@@ -23,10 +23,11 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
 import org.testng.annotations.Test;
 
-import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -43,9 +44,10 @@ public class ParseSessionTokenFromJsonResponseTest {
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/login.json");
 
-      ParseSessionTokenFromJsonResponse parser = new ParseSessionTokenFromJsonResponse(i
-               .getInstance(Gson.class));
-      String response = parser.apply(is);
+      ParseSessionTokenFromJsonResponse parser = i
+            .getInstance(ParseSessionTokenFromJsonResponse.class);
+      String response = parser.apply(new HttpResponse(200, "ok", Payloads
+            .newInputStreamPayload(is)));
       assertEquals(response, "e4b08449-4501-4b7a-af6a-d4e1e1bd7919");
    }
 

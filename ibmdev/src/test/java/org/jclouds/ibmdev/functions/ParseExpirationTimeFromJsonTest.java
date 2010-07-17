@@ -24,8 +24,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Date;
 
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -55,7 +56,8 @@ public class ParseExpirationTimeFromJsonTest {
    }
 
    public void test() {
-      Date compare = handler.apply(Utils.toInputStream("{ \"expirationTime\":1249876800000 }"));
+      Date compare = handler.apply(new HttpResponse(200, "ok", Payloads
+            .newStringPayload("{ \"expirationTime\":1249876800000 }")));
       assertEquals(compare, new Date(1249876800000l));
    }
 }

@@ -24,14 +24,18 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
+import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseSharedIpGroupListFromJsonResponseTest}
@@ -44,28 +48,40 @@ public class ParseSharedIpGroupListFromJsonResponseTest {
    Injector i = Guice.createInjector(new ParserModule());
 
    public void testApplyInputStream() {
-      InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_sharedipgroups.json");
+      InputStream is = getClass().getResourceAsStream(
+            "/cloudservers/test_list_sharedipgroups.json");
 
-      List<SharedIpGroup> expects = ImmutableList.of(new SharedIpGroup(1234, "Shared IP Group 1"),
-               new SharedIpGroup(5678, "Shared IP Group 2"));
-      ParseSharedIpGroupListFromJsonResponse parser = new ParseSharedIpGroupListFromJsonResponse(i
-               .getInstance(Gson.class));
-      assertEquals(parser.apply(is), expects);
+      List<SharedIpGroup> expects = ImmutableList.of(new SharedIpGroup(1234,
+            "Shared IP Group 1"), new SharedIpGroup(5678, "Shared IP Group 2"));
+
+      UnwrapOnlyJsonValue<List<SharedIpGroup>> parser = i.getInstance(Key
+            .get(new TypeLiteral<UnwrapOnlyJsonValue<List<SharedIpGroup>>>() {
+            }));
+      List<SharedIpGroup> response = parser.apply(new HttpResponse(200, "ok",
+            Payloads.newInputStreamPayload(is)));
+
+      assertEquals(response, expects);
+
    }
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_sharedipgroups_detail.json");
+      InputStream is = getClass().getResourceAsStream(
+            "/cloudservers/test_list_sharedipgroups_detail.json");
 
-      ParseSharedIpGroupListFromJsonResponse parser = new ParseSharedIpGroupListFromJsonResponse(i
-               .getInstance(Gson.class));
-      List<SharedIpGroup> response = parser.apply(is);
+      UnwrapOnlyJsonValue<List<SharedIpGroup>> parser = i.getInstance(Key
+            .get(new TypeLiteral<UnwrapOnlyJsonValue<List<SharedIpGroup>>>() {
+            }));
+      List<SharedIpGroup> response = parser.apply(new HttpResponse(200, "ok",
+            Payloads.newInputStreamPayload(is)));
+
       assertEquals(response.get(0).getId(), 1234);
       assertEquals(response.get(0).getName(), "Shared IP Group 1");
       assertEquals(response.get(0).getServers(), ImmutableList.of(422, 3445));
 
       assertEquals(response.get(1).getId(), 5678);
       assertEquals(response.get(1).getName(), "Shared IP Group 2");
-      assertEquals(response.get(1).getServers(), ImmutableList.of(23203, 2456, 9891));
+      assertEquals(response.get(1).getServers(), ImmutableList.of(23203, 2456,
+            9891));
 
    }
 

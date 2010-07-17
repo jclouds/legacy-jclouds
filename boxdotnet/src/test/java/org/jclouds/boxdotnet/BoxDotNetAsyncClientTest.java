@@ -57,7 +57,7 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
       GeneratedHttpRequest<BoxDotNetAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest, "GET https://www.box.net/api/1.0/rest/items HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // now make sure request filters apply by replaying
@@ -65,9 +65,10 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://www.box.net/api/1.0/rest/items HTTP/1.1");
-      // for example, using basic authentication, we should get "only one" header
+      // for example, using basic authentication, we should get "only one"
+      // header
       assertNonPayloadHeadersEqual(httpRequest,
-               "Accept: application/json\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
+            "Authorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // TODO: insert expected response class, which probably extends ParseJson
@@ -84,7 +85,7 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
       GeneratedHttpRequest<BoxDotNetAsyncClient> httpRequest = processor.createRequest(method, 1);
 
       assertRequestLineEquals(httpRequest, "GET https://www.box.net/api/1.0/rest/items/1 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // TODO: insert expected response class, which probably extends ParseJson
@@ -101,9 +102,8 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
       Method method = BoxDotNetAsyncClient.class.getMethod("delete", long.class);
       GeneratedHttpRequest<BoxDotNetAsyncClient> httpRequest = processor.createRequest(method, 1);
 
-      assertRequestLineEquals(httpRequest,
-               "DELETE https://www.box.net/api/1.0/rest/items/1 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertRequestLineEquals(httpRequest, "DELETE https://www.box.net/api/1.0/rest/items/1 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
@@ -128,7 +128,7 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
 
    @Override
    public ContextSpec<BoxDotNetClient, BoxDotNetAsyncClient> createContextSpec() {
-      return contextSpec("boxdotnet", "https://www.box.net/api/1.0/rest", "1.0", "identity",
-               "credential", BoxDotNetClient.class, BoxDotNetAsyncClient.class);
+      return contextSpec("boxdotnet", "https://www.box.net/api/1.0/rest", "1.0", "identity", "credential",
+            BoxDotNetClient.class, BoxDotNetAsyncClient.class);
    }
 }

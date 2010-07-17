@@ -18,43 +18,35 @@
  */
 package org.jclouds.gogrid.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
 
 import org.jclouds.gogrid.domain.ServerImage;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.common.base.Function;
 import com.google.inject.Singleton;
 
 /**
  * @author Oleksiy Yarmula
  */
 @Singleton
-public class ParseImageListFromJsonResponse extends
-      ParseJson<SortedSet<ServerImage>> {
+public class ParseImageListFromJsonResponse implements
+      Function<HttpResponse, SortedSet<ServerImage>> {
+
+   private final ParseJson<GenericResponseContainer<ServerImage>> json;
 
    @Inject
-   ParseImageListFromJsonResponse(Gson gson) {
-      super(gson);
+   ParseImageListFromJsonResponse(
+         ParseJson<GenericResponseContainer<ServerImage>> json) {
+      this.json = json;
    }
 
-   public SortedSet<ServerImage> apply(InputStream stream) {
-      Type setType = new TypeToken<GenericResponseContainer<ServerImage>>() {
-      }.getType();
-      GenericResponseContainer<ServerImage> response;
-      try {
-         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-               setType);
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
-      return response.getList();
+   @Override
+   public SortedSet<ServerImage> apply(HttpResponse arg0) {
+      return json.apply(arg0).getList();
    }
+
 }

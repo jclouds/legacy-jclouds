@@ -16,42 +16,43 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudservers.functions;
+package org.jclouds.rimuhosting.miro.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
-import org.jclouds.http.functions.ParseJson;
-import org.jclouds.rackspace.cloudservers.domain.Server;
-
-import com.google.gson.Gson;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.functions.ParseJson;
+import org.jclouds.rimuhosting.miro.domain.Server;
+import org.jclouds.rimuhosting.miro.domain.internal.RimuHostingResponse;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+
 /**
- * This parses {@link Server} from a gson string.
- * 
+ * @author Ivan Meredith
  * @author Adrian Cole
  */
 @Singleton
-public class ParseServerFromJsonResponse extends ParseJson<Server> {
+public class ParseServerFromJsonResponse implements
+      Function<HttpResponse, Server> {
+
+   private final ParseJson<Map<String, OrderResponse>> json;
 
    @Inject
-   public ParseServerFromJsonResponse(Gson gson) {
-      super(gson);
+   ParseServerFromJsonResponse(ParseJson<Map<String, OrderResponse>> json) {
+      this.json = json;
    }
 
-   private static class ServerListResponse {
-      Server server;
+   @Override
+   public Server apply(HttpResponse arg0) {
+      return Iterables.get(json.apply(arg0).values(), 0).about_order;
    }
 
-   public Server apply(InputStream stream) {
-
-      try {
-         return gson.fromJson(new InputStreamReader(stream, "UTF-8"), ServerListResponse.class).server;
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
+   private static class OrderResponse extends RimuHostingResponse {
+      private Server about_order;
    }
+
 }

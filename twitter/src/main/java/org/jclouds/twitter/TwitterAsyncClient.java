@@ -20,14 +20,14 @@ package org.jclouds.twitter;
 
 import java.util.SortedSet;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.RequestFilters;
-import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.twitter.domain.Status;
-import org.jclouds.twitter.functions.ParseStatusesFromJsonResponse;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -46,7 +46,7 @@ public interface TwitterAsyncClient {
     * @see TwitterClient#getMyMentions()
     */
    @GET
-   @ResponseParser(ParseStatusesFromJsonResponse.class)
+   @Consumes(MediaType.APPLICATION_JSON)
    @Path("/statuses/mentions.json")
    ListenableFuture<SortedSet<Status>> getMyMentions();
 

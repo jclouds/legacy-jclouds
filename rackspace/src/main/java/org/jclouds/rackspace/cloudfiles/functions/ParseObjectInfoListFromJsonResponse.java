@@ -25,17 +25,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
-import java.util.Date;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
+import org.jclouds.rackspace.cloudfiles.domain.internal.ObjectInfoImpl;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -45,133 +44,48 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.inject.TypeLiteral;
 
 /**
  * This parses {@link ObjectInfo} from a gson string.
  * 
  * @author Adrian Cole
  */
-public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<ObjectInfo>> implements
-         InvocationContext {
+public class ParseObjectInfoListFromJsonResponse extends
+      ParseJson<PageSet<ObjectInfo>> implements InvocationContext {
 
    private GeneratedHttpRequest<?> request;
-   private static EncryptionService encryptionService;
 
    @Inject
-   public ParseObjectInfoListFromJsonResponse(Gson gson, EncryptionService encryptionService) {
-      super(gson);
-      ParseObjectInfoListFromJsonResponse.encryptionService = encryptionService;
-   }
-
-   public static class ObjectInfoImpl implements ObjectInfo {
-      String name;
-      String hash;
-      long bytes;
-      String content_type;
-      Date last_modified;
-
-      public int compareTo(ObjectInfoImpl o) {
-         return (this == o) ? 0 : name.compareTo(o.name);
-      }
-
-      public Long getBytes() {
-         return bytes;
-      }
-
-      public String getContentType() {
-         return content_type;
-      }
-
-      public byte[] getHash() {
-         return encryptionService.fromHex(hash);
-      }
-
-      public Date getLastModified() {
-         return last_modified;
-      }
-
-      public String getName() {
-         return name;
-      }
-
-      @Override
-      public int hashCode() {
-         final int prime = 31;
-         int result = 1;
-         result = prime * result + (int) (bytes ^ (bytes >>> 32));
-         result = prime * result + ((content_type == null) ? 0 : content_type.hashCode());
-         result = prime * result + ((hash == null) ? 0 : hash.hashCode());
-         result = prime * result + ((last_modified == null) ? 0 : last_modified.hashCode());
-         result = prime * result + ((name == null) ? 0 : name.hashCode());
-         return result;
-      }
-
-      @Override
-      public boolean equals(Object obj) {
-         if (this == obj)
-            return true;
-         if (obj == null)
-            return false;
-         if (getClass() != obj.getClass())
-            return false;
-         ObjectInfoImpl other = (ObjectInfoImpl) obj;
-         if (bytes != other.bytes)
-            return false;
-         if (content_type == null) {
-            if (other.content_type != null)
-               return false;
-         } else if (!content_type.equals(other.content_type))
-            return false;
-         if (hash == null) {
-            if (other.hash != null)
-               return false;
-         } else if (!hash.equals(other.hash))
-            return false;
-         if (last_modified == null) {
-            if (other.last_modified != null)
-               return false;
-         } else if (!last_modified.equals(other.last_modified))
-            return false;
-         if (name == null) {
-            if (other.name != null)
-               return false;
-         } else if (!name.equals(other.name))
-            return false;
-         return true;
-      }
-
-      public int compareTo(ObjectInfo o) {
-         return (this == o) ? 0 : getName().compareTo(o.getName());
-      }
-
-      @Override
-      public String toString() {
-         return "ObjectInfoImpl [bytes=" + bytes + ", content_flavor=" + content_type + ", hash="
-                  + hash + ", last_modified=" + last_modified.getTime() + ", name=" + name + "]";
-      }
+   public ParseObjectInfoListFromJsonResponse(Gson gson) {
+      super(gson, new TypeLiteral<PageSet<ObjectInfo>>() {
+      });
    }
 
    public PageSet<ObjectInfo> apply(InputStream stream) {
       checkState(request != null, "request should be initialized at this point");
-      checkState(request.getArgs() != null, "request.getArgs() should be initialized at this point");
-      checkArgument(request.getArgs()[0] instanceof String, "arg[0] must be a container name");
+      checkState(request.getArgs() != null,
+            "request.getArgs() should be initialized at this point");
+      checkArgument(request.getArgs()[0] instanceof String,
+            "arg[0] must be a container name");
       checkArgument(request.getArgs()[1] instanceof ListContainerOptions[],
-               "arg[1] must be an array of ListContainerOptions");
-      ListContainerOptions[] optionsList = (ListContainerOptions[]) request.getArgs()[1];
+            "arg[1] must be an array of ListContainerOptions");
+      ListContainerOptions[] optionsList = (ListContainerOptions[]) request
+            .getArgs()[1];
       ListContainerOptions options = optionsList.length > 0 ? optionsList[0]
-               : ListContainerOptions.NONE;
+            : ListContainerOptions.NONE;
       Type listType = new TypeToken<SortedSet<ObjectInfoImpl>>() {
       }.getType();
 
       try {
-         SortedSet<ObjectInfoImpl> list = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-                  listType);
-         SortedSet<ObjectInfo> returnVal = Sets.newTreeSet(Iterables.transform(list,
-                  new Function<ObjectInfoImpl, ObjectInfo>() {
-                     public ObjectInfo apply(ObjectInfoImpl from) {
-                        return from;
-                     }
-                  }));
+         SortedSet<ObjectInfoImpl> list = gson.fromJson(new InputStreamReader(
+               stream, "UTF-8"), listType);
+         SortedSet<ObjectInfo> returnVal = Sets.newTreeSet(Iterables.transform(
+               list, new Function<ObjectInfoImpl, ObjectInfo>() {
+                  public ObjectInfo apply(ObjectInfoImpl from) {
+                     return from;
+                  }
+               }));
          boolean truncated = options.getMaxResults() == returnVal.size();
          String marker = truncated ? returnVal.last().getName() : null;
          return new PageSetImpl<ObjectInfo>(returnVal, marker);
@@ -184,7 +98,7 @@ public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<Objec
    @Override
    public ParseObjectInfoListFromJsonResponse setContext(HttpRequest request) {
       checkArgument(request instanceof GeneratedHttpRequest<?>,
-               "note this handler requires a GeneratedHttpRequest");
+            "note this handler requires a GeneratedHttpRequest");
       this.request = (GeneratedHttpRequest<?>) request;
       return this;
    }

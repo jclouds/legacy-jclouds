@@ -16,43 +16,45 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.twitter.functions;
+package org.jclouds.rimuhosting.miro.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
+import java.util.Map;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.twitter.domain.Status;
+import org.jclouds.rimuhosting.miro.domain.Server;
+import org.jclouds.rimuhosting.miro.domain.internal.RimuHostingResponse;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 /**
- * This parses {@link Status} from a json string.
- * 
+ * @author Ivan Meredith
  * @author Adrian Cole
  */
 @Singleton
-public class ParseStatusesFromJsonResponse extends ParseJson<SortedSet<Status>> {
+public class ParseServersFromJsonResponse implements
+      Function<HttpResponse, SortedSet<Server>> {
+
+   private final ParseJson<Map<String, OrderResponse>> json;
 
    @Inject
-   public ParseStatusesFromJsonResponse(Gson gson) {
-      super(gson);
+   ParseServersFromJsonResponse(ParseJson<Map<String, OrderResponse>> json) {
+      this.json = json;
    }
 
-   public SortedSet<Status> apply(InputStream stream) {
-      Type setType = new TypeToken<SortedSet<Status>>() {
-      }.getType();
-      try {
-         return gson.fromJson(new InputStreamReader(stream, "UTF-8"), setType);
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
+   @Override
+   public SortedSet<Server> apply(HttpResponse arg0) {
+      return Iterables.get(json.apply(arg0).values(), 0).about_orders;
    }
+
+   private static class OrderResponse extends RimuHostingResponse {
+      private SortedSet<Server> about_orders;
+
+   }
+
 }

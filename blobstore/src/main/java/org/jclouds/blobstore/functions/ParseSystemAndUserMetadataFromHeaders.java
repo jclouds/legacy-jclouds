@@ -45,8 +45,8 @@ import com.google.common.base.Function;
 /**
  * @author Adrian Cole
  */
-public class ParseSystemAndUserMetadataFromHeaders implements
-         Function<HttpResponse, MutableBlobMetadata>, InvocationContext {
+public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpResponse, MutableBlobMetadata>,
+      InvocationContext {
    private final String metadataPrefix;
    private final DateService dateParser;
    private final Provider<MutableBlobMetadata> metadataFactory;
@@ -55,9 +55,8 @@ public class ParseSystemAndUserMetadataFromHeaders implements
    private GeneratedHttpRequest<?> request;
 
    @Inject
-   public ParseSystemAndUserMetadataFromHeaders(Provider<MutableBlobMetadata> metadataFactory,
-            DateService dateParser, @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix,
-            @Named(PROPERTY_API_VERSION) String apiVersion) {
+   public ParseSystemAndUserMetadataFromHeaders(Provider<MutableBlobMetadata> metadataFactory, DateService dateParser,
+         @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix, @Named(PROPERTY_API_VERSION) String apiVersion) {
       this.metadataFactory = metadataFactory;
       this.dateParser = dateParser;
       this.metadataPrefix = metadataPrefix;
@@ -81,9 +80,8 @@ public class ParseSystemAndUserMetadataFromHeaders implements
    void addUserMetadataTo(HttpResponse from, MutableBlobMetadata metadata) {
       for (Entry<String, String> header : from.getHeaders().entries()) {
          if (header.getKey() != null && header.getKey().startsWith(metadataPrefix))
-            metadata.getUserMetadata().put(
-                     (header.getKey().substring(metadataPrefix.length())).toLowerCase(),
-                     header.getValue());
+            metadata.getUserMetadata().put((header.getKey().substring(metadataPrefix.length())).toLowerCase(),
+                  header.getValue());
       }
    }
 
@@ -93,12 +91,10 @@ public class ParseSystemAndUserMetadataFromHeaders implements
    }
 
    @VisibleForTesting
-   void parseLastModifiedOrThrowException(HttpResponse from, MutableBlobMetadata metadata)
-            throws HttpException {
+   void parseLastModifiedOrThrowException(HttpResponse from, MutableBlobMetadata metadata) throws HttpException {
       String lastModified = from.getFirstHeaderOrNull(HttpHeaders.LAST_MODIFIED);
       if (lastModified == null)
-         throw new HttpException(HttpHeaders.LAST_MODIFIED + " header not present in response: "
-                  + from.getStatusLine());
+         throw new HttpException(HttpHeaders.LAST_MODIFIED + " header not present in response: " + from.getStatusLine());
       // Eucalyptus 1.6 returns iso8601 dates
       if (apiVersion.indexOf("Walrus-1.6") != -1) {
          metadata.setLastModified(dateParser.iso8601DateParse(lastModified.replace("+0000", "Z")));
@@ -107,8 +103,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements
       }
 
       if (metadata.getLastModified() == null)
-         throw new HttpException("could not parse: " + HttpHeaders.LAST_MODIFIED + ": "
-                  + lastModified);
+         throw new HttpException("could not parse: " + HttpHeaders.LAST_MODIFIED + ": " + lastModified);
    }
 
    @VisibleForTesting
@@ -126,18 +121,16 @@ public class ParseSystemAndUserMetadataFromHeaders implements
    }
 
    @VisibleForTesting
-   void setContentTypeOrThrowException(HttpResponse from, MutableBlobMetadata metadata)
-            throws HttpException {
+   void setContentTypeOrThrowException(HttpResponse from, MutableBlobMetadata metadata) throws HttpException {
       if (from.getPayload() != null)
          metadata.setContentType(from.getPayload().getContentType());
-      if (metadata.getContentType() == null
-               || "application/unknown".equals(metadata.getContentType()))
+      if (from.getStatusCode() != 204 && (metadata.getContentType() == null
+            || "application/unknown".equals(metadata.getContentType())))
          throw new HttpException(HttpHeaders.CONTENT_TYPE + " not found in headers");
    }
 
    public ParseSystemAndUserMetadataFromHeaders setContext(HttpRequest request) {
-      checkArgument(request instanceof GeneratedHttpRequest<?>,
-               "note this handler requires a GeneratedHttpRequest");
+      checkArgument(request instanceof GeneratedHttpRequest<?>, "note this handler requires a GeneratedHttpRequest");
       this.request = (GeneratedHttpRequest<?>) request;
       return this;
    }

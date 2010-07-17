@@ -24,14 +24,18 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 
 import org.jclouds.date.DateService;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
+import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.ImageStatus;
 import org.testng.annotations.Test;
 
-import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseImageFromJsonResponse}
@@ -53,18 +57,23 @@ public class ParseImageFromJsonResponseTest {
    DateService dateService = i.getInstance(DateService.class);
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/cloudservers/test_get_image_details.json");
+      InputStream is = getClass().getResourceAsStream(
+            "/cloudservers/test_get_image_details.json");
 
-      ParseImageFromJsonResponse parser = new ParseImageFromJsonResponse(i.getInstance(Gson.class));
-      Image response = parser.apply(is);
+      UnwrapOnlyJsonValue<Image> parser = i.getInstance(Key
+            .get(new TypeLiteral<UnwrapOnlyJsonValue<Image>>() {
+            }));
+      Image response = parser.apply(new HttpResponse(200, "ok", Payloads
+            .newInputStreamPayload(is)));
+
       assertEquals(response.getId(), 2);
       assertEquals(response.getName(), "CentOS 5.2");
       assertEquals(response.getCreated(), dateService
-               .iso8601SecondsDateParse("2010-08-10T12:00:00Z"));
+            .iso8601SecondsDateParse("2010-08-10T12:00:00Z"));
       assertEquals(response.getProgress(), new Integer(80));
       assertEquals(response.getServerId(), new Integer(12));
       assertEquals(response.getStatus(), ImageStatus.SAVING);
       assertEquals(response.getUpdated(), dateService
-               .iso8601SecondsDateParse(("2010-10-10T12:00:00Z")));
+            .iso8601SecondsDateParse(("2010-10-10T12:00:00Z")));
    }
 }

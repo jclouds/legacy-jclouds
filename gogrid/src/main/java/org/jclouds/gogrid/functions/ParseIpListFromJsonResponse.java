@@ -18,19 +18,15 @@
  */
 package org.jclouds.gogrid.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
 
 import org.jclouds.gogrid.domain.Ip;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.common.base.Function;
 import com.google.inject.Singleton;
 
 /**
@@ -39,23 +35,19 @@ import com.google.inject.Singleton;
  * @author Oleksiy Yarmula
  */
 @Singleton
-public class ParseIpListFromJsonResponse extends ParseJson<SortedSet<Ip>> {
+public class ParseIpListFromJsonResponse implements
+      Function<HttpResponse, SortedSet<Ip>> {
+
+   private final ParseJson<GenericResponseContainer<Ip>> json;
 
    @Inject
-   ParseIpListFromJsonResponse(Gson gson) {
-      super(gson);
+   ParseIpListFromJsonResponse(ParseJson<GenericResponseContainer<Ip>> json) {
+      this.json = json;
    }
 
-   public SortedSet<Ip> apply(InputStream stream) {
-      Type setType = new TypeToken<GenericResponseContainer<Ip>>() {
-      }.getType();
-      GenericResponseContainer<Ip> response;
-      try {
-         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-               setType);
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
-      return response.getList();
+   @Override
+   public SortedSet<Ip> apply(HttpResponse arg0) {
+      return json.apply(arg0).getList();
    }
+
 }

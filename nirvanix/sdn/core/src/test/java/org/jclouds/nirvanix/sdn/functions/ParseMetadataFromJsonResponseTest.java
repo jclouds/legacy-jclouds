@@ -24,11 +24,12 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.Map;
 
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -45,10 +46,11 @@ public class ParseMetadataFromJsonResponseTest {
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/metadata.json");
 
-      ParseMetadataFromJsonResponse parser = new ParseMetadataFromJsonResponse(i
-               .getInstance(Gson.class));
-      Map<String, String> response = parser.apply(is);
-      assertEquals(response, ImmutableMap.of("MD5", "IGPBYI1uC6+AJJxC4r5YBA==", "test", "1"));
+      ParseMetadataFromJsonResponse parser = i
+            .getInstance(ParseMetadataFromJsonResponse.class);
+      Map<String, String> response = parser.apply(new HttpResponse(200, "ok",
+            Payloads.newInputStreamPayload(is)));
+      assertEquals(response, ImmutableMap.of("MD5", "IGPBYI1uC6+AJJxC4r5YBA==",
+            "test", "1"));
    }
-
 }

@@ -21,7 +21,9 @@ package org.jclouds.aws.ec2.xml;
 import java.util.Set;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 
+import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
@@ -33,9 +35,9 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-public class DescribeAvailabilityZonesResponseHandler extends
-         ParseSax.HandlerWithResult<Set<AvailabilityZoneInfo>> {
+public class DescribeAvailabilityZonesResponseHandler extends ParseSax.HandlerWithResult<Set<AvailabilityZoneInfo>> {
    private StringBuilder currentText = new StringBuilder();
+   private final String defaultRegion;
 
    private Set<AvailabilityZoneInfo> availablilityZones = Sets.newLinkedHashSet();
    private String zone;
@@ -45,6 +47,15 @@ public class DescribeAvailabilityZonesResponseHandler extends
    private String zoneState;
    private boolean inMessageSet;
    private Set<String> messages = Sets.newHashSet();
+
+   /**
+    * Eucalyptus 1.6 doesn't return region in the XML output
+    */
+   @Inject
+   DescribeAvailabilityZonesResponseHandler(@Region String defaultRegion) {
+      this.defaultRegion = defaultRegion;
+      region = defaultRegion;
+   }
 
    public Set<AvailabilityZoneInfo> getResult() {
       return availablilityZones;
@@ -75,7 +86,7 @@ public class DescribeAvailabilityZonesResponseHandler extends
       } else if (qName.equals("item") && !inMessageSet) {
          availablilityZones.add(new AvailabilityZoneInfo(zone, zoneState, region, messages));
          this.zone = null;
-         this.region = null;
+         this.region = defaultRegion;
          this.zoneState = null;
          this.messages = Sets.newHashSet();
       }

@@ -38,10 +38,9 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "ec2.MonitoringAsyncClientTest")
 public class MonitoringAsyncClientTest extends BaseEC2AsyncClientTest<MonitoringAsyncClient> {
 
-   public void testUnmonitorInstances() throws SecurityException, NoSuchMethodException,
-            IOException {
-      Method method = MonitoringAsyncClient.class.getMethod("unmonitorInstancesInRegion",
-               String.class, String.class, Array.newInstance(String.class, 0).getClass());
+   public void testUnmonitorInstances() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = MonitoringAsyncClient.class.getMethod("unmonitorInstancesInRegion", String.class, String.class,
+            Array.newInstance(String.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, null, "instance1", "instance2");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
@@ -57,16 +56,15 @@ public class MonitoringAsyncClientTest extends BaseEC2AsyncClientTest<Monitoring
    }
 
    public void testMonitorInstances() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = MonitoringAsyncClient.class.getMethod("monitorInstancesInRegion",
-               String.class, String.class, Array.newInstance(String.class, 0).getClass());
+      Method method = MonitoringAsyncClient.class.getMethod("monitorInstancesInRegion", String.class, String.class,
+            Array.newInstance(String.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, null, "instance1", "instance2");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(
-               request,
-               "Version=2010-06-15&Action=MonitorInstances&InstanceId.0=instance1&InstanceId.1=instance2",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request,
+            "Version=2010-06-15&Action=MonitorInstances&InstanceId.0=instance1&InstanceId.1=instance2",
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, MonitoringStateHandler.class);

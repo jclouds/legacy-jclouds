@@ -18,10 +18,6 @@
  */
 package org.jclouds.gogrid.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -29,41 +25,25 @@ import javax.inject.Singleton;
 
 import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.domain.Server;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Maps;
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
-import com.google.gson.reflect.TypeToken;
 
 /**
  * @author Oleksiy Yarmula
  */
 @Singleton
-public class ParseServerNameToCredentialsMapFromJsonResponse extends
-      ParseJson<Map<String, Credentials>> {
+public class ParseServerNameToCredentialsMapFromJsonResponse implements
+      Function<HttpResponse, Map<String, Credentials>> {
+   private final ParseJson<GenericResponseContainer<Password>> json;
 
    @Inject
-   ParseServerNameToCredentialsMapFromJsonResponse(Gson gson) {
-      super(gson);
-   }
-
-   public Map<String, Credentials> apply(InputStream stream) {
-      Type setType = new TypeToken<GenericResponseContainer<Password>>() {
-      }.getType();
-      GenericResponseContainer<Password> response;
-      try {
-         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-               setType);
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
-      Map<String, Credentials> serverNameToCredentials = Maps.newHashMap();
-      for (Password password : response.getList()) {
-         serverNameToCredentials.put(password.getServer().getName(),
-               new Credentials(password.getUserName(), password.getPassword()));
-      }
-      return serverNameToCredentials;
+   ParseServerNameToCredentialsMapFromJsonResponse(
+         ParseJson<GenericResponseContainer<Password>> json) {
+      this.json = json;
    }
 
    // incidental wrapper class to assist in getting the correct data
@@ -120,6 +100,16 @@ public class ParseServerNameToCredentialsMapFromJsonResponse extends
       public int compareTo(Password o) {
          return server.getName().compareTo(o.getServer().getName());
       }
+   }
+
+   @Override
+   public Map<String, Credentials> apply(HttpResponse arg0) {
+      Map<String, Credentials> serverNameToCredentials = Maps.newHashMap();
+      for (Password password : json.apply(arg0).getList()) {
+         serverNameToCredentials.put(password.getServer().getName(),
+               new Credentials(password.getUserName(), password.getPassword()));
+      }
+      return serverNameToCredentials;
    }
 
 }

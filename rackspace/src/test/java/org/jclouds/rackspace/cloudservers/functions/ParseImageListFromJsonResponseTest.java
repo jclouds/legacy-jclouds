@@ -25,15 +25,19 @@ import java.net.UnknownHostException;
 import java.util.List;
 
 import org.jclouds.date.DateService;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
+import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.ImageStatus;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseImageListFromJsonResponseTest}
@@ -60,17 +64,25 @@ public class ParseImageListFromJsonResponseTest {
 
       List<Image> expects = ImmutableList.of(new Image(2, "CentOS 5.2"), new Image(743,
                "My Server Backup"));
-      ParseImageListFromJsonResponse parser = new ParseImageListFromJsonResponse(i
-               .getInstance(Gson.class));
-      assertEquals(parser.apply(is), expects);
+      
+      UnwrapOnlyJsonValue<List<Image>> parser = i.getInstance(Key
+            .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Image>>>() {
+            }));
+      List<Image> response = parser.apply(new HttpResponse(200, "ok", Payloads
+            .newInputStreamPayload(is)));
+      
+      assertEquals(response, expects);
    }
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_images_detail.json");
 
-      ParseImageListFromJsonResponse parser = new ParseImageListFromJsonResponse(i
-               .getInstance(Gson.class));
-      List<Image> response = parser.apply(is);
+      UnwrapOnlyJsonValue<List<Image>> parser = i.getInstance(Key
+            .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Image>>>() {
+            }));
+      List<Image> response = parser.apply(new HttpResponse(200, "ok", Payloads
+            .newInputStreamPayload(is)));
+      
       assertEquals(response.get(0).getId(), 2);
       assertEquals(response.get(0).getName(), "CentOS 5.2");
       assertEquals(response.get(0).getCreated(), dateService

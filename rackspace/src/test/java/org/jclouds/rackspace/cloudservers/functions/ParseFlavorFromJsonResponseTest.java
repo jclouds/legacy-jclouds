@@ -23,13 +23,17 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
+import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.testng.annotations.Test;
 
-import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseFlavorFromJsonResponse}
@@ -44,9 +48,11 @@ public class ParseFlavorFromJsonResponseTest {
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/cloudservers/test_get_flavor_details.json");
 
-      ParseFlavorFromJsonResponse parser = new ParseFlavorFromJsonResponse(i
-               .getInstance(Gson.class));
-      Flavor response = parser.apply(is);
+      UnwrapOnlyJsonValue<Flavor> parser = i.getInstance(Key
+            .get(new TypeLiteral<UnwrapOnlyJsonValue<Flavor>>() {
+            }));
+      Flavor response = parser.apply(new HttpResponse(200, "ok", Payloads
+            .newInputStreamPayload(is)));
       assertEquals(response.getId(), 1);
       assertEquals(response.getName(), "256 MB Server");
       assertEquals(response.getRam(), new Integer(256));

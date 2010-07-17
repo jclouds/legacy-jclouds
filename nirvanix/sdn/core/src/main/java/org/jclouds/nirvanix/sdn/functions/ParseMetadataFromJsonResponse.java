@@ -18,19 +18,17 @@
  */
 package org.jclouds.nirvanix.sdn.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Maps;
-import com.google.gson.Gson;
 
 /**
  * This parses a Map of Metadata from a Nirvanix response
@@ -38,32 +36,32 @@ import com.google.gson.Gson;
  * @author Adrian Cole
  */
 @Singleton
-public class ParseMetadataFromJsonResponse extends ParseJson<Map<String, String>> {
+public class ParseMetadataFromJsonResponse implements
+      Function<HttpResponse, Map<String, String>> {
+
+   private final ParseJson<Response> json;
 
    @Inject
-   public ParseMetadataFromJsonResponse(Gson gson) {
-      super(gson);
+   ParseMetadataFromJsonResponse(ParseJson<Response> json) {
+      this.json = json;
    }
 
-   private static class SessionTokenResponse {
+   @Override
+   public Map<String, String> apply(HttpResponse arg0) {
+      Response response = json.apply(arg0);
+      if (response.ResponseCode == null || response.ResponseCode != 0)
+         throw new RuntimeException("bad response code: "
+               + response.ResponseCode);
+      Map<String, String> metadata = Maps.newHashMap();
+      for (Map<String, String> keyValue : response.Metadata) {
+         metadata.put(keyValue.get("Type"), keyValue.get("Value"));
+      }
+      return metadata;
+   }
+
+   private static class Response {
       Integer ResponseCode;
       List<Map<String, String>> Metadata;
    }
 
-   public Map<String, String> apply(InputStream stream) {
-
-      try {
-         SessionTokenResponse response = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-                  SessionTokenResponse.class);
-         if (response.ResponseCode == null || response.ResponseCode != 0)
-            throw new RuntimeException("bad response code: " + response.ResponseCode);
-         Map<String, String> metadata = Maps.newHashMap();
-         for (Map<String, String> keyValue : response.Metadata) {
-            metadata.put(keyValue.get("Type"), keyValue.get("Value"));
-         }
-         return metadata;
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
-   }
 }

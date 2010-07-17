@@ -39,8 +39,6 @@ import org.jclouds.chef.domain.User;
 import org.jclouds.chef.filters.SignedHeaderAuth;
 import org.jclouds.chef.functions.OrganizationName;
 import org.jclouds.chef.functions.ParseKeyFromJson;
-import org.jclouds.chef.functions.ParseOrganizationFromJson;
-import org.jclouds.chef.functions.ParseUserFromJson;
 import org.jclouds.chef.functions.Username;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
@@ -77,16 +75,17 @@ public interface OpscodePlatformAsyncClient {
    @POST
    @Path("/users")
    @ResponseParser(ParseKeyFromJson.class)
-   ListenableFuture<String> createUser(@BinderParam(BindToJsonPayload.class) User user);
+   ListenableFuture<String> createUser(
+         @BinderParam(BindToJsonPayload.class) User user);
 
    /**
     * @see ChefClient#updateUser
     */
    @PUT
    @Path("/users/{username}")
-   @ResponseParser(ParseUserFromJson.class)
+   @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<User> updateUser(
-            @PathParam("username") @ParamParser(Username.class) @BinderParam(BindToJsonPayload.class) User user);
+         @PathParam("username") @ParamParser(Username.class) @BinderParam(BindToJsonPayload.class) User user);
 
    /**
     * @see ChefClient#getUser
@@ -94,7 +93,7 @@ public interface OpscodePlatformAsyncClient {
    @GET
    @Path("/users/{username}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @ResponseParser(ParseUserFromJson.class)
+   @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<User> getUser(@PathParam("username") String username);
 
    /**
@@ -103,7 +102,7 @@ public interface OpscodePlatformAsyncClient {
    @DELETE
    @Path("/users/{username}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @ResponseParser(ParseUserFromJson.class)
+   @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<User> deleteUser(@PathParam("username") String username);
 
    /**
@@ -112,16 +111,17 @@ public interface OpscodePlatformAsyncClient {
    @POST
    @Path("/organizations")
    @ResponseParser(ParseKeyFromJson.class)
-   ListenableFuture<String> createOrg(@BinderParam(BindToJsonPayload.class) Organization org);
+   ListenableFuture<String> createOrg(
+         @BinderParam(BindToJsonPayload.class) Organization org);
 
    /**
     * @see ChefClient#updateOrg
     */
    @PUT
    @Path("/organizations/{orgname}")
-   @ResponseParser(ParseOrganizationFromJson.class)
+   @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Organization> updateOrg(
-            @PathParam("orgname") @ParamParser(OrganizationName.class) @BinderParam(BindToJsonPayload.class) Organization org);
+         @PathParam("orgname") @ParamParser(OrganizationName.class) @BinderParam(BindToJsonPayload.class) Organization org);
 
    /**
     * @see ChefClient#getOrg
@@ -129,7 +129,7 @@ public interface OpscodePlatformAsyncClient {
    @GET
    @Path("/organizations/{orgname}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @ResponseParser(ParseOrganizationFromJson.class)
+   @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Organization> getOrg(@PathParam("orgname") String orgname);
 
    /**
@@ -138,7 +138,7 @@ public interface OpscodePlatformAsyncClient {
    @DELETE
    @Path("/organizations/{orgname}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @ResponseParser(ParseOrganizationFromJson.class)
+   @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Organization> deleteOrg(@PathParam("orgname") String orgname);
 
 }

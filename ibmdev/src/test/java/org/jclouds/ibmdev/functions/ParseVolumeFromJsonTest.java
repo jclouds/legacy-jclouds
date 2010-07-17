@@ -24,6 +24,8 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Date;
 
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.ibmdev.domain.Volume;
 import org.testng.annotations.BeforeTest;
@@ -57,11 +59,13 @@ public class ParseVolumeFromJsonTest {
 
    public void test() {
 
-      Volume volume = new Volume("2", 5, 50, "aadelucc@us.ibm.com", new Date(1260469075119l), "1",
-               ImmutableSet.<String> of(), "ext3", "New Storage", "67");
+      Volume volume = new Volume("2", 5, 50, "aadelucc@us.ibm.com", new Date(
+            1260469075119l), "1", ImmutableSet.<String> of(), "ext3",
+            "New Storage", "67");
 
-      Volume compare = handler.apply(ParseVolumeFromJsonTest.class
-               .getResourceAsStream("/volume.json"));
+      Volume compare = handler.apply(new HttpResponse(200, "ok", Payloads
+            .newInputStreamPayload(ParseVolumeFromJsonTest.class
+                  .getResourceAsStream("/volume.json"))));
       assertEquals(compare, volume);
    }
 }

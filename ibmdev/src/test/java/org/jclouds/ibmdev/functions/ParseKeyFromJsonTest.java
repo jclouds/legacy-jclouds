@@ -24,6 +24,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Date;
 
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
+import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.ibmdev.domain.Key;
 import org.testng.annotations.BeforeTest;
@@ -32,6 +35,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseKeyFromJson}
@@ -41,7 +45,7 @@ import com.google.inject.Injector;
 @Test(groups = "unit", sequential = true, testName = "ibmdev.ParseKeyFromJsonTest")
 public class ParseKeyFromJsonTest {
 
-   private ParseKeyFromJson handler;
+   private ParseJson<Key> handler;
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
@@ -52,14 +56,19 @@ public class ParseKeyFromJsonTest {
             super.configure();
          }
       });
-      handler = injector.getInstance(ParseKeyFromJson.class);
+      handler = injector.getInstance(com.google.inject.Key
+            .get(new TypeLiteral<ParseJson<Key>>() {
+            }));
    }
 
    public void test() {
       Key key = new Key(true, ImmutableSet.<String> of("1"),
-               "AAAB3NzaC1yc2EAAAADAQABAAABAQCqBw7a+...", "DEFAULT", new Date(1260428507510l));
+            "AAAB3NzaC1yc2EAAAADAQABAAABAQCqBw7a+...", "DEFAULT", new Date(
+                  1260428507510l));
 
-      Key compare = handler.apply(ParseKeyFromJsonTest.class.getResourceAsStream("/key.json"));
+      Key compare = handler.apply(new HttpResponse(200, "ok", Payloads
+            .newInputStreamPayload(ParseKeyFromJsonTest.class
+                  .getResourceAsStream("/key.json"))));
       assertEquals(compare, key);
    }
 }

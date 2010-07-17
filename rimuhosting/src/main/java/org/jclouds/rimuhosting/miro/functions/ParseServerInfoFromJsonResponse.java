@@ -18,55 +18,41 @@
  */
 package org.jclouds.rimuhosting.miro.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.rimuhosting.miro.domain.ServerInfo;
 import org.jclouds.rimuhosting.miro.domain.internal.RimuHostingResponse;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Ivan Meredith
+ * @author Adrian Cole
  */
 @Singleton
-public class ParseInstanceInfoFromJsonResponse extends ParseJson<ServerInfo> {
+public class ParseServerInfoFromJsonResponse implements
+      Function<HttpResponse, ServerInfo> {
+
+   private final ParseJson<Map<String, OrderResponse>> json;
+
    @Inject
-   public ParseInstanceInfoFromJsonResponse(Gson gson) {
-      super(gson);
+   ParseServerInfoFromJsonResponse(ParseJson<Map<String, OrderResponse>> json) {
+      this.json = json;
+   }
+
+   @Override
+   public ServerInfo apply(HttpResponse arg0) {
+      return Iterables.get(json.apply(arg0).values(), 0).running_vps_info;
    }
 
    private static class OrderResponse extends RimuHostingResponse {
       private ServerInfo running_vps_info;
 
-      public ServerInfo getInstanceInfo() {
-         return running_vps_info;
-      }
-
-      @SuppressWarnings("unused")
-      public void setInstanceInfo(ServerInfo running_vps_info) {
-         this.running_vps_info = running_vps_info;
-      }
-   }
-
-   @Override
-   protected ServerInfo apply(InputStream stream) {
-      Type setType = new TypeToken<Map<String, OrderResponse>>() {
-      }.getType();
-      try {
-         Map<String, OrderResponse> responseMap = gson.fromJson(new InputStreamReader(stream,
-                  "UTF-8"), setType);
-         return responseMap.values().iterator().next().getInstanceInfo();
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
    }
 }

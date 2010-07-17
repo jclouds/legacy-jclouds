@@ -58,8 +58,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", sequential = true, testName = "vcloud.HostingDotComVCloudAsyncClientTest")
-public class HostingDotComVCloudAsyncClientTest extends
-         RestClientTest<HostingDotComVCloudAsyncClient> {
+public class HostingDotComVCloudAsyncClientTest extends RestClientTest<HostingDotComVCloudAsyncClient> {
    public void testCatalog() throws SecurityException, NoSuchMethodException, IOException {
       Method method = HostingDotComVCloudAsyncClient.class.getMethod("getDefaultCatalog");
       HttpRequest request = processor.createRequest(method);
@@ -94,17 +93,15 @@ public class HostingDotComVCloudAsyncClientTest extends
 
    @Override
    public ContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("hostingdotcom", "identity", "credential",
-               new Properties());
+      return new RestContextFactory().createContextSpec("hostingdotcom", "identity", "credential", new Properties());
    }
 
    @RequiresHttp
    @ConfiguresRestClient
-   protected static class HostingDotComVCloudRestClientModuleExtension extends
-            HostingDotComVCloudRestClientModule {
+   protected static class HostingDotComVCloudRestClientModuleExtension extends HostingDotComVCloudRestClientModule {
       @Override
       protected URI provideAuthenticationURI(VCloudVersionsAsyncClient versionService,
-               @Named(PROPERTY_API_VERSION) String version) {
+            @Named(PROPERTY_API_VERSION) String version) {
          return URI.create("https://vcloud/login");
       }
 
@@ -126,8 +123,7 @@ public class HostingDotComVCloudAsyncClientTest extends
       }
 
       @Override
-      protected Iterable<NamedResource> provideOrgs(Supplier<VCloudSession> cache,
-               @Named(PROPERTY_IDENTITY) String user) {
+      protected Iterable<NamedResource> provideOrgs(Supplier<VCloudSession> cache, @Named(PROPERTY_IDENTITY) String user) {
          return null;
       }
 

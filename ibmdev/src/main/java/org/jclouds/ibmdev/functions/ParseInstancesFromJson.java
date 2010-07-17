@@ -41,28 +41,30 @@
  */
 package org.jclouds.ibmdev.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.ibmdev.domain.Instance;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Sets;
-import com.google.gson.Gson;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class ParseInstancesFromJson extends ParseJson<Set<? extends Instance>> {
+public class ParseInstancesFromJson implements
+      Function<HttpResponse, Set<? extends Instance>> {
+
+   private final ParseJson<InstanceListResponse> json;
+
    @Inject
-   public ParseInstancesFromJson(Gson gson) {
-      super(gson);
+   ParseInstancesFromJson(ParseJson<InstanceListResponse> json) {
+      this.json = json;
    }
 
    private static class InstanceListResponse {
@@ -70,12 +72,8 @@ public class ParseInstancesFromJson extends ParseJson<Set<? extends Instance>> {
    }
 
    @Override
-   protected Set<? extends Instance> apply(InputStream stream) {
-      try {
-         return ParseUtils.clean(gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-                  InstanceListResponse.class).instances, ParseUtils.CLEAN_INSTANCE);
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
+   public Set<? extends Instance> apply(HttpResponse arg0) {
+      return ParseUtils.clean(json.apply(arg0).instances,
+            ParseUtils.CLEAN_INSTANCE);
    }
 }

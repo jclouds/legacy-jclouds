@@ -25,6 +25,7 @@ import java.io.IOException;
 import org.jclouds.chef.domain.Organization;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.Payloads;
+import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
@@ -32,6 +33,8 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseOrganizationFromJson}
@@ -41,12 +44,14 @@ import com.google.inject.Injector;
 @Test(groups = "unit", sequential = true, testName = "chef.ParseOrganizationFromJsonTest")
 public class ParseOrganizationFromJsonTest {
 
-   private ParseOrganizationFromJson handler;
+   private ParseJson<Organization> handler;
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
       Injector injector = Guice.createInjector(new ParserModule());
-      handler = injector.getInstance(ParseOrganizationFromJson.class);
+      handler = injector.getInstance(Key
+            .get(new TypeLiteral<ParseJson<Organization>>() {
+            }));
    }
 
    public void test() {
@@ -58,7 +63,7 @@ public class ParseOrganizationFromJsonTest {
 
       String toParse = "{\"name\": \"opscode\",\"full_name\": \"Opscode, Inc.\", \"org_type\": \"Business\",\"clientname\": \"opscode-validator\" }";
 
-      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils
-               .toInputStream(toParse)))), org);
+      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads
+            .newPayload(Utils.toInputStream(toParse)))), org);
    }
 }

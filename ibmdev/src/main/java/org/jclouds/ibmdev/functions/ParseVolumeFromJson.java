@@ -18,36 +18,32 @@
  */
 package org.jclouds.ibmdev.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.ibmdev.domain.Volume;
 
-import com.google.gson.Gson;
+import com.google.common.base.Function;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class ParseVolumeFromJson extends ParseJson<Volume> {
+public class ParseVolumeFromJson implements Function<HttpResponse, Volume> {
+
+   private final ParseJson<Volume> json;
+
    @Inject
-   public ParseVolumeFromJson(Gson gson) {
-      super(gson);
+   ParseVolumeFromJson(ParseJson<Volume> json) {
+      this.json = json;
    }
 
    @Override
-   protected Volume apply(InputStream stream) {
-      try {
-         Volume returnVal = gson.fromJson(new InputStreamReader(stream, "UTF-8"), Volume.class);
-         ParseUtils.CLEAN_VOLUME.apply(returnVal);
-         return returnVal;
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
+   public Volume apply(HttpResponse arg0) {
+      Volume input = json.apply(arg0);
+      ParseUtils.CLEAN_VOLUME.apply(input);
+      return input;
    }
 }

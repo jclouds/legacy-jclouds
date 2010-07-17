@@ -42,7 +42,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "vcloud.VCloudVersionsTest")
-public class VCloudVersionsTest extends RestClientTest<VCloudVersionsAsyncClient> {
+public class VCloudVersionsAsyncClientTest extends RestClientTest<VCloudVersionsAsyncClient> {
 
    public void testVersions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudVersionsAsyncClient.class.getMethod("getSupportedVersions");
@@ -72,8 +72,8 @@ public class VCloudVersionsTest extends RestClientTest<VCloudVersionsAsyncClient
 
    @Override
    public ContextSpec<VCloudVersionsClient, VCloudVersionsAsyncClient> createContextSpec() {
-      return contextSpec("test", "http://localhost:8080", "1", "identity", "credential",
-               VCloudVersionsClient.class, VCloudVersionsAsyncClient.class);
+      return contextSpec("test", "http://localhost:8080", "1", "identity", "credential", VCloudVersionsClient.class,
+            VCloudVersionsAsyncClient.class);
    }
 
 }

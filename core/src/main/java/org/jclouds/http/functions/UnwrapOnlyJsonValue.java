@@ -16,42 +16,34 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudservers.functions;
+package org.jclouds.http.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
-import org.jclouds.http.functions.ParseJson;
-import org.jclouds.rackspace.cloudservers.domain.Addresses;
-
-import com.google.gson.Gson;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpResponse;
+
+import com.google.common.base.Function;
+import com.google.inject.internal.Iterables;
+
 /**
- * This parses {@link Addresses} from a gson string.
- * 
  * @author Adrian Cole
  */
 @Singleton
-public class ParseAddressesFromJsonResponse extends ParseJson<Addresses> {
+public class UnwrapOnlyJsonValue<T> implements Function<HttpResponse, T> {
+
+   private final ParseJson<Map<String, T>> json;
 
    @Inject
-   public ParseAddressesFromJsonResponse(Gson gson) {
-      super(gson);
+   UnwrapOnlyJsonValue(ParseJson<Map<String, T>> json) {
+      this.json = json;
    }
 
-   private static class AddressesListResponse {
-      Addresses addresses;
-   }
-
-   public Addresses apply(InputStream stream) {
-
-      try {
-         return gson.fromJson(new InputStreamReader(stream, "UTF-8"), AddressesListResponse.class).addresses;
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
+   @Override
+   public T apply(HttpResponse arg0) {
+      Map<String, T> map = json.apply(arg0);
+      return Iterables.getOnlyElement(map.values());
    }
 }

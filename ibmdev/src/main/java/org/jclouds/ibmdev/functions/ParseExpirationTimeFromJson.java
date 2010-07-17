@@ -18,26 +18,28 @@
  */
 package org.jclouds.ibmdev.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 
-import com.google.gson.Gson;
+import com.google.common.base.Function;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class ParseExpirationTimeFromJson extends ParseJson<Date> {
+public class ParseExpirationTimeFromJson implements
+      Function<HttpResponse, Date> {
+
+   private final ParseJson<ExpirationTimeResponse> json;
+
    @Inject
-   public ParseExpirationTimeFromJson(Gson gson) {
-      super(gson);
+   ParseExpirationTimeFromJson(ParseJson<ExpirationTimeResponse> json) {
+      this.json = json;
    }
 
    private static class ExpirationTimeResponse {
@@ -45,11 +47,7 @@ public class ParseExpirationTimeFromJson extends ParseJson<Date> {
    }
 
    @Override
-   protected Date apply(InputStream stream) {
-      try {
-         return gson.fromJson(new InputStreamReader(stream, "UTF-8"), ExpirationTimeResponse.class).expirationTime;
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
+   public Date apply(HttpResponse arg0) {
+      return json.apply(arg0).expirationTime;
    }
 }

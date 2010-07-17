@@ -18,54 +18,42 @@
  */
 package org.jclouds.rimuhosting.miro.functions;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.jclouds.http.functions.ParseJson;
-import org.jclouds.rimuhosting.miro.domain.internal.RimuHostingResponse;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.functions.ParseJson;
+import org.jclouds.rimuhosting.miro.domain.internal.RimuHostingResponse;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
+
 /**
  * @author Ivan Meredith
+ * @author Adrian Cole
  */
-
 @Singleton
-public class ParseDestroyResponseFromJsonResponse extends ParseJson<List<String>> {
+public class ParseDestroyResponseFromJsonResponse implements
+      Function<HttpResponse, List<String>> {
+
+   private final ParseJson<Map<String, DestroyResponse>> json;
+
    @Inject
-   public ParseDestroyResponseFromJsonResponse(Gson gson) {
-      super(gson);
+   ParseDestroyResponseFromJsonResponse(
+         ParseJson<Map<String, DestroyResponse>> json) {
+      this.json = json;
+   }
+
+   @Override
+   public List<String> apply(HttpResponse arg0) {
+      return Iterables.get(json.apply(arg0).values(), 0).cancel_messages;
    }
 
    private static class DestroyResponse extends RimuHostingResponse {
       private List<String> cancel_messages;
-
-      public List<String> getCancelMessages() {
-         return cancel_messages;
-      }
-
-      @SuppressWarnings("unused")
-      public void setCancelMessages(List<String> cancel_messages) {
-         this.cancel_messages = cancel_messages;
-      }
    }
 
-   @Override
-   protected List<String> apply(InputStream stream) {
-      Type setType = new TypeToken<Map<String, DestroyResponse>>() {
-      }.getType();
-      try {
-         Map<String, DestroyResponse> responseMap = gson.fromJson(new InputStreamReader(stream,
-                  "UTF-8"), setType);
-         return responseMap.values().iterator().next().getCancelMessages();
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
-   }
 }

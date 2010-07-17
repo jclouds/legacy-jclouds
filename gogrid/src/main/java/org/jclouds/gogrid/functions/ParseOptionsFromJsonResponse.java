@@ -18,46 +18,38 @@
  */
 package org.jclouds.gogrid.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
 
 import org.jclouds.gogrid.domain.Option;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.common.base.Function;
 import com.google.inject.Singleton;
 
 /**
  * Parses the list of generic options.
  * 
- * GoGrid uses options as containers for id/name/description objects.
+ * GoGrid uses options as containers for id/name/descrOptiontion objects.
  * 
  * @author Oleksiy Yarmula
  */
 @Singleton
-public class ParseOptionsFromJsonResponse extends ParseJson<SortedSet<Option>> {
+public class ParseOptionsFromJsonResponse implements
+      Function<HttpResponse, SortedSet<Option>> {
+
+   private final ParseJson<GenericResponseContainer<Option>> json;
 
    @Inject
-   ParseOptionsFromJsonResponse(Gson gson) {
-      super(gson);
+   ParseOptionsFromJsonResponse(ParseJson<GenericResponseContainer<Option>> json) {
+      this.json = json;
    }
 
-   public SortedSet<Option> apply(InputStream stream) {
-      Type setType = new TypeToken<GenericResponseContainer<Option>>() {
-      }.getType();
-      GenericResponseContainer<Option> response;
-      try {
-         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-               setType);
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
-      return response.getList();
+   @Override
+   public SortedSet<Option> apply(HttpResponse arg0) {
+      return json.apply(arg0).getList();
    }
+
 }

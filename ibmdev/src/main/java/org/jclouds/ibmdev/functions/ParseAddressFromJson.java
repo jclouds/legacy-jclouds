@@ -41,36 +41,32 @@
  */
 package org.jclouds.ibmdev.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.ibmdev.domain.Address;
 
-import com.google.gson.Gson;
+import com.google.common.base.Function;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class ParseAddressFromJson extends ParseJson<Address> {
+public class ParseAddressFromJson implements Function<HttpResponse, Address> {
+
+   private final ParseJson<Address> json;
+
    @Inject
-   public ParseAddressFromJson(Gson gson) {
-      super(gson);
+   ParseAddressFromJson(ParseJson<Address> json) {
+      this.json = json;
    }
 
    @Override
-   protected Address apply(InputStream stream) {
-      try {
-         Address returnVal = gson.fromJson(new InputStreamReader(stream, "UTF-8"), Address.class);
-         ParseUtils.CLEAN_ADDRESS.apply(returnVal);
-         return returnVal;
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
+   public Address apply(HttpResponse arg0) {
+      Address input = json.apply(arg0);
+      ParseUtils.CLEAN_ADDRESS.apply(input);
+      return input;
    }
 }

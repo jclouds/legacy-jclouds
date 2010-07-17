@@ -23,42 +23,45 @@
  */
 package org.jclouds.gogrid.functions;
 
-import com.google.common.collect.Iterables;
-import com.google.gson.Gson;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import java.io.InputStream;
+import java.net.UnknownHostException;
 
 import org.jclouds.gogrid.config.DateSecondsAdapter;
 import org.jclouds.gogrid.domain.internal.ErrorResponse;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
 import org.testng.annotations.Test;
 
-import java.io.InputStream;
-import java.net.UnknownHostException;
+import com.google.common.collect.Iterables;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * @author Oleksiy Yarmula
  */
 public class ParseErrorFromJsonResponseTest {
 
-    @Test
-    public void testApplyInputStreamDetails() throws UnknownHostException {
-        InputStream is = getClass().getResourceAsStream("/test_error_handler.json");
+   Injector i = Guice.createInjector(new ParserModule() {
+      @Override
+      protected void configure() {
+         bind(DateAdapter.class).to(DateSecondsAdapter.class);
+         super.configure();
+      }
+   });
 
-        ParseErrorFromJsonResponse parser = new ParseErrorFromJsonResponse(i
-                .getInstance(Gson.class));
-        ErrorResponse response = Iterables.getOnlyElement(parser.apply(is));
-        assert "No object found that matches your input criteria.".equals(response.getMessage());
-        assert "IllegalArgumentException".equals(response.getErrorCode());
-    }
+   @Test
+   public void testApplyInputStreamDetails() throws UnknownHostException {
+      InputStream is = getClass().getResourceAsStream(
+            "/test_error_handler.json");
 
-
-    Injector i = Guice.createInjector(new ParserModule() {
-        @Override
-        protected void configure() {
-            bind(DateAdapter.class).to(DateSecondsAdapter.class);
-            super.configure();
-        }
-    });
-
+      ParseErrorFromJsonResponse parser = i
+            .getInstance(ParseErrorFromJsonResponse.class);
+      ErrorResponse response = Iterables.getOnlyElement(parser
+            .apply(new HttpResponse(200, "ok", Payloads
+                  .newInputStreamPayload(is))));
+      assert "No object found that matches your input criteria."
+            .equals(response.getMessage());
+      assert "IllegalArgumentException".equals(response.getErrorCode());
+   }
 }

@@ -41,28 +41,30 @@
  */
 package org.jclouds.ibmdev.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.ibmdev.domain.Image;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Sets;
-import com.google.gson.Gson;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class ParseImagesFromJson extends ParseJson<Set<? extends Image>> {
+public class ParseImagesFromJson implements
+      Function<HttpResponse, Set<? extends Image>> {
+
+   private final ParseJson<ImageListResponse> json;
+
    @Inject
-   public ParseImagesFromJson(Gson gson) {
-      super(gson);
+   ParseImagesFromJson(ParseJson<ImageListResponse> json) {
+      this.json = json;
    }
 
    private static class ImageListResponse {
@@ -70,12 +72,7 @@ public class ParseImagesFromJson extends ParseJson<Set<? extends Image>> {
    }
 
    @Override
-   protected Set<? extends Image> apply(InputStream stream) {
-      try {
-         return ParseUtils.clean(gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-                  ImageListResponse.class).images, ParseUtils.CLEAN_IMAGE);
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
+   public Set<? extends Image> apply(HttpResponse arg0) {
+      return ParseUtils.clean(json.apply(arg0).images, ParseUtils.CLEAN_IMAGE);
    }
 }

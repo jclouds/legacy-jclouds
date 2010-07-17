@@ -27,9 +27,13 @@ import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.config.ParserModule;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Guice;
 
 /**
  * Tests behavior of {@code DescribeAvailabilityZonesResponseHandler}
@@ -39,23 +43,38 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit", testName = "ec2.DescribeAvailabilityZonesResponseHandlerTest")
 public class DescribeAvailabilityZonesResponseHandlerTest extends BaseHandlerTest {
 
+   @BeforeTest
+   protected void setUpInjector() {
+      injector = Guice.createInjector(new ParserModule() {
+
+         @Override
+         protected void configure() {
+            bindConstant().annotatedWith(org.jclouds.aws.Region.class).to("SHOULDNTSEETHISASXMLHASREGIONDATA");
+            super.configure();
+         }
+
+      });
+      factory = injector.getInstance(ParseSax.Factory.class);
+      assert factory != null;
+   }
+
    public void testApplyInputStream() {
 
       InputStream is = getClass().getResourceAsStream("/ec2/availabilityZones.xml");
 
       Set<AvailabilityZoneInfo> expected = ImmutableSet.<AvailabilityZoneInfo> of(
 
-      new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1A, "available", Region.US_EAST_1,
-               ImmutableSet.<String> of()), new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1B,
-               "available", Region.US_EAST_1, ImmutableSet.<String> of()),
+      new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1A, "available", Region.US_EAST_1, ImmutableSet.<String> of()),
+            new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1B, "available", Region.US_EAST_1, ImmutableSet
+                  .<String> of()),
 
-      new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1C, "available", Region.US_EAST_1,
-               ImmutableSet.<String> of("our service is awesome")),
+            new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1C, "available", Region.US_EAST_1, ImmutableSet
+                  .<String> of("our service is awesome")),
 
-      new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1D, "downlikeaclown", Region.US_EAST_1,
-               ImmutableSet.<String> of()));
+            new AvailabilityZoneInfo(AvailabilityZone.US_EAST_1D, "downlikeaclown", Region.US_EAST_1, ImmutableSet
+                  .<String> of()));
       Set<AvailabilityZoneInfo> result = factory.create(
-               injector.getInstance(DescribeAvailabilityZonesResponseHandler.class)).parse(is);
+            injector.getInstance(DescribeAvailabilityZonesResponseHandler.class)).parse(is);
 
       assertEquals(result, expected);
    }

@@ -24,7 +24,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Date;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.ibmdev.config.IBMDeveloperCloudParserModule;
 import org.jclouds.ibmdev.domain.Image;
@@ -49,7 +51,7 @@ public class ParseImageFromJsonTest {
    @BeforeTest
    protected void setUpInjector() throws IOException {
       Injector injector = Guice.createInjector(new ParserModule(),
-               new IBMDeveloperCloudParserModule());
+            new IBMDeveloperCloudParserModule());
       handler = injector.getInstance(ParseImageFromJson.class);
    }
 
@@ -58,8 +60,8 @@ public class ParseImageFromJsonTest {
       Image image = new Image();
       image.setName("Rational Requirements Composer");
       image
-               .setManifest(HttpUtils
-                        .createUri("https://www-180.ibm.com/cloud/enterprise/beta/ram.ws/RAMSecure/artifact/{28C7B870-2C0A-003F-F886-B89F5B413B77}/1.0/parameters.xml"));
+            .setManifest(HttpUtils
+                  .createUri("https://www-180.ibm.com/cloud/enterprise/beta/ram.ws/RAMSecure/artifact/{28C7B870-2C0A-003F-F886-B89F5B413B77}/1.0/parameters.xml"));
       image.setState(1);
       image.setVisibility(Visibility.PUBLIC);
       image.setOwner("mutdosch@us.ibm.com");
@@ -70,14 +72,15 @@ public class ParseImageFromJsonTest {
       image.setSupportedInstanceTypes(ImmutableSet.of("LARGE", "MEDIUM"));
       // image.setProductCodes();
       image
-               .setDocumentation(HttpUtils
-                        .createUri("https://www-180.ibm.com/cloud/enterprise/beta/ram.ws/RAMSecure/artifact/{28C7B870-2C0A-003F-F886-B89F5B413B77}/1.0/GettingStarted.html"));
+            .setDocumentation(HttpUtils
+                  .createUri("https://www-180.ibm.com/cloud/enterprise/beta/ram.ws/RAMSecure/artifact/{28C7B870-2C0A-003F-F886-B89F5B413B77}/1.0/GettingStarted.html"));
       image.setId("10005598");
       image
-               .setDescription("Rational Requirements Composer helps teams define and use requirements effectively across the project lifecycle.");
+            .setDescription("Rational Requirements Composer helps teams define and use requirements effectively across the project lifecycle.");
 
-      Image compare = handler.apply(ParseImageFromJsonTest.class
-.getResourceAsStream("/image.json"));
+      Image compare = handler.apply(new HttpResponse(200, "ok", Payloads
+            .newInputStreamPayload(ParseImageFromJsonTest.class
+                  .getResourceAsStream("/image.json"))));
       assertEquals(compare, image);
    }
 }

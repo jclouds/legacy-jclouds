@@ -39,8 +39,6 @@ import org.jclouds.chef.domain.User;
 import org.jclouds.chef.filters.SignedHeaderAuth;
 import org.jclouds.chef.filters.SignedHeaderAuthTest;
 import org.jclouds.chef.functions.ParseKeyFromJson;
-import org.jclouds.chef.functions.ParseOrganizationFromJson;
-import org.jclouds.chef.functions.ParseUserFromJson;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.TimeStamp;
@@ -48,6 +46,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
+import org.jclouds.http.functions.ParseJson;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.opscodeplatform.config.OpscodePlatformRestClientModule;
 import org.jclouds.rest.ConfiguresRestClient;
@@ -75,14 +74,13 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "opscodeplatform.OpscodePlatformAsyncClientTest")
 public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatformAsyncClient> {
 
-   public void testDelegatedOpscodePlatformCallsResolveProperly() throws SecurityException,
-            NoSuchMethodException, InterruptedException, ExecutionException {
+   public void testDelegatedOpscodePlatformCallsResolveProperly() throws SecurityException, NoSuchMethodException,
+         InterruptedException, ExecutionException {
       final TransformingHttpCommandExecutorService httpExecutor = createMock(TransformingHttpCommandExecutorService.class);
 
-      Injector injector = createContextBuilder(
-               createContextSpec(),
-               ImmutableSet.of(new HttpExecutorModule(httpExecutor), new NullLoggingModule(),
-                        createModule())).buildInjector();
+      Injector injector = createContextBuilder(createContextSpec(),
+            ImmutableSet.of(new HttpExecutorModule(httpExecutor), new NullLoggingModule(), createModule()))
+            .buildInjector();
 
       replay(httpExecutor);
 
@@ -92,17 +90,16 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
          caller.getChefClientForOrg("goo").listClients().get();
          assert false : "shouldn't have connected as this url should be dummy";
       } catch (AssertionError e) {
-         assert e.getMessage().indexOf(
-                  "[request=GET https://api.opscode.com/organizations/goo/clients HTTP/1.1]") != -1 : e
-                  .getMessage();
+         assert e.getMessage().indexOf("[request=GET https://api.opscode.com/organizations/goo/clients HTTP/1.1]") != -1 : e
+               .getMessage();
       }
 
    }
 
    public void testCreateUser() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OpscodePlatformAsyncClient.class.getMethod("createUser", User.class);
-      GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(
-               method, new User("myuser"));
+      GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor
+            .createRequest(method, new User("myuser"));
 
       assertRequestLineEquals(httpRequest, "POST https://api.opscode.com/users HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
@@ -113,31 +110,16 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "POST https://api.opscode.com/users HTTP/1.1");
-      assertNonPayloadHeadersEqual(
-               httpRequest,
-               new StringBuilder("Accept: application/json")
-                        .append("\n")
-                        .append(
-                                 "X-Ops-Authorization-1: kfrkDpfgNU26k70R1vl1bEWk0Q0f9Fs/3kxOX7gHd7iNoJq03u7RrcrAOSgL")
-                        .append("\n")
-                        .append(
-                                 "X-Ops-Authorization-2: ETj5JNeCk18BmFkHMAbCA9hXVo1T4rlHCpbuzAzFlFxUGAT4wj8UoO7V886X")
-                        .append("\n")
-                        .append(
-                                 "X-Ops-Authorization-3: Kf8DvihP6ElthCNuu1xuhN0B4GEmWC9+ut7UMLe0L2T34VzkbCtuInGbf42/")
-                        .append("\n")
-                        .append(
-                                 "X-Ops-Authorization-4: G7iu94/xFOT1gN9cex4pNyTnRCHzob4JVU1usxt/2g5grN2SyYwRS5+4MNLN")
-                        .append("\n")
-                        .append(
-                                 "X-Ops-Authorization-5: WY/iLUPb/9dwtiIQsnUOXqDrs28zNswZulQW4AzYRd7MczJVKU4y4+4XRcB4")
-                        .append("\n")
-                        .append(
-                                 "X-Ops-Authorization-6: 2+BFLT5o6P6G0D+eCu3zSuaqEJRucPJPaDGWdKIMag==")
-                        .append("\n").append("X-Ops-Content-Hash: yLHOxvgIEtNw5UrZDxslOeMw1gw=")
-                        .append("\n").append("X-Ops-Sign: version=1.0").append("\n").append(
-                                 "X-Ops-Timestamp: timestamp").append("\n").append(
-                                 "X-Ops-Userid: user").append("\n").toString());
+      assertNonPayloadHeadersEqual(httpRequest, new StringBuilder("Accept: application/json").append("\n").append(
+            "X-Ops-Authorization-1: kfrkDpfgNU26k70R1vl1bEWk0Q0f9Fs/3kxOX7gHd7iNoJq03u7RrcrAOSgL").append("\n").append(
+            "X-Ops-Authorization-2: ETj5JNeCk18BmFkHMAbCA9hXVo1T4rlHCpbuzAzFlFxUGAT4wj8UoO7V886X").append("\n").append(
+            "X-Ops-Authorization-3: Kf8DvihP6ElthCNuu1xuhN0B4GEmWC9+ut7UMLe0L2T34VzkbCtuInGbf42/").append("\n").append(
+            "X-Ops-Authorization-4: G7iu94/xFOT1gN9cex4pNyTnRCHzob4JVU1usxt/2g5grN2SyYwRS5+4MNLN").append("\n").append(
+            "X-Ops-Authorization-5: WY/iLUPb/9dwtiIQsnUOXqDrs28zNswZulQW4AzYRd7MczJVKU4y4+4XRcB4").append("\n").append(
+            "X-Ops-Authorization-6: 2+BFLT5o6P6G0D+eCu3zSuaqEJRucPJPaDGWdKIMag==").append("\n").append(
+            "X-Ops-Content-Hash: yLHOxvgIEtNw5UrZDxslOeMw1gw=").append("\n").append("X-Ops-Sign: version=1.0").append(
+            "\n").append("X-Ops-Timestamp: timestamp").append("\n").append("X-Ops-Userid: user").append("\n")
+            .toString());
       assertPayloadEquals(httpRequest, "{\"username\":\"myuser\"}", "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseKeyFromJson.class);
@@ -150,14 +132,14 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
 
    public void testUpdateUser() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OpscodePlatformAsyncClient.class.getMethod("updateUser", User.class);
-      GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(
-               method, new User("myuser"));
+      GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor
+            .createRequest(method, new User("myuser"));
 
       assertRequestLineEquals(httpRequest, "PUT https://api.opscode.com/users/myuser HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, "{\"username\":\"myuser\"}", "application/json", false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseUserFromJson.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -167,14 +149,13 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
 
    public void testGetUser() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OpscodePlatformAsyncClient.class.getMethod("getUser", String.class);
-      GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(
-               method, "myuser");
+      GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(method, "myuser");
 
       assertRequestLineEquals(httpRequest, "GET https://api.opscode.com/users/myuser HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseUserFromJson.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
@@ -184,14 +165,13 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
 
    public void testDeleteUser() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OpscodePlatformAsyncClient.class.getMethod("deleteUser", String.class);
-      GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(
-               method, "myuser");
+      GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(method, "myuser");
 
       assertRequestLineEquals(httpRequest, "DELETE https://api.opscode.com/users/myuser HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseUserFromJson.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
@@ -201,8 +181,8 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
 
    public void testCreateOrg() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OpscodePlatformAsyncClient.class.getMethod("createOrg", Organization.class);
-      GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(
-               method, new Organization("myorganization"));
+      GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(method, new Organization(
+            "myorganization"));
 
       assertRequestLineEquals(httpRequest, "POST https://api.opscode.com/organizations HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
@@ -218,15 +198,14 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
 
    public void testUpdateOrg() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OpscodePlatformAsyncClient.class.getMethod("updateOrg", Organization.class);
-      GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(
-               method, new Organization("myorganization"));
+      GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(method, new Organization(
+            "myorganization"));
 
-      assertRequestLineEquals(httpRequest,
-               "PUT https://api.opscode.com/organizations/myorganization HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "PUT https://api.opscode.com/organizations/myorganization HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, "{\"name\":\"myorganization\"}", "application/json", false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseOrganizationFromJson.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -236,15 +215,13 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
 
    public void testGetOrg() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OpscodePlatformAsyncClient.class.getMethod("getOrg", String.class);
-      GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(
-               method, "myorganization");
+      GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(method, "myorganization");
 
-      assertRequestLineEquals(httpRequest,
-               "GET https://api.opscode.com/organizations/myorganization HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET https://api.opscode.com/organizations/myorganization HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseOrganizationFromJson.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
@@ -254,15 +231,13 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
 
    public void testDeleteOrg() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OpscodePlatformAsyncClient.class.getMethod("deleteOrg", String.class);
-      GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(
-               method, "myorganization");
+      GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(method, "myorganization");
 
-      assertRequestLineEquals(httpRequest,
-               "DELETE https://api.opscode.com/organizations/myorganization HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "DELETE https://api.opscode.com/organizations/myorganization HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseOrganizationFromJson.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
@@ -315,7 +290,7 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
 
    @Override
    public ContextSpec<OpscodePlatformClient, OpscodePlatformAsyncClient> createContextSpec() {
-      return new RestContextFactory().createContextSpec("opscodeplatform", "user",
-               SignedHeaderAuthTest.PRIVATE_KEY, new Properties());
+      return new RestContextFactory().createContextSpec("opscodeplatform", "user", SignedHeaderAuthTest.PRIVATE_KEY,
+            new Properties());
    }
 }

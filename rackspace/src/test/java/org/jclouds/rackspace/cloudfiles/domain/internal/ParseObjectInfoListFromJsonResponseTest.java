@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.rackspace.cloudfiles.functions;
+package org.jclouds.rackspace.cloudfiles.domain.internal;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
@@ -27,9 +27,10 @@ import java.io.InputStream;
 import java.util.Set;
 
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
-import org.jclouds.rackspace.cloudfiles.functions.ParseObjectInfoListFromJsonResponse.ObjectInfoImpl;
+import org.jclouds.rackspace.cloudfiles.functions.ParseObjectInfoListFromJsonResponse;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
@@ -46,42 +47,47 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "cloudfiles.ParseObjectInfoListFromJsonResponseTest")
 public class ParseObjectInfoListFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new ParserModule(){
+   Injector i = Guice.createInjector(new ParserModule() {
 
       @Override
       protected void configure() {
          bind(DateAdapter.class).to(Iso8601DateAdapter.class);
          super.configure();
       }
-      
+
    });
 
    public void testApplyInputStream() {
-      InputStream is = getClass().getResourceAsStream("/cloudfiles/test_list_container.json");
+      InputStream is = getClass().getResourceAsStream(
+            "/cloudfiles/test_list_container.json");
       Set<ObjectInfo> expects = Sets.newHashSet();
       ObjectInfoImpl one = i.getInstance(ObjectInfoImpl.class);
       one.name = "test_obj_1";
-      one.hash = "4281c348eaf83e70ddce0e07221c3d28";
+      one.hash = i.getInstance(EncryptionService.class).fromHex(
+            "4281c348eaf83e70ddce0e07221c3d28");
       one.bytes = 14l;
       one.content_type = "application/octet-stream";
       one.last_modified = new SimpleDateFormatDateService()
-               .iso8601DateParse("2009-02-03T05:26:32.612Z");
+            .iso8601DateParse("2009-02-03T05:26:32.612Z");
       expects.add(one);
       ObjectInfoImpl two = i.getInstance(ObjectInfoImpl.class);
       two.name = ("test_obj_2");
-      two.hash = ("b039efe731ad111bc1b0ef221c3849d0");
+      two.hash = (i.getInstance(EncryptionService.class)
+            .fromHex("b039efe731ad111bc1b0ef221c3849d0"));
       two.bytes = (64l);
       two.content_type = ("application/octet-stream");
       two.last_modified = (new SimpleDateFormatDateService()
-               .iso8601DateParse("2009-02-03T05:26:32.612Z"));
+            .iso8601DateParse("2009-02-03T05:26:32.612Z"));
       expects.add(two);
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       ListContainerOptions options = new ListContainerOptions();
-      expect(request.getArgs()).andReturn(
-               new Object[] { "containter", new ListContainerOptions[] { options } }).atLeastOnce();
+      expect(request.getArgs())
+            .andReturn(
+                  new Object[] { "containter",
+                        new ListContainerOptions[] { options } }).atLeastOnce();
       replay(request);
       ParseObjectInfoListFromJsonResponse parser = i
-               .getInstance(ParseObjectInfoListFromJsonResponse.class);
+            .getInstance(ParseObjectInfoListFromJsonResponse.class);
       parser.setContext(request);
       assertEquals(parser.apply(is), expects);
    }

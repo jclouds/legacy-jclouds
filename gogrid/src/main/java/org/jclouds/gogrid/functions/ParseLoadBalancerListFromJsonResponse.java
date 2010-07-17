@@ -18,19 +18,15 @@
  */
 package org.jclouds.gogrid.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
 
 import org.jclouds.gogrid.domain.LoadBalancer;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.common.base.Function;
 import com.google.inject.Singleton;
 
 /**
@@ -40,24 +36,20 @@ import com.google.inject.Singleton;
  * @author Oleksiy Yarmula
  */
 @Singleton
-public class ParseLoadBalancerListFromJsonResponse extends
-      ParseJson<SortedSet<LoadBalancer>> {
+public class ParseLoadBalancerListFromJsonResponse implements
+      Function<HttpResponse, SortedSet<LoadBalancer>> {
+
+   private final ParseJson<GenericResponseContainer<LoadBalancer>> json;
 
    @Inject
-   ParseLoadBalancerListFromJsonResponse(Gson gson) {
-      super(gson);
+   ParseLoadBalancerListFromJsonResponse(
+         ParseJson<GenericResponseContainer<LoadBalancer>> json) {
+      this.json = json;
    }
 
-   public SortedSet<LoadBalancer> apply(InputStream stream) {
-      Type setType = new TypeToken<GenericResponseContainer<LoadBalancer>>() {
-      }.getType();
-      GenericResponseContainer<LoadBalancer> response;
-      try {
-         response = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-               setType);
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
-      return response.getList();
+   @Override
+   public SortedSet<LoadBalancer> apply(HttpResponse arg0) {
+      return json.apply(arg0).getList();
    }
+
 }

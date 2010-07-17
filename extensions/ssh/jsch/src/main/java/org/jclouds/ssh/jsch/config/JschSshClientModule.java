@@ -51,7 +51,8 @@ public class JschSshClientModule extends AbstractModule {
 
    protected void configure() {
       bind(SshClient.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
-      bind(SocketOpen.class).to(InetSocketAddressConnect.class).in(Scopes.SINGLETON);
+      bind(SocketOpen.class).to(InetSocketAddressConnect.class).in(
+            Scopes.SINGLETON);
    }
 
    private static class Factory implements SshClient.Factory {
@@ -64,27 +65,30 @@ public class JschSshClientModule extends AbstractModule {
 
       @SuppressWarnings("unused")
       @Inject
-      public Factory(BackoffLimitedRetryHandler backoffLimitedRetryHandler, Injector injector) {
+      public Factory(BackoffLimitedRetryHandler backoffLimitedRetryHandler,
+            Injector injector) {
          this.backoffLimitedRetryHandler = backoffLimitedRetryHandler;
          this.injector = injector;
       }
 
       public SshClient create(IPSocket socket, String username, String password) {
-         SshClient client = new JschSshClient(backoffLimitedRetryHandler, socket, timeout,
-                  username, password, null);
+         SshClient client = new JschSshClient(backoffLimitedRetryHandler,
+               socket, timeout, username, password, null);
          injector.injectMembers(client);// add logger
          return client;
       }
 
-      public SshClient create(IPSocket socket, String username, byte[] privateKey) {
-         SshClient client = new JschSshClient(backoffLimitedRetryHandler, socket, timeout,
-                  username, null, privateKey);
+      public SshClient create(IPSocket socket, String username,
+            byte[] privateKey) {
+         SshClient client = new JschSshClient(backoffLimitedRetryHandler,
+               socket, timeout, username, null, privateKey);
          injector.injectMembers(client);// add logger
          return client;
       }
 
       @Override
-      public Map<String, String> generateRSAKeyPair(String comment, String passphrase) {
+      public Map<String, String> generateRSAKeyPair(String comment,
+            String passphrase) {
          KeyPair pair = null;
          try {
             pair = KeyPair.genKeyPair(new JSch(), KeyPair.RSA);
@@ -97,9 +101,9 @@ public class JschSshClientModule extends AbstractModule {
          pair.writePrivateKey(privateKey);
          ByteArrayOutputStream publicKey = new ByteArrayOutputStream();
          pair.writePublicKey(publicKey, comment);
-         return ImmutableMap.of("comment", comment, "passphrase", passphrase, "private",
-                  new String(privateKey.toByteArray()), "public", new String(publicKey
-                           .toByteArray()));
+         return ImmutableMap.of("comment", comment, "passphrase", passphrase,
+               "private", new String(privateKey.toByteArray()), "public",
+               new String(publicKey.toByteArray()));
       }
    }
 }

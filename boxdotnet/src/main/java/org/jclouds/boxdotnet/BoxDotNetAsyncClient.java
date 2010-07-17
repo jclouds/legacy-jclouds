@@ -23,12 +23,10 @@
  */
 package org.jclouds.boxdotnet;
 
-import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -47,7 +45,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(BasicAuthentication.class)
-@Consumes(MediaType.APPLICATION_JSON)
 public interface BoxDotNetAsyncClient {
    /*
     * TODO: define interface methods for BoxDotNet

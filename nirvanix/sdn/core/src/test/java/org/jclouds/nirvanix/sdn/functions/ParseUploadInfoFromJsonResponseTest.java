@@ -24,11 +24,12 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.UnknownHostException;
 
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
 import org.testng.annotations.Test;
 
-import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -45,12 +46,13 @@ public class ParseUploadInfoFromJsonResponseTest {
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/authtoken.json");
 
-      ParseUploadInfoFromJsonResponse parser = new ParseUploadInfoFromJsonResponse(i
-               .getInstance(Gson.class));
-      UploadInfo response = parser.apply(is);
+      ParseUploadInfoFromJsonResponse parser = i
+            .getInstance(ParseUploadInfoFromJsonResponse.class);
+      UploadInfo response = parser.apply(new HttpResponse(200, "ok", Payloads
+            .newInputStreamPayload(is)));
       assertEquals(response.getHost(), URI.create("https://node1.nirvanix.com"));
       assertEquals(response.getToken(),
-               "siR-ALYd~BEcJ8GR2tE~oX3SEHO8~2WXKT5xjFk~YLS5OvJyHI21TN34rQ");
+            "siR-ALYd~BEcJ8GR2tE~oX3SEHO8~2WXKT5xjFk~YLS5OvJyHI21TN34rQ");
    }
 
 }

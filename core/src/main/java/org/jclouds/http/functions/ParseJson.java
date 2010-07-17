@@ -21,6 +21,8 @@ package org.jclouds.http.functions;
 import static org.jclouds.http.HttpUtils.releasePayload;
 
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -32,23 +34,26 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.gson.Gson;
+import com.google.inject.TypeLiteral;
 
 /**
- * This object will parse the body of an HttpResponse and return the result of type <T> back to the
- * caller.
+ * This object will parse the body of an HttpResponse and return the result of
+ * type <T> back to the caller.
  * 
  * @author Adrian Cole
  */
 @Singleton
-public abstract class ParseJson<T> implements Function<HttpResponse, T> {
+public class ParseJson<T> implements Function<HttpResponse, T> {
 
    @Resource
    protected Logger logger = Logger.NULL;
    protected final Gson gson;
+   protected final TypeLiteral<T> type;
 
    @Inject
-   public ParseJson(Gson gson){
+   public ParseJson(Gson gson, TypeLiteral<T> type) {
       this.gson = gson;
+      this.type = type;
    }
 
    /**
@@ -62,12 +67,21 @@ public abstract class ParseJson<T> implements Function<HttpResponse, T> {
          StringBuilder message = new StringBuilder();
          message.append("Error parsing input");
          logger.error(e, message.toString());
-         throw new HttpResponseException(message.toString() + "\n" + from, null, from, e);
+         throw new HttpResponseException(message.toString() + "\n" + from,
+               null, from, e);
       } finally {
          releasePayload(from);
       }
 
    }
 
-   protected abstract T apply(InputStream stream);
+   @SuppressWarnings("unchecked")
+   public T apply(InputStream stream) {
+      try {
+         return (T) gson.fromJson(new InputStreamReader(stream, "UTF-8"), type
+               .getType());
+      } catch (UnsupportedEncodingException e) {
+         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
+      }
+   }
 }

@@ -23,16 +23,19 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
+import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudservers.domain.BackupSchedule;
 import org.jclouds.rackspace.cloudservers.domain.DailyBackup;
 import org.jclouds.rackspace.cloudservers.domain.WeeklyBackup;
-import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
-import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseBackupScheduleFromJsonResponse}
@@ -45,21 +48,29 @@ public class ParseBackupScheduleFromJsonResponseTest {
    Injector i = Guice.createInjector(new ParserModule());
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_backupschedule.json");
+      InputStream is = getClass().getResourceAsStream(
+            "/cloudservers/test_list_backupschedule.json");
 
-      ParseBackupScheduleFromJsonResponse parser = new ParseBackupScheduleFromJsonResponse(i
-               .getInstance(Gson.class));
-      BackupSchedule response = parser.apply(is);
-      assertEquals(new BackupSchedule(WeeklyBackup.THURSDAY, DailyBackup.H_0400_0600, true),
-               response);
+      UnwrapOnlyJsonValue<BackupSchedule> parser = i.getInstance(Key
+            .get(new TypeLiteral<UnwrapOnlyJsonValue<BackupSchedule>>() {
+            }));
+      BackupSchedule response = parser.apply(new HttpResponse(200, "ok",
+            Payloads.newInputStreamPayload(is)));
+      assertEquals(new BackupSchedule(WeeklyBackup.THURSDAY,
+            DailyBackup.H_0400_0600, true), response);
    }
 
    public void testNoSchedule() throws UnknownHostException {
 
-      ParseBackupScheduleFromJsonResponse parser = new ParseBackupScheduleFromJsonResponse(i
-               .getInstance(Gson.class));
-      BackupSchedule response = parser.apply(Utils
-               .toInputStream("{\"backupSchedule\":{\"enabled\" : false}}"));
+      UnwrapOnlyJsonValue<BackupSchedule> parser = i.getInstance(Key
+            .get(new TypeLiteral<UnwrapOnlyJsonValue<BackupSchedule>>() {
+            }));
+      BackupSchedule response = parser
+            .apply(new HttpResponse(
+                  200,
+                  "ok",
+                  Payloads
+                        .newStringPayload("{\"backupSchedule\":{\"enabled\" : false}}")));
       assertEquals(new BackupSchedule(), response);
    }
 }

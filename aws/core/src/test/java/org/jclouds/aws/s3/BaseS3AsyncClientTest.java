@@ -39,7 +39,6 @@ public abstract class BaseS3AsyncClientTest extends RestClientTest<S3AsyncClient
    protected BlobToObject blobToS3Object;
    protected RequestAuthorizeSignature filter;
 
-
    @Override
    protected void checkFilters(HttpRequest request) {
       assertEquals(request.getFilters().size(), 1);
@@ -66,9 +65,7 @@ public abstract class BaseS3AsyncClientTest extends RestClientTest<S3AsyncClient
 
    @Override
    public ContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("s3", "identity", "credential",
-              new Properties());
+      return new RestContextFactory().createContextSpec("s3", "identity", "credential", new Properties());
    }
-
 
 }

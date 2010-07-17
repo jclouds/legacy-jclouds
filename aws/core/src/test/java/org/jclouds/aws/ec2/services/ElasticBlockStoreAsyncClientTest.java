@@ -51,19 +51,35 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "ec2.ElasticBlockStoreAsyncClientTest")
-public class ElasticBlockStoreAsyncClientTest extends
-         BaseEC2AsyncClientTest<ElasticBlockStoreAsyncClient> {
+public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<ElasticBlockStoreAsyncClient> {
 
    public void testCreateVolume() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ElasticBlockStoreAsyncClient.class.getMethod(
-               "createVolumeInAvailabilityZone", String.class, int.class);
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("createVolumeInAvailabilityZone", String.class,
+            int.class);
       HttpRequest request = processor.createRequest(method, AvailabilityZone.US_EAST_1A, 20);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
+      assertPayloadEquals(request, "Version=2010-06-15&Action=CreateVolume&AvailabilityZone=us-east-1a&Size=20",
+            "application/x-www-form-urlencoded", false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, CreateVolumeResponseHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(request);
+   }
+
+   public void testCreateVolumeFromSnapShot() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("createVolumeFromSnapshotInAvailabilityZone",
+            String.class, String.class);
+      HttpRequest request = processor.createRequest(method, AvailabilityZone.US_EAST_1A, "snapshotId");
+
+      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request,
-               "Version=2010-06-15&Action=CreateVolume&AvailabilityZone=us-east-1a&Size=20",
-               "application/x-www-form-urlencoded", false);
+            "Version=2010-06-15&Action=CreateVolume&AvailabilityZone=us-east-1a&SnapshotId=snapshotId",
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, CreateVolumeResponseHandler.class);
@@ -72,40 +88,16 @@ public class ElasticBlockStoreAsyncClientTest extends
       checkFilters(request);
    }
 
-   public void testCreateVolumeFromSnapShot() throws SecurityException, NoSuchMethodException,
-            IOException {
-      Method method = ElasticBlockStoreAsyncClient.class.getMethod(
-               "createVolumeFromSnapshotInAvailabilityZone", String.class, String.class);
-      HttpRequest request = processor.createRequest(method, AvailabilityZone.US_EAST_1A,
-               "snapshotId");
+   public void testCreateVolumeFromSnapShotWithSize() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("createVolumeFromSnapshotInAvailabilityZone",
+            String.class, int.class, String.class);
+      HttpRequest request = processor.createRequest(method, AvailabilityZone.US_EAST_1A, 15, "snapshotId");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(
-               request,
-               "Version=2010-06-15&Action=CreateVolume&AvailabilityZone=us-east-1a&SnapshotId=snapshotId",
-               "application/x-www-form-urlencoded", false);
-
-      assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, CreateVolumeResponseHandler.class);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(request);
-   }
-
-   public void testCreateVolumeFromSnapShotWithSize() throws SecurityException,
-            NoSuchMethodException, IOException {
-      Method method = ElasticBlockStoreAsyncClient.class.getMethod(
-               "createVolumeFromSnapshotInAvailabilityZone", String.class, int.class, String.class);
-      HttpRequest request = processor.createRequest(method, AvailabilityZone.US_EAST_1A, 15,
-               "snapshotId");
-
-      assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(
-               request,
-               "Version=2010-06-15&Action=CreateVolume&AvailabilityZone=us-east-1a&SnapshotId=snapshotId&Size=15",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request,
+            "Version=2010-06-15&Action=CreateVolume&AvailabilityZone=us-east-1a&SnapshotId=snapshotId&Size=15",
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, CreateVolumeResponseHandler.class);
@@ -115,14 +107,13 @@ public class ElasticBlockStoreAsyncClientTest extends
    }
 
    public void testDeleteVolume() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ElasticBlockStoreAsyncClient.class.getMethod("deleteVolumeInRegion",
-               String.class, String.class);
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("deleteVolumeInRegion", String.class, String.class);
       HttpRequest request = processor.createRequest(method, null, "id");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request, "Version=2010-06-15&Action=DeleteVolume&VolumeId=id",
-               "application/x-www-form-urlencoded", false);
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -132,14 +123,14 @@ public class ElasticBlockStoreAsyncClientTest extends
    }
 
    public void testDescribeVolumes() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ElasticBlockStoreAsyncClient.class.getMethod("describeVolumesInRegion",
-               String.class, Array.newInstance(String.class, 0).getClass());
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("describeVolumesInRegion", String.class, Array
+            .newInstance(String.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, (String) null);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeVolumes",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeVolumes", "application/x-www-form-urlencoded",
+            false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeVolumesResponseHandler.class);
@@ -148,17 +139,15 @@ public class ElasticBlockStoreAsyncClientTest extends
       checkFilters(request);
    }
 
-   public void testDescribeVolumesArgs() throws SecurityException, NoSuchMethodException,
-            IOException {
-      Method method = ElasticBlockStoreAsyncClient.class.getMethod("describeVolumesInRegion",
-               String.class, Array.newInstance(String.class, 0).getClass());
+   public void testDescribeVolumesArgs() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("describeVolumesInRegion", String.class, Array
+            .newInstance(String.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, null, "1", "2");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request,
-               "Version=2010-06-15&Action=DescribeVolumes&VolumeId.1=1&VolumeId.2=2",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeVolumes&VolumeId.1=1&VolumeId.2=2",
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeVolumesResponseHandler.class);
@@ -168,16 +157,15 @@ public class ElasticBlockStoreAsyncClientTest extends
    }
 
    public void testAttachVolume() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ElasticBlockStoreAsyncClient.class.getMethod("attachVolumeInRegion",
-               String.class, String.class, String.class, String.class);
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("attachVolumeInRegion", String.class, String.class,
+            String.class, String.class);
       HttpRequest request = processor.createRequest(method, null, "id", "instanceId", "/device");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(
-               request,
-               "Version=2010-06-15&Action=AttachVolume&InstanceId=instanceId&VolumeId=id&Device=%2Fdevice",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request,
+            "Version=2010-06-15&Action=AttachVolume&InstanceId=instanceId&VolumeId=id&Device=%2Fdevice",
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, AttachmentHandler.class);
@@ -187,16 +175,14 @@ public class ElasticBlockStoreAsyncClientTest extends
    }
 
    public void testDetachVolume() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ElasticBlockStoreAsyncClient.class.getMethod("detachVolumeInRegion",
-               String.class, String.class, boolean.class, Array.newInstance(
-                        DetachVolumeOptions.class, 0).getClass());
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("detachVolumeInRegion", String.class, String.class,
+            boolean.class, Array.newInstance(DetachVolumeOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, null, "id", false);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request,
-               "Version=2010-06-15&Action=DetachVolume&Force=false&VolumeId=id",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request, "Version=2010-06-15&Action=DetachVolume&Force=false&VolumeId=id",
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -205,20 +191,17 @@ public class ElasticBlockStoreAsyncClientTest extends
       checkFilters(request);
    }
 
-   public void testDetachVolumeOptions() throws SecurityException, NoSuchMethodException,
-            IOException {
-      Method method = ElasticBlockStoreAsyncClient.class.getMethod("detachVolumeInRegion",
-               String.class, String.class, boolean.class, Array.newInstance(
-                        DetachVolumeOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, null, "id", true, fromInstance(
-               "instanceId").fromDevice("/device"));
+   public void testDetachVolumeOptions() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("detachVolumeInRegion", String.class, String.class,
+            boolean.class, Array.newInstance(DetachVolumeOptions.class, 0).getClass());
+      HttpRequest request = processor.createRequest(method, null, "id", true, fromInstance("instanceId").fromDevice(
+            "/device"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(
-               request,
-               "Version=2010-06-15&Action=DetachVolume&Force=true&VolumeId=id&InstanceId=instanceId&Device=%2Fdevice",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request,
+            "Version=2010-06-15&Action=DetachVolume&Force=true&VolumeId=id&InstanceId=instanceId&Device=%2Fdevice",
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -228,15 +211,14 @@ public class ElasticBlockStoreAsyncClientTest extends
    }
 
    public void testCreateSnapshot() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ElasticBlockStoreAsyncClient.class.getMethod("createSnapshotInRegion",
-               String.class, String.class, Array.newInstance(CreateSnapshotOptions.class, 0)
-                        .getClass());
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("createSnapshotInRegion", String.class,
+            String.class, Array.newInstance(CreateSnapshotOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, null, "volumeId");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request, "Version=2010-06-15&Action=CreateSnapshot&VolumeId=volumeId",
-               "application/x-www-form-urlencoded", false);
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, SnapshotHandler.class);
@@ -245,20 +227,17 @@ public class ElasticBlockStoreAsyncClientTest extends
       checkFilters(request);
    }
 
-   public void testCreateSnapshotOptions() throws SecurityException, NoSuchMethodException,
-            IOException {
-      Method method = ElasticBlockStoreAsyncClient.class.getMethod("createSnapshotInRegion",
-               String.class, String.class, Array.newInstance(CreateSnapshotOptions.class, 0)
-                        .getClass());
-      HttpRequest request = processor.createRequest(method, null, "volumeId",
-               CreateSnapshotOptions.Builder.withDescription("description"));
+   public void testCreateSnapshotOptions() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("createSnapshotInRegion", String.class,
+            String.class, Array.newInstance(CreateSnapshotOptions.class, 0).getClass());
+      HttpRequest request = processor.createRequest(method, null, "volumeId", CreateSnapshotOptions.Builder
+            .withDescription("description"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(
-               request,
-               "Version=2010-06-15&Action=CreateSnapshot&VolumeId=volumeId&Description=description",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request,
+            "Version=2010-06-15&Action=CreateSnapshot&VolumeId=volumeId&Description=description",
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, SnapshotHandler.class);
@@ -268,14 +247,14 @@ public class ElasticBlockStoreAsyncClientTest extends
    }
 
    public void testDescribeSnapshots() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ElasticBlockStoreAsyncClient.class.getMethod("describeSnapshotsInRegion",
-               String.class, Array.newInstance(DescribeSnapshotsOptions.class, 0).getClass());
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("describeSnapshotsInRegion", String.class, Array
+            .newInstance(DescribeSnapshotsOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, (String) null);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeSnapshots",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeSnapshots", "application/x-www-form-urlencoded",
+            false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeSnapshotsResponseHandler.class);
@@ -284,19 +263,18 @@ public class ElasticBlockStoreAsyncClientTest extends
       checkFilters(request);
    }
 
-   public void testDescribeSnapshotsArgs() throws SecurityException, NoSuchMethodException,
-            IOException {
-      Method method = ElasticBlockStoreAsyncClient.class.getMethod("describeSnapshotsInRegion",
-               String.class, Array.newInstance(DescribeSnapshotsOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, null, ownedBy("o1", "o2").restorableBy(
-               "r1", "r2").snapshotIds("s1", "s2"));
+   public void testDescribeSnapshotsArgs() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("describeSnapshotsInRegion", String.class, Array
+            .newInstance(DescribeSnapshotsOptions.class, 0).getClass());
+      HttpRequest request = processor.createRequest(method, null, ownedBy("o1", "o2").restorableBy("r1", "r2")
+            .snapshotIds("s1", "s2"));
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
-               request,
-               "Version=2010-06-15&Action=DescribeSnapshots&Owner.1=o1&Owner.2=o2&RestorableBy.1=r1&RestorableBy.2=r2&SnapshotId.1=s1&SnapshotId.2=s2",
-               "application/x-www-form-urlencoded", false);
+            request,
+            "Version=2010-06-15&Action=DescribeSnapshots&Owner.1=o1&Owner.2=o2&RestorableBy.1=r1&RestorableBy.2=r2&SnapshotId.1=s1&SnapshotId.2=s2",
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeSnapshotsResponseHandler.class);
@@ -305,18 +283,17 @@ public class ElasticBlockStoreAsyncClientTest extends
       checkFilters(request);
    }
 
-   public void testGetCreateVolumePermissionForSnapshot() throws SecurityException,
-            NoSuchMethodException, IOException {
-      Method method = ElasticBlockStoreAsyncClient.class.getMethod(
-               "getCreateVolumePermissionForSnapshotInRegion", String.class, String.class);
+   public void testGetCreateVolumePermissionForSnapshot() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("getCreateVolumePermissionForSnapshotInRegion",
+            String.class, String.class);
       HttpRequest request = processor.createRequest(method, null, "snapshotId");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
-               request,
-               "Version=2010-06-15&Action=DescribeSnapshotAttribute&Attribute=createVolumePermission&SnapshotId=snapshotId",
-               "application/x-www-form-urlencoded", false);
+            request,
+            "Version=2010-06-15&Action=DescribeSnapshotAttribute&Attribute=createVolumePermission&SnapshotId=snapshotId",
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, PermissionHandler.class);
@@ -325,20 +302,18 @@ public class ElasticBlockStoreAsyncClientTest extends
       checkFilters(request);
    }
 
-   public void testAddCreateVolumePermissionsToSnapshot() throws SecurityException,
-            NoSuchMethodException, IOException {
-      Method method = ElasticBlockStoreAsyncClient.class.getMethod(
-               "addCreateVolumePermissionsToSnapshotInRegion", String.class, Iterable.class,
-               Iterable.class, String.class);
-      HttpRequest request = processor.createRequest(method, null, ImmutableList.of("bob", "sue"),
-               ImmutableList.of("all"), "snapshotId");
+   public void testAddCreateVolumePermissionsToSnapshot() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("addCreateVolumePermissionsToSnapshotInRegion",
+            String.class, Iterable.class, Iterable.class, String.class);
+      HttpRequest request = processor.createRequest(method, null, ImmutableList.of("bob", "sue"), ImmutableList
+            .of("all"), "snapshotId");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
-               request,
-               "Version=2010-06-15&Action=ModifySnapshotAttribute&OperationType=add&Attribute=createVolumePermission&SnapshotId=snapshotId&UserGroup.1=all&UserId.1=bob&UserId.2=sue",
-               "application/x-www-form-urlencoded", false);
+            request,
+            "Version=2010-06-15&Action=ModifySnapshotAttribute&OperationType=add&Attribute=createVolumePermission&SnapshotId=snapshotId&UserGroup.1=all&UserId.1=bob&UserId.2=sue",
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -347,20 +322,19 @@ public class ElasticBlockStoreAsyncClientTest extends
       checkFilters(request);
    }
 
-   public void testRemoveCreateVolumePermissionsFromSnapshot() throws SecurityException,
-            NoSuchMethodException, IOException {
-      Method method = ElasticBlockStoreAsyncClient.class.getMethod(
-               "removeCreateVolumePermissionsFromSnapshotInRegion", String.class, Iterable.class,
-               Iterable.class, String.class);
-      HttpRequest request = processor.createRequest(method, null, ImmutableList.of("bob", "sue"),
-               ImmutableList.of("all"), "snapshotId");
+   public void testRemoveCreateVolumePermissionsFromSnapshot() throws SecurityException, NoSuchMethodException,
+         IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("removeCreateVolumePermissionsFromSnapshotInRegion",
+            String.class, Iterable.class, Iterable.class, String.class);
+      HttpRequest request = processor.createRequest(method, null, ImmutableList.of("bob", "sue"), ImmutableList
+            .of("all"), "snapshotId");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
-               request,
-               "Version=2010-06-15&Action=ModifySnapshotAttribute&OperationType=remove&Attribute=createVolumePermission&SnapshotId=snapshotId&UserGroup.1=all&UserId.1=bob&UserId.2=sue",
-               "application/x-www-form-urlencoded", false);
+            request,
+            "Version=2010-06-15&Action=ModifySnapshotAttribute&OperationType=remove&Attribute=createVolumePermission&SnapshotId=snapshotId&UserGroup.1=all&UserId.1=bob&UserId.2=sue",
+            "application/x-www-form-urlencoded", false);
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
@@ -368,18 +342,17 @@ public class ElasticBlockStoreAsyncClientTest extends
       checkFilters(request);
    }
 
-   public void testResetCreateVolumePermissionsOnSnapshot() throws SecurityException,
-            NoSuchMethodException, IOException {
-      Method method = ElasticBlockStoreAsyncClient.class.getMethod(
-               "resetCreateVolumePermissionsOnSnapshotInRegion", String.class, String.class);
+   public void testResetCreateVolumePermissionsOnSnapshot() throws SecurityException, NoSuchMethodException,
+         IOException {
+      Method method = ElasticBlockStoreAsyncClient.class.getMethod("resetCreateVolumePermissionsOnSnapshotInRegion",
+            String.class, String.class);
       HttpRequest request = processor.createRequest(method, null, "snapshotId");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(
-               request,
-               "Version=2010-06-15&Action=ResetSnapshotAttribute&Attribute=createVolumePermission&SnapshotId=snapshotId",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request,
+            "Version=2010-06-15&Action=ResetSnapshotAttribute&Attribute=createVolumePermission&SnapshotId=snapshotId",
+            "application/x-www-form-urlencoded", false);
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);

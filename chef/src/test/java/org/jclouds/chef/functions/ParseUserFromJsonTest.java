@@ -7,6 +7,7 @@ import java.io.IOException;
 import org.jclouds.chef.domain.User;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.Payloads;
+import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
@@ -14,6 +15,8 @@ import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseUserFromJson}
@@ -23,12 +26,14 @@ import com.google.inject.Injector;
 @Test(groups = "unit", sequential = true, testName = "chef.ParseUserFromJsonTest")
 public class ParseUserFromJsonTest {
 
-   private ParseUserFromJson handler;
+   private ParseJson<User> handler;
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
       Injector injector = Guice.createInjector(new ParserModule());
-      handler = injector.getInstance(ParseUserFromJson.class);
+      handler = injector.getInstance(Key
+            .get(new TypeLiteral<ParseJson<User>>() {
+            }));
    }
 
    public void test() {
@@ -42,7 +47,7 @@ public class ParseUserFromJsonTest {
 
       String toParse = "{\n\"username\": \"bobo\",\n\"first_name\": \"Bobo\",\n\"middle_name\": \"Tiberion\",\n\"last_name\": \"Clown\",\n\"display_name\": \"Bobo T. Clown\",\n\"email\": \"bobo@clownco.com\" \n}";
 
-      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils
-               .toInputStream(toParse)))), user);
+      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads
+            .newPayload(Utils.toInputStream(toParse)))), user);
    }
 }

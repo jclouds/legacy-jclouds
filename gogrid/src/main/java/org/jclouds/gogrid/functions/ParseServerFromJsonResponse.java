@@ -23,17 +23,14 @@
  */
 package org.jclouds.gogrid.functions;
 
-import java.io.InputStream;
-import java.util.SortedSet;
-
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.gogrid.domain.Server;
-import org.jclouds.http.functions.ParseJson;
+import org.jclouds.http.HttpResponse;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.google.gson.Gson;
-import com.google.inject.Singleton;
 
 /**
  * Parses a single {@link Server} from a json string.
@@ -43,16 +40,18 @@ import com.google.inject.Singleton;
  * @author Oleksiy Yarmula
  */
 @Singleton
-public class ParseServerFromJsonResponse extends ParseJson<Server> {
+public class ParseServerFromJsonResponse implements
+      Function<HttpResponse, Server> {
+   private final ParseServerListFromJsonResponse parser;
 
    @Inject
-   ParseServerFromJsonResponse(Gson gson) {
-      super(gson);
+   ParseServerFromJsonResponse(ParseServerListFromJsonResponse parser) {
+      this.parser = parser;
    }
 
-   public Server apply(InputStream stream) {
-      SortedSet<Server> allServers = new ParseServerListFromJsonResponse(gson)
-            .apply(stream);
-      return Iterables.getOnlyElement(allServers);
+   @Override
+   public Server apply(HttpResponse arg0) {
+      return Iterables.getOnlyElement(parser.apply(arg0));
    }
+
 }

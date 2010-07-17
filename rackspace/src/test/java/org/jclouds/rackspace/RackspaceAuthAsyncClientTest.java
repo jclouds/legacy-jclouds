@@ -19,19 +19,16 @@
 package org.jclouds.rackspace;
 
 import static org.jclouds.rest.RestContextFactory.contextSpec;
-import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Collections;
-
-import javax.ws.rs.HttpMethod;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rackspace.RackspaceAuthenticationLiveTest.RackspaceAuthClient;
 import org.jclouds.rackspace.functions.ParseAuthenticationResponseFromHeaders;
-import org.jclouds.rackspace.reference.RackspaceHeaders;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -45,27 +42,24 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "rackspace.RackspaceAuthentication")
 public class RackspaceAuthAsyncClientTest extends RestClientTest<RackspaceAuthAsyncClient> {
 
-   public void testAuthenticate() throws SecurityException, NoSuchMethodException {
-      Method method = RackspaceAuthAsyncClient.class.getMethod("authenticate", String.class,
-               String.class);
-      HttpRequest request = processor.createRequest(method, "foo", "bar");
-      assertEquals(request.getEndpoint().getHost(), "localhost");
-      assertEquals(request.getEndpoint().getPath(), "/auth");
-      assertEquals(request.getMethod(), HttpMethod.GET);
-      assertEquals(request.getHeaders().size(), 2);
-      assertEquals(request.getHeaders().get(RackspaceHeaders.AUTH_USER), Collections
-               .singletonList("foo"));
-      assertEquals(request.getHeaders().get(RackspaceHeaders.AUTH_KEY), Collections
-               .singletonList("bar"));
-      assertEquals(RestAnnotationProcessor.getParserOrThrowException(method),
-               ParseAuthenticationResponseFromHeaders.class);
+   public void testAuthenticate() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = RackspaceAuthAsyncClient.class.getMethod("authenticate", String.class, String.class);
+      HttpRequest httpRequest = processor.createRequest(method, "foo", "bar");
+
+      assertRequestLineEquals(httpRequest, "GET http://localhost:8080/auth HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "X-Auth-Key: bar\nX-Auth-User: foo\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseAuthenticationResponseFromHeaders.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
    }
 
    @Override
    public ContextSpec<RackspaceAuthClient, RackspaceAuthAsyncClient> createContextSpec() {
-      return contextSpec("test", "http://localhost:8080", "1", "identity", "credential",
-               RackspaceAuthClient.class, RackspaceAuthAsyncClient.class);
+      return contextSpec("test", "http://localhost:8080", "1", "identity", "credential", RackspaceAuthClient.class,
+            RackspaceAuthAsyncClient.class);
    }
 
    @Override

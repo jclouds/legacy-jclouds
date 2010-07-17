@@ -76,19 +76,16 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "vcloud.VCloudAsyncClientTest")
 public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
-   public void testInstantiateVAppTemplate() throws SecurityException, NoSuchMethodException,
-            IOException {
-      Method method = VCloudAsyncClient.class.getMethod("instantiateVAppTemplateInVDC",
-               String.class, String.class, String.class, Array.newInstance(
-                        InstantiateVAppTemplateOptions.class, 0).getClass());
+   public void testInstantiateVAppTemplate() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("instantiateVAppTemplateInVDC", String.class, String.class,
+            String.class, Array.newInstance(InstantiateVAppTemplateOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, "1", "my-vapp", 3 + "");
 
       assertRequestLineEquals(request,
-               "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
+            "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/newvapp-hosting.xml")),
-               "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
+      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream("/newvapp-hosting.xml")),
+            "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, VAppHandler.class);
@@ -97,21 +94,18 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       checkFilters(request);
    }
 
-   public void testInstantiateVAppTemplateOptions() throws SecurityException,
-            NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("instantiateVAppTemplateInVDC",
-               String.class, String.class, String.class, Array.newInstance(
-                        InstantiateVAppTemplateOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, "1", "my-vapp", 3 + "", processorCount(
-               1).memory(512).disk(1024).fenceMode("allowInOut").inNetwork(
-               URI.create("https://vcloud.safesecureweb.com/network/1990")));
+   public void testInstantiateVAppTemplateOptions() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("instantiateVAppTemplateInVDC", String.class, String.class,
+            String.class, Array.newInstance(InstantiateVAppTemplateOptions.class, 0).getClass());
+      HttpRequest request = processor.createRequest(method, "1", "my-vapp", 3 + "", processorCount(1).memory(512).disk(
+            1024).fenceMode("allowInOut").inNetwork(URI.create("https://vcloud.safesecureweb.com/network/1990")));
 
       assertRequestLineEquals(request,
-               "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
+            "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
       assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/newvapp-hostingcpumemdisk.xml")),
-               "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
+            "/newvapp-hostingcpumemdisk.xml")), "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml",
+            false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, VAppHandler.class);
@@ -121,26 +115,23 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testInstantiateVAppTemplateOptionsIllegalName() throws SecurityException,
-            NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("instantiateVAppTemplateInVDC",
-               String.class, String.class, String.class, Array.newInstance(
-                        InstantiateVAppTemplateOptions.class, 0).getClass());
-      processor.createRequest(method, "1", "CentOS 01", 3 + "", processorCount(1).memory(512).disk(
-               1024).inNetwork(URI.create("https://vcloud.safesecureweb.com/network/1990")));
+   public void testInstantiateVAppTemplateOptionsIllegalName() throws SecurityException, NoSuchMethodException,
+         IOException {
+      Method method = VCloudAsyncClient.class.getMethod("instantiateVAppTemplateInVDC", String.class, String.class,
+            String.class, Array.newInstance(InstantiateVAppTemplateOptions.class, 0).getClass());
+      processor.createRequest(method, "1", "CentOS 01", 3 + "", processorCount(1).memory(512).disk(1024).inNetwork(
+            URI.create("https://vcloud.safesecureweb.com/network/1990")));
    }
 
    public void testCloneVApp() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("cloneVAppInVDC", String.class,
-               String.class, String.class, Array.newInstance(CloneVAppOptions.class, 0).getClass());
+      Method method = VCloudAsyncClient.class.getMethod("cloneVAppInVDC", String.class, String.class, String.class,
+            Array.newInstance(CloneVAppOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, "1", "4181", "my-vapp");
 
-      assertRequestLineEquals(request,
-               "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/cloneVApp HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/cloneVApp HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/cloneVApp-default.xml")), "application/vnd.vmware.vcloud.cloneVAppParams+xml",
-               false);
+      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream("/cloneVApp-default.xml")),
+            "application/vnd.vmware.vcloud.cloneVAppParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TaskHandler.class);
@@ -150,17 +141,15 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    public void testCloneVAppOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("cloneVAppInVDC", String.class,
-               String.class, String.class, Array.newInstance(CloneVAppOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, "1", "201", "new-linux-server",
-               new CloneVAppOptions().deploy().powerOn().withDescription(
-                        "The description of the new vApp"));
+      Method method = VCloudAsyncClient.class.getMethod("cloneVAppInVDC", String.class, String.class, String.class,
+            Array.newInstance(CloneVAppOptions.class, 0).getClass());
+      HttpRequest request = processor.createRequest(method, "1", "201", "new-linux-server", new CloneVAppOptions()
+            .deploy().powerOn().withDescription("The description of the new vApp"));
 
-      assertRequestLineEquals(request,
-               "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/cloneVApp HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/cloneVApp HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/cloneVApp.xml")), "application/vnd.vmware.vcloud.cloneVAppParams+xml", false);
+      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream("/cloneVApp.xml")),
+            "application/vnd.vmware.vcloud.cloneVAppParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TaskHandler.class);
@@ -170,16 +159,14 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testCloneVAppOptionsIllegalName() throws SecurityException, NoSuchMethodException,
-            IOException {
-      Method method = VCloudAsyncClient.class.getMethod("cloneVAppInVDC", String.class,
-               String.class, String.class, Array.newInstance(CloneVAppOptions.class, 0).getClass());
-      processor.createRequest(method, "1", "201", "New Linux Server", new CloneVAppOptions()
-               .deploy().powerOn().withDescription("The description of the new vApp"));
+   public void testCloneVAppOptionsIllegalName() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("cloneVAppInVDC", String.class, String.class, String.class,
+            Array.newInstance(CloneVAppOptions.class, 0).getClass());
+      processor.createRequest(method, "1", "201", "New Linux Server", new CloneVAppOptions().deploy().powerOn()
+            .withDescription("The description of the new vApp"));
    }
 
-   public void testDefaultOrganization() throws SecurityException, NoSuchMethodException,
-            IOException {
+   public void testDefaultOrganization() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("getDefaultOrganization");
       HttpRequest request = processor.createRequest(method);
 
@@ -198,8 +185,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("getOrganization", String.class);
       HttpRequest request = processor.createRequest(method, "1");
 
-      assertRequestLineEquals(request,
-               "GET https://vcloud.safesecureweb.com/api/v0.8/org/1 HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/org/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.org+xml\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -214,8 +200,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("getDefaultCatalog");
       HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(request,
-               "GET https://vcloud.safesecureweb.com/api/v0.8/catalog HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/catalog HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -230,8 +215,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("getCatalog", String.class);
       HttpRequest request = processor.createRequest(method, "1");
 
-      assertRequestLineEquals(request,
-               "GET https://vcloud.safesecureweb.com/api/v0.8/catalog/1 HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/catalog/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -246,8 +230,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("getNetwork", String.class);
       HttpRequest request = processor.createRequest(method, "2");
 
-      assertRequestLineEquals(request,
-               "GET https://vcloud.safesecureweb.com/api/v0.8/network/2 HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/network/2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.network+xml\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -262,10 +245,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("getCatalogItem", String.class);
       HttpRequest request = processor.createRequest(method, "2");
 
-      assertRequestLineEquals(request,
-               "GET https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request,
-               "Accept: application/vnd.vmware.vcloud.catalogItem+xml\n");
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalogItem+xml\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -279,10 +260,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("getVAppTemplate", String.class);
       HttpRequest request = processor.createRequest(method, "2");
 
-      assertRequestLineEquals(request,
-               "GET https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/2 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request,
-               "Accept: application/vnd.vmware.vcloud.vAppTemplate+xml\n");
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/2 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vAppTemplate+xml\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -296,8 +275,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("getDefaultVDC");
       HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(request,
-               "GET https://vcloud.safesecureweb.com/api/v0.8/vdc/1 HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/vdc/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vdc+xml\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -312,8 +290,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("getVDC", String.class);
       HttpRequest request = processor.createRequest(method, "1");
 
-      assertRequestLineEquals(request,
-               "GET https://vcloud.safesecureweb.com/api/v0.8/vdc/1 HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/vdc/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vdc+xml\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -324,13 +301,11 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       checkFilters(request);
    }
 
-   public void testGetDefaultTasksList() throws SecurityException, NoSuchMethodException,
-            IOException {
+   public void testGetDefaultTasksList() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("getDefaultTasksList");
       HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(request,
-               "GET https://vcloud.safesecureweb.com/api/v0.8/taskslist HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/taskslist HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.tasksList+xml\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -345,8 +320,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("getTasksList", String.class);
       HttpRequest request = processor.createRequest(method, "1");
 
-      assertRequestLineEquals(request,
-               "GET https://vcloud.safesecureweb.com/api/v0.8/tasksList/1 HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/tasksList/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.tasksList+xml\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -361,8 +335,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("deployVApp", String.class);
       HttpRequest request = processor.createRequest(method, 1);
 
-      assertRequestLineEquals(request,
-               "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/action/deploy HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/action/deploy HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -377,8 +350,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("getVApp", String.class);
       HttpRequest request = processor.createRequest(method, 1);
 
-      assertRequestLineEquals(request,
-               "GET https://vcloud.safesecureweb.com/api/v0.8/vApp/1 HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/vApp/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -393,8 +365,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("undeployVApp", String.class);
       HttpRequest request = processor.createRequest(method, 1);
 
-      assertRequestLineEquals(request,
-               "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/action/undeploy HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/action/undeploy HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -409,8 +380,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("deleteVApp", String.class);
       HttpRequest request = processor.createRequest(method, 1);
 
-      assertRequestLineEquals(request,
-               "DELETE https://vcloud.safesecureweb.com/api/v0.8/vApp/1 HTTP/1.1");
+      assertRequestLineEquals(request, "DELETE https://vcloud.safesecureweb.com/api/v0.8/vApp/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -426,7 +396,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       HttpRequest request = processor.createRequest(method, 1);
 
       assertRequestLineEquals(request,
-               "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/powerOn HTTP/1.1");
+            "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/powerOn HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -442,7 +412,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       HttpRequest request = processor.createRequest(method, 1);
 
       assertRequestLineEquals(request,
-               "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/powerOff HTTP/1.1");
+            "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/powerOff HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -458,7 +428,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       HttpRequest request = processor.createRequest(method, 1);
 
       assertRequestLineEquals(request,
-               "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/reset HTTP/1.1");
+            "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/reset HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -474,7 +444,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       HttpRequest request = processor.createRequest(method, 1);
 
       assertRequestLineEquals(request,
-               "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/suspend HTTP/1.1");
+            "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/suspend HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -490,7 +460,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       HttpRequest request = processor.createRequest(method, 1);
 
       assertRequestLineEquals(request,
-               "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/shutdown HTTP/1.1");
+            "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/shutdown HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -505,8 +475,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("getTask", String.class);
       HttpRequest request = processor.createRequest(method, "1");
 
-      assertRequestLineEquals(request,
-               "GET https://vcloud.safesecureweb.com/api/v0.8/task/1 HTTP/1.1");
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/task/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -521,8 +490,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       Method method = VCloudAsyncClient.class.getMethod("cancelTask", String.class);
       HttpRequest request = processor.createRequest(method, "1");
 
-      assertRequestLineEquals(request,
-               "POST https://vcloud.safesecureweb.com/api/v0.8/task/1/action/cancel HTTP/1.1");
+      assertRequestLineEquals(request, "POST https://vcloud.safesecureweb.com/api/v0.8/task/1/action/cancel HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -554,8 +522,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    public ContextSpec<?, ?> createContextSpec() {
       Properties overrides = new Properties();
       overrides.setProperty("vcloud.endpoint", "https://vcloud.safesecureweb.com/api/v0.8");
-      return new RestContextFactory().createContextSpec("vcloud", "identity", "credential",
-               overrides);
+      return new RestContextFactory().createContextSpec("vcloud", "identity", "credential", overrides);
    }
 
    @RequiresHttp
@@ -563,7 +530,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    public static class VCloudRestClientModuleExtension extends VCloudRestClientModule {
       @Override
       protected URI provideAuthenticationURI(VCloudVersionsAsyncClient versionService,
-               @Named(PROPERTY_API_VERSION) String version) {
+            @Named(PROPERTY_API_VERSION) String version) {
          return URI.create("https://vcloud.safesecureweb.com/api/v0.8/login");
       }
 
@@ -585,8 +552,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       }
 
       @Override
-      protected Iterable<NamedResource> provideOrgs(Supplier<VCloudSession> cache,
-               @Named(PROPERTY_IDENTITY) String user) {
+      protected Iterable<NamedResource> provideOrgs(Supplier<VCloudSession> cache, @Named(PROPERTY_IDENTITY) String user) {
          return null;
       }
 
@@ -608,14 +574,13 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       @Override
       protected void configure() {
          super.configure();
-         bind(SetVCloudTokenCookie.class).toInstance(
-                  new SetVCloudTokenCookie(new Provider<String>() {
+         bind(SetVCloudTokenCookie.class).toInstance(new SetVCloudTokenCookie(new Provider<String>() {
 
-                     public String get() {
-                        return "token";
-                     }
+            public String get() {
+               return "token";
+            }
 
-                  }));
+         }));
 
       }
    }

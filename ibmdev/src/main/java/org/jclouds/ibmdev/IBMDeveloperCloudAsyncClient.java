@@ -52,7 +52,6 @@ import org.jclouds.ibmdev.functions.ParseImageFromJson;
 import org.jclouds.ibmdev.functions.ParseImagesFromJson;
 import org.jclouds.ibmdev.functions.ParseInstanceFromJson;
 import org.jclouds.ibmdev.functions.ParseInstancesFromJson;
-import org.jclouds.ibmdev.functions.ParseKeyFromJson;
 import org.jclouds.ibmdev.functions.ParseKeysFromJson;
 import org.jclouds.ibmdev.functions.ParseLongFromDate;
 import org.jclouds.ibmdev.functions.ParseVolumeFromJson;
@@ -83,7 +82,6 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(BasicAuthentication.class)
-@Consumes(MediaType.APPLICATION_JSON)
 @SkipEncoding( { '{', '}' })
 public interface IBMDeveloperCloudAsyncClient {
    public static final String VERSION = "20090403";
@@ -93,6 +91,7 @@ public interface IBMDeveloperCloudAsyncClient {
     */
    @GET
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/images")
+   @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseImagesFromJson.class)
    ListenableFuture<Set<? extends Image>> listImages();
 
@@ -102,6 +101,7 @@ public interface IBMDeveloperCloudAsyncClient {
    @GET
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/images/{imageId}")
+   @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseImageFromJson.class)
    ListenableFuture<Image> getImage(@PathParam("imageId") String id);
 
@@ -119,9 +119,10 @@ public interface IBMDeveloperCloudAsyncClient {
    @PUT
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/images/{imageId}")
+   @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseImageFromJson.class)
    ListenableFuture<Image> setImageVisibility(@PathParam("imageId") String id,
-            @FormParam("visibility") Image.Visibility visibility);
+         @FormParam("visibility") Image.Visibility visibility);
 
    /**
     * @see IBMDeveloperCloudClient#listInstancesFromRequest(long)
@@ -129,15 +130,16 @@ public interface IBMDeveloperCloudAsyncClient {
    @GET
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/requests/{requestId}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseInstancesFromJson.class)
-   ListenableFuture<Set<? extends Instance>> listInstancesFromRequest(
-            @PathParam("requestId") String requestId);
+   ListenableFuture<Set<? extends Instance>> listInstancesFromRequest(@PathParam("requestId") String requestId);
 
    /**
     * @see IBMDeveloperCloudClient#listInstances()
     */
    @GET
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/instances")
+   @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseInstancesFromJson.class)
    ListenableFuture<Set<? extends Instance>> listInstances();
 
@@ -147,6 +149,7 @@ public interface IBMDeveloperCloudAsyncClient {
    @GET
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/instances/{instanceId}")
+   @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseInstanceFromJson.class)
    ListenableFuture<Instance> getInstance(@PathParam("instanceId") String id);
 
@@ -156,9 +159,10 @@ public interface IBMDeveloperCloudAsyncClient {
     */
    @PUT
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/instances/{instanceId}")
+   @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseExpirationTimeFromJson.class)
    ListenableFuture<Date> extendReservationForInstance(@PathParam("instanceId") String id,
-            @FormParam("expirationTime") @ParamParser(ParseLongFromDate.class) Date expirationTime);
+         @FormParam("expirationTime") @ParamParser(ParseLongFromDate.class) Date expirationTime);
 
    /**
     * @see IBMDeveloperCloudClient#restartInstance
@@ -166,29 +170,29 @@ public interface IBMDeveloperCloudAsyncClient {
    @PUT
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/instances/{instanceId}")
    @FormParams(keys = "state", values = "restart")
-   ListenableFuture<Void> restartInstance(@PathParam("instanceId") String id,
-            RestartInstanceOptions... options);
+   ListenableFuture<Void> restartInstance(@PathParam("instanceId") String id, RestartInstanceOptions... options);
 
    /**
     * @see IBMDeveloperCloudClient#saveInstanceToImage
     */
    @PUT
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/instances/{instanceId}")
+   @Consumes(MediaType.APPLICATION_JSON)
    @FormParams(keys = "state", values = "save")
    @ResponseParser(ParseImageFromJson.class)
    ListenableFuture<Image> saveInstanceToImage(@PathParam("instanceId") String id,
-            @FormParam("name") String toImageName,
-            @FormParam("description") String toImageDescription);
+         @FormParam("name") String toImageName, @FormParam("description") String toImageDescription);
 
    /**
     * @see IBMDeveloperCloudClient#createInstanceInLocation
     */
    @POST
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/instances")
+   @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(GetFirstInstanceInList.class)
    ListenableFuture<Instance> createInstanceInLocation(@FormParam("location") String location,
-            @FormParam("name") String name, @FormParam("imageID") String imageID,
-            @FormParam("instanceType") String instanceType, CreateInstanceOptions... options);
+         @FormParam("name") String name, @FormParam("imageID") String imageID,
+         @FormParam("instanceType") String instanceType, CreateInstanceOptions... options);
 
    /**
     * @see IBMDeveloperCloudClient#deleteInstance
@@ -203,6 +207,7 @@ public interface IBMDeveloperCloudAsyncClient {
     */
    @GET
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/keys")
+   @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseKeysFromJson.class)
    ListenableFuture<Set<? extends Key>> listKeys();
 
@@ -211,7 +216,7 @@ public interface IBMDeveloperCloudAsyncClient {
     */
    @POST
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/keys")
-   @ResponseParser(ParseKeyFromJson.class)
+   @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Key> generateKeyPair(@FormParam("name") String name);
 
    /**
@@ -219,16 +224,14 @@ public interface IBMDeveloperCloudAsyncClient {
     */
    @POST
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/keys")
-   ListenableFuture<Void> addPublicKey(@FormParam("name") String name,
-            @FormParam("publicKey") String publicKey);
+   ListenableFuture<Void> addPublicKey(@FormParam("name") String name, @FormParam("publicKey") String publicKey);
 
    /**
     * @see IBMDeveloperCloudClient#updatePublicKey(String, String)
     */
    @PUT
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/keys/{keyName}")
-   ListenableFuture<Void> updatePublicKey(@PathParam("keyName") String name,
-            @FormParam("publicKey") String publicKey);
+   ListenableFuture<Void> updatePublicKey(@PathParam("keyName") String name, @FormParam("publicKey") String publicKey);
 
    /**
     * @see IBMDeveloperCloudClient#setDefaultStatusOfKey(String, boolean)
@@ -236,7 +239,7 @@ public interface IBMDeveloperCloudAsyncClient {
    @PUT
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/keys/{keyName}")
    ListenableFuture<Void> setDefaultStatusOfKey(@PathParam("keyName") String name,
-            @FormParam("default") boolean isDefault);
+         @FormParam("default") boolean isDefault);
 
    /**
     * @see IBMDeveloperCloudClient#getKey(String)
@@ -244,7 +247,7 @@ public interface IBMDeveloperCloudAsyncClient {
    @GET
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/keys/{keyName}")
-   @ResponseParser(ParseKeyFromJson.class)
+   @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Key> getKey(@PathParam("keyName") String name);
 
    /**
@@ -261,6 +264,7 @@ public interface IBMDeveloperCloudAsyncClient {
    @GET
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/storage")
    @ResponseParser(ParseVolumesFromJson.class)
+   @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<Set<? extends Volume>> listVolumes();
 
    /**
@@ -268,10 +272,10 @@ public interface IBMDeveloperCloudAsyncClient {
     */
    @POST
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/storage")
+   @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseVolumeFromJson.class)
    ListenableFuture<Volume> createVolumeInLocation(@FormParam("location") String location,
-            @FormParam("name") String name, @FormParam("format") String format,
-            @FormParam("size") String size);
+         @FormParam("name") String name, @FormParam("format") String format, @FormParam("size") String size);
 
    /**
     * @see IBMDeveloperCloudClient#getVolume(long)
@@ -279,6 +283,7 @@ public interface IBMDeveloperCloudAsyncClient {
    @GET
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/storage/{volumeId}")
+   @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseVolumeFromJson.class)
    ListenableFuture<Volume> getVolume(@PathParam("volumeId") String id);
 
@@ -314,6 +319,7 @@ public interface IBMDeveloperCloudAsyncClient {
     */
    @GET
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/addresses")
+   @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseAddressesFromJson.class)
    ListenableFuture<Set<? extends Address>> listAddresses();
 
@@ -322,6 +328,7 @@ public interface IBMDeveloperCloudAsyncClient {
     */
    @POST
    @Path(IBMDeveloperCloudAsyncClient.VERSION + "/addresses")
+   @Consumes(MediaType.APPLICATION_JSON)
    @ResponseParser(ParseAddressFromJson.class)
    ListenableFuture<Address> allocateAddressInLocation(@FormParam("location") String locationId);
 

@@ -40,14 +40,13 @@ import com.google.inject.TypeLiteral;
 public class KeyPairAsyncClientTest extends BaseEC2AsyncClientTest<KeyPairAsyncClient> {
 
    public void testDeleteKeyPair() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = KeyPairAsyncClient.class.getMethod("deleteKeyPairInRegion", String.class,
-               String.class);
+      Method method = KeyPairAsyncClient.class.getMethod("deleteKeyPairInRegion", String.class, String.class);
       HttpRequest request = processor.createRequest(method, null, "mykey");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request, "Version=2010-06-15&Action=DeleteKeyPair&KeyName=mykey",
-               "application/x-www-form-urlencoded", false);
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -57,14 +56,14 @@ public class KeyPairAsyncClientTest extends BaseEC2AsyncClientTest<KeyPairAsyncC
    }
 
    public void testDescribeKeyPairs() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = KeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", String.class,
-               Array.newInstance(String.class, 0).getClass());
+      Method method = KeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", String.class, Array.newInstance(
+            String.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, (String) null);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeKeyPairs",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeKeyPairs", "application/x-www-form-urlencoded",
+            false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeKeyPairsResponseHandler.class);
@@ -73,17 +72,15 @@ public class KeyPairAsyncClientTest extends BaseEC2AsyncClientTest<KeyPairAsyncC
       checkFilters(request);
    }
 
-   public void testDescribeKeyPairsArgs() throws SecurityException, NoSuchMethodException,
-            IOException {
-      Method method = KeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", String.class,
-               Array.newInstance(String.class, 0).getClass());
+   public void testDescribeKeyPairsArgs() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = KeyPairAsyncClient.class.getMethod("describeKeyPairsInRegion", String.class, Array.newInstance(
+            String.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, null, "1", "2");
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request,
-               "Version=2010-06-15&Action=DescribeKeyPairs&KeyName.1=1&KeyName.2=2",
-               "application/x-www-form-urlencoded", false);
+      assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeKeyPairs&KeyName.1=1&KeyName.2=2",
+            "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeKeyPairsResponseHandler.class);

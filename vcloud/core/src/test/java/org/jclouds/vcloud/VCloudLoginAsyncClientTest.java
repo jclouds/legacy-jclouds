@@ -50,7 +50,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "vcloud.VCloudLoginTest")
-public class VCloudLoginTest extends RestClientTest<VCloudLoginAsyncClient> {
+public class VCloudLoginAsyncClientTest extends RestClientTest<VCloudLoginAsyncClient> {
 
    public void testLogin() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudLoginAsyncClient.class.getMethod("login");
@@ -58,7 +58,7 @@ public class VCloudLoginTest extends RestClientTest<VCloudLoginAsyncClient> {
 
       assertEquals(request.getRequestLine(), "POST http://localhost:8080/login HTTP/1.1");
       assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT
-               + ": application/vnd.vmware.vcloud.organizationList+xml\n");
+            + ": application/vnd.vmware.vcloud.organizationList+xml\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseLoginResponseFromHeaders.class);
@@ -100,7 +100,7 @@ public class VCloudLoginTest extends RestClientTest<VCloudLoginAsyncClient> {
 
    @Override
    public ContextSpec<VCloudLoginClient, VCloudLoginAsyncClient> createContextSpec() {
-      return contextSpec("test", "http://localhost:8080/login", "1", "identity", "credential",
-               VCloudLoginClient.class, VCloudLoginAsyncClient.class);
+      return contextSpec("test", "http://localhost:8080/login", "1", "identity", "credential", VCloudLoginClient.class,
+            VCloudLoginAsyncClient.class);
    }
 }

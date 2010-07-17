@@ -41,41 +41,33 @@
  */
 package org.jclouds.chef.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.common.base.Function;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class ParseKeySetFromJson extends ParseJson<Set<String>> {
+public class ParseKeySetFromJson implements Function<HttpResponse, Set<String>> {
+
+   private final ParseJson<Map<String, String>> json;
+
    @Inject
-   public ParseKeySetFromJson(Gson gson) {
-      super(gson);
+   ParseKeySetFromJson(ParseJson<Map<String, String>> json) {
+      this.json = json;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
-   protected Set<String> apply(InputStream stream) {
-      try {
-         Type map = new TypeToken<Map<String, String>>() {
-         }.getType();
-         return ((Map<String, String>) gson.fromJson(new InputStreamReader(stream, "UTF-8"), map))
-                  .keySet();
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
+   public Set<String> apply(HttpResponse arg0) {
+      return json.apply(arg0).keySet();
+
    }
 }

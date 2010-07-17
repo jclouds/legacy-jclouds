@@ -18,6 +18,11 @@
  */
 package org.jclouds.aws.ec2.compute;
 
+import static org.testng.Assert.assertEquals;
+
+import org.jclouds.compute.domain.Architecture;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.Template;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -35,4 +40,17 @@ public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest 
       tag = "euc";
    }
 
+   @Override
+   protected void assertDefaultWorks() {
+      Template defaultTemplate = client.templateBuilder().build();
+      assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
+      assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.CENTOS);
+      // 64 bit implied 4 ecus
+      assertEquals(defaultTemplate.getSize().getCores(), 4.0d);
+   }
+
+   @Override
+   protected void assertCCsizeWorks() {
+      // no CC size in eucalyptus
+   }
 }

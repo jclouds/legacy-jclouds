@@ -37,6 +37,7 @@ import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.MatrixParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rimuhosting.miro.binder.CreateServerOptions;
 import org.jclouds.rimuhosting.miro.binder.RimuHostingRebootJsonBinder;
 import org.jclouds.rimuhosting.miro.domain.Image;
@@ -47,12 +48,11 @@ import org.jclouds.rimuhosting.miro.domain.ServerInfo;
 import org.jclouds.rimuhosting.miro.filters.RimuHostingAuthentication;
 import org.jclouds.rimuhosting.miro.functions.ParseDestroyResponseFromJsonResponse;
 import org.jclouds.rimuhosting.miro.functions.ParseImagesFromJsonResponse;
-import org.jclouds.rimuhosting.miro.functions.ParseInstanceFromJsonResponse;
-import org.jclouds.rimuhosting.miro.functions.ParseInstanceInfoFromJsonResponse;
-import org.jclouds.rimuhosting.miro.functions.ParseInstancesFromJsonResponse;
-import org.jclouds.rimuhosting.miro.functions.ParseNewInstanceResponseFromJsonResponse;
 import org.jclouds.rimuhosting.miro.functions.ParsePricingPlansFromJsonResponse;
 import org.jclouds.rimuhosting.miro.functions.ParseRimuHostingException;
+import org.jclouds.rimuhosting.miro.functions.ParseServerFromJsonResponse;
+import org.jclouds.rimuhosting.miro.functions.ParseServerInfoFromJsonResponse;
+import org.jclouds.rimuhosting.miro.functions.ParseServersFromJsonResponse;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -83,7 +83,7 @@ public interface RimuHostingAsyncClient {
     */
    @GET
    @Path("/orders")
-   @ResponseParser(ParseInstancesFromJsonResponse.class)
+   @ResponseParser(ParseServersFromJsonResponse.class)
    @MatrixParams(keys = "include_inactive", values = "N")
    @Produces(MediaType.APPLICATION_JSON)
    @Consumes(MediaType.APPLICATION_JSON)
@@ -109,11 +109,13 @@ public interface RimuHostingAsyncClient {
    @Produces(MediaType.APPLICATION_JSON)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ParseRimuHostingException.class)
-   @ResponseParser(ParseNewInstanceResponseFromJsonResponse.class)
+   @Unwrap
    @MapBinder(CreateServerOptions.class)
-   ListenableFuture<NewServerResponse> createServer(@MapPayloadParam("name") String name,
-            @MapPayloadParam("imageId") String imageId, @MapPayloadParam("planId") String planId,
-            CreateServerOptions... options);
+   ListenableFuture<NewServerResponse> createServer(
+         @MapPayloadParam("name") String name,
+         @MapPayloadParam("imageId") String imageId,
+         @MapPayloadParam("planId") String planId,
+         CreateServerOptions... options);
 
    /**
     * @see RimuHostingClient#getServer
@@ -121,7 +123,7 @@ public interface RimuHostingAsyncClient {
    @GET
    @Path("/orders/order-{id}-blah")
    @Consumes(MediaType.APPLICATION_JSON)
-   @ResponseParser(ParseInstanceFromJsonResponse.class)
+   @ResponseParser(ParseServerFromJsonResponse.class)
    @ExceptionParser(ParseRimuHostingException.class)
    ListenableFuture<Server> getServer(@PathParam("id") Long id);
 
@@ -132,7 +134,7 @@ public interface RimuHostingAsyncClient {
    @Path("/orders/order-{id}-blah/vps/running-state")
    @Produces(MediaType.APPLICATION_JSON)
    @Consumes(MediaType.APPLICATION_JSON)
-   @ResponseParser(ParseInstanceInfoFromJsonResponse.class)
+   @ResponseParser(ParseServerInfoFromJsonResponse.class)
    @MapBinder(RimuHostingRebootJsonBinder.class)
    @ExceptionParser(ParseRimuHostingException.class)
    ListenableFuture<ServerInfo> restartServer(@PathParam("id") Long id);

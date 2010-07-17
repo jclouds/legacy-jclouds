@@ -49,8 +49,7 @@ import com.google.common.collect.Sets;
  * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImages.html"
  *      />
  */
-public class DescribeImagesResponseHandler extends
-         ParseSax.HandlerForGeneratedRequestWithResult<Set<Image>> {
+public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Set<Image>> {
 
    @Inject
    public DescribeImagesResponseHandler(@Region String defaultRegion) {
@@ -79,7 +78,10 @@ public class DescribeImagesResponseHandler extends
    private String ramdiskId;
    private boolean inProductCodes;
    private boolean inBlockDeviceMapping;
-   private RootDeviceType rootDeviceType;
+   /**
+    * Eucalyptus 1.6 doesn't set rootDeviceType
+    */
+   private RootDeviceType rootDeviceType = RootDeviceType.INSTANCE_STORE;
    private Map<String, EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
    private String deviceName;
    private String snapshotId;
@@ -149,8 +151,7 @@ public class DescribeImagesResponseHandler extends
          virtualizationType = currentText.toString().trim();
       } else if (qName.equals("item")) {
          if (inBlockDeviceMapping) {
-            ebsBlockDevices.put(deviceName, new Image.EbsBlockDevice(snapshotId, volumeSize,
-                     deleteOnTermination));
+            ebsBlockDevices.put(deviceName, new Image.EbsBlockDevice(snapshotId, volumeSize, deleteOnTermination));
             this.deviceName = null;
             this.snapshotId = null;
             this.volumeSize = 0;
@@ -160,10 +161,9 @@ public class DescribeImagesResponseHandler extends
                String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
                if (region == null)
                   region = defaultRegion;
-               contents.add(new Image(region, architecture, this.name, description, imageId,
-                        imageLocation, imageOwnerId, imageState, imageType, isPublic, productCodes,
-                        kernelId, platform, ramdiskId, rootDeviceType, rootDeviceName,
-                        ebsBlockDevices, virtualizationType));
+               contents.add(new Image(region, architecture, this.name, description, imageId, imageLocation,
+                     imageOwnerId, imageState, imageType, isPublic, productCodes, kernelId, platform, ramdiskId,
+                     rootDeviceType, rootDeviceName, ebsBlockDevices, virtualizationType));
             } catch (NullPointerException e) {
                logger.warn(e, "malformed image: %s", imageId);
             }
@@ -180,7 +180,7 @@ public class DescribeImagesResponseHandler extends
             this.platform = null;
             this.productCodes = Sets.newHashSet();
             this.ramdiskId = null;
-            this.rootDeviceType = null;
+            this.rootDeviceType = RootDeviceType.INSTANCE_STORE;
             this.rootDeviceName = null;
             this.ebsBlockDevices = Maps.newHashMap();
             this.virtualizationType = "paravirtual";

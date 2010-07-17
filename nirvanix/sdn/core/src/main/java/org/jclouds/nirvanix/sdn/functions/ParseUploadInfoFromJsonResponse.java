@@ -18,19 +18,17 @@
  */
 package org.jclouds.nirvanix.sdn.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
 
-import com.google.gson.Gson;
+import com.google.common.base.Function;
 
 /**
  * This parses the Nirvanix Upload host and token from a gson string.
@@ -39,28 +37,29 @@ import com.google.gson.Gson;
  * @author Adrian Cole
  */
 @Singleton
-public class ParseUploadInfoFromJsonResponse extends ParseJson<UploadInfo> {
+public class ParseUploadInfoFromJsonResponse implements
+      Function<HttpResponse, UploadInfo> {
+
+   private final ParseJson<Response> json;
 
    @Inject
-   public ParseUploadInfoFromJsonResponse(Gson gson) {
-      super(gson);
+   ParseUploadInfoFromJsonResponse(ParseJson<Response> json) {
+      this.json = json;
    }
 
-   private static class StorageNodeResponse {
+   @Override
+   public UploadInfo apply(HttpResponse arg0) {
+      Response response = json.apply(arg0);
+      if (response.ResponseCode == null || response.ResponseCode != 0)
+         throw new RuntimeException("bad response code: "
+               + response.ResponseCode);
+      return new UploadInfo(response.GetStorageNode.get("UploadToken"), URI
+            .create("https://" + response.GetStorageNode.get("UploadHost")));
+   }
+
+   private static class Response {
       Integer ResponseCode;
       Map<String, String> GetStorageNode;
    }
 
-   public UploadInfo apply(InputStream stream) {
-      try {
-         StorageNodeResponse response = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-                  StorageNodeResponse.class);
-         if (response.ResponseCode == null || response.ResponseCode != 0)
-            throw new RuntimeException("bad response code: " + response.ResponseCode);
-         return new UploadInfo(response.GetStorageNode.get("UploadToken"),
-                  URI.create("https://" + response.GetStorageNode.get("UploadHost")));
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
-   }
 }

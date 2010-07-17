@@ -23,6 +23,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.ibmdev.domain.Address;
 import org.testng.annotations.BeforeTest;
@@ -55,8 +57,9 @@ public class ParseAddressFromJsonTest {
 
    public void test() {
       Address address = new Address(2, "1", "129.33.196.243", "1217", "1");
-      Address compare = handler.apply(ParseAddressFromJsonTest.class
-               .getResourceAsStream("/address.json"));
+      Address compare = handler.apply(new HttpResponse(200, "ok", Payloads
+            .newInputStreamPayload(ParseAddressFromJsonTest.class
+                  .getResourceAsStream("/address.json"))));
       assertEquals(compare, address);
    }
 }

@@ -41,36 +41,32 @@
  */
 package org.jclouds.ibmdev.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.ibmdev.domain.Instance;
 
-import com.google.gson.Gson;
+import com.google.common.base.Function;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class ParseInstanceFromJson extends ParseJson<Instance> {
+public class ParseInstanceFromJson implements Function<HttpResponse, Instance> {
+
+   private final ParseJson<Instance> json;
+
    @Inject
-   public ParseInstanceFromJson(Gson gson) {
-      super(gson);
+   ParseInstanceFromJson(ParseJson<Instance> json) {
+      this.json = json;
    }
 
    @Override
-   protected Instance apply(InputStream stream) {
-      try {
-         Instance returnVal = gson.fromJson(new InputStreamReader(stream, "UTF-8"), Instance.class);
-         ParseUtils.CLEAN_INSTANCE.apply(returnVal);
-         return returnVal;
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
+   public Instance apply(HttpResponse arg0) {
+      Instance input = json.apply(arg0);
+      ParseUtils.CLEAN_INSTANCE.apply(input);
+      return input;
    }
 }

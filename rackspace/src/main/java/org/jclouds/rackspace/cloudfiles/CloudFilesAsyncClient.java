@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
@@ -31,6 +32,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.PageSet;
@@ -53,8 +55,6 @@ import org.jclouds.rackspace.cloudfiles.functions.ObjectName;
 import org.jclouds.rackspace.cloudfiles.functions.ParseAccountMetadataResponseFromHeaders;
 import org.jclouds.rackspace.cloudfiles.functions.ParseCdnUriFromHeaders;
 import org.jclouds.rackspace.cloudfiles.functions.ParseContainerCDNMetadataFromHeaders;
-import org.jclouds.rackspace.cloudfiles.functions.ParseContainerCDNMetadataListFromJsonResponse;
-import org.jclouds.rackspace.cloudfiles.functions.ParseContainerListFromJsonResponse;
 import org.jclouds.rackspace.cloudfiles.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.rackspace.cloudfiles.functions.ParseObjectInfoFromHeaders;
 import org.jclouds.rackspace.cloudfiles.functions.ParseObjectInfoListFromJsonResponse;
@@ -79,9 +79,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * Provides asynchronous access to Cloud Files via their REST API.
  * <p/>
- * All commands return a ListenableFuture of the result from Cloud Files. Any exceptions incurred
- * during processing will be wrapped in an {@link ExecutionException} as documented in
- * {@link ListenableFuture#get()}.
+ * All commands return a ListenableFuture of the result from Cloud Files. Any
+ * exceptions incurred during processing will be wrapped in an
+ * {@link ExecutionException} as documented in {@link ListenableFuture#get()}.
  * 
  * @see CloudFilesClient
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
@@ -106,33 +106,35 @@ public interface CloudFilesAsyncClient {
     * @see CloudFilesClient#listContainers
     */
    @GET
-   @ResponseParser(ParseContainerListFromJsonResponse.class)
+   @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/")
    ListenableFuture<? extends Set<ContainerMetadata>> listContainers(
-            ListContainerOptions... options);
+         ListContainerOptions... options);
 
    /**
     * @see CloudFilesClient#setObjectInfo
     */
    @POST
    @Path("{container}/{name}")
-   ListenableFuture<Boolean> setObjectInfo(@PathParam("container") String container,
-            @PathParam("name") String name,
-            @BinderParam(BindMapToHeadersWithPrefix.class) Map<String, String> userMetadata);
+   ListenableFuture<Boolean> setObjectInfo(
+         @PathParam("container") String container,
+         @PathParam("name") String name,
+         @BinderParam(BindMapToHeadersWithPrefix.class) Map<String, String> userMetadata);
 
    /**
     * @see CloudFilesClient#listCDNContainers
     */
    @GET
-   @ResponseParser(ParseContainerCDNMetadataListFromJsonResponse.class)
+   @Consumes(MediaType.APPLICATION_JSON)
    @QueryParams(keys = "format", values = "json")
    @Path("/")
    @Endpoint(CloudFilesCDN.class)
    ListenableFuture<? extends Set<ContainerCDNMetadata>> listCDNContainers(
-            ListCdnContainerOptions... options);
+         ListCdnContainerOptions... options);
 
-   // TODO: Container name is not included in CDN HEAD response headers, so we cannot populate it
+   // TODO: Container name is not included in CDN HEAD response headers, so we
+   // cannot populate it
    // here.
    /**
     * @see CloudFilesClient#getCDNMetadata
@@ -142,7 +144,8 @@ public interface CloudFilesAsyncClient {
    @ExceptionParser(ThrowContainerNotFoundOn404.class)
    @Path("{container}")
    @Endpoint(CloudFilesCDN.class)
-   ListenableFuture<ContainerCDNMetadata> getCDNMetadata(@PathParam("container") String container);
+   ListenableFuture<ContainerCDNMetadata> getCDNMetadata(
+         @PathParam("container") String container);
 
    /**
     * @see CloudFilesClient#enableCDN(String, long);
@@ -153,7 +156,7 @@ public interface CloudFilesAsyncClient {
    @ResponseParser(ParseCdnUriFromHeaders.class)
    @Endpoint(CloudFilesCDN.class)
    ListenableFuture<URI> enableCDN(@PathParam("container") String container,
-            @HeaderParam(CloudFilesHeaders.CDN_TTL) long ttl);
+         @HeaderParam(CloudFilesHeaders.CDN_TTL) long ttl);
 
    /**
     * @see CloudFilesClient#enableCDN(String)
@@ -173,7 +176,7 @@ public interface CloudFilesAsyncClient {
    @ResponseParser(ParseCdnUriFromHeaders.class)
    @Endpoint(CloudFilesCDN.class)
    ListenableFuture<URI> updateCDN(@PathParam("container") String container,
-            @HeaderParam(CloudFilesHeaders.CDN_TTL) long ttl);
+         @HeaderParam(CloudFilesHeaders.CDN_TTL) long ttl);
 
    /**
     * @see CloudFilesClient#disableCDN
@@ -189,7 +192,8 @@ public interface CloudFilesAsyncClient {
     */
    @PUT
    @Path("{container}")
-   ListenableFuture<Boolean> createContainer(@PathParam("container") String container);
+   ListenableFuture<Boolean> createContainer(
+         @PathParam("container") String container);
 
    /**
     * @see CloudFilesClient#deleteContainerIfEmpty
@@ -197,7 +201,8 @@ public interface CloudFilesAsyncClient {
    @DELETE
    @ExceptionParser(ReturnTrueOn404FalseOn409.class)
    @Path("{container}")
-   ListenableFuture<Boolean> deleteContainerIfEmpty(@PathParam("container") String container);
+   ListenableFuture<Boolean> deleteContainerIfEmpty(
+         @PathParam("container") String container);
 
    /**
     * @see CloudFilesClient#listObjects
@@ -206,8 +211,9 @@ public interface CloudFilesAsyncClient {
    @QueryParams(keys = "format", values = "json")
    @ResponseParser(ParseObjectInfoListFromJsonResponse.class)
    @Path("{container}")
-   ListenableFuture<PageSet<ObjectInfo>> listObjects(@PathParam("container") String container,
-            ListContainerOptions... options);
+   ListenableFuture<PageSet<ObjectInfo>> listObjects(
+         @PathParam("container") String container,
+         ListContainerOptions... options);
 
    /**
     * @see CloudFilesClient#containerExists
@@ -215,7 +221,8 @@ public interface CloudFilesAsyncClient {
    @HEAD
    @Path("{container}")
    @ExceptionParser(ReturnFalseOnContainerNotFound.class)
-   ListenableFuture<Boolean> containerExists(@PathParam("container") String container);
+   ListenableFuture<Boolean> containerExists(
+         @PathParam("container") String container);
 
    /**
     * @see CloudFilesClient#putObject
@@ -224,8 +231,8 @@ public interface CloudFilesAsyncClient {
    @Path("{container}/{name}")
    @ResponseParser(ParseETagHeader.class)
    ListenableFuture<String> putObject(
-            @PathParam("container") String container,
-            @PathParam("name") @ParamParser(ObjectName.class) @BinderParam(BindCFObjectToPayload.class) CFObject object);
+         @PathParam("container") String container,
+         @PathParam("name") @ParamParser(ObjectName.class) @BinderParam(BindCFObjectToPayload.class) CFObject object);
 
    /**
     * @see CloudFilesClient#getObject
@@ -234,8 +241,9 @@ public interface CloudFilesAsyncClient {
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
    @ExceptionParser(ReturnNullOnKeyNotFound.class)
    @Path("{container}/{name}")
-   ListenableFuture<CFObject> getObject(@PathParam("container") String container,
-            @PathParam("name") String name, GetOptions... options);
+   ListenableFuture<CFObject> getObject(
+         @PathParam("container") String container,
+         @PathParam("name") String name, GetOptions... options);
 
    /**
     * @see CloudFilesClient#getObjectInfo
@@ -245,7 +253,8 @@ public interface CloudFilesAsyncClient {
    @ExceptionParser(ReturnNullOnKeyNotFound.class)
    @Path("{container}/{name}")
    ListenableFuture<MutableObjectInfoWithMetadata> getObjectInfo(
-            @PathParam("container") String container, @PathParam("name") String name);
+         @PathParam("container") String container,
+         @PathParam("name") String name);
 
    /**
     * @see CloudFilesClient#objectExists
@@ -253,8 +262,9 @@ public interface CloudFilesAsyncClient {
    @HEAD
    @ExceptionParser(ReturnFalseOnKeyNotFound.class)
    @Path("{container}/{name}")
-   ListenableFuture<Boolean> objectExists(@PathParam("container") String container,
-            @PathParam("name") String name);
+   ListenableFuture<Boolean> objectExists(
+         @PathParam("container") String container,
+         @PathParam("name") String name);
 
    /**
     * @see CloudFilesClient#removeObject
@@ -262,7 +272,8 @@ public interface CloudFilesAsyncClient {
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @Path("{container}/{name}")
-   ListenableFuture<Void> removeObject(@PathParam("container") String container,
-            @PathParam("name") String name);
+   ListenableFuture<Void> removeObject(
+         @PathParam("container") String container,
+         @PathParam("name") String name);
 
 }

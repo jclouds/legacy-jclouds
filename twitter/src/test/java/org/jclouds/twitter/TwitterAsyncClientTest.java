@@ -26,10 +26,10 @@ import java.lang.reflect.Method;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.http.functions.ParseJson;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.twitter.functions.ParseStatusesFromJsonResponse;
 import org.testng.annotations.Test;
 
 import com.google.inject.TypeLiteral;
@@ -47,10 +47,10 @@ public class TwitterAsyncClientTest extends RestClientTest<TwitterAsyncClient> {
       HttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request, "GET http://twitter.com/statuses/mentions.json HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "");
+      assertNonPayloadHeadersEqual(request, "Accept: application/json\n");
       assertPayloadEquals(request, null, null, false);
 
-      assertResponseParserClassEquals(method, request, ParseStatusesFromJsonResponse.class);
+      assertResponseParserClassEquals(method, request, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -71,8 +71,8 @@ public class TwitterAsyncClientTest extends RestClientTest<TwitterAsyncClient> {
 
    @Override
    public ContextSpec<TwitterClient, TwitterAsyncClient> createContextSpec() {
-      return contextSpec("test", "http://twitter.com", "1", "identity", "credential",
-               TwitterClient.class, TwitterAsyncClient.class);
+      return contextSpec("test", "http://twitter.com", "1", "identity", "credential", TwitterClient.class,
+            TwitterAsyncClient.class);
    }
 
 }

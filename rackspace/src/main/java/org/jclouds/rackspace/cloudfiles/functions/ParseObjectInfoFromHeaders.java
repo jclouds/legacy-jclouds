@@ -30,7 +30,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ResourceToObjectInfo;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rest.InvocationContext;
-import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 
@@ -39,22 +38,23 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
-public class ParseObjectInfoFromHeaders implements
-         Function<HttpResponse, MutableObjectInfoWithMetadata>, InvocationContext {
+public class ParseObjectInfoFromHeaders implements Function<HttpResponse, MutableObjectInfoWithMetadata>,
+      InvocationContext {
    private final ParseSystemAndUserMetadataFromHeaders blobMetadataParser;
    private final ResourceToObjectInfo blobToObjectInfo;
    private final EncryptionService encryptionService;
 
    @Inject
    public ParseObjectInfoFromHeaders(ParseSystemAndUserMetadataFromHeaders blobMetadataParser,
-            ResourceToObjectInfo blobToObjectInfo, EncryptionService encryptionService) {
+         ResourceToObjectInfo blobToObjectInfo, EncryptionService encryptionService) {
       this.blobMetadataParser = blobMetadataParser;
       this.blobToObjectInfo = blobToObjectInfo;
       this.encryptionService = encryptionService;
    }
 
    /**
-    * parses the http response headers to create a new {@link MutableObjectInfoWithMetadata} object.
+    * parses the http response headers to create a new
+    * {@link MutableObjectInfoWithMetadata} object.
     */
    public MutableObjectInfoWithMetadata apply(HttpResponse from) {
       BlobMetadata base = blobMetadataParser.apply(from);
@@ -62,8 +62,7 @@ public class ParseObjectInfoFromHeaders implements
       to.setBytes(attemptToParseSizeAndRangeFromHeaders(from));
       String eTagHeader = from.getFirstHeaderOrNull("Etag");
       if (eTagHeader != null) {
-         String hashString = Utils.replaceAll(eTagHeader, '"', "");
-         to.setHash(encryptionService.fromHex(hashString));
+         to.setHash(encryptionService.fromHex(eTagHeader));
       }
       return to;
    }

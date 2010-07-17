@@ -43,7 +43,11 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
-public class ParseBlobMetadataFromHeadersTest {
+/**
+ * @author Adrian Cole
+ */
+@Test(sequential = true)
+public class ParseSystemAndUserMetadataFromHeadersTest {
 
    private ParseSystemAndUserMetadataFromHeaders parser;
    private Provider<MutableBlobMetadata> blobMetadataProvider = new Provider<MutableBlobMetadata>() {
@@ -57,8 +61,8 @@ public class ParseBlobMetadataFromHeadersTest {
    @BeforeTest
    void setUp() {
 
-      parser = new ParseSystemAndUserMetadataFromHeaders(blobMetadataProvider,
-               new SimpleDateFormatDateService(), "prefix", "default");
+      parser = new ParseSystemAndUserMetadataFromHeaders(blobMetadataProvider, new SimpleDateFormatDateService(),
+            "prefix", "default");
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
@@ -75,6 +79,13 @@ public class ParseBlobMetadataFromHeadersTest {
       from.getPayload().setContentLength(100l);
       BlobMetadata metadata = parser.apply(from);
       assertEquals(metadata.getName(), "key");
+   }
+
+   @Test
+   public void testNoContentOn204IsOk() {
+      HttpResponse from = new HttpResponse(204, "ok", Payloads.newStringPayload(""));
+      from.getHeaders().put(HttpHeaders.LAST_MODIFIED, "Wed, 09 Sep 2009 19:50:23 GMT");
+      parser.apply(from);
    }
 
    @Test
@@ -116,7 +127,7 @@ public class ParseBlobMetadataFromHeadersTest {
       MutableBlobMetadata metadata = blobMetadataProvider.get();
       parser.parseLastModifiedOrThrowException(from, metadata);
       assertEquals(metadata.getLastModified(), new SimpleDateFormatDateService()
-               .rfc822DateParse("Wed, 09 Sep 2009 19:50:23 GMT"));
+            .rfc822DateParse("Wed, 09 Sep 2009 19:50:23 GMT"));
    }
 
    @Test(expectedExceptions = HttpException.class)

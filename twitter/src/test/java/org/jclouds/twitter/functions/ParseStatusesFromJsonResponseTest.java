@@ -27,6 +27,7 @@ import java.util.SortedSet;
 
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
+import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.twitter.domain.Location;
 import org.jclouds.twitter.domain.Status;
@@ -34,9 +35,10 @@ import org.jclouds.twitter.domain.User;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseStatusesFromJsonResponse}
@@ -59,48 +61,51 @@ public class ParseStatusesFromJsonResponseTest {
       InputStream is = getClass().getResourceAsStream("/test_mentions.json");
 
       SortedSet<Status> expects = ImmutableSortedSet
-               .of(
+            .of(
 
-               new Status(
-                        dateService.cDateParse("Tue Jun 29 20:41:15 +0000 2010"),
+            new Status(
+                  dateService.cDateParse("Tue Jun 29 20:41:15 +0000 2010"),
+                  false,
+                  new Location("Point", new double[] { 153.08691298,
+                        -26.38658779 }),
+                  15138751340l,
+                  "adrianfcole",
+                  15112459535l,
+                  21744326,
+                  null,
+                  "@adrianfcole hehe, yes. Still going :) hope you're keeping well!",
+                  false,
+                  new User(
+                        dateService
+                              .cDateParse("Sat Jul 26 08:08:17 +0000 2008"),
+                        "London-based South African software geek & amateur photog. Since Nov 2009, travelling the world with @sunflowerkate on an extended honeymoon",
+                        21,
+                        315,
+                        true,
+                        405,
+                        true,
                         false,
-                        new Location("Point", new double[] { 153.08691298, -26.38658779 }),
-                        15138751340l,
-                        "adrianfcole",
-                        15112459535l,
-                        21744326,
-                        null,
-                        "@adrianfcole hehe, yes. Still going :) hope you're keeping well!",
+                        15608907,
+                        "Travelling around the world",
+                        "Andrew Newdigate",
+                        "en",
                         false,
-                        new User(
-                                 dateService.cDateParse("Sat Jul 26 08:08:17 +0000 2008"),
-                                 "London-based South African software geek & amateur photog. Since Nov 2009, travelling the world with @sunflowerkate on an extended honeymoon",
-                                 21,
-                                 315,
-                                 true,
-                                 405,
-                                 true,
-                                 false,
-                                 15608907,
-                                 "Travelling around the world",
-                                 "Andrew Newdigate",
-                                 "en",
-                                 false,
-                                 "FFF04D",
-                                 true,
-                                 URI
-                                          .create("http://a1.twimg.com/profile_background_images/62032362/_MG_8095_6_7HDR_tonemapped.jpg"),
-                                 false,
-                                 URI
-                                          .create("http://a1.twimg.com/profile_images/593267212/many_moon_honeymoon_normal.jpg"),
-                                 "0099CC", "fff8ad", "f6ffd1", "333333", false, "suprememoocow",
-                                 987, "Kuala Lumpur", URI.create("http://newdigate.me"), -28800,
-                                 false))
+                        "FFF04D",
+                        true,
+                        URI
+                              .create("http://a1.twimg.com/profile_background_images/62032362/_MG_8095_6_7HDR_tonemapped.jpg"),
+                        false,
+                        URI
+                              .create("http://a1.twimg.com/profile_images/593267212/many_moon_honeymoon_normal.jpg"),
+                        "0099CC", "fff8ad", "f6ffd1", "333333", false,
+                        "suprememoocow", 987, "Kuala Lumpur", URI
+                              .create("http://newdigate.me"), -28800, false))
 
-               );
+            );
 
-      ParseStatusesFromJsonResponse parser = new ParseStatusesFromJsonResponse(i
-               .getInstance(Gson.class));
+      ParseJson<SortedSet<Status>> parser = i.getInstance(Key
+            .get(new TypeLiteral<ParseJson<SortedSet<Status>>>() {
+            }));
       SortedSet<Status> response = parser.apply(is);
       assertEquals(response, expects);
    }

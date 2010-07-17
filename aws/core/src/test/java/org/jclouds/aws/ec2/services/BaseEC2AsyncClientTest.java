@@ -58,21 +58,20 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
 
       @Override
       protected String provideTimeStamp(final DateService dateService,
-               @Named(Constants.PROPERTY_SESSION_INTERVAL) final int expiration) {
+            @Named(Constants.PROPERTY_SESSION_INTERVAL) final int expiration) {
          return "2009-11-08T15:54:08.897Z";
       }
 
       @Override
       protected Map<String, URI> provideRegions(Injector client) {
-         return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI
-                  .create("https://ec2.eu-west-1.amazonaws.com"), Region.US_EAST_1, URI
-                  .create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1, URI
-                  .create("https://ec2.us-west-1.amazonaws.com"));
+         return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI.create("https://ec2.eu-west-1.amazonaws.com"),
+               Region.US_EAST_1, URI.create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1, URI
+                     .create("https://ec2.us-west-1.amazonaws.com"));
       }
 
       @Override
       protected Map<String, String> provideAvailabilityZoneToRegions(EC2Client client,
-               @org.jclouds.aws.Region Map<String, URI> regions) {
+            @org.jclouds.aws.Region Map<String, URI> regions) {
          return ImmutableMap.<String, String> of(AvailabilityZone.US_EAST_1A, Region.US_EAST_1);
       }
    }
@@ -103,8 +102,7 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
 
    @Override
    public ContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("ec2", "identity", "credential",
-               new Properties());
+      return new RestContextFactory().createContextSpec("ec2", "identity", "credential", new Properties());
    }
 
 }

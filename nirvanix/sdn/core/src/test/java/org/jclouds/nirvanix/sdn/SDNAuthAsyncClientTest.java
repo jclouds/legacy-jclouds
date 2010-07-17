@@ -19,17 +19,16 @@
 package org.jclouds.nirvanix.sdn;
 
 import static org.jclouds.rest.RestContextFactory.contextSpec;
-import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
-
-import javax.ws.rs.HttpMethod;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.nirvanix.sdn.SDNAuthenticationLiveTest.SDNAuthClient;
 import org.jclouds.nirvanix.sdn.functions.ParseSessionTokenFromJsonResponse;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -43,18 +42,17 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "sdn.SDNAuthentication")
 public class SDNAuthAsyncClientTest extends RestClientTest<SDNAuthAsyncClient> {
 
-   public void testAuthenticate() throws SecurityException, NoSuchMethodException {
-      Method method = SDNAuthAsyncClient.class.getMethod("authenticate", String.class,
-               String.class, String.class);
-      HttpRequest request = processor.createRequest(method, new Object[] { "apple", "foo", "bar" });
-      assertEquals(request.getEndpoint().getHost(), "localhost");
-      assertEquals(request.getEndpoint().getPath(), "/ws/Authentication/Login.ashx");
-      assertEquals(request.getEndpoint().getQuery(),
-               "output=json&appKey=apple&password=bar&username=foo");
-      assertEquals(request.getMethod(), HttpMethod.GET);
-      assertEquals(request.getHeaders().size(), 0);
-      assertEquals(RestAnnotationProcessor.getParserOrThrowException(method),
-               ParseSessionTokenFromJsonResponse.class);
+   public void testAuthenticate() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = SDNAuthAsyncClient.class.getMethod("authenticate", String.class, String.class, String.class);
+      HttpRequest httpRequest = processor.createRequest(method, "apple", "foo", "bar");
+      assertRequestLineEquals(httpRequest,
+            "GET http://localhost:8080/ws/Authentication/Login.ashx?output=json&appKey=apple&password=bar&username=foo HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseSessionTokenFromJsonResponse.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
    }
 
    @Override
@@ -70,8 +68,8 @@ public class SDNAuthAsyncClientTest extends RestClientTest<SDNAuthAsyncClient> {
 
    @Override
    public ContextSpec<SDNAuthClient, SDNAuthAsyncClient> createContextSpec() {
-      return contextSpec("test", "http://localhost:8080", "1", "identity", "credential",
-               SDNAuthClient.class, SDNAuthAsyncClient.class);
+      return contextSpec("test", "http://localhost:8080", "1", "identity", "credential", SDNAuthClient.class,
+            SDNAuthAsyncClient.class);
    }
 
 }

@@ -24,14 +24,18 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.Payloads;
+import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code ParseFlavorListFromJsonResponseTest}
@@ -44,32 +48,39 @@ public class ParseFlavorListFromJsonResponseTest {
    Injector i = Guice.createInjector(new ParserModule());
 
    public void testApplyInputStream() {
-      InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_flavors.json");
+      InputStream is = getClass().getResourceAsStream(
+            "/cloudservers/test_list_flavors.json");
 
-      List<Flavor> expects = ImmutableList.of(new Flavor(1, "256 MB Server"), new Flavor(2,
-               "512 MB Server"));
+      List<Flavor> expects = ImmutableList.of(new Flavor(1, "256 MB Server"),
+            new Flavor(2, "512 MB Server"));
 
-      ParseFlavorListFromJsonResponse parser = new ParseFlavorListFromJsonResponse(i
-               .getInstance(Gson.class));
-      assertEquals(parser.apply(is), expects);
+      UnwrapOnlyJsonValue<List<Flavor>> parser = i.getInstance(Key
+            .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Flavor>>>() {
+            }));
+      List<Flavor> response = parser.apply(new HttpResponse(200, "ok", Payloads
+            .newInputStreamPayload(is)));
+      assertEquals(response, expects);
    }
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_flavors_detail.json");
+      InputStream is = getClass().getResourceAsStream(
+            "/cloudservers/test_list_flavors_detail.json");
 
-      ParseFlavorListFromJsonResponse parser = new ParseFlavorListFromJsonResponse(i
-               .getInstance(Gson.class));
-      List<Flavor> response = parser.apply(is);
+      UnwrapOnlyJsonValue<List<Flavor>> parser = i.getInstance(Key
+            .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Flavor>>>() {
+            }));
+      List<Flavor> response = parser.apply(new HttpResponse(200, "ok", Payloads
+            .newInputStreamPayload(is)));
       assertEquals(response.get(0).getId(), 1);
       assertEquals(response.get(0).getName(), "256 MB Server");
       assertEquals(response.get(0).getDisk(), new Integer(10));
       assertEquals(response.get(0).getRam(), new Integer(256));
-     
+
       assertEquals(response.get(1).getId(), 2);
       assertEquals(response.get(1).getName(), "512 MB Server");
       assertEquals(response.get(1).getDisk(), new Integer(20));
       assertEquals(response.get(1).getRam(), new Integer(512));
-     
+
    }
 
 }

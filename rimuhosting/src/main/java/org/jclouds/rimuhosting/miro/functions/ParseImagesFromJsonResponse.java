@@ -18,56 +18,43 @@
  */
 package org.jclouds.rimuhosting.miro.functions;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.SortedSet;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.rimuhosting.miro.domain.Image;
 import org.jclouds.rimuhosting.miro.domain.internal.RimuHostingResponse;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Ivan Meredith
+ * @author Adrian Cole
  */
 @Singleton
-public class ParseImagesFromJsonResponse extends ParseJson<SortedSet<Image>> {
+public class ParseImagesFromJsonResponse implements
+      Function<HttpResponse, SortedSet<Image>> {
+
+   private final ParseJson<Map<String, DistroResponse>> json;
 
    @Inject
-   public ParseImagesFromJsonResponse(Gson gson) {
-      super(gson);
+   ParseImagesFromJsonResponse(ParseJson<Map<String, DistroResponse>> json) {
+      this.json = json;
+   }
+
+   @Override
+   public SortedSet<Image> apply(HttpResponse arg0) {
+      return Iterables.get(json.apply(arg0).values(), 0).distro_infos;
    }
 
    private static class DistroResponse extends RimuHostingResponse {
       private SortedSet<Image> distro_infos;
 
-      public SortedSet<Image> getDistroInfos() {
-         return distro_infos;
-      }
-
-      @SuppressWarnings("unused")
-      public void setDistroInfos(SortedSet<Image> distro_infos) {
-         this.distro_infos = distro_infos;
-      }
    }
 
-   public SortedSet<Image> apply(InputStream stream) {
-      Type setType = new TypeToken<Map<String, DistroResponse>>() {
-      }.getType();
-      try {
-         Map<String, DistroResponse> t = gson.fromJson(new InputStreamReader(stream, "UTF-8"),
-                  setType);
-         return t.values().iterator().next().getDistroInfos();
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
-      }
-   }
 }
