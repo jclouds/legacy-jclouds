@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.terremark.xml;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -34,12 +34,12 @@ import com.google.common.collect.Sets;
 /**
  * @author Adrian Cole
  */
-public class PublicIpAddressesHandler extends HandlerWithResult<SortedSet<PublicIpAddress>> {
+public class PublicIpAddressesHandler extends HandlerWithResult<Set<PublicIpAddress>> {
 
    @Resource
    protected Logger logger = Logger.NULL;
    private final PublicIpAddressHandler handler;
-   SortedSet<PublicIpAddress> result = Sets.newTreeSet();
+   Set<PublicIpAddress> result = Sets.newLinkedHashSet();
 
    @Inject
    public PublicIpAddressesHandler(PublicIpAddressHandler handler) {
@@ -47,7 +47,7 @@ public class PublicIpAddressesHandler extends HandlerWithResult<SortedSet<Public
    }
 
    @Override
-   public SortedSet<PublicIpAddress> getResult() {
+   public Set<PublicIpAddress> getResult() {
       return result;
    }
 

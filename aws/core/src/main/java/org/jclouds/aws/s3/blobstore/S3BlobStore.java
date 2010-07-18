@@ -21,7 +21,6 @@ package org.jclouds.aws.s3.blobstore;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
-import java.util.SortedSet;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -101,9 +100,9 @@ public class S3BlobStore extends BaseBlobStore {
     */
    @Override
    public PageSet<? extends StorageMetadata> list() {
-      return new Function<SortedSet<BucketMetadata>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
+      return new Function<Set<BucketMetadata>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
          public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(
-                  SortedSet<BucketMetadata> from) {
+                  Set<BucketMetadata> from) {
             return new PageSetImpl<StorageMetadata>(Iterables.transform(from, bucket2ResourceMd),
                      null);
          }

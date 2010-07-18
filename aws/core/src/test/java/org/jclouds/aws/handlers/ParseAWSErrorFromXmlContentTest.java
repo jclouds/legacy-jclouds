@@ -39,6 +39,12 @@ public class ParseAWSErrorFromXmlContentTest {
    }
 
    @Test
+   public void test400WithUnknownSetsResourceNotFoundException() {
+      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
+               "<Error><Code>InvalidPlacementGroup.Unknown</Code></Error>", ResourceNotFoundException.class);
+   }
+
+   @Test
    public void test400WithIncorrectStateSetsIllegalStateException() {
       assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
                "<Error><Code>IncorrectState</Code></Error>", IllegalStateException.class);
@@ -50,24 +56,23 @@ public class ParseAWSErrorFromXmlContentTest {
                "<Error><Code>AuthFailure</Code></Error>", AuthorizationException.class);
    }
 
-   private void assertCodeMakes(String method, URI uri, int statusCode, String message,
-            String content, Class<? extends Exception> expected) {
+   private void assertCodeMakes(String method, URI uri, int statusCode, String message, String content,
+            Class<? extends Exception> expected) {
 
-      ParseAWSErrorFromXmlContent function = Guice.createInjector(new ParserModule(),
-               new AbstractModule() {
+      ParseAWSErrorFromXmlContent function = Guice.createInjector(new ParserModule(), new AbstractModule() {
 
-                  @Override
-                  protected void configure() {
-                     bind(RequestSigner.class).toInstance(createMock(RequestSigner.class));
-                     bindConstant().annotatedWith(Names.named(PROPERTY_HEADER_TAG)).to("amz");
-                  }
+         @Override
+         protected void configure() {
+            bind(RequestSigner.class).toInstance(createMock(RequestSigner.class));
+            bindConstant().annotatedWith(Names.named(PROPERTY_HEADER_TAG)).to("amz");
+         }
 
-               }).getInstance(ParseAWSErrorFromXmlContent.class);
+      }).getInstance(ParseAWSErrorFromXmlContent.class);
 
       HttpCommand command = createMock(HttpCommand.class);
       HttpRequest request = new HttpRequest(method, uri);
-      HttpResponse response = new HttpResponse(statusCode, message, Payloads
-               .newInputStreamPayload(Utils.toInputStream(content)));
+      HttpResponse response = new HttpResponse(statusCode, message, Payloads.newInputStreamPayload(Utils
+               .toInputStream(content)));
 
       expect(command.getRequest()).andReturn(request).atLeastOnce();
       command.setException(classEq(expected));

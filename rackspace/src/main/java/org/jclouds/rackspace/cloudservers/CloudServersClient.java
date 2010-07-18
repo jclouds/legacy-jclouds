@@ -18,7 +18,7 @@
  */
 package org.jclouds.rackspace.cloudservers;
 
-import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -64,7 +64,7 @@ public interface CloudServersClient {
     * in order to retrieve all details, pass the option {@link ListOptions#withDetails()
     * withDetails()}
     */
-   List<Server> listServers(ListOptions... options);
+   Set<Server> listServers(ListOptions... options);
 
    /**
     * 
@@ -231,7 +231,7 @@ public interface CloudServersClient {
     * in order to retrieve all details, pass the option {@link ListOptions#withDetails()
     * withDetails()}
     */
-   List<Flavor> listFlavors(ListOptions... options);
+   Set<Flavor> listFlavors(ListOptions... options);
 
    /**
     * 
@@ -249,7 +249,7 @@ public interface CloudServersClient {
     * in order to retrieve all details, pass the option {@link ListOptions#withDetails()
     * withDetails()}
     */
-   List<Image> listImages(ListOptions... options);
+   Set<Image> listImages(ListOptions... options);
 
    /**
     * 
@@ -302,7 +302,7 @@ public interface CloudServersClient {
     * in order to retrieve all details, pass the option {@link ListOptions#withDetails()
     * withDetails()}
     */
-   List<SharedIpGroup> listSharedIpGroups(ListOptions... options);
+   Set<SharedIpGroup> listSharedIpGroups(ListOptions... options);
 
    /**
     * 
@@ -358,25 +358,22 @@ public interface CloudServersClient {
    /**
     * List all server addresses
     * 
-    * @throws ResourceNotFoundException
-    *            , if the server doesn't exist
+    * returns empty set if the server doesn't exist
     */
    Addresses getAddresses(int serverId);
 
    /**
     * List all public server addresses
     * 
-    * @throws ResourceNotFoundException
-    *            , if the server doesn't exist
+    * returns empty set if the server doesn't exist
     */
-   List<String> listPublicAddresses(int serverId);
+   Set<String> listPublicAddresses(int serverId);
 
    /**
     * List all private server addresses
     * 
-    * @throws ResourceNotFoundException
-    *            , if the server doesn't exist
+    * returns empty set if the server doesn't exist
     */
-   List<String> listPrivateAddresses(int serverId);
+   Set<String> listPrivateAddresses(int serverId);
 
 }

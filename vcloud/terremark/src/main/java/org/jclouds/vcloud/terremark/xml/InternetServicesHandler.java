@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.terremark.xml;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -34,12 +34,12 @@ import com.google.common.collect.Sets;
 /**
  * @author Adrian Cole
  */
-public class InternetServicesHandler extends HandlerWithResult<SortedSet<InternetService>> {
+public class InternetServicesHandler extends HandlerWithResult<Set<InternetService>> {
 
    @Resource
    protected Logger logger = Logger.NULL;
    private final InternetServiceHandler handler;
-   SortedSet<InternetService> result = Sets.newTreeSet();
+   Set<InternetService> result = Sets.newLinkedHashSet();
 
    @Inject
    public InternetServicesHandler(InternetServiceHandler handler) {
@@ -47,7 +47,7 @@ public class InternetServicesHandler extends HandlerWithResult<SortedSet<Interne
    }
 
    @Override
-   public SortedSet<InternetService> getResult() {
+   public Set<InternetService> getResult() {
       return result;
    }
 

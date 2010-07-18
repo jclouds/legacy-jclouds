@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.terremark.xml;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
@@ -35,20 +35,20 @@ import com.google.common.collect.Sets;
 /**
  * @author Adrian Cole
  */
-public class IpAddressesHandler extends ParseSax.HandlerWithResult<SortedSet<IpAddress>> {
+public class IpAddressesHandler extends ParseSax.HandlerWithResult<Set<IpAddress>> {
    protected StringBuilder currentText = new StringBuilder();
 
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private SortedSet<IpAddress> addresses = Sets.newTreeSet();
+   private Set<IpAddress> addresses = Sets.newLinkedHashSet();
    private String address;
    private Status status;
    @Nullable
    private String server;
    private boolean skip;
 
-   public SortedSet<IpAddress> getResult() {
+   public Set<IpAddress> getResult() {
       return addresses;
    }
 

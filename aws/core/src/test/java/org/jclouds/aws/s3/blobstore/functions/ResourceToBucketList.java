@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.s3.blobstore.functions;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -67,7 +67,7 @@ public class ResourceToBucketList implements
 
       });
 
-      SortedSet<String> commonPrefixes = Sets.newTreeSet(Iterables.transform(Iterables.filter(list,
+      Set<String> commonPrefixes = Sets.newLinkedHashSet(Iterables.transform(Iterables.filter(list,
                new Predicate<StorageMetadata>() {
 
                   public boolean apply(StorageMetadata input) {

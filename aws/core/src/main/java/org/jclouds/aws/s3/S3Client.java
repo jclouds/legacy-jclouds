@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.s3;
 
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -250,7 +250,7 @@ public interface S3Client {
     *      />
     * 
     */
-   SortedSet<BucketMetadata> listOwnedBuckets();
+   Set<BucketMetadata> listOwnedBuckets();
 
    /**
     * Copies one object to another bucket, retaining UserMetadata from the source. The destination

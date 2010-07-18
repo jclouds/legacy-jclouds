@@ -31,7 +31,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.Date;
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -56,6 +56,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -87,8 +88,8 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
-   public void testPrivateAclIsDefaultForBucket() throws InterruptedException, ExecutionException,
-            TimeoutException, IOException {
+   public void testPrivateAclIsDefaultForBucket() throws InterruptedException, ExecutionException, TimeoutException,
+            IOException {
       String bucketName = getContainerName();
       try {
          AccessControlList acl = getApi().getBucketACL(bucketName);
@@ -102,8 +103,8 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
 
    }
 
-   public void testUpdateBucketACL() throws InterruptedException, ExecutionException,
-            TimeoutException, IOException, Exception {
+   public void testUpdateBucketACL() throws InterruptedException, ExecutionException, TimeoutException, IOException,
+            Exception {
       String bucketName = getContainerName();
       try {
          // Confirm the bucket is private
@@ -134,24 +135,20 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
       assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
       assertTrue(acl.hasPermission(ownerId, Permission.WRITE_ACP), acl.toString());
       // EmailAddressGrantee is replaced by a CanonicalUserGrantee, so we cannot test by email addr
-      assertTrue(acl.hasPermission(StubS3AsyncClient.TEST_ACL_ID, Permission.READ_ACP), acl
-               .toString());
+      assertTrue(acl.hasPermission(StubS3AsyncClient.TEST_ACL_ID, Permission.READ_ACP), acl.toString());
    }
 
    private void addGrantsToACL(AccessControlList acl) {
       String ownerId = acl.getOwner().getId();
       acl.addPermission(GroupGranteeURI.ALL_USERS, Permission.READ);
-      acl.addPermission(new EmailAddressGrantee(StubS3AsyncClient.TEST_ACL_EMAIL),
-               Permission.READ_ACP);
+      acl.addPermission(new EmailAddressGrantee(StubS3AsyncClient.TEST_ACL_EMAIL), Permission.READ_ACP);
       acl.addPermission(new CanonicalUserGrantee(ownerId), Permission.WRITE_ACP);
    }
 
    public void testPublicReadAccessPolicy() throws Exception {
       String bucketName = getScratchContainerName();
       try {
-         getApi()
-                  .putBucketInRegion(null, bucketName,
-                           withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
+         getApi().putBucketInRegion(null, bucketName, withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
          AccessControlList acl = getApi().getBucketACL(bucketName);
          assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
          // TODO: I believe that the following should work based on the above acl assertion passing.
@@ -180,8 +177,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
       String bucketName = getContainerName();
       try {
          String location = getApi().getBucketLocation(bucketName);
-         assert location.equals(Region.US_STANDARD) : "bucket: " + bucketName + " location: "
-                  + location;
+         assert location.equals(Region.US_STANDARD) : "bucket: " + bucketName + " location: " + location;
       } finally {
          returnContainer(bucketName);
       }
@@ -242,8 +238,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
                   }
                   // EmailAddressGrantee is replaced by a CanonicalUserGrantee, so we cannot test by
                   // email addr
-                  assertTrue(acl.hasPermission(StubS3AsyncClient.TEST_ACL_ID,
-                           Permission.FULL_CONTROL), acl.toString());
+                  assertTrue(acl.hasPermission(StubS3AsyncClient.TEST_ACL_ID, Permission.FULL_CONTROL), acl.toString());
                   assertEquals(logging.getTargetBucket(), newLogging.getTargetBucket());
                   assertEquals(logging.getTargetPrefix(), newLogging.getTargetPrefix());
                } catch (Exception e) {
@@ -281,14 +276,12 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
    public void testEu() throws Exception {
       final String bucketName = getScratchContainerName();
       try {
-         getApi().putBucketInRegion(Region.EU_WEST_1, bucketName + "eu",
-                  withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
+         getApi().putBucketInRegion(Region.EU_WEST_1, bucketName + "eu", withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
          assertConsistencyAware(new Runnable() {
             public void run() {
                try {
                   AccessControlList acl = getApi().getBucketACL(bucketName + "eu");
-                  assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl
-                           .toString());
+                  assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
                } catch (Exception e) {
                   Throwables.propagateIfPossible(e);
                }
@@ -316,8 +309,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
             public void run() {
                try {
                   AccessControlList acl = getApi().getBucketACL(bucketName + "cali");
-                  assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl
-                           .toString());
+                  assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
                } catch (Exception e) {
                   Throwables.propagateIfPossible(e);
                }
@@ -336,8 +328,8 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
    void bucketExists() throws Exception {
       String bucketName = getContainerName();
       try {
-         SortedSet<BucketMetadata> list = getApi().listOwnedBuckets();
-         BucketMetadata firstBucket = list.first();
+         Set<BucketMetadata> list = getApi().listOwnedBuckets();
+         BucketMetadata firstBucket = Iterables.get(list, 0);
          BucketMetadata toMatch = new BucketMetadata(bucketName, new Date(), firstBucket.getOwner());
          assert list.contains(toMatch);
       } finally {
@@ -354,8 +346,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
-   public void testListBucketMarker() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testListBucketMarker() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = getContainerName();
       try {
          addAlphabetUnderRoot(bucketName);
@@ -368,8 +359,8 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
-   public void testListBucketDelimiter() throws InterruptedException, ExecutionException,
-            TimeoutException, UnsupportedEncodingException {
+   public void testListBucketDelimiter() throws InterruptedException, ExecutionException, TimeoutException,
+            UnsupportedEncodingException {
       String bucketName = getContainerName();
       try {
          String prefix = "apps";
@@ -386,8 +377,8 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
 
    }
 
-   public void testListBucketPrefix() throws InterruptedException, ExecutionException,
-            TimeoutException, UnsupportedEncodingException {
+   public void testListBucketPrefix() throws InterruptedException, ExecutionException, TimeoutException,
+            UnsupportedEncodingException {
       String bucketName = getContainerName();
       try {
          String prefix = "apps";
@@ -404,8 +395,8 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
 
    }
 
-   public void testListBucketMaxResults() throws InterruptedException, ExecutionException,
-            TimeoutException, UnsupportedEncodingException {
+   public void testListBucketMaxResults() throws InterruptedException, ExecutionException, TimeoutException,
+            UnsupportedEncodingException {
       String bucketName = getContainerName();
       try {
          addAlphabetUnderRoot(bucketName);

@@ -30,9 +30,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.security.SecureRandom;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.http.HttpResponseException;
@@ -86,10 +86,9 @@ public class CloudServersClientLiveTest {
       String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
       String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
-      Injector injector = new RestContextFactory().createContextBuilder("cloudservers", identity,
-               credential,
-               ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()),
-               new Properties()).buildInjector();
+      Injector injector = new RestContextFactory().createContextBuilder("cloudservers", identity, credential,
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), new Properties())
+               .buildInjector();
 
       client = injector.getInstance(CloudServersClient.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
@@ -100,7 +99,7 @@ public class CloudServersClientLiveTest {
 
    public void testListServers() throws Exception {
 
-      List<Server> response = client.listServers();
+      Set<Server> response = client.listServers();
       assert null != response;
       long initialContainerCount = response.size();
       assertTrue(initialContainerCount >= 0);
@@ -108,14 +107,14 @@ public class CloudServersClientLiveTest {
    }
 
    public void testListServersDetail() throws Exception {
-      List<Server> response = client.listServers(withDetails());
+      Set<Server> response = client.listServers(withDetails());
       assert null != response;
       long initialContainerCount = response.size();
       assertTrue(initialContainerCount >= 0);
    }
 
    public void testListImages() throws Exception {
-      List<Image> response = client.listImages();
+      Set<Image> response = client.listImages();
       assert null != response;
       long imageCount = response.size();
       assertTrue(imageCount >= 1);
@@ -127,7 +126,7 @@ public class CloudServersClientLiveTest {
    }
 
    public void testListImagesDetail() throws Exception {
-      List<Image> response = client.listImages(withDetails());
+      Set<Image> response = client.listImages(withDetails());
       assert null != response;
       long imageCount = response.size();
       assertTrue(imageCount >= 0);
@@ -139,7 +138,7 @@ public class CloudServersClientLiveTest {
    }
 
    public void testGetImagesDetail() throws Exception {
-      List<Image> response = client.listImages(withDetails());
+      Set<Image> response = client.listImages(withDetails());
       assert null != response;
       long imageCount = response.size();
       assertTrue(imageCount >= 0);
@@ -165,7 +164,7 @@ public class CloudServersClientLiveTest {
    }
 
    public void testGetServersDetail() throws Exception {
-      List<Server> response = client.listServers(withDetails());
+      Set<Server> response = client.listServers(withDetails());
       assert null != response;
       long serverCount = response.size();
       assertTrue(serverCount >= 0);
@@ -176,7 +175,7 @@ public class CloudServersClientLiveTest {
    }
 
    public void testListFlavors() throws Exception {
-      List<Flavor> response = client.listFlavors();
+      Set<Flavor> response = client.listFlavors();
       assert null != response;
       long flavorCount = response.size();
       assertTrue(flavorCount >= 1);
@@ -188,7 +187,7 @@ public class CloudServersClientLiveTest {
    }
 
    public void testListFlavorsDetail() throws Exception {
-      List<Flavor> response = client.listFlavors(withDetails());
+      Set<Flavor> response = client.listFlavors(withDetails());
       assert null != response;
       long flavorCount = response.size();
       assertTrue(flavorCount >= 0);
@@ -201,7 +200,7 @@ public class CloudServersClientLiveTest {
    }
 
    public void testGetFlavorsDetail() throws Exception {
-      List<Flavor> response = client.listFlavors(withDetails());
+      Set<Flavor> response = client.listFlavors(withDetails());
       assert null != response;
       long flavorCount = response.size();
       assertTrue(flavorCount >= 0);
@@ -217,7 +216,7 @@ public class CloudServersClientLiveTest {
    }
 
    public void testListSharedIpGroups() throws Exception {
-      List<SharedIpGroup> response = client.listSharedIpGroups();
+      Set<SharedIpGroup> response = client.listSharedIpGroups();
       assert null != response;
       long sharedIpGroupCount = response.size();
       assertTrue(sharedIpGroupCount >= 0);
@@ -229,7 +228,7 @@ public class CloudServersClientLiveTest {
    }
 
    public void testListSharedIpGroupsDetail() throws Exception {
-      List<SharedIpGroup> response = client.listSharedIpGroups(withDetails());
+      Set<SharedIpGroup> response = client.listSharedIpGroups(withDetails());
       assert null != response;
       long sharedIpGroupCount = response.size();
       assertTrue(sharedIpGroupCount >= 0);
@@ -241,7 +240,7 @@ public class CloudServersClientLiveTest {
    }
 
    public void testGetSharedIpGroupsDetail() throws Exception {
-      List<SharedIpGroup> response = client.listSharedIpGroups(withDetails());
+      Set<SharedIpGroup> response = client.listSharedIpGroups(withDetails());
       assert null != response;
       long sharedIpGroupCount = response.size();
       assertTrue(sharedIpGroupCount >= 0);
@@ -260,8 +259,7 @@ public class CloudServersClientLiveTest {
    public void testCreateSharedIpGroup() throws Exception {
       SharedIpGroup sharedIpGroup = null;
       while (sharedIpGroup == null) {
-         String sharedIpGroupName = serverPrefix + "createSharedIpGroup"
-                  + new SecureRandom().nextInt();
+         String sharedIpGroupName = serverPrefix + "createSharedIpGroup" + new SecureRandom().nextInt();
          try {
             sharedIpGroup = client.createSharedIpGroup(sharedIpGroupName, withServer(serverId));
          } catch (UndeclaredThrowableException e) {
@@ -296,8 +294,8 @@ public class CloudServersClientLiveTest {
       while (server == null) {
          String serverName = serverPrefix + "createserver" + new SecureRandom().nextInt();
          try {
-            server = client.createServer(serverName, imageId, flavorId, withFile(
-                     "/etc/jclouds.txt", "rackspace".getBytes()).withMetadata(metadata));
+            server = client.createServer(serverName, imageId, flavorId, withFile("/etc/jclouds.txt",
+                     "rackspace".getBytes()).withMetadata(metadata));
          } catch (UndeclaredThrowableException e) {
             HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
             if (htpe.getResponse().getStatusCode() == 400)
@@ -355,8 +353,7 @@ public class CloudServersClientLiveTest {
       assertEquals(server.getAddresses().getPublicAddresses().size(), 1);
       assertEquals(client.listPublicAddresses(serverId), server.getAddresses().getPublicAddresses());
       assertEquals(server.getAddresses().getPrivateAddresses().size(), 1);
-      assertEquals(client.listPrivateAddresses(serverId), server.getAddresses()
-               .getPrivateAddresses());
+      assertEquals(client.listPrivateAddresses(serverId), server.getAddresses().getPrivateAddresses());
 
       // check metadata
       assertEquals(server.getMetadata(), metadata);
@@ -380,8 +377,7 @@ public class CloudServersClientLiveTest {
    }
 
    private void doCheckPass(Server newDetails, String pass) throws IOException {
-      IPSocket socket = new IPSocket(Iterables.get(newDetails.getAddresses().getPublicAddresses(),
-               0), 22);
+      IPSocket socket = new IPSocket(Iterables.get(newDetails.getAddresses().getPublicAddresses(), 0), 22);
       socketTester.apply(socket);
 
       SshClient client = sshFactory.create(socket, "root", pass);
@@ -397,8 +393,7 @@ public class CloudServersClientLiveTest {
    }
 
    private ExecResponse exec(Server details, String pass, String command) throws IOException {
-      IPSocket socket = new IPSocket(Iterables.get(details.getAddresses().getPublicAddresses(), 0),
-               22);
+      IPSocket socket = new IPSocket(Iterables.get(details.getAddresses().getPublicAddresses(), 0), 22);
       socketTester.apply(socket);
       SshClient client = sshFactory.create(socket, "root", pass);
       try {
@@ -435,9 +430,9 @@ public class CloudServersClientLiveTest {
       while (server == null) {
          String serverName = serverPrefix + "createserver" + new SecureRandom().nextInt();
          try {
-            server = client.createServer(serverName, imageId, flavorId, withFile(
-                     "/etc/jclouds.txt", "rackspace".getBytes()).withMetadata(metadata)
-                     .withSharedIpGroup(sharedIpGroupId).withSharedIp(ip));
+            server = client
+                     .createServer(serverName, imageId, flavorId, withFile("/etc/jclouds.txt", "rackspace".getBytes())
+                              .withMetadata(metadata).withSharedIpGroup(sharedIpGroupId).withSharedIp(ip));
          } catch (UndeclaredThrowableException e) {
             HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
             if (htpe.getResponse().getStatusCode() == 400)
@@ -450,16 +445,15 @@ public class CloudServersClientLiveTest {
       adminPass2 = server.getAdminPass();
       blockUntilServerActive(serverId2);
       assertIpConfigured(server, adminPass2);
-      assert server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses()
-               + " doesn't contain " + ip;
+      assert server.getAddresses().getPublicAddresses().contains(ip) : server.getAddresses() + " doesn't contain " + ip;
       assertEquals(server.getSharedIpGroupId(), new Integer(sharedIpGroupId));
    }
 
    private void assertIpConfigured(Server server, String password) {
       try {
          ExecResponse response = exec(server, password, "ifconfig -a");
-         assert response.getOutput().indexOf(ip) > 0 : String.format(
-                  "server %s didn't get ip %s%n%s", server, ip, response);
+         assert response.getOutput().indexOf(ip) > 0 : String.format("server %s didn't get ip %s%n%s", server, ip,
+                  response);
       } catch (Exception e) {
          e.printStackTrace();
       } catch (AssertionError e) {
@@ -479,8 +473,8 @@ public class CloudServersClientLiveTest {
    private void assertIpNotConfigured(Server server, String password) {
       try {
          ExecResponse response = exec(server, password, "ifconfig -a");
-         assert response.getOutput().indexOf(ip) == -1 : String.format(
-                  "server %s still has get ip %s%n%s", server, ip, response);
+         assert response.getOutput().indexOf(ip) == -1 : String.format("server %s still has get ip %s%n%s", server, ip,
+                  response);
       } catch (Exception e) {
          e.printStackTrace();
       } catch (AssertionError e) {
@@ -568,8 +562,8 @@ public class CloudServersClientLiveTest {
       assertEquals(new Integer(2), client.getServer(serverId2).getFlavorId());
    }
 
-   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = { "testRebootSoft",
-            "testRevertResize", "testConfirmResize" })
+   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = { "testRebootSoft", "testRevertResize",
+            "testConfirmResize" })
    void deleteServer2() {
       if (serverId2 > 0) {
          client.deleteServer(serverId2);

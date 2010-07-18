@@ -62,15 +62,15 @@ public class S3RestClientModule extends AWSRestClientModule<S3Client, S3AsyncCli
    }
 
    @Provides
-   @TimeStamp
-   protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
-      return cache.get();
-   }
-
-   @Provides
    @Singleton
    protected RequestSigner provideRequestSigner(RequestAuthorizeSignature in) {
       return in;
+   }
+
+   @Provides
+   @TimeStamp
+   protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
+      return cache.get();
    }
 
    /**

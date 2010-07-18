@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.terremark.xml;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -34,12 +34,12 @@ import com.google.common.collect.Sets;
 /**
  * @author Adrian Cole
  */
-public class NodesHandler extends HandlerWithResult<SortedSet<Node>> {
+public class NodesHandler extends HandlerWithResult<Set<Node>> {
 
    @Resource
    protected Logger logger = Logger.NULL;
    private final NodeHandler handler;
-   SortedSet<Node> result = Sets.newTreeSet();
+   Set<Node> result = Sets.newLinkedHashSet();
 
    @Inject
    public NodesHandler(NodeHandler handler) {
@@ -47,7 +47,7 @@ public class NodesHandler extends HandlerWithResult<SortedSet<Node>> {
    }
 
    @Override
-   public SortedSet<Node> getResult() {
+   public Set<Node> getResult() {
       return result;
    }
 

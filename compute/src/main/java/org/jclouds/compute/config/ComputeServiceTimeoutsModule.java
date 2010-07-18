@@ -47,38 +47,31 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
    @Provides
    @Singleton
    @Named("NODE_RUNNING")
-   protected Predicate<NodeMetadata> nodeRunning(NodeRunning stateRunning,
-         Timeouts timeouts) {
-      return timeouts.nodeRunning == 0 ? stateRunning
-            : new RetryablePredicate<NodeMetadata>(stateRunning,
-                  timeouts.nodeRunning);
+   protected Predicate<NodeMetadata> nodeRunning(NodeRunning stateRunning, Timeouts timeouts) {
+      return timeouts.nodeRunning == 0 ? stateRunning : new RetryablePredicate<NodeMetadata>(stateRunning,
+               timeouts.nodeRunning);
    }
 
    @Provides
    @Singleton
    @Named("NODE_TERMINATED")
-   protected Predicate<NodeMetadata> serverTerminated(
-         NodeTerminated stateTerminated, Timeouts timeouts) {
-      return timeouts.nodeTerminated == 0 ? stateTerminated
-            : new RetryablePredicate<NodeMetadata>(stateTerminated,
-                  timeouts.nodeTerminated);
+   protected Predicate<NodeMetadata> serverTerminated(NodeTerminated stateTerminated, Timeouts timeouts) {
+      return timeouts.nodeTerminated == 0 ? stateTerminated : new RetryablePredicate<NodeMetadata>(stateTerminated,
+               timeouts.nodeTerminated);
    }
 
    @Provides
    @Singleton
    @Named("SCRIPT_COMPLETE")
-   protected Predicate<CommandUsingClient> runScriptRunning(
-         ScriptStatusReturnsZero stateRunning, Timeouts timeouts) {
-      return timeouts.scriptComplete == 0 ? not(stateRunning)
-            : new RetryablePredicate<CommandUsingClient>(not(stateRunning),
-                  timeouts.scriptComplete);
+   protected Predicate<CommandUsingClient> runScriptRunning(ScriptStatusReturnsZero stateRunning, Timeouts timeouts) {
+      return timeouts.scriptComplete == 0 ? not(stateRunning) : new RetryablePredicate<CommandUsingClient>(
+               not(stateRunning), timeouts.scriptComplete);
    }
 
    @Provides
    @Singleton
    protected Predicate<IPSocket> socketTester(SocketOpen open, Timeouts timeouts) {
-      return timeouts.portOpen == 0 ? open : new RetryablePredicate<IPSocket>(
-            open, timeouts.portOpen);
+      return timeouts.portOpen == 0 ? open : new RetryablePredicate<IPSocket>(open, timeouts.portOpen);
    }
 
    @Override

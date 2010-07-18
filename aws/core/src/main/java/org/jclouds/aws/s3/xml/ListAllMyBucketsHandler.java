@@ -19,7 +19,7 @@
 package org.jclouds.aws.s3.xml;
 
 import java.util.Date;
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -33,16 +33,16 @@ import com.google.common.collect.Sets;
 /**
  * Parses the following XML document:
  * <p/>
- * SortedSetAllMyBucketsResult xmlns="http://doc.s3.amazonaws.com/2006-03-01"
+ * SetAllMyBucketsResult xmlns="http://doc.s3.amazonaws.com/2006-03-01"
  * 
  * @see <a
  *      href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTServiceGET.html"
  *      />
  * @author Adrian Cole
  */
-public class ListAllMyBucketsHandler extends ParseSax.HandlerWithResult<SortedSet<BucketMetadata>> {
+public class ListAllMyBucketsHandler extends ParseSax.HandlerWithResult<Set<BucketMetadata>> {
 
-   private SortedSet<BucketMetadata> buckets = Sets.newTreeSet();
+   private Set<BucketMetadata> buckets = Sets.newLinkedHashSet();
    private CanonicalUser currentOwner;
    private StringBuilder currentText = new StringBuilder();
 
@@ -55,7 +55,7 @@ public class ListAllMyBucketsHandler extends ParseSax.HandlerWithResult<SortedSe
       this.dateParser = dateParser;
    }
 
-   public SortedSet<BucketMetadata> getResult() {
+   public Set<BucketMetadata> getResult() {
       return buckets;
    }
 

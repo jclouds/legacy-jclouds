@@ -41,7 +41,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -87,11 +87,9 @@ public class VAppHandlerTest extends BaseHandlerTest {
 
       assertEquals(result.getSize().longValue(), 4l);
 
-      assertEquals(result.getLocation(), URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/13775"));
-      assertEquals(result.getVDC(), new NamedResourceImpl("32", null,
-               "application/vnd.vmware.vcloud.vdc+xml", URI
-                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
+      assertEquals(result.getLocation(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/13775"));
+      assertEquals(result.getVDC(), new NamedResourceImpl("32", null, "application/vnd.vmware.vcloud.vdc+xml", URI
+               .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
 
    }
 
@@ -107,44 +105,33 @@ public class VAppHandlerTest extends BaseHandlerTest {
       assertEquals(result.getSize().longValue(), 10485760);
       assertEquals(result.getOperatingSystemDescription(), "Red Hat Enterprise Linux 5 (64-bit)");
 
-      assertEquals(result.getLocation(), URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/16238"));
+      assertEquals(result.getLocation(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/16238"));
       assertEquals(result.getVDC(), new NamedResourceImpl("32", null, VCloudMediaType.VDC_XML, URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
 
-      assertEquals(result.getSystem(), new VirtualSystem(0, "Virtual Hardware Family", "centos-53",
-               "vmx-07"));
-      assertEquals(result.getNetworkToAddresses().get("Internal"), ImmutableList
-               .<String> of("10.114.34.132"));
+      assertEquals(result.getSystem(), new VirtualSystem(0, "Virtual Hardware Family", "centos-53", "vmx-07"));
+      assertEquals(result.getNetworkToAddresses().get("Internal"), ImmutableList.<String> of("10.114.34.132"));
 
-      ResourceAllocation cpu = new ResourceAllocation(1, "1 virtual CPU(s)",
-               "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null,
-               null, 1, "hertz * 10^6");
+      ResourceAllocation cpu = new ResourceAllocation(1, "1 virtual CPU(s)", "Number of Virtual CPUs",
+               ResourceType.PROCESSOR, null, null, null, null, null, null, 1, "hertz * 10^6");
 
-      ResourceAllocation controller = new ResourceAllocation(3, "SCSI Controller 0",
-               "SCSI Controller", ResourceType.SCSI_CONTROLLER, "lsilogic", null, 0, null, null,
-               null, 1, null);
-      ResourceAllocation memory = new ResourceAllocation(2, "512MB of memory", "Memory Size",
-               ResourceType.MEMORY, null, null, null, null, null, null, 512, "byte * 2^20");
-      ResourceAllocation disk = new ResourceAllocation(9, "Hard Disk 1", null,
-               ResourceType.DISK_DRIVE, null, "10485760", null, 0, 3, null, 10485760, "byte * 2^20");
-      assertEquals(result.getResourceAllocations(), ImmutableSortedSet.of(cpu, controller, memory,
-               disk));
-      assertEquals(Iterables.getOnlyElement(
-               result.getResourceAllocationByType().get(ResourceType.PROCESSOR))
+      ResourceAllocation controller = new ResourceAllocation(3, "SCSI Controller 0", "SCSI Controller",
+               ResourceType.SCSI_CONTROLLER, "lsilogic", null, 0, null, null, null, 1, null);
+      ResourceAllocation memory = new ResourceAllocation(2, "512MB of memory", "Memory Size", ResourceType.MEMORY,
+               null, null, null, null, null, null, 512, "byte * 2^20");
+      ResourceAllocation disk = new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE, null,
+               "10485760", null, 0, 3, null, 10485760, "byte * 2^20");
+      assertEquals(result.getResourceAllocations(), ImmutableSet.of(cpu, memory, controller, disk));
+      assertEquals(Iterables.getOnlyElement(result.getResourceAllocationByType().get(ResourceType.PROCESSOR))
                .getVirtualQuantity(), 1);
-      assertEquals(Iterables.getOnlyElement(
-               result.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER))
+      assertEquals(Iterables.getOnlyElement(result.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER))
                .getVirtualQuantity(), 1);
-      assertEquals(Iterables.getOnlyElement(
-               result.getResourceAllocationByType().get(ResourceType.MEMORY)).getVirtualQuantity(),
-               512);
-      assertEquals(Iterables.getOnlyElement(
-               result.getResourceAllocationByType().get(ResourceType.DISK_DRIVE))
+      assertEquals(Iterables.getOnlyElement(result.getResourceAllocationByType().get(ResourceType.MEMORY))
+               .getVirtualQuantity(), 512);
+      assertEquals(Iterables.getOnlyElement(result.getResourceAllocationByType().get(ResourceType.DISK_DRIVE))
                .getVirtualQuantity(), 10485760);
       assertEquals(result.getSize().longValue(), Iterables.getOnlyElement(
-               result.getResourceAllocationByType().get(ResourceType.DISK_DRIVE))
-               .getVirtualQuantity());
+               result.getResourceAllocationByType().get(ResourceType.DISK_DRIVE)).getVirtualQuantity());
    }
 
    public void testGetVApp2disks() throws UnknownHostException {
@@ -159,41 +146,32 @@ public class VAppHandlerTest extends BaseHandlerTest {
       assertEquals(vApp.getSize().longValue(), 30408704);
       assertEquals(vApp.getOperatingSystemDescription(), "Ubuntu Linux (32-bit)");
 
-      assertEquals(vApp.getLocation(), URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/15639"));
+      assertEquals(vApp.getLocation(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/15639"));
       assertEquals(vApp.getVDC(), new NamedResourceImpl("32", null, VCloudMediaType.VDC_XML, URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
 
-      assertEquals(vApp.getSystem(), new VirtualSystem(0, "Virtual Hardware Family", "eduardo",
-               "vmx-07"));
+      assertEquals(vApp.getSystem(), new VirtualSystem(0, "Virtual Hardware Family", "eduardo", "vmx-07"));
       assertEquals(vApp.getNetworkToAddresses().get("Internal"), ImmutableList.of("10.114.34.131"));
 
-      ResourceAllocation cpu = new ResourceAllocation(1, "2 virtual CPU(s)",
-               "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null,
-               null, 2, "hertz * 10^6");
+      ResourceAllocation cpu = new ResourceAllocation(1, "2 virtual CPU(s)", "Number of Virtual CPUs",
+               ResourceType.PROCESSOR, null, null, null, null, null, null, 2, "hertz * 10^6");
 
-      ResourceAllocation controller = new ResourceAllocation(3, "SCSI Controller 0",
-               "SCSI Controller", ResourceType.SCSI_CONTROLLER, "lsilogic", null, 0, null, null,
-               null, 1, null);
-      ResourceAllocation memory = new ResourceAllocation(2, "1024MB of memory", "Memory Size",
-               ResourceType.MEMORY, null, null, null, null, null, null, 1024, "byte * 2^20");
-      ResourceAllocation disk = new ResourceAllocation(9, "Hard Disk 1", null,
-               ResourceType.DISK_DRIVE, null, "4194304", null, 0, 3, null, 4194304, "byte * 2^20");
-      ResourceAllocation disk2 = new ResourceAllocation(9, "Hard Disk 2", null,
-               ResourceType.DISK_DRIVE, null, "26214400", null, 1, 3, null, 26214400, "byte * 2^20");
+      ResourceAllocation controller = new ResourceAllocation(3, "SCSI Controller 0", "SCSI Controller",
+               ResourceType.SCSI_CONTROLLER, "lsilogic", null, 0, null, null, null, 1, null);
+      ResourceAllocation memory = new ResourceAllocation(2, "1024MB of memory", "Memory Size", ResourceType.MEMORY,
+               null, null, null, null, null, null, 1024, "byte * 2^20");
+      ResourceAllocation disk = new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE, null,
+               "4194304", null, 0, 3, null, 4194304, "byte * 2^20");
+      ResourceAllocation disk2 = new ResourceAllocation(9, "Hard Disk 2", null, ResourceType.DISK_DRIVE, null,
+               "26214400", null, 1, 3, null, 26214400, "byte * 2^20");
 
-      assertEquals(vApp.getResourceAllocations(), ImmutableSortedSet.of(cpu, controller, memory,
-               disk, disk2));
-      assertEquals(
-               Iterables.getOnlyElement(
-                        vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR))
-                        .getVirtualQuantity(), 2);
-      assertEquals(Iterables.getOnlyElement(
-               vApp.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER))
+      assertEquals(vApp.getResourceAllocations(), ImmutableSet.of(cpu, memory, controller, disk, disk2));
+      assertEquals(Iterables.getOnlyElement(vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR))
+               .getVirtualQuantity(), 2);
+      assertEquals(Iterables.getOnlyElement(vApp.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER))
                .getVirtualQuantity(), 1);
-      assertEquals(Iterables.getOnlyElement(
-               vApp.getResourceAllocationByType().get(ResourceType.MEMORY)).getVirtualQuantity(),
-               1024);
+      assertEquals(Iterables.getOnlyElement(vApp.getResourceAllocationByType().get(ResourceType.MEMORY))
+               .getVirtualQuantity(), 1024);
 
       // extract the disks on the vApp sorted by addressOnParent
       List<ResourceAllocation> disks = Lists.newArrayList(vApp.getResourceAllocationByType().get(

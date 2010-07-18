@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContext;
 
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -49,21 +49,18 @@ public class TwitterClientLiveTest {
 
    @BeforeGroups(groups = "live")
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException {
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"),
-               "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"),
-               "jclouds.test.credential");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
-      context = createContext(contextSpec("twitter", "http://twitter.com", "1", identity,
-               credential, TwitterClient.class, TwitterAsyncClient.class), ImmutableSet
-               .<Module> of(new Log4JLoggingModule()));
+      context = createContext(contextSpec("twitter", "http://twitter.com", "1", identity, credential,
+               TwitterClient.class, TwitterAsyncClient.class), ImmutableSet.<Module> of(new Log4JLoggingModule()));
 
       connection = context.getApi();
    }
 
    @Test
    public void testGetMyMentions() throws Exception {
-      SortedSet<Status> response = connection.getMyMentions();
+      Set<Status> response = connection.getMyMentions();
       assert (response.size() > 0);
    }
 

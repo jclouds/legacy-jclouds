@@ -22,14 +22,14 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.UnknownHostException;
-import java.util.SortedSet;
+import java.util.Set;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.vcloud.terremark.domain.IpAddress;
 import org.jclouds.vcloud.terremark.domain.IpAddress.Status;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code IpAddressesHandler}
@@ -42,9 +42,9 @@ public class IpAddressesHandlerTest extends BaseHandlerTest {
    public void test1() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/terremark/ipAddresses.xml");
 
-      SortedSet<IpAddress> result = factory.create(injector.getInstance(IpAddressesHandler.class))
+      Set<IpAddress> result = factory.create(injector.getInstance(IpAddressesHandler.class))
                .parse(is);
-      assertEquals(result, ImmutableSortedSet.of(new IpAddress("10.114.34.131", Status.ASSIGNED,
+      assertEquals(result, ImmutableSet.of(new IpAddress("10.114.34.131", Status.ASSIGNED,
                "testforjcloud2"), new IpAddress("10.114.34.132", Status.AVAILABLE, null)));
    }
 }

@@ -37,6 +37,7 @@ import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
@@ -65,6 +66,7 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
    @Endpoint(KeysList.class)
    @Consumes(KEYSLIST_XML)
    @XMLResponseParser(KeyPairsHandler.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<KeyPair>> listKeyPairs();
 
    /**
@@ -75,6 +77,7 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
    @Path("/extensions/org/{orgId}/keys")
    @Consumes(KEYSLIST_XML)
    @XMLResponseParser(KeyPairsHandler.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<KeyPair>> listKeyPairsInOrg(@PathParam("orgId") String orgId);
 
    /**

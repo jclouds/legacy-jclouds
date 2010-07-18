@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -67,7 +66,7 @@ public class AccessControlList {
     * @return an unmodifiable set of grantees who have been assigned permissions in this ACL.
     */
    public Set<Grantee> getGrantees() {
-      SortedSet<Grantee> grantees = new TreeSet<Grantee>();
+      Set<Grantee> grantees = new TreeSet<Grantee>();
       for (Grant grant : getGrants()) {
          grantees.add(grant.getGrantee());
       }

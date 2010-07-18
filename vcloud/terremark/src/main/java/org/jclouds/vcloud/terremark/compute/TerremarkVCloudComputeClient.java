@@ -26,7 +26,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.SortedSet;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -167,7 +166,7 @@ public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
                         node.getPort());
                client.deleteNode(node.getId());
                logger.debug("<< deleted Node(%s)", node.getId());
-               SortedSet<Node> nodes = client.getNodes(service.getId());
+               Set<Node> nodes = client.getNodes(service.getId());
                if (nodes.size() == 0) {
                   logger.debug(">> deleting InternetService(%s) %s:%d", service.getId(), service
                            .getPublicIpAddress().getAddress(), service.getPort());
@@ -183,7 +182,7 @@ public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
 
    private void deletePublicIpAddressesWithNoServicesAttached(Set<PublicIpAddress> ipAddresses) {
       IPADDRESS: for (PublicIpAddress address : ipAddresses) {
-         SortedSet<InternetService> services = client
+         Set<InternetService> services = client
                   .getInternetServicesOnPublicIp(address.getId());
          if (services.size() == 0) {
             logger.debug(">> deleting PublicIpAddress(%s) %s", address.getId(), address

@@ -31,7 +31,7 @@ import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -99,8 +99,8 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test
-   public void testCreateBucketImpl() throws S3ServiceException, InterruptedException,
-            ExecutionException, TimeoutException {
+   public void testCreateBucketImpl() throws S3ServiceException, InterruptedException, ExecutionException,
+            TimeoutException {
       String bucketName = getContainerName();
       try {
          S3Bucket bucket = service.createBucket(new S3Bucket(bucketName));
@@ -112,8 +112,8 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test
-   public void testDeleteBucketImpl() throws S3ServiceException, InterruptedException,
-            ExecutionException, TimeoutException {
+   public void testDeleteBucketImpl() throws S3ServiceException, InterruptedException, ExecutionException,
+            TimeoutException {
       final String bucketName = getContainerName();
       service.deleteBucket(bucketName);
       assertConsistencyAware(new Runnable() {
@@ -124,8 +124,8 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test
-   public void testDeleteObjectImpl() throws InterruptedException, ExecutionException,
-            TimeoutException, S3ServiceException, IOException {
+   public void testDeleteObjectImpl() throws InterruptedException, ExecutionException, TimeoutException,
+            S3ServiceException, IOException {
       String bucketName = getContainerName();
       try {
          String objectKey = "key-testDeleteObjectImpl";
@@ -141,8 +141,8 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test
-   public void testGetObjectDetailsImpl() throws InterruptedException, ExecutionException,
-            TimeoutException, S3ServiceException, IOException {
+   public void testGetObjectDetailsImpl() throws InterruptedException, ExecutionException, TimeoutException,
+            S3ServiceException, IOException {
       String bucketName = getContainerName();
       try {
          String objectKey = "key-testGetObjectDetailsImpl".toLowerCase();
@@ -167,8 +167,8 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test
-   public void testGetObjectImpl() throws InterruptedException, ExecutionException,
-            TimeoutException, S3ServiceException, IOException {
+   public void testGetObjectImpl() throws InterruptedException, ExecutionException, TimeoutException,
+            S3ServiceException, IOException {
       String bucketName = getContainerName();
       try {
          String objectKey = "key-testGetObjectImpl".toLowerCase();
@@ -196,15 +196,14 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test
-   public void testListAllBucketsImpl() throws InterruptedException, ExecutionException,
-            TimeoutException, S3ServiceException {
+   public void testListAllBucketsImpl() throws InterruptedException, ExecutionException, TimeoutException,
+            S3ServiceException {
       String bucketName = getContainerName();
       try {
          // Ensure there is at least 1 bucket in S3 identity to list and compare.
          S3Bucket[] jsBuckets = service.listAllBuckets();
 
-         SortedSet<org.jclouds.aws.s3.domain.BucketMetadata> jcBuckets = getApi()
-                  .listOwnedBuckets();
+         Set<org.jclouds.aws.s3.domain.BucketMetadata> jcBuckets = getApi().listOwnedBuckets();
 
          assert jsBuckets.length == jcBuckets.size();
 
@@ -221,8 +220,8 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test
-   public void testListObjectsChunkedImpl() throws InterruptedException, ExecutionException,
-            TimeoutException, IOException, S3ServiceException {
+   public void testListObjectsChunkedImpl() throws InterruptedException, ExecutionException, TimeoutException,
+            IOException, S3ServiceException {
       String bucketName = getContainerName();
       try {
          addBlobToContainer(bucketName, "item1/subobject2");
@@ -301,8 +300,8 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test
-   public void testListObjectsImpl() throws InterruptedException, ExecutionException,
-            TimeoutException, IOException, S3ServiceException {
+   public void testListObjectsImpl() throws InterruptedException, ExecutionException, TimeoutException, IOException,
+            S3ServiceException {
       String bucketName = null;
       try {
          bucketName = getContainerName();
@@ -343,8 +342,8 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test
-   public void testPutObjectImpl() throws S3ServiceException, InterruptedException,
-            ExecutionException, TimeoutException, NoSuchAlgorithmException, IOException {
+   public void testPutObjectImpl() throws S3ServiceException, InterruptedException, ExecutionException,
+            TimeoutException, NoSuchAlgorithmException, IOException {
       String bucketName = getContainerName();
       try {
          String objectKey = "putObject";
@@ -396,8 +395,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
          requestObject = new S3Object(objectKey);
          requestObject.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
-         org.jclouds.aws.s3.domain.AccessControlList jcACL = getApi().getObjectACL(bucketName,
-                  objectKey);
+         org.jclouds.aws.s3.domain.AccessControlList jcACL = getApi().getObjectACL(bucketName, objectKey);
          assertTrue(jcACL.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ));
          assertTrue(jcACL.hasPermission(jcACL.getOwner().getId(), Permission.FULL_CONTROL));
          assertEquals(jcACL.getGrants().size(), 2);
@@ -414,8 +412,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
          jsResultObject = service.putObject(new S3Bucket(bucketName), requestObject);
          jcObject = getApi().getObject(bucketName, objectKey);
          assertTrue(jsResultObject.verifyData(data.getBytes("UTF-8")));
-         assertEquals(jsResultObject.getETag(), jcObject.getMetadata().getETag().replaceAll("\"",
-                  ""));
+         assertEquals(jsResultObject.getETag(), jcObject.getMetadata().getETag().replaceAll("\"", ""));
       } finally {
          returnContainer(bucketName);
       }
@@ -423,8 +420,8 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
 
    @Test
    @SuppressWarnings("unchecked")
-   public void testCopyObjectImpl() throws InterruptedException, ExecutionException,
-            TimeoutException, IOException, S3ServiceException {
+   public void testCopyObjectImpl() throws InterruptedException, ExecutionException, TimeoutException, IOException,
+            S3ServiceException {
       String bucketName = getContainerName();
       try {
          String data = "This is my data";
@@ -445,13 +442,11 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
 
          // Copy with metadata and ACL retained
          destinationObject = new S3Object(destinationObjectKey);
-         copyResult = service.copyObject(bucketName, sourceObjectKey, bucketName,
-                  destinationObject, false);
+         copyResult = service.copyObject(bucketName, sourceObjectKey, bucketName, destinationObject, false);
          jcDestinationObject = getApi().getObject(bucketName, destinationObject.getKey());
          // TODO null keys from s3object! assertEquals(jcDestinationObject.getKey(),
          // destinationObjectKey);
-         assertEquals(jcDestinationObject.getMetadata().getUserMetadata().get(metadataName),
-                  sourceMetadataValue);
+         assertEquals(jcDestinationObject.getMetadata().getUserMetadata().get(metadataName), sourceMetadataValue);
          assertEquals(copyResult.get("ETag"), jcDestinationObject.getMetadata().getETag());
          // Test destination ACL is unchanged (ie private)
          org.jclouds.aws.s3.domain.AccessControlList jcACL = getApi().getObjectACL(bucketName,
@@ -462,11 +457,9 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
          // Copy with metadata replaced
          destinationObject = new S3Object(destinationObjectKey);
          destinationObject.addMetadata("x-amz-meta-" + metadataName, destinationMetadataValue);
-         copyResult = service.copyObject(bucketName, sourceObjectKey, bucketName,
-                  destinationObject, true);
+         copyResult = service.copyObject(bucketName, sourceObjectKey, bucketName, destinationObject, true);
          jcDestinationObject = getApi().getObject(bucketName, destinationObject.getKey());
-         assertEquals(jcDestinationObject.getMetadata().getUserMetadata().get(metadataName),
-                  destinationMetadataValue);
+         assertEquals(jcDestinationObject.getMetadata().getUserMetadata().get(metadataName), destinationMetadataValue);
          // Test destination ACL is unchanged (ie private)
          jcACL = getApi().getObjectACL(bucketName, destinationObject.getKey());
          assertEquals(jcACL.getGrants().size(), 1);
@@ -475,8 +468,7 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
          // Copy with ACL modified
          destinationObject = new S3Object(destinationObjectKey);
          destinationObject.setAcl(AccessControlList.REST_CANNED_PUBLIC_READ);
-         copyResult = service.copyObject(bucketName, sourceObjectKey, bucketName,
-                  destinationObject, false);
+         copyResult = service.copyObject(bucketName, sourceObjectKey, bucketName, destinationObject, false);
          // Test destination ACL is changed (ie public-read)
          jcACL = getApi().getObjectACL(bucketName, destinationObject.getKey());
          assertEquals(jcACL.getGrants().size(), 2);
@@ -490,8 +482,8 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
 
    @Test
    @SuppressWarnings("unchecked")
-   public void testPutAndGetBucketAclImpl() throws InterruptedException, ExecutionException,
-            TimeoutException, S3ServiceException {
+   public void testPutAndGetBucketAclImpl() throws InterruptedException, ExecutionException, TimeoutException,
+            S3ServiceException {
       String bucketName = getContainerName();
       try {
          S3Bucket bucket = new S3Bucket(bucketName);
@@ -508,40 +500,31 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
                      }
                   });
          assertNotNull(gap);
-         assertEquals(gap.getPermission(),
-                  org.jets3t.service.acl.Permission.PERMISSION_FULL_CONTROL);
+         assertEquals(gap.getPermission(), org.jets3t.service.acl.Permission.PERMISSION_FULL_CONTROL);
 
          // Add read access for public, and read-acp access for authenticated users.
-         acl.grantPermission(GroupGrantee.ALL_USERS,
-                  org.jets3t.service.acl.Permission.PERMISSION_READ);
-         acl.grantPermission(GroupGrantee.AUTHENTICATED_USERS,
-                  org.jets3t.service.acl.Permission.PERMISSION_READ_ACP);
+         acl.grantPermission(GroupGrantee.ALL_USERS, org.jets3t.service.acl.Permission.PERMISSION_READ);
+         acl.grantPermission(GroupGrantee.AUTHENTICATED_USERS, org.jets3t.service.acl.Permission.PERMISSION_READ_ACP);
          service.putBucketAcl(bucketName, acl);
          acl = service.getBucketAcl(bucket);
          assertEquals(acl.getGrants().size(), 3);
-         gap = (GrantAndPermission) Iterables.find(acl.getGrants(),
-                  new Predicate<GrantAndPermission>() {
-                     public boolean apply(GrantAndPermission gap) {
-                        return gap.getGrantee().getIdentifier().equals(ownerId);
-                     }
-                  });
-         assertEquals(gap.getPermission(),
-                  org.jets3t.service.acl.Permission.PERMISSION_FULL_CONTROL);
-         gap = (GrantAndPermission) Iterables.find(acl.getGrants(),
-                  new Predicate<GrantAndPermission>() {
-                     public boolean apply(GrantAndPermission gap) {
-                        return gap.getGrantee().getIdentifier().equals(
-                                 GroupGrantee.ALL_USERS.getIdentifier());
-                     }
-                  });
+         gap = (GrantAndPermission) Iterables.find(acl.getGrants(), new Predicate<GrantAndPermission>() {
+            public boolean apply(GrantAndPermission gap) {
+               return gap.getGrantee().getIdentifier().equals(ownerId);
+            }
+         });
+         assertEquals(gap.getPermission(), org.jets3t.service.acl.Permission.PERMISSION_FULL_CONTROL);
+         gap = (GrantAndPermission) Iterables.find(acl.getGrants(), new Predicate<GrantAndPermission>() {
+            public boolean apply(GrantAndPermission gap) {
+               return gap.getGrantee().getIdentifier().equals(GroupGrantee.ALL_USERS.getIdentifier());
+            }
+         });
          assertEquals(gap.getPermission(), org.jets3t.service.acl.Permission.PERMISSION_READ);
-         gap = (GrantAndPermission) Iterables.find(acl.getGrants(),
-                  new Predicate<GrantAndPermission>() {
-                     public boolean apply(GrantAndPermission gap) {
-                        return gap.getGrantee().getIdentifier().equals(
-                                 GroupGrantee.AUTHENTICATED_USERS.getIdentifier());
-                     }
-                  });
+         gap = (GrantAndPermission) Iterables.find(acl.getGrants(), new Predicate<GrantAndPermission>() {
+            public boolean apply(GrantAndPermission gap) {
+               return gap.getGrantee().getIdentifier().equals(GroupGrantee.AUTHENTICATED_USERS.getIdentifier());
+            }
+         });
          assertEquals(gap.getPermission(), org.jets3t.service.acl.Permission.PERMISSION_READ_ACP);
       } finally {
          // need to delete this container as we've modified its acls
@@ -551,8 +534,8 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
 
    @Test
    @SuppressWarnings("unchecked")
-   public void testGetAndPutObjectAclImpl() throws InterruptedException, ExecutionException,
-            TimeoutException, S3ServiceException, NoSuchAlgorithmException, IOException {
+   public void testGetAndPutObjectAclImpl() throws InterruptedException, ExecutionException, TimeoutException,
+            S3ServiceException, NoSuchAlgorithmException, IOException {
       String bucketName = getContainerName();
       try {
          S3Bucket bucket = new S3Bucket(bucketName);
@@ -573,40 +556,31 @@ public class JCloudsS3ServiceLiveTest extends BaseBlobStoreIntegrationTest {
                      }
                   });
          assertNotNull(gap);
-         assertEquals(gap.getPermission(),
-                  org.jets3t.service.acl.Permission.PERMISSION_FULL_CONTROL);
+         assertEquals(gap.getPermission(), org.jets3t.service.acl.Permission.PERMISSION_FULL_CONTROL);
 
          // Add read access for public, and read-acp access for authenticated users.
-         acl.grantPermission(GroupGrantee.ALL_USERS,
-                  org.jets3t.service.acl.Permission.PERMISSION_READ);
-         acl.grantPermission(GroupGrantee.AUTHENTICATED_USERS,
-                  org.jets3t.service.acl.Permission.PERMISSION_READ_ACP);
+         acl.grantPermission(GroupGrantee.ALL_USERS, org.jets3t.service.acl.Permission.PERMISSION_READ);
+         acl.grantPermission(GroupGrantee.AUTHENTICATED_USERS, org.jets3t.service.acl.Permission.PERMISSION_READ_ACP);
          service.putObjectAcl(bucketName, object.getKey(), acl);
          acl = service.getObjectAcl(bucket, object.getKey());
          assertEquals(acl.getGrants().size(), 3);
-         gap = (GrantAndPermission) Iterables.find(acl.getGrants(),
-                  new Predicate<GrantAndPermission>() {
-                     public boolean apply(GrantAndPermission gap) {
-                        return gap.getGrantee().getIdentifier().equals(ownerId);
-                     }
-                  });
-         assertEquals(gap.getPermission(),
-                  org.jets3t.service.acl.Permission.PERMISSION_FULL_CONTROL);
-         gap = (GrantAndPermission) Iterables.find(acl.getGrants(),
-                  new Predicate<GrantAndPermission>() {
-                     public boolean apply(GrantAndPermission gap) {
-                        return gap.getGrantee().getIdentifier().equals(
-                                 GroupGrantee.ALL_USERS.getIdentifier());
-                     }
-                  });
+         gap = (GrantAndPermission) Iterables.find(acl.getGrants(), new Predicate<GrantAndPermission>() {
+            public boolean apply(GrantAndPermission gap) {
+               return gap.getGrantee().getIdentifier().equals(ownerId);
+            }
+         });
+         assertEquals(gap.getPermission(), org.jets3t.service.acl.Permission.PERMISSION_FULL_CONTROL);
+         gap = (GrantAndPermission) Iterables.find(acl.getGrants(), new Predicate<GrantAndPermission>() {
+            public boolean apply(GrantAndPermission gap) {
+               return gap.getGrantee().getIdentifier().equals(GroupGrantee.ALL_USERS.getIdentifier());
+            }
+         });
          assertEquals(gap.getPermission(), org.jets3t.service.acl.Permission.PERMISSION_READ);
-         gap = (GrantAndPermission) Iterables.find(acl.getGrants(),
-                  new Predicate<GrantAndPermission>() {
-                     public boolean apply(GrantAndPermission gap) {
-                        return gap.getGrantee().getIdentifier().equals(
-                                 GroupGrantee.AUTHENTICATED_USERS.getIdentifier());
-                     }
-                  });
+         gap = (GrantAndPermission) Iterables.find(acl.getGrants(), new Predicate<GrantAndPermission>() {
+            public boolean apply(GrantAndPermission gap) {
+               return gap.getGrantee().getIdentifier().equals(GroupGrantee.AUTHENTICATED_USERS.getIdentifier());
+            }
+         });
          assertEquals(gap.getPermission(), org.jets3t.service.acl.Permission.PERMISSION_READ_ACP);
       } finally {
          returnContainer(bucketName);

@@ -54,6 +54,7 @@ import org.jclouds.ibmdev.xml.LocationsHandler;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -77,7 +78,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images HTTP/1.1");
+               "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -86,16 +87,16 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest,
-            "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images HTTP/1.1");
+               "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
       // header
       assertNonPayloadHeadersEqual(httpRequest,
-            "Accept: application/json\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
+               "Accept: application/json\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseImagesFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -106,7 +107,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
-            "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images/1 HTTP/1.1");
+               "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -123,7 +124,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
-            "DELETE https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images/1 HTTP/1.1");
+               "DELETE https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -137,12 +138,12 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testSetImageVisibility() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("setImageVisibility", String.class,
-            Image.Visibility.class);
+               Image.Visibility.class);
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1",
-            Image.Visibility.PUBLIC);
+               Image.Visibility.PUBLIC);
 
       assertRequestLineEquals(httpRequest,
-            "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images/1 HTTP/1.1");
+               "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/images/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, "visibility=PUBLIC", "application/x-www-form-urlencoded", false);
 
@@ -159,13 +160,13 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances HTTP/1.1");
+               "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseInstancesFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -176,13 +177,13 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
-            "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/requests/1 HTTP/1.1");
+               "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/requests/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseInstancesFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -193,7 +194,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
-            "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
+               "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -207,12 +208,12 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testExtendReservationForInstance() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("extendReservationForInstance", String.class,
-            Date.class);
+               Date.class);
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1", new Date(
-            123215235l));
+               123215235l));
 
       assertRequestLineEquals(httpRequest,
-            "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
+               "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, "expirationTime=123215235", "application/x-www-form-urlencoded", false);
 
@@ -225,11 +226,11 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testRestartInstance() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("restartInstance", String.class,
-            RestartInstanceOptions[].class);
+               RestartInstanceOptions[].class);
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
-            "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
+               "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, "state=restart", "application/x-www-form-urlencoded", false);
 
@@ -242,12 +243,12 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testRestartInstanceNewKey() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("restartInstance", String.class,
-            RestartInstanceOptions[].class);
+               RestartInstanceOptions[].class);
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1",
-            new RestartInstanceOptions().authorizePublicKey("keyName"));
+               new RestartInstanceOptions().authorizePublicKey("keyName"));
 
       assertRequestLineEquals(httpRequest,
-            "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
+               "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, "state=restart&keyName=keyName", "application/x-www-form-urlencoded", false);
 
@@ -260,15 +261,15 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testSaveInstanceToImage() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("saveInstanceToImage", String.class, String.class,
-            String.class);
+               String.class);
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1",
-            "imageName", "imageDescription");
+               "imageName", "imageDescription");
 
       assertRequestLineEquals(httpRequest,
-            "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
+               "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, "state=save&description=imageDescription&name=imageName",
-            "application/x-www-form-urlencoded", false);
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseImageFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -282,7 +283,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
-            "DELETE https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
+               "DELETE https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -299,13 +300,13 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys HTTP/1.1");
+               "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseKeysFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -316,7 +317,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
-            "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys/1 HTTP/1.1");
+               "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -333,7 +334,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "key");
 
       assertRequestLineEquals(httpRequest,
-            "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys HTTP/1.1");
+               "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, "name=key", "application/x-www-form-urlencoded", false);
 
@@ -348,10 +349,10 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
    public void testAddPublicKey() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("addPublicKey", String.class, String.class);
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "key",
-            "publicbits");
+               "publicbits");
 
       assertRequestLineEquals(httpRequest,
-            "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys HTTP/1.1");
+               "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, "name=key&publicKey=publicbits", "application/x-www-form-urlencoded", false);
 
@@ -366,10 +367,10 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
    public void testUpdatePublicKey() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("updatePublicKey", String.class, String.class);
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "key",
-            "publicbits");
+               "publicbits");
 
       assertRequestLineEquals(httpRequest,
-            "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys/key HTTP/1.1");
+               "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys/key HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, "publicKey=publicbits", "application/x-www-form-urlencoded", false);
 
@@ -383,11 +384,11 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testSetDefaultStatusOfKey() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class
-            .getMethod("setDefaultStatusOfKey", String.class, boolean.class);
+               .getMethod("setDefaultStatusOfKey", String.class, boolean.class);
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "key", true);
 
       assertRequestLineEquals(httpRequest,
-            "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys/key HTTP/1.1");
+               "PUT https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys/key HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, "default=true", "application/x-www-form-urlencoded", false);
 
@@ -404,7 +405,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
-            "DELETE https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys/1 HTTP/1.1");
+               "DELETE https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/keys/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -421,13 +422,13 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/storage HTTP/1.1");
+               "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/storage HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseVolumesFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -438,7 +439,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
-            "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/storage/1 HTTP/1.1");
+               "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/storage/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -452,15 +453,15 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testCreateVolumeInLocation() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("createVolumeInLocation", String.class,
-            String.class, String.class, String.class);
+               String.class, String.class, String.class);
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "location",
-            "name", "format", "size");
+               "name", "format", "size");
 
       assertRequestLineEquals(httpRequest,
-            "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/storage HTTP/1.1");
+               "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/storage HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, "location=location&format=format&name=name&size=size",
-            "application/x-www-form-urlencoded", false);
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseVolumeFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -472,15 +473,15 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testCreateInstanceInLocation() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("createInstanceInLocation", String.class,
-            String.class, String.class, String.class, CreateInstanceOptions[].class);
+               String.class, String.class, String.class, CreateInstanceOptions[].class);
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1", "name",
-            "22", "instanceType");
+               "22", "instanceType");
 
       assertRequestLineEquals(httpRequest,
-            "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances HTTP/1.1");
+               "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, "location=1&imageID=22&name=name&instanceType=instanceType",
-            "application/x-www-form-urlencoded", false);
+               "application/x-www-form-urlencoded", false);
       assertResponseParserClassEquals(method, httpRequest, GetFirstInstanceInList.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
@@ -491,20 +492,20 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testCreateInstanceInLocationWithOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("createInstanceInLocation", String.class,
-            String.class, String.class, String.class, CreateInstanceOptions[].class);
+               String.class, String.class, String.class, CreateInstanceOptions[].class);
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "location",
-            "name", "22", "instanceType", new CreateInstanceOptions().attachIp("1").authorizePublicKey("MOO")
-                  .mountVolume("2", "/mnt").configurationData(
-                        ImmutableMap.of("insight_admin_password", "myPassword1", "db2_admin_password", "myPassword2",
-                              "report_user_password", "myPassword3")));
+               "name", "22", "instanceType", new CreateInstanceOptions().attachIp("1").authorizePublicKey("MOO")
+                        .mountVolume("2", "/mnt").configurationData(
+                                 ImmutableMap.of("insight_admin_password", "myPassword1", "db2_admin_password",
+                                          "myPassword2", "report_user_password", "myPassword3")));
 
       assertRequestLineEquals(httpRequest,
-            "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances HTTP/1.1");
+               "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/instances HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(
-            httpRequest,
-            "location=location&imageID=22&name=name&instanceType=instanceType&ip=1&publicKey=MOO&volumeID=2&oss.storage.id.0.mnt=%2Fmnt&insight_admin_password=myPassword1&db2_admin_password=myPassword2&report_user_password=myPassword3",
-            "application/x-www-form-urlencoded", false);
+               httpRequest,
+               "location=location&imageID=22&name=name&instanceType=instanceType&ip=1&publicKey=MOO&volumeID=2&oss.storage.id.0.mnt=%2Fmnt&insight_admin_password=myPassword1&db2_admin_password=myPassword2&report_user_password=myPassword3",
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, httpRequest, GetFirstInstanceInList.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -519,7 +520,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
-            "DELETE https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/storage/1 HTTP/1.1");
+               "DELETE https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/storage/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -536,13 +537,13 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/locations HTTP/1.1");
+               "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/locations HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/xml\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseSax.class);
       assertSaxResponseParserClassEquals(method, LocationsHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -553,7 +554,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
-            "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/locations/1 HTTP/1.1");
+               "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/locations/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/xml\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -570,13 +571,13 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
-            "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/addresses HTTP/1.1");
+               "GET https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/addresses HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseAddressesFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
@@ -587,7 +588,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
-            "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/addresses HTTP/1.1");
+               "POST https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/addresses HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, "location=1", "application/x-www-form-urlencoded", false);
 
@@ -604,7 +605,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
-            "DELETE https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/addresses/1 HTTP/1.1");
+               "DELETE https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403/addresses/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 

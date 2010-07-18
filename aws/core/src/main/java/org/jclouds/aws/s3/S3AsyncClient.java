@@ -20,7 +20,7 @@ package org.jclouds.aws.s3;
 
 import static org.jclouds.blobstore.attr.BlobScopes.CONTAINER;
 
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Nullable;
@@ -242,7 +242,7 @@ public interface S3AsyncClient {
    @XMLResponseParser(ListAllMyBucketsHandler.class)
    @Path("/")
    @VirtualHost
-   ListenableFuture<? extends SortedSet<BucketMetadata>> listOwnedBuckets();
+   ListenableFuture<? extends Set<BucketMetadata>> listOwnedBuckets();
 
    /**
     * @see S3Client#copyObject

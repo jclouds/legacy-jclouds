@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.terremark;
 
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -55,7 +55,7 @@ public interface TerremarkVCloudClient extends VCloudClient {
    /**
     * This call returns a list of public IP addresses.
     */
-   SortedSet<PublicIpAddress> getPublicIpsAssociatedWithVDC(String vDCId);
+   Set<PublicIpAddress> getPublicIpsAssociatedWithVDC(String vDCId);
 
    void deletePublicIp(int ipId);
 
@@ -87,14 +87,14 @@ public interface TerremarkVCloudClient extends VCloudClient {
 
    InternetService getInternetService(int internetServiceId);
 
-   SortedSet<InternetService> getAllInternetServicesInVDC(String vDCId);
+   Set<InternetService> getAllInternetServicesInVDC(String vDCId);
 
    /**
     * This call returns information about the internet service on a public IP.
     */
-   SortedSet<InternetService> getInternetServicesOnPublicIp(int ipId);
+   Set<InternetService> getInternetServicesOnPublicIp(int ipId);
 
-   SortedSet<InternetService> getPublicIp(int ipId);
+   Set<InternetService> getPublicIp(int ipId);
 
    /**
     * This call adds a node to an existing internet service.
@@ -119,7 +119,7 @@ public interface TerremarkVCloudClient extends VCloudClient {
 
    void deleteNode(int nodeId);
 
-   SortedSet<Node> getNodes(int internetServiceId);
+   Set<Node> getNodes(int internetServiceId);
 
    /**
     * This call configures the settings of an existing vApp by passing the new configuration. The

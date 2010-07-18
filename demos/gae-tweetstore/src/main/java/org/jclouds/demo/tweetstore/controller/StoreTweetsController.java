@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -65,8 +65,7 @@ public class StoreTweetsController extends HttpServlet {
          Blob to = map.newBlob(from.getId() + "");
          to.getMetadata().setContentType(MediaType.TEXT_PLAIN);
          to.setPayload(from.getText());
-         to.getMetadata().getUserMetadata().put(TweetStoreConstants.SENDER_NAME,
-                  from.getUser().getScreenName());
+         to.getMetadata().getUserMetadata().put(TweetStoreConstants.SENDER_NAME, from.getUser().getScreenName());
          return to;
       }
    }
@@ -84,17 +83,16 @@ public class StoreTweetsController extends HttpServlet {
    @Inject
    @VisibleForTesting
    public StoreTweetsController(Map<String, BlobStoreContext> contexts,
-            @Named(TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER) String container,
-            TwitterClient client) {
+            @Named(TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER) String container, TwitterClient client) {
       this.container = container;
       this.contexts = contexts;
       this.client = client;
    }
 
    @VisibleForTesting
-   public void addMyTweets(String contextName, SortedSet<Status> allAboutMe) {
-      BlobStoreContext context = checkNotNull(contexts.get(contextName), "no context for "
-               + contextName + " in " + contexts.keySet());
+   public void addMyTweets(String contextName, Set<Status> allAboutMe) {
+      BlobStoreContext context = checkNotNull(contexts.get(contextName), "no context for " + contextName + " in "
+               + contexts.keySet());
       BlobMap map = context.createBlobMap(container);
       for (Status status : allAboutMe) {
          Blob blob = null;
@@ -104,20 +102,17 @@ public class StoreTweetsController extends HttpServlet {
          } catch (AuthorizationException e) {
             throw e;
          } catch (Exception e) {
-            logger.error(e, "Error storing tweet %s (blob[%s]) on map %s/%s", status.getId(), blob,
-                     context, container);
+            logger.error(e, "Error storing tweet %s (blob[%s]) on map %s/%s", status.getId(), blob, context, container);
          }
       }
    }
 
    @Override
-   protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
       if (request.getHeader("X-AppEngine-QueueName") != null
                && request.getHeader("X-AppEngine-QueueName").equals("twitter")) {
          try {
-            String contextName = checkNotNull(request.getHeader("context"),
-                     "missing header context");
+            String contextName = checkNotNull(request.getHeader("context"), "missing header context");
             logger.info("retrieving tweets");
             addMyTweets(contextName, client.getMyMentions());
             logger.debug("done storing tweets");

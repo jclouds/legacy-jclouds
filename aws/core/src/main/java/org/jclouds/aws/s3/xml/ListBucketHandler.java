@@ -19,7 +19,7 @@
 package org.jclouds.aws.s3.xml;
 
 import java.util.Date;
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -48,8 +48,8 @@ import com.google.common.collect.Sets;
  *      />
  */
 public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResponse> {
-   private SortedSet<ObjectMetadata> contents;
-   private SortedSet<String> commonPrefixes;
+   private Set<ObjectMetadata> contents;
+   private Set<String> commonPrefixes;
    private CanonicalUser currentOwner;
    private StringBuilder currentText = new StringBuilder();
 
@@ -67,8 +67,8 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
    public ListBucketHandler(DateService dateParser, EncryptionService encryptionService) {
       this.dateParser = dateParser;
       this.encryptionService = encryptionService;
-      this.contents = Sets.newTreeSet();
-      this.commonPrefixes = Sets.newTreeSet();
+      this.contents = Sets.newLinkedHashSet();
+      this.commonPrefixes = Sets.newLinkedHashSet();
    }
 
    public ListBucketResponse getResult() {

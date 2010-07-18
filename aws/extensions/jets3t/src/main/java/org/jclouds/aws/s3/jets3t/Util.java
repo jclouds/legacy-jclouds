@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import javax.ws.rs.core.MediaType;
@@ -66,14 +66,12 @@ public class Util {
    public static S3Bucket convertBucket(org.jclouds.aws.s3.domain.BucketMetadata jcBucketMD) {
       S3Bucket jsBucket = new S3Bucket(jcBucketMD.getName());
       if (jcBucketMD.getOwner() != null) {
-         jsBucket.setOwner(new S3Owner(jcBucketMD.getOwner().getId(), jcBucketMD.getOwner()
-                  .getDisplayName()));
+         jsBucket.setOwner(new S3Owner(jcBucketMD.getOwner().getId(), jcBucketMD.getOwner().getDisplayName()));
       }
       return jsBucket;
    }
 
-   public static S3Bucket[] convertBuckets(
-            SortedSet<org.jclouds.aws.s3.domain.BucketMetadata> jcBucketMDs) {
+   public static S3Bucket[] convertBuckets(Set<org.jclouds.aws.s3.domain.BucketMetadata> jcBucketMDs) {
       List<S3Bucket> jsBuckets = new ArrayList<S3Bucket>(jcBucketMDs.size());
       for (org.jclouds.aws.s3.domain.BucketMetadata jcBucketMD : jcBucketMDs) {
          jsBuckets.add(convertBucket(jcBucketMD));
@@ -92,8 +90,7 @@ public class Util {
    public static S3Object convertObjectHead(ObjectMetadata jcObjectMD) {
       S3Object jsObject = new S3Object(jcObjectMD.getKey());
       if (jcObjectMD.getOwner() != null) {
-         jsObject.setOwner(new S3Owner(jcObjectMD.getOwner().getId(), jcObjectMD.getOwner()
-                  .getDisplayName()));
+         jsObject.setOwner(new S3Owner(jcObjectMD.getOwner().getId(), jcObjectMD.getOwner().getDisplayName()));
       }
       jsObject.setContentLength(jcObjectMD.getSize());
       jsObject.setContentDisposition(jcObjectMD.getContentDisposition());
@@ -172,9 +169,8 @@ public class Util {
       return jcObject;
    }
 
-   public static GetOptions convertGetObjectOptions(Calendar ifModifiedSince,
-            Calendar ifUnmodifiedSince, String[] ifMatchTags, String[] ifNoneMatchTags)
-            throws UnsupportedEncodingException {
+   public static GetOptions convertGetObjectOptions(Calendar ifModifiedSince, Calendar ifUnmodifiedSince,
+            String[] ifMatchTags, String[] ifNoneMatchTags) throws UnsupportedEncodingException {
       GetOptions options = new GetOptions();
       if (ifModifiedSince != null) {
          options.ifModifiedSince(ifModifiedSince.getTime());
@@ -193,8 +189,8 @@ public class Util {
       return options;
    }
 
-   public static ListBucketOptions convertListObjectOptions(String prefix, String marker,
-            String delimiter, Integer maxKeys) throws UnsupportedEncodingException {
+   public static ListBucketOptions convertListObjectOptions(String prefix, String marker, String delimiter,
+            Integer maxKeys) throws UnsupportedEncodingException {
       ListBucketOptions options = new ListBucketOptions();
       if (prefix != null) {
          options.withPrefix(prefix);
@@ -223,12 +219,10 @@ public class Util {
       } else if (acl == AccessControlList.REST_CANNED_PUBLIC_READ_WRITE) {
          return CannedAccessPolicy.PUBLIC_READ_WRITE;
       }
-      throw new IllegalArgumentException("Only 'canned' AccessControlList options are supported: "
-               + acl);
+      throw new IllegalArgumentException("Only 'canned' AccessControlList options are supported: " + acl);
    }
 
-   public static AccessControlList convertAccessControlList(
-            org.jclouds.aws.s3.domain.AccessControlList jcACL) {
+   public static AccessControlList convertAccessControlList(org.jclouds.aws.s3.domain.AccessControlList jcACL) {
       AccessControlList jsACL = new AccessControlList();
       if (jcACL.getOwner() != null) {
          jsACL.setOwner(new S3Owner(jcACL.getOwner().getId(), jcACL.getOwner().getDisplayName()));
@@ -264,16 +258,14 @@ public class Util {
    }
 
    @SuppressWarnings("unchecked")
-   public static org.jclouds.aws.s3.domain.AccessControlList convertAccessControlList(
-            AccessControlList jsACL) {
+   public static org.jclouds.aws.s3.domain.AccessControlList convertAccessControlList(AccessControlList jsACL) {
       org.jclouds.aws.s3.domain.AccessControlList jcACL = new org.jclouds.aws.s3.domain.AccessControlList();
       if (jsACL.getOwner() != null) {
          jcACL.setOwner(new org.jclouds.aws.s3.domain.CanonicalUser(jsACL.getOwner().getId()));
       }
       Iterator jsGrantAndPermissionIter = jsACL.getGrants().iterator();
       while (jsGrantAndPermissionIter.hasNext()) {
-         GrantAndPermission jsGrantAndPermission = (GrantAndPermission) jsGrantAndPermissionIter
-                  .next();
+         GrantAndPermission jsGrantAndPermission = (GrantAndPermission) jsGrantAndPermissionIter.next();
 
          org.jclouds.aws.s3.domain.AccessControlList.Permission jcPermission = null;
          Permission jsPerm = jsGrantAndPermission.getPermission();
@@ -292,15 +284,12 @@ public class Util {
          org.jclouds.aws.s3.domain.AccessControlList.Grantee jcGrantee = null;
          GranteeInterface jsGrantee = jsGrantAndPermission.getGrantee();
          if (jsGrantee instanceof EmailAddressGrantee) {
-            jcGrantee = new org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee(
-                     jsGrantee.getIdentifier());
+            jcGrantee = new org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee(jsGrantee.getIdentifier());
          } else if (jsGrantee instanceof CanonicalGrantee) {
-            jcGrantee = new org.jclouds.aws.s3.domain.AccessControlList.CanonicalUserGrantee(
-                     jsGrantee.getIdentifier());
+            jcGrantee = new org.jclouds.aws.s3.domain.AccessControlList.CanonicalUserGrantee(jsGrantee.getIdentifier());
          } else if (jsGrantee instanceof GroupGrantee) {
             jcGrantee = new org.jclouds.aws.s3.domain.AccessControlList.GroupGrantee(
-                     org.jclouds.aws.s3.domain.AccessControlList.GroupGranteeURI.fromURI(jsGrantee
-                              .getIdentifier()));
+                     org.jclouds.aws.s3.domain.AccessControlList.GroupGranteeURI.fromURI(jsGrantee.getIdentifier()));
          }
 
          jcACL.addPermission(jcGrantee, jcPermission);
@@ -317,9 +306,9 @@ public class Util {
    }
 
    @SuppressWarnings("unchecked")
-   public static CopyObjectOptions convertCopyObjectOptions(AccessControlList acl,
-            Map destinationMetadata, Calendar ifModifiedSince, Calendar ifUnmodifiedSince,
-            String[] ifMatchTags, String[] ifNoneMatchTags) throws UnsupportedEncodingException {
+   public static CopyObjectOptions convertCopyObjectOptions(AccessControlList acl, Map destinationMetadata,
+            Calendar ifModifiedSince, Calendar ifUnmodifiedSince, String[] ifMatchTags, String[] ifNoneMatchTags)
+            throws UnsupportedEncodingException {
       CopyObjectOptions options = new CopyObjectOptions();
       if (acl != null) {
          options.overrideAcl(convertACLToCannedAccessPolicy(acl));

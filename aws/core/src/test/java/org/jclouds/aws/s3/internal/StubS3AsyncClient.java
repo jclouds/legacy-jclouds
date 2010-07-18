@@ -25,7 +25,7 @@ import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
@@ -302,8 +302,8 @@ public class StubS3AsyncClient implements S3AsyncClient {
       });
    }
 
-   public ListenableFuture<? extends SortedSet<BucketMetadata>> listOwnedBuckets() {
-      return immediateFuture(Sets.newTreeSet(Iterables.transform(containerToBlobs.keySet(),
+   public ListenableFuture<? extends Set<BucketMetadata>> listOwnedBuckets() {
+      return immediateFuture(Sets.newLinkedHashSet(Iterables.transform(containerToBlobs.keySet(),
                new Function<String, BucketMetadata>() {
                   public BucketMetadata apply(String name) {
                      return new BucketMetadata(name, null, null);

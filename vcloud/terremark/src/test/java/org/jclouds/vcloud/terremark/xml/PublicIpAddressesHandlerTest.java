@@ -23,13 +23,13 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.UnknownHostException;
-import java.util.SortedSet;
+import java.util.Set;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code PublicIpAddressesHandler}
@@ -42,11 +42,11 @@ public class PublicIpAddressesHandlerTest extends BaseHandlerTest {
    public void test1() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/terremark/PublicIpAddresses.xml");
 
-      SortedSet<PublicIpAddress> result = factory.create(
+      Set<PublicIpAddress> result = factory.create(
                injector.getInstance(PublicIpAddressesHandler.class)).parse(is);
       assertEquals(
                result,
-               ImmutableSortedSet
+               ImmutableSet
                         .of(
                                  new PublicIpAddress(
                                           8720,

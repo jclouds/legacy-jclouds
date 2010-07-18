@@ -82,7 +82,7 @@ public class VAppConfiguration {
     * Ex.
     * 
     * <pre>
-    * SortedSet&lt;ResourceAllocation&gt; disks = Sets.newTreeSet(vApp.getResourceAllocationByType().get(
+    * Set&lt;ResourceAllocation&gt; disks = Sets.newLinkedHashSet(vApp.getResourceAllocationByType().get(
     *          ResourceType.DISK_DRIVE));
     * ResourceAllocation lastDisk = disks.last();
     * VAppConfiguration config = deleteDiskWithAddressOnParent(lastDisk.getAddressOnParent());

@@ -21,7 +21,7 @@ package org.jclouds.vcloud.terremark;
 import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.INTERNETSERVICESLIST_XML;
 import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.INTERNETSERVICE_XML;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -36,6 +36,7 @@ import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.terremark.domain.InternetService;
@@ -67,10 +68,9 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @XMLResponseParser(InternetServiceHandler.class)
    @MapBinder(AddInternetServiceOptions.class)
    @Override
-   ListenableFuture<? extends InternetService> addInternetServiceToVDC(
-            @PathParam("vDCId") String vDCId, @MapPayloadParam("name") String serviceName,
-            @MapPayloadParam("protocol") Protocol protocol, @MapPayloadParam("port") int port,
-            AddInternetServiceOptions... options);
+   ListenableFuture<? extends InternetService> addInternetServiceToVDC(@PathParam("vDCId") String vDCId,
+            @MapPayloadParam("name") String serviceName, @MapPayloadParam("protocol") Protocol protocol,
+            @MapPayloadParam("port") int port, AddInternetServiceOptions... options);
 
    /**
     * @see TerremarkVCloudExpressClient#getAllInternetServices
@@ -81,8 +81,7 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServicesHandler.class)
    @Override
-   ListenableFuture<? extends SortedSet<InternetService>> getAllInternetServicesInVDC(
-            @PathParam("vDCId") String vDCId);
+   ListenableFuture<? extends Set<InternetService>> getAllInternetServicesInVDC(@PathParam("vDCId") String vDCId);
 
    /**
     * @see TerremarkVCloudExpressClient#addInternetServiceToExistingIp
@@ -95,10 +94,9 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @XMLResponseParser(InternetServiceHandler.class)
    @MapBinder(AddInternetServiceOptions.class)
    @Override
-   ListenableFuture<? extends InternetService> addInternetServiceToExistingIp(
-            @PathParam("ipId") int existingIpId, @MapPayloadParam("name") String serviceName,
-            @MapPayloadParam("protocol") Protocol protocol, @MapPayloadParam("port") int port,
-            AddInternetServiceOptions... options);
+   ListenableFuture<? extends InternetService> addInternetServiceToExistingIp(@PathParam("ipId") int existingIpId,
+            @MapPayloadParam("name") String serviceName, @MapPayloadParam("protocol") Protocol protocol,
+            @MapPayloadParam("port") int port, AddInternetServiceOptions... options);
 
    /**
     * @see TerremarkVCloudExpressClient#getInternetServicesOnPublicIP
@@ -108,9 +106,9 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @Path("/extensions/publicIp/{ipId}/internetServices")
    @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServicesHandler.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @Override
-   ListenableFuture<? extends SortedSet<InternetService>> getInternetServicesOnPublicIp(
-            @PathParam("ipId") int ipId);
+   ListenableFuture<? extends Set<InternetService>> getInternetServicesOnPublicIp(@PathParam("ipId") int ipId);
 
    /**
     * @see TerremarkVCloudExpressClient#getInternetService
@@ -122,7 +120,6 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @XMLResponseParser(InternetServiceHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Override
-   ListenableFuture<? extends InternetService> getInternetService(
-            @PathParam("internetServiceId") int internetServiceId);
+   ListenableFuture<? extends InternetService> getInternetService(@PathParam("internetServiceId") int internetServiceId);
 
 }

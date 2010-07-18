@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.compose;
 
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
@@ -113,9 +112,9 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<? extends PageSet<? extends StorageMetadata>> list() {
       return compose(
                async.listOwnedBuckets(),
-               new Function<SortedSet<BucketMetadata>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
+               new Function<Set<BucketMetadata>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
                   public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(
-                           SortedSet<BucketMetadata> from) {
+                           Set<BucketMetadata> from) {
                      return new PageSetImpl<StorageMetadata>(Iterables.transform(from,
                               bucket2ResourceMd), null);
                   }

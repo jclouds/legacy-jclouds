@@ -18,7 +18,7 @@
  */
 package org.jclouds.twitter;
 
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -35,6 +35,6 @@ import org.jclouds.twitter.domain.Status;
 @Timeout(duration = 4, timeUnit = TimeUnit.SECONDS)
 public interface TwitterClient {
 
-   SortedSet<Status> getMyMentions();
+   Set<Status> getMyMentions();
 
 }

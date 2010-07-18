@@ -22,7 +22,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Properties;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -50,7 +49,7 @@ import com.google.inject.Module;
 public class InternetServiceLiveTest {
    TerremarkVCloudExpressClient tmClient;
 
-   private SortedSet<InternetService> services = Sets.newTreeSet();
+   private Set<InternetService> services = Sets.newLinkedHashSet();
 
    private RestContext<TerremarkVCloudExpressClient, TerremarkVCloudExpressAsyncClient> context;
 
@@ -61,7 +60,7 @@ public class InternetServiceLiveTest {
       tmClient.getAllInternetServicesInVDC(tmClient.getDefaultVDC().getId());
    }
 
-   private void delete(SortedSet<InternetService> set) {
+   private void delete(Set<InternetService> set) {
       Set<Integer> publicIps = Sets.newHashSet();
       for (InternetService service : set) {
          for (Node node : tmClient.getNodes(service.getId())) {
@@ -104,7 +103,7 @@ public class InternetServiceLiveTest {
 
    }
 
-   void print(SortedSet<InternetService> set) {
+   void print(Set<InternetService> set) {
       for (InternetService service : set) {
          System.out.printf("%d (%s:%d%n)", service.getId(), service.getPublicIpAddress()
                   .getAddress(), service.getPort());

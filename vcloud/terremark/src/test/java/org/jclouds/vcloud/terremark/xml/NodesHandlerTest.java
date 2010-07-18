@@ -23,13 +23,13 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.UnknownHostException;
-import java.util.SortedSet;
+import java.util.Set;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.vcloud.terremark.domain.Node;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code NodesHandler}
@@ -42,8 +42,8 @@ public class NodesHandlerTest extends BaseHandlerTest {
    public void test1() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/terremark/NodeServices.xml");
 
-      SortedSet<Node> result = factory.create(injector.getInstance(NodesHandler.class)).parse(is);
-      assertEquals(result, ImmutableSortedSet.of(new Node(242, "Node for Jim", URI
+      Set<Node> result = factory.create(injector.getInstance(NodesHandler.class)).parse(is);
+      assertEquals(result, ImmutableSet.of(new Node(242, "Node for Jim", URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/NodeServices/242"),
                "172.16.20.3", 80, false, "Some test node")));
    }

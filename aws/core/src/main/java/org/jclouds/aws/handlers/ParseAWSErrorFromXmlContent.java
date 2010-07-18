@@ -67,32 +67,32 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
          AWSError error = utils.parseAWSErrorFromContent(request, response);
          exception = error != null ? new AWSResponseException(command, response, error) : exception;
          String notFoundMessage = error != null ? error.getMessage() : String.format("%s -> %s", request
-               .getRequestLine(), response.getStatusLine());
+                  .getRequestLine(), response.getStatusLine());
          switch (response.getStatusCode()) {
-         case 400:
-            if (error.getCode().endsWith(".NotFound"))
-               exception = new ResourceNotFoundException(notFoundMessage, exception);
-            else if (error.getCode().equals("IncorrectState"))
-               exception = new IllegalStateException(error.getMessage(), exception);
-            else if (error.getCode().equals("AuthFailure"))
+            case 400:
+               if (error.getCode().endsWith(".NotFound") || error.getCode().endsWith(".Unknown"))
+                  exception = new ResourceNotFoundException(notFoundMessage, exception);
+               else if (error.getCode().equals("IncorrectState"))
+                  exception = new IllegalStateException(error.getMessage(), exception);
+               else if (error.getCode().equals("AuthFailure"))
+                  exception = new AuthorizationException(command.getRequest(), error != null ? error.getMessage()
+                           : response.getStatusLine());
+               break;
+            case 401:
+            case 403:
                exception = new AuthorizationException(command.getRequest(), error != null ? error.getMessage()
-                     : response.getStatusLine());
-            break;
-         case 401:
-         case 403:
-            exception = new AuthorizationException(command.getRequest(), error != null ? error.getMessage() : response
-                  .getStatusLine());
-            break;
-         case 404:
-            if (!command.getRequest().getMethod().equals("DELETE")) {
-               String container = request.getEndpoint().getHost();
-               String key = request.getEndpoint().getPath();
-               if (key == null || key.equals("/"))
-                  exception = new ContainerNotFoundException(container, notFoundMessage);
-               else
-                  exception = new KeyNotFoundException(container, key, notFoundMessage);
-            }
-            break;
+                        : response.getStatusLine());
+               break;
+            case 404:
+               if (!command.getRequest().getMethod().equals("DELETE")) {
+                  String container = request.getEndpoint().getHost();
+                  String key = request.getEndpoint().getPath();
+                  if (key == null || key.equals("/"))
+                     exception = new ContainerNotFoundException(container, notFoundMessage);
+                  else
+                     exception = new KeyNotFoundException(container, key, notFoundMessage);
+               }
+               break;
          }
       } finally {
          releasePayload(response);

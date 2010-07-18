@@ -23,7 +23,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.UnknownHostException;
-import java.util.SortedSet;
+import java.util.Set;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.vcloud.terremark.domain.InternetService;
@@ -31,7 +31,7 @@ import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code InternetServicesHandler}
@@ -44,11 +44,11 @@ public class InternetServicesHandlerTest extends BaseHandlerTest {
    public void test2() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/terremark/InternetServices.xml");
 
-      SortedSet<InternetService> result = factory.create(
+      Set<InternetService> result = factory.create(
                injector.getInstance(InternetServicesHandler.class)).parse(is);
       assertEquals(
                result,
-               ImmutableSortedSet
+               ImmutableSet
                         .of(new InternetService(
                                  524,
                                  "IS_for_Jim2",

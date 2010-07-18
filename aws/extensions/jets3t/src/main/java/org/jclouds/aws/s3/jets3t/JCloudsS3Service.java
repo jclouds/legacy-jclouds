@@ -24,7 +24,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
+import java.util.Set;
 
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.blobstore.S3AsyncBlobStore;
@@ -72,11 +72,10 @@ public class JCloudsS3Service extends S3Service {
     *           URLFetchServiceClientModule
     * @throws S3ServiceException
     */
-   protected JCloudsS3Service(AWSCredentials awsCredentials, Module... modules)
-            throws S3ServiceException {
+   protected JCloudsS3Service(AWSCredentials awsCredentials, Module... modules) throws S3ServiceException {
       super(awsCredentials);
-      context = new BlobStoreContextFactory().createContext("s3", awsCredentials.getAccessKey(),
-               awsCredentials.getSecretKey(), ImmutableList.<Module> copyOf(modules));
+      context = new BlobStoreContextFactory().createContext("s3", awsCredentials.getAccessKey(), awsCredentials
+               .getSecretKey(), ImmutableList.<Module> copyOf(modules));
       connection = (S3Client) context.getProviderSpecificContext().getApi();
    }
 
@@ -91,13 +90,12 @@ public class JCloudsS3Service extends S3Service {
     */
    @SuppressWarnings("unchecked")
    @Override
-   protected Map copyObjectImpl(String sourceBucketName, String sourceObjectKey,
-            String destinationBucketName, String destinationObjectKey, AccessControlList acl,
-            Map destinationMetadata, Calendar ifModifiedSince, Calendar ifUnmodifiedSince,
-            String[] ifMatchTags, String[] ifNoneMatchTags) throws S3ServiceException {
+   protected Map copyObjectImpl(String sourceBucketName, String sourceObjectKey, String destinationBucketName,
+            String destinationObjectKey, AccessControlList acl, Map destinationMetadata, Calendar ifModifiedSince,
+            Calendar ifUnmodifiedSince, String[] ifMatchTags, String[] ifNoneMatchTags) throws S3ServiceException {
       try {
-         CopyObjectOptions options = Util.convertCopyObjectOptions(acl, destinationMetadata,
-                  ifModifiedSince, ifUnmodifiedSince, ifMatchTags, ifNoneMatchTags);
+         CopyObjectOptions options = Util.convertCopyObjectOptions(acl, destinationMetadata, ifModifiedSince,
+                  ifUnmodifiedSince, ifMatchTags, ifNoneMatchTags);
          ObjectMetadata jcObjectMetadata = connection.copyObject(sourceBucketName, sourceObjectKey,
                   destinationBucketName, destinationObjectKey, options);
 
@@ -157,8 +155,7 @@ public class JCloudsS3Service extends S3Service {
          connection.deleteObject(bucketName, objectKey);
       } catch (Exception e) {
          Throwables.propagateIfPossible(e, S3ServiceException.class);
-         throw new S3ServiceException(String.format("error deleting object: %1$s:%2$s", bucketName,
-                  objectKey), e);
+         throw new S3ServiceException(String.format("error deleting object: %1$s:%2$s", bucketName, objectKey), e);
       }
    }
 
@@ -180,18 +177,15 @@ public class JCloudsS3Service extends S3Service {
    }
 
    @Override
-   protected S3BucketLoggingStatus getBucketLoggingStatusImpl(String bucketName)
-            throws S3ServiceException {
+   protected S3BucketLoggingStatus getBucketLoggingStatusImpl(String bucketName) throws S3ServiceException {
       // TODO Unimplemented
       throw new UnsupportedOperationException();
    }
 
    @Override
-   protected AccessControlList getObjectAclImpl(String bucketName, String objectKey)
-            throws S3ServiceException {
+   protected AccessControlList getObjectAclImpl(String bucketName, String objectKey) throws S3ServiceException {
       try {
-         org.jclouds.aws.s3.domain.AccessControlList jcACL = connection.getObjectACL(bucketName,
-                  objectKey);
+         org.jclouds.aws.s3.domain.AccessControlList jcACL = connection.getObjectACL(bucketName, objectKey);
          return Util.convertAccessControlList(jcACL);
       } catch (Exception e) {
          Throwables.propagateIfPossible(e, S3ServiceException.class);
@@ -200,9 +194,8 @@ public class JCloudsS3Service extends S3Service {
    }
 
    @Override
-   protected S3Object getObjectDetailsImpl(String bucketName, String objectKey,
-            Calendar ifModifiedSince, Calendar ifUnmodifiedSince, String[] ifMatchTags,
-            String[] ifNoneMatchTags) throws S3ServiceException {
+   protected S3Object getObjectDetailsImpl(String bucketName, String objectKey, Calendar ifModifiedSince,
+            Calendar ifUnmodifiedSince, String[] ifMatchTags, String[] ifNoneMatchTags) throws S3ServiceException {
       try {
          if (ifModifiedSince != null)
             throw new IllegalArgumentException("ifModifiedSince");
@@ -216,23 +209,22 @@ public class JCloudsS3Service extends S3Service {
          return Util.convertObjectHead(connection.headObject(bucketName, objectKey));
       } catch (Exception e) {
          Throwables.propagateIfPossible(e, S3ServiceException.class);
-         throw new S3ServiceException(String.format("error retrieving object head: %1$s:%2$s",
-                  bucketName, objectKey), e);
+         throw new S3ServiceException(String.format("error retrieving object head: %1$s:%2$s", bucketName, objectKey),
+                  e);
       }
    }
 
    @Override
    protected S3Object getObjectImpl(String bucketName, String objectKey, Calendar ifModifiedSince,
-            Calendar ifUnmodifiedSince, String[] ifMatchTags, String[] ifNoneMatchTags,
-            Long byteRangeStart, Long byteRangeEnd) throws S3ServiceException {
+            Calendar ifUnmodifiedSince, String[] ifMatchTags, String[] ifNoneMatchTags, Long byteRangeStart,
+            Long byteRangeEnd) throws S3ServiceException {
       try {
-         GetOptions options = Util.convertGetObjectOptions(ifModifiedSince, ifUnmodifiedSince,
-                  ifMatchTags, ifNoneMatchTags);
+         GetOptions options = Util.convertGetObjectOptions(ifModifiedSince, ifUnmodifiedSince, ifMatchTags,
+                  ifNoneMatchTags);
          return Util.convertObject(connection.getObject(bucketName, objectKey, options));
       } catch (Exception e) {
          Throwables.propagateIfPossible(e, S3ServiceException.class);
-         throw new S3ServiceException(String.format("error retrieving object: %1$s:%2$s",
-                  bucketName, objectKey), e);
+         throw new S3ServiceException(String.format("error retrieving object: %1$s:%2$s", bucketName, objectKey), e);
       }
    }
 
@@ -251,8 +243,7 @@ public class JCloudsS3Service extends S3Service {
    @Override
    protected S3Bucket[] listAllBucketsImpl() throws S3ServiceException {
       try {
-         SortedSet<org.jclouds.aws.s3.domain.BucketMetadata> jcBucketList = connection
-                  .listOwnedBuckets();
+         Set<org.jclouds.aws.s3.domain.BucketMetadata> jcBucketList = connection.listOwnedBuckets();
          return Util.convertBuckets(jcBucketList);
       } catch (Exception e) {
          Throwables.propagateIfPossible(e, S3ServiceException.class);
@@ -261,16 +252,15 @@ public class JCloudsS3Service extends S3Service {
    }
 
    @Override
-   protected S3ObjectsChunk listObjectsChunkedImpl(String bucketName, String prefix,
-            String delimiter, long maxListingLength, String priorLastKey, boolean completeListing)
-            throws S3ServiceException {
+   protected S3ObjectsChunk listObjectsChunkedImpl(String bucketName, String prefix, String delimiter,
+            long maxListingLength, String priorLastKey, boolean completeListing) throws S3ServiceException {
       try {
          List<S3Object> jsObjects = new ArrayList<S3Object>();
          List<String> commonPrefixes = new ArrayList<String>();
          ListBucketResponse jcBucket = null;
          do {
-            ListBucketOptions options = Util.convertListObjectOptions(prefix, priorLastKey,
-                     delimiter, (int) maxListingLength);
+            ListBucketOptions options = Util.convertListObjectOptions(prefix, priorLastKey, delimiter,
+                     (int) maxListingLength);
 
             jcBucket = connection.listBucket(bucketName, options);
 
@@ -283,11 +273,11 @@ public class JCloudsS3Service extends S3Service {
             }
          } while (completeListing && jcBucket.isTruncated()); // Build entire listing if requested
 
-         return new S3ObjectsChunk(prefix, // Return the supplied prefix, not the one in the S3
+         return new S3ObjectsChunk(
+                  prefix, // Return the supplied prefix, not the one in the S3
                   // response.
-                  jcBucket.getDelimiter(), (S3Object[]) jsObjects.toArray(new S3Object[jsObjects
-                           .size()]), (String[]) commonPrefixes.toArray(new String[commonPrefixes
-                           .size()]), priorLastKey);
+                  jcBucket.getDelimiter(), (S3Object[]) jsObjects.toArray(new S3Object[jsObjects.size()]),
+                  (String[]) commonPrefixes.toArray(new String[commonPrefixes.size()]), priorLastKey);
       } catch (Exception e) {
          Throwables.propagateIfPossible(e, S3ServiceException.class);
          throw new S3ServiceException("error listing objects in bucket " + bucketName, e);
@@ -295,20 +285,18 @@ public class JCloudsS3Service extends S3Service {
    }
 
    @Override
-   protected S3Object[] listObjectsImpl(String bucketName, String prefix, String delimiter,
-            long maxListingLength) throws S3ServiceException {
-      try {
-         return listObjectsChunked(bucketName, prefix, delimiter, maxListingLength, null, true)
-                  .getObjects();
-      } catch (Exception e) {
-         Throwables.propagateIfPossible(e, S3ServiceException.class);
-         throw new S3ServiceException("error listing objects in bucket " + bucketName, e);
-      }
-   }
-
-   @Override
-   protected void putBucketAclImpl(String bucketName, AccessControlList jsACL)
+   protected S3Object[] listObjectsImpl(String bucketName, String prefix, String delimiter, long maxListingLength)
             throws S3ServiceException {
+      try {
+         return listObjectsChunked(bucketName, prefix, delimiter, maxListingLength, null, true).getObjects();
+      } catch (Exception e) {
+         Throwables.propagateIfPossible(e, S3ServiceException.class);
+         throw new S3ServiceException("error listing objects in bucket " + bucketName, e);
+      }
+   }
+
+   @Override
+   protected void putBucketAclImpl(String bucketName, AccessControlList jsACL) throws S3ServiceException {
       try {
          org.jclouds.aws.s3.domain.AccessControlList jcACL = Util.convertAccessControlList(jsACL);
          connection.putBucketACL(bucketName, jcACL);
@@ -334,8 +322,7 @@ public class JCloudsS3Service extends S3Service {
    protected S3Object putObjectImpl(String bucketName, S3Object jsObject) throws S3ServiceException {
       try {
          PutObjectOptions options = Util.convertPutObjectOptions(jsObject.getAcl());
-         org.jclouds.aws.s3.domain.S3Object jcObject = Util.convertObject(jsObject, connection
-                  .newS3Object());
+         org.jclouds.aws.s3.domain.S3Object jcObject = Util.convertObject(jsObject, connection.newS3Object());
          String eTag = connection.putObject(bucketName, jcObject, options);
          jsObject.setETag(eTag);
          return jsObject;
@@ -346,23 +333,20 @@ public class JCloudsS3Service extends S3Service {
    }
 
    @Override
-   protected void setBucketLoggingStatusImpl(String bucketName, S3BucketLoggingStatus status)
-            throws S3ServiceException {
+   protected void setBucketLoggingStatusImpl(String bucketName, S3BucketLoggingStatus status) throws S3ServiceException {
       // TODO Unimplemented
       throw new UnsupportedOperationException();
 
    }
 
    @Override
-   protected void setRequesterPaysBucketImpl(String bucketName, boolean requesterPays)
-            throws S3ServiceException {
+   protected void setRequesterPaysBucketImpl(String bucketName, boolean requesterPays) throws S3ServiceException {
       // TODO Unimplemented
       throw new UnsupportedOperationException();
 
    }
 
-   protected org.jets3t.service.model.S3Owner getAccountOwnerImpl()
-            throws org.jets3t.service.S3ServiceException {
+   protected org.jets3t.service.model.S3Owner getAccountOwnerImpl() throws org.jets3t.service.S3ServiceException {
       // TODO Unimplemented
       throw new UnsupportedOperationException();
 

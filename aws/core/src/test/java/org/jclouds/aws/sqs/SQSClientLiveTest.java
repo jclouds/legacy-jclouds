@@ -62,10 +62,8 @@ public class SQSClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws IOException {
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"),
-               "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"),
-               "jclouds.test.credential");
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
       context = new RestContextFactory().createContext("sqs", identity, credential, ImmutableSet
                .<Module> of(new Log4JLoggingModule()));
@@ -74,8 +72,8 @@ public class SQSClientLiveTest {
 
    @Test
    void testListQueuesInRegion() throws InterruptedException {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
-               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
+               Region.AP_SOUTHEAST_1)) {
          SortedSet<Queue> allResults = Sets.newTreeSet(client.listQueuesInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
@@ -91,11 +89,10 @@ public class SQSClientLiveTest {
    void testCreateQueue() throws InterruptedException {
       String queueName = PREFIX + "1";
 
-      for (final String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
-               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
+      for (final String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
+               Region.AP_SOUTHEAST_1)) {
          try {
-            SortedSet<Queue> result = Sets.newTreeSet(client.listQueuesInRegion(region,
-                     queuePrefix(queueName)));
+            SortedSet<Queue> result = Sets.newTreeSet(client.listQueuesInRegion(region, queuePrefix(queueName)));
             if (result.size() >= 1) {
                client.deleteQueue(result.last());
                queueName += 1;// cannot recreate a queue within 60 seconds
@@ -139,8 +136,7 @@ public class SQSClientLiveTest {
       final Queue finalQ = queue;
       assertEventually(new Runnable() {
          public void run() {
-            SortedSet<Queue> result = Sets.newTreeSet(client.listQueuesInRegion(region,
-                     queuePrefix(finalQ.getName())));
+            SortedSet<Queue> result = Sets.newTreeSet(client.listQueuesInRegion(region, queuePrefix(finalQ.getName())));
             assertNotNull(result);
             assert result.size() >= 1 : result;
             assertEquals(result.first(), finalQ);
@@ -161,9 +157,8 @@ public class SQSClientLiveTest {
          try {
             assertion.run();
             if (i > 0)
-               System.err.printf("%d attempts and %dms asserting %s%n", i + 1, System
-                        .currentTimeMillis()
-                        - start, assertion.getClass().getSimpleName());
+               System.err.printf("%d attempts and %dms asserting %s%n", i + 1, System.currentTimeMillis() - start,
+                        assertion.getClass().getSimpleName());
             return;
          } catch (AssertionError e) {
             error = e;

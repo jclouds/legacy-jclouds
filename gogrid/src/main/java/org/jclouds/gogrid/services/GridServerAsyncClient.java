@@ -53,7 +53,6 @@ import org.jclouds.gogrid.functions.ParseOptionsFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseServerFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseServerListFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseServerNameToCredentialsMapFromJsonResponse;
-import org.jclouds.gogrid.functions.ReturnEmptySetOnNotFound;
 import org.jclouds.gogrid.options.AddServerOptions;
 import org.jclouds.gogrid.options.GetServerListOptions;
 import org.jclouds.rest.annotations.BinderParam;
@@ -61,6 +60,7 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.QueryParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -91,7 +91,7 @@ public interface GridServerAsyncClient {
     */
    @GET
    @ResponseParser(ParseServerListFromJsonResponse.class)
-   @ExceptionParser(ReturnEmptySetOnNotFound.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @Path("/grid/server/get")
    ListenableFuture<Set<Server>> getServersByName(
             @BinderParam(BindNamesToQueryParams.class) String... names);
@@ -101,7 +101,7 @@ public interface GridServerAsyncClient {
     */
    @GET
    @ResponseParser(ParseServerListFromJsonResponse.class)
-   @ExceptionParser(ReturnEmptySetOnNotFound.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @Path("/grid/server/get")
    ListenableFuture<Set<Server>> getServersById(
             @BinderParam(BindIdsToQueryParams.class) long... ids);

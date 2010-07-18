@@ -40,7 +40,7 @@ public interface ComputeServiceConstants {
    static class Timeouts {
       @Inject(optional = true)
       @Named(PROPERTY_TIMEOUT_NODE_TERMINATED)
-      public long nodeTerminated = 15 * 1000;
+      public long nodeTerminated = 30 * 1000;
 
       @Inject(optional = true)
       @Named(PROPERTY_TIMEOUT_NODE_RUNNING)

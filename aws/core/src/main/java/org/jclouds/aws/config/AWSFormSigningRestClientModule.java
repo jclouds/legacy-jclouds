@@ -56,8 +56,7 @@ public class AWSFormSigningRestClientModule<S, A> extends AWSRestClientModule<S,
    @TimeStamp
    protected String provideTimeStamp(final DateService dateService,
             @Named(Constants.PROPERTY_SESSION_INTERVAL) final int expiration) {
-      return dateService.iso8601DateFormat(new Date(System.currentTimeMillis()
-               + (expiration * 1000)));
+      return dateService.iso8601DateFormat(new Date(System.currentTimeMillis() + (expiration * 1000)));
    }
 
    @Provides
