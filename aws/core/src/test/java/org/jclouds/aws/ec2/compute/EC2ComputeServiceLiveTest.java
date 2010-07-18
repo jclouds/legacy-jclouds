@@ -184,11 +184,12 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assertEquals(instance.getKeyName(), null);
 
          // make sure we made our dummy group and also let in the user's group
-         assertEquals(instance.getGroupIds(), ImmutableSet.<String> of(tag, "jclouds#" + tag));
+         assertEquals(instance.getGroupIds(), ImmutableSet.<String> of(tag, String.format("jclouds#%s#%s", tag,
+                  instance.getRegion())));
 
          // make sure our dummy group has no rules
-         SecurityGroup group = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
-                  "jclouds#" + tag));
+         SecurityGroup group = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null, String
+                  .format("jclouds#%s#%s", tag, instance.getRegion())));
          assert group.getIpPermissions().size() == 0 : group;
 
       } finally {
@@ -268,7 +269,8 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       return instance;
    }
 
-   private void cleanupExtendedStuff(SecurityGroupClient securityGroupClient, KeyPairClient keyPairClient, String tag) {
+   private void cleanupExtendedStuff(SecurityGroupClient securityGroupClient, KeyPairClient keyPairClient, String tag)
+            throws InterruptedException {
       try {
          securityGroupClient.deleteSecurityGroupInRegion(null, tag);
       } catch (Exception e) {
@@ -279,6 +281,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       } catch (Exception e) {
 
       }
+      Thread.sleep(2000);
    }
 
 }

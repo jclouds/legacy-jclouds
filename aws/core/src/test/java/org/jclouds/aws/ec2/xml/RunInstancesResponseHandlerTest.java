@@ -68,17 +68,17 @@ public class RunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                new RunningInstance(defaultRegion, ImmutableSet.of("default"), "0", null, "ami-60a54009", "i-2ba64342",
                         InstanceState.PENDING, InstanceType.M1_SMALL, (String) null, null, "example-key-name",
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"), true, AvailabilityZone.US_EAST_1B,
-                        null, null, (String) null, null, "paravirtual", Sets.<String> newLinkedHashSet(), null, null,
+                        null, "paravirtual", null, (String) null, null, Sets.<String> newLinkedHashSet(), null, null,
                         null, null, RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of()),
                new RunningInstance(defaultRegion, ImmutableSet.of("default"), "1", null, "ami-60a54009", "i-2bc64242",
                         InstanceState.PENDING, InstanceType.M1_SMALL, (String) null, null, "example-key-name",
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"), true, AvailabilityZone.US_EAST_1B,
-                        null, null, (String) null, null, "paravirtual", Sets.<String> newLinkedHashSet(), null, null,
+                        null, "paravirtual", null, (String) null, null, Sets.<String> newLinkedHashSet(), null, null,
                         null, null, RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of()),
                new RunningInstance(defaultRegion, ImmutableSet.of("default"), "2", null, "ami-60a54009", "i-2be64332",
                         InstanceState.PENDING, InstanceType.M1_SMALL, (String) null, null, "example-key-name",
                         dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"), true, AvailabilityZone.US_EAST_1B,
-                        null, null, (String) null, null, "paravirtual", Sets.<String> newLinkedHashSet(), null, null,
+                        null, "paravirtual", null, (String) null, null, Sets.<String> newLinkedHashSet(), null, null,
                         null, null, RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of())
 
       ), "AIDADH4IGTRXXKCD", null, "r-47a5402e");

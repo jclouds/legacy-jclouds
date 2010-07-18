@@ -373,7 +373,8 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
          }
       });
       for (String zone : availabilityZoneToRegionMap.keySet()) {
-         locations.add(new LocationImpl(LocationScope.ZONE, zone, zone, idToLocation.get(zone)));
+         locations.add(new LocationImpl(LocationScope.ZONE, zone, zone, idToLocation.get(availabilityZoneToRegionMap
+                  .get(zone))));
       }
       return locations;
    }

@@ -236,7 +236,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
             region = defaultRegion;
          instances.add(new RunningInstance(region, groupIds, amiLaunchIndex, dnsName, imageId, instanceId,
                   instanceState, instanceType, ipAddress, kernelId, keyName, launchTime, monitoring, availabilityZone,
-                  placementGroup, platform, privateDnsName, privateIpAddress, virtualizationType, productCodes,
+                  placementGroup, virtualizationType, platform, privateDnsName, privateIpAddress, productCodes,
                   ramdiskId, reason, subnetId, vpcId, rootDeviceType, rootDeviceName, ebsBlockDevices));
          this.amiLaunchIndex = null;
          this.dnsName = null;
