@@ -49,8 +49,4 @@ public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest 
       assertEquals(defaultTemplate.getSize().getCores(), 4.0d);
    }
 
-   @Override
-   protected void assertCCsizeWorks() {
-      // no CC size in eucalyptus
-   }
 }

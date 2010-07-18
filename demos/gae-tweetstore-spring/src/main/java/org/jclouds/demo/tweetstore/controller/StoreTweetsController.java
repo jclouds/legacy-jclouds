@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -92,7 +92,7 @@ public class StoreTweetsController extends HttpServlet {
    }
 
    @VisibleForTesting
-   public void addMyTweets(String contextName, SortedSet<Status> allAboutMe) {
+   public void addMyTweets(String contextName, Set<Status> allAboutMe) {
       BlobStoreContext context = checkNotNull(contexts.get(contextName), "no context for "
                + contextName + " in " + contexts.keySet());
       BlobMap map = context.createBlobMap(container);

@@ -53,11 +53,13 @@ import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.functions.RegionToEndpoint;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
+import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -79,6 +81,7 @@ public interface InstanceAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeInstances")
    @XMLResponseParser(DescribeInstancesResponseHandler.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<Reservation>> describeInstancesInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
@@ -125,8 +128,7 @@ public interface InstanceAsyncClient {
    @FormParams(keys = ACTION, values = "StopInstances")
    @XMLResponseParser(InstanceStateChangeHandler.class)
    ListenableFuture<? extends Set<InstanceStateChange>> stopInstancesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
-            @FormParam("Force") boolean force,
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region, @FormParam("Force") boolean force,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
    /**
@@ -156,8 +158,7 @@ public interface InstanceAsyncClient {
     */
    @POST
    @Path("/")
-   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute",
-            "rootDeviceName" })
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute", "rootDeviceName" })
    @XMLResponseParser(StringValueHandler.class)
    ListenableFuture<String> getRootDeviceNameForInstanceInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
@@ -190,8 +191,7 @@ public interface InstanceAsyncClient {
     */
    @POST
    @Path("/")
-   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute",
-            "disableApiTermination" })
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute", "disableApiTermination" })
    @XMLResponseParser(BooleanValueHandler.class)
    ListenableFuture<Boolean> isApiTerminationDisabledForInstanceInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
@@ -202,8 +202,7 @@ public interface InstanceAsyncClient {
     */
    @POST
    @Path("/")
-   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute",
-            "instanceType" })
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute", "instanceType" })
    @XMLResponseParser(InstanceTypeHandler.class)
    ListenableFuture<String> getInstanceTypeForInstanceInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
@@ -226,8 +225,7 @@ public interface InstanceAsyncClient {
     */
    @POST
    @Path("/")
-   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute",
-            "blockDeviceMapping" })
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute", "blockDeviceMapping" })
    @XMLResponseParser(BlockDeviceMappingHandler.class)
    ListenableFuture<? extends Map<String, RunningInstance.EbsBlockDevice>> getBlockDeviceMappingForInstanceInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
@@ -289,12 +287,10 @@ public interface InstanceAsyncClient {
     */
    @POST
    @Path("/")
-   @FormParams(keys = { ACTION, "Attribute" }, values = { "ModifyInstanceAttribute",
-            "disableApiTermination" })
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "ModifyInstanceAttribute", "disableApiTermination" })
    ListenableFuture<Void> setApiTerminationDisabledForInstanceInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
-            @FormParam("InstanceId") String instanceId,
-            @FormParam("Value") boolean apiTerminationDisabled);
+            @FormParam("InstanceId") String instanceId, @FormParam("Value") boolean apiTerminationDisabled);
 
    /**
     * @see AMIClient#setInstanceTypeForInstanceInRegion

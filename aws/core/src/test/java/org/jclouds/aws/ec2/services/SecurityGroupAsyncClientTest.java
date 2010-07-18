@@ -24,11 +24,12 @@ import java.lang.reflect.Method;
 
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
-import org.jclouds.aws.ec2.functions.ReturnVoidOnGroupNotFound;
 import org.jclouds.aws.ec2.xml.DescribeSecurityGroupsResponseHandler;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -54,7 +55,7 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnVoidOnGroupNotFound.class);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -89,7 +90,7 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeSecurityGroupsResponseHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -106,7 +107,7 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeSecurityGroupsResponseHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
    }

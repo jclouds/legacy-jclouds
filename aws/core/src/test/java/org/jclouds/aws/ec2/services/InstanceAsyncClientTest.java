@@ -41,6 +41,7 @@ import org.jclouds.aws.ec2.xml.UnencodeStringValueHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -64,7 +65,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeInstancesResponseHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -80,7 +81,7 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeInstancesResponseHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
    }

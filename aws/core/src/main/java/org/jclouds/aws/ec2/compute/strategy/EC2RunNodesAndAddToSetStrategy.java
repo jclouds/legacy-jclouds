@@ -66,7 +66,7 @@ public class EC2RunNodesAndAddToSetStrategy implements
    @VisibleForTesting
    final EC2Client client;
    @VisibleForTesting
-   final CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions;
+   final CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions;
    @VisibleForTesting
    final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
    @VisibleForTesting
@@ -77,7 +77,7 @@ public class EC2RunNodesAndAddToSetStrategy implements
    @Inject
    EC2RunNodesAndAddToSetStrategy(
          EC2Client client,
-         CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions,
+         CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions,
          @Named("PRESENT") Predicate<RunningInstance> instancePresent,
          RunningInstanceToNodeMetadata runningInstanceToNodeMetadata,
          ComputeUtils utils) {

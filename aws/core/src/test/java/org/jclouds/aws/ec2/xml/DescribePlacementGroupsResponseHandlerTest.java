@@ -24,49 +24,37 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.util.Set;
 
-import org.jclouds.aws.ec2.domain.IpPermission;
-import org.jclouds.aws.ec2.domain.IpProtocol;
-import org.jclouds.aws.ec2.domain.SecurityGroup;
-import org.jclouds.aws.ec2.domain.UserIdGroupPair;
+import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
+import com.google.inject.internal.Iterables;
 
 /**
- * Tests behavior of {@code DescribeSecurityGroupsHandler}
+ * Tests behavior of {@code DescribePlacementGroupsResponseHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.DescribeSecurityGroupsHandlerTest")
-public class DescribeSecurityGroupsResponseHandlerTest extends BaseEC2HandlerTest {
+@Test(groups = "unit", testName = "ec2.DescribePlacementGroupsResponseHandlerTest")
+public class DescribePlacementGroupsResponseHandlerTest extends BaseEC2HandlerTest {
    public void testApplyInputStream() {
+      InputStream is = getClass().getResourceAsStream("/ec2/describe_placement_groups.xml");
 
-      InputStream is = getClass().getResourceAsStream("/ec2/describe_securitygroups.xml");
-
-      Set<SecurityGroup> expected = ImmutableSet.of(new SecurityGroup(defaultRegion,
-               "WebServers", "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM", "Web Servers", ImmutableSet
-                        .of(new IpPermission(80, 80, ImmutableSet.<UserIdGroupPair> of(),
-                                 IpProtocol.TCP, ImmutableSet.of("0.0.0.0/0")))),
-               new SecurityGroup(defaultRegion, "RangedPortsBySource", "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM",
-                        "Group A", ImmutableSet.of(new IpPermission(6000, 7000,
-                                 ImmutableSet.<UserIdGroupPair> of(), IpProtocol.TCP,
-                                 ImmutableSet.<String> of()))));
-
-      DescribeSecurityGroupsResponseHandler handler = injector
-               .getInstance(DescribeSecurityGroupsResponseHandler.class);
+      PlacementGroup expected = new PlacementGroup(defaultRegion, "XYZ-cluster", "cluster",
+               PlacementGroup.State.AVAILABLE);
+      DescribePlacementGroupsResponseHandler handler = injector
+               .getInstance(DescribePlacementGroupsResponseHandler.class);
       addDefaultRegionToHandler(handler);
-      Set<SecurityGroup> result = factory.create(handler).parse(is);
+      PlacementGroup result = Iterables.getOnlyElement(factory.create(handler).parse(is));
 
       assertEquals(result, expected);
    }
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(new Object[] { null }).atLeastOnce();
+      expect(request.getArgs()).andReturn(new Object[] { null });
       replay(request);
       handler.setContext(request);
    }

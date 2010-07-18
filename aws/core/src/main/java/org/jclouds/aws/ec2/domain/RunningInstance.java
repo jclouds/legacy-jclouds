@@ -45,8 +45,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       private final Date attachTime;
       private final boolean deleteOnTermination;
 
-      public EbsBlockDevice(String volumeId, Status attachmentStatus, Date attachTime,
-               boolean deleteOnTermination) {
+      public EbsBlockDevice(String volumeId, Status attachmentStatus, Date attachTime, boolean deleteOnTermination) {
          super();
          this.volumeId = volumeId;
          this.attachmentStatus = attachmentStatus;
@@ -136,6 +135,9 @@ public class RunningInstance implements Comparable<RunningInstance> {
    private final boolean monitoring;
    private final String availabilityZone;
    @Nullable
+   private final String placementGroup;
+   private final String virtualizationType;
+   @Nullable
    private final String platform;
    @Nullable
    private final String privateDnsName;
@@ -159,16 +161,14 @@ public class RunningInstance implements Comparable<RunningInstance> {
       return (this == o) ? 0 : getId().compareTo(o.getId());
    }
 
-   public RunningInstance(String region, Iterable<String> groupIds,
-            @Nullable String amiLaunchIndex, @Nullable String dnsName, String imageId,
-            String instanceId, InstanceState instanceState, String instanceType,
-            @Nullable String ipAddress, @Nullable String kernelId, @Nullable String keyName,
-            Date launchTime, boolean monitoring, String availabilityZone,
-            @Nullable String platform, @Nullable String privateDnsName,
-            @Nullable String privateIpAddress, Set<String> productCodes,
-            @Nullable String ramdiskId, @Nullable String reason, @Nullable String subnetId,
-            @Nullable String vpcId, RootDeviceType rootDeviceType, @Nullable String rootDeviceName,
-            Map<String, EbsBlockDevice> ebsBlockDevices) {
+   public RunningInstance(String region, Iterable<String> groupIds, @Nullable String amiLaunchIndex,
+            @Nullable String dnsName, String imageId, String instanceId, InstanceState instanceState,
+            String instanceType, @Nullable String ipAddress, @Nullable String kernelId, @Nullable String keyName,
+            Date launchTime, boolean monitoring, String availabilityZone, @Nullable String placementGroup,
+            String virtualizationType, @Nullable String platform, @Nullable String privateDnsName,
+            @Nullable String privateIpAddress, Set<String> productCodes, @Nullable String ramdiskId,
+            @Nullable String reason, @Nullable String subnetId, @Nullable String vpcId, RootDeviceType rootDeviceType,
+            @Nullable String rootDeviceName, Map<String, EbsBlockDevice> ebsBlockDevices) {
       Iterables.addAll(this.groupIds, checkNotNull(groupIds, "groupIds"));
       this.region = checkNotNull(region, "region");
       this.amiLaunchIndex = amiLaunchIndex; // nullable on runinstances.
@@ -183,6 +183,8 @@ public class RunningInstance implements Comparable<RunningInstance> {
       this.launchTime = checkNotNull(launchTime, "launchTime");
       this.monitoring = checkNotNull(monitoring, "monitoring");
       this.availabilityZone = checkNotNull(availabilityZone, "availabilityZone");
+      this.placementGroup = placementGroup;
+      this.virtualizationType = virtualizationType;
       this.platform = platform;
       this.privateDnsName = privateDnsName; // nullable on runinstances.
       this.privateIpAddress = privateIpAddress;
@@ -293,6 +295,20 @@ public class RunningInstance implements Comparable<RunningInstance> {
    }
 
    /**
+    * The name of the placement group the instance is in (for cluster compute instances).
+    */
+   public String getPlacementGroup() {
+      return placementGroup;
+   }
+
+   /**
+    * Specifies the instance's virtualization type. Valid values are paravirtual or hvm.
+    */
+   public String getVirtualizationType() {
+      return virtualizationType;
+   }
+
+   /**
     * Platform of the instance (e.g., Windows).
     */
    public String getPlatform() {
@@ -377,6 +393,8 @@ public class RunningInstance implements Comparable<RunningInstance> {
       int result = 1;
       result = prime * result + ((amiLaunchIndex == null) ? 0 : amiLaunchIndex.hashCode());
       result = prime * result + ((availabilityZone == null) ? 0 : availabilityZone.hashCode());
+      result = prime * result + ((placementGroup == null) ? 0 : placementGroup.hashCode());
+      result = prime * result + ((virtualizationType == null) ? 0 : virtualizationType.hashCode());
       result = prime * result + ((dnsName == null) ? 0 : dnsName.hashCode());
       result = prime * result + ((ebsBlockDevices == null) ? 0 : ebsBlockDevices.hashCode());
       result = prime * result + ((groupIds == null) ? 0 : groupIds.hashCode());
@@ -419,6 +437,16 @@ public class RunningInstance implements Comparable<RunningInstance> {
          if (other.availabilityZone != null)
             return false;
       } else if (!availabilityZone.equals(other.availabilityZone))
+         return false;
+      if (placementGroup == null) {
+         if (other.placementGroup != null)
+            return false;
+      } else if (!placementGroup.equals(other.placementGroup))
+         return false;
+      if (virtualizationType == null) {
+         if (other.virtualizationType != null)
+            return false;
+      } else if (!virtualizationType.equals(other.virtualizationType))
          return false;
       if (dnsName == null) {
          if (other.dnsName != null)
@@ -527,17 +555,16 @@ public class RunningInstance implements Comparable<RunningInstance> {
 
    @Override
    public String toString() {
-      return "RunningInstance [amiLaunchIndex=" + amiLaunchIndex + ", availabilityZone="
-               + availabilityZone + ", dnsName=" + dnsName + ", ebsBlockDevices=" + ebsBlockDevices
-               + ", groupIds=" + groupIds + ", imageId=" + imageId + ", instanceId=" + instanceId
-               + ", instanceState=" + instanceState + ", instanceType=" + instanceType
-               + ", ipAddress=" + ipAddress + ", kernelId=" + kernelId + ", keyName=" + keyName
-               + ", launchTime=" + launchTime + ", monitoring=" + monitoring + ", platform="
-               + platform + ", privateDnsName=" + privateDnsName + ", privateIpAddress="
-               + privateIpAddress + ", productCodes=" + productCodes + ", ramdiskId=" + ramdiskId
-               + ", reason=" + reason + ", region=" + region + ", rootDeviceName=" + rootDeviceName
-               + ", rootDeviceType=" + rootDeviceType + ", subnetId=" + subnetId + ", vpcId="
-               + vpcId + "]";
+      return "RunningInstance [amiLaunchIndex=" + amiLaunchIndex + ", availabilityZone=" + availabilityZone
+               + ", placementGroup=" + placementGroup + ", virtualizationType=" + virtualizationType + ", dnsName="
+               + dnsName + ", ebsBlockDevices=" + ebsBlockDevices + ", groupIds=" + groupIds + ", imageId=" + imageId
+               + ", instanceId=" + instanceId + ", instanceState=" + instanceState + ", instanceType=" + instanceType
+               + ", ipAddress=" + ipAddress + ", kernelId=" + kernelId + ", keyName=" + keyName + ", launchTime="
+               + launchTime + ", monitoring=" + monitoring + ", platform=" + platform + ", privateDnsName="
+               + privateDnsName + ", privateIpAddress=" + privateIpAddress + ", productCodes=" + productCodes
+               + ", ramdiskId=" + ramdiskId + ", reason=" + reason + ", region=" + region + ", rootDeviceName="
+               + rootDeviceName + ", rootDeviceType=" + rootDeviceType + ", subnetId=" + subnetId + ", vpcId=" + vpcId
+               + "]";
    }
 
 }

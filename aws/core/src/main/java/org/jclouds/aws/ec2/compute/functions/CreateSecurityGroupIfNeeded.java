@@ -41,8 +41,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class CreateSecurityGroupIfNeeded implements
-      Function<RegionNameAndIngressRules, String> {
+public class CreateSecurityGroupIfNeeded implements Function<RegionNameAndIngressRules, String> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -55,20 +54,16 @@ public class CreateSecurityGroupIfNeeded implements
 
    @Override
    public String apply(RegionNameAndIngressRules from) {
-      createSecurityGroupInRegion(from.getRegion(), from.getName(), from
-            .getPorts());
+      createSecurityGroupInRegion(from.getRegion(), from.getName(), from.getPorts());
       return from.getName();
    }
 
-   private void createSecurityGroupInRegion(String region, String name,
-         int... ports) {
+   private void createSecurityGroupInRegion(String region, String name, int... ports) {
       checkNotNull(region, "region");
       checkNotNull(name, "name");
-      logger.debug(">> creating securityGroup region(%s) name(%s)", region,
-            name);
+      logger.debug(">> creating securityGroup region(%s) name(%s)", region, name);
       try {
-         ec2Client.getSecurityGroupServices().createSecurityGroupInRegion(
-               region, name, name);
+         ec2Client.getSecurityGroupServices().createSecurityGroupInRegion(region, name, name);
          logger.debug("<< created securityGroup(%s)", name);
          for (int port : ports) {
             createIngressRuleForTCPPort(region, name, port);
@@ -78,7 +73,7 @@ public class CreateSecurityGroupIfNeeded implements
          }
       } catch (AWSResponseException e) {
          if (e.getError().getCode().equals("InvalidGroup.Duplicate")
-               || e.getError().getMessage().endsWith("already exists")) {
+                  || e.getError().getMessage().endsWith("already exists")) {
             logger.debug("<< reused securityGroup(%s)", name);
          } else {
             throw e;
@@ -87,25 +82,18 @@ public class CreateSecurityGroupIfNeeded implements
    }
 
    private void createIngressRuleForTCPPort(String region, String name, int port) {
-      logger.debug(">> authorizing securityGroup region(%s) name(%s) port(%s)",
-            region, name, port);
-      ec2Client.getSecurityGroupServices()
-            .authorizeSecurityGroupIngressInRegion(region, name,
-                  IpProtocol.TCP, port, port, "0.0.0.0/0");
+      logger.debug(">> authorizing securityGroup region(%s) name(%s) port(%s)", region, name, port);
+      ec2Client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(region, name, IpProtocol.TCP, port,
+               port, "0.0.0.0/0");
       logger.debug("<< authorized securityGroup(%s)", name);
    }
 
    private void authorizeGroupToItself(String region, String name) {
-      logger
-            .debug(
-                  ">> authorizing securityGroup region(%s) name(%s) permission to itself",
-                  region, name);
-      String myOwnerId = Iterables.get(
-            ec2Client.getSecurityGroupServices()
-                  .describeSecurityGroupsInRegion(region), 0).getOwnerId();
-      ec2Client.getSecurityGroupServices()
-            .authorizeSecurityGroupIngressInRegion(region, name,
-                  new UserIdGroupPair(myOwnerId, name));
+      logger.debug(">> authorizing securityGroup region(%s) name(%s) permission to itself", region, name);
+      String myOwnerId = Iterables.get(ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region), 0)
+               .getOwnerId();
+      ec2Client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(region, name,
+               new UserIdGroupPair(myOwnerId, name));
       logger.debug("<< authorized securityGroup(%s)", name);
    }
 

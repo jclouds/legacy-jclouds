@@ -31,6 +31,7 @@ public class EC2AsyncClientTest extends BaseEC2AsyncClientTest<EC2AsyncClient> {
       assert syncClient.getKeyPairServices() != null;
       assert syncClient.getMonitoringServices() != null;
       assert syncClient.getSecurityGroupServices() != null;
+      assert syncClient.getPlacementGroupServices() != null;
       assert syncClient.getWindowsServices() != null;
 
    }
@@ -44,6 +45,7 @@ public class EC2AsyncClientTest extends BaseEC2AsyncClientTest<EC2AsyncClient> {
       assert asyncClient.getKeyPairServices() != null;
       assert asyncClient.getMonitoringServices() != null;
       assert asyncClient.getSecurityGroupServices() != null;
+      assert asyncClient.getPlacementGroupServices() != null;
       assert asyncClient.getWindowsServices() != null;
    }
 

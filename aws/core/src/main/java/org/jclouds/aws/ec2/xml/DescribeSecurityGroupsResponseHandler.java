@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -42,30 +42,30 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class DescribeSecurityGroupsResponseHandler extends
-         ParseSax.HandlerForGeneratedRequestWithResult<SortedSet<SecurityGroup>> {
+         ParseSax.HandlerForGeneratedRequestWithResult<Set<SecurityGroup>> {
    @Inject
    @Region
    String defaultRegion;
 
    private StringBuilder currentText = new StringBuilder();
-   private SortedSet<SecurityGroup> securtyGroups = Sets.newTreeSet();
+   private Set<SecurityGroup> securtyGroups = Sets.newLinkedHashSet();
    private String groupName;
    private String ownerId;
    private String groupDescription;
-   private SortedSet<IpPermission> ipPermissions = Sets.newTreeSet();
+   private Set<IpPermission> ipPermissions = Sets.newLinkedHashSet();
    private int fromPort;
    private int toPort;
-   private SortedSet<UserIdGroupPair> groups = Sets.newTreeSet();
+   private Set<UserIdGroupPair> groups = Sets.newLinkedHashSet();
    private String userId;
    private String userIdGroupName;
    private IpProtocol ipProtocol;
-   private SortedSet<String> ipRanges = Sets.newTreeSet();
+   private Set<String> ipRanges = Sets.newLinkedHashSet();
 
    private boolean inIpPermissions;
    private boolean inIpRanges;
    private boolean inGroups;
 
-   public SortedSet<SecurityGroup> getResult() {
+   public Set<SecurityGroup> getResult() {
       return securtyGroups;
    }
 
@@ -110,9 +110,9 @@ public class DescribeSecurityGroupsResponseHandler extends
             ipPermissions.add(new IpPermission(fromPort, toPort, groups, ipProtocol, ipRanges));
             this.fromPort = -1;
             this.toPort = -1;
-            this.groups = Sets.newTreeSet();
+            this.groups = Sets.newLinkedHashSet();
             this.ipProtocol = null;
-            this.ipRanges = Sets.newTreeSet();
+            this.ipRanges = Sets.newLinkedHashSet();
          } else if (inIpPermissions && !inIpRanges && inGroups) {
             this.groups.add(new UserIdGroupPair(userId, userIdGroupName));
             this.userId = null;
@@ -126,7 +126,7 @@ public class DescribeSecurityGroupsResponseHandler extends
             this.groupName = null;
             this.ownerId = null;
             this.groupDescription = null;
-            this.ipPermissions = Sets.newTreeSet();
+            this.ipPermissions = Sets.newLinkedHashSet();
          }
       }
 

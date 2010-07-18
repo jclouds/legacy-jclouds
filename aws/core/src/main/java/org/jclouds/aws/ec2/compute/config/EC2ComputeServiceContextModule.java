@@ -53,6 +53,7 @@ import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.EC2ComputeService;
 import org.jclouds.aws.ec2.compute.domain.EC2Size;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
+import org.jclouds.aws.ec2.compute.functions.CreatePlacementGroupIfNeeded;
 import org.jclouds.aws.ec2.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.aws.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.aws.ec2.compute.functions.ImageParser;
@@ -66,11 +67,14 @@ import org.jclouds.aws.ec2.compute.strategy.EC2LoadBalanceNodesStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2RunNodesAndAddToSetStrategy;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.KeyPair;
+import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.domain.Image.ImageType;
 import org.jclouds.aws.ec2.functions.RunningInstanceToStorageMappingUnix;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.aws.ec2.predicates.InstancePresent;
+import org.jclouds.aws.ec2.predicates.PlacementGroupAvailable;
+import org.jclouds.aws.ec2.predicates.PlacementGroupDeleted;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
@@ -106,6 +110,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.MapMaker;
@@ -119,8 +124,7 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 
 /**
- * Configures the {@link ComputeServiceContext}; requires
- * {@link EC2ComputeService} bound.
+ * Configures the {@link ComputeServiceContext}; requires {@link EC2ComputeService} bound.
  * 
  * @author Adrian Cole
  */
@@ -130,7 +134,21 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Named("PRESENT")
    protected Predicate<RunningInstance> instancePresent(InstancePresent present) {
-      return new RetryablePredicate<RunningInstance>(present, 3000, 200, TimeUnit.MILLISECONDS);
+      return new RetryablePredicate<RunningInstance>(present, 5000, 200, TimeUnit.MILLISECONDS);
+   }
+
+   @Provides
+   @Singleton
+   @Named("AVAILABLE")
+   protected Predicate<PlacementGroup> placementGroupAvailable(PlacementGroupAvailable available) {
+      return new RetryablePredicate<PlacementGroup>(available, 60, 1, TimeUnit.SECONDS);
+   }
+
+   @Provides
+   @Singleton
+   @Named("DELETED")
+   protected Predicate<PlacementGroup> placementGroupDeleted(PlacementGroupDeleted deleted) {
+      return new RetryablePredicate<PlacementGroup>(deleted, 60, 1, TimeUnit.SECONDS);
    }
 
    @Override
@@ -175,8 +193,8 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
    @Named("DEFAULT")
    protected TemplateBuilder provideTemplate(@Region String region, TemplateBuilder template) {
       return "Eucalyptus".equals(region) ? template.osFamily(CENTOS).smallest() : template.architecture(
-            Architecture.X86_32).osFamily(UBUNTU).imageNameMatches(".*10\\.?04.*").osDescriptionMatches(
-            "^ubuntu-images.*");
+               Architecture.X86_32).osFamily(UBUNTU).imageNameMatches(".*10\\.?04.*").osDescriptionMatches(
+               "^ubuntu-images.*");
    }
 
    // TODO make this more efficient for listNodes(); currently
@@ -195,8 +213,8 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
 
       @Inject
       protected EC2ListNodesStrategy(EC2Client client, @Region Map<String, URI> regionMap,
-            RunningInstanceToNodeMetadata runningInstanceToNodeMetadata,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+               RunningInstanceToNodeMetadata runningInstanceToNodeMetadata,
+               @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
          this.client = client;
          this.regionMap = regionMap;
          this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
@@ -219,7 +237,7 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
                @Override
                public Void call() throws Exception {
                   Iterables.addAll(nodes, Iterables.transform(Iterables.concat(client.getInstanceServices()
-                        .describeInstancesInRegion(region)), runningInstanceToNodeMetadata));
+                           .describeInstancesInRegion(region)), runningInstanceToNodeMetadata));
                   return null;
                }
             }), executor));
@@ -251,7 +269,7 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
          String instanceId = parts[1];
          try {
             RunningInstance runningInstance = Iterables.getOnlyElement(getAllRunningInstancesInRegion(client
-                  .getInstanceServices(), region, instanceId));
+                     .getInstanceServices(), region, instanceId));
             return runningInstanceToNodeMetadata.apply(runningInstance);
          } catch (NoSuchElementException e) {
             return null;
@@ -292,7 +310,17 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
 
    @Provides
    @Singleton
+   @Named("SECURITY")
    protected final Map<RegionAndName, String> securityGroupMap(CreateSecurityGroupIfNeeded in) {
+      // doesn't seem to clear when someone issues remove(key)
+      // return new MapMaker().makeComputingMap(in);
+      return Maps.newLinkedHashMap();
+   }
+
+   @Provides
+   @Singleton
+   @Named("PLACEMENT")
+   protected final Map<RegionAndName, String> placementGroupMap(CreatePlacementGroupIfNeeded in) {
       // doesn't seem to clear when someone issues remove(key)
       // return new MapMaker().makeComputingMap(in);
       return Maps.newLinkedHashMap();
@@ -326,21 +354,26 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
          sizes.add(new EC2Size(location, InstanceType.CC1_4XLARGE, 33.5, 23 * 1024, 1690, ccAmis));
       }
       sizes.addAll(ImmutableSet.<Size> of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE, EC2Size.M1_SMALL,
-            EC2Size.M1_XLARGE, EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE, EC2Size.M2_4XLARGE));
+               EC2Size.M1_XLARGE, EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE, EC2Size.M2_4XLARGE));
       return sizes;
    }
 
    @Provides
-   @Singleton
    Set<? extends Location> provideLocations(Map<String, String> availabilityZoneToRegionMap,
-         @Provider String providerName) {
+            @Provider String providerName) {
       Location ec2 = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
       Set<Location> locations = Sets.newLinkedHashSet();
+      for (String region : Sets.newLinkedHashSet(availabilityZoneToRegionMap.values())) {
+         locations.add(new LocationImpl(LocationScope.REGION, region, region, ec2));
+      }
+      ImmutableMap<String, Location> idToLocation = Maps.uniqueIndex(locations, new Function<Location, String>() {
+         @Override
+         public String apply(Location from) {
+            return from.getId();
+         }
+      });
       for (String zone : availabilityZoneToRegionMap.keySet()) {
-         Location region = new LocationImpl(LocationScope.REGION, availabilityZoneToRegionMap.get(zone),
-               availabilityZoneToRegionMap.get(zone), ec2);
-         locations.add(region);
-         locations.add(new LocationImpl(LocationScope.ZONE, zone, zone, region));
+         locations.add(new LocationImpl(LocationScope.ZONE, zone, zone, idToLocation.get(zone)));
       }
       return locations;
    }
@@ -383,11 +416,11 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
    @Provides
    @Singleton
    protected Map<RegionAndName, ? extends Image> provideImages(final EC2Client sync,
-         @Region Map<String, URI> regionMap, final LogHolder holder, Function<ComputeMetadata, String> indexer,
-         @Named(PROPERTY_EC2_CC_AMIs) String[] ccAmis, @Named(PROPERTY_EC2_AMI_OWNERS) final String[] amiOwners,
-         final ImageParser parser, final ConcurrentMap<RegionAndName, Image> images,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) throws InterruptedException,
-         ExecutionException, TimeoutException {
+            @Region Map<String, URI> regionMap, final LogHolder holder, Function<ComputeMetadata, String> indexer,
+            @Named(PROPERTY_EC2_CC_AMIs) String[] ccAmis, @Named(PROPERTY_EC2_AMI_OWNERS) final String[] amiOwners,
+            final ImageParser parser, final ConcurrentMap<RegionAndName, Image> images,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) throws InterruptedException,
+            ExecutionException, TimeoutException {
       if (amiOwners.length == 0) {
          holder.logger.debug(">> no owners specified, skipping image parsing");
       } else {
@@ -404,7 +437,7 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
                @Override
                public Void call() throws Exception {
                   Set<org.jclouds.aws.ec2.domain.Image> matchingImages = sync.getAMIServices().describeImagesInRegion(
-                        region, options);
+                           region, options);
                   for (final org.jclouds.aws.ec2.domain.Image from : matchingImages) {
                      Image image = parser.apply(from);
                      if (image != null)
@@ -420,7 +453,7 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
          for (String ccAmi : ccAmis) {
             String region = ccAmi.split("/")[0];
             org.jclouds.aws.ec2.domain.Image from = Iterables.getOnlyElement(sync.getAMIServices()
-                  .describeImagesInRegion(region, imageIds(ccAmi.split("/")[1])));
+                     .describeImagesInRegion(region, imageIds(ccAmi.split("/")[1])));
             Image image = parser.apply(from);
             if (image != null)
                images.put(new RegionAndName(region, image.getProviderId()), image);

@@ -43,18 +43,16 @@ public class EC2PropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_HEADER_TAG, "amz");
       properties.setProperty(PROPERTY_ENDPOINT, "https://ec2.us-east-1.amazonaws.com");
       properties.setProperty(PROPERTY_API_VERSION, EC2AsyncClient.VERSION);
-      properties.setProperty(PROPERTY_ELB_ENDPOINT,
-               "https://elasticloadbalancing.us-east-1.amazonaws.com");
+      properties.setProperty(PROPERTY_ELB_ENDPOINT, "https://elasticloadbalancing.us-east-1.amazonaws.com");
       // alestic, canonical, and rightscale
       properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "063491364108,099720109477,411009282317");
       // amis that work with the cluster instances
       properties.setProperty(PROPERTY_EC2_CC_AMIs, "us-east-1/ami-7ea24a17");
       // auth fail sometimes happens in EC2, as the rc.local script that injects the
       // authorized key executes after ssh has started
-      properties.setProperty("jclouds.ssh.max_retries", "6");
-      properties
-               .setProperty("jclouds.ssh.retryable_messages",
-                        "Auth fail,invalid data,End of IO Stream Read,Connection reset,socket is not established");
+      properties.setProperty("jclouds.ssh.max_retries", "7");
+      properties.setProperty("jclouds.ssh.retryable_messages",
+               "Auth fail,invalid data,End of IO Stream Read,Connection reset,socket is not established");
       return properties;
    }
 

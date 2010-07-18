@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -48,13 +48,13 @@ import com.google.common.collect.Sets;
  *      />
  */
 public class InstanceStateChangeHandler extends
-         HandlerForGeneratedRequestWithResult<SortedSet<InstanceStateChange>> {
+         HandlerForGeneratedRequestWithResult<Set<InstanceStateChange>> {
    private StringBuilder currentText = new StringBuilder();
    @Inject
    @Region
    String defaultRegion;
 
-   SortedSet<InstanceStateChange> instances = Sets.newTreeSet();
+   Set<InstanceStateChange> instances = Sets.newLinkedHashSet();
    private InstanceState shutdownState;
    private InstanceState previousState;
    private String instanceId;
@@ -64,7 +64,7 @@ public class InstanceStateChangeHandler extends
    private boolean inPreviousState;
 
    @Override
-   public SortedSet<InstanceStateChange> getResult() {
+   public Set<InstanceStateChange> getResult() {
       return instances;
    }
 

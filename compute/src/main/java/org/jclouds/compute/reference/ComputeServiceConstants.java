@@ -44,7 +44,7 @@ public interface ComputeServiceConstants {
 
       @Inject(optional = true)
       @Named(PROPERTY_TIMEOUT_NODE_RUNNING)
-      public long nodeRunning = 600 * 1000;
+      public long nodeRunning = 1200 * 1000;
 
       @Inject(optional = true)
       @Named(PROPERTY_TIMEOUT_SCRIPT_COMPLETE)
@@ -52,7 +52,7 @@ public interface ComputeServiceConstants {
 
       @Inject(optional = true)
       @Named(PROPERTY_TIMEOUT_PORT_OPEN)
-      public long portOpen = 130 * 1000;
+      public long portOpen = 600 * 1000;
 
    }
 }

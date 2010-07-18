@@ -209,7 +209,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
    @SuppressWarnings("unchecked")
    private EC2RunNodesAndAddToSetStrategy setupStrategy() {
       EC2Client client = createMock(EC2Client.class);
-      CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions = createMock(CreateKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.class);
+      CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions = createMock(CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions.class);
       Predicate<RunningInstance> instanceStateRunning = createMock(Predicate.class);
       RunningInstanceToNodeMetadata runningInstanceToNodeMetadata = createMock(RunningInstanceToNodeMetadata.class);
       ComputeUtils utils = createMock(ComputeUtils.class);

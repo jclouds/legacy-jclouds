@@ -68,7 +68,7 @@ import com.google.inject.util.Providers;
 public class EC2ComputeServiceTest {
    private static final Location location = new LocationImpl(LocationScope.REGION, "us-east-1", "us east", null);
 
-   private static final EC2Size CC1_4XLARGE = new EC2Size(location,
+   public static final EC2Size CC1_4XLARGE = new EC2Size(location,
                                  InstanceType.CC1_4XLARGE, 33.5, 23 * 1024, 1690, new String[]{"us-east-1/cc-image"});
 
    /**

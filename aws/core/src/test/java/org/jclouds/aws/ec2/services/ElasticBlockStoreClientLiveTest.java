@@ -24,6 +24,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
@@ -75,14 +76,13 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test
    void testDescribeVolumes() {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
-               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
+               Region.AP_SOUTHEAST_1)) {
          SortedSet<Volume> allResults = Sets.newTreeSet(client.describeVolumesInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
             Volume volume = allResults.last();
-            SortedSet<Volume> result = Sets.newTreeSet(client.describeVolumesInRegion(region,
-                     volume.getId()));
+            SortedSet<Volume> result = Sets.newTreeSet(client.describeVolumesInRegion(region, volume.getId()));
             assertNotNull(result);
             Volume compare = result.last();
             assertEquals(compare, volume);
@@ -99,8 +99,7 @@ public class ElasticBlockStoreClientLiveTest {
 
       this.volumeId = expected.getId();
 
-      SortedSet<Volume> result = Sets.newTreeSet(client.describeVolumesInRegion(null, expected
-               .getId()));
+      Set<Volume> result = Sets.newLinkedHashSet(client.describeVolumesInRegion(null, expected.getId()));
       assertNotNull(result);
       assertEquals(result.size(), 1);
       Volume volume = result.iterator().next();
@@ -110,12 +109,12 @@ public class ElasticBlockStoreClientLiveTest {
    @Test(dependsOnMethods = "testCreateVolumeInAvailabilityZone")
    void testCreateSnapshotInRegion() {
       Snapshot snapshot = client.createSnapshotInRegion(null, volumeId);
-      Predicate<Snapshot> snapshotted = new RetryablePredicate<Snapshot>(new SnapshotCompleted(
-               client), 600, 10, TimeUnit.SECONDS);
+      Predicate<Snapshot> snapshotted = new RetryablePredicate<Snapshot>(new SnapshotCompleted(client), 600, 10,
+               TimeUnit.SECONDS);
       assert snapshotted.apply(snapshot);
 
-      Snapshot result = Iterables.getOnlyElement(client.describeSnapshotsInRegion(snapshot
-               .getRegion(), snapshotIds(snapshot.getId())));
+      Snapshot result = Iterables.getOnlyElement(client.describeSnapshotsInRegion(snapshot.getRegion(),
+               snapshotIds(snapshot.getId())));
 
       assertEquals(result.getProgress(), 100);
       this.snapshot = result;
@@ -123,16 +122,14 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateSnapshotInRegion")
    void testCreateVolumeFromSnapshotInAvailabilityZone() {
-      Volume volume = client.createVolumeFromSnapshotInAvailabilityZone(
-               AvailabilityZone.US_EAST_1A, snapshot.getId());
+      Volume volume = client.createVolumeFromSnapshotInAvailabilityZone(AvailabilityZone.US_EAST_1A, snapshot.getId());
       assertNotNull(volume);
 
-      Predicate<Volume> availabile = new RetryablePredicate<Volume>(new VolumeAvailable(client),
-               600, 10, TimeUnit.SECONDS);
+      Predicate<Volume> availabile = new RetryablePredicate<Volume>(new VolumeAvailable(client), 600, 10,
+               TimeUnit.SECONDS);
       assert availabile.apply(volume);
 
-      Volume result = Iterables.getOnlyElement(client.describeVolumesInRegion(snapshot.getRegion(),
-               volume.getId()));
+      Volume result = Iterables.getOnlyElement(client.describeVolumesInRegion(snapshot.getRegion(), volume.getId()));
       assertEquals(volume.getId(), result.getId());
       assertEquals(volume.getSnapshotId(), snapshot.getId());
       assertEquals(volume.getAvailabilityZone(), AvailabilityZone.US_EAST_1A);
@@ -143,16 +140,15 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateSnapshotInRegion")
    void testCreateVolumeFromSnapshotInAvailabilityZoneWithSize() {
-      Volume volume = client.createVolumeFromSnapshotInAvailabilityZone(
-               AvailabilityZone.US_EAST_1B, 2, snapshot.getId());
+      Volume volume = client.createVolumeFromSnapshotInAvailabilityZone(AvailabilityZone.US_EAST_1B, 2, snapshot
+               .getId());
       assertNotNull(volume);
 
-      Predicate<Volume> availabile = new RetryablePredicate<Volume>(new VolumeAvailable(client),
-               600, 10, TimeUnit.SECONDS);
+      Predicate<Volume> availabile = new RetryablePredicate<Volume>(new VolumeAvailable(client), 600, 10,
+               TimeUnit.SECONDS);
       assert availabile.apply(volume);
 
-      Volume result = Iterables.getOnlyElement(client.describeVolumesInRegion(snapshot.getRegion(),
-               volume.getId()));
+      Volume result = Iterables.getOnlyElement(client.describeVolumesInRegion(snapshot.getRegion(), volume.getId()));
       assertEquals(volume.getId(), result.getId());
       assertEquals(volume.getSnapshotId(), snapshot.getId());
       assertEquals(volume.getAvailabilityZone(), AvailabilityZone.US_EAST_1B);
@@ -174,14 +170,14 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test
    void testDescribeSnapshots() {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
-               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
+               Region.AP_SOUTHEAST_1)) {
          SortedSet<Snapshot> allResults = Sets.newTreeSet(client.describeSnapshotsInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
             Snapshot snapshot = allResults.last();
-            Snapshot result = Iterables.getOnlyElement(client.describeSnapshotsInRegion(region,
-                     snapshotIds(snapshot.getId())));
+            Snapshot result = Iterables.getOnlyElement(client.describeSnapshotsInRegion(region, snapshotIds(snapshot
+                     .getId())));
             assertNotNull(result);
             assertEquals(result, snapshot);
          }
@@ -209,14 +205,13 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateSnapshotInRegion")
    public void testGetCreateVolumePermissionForSnapshot() {
-      System.out.println(client.getCreateVolumePermissionForSnapshotInRegion(snapshot.getRegion(),
-               snapshot.getId()));
+      System.out.println(client.getCreateVolumePermissionForSnapshotInRegion(snapshot.getRegion(), snapshot.getId()));
    }
 
    @Test(dependsOnMethods = "testCreateSnapshotInRegion")
    void testDeleteVolumeInRegion() {
       client.deleteVolumeInRegion(null, volumeId);
-      SortedSet<Volume> result = Sets.newTreeSet(client.describeVolumesInRegion(null, volumeId));
+      Set<Volume> result = Sets.newLinkedHashSet(client.describeVolumesInRegion(null, volumeId));
       assertEquals(result.size(), 1);
       Volume volume = result.iterator().next();
       assertEquals(volume.getStatus(), Volume.Status.DELETING);

@@ -26,6 +26,7 @@ import org.jclouds.aws.ec2.xml.BundleTaskHandler;
 import org.jclouds.aws.ec2.xml.DescribeBundleTasksResponseHandler;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -41,15 +42,15 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
 
    public void testBundleInstanceInRegion() throws SecurityException, NoSuchMethodException, IOException {
       Method method = WindowsAsyncClient.class.getMethod("bundleInstanceInRegion", String.class, String.class,
-            String.class, String.class, String.class, BundleInstanceS3StorageOptions[].class);
+               String.class, String.class, String.class, BundleInstanceS3StorageOptions[].class);
       HttpRequest request = processor
-            .createRequest(
-                  method,
-                  null,
-                  "i-e468cd8d",
-                  "winami",
-                  "my-bucket",
-                  "{\"expiration\": \"2008-08-30T08:49:09Z\",\"conditions\": [{\"bucket\": \"my-bucket\"},[\"starts-with\", \"$key\", \"my-new-image\"]]}");
+               .createRequest(
+                        method,
+                        null,
+                        "i-e468cd8d",
+                        "winami",
+                        "my-bucket",
+                        "{\"expiration\": \"2008-08-30T08:49:09Z\",\"conditions\": [{\"bucket\": \"my-bucket\"},[\"starts-with\", \"$key\", \"my-new-image\"]]}");
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       String payload = "Version=2010-06-15&Action=BundleInstance&Storage.S3.Prefix=winami&InstanceId=i-e468cd8d&Storage.S3.Bucket=my-bucket&Storage.S3.UploadPolicy=eyJleHBpcmF0aW9uIjogIjIwMDgtMDgtMzBUMDg6NDk6MDlaIiwiY29uZGl0aW9ucyI6IFt7ImJ1Y2tldCI6ICJteS1idWNrZXQifSxbInN0YXJ0cy13aXRoIiwgIiRrZXkiLCAibXktbmV3LWltYWdlIl1dfQ%3D%3D&Storage.S3.UploadPolicySignature=ih%2FiohGe0A7y4QVRbKaq6BZShzUsmBEJEa9AdFbxM6Y%3D";
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -64,16 +65,16 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
 
    public void testBundleInstanceInRegionOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = WindowsAsyncClient.class.getMethod("bundleInstanceInRegion", String.class, String.class,
-            String.class, String.class, String.class, BundleInstanceS3StorageOptions[].class);
+               String.class, String.class, String.class, BundleInstanceS3StorageOptions[].class);
       HttpRequest request = processor
-            .createRequest(
-                  method,
-                  null,
-                  "i-e468cd8d",
-                  "winami",
-                  "my-bucket",
-                  "{\"expiration\": \"2008-08-30T08:49:09Z\",\"conditions\": [{\"bucket\": \"my-bucket\"},[\"starts-with\", \"$key\", \"my-new-image\"]]}",
-                  BundleInstanceS3StorageOptions.Builder.bucketOwnedBy("10QMXFEV71ZS32XQFTR2"));
+               .createRequest(
+                        method,
+                        null,
+                        "i-e468cd8d",
+                        "winami",
+                        "my-bucket",
+                        "{\"expiration\": \"2008-08-30T08:49:09Z\",\"conditions\": [{\"bucket\": \"my-bucket\"},[\"starts-with\", \"$key\", \"my-new-image\"]]}",
+                        BundleInstanceS3StorageOptions.Builder.bucketOwnedBy("10QMXFEV71ZS32XQFTR2"));
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       String payload = "Version=2010-06-15&Action=BundleInstance&Storage.S3.Prefix=winami&InstanceId=i-e468cd8d&Storage.S3.Bucket=my-bucket&Storage.S3.AWSAccessKeyId=10QMXFEV71ZS32XQFTR2&Storage.S3.UploadPolicy=eyJleHBpcmF0aW9uIjogIjIwMDgtMDgtMzBUMDg6NDk6MDlaIiwiY29uZGl0aW9ucyI6IFt7ImJ1Y2tldCI6ICJteS1idWNrZXQifSxbInN0YXJ0cy13aXRoIiwgIiRrZXkiLCAibXktbmV3LWltYWdlIl1dfQ%3D%3D&Storage.S3.UploadPolicySignature=ih%2FiohGe0A7y4QVRbKaq6BZShzUsmBEJEa9AdFbxM6Y%3D";
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
@@ -85,19 +86,19 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
 
       checkFilters(request);
    }
-   
+
    public void testDescribeBundleTasks() throws SecurityException, NoSuchMethodException, IOException {
       Method method = WindowsAsyncClient.class.getMethod("describeBundleTasksInRegion", String.class, String[].class);
       HttpRequest request = processor.createRequest(method, (String) null);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeBundleTasks", "application/x-www-form-urlencoded",
-            false);
+      assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeBundleTasks",
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeBundleTasksResponseHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
    }
@@ -109,11 +110,11 @@ public class WindowsAsyncClientTest extends BaseEC2AsyncClientTest<WindowsAsyncC
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
       assertPayloadEquals(request, "Version=2010-06-15&Action=DescribeBundleTasks&BundleId.1=1&BundleId.2=2",
-            "application/x-www-form-urlencoded", false);
+               "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DescribeBundleTasksResponseHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(request);
    }

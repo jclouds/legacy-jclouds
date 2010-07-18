@@ -30,12 +30,14 @@
                     <launchTime>2009-12-30T04:06:23.000Z</launchTime>
                     <placement>
                         <availabilityZone>us-east-1b</availabilityZone>
+                        <groupName>placement</groupName>
                     </placement>
                     <kernelId>aki-a71cf9ce</kernelId>
                     <ramdiskId>ari-a51cf9cc</ramdiskId>
                     <monitoring>
                         <state>disabled</state>
                     </monitoring>
+                    <virtualizationType>hvm</virtualizationType>
                     <privateIpAddress>10.210.209.157</privateIpAddress>
                     <ipAddress>75.101.203.146</ipAddress>
                     <rootDeviceType>ebs</rootDeviceType>

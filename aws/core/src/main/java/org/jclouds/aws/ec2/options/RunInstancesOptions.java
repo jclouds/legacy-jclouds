@@ -37,7 +37,7 @@ import org.jclouds.encryption.internal.Base64;
  * EC2Client connection = // get connection
  * ListenableFuture<ReservationInfo> instances = connection.runInstances(executableBy("123125").imageIds(1000, 1004));
  * <code>
- *
+ * 
  * @author Adrian Cole
  * @see <a
  *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-form-RunInstances.html"
@@ -65,7 +65,7 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
       indexFormValuesWithPrefix("SecurityGroup", securityGroups);
       return this;
    }
-   
+
    /**
     * Attach multiple security groups
     */
@@ -73,18 +73,35 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
       indexFormValuesWithPrefix("SecurityGroup", securityGroups);
       return this;
    }
-   
+
    /**
-    * Attaches a single security group. Multiple calls to this method
-    * won't add more groups.
-    * @param securityGroup name of an existing security group
+    * Attaches a single security group. Multiple calls to this method won't add more groups.
+    * 
+    * @param securityGroup
+    *           name of an existing security group
     */
    public RunInstancesOptions withSecurityGroup(String securityGroup) {
       return withSecurityGroups(securityGroup);
    }
-    
+
    String getSecurityGroup() {
       return getFirstFormOrNull("SecurityGroup.1");
+   }
+
+   /**
+    * Specifies the name of an existing placement group you want to launch the instance into (for
+    * cluster compute instances).
+    * 
+    * @param placementGroup
+    *           name of an existing placement group
+    */
+   public RunInstancesOptions inPlacementGroup(String placementGroup) {
+      formParameters.put("Placement.GroupName", checkNotNull(placementGroup, "placementGroup"));
+      return this;
+   }
+
+   String getPlacementGroup() {
+      return getFirstFormOrNull("Placement.GroupName");
    }
 
    /**
@@ -156,8 +173,7 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
     * The virtual name.
     */
    public RunInstancesOptions withVirtualName(String virtualName) {
-      formParameters
-               .put("BlockDeviceMapping.VirtualName", checkNotNull(virtualName, "virtualName"));
+      formParameters.put("BlockDeviceMapping.VirtualName", checkNotNull(virtualName, "virtualName"));
       return this;
    }
 
@@ -217,6 +233,14 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
       public static RunInstancesOptions withSecurityGroup(String securityGroup) {
          RunInstancesOptions options = new RunInstancesOptions();
          return options.withSecurityGroup(securityGroup);
+      }
+
+      /**
+       * @see RunInstancesOptions#inPlacementGroup(String)
+       */
+      public static RunInstancesOptions inPlacementGroup(String placementGroup) {
+         RunInstancesOptions options = new RunInstancesOptions();
+         return options.inPlacementGroup(placementGroup);
       }
 
       /**

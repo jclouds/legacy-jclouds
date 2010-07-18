@@ -39,10 +39,12 @@ import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.functions.RegionToEndpoint;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
+import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -65,11 +67,11 @@ public interface WindowsAsyncClient {
    @FormParams(keys = ACTION, values = "BundleInstance")
    @XMLResponseParser(BundleTaskHandler.class)
    ListenableFuture<BundleTask> bundleInstanceInRegion(
-         @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
-         @FormParam("InstanceId") String instanceId, @FormParam("Storage.S3.Prefix") String prefix,
-         @FormParam("Storage.S3.Bucket") String bucket,
-         @BinderParam(BindS3UploadPolicyAndSignature.class) String uploadPolicy,
-         BundleInstanceS3StorageOptions... options);
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @FormParam("InstanceId") String instanceId, @FormParam("Storage.S3.Prefix") String prefix,
+            @FormParam("Storage.S3.Bucket") String bucket,
+            @BinderParam(BindS3UploadPolicyAndSignature.class) String uploadPolicy,
+            BundleInstanceS3StorageOptions... options);
 
    /**
     * @see WindowsClient#cancelBundleTaskInRegion
@@ -79,7 +81,8 @@ public interface WindowsAsyncClient {
    @FormParams(keys = ACTION, values = "CancelBundleTask")
    @XMLResponseParser(BundleTaskHandler.class)
    ListenableFuture<BundleTask> cancelBundleTaskInRegion(
-         @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region, @FormParam("BundleId") String bundleId);
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @FormParam("BundleId") String bundleId);
 
    /**
     * @see BundleTaskClient#describeBundleTasksInRegion
@@ -88,8 +91,9 @@ public interface WindowsAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeBundleTasks")
    @XMLResponseParser(DescribeBundleTasksResponseHandler.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<BundleTask>> describeBundleTasksInRegion(
-         @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
-         @BinderParam(BindBundleIdsToIndexedFormParams.class) String... bundleTaskIds);
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @BinderParam(BindBundleIdsToIndexedFormParams.class) String... bundleTaskIds);
 
 }

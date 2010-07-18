@@ -42,6 +42,8 @@ import org.jclouds.aws.ec2.services.KeyPairAsyncClient;
 import org.jclouds.aws.ec2.services.KeyPairClient;
 import org.jclouds.aws.ec2.services.MonitoringAsyncClient;
 import org.jclouds.aws.ec2.services.MonitoringClient;
+import org.jclouds.aws.ec2.services.PlacementGroupAsyncClient;
+import org.jclouds.aws.ec2.services.PlacementGroupClient;
 import org.jclouds.aws.ec2.services.SecurityGroupAsyncClient;
 import org.jclouds.aws.ec2.services.SecurityGroupClient;
 import org.jclouds.aws.ec2.services.WindowsAsyncClient;
@@ -64,16 +66,17 @@ import com.google.inject.Provides;
 public class EC2RestClientModule extends AWSFormSigningRestClientModule<EC2Client, EC2AsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-         .put(AMIClient.class, AMIAsyncClient.class)//
-         .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
-         .put(InstanceClient.class, InstanceAsyncClient.class)//
-         .put(KeyPairClient.class, KeyPairAsyncClient.class)//
-         .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
-         .put(MonitoringClient.class, MonitoringAsyncClient.class)//
-         .put(WindowsClient.class, WindowsAsyncClient.class)//
-         .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
-         .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
-         .build();
+            .put(AMIClient.class, AMIAsyncClient.class)//
+            .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
+            .put(InstanceClient.class, InstanceAsyncClient.class)//
+            .put(KeyPairClient.class, KeyPairAsyncClient.class)//
+            .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
+            .put(PlacementGroupClient.class, PlacementGroupAsyncClient.class)//
+            .put(MonitoringClient.class, MonitoringAsyncClient.class)//
+            .put(WindowsClient.class, WindowsAsyncClient.class)//
+            .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
+            .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
+            .build();
 
    public EC2RestClientModule() {
       super(EC2Client.class, EC2AsyncClient.class, DELEGATE_MAP);
@@ -105,7 +108,7 @@ public class EC2RestClientModule extends AWSFormSigningRestClientModule<EC2Clien
       Map<String, String> map = Maps.newHashMap();
       for (String region : regions.keySet()) {
          for (AvailabilityZoneInfo zoneInfo : client.getAvailabilityZoneAndRegionServices()
-               .describeAvailabilityZonesInRegion(region)) {
+                  .describeAvailabilityZonesInRegion(region)) {
             map.put(zoneInfo.getZone(), region);
          }
       }

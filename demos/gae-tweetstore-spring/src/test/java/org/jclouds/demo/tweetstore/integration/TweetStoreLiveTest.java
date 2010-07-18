@@ -29,7 +29,6 @@ import java.net.URL;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -68,20 +67,17 @@ public class TweetStoreLiveTest {
    private Map<String, BlobStoreContext> contexts;
    private String container;
 
-   private static final Iterable<String> blobstores = ImmutableSet.of("cloudfiles",
-            "googlestorage", "s3", "azureblob");
+   private static final Iterable<String> blobstores = ImmutableSet.of("cloudfiles", "googlestorage", "s3", "azureblob");
    private static final Properties props = new Properties();
 
    @BeforeTest
-   void clearAndCreateContainers() throws InterruptedException, ExecutionException,
-            TimeoutException, IOException {
+   void clearAndCreateContainers() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       container = checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER));
 
-      props.setProperty(PROPERTY_TWEETSTORE_CONTAINER, checkNotNull(System
-               .getProperty(PROPERTY_TWEETSTORE_CONTAINER), PROPERTY_TWEETSTORE_CONTAINER));
+      props.setProperty(PROPERTY_TWEETSTORE_CONTAINER, checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER),
+               PROPERTY_TWEETSTORE_CONTAINER));
 
-      props.setProperty(SpringServletConfig.PROPERTY_BLOBSTORE_CONTEXTS, Joiner.on(',').join(
-               blobstores));
+      props.setProperty(SpringServletConfig.PROPERTY_BLOBSTORE_CONTEXTS, Joiner.on(',').join(blobstores));
 
       // put all identity/credential pairs into the client
       addCredentialsForBlobStores(props);
@@ -98,18 +94,17 @@ public class TweetStoreLiveTest {
          contexts.put(provider, factory.createContext(provider, wiring, props));
       }
 
-      RestContext<TwitterClient, TwitterAsyncClient> twitterContext = new RestContextFactory()
-               .createContext("twitter", wiring, props);
-      StoreTweetsController controller = new StoreTweetsController(contexts, container,
-               twitterContext.getApi());
+      RestContext<TwitterClient, TwitterAsyncClient> twitterContext = new RestContextFactory().createContext("twitter",
+               wiring, props);
+      StoreTweetsController controller = new StoreTweetsController(contexts, container, twitterContext.getApi());
 
-      SortedSet<Status> statuses = twitterContext.getApi().getMyMentions();
+      Set<Status> statuses = twitterContext.getApi().getMyMentions();
 
       boolean deleted = false;
       for (BlobStoreContext context : contexts.values()) {
          if (context.getBlobStore().containerExists(container)) {
-            System.err.printf("deleting container %s at %s%n", container, context
-                     .getProviderSpecificContext().getEndpoint());
+            System.err.printf("deleting container %s at %s%n", container, context.getProviderSpecificContext()
+                     .getEndpoint());
             context.getBlobStore().deleteContainer(container);
             deleted = true;
          }
@@ -119,8 +114,8 @@ public class TweetStoreLiveTest {
          Thread.sleep(60000);
       }
       for (BlobStoreContext context : contexts.values()) {
-         System.err.printf("creating container %s at %s%n", container, context
-                  .getProviderSpecificContext().getEndpoint());
+         System.err.printf("creating container %s at %s%n", container, context.getProviderSpecificContext()
+                  .getEndpoint());
          context.getBlobStore().createContainerInLocation(null, container);
       }
       if (deleted) {
@@ -135,29 +130,25 @@ public class TweetStoreLiveTest {
    }
 
    private void addConfigurationForTwitter(Properties props) {
-      String twitterIdentity = checkNotNull(System.getProperty("twitter.identity"),
-               "twitter.identity");
-      String twitterCredential = checkNotNull(System.getProperty("twitter.credential"),
-               "twitter.credential");
+      String twitterIdentity = checkNotNull(System.getProperty("twitter.identity"), "twitter.identity");
+      String twitterCredential = checkNotNull(System.getProperty("twitter.credential"), "twitter.credential");
 
-      props.putAll(RestContextFactory.toProperties(contextSpec("twitter", "http://twitter.com",
-               "1", twitterIdentity, twitterCredential, TwitterClient.class,
-               TwitterAsyncClient.class)));
+      props.putAll(RestContextFactory.toProperties(contextSpec("twitter", "http://twitter.com", "1", twitterIdentity,
+               twitterCredential, TwitterClient.class, TwitterAsyncClient.class)));
    }
 
    private void addCredentialsForBlobStores(Properties props) {
       for (String provider : blobstores) {
-         props.setProperty(provider + ".identity", checkNotNull(System.getProperty(provider
-                  + ".identity"), provider + ".identity"));
-         props.setProperty(provider + ".credential", checkNotNull(System.getProperty(provider
-                  + ".credential"), provider + ".credential"));
+         props.setProperty(provider + ".identity", checkNotNull(System.getProperty(provider + ".identity"), provider
+                  + ".identity"));
+         props.setProperty(provider + ".credential", checkNotNull(System.getProperty(provider + ".credential"),
+                  provider + ".credential"));
       }
    }
 
    @BeforeTest
    @Parameters( { "warfile", "devappserver.address", "devappserver.port" })
-   public void startDevAppServer(final String warfile, final String address, final String port)
-            throws Exception {
+   public void startDevAppServer(final String warfile, final String address, final String port) throws Exception {
       url = new URL(String.format("http://%s:%s", address, port));
       server = new GoogleDevServer();
       server.writePropertiesAndStartServer(address, port, warfile, props);
@@ -193,8 +184,7 @@ public class TweetStoreLiveTest {
       System.err.println("sleeping 20 seconds to allow for eventual consistency delay");
       Thread.sleep(20000);
       for (BlobStoreContext context : contexts.values()) {
-         assert context.createInputStreamMap(container).size() > 0 : context
-                  .getProviderSpecificContext().getEndpoint();
+         assert context.createInputStreamMap(container).size() > 0 : context.getProviderSpecificContext().getEndpoint();
       }
    }
 

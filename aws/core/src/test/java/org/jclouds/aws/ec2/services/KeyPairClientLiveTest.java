@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.SortedSet;
 
 import org.jclouds.aws.domain.Region;
@@ -63,15 +64,14 @@ public class KeyPairClientLiveTest {
 
    @Test
    void testDescribeKeyPairs() {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
-               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
+               Region.AP_SOUTHEAST_1)) {
 
          SortedSet<KeyPair> allResults = Sets.newTreeSet(client.describeKeyPairsInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
             KeyPair pair = allResults.last();
-            SortedSet<KeyPair> result = Sets.newTreeSet(client.describeKeyPairsInRegion(region,
-                     pair.getKeyName()));
+            SortedSet<KeyPair> result = Sets.newTreeSet(client.describeKeyPairsInRegion(region, pair.getKeyName()));
             assertNotNull(result);
             KeyPair compare = result.last();
             assertEquals(compare, pair);
@@ -97,8 +97,7 @@ public class KeyPairClientLiveTest {
       assertNotNull(result.getKeyFingerprint());
       assertEquals(result.getKeyName(), keyName);
 
-      SortedSet<KeyPair> twoResults = Sets.newTreeSet(client
-               .describeKeyPairsInRegion(null, keyName));
+      Set<KeyPair> twoResults = Sets.newLinkedHashSet(client.describeKeyPairsInRegion(null, keyName));
       assertNotNull(twoResults);
       assertEquals(twoResults.size(), 1);
       KeyPair listPair = twoResults.iterator().next();

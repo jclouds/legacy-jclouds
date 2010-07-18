@@ -56,6 +56,7 @@ import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -120,8 +121,7 @@ public interface ElasticBlockStoreAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteVolume")
-   ListenableFuture<Void> deleteVolumeInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+   ListenableFuture<Void> deleteVolumeInRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("VolumeId") String volumeId);
 
    /**
@@ -131,10 +131,8 @@ public interface ElasticBlockStoreAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DetachVolume")
    @ExceptionParser(ReturnVoidOnVolumeAvailable.class)
-   ListenableFuture<Void> detachVolumeInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
-            @FormParam("VolumeId") String volumeId, @FormParam("Force") boolean force,
-            DetachVolumeOptions... options);
+   ListenableFuture<Void> detachVolumeInRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @FormParam("VolumeId") String volumeId, @FormParam("Force") boolean force, DetachVolumeOptions... options);
 
    /**
     * @see ElasticBlockStoreClient#attachVolumeInRegion
@@ -166,6 +164,7 @@ public interface ElasticBlockStoreAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DescribeSnapshots")
    @XMLResponseParser(DescribeSnapshotsResponseHandler.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<Snapshot>> describeSnapshotsInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             DescribeSnapshotsOptions... options);
@@ -185,8 +184,8 @@ public interface ElasticBlockStoreAsyncClient {
     */
    @POST
    @Path("/")
-   @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = {
-            "ModifySnapshotAttribute", "add", "createVolumePermission" })
+   @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifySnapshotAttribute", "add",
+            "createVolumePermission" })
    ListenableFuture<Void> addCreateVolumePermissionsToSnapshotInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @BinderParam(BindUserIdsToIndexedFormParams.class) Iterable<String> userIds,
@@ -198,8 +197,8 @@ public interface ElasticBlockStoreAsyncClient {
     */
    @POST
    @Path("/")
-   @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = {
-            "ModifySnapshotAttribute", "remove", "createVolumePermission" })
+   @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifySnapshotAttribute", "remove",
+            "createVolumePermission" })
    ListenableFuture<Void> removeCreateVolumePermissionsFromSnapshotInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @BinderParam(BindUserIdsToIndexedFormParams.class) Iterable<String> userIds,
@@ -211,8 +210,7 @@ public interface ElasticBlockStoreAsyncClient {
     */
    @POST
    @Path("/")
-   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeSnapshotAttribute",
-            "createVolumePermission" })
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeSnapshotAttribute", "createVolumePermission" })
    @XMLResponseParser(PermissionHandler.class)
    ListenableFuture<Permission> getCreateVolumePermissionForSnapshotInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
@@ -223,8 +221,7 @@ public interface ElasticBlockStoreAsyncClient {
     */
    @POST
    @Path("/")
-   @FormParams(keys = { ACTION, "Attribute" }, values = { "ResetSnapshotAttribute",
-            "createVolumePermission" })
+   @FormParams(keys = { ACTION, "Attribute" }, values = { "ResetSnapshotAttribute", "createVolumePermission" })
    ListenableFuture<Void> resetCreateVolumePermissionsOnSnapshotInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("SnapshotId") String snapshotId);

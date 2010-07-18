@@ -24,7 +24,6 @@ import java.util.Set;
 
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
-import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
@@ -34,10 +33,8 @@ import org.jclouds.aws.ec2.services.KeyPairClient;
 import org.jclouds.aws.ec2.services.SecurityGroupClient;
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.domain.Architecture;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
@@ -46,7 +43,6 @@ import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
@@ -71,7 +67,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public void testImagesResolveCorrectly() {
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getId(), defaultTemplate.getImage().getLocation().getId() + "/"
-            + defaultTemplate.getImage().getProviderId());
+               + defaultTemplate.getImage().getProviderId());
       Template byId = client.templateBuilder().imageId(defaultTemplate.getImage().getId()).build();
       assertEquals(byId.getImage(), defaultTemplate.getImage());
    }
@@ -89,45 +85,15 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    }
 
    @Test(enabled = true, dependsOnMethods = "testDefaultTemplateBuilder")
-   public void testTemplateChoiceForInstanceByCCSizeId() throws Exception {
-      assertCCsizeWorks();
-   }
-
-   protected void assertCCsizeWorks() {
-      Set<? extends Size> sizes = context.getComputeService().listSizes();
-      assert Iterables.any(sizes, new Predicate<Size>() {
-
-         @Override
-         public boolean apply(Size arg0) {
-            return arg0.getProviderId().equals(InstanceType.CC1_4XLARGE);
-         }
-
-      }) : sizes;
-      Set<? extends Image> images = context.getComputeService().listImages();
-      assert Iterables.any(images, new Predicate<Image>() {
-
-         @Override
-         public boolean apply(Image arg0) {
-            return arg0.getId().equals("us-east-1/ami-7ea24a17");
-         }
-
-      }) : images;
-      Template template = context.getComputeService().templateBuilder().fastest().build();
-      assert template != null : "The returned template was null, but it should have a value.";
-      assertEquals(template.getSize().getProviderId(), InstanceType.CC1_4XLARGE);
-      assertEquals(template.getImage().getId(), "us-east-1/ami-7ea24a17");
-   }
-
-   @Test(enabled = true, dependsOnMethods = "testDefaultTemplateBuilder")
    public void testExtendedOptionsAndLogin() throws Exception {
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getSecurityGroupServices();
+               .getSecurityGroupServices();
 
       KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getKeyPairServices();
+               .getKeyPairServices();
 
       InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getInstanceServices();
+               .getInstanceServices();
 
       String tag = this.tag + "optionsandlogin";
 
@@ -164,12 +130,12 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
          // make sure our dummy group has no rules
          SecurityGroup group = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
-               "jclouds#" + tag));
+                  "jclouds#" + tag));
          assert group.getIpPermissions().size() == 0 : group;
 
          // try to run a script with the original keyPair
          runScriptWithCreds(tag, first.getImage().getOsFamily(), new Credentials(first.getCredentials().identity,
-               result.getKeyMaterial()));
+                  result.getKeyMaterial()));
 
       } finally {
          client.destroyNodesMatching(NodePredicates.withTag(tag));
@@ -182,16 +148,16 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true, dependsOnMethods = "testTemplateChoiceForInstanceByCCSizeId")
+   @Test(enabled = true, dependsOnMethods = "testDefaultTemplateBuilder")
    public void testExtendedOptionsNoKeyPair() throws Exception {
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getSecurityGroupServices();
+               .getSecurityGroupServices();
 
       KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getKeyPairServices();
+               .getKeyPairServices();
 
       InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getInstanceServices();
+               .getInstanceServices();
 
       String tag = this.tag + "optionsnokey";
 
@@ -222,7 +188,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
          // make sure our dummy group has no rules
          SecurityGroup group = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
-               "jclouds#" + tag));
+                  "jclouds#" + tag));
          assert group.getIpPermissions().size() == 0 : group;
 
       } finally {
@@ -235,7 +201,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true, dependsOnMethods = "testTemplateChoiceForInstanceByCCSizeId")
+   @Test(enabled = true, dependsOnMethods = "testDefaultTemplateBuilder")
    public void testExtendedOptionsWithSubnetId() throws Exception {
 
       String subnetId = System.getProperty("jclouds.test.subnetId");
@@ -244,13 +210,13 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          return;
       }
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getSecurityGroupServices();
+               .getSecurityGroupServices();
 
       KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getKeyPairServices();
+               .getKeyPairServices();
 
       InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-            .getInstanceServices();
+               .getInstanceServices();
 
       String tag = this.tag + "optionswithsubnetid";
 
@@ -283,6 +249,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          RunningInstance instance = getInstance(instanceClient, startedId);
 
          assertEquals(instance.getSubnetId(), subnetId);
+         assertEquals(instance.getSubnetId(), Iterables.getOnlyElement(nodes).getExtra().get("subnetId"));
 
       } finally {
          if (nodeId != null)
@@ -297,7 +264,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    private RunningInstance getInstance(InstanceClient instanceClient, String id) {
       RunningInstance instance = Iterables.getOnlyElement(Iterables.getOnlyElement(instanceClient
-            .describeInstancesInRegion(null, id)));
+               .describeInstancesInRegion(null, id)));
       return instance;
    }
 

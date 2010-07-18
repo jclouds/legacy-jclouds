@@ -53,6 +53,8 @@ public class EC2TemplateOptions extends TemplateOptions {
    private Set<String> groupIds = ImmutableSet.of();
    private String keyPair = null;
    private boolean noKeyPair;
+   private String placementGroup = null;
+   private boolean noPlacementGroup;
    private String subnetId;
 
    public static final EC2TemplateOptions NONE = new EC2TemplateOptions();
@@ -95,7 +97,27 @@ public class EC2TemplateOptions extends TemplateOptions {
       this.noKeyPair = true;
       return this;
    }
-   
+
+   /**
+    * Specifies the keypair used to run instances with
+    */
+   public EC2TemplateOptions placementGroup(String placementGroup) {
+      checkNotNull(placementGroup, "use noPlacementGroup option to request boot without a keypair");
+      checkState(!noPlacementGroup, "you cannot specify both options placementGroup and noPlacementGroup");
+      Utils.checkNotEmpty(placementGroup, "placementGroup must be non-empty");
+      this.placementGroup = placementGroup;
+      return this;
+   }
+
+   /**
+    * Do not use a keypair on instances
+    */
+   public EC2TemplateOptions noPlacementGroup() {
+      checkState(placementGroup == null, "you cannot specify both options placementGroup and noPlacementGroup");
+      this.noPlacementGroup = true;
+      return this;
+   }
+
    /**
     * Specifies the subnetId used to run instances in
     */
@@ -138,6 +160,22 @@ public class EC2TemplateOptions extends TemplateOptions {
       public static EC2TemplateOptions noKeyPair() {
          EC2TemplateOptions options = new EC2TemplateOptions();
          return EC2TemplateOptions.class.cast(options.noKeyPair());
+      }
+
+      /**
+       * @see EC2TemplateOptions#placementGroup
+       */
+      public static EC2TemplateOptions placementGroup(String placementGroup) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return EC2TemplateOptions.class.cast(options.placementGroup(placementGroup));
+      }
+
+      /**
+       * @see EC2TemplateOptions#noPlacementGroup
+       */
+      public static EC2TemplateOptions noPlacementGroup() {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return EC2TemplateOptions.class.cast(options.noPlacementGroup());
       }
 
       // methods that only facilitate returning the correct object type
@@ -188,7 +226,7 @@ public class EC2TemplateOptions extends TemplateOptions {
          EC2TemplateOptions options = new EC2TemplateOptions();
          return EC2TemplateOptions.class.cast(options.withMetadata());
       }
-      
+
       /**
        * @see TemplateOptions#withSubnetId
        */
@@ -275,26 +313,40 @@ public class EC2TemplateOptions extends TemplateOptions {
    public boolean shouldAutomaticallyCreateKeyPair() {
       return !noKeyPair;
    }
-   
-   
+
+   /**
+    * @return placementGroup to use when running the instance or null, to generate a placementGroup.
+    */
+   public String getPlacementGroup() {
+      return placementGroup;
+   }
+
+   /**
+    * @return true (default) if we are supposed to use a placementGroup
+    */
+   public boolean shouldAutomaticallyCreatePlacementGroup() {
+      return !noPlacementGroup;
+   }
+
    /**
     * @return subnetId to use when running the instance or null.
     */
-   public String getSubnetId()
-   {
+   public String getSubnetId() {
       return subnetId;
    }
 
-@Override
-public int hashCode() {
-   final int prime = 31;
-   int result = super.hashCode();
-   result = prime * result + ((groupIds == null) ? 0 : groupIds.hashCode());
-   result = prime * result + ((keyPair == null) ? 0 : keyPair.hashCode());
-   result = prime * result + (noKeyPair ? 1231 : 1237);
-   result = prime * result + ((subnetId == null) ? 0 : subnetId.hashCode());
-   return result;
-}
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((groupIds == null) ? 0 : groupIds.hashCode());
+      result = prime * result + ((keyPair == null) ? 0 : keyPair.hashCode());
+      result = prime * result + (noKeyPair ? 1231 : 1237);
+      result = prime * result + (noPlacementGroup ? 1231 : 1237);
+      result = prime * result + ((placementGroup == null) ? 0 : placementGroup.hashCode());
+      result = prime * result + ((subnetId == null) ? 0 : subnetId.hashCode());
+      return result;
+   }
 
    @Override
    public boolean equals(Object obj) {
@@ -317,6 +369,13 @@ public int hashCode() {
          return false;
       if (noKeyPair != other.noKeyPair)
          return false;
+      if (noPlacementGroup != other.noPlacementGroup)
+         return false;
+      if (placementGroup == null) {
+         if (other.placementGroup != null)
+            return false;
+      } else if (!placementGroup.equals(other.placementGroup))
+         return false;
       if (subnetId == null) {
          if (other.subnetId != null)
             return false;
@@ -327,11 +386,11 @@ public int hashCode() {
 
    @Override
    public String toString() {
-      return "EC2TemplateOptions [groupIds=" + groupIds + ", keyPair=" + keyPair + ", noKeyPair="
-               + noKeyPair + ", inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey="
-               + (privateKey != null) + ", publicKey=" + (publicKey != null) + ", runScript="
-               + (script != null) + ", port:seconds=" + port + ":" + seconds + ", subnetId="
-               + subnetId + ", metadata/details: " + includeMetadata + "]";
+      return "[groupIds=" + groupIds + ", keyPair=" + keyPair + ", noKeyPair=" + noKeyPair + ", placementGroup="
+               + placementGroup + ", noPlacementGroup=" + noPlacementGroup + ", inboundPorts="
+               + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
+               + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port + ":" + seconds
+               + ", subnetId=" + subnetId + ", metadata/details: " + includeMetadata + "]";
    }
 
 }

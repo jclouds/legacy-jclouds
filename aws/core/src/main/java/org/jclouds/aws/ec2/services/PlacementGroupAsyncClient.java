@@ -29,10 +29,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.ec2.EC2AsyncClient;
-import org.jclouds.aws.ec2.binders.BindKeyNameToIndexedFormParams;
-import org.jclouds.aws.ec2.domain.KeyPair;
-import org.jclouds.aws.ec2.xml.DescribeKeyPairsResponseHandler;
-import org.jclouds.aws.ec2.xml.KeyPairResponseHandler;
+import org.jclouds.aws.ec2.binders.BindGroupNameToIndexedFormParams;
+import org.jclouds.aws.ec2.domain.PlacementGroup;
+import org.jclouds.aws.ec2.xml.DescribePlacementGroupsResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.functions.RegionToEndpoint;
 import org.jclouds.rest.annotations.BinderParam;
@@ -43,11 +42,12 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides access to EC2 via their REST API.
+ * Provides access to EC2 Placement Groups via their REST API.
  * <p/>
  * 
  * @author Adrian Cole
@@ -55,39 +55,47 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(FormSigner.class)
 @FormParams(keys = VERSION, values = EC2AsyncClient.VERSION)
 @VirtualHost
-public interface KeyPairAsyncClient {
+public interface PlacementGroupAsyncClient {
 
    /**
-    * @see KeyPairClient#createKeyPairInRegion
+    * @see PlacementGroupClient#createPlacementGroupInRegion(String,String,String)
     */
    @POST
    @Path("/")
-   @FormParams(keys = ACTION, values = "CreateKeyPair")
-   @XMLResponseParser(KeyPairResponseHandler.class)
-   ListenableFuture<KeyPair> createKeyPairInRegion(
+   @FormParams(keys = ACTION, values = "CreatePlacementGroup")
+   ListenableFuture<Void> createPlacementGroupInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
-            @FormParam("KeyName") String keyName);
+            @FormParam("GroupName") String name, @FormParam("Strategy") String strategy);
 
    /**
-    * @see KeyPairClient#describeKeyPairsInRegion
+    * @see PlacementGroupClient#createPlacementGroupInRegion(String,String)
     */
    @POST
    @Path("/")
-   @FormParams(keys = ACTION, values = "DescribeKeyPairs")
-   @XMLResponseParser(DescribeKeyPairsResponseHandler.class)
+   @FormParams(keys = { ACTION, "Strategy" }, values = { "CreatePlacementGroup", "cluster" })
+   ListenableFuture<Void> createPlacementGroupInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region, @FormParam("GroupName") String name);
+
+   /**
+    * @see PlacementGroupClient#deletePlacementGroupInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DeletePlacementGroup")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> deletePlacementGroupInRegion(
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region, @FormParam("GroupName") String name);
+
+   /**
+    * @see PlacementGroupClient#describePlacementGroupsInRegion
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "DescribePlacementGroups")
+   @XMLResponseParser(DescribePlacementGroupsResponseHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<KeyPair>> describeKeyPairsInRegion(
+   ListenableFuture<? extends Set<PlacementGroup>> describePlacementGroupsInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
-            @BinderParam(BindKeyNameToIndexedFormParams.class) String... keyPairNames);
-
-   /**
-    * @see KeyPairClient#deleteKeyPairInRegion
-    */
-   @POST
-   @Path("/")
-   @FormParams(keys = ACTION, values = "DeleteKeyPair")
-   ListenableFuture<Void> deleteKeyPairInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
-            @FormParam("KeyName") String keyName);
+            @BinderParam(BindGroupNameToIndexedFormParams.class) String... placementGroupIds);
 
 }

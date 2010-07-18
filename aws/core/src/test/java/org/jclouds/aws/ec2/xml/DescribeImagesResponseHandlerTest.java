@@ -25,7 +25,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.util.Set;
-import java.util.SortedSet;
 
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.RootDeviceType;
@@ -50,7 +49,7 @@ public class DescribeImagesResponseHandlerTest extends BaseEC2HandlerTest {
 
    public void testUNIX() {
       InputStream is = getClass().getResourceAsStream("/ec2/describe_images.xml");
-      SortedSet<Image> contents = Sets.newTreeSet();
+      Set<Image> contents = Sets.newLinkedHashSet();
 
       contents.add(new Image(defaultRegion, Architecture.I386, null, null, "ami-be3adfd7",
                "ec2-public-images/fedora-8-i386-base-v1.04.manifest.xml", "206029621532",
@@ -65,7 +64,7 @@ public class DescribeImagesResponseHandlerTest extends BaseEC2HandlerTest {
 
    public void testWindows() {
       InputStream is = getClass().getResourceAsStream("/ec2/describe_images_windows.xml");
-      SortedSet<Image> contents = Sets.newTreeSet();
+      Set<Image> contents = Sets.newLinkedHashSet();
 
       contents.add(new Image(defaultRegion, Architecture.X86_64, null, null, "ami-02eb086b",
                "aws-solutions-amis/SqlSvrStd2003r2-x86_64-Win_SFWBasic5.1-v1.0.manifest.xml",
@@ -80,7 +79,7 @@ public class DescribeImagesResponseHandlerTest extends BaseEC2HandlerTest {
 
    public void testEBS() {
       InputStream is = getClass().getResourceAsStream("/ec2/describe_images_ebs.xml");
-      SortedSet<Image> contents = Sets.newTreeSet();
+      Set<Image> contents = Sets.newLinkedHashSet();
 
       contents.add(new Image(defaultRegion, Architecture.I386, "websrv_2009-12-10",
                "Web Server AMI", "ami-246f8d4d", "706093390852/websrv_2009-12-10", "706093390852",

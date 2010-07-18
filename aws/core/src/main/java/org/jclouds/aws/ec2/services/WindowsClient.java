@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
 import org.jclouds.aws.ec2.domain.BundleTask;
-import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.options.BundleInstanceS3StorageOptions;
 import org.jclouds.concurrent.Timeout;
 
@@ -109,5 +108,5 @@ public interface WindowsClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeBundleTasks.html"
     *      />
     */
-   Set<Reservation> describeBundleTasksInRegion(@Nullable String region, String... bundleTaskIds);
+   Set<BundleTask> describeBundleTasksInRegion(@Nullable String region, String... bundleTaskIds);
 }

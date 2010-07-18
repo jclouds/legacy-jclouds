@@ -315,7 +315,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    }
 
    @Override
-   protected void setupKeyPair() throws FileNotFoundException, IOException {
+   protected void setupKeyPairForTest() throws FileNotFoundException, IOException {
       keyPair = ImmutableMap.<String, String> of("public", "ssh-rsa", "private",
                "-----BEGIN RSA PRIVATE KEY-----");
    }

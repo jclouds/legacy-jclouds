@@ -21,7 +21,6 @@ package org.jclouds.aws.ec2.xml;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -61,8 +60,8 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
    @Resource
    protected Logger logger = Logger.NULL;
    private StringBuilder currentText = new StringBuilder();
-   private SortedSet<String> groupIds = Sets.newTreeSet();
-   private SortedSet<RunningInstance> instances = Sets.newTreeSet();
+   private Set<String> groupIds = Sets.newLinkedHashSet();
+   private Set<RunningInstance> instances = Sets.newLinkedHashSet();
    private String ownerId;
    private String requesterId;
    private String reservationId;
@@ -78,6 +77,8 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
    private Date launchTime;
    private boolean monitoring;
    private String availabilityZone;
+   private String placementGroup;
+   private String virtualizationType = "paravirtual";
    private String platform;
    private String privateDnsName;
    private String privateIpAddress;
@@ -158,6 +159,10 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
          monitoring = Boolean.parseBoolean(currentOrNull());
       } else if (qName.equals("availabilityZone")) {
          availabilityZone = currentOrNull();
+      } else if (qName.equals("groupName")) {
+         placementGroup = currentOrNull();
+      } else if (qName.equals("virtualizationType")) {
+         virtualizationType = currentOrNull();
       } else if (qName.equals("platform")) {
          platform = currentOrNull();
       } else if (qName.equals("privateDnsName")) {
@@ -207,8 +212,8 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
 
    protected void inItem() {
       if (inBlockDeviceMapping) {
-         ebsBlockDevices.put(deviceName, new RunningInstance.EbsBlockDevice(volumeId,
-                  attachmentStatus, attachTime, deleteOnTermination));
+         ebsBlockDevices.put(deviceName, new RunningInstance.EbsBlockDevice(volumeId, attachmentStatus, attachTime,
+                  deleteOnTermination));
          this.deviceName = null;
          this.volumeId = null;
          this.attachmentStatus = null;
@@ -223,18 +228,16 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
             dnsName = null;
          }
 
-         if (privateIpAddress == null && privateDnsName != null
-                  && privateDnsName.matches(".*[0-9]$")) {
+         if (privateIpAddress == null && privateDnsName != null && privateDnsName.matches(".*[0-9]$")) {
             privateIpAddress = privateDnsName;
             privateDnsName = null;
          }
          if (region == null)
             region = defaultRegion;
-         instances.add(new RunningInstance(region, groupIds, amiLaunchIndex, dnsName, imageId,
-                  instanceId, instanceState, instanceType, ipAddress, kernelId, keyName,
-                  launchTime, monitoring, availabilityZone, platform, privateDnsName,
-                  privateIpAddress, productCodes, ramdiskId, reason, subnetId, vpcId,
-                  rootDeviceType, rootDeviceName, ebsBlockDevices));
+         instances.add(new RunningInstance(region, groupIds, amiLaunchIndex, dnsName, imageId, instanceId,
+                  instanceState, instanceType, ipAddress, kernelId, keyName, launchTime, monitoring, availabilityZone,
+                  placementGroup, platform, privateDnsName, privateIpAddress, virtualizationType, productCodes,
+                  ramdiskId, reason, subnetId, vpcId, rootDeviceType, rootDeviceName, ebsBlockDevices));
          this.amiLaunchIndex = null;
          this.dnsName = null;
          this.imageId = null;
@@ -247,6 +250,8 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
          this.launchTime = null;
          this.monitoring = false;
          this.availabilityZone = null;
+         this.placementGroup = null;
+         this.virtualizationType = "paravirtual";
          this.platform = null;
          this.privateDnsName = null;
          this.privateIpAddress = null;
@@ -269,10 +274,9 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
       String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
       if (region == null)
          region = defaultRegion;
-      Reservation info = new Reservation(region, groupIds, instances, ownerId, requesterId,
-               reservationId);
-      this.groupIds = Sets.newTreeSet();
-      this.instances = Sets.newTreeSet();
+      Reservation info = new Reservation(region, groupIds, instances, ownerId, requesterId, reservationId);
+      this.groupIds = Sets.newLinkedHashSet();
+      this.instances = Sets.newLinkedHashSet();
       this.ownerId = null;
       this.requesterId = null;
       this.reservationId = null;

@@ -64,15 +64,14 @@ public class ElasticIPAddressClientLiveTest {
 
    @Test
    void testDescribeAddresses() {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
-               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
-         SortedSet<PublicIpInstanceIdPair> allResults = Sets.newTreeSet(client
-                  .describeAddressesInRegion(region));
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
+               Region.AP_SOUTHEAST_1)) {
+         SortedSet<PublicIpInstanceIdPair> allResults = Sets.newTreeSet(client.describeAddressesInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
             PublicIpInstanceIdPair pair = allResults.last();
-            SortedSet<PublicIpInstanceIdPair> result = Sets.newTreeSet(client
-                     .describeAddressesInRegion(region, pair.getPublicIp()));
+            SortedSet<PublicIpInstanceIdPair> result = Sets.newTreeSet(client.describeAddressesInRegion(region, pair
+                     .getPublicIp()));
             assertNotNull(result);
             PublicIpInstanceIdPair compare = result.last();
             assertEquals(compare, pair);

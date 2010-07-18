@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.ec2.services;
 
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
@@ -100,7 +100,7 @@ public interface SecurityGroupClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeSecurityGroups.html"
     *      />
     */
-   SortedSet<SecurityGroup> describeSecurityGroupsInRegion(@Nullable String region,
+   Set<SecurityGroup> describeSecurityGroupsInRegion(@Nullable String region,
             String... securityGroupNames);
 
    /**

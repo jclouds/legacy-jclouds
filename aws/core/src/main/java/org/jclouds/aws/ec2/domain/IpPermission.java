@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.ec2.domain;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 /**
  * 
@@ -29,12 +29,12 @@ import java.util.SortedSet;
 public class IpPermission implements Comparable<IpPermission> {
    private final int fromPort;
    private final int toPort;
-   private final SortedSet<UserIdGroupPair> groups;
+   private final Set<UserIdGroupPair> groups;
    private final IpProtocol ipProtocol;
-   private final SortedSet<String> ipRanges;
+   private final Set<String> ipRanges;
 
-   public IpPermission(int fromPort, int toPort, SortedSet<UserIdGroupPair> groups,
-            IpProtocol ipProtocol, SortedSet<String> ipRanges) {
+   public IpPermission(int fromPort, int toPort, Set<UserIdGroupPair> groups,
+            IpProtocol ipProtocol, Set<String> ipRanges) {
       this.fromPort = fromPort;
       this.toPort = toPort;
       this.groups = groups;
@@ -68,7 +68,7 @@ public class IpPermission implements Comparable<IpPermission> {
    /**
     * List of security group and user ID pairs.
     */
-   public SortedSet<UserIdGroupPair> getGroups() {
+   public Set<UserIdGroupPair> getGroups() {
       return groups;
    }
 
@@ -82,7 +82,7 @@ public class IpPermission implements Comparable<IpPermission> {
    /**
     * IP ranges.
     */
-   public SortedSet<String> getIpRanges() {
+   public Set<String> getIpRanges() {
       return ipRanges;
    }
 

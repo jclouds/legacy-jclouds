@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.SortedMap;
-import java.util.SortedSet;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import org.jclouds.aws.domain.Region;
@@ -72,14 +72,14 @@ public class AvailabilityZoneAndRegionClientLiveTest {
    public void testDescribeAvailabilityZones() {
       for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
-         SortedSet<AvailabilityZoneInfo> allResults = Sets.newTreeSet(client
+         Set<AvailabilityZoneInfo> allResults = Sets.newLinkedHashSet(client
                   .describeAvailabilityZonesInRegion(region));
          assertNotNull(allResults);
          assert allResults.size() >= 2 : allResults.size();
          Iterator<AvailabilityZoneInfo> iterator = allResults.iterator();
          String id1 = iterator.next().getZone();
          String id2 = iterator.next().getZone();
-         SortedSet<AvailabilityZoneInfo> twoResults = Sets.newTreeSet(client
+         Set<AvailabilityZoneInfo> twoResults = Sets.newLinkedHashSet(client
                   .describeAvailabilityZonesInRegion(region, availabilityZones(id1, id2)));
          assertNotNull(twoResults);
          assertEquals(twoResults.size(), 2);

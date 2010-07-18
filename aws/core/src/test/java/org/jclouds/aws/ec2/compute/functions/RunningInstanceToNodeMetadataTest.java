@@ -92,6 +92,9 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getGroupIds()).andReturn(ImmutableSet.<String> of()).atLeastOnce();
       expect(instance.getKeyName()).andReturn(null).atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
+      expect(instance.getVirtualizationType()).andReturn("paravirtual");
+      expect(instance.getPlacementGroup()).andReturn(null);
+      expect(instance.getSubnetId()).andReturn(null);
 
       expect(instance.getIpAddress()).andReturn("127.0.0.1");
       expect(instance.getPrivateIpAddress()).andReturn("127.0.0.1");
@@ -152,6 +155,9 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getGroupIds()).andReturn(ImmutableSet.<String> of()).atLeastOnce();
       expect(instance.getKeyName()).andReturn(null).atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
+      expect(instance.getVirtualizationType()).andReturn("paravirtual");
+      expect(instance.getPlacementGroup()).andReturn(null);
+      expect(instance.getSubnetId()).andReturn(null);
 
       expect(instance.getIpAddress()).andReturn("127.0.0.1");
       expect(instance.getPrivateIpAddress()).andReturn("127.0.0.1");
@@ -213,6 +219,9 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getGroupIds()).andReturn(ImmutableSet.<String> of()).atLeastOnce();
       expect(instance.getKeyName()).andReturn(null).atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
+      expect(instance.getVirtualizationType()).andReturn("paravirtual");
+      expect(instance.getPlacementGroup()).andReturn(null);
+      expect(instance.getSubnetId()).andReturn(null);
 
       expect(instance.getIpAddress()).andReturn("127.0.0.1");
       expect(instance.getPrivateIpAddress()).andReturn("127.0.0.1");
@@ -280,6 +289,9 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getGroupIds()).andReturn(ImmutableSet.<String> of()).atLeastOnce();
       expect(instance.getKeyName()).andReturn(null).atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
+      expect(instance.getVirtualizationType()).andReturn("paravirtual");
+      expect(instance.getPlacementGroup()).andReturn(null);
+      expect(instance.getSubnetId()).andReturn(null);
 
       expect(instance.getIpAddress()).andReturn("127.0.0.1");
       expect(instance.getPrivateIpAddress()).andReturn("127.0.0.1");
@@ -336,9 +348,12 @@ public class RunningInstanceToNodeMetadataTest {
 
       expect(instance.getId()).andReturn("id").atLeastOnce();
       expect(instance.getRegion()).andReturn("us-east-1").atLeastOnce();
-      expect(instance.getGroupIds()).andReturn(ImmutableSet.of("jclouds#tag")).atLeastOnce();
+      expect(instance.getGroupIds()).andReturn(ImmutableSet.of("jclouds#tag#us-east-1")).atLeastOnce();
       expect(instance.getKeyName()).andReturn(null).atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
+      expect(instance.getVirtualizationType()).andReturn("paravirtual");
+      expect(instance.getPlacementGroup()).andReturn(null);
+      expect(instance.getSubnetId()).andReturn(null);
 
       expect(instance.getIpAddress()).andReturn("127.0.0.1");
       expect(instance.getPrivateIpAddress()).andReturn("127.0.0.1");
@@ -393,9 +408,12 @@ public class RunningInstanceToNodeMetadataTest {
       Image image = createMock(Image.class);
 
       expect(instance.getId()).andReturn("id").atLeastOnce();
-      expect(instance.getGroupIds()).andReturn(ImmutableSet.of("jclouds#tag")).atLeastOnce();
-      expect(instance.getKeyName()).andReturn("jclouds#keyName").atLeastOnce();
+      expect(instance.getGroupIds()).andReturn(ImmutableSet.of("jclouds#tag#us-east-1")).atLeastOnce();
+      expect(instance.getKeyName()).andReturn("jclouds#tag#us-east-1#50").atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
+      expect(instance.getVirtualizationType()).andReturn("paravirtual");
+      expect(instance.getPlacementGroup()).andReturn(null);
+      expect(instance.getSubnetId()).andReturn(null);
 
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
       Set<Location> locations = ImmutableSet.<Location> of(location);
@@ -415,8 +433,8 @@ public class RunningInstanceToNodeMetadataTest {
 
       expect(credentialProvider.execute(image)).andReturn(new Credentials("user", "pass"));
 
-      expect(credentialsMap.get(new RegionAndName(Region.US_EAST_1, "jclouds#keyName"))).andReturn(
-               new KeyPair(Region.US_EAST_1, "jclouds#keyName", "keyFingerprint", "pass"));
+      expect(credentialsMap.get(new RegionAndName(Region.US_EAST_1, "jclouds#tag#us-east-1#50"))).andReturn(
+               new KeyPair(Region.US_EAST_1, "jclouds#tag#us-east-1#50", "keyFingerprint", "pass"));
 
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
@@ -465,10 +483,13 @@ public class RunningInstanceToNodeMetadataTest {
       Image image = createMock(Image.class);
 
       expect(instance.getId()).andReturn("id").atLeastOnce();
-      expect(instance.getGroupIds()).andReturn(ImmutableSet.of("jclouds#tag", "jclouds#tag2"))
+      expect(instance.getGroupIds()).andReturn(ImmutableSet.of("jclouds1", "jclouds2"))
                .atLeastOnce();
-      expect(instance.getKeyName()).andReturn("jclouds#keyName").atLeastOnce();
+      expect(instance.getKeyName()).andReturn("jclouds#tag#us-east-1#50").atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
+      expect(instance.getVirtualizationType()).andReturn("paravirtual");
+      expect(instance.getPlacementGroup()).andReturn(null);
+      expect(instance.getSubnetId()).andReturn(null);
 
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
       Set<Location> locations = ImmutableSet.<Location> of(location);
@@ -488,8 +509,8 @@ public class RunningInstanceToNodeMetadataTest {
 
       expect(credentialProvider.execute(image)).andReturn(new Credentials("user", "pass"));
 
-      expect(credentialsMap.get(new RegionAndName(Region.US_EAST_1, "jclouds#keyName"))).andReturn(
-               new KeyPair(Region.US_EAST_1, "jclouds#keyName", "keyFingerprint", "pass"));
+      expect(credentialsMap.get(new RegionAndName(Region.US_EAST_1, "jclouds#tag#us-east-1#50"))).andReturn(
+               new KeyPair(Region.US_EAST_1, "jclouds#tag#us-east-1#50", "keyFingerprint", "pass"));
 
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 

@@ -77,8 +77,8 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       @Override
       public boolean apply(Image input) {
          return input.getProviderId().equals(instance.getImageId())
-                  && (input.getLocation() == null || input.getLocation().equals(location) || input
-                           .getLocation().equals(location.getParent()));
+                  && (input.getLocation() == null || input.getLocation().equals(location) || input.getLocation()
+                           .equals(location.getParent()));
       }
 
       @Override
@@ -114,9 +114,9 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    }
 
    private static final Map<InstanceState, NodeState> instanceToNodeState = ImmutableMap
-            .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING)
-            .put(InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN,
-                     NodeState.PENDING).put(InstanceState.TERMINATED, NodeState.TERMINATED).build();
+            .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING).put(
+                     InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN, NodeState.PENDING).put(
+                     InstanceState.TERMINATED, NodeState.TERMINATED).build();
 
    private final EC2Client client;
    private final Map<RegionAndName, KeyPair> credentialsMap;
@@ -127,21 +127,17 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    private final ConcurrentMap<RegionAndName, Image> imageMap;
 
    @Inject
-   RunningInstanceToNodeMetadata(
-            EC2Client client,
-            Map<RegionAndName, KeyPair> credentialsMap,
+   RunningInstanceToNodeMetadata(EC2Client client, Map<RegionAndName, KeyPair> credentialsMap,
             PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
             Provider<Set<? extends Image>> images, // to facilitate on-demand refresh of image list
-            ConcurrentMap<RegionAndName, Image> imageMap,
-            Set<? extends Location> locations,
+            ConcurrentMap<RegionAndName, Image> imageMap, Set<? extends Location> locations,
             @Named("volumeMapping") Function<RunningInstance, Map<String, String>> instanceToStorageMapping) {
       this.client = checkNotNull(client, "client");
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
       this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");
       this.images = checkNotNull(images, "images");
       this.locations = checkNotNull(locations, "locations");
-      this.instanceToStorageMapping = checkNotNull(instanceToStorageMapping,
-               "instanceToStorageMapping");
+      this.instanceToStorageMapping = checkNotNull(instanceToStorageMapping, "instanceToStorageMapping");
       this.imageMap = checkNotNull(imageMap, "imageMap");
    }
 
@@ -152,7 +148,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       String name = null; // user doesn't determine a node name;
       URI uri = null; // no uri to get rest access to host info
 
-      String tag = getTagForInstace(instance);
+      String tag = getTagForInstance(instance);
 
       Credentials credentials = getCredentialsForInstanceWithTag(instance, tag);
 
@@ -169,40 +165,35 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
       Image image = resolveImageForInstanceInLocation(instance, location);
 
-      return new NodeMetadataImpl(id, name, instance.getRegion() + "/" + instance.getId(),
-               location, uri, userMetadata, tag, image, state, publicAddresses, privateAddresses,
-               extra, credentials);
+      return new NodeMetadataImpl(id, name, instance.getRegion() + "/" + instance.getId(), location, uri, userMetadata,
+               tag, image, state, publicAddresses, privateAddresses, extra, credentials);
    }
 
    private Credentials getCredentialsForInstanceWithTag(final RunningInstance instance, String tag) {
       Credentials credentials = null;// default if no keypair exists
 
       if (instance.getKeyName() != null) {
-         credentials = new Credentials(getLoginAccountFor(instance), getPrivateKeyOrNull(instance,
-                  tag));
+         credentials = new Credentials(getLoginAccountFor(instance), getPrivateKeyOrNull(instance, tag));
       }
       return credentials;
    }
 
-   private String getTagForInstace(final RunningInstance instance) {
+   @VisibleForTesting
+   String getTagForInstance(final RunningInstance instance) {
       String tag = String.format("NOTAG-%s", instance.getId());// default
       try {
-         tag = Iterables.getOnlyElement(
-                  Iterables.filter(instance.getGroupIds(), new Predicate<String>() {
+         tag = Iterables.getOnlyElement(Iterables.filter(instance.getGroupIds(), new Predicate<String>() {
 
-                     @Override
-                     public boolean apply(String input) {
-                        return input.startsWith("jclouds#");
-                     }
+            @Override
+            public boolean apply(String input) {
+               return input.startsWith("jclouds#") && input.endsWith("#" + instance.getRegion());
+            }
 
-                  })).substring(8);
+         })).substring(8).replaceAll("#" + instance.getRegion() + "$", "");
       } catch (NoSuchElementException e) {
-         logger
-                  .warn("no tag parsed from %s's groups: %s", instance.getId(), instance
-                           .getGroupIds());
+         logger.warn("no tag parsed from %s's groups: %s", instance.getId(), instance.getGroupIds());
       } catch (IllegalArgumentException e) {
-         logger.warn("too many groups match %s; %s's groups: %s", "jclouds#", instance.getId(),
-                  instance.getGroupIds());
+         logger.warn("too many groups match %s; %s's groups: %s", "jclouds#", instance.getId(), instance.getGroupIds());
       }
       return tag;
    }
@@ -231,8 +222,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
          try {
             image = imageMap.get(key);
          } catch (NullPointerException nex) {
-            logger.warn("could not find a matching image for instance %s in location %s", instance,
-                     location);
+            logger.warn("could not find a matching image for instance %s in location %s", instance, location);
          }
       }
       return image;
@@ -250,7 +240,11 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    @VisibleForTesting
    Map<String, String> getExtra(RunningInstance instance) {
       Map<String, String> extra = Maps.newHashMap();
-
+      extra.put("virtualizationType", instance.getVirtualizationType());
+      if (instance.getPlacementGroup() != null)
+         extra.put("placementGroup", instance.getPlacementGroup());
+      if (instance.getSubnetId() != null)
+         extra.put("subnetId", instance.getSubnetId());
       // put storage info
       /* TODO: only valid for UNIX */
       extra.putAll(instanceToStorageMapping.apply(instance));
@@ -260,18 +254,15 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
    @VisibleForTesting
    String getPrivateKeyOrNull(RunningInstance instance, String tag) {
-      KeyPair keyPair = credentialsMap.get(new RegionAndName(instance.getRegion(), instance
-               .getKeyName()));
+      KeyPair keyPair = credentialsMap.get(new RegionAndName(instance.getRegion(), instance.getKeyName()));
       return keyPair != null ? keyPair.getKeyMaterial() : null;
    }
 
    @VisibleForTesting
    String getLoginAccountFor(RunningInstance from) {
-      org.jclouds.aws.ec2.domain.Image image = Iterables.getOnlyElement(client.getAMIServices()
-               .describeImagesInRegion(from.getRegion(),
-                        DescribeImagesOptions.Builder.imageIds(from.getImageId())));
-      return checkNotNull(credentialProvider.execute(image), "login from image: "
-               + from.getImageId()).identity;
+      org.jclouds.aws.ec2.domain.Image image = Iterables.getOnlyElement(client.getAMIServices().describeImagesInRegion(
+               from.getRegion(), DescribeImagesOptions.Builder.imageIds(from.getImageId())));
+      return checkNotNull(credentialProvider.execute(image), "login from image: " + from.getImageId()).identity;
    }
 
 }

@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -37,8 +37,8 @@ import com.google.common.collect.Sets;
  * @see <a href="http: />
  */
 public class DescribeInstancesResponseHandler extends
-         BaseReservationHandler<SortedSet<Reservation>> {
-   private SortedSet<Reservation> reservations = Sets.newTreeSet();
+         BaseReservationHandler<Set<Reservation>> {
+   private Set<Reservation> reservations = Sets.newLinkedHashSet();
 
    @Inject
    DescribeInstancesResponseHandler(DateService dateService, @Region String defaultRegion) {
@@ -46,7 +46,7 @@ public class DescribeInstancesResponseHandler extends
    }
 
    @Override
-   public SortedSet<Reservation> getResult() {
+   public Set<Reservation> getResult() {
       return reservations;
    }
 

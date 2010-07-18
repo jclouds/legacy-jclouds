@@ -27,6 +27,7 @@ import org.jclouds.aws.ec2.services.ElasticIPAddressClient;
 import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.aws.ec2.services.KeyPairClient;
 import org.jclouds.aws.ec2.services.MonitoringClient;
+import org.jclouds.aws.ec2.services.PlacementGroupClient;
 import org.jclouds.aws.ec2.services.SecurityGroupClient;
 import org.jclouds.aws.ec2.services.WindowsClient;
 import org.jclouds.concurrent.Timeout;
@@ -68,6 +69,12 @@ public interface EC2Client {
     */
    @Delegate
    SecurityGroupClient getSecurityGroupServices();
+
+   /**
+    * Provides synchronous access to PlacementGroup services.
+    */
+   @Delegate
+   PlacementGroupClient getPlacementGroupServices();
 
    /**
     * Provides synchronous access to Monitoring services.

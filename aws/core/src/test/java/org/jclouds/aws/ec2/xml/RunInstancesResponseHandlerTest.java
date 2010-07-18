@@ -40,7 +40,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -65,33 +64,24 @@ public class RunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
       InputStream is = getClass().getResourceAsStream("/ec2/run_instances.xml");
 
-      Reservation expected = new Reservation(defaultRegion, ImmutableSortedSet.of("default"),
-               ImmutableSet.of(new RunningInstance(defaultRegion, ImmutableSortedSet.of("default"),
-                        "0", null, "ami-60a54009", "i-2ba64342", InstanceState.PENDING,
-                        InstanceType.M1_SMALL, (String) null, null, "example-key-name",
-                        dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
-                        AvailabilityZone.US_EAST_1B, null, null, (String) null, Sets
-                                 .<String> newTreeSet(), null, null, null, null,
-                        RootDeviceType.INSTANCE_STORE, null, ImmutableMap
-                                 .<String, EbsBlockDevice> of()), new RunningInstance(
-                        defaultRegion, ImmutableSortedSet.of("default"), "1", null, "ami-60a54009",
-                        "i-2bc64242", InstanceState.PENDING, InstanceType.M1_SMALL,
-                        (String) null, null, "example-key-name", dateService
-                                 .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
-                        AvailabilityZone.US_EAST_1B, null, null, (String) null, Sets
-                                 .<String> newTreeSet(), null, null, null, null,
-                        RootDeviceType.INSTANCE_STORE, null, ImmutableMap
-                                 .<String, EbsBlockDevice> of()), new RunningInstance(
-                        defaultRegion, ImmutableSortedSet.of("default"), "2", null, "ami-60a54009",
-                        "i-2be64332", InstanceState.PENDING, InstanceType.M1_SMALL,
-                        (String) null, null, "example-key-name", dateService
-                                 .iso8601DateParse("2007-08-07T11:51:50.000Z"), true,
-                        AvailabilityZone.US_EAST_1B, null, null, (String) null, Sets
-                                 .<String> newTreeSet(), null, null, null, null,
-                        RootDeviceType.INSTANCE_STORE, null, ImmutableMap
-                                 .<String, EbsBlockDevice> of())
+      Reservation expected = new Reservation(defaultRegion, ImmutableSet.of("default"), ImmutableSet.of(
+               new RunningInstance(defaultRegion, ImmutableSet.of("default"), "0", null, "ami-60a54009", "i-2ba64342",
+                        InstanceState.PENDING, InstanceType.M1_SMALL, (String) null, null, "example-key-name",
+                        dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"), true, AvailabilityZone.US_EAST_1B,
+                        null, null, (String) null, null, "paravirtual", Sets.<String> newLinkedHashSet(), null, null,
+                        null, null, RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of()),
+               new RunningInstance(defaultRegion, ImmutableSet.of("default"), "1", null, "ami-60a54009", "i-2bc64242",
+                        InstanceState.PENDING, InstanceType.M1_SMALL, (String) null, null, "example-key-name",
+                        dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"), true, AvailabilityZone.US_EAST_1B,
+                        null, null, (String) null, null, "paravirtual", Sets.<String> newLinkedHashSet(), null, null,
+                        null, null, RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of()),
+               new RunningInstance(defaultRegion, ImmutableSet.of("default"), "2", null, "ami-60a54009", "i-2be64332",
+                        InstanceState.PENDING, InstanceType.M1_SMALL, (String) null, null, "example-key-name",
+                        dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"), true, AvailabilityZone.US_EAST_1B,
+                        null, null, (String) null, null, "paravirtual", Sets.<String> newLinkedHashSet(), null, null,
+                        null, null, RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of())
 
-               ), "AIDADH4IGTRXXKCD", null, "r-47a5402e");
+      ), "AIDADH4IGTRXXKCD", null, "r-47a5402e");
 
       RunInstancesResponseHandler handler = injector.getInstance(RunInstancesResponseHandler.class);
       addDefaultRegionToHandler(handler);
