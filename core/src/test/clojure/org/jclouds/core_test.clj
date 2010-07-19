@@ -38,7 +38,11 @@ list, Alan Dipert and MeikelBrandmeyer."
             (assoc module-lookup
               :string 'java.lang.String)]
     (is (instance? String (first (modules :string))))
-    (is (= 1 (count (modules :string))))))
+    (is (= 1 (count (modules :string)))))
+  (testing "pre-instantiated"
+    (is (instance? String (first (modules "string")))))
+  (testing "symbol"
+    (is (instance? String (first (modules 'java.lang.String))))))
 
 (deftest modules-instantiate-fail-test
   (binding [module-lookup

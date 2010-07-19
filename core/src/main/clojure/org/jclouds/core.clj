@@ -57,7 +57,11 @@ Ensure the module is on the classpath.  You are maybe missing a dependency on
           (reduce #(.add #^com.google.common.collect.ImmutableSet$Builder %1 %2)
                   (com.google.common.collect.ImmutableSet/builder)
                   (filter (complement nil?)
-                          (map (comp instantiate module-lookup) modules)))))
+                          (map #(cond
+                                 (keyword? %) (-> % module-lookup instantiate)
+                                 (symbol? %) (instantiate %)
+                                 :else %)
+                               modules)))))
 
 (defn dashed [a]
   (apply str (interpose "-" (map string/lower-case (re-seq #"[A-Z][^A-Z]*" a)))))
