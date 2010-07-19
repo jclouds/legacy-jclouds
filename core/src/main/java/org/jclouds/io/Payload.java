@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http;
+package org.jclouds.io;
 
 import java.io.Closeable;
 import java.io.IOException;

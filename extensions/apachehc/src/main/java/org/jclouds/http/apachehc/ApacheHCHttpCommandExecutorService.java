@@ -36,12 +36,12 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.IOExceptionRetryHandler;
-import org.jclouds.http.Payload;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.BaseHttpCommandExecutorService;
 import org.jclouds.http.internal.HttpWire;
+import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;

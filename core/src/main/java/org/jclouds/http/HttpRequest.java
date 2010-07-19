@@ -28,6 +28,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.io.Payload;
+
 import com.google.common.collect.Multimap;
 
 /**

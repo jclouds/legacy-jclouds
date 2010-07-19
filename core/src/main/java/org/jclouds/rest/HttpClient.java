@@ -23,8 +23,8 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.http.Payload;
 import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.io.Payload;
 
 /**
  * Simple client

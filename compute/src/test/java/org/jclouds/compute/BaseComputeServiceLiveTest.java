@@ -19,6 +19,21 @@
 package org.jclouds.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.and;
+import static com.google.common.base.Predicates.not;
+import static com.google.common.base.Throwables.getRootCause;
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Sets.filter;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newTreeSet;
+import static org.jclouds.compute.options.RunScriptOptions.Builder.overrideCredentialsWith;
+import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
+import static org.jclouds.compute.predicates.NodePredicates.all;
+import static org.jclouds.compute.predicates.NodePredicates.runningWithTag;
+import static org.jclouds.compute.predicates.NodePredicates.withTag;
+import static org.jclouds.io.Payloads.newStringPayload;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -43,9 +58,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -65,12 +78,8 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Predicates;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import com.google.common.io.Files;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -128,7 +137,7 @@ public abstract class BaseComputeServiceLiveTest {
       String secret = Files.toString(new File(secretKeyFile), Charsets.UTF_8);
       assert secret.startsWith("-----BEGIN RSA PRIVATE KEY-----") : "invalid key:\n" + secret;
       return ImmutableMap.<String, String> of("private", secret, "public", Files.toString(new File(secretKeyFile
-               + ".pub"), Charsets.UTF_8));
+            + ".pub"), Charsets.UTF_8));
    }
 
    protected void setupCredentials() {
@@ -144,7 +153,7 @@ public abstract class BaseComputeServiceLiveTest {
       if (context != null)
          context.close();
       context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet.of(
-               new Log4JLoggingModule(), getSshModule()));
+            new Log4JLoggingModule(), getSshModule()));
       client = context.getComputeService();
    }
 
@@ -161,7 +170,7 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, expectedExceptions = AuthorizationException.class)
    public void testCorrectAuthException() throws Exception {
       new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA",
-               ImmutableSet.<Module> of(new Log4JLoggingModule())).close();
+            ImmutableSet.<Module> of(new Log4JLoggingModule())).close();
    }
 
    @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
@@ -179,7 +188,7 @@ public abstract class BaseComputeServiceLiveTest {
    public void testAScriptExecutionAfterBootWithBasicTemplate() throws Exception {
       String tag = this.tag + "run";
       try {
-         client.destroyNodesMatching(NodePredicates.withTag(tag));
+         client.destroyNodesMatching(withTag(tag));
       } catch (Exception e) {
 
       }
@@ -191,13 +200,13 @@ public abstract class BaseComputeServiceLiveTest {
          assert good.identity != null;
          assert good.credential != null;
 
-         Image image = Iterables.get(nodes, 0).getImage();
+         Image image = get(nodes, 0).getImage();
          try {
             Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(tag, image.getOsFamily(),
-                     new Credentials(good.identity, "romeo"));
+                  new Credentials(good.identity, "romeo"));
             assert false : "shouldn't pass with a bad password\n" + responses;
          } catch (RunScriptOnNodesException e) {
-            assert Throwables.getRootCause(e).getMessage().contains("Auth fail") : e;
+            assert getRootCause(e).getMessage().contains("Auth fail") : e;
          }
 
          runScriptWithCreds(tag, image.getOsFamily(), good);
@@ -205,7 +214,7 @@ public abstract class BaseComputeServiceLiveTest {
          checkNodes(nodes, tag);
 
       } finally {
-         client.destroyNodesMatching(NodePredicates.withTag(tag));
+         client.destroyNodesMatching(withTag(tag));
       }
    }
 
@@ -219,7 +228,7 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testTemplateMatch")
    public void testCreateTwoNodesWithRunScript() throws Exception {
       try {
-         client.destroyNodesMatching(NodePredicates.withTag(tag));
+         client.destroyNodesMatching(withTag(tag));
       } catch (HttpResponseException e) {
          // TODO hosting.com throws 400 when we try to delete a vApp
       } catch (NoSuchElementException e) {
@@ -227,12 +236,13 @@ public abstract class BaseComputeServiceLiveTest {
       }
       template = buildTemplate(client.templateBuilder());
 
-      template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(keyPair.get("public"))
-               .runScript(buildScript(template.getImage().getOsFamily()).getBytes());
+      template.getOptions().installPrivateKey(newStringPayload(keyPair.get("private"))).authorizePublicKey(
+            newStringPayload(keyPair.get("public"))).runScript(
+            newStringPayload(buildScript(template.getImage().getOsFamily())));
       try {
-         nodes = Sets.newTreeSet(client.runNodesWithTag(tag, 2, template));
+         nodes = newTreeSet(client.runNodesWithTag(tag, 2, template));
       } catch (RunNodesException e) {
-         nodes = Sets.newTreeSet(Iterables.concat(e.getSuccessfulNodes(), e.getNodeErrors().keySet()));
+         nodes = newTreeSet(concat(e.getSuccessfulNodes(), e.getNodeErrors().keySet()));
          throw e;
       }
       assertEquals(nodes.size(), 2);
@@ -261,7 +271,7 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCreateTwoNodesWithRunScript")
    public void testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired() throws Exception {
       initializeContextAndClient();
-      TreeSet<NodeMetadata> nodes = Sets.newTreeSet(client.runNodesWithTag(tag, 1, template));
+      TreeSet<NodeMetadata> nodes = newTreeSet(client.runNodesWithTag(tag, 1, template));
       checkNodes(nodes, tag);
       NodeMetadata node = nodes.first();
       this.nodes.add(node);
@@ -271,12 +281,12 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String tag, OsFamily osFamily,
-            Credentials creds) throws RunScriptOnNodesException {
+         Credentials creds) throws RunScriptOnNodesException {
       try {
-         return client.runScriptOnNodesMatching(NodePredicates.runningWithTag(tag), buildScript(osFamily).getBytes(),
-                  RunScriptOptions.Builder.overrideCredentialsWith(creds));
+         return client.runScriptOnNodesMatching(runningWithTag(tag), newStringPayload(buildScript(osFamily)),
+               overrideCredentialsWith(creds));
       } catch (SshException e) {
-         if (Throwables.getRootCause(e).getMessage().contains("Auth fail")) {
+         if (getRootCause(e).getMessage().contains("Auth fail")) {
             // System.err.printf("bad credentials: %s:%s for %s%n",
             // creds.identity, creds.key, client
             // .listNodesDetailsMatching(tag));
@@ -307,40 +317,38 @@ public abstract class BaseComputeServiceLiveTest {
 
    public static String buildScript(OsFamily osFamily) {
       switch (osFamily) {
-         case UBUNTU:
-            return new StringBuilder()//
-                     .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
-                     .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
-                     .append(
-                              "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
-                     .append("apt-get update\n")//
-                     .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
-                     .append("wget -qO/usr/bin/runurl run.alestic.com/runurl\n")//
-                     .append("chmod 755 /usr/bin/runurl\n")//
-                     .toString();
-         case CENTOS:
-         case RHEL:
-            return new StringBuilder()
-                     .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")
-                     .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-                     .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-                     .append(
-                              "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-                     .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-                     .append("yum --nogpgcheck -y install java-1.6.0-openjdk\n")
-                     .append(
-                              "echo \"export PATH=\\\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\\$PATH\\\"\" >> /root/.bashrc\n")
-                     .toString();
-         default:
-            throw new IllegalArgumentException(osFamily.toString());
+      case UBUNTU:
+         return new StringBuilder()//
+               .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
+               .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
+               .append(
+                     "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
+               .append("apt-get update\n")//
+               .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
+               .append("wget -qO/usr/bin/runurl run.alestic.com/runurl\n")//
+               .append("chmod 755 /usr/bin/runurl\n")//
+               .toString();
+      case CENTOS:
+      case RHEL:
+         return new StringBuilder()
+               .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")
+               .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+               .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+               .append(
+                     "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+               .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n").append(
+                     "yum --nogpgcheck -y install java-1.6.0-openjdk\n").append(
+                     "echo \"export PATH=\\\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\\$PATH\\\"\" >> /root/.bashrc\n")
+               .toString();
+      default:
+         throw new IllegalArgumentException(osFamily.toString());
       }
    }
 
    @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
    public void testGet() throws Exception {
-      Set<? extends NodeMetadata> metadataSet = Sets.newHashSet(Iterables.filter(client
-               .listNodesDetailsMatching(NodePredicates.all()), Predicates.and(NodePredicates.withTag(tag), Predicates
-               .not(NodePredicates.TERMINATED))));
+      Set<? extends NodeMetadata> metadataSet = newHashSet(filter(client.listNodesDetailsMatching(all()), and(
+            withTag(tag), not(TERMINATED))));
       for (NodeMetadata node : nodes) {
          metadataSet.remove(node);
          NodeMetadata metadata = client.getNodeMetadata(node.getId());
@@ -357,12 +365,12 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected void assertNodeZero(Set<? extends NodeMetadata> metadataSet) {
       assert metadataSet.size() == 0 : String.format("nodes left in set: [%s] which didn't match set: [%s]",
-               metadataSet, nodes);
+            metadataSet, nodes);
    }
 
    @Test(enabled = true, dependsOnMethods = "testGet")
    public void testReboot() throws Exception {
-      client.rebootNodesMatching(NodePredicates.withTag(tag));// TODO test
+      client.rebootNodesMatching(withTag(tag));// TODO test
       // validation
       testGet();
    }
@@ -383,7 +391,7 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    public void testGetNodesWithDetails() throws Exception {
-      for (NodeMetadata node : client.listNodesDetailsMatching(NodePredicates.all())) {
+      for (NodeMetadata node : client.listNodesDetailsMatching(all())) {
          assert node.getProviderId() != null : node;
          assert node.getLocation() != null : node;
          assertEquals(node.getType(), ComputeType.NODE);
@@ -418,26 +426,26 @@ public abstract class BaseComputeServiceLiveTest {
          assert location != location.getParent() : location;
          assert location.getScope() != null : location;
          switch (location.getScope()) {
-            case PROVIDER:
-               assertProvider(location);
-               break;
-            case REGION:
-               assertProvider(location.getParent());
-               break;
-            case ZONE:
-               Location provider = location.getParent().getParent();
-               // zone can be a direct descendant of provider
-               if (provider == null)
-                  provider = location.getParent();
-               assertProvider(provider);
-               break;
-            case HOST:
-               Location provider2 = location.getParent().getParent().getParent();
-               // zone can be a direct descendant of provider
-               if (provider2 == null)
-                  provider2 = location.getParent().getParent();
-               assertProvider(provider2);
-               break;
+         case PROVIDER:
+            assertProvider(location);
+            break;
+         case REGION:
+            assertProvider(location.getParent());
+            break;
+         case ZONE:
+            Location provider = location.getParent().getParent();
+            // zone can be a direct descendant of provider
+            if (provider == null)
+               provider = location.getParent();
+            assertProvider(provider);
+            break;
+         case HOST:
+            Location provider2 = location.getParent().getParent().getParent();
+            // zone can be a direct descendant of provider
+            if (provider2 == null)
+               provider2 = location.getParent().getParent();
+            assertProvider(provider2);
+            break;
          }
       }
    }
@@ -446,7 +454,7 @@ public abstract class BaseComputeServiceLiveTest {
    public void testOptionToNotBlock() throws Exception {
       String tag = this.tag + "block";
       try {
-         client.destroyNodesMatching(NodePredicates.withTag(tag));
+         client.destroyNodesMatching(withTag(tag));
       } catch (Exception e) {
 
       }
@@ -455,12 +463,12 @@ public abstract class BaseComputeServiceLiveTest {
       try {
          long time = System.currentTimeMillis();
          Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
-         NodeMetadata node = Iterables.getOnlyElement(nodes);
+         NodeMetadata node = getOnlyElement(nodes);
          assert node.getState() != NodeState.RUNNING;
          long duration = System.currentTimeMillis() - time;
          assert duration < 30 * 1000 : "duration longer than 30 seconds!:  " + duration / 1000;
       } finally {
-         client.destroyNodesMatching(NodePredicates.withTag(tag));
+         client.destroyNodesMatching(withTag(tag));
       }
    }
 
@@ -495,7 +503,7 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    protected void doCheckJavaIsInstalledViaSsh(NodeMetadata node) throws IOException {
-      IPSocket socket = new IPSocket(Iterables.get(node.getPublicAddresses(), 0), 22);
+      IPSocket socket = new IPSocket(get(node.getPublicAddresses(), 0), 22);
       socketTester.apply(socket); // TODO add transitionTo option that accepts
       // a socket conection
       // state.
@@ -515,9 +523,8 @@ public abstract class BaseComputeServiceLiveTest {
    @AfterTest
    protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       if (nodes != null) {
-         client.destroyNodesMatching(NodePredicates.withTag(tag));
-         for (NodeMetadata node : Iterables.filter(client.listNodesDetailsMatching(NodePredicates.all()),
-                  NodePredicates.withTag(tag))) {
+         client.destroyNodesMatching(withTag(tag));
+         for (NodeMetadata node : filter(client.listNodesDetailsMatching(all()), withTag(tag))) {
             assert node.getState() == NodeState.TERMINATED : node;
          }
       }

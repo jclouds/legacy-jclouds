@@ -85,8 +85,8 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.options.HttpRequestOptions;
-import org.jclouds.http.payloads.ByteArrayPayload;
-import org.jclouds.http.payloads.DelegatingPayload;
+import org.jclouds.io.payloads.ByteArrayPayload;
+import org.jclouds.io.payloads.DelegatingPayload;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;

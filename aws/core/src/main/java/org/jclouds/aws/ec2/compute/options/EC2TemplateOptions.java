@@ -26,17 +26,18 @@ import java.util.Arrays;
 import java.util.Set;
 
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.io.Payload;
 import org.jclouds.util.Utils;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
- * Contains options supported in the {@code ComputeService#runNode} operation on the "ec2" provider.
- * <h2>
- * Usage</h2> The recommended way to instantiate a EC2TemplateOptions object is to statically import
- * EC2TemplateOptions.* and invoke a static creation method followed by an instance mutator (if
- * needed):
+ * Contains options supported in the {@code ComputeService#runNode} operation on
+ * the "ec2" provider. <h2>
+ * Usage</h2> The recommended way to instantiate a EC2TemplateOptions object is
+ * to statically import EC2TemplateOptions.* and invoke a static creation method
+ * followed by an instance mutator (if needed):
  * <p/>
  * <code>
  * import static org.jclouds.aws.ec2.compute.options.EC2TemplateOptions.Builder.*;
@@ -240,14 +241,6 @@ public class EC2TemplateOptions extends TemplateOptions {
    // methods that only facilitate returning the correct object type
 
    /**
-    * @see TemplateOptions#authorizePublicKey
-    */
-   @Override
-   public EC2TemplateOptions authorizePublicKey(String publicKey) {
-      return EC2TemplateOptions.class.cast(super.authorizePublicKey(publicKey));
-   }
-
-   /**
     * @see TemplateOptions#blockOnPort
     */
    @Override
@@ -257,9 +250,10 @@ public class EC2TemplateOptions extends TemplateOptions {
 
    /**
     * 
-    * special thing is that we do assume if you are passing groups that you have everything you need
-    * already defined. for example, our option inboundPorts normally creates ingress rules
-    * accordingly but if we notice you've specified securityGroups, we do not mess with rules at all
+    * special thing is that we do assume if you are passing groups that you have
+    * everything you need already defined. for example, our option inboundPorts
+    * normally creates ingress rules accordingly but if we notice you've
+    * specified securityGroups, we do not mess with rules at all
     * 
     * @see TemplateOptions#inboundPorts
     */
@@ -269,17 +263,52 @@ public class EC2TemplateOptions extends TemplateOptions {
    }
 
    /**
-    * @see TemplateOptions#installPrivateKey
+    * @see TemplateOptions#authorizePublicKey(String)
     */
    @Override
+   @Deprecated
+   public EC2TemplateOptions authorizePublicKey(String publicKey) {
+      return EC2TemplateOptions.class.cast(super.authorizePublicKey(publicKey));
+   }
+
+   /**
+    * @see TemplateOptions#authorizePublicKey(Payload)
+    */
+   @Override
+   public EC2TemplateOptions authorizePublicKey(Payload publicKey) {
+      return EC2TemplateOptions.class.cast(super.authorizePublicKey(publicKey));
+   }
+
+   /**
+    * @see TemplateOptions#installPrivateKey(String)
+    */
+   @Override
+   @Deprecated
    public EC2TemplateOptions installPrivateKey(String privateKey) {
       return EC2TemplateOptions.class.cast(super.installPrivateKey(privateKey));
    }
 
    /**
-    * @see TemplateOptions#runScript
+    * @see TemplateOptions#installPrivateKey(Payload)
     */
    @Override
+   public EC2TemplateOptions installPrivateKey(Payload privateKey) {
+      return EC2TemplateOptions.class.cast(super.installPrivateKey(privateKey));
+   }
+
+   /**
+    * @see TemplateOptions#runScript(Payload)
+    */
+   @Override
+   public EC2TemplateOptions runScript(Payload script) {
+      return EC2TemplateOptions.class.cast(super.runScript(script));
+   }
+
+   /**
+    * @see TemplateOptions#runScript(byte[])
+    */
+   @Override
+   @Deprecated
    public EC2TemplateOptions runScript(byte[] script) {
       return EC2TemplateOptions.class.cast(super.runScript(script));
    }
@@ -293,15 +322,16 @@ public class EC2TemplateOptions extends TemplateOptions {
    }
 
    /**
-    * @return groupIds the user specified to run instances with, or zero length set to create an
-    *         implicit group
+    * @return groupIds the user specified to run instances with, or zero length
+    *         set to create an implicit group
     */
    public Set<String> getGroupIds() {
       return groupIds;
    }
 
    /**
-    * @return keyPair to use when running the instance or null, to generate a keypair.
+    * @return keyPair to use when running the instance or null, to generate a
+    *         keypair.
     */
    public String getKeyPair() {
       return keyPair;
@@ -315,7 +345,8 @@ public class EC2TemplateOptions extends TemplateOptions {
    }
 
    /**
-    * @return placementGroup to use when running the instance or null, to generate a placementGroup.
+    * @return placementGroup to use when running the instance or null, to
+    *         generate a placementGroup.
     */
    public String getPlacementGroup() {
       return placementGroup;
@@ -387,10 +418,10 @@ public class EC2TemplateOptions extends TemplateOptions {
    @Override
    public String toString() {
       return "[groupIds=" + groupIds + ", keyPair=" + keyPair + ", noKeyPair=" + noKeyPair + ", placementGroup="
-               + placementGroup + ", noPlacementGroup=" + noPlacementGroup + ", inboundPorts="
-               + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
-               + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port + ":" + seconds
-               + ", subnetId=" + subnetId + ", metadata/details: " + includeMetadata + "]";
+            + placementGroup + ", noPlacementGroup=" + noPlacementGroup + ", inboundPorts="
+            + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
+            + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port + ":" + seconds
+            + ", subnetId=" + subnetId + ", metadata/details: " + includeMetadata + "]";
    }
 
 }

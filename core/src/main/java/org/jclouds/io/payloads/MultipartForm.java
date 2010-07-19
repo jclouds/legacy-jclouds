@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http.payloads;
+package org.jclouds.io.payloads;
 
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Lists.newArrayList;

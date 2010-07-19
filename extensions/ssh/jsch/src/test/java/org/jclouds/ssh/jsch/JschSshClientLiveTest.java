@@ -24,8 +24,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
+import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
@@ -55,8 +56,8 @@ public class JschSshClientLiveTest {
    public SshClient setupClient() throws NumberFormatException, FileNotFoundException, IOException {
       int port = (sshPort != null) ? Integer.parseInt(sshPort) : 22;
       if (sshUser == null
-               || ((sshPass == null || sshPass.trim().equals("")) && (sshKeyFile == null || sshKeyFile
-                        .trim().equals(""))) || sshUser.trim().equals("")) {
+            || ((sshPass == null || sshPass.trim().equals("")) && (sshKeyFile == null || sshKeyFile.trim().equals("")))
+            || sshUser.trim().equals("")) {
          System.err.println("ssh credentials not present.  Tests will be lame");
          return new SshClient() {
 
@@ -66,11 +67,11 @@ public class JschSshClientLiveTest {
             public void disconnect() {
             }
 
-            public InputStream get(String path) {
+            public Payload get(String path) {
                if (path.equals("/etc/passwd")) {
-                  return Utils.toInputStream("root");
+                  return Payloads.newStringPayload("root");
                } else if (path.equals(temp.getAbsolutePath())) {
-                  return Utils.toInputStream("rabbit");
+                  return Payloads.newStringPayload("rabbit");
                }
                throw new RuntimeException("path " + path + " not stubbed");
             }
@@ -83,7 +84,7 @@ public class JschSshClientLiveTest {
             }
 
             @Override
-            public void put(String path, InputStream contents) {
+            public void put(String path, Payload contents) {
 
             }
 
@@ -103,8 +104,8 @@ public class JschSshClientLiveTest {
          SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
          SshClient connection;
          if (sshKeyFile != null && !sshKeyFile.trim().equals("")) {
-            connection = factory.create(new IPSocket(sshHost, port), sshUser, Utils
-                     .toStringAndClose(new FileInputStream(sshKeyFile)).getBytes());
+            connection = factory.create(new IPSocket(sshHost, port), sshUser, Utils.toStringAndClose(
+                  new FileInputStream(sshKeyFile)).getBytes());
          } else {
             connection = factory.create(new IPSocket(sshHost, port), sshUser, sshPass);
          }
@@ -117,15 +118,15 @@ public class JschSshClientLiveTest {
       temp = File.createTempFile("foo", "bar");
       temp.deleteOnExit();
       SshClient client = setupClient();
-      client.put(temp.getAbsolutePath(), Utils.toInputStream("rabbit"));
-      InputStream input = setupClient().get(temp.getAbsolutePath());
-      String contents = Utils.toStringAndClose(input);
+      client.put(temp.getAbsolutePath(), Payloads.newStringPayload("rabbit"));
+      Payload input = setupClient().get(temp.getAbsolutePath());
+      String contents = Utils.toStringAndClose(input.getInput());
       assertEquals(contents, "rabbit");
    }
 
    public void testGetEtcPassword() throws IOException {
-      InputStream input = setupClient().get("/etc/passwd");
-      String contents = Utils.toStringAndClose(input);
+      Payload input = setupClient().get("/etc/passwd");
+      String contents = Utils.toStringAndClose(input.getInput());
       assert contents.indexOf("root") >= 0 : "no root in " + contents;
    }
 

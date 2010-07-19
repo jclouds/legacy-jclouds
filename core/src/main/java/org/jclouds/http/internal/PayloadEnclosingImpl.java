@@ -19,15 +19,15 @@
 package org.jclouds.http.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.http.Payloads.newPayload;
+import static org.jclouds.io.Payloads.newPayload;
 
 import java.io.File;
 import java.io.InputStream;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.http.Payload;
 import org.jclouds.http.PayloadEnclosing;
+import org.jclouds.io.Payload;
 
 /**
  * 

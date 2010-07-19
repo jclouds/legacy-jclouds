@@ -41,12 +41,12 @@ import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.Payload;
-import org.jclouds.http.payloads.BasePayload;
-import org.jclouds.http.payloads.ByteArrayPayload;
-import org.jclouds.http.payloads.DelegatingPayload;
-import org.jclouds.http.payloads.FilePayload;
-import org.jclouds.http.payloads.StringPayload;
+import org.jclouds.io.Payload;
+import org.jclouds.io.payloads.BasePayload;
+import org.jclouds.io.payloads.ByteArrayPayload;
+import org.jclouds.io.payloads.DelegatingPayload;
+import org.jclouds.io.payloads.FilePayload;
+import org.jclouds.io.payloads.StringPayload;
 
 import com.google.common.base.Throwables;
 

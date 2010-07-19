@@ -26,8 +26,8 @@ import java.io.UnsupportedEncodingException;
 import javax.annotation.Resource;
 
 import org.jclouds.encryption.EncryptionService;
-import org.jclouds.http.Payload;
 import org.jclouds.http.PayloadEnclosing;
+import org.jclouds.io.Payload;
 import org.jclouds.logging.Logger;
 
 /**

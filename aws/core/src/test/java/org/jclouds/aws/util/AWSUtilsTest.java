@@ -31,7 +31,7 @@ import org.jclouds.aws.domain.AWSError;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payloads;
+import org.jclouds.io.Payloads;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.BaseRestClientTest.MockModule;

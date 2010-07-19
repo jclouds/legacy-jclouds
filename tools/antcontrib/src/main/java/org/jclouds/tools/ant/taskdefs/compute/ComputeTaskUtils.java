@@ -25,7 +25,6 @@ package org.jclouds.tools.ant.taskdefs.compute;
 
 import static org.jclouds.rest.RestContextFactory.getPropertiesFromResource;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -43,16 +42,15 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
+import org.jclouds.io.Payloads;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.tools.ant.logging.config.AntLoggingModule;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.MapMaker;
-import com.google.common.io.Files;
 import com.google.inject.Module;
 import com.google.inject.Provider;
 
@@ -64,12 +62,12 @@ public class ComputeTaskUtils {
 
    /**
     * 
-    * Creates a Map that associates a uri with a live connection to the compute provider. This is
-    * done on-demand.
+    * Creates a Map that associates a uri with a live connection to the compute
+    * provider. This is done on-demand.
     * 
     * @param projectProvider
-    *           allows access to the ant project to retrieve default properties needed for compute
-    *           providers.
+    *           allows access to the ant project to retrieve default properties
+    *           needed for compute providers.
     */
    static Map<URI, ComputeServiceContext> buildComputeMap(final Provider<Project> projectProvider) {
       return new MapMaker().makeComputingMap(new Function<URI, ComputeServiceContext>() {
@@ -79,13 +77,13 @@ public class ComputeTaskUtils {
          public ComputeServiceContext apply(URI from) {
             Properties props = getPropertiesFromResource("/rest.properties");
             props.putAll(projectProvider.get().getProperties());
-            // adding the properties to the factory will allow us to pass alternate endpoints
+            // adding the properties to the factory will allow us to pass
+            // alternate endpoints
             String provider = from.getHost();
             Credentials creds = Credentials.parse(from);
-            return new ComputeServiceContextFactory(props).createContext(provider,
-                     creds.identity, creds.credential, ImmutableSet.of((Module) new AntLoggingModule(
-                              projectProvider.get(), ComputeServiceConstants.COMPUTE_LOGGER),
-                              new JschSshClientModule()), props);
+            return new ComputeServiceContextFactory(props).createContext(provider, creds.identity, creds.credential,
+                  ImmutableSet.of((Module) new AntLoggingModule(projectProvider.get(),
+                        ComputeServiceConstants.COMPUTE_LOGGER), new JschSshClientModule()), props);
 
          }
 
@@ -122,49 +120,31 @@ public class ComputeTaskUtils {
          template.biggest();
       } else {
          throw new BuildException("size: " + nodeElement.getSize()
-                  + " not supported.  valid sizes are smallest, fastest, biggest");
+               + " not supported.  valid sizes are smallest, fastest, biggest");
       }
    }
 
    static TemplateOptions getNodeOptionsFromElement(NodeElement nodeElement) {
-      TemplateOptions options = new TemplateOptions()
-               .inboundPorts(getPortsToOpenFromElement(nodeElement));
+      TemplateOptions options = new TemplateOptions().inboundPorts(getPortsToOpenFromElement(nodeElement));
       addRunScriptToOptionsIfPresentInNodeElement(nodeElement, options);
       addPrivateKeyToOptionsIfPresentInNodeElement(nodeElement, options);
       addPublicKeyToOptionsIfPresentInNodeElement(nodeElement, options);
       return options;
    }
 
-   static void addRunScriptToOptionsIfPresentInNodeElement(NodeElement nodeElement,
-            TemplateOptions options) {
+   static void addRunScriptToOptionsIfPresentInNodeElement(NodeElement nodeElement, TemplateOptions options) {
       if (nodeElement.getRunscript() != null)
-         try {
-            options.runScript(Files.toByteArray(nodeElement.getRunscript()));
-         } catch (IOException e) {
-            throw new BuildException(e);
-         }
+         options.runScript(Payloads.newFilePayload(nodeElement.getRunscript()));
    }
 
-   static void addPrivateKeyToOptionsIfPresentInNodeElement(NodeElement nodeElement,
-            TemplateOptions options) {
+   static void addPrivateKeyToOptionsIfPresentInNodeElement(NodeElement nodeElement, TemplateOptions options) {
       if (nodeElement.getPrivatekeyfile() != null)
-         try {
-            options.installPrivateKey(Files.toString(nodeElement.getPrivatekeyfile(),
-                     Charsets.UTF_8));
-         } catch (IOException e) {
-            throw new BuildException(e);
-         }
+         options.installPrivateKey(Payloads.newFilePayload(nodeElement.getPrivatekeyfile()));
    }
 
-   static void addPublicKeyToOptionsIfPresentInNodeElement(NodeElement nodeElement,
-            TemplateOptions options) {
+   static void addPublicKeyToOptionsIfPresentInNodeElement(NodeElement nodeElement, TemplateOptions options) {
       if (nodeElement.getPrivatekeyfile() != null)
-         try {
-            options.authorizePublicKey(Files.toString(nodeElement.getPublickeyfile(),
-                     Charsets.UTF_8));
-         } catch (IOException e) {
-            throw new BuildException(e);
-         }
+         options.authorizePublicKey(Payloads.newFilePayload(nodeElement.getPublickeyfile()));
    }
 
    static String ipOrEmptyString(Set<String> set) {

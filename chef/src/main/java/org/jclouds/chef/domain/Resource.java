@@ -21,7 +21,7 @@ package org.jclouds.chef.domain;
 import java.net.URI;
 import java.util.Arrays;
 
-import org.jclouds.http.payloads.FilePayload;
+import org.jclouds.io.payloads.FilePayload;
 
 import com.google.common.primitives.Bytes;
 

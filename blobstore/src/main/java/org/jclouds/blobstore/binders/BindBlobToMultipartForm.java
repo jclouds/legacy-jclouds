@@ -22,9 +22,9 @@ import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.payloads.MultipartForm;
-import org.jclouds.http.payloads.Part;
-import org.jclouds.http.payloads.Part.PartOptions;
+import org.jclouds.io.payloads.MultipartForm;
+import org.jclouds.io.payloads.Part;
+import org.jclouds.io.payloads.Part.PartOptions;
 import org.jclouds.rest.Binder;
 
 /**

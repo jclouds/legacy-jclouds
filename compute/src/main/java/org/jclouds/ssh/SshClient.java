@@ -18,12 +18,10 @@
  */
 package org.jclouds.ssh;
 
-import java.io.InputStream;
-import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.jclouds.io.Payload;
 import org.jclouds.net.IPSocket;
 
 /**
@@ -35,17 +33,15 @@ public interface SshClient {
       SshClient create(IPSocket socket, String username, String password);
 
       SshClient create(IPSocket socket, String username, byte[] privateKey);
-
-      Map<String, String> generateRSAKeyPair(String comment, String passphrase);
    }
 
    String getUsername();
 
    String getHostAddress();
 
-   void put(String path, InputStream contents);
+   void put(String path, Payload contents);
 
-   InputStream get(String path);
+   Payload get(String path);
 
    ExecResponse exec(String command);
 

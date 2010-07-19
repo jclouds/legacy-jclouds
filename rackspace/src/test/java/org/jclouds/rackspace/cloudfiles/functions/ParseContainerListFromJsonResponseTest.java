@@ -24,9 +24,9 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.io.Payloads;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;

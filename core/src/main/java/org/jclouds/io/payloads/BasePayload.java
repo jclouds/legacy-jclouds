@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http.payloads;
+package org.jclouds.io.payloads;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -29,7 +29,7 @@ import java.io.OutputStream;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.http.Payload;
+import org.jclouds.io.Payload;
 
 /**
  * @author Adrian Cole

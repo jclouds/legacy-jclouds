@@ -31,7 +31,7 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.Payloads;
+import org.jclouds.io.Payloads;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;

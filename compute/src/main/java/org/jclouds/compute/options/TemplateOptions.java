@@ -20,8 +20,12 @@ package org.jclouds.compute.options;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.io.Payloads.newByteArrayPayload;
+import static org.jclouds.io.Payloads.newStringPayload;
 
 import java.util.Arrays;
+
+import org.jclouds.io.Payload;
 
 /**
  * Contains options supported in the {@code ComputeService#runNodesWithTag}
@@ -42,303 +46,384 @@ import java.util.Arrays;
  */
 public class TemplateOptions {
 
-	public static final TemplateOptions NONE = new ImmutableTemplateOptions(
-			new TemplateOptions());
+   public static final TemplateOptions NONE = new ImmutableTemplateOptions(new TemplateOptions());
 
-	public static class ImmutableTemplateOptions extends TemplateOptions {
-		private final TemplateOptions delegate;
+   public static class ImmutableTemplateOptions extends TemplateOptions {
+      private final TemplateOptions delegate;
 
-		public ImmutableTemplateOptions(TemplateOptions delegate) {
-			this.delegate = delegate;
-		}
+      public ImmutableTemplateOptions(TemplateOptions delegate) {
+         this.delegate = delegate;
+      }
 
-		@Override
-		public String toString() {
-			return delegate.toString();
-		}
+      @Override
+      public String toString() {
+         return delegate.toString();
+      }
 
-		@Override
-		public <T extends TemplateOptions> T as(Class<T> clazz) {
-			return delegate.as(clazz);
-		}
+      @Override
+      public <T extends TemplateOptions> T as(Class<T> clazz) {
+         return delegate.as(clazz);
+      }
 
-		@Override
-		public TemplateOptions authorizePublicKey(String publicKey) {
-			throw new IllegalArgumentException(
-					"authorizePublicKey is immutable");
-		}
+      @Override
+      public TemplateOptions authorizePublicKey(String publicKey) {
+         throw new IllegalArgumentException("authorizePublicKey is immutable");
+      }
 
-		@Override
-		public TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
-			throw new IllegalArgumentException("blockUntilRunning is immutable");
-		}
+      @Override
+      public TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
+         throw new IllegalArgumentException("blockUntilRunning is immutable");
+      }
 
-		@Override
-		public TemplateOptions blockOnPort(int port, int seconds) {
-			throw new IllegalArgumentException("port, seconds are immutable");
-		}
+      @Override
+      public TemplateOptions blockOnPort(int port, int seconds) {
+         throw new IllegalArgumentException("port, seconds are immutable");
+      }
 
-		@Override
-		public int[] getInboundPorts() {
-			return delegate.getInboundPorts();
-		}
+      @Override
+      public int[] getInboundPorts() {
+         return delegate.getInboundPorts();
+      }
 
-		@Override
-		public int getPort() {
-			return delegate.getPort();
-		}
+      @Override
+      public int getPort() {
+         return delegate.getPort();
+      }
 
-		@Override
-		public String getPrivateKey() {
-			return delegate.getPrivateKey();
-		}
+      @Override
+      public Payload getPrivateKey() {
+         return delegate.getPrivateKey();
+      }
 
-		@Override
-		public String getPublicKey() {
-			return delegate.getPublicKey();
-		}
+      @Override
+      public Payload getPublicKey() {
+         return delegate.getPublicKey();
+      }
 
-		@Override
-		public byte[] getRunScript() {
-			return delegate.getRunScript();
-		}
+      @Override
+      public Payload getRunScript() {
+         return delegate.getRunScript();
+      }
 
-		@Override
-		public int getSeconds() {
-			return delegate.getSeconds();
-		}
+      @Override
+      public int getSeconds() {
+         return delegate.getSeconds();
+      }
 
-		@Override
-		public boolean shouldBlockUntilRunning() {
-			return delegate.shouldBlockUntilRunning();
-		}
+      @Override
+      public boolean shouldBlockUntilRunning() {
+         return delegate.shouldBlockUntilRunning();
+      }
 
-		@Override
-		public TemplateOptions inboundPorts(int... ports) {
-			throw new IllegalArgumentException("ports is immutable");
-		}
+      @Override
+      public TemplateOptions inboundPorts(int... ports) {
+         throw new IllegalArgumentException("ports is immutable");
+      }
 
-		@Override
-		public TemplateOptions installPrivateKey(String privateKey) {
-			throw new IllegalArgumentException("privateKey is immutable");
-		}
+      @Override
+      public TemplateOptions installPrivateKey(String privateKey) {
+         throw new IllegalArgumentException("privateKey is immutable");
+      }
 
-		@Override
-		public boolean isIncludeMetadata() {
-			return delegate.isIncludeMetadata();
-		}
+      @Override
+      public boolean isIncludeMetadata() {
+         return delegate.isIncludeMetadata();
+      }
 
-		@Override
-		public TemplateOptions runScript(byte[] script) {
-			throw new IllegalArgumentException("withMetadata is immutable");
-		}
+      @Override
+      public TemplateOptions runScript(byte[] script) {
+         throw new IllegalArgumentException("withMetadata is immutable");
+      }
 
-		@Override
-		public TemplateOptions withMetadata() {
-			throw new IllegalArgumentException("withMetadata is immutable");
-		}
+      @Override
+      public TemplateOptions withMetadata() {
+         throw new IllegalArgumentException("withMetadata is immutable");
+      }
 
-	}
+   }
 
-	protected int[] inboundPorts = new int[] { 22 };
+   protected int[] inboundPorts = new int[] { 22 };
 
-	protected byte[] script;
+   protected Payload script;
 
-	protected String privateKey;
+   protected Payload privateKey;
 
-	protected String publicKey;
+   protected Payload publicKey;
 
-	protected int port = -1;
+   protected int port = -1;
 
-	protected int seconds = -1;
+   protected int seconds = -1;
 
-	protected boolean includeMetadata;
+   protected boolean includeMetadata;
 
-	protected boolean blockUntilRunning = true;
+   protected boolean blockUntilRunning = true;
 
-	public int getPort() {
-		return port;
-	}
+   public int getPort() {
+      return port;
+   }
 
-	public int getSeconds() {
-		return seconds;
-	}
+   public int getSeconds() {
+      return seconds;
+   }
 
-	public int[] getInboundPorts() {
-		return inboundPorts;
-	}
+   public int[] getInboundPorts() {
+      return inboundPorts;
+   }
 
-	public byte[] getRunScript() {
-		return script;
-	}
+   public Payload getRunScript() {
+      return script;
+   }
 
-	public String getPrivateKey() {
-		return privateKey;
-	}
+   public Payload getPrivateKey() {
+      return privateKey;
+   }
 
-	public String getPublicKey() {
-		return publicKey;
-	}
+   public Payload getPublicKey() {
+      return publicKey;
+   }
 
-	public boolean isIncludeMetadata() {
-		return includeMetadata;
-	}
+   public boolean isIncludeMetadata() {
+      return includeMetadata;
+   }
 
-	public boolean shouldBlockUntilRunning() {
-		return blockUntilRunning;
-	}
+   public boolean shouldBlockUntilRunning() {
+      return blockUntilRunning;
+   }
 
-	public <T extends TemplateOptions> T as(Class<T> clazz) {
-		return clazz.cast(this);
-	}
+   public <T extends TemplateOptions> T as(Class<T> clazz) {
+      return clazz.cast(this);
+   }
 
-	/**
-	 * When the node is started, wait until the following port is active
-	 */
-	public TemplateOptions blockOnPort(int port, int seconds) {
-		checkArgument(port > 0 && port < 65536,
-				"port must be a positive integer < 65535");
-		checkArgument(seconds > 0, "seconds must be a positive integer");
-		this.port = port;
-		this.seconds = seconds;
-		return this;
-	}
+   /**
+    * When the node is started, wait until the following port is active
+    */
+   public TemplateOptions blockOnPort(int port, int seconds) {
+      checkArgument(port > 0 && port < 65536, "port must be a positive integer < 65535");
+      checkArgument(seconds > 0, "seconds must be a positive integer");
+      this.port = port;
+      this.seconds = seconds;
+      return this;
+   }
 
-	/**
-	 * This script will be executed as the root user upon system startup. This
-	 * script gets a prologue, so no #!/bin/bash required, path set up, etc
-	 */
-	public TemplateOptions runScript(byte[] script) {
-		checkArgument(checkNotNull(script, "script").length <= 16 * 1024,
-				"script cannot be larger than 16kb");
-		this.script = script;
-		return this;
-	}
+   /**
+    * This script will be executed as the root user upon system startup. This
+    * script gets a prologue, so no #!/bin/bash required, path set up, etc
+    * <p/>
+    * please use alternative that uses the {@link org.jclouds.io.Payload} object
+    * 
+    * @see org.jclouds.io.Payloads
+    */
+   @Deprecated
+   public TemplateOptions runScript(byte[] script) {
+      return runScript(newByteArrayPayload(checkNotNull(script, "script")));
+   }
 
-	/**
-	 * replaces the rsa ssh key used at login.
-	 */
-	public TemplateOptions installPrivateKey(String privateKey) {
-		checkArgument(checkNotNull(privateKey, "privateKey").startsWith(
-				"-----BEGIN RSA PRIVATE KEY-----"),
-				"key should start with -----BEGIN RSA PRIVATE KEY-----");
-		this.privateKey = privateKey;
-		return this;
-	}
+   /**
+    * This script will be executed as the root user upon system startup. This
+    * script gets a prologue, so no #!/bin/bash required, path set up, etc
+    * 
+    * @see org.jclouds.io.Payloads
+    */
+   public TemplateOptions runScript(Payload script) {
+      checkArgument(
+            checkNotNull(checkNotNull(script, "script").getContentLength(), "script.contentLength") <= 16 * 1024,
+            "script cannot be larger than 16kb");
+      this.script = script;
+      return this;
+   }
 
-	public TemplateOptions dontAuthorizePublicKey() {
-		this.publicKey = null;
-		return this;
-	}
+   /**
+    * replaces the rsa ssh key used at login.
+    * <p/>
+    * please use alternative that uses the {@link org.jclouds.io.Payload} object
+    * 
+    * @see org.jclouds.io.Payloads
+    */
+   @Deprecated
+   public TemplateOptions installPrivateKey(String privateKey) {
+      checkArgument(checkNotNull(privateKey, "privateKey").startsWith("-----BEGIN RSA PRIVATE KEY-----"),
+            "key should start with -----BEGIN RSA PRIVATE KEY-----");
+      Payload payload = newStringPayload(privateKey);
+      payload.setContentType("text/plain");
+      return installPrivateKey(payload);
+   }
 
-	/**
-	 * if true, return when node(s) are NODE_RUNNING, if false, return as soon as the
-	 * server is provisioned.
-	 * <p/>
-	 * default is true
-	 */
-	public TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
-		this.blockUntilRunning = blockUntilRunning;
-		if (!blockUntilRunning)
-			port = seconds = -1;
-		return this;
-	}
+   /**
+    * replaces the rsa ssh key used at login.
+    * 
+    * @see org.jclouds.io.Payloads
+    */
+   public TemplateOptions installPrivateKey(Payload privateKey) {
+      this.privateKey = checkNotNull(privateKey, "privateKey");
+      return this;
+   }
 
-	/**
-	 * authorized an rsa ssh key.
-	 */
-	public TemplateOptions authorizePublicKey(String publicKey) {
-		checkArgument(checkNotNull(publicKey, "publicKey")
-				.startsWith("ssh-rsa"), "key should start with ssh-rsa");
-		this.publicKey = publicKey;
-		return this;
-	}
+   public TemplateOptions dontAuthorizePublicKey() {
+      this.publicKey = null;
+      return this;
+   }
 
-	/**
-	 * Opens the set of ports to public access.
-	 */
-	public TemplateOptions inboundPorts(int... ports) {
-		for (int port : ports)
-			checkArgument(port > 0 && port < 65536,
-					"port must be a positive integer < 65535");
-		this.inboundPorts = ports;
-		return this;
-	}
+   /**
+    * if true, return when node(s) are NODE_RUNNING, if false, return as soon as
+    * the server is provisioned.
+    * <p/>
+    * default is true
+    */
+   public TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
+      this.blockUntilRunning = blockUntilRunning;
+      if (!blockUntilRunning)
+         port = seconds = -1;
+      return this;
+   }
 
-	public TemplateOptions withMetadata() {
-		this.includeMetadata = true;
-		return this;
-	}
+   /**
+    * authorize an rsa ssh key.
+    * <p/>
+    * please use alternative that uses the {@link org.jclouds.io.Payload} object
+    * 
+    * @see org.jclouds.io.Payloads
+    */
+   @Deprecated
+   public TemplateOptions authorizePublicKey(String publicKey) {
+      checkArgument(checkNotNull(publicKey, "publicKey").startsWith("ssh-rsa"), "key should start with ssh-rsa");
+      Payload payload = newStringPayload(publicKey);
+      payload.setContentType("text/plain");
+      return authorizePublicKey(payload);
+   }
 
-	public static class Builder {
+   /**
+    * authorize an rsa ssh key.
+    * 
+    * @see org.jclouds.io.Payloads
+    */
+   public TemplateOptions authorizePublicKey(Payload publicKey) {
+      this.publicKey = checkNotNull(publicKey, "publicKey");
+      return this;
+   }
 
-		/**
-		 * @see TemplateOptions#inboundPorts
-		 */
-		public static TemplateOptions inboundPorts(int... ports) {
-			TemplateOptions options = new TemplateOptions();
-			return options.inboundPorts(ports);
-		}
+   /**
+    * Opens the set of ports to public access.
+    */
+   public TemplateOptions inboundPorts(int... ports) {
+      for (int port : ports)
+         checkArgument(port > 0 && port < 65536, "port must be a positive integer < 65535");
+      this.inboundPorts = ports;
+      return this;
+   }
 
-		/**
-		 * @see TemplateOptions#port
-		 */
-		public static TemplateOptions blockOnPort(int port, int seconds) {
-			TemplateOptions options = new TemplateOptions();
-			return options.blockOnPort(port, seconds);
-		}
+   public TemplateOptions withMetadata() {
+      this.includeMetadata = true;
+      return this;
+   }
 
-		/**
-		 * @see TemplateOptions#blockUntilRunning
-		 */
-		public static TemplateOptions blockUntilRunning(
-				boolean blockUntilRunning) {
-			TemplateOptions options = new TemplateOptions();
-			return options.blockUntilRunning(blockUntilRunning);
-		}
+   public static class Builder {
 
-		/**
-		 * @see TemplateOptions#runScript
-		 */
-		public static TemplateOptions runScript(byte[] script) {
-			TemplateOptions options = new TemplateOptions();
-			return options.runScript(script);
-		}
+      /**
+       * @see TemplateOptions#inboundPorts
+       */
+      public static TemplateOptions inboundPorts(int... ports) {
+         TemplateOptions options = new TemplateOptions();
+         return options.inboundPorts(ports);
+      }
 
-		/**
-		 * @see TemplateOptions#installPrivateKey
-		 */
-		public static TemplateOptions installPrivateKey(String rsaKey) {
-			TemplateOptions options = new TemplateOptions();
-			return options.installPrivateKey(rsaKey);
-		}
+      /**
+       * @see TemplateOptions#port
+       */
+      public static TemplateOptions blockOnPort(int port, int seconds) {
+         TemplateOptions options = new TemplateOptions();
+         return options.blockOnPort(port, seconds);
+      }
 
-		/**
-		 * @see TemplateOptions#authorizePublicKey
-		 */
-		public static TemplateOptions authorizePublicKey(String rsaKey) {
-			TemplateOptions options = new TemplateOptions();
-			return options.authorizePublicKey(rsaKey);
-		}
+      /**
+       * @see TemplateOptions#blockUntilRunning
+       */
+      public static TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
+         TemplateOptions options = new TemplateOptions();
+         return options.blockUntilRunning(blockUntilRunning);
+      }
 
-		public static TemplateOptions withDetails() {
-			TemplateOptions options = new TemplateOptions();
-			return options.withMetadata();
-		}
+      /**
+       * please use alternative that uses the {@link org.jclouds.io.Payload}
+       * object
+       * 
+       * @see org.jclouds.io.Payloads
+       * @see #runScript(Payload)
+       */
+      @Deprecated
+      public static TemplateOptions runScript(byte[] script) {
+         TemplateOptions options = new TemplateOptions();
+         return options.runScript(script);
+      }
 
-	}
+      /**
+       * @see TemplateOptions#runScript
+       * @see org.jclouds.io.Payloads
+       */
+      public static TemplateOptions runScript(Payload script) {
+         TemplateOptions options = new TemplateOptions();
+         return options.runScript(script);
+      }
 
-	@Override
-	public String toString() {
-		return "TemplateOptions [inboundPorts=" + Arrays.toString(inboundPorts)
-				+ ", privateKey=" + (privateKey != null) + ", publicKey="
-				+ (publicKey != null) + ", runScript=" + (script != null)
-				+ ", blockUntilRunning=" + blockUntilRunning
-				+ ", port:seconds=" + port + ":" + seconds
-				+ ", metadata/details: " + includeMetadata + "]";
-	}
+      /**
+       * please use alternative that uses the {@link org.jclouds.io.Payload}
+       * object
+       * 
+       * @see org.jclouds.io.Payloads
+       * @see #installPrivateKey(Payload)
+       */
+      @Deprecated
+      public static TemplateOptions installPrivateKey(String rsaKey) {
+         TemplateOptions options = new TemplateOptions();
+         return options.installPrivateKey(rsaKey);
+      }
 
-	@Override
+      /**
+       * @see TemplateOptions#installPrivateKey
+       * @see org.jclouds.io.Payloads
+       */
+      public static TemplateOptions installPrivateKey(Payload rsaKey) {
+         TemplateOptions options = new TemplateOptions();
+         return options.installPrivateKey(rsaKey);
+      }
+
+      /**
+       * please use alternative that uses the {@link org.jclouds.io.Payload}
+       * object
+       * 
+       * @see org.jclouds.io.Payloads
+       * @see #authorizePublicKey(Payload)
+       */
+      @Deprecated
+      public static TemplateOptions authorizePublicKey(String rsaKey) {
+         TemplateOptions options = new TemplateOptions();
+         return options.authorizePublicKey(rsaKey);
+      }
+
+      /**
+       * @see TemplateOptions#authorizePublicKey(Payload)
+       * @see org.jclouds.io.Payloads
+       */
+      public static TemplateOptions authorizePublicKey(Payload rsaKey) {
+         TemplateOptions options = new TemplateOptions();
+         return options.authorizePublicKey(rsaKey);
+      }
+
+      public static TemplateOptions withDetails() {
+         TemplateOptions options = new TemplateOptions();
+         return options.withMetadata();
+      }
+
+   }
+
+   @Override
+   public String toString() {
+      return "TemplateOptions [inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null)
+            + ", publicKey=" + (publicKey != null) + ", runScript=" + (script != null) + ", blockUntilRunning="
+            + blockUntilRunning + ", port:seconds=" + port + ":" + seconds + ", metadata/details: " + includeMetadata
+            + "]";
+   }
+
+   @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
@@ -346,16 +431,14 @@ public class TemplateOptions {
       result = prime * result + Arrays.hashCode(inboundPorts);
       result = prime * result + (includeMetadata ? 1231 : 1237);
       result = prime * result + port;
-      result = prime * result
-            + ((privateKey == null) ? 0 : privateKey.hashCode());
-      result = prime * result
-            + ((publicKey == null) ? 0 : publicKey.hashCode());
-      result = prime * result + Arrays.hashCode(script);
+      result = prime * result + ((privateKey == null) ? 0 : privateKey.hashCode());
+      result = prime * result + ((publicKey == null) ? 0 : publicKey.hashCode());
+      result = prime * result + ((script == null) ? 0 : script.hashCode());
       result = prime * result + seconds;
       return result;
    }
 
-	@Override
+   @Override
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
@@ -382,7 +465,10 @@ public class TemplateOptions {
             return false;
       } else if (!publicKey.equals(other.publicKey))
          return false;
-      if (!Arrays.equals(script, other.script))
+      if (script == null) {
+         if (other.script != null)
+            return false;
+      } else if (!script.equals(other.script))
          return false;
       if (seconds != other.seconds)
          return false;

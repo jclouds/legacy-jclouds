@@ -25,8 +25,8 @@ import java.net.URI;
 import java.net.UnknownHostException;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.io.Payloads;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
 import org.testng.annotations.Test;
 

@@ -30,7 +30,7 @@ import static java.util.Collections.singletonList;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.HttpHeaders.HOST;
-import static org.jclouds.http.Payloads.newUrlEncodedFormPayload;
+import static org.jclouds.io.Payloads.newUrlEncodedFormPayload;
 import static org.jclouds.util.Patterns.CHAR_TO_ENCODED_PATTERN;
 import static org.jclouds.util.Patterns.PATTERN_THAT_BREAKS_URI;
 import static org.jclouds.util.Patterns.PLUS_PATTERN;
@@ -64,6 +64,8 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.Constants;
 import org.jclouds.encryption.EncryptionService;
+import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Joiner;

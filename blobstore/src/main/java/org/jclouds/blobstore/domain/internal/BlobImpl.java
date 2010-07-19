@@ -25,10 +25,10 @@ import javax.inject.Inject;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.http.Payload;
 import org.jclouds.http.PayloadEnclosing;
 import org.jclouds.http.internal.PayloadEnclosingImpl;
-import org.jclouds.http.payloads.DelegatingPayload;
+import org.jclouds.io.Payload;
+import org.jclouds.io.payloads.DelegatingPayload;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;

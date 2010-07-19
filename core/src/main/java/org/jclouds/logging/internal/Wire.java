@@ -29,9 +29,9 @@ import java.io.InputStream;
 
 import javax.annotation.Resource;
 
-import org.jclouds.http.Payload;
 import org.jclouds.http.PayloadEnclosing;
-import org.jclouds.http.Payloads;
+import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 
 import com.google.common.io.ByteStreams;

@@ -20,10 +20,9 @@ package org.jclouds.compute.callables;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.ByteArrayInputStream;
-
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.util.ComputeServiceUtils.SshCallable;
+import org.jclouds.io.Payload;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
@@ -37,11 +36,11 @@ import com.google.common.collect.Iterables;
 public class AuthorizeRSAPublicKey implements SshCallable<ExecResponse> {
    private SshClient ssh;
    private final NodeMetadata node;
-   private final String publicKey;
+   private final Payload publicKey;
 
    private Logger logger = Logger.NULL;
 
-   public AuthorizeRSAPublicKey(NodeMetadata node, String publicKey) {
+   public AuthorizeRSAPublicKey(NodeMetadata node, Payload publicKey) {
       this.node = checkNotNull(node, "node");
       this.publicKey = checkNotNull(publicKey, "publicKey");
    }
@@ -49,9 +48,9 @@ public class AuthorizeRSAPublicKey implements SshCallable<ExecResponse> {
    @Override
    public ExecResponse call() throws Exception {
       ssh.exec("mkdir .ssh");
-      ssh.put(".ssh/id_rsa.pub", new ByteArrayInputStream(publicKey.getBytes()));
-      logger.debug(">> authorizing rsa public key for %s@%s", node.getCredentials().identity,
-               Iterables.get(node.getPublicAddresses(), 0));
+      ssh.put(".ssh/id_rsa.pub", publicKey);
+      logger.debug(">> authorizing rsa public key for %s@%s", node.getCredentials().identity, Iterables.get(node
+            .getPublicAddresses(), 0));
       ExecResponse returnVal = ssh.exec("cat .ssh/id_rsa.pub >> .ssh/authorized_keys");
       returnVal = ssh.exec("chmod 600 .ssh/authorized_keys");
       logger.debug("<< complete(%d)", returnVal.getExitCode());

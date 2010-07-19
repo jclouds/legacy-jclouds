@@ -22,7 +22,7 @@ import javax.inject.Inject;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.encryption.EncryptionService;
-import org.jclouds.http.Payloads;
+import org.jclouds.io.Payloads;
 
 import com.google.common.base.Function;
 

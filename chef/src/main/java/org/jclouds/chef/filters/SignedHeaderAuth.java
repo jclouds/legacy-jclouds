@@ -43,11 +43,11 @@ import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.http.Payload;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.internal.SignatureWire;
-import org.jclouds.http.payloads.MultipartForm;
-import org.jclouds.http.payloads.Part;
+import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
+import org.jclouds.io.payloads.MultipartForm;
+import org.jclouds.io.payloads.Part;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 

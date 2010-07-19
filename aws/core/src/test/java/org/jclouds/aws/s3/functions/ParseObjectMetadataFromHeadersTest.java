@@ -38,7 +38,7 @@ import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payloads;
+import org.jclouds.io.Payloads;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

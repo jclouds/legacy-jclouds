@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http.payloads;
+package org.jclouds.io.payloads;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Multimaps.forMap;
@@ -26,8 +26,8 @@ import java.util.LinkedHashMap;
 import javax.annotation.Nullable;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.http.Payload;
-import org.jclouds.http.Payloads;
+import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;

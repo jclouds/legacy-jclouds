@@ -24,9 +24,9 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.io.Payloads;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
 import org.testng.annotations.Test;
 

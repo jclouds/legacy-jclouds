@@ -35,7 +35,7 @@ import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.jclouds.http.payloads.ByteArrayPayload;
+import org.jclouds.io.payloads.ByteArrayPayload;
 
 /**
  * 

@@ -34,7 +34,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payload;
+import org.jclouds.io.Payload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
 import org.mortbay.jetty.HttpHeaders;

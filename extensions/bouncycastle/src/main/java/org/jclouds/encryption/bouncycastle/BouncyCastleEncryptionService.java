@@ -40,7 +40,7 @@ import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.util.encoders.Base64;
 import org.jclouds.encryption.internal.BaseEncryptionService;
-import org.jclouds.http.payloads.ByteArrayPayload;
+import org.jclouds.io.payloads.ByteArrayPayload;
 
 /**
  * 

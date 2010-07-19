@@ -37,10 +37,10 @@ import org.jclouds.PerformanceTest;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.sqs.domain.Queue;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.io.Payloads;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

@@ -41,8 +41,8 @@ import org.jclouds.gogrid.domain.LoadBalancerType;
 import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.functions.internal.CustomDeserializers;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSortedSet;

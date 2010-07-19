@@ -28,7 +28,7 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.blobstore.binders.BindUserMetadataToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.Payload;
+import org.jclouds.io.Payload;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlob;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;

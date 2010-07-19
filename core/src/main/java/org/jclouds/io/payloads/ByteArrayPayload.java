@@ -16,19 +16,25 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http.payloads;
+package org.jclouds.io.payloads;
 
-import static com.google.common.io.Closeables.closeQuietly;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 /**
  * @author Adrian Cole
  */
-public class InputStreamPayload extends BasePayload<InputStream> {
+public class ByteArrayPayload extends BasePayload<byte[]> {
+   public ByteArrayPayload(byte[] content) {
+      this(content, null);
+   }
 
-   public InputStreamPayload(InputStream content) {
-      super(content, null, null, null);
+   public ByteArrayPayload(byte[] content, byte[] md5) {
+      super(content, null, new Long(checkNotNull(content, "content").length), md5);
+      checkArgument(content.length >= 0, "length cannot me negative");
    }
 
    /**
@@ -36,23 +42,7 @@ public class InputStreamPayload extends BasePayload<InputStream> {
     */
    @Override
    public InputStream getInput() {
-      return content;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public boolean isRepeatable() {
-      return false;
-   }
-
-   /**
-    * if we created the stream, then it is already consumed on close.
-    */
-   @Override
-   public void release() {
-      closeQuietly(content);
+      return new ByteArrayInputStream(content);
    }
 
 }

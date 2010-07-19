@@ -20,7 +20,7 @@ package org.jclouds.blobstore.internal;
 
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
-import static org.jclouds.http.Payloads.newPayload;
+import static org.jclouds.io.Payloads.newPayload;
 
 import java.io.File;
 import java.io.InputStream;
@@ -39,11 +39,11 @@ import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.PutBlobsStrategy;
 import org.jclouds.blobstore.strategy.internal.ListContainerAndRecurseThroughFolders;
 import org.jclouds.encryption.EncryptionService;
-import org.jclouds.http.Payload;
-import org.jclouds.http.payloads.ByteArrayPayload;
-import org.jclouds.http.payloads.FilePayload;
-import org.jclouds.http.payloads.InputStreamPayload;
-import org.jclouds.http.payloads.StringPayload;
+import org.jclouds.io.Payload;
+import org.jclouds.io.payloads.ByteArrayPayload;
+import org.jclouds.io.payloads.FilePayload;
+import org.jclouds.io.payloads.InputStreamPayload;
+import org.jclouds.io.payloads.StringPayload;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;

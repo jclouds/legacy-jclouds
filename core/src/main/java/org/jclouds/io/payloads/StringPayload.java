@@ -16,34 +16,19 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http.payloads;
-
-import static org.jclouds.http.HttpUtils.makeQueryLine;
+package org.jclouds.io.payloads;
 
 import java.io.InputStream;
-import java.util.Comparator;
-import java.util.Map;
-
-import javax.annotation.Nullable;
-import javax.ws.rs.core.MediaType;
 
 import org.jclouds.util.Utils;
-
-import com.google.common.collect.Multimap;
 
 /**
  * @author Adrian Cole
  */
-public class UrlEncodedFormPayload extends BasePayload<String> {
-   public UrlEncodedFormPayload(Multimap<String, String> formParams, char... skips) {
-      this(formParams, null, skips);
-   }
+public class StringPayload extends BasePayload<String> {
 
-   public UrlEncodedFormPayload(Multimap<String, String> formParams,
-            @Nullable Comparator<Map.Entry<String, String>> sorter, char... skips) {
-      super(makeQueryLine(formParams, sorter, skips), MediaType.APPLICATION_FORM_URLENCODED, null,
-               null);
-      setContentLength(new Long(content.length()));
+   public StringPayload(String content) {
+      super(content, null, new Long(content.length()), null);
    }
 
    /**
@@ -53,6 +38,5 @@ public class UrlEncodedFormPayload extends BasePayload<String> {
    public InputStream getInput() {
       return Utils.toInputStream(content);
    }
-
 
 }

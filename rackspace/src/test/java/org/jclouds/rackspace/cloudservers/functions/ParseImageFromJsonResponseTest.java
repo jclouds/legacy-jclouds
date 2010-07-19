@@ -25,9 +25,9 @@ import java.net.UnknownHostException;
 
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.io.Payloads;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.ImageStatus;
 import org.testng.annotations.Test;

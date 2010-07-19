@@ -26,9 +26,9 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.io.Payloads;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
 import org.testng.annotations.Test;
 

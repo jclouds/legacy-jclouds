@@ -9,9 +9,9 @@ import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 
-import org.jclouds.http.Payload;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.io.Payload;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.ResponseParser;

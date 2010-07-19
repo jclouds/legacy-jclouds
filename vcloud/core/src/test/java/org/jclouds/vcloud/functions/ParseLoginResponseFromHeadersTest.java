@@ -25,8 +25,8 @@ import java.net.URI;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.io.Payloads;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;

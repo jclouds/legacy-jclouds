@@ -24,9 +24,9 @@ import java.io.IOException;
 
 import org.jclouds.chef.domain.Organization;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.io.Payloads;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;

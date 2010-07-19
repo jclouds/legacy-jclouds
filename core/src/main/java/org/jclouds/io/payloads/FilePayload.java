@@ -16,25 +16,26 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http.payloads;
+package org.jclouds.io.payloads;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+
+import com.google.common.base.Throwables;
 
 /**
  * @author Adrian Cole
  */
-public class ByteArrayPayload extends BasePayload<byte[]> {
-   public ByteArrayPayload(byte[] content) {
-      this(content, null);
-   }
+public class FilePayload extends BasePayload<File> {
 
-   public ByteArrayPayload(byte[] content, byte[] md5) {
-      super(content, null, new Long(checkNotNull(content, "content").length), md5);
-      checkArgument(content.length >= 0, "length cannot me negative");
+   public FilePayload(File content) {
+      super(content, null, content.length(), null);
+      checkArgument(checkNotNull(content, "content").exists(), "file must exist: " + content);
    }
 
    /**
@@ -42,7 +43,12 @@ public class ByteArrayPayload extends BasePayload<byte[]> {
     */
    @Override
    public InputStream getInput() {
-      return new ByteArrayInputStream(content);
+      try {
+         return new FileInputStream(content);
+      } catch (FileNotFoundException e) {
+         Throwables.propagate(e);
+         return null;
+      }
    }
 
 }

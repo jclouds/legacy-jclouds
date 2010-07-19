@@ -20,10 +20,9 @@ package org.jclouds.compute.callables;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.ByteArrayInputStream;
-
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.util.ComputeServiceUtils.SshCallable;
+import org.jclouds.io.Payload;
 import org.jclouds.logging.Logger;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
@@ -37,11 +36,11 @@ import com.google.common.collect.Iterables;
 public class InstallRSAPrivateKey implements SshCallable<ExecResponse> {
    private SshClient ssh;
    private final NodeMetadata node;
-   private final String privateKey;
+   private final Payload privateKey;
 
    private Logger logger = Logger.NULL;
 
-   public InstallRSAPrivateKey(NodeMetadata node, String privateKey) {
+   public InstallRSAPrivateKey(NodeMetadata node, Payload privateKey) {
       this.node = checkNotNull(node, "node");
       this.privateKey = checkNotNull(privateKey, "privateKey");
    }
@@ -49,9 +48,9 @@ public class InstallRSAPrivateKey implements SshCallable<ExecResponse> {
    @Override
    public ExecResponse call() throws Exception {
       ssh.exec("mkdir .ssh");
-      ssh.put(".ssh/id_rsa", new ByteArrayInputStream(privateKey.getBytes()));
-      logger.debug(">> installing rsa key for %s@%s", node.getCredentials().identity, Iterables.get(
-               node.getPublicAddresses(), 0));
+      ssh.put(".ssh/id_rsa", privateKey);
+      logger.debug(">> installing rsa key for %s@%s", node.getCredentials().identity, Iterables.get(node
+            .getPublicAddresses(), 0));
       return ssh.exec("chmod 600 .ssh/id_rsa");
    }
 

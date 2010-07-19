@@ -18,10 +18,7 @@
  */
 package org.jclouds.ssh.jsch.config;
 
-import static org.testng.Assert.assertEquals;
-
 import java.net.UnknownHostException;
-import java.util.Map;
 
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
@@ -45,10 +42,5 @@ public class JschSshClientModuleTest {
       SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
       SshClient connection = factory.create(new IPSocket("localhost", 22), "username", "password");
       assert connection instanceof JschSshClient;
-      Map<String, String> keyPair = factory.generateRSAKeyPair("comment", "hola");
-      assertEquals(keyPair.get("comment"), "comment");
-      assertEquals(keyPair.get("passphrase"), "hola");
-      assert keyPair.get("private").indexOf("-----BEGIN RSA PRIVATE KEY-----") == 0 : keyPair;
-      assert keyPair.get("public").indexOf("ssh-rsa ") == 0 : keyPair;
    }
 }

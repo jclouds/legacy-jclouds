@@ -40,6 +40,8 @@ import javax.inject.Named;
 import org.apache.commons.io.input.ProxyInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
+import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.ExecResponse;
@@ -101,8 +103,7 @@ public class JschSshClient implements SshClient {
 
    @Inject(optional = true)
    @Named("jclouds.ssh.retry_predicate")
-   private Predicate<Throwable> retryPredicate = or(instanceOf(ConnectException.class),
-            instanceOf(IOException.class));
+   private Predicate<Throwable> retryPredicate = or(instanceOf(ConnectException.class), instanceOf(IOException.class));
    @Resource
    protected Logger logger = Logger.NULL;
    private Session session;
@@ -111,21 +112,20 @@ public class JschSshClient implements SshClient {
    private final int timeout;
    private final BackoffLimitedRetryHandler backoffLimitedRetryHandler;
 
-   public JschSshClient(BackoffLimitedRetryHandler backoffLimitedRetryHandler, IPSocket socket,
-            int timeout, String username, String password, byte[] privateKey) {
+   public JschSshClient(BackoffLimitedRetryHandler backoffLimitedRetryHandler, IPSocket socket, int timeout,
+         String username, String password, byte[] privateKey) {
       this.host = checkNotNull(socket, "socket").getAddress();
       checkArgument(socket.getPort() > 0, "ssh port must be greater then zero" + socket.getPort());
       checkArgument(password != null || privateKey != null, "you must specify a password or a key");
       this.port = socket.getPort();
       this.username = checkNotNull(username, "username");
-      this.backoffLimitedRetryHandler = checkNotNull(backoffLimitedRetryHandler,
-               "backoffLimitedRetryHandler");
+      this.backoffLimitedRetryHandler = checkNotNull(backoffLimitedRetryHandler, "backoffLimitedRetryHandler");
       this.timeout = timeout;
       this.password = password;
       this.privateKey = privateKey;
    }
 
-   public InputStream get(String path) {
+   public Payload get(String path) {
       checkNotNull(path, "path");
 
       checkConnected();
@@ -135,18 +135,16 @@ public class JschSshClient implements SshClient {
          sftp = (ChannelSftp) session.openChannel("sftp");
          sftp.connect();
       } catch (JSchException e) {
-         throw new SshException(String.format("%s@%s:%d: Error connecting to sftp.", username,
-                  host, port), e);
+         throw new SshException(String.format("%s@%s:%d: Error connecting to sftp.", username, host, port), e);
       }
       try {
-         return new CloseFtpChannelOnCloseInputStream(sftp.get(path), sftp);
+         return Payloads.newInputStreamPayload(new CloseFtpChannelOnCloseInputStream(sftp.get(path), sftp));
       } catch (SftpException e) {
-         throw new SshException(String.format("%s@%s:%d: Error getting path: %s", username, host,
-                  port, path), e);
+         throw new SshException(String.format("%s@%s:%d: Error getting path: %s", username, host, port, path), e);
       }
    }
 
-   public void put(String path, InputStream contents) {
+   public void put(String path, Payload contents) {
       checkNotNull(path, "path");
       checkNotNull(contents, "contents");
 
@@ -157,22 +155,20 @@ public class JschSshClient implements SshClient {
          sftp = (ChannelSftp) session.openChannel("sftp");
          sftp.connect();
       } catch (JSchException e) {
-         throw new SshException(String.format("%s@%s:%d: Error connecting to sftp.", username,
-                  host, port), e);
+         throw new SshException(String.format("%s@%s:%d: Error connecting to sftp.", username, host, port), e);
       }
       try {
-         sftp.put(contents, path);
+         sftp.put(contents.getInput(), path);
       } catch (SftpException e) {
-         throw new SshException(String.format("%s@%s:%d: Error putting path: %s", username, host,
-                  port, path), e);
+         throw new SshException(String.format("%s@%s:%d: Error putting path: %s", username, host, port, path), e);
       } finally {
          Closeables.closeQuietly(contents);
       }
    }
 
    private void checkConnected() {
-      checkState(session != null && session.isConnected(), String.format(
-               "%s@%s:%d: SFTP not connected!", username, host, port));
+      checkState(session != null && session.isConnected(), String.format("%s@%s:%d: SFTP not connected!", username,
+            host, port));
    }
 
    @PostConstruct
@@ -207,19 +203,19 @@ public class JschSshClient implements SshClient {
    boolean shouldRetry(Exception from) {
       final String rootMessage = getRootCause(from).getMessage();
       return any(getCausalChain(from), retryPredicate)
-               || Iterables.any(Splitter.on(",").split(retryableMessages), new Predicate<String>() {
+            || Iterables.any(Splitter.on(",").split(retryableMessages), new Predicate<String>() {
 
-                  @Override
-                  public boolean apply(String input) {
-                     return rootMessage.indexOf(input) != -1;
-                  }
+               @Override
+               public boolean apply(String input) {
+                  return rootMessage.indexOf(input) != -1;
+               }
 
-               });
+            });
    }
 
    private void backoffForAttempt(int retryAttempt, String rootMessage) {
-      backoffLimitedRetryHandler.imposeBackoffExponentialDelay(200L, 2, retryAttempt, sshRetries,
-               String.format("%s@%s:%d: connection error: %s", username, host, port, rootMessage));
+      backoffLimitedRetryHandler.imposeBackoffExponentialDelay(200L, 2, retryAttempt, sshRetries, String.format(
+            "%s@%s:%d: connection error: %s", username, host, port, rootMessage));
    }
 
    private void newSession() throws JSchException {
@@ -234,12 +230,10 @@ public class JschSshClient implements SshClient {
             session.setPassword(password);
          } else {
             // jsch wipes out your private key
-            jsch.addIdentity(username, Arrays.copyOf(privateKey, privateKey.length), null,
-                     emptyPassPhrase);
+            jsch.addIdentity(username, Arrays.copyOf(privateKey, privateKey.length), null, emptyPassPhrase);
          }
       } catch (JSchException e) {
-         throw new SshException(String.format("%s@%s:%d: Error creating session.", username, host,
-                  port), e);
+         throw new SshException(String.format("%s@%s:%d: Error creating session.", username, host, port), e);
       }
       java.util.Properties config = new java.util.Properties();
       config.put("StrictHostKeyChecking", "no");
@@ -249,8 +243,7 @@ public class JschSshClient implements SshClient {
    }
 
    private SshException propagate(Exception e) {
-      throw new SshException(String.format("%s@%s:%d: Error connecting to session.", username,
-               host, port), e);
+      throw new SshException(String.format("%s@%s:%d: Error connecting to session.", username, host, port), e);
    }
 
    @PreDestroy
@@ -268,19 +261,18 @@ public class JschSshClient implements SshClient {
          try {
             executor = (ChannelExec) session.openChannel("exec");
          } catch (JSchException e) {
-            throw new SshException(String.format("%s@%s:%d: Error connecting to exec.", username,
-                     host, port), e);
+            throw new SshException(String.format("%s@%s:%d: Error connecting to exec.", username, host, port), e);
          }
          executor.setCommand(command);
          ByteArrayOutputStream error = new ByteArrayOutputStream();
          executor.setErrStream(error);
          try {
             executor.connect();
-            return new ExecResponse(Utils.toStringAndClose(executor.getInputStream()), error
-                     .toString(), executor.getExitStatus());
+            return new ExecResponse(Utils.toStringAndClose(executor.getInputStream()), error.toString(), executor
+                  .getExitStatus());
          } catch (Exception e) {
-            throw new SshException(String.format("%s@%s:%d: Error executing command: %s", username,
-                     host, port, command), e);
+            throw new SshException(String
+                  .format("%s@%s:%d: Error executing command: %s", username, host, port, command), e);
          }
       } finally {
          if (executor != null)

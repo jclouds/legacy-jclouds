@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http;
+package org.jclouds.io;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -27,11 +27,11 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.http.payloads.ByteArrayPayload;
-import org.jclouds.http.payloads.FilePayload;
-import org.jclouds.http.payloads.InputStreamPayload;
-import org.jclouds.http.payloads.StringPayload;
-import org.jclouds.http.payloads.UrlEncodedFormPayload;
+import org.jclouds.io.payloads.ByteArrayPayload;
+import org.jclouds.io.payloads.FilePayload;
+import org.jclouds.io.payloads.InputStreamPayload;
+import org.jclouds.io.payloads.StringPayload;
+import org.jclouds.io.payloads.UrlEncodedFormPayload;
 
 import com.google.common.collect.Multimap;
 

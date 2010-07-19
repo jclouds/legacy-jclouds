@@ -20,6 +20,8 @@ package org.jclouds.http;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.io.Payload;
+
 /**
  * Represents a response produced from {@link HttpCommandExecutorService}
  * 

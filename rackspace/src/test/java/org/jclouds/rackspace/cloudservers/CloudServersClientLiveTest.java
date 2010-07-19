@@ -27,7 +27,6 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.security.SecureRandom;
 import java.util.Map;
@@ -36,6 +35,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.io.Payload;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
@@ -383,8 +383,8 @@ public class CloudServersClientLiveTest {
       SshClient client = sshFactory.create(socket, "root", pass);
       try {
          client.connect();
-         InputStream etcPasswd = client.get("/etc/jclouds.txt");
-         String etcPasswdContents = Utils.toStringAndClose(etcPasswd);
+         Payload etcPasswd = client.get("/etc/jclouds.txt");
+         String etcPasswdContents = Utils.toStringAndClose(etcPasswd.getInput());
          assertEquals("rackspace", etcPasswdContents.trim());
       } finally {
          if (client != null)

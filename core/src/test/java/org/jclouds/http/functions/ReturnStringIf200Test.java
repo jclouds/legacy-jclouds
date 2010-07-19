@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payload;
+import org.jclouds.io.Payload;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 

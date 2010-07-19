@@ -29,7 +29,7 @@ import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.blobstore.binders.BindUserMetadataToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.Payload;
+import org.jclouds.io.Payload;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Multimap;

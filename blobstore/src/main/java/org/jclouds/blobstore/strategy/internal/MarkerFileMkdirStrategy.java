@@ -26,7 +26,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.blobstore.strategy.MkdirStrategy;
-import org.jclouds.http.Payloads;
+import org.jclouds.io.Payloads;
 
 import com.google.inject.Inject;
 

@@ -33,8 +33,8 @@ import java.io.InputStream;
 import org.jclouds.gogrid.mock.HttpCommandMock;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.io.Payloads;
 import org.testng.TestException;
 import org.testng.annotations.Test;
 

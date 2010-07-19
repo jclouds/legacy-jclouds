@@ -23,6 +23,7 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 import org.jclouds.http.internal.PayloadEnclosingImpl;
+import org.jclouds.io.Payload;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;

@@ -35,7 +35,7 @@ import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payloads;
+import org.jclouds.io.Payloads;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;

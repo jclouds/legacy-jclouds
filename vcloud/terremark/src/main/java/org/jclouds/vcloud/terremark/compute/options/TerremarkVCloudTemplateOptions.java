@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.util.Arrays;
 
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.io.Payload;
 import org.jclouds.util.Utils;
 
 /**
@@ -55,10 +56,8 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
     * Specifies the keypair used to run instances with
     */
    public TerremarkVCloudTemplateOptions sshKeyFingerprint(String keyPair) {
-      checkNotNull(keyPair,
-            "use noKeyPair option to request boot without a keypair");
-      checkState(!noKeyPair,
-            "you cannot specify both options keyPair and noKeyPair");
+      checkNotNull(keyPair, "use noKeyPair option to request boot without a keypair");
+      checkState(!noKeyPair, "you cannot specify both options keyPair and noKeyPair");
       Utils.checkNotEmpty(keyPair, "keypair must be non-empty");
       this.keyPair = keyPair;
       return this;
@@ -68,8 +67,7 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
     * Do not use a keypair on instances
     */
    public TerremarkVCloudTemplateOptions noKeyPair() {
-      checkState(keyPair == null,
-            "you cannot specify both options keyPair and noKeyPair");
+      checkState(keyPair == null, "you cannot specify both options keyPair and noKeyPair");
       this.noKeyPair = true;
       return this;
    }
@@ -79,11 +77,9 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
       /**
        * @see TerremarkVCloudTemplateOptions#sshKeyFingerprint
        */
-      public static TerremarkVCloudTemplateOptions sshKeyFingerprint(
-            String keyPair) {
+      public static TerremarkVCloudTemplateOptions sshKeyFingerprint(String keyPair) {
          TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
-         return TerremarkVCloudTemplateOptions.class.cast(options
-               .sshKeyFingerprint(keyPair));
+         return TerremarkVCloudTemplateOptions.class.cast(options.sshKeyFingerprint(keyPair));
       }
 
       /**
@@ -100,28 +96,23 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
        */
       public static TerremarkVCloudTemplateOptions inboundPorts(int... ports) {
          TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
-         return TerremarkVCloudTemplateOptions.class.cast(options
-               .inboundPorts(ports));
+         return TerremarkVCloudTemplateOptions.class.cast(options.inboundPorts(ports));
       }
 
       /**
        * @see TemplateOptions#port
        */
-      public static TerremarkVCloudTemplateOptions blockOnPort(int port,
-            int seconds) {
+      public static TerremarkVCloudTemplateOptions blockOnPort(int port, int seconds) {
          TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
-         return TerremarkVCloudTemplateOptions.class.cast(options.blockOnPort(
-               port, seconds));
+         return TerremarkVCloudTemplateOptions.class.cast(options.blockOnPort(port, seconds));
       }
 
       /**
        * @see TemplateOptions#blockUntilRunning
        */
-      public static TerremarkVCloudTemplateOptions blockUntilRunning(
-            boolean blockUntilRunning) {
+      public static TerremarkVCloudTemplateOptions blockUntilRunning(boolean blockUntilRunning) {
          TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
-         return TerremarkVCloudTemplateOptions.class.cast(options
-               .blockUntilRunning(blockUntilRunning));
+         return TerremarkVCloudTemplateOptions.class.cast(options.blockUntilRunning(blockUntilRunning));
       }
 
       /**
@@ -129,28 +120,23 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
        */
       public static TerremarkVCloudTemplateOptions runScript(byte[] script) {
          TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
-         return TerremarkVCloudTemplateOptions.class.cast(options
-               .runScript(script));
+         return TerremarkVCloudTemplateOptions.class.cast(options.runScript(script));
       }
 
       /**
        * @see TemplateOptions#installPrivateKey
        */
-      public static TerremarkVCloudTemplateOptions installPrivateKey(
-            String rsaKey) {
+      public static TerremarkVCloudTemplateOptions installPrivateKey(String rsaKey) {
          TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
-         return TerremarkVCloudTemplateOptions.class.cast(options
-               .installPrivateKey(rsaKey));
+         return TerremarkVCloudTemplateOptions.class.cast(options.installPrivateKey(rsaKey));
       }
 
       /**
        * @see TemplateOptions#authorizePublicKey
        */
-      public static TerremarkVCloudTemplateOptions authorizePublicKey(
-            String rsaKey) {
+      public static TerremarkVCloudTemplateOptions authorizePublicKey(String rsaKey) {
          TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
-         return TerremarkVCloudTemplateOptions.class.cast(options
-               .authorizePublicKey(rsaKey));
+         return TerremarkVCloudTemplateOptions.class.cast(options.authorizePublicKey(rsaKey));
       }
 
       /**
@@ -158,8 +144,7 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
        */
       public static TerremarkVCloudTemplateOptions withDetails() {
          TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
-         return TerremarkVCloudTemplateOptions.class.cast(options
-               .withMetadata());
+         return TerremarkVCloudTemplateOptions.class.cast(options.withMetadata());
       }
 
    }
@@ -167,21 +152,11 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
    // methods that only facilitate returning the correct object type
 
    /**
-    * @see TemplateOptions#authorizePublicKey
-    */
-   @Override
-   public TerremarkVCloudTemplateOptions authorizePublicKey(String publicKey) {
-      return TerremarkVCloudTemplateOptions.class.cast(super
-            .authorizePublicKey(publicKey));
-   }
-
-   /**
     * @see TemplateOptions#blockOnPort
     */
    @Override
    public TerremarkVCloudTemplateOptions blockOnPort(int port, int seconds) {
-      return TerremarkVCloudTemplateOptions.class.cast(super.blockOnPort(port,
-            seconds));
+      return TerremarkVCloudTemplateOptions.class.cast(super.blockOnPort(port, seconds));
    }
 
    /**
@@ -195,23 +170,56 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
     */
    @Override
    public TerremarkVCloudTemplateOptions inboundPorts(int... ports) {
-      return TerremarkVCloudTemplateOptions.class.cast(super
-            .inboundPorts(ports));
+      return TerremarkVCloudTemplateOptions.class.cast(super.inboundPorts(ports));
    }
 
    /**
-    * @see TemplateOptions#installPrivateKey
+    * @see TemplateOptions#authorizePublicKey(String)
     */
    @Override
+   @Deprecated
+   public TerremarkVCloudTemplateOptions authorizePublicKey(String publicKey) {
+      return TerremarkVCloudTemplateOptions.class.cast(super.authorizePublicKey(publicKey));
+   }
+
+   /**
+    * @see TemplateOptions#authorizePublicKey(Payload)
+    */
+   @Override
+   public TerremarkVCloudTemplateOptions authorizePublicKey(Payload publicKey) {
+      return TerremarkVCloudTemplateOptions.class.cast(super.authorizePublicKey(publicKey));
+   }
+
+   /**
+    * @see TemplateOptions#installPrivateKey(String)
+    */
+   @Override
+   @Deprecated
    public TerremarkVCloudTemplateOptions installPrivateKey(String privateKey) {
-      return TerremarkVCloudTemplateOptions.class.cast(super
-            .installPrivateKey(privateKey));
+      return TerremarkVCloudTemplateOptions.class.cast(super.installPrivateKey(privateKey));
    }
 
    /**
-    * @see TemplateOptions#runScript
+    * @see TemplateOptions#installPrivateKey(Payload)
     */
    @Override
+   public TerremarkVCloudTemplateOptions installPrivateKey(Payload privateKey) {
+      return TerremarkVCloudTemplateOptions.class.cast(super.installPrivateKey(privateKey));
+   }
+
+   /**
+    * @see TemplateOptions#runScript(Payload)
+    */
+   @Override
+   public TerremarkVCloudTemplateOptions runScript(Payload script) {
+      return TerremarkVCloudTemplateOptions.class.cast(super.runScript(script));
+   }
+
+   /**
+    * @see TemplateOptions#runScript(byte[])
+    */
+   @Override
+   @Deprecated
    public TerremarkVCloudTemplateOptions runScript(byte[] script) {
       return TerremarkVCloudTemplateOptions.class.cast(super.runScript(script));
    }
@@ -269,12 +277,10 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
 
    @Override
    public String toString() {
-      return "TerremarkVCloudTemplateOptions [keyPair=" + keyPair
-            + ", noKeyPair=" + noKeyPair + ", inboundPorts="
-            + Arrays.toString(inboundPorts) + ", privateKey="
-            + (privateKey != null) + ", publicKey=" + (publicKey != null)
-            + ", runScript=" + (script != null) + ", port:seconds=" + port
-            + ":" + seconds + ", metadata/details: " + includeMetadata + "]";
+      return "TerremarkVCloudTemplateOptions [keyPair=" + keyPair + ", noKeyPair=" + noKeyPair + ", inboundPorts="
+            + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
+            + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port + ":" + seconds
+            + ", metadata/details: " + includeMetadata + "]";
    }
 
 }

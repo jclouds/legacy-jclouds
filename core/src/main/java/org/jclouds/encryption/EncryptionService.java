@@ -25,9 +25,9 @@ import java.io.OutputStream;
 import java.security.Key;
 
 import org.jclouds.encryption.internal.JCEEncryptionService;
-import org.jclouds.http.Payload;
 import org.jclouds.http.PayloadEnclosing;
-import org.jclouds.http.payloads.ByteArrayPayload;
+import org.jclouds.io.Payload;
+import org.jclouds.io.payloads.ByteArrayPayload;
 
 import com.google.inject.ImplementedBy;
 

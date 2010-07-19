@@ -25,7 +25,7 @@ import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.date.DateService;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payloads;
+import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;

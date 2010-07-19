@@ -29,8 +29,8 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.ReturnStringIf2xx;
+import org.jclouds.io.Payloads;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 

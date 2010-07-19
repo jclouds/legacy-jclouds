@@ -23,8 +23,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.http.Payload;
-import org.jclouds.http.Payloads;
+import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
 
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPResponse;

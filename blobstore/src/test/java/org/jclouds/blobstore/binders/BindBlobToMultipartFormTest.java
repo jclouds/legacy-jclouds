@@ -18,7 +18,7 @@
  */
 package org.jclouds.blobstore.binders;
 
-import static org.jclouds.http.payloads.MultipartForm.BOUNDARY;
+import static org.jclouds.io.payloads.MultipartForm.BOUNDARY;
 import static org.jclouds.util.Utils.toStringAndClose;
 import static org.testng.Assert.assertEquals;
 

@@ -10,9 +10,9 @@ import org.jclouds.chef.domain.ChecksumStatus;
 import org.jclouds.chef.domain.UploadSandbox;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.io.Payloads;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

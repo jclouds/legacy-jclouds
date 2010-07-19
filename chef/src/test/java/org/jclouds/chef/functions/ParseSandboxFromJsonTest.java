@@ -7,11 +7,11 @@ import java.io.IOException;
 import org.jclouds.chef.domain.Sandbox;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.http.functions.config.ParserModule.DateAdapter;
 import org.jclouds.http.functions.config.ParserModule.Iso8601DateAdapter;
+import org.jclouds.io.Payloads;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

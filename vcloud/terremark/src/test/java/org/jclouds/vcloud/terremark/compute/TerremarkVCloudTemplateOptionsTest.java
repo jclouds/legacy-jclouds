@@ -8,7 +8,10 @@ import static org.jclouds.vcloud.terremark.compute.options.TerremarkVCloudTempla
 import static org.jclouds.vcloud.terremark.compute.options.TerremarkVCloudTemplateOptions.Builder.sshKeyFingerprint;
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
+
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.util.Utils;
 import org.jclouds.vcloud.terremark.compute.options.TerremarkVCloudTemplateOptions;
 import org.testng.annotations.Test;
 
@@ -92,17 +95,19 @@ public class TerremarkVCloudTemplateOptionsTest {
    }
 
    // superclass tests
+   @SuppressWarnings("deprecation")
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testinstallPrivateKeyBadFormat() {
       TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
       options.installPrivateKey("whompy");
    }
 
+   @SuppressWarnings("deprecation")
    @Test
-   public void testinstallPrivateKey() {
+   public void testinstallPrivateKey() throws IOException {
       TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
       options.installPrivateKey("-----BEGIN RSA PRIVATE KEY-----");
-      assertEquals(options.getPrivateKey(), "-----BEGIN RSA PRIVATE KEY-----");
+      assertEquals(Utils.toStringAndClose(options.getPrivateKey().getInput()), "-----BEGIN RSA PRIVATE KEY-----");
    }
 
    @Test
@@ -112,9 +117,9 @@ public class TerremarkVCloudTemplateOptionsTest {
    }
 
    @Test
-   public void testinstallPrivateKeyStatic() {
+   public void testinstallPrivateKeyStatic() throws IOException {
       TerremarkVCloudTemplateOptions options = installPrivateKey("-----BEGIN RSA PRIVATE KEY-----");
-      assertEquals(options.getPrivateKey(), "-----BEGIN RSA PRIVATE KEY-----");
+      assertEquals(Utils.toStringAndClose(options.getPrivateKey().getInput()), "-----BEGIN RSA PRIVATE KEY-----");
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -122,17 +127,19 @@ public class TerremarkVCloudTemplateOptionsTest {
       installPrivateKey(null);
    }
 
+   @SuppressWarnings("deprecation")
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testauthorizePublicKeyBadFormat() {
       TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
       options.authorizePublicKey("whompy");
    }
 
+   @SuppressWarnings("deprecation")
    @Test
-   public void testauthorizePublicKey() {
+   public void testauthorizePublicKey() throws IOException {
       TerremarkVCloudTemplateOptions options = new TerremarkVCloudTemplateOptions();
       options.authorizePublicKey("ssh-rsa");
-      assertEquals(options.getPublicKey(), "ssh-rsa");
+      assertEquals(Utils.toStringAndClose(options.getPublicKey().getInput()), "ssh-rsa");
    }
 
    @Test
@@ -142,9 +149,9 @@ public class TerremarkVCloudTemplateOptionsTest {
    }
 
    @Test
-   public void testauthorizePublicKeyStatic() {
+   public void testauthorizePublicKeyStatic() throws IOException {
       TerremarkVCloudTemplateOptions options = authorizePublicKey("ssh-rsa");
-      assertEquals(options.getPublicKey(), "ssh-rsa");
+      assertEquals(Utils.toStringAndClose(options.getPublicKey().getInput()), "ssh-rsa");
    }
 
    @Test(expectedExceptions = NullPointerException.class)

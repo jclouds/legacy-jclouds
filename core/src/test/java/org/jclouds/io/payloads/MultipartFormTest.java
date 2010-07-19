@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http;
+package org.jclouds.io.payloads;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
@@ -30,11 +30,12 @@ import java.io.OutputStream;
 
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.http.payloads.FilePayload;
-import org.jclouds.http.payloads.MultipartForm;
-import org.jclouds.http.payloads.Part;
-import org.jclouds.http.payloads.StringPayload;
-import org.jclouds.http.payloads.Part.PartOptions;
+import org.jclouds.io.Payloads;
+import org.jclouds.io.payloads.FilePayload;
+import org.jclouds.io.payloads.MultipartForm;
+import org.jclouds.io.payloads.Part;
+import org.jclouds.io.payloads.StringPayload;
+import org.jclouds.io.payloads.Part.PartOptions;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 

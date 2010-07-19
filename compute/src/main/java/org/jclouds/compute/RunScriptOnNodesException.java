@@ -27,6 +27,7 @@ import javax.annotation.Nullable;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.RunScriptOptions;
+import org.jclouds.io.Payload;
 import org.jclouds.ssh.ExecResponse;
 
 /**
@@ -37,19 +38,17 @@ public class RunScriptOnNodesException extends Exception {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -2272965726680821281L;
-   private final byte[] runScript;
+   private final Payload runScript;
    private final RunScriptOptions options;
    private final Map<NodeMetadata, ExecResponse> successfulNodes;
    private final Map<? extends NodeMetadata, ? extends Throwable> failedNodes;
    private final Map<?, Exception> executionExceptions;
 
-   public RunScriptOnNodesException(final byte[] runScript,
-            @Nullable final RunScriptOptions options,
-            Map<NodeMetadata, ExecResponse> successfulNodes, Map<?, Exception> executionExceptions,
-            Map<? extends NodeMetadata, ? extends Throwable> failedNodes) {
+   public RunScriptOnNodesException(final Payload runScript, @Nullable final RunScriptOptions options,
+         Map<NodeMetadata, ExecResponse> successfulNodes, Map<?, Exception> executionExceptions,
+         Map<? extends NodeMetadata, ? extends Throwable> failedNodes) {
       super(String.format("error runScript on filtered nodes options(%s)%n%s%n%s", options,
-               createExecutionErrorMessage(executionExceptions),
-               createNodeErrorMessage(failedNodes)));
+            createExecutionErrorMessage(executionExceptions), createNodeErrorMessage(failedNodes)));
       this.runScript = runScript;
       this.options = options;
       this.successfulNodes = successfulNodes;
@@ -66,7 +65,8 @@ public class RunScriptOnNodesException extends Exception {
 
    /**
     * 
-    * @return Nodes that performed startup without error, but incurred problems applying options
+    * @return Nodes that performed startup without error, but incurred problems
+    *         applying options
     */
    public Map<?, ? extends Throwable> getExecutionErrors() {
       return executionExceptions;
@@ -74,13 +74,14 @@ public class RunScriptOnNodesException extends Exception {
 
    /**
     * 
-    * @return Nodes that performed startup without error, but incurred problems applying options
+    * @return Nodes that performed startup without error, but incurred problems
+    *         applying options
     */
    public Map<? extends NodeMetadata, ? extends Throwable> getNodeErrors() {
       return failedNodes;
    }
 
-   public byte[] getRunScript() {
+   public Payload getRunScript() {
       return runScript;
    }
 

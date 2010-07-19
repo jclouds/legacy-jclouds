@@ -28,6 +28,7 @@ import java.net.URI;
 
 import org.easymock.IArgumentMatcher;
 import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.io.Payloads;
 
 import com.google.inject.Guice;
 

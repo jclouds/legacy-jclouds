@@ -21,6 +21,8 @@ package org.jclouds.http;
 import java.io.File;
 import java.io.InputStream;
 
+import org.jclouds.io.Payload;
+
 /**
  * 
  * @author Adrian Cole

@@ -16,26 +16,19 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http.payloads;
+package org.jclouds.io.payloads;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.Closeables.closeQuietly;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
-
-import com.google.common.base.Throwables;
 
 /**
  * @author Adrian Cole
  */
-public class FilePayload extends BasePayload<File> {
+public class InputStreamPayload extends BasePayload<InputStream> {
 
-   public FilePayload(File content) {
-      super(content, null, content.length(), null);
-      checkArgument(checkNotNull(content, "content").exists(), "file must exist: " + content);
+   public InputStreamPayload(InputStream content) {
+      super(content, null, null, null);
    }
 
    /**
@@ -43,12 +36,23 @@ public class FilePayload extends BasePayload<File> {
     */
    @Override
    public InputStream getInput() {
-      try {
-         return new FileInputStream(content);
-      } catch (FileNotFoundException e) {
-         Throwables.propagate(e);
-         return null;
-      }
+      return content;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean isRepeatable() {
+      return false;
+   }
+
+   /**
+    * if we created the stream, then it is already consumed on close.
+    */
+   @Override
+   public void release() {
+      closeQuietly(content);
    }
 
 }
