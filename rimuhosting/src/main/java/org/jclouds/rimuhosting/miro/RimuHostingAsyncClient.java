@@ -19,7 +19,7 @@
 package org.jclouds.rimuhosting.miro;
 
 import java.util.List;
-import java.util.SortedSet;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -76,7 +76,7 @@ public interface RimuHostingAsyncClient {
    @Produces(MediaType.APPLICATION_JSON)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ParseRimuHostingException.class)
-   ListenableFuture<SortedSet<Image>> getImageList();
+   ListenableFuture<Set<Image>> getImageList();
 
    /**
     * @see RimuHostingClient#getServerList
@@ -88,7 +88,7 @@ public interface RimuHostingAsyncClient {
    @Produces(MediaType.APPLICATION_JSON)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ParseRimuHostingException.class)
-   ListenableFuture<SortedSet<Server>> getServerList();
+   ListenableFuture<Set<Server>> getServerList();
 
    /**
     * @see RimuHostingClient#getPricingPlanList
@@ -99,7 +99,7 @@ public interface RimuHostingAsyncClient {
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ParseRimuHostingException.class)
    @ResponseParser(ParsePricingPlansFromJsonResponse.class)
-   ListenableFuture<SortedSet<PricingPlan>> getPricingPlanList();
+   ListenableFuture<Set<PricingPlan>> getPricingPlanList();
 
    /**
     * @see RimuHostingClient#createServer
@@ -111,10 +111,8 @@ public interface RimuHostingAsyncClient {
    @ExceptionParser(ParseRimuHostingException.class)
    @Unwrap
    @MapBinder(CreateServerOptions.class)
-   ListenableFuture<NewServerResponse> createServer(
-         @MapPayloadParam("name") String name,
-         @MapPayloadParam("imageId") String imageId,
-         @MapPayloadParam("planId") String planId,
+   ListenableFuture<NewServerResponse> createServer(@MapPayloadParam("name") String name,
+         @MapPayloadParam("imageId") String imageId, @MapPayloadParam("planId") String planId,
          CreateServerOptions... options);
 
    /**

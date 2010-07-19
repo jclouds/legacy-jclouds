@@ -23,7 +23,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
@@ -54,15 +54,15 @@ public class RimuHostingClientLiveTest {
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
-      this.context = new RestContextFactory().createContext("rimuhosting", credential, credential,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()));
+      this.context = new RestContextFactory().createContext("rimuhosting", credential, credential, ImmutableSet
+            .<Module> of(new Log4JLoggingModule()));
       this.connection = context.getApi();
 
    }
 
    @Test
    public void testPricingPlans() {
-      SortedSet<PricingPlan> plans = connection.getPricingPlanList();
+      Set<PricingPlan> plans = connection.getPricingPlanList();
       for (PricingPlan plan : plans) {
          if (plan.getId().equalsIgnoreCase("miro1")) {
             assertTrue(true);
@@ -74,7 +74,7 @@ public class RimuHostingClientLiveTest {
 
    @Test
    public void testImages() {
-      SortedSet<Image> images = connection.getImageList();
+      Set<Image> images = connection.getImageList();
       for (Image image : images) {
          if (image.getId().equalsIgnoreCase("lenny")) {
             assertTrue(true);
@@ -87,8 +87,7 @@ public class RimuHostingClientLiveTest {
    @Test
    public void testLifeCycle() {
       // Get the first image, we dont really care what it is in this test.
-      NewServerResponse serverResponse = connection.createServer("test.ivan.api.com", "lenny",
-               "MIRO1B");
+      NewServerResponse serverResponse = connection.createServer("test.ivan.api.com", "lenny", "MIRO1B");
       Server server = serverResponse.getServer();
       // Now we have the server, lets restart it
       assertNotNull(server.getId());

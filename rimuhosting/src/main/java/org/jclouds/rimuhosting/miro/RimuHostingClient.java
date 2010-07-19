@@ -18,19 +18,24 @@
  */
 package org.jclouds.rimuhosting.miro;
 
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rimuhosting.miro.binder.CreateServerOptions;
-import org.jclouds.rimuhosting.miro.domain.*;
-
-import java.util.List;
-import java.util.SortedSet;
-import java.util.concurrent.TimeUnit;
+import org.jclouds.rimuhosting.miro.domain.Image;
+import org.jclouds.rimuhosting.miro.domain.MetaData;
+import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
+import org.jclouds.rimuhosting.miro.domain.PricingPlan;
+import org.jclouds.rimuhosting.miro.domain.Server;
+import org.jclouds.rimuhosting.miro.domain.ServerInfo;
 
 /**
  * Provides synchronous access to RimuHosting.
  * <p/>
- *
- * @author Ivan Meredith 
+ * 
+ * @author Ivan Meredith
  * @see RimuHostingAsyncClient
  * @see <a href="TODO: insert URL of client documentation" />
  */
@@ -38,38 +43,42 @@ import java.util.concurrent.TimeUnit;
 public interface RimuHostingClient {
 
    /**
-    * This operation returns a list of images that can be used for  server creation.
-    *c
+    * This operation returns a list of images that can be used for server
+    * creation. c
+    * 
     * @see Image
     */
-   SortedSet<Image> getImageList();
+   Set<Image> getImageList();
 
    /**
-    * Returns a list of servers that belong to this identity. 
+    * Returns a list of servers that belong to this identity.
     * 
     * @return An empty set if there are no servers.
     * @see Server
     */
-   SortedSet<Server> getServerList();
+   Set<Server> getServerList();
 
    /**
     * Returns a list of pricing plans that can be used for server creation.
+    * 
     * @see PricingPlan
     */
-   SortedSet<PricingPlan> getPricingPlanList();
+   Set<PricingPlan> getPricingPlanList();
 
    /**
     * This operation creates a node based on its name, imageId and planId.
     * 
-    * A password can be specified with the option {@link CreateServerOptions#withPassword(String) | withPassword()}
+    * A password can be specified with the option
+    * {@link CreateServerOptions#withPassword(String) | withPassword()}
     * 
-    * Key-Value @{link {@link MetaData | metadata} can be included with the option {@link CreateServerOptions#withMetaData(List) | withMetaData()}
+    * Key-Value @{link {@link MetaData | metadata} can be included with the
+    * option {@link CreateServerOptions#withMetaData(List) | withMetaData()}
     * 
     * @see CreateServerOptions
     * 
-    * TODO: add more CreateServerOptions
+    *      TODO: add more CreateServerOptions
     */
-   NewServerResponse createServer(String name, String imageId, String planId, CreateServerOptions ... options);
+   NewServerResponse createServer(String name, String imageId, String planId, CreateServerOptions... options);
 
    /**
     * Gets a server based on its id.
@@ -78,18 +87,19 @@ public interface RimuHostingClient {
     * @see Server
     */
    Server getServer(Long id);
-   
+
    /**
     * Restarts a server.
     * 
     * @return State of the server.
     */
    ServerInfo restartServer(Long id);
-   
+
    /**
     * Destroys a server. This an async operation.
-    *
-    * @return A list of messages that have something to do with the shutdown. Can ignore safely.
+    * 
+    * @return A list of messages that have something to do with the shutdown.
+    *         Can ignore safely.
     */
    List<String> destroyServer(Long id);
 }
