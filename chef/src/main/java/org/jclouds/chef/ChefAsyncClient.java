@@ -41,6 +41,7 @@ import org.jclouds.chef.binders.BindClientnameToJsonPayload;
 import org.jclouds.chef.binders.BindGenerateKeyForClientToJsonPayload;
 import org.jclouds.chef.binders.BindIsCompletedToJsonPayload;
 import org.jclouds.chef.binders.NodeName;
+import org.jclouds.chef.domain.Client;
 import org.jclouds.chef.domain.CookbookVersion;
 import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.domain.Sandbox;
@@ -60,7 +61,6 @@ import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -84,7 +84,7 @@ public interface ChefAsyncClient {
    @POST
    @Path("sandboxes")
    ListenableFuture<UploadSandbox> getUploadSandboxForChecksums(
-            @BinderParam(BindChecksumsToJsonPayload.class) Set<List<Byte>> md5s);
+         @BinderParam(BindChecksumsToJsonPayload.class) Set<List<Byte>> md5s);
 
    @PUT
    ListenableFuture<Void> uploadContent(@BinderParam(BindChecksumsToJsonPayload.class) Set<List<Byte>> md5s);
@@ -95,7 +95,7 @@ public interface ChefAsyncClient {
    @PUT
    @Path("sandboxes/{id}")
    ListenableFuture<Sandbox> commitSandbox(@PathParam("id") String id,
-            @BinderParam(BindIsCompletedToJsonPayload.class) boolean isCompleted);
+         @BinderParam(BindIsCompletedToJsonPayload.class) boolean isCompleted);
 
    /**
     * @see ChefCookbooks#listCookbooks
@@ -111,17 +111,17 @@ public interface ChefAsyncClient {
     */
    @PUT
    @Path("cookbooks/{cookbookname}/{version}")
-   ListenableFuture<Void> updateCookbook(@PathParam("cookbookname") String cookbookName,
-            @PathParam("version") String version, @BinderParam(BindToJsonPayload.class) CookbookVersion cookbook);
+   ListenableFuture<CookbookVersion> updateCookbook(@PathParam("cookbookname") String cookbookName,
+         @PathParam("version") String version, @BinderParam(BindToJsonPayload.class) CookbookVersion cookbook);
 
    /**
     * @see ChefCookbook#deleteCookbook(String)
     */
    @DELETE
    @Path("cookbooks/{cookbookname}/{version}")
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteCookbook(@PathParam("cookbookname") String cookbookName,
-            @PathParam("version") String version);
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<CookbookVersion> deleteCookbook(@PathParam("cookbookname") String cookbookName,
+         @PathParam("version") String version);
 
    /**
     * @see ChefCookbook#getVersionsOfCookbook
@@ -139,7 +139,7 @@ public interface ChefAsyncClient {
    @Path("cookbooks/{cookbookname}/{version}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<CookbookVersion> getCookbook(@PathParam("cookbookname") String cookbookName,
-            @PathParam("version") String version);
+         @PathParam("version") String version);
 
    /**
     * @see ChefClient#createClient
@@ -156,7 +156,7 @@ public interface ChefAsyncClient {
    @Path("clients/{clientname}")
    @ResponseParser(ParseKeyFromJson.class)
    ListenableFuture<String> generateKeyForClient(
-            @PathParam("clientname") @BinderParam(BindGenerateKeyForClientToJsonPayload.class) String clientname);
+         @PathParam("clientname") @BinderParam(BindGenerateKeyForClientToJsonPayload.class) String clientname);
 
    /**
     * @see ChefClient#clientExists
@@ -172,7 +172,7 @@ public interface ChefAsyncClient {
    @GET
    @Path("clients/{clientname}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Boolean> getClient(@PathParam("clientname") String clientname);
+   ListenableFuture<Client> getClient(@PathParam("clientname") String clientname);
 
    /**
     * @see ChefClient#deleteClient
@@ -181,8 +181,7 @@ public interface ChefAsyncClient {
    @Path("clients/{clientname}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(ReturnStringIf2xx.class)
-   // TODO: why string?
-   ListenableFuture<String> deleteClient(@PathParam("clientname") String clientname);
+   ListenableFuture<Client> deleteClient(@PathParam("clientname") String clientname);
 
    /**
     * @see ChefClient#listClients
@@ -206,7 +205,7 @@ public interface ChefAsyncClient {
    @PUT
    @Path("nodes/{nodename}")
    ListenableFuture<Node> updateNode(
-            @PathParam("nodename") @ParamParser(NodeName.class) @BinderParam(BindToJsonPayload.class) Node node);
+         @PathParam("nodename") @ParamParser(NodeName.class) @BinderParam(BindToJsonPayload.class) Node node);
 
    /**
     * @see ChefNode#nodeExists
@@ -229,9 +228,8 @@ public interface ChefAsyncClient {
     */
    @DELETE
    @Path("nodes/{nodename}")
-   // TODO why string?!
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<String> deleteNode(@PathParam("nodename") String nodename);
+   ListenableFuture<Node> deleteNode(@PathParam("nodename") String nodename);
 
    /**
     * @see ChefNode#listNodes

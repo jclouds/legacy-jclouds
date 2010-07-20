@@ -7,7 +7,6 @@ import java.io.IOException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
-import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -33,13 +32,12 @@ public class ParseKeySetFromJsonTest {
 
    public void testRegex() {
       assertEquals(
-               handler
-                        .apply(new HttpResponse(
-                                 200,
-                                 "ok",
-                                 Payloads
-                                          .newPayload(Utils
-                                                   .toInputStream("{\n\"opscode-validator\": \"https://api.opscode.com/...\", \"pimp-validator\": \"https://api.opscode.com/...\"}")))),
-               ImmutableSet.of("opscode-validator", "pimp-validator"));
+            handler
+                  .apply(new HttpResponse(
+                        200,
+                        "ok",
+                        Payloads
+                              .newStringPayload("{\n\"opscode-validator\": \"https://api.opscode.com/...\", \"pimp-validator\": \"https://api.opscode.com/...\"}"))),
+            ImmutableSet.of("opscode-validator", "pimp-validator"));
    }
 }

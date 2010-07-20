@@ -27,7 +27,6 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
-import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -49,9 +48,8 @@ public class ParseOrganizationFromJsonTest {
    @BeforeTest
    protected void setUpInjector() throws IOException {
       Injector injector = Guice.createInjector(new ParserModule());
-      handler = injector.getInstance(Key
-            .get(new TypeLiteral<ParseJson<Organization>>() {
-            }));
+      handler = injector.getInstance(Key.get(new TypeLiteral<ParseJson<Organization>>() {
+      }));
    }
 
    public void test() {
@@ -63,7 +61,6 @@ public class ParseOrganizationFromJsonTest {
 
       String toParse = "{\"name\": \"opscode\",\"full_name\": \"Opscode, Inc.\", \"org_type\": \"Business\",\"clientname\": \"opscode-validator\" }";
 
-      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads
-            .newPayload(Utils.toInputStream(toParse)))), org);
+      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(toParse))), org);
    }
 }
