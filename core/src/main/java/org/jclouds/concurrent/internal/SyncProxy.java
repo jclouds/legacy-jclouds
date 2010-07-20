@@ -35,6 +35,8 @@ import javax.inject.Named;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.util.Utils;
 
@@ -52,8 +54,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 public class SyncProxy implements InvocationHandler {
 
    @SuppressWarnings("unchecked")
-   public static <T> T proxy(Class<T> clazz, SyncProxy proxy) throws IllegalArgumentException,
-            SecurityException, NoSuchMethodException {
+   public static <T> T proxy(Class<T> clazz, SyncProxy proxy) throws IllegalArgumentException, SecurityException,
+         NoSuchMethodException {
       return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz }, proxy);
    }
 
@@ -68,15 +70,14 @@ public class SyncProxy implements InvocationHandler {
 
    @Inject
    public SyncProxy(Class<?> declaring, Object async,
-            @Named("sync") ConcurrentMap<ClassMethodArgs, Object> delegateMap,
-            Map<Class<?>, Class<?>> sync2Async) throws SecurityException, NoSuchMethodException {
+         @Named("sync") ConcurrentMap<ClassMethodArgs, Object> delegateMap, Map<Class<?>, Class<?>> sync2Async)
+         throws SecurityException, NoSuchMethodException {
       this.delegateMap = delegateMap;
       this.delegate = async;
       this.declaring = declaring;
       this.sync2Async = sync2Async;
       if (!declaring.isAnnotationPresent(Timeout.class)) {
-         throw new IllegalArgumentException(String.format(
-                  "type %s does not specify a default @Timeout", declaring));
+         throw new IllegalArgumentException(String.format("type %s does not specify a default @Timeout", declaring));
       }
       Timeout typeTimeout = declaring.getAnnotation(Timeout.class);
       long typeNanos = convertToNanos(typeTimeout);
@@ -86,12 +87,10 @@ public class SyncProxy implements InvocationHandler {
       timeoutMap = Maps.newHashMap();
       for (Method method : declaring.getMethods()) {
          if (!objectMethods.contains(method)) {
-            Method delegatedMethod = delegate.getClass().getMethod(method.getName(),
-                     method.getParameterTypes());
+            Method delegatedMethod = delegate.getClass().getMethod(method.getName(), method.getParameterTypes());
             if (!Arrays.equals(delegatedMethod.getExceptionTypes(), method.getExceptionTypes()))
                throw new IllegalArgumentException(String.format(
-                        "method %s has different typed exceptions than delegated method %s",
-                        method, delegatedMethod));
+                     "method %s has different typed exceptions than delegated method %s", method, delegatedMethod));
             if (delegatedMethod.getReturnType().isAssignableFrom(ListenableFuture.class)) {
                if (method.isAnnotationPresent(Timeout.class)) {
                   Timeout methodTimeout = method.getAnnotation(Timeout.class);
@@ -122,16 +121,16 @@ public class SyncProxy implements InvocationHandler {
          return this.toString();
       } else if (method.isAnnotationPresent(Delegate.class)) {
          Class<?> asyncClass = sync2Async.get(method.getReturnType());
-         checkState(asyncClass != null, "please configure corresponding async class for "
-                  + method.getReturnType() + " in your RestClientModule");
+         checkState(asyncClass != null, "please configure corresponding async class for " + method.getReturnType()
+               + " in your RestClientModule");
          Object returnVal = delegateMap.get(new ClassMethodArgs(asyncClass, method, args));
          return returnVal;
       } else if (syncMethodMap.containsKey(method)) {
          return syncMethodMap.get(method).invoke(delegate, args);
       } else {
          try {
-            return ((ListenableFuture<?>) methodMap.get(method).invoke(delegate, args)).get(
-                     timeoutMap.get(method), TimeUnit.NANOSECONDS);
+            return ((ListenableFuture<?>) methodMap.get(method).invoke(delegate, args)).get(timeoutMap.get(method),
+                  TimeUnit.NANOSECONDS);
          } catch (ExecutionException e) {
             throw throwTypedExceptionOrCause(method.getExceptionTypes(), e);
          } catch (Exception e) {
@@ -141,14 +140,16 @@ public class SyncProxy implements InvocationHandler {
    }
 
    @SuppressWarnings("unchecked")
-   public static Exception throwTypedExceptionOrCause(Class[] exceptionTypes, Exception exception)
-            throws Exception {
+   public static Exception throwTypedExceptionOrCause(Class[] exceptionTypes, Exception exception) throws Exception {
       for (Class type : exceptionTypes) {
          Throwable throwable = Utils.getFirstThrowableOfType(exception, type);
          if (throwable != null) {
-            Throwables.throwCause(exception, true);
+            return (Exception) throwable;
          }
       }
+      Throwables.propagateIfInstanceOf(exception, IllegalStateException.class);
+      Throwables.propagateIfInstanceOf(exception, AuthorizationException.class);
+      Throwables.propagateIfInstanceOf(exception, ResourceNotFoundException.class);
       Throwables.throwCause(exception, true);
       return exception;
    }
