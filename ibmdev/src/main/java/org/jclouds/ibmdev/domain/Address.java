@@ -29,25 +29,27 @@ import javax.annotation.Nullable;
 public class Address {
 
    public static enum State {
-      NEW, ALLOCATING, FREE, ATTACHED, RELEASING, RELEASED, FAILED;
+      NEW, ALLOCATING, FREE, ATTACHED, RELEASING, RELEASED, FAILED, RELEASE_PENDING;
       public static State fromValue(int v) {
          switch (v) {
-            case 0:
-               return NEW;
-            case 1:
-               return ALLOCATING;
-            case 2:
-               return FREE;
-            case 3:
-               return ATTACHED;
-            case 4:
-               return RELEASING;
-            case 5:
-               return RELEASED;
-            case 6:
-               return FAILED;
-            default:
-               throw new IllegalArgumentException("invalid state:" + v);
+         case 0:
+            return NEW;
+         case 1:
+            return ALLOCATING;
+         case 2:
+            return FREE;
+         case 3:
+            return ATTACHED;
+         case 4:
+            return RELEASING;
+         case 5:
+            return RELEASED;
+         case 6:
+            return FAILED;
+         case 7:
+            return RELEASE_PENDING;
+         default:
+            throw new IllegalArgumentException("invalid state:" + v);
          }
       }
    }
@@ -156,8 +158,8 @@ public class Address {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", ip=" + ip + ", location=" + location + ", state=" + getState()
-               + ", instanceId=" + instanceId + "]";
+      return "[id=" + id + ", ip=" + ip + ", location=" + location + ", state=" + getState() + ", instanceId="
+            + instanceId + "]";
    }
 
 }
