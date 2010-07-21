@@ -35,8 +35,8 @@ public class GetFirstInstanceInList implements Function<HttpResponse, Instance> 
    private ParseInstancesFromJson listParser;
 
    @Inject
-   public GetFirstInstanceInList(ParseInstancesFromJson gson) {
-      this.listParser = gson;
+   public GetFirstInstanceInList(ParseInstancesFromJson mapper) {
+      this.listParser = mapper;
    }
 
    @Override

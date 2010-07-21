@@ -40,8 +40,7 @@ public class Key {
    private String name;
    private Date lastModifiedTime;
 
-   public Key(boolean isDefault, Iterable<String> instanceIds, String keyMaterial, String name,
-            Date lastModifiedTime) {
+   public Key(boolean isDefault, Iterable<String> instanceIds, String keyMaterial, String name, Date lastModifiedTime) {
       this.isDefault = isDefault;
       Iterables.addAll(this.instanceIds, instanceIds);
       this.keyMaterial = keyMaterial;
@@ -133,8 +132,8 @@ public class Key {
 
    @Override
    public String toString() {
-      return "Key [isDefault=" + isDefault + ", instanceIds=" + instanceIds + ", name=" + name
-               + ", keyMaterial=" + keyMaterial + ", lastModifiedTime=" + lastModifiedTime + "]";
+      return "Key [isDefault=" + isDefault + ", instanceIds=" + instanceIds + ", name=" + name + ", keyMaterial="
+            + keyMaterial + ", lastModifiedTime=" + lastModifiedTime + "]";
    }
 
    public Set<String> getInstanceIds() {

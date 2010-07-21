@@ -30,11 +30,10 @@ import com.google.inject.Inject;
 
 /**
  * 
- * 
  * @author Adrian Cole
  */
 @Singleton
-public class InstanceRemovedOrNotFound implements Predicate<Instance> {
+public class InstanceActiveOrFailed implements Predicate<Instance> {
 
    private final IBMDeveloperCloudClient client;
 
@@ -42,7 +41,7 @@ public class InstanceRemovedOrNotFound implements Predicate<Instance> {
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public InstanceRemovedOrNotFound(IBMDeveloperCloudClient client) {
+   public InstanceActiveOrFailed(IBMDeveloperCloudClient client) {
       this.client = client;
    }
 
@@ -50,10 +49,10 @@ public class InstanceRemovedOrNotFound implements Predicate<Instance> {
       logger.trace("looking for state on instance %s", instance);
       instance = client.getInstance(instance.getId());
       if (instance == null)
-         return true;
-      logger.trace("%s: looking for instance state %s: currently: %s", instance.getId(), Instance.Status.REMOVED,
-            instance.getStatus());
-      return instance.getStatus() == Instance.Status.REMOVED;
+         return false;
+      logger.trace("%s: looking for instance state %s: currently: %s", instance.getId(), String.format("%s or %s",
+            Instance.Status.ACTIVE, Instance.Status.FAILED), instance.getStatus());
+      return instance.getStatus() == Instance.Status.ACTIVE || instance.getStatus() == Instance.Status.FAILED;
    }
 
 }

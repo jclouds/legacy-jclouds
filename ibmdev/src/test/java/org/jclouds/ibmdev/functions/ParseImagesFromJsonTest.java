@@ -28,6 +28,9 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.ibmdev.config.IBMDeveloperCloudParserModule;
 import org.jclouds.ibmdev.domain.Image;
+import org.jclouds.ibmdev.domain.InstanceType;
+import org.jclouds.ibmdev.domain.Price;
+import org.jclouds.ibmdev.domain.Image.Visibility;
 import org.jclouds.io.Payloads;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -48,61 +51,32 @@ public class ParseImagesFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule(),
-            new IBMDeveloperCloudParserModule());
+      Injector injector = Guice.createInjector(new ParserModule(), new IBMDeveloperCloudParserModule());
       handler = injector.getInstance(ParseImagesFromJson.class);
    }
 
    public void test() {
-      Image image1 = new Image();
+      Image image1 = new Image(
+            "SUSE Linux Enterprise Server 11 for x86",
+            HttpUtils
+                  .createUri("https://www-147.ibm.com/cloud/enterprise/ram.ws/RAMSecure/artifact/{F006D027-02CC-9D08-D389-6C729D939D44}/1.0/parameters.xml"),
+            1,
+            Visibility.PUBLIC,
+            "SYSTEM",
+            "SUSE Linux Enterprise Server/11",
+            new Date(1216944000000l),
+            "41",
+            ImmutableSet.<InstanceType> of(new InstanceType("Bronze 32 bit", new Price(0.17, "UHR  ", "897", null,
+                  "USD", 1), "BRZ32.1/2048/175"), new InstanceType("Gold 32 bit", new Price(0.41, "UHR  ", "897", null,
+                  "USD", 1), "GLD32.4/4096/350"), new InstanceType("Silver 32 bit", new Price(0.265, "UHR  ", "897",
+                  null, "USD", 1), "SLV32.2/4096/350")),
+            ImmutableSet.<String> of("ifeE7VOzRG6SGvoDlRPTQw"),
+            HttpUtils
+                  .createUri("https://www-147.ibm.com/cloud/enterprise/ram.ws/RAMSecure/artifact/{F006D027-02CC-9D08-D389-6C729D939D44}/1.0/GettingStarted.html"),
+            "20001150", "SUSE Linux Enterprise Server 11 for x86 Base OS 32-bit with pay for use licensing");
 
-      image1.setName("Rational Build Forge Agent");
-      image1
-            .setManifest(HttpUtils
-                  .createUri("https://www-180.ibm.com/cloud/enterprise/beta/ram.ws/RAMSecure/artifact/{A233F5A0-05A5-F21D-3E92-3793B722DFBD}/1.0/parameters.xml"));
-      image1.setState(1);
-      image1.setVisibility(Image.Visibility.PUBLIC);
-      image1.setOwner("SYSTEM");
-      image1.setArchitecture("i386");
-      image1.setPlatform("SUSE Linux Enterprise/10 SP2");
-      image1.setCreatedTime(new Date(1240632000000l));
-      image1.setLocation("1");
-      image1.setSupportedInstanceTypes(ImmutableSet.of("SMALL", "MEDIUM",
-            "LARGE"));
-      image1.setProductCodes(ImmutableSet
-            .of("fd2d0478b132490897526b9b4433a334"));
-      image1
-            .setDocumentation(HttpUtils
-                  .createUri("https://www-180.ibm.com/cloud/enterprise/beta/ram.ws/RAMSecure/artifact/{A233F5A0-05A5-F21D-3E92-3793B722DFBD}/1.0/GettingStarted.html"));
-      image1.setId("2");
-      image1
-            .setDescription("Rational Build Forge provides an adaptive process execution framework that automates, orchestrates, manages, and tracks all the processes between each handoff within the assembly line of software development, creating an automated software factory.");
-
-      Image image2 = new Image();
-      image2.setName("Rational Requirements Composer");
-      image2
-            .setManifest(HttpUtils
-                  .createUri("https://www-180.ibm.com/cloud/enterprise/beta/ram.ws/RAMSecure/artifact/{28C7B870-2C0A-003F-F886-B89F5B413B77}/1.0/parameters.xml"));
-      image2.setState(1);
-      image2.setVisibility(Image.Visibility.PUBLIC);
-      image2.setOwner("mutdosch@us.ibm.com");
-      image2.setArchitecture("i386");
-      image2.setPlatform("Redhat Enterprise Linux (32-bit)/5.4");
-      image2.setCreatedTime(new Date(1265647398869l));
-      image2.setLocation("1");
-      image2.setSupportedInstanceTypes(ImmutableSet.of("LARGE", "MEDIUM"));
-      // image.setProductCodes();
-      image2
-            .setDocumentation(HttpUtils
-                  .createUri("https://www-180.ibm.com/cloud/enterprise/beta/ram.ws/RAMSecure/artifact/{28C7B870-2C0A-003F-F886-B89F5B413B77}/1.0/GettingStarted.html"));
-      image2.setId("10005598");
-      image2
-            .setDescription("Rational Requirements Composer helps teams define and use requirements effectively across the project lifecycle.");
-
-      Set<? extends Image> compare = handler.apply(new HttpResponse(200, "ok",
-            Payloads.newInputStreamPayload(ParseImagesFromJsonTest.class
-                  .getResourceAsStream("/images.json"))));
+      Set<? extends Image> compare = handler.apply(new HttpResponse(200, "ok", Payloads
+            .newInputStreamPayload(ParseImagesFromJsonTest.class.getResourceAsStream("/images.json"))));
       assert (compare.contains(image1));
-      assert (compare.contains(image2));
    }
 }

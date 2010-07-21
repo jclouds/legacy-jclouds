@@ -24,11 +24,12 @@
 package org.jclouds.ibmdev;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.ibmdev.options.CreateInstanceOptions.Builder.attachIp;
 import static org.jclouds.ibmdev.options.CreateInstanceOptions.Builder.authorizePublicKey;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -38,33 +39,49 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.ibmdev.domain.Address;
 import org.jclouds.ibmdev.domain.Image;
 import org.jclouds.ibmdev.domain.Instance;
+import org.jclouds.ibmdev.domain.InstanceType;
 import org.jclouds.ibmdev.domain.Key;
 import org.jclouds.ibmdev.domain.Location;
+import org.jclouds.ibmdev.domain.Offering;
+import org.jclouds.ibmdev.domain.StorageOffering;
 import org.jclouds.ibmdev.domain.Volume;
 import org.jclouds.ibmdev.domain.Instance.Software;
+import org.jclouds.ibmdev.domain.StorageOffering.Format;
 import org.jclouds.ibmdev.predicates.AddressFree;
 import org.jclouds.ibmdev.predicates.InstanceActive;
+import org.jclouds.ibmdev.predicates.InstanceActiveOrFailed;
 import org.jclouds.ibmdev.predicates.InstanceRemovedOrNotFound;
 import org.jclouds.ibmdev.predicates.VolumeUnmounted;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
+import org.jclouds.ssh.ExecResponse;
+import org.jclouds.ssh.SshClient;
+import org.jclouds.ssh.SshException;
+import org.jclouds.ssh.jsch.JschSshClient;
+import org.jclouds.ssh.jsch.predicates.InetSocketAddressConnect;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Ordering;
 import com.google.common.io.Files;
 import com.google.inject.Module;
+import com.google.inject.internal.Sets;
 
 /**
  * Tests behavior of {@code IBMDeveloperCloudClient}
@@ -73,10 +90,15 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", testName = "ibmdevelopercloud.IBMDeveloperCloudClientLiveTest")
 public class IBMDeveloperCloudClientLiveTest {
+   private static final String OS = "Red Hat Enterprise Linux";
+   private static final String VERSION = "5.4";
 
-   private static final ImmutableSet<Software> SOFTWARE = ImmutableSet.<Software> of(new Software(
-            "SUSE Linux Enterprise", "OS", "10 SP2"));
-   private static final String SIZE = "LARGE";
+   private static final String PLATFORM = OS + "/" + VERSION;
+
+   private static final ImmutableSet<Software> SOFTWARE = ImmutableSet.<Software> of(new Software(OS, "OS", VERSION));
+
+   private static String FORMAT = "EXT3";
+
    private IBMDeveloperCloudClient connection;
    private Location location;
    private Address ip;
@@ -87,6 +109,10 @@ public class IBMDeveloperCloudClientLiveTest {
    private Instance instance2;
    private Instance instance;
    private RestContext<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> context;
+   private InstanceType instanceType;
+   private Image image;
+
+   private StorageOffering cheapestStorage;
 
    private static final String TAG = System.getProperty("user.name");
 
@@ -95,14 +121,13 @@ public class IBMDeveloperCloudClientLiveTest {
 
       String endpoint = System.getProperty("jclouds.test.endpoint");
       identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"),
-               "jclouds.test.credential");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
       Properties props = new Properties();
       if (endpoint != null)
          props.setProperty("ibmdev.endpoint", endpoint);
       context = new RestContextFactory().createContext("ibmdev", identity, credential, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()), props);
+            .<Module> of(new Log4JLoggingModule()), props);
 
       connection = context.getApi();
       for (Instance instance : connection.listInstances()) {
@@ -137,9 +162,9 @@ public class IBMDeveloperCloudClientLiveTest {
    }
 
    @Test
-   public void testListInstancesFromRequestReturnsNull() throws Exception {
+   public void testListInstancesFromRequestReturnsEmptySet() throws Exception {
       Set<? extends Instance> response = connection.listInstancesFromRequest(Long.MAX_VALUE + "");
-      assertNull(response);
+      assertEquals(response.size(), 0);
    }
 
    @Test
@@ -223,12 +248,8 @@ public class IBMDeveloperCloudClientLiveTest {
          key = connection.getKey(TAG);
          for (String instanceId : key.getInstanceIds()) {
             Instance instance = connection.getInstance(instanceId);
-            System.out.println("deleting instance: " + instance);
-            if (instance.getStatus() == Instance.Status.FAILED
-                     || instance.getStatus() == Instance.Status.ACTIVE) {
-               connection.deleteInstance(instanceId);
-               assert new RetryablePredicate<Instance>(new InstanceRemovedOrNotFound(connection),
-                        30, 2, TimeUnit.SECONDS).apply(instance) : instance;
+            if (instance.getStatus() == Instance.Status.FAILED || instance.getStatus() == Instance.Status.ACTIVE) {
+               killInstance(instance.getId());
             }
          }
       }
@@ -237,15 +258,23 @@ public class IBMDeveloperCloudClientLiveTest {
       assertNotNull(key.getLastModifiedTime());
    }
 
-   @Test(dependsOnMethods = "testGetLocation")
+   @Test(dependsOnMethods = "resolveImageAndInstanceType")
    public void testAllocateIpAddress() throws Exception {
+
+      Offering offering = Iterables.find(connection.listAddressOfferings(), new Predicate<Offering>() {
+
+         @Override
+         public boolean apply(Offering arg0) {
+            return arg0.getLocation().equals(location.getId());
+         }
+      });
+
       try {
-         ip = connection.allocateAddressInLocation(location.getId());
+         ip = connection.allocateAddressInLocation(location.getId(), offering.getId());
          System.out.println(ip);
          assertEquals(ip.getIp(), null);
          // wait up to 30 seconds for this to become "free"
-         new RetryablePredicate<Address>(new AddressFree(connection), 30, 2, TimeUnit.SECONDS)
-                  .apply(ip);
+         new RetryablePredicate<Address>(new AddressFree(connection), 30, 2, TimeUnit.SECONDS).apply(ip);
          refreshIpAndReturnAllAddresses();
          assertEquals(ip.getInstanceId(), null);
       } catch (IllegalStateException e) {
@@ -271,14 +300,44 @@ public class IBMDeveloperCloudClientLiveTest {
    }
 
    @Test(dependsOnMethods = "testGetLocation")
+   public void testResolveVolumeOffering() throws Exception {
+
+      Ordering<StorageOffering> cheapestOrdering = new Ordering<StorageOffering>() {
+         public int compare(StorageOffering left, StorageOffering right) {
+            return ComparisonChain.start().compare(left.getPrice().getRate(), right.getPrice().getRate()).result();
+         }
+      }.reverse();
+
+      Iterable<? extends StorageOffering> storageOfferingsThatAreInOurLocationAndCorrectFormat = filter(connection
+            .listStorageOfferings(), new Predicate<StorageOffering>() {
+         @Override
+         public boolean apply(StorageOffering arg0) {
+
+            return arg0.getLocation().equals(location.getId())
+                  && Iterables.any(arg0.getFormats(), new Predicate<StorageOffering.Format>() {
+
+                     @Override
+                     public boolean apply(Format arg0) {
+                        return arg0.getId().equals(FORMAT);
+                     }
+
+                  });
+         }
+      });
+      cheapestStorage = cheapestOrdering.max(storageOfferingsThatAreInOurLocationAndCorrectFormat);
+      System.out.println(cheapestStorage);
+   }
+
+   @Test(dependsOnMethods = "testResolveVolumeOffering")
    public void testCreateVolume() throws Exception {
       try {
-         volume = connection.createVolumeInLocation(location.getId(), TAG, "EXT3", "SMALL");
+         volume = connection.createVolumeInLocation(location.getId(), TAG, FORMAT, cheapestStorage.getName(),
+               cheapestStorage.getId());
          // wait up to 5 minutes for this to become "unmounted"
-         assert new RetryablePredicate<Volume>(new VolumeUnmounted(connection), 300, 5,
-                  TimeUnit.SECONDS).apply(volume);
+         assert new RetryablePredicate<Volume>(new VolumeUnmounted(connection), 300, 5, TimeUnit.SECONDS).apply(volume);
       } catch (IllegalStateException e) {
-         if (HttpResponseException.class.cast(e.getCause()).getResponse().getStatusCode() == 409) {
+         int code = HttpResponseException.class.cast(e.getCause()).getResponse().getStatusCode();
+         if (code == 409 || code == 500) {
             Set<? extends Volume> volumes = connection.listVolumes();
             try {
                volume = Iterables.find(volumes, new Predicate<Volume>() {
@@ -290,7 +349,7 @@ public class IBMDeveloperCloudClientLiveTest {
 
                });
             } catch (NoSuchElementException ex) {
-               throw new RuntimeException("no unmounted volumes in: " + volumes, e);
+               killInstance(TAG + 1);
             }
          } else {
             throw e;
@@ -315,32 +374,64 @@ public class IBMDeveloperCloudClientLiveTest {
       assert (allVolumes.contains(volume)) : String.format("volume %s not in %s", volume, volume);
    }
 
-   private static final String IMAGE_ID = "11";// Rational Insight
+   @Test(dependsOnMethods = "testGetLocation")
+   public void resolveImageAndInstanceType() throws Exception {
+      Iterable<? extends Image> imagesThatAreInOurLocationAndNotBYOL = filter(connection.listImages(),
+            new Predicate<Image>() {
+               @Override
+               public boolean apply(Image arg0) {
+                  return arg0.getLocation().equals(location.getId()) && arg0.getPlatform().equals(PLATFORM)
+                        && !arg0.getName().contains("BYOL") && !arg0.getName().contains("PAYG");
+               }
+            });
 
-   @Test(dependsOnMethods = { "testAddPublicKey" })
+      Ordering<InstanceType> cheapestOrdering = new Ordering<InstanceType>() {
+         public int compare(InstanceType left, InstanceType right) {
+            return ComparisonChain.start().compare(left.getPrice().getRate(), right.getPrice().getRate()).result();
+         }
+      }.reverse();
+
+      Set<InstanceType> instanceTypes = Sets.newLinkedHashSet();
+
+      for (Image image : imagesThatAreInOurLocationAndNotBYOL)
+         Iterables.addAll(instanceTypes, image.getSupportedInstanceTypes());
+
+      instanceType = cheapestOrdering.max(instanceTypes);
+
+      final InstanceType cheapestInstanceType = instanceType;
+      System.err.println(cheapestInstanceType);
+
+      image = Iterables.find(imagesThatAreInOurLocationAndNotBYOL, new Predicate<Image>() {
+
+         @Override
+         public boolean apply(Image arg0) {
+            return arg0.getSupportedInstanceTypes().contains(cheapestInstanceType);
+         }
+
+      });
+      System.err.println(image);
+      connection.getManifest(connection.getImage(image.getId()).getManifest());
+      connection.getManifest(connection.getImage(image.getId()).getDocumentation());
+   }
+
+   @Test(dependsOnMethods = { "testAddPublicKey", "resolveImageAndInstanceType" })
    public void testCreateInstance() throws Exception {
-
       killInstance(TAG);
 
-      System.err.println(connection.getManifest(connection.getImage(IMAGE_ID).getManifest()));
-      System.err.println(connection.getManifest(connection.getImage(IMAGE_ID).getDocumentation()));
-
-      instance = connection.createInstanceInLocation(location.getId(), TAG, IMAGE_ID, SIZE,
-               authorizePublicKey(key.getName()).configurationData(
-                        ImmutableMap.of("insight_admin_password", "myPassword1",
-                                 "db2_admin_password", "myPassword2", "report_user_password",
-                                 "myPassword3")));
+      instance = connection.createInstanceInLocation(location.getId(), TAG, image.getId(), instanceType.getId(),
+            authorizePublicKey(key.getName()));
 
       assertBeginState(instance, TAG);
+      assertIpHostNullAndStatusNEW(instance);
       blockUntilRunning(instance);
-      assertRunning(instance, TAG);
-
+      instance = assertRunning(instance, TAG);
+      sshAndDf(new IPSocket(instance.getIp(), 22), new Credentials("idcuser", key.getKeyMaterial()));
    }
 
    private void killInstance(final String nameToKill) {
       Set<? extends Instance> instances = connection.listInstances();
       try {
-         instance = Iterables.find(instances, new Predicate<Instance>() {
+         Instance instance = Iterables.find(instances, new Predicate<Instance>() {
 
             @Override
             public boolean apply(Instance input) {
@@ -348,12 +439,22 @@ public class IBMDeveloperCloudClientLiveTest {
             }
 
          });
-         connection.deleteInstance(instance.getId());
+         if (instance.getStatus() != Instance.Status.DEPROVISIONING
+               && instance.getStatus() != Instance.Status.DEPROVISION_PENDING) {
+            System.out.println("deleting instance: " + instance);
+            int timeout = (instance.getStatus() == Instance.Status.NEW || instance.getStatus() == Instance.Status.PROVISIONING) ? 300
+                  : 30;
+            assert new RetryablePredicate<Instance>(new InstanceActiveOrFailed(connection), timeout, 2,
+                  TimeUnit.SECONDS).apply(instance) : instance;
+            connection.deleteInstance(instance.getId());
+         }
+         assert new RetryablePredicate<Instance>(new InstanceRemovedOrNotFound(connection), 120, 2, TimeUnit.SECONDS)
+               .apply(instance) : instance;
       } catch (NoSuchElementException ex) {
       }
    }
 
-   private void assertRunning(Instance instance, String name) throws AssertionError {
+   private Instance assertRunning(Instance instance, String name) throws AssertionError {
       instance = connection.getInstance(instance.getId());
 
       try {
@@ -366,25 +467,26 @@ public class IBMDeveloperCloudClientLiveTest {
          System.err.println(instance);
          throw e;
       }
+      System.err.println("RUNNING: " + instance);
+      return instance;
    }
 
    private void blockUntilRunning(Instance instance) {
       long start = System.currentTimeMillis();
-      assert new RetryablePredicate<Instance>(new InstanceActive(connection), 15 * 60 * 1000)
-               .apply(instance) : connection.getInstance(instance.getId());
+      assert new RetryablePredicate<Instance>(new InstanceActive(connection), 15 * 60 * 1000).apply(instance) : connection
+            .getInstance(instance.getId());
 
       System.out.println(((System.currentTimeMillis() - start) / 1000) + " seconds");
    }
 
    private void assertBeginState(Instance instance, String name) throws AssertionError {
       try {
-         assertIpHostAndStatusNEW(instance);
          assertConsistent(instance, name);
       } catch (NullPointerException e) {
          System.err.println(instance);
          throw e;
       } catch (AssertionError e) {
-         System.err.println(instance);
+         killInstance(instance.getId());
          throw e;
       }
    }
@@ -392,9 +494,9 @@ public class IBMDeveloperCloudClientLiveTest {
    private void assertConsistent(Instance instance, String name) {
       assertNotNull(instance.getId());
       assertEquals(instance.getName(), name);
-      assertEquals(instance.getInstanceType(), SIZE);
+      assertEquals(instance.getInstanceType(), instanceType.getId());
       assertEquals(instance.getLocation(), location.getId());
-      assertEquals(instance.getImageId(), IMAGE_ID);
+      assertEquals(instance.getImageId(), image.getId());
       assertEquals(instance.getSoftware(), SOFTWARE);
       assertEquals(instance.getKeyName(), key.getName());
       assertNotNull(instance.getLaunchTime());
@@ -405,9 +507,15 @@ public class IBMDeveloperCloudClientLiveTest {
       assertNotNull(instance.getRequestId());
    }
 
-   private void assertIpHostAndStatusNEW(Instance instance) {
+   private void assertIpHostNullAndStatusNEW(Instance instance) {
       assertEquals(instance.getIp(), null);
       assertEquals(instance.getHostname(), null);
+      assertEquals(instance.getStatus(), Instance.Status.NEW);
+   }
+
+   private void assertIpHostAndStatusNEW(Instance instance) {
+      assertNotNull(instance.getIp());
+      assertNotNull(instance.getHostname());
       assertEquals(instance.getStatus(), Instance.Status.NEW);
    }
 
@@ -417,27 +525,19 @@ public class IBMDeveloperCloudClientLiveTest {
       assertEquals(instance.getStatus(), Instance.Status.ACTIVE);
    }
 
-   /**
-    * cannot run an instance due to 500 errors:
-    * 
-    * http://www-180.ibm.com/cloud/enterprise/beta/ram/community/discussionTopic .faces?guid={
-    * DA689AEE-783C-6FE7-6F9F-DFEE9763F806}&v=1&fid=1068&tid=1523#topic
-    */
-   @Test(dependsOnMethods = { "testAddPublicKey", "testAllocateIpAddress", "testCreateVolume" })
-   public void testCreateInstanceWithVolume() throws Exception {
+   @Test(dependsOnMethods = { "testAddPublicKey", "testAllocateIpAddress", "testCreateVolume",
+         "resolveImageAndInstanceType" })
+   public void testCreateInstanceWithIpAndVolume() throws Exception {
       String name = TAG + "1";
       killInstance(name);
 
-      instance2 = connection.createInstanceInLocation(location.getId(), name, IMAGE_ID, SIZE,
-               attachIp(ip.getId()).authorizePublicKey(key.getName()).mountVolume(volume.getId(),
-                        "/mnt").configurationData(
-                        ImmutableMap.of("insight_admin_password", "myPassword1",
-                                 "db2_admin_password", "myPassword2", "report_user_password",
-                                 "myPassword3")));
+      instance2 = connection.createInstanceInLocation(location.getId(), name, image.getId(), instanceType.getId(),
+            attachIp(ip.getId()).authorizePublicKey(key.getName()).mountVolume(volume.getId(), "/mnt"));
 
       assertBeginState(instance2, name);
+      assertIpHostAndStatusNEW(instance2);
       blockUntilRunning(instance2);
-      assertRunning(instance2, name);
+      instance2 = assertRunning(instance2, name);
 
       volume = connection.getVolume(volume.getId());
       assertEquals(volume.getInstanceId(), instance2.getId());
@@ -445,7 +545,7 @@ public class IBMDeveloperCloudClientLiveTest {
       refreshIpAndReturnAllAddresses();
       assertEquals(ip.getInstanceId(), instance2.getId());
       assertEquals(ip.getIp(), instance2.getIp());
-
+      sshAndDf(new IPSocket(instance2.getIp(), 22), new Credentials("idcuser", keyPair.get("private")));
    }
 
    private Set<? extends Address> refreshIpAndReturnAllAddresses() {
@@ -497,18 +597,53 @@ public class IBMDeveloperCloudClientLiveTest {
          }
    }
 
+   private void sshAndDf(IPSocket socket, Credentials credentials) throws IOException {
+      for (int i = 0; i < 5; i++) {// retry loop TODO replace with predicate.
+         try {
+            _sshAndDf(socket, credentials);
+            return;
+         } catch (SshException e) {
+            try {
+               Thread.sleep(10 * 1000);
+            } catch (InterruptedException e1) {
+            }
+            continue;
+         }
+      }
+   }
+
+   private void _sshAndDf(IPSocket socket, Credentials credentials) {
+      RetryablePredicate<IPSocket> socketOpen = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180,
+            5, TimeUnit.SECONDS);
+
+      socketOpen.apply(socket);
+
+      SshClient ssh = new JschSshClient(new BackoffLimitedRetryHandler(), socket, 60000, credentials.identity, null,
+            credentials.credential.getBytes());
+      try {
+         ssh.connect();
+         ExecResponse hello = ssh.exec("echo hello");
+         assertEquals(hello.getOutput().trim(), "hello");
+         ExecResponse exec = ssh.exec("df");
+         assertTrue(exec.getOutput().contains("Filesystem"),
+               "The output should've contained filesystem information, but it didn't. Output: " + exec);
+      } finally {
+         if (ssh != null)
+            ssh.disconnect();
+      }
+   }
+
    @BeforeGroups(groups = { "live" })
    protected void setupKeyPair() throws FileNotFoundException, IOException {
       String secretKeyFile;
       try {
-         secretKeyFile = checkNotNull(System.getProperty("jclouds.test.ssh.keyfile"),
-                  "jclouds.test.ssh.keyfile");
+         secretKeyFile = checkNotNull(System.getProperty("jclouds.test.ssh.keyfile"), "jclouds.test.ssh.keyfile");
       } catch (NullPointerException e) {
          secretKeyFile = System.getProperty("user.home") + "/.ssh/id_rsa";
       }
       String secret = Files.toString(new File(secretKeyFile), Charsets.UTF_8);
       assert secret.startsWith("-----BEGIN RSA PRIVATE KEY-----") : "invalid key:\n" + secret;
-      keyPair = ImmutableMap.<String, String> of("private", secret, "public", Files.toString(
-               new File(secretKeyFile + ".pub"), Charsets.UTF_8));
+      keyPair = ImmutableMap.<String, String> of("private", secret, "public", Files.toString(new File(secretKeyFile
+            + ".pub"), Charsets.UTF_8));
    }
 }

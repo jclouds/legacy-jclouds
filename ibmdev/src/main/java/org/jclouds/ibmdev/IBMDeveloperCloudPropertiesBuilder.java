@@ -42,8 +42,7 @@ public class IBMDeveloperCloudPropertiesBuilder extends PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_API_VERSION, IBMDeveloperCloudAsyncClient.VERSION);
-      properties.setProperty(PROPERTY_ENDPOINT,
-               "https://www-180.ibm.com/cloud/enterprise/beta/api/rest");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://www-147.ibm.com/computecloud/enterprise/api/rest");
       properties.setProperty(PROPERTY_IBMDEVELOPERCLOUD_LOCATION, "1");
       properties.setProperty(PROPERTY_TIMEOUT_NODE_RUNNING, (15 * 60 * 1000) + "");
       return properties;

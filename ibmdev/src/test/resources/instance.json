@@ -4,14 +4,14 @@
      [ 
        { "version":"10 SP2", "type":"OS", "name":"SUSE Linux Enterprise" } 
      ], 
-  "ip":"129.33.197.78", 
+  "ip":"129.33.197.78  ", 
   "requestId":"7430", 
   "keyName":"DEFAULT", 
   "name":"ABC", 
   "instanceType":"MEDIUM", 
   "status":5, 
   "owner":"aadelucc@us.ibm.com", 
-  "hostname":"vm723.developer.ihost.com", 
+  "hostname":"vm723.developer.ihost.com  ", 
   "location":"1", 
   "imageId":"3", 
   "productCodes":[], 

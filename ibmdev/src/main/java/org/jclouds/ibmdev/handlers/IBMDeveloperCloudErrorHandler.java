@@ -50,29 +50,32 @@ public class IBMDeveloperCloudErrorHandler implements HttpErrorHandler {
       try {
          // it is important to always read fully and close streams
          String message = parseMessage(response);
-         exception = message != null ? new HttpResponseException(command, response, message)
-                  : exception;
-         message = message != null ? message : String.format("%s -> %s", command.getRequest()
-                  .getRequestLine(), response.getStatusLine());
+         exception = message != null ? new HttpResponseException(command, response, message) : exception;
+         message = message != null ? message : String.format("%s -> %s", command.getRequest().getRequestLine(),
+               response.getStatusLine());
          switch (response.getStatusCode()) {
-            case 401:
-               exception = new AuthorizationException(command.getRequest(),
-                        message != null ? message : response.getStatusLine());
-               break;
-            case 402:
-            case 403:
-               exception = new AuthorizationException(message, exception);
-               break;
-            case 406:
-            case 409:
-            case 412:
+         case 401:
+            exception = new AuthorizationException(command.getRequest(), message != null ? message : response
+                  .getStatusLine());
+            break;
+         case 402:
+         case 403:
+            exception = new AuthorizationException(message, exception);
+            break;
+         case 404:
+            if (!command.getRequest().getMethod().equals("DELETE")) {
+               exception = new ResourceNotFoundException(message, exception);
+            }
+            break;
+         case 406:
+         case 409:
+         case 412:
+            exception = new IllegalStateException(message, exception);
+            break;
+         case 500:
+            if (message != null && message.indexOf("There is already a BlockStorageDevice object with name") != 1)
                exception = new IllegalStateException(message, exception);
-               break;
-            case 404:
-               if (!command.getRequest().getMethod().equals("DELETE")) {
-                  exception = new ResourceNotFoundException(message, exception);
-               }
-               break;
+            break;
          }
       } catch (IOException e) {
       } finally {

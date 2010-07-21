@@ -58,9 +58,9 @@
     </repositories>
     
     <properties>
-        <jclouds.test.identity>${providerUser}</jclouds.test.identity>
-        <jclouds.test.credential>${providerPassword}</jclouds.test.credential>
-        <jclouds.test.endpoint>https://www-180.ibm.com/cloud/enterprise/beta/api/rest/20090403</jclouds.test.endpoint>
+        <jclouds.test.identity>${jclouds.ibmdev.user}</jclouds.test.identity>
+        <jclouds.test.credential>${jclouds.ibmdev.password}</jclouds.test.credential>
+        <jclouds.test.endpoint>https://www-147.ibm.com/computecloud/enterprise/api/rest</jclouds.test.endpoint>
     </properties>
     <dependencies>
         <dependency>

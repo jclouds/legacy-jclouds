@@ -31,35 +31,37 @@ import com.google.common.collect.Sets;
  */
 public class Instance {
    public static enum Status {
-      NEW, PROVISIONING, FAILED, REMOVED, REJECTED, ACTIVE, UNKNOWN, DEPROVISIONING, RESTARTING, STARTING, STOPPING, STOPPED;
+      NEW, PROVISIONING, FAILED, REMOVED, REJECTED, ACTIVE, UNKNOWN, DEPROVISIONING, RESTARTING, STARTING, STOPPING, STOPPED, DEPROVISION_PENDING;
       public static Status fromValue(int v) {
          switch (v) {
-            case 0:
-               return NEW;
-            case 1:
-               return PROVISIONING;
-            case 2:
-               return FAILED;
-            case 3:
-               return REMOVED;
-            case 4:
-               return REJECTED;
-            case 5:
-               return ACTIVE;
-            case 6:
-               return UNKNOWN;
-            case 7:
-               return DEPROVISIONING;
-            case 8:
-               return RESTARTING;
-            case 9:
-               return STARTING;
-            case 10:
-               return STOPPING;
-            case 11:
-               return STOPPED;
-            default:
-               throw new IllegalArgumentException("invalid state:" + v);
+         case 0:
+            return NEW;
+         case 1:
+            return PROVISIONING;
+         case 2:
+            return FAILED;
+         case 3:
+            return REMOVED;
+         case 4:
+            return REJECTED;
+         case 5:
+            return ACTIVE;
+         case 6:
+            return UNKNOWN;
+         case 7:
+            return DEPROVISIONING;
+         case 8:
+            return RESTARTING;
+         case 9:
+            return STARTING;
+         case 10:
+            return STOPPING;
+         case 11:
+            return STOPPED;
+         case 12:
+            return DEPROVISION_PENDING;
+         default:
+            throw new IllegalArgumentException("invalid state:" + v);
          }
       }
    }
@@ -163,10 +165,9 @@ public class Instance {
    private String id;
    private Date expirationTime;
 
-   public Instance(Date launchTime, Set<Software> software, String ip, String requestId,
-            String keyName, String name, String instanceType, int status, String owner,
-            String hostname, String location, String imageId, Set<String> productCodes,
-            String requestName, String id, Date expirationTime) {
+   public Instance(Date launchTime, Set<Software> software, String ip, String requestId, String keyName, String name,
+         String instanceType, int status, String owner, String hostname, String location, String imageId,
+         Set<String> productCodes, String requestName, String id, Date expirationTime) {
       this.launchTime = launchTime;
       this.software = software;
       this.ip = ip;
@@ -421,12 +422,11 @@ public class Instance {
 
    @Override
    public String toString() {
-      return "Instance [id=" + id + ", name=" + name + ", ip=" + ip + ", hostname=" + hostname
-               + ", status=" + getStatus() + ", instanceType=" + instanceType + ", location="
-               + location + ", imageId=" + imageId + ", software=" + software + ", keyName="
-               + keyName + ", launchTime=" + launchTime + ", expirationTime=" + expirationTime
-               + ", owner=" + owner + ", productCodes=" + productCodes + ", requestId=" + requestId
-               + ", requestName=" + requestName + "]";
+      return "Instance [id=" + id + ", name=" + name + ", ip=" + ip + ", hostname=" + hostname + ", status="
+            + getStatus() + ", instanceType=" + instanceType + ", location=" + location + ", imageId=" + imageId
+            + ", software=" + software + ", keyName=" + keyName + ", launchTime=" + launchTime + ", expirationTime="
+            + expirationTime + ", owner=" + owner + ", productCodes=" + productCodes + ", requestId=" + requestId
+            + ", requestName=" + requestName + "]";
    }
 
 }

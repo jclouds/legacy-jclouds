@@ -29,6 +29,8 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.ibmdev.config.IBMDeveloperCloudParserModule;
 import org.jclouds.ibmdev.domain.Image;
+import org.jclouds.ibmdev.domain.InstanceType;
+import org.jclouds.ibmdev.domain.Price;
 import org.jclouds.ibmdev.domain.Image.Visibility;
 import org.jclouds.io.Payloads;
 import org.testng.annotations.BeforeTest;
@@ -50,37 +52,33 @@ public class ParseImageFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule(),
-            new IBMDeveloperCloudParserModule());
+      Injector injector = Guice.createInjector(new ParserModule(), new IBMDeveloperCloudParserModule());
       handler = injector.getInstance(ParseImageFromJson.class);
    }
 
    public void test() {
 
-      Image image = new Image();
-      image.setName("Rational Requirements Composer");
-      image
-            .setManifest(HttpUtils
-                  .createUri("https://www-180.ibm.com/cloud/enterprise/beta/ram.ws/RAMSecure/artifact/{28C7B870-2C0A-003F-F886-B89F5B413B77}/1.0/parameters.xml"));
-      image.setState(1);
-      image.setVisibility(Visibility.PUBLIC);
-      image.setOwner("mutdosch@us.ibm.com");
-      image.setArchitecture("i386");
-      image.setPlatform("Redhat Enterprise Linux (32-bit)/5.4");
-      image.setCreatedTime(new Date(1265647398000l));
-      image.setLocation("1");
-      image.setSupportedInstanceTypes(ImmutableSet.of("LARGE", "MEDIUM"));
-      // image.setProductCodes();
-      image
-            .setDocumentation(HttpUtils
-                  .createUri("https://www-180.ibm.com/cloud/enterprise/beta/ram.ws/RAMSecure/artifact/{28C7B870-2C0A-003F-F886-B89F5B413B77}/1.0/GettingStarted.html"));
-      image.setId("10005598");
-      image
-            .setDescription("Rational Requirements Composer helps teams define and use requirements effectively across the project lifecycle.");
+      Image image = new Image(
+            "SUSE Linux Enterprise Server 11 for x86",
+            HttpUtils
+                  .createUri("https://www-147.ibm.com/cloud/enterprise/ram.ws/RAMSecure/artifact/{F006D027-02CC-9D08-D389-6C729D939D44}/1.0/parameters.xml"),
+            1,
+            Visibility.PUBLIC,
+            "SYSTEM",
+            "SUSE Linux Enterprise Server/11",
+            new Date(1216944000000l),
+            "41",
+            ImmutableSet.<InstanceType> of(new InstanceType("Bronze 32 bit", new Price(0.17, "UHR  ", "897", null,
+                  "USD", 1), "BRZ32.1/2048/175"), new InstanceType("Gold 32 bit", new Price(0.41, "UHR  ", "897", null,
+                  "USD", 1), "GLD32.4/4096/350"), new InstanceType("Silver 32 bit", new Price(0.265, "UHR  ", "897",
+                  null, "USD", 1), "SLV32.2/4096/350")),
+            ImmutableSet.<String> of("ifeE7VOzRG6SGvoDlRPTQw"),
+            HttpUtils
+                  .createUri("https://www-147.ibm.com/cloud/enterprise/ram.ws/RAMSecure/artifact/{F006D027-02CC-9D08-D389-6C729D939D44}/1.0/GettingStarted.html"),
+            "20001150", "SUSE Linux Enterprise Server 11 for x86 Base OS 32-bit with pay for use licensing");
 
       Image compare = handler.apply(new HttpResponse(200, "ok", Payloads
-            .newInputStreamPayload(ParseImageFromJsonTest.class
-                  .getResourceAsStream("/image.json"))));
+            .newInputStreamPayload(ParseImageFromJsonTest.class.getResourceAsStream("/image.json"))));
       assertEquals(compare, image);
    }
 }

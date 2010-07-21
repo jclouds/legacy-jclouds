@@ -36,18 +36,18 @@ public class Image {
       NEW, AVAILABLE, UNAVAILABLE, DELETED, CAPTURING;
       public static State fromValue(int v) {
          switch (v) {
-            case 0:
-               return NEW;
-            case 1:
-               return AVAILABLE;
-            case 2:
-               return UNAVAILABLE;
-            case 3:
-               return DELETED;
-            case 4:
-               return CAPTURING;
-            default:
-               throw new IllegalArgumentException("invalid state:" + v);
+         case 0:
+            return NEW;
+         case 1:
+            return AVAILABLE;
+         case 2:
+            return UNAVAILABLE;
+         case 3:
+            return DELETED;
+         case 4:
+            return CAPTURING;
+         default:
+            throw new IllegalArgumentException("invalid state:" + v);
          }
       }
    }
@@ -67,15 +67,36 @@ public class Image {
    private int state;
    private Visibility visibility;
    private String owner;
-   private String architecture;
    private String platform;
    private Date createdTime;
    private String location;
-   private Set<String> supportedInstanceTypes = Sets.newLinkedHashSet();
+   private Set<InstanceType> supportedInstanceTypes = Sets.newLinkedHashSet();
    private Set<String> productCodes = Sets.newLinkedHashSet();
    private URI documentation;
    private String id;
    private String description;
+
+   Image() {
+
+   }
+
+   public Image(String name, URI manifest, int state, Visibility visibility, String owner, String platform,
+         Date createdTime, String location, Set<InstanceType> supportedInstanceTypes, Set<String> productCodes,
+         URI documentation, String id, String description) {
+      this.name = name;
+      this.manifest = manifest;
+      this.state = state;
+      this.visibility = visibility;
+      this.owner = owner;
+      this.platform = platform;
+      this.createdTime = createdTime;
+      this.location = location;
+      this.supportedInstanceTypes = supportedInstanceTypes;
+      this.productCodes = productCodes;
+      this.documentation = documentation;
+      this.id = id;
+      this.description = description;
+   }
 
    public String getName() {
       return name;
@@ -117,14 +138,6 @@ public class Image {
       this.owner = owner;
    }
 
-   public String getArchitecture() {
-      return architecture;
-   }
-
-   public void setArchitecture(String architecture) {
-      this.architecture = architecture;
-   }
-
    public String getPlatform() {
       return platform;
    }
@@ -149,11 +162,11 @@ public class Image {
       this.location = location;
    }
 
-   public Set<String> getSupportedInstanceTypes() {
+   public Set<InstanceType> getSupportedInstanceTypes() {
       return supportedInstanceTypes;
    }
 
-   public void setSupportedInstanceTypes(Set<String> supportedInstanceTypes) {
+   public void setSupportedInstanceTypes(Set<InstanceType> supportedInstanceTypes) {
       this.supportedInstanceTypes = supportedInstanceTypes;
    }
 
@@ -193,7 +206,6 @@ public class Image {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((architecture == null) ? 0 : architecture.hashCode());
       result = prime * result + ((createdTime == null) ? 0 : createdTime.hashCode());
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((documentation == null) ? 0 : documentation.hashCode());
@@ -204,8 +216,7 @@ public class Image {
       result = prime * result + ((owner == null) ? 0 : owner.hashCode());
       result = prime * result + ((platform == null) ? 0 : platform.hashCode());
       result = prime * result + ((productCodes == null) ? 0 : productCodes.hashCode());
-      result = prime * result
-               + ((supportedInstanceTypes == null) ? 0 : supportedInstanceTypes.hashCode());
+      result = prime * result + ((supportedInstanceTypes == null) ? 0 : supportedInstanceTypes.hashCode());
       result = prime * result + ((visibility == null) ? 0 : visibility.hashCode());
       return result;
    }
@@ -219,11 +230,6 @@ public class Image {
       if (getClass() != obj.getClass())
          return false;
       Image other = (Image) obj;
-      if (architecture == null) {
-         if (other.architecture != null)
-            return false;
-      } else if (!architecture.equals(other.architecture))
-         return false;
       if (createdTime == null) {
          if (other.createdTime != null)
             return false;
@@ -289,9 +295,8 @@ public class Image {
 
    @Override
    public String toString() {
-      return "Image [id=" + id + ", name=" + name + ", location=" + location + ", manifest="
-               + manifest + ", platform=" + platform + ", state=" + getState()
-               + ", supportedInstanceTypes=" + supportedInstanceTypes + ", visibility="
-               + visibility + "]";
+      return "Image [id=" + id + ", name=" + name + ", location=" + location + ", manifest=" + manifest + ", platform="
+            + platform + ", state=" + getState() + ", supportedInstanceTypes=" + supportedInstanceTypes
+            + ", visibility=" + visibility + "]";
    }
 }
