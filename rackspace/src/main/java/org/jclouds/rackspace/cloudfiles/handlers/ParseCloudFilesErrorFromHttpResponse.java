@@ -35,27 +35,25 @@ public class ParseCloudFilesErrorFromHttpResponse implements HttpErrorHandler {
       Exception exception = new HttpResponseException(command, response);
       try {
          String content = parseErrorFromContentOrNull(command, response);
+         exception = content != null ? new HttpResponseException(command, response, content) : exception;
          switch (response.getStatusCode()) {
-            case 401:
-               exception = new AuthorizationException(command.getRequest(), content);
-               break;
-            case 404:
-               if (!command.getRequest().getMethod().equals("DELETE")) {
-                  String path = command.getRequest().getEndpoint().getPath();
-                  Matcher matcher = CONTAINER_PATH.matcher(path);
+         case 401:
+            exception = new AuthorizationException(command.getRequest(), content, exception);
+            break;
+         case 404:
+            if (!command.getRequest().getMethod().equals("DELETE")) {
+               String path = command.getRequest().getEndpoint().getPath();
+               Matcher matcher = CONTAINER_PATH.matcher(path);
+               if (matcher.find()) {
+                  exception = new ContainerNotFoundException(matcher.group(1), content);
+               } else {
+                  matcher = CONTAINER_KEY_PATH.matcher(path);
                   if (matcher.find()) {
-                     exception = new ContainerNotFoundException(matcher.group(1), content);
-                  } else {
-                     matcher = CONTAINER_KEY_PATH.matcher(path);
-                     if (matcher.find()) {
-                        exception = new KeyNotFoundException(matcher.group(1), matcher.group(2),
-                                 content);
-                     }
+                     exception = new KeyNotFoundException(matcher.group(1), matcher.group(2), content);
                   }
                }
-               break;
-            default:
-               exception = new HttpResponseException(command, response, content);
+            }
+            break;
          }
       } finally {
          releasePayload(response);

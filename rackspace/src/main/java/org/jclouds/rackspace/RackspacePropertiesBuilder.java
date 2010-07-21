@@ -34,8 +34,8 @@ public class RackspacePropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_ENDPOINT, "https://api.mosso.com");
-      properties.setProperty(PROPERTY_API_VERSION, "TODO");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://auth.api.rackspacecloud.com");
+      properties.setProperty(PROPERTY_API_VERSION, RackspaceAuthAsyncClient.VERSION);
       return properties;
    }
 

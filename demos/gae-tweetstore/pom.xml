@@ -39,7 +39,7 @@
 		<appengine.applicationid>jclouds-tweetstore</appengine.applicationid>
 		<devappserver.address>localhost</devappserver.address>
 		<devappserver.port>8088</devappserver.port>
-		<jclouds.tweetstore.blobstores>googlestorage,s3,azureblob</jclouds.tweetstore.blobstores>
+		<jclouds.tweetstore.blobstores>cloudfiles,googlestorage,s3,azureblob</jclouds.tweetstore.blobstores>
 		<jclouds.tweetstore.container>jclouds-tweetstore</jclouds.tweetstore.container>
 	</properties>
 

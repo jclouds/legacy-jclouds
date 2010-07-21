@@ -46,7 +46,7 @@ public class RackspaceAuthAsyncClientTest extends RestClientTest<RackspaceAuthAs
       Method method = RackspaceAuthAsyncClient.class.getMethod("authenticate", String.class, String.class);
       HttpRequest httpRequest = processor.createRequest(method, "foo", "bar");
 
-      assertRequestLineEquals(httpRequest, "GET http://localhost:8080/auth HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "GET http://localhost:8080/v1.0 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "X-Auth-Key: bar\nX-Auth-User: foo\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
