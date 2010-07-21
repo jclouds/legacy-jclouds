@@ -41,6 +41,7 @@
         <appengine.applicationid>jclouds-tweetstore-spring</appengine.applicationid>
         <devappserver.address>localhost</devappserver.address>
         <devappserver.port>8088</devappserver.port>
+        <jclouds.tweetstore.blobstores>googlestorage,s3,azureblob</jclouds.tweetstore.blobstores>
         <jclouds.tweetstore.container>jclouds-tweetstore-spring</jclouds.tweetstore.container>
     </properties>
 
@@ -168,12 +169,12 @@
         <dependency>
             <groupId>com.google.appengine</groupId>
             <artifactId>appengine-api-labs</artifactId>
-            <version>1.3.2</version>
+            <version>1.3.5</version>
         </dependency>
         <dependency>
             <groupId>com.google.appengine</groupId>
             <artifactId>appengine-tools-api</artifactId>
-            <version>1.3.2</version>
+            <version>1.3.5</version>
             <scope>system</scope>
             <systemPath>${appengine.home}/lib/appengine-tools-api.jar</systemPath>
         </dependency>
@@ -304,6 +305,10 @@
                                         <property>
                                             <name>devappserver.port</name>
                                             <value>${devappserver.port}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.tweetstore.blobstores</name>
+                                            <value>${jclouds.tweetstore.blobstores}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.tweetstore.container</name>

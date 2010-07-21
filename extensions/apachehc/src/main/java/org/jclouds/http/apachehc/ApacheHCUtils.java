@@ -97,8 +97,7 @@ public class ApacheHCUtils {
    }
 
    public static void addEntityForContent(HttpEntityEnclosingRequest apacheRequest, Payload payload) {
-      payload = payload instanceof DelegatingPayload ? DelegatingPayload.class.cast(payload)
-               .getDelegate() : payload;
+      payload = payload instanceof DelegatingPayload ? DelegatingPayload.class.cast(payload).getDelegate() : payload;
       if (payload instanceof StringPayload) {
          StringEntity nStringEntity = null;
          try {
@@ -109,17 +108,15 @@ public class ApacheHCUtils {
          nStringEntity.setContentType(payload.getContentType());
          apacheRequest.setEntity(nStringEntity);
       } else if (payload instanceof FilePayload) {
-         apacheRequest.setEntity(new FileEntity((File) payload.getRawContent(), payload
-                  .getContentType()));
+         apacheRequest.setEntity(new FileEntity((File) payload.getRawContent(), payload.getContentType()));
       } else if (payload instanceof ByteArrayPayload) {
          ByteArrayEntity Entity = new ByteArrayEntity((byte[]) payload.getRawContent());
          Entity.setContentType(payload.getContentType());
          apacheRequest.setEntity(Entity);
       } else {
          InputStream inputStream = payload.getInput();
-         if (!new Long(1).equals(payload.getContentLength()))
-            throw new IllegalArgumentException(
-                     "you must specify size when content is an InputStream");
+         if (payload.getContentLength() == null)
+            throw new IllegalArgumentException("you must specify size when content is an InputStream");
          InputStreamEntity Entity = new InputStreamEntity(inputStream, payload.getContentLength());
          Entity.setContentType(payload.getContentType());
          apacheRequest.setEntity(Entity);

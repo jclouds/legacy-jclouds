@@ -28,7 +28,7 @@ attempting to run 'mvn -Plive install'
         <activeByDefault>true</activeByDefault>
       </activation>
       <properties>
-        <appengine.home>/path/to/appengine-java-sdk-1.2.5</appengine.home>
+        <appengine.home>/path/to/appengine-java-sdk-1.3.5</appengine.home>
         <appengine.applicationid>yourappid</appengine.applicationid>
       </properties>
     </profile>

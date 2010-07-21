@@ -34,6 +34,7 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.io.Payload;
 
 import com.google.appengine.api.urlfetch.FetchOptions;
 import com.google.appengine.api.urlfetch.HTTPHeader;
@@ -48,7 +49,7 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
-   public static final String USER_AGENT = "jclouds/1.0 urlfetch/1.3.2";
+   public static final String USER_AGENT = "jclouds/1.0 urlfetch/1.3.5";
 
    private final EncryptionService encryptionService;
 
@@ -58,8 +59,8 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
    }
 
    /**
-    * byte [] content is replayable and the only content type supportable by GAE. As such, we
-    * convert the original request content to a byte array.
+    * byte [] content is replayable and the only content type supportable by
+    * GAE. As such, we convert the original request content to a byte array.
     */
    @Override
    public HTTPRequest apply(HttpRequest request) {
@@ -73,8 +74,7 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
       FetchOptions options = disallowTruncate();
       options.doNotFollowRedirects();
 
-      HTTPRequest gaeRequest = new HTTPRequest(url, HTTPMethod.valueOf(request.getMethod()
-               .toString()), options);
+      HTTPRequest gaeRequest = new HTTPRequest(url, HTTPMethod.valueOf(request.getMethod().toString()), options);
 
       for (String header : request.getHeaders().keySet()) {
          for (String value : request.getHeaders().get(header)) {
@@ -84,15 +84,21 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
       }
       gaeRequest.addHeader(new HTTPHeader(HttpHeaders.USER_AGENT, USER_AGENT));
       /**
-       * byte [] content is replayable and the only content type supportable by GAE. As such, we
-       * convert the original request content to a byte array.
+       * byte [] content is replayable and the only content type supportable by
+       * GAE. As such, we convert the original request content to a byte array.
        */
       if (request.getPayload() != null) {
          InputStream input = request.getPayload().getInput();
          try {
             byte[] array = toByteArray(input);
-            if (!request.getPayload().isRepeatable())
+            if (!request.getPayload().isRepeatable()) {
+               Payload oldPayload = request.getPayload();
                request.setPayload(array);
+               if (oldPayload.getContentMD5() != null)
+                  request.getPayload().setContentMD5(oldPayload.getContentMD5());
+               if (oldPayload.getContentType() != null)
+                  request.getPayload().setContentType(oldPayload.getContentType());
+            }
             gaeRequest.setPayload(array);
          } catch (IOException e) {
             Throwables.propagate(e);
@@ -100,16 +106,15 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
             closeQuietly(input);
          }
          if (request.getPayload().getContentMD5() != null)
-            gaeRequest.addHeader(new HTTPHeader("Content-MD5", encryptionService.base64(request
-                     .getPayload().getContentMD5())));
-
-         Long length = checkNotNull(request.getPayload().getContentLength(),
-                  "payload.getContentLength");
-         gaeRequest.addHeader(new HTTPHeader(HttpHeaders.CONTENT_LENGTH, length.toString()));
+            gaeRequest.setHeader(new HTTPHeader("Content-MD5", encryptionService.base64(request.getPayload()
+                  .getContentMD5())));
+         if (request.getPayload().getContentType() != null)
+            gaeRequest.setHeader(new HTTPHeader(HttpHeaders.CONTENT_TYPE, request.getPayload().getContentType()));
+         Long length = checkNotNull(request.getPayload().getContentLength(), "payload.getContentLength");
+         gaeRequest.setHeader(new HTTPHeader(HttpHeaders.CONTENT_LENGTH, length.toString()));
       } else {
-         gaeRequest.addHeader(new HTTPHeader(HttpHeaders.CONTENT_LENGTH, "0"));
+         gaeRequest.setHeader(new HTTPHeader(HttpHeaders.CONTENT_LENGTH, "0"));
       }
       return gaeRequest;
    }
-
 }

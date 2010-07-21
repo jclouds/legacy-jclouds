@@ -54,7 +54,7 @@ public class GoogleDevServer {
 
         });
         server.start();
-        Thread.sleep(15 * 1000);
+        Thread.sleep(30 * 1000);
     }
 
     @SuppressWarnings("deprecation")

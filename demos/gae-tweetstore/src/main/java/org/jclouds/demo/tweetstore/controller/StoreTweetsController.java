@@ -63,8 +63,8 @@ public class StoreTweetsController extends HttpServlet {
 
       public Blob apply(Status from) {
          Blob to = map.newBlob(from.getId() + "");
-         to.getMetadata().setContentType(MediaType.TEXT_PLAIN);
          to.setPayload(from.getText());
+         to.getPayload().setContentType(MediaType.TEXT_PLAIN);
          to.getMetadata().getUserMetadata().put(TweetStoreConstants.SENDER_NAME, from.getUser().getScreenName());
          return to;
       }
@@ -83,7 +83,7 @@ public class StoreTweetsController extends HttpServlet {
    @Inject
    @VisibleForTesting
    public StoreTweetsController(Map<String, BlobStoreContext> contexts,
-            @Named(TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER) String container, TwitterClient client) {
+         @Named(TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER) String container, TwitterClient client) {
       this.container = container;
       this.contexts = contexts;
       this.client = client;
@@ -92,7 +92,7 @@ public class StoreTweetsController extends HttpServlet {
    @VisibleForTesting
    public void addMyTweets(String contextName, Set<Status> allAboutMe) {
       BlobStoreContext context = checkNotNull(contexts.get(contextName), "no context for " + contextName + " in "
-               + contexts.keySet());
+            + contexts.keySet());
       BlobMap map = context.createBlobMap(container);
       for (Status status : allAboutMe) {
          Blob blob = null;
@@ -110,7 +110,7 @@ public class StoreTweetsController extends HttpServlet {
    @Override
    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
       if (request.getHeader("X-AppEngine-QueueName") != null
-               && request.getHeader("X-AppEngine-QueueName").equals("twitter")) {
+            && request.getHeader("X-AppEngine-QueueName").equals("twitter")) {
          try {
             String contextName = checkNotNull(request.getHeader("context"), "missing header context");
             logger.info("retrieving tweets");

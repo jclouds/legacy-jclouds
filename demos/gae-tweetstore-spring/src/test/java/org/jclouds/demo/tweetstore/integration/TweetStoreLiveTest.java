@@ -49,13 +49,14 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.inject.Module;
 
 /**
- * Starts up the Google App Engine for Java Development environment and deploys an application which
- * tests accesses twitter and blobstores.
+ * Starts up the Google App Engine for Java Development environment and deploys
+ * an application which tests accesses twitter and blobstores.
  * 
  * @author Adrian Cole
  */
@@ -67,7 +68,9 @@ public class TweetStoreLiveTest {
    private Map<String, BlobStoreContext> contexts;
    private String container;
 
-   private static final Iterable<String> blobstores = ImmutableSet.of("cloudfiles", "googlestorage", "s3", "azureblob");
+   private static final String blobs = System.getProperty("jclouds.tweetstore.blobstores",
+         "cloudfiles,googlestorage,s3,azureblob");
+   private static final Iterable<String> blobstores = Splitter.on(',').split(blobs);
    private static final Properties props = new Properties();
 
    @BeforeTest
@@ -75,7 +78,7 @@ public class TweetStoreLiveTest {
       container = checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER));
 
       props.setProperty(PROPERTY_TWEETSTORE_CONTAINER, checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER),
-               PROPERTY_TWEETSTORE_CONTAINER));
+            PROPERTY_TWEETSTORE_CONTAINER));
 
       props.setProperty(SpringServletConfig.PROPERTY_BLOBSTORE_CONTEXTS, Joiner.on(',').join(blobstores));
 
@@ -95,7 +98,7 @@ public class TweetStoreLiveTest {
       }
 
       RestContext<TwitterClient, TwitterAsyncClient> twitterContext = new RestContextFactory().createContext("twitter",
-               wiring, props);
+            wiring, props);
       StoreTweetsController controller = new StoreTweetsController(contexts, container, twitterContext.getApi());
 
       Set<Status> statuses = twitterContext.getApi().getMyMentions();
@@ -104,7 +107,7 @@ public class TweetStoreLiveTest {
       for (BlobStoreContext context : contexts.values()) {
          if (context.getBlobStore().containerExists(container)) {
             System.err.printf("deleting container %s at %s%n", container, context.getProviderSpecificContext()
-                     .getEndpoint());
+                  .getEndpoint());
             context.getBlobStore().deleteContainer(container);
             deleted = true;
          }
@@ -115,7 +118,7 @@ public class TweetStoreLiveTest {
       }
       for (BlobStoreContext context : contexts.values()) {
          System.err.printf("creating container %s at %s%n", container, context.getProviderSpecificContext()
-                  .getEndpoint());
+               .getEndpoint());
          context.getBlobStore().createContainerInLocation(null, container);
       }
       if (deleted) {
@@ -134,15 +137,15 @@ public class TweetStoreLiveTest {
       String twitterCredential = checkNotNull(System.getProperty("twitter.credential"), "twitter.credential");
 
       props.putAll(RestContextFactory.toProperties(contextSpec("twitter", "http://twitter.com", "1", twitterIdentity,
-               twitterCredential, TwitterClient.class, TwitterAsyncClient.class)));
+            twitterCredential, TwitterClient.class, TwitterAsyncClient.class)));
    }
 
    private void addCredentialsForBlobStores(Properties props) {
       for (String provider : blobstores) {
          props.setProperty(provider + ".identity", checkNotNull(System.getProperty(provider + ".identity"), provider
-                  + ".identity"));
+               + ".identity"));
          props.setProperty(provider + ".credential", checkNotNull(System.getProperty(provider + ".credential"),
-                  provider + ".credential"));
+               provider + ".credential"));
       }
    }
 
@@ -170,7 +173,7 @@ public class TweetStoreLiveTest {
    public void testPrimeContainers() throws IOException, InterruptedException {
       URL gurl = new URL(url, "/store/do");
       // WATCH THIS, you need to add a context each time
-      for (String context : new String[] { "cloudfiles", "s3", "azureblob" }) {
+      for (String context : blobstores) {
          System.out.println("storing at context: " + context);
          HttpURLConnection connection = (HttpURLConnection) gurl.openConnection();
          connection.addRequestProperty("X-AppEngine-QueueName", "twitter");

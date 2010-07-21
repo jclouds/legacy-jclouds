@@ -37,6 +37,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
+import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.repackaged.com.google.common.base.Charsets;
 import com.google.common.io.Files;
@@ -84,9 +85,10 @@ public class ConvertToGaeRequestTest {
       HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
       HTTPRequest gaeRequest = req.apply(request);
       assert gaeRequest.getPayload() == null;
-      assertEquals(gaeRequest.getHeaders().size(), 2);// content length, user agent
+      assertEquals(gaeRequest.getHeaders().size(), 2);// content length, user
+      // agent
       assertEquals(gaeRequest.getHeaders().get(0).getName(), HttpHeaders.USER_AGENT);
-      assertEquals(gaeRequest.getHeaders().get(0).getValue(), "jclouds/1.0 urlfetch/1.3.2");
+      assertEquals(gaeRequest.getHeaders().get(0).getValue(), "jclouds/1.0 urlfetch/1.3.5");
    }
 
    @Test
@@ -129,15 +131,16 @@ public class ConvertToGaeRequestTest {
    }
 
    private void testHoot(HttpRequest request) throws IOException {
-      request.getHeaders().put(HttpHeaders.CONTENT_TYPE, "text/plain");
+      request.getPayload().setContentType("text/plain");
+      request.getPayload().setContentMD5(new byte[] { 1, 2, 3, 4 });
       HTTPRequest gaeRequest = req.apply(request);
-      try {
-         assertEquals(gaeRequest.getHeaders().get(0).getName(), HttpHeaders.CONTENT_TYPE);
-         assertEquals(gaeRequest.getHeaders().get(0).getValue(), "text/plain");
-      } catch (AssertionError e) {
-         assertEquals(gaeRequest.getHeaders().get(1).getName(), HttpHeaders.CONTENT_TYPE);
-         assertEquals(gaeRequest.getHeaders().get(1).getValue(), "text/plain");
+
+      StringBuilder builder = new StringBuilder();
+      for (HTTPHeader header : gaeRequest.getHeaders()) {
+         builder.append(header.getName()).append(": ").append(header.getValue()).append("\n");
       }
+      assertEquals(builder.toString(),
+            "User-Agent: jclouds/1.0 urlfetch/1.3.5\nContent-MD5: AQIDBA==\nContent-Type: text/plain\nContent-Length: 5\n");
       assertEquals(new String(gaeRequest.getPayload()), "hoot!");
    }
 }

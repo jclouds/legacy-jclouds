@@ -101,7 +101,7 @@
         <dependency>
             <groupId>com.google.appengine</groupId>
             <artifactId>appengine-tools-api</artifactId>
-            <version>1.3.2</version>
+            <version>1.3.5</version>
             <scope>system</scope>
             <systemPath>${appengine.home}/lib/appengine-tools-api.jar</systemPath>
         </dependency>
