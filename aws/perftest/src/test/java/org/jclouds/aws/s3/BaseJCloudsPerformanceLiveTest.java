@@ -18,7 +18,8 @@
  */
 package org.jclouds.aws.s3;
 
-import static org.jclouds.Constants.*;
+import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
+import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT;
 import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
@@ -30,7 +31,7 @@ import java.util.concurrent.Future;
 
 import org.jclouds.aws.s3.domain.S3Object;
 
-import com.google.appengine.repackaged.com.google.common.base.Throwables;
+import com.google.common.base.Throwables;
 
 /**
  * // TODO: Adrian: Document this!
@@ -57,12 +58,10 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
    // }
    protected void overrideWithSysPropertiesAndPrint(Properties overrides, String contextName) {
       overrides.putAll(System.getProperties());
-      System.out.printf(
-               "%s: loopCount(%s), perContext(%s), perHost(%s),ioWorkers(%s), userThreads(%s)%n",
-               contextName, loopCount, overrides.getProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT),
-               overrides.getProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST), overrides
-                        .getProperty(PROPERTY_IO_WORKER_THREADS), overrides
-                        .getProperty(PROPERTY_USER_THREADS));
+      System.out.printf("%s: loopCount(%s), perContext(%s), perHost(%s),ioWorkers(%s), userThreads(%s)%n", contextName,
+            loopCount, overrides.getProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT), overrides
+                  .getProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST), overrides.getProperty(PROPERTY_IO_WORKER_THREADS),
+            overrides.getProperty(PROPERTY_USER_THREADS));
    }
 
    @Override
@@ -90,16 +89,15 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
    }
 
    @Override
-   protected Future<?> putInputStream(String bucket, String key, InputStream data,
-            String contentType) {
+   protected Future<?> putInputStream(String bucket, String key, InputStream data, String contentType) {
       S3Object object = newObject(key);
-      object.getMetadata().setContentType(contentType);
       object.setPayload(data);
       try {
-         object.setContentLength(new Long(data.available()));
+         object.getPayload().setContentLength(new Long(data.available()));
       } catch (IOException e) {
          Throwables.propagate(e);
       }
+      object.getPayload().setContentType(contentType);
       return getApi().putObject(bucket, object);
    }
 

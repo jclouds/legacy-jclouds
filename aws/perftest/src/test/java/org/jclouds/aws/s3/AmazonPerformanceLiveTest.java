@@ -18,14 +18,12 @@
  */
 package org.jclouds.aws.s3;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.jets3t.service.S3ServiceException;
@@ -33,7 +31,11 @@ import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.amazon.s3.AWSAuthConnection;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 
 /**
  * Runs operations that amazon s3 sample code is capable of performing.
@@ -42,40 +44,17 @@ import com.amazon.s3.AWSAuthConnection;
  */
 @Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "perftest.AmazonPerformanceLiveTest", groups = { "live" })
 public class AmazonPerformanceLiveTest extends BasePerformanceLiveTest {
-   private AWSAuthConnection amzClient;
+   private AmazonS3 s3;
 
    @BeforeClass(groups = { "live" }, dependsOnMethods = "setUpResourcesOnThisThread")
    protected void createLiveS3Context(ITestContext testContext) throws S3ServiceException {
-      if (testContext.getAttribute("jclouds.test.user") != null) {
-         amzClient = new AWSAuthConnection((String) testContext.getAttribute("jclouds.test.user"),
-                  (String) testContext.getAttribute("jclouds.test.key"), false);
+      exec = Executors.newCachedThreadPool();
+      if (testContext.getAttribute("jclouds.test.identity") != null) {
+         s3 = new AmazonS3Client(new BasicAWSCredentials((String) testContext.getAttribute("jclouds.test.identity"),
+               (String) testContext.getAttribute("jclouds.test.credential")));
       } else {
          throw new RuntimeException("not configured properly");
       }
-   }
-
-   @Override
-   @Test(enabled = false)
-   public void testPutFileSerial() throws Exception {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   @Test(enabled = false)
-   public void testPutFileParallel() throws InterruptedException, ExecutionException {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   @Test(enabled = false)
-   public void testPutInputStreamSerial() throws Exception {
-      throw new UnsupportedOperationException();
-   }
-
-   @Override
-   @Test(enabled = false)
-   public void testPutInputStreamParallel() throws InterruptedException, ExecutionException {
-      throw new UnsupportedOperationException();
    }
 
    @Override
@@ -92,28 +71,45 @@ public class AmazonPerformanceLiveTest extends BasePerformanceLiveTest {
 
    @SuppressWarnings("unchecked")
    @Override
-   protected Future<?> putByteArray(final String bucket, final String key, byte[] data,
-            String contentType) {
-      final com.amazon.s3.S3Object object = new com.amazon.s3.S3Object(data, null);
-      final Map<String, List<String>> headers = new TreeMap<String, List<String>>();
-      headers.put("Content-Type", Arrays.asList(new String[] { contentType }));
+   protected Future<?> putByteArray(final String bucket, final String key, final byte[] data, final String contentType) {
+
       return exec.submit(new Callable() {
          @Override
          public Object call() throws Exception {
-            return amzClient.put(bucket, key, object, headers).connection.getResponseMessage();
+            ObjectMetadata md = new ObjectMetadata();
+            md.setContentType(contentType);
+            md.setContentLength(data.length);
+            return s3.putObject(new PutObjectRequest(bucket, key, new ByteArrayInputStream(data), md)).getETag();
          }
       });
    }
 
+   @SuppressWarnings("unchecked")
    @Override
-   protected Future<?> putFile(String bucket, String key, File data, String contentType) {
-      throw new UnsupportedOperationException();
+   protected Future<?> putFile(final String bucket, final String key, final File data, String contentType) {
+
+      return exec.submit(new Callable() {
+         @Override
+         public Object call() throws Exception {
+            return s3.putObject(new PutObjectRequest(bucket, key, data)).getETag();
+         }
+      });
    }
 
+   @SuppressWarnings("unchecked")
    @Override
-   protected Future<?> putInputStream(String bucket, String key, InputStream data,
-            String contentType) {
-      throw new UnsupportedOperationException();
+   protected Future<?> putInputStream(final String bucket, final String key, final InputStream data,
+         final String contentType) {
+
+      return exec.submit(new Callable() {
+         @Override
+         public Object call() throws Exception {
+            ObjectMetadata md = new ObjectMetadata();
+            md.setContentType(contentType);
+            md.setContentLength(data.available());
+            return s3.putObject(new PutObjectRequest(bucket, key, data, md)).getETag();
+         }
+      });
    }
 
    @Override

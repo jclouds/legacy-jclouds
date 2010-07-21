@@ -20,24 +20,23 @@ package org.jclouds.aws.s3;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.testng.v6.Maps;
 
-import com.google.appengine.tools.development.ApiProxyLocalImpl;
-import com.google.apphosting.api.ApiProxy;
+import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.appengine.tools.development.testing.LocalURLFetchServiceTestConfig;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -50,8 +49,7 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTes
 
    @Override
    @Test(enabled = false)
-   public void testPutBytesParallel() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testPutBytesParallel() throws InterruptedException, ExecutionException, TimeoutException {
       throw new UnsupportedOperationException();
    }
 
@@ -63,8 +61,7 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTes
 
    @Override
    @Test(enabled = false)
-   public void testPutFileParallel() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testPutFileParallel() throws InterruptedException, ExecutionException, TimeoutException {
       throw new UnsupportedOperationException();
    }
 
@@ -76,8 +73,7 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTes
 
    @Override
    @Test(enabled = false)
-   public void testPutInputStreamParallel() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testPutInputStreamParallel() throws InterruptedException, ExecutionException, TimeoutException {
       throw new UnsupportedOperationException();
    }
 
@@ -89,8 +85,7 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTes
 
    @Override
    @Test(enabled = false)
-   public void testPutStringParallel() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testPutStringParallel() throws InterruptedException, ExecutionException, TimeoutException {
       throw new UnsupportedOperationException();
    }
 
@@ -103,7 +98,8 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTes
    public JCloudsGaePerformanceLiveTest() {
       super();
       // otherwise, we'll get timeout errors
-      // TODO sdk 1.2.3 should give the ability to set a higher timeout then 5 seconds allowing this
+      // TODO sdk 1.2.3 should give the ability to set a higher timeout then 5
+      // seconds allowing this
       // to be removed
       loopCount = 5;
    }
@@ -121,8 +117,7 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTes
    }
 
    @Override
-   protected Future<?> putInputStream(String bucket, String key, InputStream data,
-            String contentType) {
+   protected Future<?> putInputStream(String bucket, String key, InputStream data, String contentType) {
       setupApiProxy();
       return super.putInputStream(bucket, key, data, contentType);
    }
@@ -135,64 +130,20 @@ public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTes
 
    @BeforeMethod
    void setupApiProxy() {
-      ApiProxy.setEnvironmentForCurrentThread(new TestEnvironment());
-      ApiProxy.setDelegate(new ApiProxyLocalImpl(new File(".")) {
-      });
-   }
-
-   class TestEnvironment implements ApiProxy.Environment {
-      public String getAppId() {
-         return "Unit Tests";
-      }
-
-      public String getVersionId() {
-         return "1.0";
-      }
-
-      public void setDefaultNamespace(String s) {
-      }
-
-      public String getRequestNamespace() {
-         return null;
-      }
-
-      public String getDefaultNamespace() {
-         return null;
-      }
-
-      public String getAuthDomain() {
-         return null;
-      }
-
-      public boolean isLoggedIn() {
-         return false;
-      }
-
-      public String getEmail() {
-         return null;
-      }
-
-      public boolean isAdmin() {
-         return false;
-      }
-
-      public Map<String, Object> getAttributes() {
-         return Maps.newHashMap();
-      }
+      new LocalServiceTestHelper(new LocalURLFetchServiceTestConfig()).setUp();
    }
 
    private BlobStoreContext perfContext;
 
    @BeforeClass(groups = { "live" })
    void setup() {
-      String accesskeyid = System.getProperty("jclouds.test.user");
-      String secretkey = System.getProperty("jclouds.test.key");
+      String accesskeyid = System.getProperty("jclouds.test.identity");
+      String secretkey = System.getProperty("jclouds.test.credential");
       Properties overrides = new Properties();
       String contextName = "gae";
       overrideWithSysPropertiesAndPrint(overrides, contextName);
-      this.perfContext = S3ContextFactory.createContext(overrides, accesskeyid, secretkey,
-               new NullLoggingModule(), new EnterpriseConfigurationModule(),
-               new GoogleAppEngineConfigurationModule());
+      context = new BlobStoreContextFactory().createContext("s3", accesskeyid, secretkey, ImmutableSet.of(
+            new NullLoggingModule(), new GoogleAppEngineConfigurationModule()), overrides);
    }
 
    @AfterClass(groups = { "live" })

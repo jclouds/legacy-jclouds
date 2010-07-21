@@ -28,6 +28,7 @@ import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
 import org.jclouds.http.apachehc.config.ApacheHCHttpCommandExecutorServiceModule;
 import org.jclouds.logging.config.NullLoggingModule;
@@ -35,15 +36,17 @@ import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-@Test(sequential = true, testName = "perftest.JCloudsNioPerformanceLiveTest", groups = { "live" })
+import com.google.common.collect.ImmutableSet;
+
+@Test(sequential = true, testName = "perftest.JCloudsApacheHCPerformanceLiveTest", groups = { "live" })
 public class JCloudsApacheHCPerformanceLiveTest extends BaseJCloudsPerformanceLiveTest {
 
    @Override
    @BeforeClass(groups = { "integration", "live" })
    public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
       exec = Executors.newCachedThreadPool();
-      String accesskeyid = System.getProperty("jclouds.test.user");
-      String secretkey = System.getProperty("jclouds.test.key");
+      String accesskeyid = System.getProperty("jclouds.test.identity");
+      String secretkey = System.getProperty("jclouds.test.credential");
       Properties overrides = new Properties();
       overrides.setProperty(PROPERTY_SO_TIMEOUT, 5000 + "");
       overrides.setProperty(PROPERTY_CONNECTION_TIMEOUT, 5000 + "");
@@ -53,9 +56,9 @@ public class JCloudsApacheHCPerformanceLiveTest extends BaseJCloudsPerformanceLi
       overrides.setProperty(PROPERTY_USER_THREADS, 0 + "");
       String contextName = "enterprise";
       overrideWithSysPropertiesAndPrint(overrides, contextName);
-      context = S3ContextFactory.createContext(overrides, accesskeyid, secretkey,
-               new NullLoggingModule(), new ApacheHCHttpCommandExecutorServiceModule(),
-               new EnterpriseConfigurationModule());
+      context = new BlobStoreContextFactory().createContext("s3", accesskeyid, secretkey, ImmutableSet.of(
+            new NullLoggingModule(), new ApacheHCHttpCommandExecutorServiceModule(),
+            new EnterpriseConfigurationModule()), overrides);
    }
 
    @Override

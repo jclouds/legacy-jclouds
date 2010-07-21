@@ -50,7 +50,7 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
       containerCount = 1;
    }
    protected int timeoutSeconds = 15;
-   protected int loopCount = 1000;
+   protected int loopCount = Integer.parseInt(System.getProperty("jclouds.test.loopcount", "1000"));
    protected ExecutorService exec;
    protected Logger logger = Logger.NULL;;
 
@@ -65,8 +65,7 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
    }
 
    @Test
-   public void testPutBytesParallel() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testPutBytesParallel() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = getContainerName();
       try {
          doParallel(new PutBytesFuture(bucketName), loopCount, bucketName);
@@ -86,8 +85,7 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
    }
 
    @Test
-   public void testPutFileParallel() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testPutFileParallel() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = getContainerName();
       try {
          doParallel(new PutFileFuture(bucketName), loopCount, bucketName);
@@ -107,8 +105,7 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
    }
 
    @Test
-   public void testPutInputStreamParallel() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testPutInputStreamParallel() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = getContainerName();
       try {
          doParallel(new PutInputStreamFuture(bucketName), loopCount, bucketName);
@@ -128,8 +125,7 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
    }
 
    @Test
-   public void testPutStringParallel() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testPutStringParallel() throws InterruptedException, ExecutionException, TimeoutException {
       String bucketName = getContainerName();
       try {
          doParallel(new PutStringFuture(bucketName), loopCount, bucketName);
@@ -138,19 +134,18 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
       }
    }
 
-   private void doSerial(Provider<ListenableFuture<?>> provider, int loopCount) throws Exception,
-            ExecutionException {
+   private void doSerial(Provider<ListenableFuture<?>> provider, int loopCount) throws Exception, ExecutionException {
       for (int i = 0; i < loopCount; i++)
          assert provider.get().get() != null;
    }
 
-   private void doParallel(Provider<ListenableFuture<?>> provider, int loopCount,
-            String containerName) throws InterruptedException, ExecutionException, TimeoutException {
+   private void doParallel(Provider<ListenableFuture<?>> provider, int loopCount, String containerName)
+         throws InterruptedException, ExecutionException, TimeoutException {
       Map<Integer, ListenableFuture<?>> responses = Maps.newHashMap();
       for (int i = 0; i < loopCount; i++)
          responses.put(i, provider.get());
       assert awaitCompletion(responses, exec, null, logger,
-               String.format("putting into containerName: %s", containerName)).size() == 0;
+            String.format("putting into containerName: %s", containerName)).size() == 0;
    }
 
    class PutBytesFuture implements Provider<ListenableFuture<?>> {
@@ -164,7 +159,7 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
 
       public ListenableFuture<?> get() {
          return Futures.makeListenable(putByteArray(bucketName, key.getAndIncrement() + "", test,
-                  "application/octetstring"));
+               "application/octetstring"));
       }
    }
 
@@ -178,8 +173,7 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
       }
 
       public ListenableFuture<?> get() {
-         return Futures.makeListenable(putFile(bucketName, key.getAndIncrement() + "", file,
-                  "text/xml"));
+         return Futures.makeListenable(putFile(bucketName, key.getAndIncrement() + "", file, "text/xml"));
       }
    }
 
@@ -195,8 +189,8 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
       @Override
       public ListenableFuture<?> get() {
 
-         return Futures.makeListenable(putInputStream(bucketName, key.getAndIncrement() + "",
-                  new ByteArrayInputStream(test), "application/octetstring"));
+         return Futures.makeListenable(putInputStream(bucketName, key.getAndIncrement() + "", new ByteArrayInputStream(
+               test), "application/octetstring"));
 
       }
    }
@@ -211,18 +205,15 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
       }
 
       public ListenableFuture<?> get() {
-         return Futures.makeListenable(putString(bucketName, key.getAndIncrement() + "",
-                  testString, "text/plain"));
+         return Futures.makeListenable(putString(bucketName, key.getAndIncrement() + "", testString, "text/plain"));
       }
    }
 
-   protected abstract Future<?> putByteArray(String bucket, String key, byte[] data,
-            String contentType);
+   protected abstract Future<?> putByteArray(String bucket, String key, byte[] data, String contentType);
 
    protected abstract Future<?> putFile(String bucket, String key, File data, String contentType);
 
-   protected abstract Future<?> putInputStream(String bucket, String key, InputStream data,
-            String contentType);
+   protected abstract Future<?> putInputStream(String bucket, String key, InputStream data, String contentType);
 
    protected abstract Future<?> putString(String bucket, String key, String data, String contentType);
 

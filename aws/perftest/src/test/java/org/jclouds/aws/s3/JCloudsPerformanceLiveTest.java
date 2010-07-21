@@ -26,11 +26,14 @@ import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 import java.util.Properties;
 import java.util.concurrent.Executors;
 
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests the default JClouds client.
@@ -45,8 +48,8 @@ public class JCloudsPerformanceLiveTest extends BaseJCloudsPerformanceLiveTest {
    @BeforeClass(groups = { "integration", "live" })
    public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
       exec = Executors.newCachedThreadPool();
-      String accesskeyid = System.getProperty("jclouds.test.user");
-      String secretkey = System.getProperty("jclouds.test.key");
+      String accesskeyid = System.getProperty("jclouds.test.identity");
+      String secretkey = System.getProperty("jclouds.test.credential");
       Properties overrides = new Properties();
       overrides.setProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT, 50 + "");
       overrides.setProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST, 30 + "");
@@ -54,8 +57,8 @@ public class JCloudsPerformanceLiveTest extends BaseJCloudsPerformanceLiveTest {
       overrides.setProperty(PROPERTY_USER_THREADS, 0 + "");
       String contextName = "standard";
       overrideWithSysPropertiesAndPrint(overrides, contextName);
-      context = S3ContextFactory.createContext(overrides, accesskeyid, secretkey,
-               new NullLoggingModule(), new EnterpriseConfigurationModule());
+      context = new BlobStoreContextFactory().createContext("s3", accesskeyid, secretkey, ImmutableSet.of(
+            new NullLoggingModule(), new EnterpriseConfigurationModule()), overrides);
    }
 
    @Override

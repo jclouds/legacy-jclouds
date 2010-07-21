@@ -69,10 +69,10 @@ public class Jets3tPerformanceLiveTest extends BasePerformanceLiveTest {
 
    @BeforeClass(groups = { "live" }, dependsOnMethods = "setUpResourcesOnThisThread")
    protected void createLiveS3Context(ITestContext testContext) throws S3ServiceException {
-      if (testContext.getAttribute("jclouds.test.user") != null) {
+      if (testContext.getAttribute("jclouds.test.identity") != null) {
          AWSCredentials credentials = new AWSCredentials((String) testContext
-                  .getAttribute("jclouds.test.user"), (String) testContext
-                  .getAttribute("jclouds.test.key"));
+                  .getAttribute("jclouds.test.identity"), (String) testContext
+                  .getAttribute("jclouds.test.credential"));
          jetClient = new RestS3Service(credentials);
       } else {
          throw new RuntimeException("not configured properly");
