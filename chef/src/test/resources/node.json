@@ -1,0 +1,1 @@
+{"normal":{"tomcat6":{"ssl_port":8433}},"name":"adrian-jcloudstest","override":{},"default":{},"json_class":"Chef::Node","automatic":{},"run_list":["recipe[java]"],"chef_type":"node"}

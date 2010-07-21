@@ -51,15 +51,11 @@ public class Metadata {
    private Map<String, Attribute> attributes = Maps.newLinkedHashMap();
    private Map<String, String> recommendations = Maps.newLinkedHashMap();
 
-   public Metadata(String license, String maintainer,
-         Map<String, String> suggestions,
-         Map<String, Set<String>> dependencies, String maintainerEmail,
-         Map<String, Set<String>> conflicting, String description,
-         Map<String, Set<String>> providing,
-         Map<String, Set<String>> platforms, String version,
-         Map<String, String> recipes, Map<String, Set<String>> replacing,
-         String name, Map<String, String> groupings, String longDescription,
-         Map<String, Attribute> attributes, Map<String, String> recommendations) {
+   public Metadata(String license, String maintainer, Map<String, String> suggestions,
+         Map<String, Set<String>> dependencies, String maintainerEmail, Map<String, Set<String>> conflicting,
+         String description, Map<String, Set<String>> providing, Map<String, Set<String>> platforms, String version,
+         Map<String, String> recipes, Map<String, Set<String>> replacing, String name, Map<String, String> groupings,
+         String longDescription, Map<String, Attribute> attributes, Map<String, String> recommendations) {
       this.license = license;
       this.maintainer = maintainer;
       this.suggestions.putAll(suggestions);
@@ -154,35 +150,22 @@ public class Metadata {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-            + ((attributes == null) ? 0 : attributes.hashCode());
-      result = prime * result
-            + ((conflicting == null) ? 0 : conflicting.hashCode());
-      result = prime * result
-            + ((dependencies == null) ? 0 : dependencies.hashCode());
-      result = prime * result
-            + ((description == null) ? 0 : description.hashCode());
-      result = prime * result
-            + ((groupings == null) ? 0 : groupings.hashCode());
+      result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
+      result = prime * result + ((conflicting == null) ? 0 : conflicting.hashCode());
+      result = prime * result + ((dependencies == null) ? 0 : dependencies.hashCode());
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + ((groupings == null) ? 0 : groupings.hashCode());
       result = prime * result + ((license == null) ? 0 : license.hashCode());
-      result = prime * result
-            + ((longDescription == null) ? 0 : longDescription.hashCode());
-      result = prime * result
-            + ((maintainer == null) ? 0 : maintainer.hashCode());
-      result = prime * result
-            + ((maintainerEmail == null) ? 0 : maintainerEmail.hashCode());
+      result = prime * result + ((longDescription == null) ? 0 : longDescription.hashCode());
+      result = prime * result + ((maintainer == null) ? 0 : maintainer.hashCode());
+      result = prime * result + ((maintainerEmail == null) ? 0 : maintainerEmail.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result
-            + ((platforms == null) ? 0 : platforms.hashCode());
-      result = prime * result
-            + ((providing == null) ? 0 : providing.hashCode());
+      result = prime * result + ((platforms == null) ? 0 : platforms.hashCode());
+      result = prime * result + ((providing == null) ? 0 : providing.hashCode());
       result = prime * result + ((recipes == null) ? 0 : recipes.hashCode());
-      result = prime * result
-            + ((recommendations == null) ? 0 : recommendations.hashCode());
-      result = prime * result
-            + ((replacing == null) ? 0 : replacing.hashCode());
-      result = prime * result
-            + ((suggestions == null) ? 0 : suggestions.hashCode());
+      result = prime * result + ((recommendations == null) ? 0 : recommendations.hashCode());
+      result = prime * result + ((replacing == null) ? 0 : replacing.hashCode());
+      result = prime * result + ((suggestions == null) ? 0 : suggestions.hashCode());
       result = prime * result + ((version == null) ? 0 : version.hashCode());
       return result;
    }
@@ -286,15 +269,12 @@ public class Metadata {
 
    @Override
    public String toString() {
-      return "Metadata [attributes=" + attributes + ", conflicting="
-            + conflicting + ", dependencies=" + dependencies + ", description="
-            + description + ", groupings=" + groupings + ", license=" + license
-            + ", longDescription=" + longDescription + ", maintainer="
-            + maintainer + ", maintainerEmail=" + maintainerEmail + ", name="
-            + name + ", platforms=" + platforms + ", providing=" + providing
-            + ", recipes=" + recipes + ", recommendations=" + recommendations
-            + ", replacing=" + replacing + ", suggestions=" + suggestions
-            + ", version=" + version + "]";
+      return "Metadata [attributes=" + attributes + ", conflicting=" + conflicting + ", dependencies=" + dependencies
+            + ", description=" + description + ", groupings=" + groupings + ", license=" + license
+            + ", longDescription=" + longDescription + ", maintainer=" + maintainer + ", maintainerEmail="
+            + maintainerEmail + ", name=" + name + ", platforms=" + platforms + ", providing=" + providing
+            + ", recipes=" + recipes + ", recommendations=" + recommendations + ", replacing=" + replacing
+            + ", suggestions=" + suggestions + ", version=" + version + "]";
    }
 
 }

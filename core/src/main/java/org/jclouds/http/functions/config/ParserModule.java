@@ -18,6 +18,7 @@
  */
 package org.jclouds.http.functions.config;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
@@ -30,6 +31,7 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.jclouds.Constants;
 import org.jclouds.date.DateService;
+import org.jclouds.domain.JsonBall;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.HandlerWithResult;
@@ -39,9 +41,11 @@ import com.google.common.collect.Maps;
 import com.google.common.primitives.Bytes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JcloudsCompactFormatter;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonLiteral;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
@@ -92,18 +96,26 @@ public class ParserModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Gson provideGson(JsonObjectAdapter jsonObjectAdapter, DateAdapter adapter, ByteListAdapter byteListAdapter,
-         ByteArrayAdapter byteArrayAdapter, GsonAdapterBindings bindings) {
-      GsonBuilder gson = new GsonBuilder();
-      gson.registerTypeAdapter(JsonElement.class, jsonObjectAdapter);
-      gson.registerTypeAdapter(Date.class, adapter);
-      gson.registerTypeAdapter(new TypeToken<List<Byte>>() {
+   Gson provideGson(JsonBallAdapter jsonObjectAdapter, DateAdapter adapter, ByteListAdapter byteListAdapter,
+         ByteArrayAdapter byteArrayAdapter, GsonAdapterBindings bindings) throws SecurityException,
+         NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+      GsonBuilder builder = new GsonBuilder();
+      builder.registerTypeAdapter(JsonBall.class, jsonObjectAdapter);
+      builder.registerTypeAdapter(Date.class, adapter);
+      builder.registerTypeAdapter(new TypeToken<List<Byte>>() {
       }.getType(), byteListAdapter);
-      gson.registerTypeAdapter(byte[].class, byteArrayAdapter);
+      builder.registerTypeAdapter(byte[].class, byteArrayAdapter);
       for (Map.Entry<Type, Object> binding : bindings.getBindings().entrySet()) {
-         gson.registerTypeAdapter(binding.getKey(), binding.getValue());
+         builder.registerTypeAdapter(binding.getKey(), binding.getValue());
       }
-      return gson.create();
+      JcloudsCompactFormatter formatter = new JcloudsCompactFormatter();
+
+      Gson gson = builder.create();
+      // allow us to print json literals
+      Field statFinField = Gson.class.getDeclaredField("formatter");
+      statFinField.setAccessible(true);
+      statFinField.set(gson, formatter);
+      return gson;
    }
 
    @ImplementedBy(CDateAdapter.class)
@@ -211,21 +223,21 @@ public class ParserModule extends AbstractModule {
 
    }
 
-   @ImplementedBy(JsonObjectAdapterImpl.class)
-   public static interface JsonObjectAdapter extends JsonSerializer<JsonElement>, JsonDeserializer<JsonElement> {
+   @ImplementedBy(JsonBallAdapterImpl.class)
+   public static interface JsonBallAdapter extends JsonSerializer<JsonBall>, JsonDeserializer<JsonBall> {
 
    }
 
    @Singleton
-   public static class JsonObjectAdapterImpl implements JsonObjectAdapter {
+   public static class JsonBallAdapterImpl implements JsonBallAdapter {
 
-      public JsonElement serialize(JsonElement src, Type typeOfSrc, JsonSerializationContext context) {
-         return src;
+      public JsonElement serialize(JsonBall src, Type typeOfSrc, JsonSerializationContext context) {
+         return new JsonLiteral(src);
       }
 
-      public JsonElement deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+      public JsonBall deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
             throws JsonParseException {
-         return json;
+         return new JsonBall(json.toString());
       }
 
    }

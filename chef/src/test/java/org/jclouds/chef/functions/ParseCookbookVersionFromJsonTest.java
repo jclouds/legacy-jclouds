@@ -41,71 +41,55 @@ public class ParseCookbookVersionFromJsonTest {
    @BeforeTest
    protected void setUpInjector() throws IOException {
       injector = Guice.createInjector(new ParserModule());
-      handler = injector.getInstance(Key
-            .get(new TypeLiteral<ParseJson<CookbookVersion>>() {
-            }));
+      handler = injector.getInstance(Key.get(new TypeLiteral<ParseJson<CookbookVersion>>() {
+      }));
    }
 
    @Test(enabled = false)
    public void testBrew() throws IOException {
-      CookbookVersion cookbook = handler.apply(new HttpResponse(200, "ok",
-            Payloads.newPayload(ParseCookbookVersionFromJsonTest.class
-                  .getResourceAsStream("/brew-cookbook.json"))));
+      CookbookVersion cookbook = handler.apply(new HttpResponse(200, "ok", Payloads
+            .newPayload(ParseCookbookVersionFromJsonTest.class.getResourceAsStream("/brew-cookbook.json"))));
 
-      assertEquals(cookbook, handler.apply(new HttpResponse(200, "ok", Payloads
-            .newPayload(Utils.toInputStream(new Gson().toJson(cookbook))))));
+      assertEquals(cookbook, handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils
+            .toInputStream(new Gson().toJson(cookbook))))));
    }
 
    @Test(enabled = false)
    public void testTomcat() {
-      CookbookVersion cookbook = handler.apply(new HttpResponse(200, "ok",
-            Payloads.newPayload(ParseCookbookVersionFromJsonTest.class
-                  .getResourceAsStream("/tomcat-cookbook.json"))));
+      CookbookVersion cookbook = handler.apply(new HttpResponse(200, "ok", Payloads
+            .newPayload(ParseCookbookVersionFromJsonTest.class.getResourceAsStream("/tomcat-cookbook.json"))));
 
-      assertEquals(cookbook, handler.apply(new HttpResponse(200, "ok", Payloads
-            .newPayload(Utils.toInputStream(new Gson().toJson(cookbook))))));
+      assertEquals(cookbook, handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils
+            .toInputStream(new Gson().toJson(cookbook))))));
    }
 
    @Test(enabled = false)
    public void testMysql() throws IOException {
-      CookbookVersion cookbook = handler.apply(new HttpResponse(200, "ok",
-            Payloads.newPayload(ParseCookbookVersionFromJsonTest.class
-                  .getResourceAsStream("/mysql-cookbook.json"))));
+      CookbookVersion cookbook = handler.apply(new HttpResponse(200, "ok", Payloads
+            .newPayload(ParseCookbookVersionFromJsonTest.class.getResourceAsStream("/mysql-cookbook.json"))));
 
-      assertEquals(cookbook, handler.apply(new HttpResponse(200, "ok", Payloads
-            .newPayload(Utils.toInputStream(new Gson().toJson(cookbook))))));
+      assertEquals(cookbook, handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils
+            .toInputStream(new Gson().toJson(cookbook))))));
    }
 
    @Test(enabled = false)
    public void testApache() {
-      EncryptionService encryptionService = injector
-            .getInstance(EncryptionService.class);
+      EncryptionService encryptionService = injector.getInstance(EncryptionService.class);
 
       assertEquals(
-            handler
-                  .apply(new HttpResponse(
-                        200,
-                        "ok",
-                        Payloads
-                              .newPayload(ParseCookbookVersionFromJsonTest.class
-                                    .getResourceAsStream("/apache-chef-demo-cookbook.json")))),
+            handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(ParseCookbookVersionFromJsonTest.class
+                  .getResourceAsStream("/apache-chef-demo-cookbook.json")))),
             new CookbookVersion(
                   "apache-chef-demo-0.0.0",
                   ImmutableSet.<Resource> of(),
                   ImmutableSet.<Resource> of(),
                   ImmutableSet.<Resource> of(),
-                  new Metadata("Apache v2.0", "Your Name", ImmutableMap
-                        .<String, String> of(), ImmutableMap
-                        .<String, Set<String>> of(), "youremail@example.com",
-                        ImmutableMap.<String, Set<String>> of(),
-                        "A fabulous new cookbook", ImmutableMap
-                              .<String, Set<String>> of(), ImmutableMap
-                              .<String, Set<String>> of(), "0.0.0",
-                        ImmutableMap.<String, String> of(), ImmutableMap
-                              .<String, Set<String>> of(), "apache-chef-demo",
-                        ImmutableMap.<String, String> of(), "", ImmutableMap
-                              .<String, Attribute> of(), ImmutableMap
-                              .<String, String> of()),
+                  new Metadata("Apache v2.0", "Your Name", ImmutableMap.<String, String> of(), ImmutableMap
+                        .<String, Set<String>> of(), "youremail@example.com", ImmutableMap.<String, Set<String>> of(),
+                        "A fabulous new cookbook", ImmutableMap.<String, Set<String>> of(), ImmutableMap
+                              .<String, Set<String>> of(), "0.0.0", ImmutableMap.<String, String> of(), ImmutableMap
+                              .<String, Set<String>> of(), "apache-chef-demo", ImmutableMap.<String, String> of(), "",
+                        ImmutableMap.<String, Attribute> of(), ImmutableMap.<String, String> of()),
                   ImmutableSet.<Resource> of(),
                   "apache-chef-demo",
                   ImmutableSet.<Resource> of(),
@@ -119,16 +103,13 @@ public class ParseCookbookVersionFromJsonTest {
                                     "README",
                                     URI
                                           .create("https://s3.amazonaws.com/opscode-platform-production-data/organization-486ca3ac66264fea926aa0b4ff74341c/checksum-11637f98942eafbf49c71b7f2f048b78?AWSAccessKeyId=AKIAJOZTD2N26S7W6APA&Expires=1277766181&Signature=zgpNl6wSxjTNovqZu2nJq0JztU8%3D"),
-                                    encryptionService
-                                          .fromHex("11637f98942eafbf49c71b7f2f048b78"),
-                                    "README", "default"),
+                                    encryptionService.fromHex("11637f98942eafbf49c71b7f2f048b78"), "README", "default"),
                               new Resource(
                                     "Rakefile",
                                     URI
                                           .create("https://s3.amazonaws.com/opscode-platform-production-data/organization-486ca3ac66264fea926aa0b4ff74341c/checksum-ebcf925a1651b4e04b9cd8aac2bc54eb?AWSAccessKeyId=AKIAJOZTD2N26S7W6APA&Expires=1277766181&Signature=EFzzDSKKytTl7b%2FxrCeNLh05zj4%3D"),
-                                    encryptionService
-                                          .fromHex("ebcf925a1651b4e04b9cd8aac2bc54eb"),
-                                    "Rakefile", "default"))));
+                                    encryptionService.fromHex("ebcf925a1651b4e04b9cd8aac2bc54eb"), "Rakefile",
+                                    "default"))));
 
    }
 }

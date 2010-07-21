@@ -47,6 +47,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.chef.domain.Client;
 import org.jclouds.chef.domain.CookbookVersion;
+import org.jclouds.chef.domain.Node;
+import org.jclouds.chef.domain.Role;
 import org.jclouds.chef.domain.Sandbox;
 import org.jclouds.chef.domain.UploadSandbox;
 import org.jclouds.concurrent.Timeout;
@@ -89,18 +91,9 @@ public interface ChefClient {
    Set<String> listCookbooks();
 
    /**
-    * Creates or updates (uploads) a cookbook with the name present from the
-    * tar/gz file.
+    * Creates or updates (uploads) a cookbook //TODO document
     * 
     * @param cookbookName
-    *           matches the root directory path of the archive
-    * @param tgzArchive
-    *           tar gz archive, with a base path of {@code cookbookName}
-    *           <p/>
-    *           "401 Unauthorized" if the caller is not a recognized user.
-    *           <p/>
-    *           "403 Forbidden" if you do not have permission to create
-    *           cookbooks.
     * @throws HttpResponseException
     *            "409 Conflict" if the cookbook already exists
     */
@@ -227,4 +220,150 @@ public interface ChefClient {
     *            "403 Forbidden" if you do not have view rights on the client.
     */
    Client getClient(String name);
+
+   /**
+    * creates a new node
+    * 
+    * @return //TODO
+    * @throws AuthorizationException
+    *            <p/>
+    *            "401 Unauthorized" if the caller is not a recognized user.
+    *            <p/>
+    *            "403 Forbidden" if the caller is not authorized to create a
+    *            node.
+    * @throws HttpResponseException
+    *            "409 Conflict" if the node already exists
+    */
+   @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
+   Node createNode(Node node);
+
+   /**
+    * Creates or updates (uploads) a node //TODO document
+    * 
+    * @param nodeName
+    * @throws HttpResponseException
+    *            "409 Conflict" if the node already exists
+    */
+   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
+   Node updateNode(Node node);
+
+   /**
+    * @return list of node names.
+    * 
+    * @throws AuthorizationException
+    *            <p/>
+    *            "401 Unauthorized" if you are not a recognized user.
+    *            <p/>
+    *            "403 Forbidden" if you do not have rights to list nodes.
+    */
+   Set<String> listNodes();
+
+   /**
+    * 
+    * @return true if the specified node name exists.
+    * 
+    * @throws AuthorizationException
+    *            <p/>
+    *            "401 Unauthorized" if you are not a recognized user.
+    *            <p/>
+    *            "403 Forbidden" if you do not have rights to view the node.
+    */
+   boolean nodeExists(String name);
+
+   /**
+    * deletes an existing node.
+    * 
+    * @return last state of the node you deleted or null, if not found
+    * 
+    * @throws AuthorizationException
+    *            <p/>
+    *            "401 Unauthorized" if you are not a recognized user.
+    *            <p/>
+    *            "403 Forbidden" if you do not have Delete rights on the node.
+    */
+   Node deleteNode(String name);
+
+   /**
+    * gets an existing node.
+    * 
+    * @throws AuthorizationException
+    *            <p/>
+    *            "401 Unauthorized" if you are not a recognized user.
+    *            <p/>
+    *            "403 Forbidden" if you do not have view rights on the node.
+    */
+   Node getNode(String name);
+
+   /**
+    * creates a new role
+    * 
+    * @return //TODO
+    * @throws AuthorizationException
+    *            <p/>
+    *            "401 Unauthorized" if the caller is not a recognized user.
+    *            <p/>
+    *            "403 Forbidden" if the caller is not authorized to create a
+    *            role.
+    * @throws HttpResponseException
+    *            "409 Conflict" if the role already exists
+    */
+   @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
+   Role createRole(Role role);
+
+   /**
+    * Creates or updates (uploads) a role //TODO document
+    * 
+    * @param roleName
+    * @throws HttpResponseException
+    *            "409 Conflict" if the role already exists
+    */
+   @Timeout(duration = 10, timeUnit = TimeUnit.MINUTES)
+   Role updateRole(Role role);
+
+   /**
+    * @return list of role names.
+    * 
+    * @throws AuthorizationException
+    *            <p/>
+    *            "401 Unauthorized" if you are not a recognized user.
+    *            <p/>
+    *            "403 Forbidden" if you do not have rights to list roles.
+    */
+   Set<String> listRoles();
+
+   /**
+    * 
+    * @return true if the specified role name exists.
+    * 
+    * @throws AuthorizationException
+    *            <p/>
+    *            "401 Unauthorized" if you are not a recognized user.
+    *            <p/>
+    *            "403 Forbidden" if you do not have rights to view the role.
+    */
+   boolean roleExists(String name);
+
+   /**
+    * deletes an existing role.
+    * 
+    * @return last state of the role you deleted or null, if not found
+    * 
+    * @throws AuthorizationException
+    *            <p/>
+    *            "401 Unauthorized" if you are not a recognized user.
+    *            <p/>
+    *            "403 Forbidden" if you do not have Delete rights on the role.
+    */
+   Role deleteRole(String name);
+
+   /**
+    * gets an existing role.
+    * 
+    * @throws AuthorizationException
+    *            <p/>
+    *            "401 Unauthorized" if you are not a recognized user.
+    *            <p/>
+    *            "403 Forbidden" if you do not have view rights on the role.
+    */
+   Role getRole(String name);
 }

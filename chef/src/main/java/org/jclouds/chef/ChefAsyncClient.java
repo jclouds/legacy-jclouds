@@ -41,15 +41,17 @@ import org.jclouds.chef.binders.BindClientnameToJsonPayload;
 import org.jclouds.chef.binders.BindGenerateKeyForClientToJsonPayload;
 import org.jclouds.chef.binders.BindIsCompletedToJsonPayload;
 import org.jclouds.chef.binders.NodeName;
+import org.jclouds.chef.binders.RoleName;
 import org.jclouds.chef.domain.Client;
 import org.jclouds.chef.domain.CookbookVersion;
 import org.jclouds.chef.domain.Node;
+import org.jclouds.chef.domain.Role;
 import org.jclouds.chef.domain.Sandbox;
 import org.jclouds.chef.domain.UploadSandbox;
 import org.jclouds.chef.filters.SignedHeaderAuth;
 import org.jclouds.chef.functions.ParseKeyFromJson;
 import org.jclouds.chef.functions.ParseKeySetFromJson;
-import org.jclouds.http.functions.ReturnStringIf2xx;
+import org.jclouds.domain.JsonBall;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
@@ -180,7 +182,6 @@ public interface ChefAsyncClient {
    @DELETE
    @Path("clients/{clientname}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @ResponseParser(ReturnStringIf2xx.class)
    ListenableFuture<Client> deleteClient(@PathParam("clientname") String clientname);
 
    /**
@@ -239,4 +240,102 @@ public interface ChefAsyncClient {
    @ResponseParser(ParseKeySetFromJson.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<String>> listNodes();
+
+   /**
+    * @see ChefClient#createRole
+    */
+   @POST
+   @Path("roles")
+   ListenableFuture<Role> createRole(@BinderParam(BindToJsonPayload.class) Role role);
+
+   /**
+    * @see ChefClient#updateRole
+    */
+   @PUT
+   @Path("roles/{rolename}")
+   ListenableFuture<Role> updateRole(
+         @PathParam("rolename") @ParamParser(RoleName.class) @BinderParam(BindToJsonPayload.class) Role role);
+
+   /**
+    * @see ChefRole#roleExists
+    */
+   @HEAD
+   @Path("roles/{rolename}")
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   ListenableFuture<Boolean> roleExists(@PathParam("rolename") String rolename);
+
+   /**
+    * @see ChefRole#getRole
+    */
+   @GET
+   @Path("roles/{rolename}")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Role> getRole(@PathParam("rolename") String rolename);
+
+   /**
+    * @see ChefRole#deleteRole
+    */
+   @DELETE
+   @Path("roles/{rolename}")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Role> deleteRole(@PathParam("rolename") String rolename);
+
+   /**
+    * @see ChefRole#listRoles
+    */
+   @GET
+   @Path("roles")
+   @ResponseParser(ParseKeySetFromJson.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<Set<String>> listRoles();
+   
+   
+   /**
+    * @see ChefClient#createDataBag
+    */
+   @POST
+   @Path("data")
+   ListenableFuture<JsonBall> createDataBag(@BinderParam(BindToJsonPayload.class) JsonBall node);
+
+   /**
+    * @see ChefClient#updateDataBag
+    */
+   @PUT
+   @Path("data/{path}")
+   ListenableFuture<JsonBall> updateDataBag(
+         @PathParam("path") String path, @BinderParam(BindToJsonPayload.class) JsonBall node);
+
+   /**
+    * @see ChefDataBag#nodeExists
+    */
+   @HEAD
+   @Path("data/{path}")
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   ListenableFuture<Boolean> dataBagExists(@PathParam("path") String path);
+
+   /**
+    * @see ChefDataBag#getDataBag
+    */
+   @GET
+   @Path("data/{path}")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<JsonBall> getDataBag(@PathParam("path") String path);
+
+   /**
+    * @see ChefDataBag#deleteDataBag
+    */
+   @DELETE
+   @Path("data/{path}")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<JsonBall> deleteDataBag(@PathParam("path") String path);
+
+   /**
+    * @see ChefDataBag#listDataBags
+    */
+   @GET
+   @Path("data")
+   @ResponseParser(ParseKeySetFromJson.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<Set<String>> listDataBags();
+
 }

@@ -48,9 +48,8 @@ public class Attribute {
    private String displayName;
    private String description;
 
-   public Attribute(String required, boolean calculated, Set<String> choice,
-         String defaultValue, String type, List<String> recipes,
-         String displayName, String description) {
+   public Attribute(String required, boolean calculated, Set<String> choice, String defaultValue, String type,
+         List<String> recipes, String displayName, String description) {
       this.required = required;
       this.calculated = calculated;
       Iterables.addAll(this.choice, choice);
@@ -102,12 +101,9 @@ public class Attribute {
       int result = 1;
       result = prime * result + (calculated ? 1231 : 1237);
       result = prime * result + ((choice == null) ? 0 : choice.hashCode());
-      result = prime * result
-            + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-      result = prime * result
-            + ((description == null) ? 0 : description.hashCode());
-      result = prime * result
-            + ((displayName == null) ? 0 : displayName.hashCode());
+      result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + ((displayName == null) ? 0 : displayName.hashCode());
       result = prime * result + ((recipes == null) ? 0 : recipes.hashCode());
       result = prime * result + ((required == null) ? 0 : required.hashCode());
       result = prime * result + ((type == null) ? 0 : type.hashCode());
@@ -165,10 +161,9 @@ public class Attribute {
 
    @Override
    public String toString() {
-      return "Attribute [calculated=" + calculated + ", choice=" + choice
-            + ", defaultValue=" + defaultValue + ", description=" + description
-            + ", displayName=" + displayName + ", recipes=" + recipes
-            + ", required=" + required + ", type=" + type + "]";
+      return "Attribute [calculated=" + calculated + ", choice=" + choice + ", defaultValue=" + defaultValue
+            + ", description=" + description + ", displayName=" + displayName + ", recipes=" + recipes + ", required="
+            + required + ", type=" + type + "]";
    }
 
 }

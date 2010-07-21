@@ -33,44 +33,39 @@ import com.google.gson.annotations.SerializedName;
  * 
  * @author Adrian Cole
  */
-public class Node {
+public class Role {
 
    private String name;
-   private Map<String, JsonBall> normal = Maps.newLinkedHashMap();
+   private String description;
+   @SerializedName("override_attributes")
    private Map<String, JsonBall> override = Maps.newLinkedHashMap();
-   @SerializedName("default")
+   @SerializedName("default_attributes")
    private Map<String, JsonBall> defaultA = Maps.newLinkedHashMap();
-   private Map<String, JsonBall> automatic = Maps.newLinkedHashMap();
    @SerializedName("run_list")
    private List<String> runList = Lists.newArrayList();
 
    // internal
    @SerializedName("json_class")
-   private String _jsonClass = "Chef::Node";
+   private String _jsonClass = "Chef::Role";
+   @SerializedName("chef_type")
+   private String _chefType = "role";
 
-   public Node(String name, Map<String, JsonBall> normal, Map<String, JsonBall> override,
-         Map<String, JsonBall> defaultA, Map<String, JsonBall> automatic, Iterable<String> runList) {
+   public Role(String name, String description, Map<String, JsonBall> defaultA, List<String> runList,
+         Map<String, JsonBall> override) {
       this.name = name;
-      this.normal.putAll(normal);
-      this.override.putAll(override);
-      this.defaultA.putAll(defaultA);
-      this.automatic.putAll(automatic);
-      Iterables.addAll(this.runList, runList);
+      this.description = description;
+      this.defaultA = defaultA;
+      this.runList = runList;
+      this.override = override;
    }
 
-   @Override
-   public String toString() {
-      return "Node [name=" + name + ", runList=" + runList + ", normal=" + normal + ", default=" + defaultA
-            + ", override=" + override + ", automatic=" + automatic + "]";
-   }
-
-   public Node(String name, Iterable<String> runList) {
+   public Role(String name, Iterable<String> runList) {
       this.name = name;
       Iterables.addAll(this.runList, runList);
    }
 
    // hidden but needs to be here for json deserialization to work
-   Node() {
+   Role() {
 
    }
 
@@ -78,8 +73,8 @@ public class Node {
       return name;
    }
 
-   public Map<String, JsonBall> getNormal() {
-      return normal;
+   public String getDescription() {
+      return description;
    }
 
    public Map<String, JsonBall> getOverride() {
@@ -90,16 +85,9 @@ public class Node {
       return defaultA;
    }
 
-   public Map<String, JsonBall> getAutomatic() {
-      return automatic;
-   }
-
    public List<String> getRunList() {
       return runList;
    }
-
-   @SerializedName("chef_type")
-   private String _chefType = "node";
 
    @Override
    public int hashCode() {
@@ -107,10 +95,9 @@ public class Node {
       int result = 1;
       result = prime * result + ((_chefType == null) ? 0 : _chefType.hashCode());
       result = prime * result + ((_jsonClass == null) ? 0 : _jsonClass.hashCode());
-      result = prime * result + ((automatic == null) ? 0 : automatic.hashCode());
       result = prime * result + ((defaultA == null) ? 0 : defaultA.hashCode());
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((normal == null) ? 0 : normal.hashCode());
       result = prime * result + ((override == null) ? 0 : override.hashCode());
       result = prime * result + ((runList == null) ? 0 : runList.hashCode());
       return result;
@@ -124,7 +111,7 @@ public class Node {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      Node other = (Node) obj;
+      Role other = (Role) obj;
       if (_chefType == null) {
          if (other._chefType != null)
             return false;
@@ -135,25 +122,20 @@ public class Node {
             return false;
       } else if (!_jsonClass.equals(other._jsonClass))
          return false;
-      if (automatic == null) {
-         if (other.automatic != null)
-            return false;
-      } else if (!automatic.equals(other.automatic))
-         return false;
       if (defaultA == null) {
          if (other.defaultA != null)
             return false;
       } else if (!defaultA.equals(other.defaultA))
          return false;
+      if (description == null) {
+         if (other.description != null)
+            return false;
+      } else if (!description.equals(other.description))
+         return false;
       if (name == null) {
          if (other.name != null)
             return false;
       } else if (!name.equals(other.name))
-         return false;
-      if (normal == null) {
-         if (other.normal != null)
-            return false;
-      } else if (!normal.equals(other.normal))
          return false;
       if (override == null) {
          if (other.override != null)
@@ -166,6 +148,12 @@ public class Node {
       } else if (!runList.equals(other.runList))
          return false;
       return true;
+   }
+
+   @Override
+   public String toString() {
+      return "[name=" + name + ", description=" + description + ", defaultA=" + defaultA + ", override=" + override
+            + ", runList=" + runList + "]";
    }
 
 }

@@ -125,8 +125,8 @@ public class Organization implements Comparable<Organization> {
 
    @Override
    public String toString() {
-      return "Organization [clientname=" + clientname + ", fullName=" + fullName + ", name=" + name
-               + ", orgType=" + orgType + "]";
+      return "Organization [clientname=" + clientname + ", fullName=" + fullName + ", name=" + name + ", orgType="
+            + orgType + "]";
    }
 
 }

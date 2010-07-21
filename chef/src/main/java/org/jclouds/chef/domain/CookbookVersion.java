@@ -61,10 +61,10 @@ public class CookbookVersion {
       this.name = cookbookName + "-" + version;
    }
 
-   public CookbookVersion(String name, Set<Resource> definitions, Set<Resource> attributes,
-            Set<Resource> files, Metadata metadata, Set<Resource> providers, String cookbookName,
-            Set<Resource> resources, Set<Resource> templates, Set<Resource> libraries,
-            String version, Set<Resource> recipes, Set<Resource> rootFiles) {
+   public CookbookVersion(String name, Set<Resource> definitions, Set<Resource> attributes, Set<Resource> files,
+         Metadata metadata, Set<Resource> providers, String cookbookName, Set<Resource> resources,
+         Set<Resource> templates, Set<Resource> libraries, String version, Set<Resource> recipes,
+         Set<Resource> rootFiles) {
       this.name = name;
       Iterables.addAll(this.definitions, definitions);
       Iterables.addAll(this.attributes, attributes);
@@ -236,11 +236,10 @@ public class CookbookVersion {
 
    @Override
    public String toString() {
-      return "Cookbook [attributes=" + attributes + ", cookbookName=" + cookbookName
-               + ", definitions=" + definitions + ", files=" + files + ", libraries=" + libraries
-               + ", metadata=" + metadata + ", name=" + name + ", providers=" + providers
-               + ", recipes=" + recipes + ", resources=" + resources + ", rootFiles=" + rootFiles
-               + ", templates=" + templates + ", version=" + version + "]";
+      return "Cookbook [attributes=" + attributes + ", cookbookName=" + cookbookName + ", definitions=" + definitions
+            + ", files=" + files + ", libraries=" + libraries + ", metadata=" + metadata + ", name=" + name
+            + ", providers=" + providers + ", recipes=" + recipes + ", resources=" + resources + ", rootFiles="
+            + rootFiles + ", templates=" + templates + ", version=" + version + "]";
    }
 
 }

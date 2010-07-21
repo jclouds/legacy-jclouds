@@ -50,8 +50,7 @@ public class Sandbox {
    @SuppressWarnings("unused")
    private String _chefType = "sandbox";
 
-   public Sandbox(String rev, boolean isCompleted, Date createTime, Iterable<String> checksums,
-            String name, String guid) {
+   public Sandbox(String rev, boolean isCompleted, Date createTime, Iterable<String> checksums, String name, String guid) {
       this.rev = rev;
       this.isCompleted = isCompleted;
       this.createTime = createTime;
@@ -142,7 +141,7 @@ public class Sandbox {
 
    @Override
    public String toString() {
-      return "Sandbox [checksums=" + checksums + ", createTime=" + createTime + ", guid=" + guid
-               + ", isCompleted=" + isCompleted + ", name=" + name + ", rev=" + rev + "]";
+      return "Sandbox [checksums=" + checksums + ", createTime=" + createTime + ", guid=" + guid + ", isCompleted="
+            + isCompleted + ", name=" + name + ", rev=" + rev + "]";
    }
 }
