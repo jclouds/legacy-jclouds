@@ -40,6 +40,12 @@ public class ClassMethodArgs {
       this.args = args;
    }
 
+   @Override
+   public String toString() {
+      return "[class=" + asyncClass.getSimpleName() + ", method=" + method.getName() + ", args="
+            + Arrays.toString(args) + "]";
+   }
+
    public Method getMethod() {
       return method;
    }

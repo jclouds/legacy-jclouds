@@ -42,6 +42,10 @@ public class AuthorizationException extends RuntimeException {
       super(String.format("%s -> %s", resource.getRequestLine(), error));
    }
 
+   public AuthorizationException(HttpRequest resource, String error, Throwable arg1) {
+      super(String.format("%s -> %s", resource.getRequestLine(), error), arg1);
+   }
+
    public AuthorizationException(Throwable arg0) {
       super(arg0);
    }

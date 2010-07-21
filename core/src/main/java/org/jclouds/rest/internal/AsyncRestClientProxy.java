@@ -69,9 +69,8 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
 
    @SuppressWarnings("unchecked")
    @Inject
-   public AsyncRestClientProxy(Injector injector, Factory factory,
-         RestAnnotationProcessor<T> util, TypeLiteral<T> typeLiteral,
-         @Named("async") ConcurrentMap<ClassMethodArgs, Object> delegateMap) {
+   public AsyncRestClientProxy(Injector injector, Factory factory, RestAnnotationProcessor<T> util,
+         TypeLiteral<T> typeLiteral, @Named("async") ConcurrentMap<ClassMethodArgs, Object> delegateMap) {
       this.injector = injector;
       this.annotationProcessor = util;
       this.declaring = (Class<T>) typeLiteral.getRawType();
@@ -79,8 +78,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       this.delegateMap = delegateMap;
    }
 
-   public Object invoke(Object o, Method method, Object[] args)
-         throws Throwable {
+   public Object invoke(Object o, Method method, Object[] args) throws Throwable {
       if (method.getName().equals("equals")) {
          return this.equals(o);
       } else if (method.getName().equals("toString")) {
@@ -90,23 +88,19 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       } else if (method.getName().startsWith("new")) {
          return injector.getInstance(method.getReturnType());
       } else if (method.isAnnotationPresent(Delegate.class)) {
-         return delegateMap.get(new ClassMethodArgs(method.getReturnType(),
-               method, args));
+         return delegateMap.get(new ClassMethodArgs(method.getReturnType(), method, args));
       } else if (annotationProcessor.getDelegateOrNull(method) != null
             && ListenableFuture.class.isAssignableFrom(method.getReturnType())) {
          return createFuture(method, args);
       } else {
-         throw new RuntimeException(
-               "method is intended solely to set constants: " + method);
+         throw new RuntimeException("method is intended solely to set constants: " + method);
       }
    }
 
    @SuppressWarnings("unchecked")
-   private ListenableFuture<?> createFuture(Method method, Object[] args)
-         throws ExecutionException {
+   private ListenableFuture<?> createFuture(Method method, Object[] args) throws ExecutionException {
       method = annotationProcessor.getDelegateOrNull(method);
-      logger.trace("Converting %s.%s", declaring.getSimpleName(), method
-            .getName());
+      logger.trace("Converting %s.%s", declaring.getSimpleName(), method.getName());
       Function<Exception, ?> exceptionParser = annotationProcessor
             .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method);
       // in case there is an exception creating the request, we should at least
@@ -118,8 +112,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       try {
          request = annotationProcessor.createRequest(method, args);
          if (exceptionParser instanceof InvocationContext) {
-            ((InvocationContext) exceptionParser)
-                  .setContext((GeneratedHttpRequest<T>) request);
+            ((InvocationContext) exceptionParser).setContext((GeneratedHttpRequest<T>) request);
          }
       } catch (RuntimeException e) {
          if (exceptionParser != null) {
@@ -131,32 +124,25 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
          }
          return Futures.immediateFailedFuture(e);
       }
-      logger.trace("Converted %s.%s to %s", declaring.getSimpleName(), method
-            .getName(), request.getRequestLine());
+      logger.trace("Converted %s.%s to %s", declaring.getSimpleName(), method.getName(), request.getRequestLine());
 
-      Function<HttpResponse, ?> transformer = annotationProcessor
-            .createResponseParser(method, request);
-      logger.trace("Response from %s.%s is parsed by %s", declaring
-            .getSimpleName(), method.getName(), transformer.getClass()
-            .getSimpleName());
+      Function<HttpResponse, ?> transformer = annotationProcessor.createResponseParser(method, request);
+      logger.trace("Response from %s.%s is parsed by %s", declaring.getSimpleName(), method.getName(), transformer
+            .getClass().getSimpleName());
 
-      logger.debug("Invoking %s.%s", declaring.getSimpleName(), method
-            .getName());
-      ListenableFuture<?> result = commandFactory.create(request, transformer)
-            .execute();
+      logger.debug("Invoking %s.%s", declaring.getSimpleName(), method.getName());
+      ListenableFuture<?> result = commandFactory.create(request, transformer).execute();
 
       if (exceptionParser != null) {
-         logger.trace("Exceptions from %s.%s are parsed by %s", declaring
-               .getSimpleName(), method.getName(), exceptionParser.getClass()
-               .getSimpleName());
+         logger.trace("Exceptions from %s.%s are parsed by %s", declaring.getSimpleName(), method.getName(),
+               exceptionParser.getClass().getSimpleName());
          result = new FutureExceptionParser(result, exceptionParser);
       }
       return result;
    }
 
    public static interface Factory {
-      public TransformingHttpCommand<?> create(HttpRequest request,
-            Function<HttpResponse, ?> transformer);
+      public TransformingHttpCommand<?> create(HttpRequest request, Function<HttpResponse, ?> transformer);
    }
 
    @Override
