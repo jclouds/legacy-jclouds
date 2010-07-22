@@ -21,30 +21,44 @@ package org.jclouds.encryption.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.spec.KeySpec;
+import java.security.spec.PKCS8EncodedKeySpec;
 
 import javax.annotation.Resource;
+
+import net.oauth.signature.pem.PEMReader;
+import net.oauth.signature.pem.PKCS1EncodedKeySpec;
 
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.PayloadEnclosing;
 import org.jclouds.io.Payload;
 import org.jclouds.logging.Logger;
 
+import com.google.common.base.Throwables;
+
 /**
  * 
  * @author Adrian Cole
  */
 public abstract class BaseEncryptionService implements EncryptionService {
-   
+
    @Resource
    protected Logger logger = Logger.NULL;
-   
+
    protected static final int BUF_SIZE = 0x2000; // 8
 
+   final byte[] HEX_CHAR_TABLE = { (byte) '0', (byte) '1', (byte) '2', (byte) '3', (byte) '4', (byte) '5', (byte) '6',
+         (byte) '7', (byte) '8', (byte) '9', (byte) 'a', (byte) 'b', (byte) 'c', (byte) 'd', (byte) 'e', (byte) 'f' };
 
-   final byte[] HEX_CHAR_TABLE = { (byte) '0', (byte) '1', (byte) '2', (byte) '3', (byte) '4',
-            (byte) '5', (byte) '6', (byte) '7', (byte) '8', (byte) '9', (byte) 'a', (byte) 'b',
-            (byte) 'c', (byte) 'd', (byte) 'e', (byte) 'f' };
+   private final KeyFactory rsaKeyFactory;
+
+   public BaseEncryptionService(KeyFactory rsaKeyFactory) {
+      this.rsaKeyFactory = rsaKeyFactory;
+   }
 
    @Override
    public String hex(byte[] raw) {
@@ -90,7 +104,6 @@ public abstract class BaseEncryptionService implements EncryptionService {
 
    /**
     * {@inheritDoc}
-    * @
     */
    @Override
    public <T extends PayloadEnclosing> T generateMD5BufferingIfNotRepeatable(T payloadEnclosing) {
@@ -99,5 +112,31 @@ public abstract class BaseEncryptionService implements EncryptionService {
       if (newPayload != payloadEnclosing.getPayload())
          payloadEnclosing.setPayload(newPayload);
       return payloadEnclosing;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public PrivateKey readPrivateKeyFromPEM(byte[] pem) {
+      PEMReader reader;
+      try {
+         reader = new PEMReader(pem);
+
+         byte[] bytes = reader.getDerBytes();
+         KeySpec keySpec;
+
+         if (PEMReader.PRIVATE_PKCS1_MARKER.equals(reader.getBeginMarker())) {
+            keySpec = (new PKCS1EncodedKeySpec(bytes)).getKeySpec();
+         } else if (PEMReader.PRIVATE_PKCS8_MARKER.equals(reader.getBeginMarker())) {
+            keySpec = new PKCS8EncodedKeySpec(bytes);
+         } else {
+            throw new IOException("Invalid PEM file: Unknown marker " + "for private key " + reader.getBeginMarker());
+         }
+         return rsaKeyFactory.generatePrivate(keySpec);
+      } catch (Exception e) {
+         Throwables.propagate(e);
+         return null;
+      }
    }
 }

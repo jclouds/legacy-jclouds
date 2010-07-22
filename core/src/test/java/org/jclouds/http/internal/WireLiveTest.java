@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
@@ -35,6 +36,7 @@ import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Throwables;
 import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -49,7 +51,16 @@ public class WireLiveTest {
    private static final String sysHttpStreamUrl = System.getProperty("jclouds.wire.httpstream.url");
    private static final String sysHttpStreamMd5 = System.getProperty("jclouds.wire.httpstream.md5");
 
-   private static final EncryptionService encryptionService = new JCEEncryptionService();
+   private static EncryptionService encryptionService;
+
+   static {
+      try {
+         encryptionService = new JCEEncryptionService();
+      } catch (NoSuchAlgorithmException e) {
+         Throwables.propagate(e);
+         encryptionService = null;
+      }
+   }
 
    private static class ConnectionTester implements Callable<Void> {
       private final InputStream fromServer;
@@ -65,8 +76,7 @@ public class WireLiveTest {
          ByteStreams.copy(in, out);
          byte[] compare = encryptionService.md5(new ByteArrayInputStream(out.toByteArray()));
          Thread.sleep(100);
-         assertEquals(encryptionService.hex(compare), checkNotNull(sysHttpStreamMd5,
-                  sysHttpStreamMd5));
+         assertEquals(encryptionService.hex(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
          assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
          return null;
       }
@@ -145,8 +155,7 @@ public class WireLiveTest {
       InputStream in = wire.input(connection.getInputStream());
       byte[] compare = encryptionService.md5(in);
       Thread.sleep(100);
-      assertEquals(encryptionService.hex(compare), checkNotNull(sysHttpStreamMd5,
-               sysHttpStreamMd5));
+      assertEquals(encryptionService.hex(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
       assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
    }
 
@@ -155,8 +164,7 @@ public class WireLiveTest {
       URL url = new URL(checkNotNull(sysHttpStreamUrl, "sysHttpStreamUrl"));
       URLConnection connection = url.openConnection();
       Callable<Void> callable = new ConnectionTester(connection.getInputStream());
-      ListenableFuture<Void> result = Futures
-               .makeListenable(newCachedThreadPool().submit(callable));
+      ListenableFuture<Void> result = Futures.makeListenable(newCachedThreadPool().submit(callable));
       result.get(30, TimeUnit.SECONDS);
    }
 
@@ -168,8 +176,7 @@ public class WireLiveTest {
       InputStream in = wire.input(connection.getInputStream());
       byte[] compare = encryptionService.md5(in);
       Thread.sleep(100);
-      assertEquals(encryptionService.hex(compare), checkNotNull(sysHttpStreamMd5,
-               sysHttpStreamMd5));
+      assertEquals(encryptionService.hex(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
       assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
    }
 

@@ -23,6 +23,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.Map;
 
@@ -42,6 +43,7 @@ import org.jclouds.io.Payloads;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -49,7 +51,15 @@ import com.google.common.collect.ImmutableMap;
  */
 @Test(testName = "s3.ParseObjectMetadataFromHeadersTest")
 public class ParseObjectMetadataFromHeadersTest {
-   private static final EncryptionService encryptionService = new JCEEncryptionService();
+
+   protected volatile static EncryptionService encryptionService;
+   static {
+      try {
+         encryptionService = new JCEEncryptionService();
+      } catch (NoSuchAlgorithmException e) {
+         Throwables.propagate(e);
+      }
+   }
 
    @Test
    void testNormal() throws Exception {
@@ -59,8 +69,8 @@ public class ParseObjectMetadataFromHeadersTest {
       http.getHeaders().put(HttpHeaders.CACHE_CONTROL, "cacheControl");
       http.getHeaders().put("Content-Disposition", "contentDisposition");
       http.getHeaders().put(HttpHeaders.CONTENT_ENCODING, "encoding");
-      ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(blobParser(http,
-               "\"abc\""), blobToObjectMetadata, encryptionService, "x-amz-meta-");
+      ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(blobParser(http, "\"abc\""),
+            blobToObjectMetadata, encryptionService, "x-amz-meta-");
       MutableObjectMetadata response = parser.apply(http);
       assertEquals(response, expects);
    }
@@ -75,8 +85,8 @@ public class ParseObjectMetadataFromHeadersTest {
       http.getHeaders().put("Content-Disposition", "contentDisposition");
       http.getHeaders().put(HttpHeaders.CONTENT_ENCODING, "encoding");
       http.getHeaders().put("x-amz-meta-object-eTag", "\"abc\"");
-      ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(blobParser(http,
-               null), blobToObjectMetadata, encryptionService, "x-amz-meta-");
+      ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(blobParser(http, null),
+            blobToObjectMetadata, encryptionService, "x-amz-meta-");
       MutableObjectMetadata response = parser.apply(http);
       assertEquals(response, expects);
    }

@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Key;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.Cipher;
 import javax.inject.Singleton;
@@ -48,6 +50,13 @@ import org.jclouds.io.payloads.ByteArrayPayload;
  */
 @Singleton
 public class BouncyCastleEncryptionService extends BaseEncryptionService {
+   public BouncyCastleEncryptionService(KeyFactory rsaKeyFactory) {
+      super(rsaKeyFactory);
+   }
+
+   public BouncyCastleEncryptionService() throws NoSuchAlgorithmException {
+      super(KeyFactory.getInstance("RSA"));
+   }
 
    @Override
    public byte[] hmacSha256(String toEncode, byte[] key) {

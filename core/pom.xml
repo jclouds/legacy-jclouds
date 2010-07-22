@@ -45,9 +45,20 @@
             <id>gson</id>
             <url>http://google-gson.googlecode.com/svn/mavenrepo</url>
         </repository>
+  <repository>
+      <id>oauth</id>
+      <name>OAuth Repository</name>
+      <url>http://oauth.googlecode.com/svn/code/maven</url>
+    </repository>
     </repositories>
 
     <dependencies>
+                <dependency>
+    <groupId>net.oauth.core</groupId>
+    <artifactId>oauth</artifactId>
+    <version>20100527</version>
+                </dependency>
+
         <dependency>
             <groupId>aopalliance</groupId>
             <artifactId>aopalliance</artifactId>

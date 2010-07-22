@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.security.DigestOutputStream;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -42,6 +43,14 @@ import org.jclouds.io.payloads.ByteArrayPayload;
  * @author Adrian Cole
  */
 public class JCEEncryptionService extends BaseEncryptionService {
+
+   public JCEEncryptionService(KeyFactory rsaKeyFactory) {
+      super(rsaKeyFactory);
+   }
+
+   public JCEEncryptionService() throws NoSuchAlgorithmException {
+      super(KeyFactory.getInstance("RSA"));
+   }
 
    @Override
    public byte[] hmacSha256(String toEncode, byte[] key) {

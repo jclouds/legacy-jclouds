@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Key;
+import java.security.PrivateKey;
 
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.PayloadEnclosing;
@@ -73,6 +74,8 @@ public interface EncryptionService {
 
    MD5OutputStream md5OutputStream(OutputStream out);
 
+   PrivateKey readPrivateKeyFromPEM(byte [] pem);
+   
    public static abstract class MD5OutputStream extends FilterOutputStream {
       public MD5OutputStream(OutputStream out) {
          super(out);

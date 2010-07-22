@@ -16,7 +16,8 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.aws.handlers;
+
+package org.jclouds.chef.handlers;
 
 import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 
@@ -24,51 +25,44 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.domain.AWSError;
-import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
 
 /**
- * Handles Retryable responses with error codes in the 4xx range
+ * Allow for eventual consistency on sandbox requests.
  * 
  * @author Adrian Cole
  */
-public class AWSClientErrorRetryHandler implements HttpRetryHandler {
+public class ChefClientErrorRetryHandler implements HttpRetryHandler {
 
    @Inject(optional = true)
    @Named(Constants.PROPERTY_MAX_RETRIES)
    private int retryCountLimit = 5;
 
-   private final AWSUtils utils;
-
    @Resource
    protected Logger logger = Logger.NULL;
 
+   private final BackoffLimitedRetryHandler backoffLimitedRetryHandler;
+
    @Inject
-   public AWSClientErrorRetryHandler(AWSUtils utils) {
-      this.utils = utils;
+   ChefClientErrorRetryHandler(BackoffLimitedRetryHandler backoffLimitedRetryHandler) {
+      this.backoffLimitedRetryHandler = backoffLimitedRetryHandler;
    }
 
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       if (command.getFailureCount() > retryCountLimit)
          return false;
-      if (response.getStatusCode() == 400 || response.getStatusCode() == 403
-               || response.getStatusCode() == 409) {
-         command.incrementFailureCount();
-         // Content can be null in the case of HEAD requests
+      if (response.getStatusCode() == 400 && command.getRequest().getMethod().equals("PUT")
+            && command.getRequest().getEndpoint().getPath().indexOf("sandboxes") != -1) {
          if (response.getPayload() != null) {
-            closeClientButKeepContentStream(response);
-            AWSError error = utils.parseAWSErrorFromContent(command.getRequest(), response);
-            if (error != null
-                     && ("RequestTimeout".equals(error.getCode())
-                              || "OperationAborted".equals(error.getCode()) || "SignatureDoesNotMatch"
-                              .equals(error.getCode()))) {
-               return true;
+            String error = new String(closeClientButKeepContentStream(response));
+            if (error != null && error.indexOf("was not uploaded") != -1) {
+               return backoffLimitedRetryHandler.shouldRetryRequest(command, response);
             }
          }
       }

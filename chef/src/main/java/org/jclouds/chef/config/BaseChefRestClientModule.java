@@ -44,24 +44,22 @@ package org.jclouds.chef.config;
 import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.security.KeyPair;
+import java.io.UnsupportedEncodingException;
 import java.security.PrivateKey;
-import java.security.Security;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.bouncycastle.openssl.PEMReader;
+import org.jclouds.chef.handlers.ChefClientErrorRetryHandler;
 import org.jclouds.chef.handlers.ChefErrorHandler;
 import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
@@ -88,7 +86,7 @@ public class BaseChefRestClientModule<S, A> extends RestClientModule<S, A> {
    }
 
    protected BaseChefRestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
-            Map<Class<?>, Class<?>> delegates) {
+         Map<Class<?>, Class<?>> delegates) {
       super(syncClientType, asyncClientType, delegates);
    }
 
@@ -103,8 +101,7 @@ public class BaseChefRestClientModule<S, A> extends RestClientModule<S, A> {
     */
    @Provides
    @TimeStamp
-   Supplier<String> provideTimeStampCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final DateService dateService) {
+   Supplier<String> provideTimeStampCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds, final DateService dateService) {
       return new ExpirableSupplier<String>(new Supplier<String>() {
          public String get() {
             return dateService.iso8601SecondsDateFormat();
@@ -114,11 +111,9 @@ public class BaseChefRestClientModule<S, A> extends RestClientModule<S, A> {
 
    @Provides
    @Singleton
-   public PrivateKey provideKey(@Named(PROPERTY_CREDENTIAL) String key) throws IOException {
-      // TODO do this without adding a provider
-      Security.addProvider(new BouncyCastleProvider());
-      KeyPair pair = KeyPair.class.cast(new PEMReader(new StringReader(key)).readObject());
-      return pair.getPrivate();
+   public PrivateKey provideKey(EncryptionService encryptionService, @Named(PROPERTY_CREDENTIAL) String pem)
+         throws UnsupportedEncodingException {
+      return encryptionService.readPrivateKeyFromPEM(pem.getBytes("UTF-8"));
    }
 
    @Override
@@ -126,6 +121,11 @@ public class BaseChefRestClientModule<S, A> extends RestClientModule<S, A> {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ChefErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ChefErrorHandler.class);
       bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ChefErrorHandler.class);
+   }
+
+   @Override
+   protected void bindRetryHandlers() {
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(ChefClientErrorRetryHandler.class);
    }
 
    @Override

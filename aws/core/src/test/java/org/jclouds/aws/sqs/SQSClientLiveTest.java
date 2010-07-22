@@ -24,6 +24,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -40,6 +41,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.inject.Module;
@@ -57,7 +59,15 @@ public class SQSClientLiveTest {
 
    private RestContext<SQSClient, SQSAsyncClient> context;
 
-   private EncryptionService encryptionService = new JCEEncryptionService();
+   protected volatile static EncryptionService encryptionService;
+   static {
+      try {
+         encryptionService = new JCEEncryptionService();
+      } catch (NoSuchAlgorithmException e) {
+         Throwables.propagate(e);
+      }
+   }
+
    private Set<Queue> queues = Sets.newHashSet();
 
    @BeforeGroups(groups = { "live" })
@@ -66,14 +76,14 @@ public class SQSClientLiveTest {
       String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
       context = new RestContextFactory().createContext("sqs", identity, credential, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()));
+            .<Module> of(new Log4JLoggingModule()));
       this.client = context.getApi();
    }
 
    @Test
    void testListQueuesInRegion() throws InterruptedException {
       for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-               Region.AP_SOUTHEAST_1)) {
+            Region.AP_SOUTHEAST_1)) {
          SortedSet<Queue> allResults = Sets.newTreeSet(client.listQueuesInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
@@ -90,7 +100,7 @@ public class SQSClientLiveTest {
       String queueName = PREFIX + "1";
 
       for (final String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-               Region.AP_SOUTHEAST_1)) {
+            Region.AP_SOUTHEAST_1)) {
          try {
             SortedSet<Queue> result = Sets.newTreeSet(client.listQueuesInRegion(region, queuePrefix(queueName)));
             if (result.size() >= 1) {
@@ -147,8 +157,9 @@ public class SQSClientLiveTest {
    private static final int INCONSISTENCY_WINDOW = 10000;
 
    /**
-    * Due to eventual consistency, container commands may not return correctly immediately. Hence,
-    * we will try up to the inconsistency window to see if the assertion completes.
+    * Due to eventual consistency, container commands may not return correctly
+    * immediately. Hence, we will try up to the inconsistency window to see if
+    * the assertion completes.
     */
    protected static void assertEventually(Runnable assertion) throws InterruptedException {
       long start = System.currentTimeMillis();
@@ -158,7 +169,7 @@ public class SQSClientLiveTest {
             assertion.run();
             if (i > 0)
                System.err.printf("%d attempts and %dms asserting %s%n", i + 1, System.currentTimeMillis() - start,
-                        assertion.getClass().getSimpleName());
+                     assertion.getClass().getSimpleName());
             return;
          } catch (AssertionError e) {
             error = e;

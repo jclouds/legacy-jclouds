@@ -24,11 +24,13 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.Payloads;
@@ -40,6 +42,7 @@ import org.testng.annotations.Test;
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.repackaged.com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
 import com.google.common.io.Files;
 
 /**
@@ -51,10 +54,19 @@ public class ConvertToGaeRequestTest {
    ConvertToGaeRequest req;
    URI endPoint;
 
+   protected volatile static EncryptionService encryptionService;
+   static {
+      try {
+         encryptionService = new JCEEncryptionService();
+      } catch (NoSuchAlgorithmException e) {
+         Throwables.propagate(e);
+      }
+   }
+
    @BeforeTest
    void setupClient() throws MalformedURLException {
       endPoint = URI.create("http://localhost:80/foo");
-      req = new ConvertToGaeRequest(new JCEEncryptionService());
+      req = new ConvertToGaeRequest(encryptionService);
    }
 
    @Test

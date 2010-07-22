@@ -27,6 +27,7 @@ import static org.testng.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -51,6 +52,7 @@ import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
@@ -61,7 +63,15 @@ import com.google.common.collect.Maps;
  */
 @Test(groups = "live", testName = "cloudfiles.CloudFilesClientLiveTest")
 public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
-   private static final EncryptionService encryptionService = new JCEEncryptionService();
+
+   protected volatile static EncryptionService encryptionService;
+   static {
+      try {
+         encryptionService = new JCEEncryptionService();
+      } catch (NoSuchAlgorithmException e) {
+         Throwables.propagate(e);
+      }
+   }
 
    public CloudFilesClient getApi() {
       return (CloudFilesClient) context.getProviderSpecificContext().getApi();
@@ -321,7 +331,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          assertEquals(metadata.getContentType(), null);
          // assertEquals(metadata.getBytes(), new Long(data.length()));
          // assertEquals(metadata.getContentType(), "text/plain");
-         
+
          assertEquals(encryptionService.hex(md5), encryptionService.hex(metadata.getHash()));
          assertEquals(metadata.getHash(), encryptionService.fromHex(newEtag));
          assertEquals(metadata.getMetadata().entrySet().size(), 1);

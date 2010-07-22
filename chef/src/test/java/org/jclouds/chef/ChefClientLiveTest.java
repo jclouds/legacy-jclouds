@@ -106,6 +106,7 @@ public class ChefClientLiveTest {
 
       // define the file you want in the cookbook
       FilePayload content = Payloads.newFilePayload(new File(System.getProperty("user.dir"), "pom.xml"));
+      content.setContentType("application/x-binary");
 
       // get an md5 so that you can see if the server already has it or not
       adminConnection.utils().encryption().generateMD5BufferingIfNotRepeatable(content);
@@ -126,7 +127,6 @@ public class ChefClientLiveTest {
             adminConnection.utils().http().put(status.getUrl(), content);
          }
 
-         // if we were able to get here, close the sandbox
          adminConnection.getApi().commitSandbox(site.getSandboxId(), true);
 
       } catch (RuntimeException e) {

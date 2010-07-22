@@ -26,11 +26,13 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
@@ -40,6 +42,7 @@ import org.testng.annotations.Test;
 
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPResponse;
+import com.google.common.base.Throwables;
 
 /**
  * 
@@ -50,10 +53,19 @@ public class ConvertToJcloudsResponseTest {
    ConvertToJcloudsResponse req;
    URI endPoint;
 
+   protected volatile static EncryptionService encryptionService;
+   static {
+      try {
+         encryptionService = new JCEEncryptionService();
+      } catch (NoSuchAlgorithmException e) {
+         Throwables.propagate(e);
+      }
+   }
+
    @BeforeTest
    void setupClient() throws MalformedURLException {
       endPoint = URI.create("http://localhost:80/foo");
-      req = new ConvertToJcloudsResponse(new HttpUtils(new JCEEncryptionService(), 0, 0, 0, 0));
+      req = new ConvertToJcloudsResponse(new HttpUtils(encryptionService, 0, 0, 0, 0));
    }
 
    @Test

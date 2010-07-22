@@ -37,7 +37,6 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.testng.annotations.Test;
 
 /**
@@ -48,8 +47,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    @Test(groups = { "integration", "live" })
    public void containerDoesntExist() {
       assert !context.getBlobStore().containerExists("forgetaboutit");
-      assert !context.getBlobStore().containerExists(
-               "cloudcachestorefunctionalintegrationtest-first");
+      assert !context.getBlobStore().containerExists("cloudcachestorefunctionalintegrationtest-first");
    }
 
    @Test(groups = { "integration", "live" })
@@ -77,26 +75,25 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       object.setPayload(TEST_STRING);
       object.getMetadata().setContentType(MediaType.TEXT_PLAIN);
       object.getMetadata().setSize(new Long(TEST_STRING.length()));
-      // NOTE all metadata in jclouds comes out as lowercase, in an effort to normalize the
+      // NOTE all metadata in jclouds comes out as lowercase, in an effort to
+      // normalize the
       // providers.
       object.getMetadata().getUserMetadata().put("Adrian", "powderpuff");
-      object.getMetadata()
-               .setContentMD5(new JCEEncryptionService().md5(toInputStream(TEST_STRING)));
+      object.getMetadata().setContentMD5(encryptionService.md5(toInputStream(TEST_STRING)));
       String containerName = getContainerName();
       try {
          addBlobToContainer(containerName, object);
          validateContent(containerName, key);
 
          PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName,
-                  maxResults(1).withDetails());
+               maxResults(1).withDetails());
 
          BlobMetadata metadata = BlobMetadata.class.cast(get(container, 0));
 
          assert metadata.getContentType().startsWith("text/plain") : metadata.getContentType();
          assertEquals(metadata.getSize(), new Long(TEST_STRING.length()));
          assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
-         assertEquals(metadata.getContentMD5(), new JCEEncryptionService()
-                  .md5(toInputStream(TEST_STRING)));
+         assertEquals(metadata.getContentMD5(), encryptionService.md5(toInputStream(TEST_STRING)));
       } finally {
          returnContainer(containerName);
       }
@@ -119,8 +116,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
-         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName,
-                  maxResults(1));
+         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName, maxResults(1));
 
          assert container.getNextMarker() != null;
          assertEquals(container.size(), 1);
@@ -128,8 +124,8 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
 
          container = context.getBlobStore().list(containerName, afterMarker(marker));
          assertEquals(container.getNextMarker(), null);
-         assert container.size() == 25 : String.format("size should have been 25, but was %d: %s",
-                  container.size(), container);
+         assert container.size() == 25 : String.format("size should have been 25, but was %d: %s", container.size(),
+               container);
          assert container.getNextMarker() == null;
 
       } finally {
@@ -138,8 +134,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testListRootUsesDelimiter() throws InterruptedException,
-            UnsupportedEncodingException {
+   public void testListRootUsesDelimiter() throws InterruptedException, UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
          String prefix = "rootdelimeter";
@@ -239,8 +234,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
          addTenObjectsUnderPrefix(containerName, prefix);
          add15UnderRoot(containerName);
 
-         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName,
-                  inDirectory(prefix));
+         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName, inDirectory(prefix));
          assert container.getNextMarker() == null;
          assertEquals(container.size(), 10);
       } finally {
@@ -250,13 +244,11 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testListContainerMaxResults() throws InterruptedException,
-            UnsupportedEncodingException {
+   public void testListContainerMaxResults() throws InterruptedException, UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
          addAlphabetUnderRoot(containerName);
-         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName,
-                  maxResults(5));
+         PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName, maxResults(5));
          assertEquals(container.size(), 5);
          assert container.getNextMarker() != null;
       } finally {
@@ -302,8 +294,8 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       assertConsistencyAware(new Runnable() {
          public void run() {
             try {
-               assert !context.getBlobStore().containerExists(containerName) : "container "
-                        + containerName + " still exists";
+               assert !context.getBlobStore().containerExists(containerName) : "container " + containerName
+                     + " still exists";
             } catch (Exception e) {
                propagateIfPossible(e);
             }
@@ -312,8 +304,8 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testListContainer() throws InterruptedException, ExecutionException,
-            TimeoutException, UnsupportedEncodingException {
+   public void testListContainer() throws InterruptedException, ExecutionException, TimeoutException,
+         UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
          add15UnderRoot(containerName);
@@ -341,8 +333,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
-   protected void addTenObjectsUnderPrefix(String containerName, String prefix)
-            throws InterruptedException {
+   protected void addTenObjectsUnderPrefix(String containerName, String prefix) throws InterruptedException {
       for (int i = 0; i < 10; i++) {
          Blob blob = context.getBlobStore().newBlob(prefix + "/" + i);
          blob.setPayload(i + "content");
