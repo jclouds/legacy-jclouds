@@ -51,7 +51,7 @@ import com.google.common.annotations.VisibleForTesting;
 @SingleThreaded
 @Singleton
 public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorService<HTTPRequest> {
-   public static final String USER_AGENT = "jclouds/1.0 urlfetch/1.3.2";
+   public static final String USER_AGENT = "jclouds/1.0 urlfetch/1.3.5";
 
    private final URLFetchService urlFetchService;
    private final ConvertToGaeRequest convertToGaeRequest;
