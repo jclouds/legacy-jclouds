@@ -37,6 +37,8 @@ public class Patterns {
    public static final Pattern URL_ENCODED_PATTERN = Pattern.compile(".*%[a-fA-F0-9][a-fA-F0-9].*");
    public static final Pattern URI_PATTERN = Pattern.compile("([a-z0-9]+)://([^:]*):(.*)@(.*)");
    public static final Pattern PATTERN_THAT_BREAKS_URI = Pattern.compile("[a-z0-9]+://.*/.*@.*");
+   public static final Pattern JSON_STRING_PATTERN = Pattern.compile("^[^\"\\{\\[].*[^\\{\\[\"]$");
+   public static final Pattern JSON_NUMBER_PATTERN = Pattern.compile("^[0-9]*\\.?[0-9]*$");
    public static final Pattern PLUS_PATTERN = Pattern.compile("\\+");
    public static final Pattern STAR_PATTERN = Pattern.compile("\\*");
    public static final Pattern _7E_PATTERN = Pattern.compile("%7E");

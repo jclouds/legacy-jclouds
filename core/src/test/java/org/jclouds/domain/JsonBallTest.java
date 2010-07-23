@@ -54,7 +54,7 @@ public class JsonBallTest {
 
    }
 
-   public void test() {
+   public void testHash() {
       String json = "{\"tomcat6\":{\"ssl_port\":8433}}";
 
       Map<String, JsonBall> map = ImmutableMap.<String, JsonBall> of("tomcat6", new JsonBall("{\"ssl_port\":8433}"));
@@ -65,4 +65,38 @@ public class JsonBallTest {
 
    }
 
+
+   public void testList() {
+      String json = "{\"list\":[8431,8433]}";
+
+      Map<String, JsonBall> map = ImmutableMap.<String, JsonBall> of("list", new JsonBall("[8431,8433]"));
+
+      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads
+            .newStringPayload(json))), map);
+      assertEquals(mapper.toJson(map), json);
+
+   }
+
+   public void testString() {
+      String json = "{\"name\":\"fooy\"}";
+
+      Map<String, JsonBall> map = ImmutableMap.<String, JsonBall> of("name", new JsonBall("fooy"));
+
+      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads
+            .newStringPayload(json))), map);
+      assertEquals(mapper.toJson(map), json);
+
+   }
+   
+
+   public void testNumber() {
+      String json = "{\"number\":1}";
+
+      Map<String, JsonBall> map = ImmutableMap.<String, JsonBall> of("number", new JsonBall("1"));
+
+      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads
+            .newStringPayload(json))), map);
+      assertEquals(mapper.toJson(map), json);
+
+   }
 }

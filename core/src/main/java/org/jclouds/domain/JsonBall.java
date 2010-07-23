@@ -20,6 +20,8 @@ package org.jclouds.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.jclouds.util.Patterns;
+
 /**
  * 
  * As String is final, using a different marker to imply this is a json object
@@ -62,7 +64,14 @@ public class JsonBall implements java.io.Serializable, Comparable<String>, CharS
    }
 
    public JsonBall(String value) {
-      this.value = checkNotNull(value, "value");
+      this.value = quoteStringIfNotNumber(checkNotNull(value, "value"));
+   }
+
+   static String quoteStringIfNotNumber(String in) {
+      if (Patterns.JSON_STRING_PATTERN.matcher(in).find() && !Patterns.JSON_NUMBER_PATTERN.matcher(in).find()) {
+         return "\"" + in + "\"";
+      }
+      return in;
    }
 
    @Override
