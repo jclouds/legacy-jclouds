@@ -30,9 +30,10 @@ import java.net.URI;
 
 import javax.ws.rs.HttpMethod;
 
+import org.jclouds.chef.config.ChefParserModule;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -45,7 +46,7 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "chef.BindHexEncodedMD5sToJsonPayloadTest")
 public class BindHexEncodedMD5sToJsonPayloadTest {
 
-   Injector injector = Guice.createInjector(new ParserModule());
+   Injector injector = Guice.createInjector(new ChefParserModule(), new GsonModule());
    BindChecksumsToJsonPayload binder = injector.getInstance(BindChecksumsToJsonPayload.class);
 
    @Test(expectedExceptions = IllegalArgumentException.class)
@@ -57,10 +58,9 @@ public class BindHexEncodedMD5sToJsonPayloadTest {
    @Test(enabled = false)
    public void testCorrect() {
       HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
-      binder.bindToRequest(request, ImmutableSet.of(injector.getInstance(EncryptionService.class)
-               .fromHex("abddef"), injector.getInstance(EncryptionService.class).fromHex("1234")));
-      assertEquals(request.getPayload().getRawContent(),
-               "{\"checksums\":{\"abddef\":null,\"1234\":null}}");
+      binder.bindToRequest(request, ImmutableSet.of(injector.getInstance(EncryptionService.class).fromHex("abddef"),
+            injector.getInstance(EncryptionService.class).fromHex("1234")));
+      assertEquals(request.getPayload().getRawContent(), "{\"checksums\":{\"abddef\":null,\"1234\":null}}");
    }
 
    @Test(expectedExceptions = { NullPointerException.class, IllegalStateException.class })

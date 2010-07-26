@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Set;
 
+import org.jclouds.chef.config.ChefParserModule;
 import org.jclouds.chef.domain.Attribute;
 import org.jclouds.chef.domain.CookbookVersion;
 import org.jclouds.chef.domain.Metadata;
@@ -13,15 +14,15 @@ import org.jclouds.chef.domain.Resource;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.Json;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -37,10 +38,12 @@ public class ParseCookbookVersionFromJsonTest {
 
    private ParseJson<CookbookVersion> handler;
    private Injector injector;
+   private Json json;
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      injector = Guice.createInjector(new ParserModule());
+      injector = Guice.createInjector(new ChefParserModule(), new GsonModule());
+      json = injector.getInstance(Json.class);
       handler = injector.getInstance(Key.get(new TypeLiteral<ParseJson<CookbookVersion>>() {
       }));
    }
@@ -50,8 +53,8 @@ public class ParseCookbookVersionFromJsonTest {
       CookbookVersion cookbook = handler.apply(new HttpResponse(200, "ok", Payloads
             .newPayload(ParseCookbookVersionFromJsonTest.class.getResourceAsStream("/brew-cookbook.json"))));
 
-      assertEquals(cookbook, handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils
-            .toInputStream(new Gson().toJson(cookbook))))));
+      assertEquals(cookbook, handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils.toInputStream(json
+            .toJson(cookbook))))));
    }
 
    @Test(enabled = false)
@@ -59,8 +62,8 @@ public class ParseCookbookVersionFromJsonTest {
       CookbookVersion cookbook = handler.apply(new HttpResponse(200, "ok", Payloads
             .newPayload(ParseCookbookVersionFromJsonTest.class.getResourceAsStream("/tomcat-cookbook.json"))));
 
-      assertEquals(cookbook, handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils
-            .toInputStream(new Gson().toJson(cookbook))))));
+      assertEquals(cookbook, handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils.toInputStream(json
+            .toJson(cookbook))))));
    }
 
    @Test(enabled = false)
@@ -68,8 +71,8 @@ public class ParseCookbookVersionFromJsonTest {
       CookbookVersion cookbook = handler.apply(new HttpResponse(200, "ok", Payloads
             .newPayload(ParseCookbookVersionFromJsonTest.class.getResourceAsStream("/mysql-cookbook.json"))));
 
-      assertEquals(cookbook, handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils
-            .toInputStream(new Gson().toJson(cookbook))))));
+      assertEquals(cookbook, handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils.toInputStream(json
+            .toJson(cookbook))))));
    }
 
    @Test(enabled = false)

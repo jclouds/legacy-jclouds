@@ -8,8 +8,8 @@ import org.jclouds.chef.config.ChefParserModule;
 import org.jclouds.chef.domain.DataBagItem;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -29,7 +29,7 @@ public class ParseDataBagItemFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule(), new ChefParserModule());
+      Injector injector = Guice.createInjector(new ChefParserModule(), new GsonModule());
       handler = injector.getInstance(Key.get(new TypeLiteral<ParseJson<DataBagItem>>() {
       }));
       mapper = injector.getInstance(Gson.class);

@@ -22,11 +22,12 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
+import org.jclouds.chef.config.ChefParserModule;
 import org.jclouds.chef.domain.Organization;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -47,7 +48,7 @@ public class ParseOrganizationFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule());
+      Injector injector = Guice.createInjector(new ChefParserModule(), new GsonModule());
       handler = injector.getInstance(Key.get(new TypeLiteral<ParseJson<Organization>>() {
       }));
    }

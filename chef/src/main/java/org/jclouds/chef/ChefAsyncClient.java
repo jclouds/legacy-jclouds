@@ -78,7 +78,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Headers(keys = "X-Chef-Version", values = ChefAsyncClient.VERSION)
 @Consumes(MediaType.APPLICATION_JSON)
 public interface ChefAsyncClient {
-   public static final String VERSION = "0.9.6";
+   public static final String VERSION = "0.9.8";
 
    /**
     * @see ChefClient#getUploadSandboxForChecksums

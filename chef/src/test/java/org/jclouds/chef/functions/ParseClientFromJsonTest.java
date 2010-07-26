@@ -5,10 +5,11 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
+import org.jclouds.chef.config.ChefParserModule;
 import org.jclouds.chef.domain.Client;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -29,7 +30,7 @@ public class ParseClientFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule());
+      Injector injector = Guice.createInjector(new ChefParserModule(), new GsonModule());
       handler = injector.getInstance(Key.get(new TypeLiteral<ParseJson<Client>>() {
       }));
    }

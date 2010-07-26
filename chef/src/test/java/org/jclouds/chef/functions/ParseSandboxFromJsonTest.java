@@ -4,19 +4,17 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
+import org.jclouds.chef.config.ChefParserModule;
 import org.jclouds.chef.domain.Sandbox;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.http.functions.config.ParserModule;
-import org.jclouds.http.functions.config.ParserModule.DateAdapter;
-import org.jclouds.http.functions.config.ParserModule.Iso8601DateAdapter;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -35,28 +33,16 @@ public class ParseSandboxFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule(),
-            new AbstractModule() {
-
-               @Override
-               protected void configure() {
-                  bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-               }
-
-            });
-      handler = injector.getInstance(Key
-            .get(new TypeLiteral<ParseJson<Sandbox>>() {
-            }));
+      Injector injector = Guice.createInjector(new ChefParserModule(), new GsonModule());
+      handler = injector.getInstance(Key.get(new TypeLiteral<ParseJson<Sandbox>>() {
+      }));
       dateService = injector.getInstance(DateService.class);
    }
 
    public void test() {
-      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads
-            .newPayload(ParseSandboxFromJsonTest.class
-                  .getResourceAsStream("/sandbox.json")))), new Sandbox(
-            "1-8c27b0ea4c2b7aaedbb44cfbdfcc11b2", false, dateService
-                  .iso8601SecondsDateParse("2010-07-07T03:36:00+00:00"),
-            ImmutableSet.<String> of(), "f9d6d9b72bae465890aae87969f98a9c",
-            "f9d6d9b72bae465890aae87969f98a9c"));
+      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(ParseSandboxFromJsonTest.class
+            .getResourceAsStream("/sandbox.json")))), new Sandbox("1-8c27b0ea4c2b7aaedbb44cfbdfcc11b2", false,
+            dateService.iso8601SecondsDateParse("2010-07-07T03:36:00+00:00"), ImmutableSet.<String> of(),
+            "f9d6d9b72bae465890aae87969f98a9c", "f9d6d9b72bae465890aae87969f98a9c"));
    }
 }

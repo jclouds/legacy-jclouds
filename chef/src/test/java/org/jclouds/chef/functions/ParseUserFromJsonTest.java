@@ -4,11 +4,12 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
+import org.jclouds.chef.config.ChefParserModule;
 import org.jclouds.chef.domain.User;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -30,10 +31,9 @@ public class ParseUserFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule());
-      handler = injector.getInstance(Key
-            .get(new TypeLiteral<ParseJson<User>>() {
-            }));
+      Injector injector = Guice.createInjector(new ChefParserModule(), new GsonModule());
+      handler = injector.getInstance(Key.get(new TypeLiteral<ParseJson<User>>() {
+      }));
    }
 
    public void test() {
@@ -47,7 +47,6 @@ public class ParseUserFromJsonTest {
 
       String toParse = "{\n\"username\": \"bobo\",\n\"first_name\": \"Bobo\",\n\"middle_name\": \"Tiberion\",\n\"last_name\": \"Clown\",\n\"display_name\": \"Bobo T. Clown\",\n\"email\": \"bobo@clownco.com\" \n}";
 
-      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads
-            .newPayload(Utils.toInputStream(toParse)))), user);
+      assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(Utils.toInputStream(toParse)))), user);
    }
 }

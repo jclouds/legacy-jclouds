@@ -4,9 +4,10 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
+import org.jclouds.chef.config.ChefParserModule;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -26,25 +27,25 @@ public class ParseKeyFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule());
+      Injector injector = Guice.createInjector(new ChefParserModule(), new GsonModule());
       handler = injector.getInstance(ParseKeyFromJson.class);
    }
 
    public void testRegex() {
       assertEquals(
-               handler
-                        .apply(new HttpResponse(
-                                 200,
-                                 "ok",
-                                 Payloads
-                                          .newPayload(Utils
-                                                   .toInputStream("{\n\"uri\": \"https://api.opscode.com/users/bobo\", \"private_key\": \"RSA_PRIVATE_KEY\",}")))),
-               "RSA_PRIVATE_KEY");
+            handler
+                  .apply(new HttpResponse(
+                        200,
+                        "ok",
+                        Payloads
+                              .newPayload(Utils
+                                    .toInputStream("{\n\"uri\": \"https://api.opscode.com/users/bobo\", \"private_key\": \"RSA_PRIVATE_KEY\",}")))),
+            "RSA_PRIVATE_KEY");
    }
 
    public void test2() {
-      String key = handler.apply(new HttpResponse(200, "ok", Payloads
-               .newPayload(ParseKeyFromJsonTest.class.getResourceAsStream("/newclient.txt"))));
+      String key = handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(ParseKeyFromJsonTest.class
+            .getResourceAsStream("/newclient.txt"))));
       assert key.startsWith("-----BEGIN RSA PRIVATE KEY-----\n");
    }
 }

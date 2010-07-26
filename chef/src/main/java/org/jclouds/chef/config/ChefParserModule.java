@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,6 +26,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.chef.domain.DataBagItem;
+import org.jclouds.json.config.GsonModule.DateAdapter;
+import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonDeserializationContext;
@@ -79,5 +81,6 @@ public class ChefParserModule extends AbstractModule {
 
    @Override
    protected void configure() {
+      bind(DateAdapter.class).to(Iso8601DateAdapter.class);
    }
 }

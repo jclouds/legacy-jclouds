@@ -5,12 +5,13 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Collections;
 
+import org.jclouds.chef.config.ChefParserModule;
 import org.jclouds.chef.domain.Node;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -32,16 +33,16 @@ public class ParseNodeFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule());
+      Injector injector = Guice.createInjector(new ChefParserModule(), new GsonModule());
       handler = injector.getInstance(Key.get(new TypeLiteral<ParseJson<Node>>() {
       }));
    }
 
    public void test() {
 
-      Node node = new Node("adrian-jcloudstest", ImmutableMap.<String, JsonBall> of("tomcat6",new JsonBall("{\"ssl_port\":8433}")), ImmutableMap
-            .<String, JsonBall> of(), ImmutableMap.<String, JsonBall> of(), ImmutableMap.<String, JsonBall> of(),
-            Collections.singleton("recipe[java]"));
+      Node node = new Node("adrian-jcloudstest", ImmutableMap.<String, JsonBall> of("tomcat6", new JsonBall(
+            "{\"ssl_port\":8433}")), ImmutableMap.<String, JsonBall> of(), ImmutableMap.<String, JsonBall> of(),
+            ImmutableMap.<String, JsonBall> of(), Collections.singleton("recipe[java]"));
 
       assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newPayload(ParseCookbookVersionFromJsonTest.class
             .getResourceAsStream("/node.json")))), node);

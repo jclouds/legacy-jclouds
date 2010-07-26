@@ -76,7 +76,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
             "0189e76ccc476701d6b374e5a1a27347", true);
       assertRequestLineEquals(httpRequest,
             "PUT http://localhost:4000/sandboxes/0189e76ccc476701d6b374e5a1a27347 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, "{\"is_completed\":\"true\"}", "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
@@ -95,7 +95,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
             .fromHex("0c5ecd7788cf4f6c7de2a57193897a6c")), Bytes.asList(encryptionService
             .fromHex("1dda05ed139664f1f89b9dec482b77c0"))));
       assertRequestLineEquals(httpRequest, "POST http://localhost:4000/sandboxes HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
             httpRequest,
             "{\"checksums\":{\"0189e76ccc476701d6b374e5a1a27347\":null,\"0c5ecd7788cf4f6c7de2a57193897a6c\":null,\"1dda05ed139664f1f89b9dec482b77c0\":null}}",
@@ -113,7 +113,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       Method method = ChefAsyncClient.class.getMethod("getCookbook", String.class, String.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "cookbook", "1.0.0");
       assertRequestLineEquals(httpRequest, "GET http://localhost:4000/cookbooks/cookbook/1.0.0 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
@@ -128,7 +128,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       Method method = ChefAsyncClient.class.getMethod("deleteCookbook", String.class, String.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "cookbook", "1.0.0");
       assertRequestLineEquals(httpRequest, "DELETE http://localhost:4000/cookbooks/cookbook/1.0.0 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
@@ -146,7 +146,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
             new CookbookVersion("cookbook", "1.0.1"));
 
       assertRequestLineEquals(httpRequest, "PUT http://localhost:4000/cookbooks/cookbook/1.0.1 HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
             httpRequest,
             "{\"name\":\"cookbook-1.0.1\",\"definitions\":[],\"attributes\":[],\"files\":[],\"metadata\":{\"suggestions\":{},\"dependencies\":{},\"conflicting\":{},\"providing\":{},\"platforms\":{},\"recipes\":{},\"replacing\":{},\"groupings\":{},\"attributes\":{},\"recommendations\":{}},\"providers\":[],\"cookbook_name\":\"cookbook\",\"resources\":[],\"templates\":[],\"libraries\":[],\"version\":\"1.0.1\",\"recipes\":[],\"root_files\":[],\"json_class\":\"Chef::CookbookVersion\",\"chef_type\":\"cookbook_version\"}",
@@ -164,7 +164,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:4000/cookbooks HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseKeySetFromJson.class);
@@ -179,7 +179,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       Method method = ChefAsyncClient.class.getMethod("clientExists", String.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "client");
       assertRequestLineEquals(httpRequest, "HEAD http://localhost:4000/clients/client HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ReturnTrueIf2xx.class);
@@ -194,7 +194,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       Method method = ChefAsyncClient.class.getMethod("deleteClient", String.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "client");
       assertRequestLineEquals(httpRequest, "DELETE http://localhost:4000/clients/client HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
@@ -210,7 +210,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "client");
 
       assertRequestLineEquals(httpRequest, "POST http://localhost:4000/clients HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, "{\"clientname\":\"client\"}", "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseKeyFromJson.class);
@@ -226,7 +226,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:4000/clients HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseKeySetFromJson.class);
@@ -241,7 +241,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       Method method = ChefAsyncClient.class.getMethod("generateKeyForClient", String.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "client");
       assertRequestLineEquals(httpRequest, "PUT http://localhost:4000/clients/client HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, "{\"clientname\":\"client\", \"private_key\": true}", "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseKeyFromJson.class);
@@ -256,7 +256,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       Method method = ChefAsyncClient.class.getMethod("nodeExists", String.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "node");
       assertRequestLineEquals(httpRequest, "HEAD http://localhost:4000/nodes/node HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ReturnTrueIf2xx.class);
@@ -271,7 +271,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       Method method = ChefAsyncClient.class.getMethod("deleteNode", String.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "node");
       assertRequestLineEquals(httpRequest, "DELETE http://localhost:4000/nodes/node HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
@@ -288,7 +288,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
             ImmutableSet.of("recipe[java]")));
 
       assertRequestLineEquals(httpRequest, "POST http://localhost:4000/nodes HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
             httpRequest,
             "{\"name\":\"testnode\",\"normal\":{},\"override\":{},\"default\":{},\"automatic\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Node\",\"chef_type\":\"node\"}",
@@ -308,7 +308,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
             ImmutableSet.of("recipe[java]")));
 
       assertRequestLineEquals(httpRequest, "PUT http://localhost:4000/nodes/testnode HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
             httpRequest,
             "{\"name\":\"testnode\",\"normal\":{},\"override\":{},\"default\":{},\"automatic\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Node\",\"chef_type\":\"node\"}",
@@ -327,7 +327,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:4000/nodes HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseKeySetFromJson.class);
@@ -342,7 +342,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       Method method = ChefAsyncClient.class.getMethod("roleExists", String.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "role");
       assertRequestLineEquals(httpRequest, "HEAD http://localhost:4000/roles/role HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ReturnTrueIf2xx.class);
@@ -357,7 +357,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       Method method = ChefAsyncClient.class.getMethod("deleteRole", String.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "role");
       assertRequestLineEquals(httpRequest, "DELETE http://localhost:4000/roles/role HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
@@ -374,7 +374,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
             ImmutableSet.of("recipe[java]")));
 
       assertRequestLineEquals(httpRequest, "POST http://localhost:4000/roles HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
             httpRequest,
             "{\"name\":\"testrole\",\"override_attributes\":{},\"default_attributes\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Role\",\"chef_type\":\"role\"}",
@@ -394,7 +394,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
             ImmutableSet.of("recipe[java]")));
 
       assertRequestLineEquals(httpRequest, "PUT http://localhost:4000/roles/testrole HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
             httpRequest,
             "{\"name\":\"testrole\",\"override_attributes\":{},\"default_attributes\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Role\",\"chef_type\":\"role\"}",
@@ -413,7 +413,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:4000/roles HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.6\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseKeySetFromJson.class);

@@ -16,25 +16,13 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.chef;
-
-import org.jclouds.util.Utils;
-import org.testng.annotations.Test;
-
-import com.google.common.collect.Iterables;
+package org.jclouds.ohai.config;
 
 /**
+ * Wires the components needed to parse ohai data without violating the GAE JVM
  * 
  * @author Adrian Cole
- * 
  */
-@Test(groups = "unit")
-public class ProvidersInPropertiesTest {
-
-   @Test
-   public void testSupportedProviders() {
-      Iterable<String> providers = Utils.getSupportedProviders();
-      assert Iterables.contains(providers, "chef") : providers;
-   }
+public class WhiteListCompliantOhaiModule extends BaseOhaiModule {
 
 }
