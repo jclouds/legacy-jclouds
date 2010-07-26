@@ -25,7 +25,6 @@ package org.jclouds.ohai;
 
 import static org.testng.Assert.assertEquals;
 
-import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Properties;
 
@@ -33,7 +32,6 @@ import org.jclouds.chef.config.ChefParserModule;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.ohai.config.BaseOhaiModule;
-import org.jclouds.ohai.functions.ByteArrayToMacAddress;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -50,7 +48,6 @@ public class WhiteListCompliantJVMTest {
    @Test
    public void test() throws SocketException {
 
-      byte[] mac = NetworkInterface.getNetworkInterfaces().nextElement().getHardwareAddress();
       final Properties sysProperties = new Properties();
 
       sysProperties.setProperty("os.name", "Mac OS X");
@@ -69,14 +66,12 @@ public class WhiteListCompliantJVMTest {
          }
 
       });
-      String macString = injector.getInstance(ByteArrayToMacAddress.class).apply(mac);
       Json json = injector.getInstance(Json.class);
       WhiteListCompliantJVM WhiteListCompliantJVM = injector.getInstance(WhiteListCompliantJVM.class);
 
       assertEquals(
             json.toJson(WhiteListCompliantJVM.get()),
-            "{\"ohai_time\":1279992919.32529,\"java\":{\"user.name\":\"user\",\"os.version\":\"10.3.0\",\"os.name\":\"Mac OS X\"},\"macaddress\":\""
-                  + macString + "\",\"platform\":\"macosx\",\"platform_version\":\"10.3.0\",\"current_user\":\"user\"}");
+            "{\"ohai_time\":1279992919.32529,\"java\":{\"user.name\":\"user\",\"os.version\":\"10.3.0\",\"os.name\":\"Mac OS X\"},\"platform\":\"macosx\",\"platform_version\":\"10.3.0\",\"current_user\":\"user\"}");
 
    }
 }

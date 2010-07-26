@@ -18,8 +18,6 @@
  */
 package org.jclouds.ohai.config;
 
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.util.Map;
 import java.util.Properties;
 
@@ -78,12 +76,6 @@ public class BaseOhaiModule extends AbstractModule {
    @Provides
    Iterable<Supplier<Map<String, JsonBall>>> suppliers(Injector injector) {
       return ImmutableList.<Supplier<Map<String, JsonBall>>> of(injector.getInstance(WhiteListCompliantJVM.class));
-   }
-
-   @Provides
-   @Singleton
-   protected NetworkInterface provideDefaultNetworkInterface() throws SocketException {
-      return NetworkInterface.getNetworkInterfaces().nextElement();
    }
 
 }

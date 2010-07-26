@@ -20,8 +20,6 @@ package org.jclouds.ohai;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.util.Map;
 import java.util.Properties;
 
@@ -35,7 +33,6 @@ import org.jclouds.domain.JsonBall;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger;
 
-import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.inject.internal.Maps;
 
@@ -53,22 +50,16 @@ public class WhiteListCompliantJVM implements Supplier<Map<String, JsonBall>> {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final Function<byte[], String> byteArrayToMacAddress;
-   private final NetworkInterface defaultNetworkInterface;
    private final Json json;
    private final Provider<Long> nanoTimeProvider;
    private final Provider<Properties> systemPropertiesProvider;
 
    @Inject
-   public WhiteListCompliantJVM(Json json, Function<byte[], String> byteArrayToMacAddress,
-         @Named("nanoTime") Provider<Long> nanoTimeProvider,
-         @Named("systemProperties") Provider<Properties> systemPropertiesProvider,
-         NetworkInterface defaultNetworkInterface) {
+   public WhiteListCompliantJVM(Json json, @Named("nanoTime") Provider<Long> nanoTimeProvider,
+         @Named("systemProperties") Provider<Properties> systemPropertiesProvider) {
       this.json = checkNotNull(json, "json");
-      this.byteArrayToMacAddress = checkNotNull(byteArrayToMacAddress, "byteArrayToMacAddress");
       this.nanoTimeProvider = checkNotNull(nanoTimeProvider, "nanoTimeProvider");
       this.systemPropertiesProvider = checkNotNull(systemPropertiesProvider, "systemPropertiesProvider");
-      this.defaultNetworkInterface = checkNotNull(defaultNetworkInterface, "defaultNetworkInterface");
    }
 
    public Map<String, JsonBall> get() {
@@ -82,13 +73,6 @@ public class WhiteListCompliantJVM implements Supplier<Map<String, JsonBall>> {
 
       returnVal.put("ohai_time", new JsonBall(now));
       returnVal.put("java", new JsonBall(json.toJson(systemProperties)));
-
-      try {
-         String mac = byteArrayToMacAddress.apply(defaultNetworkInterface.getHardwareAddress());
-         returnVal.put("macaddress", new JsonBall(mac));
-      } catch (SocketException e) {
-         logger.warn(e, "could not read address from %s", defaultNetworkInterface.getDisplayName());
-      }
 
       String platform = systemProperties.getProperty("os.name");
       platform = platform.replaceAll("[ -]", "").toLowerCase();
