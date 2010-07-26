@@ -35,7 +35,8 @@ public class SlicehostPropertiesBuilder extends PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_ENDPOINT, "https://api.slicehost.com");
-      properties.setProperty(PROPERTY_API_VERSION, "1.0");
+      properties.setProperty(PROPERTY_API_VERSION, "1.4.1.1");
+      properties.setProperty("jclouds.ssh.max_retries", "8");
       return properties;
    }
 

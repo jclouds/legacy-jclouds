@@ -122,8 +122,8 @@ public class SlicehostComputeServiceContextModule extends AbstractModule {
    @Provides
    @Named("NAMING_CONVENTION")
    @Singleton
-   String provideNamingConvention(@Named(Constants.PROPERTY_IDENTITY) String identity) {
-      return identity + "-%s-%s";
+   String provideNamingConvention() {
+      return "%s-%s";
    }
 
    @Singleton
@@ -275,8 +275,8 @@ public class SlicehostComputeServiceContextModule extends AbstractModule {
       holder.logger.debug(">> providing sizes");
       for (final Flavor from : sync.listFlavors()) {
          sizes.add(new SizeImpl(from.getId() + "", from.getName(), from.getId() + "", location, null, ImmutableMap
-               .<String, String> of(), from.getRam() / 1024.0, from.getRam(), (from.getRam() * 4) / 1024, ImagePredicates
-               .any()));
+               .<String, String> of(), from.getRam() / 1024.0, from.getRam(), (from.getRam() * 4) / 1024,
+               ImagePredicates.any()));
       }
       holder.logger.debug("<< sizes(%d)", sizes.size());
       return sizes;

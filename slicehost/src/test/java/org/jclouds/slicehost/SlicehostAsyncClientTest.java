@@ -34,6 +34,7 @@ import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.slicehost.filters.SlicehostBasic;
+import org.jclouds.slicehost.xml.BackupHandler;
 import org.jclouds.slicehost.xml.FlavorHandler;
 import org.jclouds.slicehost.xml.FlavorsHandler;
 import org.jclouds.slicehost.xml.ImageHandler;
@@ -249,6 +250,25 @@ public class SlicehostAsyncClientTest extends RestClientTest<SlicehostAsyncClien
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);
+   }
+
+   public void testCreateBackup() throws IOException, SecurityException, NoSuchMethodException {
+      Method method = SlicehostAsyncClient.class.getMethod("createBackup", String.class, int.class);
+      HttpRequest request = processor.createRequest(method, "ralphie", 2);
+
+      assertRequestLineEquals(request, "POST https://api.slicehost.com/slices.xml HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(
+            request,
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><backup><slice-id type=\"integer\">2</slice-id><name>ralphie</name></backup>",
+            "application/xml", false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, BackupHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(request);
+
    }
 
    @Override

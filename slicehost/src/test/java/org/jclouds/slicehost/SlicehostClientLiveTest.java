@@ -203,7 +203,7 @@ public class SlicehostClientLiveTest {
    private String rootPassword;
    private int backupId;
 
-   @Test(enabled = false)
+   @Test(enabled = true)
    public void testCreateSlice() throws Exception {
       int imageId = 14362;
       int flavorId = 1;
@@ -235,7 +235,7 @@ public class SlicehostClientLiveTest {
       }
    }
 
-   @Test(enabled = false, timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateSlice")
+   @Test(enabled = true, timeOut = 5 * 60 * 1000, dependsOnMethods = "testCreateSlice")
    public void testSliceDetails() throws Exception {
       Slice slice = client.getSlice(sliceId);
       assertEquals(slice.getStatus(), Slice.Status.ACTIVE);
@@ -285,9 +285,9 @@ public class SlicehostClientLiveTest {
       return ip;
    }
 
-   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testSliceDetails")
+   @Test(enabled = true, timeOut = 10 * 60 * 1000, dependsOnMethods = "testSliceDetails")
    public void testCreateBackup() throws Exception {
-      Backup backup = client.createBackupFromSlice(sliceId);
+      Backup backup = client.createBackup("hoofie", sliceId);
       // TODO validate our request, as the above returns <nil-classes
       // type="array"/>
       assertEquals("hoofie", backup.getName());
@@ -295,7 +295,7 @@ public class SlicehostClientLiveTest {
       backupId = backup.getId();
    }
 
-   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateBackup")
+   @Test(enabled = true, timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateBackup")
    public void testRebuildSlice() throws Exception {
       client.rebuildSliceFromBackup(sliceId, backupId);
       blockUntilSliceActive(sliceId);
@@ -304,19 +304,19 @@ public class SlicehostClientLiveTest {
       // client.getSlice(sliceId).getImageId());
    }
 
-   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebuildSlice")
+   @Test(enabled = true, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebuildSlice")
    public void testRebootHard() throws Exception {
       client.hardRebootSlice(sliceId);
       blockUntilSliceActive(sliceId);
    }
 
-   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootHard")
+   @Test(enabled = true, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootHard")
    public void testRebootSoft() throws Exception {
       client.rebootSlice(sliceId);
       blockUntilSliceActive(sliceId);
    }
 
-   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
+   @Test(enabled = true, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
    void testDeleteBackup() {
       if (backupId > 0) {
          client.destroyBackup(backupId);
@@ -324,7 +324,7 @@ public class SlicehostClientLiveTest {
       }
    }
 
-   @Test(enabled = false, timeOut = 10 * 60 * 1000, dependsOnMethods = "testDeleteBackup")
+   @Test(enabled = true, timeOut = 10 * 60 * 1000, dependsOnMethods = "testDeleteBackup")
    void destroySlice1() {
       if (sliceId > 0) {
          client.destroySlice(sliceId);

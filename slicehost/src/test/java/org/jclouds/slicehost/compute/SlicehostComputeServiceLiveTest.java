@@ -21,18 +21,14 @@ package org.jclouds.slicehost.compute;
 
 import static org.testng.Assert.assertEquals;
 
-import java.io.IOException;
-
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.Architecture;
-import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.domain.LocationScope;
+import org.jclouds.rest.RestContext;
 import org.jclouds.slicehost.SlicehostAsyncClient;
 import org.jclouds.slicehost.SlicehostClient;
-import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -68,15 +64,7 @@ public class SlicehostComputeServiceLiveTest extends BaseComputeServiceLiveTest 
 
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
-      RestContext<SlicehostClient, SlicehostAsyncClient> tmContext = new ComputeServiceContextFactory()
-               .createContext(provider, identity, credential).getProviderSpecificContext();
-   }
-
-   @Override
-   protected void checkNodes(Iterable<? extends NodeMetadata> nodes, String tag) throws IOException {
-      super.checkNodes(nodes, tag);
-      for (NodeMetadata node : nodes) {
-         assertEquals(node.getLocation().getScope(), LocationScope.HOST);
-      }
+      RestContext<SlicehostClient, SlicehostAsyncClient> tmContext = new ComputeServiceContextFactory().createContext(
+            provider, identity, credential).getProviderSpecificContext();
    }
 }

@@ -46,8 +46,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
-   public static final Pattern SECOND_FIELD_DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX = Pattern
-         .compile("[^-]+-([^-]+)-[0-9a-f]+");
+   public static final Pattern DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX = Pattern.compile("([^-]+)-[0-9a-f]+");
    private final Location location;
    private final Map<Slice.Status, NodeState> sliceToNodeState;
    private final Set<? extends Image> images;
@@ -56,18 +55,15 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
    protected Logger logger = Logger.NULL;
 
    private static class FindImageForSlice implements Predicate<Image> {
-      private final Location location;
-      private final Slice instance;
+      private final Slice slice;
 
-      private FindImageForSlice(Location location, Slice instance) {
-         this.location = location;
-         this.instance = instance;
+      private FindImageForSlice(Slice slice) {
+         this.slice = slice;
       }
 
       @Override
       public boolean apply(Image input) {
-         return input.getProviderId().equals(instance.getImageId() + "")
-               && (input.getLocation() == null || input.getLocation().equals(location.getParent()));
+         return input.getProviderId().equals(slice.getImageId() + "");
       }
    }
 
@@ -81,11 +77,11 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
 
    @Override
    public NodeMetadata apply(Slice from) {
-      Matcher matcher = SECOND_FIELD_DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX.matcher(from.getName());
+      Matcher matcher = DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX.matcher(from.getName());
       final String tag = matcher.find() ? matcher.group(1) : null;
       Image image = null;
       try {
-         image = Iterables.find(images, new FindImageForSlice(location, from));
+         image = Iterables.find(images, new FindImageForSlice(from));
       } catch (NoSuchElementException e) {
          logger.warn("could not find a matching image for slice %s in location %s", from, location);
       }

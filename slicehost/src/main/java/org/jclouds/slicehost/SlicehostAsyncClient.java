@@ -37,6 +37,7 @@ import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.slicehost.binders.BindCreateBackupToXmlPayload;
 import org.jclouds.slicehost.binders.BindCreateSliceToXmlPayload;
 import org.jclouds.slicehost.domain.Backup;
 import org.jclouds.slicehost.domain.Flavor;
@@ -194,11 +195,12 @@ public interface SlicehostAsyncClient {
    ListenableFuture<Backup> getBackup(@PathParam("id") int id);
 
    /**
-    * @see SlicehostClient#createBackupFromSlice
+    * @see BackuphostClient#createBackup
     */
-   @PUT
-   @Path("/backups.xml")
+   @POST
+   @Path("/slices.xml")
+   @MapBinder(BindCreateBackupToXmlPayload.class)
    @XMLResponseParser(BackupHandler.class)
-   ListenableFuture<Backup> createBackupFromSlice(@QueryParam("slice_id") int sliceId);
+   ListenableFuture<Backup> createBackup(@MapPayloadParam("name") String name, @MapPayloadParam("slice_id") int sliceId);
 
 }

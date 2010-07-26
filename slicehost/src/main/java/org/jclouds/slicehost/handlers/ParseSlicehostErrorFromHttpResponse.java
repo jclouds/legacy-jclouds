@@ -64,6 +64,9 @@ public class ParseSlicehostErrorFromHttpResponse implements HttpErrorHandler {
                exception = new ResourceNotFoundException(message);
             }
             break;
+         case 422:
+            exception = new IllegalStateException(content);
+            break;
          default:
             exception = new HttpResponseException(command, response, content);
          }
@@ -100,7 +103,8 @@ public class ParseSlicehostErrorFromHttpResponse implements HttpErrorHandler {
    }
 
    String parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
-      if (response.getPayload() != null) {
+      // slicehost returns " " which is unparsable
+      if (response.getPayload() != null && response.getPayload().getContentLength() != 1) {
          return errorParser.parse(response.getPayload());
       }
       return null;

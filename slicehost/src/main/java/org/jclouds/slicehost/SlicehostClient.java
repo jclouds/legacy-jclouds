@@ -73,6 +73,6 @@ public interface SlicehostClient {
 
    Backup getBackup(int id);
 
-   Backup createBackupFromSlice(int sliceId);
+   Backup createBackup(String name, int sliceId);
 
 }
