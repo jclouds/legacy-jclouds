@@ -50,12 +50,15 @@
         <module>twitter</module>
         <module>vcloud</module>
         <module>gogrid</module>
-    <module>chef</module>
-    <module>opscodeplatform</module>
-    <module>ibmdev</module>
-    <module>boxdotnet</module>
-    <module>slicehost</module>
-  </modules>
+        <module>chef</module>
+        <module>opscodeplatform</module>
+        <module>ibmdev</module>
+        <module>boxdotnet</module>
+        <module>slicehost</module>
+        <module>allcompute</module>
+        <module>allblobstore</module>
+        <module>all</module>
+    </modules>
     <build>
         <plugins>
             <plugin>

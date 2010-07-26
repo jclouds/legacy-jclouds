@@ -9,9 +9,22 @@ our dev version is 1.0-SNAPSHOT
  
 our compute api supports: ec2, gogrid, rackspace, rimuhosting, vcloud, terremark, 
                           eucalyptus, hosting.com, bluelock, ibmdev, slicehost
+
+  * note * the pom dependency org.jclouds/jclouds-allcompute gives you access to
+           to all of these providers
+
 our blobstore api supports: s3, rackspace, azure, atmos online, att synaptic,
                           walrus, googlestorage, transient (in-memory)
  
+  * note * the pom dependency org.jclouds/jclouds-allblobstore gives you access to
+           to all of these providers
+
+we also have rest clients for: chef, opscodeplatform, pcs2 (mezeo), sdn (nirvanix), twitter
+
+
+If you want access to all jclouds components, include the maven dependency org.jclouds/jclouds-all
+
+
 BlobStore Example (Java):
   // init
   context = new BlobStoreContextFactory().createContext(
