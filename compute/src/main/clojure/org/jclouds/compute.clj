@@ -21,7 +21,7 @@
 
 Current supported services are:
    [ec2, rimuhosting, cloudservers, trmk-ecloud, trmk-vcloudexpress, vcloud, bluelock, 
-    ibmdev, eucalyptus, hostingdotcom]
+    ibmdev, eucalyptus, hostingdotcom, slicehost]
 
 Here's an example of getting some compute configuration from rackspace:
 

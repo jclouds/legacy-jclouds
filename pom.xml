@@ -54,6 +54,7 @@
     <module>opscodeplatform</module>
     <module>ibmdev</module>
     <module>boxdotnet</module>
+    <module>slicehost</module>
   </modules>
     <build>
         <plugins>

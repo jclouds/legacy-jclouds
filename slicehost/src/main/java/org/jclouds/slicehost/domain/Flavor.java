@@ -46,7 +46,7 @@ public class Flavor {
    }
 
    /**
-    * @return Verbose name for the flavor, e.g. “256 slice”
+    * @return Verbose name for the flavor, e.g. 256 slice
     */
    public String getName() {
       return name;
