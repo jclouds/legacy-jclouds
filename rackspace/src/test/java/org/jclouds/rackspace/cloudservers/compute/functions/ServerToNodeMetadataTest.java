@@ -39,7 +39,7 @@ public class ServerToNodeMetadataTest {
       Server server = createMock(Server.class);
 
       expect(server.getId()).andReturn(10000).atLeastOnce();
-      expect(server.getName()).andReturn("adriancole-cloudservers-ea3").atLeastOnce();
+      expect(server.getName()).andReturn("cloudservers-ea3").atLeastOnce();
       expect(server.getHostId()).andReturn("AHOST").atLeastOnce();
       expect(server.getMetadata()).andReturn(ImmutableMap.<String, String> of()).atLeastOnce();
 
