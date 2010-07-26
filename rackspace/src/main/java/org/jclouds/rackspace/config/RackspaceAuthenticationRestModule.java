@@ -28,7 +28,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.RequiresHttp;
@@ -41,6 +40,7 @@ import org.jclouds.rackspace.RackspaceAuthAsyncClient.AuthenticationResponse;
 import org.jclouds.rest.AsyncClientFactory;
 
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.AbstractModule;
@@ -79,7 +79,7 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
    @Singleton
    Supplier<AuthenticationResponse> provideAuthenticationResponseCache(final AsyncClientFactory factory,
          @Named(Constants.PROPERTY_IDENTITY) final String user, @Named(Constants.PROPERTY_CREDENTIAL) final String key) {
-      return new ExpirableSupplier<AuthenticationResponse>(new RetryOnTimeOutExceptionSupplier<AuthenticationResponse>(
+      return Suppliers.memoizeWithExpiration(new RetryOnTimeOutExceptionSupplier<AuthenticationResponse>(
             new Supplier<AuthenticationResponse>() {
                public AuthenticationResponse get() {
                   try {
@@ -99,7 +99,7 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
    @Singleton
    @TimeStamp
    protected Supplier<Date> provideCacheBusterDate() {
-      return new ExpirableSupplier<Date>(new Supplier<Date>() {
+      return Suppliers.memoizeWithExpiration(new Supplier<Date>() {
          public Date get() {
             return new Date();
          }

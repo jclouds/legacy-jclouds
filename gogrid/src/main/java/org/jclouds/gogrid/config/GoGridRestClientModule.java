@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
 
-import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.GoGridClient;
@@ -49,6 +48,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
 
@@ -61,14 +61,13 @@ import com.google.inject.Provides;
 @RequiresHttp
 @ConfiguresRestClient
 public class GoGridRestClientModule extends RestClientModule<GoGridClient, GoGridAsyncClient> {
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap
-            .<Class<?>, Class<?>> builder()//
-            .put(GridServerClient.class, GridServerAsyncClient.class)//
-            .put(GridJobClient.class, GridJobAsyncClient.class)//
-            .put(GridIpClient.class, GridIpAsyncClient.class)//
-            .put(GridLoadBalancerClient.class, GridLoadBalancerAsyncClient.class)//
-            .put(GridImageClient.class, GridImageAsyncClient.class)//
-            .build();
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
+         .put(GridServerClient.class, GridServerAsyncClient.class)//
+         .put(GridJobClient.class, GridJobAsyncClient.class)//
+         .put(GridIpClient.class, GridIpAsyncClient.class)//
+         .put(GridLoadBalancerClient.class, GridLoadBalancerAsyncClient.class)//
+         .put(GridImageClient.class, GridImageAsyncClient.class)//
+         .build();
 
    public GoGridRestClientModule() {
       super(GoGridClient.class, GoGridAsyncClient.class, DELEGATE_MAP);
@@ -86,7 +85,7 @@ public class GoGridRestClientModule extends RestClientModule<GoGridClient, GoGri
    @Provides
    @TimeStamp
    Supplier<Long> provideTimeStampCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds) {
-      return new ExpirableSupplier<Long>(new Supplier<Long>() {
+      return Suppliers.memoizeWithExpiration(new Supplier<Long>() {
          public Long get() {
             return System.currentTimeMillis() / 1000;
          }

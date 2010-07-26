@@ -31,7 +31,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.chef.handlers.ChefClientErrorRetryHandler;
 import org.jclouds.chef.handlers.ChefErrorHandler;
-import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.EncryptionService;
@@ -45,6 +44,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.inject.Provides;
 
 /**
@@ -77,7 +77,7 @@ public class BaseChefRestClientModule<S, A> extends RestClientModule<S, A> {
    @Provides
    @TimeStamp
    Supplier<String> provideTimeStampCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds, final DateService dateService) {
-      return new ExpirableSupplier<String>(new Supplier<String>() {
+      return Suppliers.memoizeWithExpiration(new Supplier<String>() {
          public String get() {
             return dateService.iso8601SecondsDateFormat();
          }

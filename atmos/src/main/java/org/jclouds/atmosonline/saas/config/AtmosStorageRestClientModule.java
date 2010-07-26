@@ -27,7 +27,6 @@ import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.handlers.AtmosStorageClientErrorRetryHandler;
 import org.jclouds.atmosonline.saas.handlers.ParseAtmosStorageErrorFromXmlContent;
-import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpErrorHandler;
@@ -40,6 +39,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.inject.Provides;
 
 /**
@@ -75,7 +75,7 @@ public class AtmosStorageRestClientModule extends RestClientModule<AtmosStorageC
    @TimeStamp
    Supplier<String> provideTimeStampCache(@Named(Constants.PROPERTY_SESSION_INTERVAL) long seconds,
          final DateService dateService) {
-      return new ExpirableSupplier<String>(new Supplier<String>() {
+      return Suppliers.memoizeWithExpiration(new Supplier<String>() {
          public String get() {
             return dateService.rfc822DateFormat();
          }

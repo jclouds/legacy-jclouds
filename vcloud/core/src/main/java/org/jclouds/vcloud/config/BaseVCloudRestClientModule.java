@@ -37,7 +37,6 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
@@ -73,20 +72,22 @@ import org.jclouds.vcloud.predicates.TaskSuccess;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.inject.Provides;
 import com.google.inject.internal.Maps;
 
 /**
- * Configures the VCloud authentication service connection, including logging and http transport.
+ * Configures the VCloud authentication service connection, including logging
+ * and http transport.
  * 
  * @author Adrian Cole
  */
 @RequiresHttp
 @ConfiguresRestClient
-public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A extends VCloudAsyncClient>
-         extends RestClientModule<S, A> {
+public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A extends VCloudAsyncClient> extends
+      RestClientModule<S, A> {
 
    public BaseVCloudRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
       super(syncClientType, asyncClientType);
@@ -104,7 +105,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Provides
    @Singleton
    protected Predicate<String> successTester(TaskSuccess success,
-            @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long completed) {
+         @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long completed) {
       return new RetryablePredicate<String>(success, completed);
    }
 
@@ -124,8 +125,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Provides
    @Named("VDC_TO_ORG")
    @Singleton
-   protected Map<String, String> provideVDCtoORG(@Org Iterable<NamedResource> orgs,
-            VCloudClient client) {
+   protected Map<String, String> provideVDCtoORG(@Org Iterable<NamedResource> orgs, VCloudClient client) {
       Map<String, String> returnVal = Maps.newLinkedHashMap();
       for (NamedResource orgr : orgs) {
          for (NamedResource vdc : client.getOrganization(orgr.getId()).getVDCs().values()) {
@@ -138,8 +138,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Provides
    @Org
    @Singleton
-   protected Iterable<NamedResource> provideOrgs(Supplier<VCloudSession> cache,
-            @Named(PROPERTY_IDENTITY) String user) {
+   protected Iterable<NamedResource> provideOrgs(Supplier<VCloudSession> cache, @Named(PROPERTY_IDENTITY) String user) {
       VCloudSession discovery = cache.get();
       checkState(discovery.getOrgs().size() > 0, "No orgs present for user: " + user);
       return discovery.getOrgs().values();
@@ -160,47 +159,44 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Provides
    @Singleton
    Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final VCloudLoginAsyncClient login) {
-      return new ExpirableSupplier<VCloudSession>(
-               new RetryOnTimeOutExceptionSupplier<VCloudSession>(new Supplier<VCloudSession>() {
-                  public VCloudSession get() {
-                     // http://code.google.com/p/google-guice/issues/detail?id=483
-                     // guice doesn't remember when singleton providers throw
-                     // exceptions.
-                     // in this case, if describeRegions fails, it is called
-                     // again for
-                     // each provider method that depends on it. To
-                     // short-circuit this,
-                     // we remember the last exception trusting that guice is
-                     // single-threaded
-                     if (authException != null)
-                        throw authException;
-                     try {
-                        return login.login().get(10, TimeUnit.SECONDS);
-                     } catch (AuthorizationException e) {
-                        BaseVCloudRestClientModule.this.authException = e;
-                        throw e;
-                     } catch (Exception e) {
-                        Throwables.propagate(e);
-                        assert false : e;
-                        return null;
-                     }
+         final VCloudLoginAsyncClient login) {
+      return Suppliers.memoizeWithExpiration(new RetryOnTimeOutExceptionSupplier<VCloudSession>(
+            new Supplier<VCloudSession>() {
+               public VCloudSession get() {
+                  // http://code.google.com/p/google-guice/issues/detail?id=483
+                  // guice doesn't remember when singleton providers throw
+                  // exceptions.
+                  // in this case, if describeRegions fails, it is called
+                  // again for
+                  // each provider method that depends on it. To
+                  // short-circuit this,
+                  // we remember the last exception trusting that guice is
+                  // single-threaded
+                  if (authException != null)
+                     throw authException;
+                  try {
+                     return login.login().get(10, TimeUnit.SECONDS);
+                  } catch (AuthorizationException e) {
+                     BaseVCloudRestClientModule.this.authException = e;
+                     throw e;
+                  } catch (Exception e) {
+                     Throwables.propagate(e);
+                     assert false : e;
+                     return null;
                   }
+               }
 
-               }), seconds, TimeUnit.SECONDS);
+            }), seconds, TimeUnit.SECONDS);
    }
 
    @Provides
    @Singleton
    @org.jclouds.vcloud.endpoints.VCloudLogin
    protected URI provideAuthenticationURI(VCloudVersionsAsyncClient versionService,
-            @Named(PROPERTY_API_VERSION) String version) throws InterruptedException,
-            ExecutionException, TimeoutException {
-      SortedMap<String, URI> versions = versionService.getSupportedVersions().get(180,
-               TimeUnit.SECONDS);
+         @Named(PROPERTY_API_VERSION) String version) throws InterruptedException, ExecutionException, TimeoutException {
+      SortedMap<String, URI> versions = versionService.getSupportedVersions().get(180, TimeUnit.SECONDS);
       checkState(versions.size() > 0, "No versions present");
-      checkState(versions.containsKey(version), "version " + version + " not present in: "
-               + versions);
+      checkState(versions.containsKey(version), "version " + version + " not present in: " + versions);
       return versions.get(version);
    }
 
@@ -239,8 +235,8 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
 
    @Provides
    @Singleton
-   protected Organization provideOrganization(VCloudClient discovery) throws ExecutionException,
-            TimeoutException, InterruptedException {
+   protected Organization provideOrganization(VCloudClient discovery) throws ExecutionException, TimeoutException,
+         InterruptedException {
       if (authException != null)
          throw authException;
       try {
@@ -270,8 +266,8 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Provides
    @Network
    @Singleton
-   protected URI provideDefaultNetwork(VCloudClient client) throws InterruptedException,
-            ExecutionException, TimeoutException {
+   protected URI provideDefaultNetwork(VCloudClient client) throws InterruptedException, ExecutionException,
+         TimeoutException {
       if (authException != null)
          throw authException;
       try {
@@ -294,12 +290,9 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
 
    @Override
    protected void bindErrorHandlers() {
-      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-               ParseVCloudErrorFromHttpResponse.class);
-      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-               ParseVCloudErrorFromHttpResponse.class);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-               ParseVCloudErrorFromHttpResponse.class);
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseVCloudErrorFromHttpResponse.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ParseVCloudErrorFromHttpResponse.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseVCloudErrorFromHttpResponse.class);
    }
 
    @Provides

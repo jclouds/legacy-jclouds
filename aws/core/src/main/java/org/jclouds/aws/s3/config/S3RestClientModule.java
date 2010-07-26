@@ -28,7 +28,6 @@ import org.jclouds.aws.config.AWSRestClientModule;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
-import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.RequiresHttp;
@@ -36,6 +35,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RequestSigner;
 
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 
@@ -79,7 +79,7 @@ public class S3RestClientModule extends AWSRestClientModule<S3Client, S3AsyncCli
    @Singleton
    protected Supplier<String> provideTimeStampCache(@Named(Constants.PROPERTY_SESSION_INTERVAL) long seconds,
          final DateService dateService) {
-      return new ExpirableSupplier<String>(new Supplier<String>() {
+      return Suppliers.memoizeWithExpiration(new Supplier<String>() {
          public String get() {
             return dateService.rfc822DateFormat();
          }
