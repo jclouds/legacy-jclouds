@@ -70,18 +70,20 @@ public class WhiteListCompliantJVM implements Supplier<Map<String, JsonBall>> {
       while (nowBuilder.lastIndexOf("0") != -1 && nowBuilder.lastIndexOf("0") == nowBuilder.length() - 1)
          nowBuilder.deleteCharAt(nowBuilder.length() - 1);
       now = nowBuilder.toString();
-
       returnVal.put("ohai_time", new JsonBall(now));
+
       returnVal.put("java", new JsonBall(json.toJson(systemProperties)));
 
       String platform = systemProperties.getProperty("os.name");
       platform = platform.replaceAll("[ -]", "").toLowerCase();
 
       returnVal.put("platform", new JsonBall(platform));
-      returnVal.put("platform_version", new JsonBall(systemProperties.getProperty("os.version")));
 
-      returnVal.put("ohai_time", new JsonBall(now));
-      returnVal.put("current_user", new JsonBall(systemProperties.getProperty("user.name")));
+      if (systemProperties.getProperty("os.version") != null)
+         returnVal.put("platform_version", new JsonBall(systemProperties.getProperty("os.version")));
+
+      if (systemProperties.getProperty("user.name") != null)
+         returnVal.put("current_user", new JsonBall(systemProperties.getProperty("user.name")));
       return returnVal;
    }
 }
