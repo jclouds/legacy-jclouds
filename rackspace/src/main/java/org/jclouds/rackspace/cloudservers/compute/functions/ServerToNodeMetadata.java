@@ -49,8 +49,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
-   public static final Pattern SECOND_FIELD_DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX = Pattern
-            .compile("[^-]+-([^-]+)-[0-9a-f]+");
+   public static final Pattern DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX = Pattern.compile("([^-]+)-[0-9a-f]+");
    private final Location location;
    private final Map<ServerStatus, NodeState> serverToNodeState;
    private final Set<? extends Image> images;
@@ -70,14 +69,13 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       @Override
       public boolean apply(Image input) {
          return input.getProviderId().equals(instance.getImageId() + "")
-                  && (input.getLocation() == null || input.getLocation().equals(
-                           location.getParent()));
+               && (input.getLocation() == null || input.getLocation().equals(location.getParent()));
       }
    }
 
    @Inject
-   ServerToNodeMetadata(Map<ServerStatus, NodeState> serverStateToNodeState,
-            Set<? extends Image> images, Location location) {
+   ServerToNodeMetadata(Map<ServerStatus, NodeState> serverStateToNodeState, Set<? extends Image> images,
+         Location location) {
       this.serverToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
       this.images = checkNotNull(images, "images");
       this.location = checkNotNull(location, "location");
@@ -85,22 +83,17 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Override
    public NodeMetadata apply(Server from) {
-      Matcher matcher = SECOND_FIELD_DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX.matcher(from
-               .getName());
+      Matcher matcher = DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX.matcher(from.getName());
       final String tag = matcher.find() ? matcher.group(1) : null;
-      Location host = new LocationImpl(LocationScope.HOST, from.getHostId(), from.getHostId(),
-               location);
+      Location host = new LocationImpl(LocationScope.HOST, from.getHostId(), from.getHostId(), location);
       Image image = null;
       try {
          image = Iterables.find(images, new FindImageForServer(host, from));
       } catch (NoSuchElementException e) {
-         logger
-                  .warn("could not find a matching image for server %s in location %s", from,
-                           location);
+         logger.warn("could not find a matching image for server %s in location %s", from, location);
       }
-      return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", host, null,
-               from.getMetadata(), tag, image, serverToNodeState.get(from.getStatus()), from
-                        .getAddresses().getPublicAddresses(), from.getAddresses()
-                        .getPrivateAddresses(), ImmutableMap.<String, String> of(), null);
+      return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", host, null, from.getMetadata(),
+            tag, image, serverToNodeState.get(from.getStatus()), from.getAddresses().getPublicAddresses(), from
+                  .getAddresses().getPrivateAddresses(), ImmutableMap.<String, String> of(), null);
    }
 }

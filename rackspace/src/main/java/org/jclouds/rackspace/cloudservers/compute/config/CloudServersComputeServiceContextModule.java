@@ -89,8 +89,8 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.util.Providers;
 
 /**
- * Configures the {@link CloudServersComputeServiceContext}; requires {@link BaseComputeService}
- * bound.
+ * Configures the {@link CloudServersComputeServiceContext}; requires
+ * {@link BaseComputeService} bound.
  * 
  * @author Adrian Cole
  */
@@ -104,10 +104,8 @@ public class CloudServersComputeServiceContextModule extends AbstractModule {
       }).to(ServerToNodeMetadata.class);
       bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
       bind(new TypeLiteral<ComputeServiceContext>() {
-      })
-               .to(
-                        new TypeLiteral<ComputeServiceContextImpl<CloudServersClient, CloudServersAsyncClient>>() {
-                        }).in(Scopes.SINGLETON);
+      }).to(new TypeLiteral<ComputeServiceContextImpl<CloudServersClient, CloudServersAsyncClient>>() {
+      }).in(Scopes.SINGLETON);
       bind(new TypeLiteral<RestContext<CloudServersClient, CloudServersAsyncClient>>() {
       }).to(new TypeLiteral<RestContextImpl<CloudServersClient, CloudServersAsyncClient>>() {
       }).in(Scopes.SINGLETON);
@@ -127,8 +125,8 @@ public class CloudServersComputeServiceContextModule extends AbstractModule {
    @Provides
    @Named("NAMING_CONVENTION")
    @Singleton
-   String provideNamingConvention(@Named(Constants.PROPERTY_IDENTITY) String identity) {
-      return identity + "-%s-%s";
+   String provideNamingConvention() {
+      return "%s-%s";
    }
 
    @Singleton
@@ -137,8 +135,7 @@ public class CloudServersComputeServiceContextModule extends AbstractModule {
       private final GetNodeMetadataStrategy getNode;
 
       @Inject
-      protected CloudServersRebootNodeStrategy(CloudServersClient client,
-               GetNodeMetadataStrategy getNode) {
+      protected CloudServersRebootNodeStrategy(CloudServersClient client, GetNodeMetadataStrategy getNode) {
          this.client = client;
          this.getNode = getNode;
       }
@@ -159,8 +156,7 @@ public class CloudServersComputeServiceContextModule extends AbstractModule {
       private final GetNodeMetadataStrategy getNode;
 
       @Inject
-      protected CloudServersDestroyNodeStrategy(CloudServersClient client,
-               GetNodeMetadataStrategy getNode) {
+      protected CloudServersDestroyNodeStrategy(CloudServersClient client, GetNodeMetadataStrategy getNode) {
          this.client = client;
          this.getNode = getNode;
       }
@@ -186,15 +182,13 @@ public class CloudServersComputeServiceContextModule extends AbstractModule {
 
       @Override
       public NodeMetadata execute(String tag, String name, Template template) {
-         Server server = client.createServer(name, Integer.parseInt(template.getImage()
-                  .getProviderId()), Integer.parseInt(template.getSize().getProviderId()));
-         return new NodeMetadataImpl(server.getId() + "", name, server.getId() + "",
-                  new LocationImpl(LocationScope.HOST, server.getHostId(), server.getHostId(),
-                           template.getLocation()), null, server.getMetadata(), tag, template
-                           .getImage(), NodeState.PENDING, server.getAddresses()
-                           .getPublicAddresses(), server.getAddresses().getPrivateAddresses(),
-                  ImmutableMap.<String, String> of(),
-                  new Credentials("root", server.getAdminPass()));
+         Server server = client.createServer(name, Integer.parseInt(template.getImage().getProviderId()), Integer
+               .parseInt(template.getSize().getProviderId()));
+         return new NodeMetadataImpl(server.getId() + "", name, server.getId() + "", new LocationImpl(
+               LocationScope.HOST, server.getHostId(), server.getHostId(), template.getLocation()), null, server
+               .getMetadata(), tag, template.getImage(), NodeState.PENDING, server.getAddresses().getPublicAddresses(),
+               server.getAddresses().getPrivateAddresses(), ImmutableMap.<String, String> of(), new Credentials("root",
+                     server.getAdminPass()));
       }
 
    }
@@ -206,7 +200,7 @@ public class CloudServersComputeServiceContextModule extends AbstractModule {
 
       @Inject
       protected CloudServersListNodesStrategy(CloudServersClient client,
-               Function<Server, NodeMetadata> serverToNodeMetadata) {
+            Function<Server, NodeMetadata> serverToNodeMetadata) {
          this.client = client;
          this.serverToNodeMetadata = serverToNodeMetadata;
       }
@@ -217,10 +211,9 @@ public class CloudServersComputeServiceContextModule extends AbstractModule {
       }
 
       @Override
-      public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(
-               Predicate<ComputeMetadata> filter) {
-         return Iterables.filter(Iterables.transform(client.listServers(ListOptions.Builder
-                  .withDetails()), serverToNodeMetadata), filter);
+      public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
+         return Iterables.filter(Iterables.transform(client.listServers(ListOptions.Builder.withDetails()),
+               serverToNodeMetadata), filter);
       }
    }
 
@@ -232,7 +225,7 @@ public class CloudServersComputeServiceContextModule extends AbstractModule {
 
       @Inject
       protected CloudServersGetNodeMetadataStrategy(CloudServersClient client,
-               Function<Server, NodeMetadata> serverToNodeMetadata) {
+            Function<Server, NodeMetadata> serverToNodeMetadata) {
          this.client = client;
          this.serverToNodeMetadata = serverToNodeMetadata;
       }
@@ -248,30 +241,29 @@ public class CloudServersComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Provides
    Map<ServerStatus, NodeState> provideServerToNodeState() {
-      return ImmutableMap.<ServerStatus, NodeState> builder().put(ServerStatus.ACTIVE,
-               NodeState.RUNNING)//
-               .put(ServerStatus.SUSPENDED, NodeState.SUSPENDED)//
-               .put(ServerStatus.DELETED, NodeState.TERMINATED)//
-               .put(ServerStatus.QUEUE_RESIZE, NodeState.PENDING)//
-               .put(ServerStatus.PREP_RESIZE, NodeState.PENDING)//
-               .put(ServerStatus.RESIZE, NodeState.PENDING)//
-               .put(ServerStatus.VERIFY_RESIZE, NodeState.PENDING)//
-               .put(ServerStatus.QUEUE_MOVE, NodeState.PENDING)//
-               .put(ServerStatus.PREP_MOVE, NodeState.PENDING)//
-               .put(ServerStatus.MOVE, NodeState.PENDING)//
-               .put(ServerStatus.VERIFY_MOVE, NodeState.PENDING)//
-               .put(ServerStatus.RESCUE, NodeState.PENDING)//
-               .put(ServerStatus.ERROR, NodeState.ERROR)//
-               .put(ServerStatus.BUILD, NodeState.PENDING)//
-               .put(ServerStatus.RESTORING, NodeState.PENDING)//
-               .put(ServerStatus.PASSWORD, NodeState.PENDING)//
-               .put(ServerStatus.REBUILD, NodeState.PENDING)//
-               .put(ServerStatus.DELETE_IP, NodeState.PENDING)//
-               .put(ServerStatus.SHARE_IP_NO_CONFIG, NodeState.PENDING)//
-               .put(ServerStatus.SHARE_IP, NodeState.PENDING)//
-               .put(ServerStatus.REBOOT, NodeState.PENDING)//
-               .put(ServerStatus.HARD_REBOOT, NodeState.PENDING)//
-               .put(ServerStatus.UNKNOWN, NodeState.UNKNOWN).build();
+      return ImmutableMap.<ServerStatus, NodeState> builder().put(ServerStatus.ACTIVE, NodeState.RUNNING)//
+            .put(ServerStatus.SUSPENDED, NodeState.SUSPENDED)//
+            .put(ServerStatus.DELETED, NodeState.TERMINATED)//
+            .put(ServerStatus.QUEUE_RESIZE, NodeState.PENDING)//
+            .put(ServerStatus.PREP_RESIZE, NodeState.PENDING)//
+            .put(ServerStatus.RESIZE, NodeState.PENDING)//
+            .put(ServerStatus.VERIFY_RESIZE, NodeState.PENDING)//
+            .put(ServerStatus.QUEUE_MOVE, NodeState.PENDING)//
+            .put(ServerStatus.PREP_MOVE, NodeState.PENDING)//
+            .put(ServerStatus.MOVE, NodeState.PENDING)//
+            .put(ServerStatus.VERIFY_MOVE, NodeState.PENDING)//
+            .put(ServerStatus.RESCUE, NodeState.PENDING)//
+            .put(ServerStatus.ERROR, NodeState.ERROR)//
+            .put(ServerStatus.BUILD, NodeState.PENDING)//
+            .put(ServerStatus.RESTORING, NodeState.PENDING)//
+            .put(ServerStatus.PASSWORD, NodeState.PENDING)//
+            .put(ServerStatus.REBUILD, NodeState.PENDING)//
+            .put(ServerStatus.DELETE_IP, NodeState.PENDING)//
+            .put(ServerStatus.SHARE_IP_NO_CONFIG, NodeState.PENDING)//
+            .put(ServerStatus.SHARE_IP, NodeState.PENDING)//
+            .put(ServerStatus.REBOOT, NodeState.PENDING)//
+            .put(ServerStatus.HARD_REBOOT, NodeState.PENDING)//
+            .put(ServerStatus.UNKNOWN, NodeState.UNKNOWN).build();
    }
 
    @Provides
@@ -287,17 +279,14 @@ public class CloudServersComputeServiceContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Set<? extends Size> provideSizes(CloudServersClient sync, Set<? extends Image> images,
-            Location location, LogHolder holder,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-            Function<ComputeMetadata, String> indexer) throws InterruptedException,
-            TimeoutException, ExecutionException {
+   protected Set<? extends Size> provideSizes(CloudServersClient sync, Set<? extends Image> images, Location location,
+         LogHolder holder, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+         Function<ComputeMetadata, String> indexer) throws InterruptedException, TimeoutException, ExecutionException {
       final Set<Size> sizes = Sets.newHashSet();
       holder.logger.debug(">> providing sizes");
       for (final Flavor from : sync.listFlavors(ListOptions.Builder.withDetails())) {
-         sizes.add(new SizeImpl(from.getId() + "", from.getName(), from.getId() + "", location,
-                  null, ImmutableMap.<String, String> of(), from.getDisk() / 10, from.getRam(),
-                  from.getDisk(), ImagePredicates.any()));
+         sizes.add(new SizeImpl(from.getId() + "", from.getName(), from.getId() + "", location, null, ImmutableMap
+               .<String, String> of(), from.getDisk() / 10, from.getRam(), from.getDisk(), ImagePredicates.any()));
       }
       holder.logger.debug("<< sizes(%d)", sizes.size());
       return sizes;
@@ -313,13 +302,12 @@ public class CloudServersComputeServiceContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Set<? extends Image> provideImages(final CloudServersClient sync, Location location,
-            LogHolder holder, Function<ComputeMetadata, String> indexer)
-            throws InterruptedException, ExecutionException, TimeoutException {
+   protected Set<? extends Image> provideImages(final CloudServersClient sync, Location location, LogHolder holder,
+         Function<ComputeMetadata, String> indexer) throws InterruptedException, ExecutionException, TimeoutException {
       final Set<Image> images = Sets.newHashSet();
       holder.logger.debug(">> providing images");
-      for (final org.jclouds.rackspace.cloudservers.domain.Image from : sync
-               .listImages(ListOptions.Builder.withDetails())) {
+      for (final org.jclouds.rackspace.cloudservers.domain.Image from : sync.listImages(ListOptions.Builder
+            .withDetails())) {
          OsFamily os = null;
          Architecture arch = Architecture.X86_64;
          String osDescription = "";
@@ -337,9 +325,10 @@ public class CloudServersComputeServiceContextModule extends AbstractModule {
                holder.logger.debug("<< didn't match os(%s)", matcher.group(2));
             }
          }
-         images.add(new ImageImpl(from.getId() + "", from.getName(), from.getId() + "", location,
-                  null, ImmutableMap.<String, String> of(), from.getName(), version, os,
-                  osDescription, arch, new Credentials("root", null)));
+         images
+               .add(new ImageImpl(from.getId() + "", from.getName(), from.getId() + "", location, null, ImmutableMap
+                     .<String, String> of(), from.getName(), version, os, osDescription, arch, new Credentials("root",
+                     null)));
       }
       holder.logger.debug("<< images(%d)", images.size());
       return images;
