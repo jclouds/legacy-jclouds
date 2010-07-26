@@ -24,7 +24,6 @@ import static com.google.common.collect.Lists.partition;
 import static com.google.common.primitives.Bytes.asList;
 import static com.google.common.primitives.Bytes.toArray;
 
-import java.net.NetworkInterface;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -46,7 +45,7 @@ public class ByteArrayToMacAddress implements Function<byte[], String> {
    private final EncryptionService encryptionService;
 
    @Inject
-   ByteArrayToMacAddress(EncryptionService encryptionService, NetworkInterface networkInterface) {
+   ByteArrayToMacAddress(EncryptionService encryptionService) {
       this.encryptionService = checkNotNull(encryptionService, "encryptionService");
    }
 
