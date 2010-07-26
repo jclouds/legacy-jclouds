@@ -28,7 +28,7 @@ import java.util.Date;
 
 import javax.inject.Singleton;
 
-import org.jclouds.http.functions.config.ParserModule.DateAdapter;
+import org.jclouds.json.config.GsonModule.DateAdapter;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;

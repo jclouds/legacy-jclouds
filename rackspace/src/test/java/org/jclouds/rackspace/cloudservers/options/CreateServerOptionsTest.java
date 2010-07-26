@@ -28,7 +28,7 @@ import java.net.URI;
 import javax.ws.rs.HttpMethod;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -43,21 +43,19 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "cloudservers.CreateServerOptionsTest")
 public class CreateServerOptionsTest {
 
-   Injector injector = Guice.createInjector(new ParserModule());
+   Injector injector = Guice.createInjector(new GsonModule());
 
    @Test
    public void testAddPayloadToRequestMapOfStringStringHttpRequest() {
       CreateServerOptions options = new CreateServerOptions();
       HttpRequest request = buildRequest(options);
-      assertEquals("{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2}}", request
-               .getPayload().getRawContent());
+      assertEquals("{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2}}", request.getPayload().getRawContent());
    }
 
    private HttpRequest buildRequest(CreateServerOptions options) {
       injector.injectMembers(options);
       HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
-      options.bindToRequest(request, ImmutableMap
-               .of("name", "foo", "imageId", "1", "flavorId", "2"));
+      options.bindToRequest(request, ImmutableMap.of("name", "foo", "imageId", "1", "flavorId", "2"));
       return request;
    }
 
@@ -78,8 +76,8 @@ public class CreateServerOptionsTest {
 
    private void assertFile(HttpRequest request) {
       assertEquals(
-               "{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2,\"personality\":[{\"path\":\"/tmp/rhubarb\",\"contents\":\"Zm9v\"}]}}",
-               request.getPayload().getRawContent());
+            "{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2,\"personality\":[{\"path\":\"/tmp/rhubarb\",\"contents\":\"Zm9v\"}]}}",
+            request.getPayload().getRawContent());
    }
 
    @Test
@@ -98,9 +96,8 @@ public class CreateServerOptionsTest {
    }
 
    private void assertSharedIpGroup(HttpRequest request) {
-      assertEquals(
-               "{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2,\"sharedIpGroupId\":3}}",
-               request.getPayload().getRawContent());
+      assertEquals("{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2,\"sharedIpGroupId\":3}}", request
+            .getPayload().getRawContent());
    }
 
    @Test
@@ -124,8 +121,8 @@ public class CreateServerOptionsTest {
 
    private void assertSharedIp(HttpRequest request) {
       assertEquals(
-               "{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2,\"sharedIpGroupId\":3,\"addresses\":{\"public\":[\"127.0.0.1\"]}}}",
-               request.getPayload().getRawContent());
+            "{\"server\":{\"name\":\"foo\",\"imageId\":1,\"flavorId\":2,\"sharedIpGroupId\":3,\"addresses\":{\"public\":[\"127.0.0.1\"]}}}",
+            request.getPayload().getRawContent());
    }
 
    @Test(expectedExceptions = IllegalStateException.class)

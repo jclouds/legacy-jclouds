@@ -24,9 +24,10 @@ import java.util.Date;
 import java.util.Set;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.ibmdev.config.IBMDeveloperCloudParserModule;
 import org.jclouds.ibmdev.domain.Key;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -46,27 +47,18 @@ public class ParseKeysFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule() {
-         @Override
-         protected void configure() {
-            bind(DateAdapter.class).to(LongDateAdapter.class);
-            super.configure();
-         }
-      });
+      Injector injector = Guice.createInjector(new IBMDeveloperCloudParserModule(), new GsonModule());
       handler = injector.getInstance(ParseKeysFromJson.class);
    }
 
    public void test() {
-      Key key1 = new Key(true, ImmutableSet.<String> of("1"),
-            "AAAB3NzaC1yc2EAAAADAQABAAABAQCqBw7a+...", "DEFAULT", new Date(
-                  1260428507510l));
-      Key key2 = new Key(false, ImmutableSet.<String> of(),
-            "AAAB3NzaC1yc2EAAAADAQABAAABAQCqBw7a+", "BEAR", new Date(
-                  1260428507511l));
+      Key key1 = new Key(true, ImmutableSet.<String> of("1"), "AAAB3NzaC1yc2EAAAADAQABAAABAQCqBw7a+...", "DEFAULT",
+            new Date(1260428507510l));
+      Key key2 = new Key(false, ImmutableSet.<String> of(), "AAAB3NzaC1yc2EAAAADAQABAAABAQCqBw7a+", "BEAR", new Date(
+            1260428507511l));
 
-      Set<? extends Key> compare = handler.apply(new HttpResponse(200, "ok",
-            Payloads.newInputStreamPayload(ParseKeysFromJsonTest.class
-                  .getResourceAsStream("/keys.json"))));
+      Set<? extends Key> compare = handler.apply(new HttpResponse(200, "ok", Payloads
+            .newInputStreamPayload(ParseKeysFromJsonTest.class.getResourceAsStream("/keys.json"))));
       assert (compare.contains(key1));
       assert (compare.contains(key2));
    }

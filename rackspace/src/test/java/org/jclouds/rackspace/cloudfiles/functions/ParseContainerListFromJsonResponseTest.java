@@ -25,9 +25,10 @@ import java.util.List;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
+import org.jclouds.rackspace.config.RackspaceParserModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
@@ -44,20 +45,18 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", testName = "cloudfiles.ParseContainerListFromJsonResponse")
 public class ParseContainerListFromJsonResponseTest {
-   Injector i = Guice.createInjector(new ParserModule());
+   Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
 
    @Test
    public void testApplyInputStream() {
       InputStream is = Utils
             .toInputStream("[ {\"name\":\"test_container_1\",\"count\":2,\"bytes\":78}, {\"name\":\"test_container_2\",\"count\":1,\"bytes\":17} ]   ");
 
-      List<ContainerMetadata> expects = ImmutableList.of(new ContainerMetadata(
-            "test_container_1", 2, 78), new ContainerMetadata(
-            "test_container_2", 1, 17));
+      List<ContainerMetadata> expects = ImmutableList.of(new ContainerMetadata("test_container_1", 2, 78),
+            new ContainerMetadata("test_container_2", 1, 17));
       ParseJson<List<ContainerMetadata>> parser = i.getInstance(Key
             .get(new TypeLiteral<ParseJson<List<ContainerMetadata>>>() {
             }));
-      assertEquals(parser.apply(new HttpResponse(200, "ok", Payloads
-            .newInputStreamPayload(is))), expects);
+      assertEquals(parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is))), expects);
    }
 }

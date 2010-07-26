@@ -27,7 +27,7 @@ import static org.easymock.classextension.EasyMock.verify;
 import java.net.URI;
 
 import org.easymock.IArgumentMatcher;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.io.Payloads;
 
 import com.google.inject.Guice;
@@ -62,7 +62,7 @@ public abstract class BaseHttpErrorHandlerTest {
    protected void assertCodeMakes(String method, URI uri, int statusCode, String message,
             String content, Class<? extends Exception> expected) {
 
-      HttpErrorHandler function = Guice.createInjector(new ParserModule()).getInstance(
+      HttpErrorHandler function = Guice.createInjector(new SaxParserModule()).getInstance(
                getHandlerClass());
 
       HttpCommand command = createMock(HttpCommand.class);

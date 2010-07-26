@@ -26,10 +26,11 @@ import java.util.Date;
 import java.util.Set;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.ibmdev.config.IBMDeveloperCloudParserModule;
 import org.jclouds.ibmdev.domain.Instance;
 import org.jclouds.ibmdev.domain.Instance.Software;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -50,13 +51,7 @@ public class ParseInstancesFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule() {
-         @Override
-         protected void configure() {
-            bind(DateAdapter.class).to(LongDateAdapter.class);
-            super.configure();
-         }
-      });
+      Injector injector = Guice.createInjector(new IBMDeveloperCloudParserModule(), new GsonModule());
       handler = injector.getInstance(ParseInstancesFromJson.class);
    }
 

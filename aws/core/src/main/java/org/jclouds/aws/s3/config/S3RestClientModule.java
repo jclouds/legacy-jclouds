@@ -32,8 +32,6 @@ import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.http.functions.config.ParserModule.DateAdapter;
-import org.jclouds.http.functions.config.ParserModule.Iso8601DateAdapter;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RequestSigner;
 
@@ -56,7 +54,7 @@ public class S3RestClientModule extends AWSRestClientModule<S3Client, S3AsyncCli
    @Override
    protected void configure() {
       install(new S3ObjectModule());
-      bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+      install(new S3ParserModule());
       bind(RequestAuthorizeSignature.class).in(Scopes.SINGLETON);
       super.configure();
    }
@@ -80,7 +78,7 @@ public class S3RestClientModule extends AWSRestClientModule<S3Client, S3AsyncCli
    @TimeStamp
    @Singleton
    protected Supplier<String> provideTimeStampCache(@Named(Constants.PROPERTY_SESSION_INTERVAL) long seconds,
-            final DateService dateService) {
+         final DateService dateService) {
       return new ExpirableSupplier<String>(new Supplier<String>() {
          public String get() {
             return dateService.rfc822DateFormat();

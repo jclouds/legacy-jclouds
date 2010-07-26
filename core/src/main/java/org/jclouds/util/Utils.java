@@ -65,6 +65,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.common.io.OutputSupplier;
 import com.google.inject.ProvisionException;
 import com.google.inject.spi.Message;
@@ -75,6 +76,28 @@ import com.google.inject.spi.Message;
  * @author Adrian Cole
  */
 public class Utils {
+
+   public static <K, V> Supplier<Map<K, V>> composeMapSupplier(Iterable<Supplier<Map<K, V>>> suppliers) {
+      return new ListMapSupplier<K, V>(suppliers);
+   }
+
+   static class ListMapSupplier<K, V> implements Supplier<Map<K, V>> {
+
+      private final Iterable<Supplier<Map<K, V>>> suppliers;
+
+      ListMapSupplier(Iterable<Supplier<Map<K, V>>> suppliers) {
+         this.suppliers = suppliers;
+      }
+
+      @Override
+      public Map<K, V> get() {
+         Map<K, V> toReturn = Maps.newLinkedHashMap();
+         for (Supplier<Map<K, V>> supplier : suppliers) {
+            toReturn.putAll(supplier.get());
+         }
+         return toReturn;
+      }
+   }
 
    public static <T> T propagateAuthorizationOrOriginalException(Exception e) {
       AuthorizationException aex = getFirstThrowableOfType(e, AuthorizationException.class);
@@ -132,8 +155,7 @@ public class Utils {
       }
    }
 
-   public static <T extends Throwable> T getFirstThrowableOfType(ProvisionException e,
-            Class<T> clazz) {
+   public static <T extends Throwable> T getFirstThrowableOfType(ProvisionException e, Class<T> clazz) {
       for (Message message : e.getErrorMessages()) {
          T cause = getFirstThrowableOfType(message.getCause(), clazz);
          if (cause instanceof ProvisionException)
@@ -184,7 +206,7 @@ public class Utils {
    }
 
    public static boolean eventuallyTrue(Supplier<Boolean> assertion, long inconsistencyMillis)
-            throws InterruptedException {
+         throws InterruptedException {
 
       for (int i = 0; i < 30; i++) {
          if (!assertion.get()) {
@@ -219,14 +241,15 @@ public class Utils {
    }
 
    /**
-    * Encode the given string with the given encoding, if possible. If the encoding fails with
-    * {@link UnsupportedEncodingException}, log a warning and fall back to the system's default
-    * encoding.
+    * Encode the given string with the given encoding, if possible. If the
+    * encoding fails with {@link UnsupportedEncodingException}, log a warning
+    * and fall back to the system's default encoding.
     * 
     * @param str
     *           what to encode
     * @param charsetName
-    *           the name of a supported {@link java.nio.charset.Charset </code>charset<code>}
+    *           the name of a supported {@link java.nio.charset.Charset
+    *           </code>charset<code>}
     * @return properly encoded String.
     */
    public static byte[] encodeString(String str, String charsetName) {
@@ -234,15 +257,16 @@ public class Utils {
          return str.getBytes(charsetName);
       } catch (UnsupportedEncodingException e) {
          logger.warn(e, "Failed to encode string to bytes with encoding " + charsetName
-                  + ". Falling back to system's default encoding");
+               + ". Falling back to system's default encoding");
          return str.getBytes();
       }
    }
 
    /**
-    * Encode the given string with the UTF-8 encoding, the sane default. In the very unlikely event
-    * the encoding fails with {@link UnsupportedEncodingException}, log a warning and fall back to
-    * the system's default encoding.
+    * Encode the given string with the UTF-8 encoding, the sane default. In the
+    * very unlikely event the encoding fails with
+    * {@link UnsupportedEncodingException}, log a warning and fall back to the
+    * system's default encoding.
     * 
     * @param str
     *           what to encode
@@ -293,7 +317,8 @@ public class Utils {
    }
 
    /**
-    * Will throw an exception if the argument is null or empty. Accepts a custom error message.
+    * Will throw an exception if the argument is null or empty. Accepts a custom
+    * error message.
     * 
     * @param nullableString
     *           string to verify. Can be null or empty.
@@ -305,8 +330,8 @@ public class Utils {
    }
 
    /**
-    * Gets a set of supported providers. Idea stolen from pallets (supported-clouds). Uses
-    * rest.properties to populate the set.
+    * Gets a set of supported providers. Idea stolen from pallets
+    * (supported-clouds). Uses rest.properties to populate the set.
     * 
     */
    public static Iterable<String> getSupportedProviders() {
@@ -314,13 +339,12 @@ public class Utils {
    }
 
    /**
-    * Gets a set of supported providers. Idea stolen from pallets (supported-clouds). Uses
-    * rest.properties to populate the set.
+    * Gets a set of supported providers. Idea stolen from pallets
+    * (supported-clouds). Uses rest.properties to populate the set.
     * 
     */
    @SuppressWarnings("unchecked")
-   public static Iterable<String> getSupportedProvidersOfType(
-            Class<? extends RestContextBuilder> type) {
+   public static Iterable<String> getSupportedProvidersOfType(Class<? extends RestContextBuilder> type) {
       Properties properties = new Properties();
       try {
          properties.load(Utils.class.getResourceAsStream("/rest.properties"));
@@ -332,25 +356,23 @@ public class Utils {
 
    @SuppressWarnings("unchecked")
    public static Iterable<String> getSupportedProvidersOfTypeInProperties(
-            final Class<? extends RestContextBuilder> type, final Properties properties) {
-      return filter(transform(filter(properties.entrySet(),
-               new Predicate<Map.Entry<Object, Object>>() {
+         final Class<? extends RestContextBuilder> type, final Properties properties) {
+      return filter(transform(filter(properties.entrySet(), new Predicate<Map.Entry<Object, Object>>() {
 
-                  @Override
-                  public boolean apply(Entry<Object, Object> input) {
-                     String keyString = input.getKey().toString();
-                     return keyString.endsWith(".contextbuilder") || keyString.endsWith(".sync");
-                  }
+         @Override
+         public boolean apply(Entry<Object, Object> input) {
+            String keyString = input.getKey().toString();
+            return keyString.endsWith(".contextbuilder") || keyString.endsWith(".sync");
+         }
 
-               }), new Function<Map.Entry<Object, Object>, String>() {
+      }), new Function<Map.Entry<Object, Object>, String>() {
 
          @Override
          public String apply(Entry<Object, Object> from) {
             String keyString = from.getKey().toString();
             try {
                String provider = get(Splitter.on('.').split(keyString), 0);
-               Class<RestContextBuilder<Object, Object>> clazz = resolveContextBuilderClass(
-                        provider, properties);
+               Class<RestContextBuilder<Object, Object>> clazz = resolveContextBuilderClass(provider, properties);
                if (type.isAssignableFrom(clazz))
                   return provider;
             } catch (ClassNotFoundException e) {
@@ -365,9 +387,8 @@ public class Utils {
 
    @SuppressWarnings("unchecked")
    public static <S, A> Class<RestContextBuilder<S, A>> resolveContextBuilderClass(String provider,
-            Properties properties) throws ClassNotFoundException, IllegalArgumentException,
-            SecurityException, InstantiationException, IllegalAccessException,
-            InvocationTargetException, NoSuchMethodException {
+         Properties properties) throws ClassNotFoundException, IllegalArgumentException, SecurityException,
+         InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
       String contextBuilderClassName = properties.getProperty(provider + ".contextbuilder");
       String syncClassName = properties.getProperty(provider + ".sync");
       String asyncClassName = properties.getProperty(provider + ".async");
@@ -376,37 +397,33 @@ public class Utils {
          Class.forName(syncClassName);
          Class.forName(asyncClassName);
          return (Class<RestContextBuilder<S, A>>) (contextBuilderClassName != null ? Class
-                  .forName(contextBuilderClassName) : RestContextBuilder.class);
+               .forName(contextBuilderClassName) : RestContextBuilder.class);
       } else {
-         checkArgument(contextBuilderClassName != null,
-                  "please configure contextbuilder class for " + provider);
+         checkArgument(contextBuilderClassName != null, "please configure contextbuilder class for " + provider);
          return (Class<RestContextBuilder<S, A>>) Class.forName(contextBuilderClassName);
       }
    }
 
    public static <S, A> RestContextBuilder<S, A> initContextBuilder(
-            Class<RestContextBuilder<S, A>> contextBuilderClass, @Nullable Class<S> sync,
-            @Nullable Class<A> async, Properties properties) throws ClassNotFoundException,
-            IllegalArgumentException, SecurityException, InstantiationException,
-            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+         Class<RestContextBuilder<S, A>> contextBuilderClass, @Nullable Class<S> sync, @Nullable Class<A> async,
+         Properties properties) throws ClassNotFoundException, IllegalArgumentException, SecurityException,
+         InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
       checkArgument(properties != null, "please configure properties for " + contextBuilderClass);
       try {
-         return (RestContextBuilder<S, A>) contextBuilderClass.getConstructor(Properties.class)
-                  .newInstance(properties);
+         return (RestContextBuilder<S, A>) contextBuilderClass.getConstructor(Properties.class).newInstance(properties);
       } catch (NoSuchMethodException e) {
          checkArgument(sync != null, "please configure sync class for " + contextBuilderClass);
          checkArgument(async != null, "please configure async class for " + contextBuilderClass);
-         return (RestContextBuilder<S, A>) contextBuilderClass.getConstructor(sync.getClass(),
-                  async.getClass(), Properties.class).newInstance(sync, async, properties);
+         return (RestContextBuilder<S, A>) contextBuilderClass.getConstructor(sync.getClass(), async.getClass(),
+               Properties.class).newInstance(sync, async, properties);
       }
    }
 
    @SuppressWarnings("unchecked")
-   public static Class<PropertiesBuilder> resolvePropertiesBuilderClass(String providerName,
-            Properties props) throws ClassNotFoundException, InstantiationException,
-            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-      String propertiesBuilderClassName = props.getProperty(providerName + ".propertiesbuilder",
-               null);
+   public static Class<PropertiesBuilder> resolvePropertiesBuilderClass(String providerName, Properties props)
+         throws ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException,
+         NoSuchMethodException {
+      String propertiesBuilderClassName = props.getProperty(providerName + ".propertiesbuilder", null);
       if (propertiesBuilderClassName != null) {
          return (Class<PropertiesBuilder>) Class.forName(propertiesBuilderClassName);
       } else {

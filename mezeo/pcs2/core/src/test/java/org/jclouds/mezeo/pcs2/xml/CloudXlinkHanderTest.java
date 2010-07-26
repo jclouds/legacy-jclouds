@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * Tests behavior of {@code ParseFlavorListFromGsonResponseTest}
+ * Tests behavior of {@code ParseFlavorListFromJsonResponseTest}
  * 
  * @author Adrian Cole
  */

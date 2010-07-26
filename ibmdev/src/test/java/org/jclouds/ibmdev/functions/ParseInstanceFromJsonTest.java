@@ -25,10 +25,11 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.ibmdev.config.IBMDeveloperCloudParserModule;
 import org.jclouds.ibmdev.domain.Instance;
 import org.jclouds.ibmdev.domain.Instance.Software;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -48,27 +49,18 @@ public class ParseInstanceFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule() {
-         @Override
-         protected void configure() {
-            bind(DateAdapter.class).to(LongDateAdapter.class);
-            super.configure();
-         }
-      });
+      Injector injector = Guice.createInjector(new IBMDeveloperCloudParserModule(), new GsonModule());
       handler = injector.getInstance(ParseInstanceFromJson.class);
    }
 
    public void test() {
-      Instance instance = new Instance(new Date(1260472231726l),
-            ImmutableSet.<Software> of(new Software("SUSE Linux Enterprise",
-                  "OS", "10 SP2")), "129.33.197.78", "7430", "DEFAULT", "ABC",
-            "MEDIUM", 5, "aadelucc@us.ibm.com", "vm723.developer.ihost.com",
-            "1", "3", ImmutableSet.<String> of(), "ABC", "7430", new Date(
-                  1263064240837l));
+      Instance instance = new Instance(new Date(1260472231726l), ImmutableSet.<Software> of(new Software(
+            "SUSE Linux Enterprise", "OS", "10 SP2")), "129.33.197.78", "7430", "DEFAULT", "ABC", "MEDIUM", 5,
+            "aadelucc@us.ibm.com", "vm723.developer.ihost.com", "1", "3", ImmutableSet.<String> of(), "ABC", "7430",
+            new Date(1263064240837l));
 
       Instance compare = handler.apply(new HttpResponse(200, "ok", Payloads
-            .newInputStreamPayload(ParseInstanceFromJsonTest.class
-                  .getResourceAsStream("/instance.json"))));
+            .newInputStreamPayload(ParseInstanceFromJsonTest.class.getResourceAsStream("/instance.json"))));
       assertEquals(compare, instance);
    }
 }

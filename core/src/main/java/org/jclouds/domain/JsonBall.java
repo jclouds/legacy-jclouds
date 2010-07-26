@@ -63,6 +63,18 @@ public class JsonBall implements java.io.Serializable, Comparable<String>, CharS
       return value;
    }
 
+   public JsonBall(double value) {
+      this.value = value + "";
+   }
+
+   public JsonBall(int value) {
+      this.value = value + "";
+   }
+
+   public JsonBall(long value) {
+      this.value = value + "";
+   }
+
    public JsonBall(String value) {
       this.value = quoteStringIfNotNumber(checkNotNull(value, "value"));
    }

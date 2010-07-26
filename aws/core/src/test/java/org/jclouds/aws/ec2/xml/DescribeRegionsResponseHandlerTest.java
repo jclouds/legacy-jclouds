@@ -27,7 +27,7 @@ import java.util.Map;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.rest.annotations.Provider;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
@@ -47,7 +47,7 @@ public class DescribeRegionsResponseHandlerTest extends BaseHandlerTest {
    @BeforeTest
    @Override
    protected void setUpInjector() {
-      injector = Guice.createInjector(new ParserModule(), new AbstractModule() {
+      injector = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
 
          @Override
          protected void configure() {

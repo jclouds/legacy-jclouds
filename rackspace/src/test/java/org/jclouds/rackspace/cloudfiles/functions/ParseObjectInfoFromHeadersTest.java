@@ -28,7 +28,6 @@ import java.net.URI;
 import org.jclouds.Constants;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -46,13 +45,12 @@ import com.google.inject.name.Names;
  */
 @Test(groups = "unit", testName = "cloudfiles.ParseObjectInfoFromHeadersTest")
 public class ParseObjectInfoFromHeadersTest {
-   Injector i = Guice.createInjector(new ParserModule(), new AbstractModule() {
+
+   Injector i = Guice.createInjector(new AbstractModule() {
 
       @Override
       protected void configure() {
-         bindConstant()
-                  .annotatedWith(Names.named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX)).to(
-                           "sdf");
+         bindConstant().annotatedWith(Names.named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX)).to("sdf");
          bindConstant().annotatedWith(Names.named(Constants.PROPERTY_API_VERSION)).to("1");
       }
 

@@ -26,9 +26,10 @@ import java.util.List;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
+import org.jclouds.rackspace.config.RackspaceParserModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -45,32 +46,27 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "cloudFlavors.ParseFlavorListFromJsonResponseTest")
 public class ParseFlavorListFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new ParserModule());
+   Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
 
    public void testApplyInputStream() {
-      InputStream is = getClass().getResourceAsStream(
-            "/cloudservers/test_list_flavors.json");
+      InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_flavors.json");
 
-      List<Flavor> expects = ImmutableList.of(new Flavor(1, "256 MB Server"),
-            new Flavor(2, "512 MB Server"));
+      List<Flavor> expects = ImmutableList.of(new Flavor(1, "256 MB Server"), new Flavor(2, "512 MB Server"));
 
       UnwrapOnlyJsonValue<List<Flavor>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Flavor>>>() {
             }));
-      List<Flavor> response = parser.apply(new HttpResponse(200, "ok", Payloads
-            .newInputStreamPayload(is)));
+      List<Flavor> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
       assertEquals(response, expects);
    }
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream(
-            "/cloudservers/test_list_flavors_detail.json");
+      InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_flavors_detail.json");
 
       UnwrapOnlyJsonValue<List<Flavor>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Flavor>>>() {
             }));
-      List<Flavor> response = parser.apply(new HttpResponse(200, "ok", Payloads
-            .newInputStreamPayload(is)));
+      List<Flavor> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
       assertEquals(response.get(0).getId(), 1);
       assertEquals(response.get(0).getName(), "256 MB Server");
       assertEquals(response.get(0).getDisk(), new Integer(10));

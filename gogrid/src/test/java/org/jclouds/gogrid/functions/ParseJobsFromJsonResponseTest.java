@@ -38,8 +38,8 @@ import org.jclouds.gogrid.domain.ObjectType;
 import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.functions.internal.CustomDeserializers;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSortedSet;
@@ -57,13 +57,10 @@ public class ParseJobsFromJsonResponseTest {
 
    @Test
    public void testApplyInputStreamDetails() throws UnknownHostException {
-      InputStream is = getClass()
-            .getResourceAsStream("/test_get_job_list.json");
+      InputStream is = getClass().getResourceAsStream("/test_get_job_list.json");
 
-      ParseJobListFromJsonResponse parser = i
-            .getInstance(ParseJobListFromJsonResponse.class);
-      SortedSet<Job> response = parser.apply(new HttpResponse(200, "ok",
-            Payloads.newInputStreamPayload(is)));
+      ParseJobListFromJsonResponse parser = i.getInstance(ParseJobListFromJsonResponse.class);
+      SortedSet<Job> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
       Map<String, String> details = Maps.newTreeMap();
       details.put("description", null);
@@ -72,18 +69,15 @@ public class ParseJobsFromJsonResponseTest {
       details.put("name", "ServerCreated40562");
       details.put("type", "virtual_server");
 
-      Job job = new Job(250628L, new Option(7L, "DeleteVirtualServer",
-            "Delete Virtual Server"), ObjectType.VIRTUAL_SERVER, new Date(
-            1267404528895L), new Date(1267404538592L), JobState.SUCCEEDED, 1,
-            "3116784158f0af2d-24076@api.gogrid.com", ImmutableSortedSet.of(
-                  new JobProperties(940263L, new Date(1267404528897L),
-                        JobState.CREATED, null), new JobProperties(940264L,
-                        new Date(1267404528967L), JobState.QUEUED, null)),
-            details);
+      Job job = new Job(250628L, new Option(7L, "DeleteVirtualServer", "Delete Virtual Server"),
+            ObjectType.VIRTUAL_SERVER, new Date(1267404528895L), new Date(1267404538592L), JobState.SUCCEEDED, 1,
+            "3116784158f0af2d-24076@api.gogrid.com", ImmutableSortedSet.of(new JobProperties(940263L, new Date(
+                  1267404528897L), JobState.CREATED, null), new JobProperties(940264L, new Date(1267404528967L),
+                  JobState.QUEUED, null)), details);
       assertEquals(job, Iterables.getOnlyElement(response));
    }
 
-   Injector i = Guice.createInjector(new ParserModule() {
+   Injector i = Guice.createInjector(new GsonModule() {
       @Override
       protected void configure() {
          bind(DateAdapter.class).to(DateSecondsAdapter.class);
@@ -96,10 +90,8 @@ public class ParseJobsFromJsonResponseTest {
       @com.google.inject.name.Named(Constants.PROPERTY_GSON_ADAPTERS)
       public Map<Type, Object> provideCustomAdapterBindings() {
          Map<Type, Object> bindings = Maps.newHashMap();
-         bindings.put(ObjectType.class,
-               new CustomDeserializers.ObjectTypeAdapter());
-         bindings
-               .put(JobState.class, new CustomDeserializers.JobStateAdapter());
+         bindings.put(ObjectType.class, new CustomDeserializers.ObjectTypeAdapter());
+         bindings.put(JobState.class, new CustomDeserializers.JobStateAdapter());
          return bindings;
       }
    });

@@ -34,7 +34,7 @@ import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.functions.FindLocationForResourceInVDC;
 import org.jclouds.vcloud.domain.NamedResource;
@@ -61,7 +61,7 @@ public class ParseVAppTemplatesInVDCToSizeProviderTest {
 
    public void testParse() {
       InputStream is = getClass().getResourceAsStream("/bluelock/vdc.xml");
-      Injector injector = Guice.createInjector(new ParserModule(), new AbstractModule() {
+      Injector injector = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
 
          @Override
          protected void configure() {

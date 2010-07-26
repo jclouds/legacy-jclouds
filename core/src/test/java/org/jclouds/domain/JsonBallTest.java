@@ -25,13 +25,13 @@ import java.util.Map;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.Json;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -43,14 +43,14 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "jclouds.JsonBallTest")
 public class JsonBallTest {
    private ParseJson<Map<String, JsonBall>> handler;
-   private Gson mapper;
+   private Json mapper;
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule());
+      Injector injector = Guice.createInjector(new GsonModule());
       handler = injector.getInstance(Key.get(new TypeLiteral<ParseJson<Map<String, JsonBall>>>() {
       }));
-      mapper = injector.getInstance(Gson.class);
+      mapper = injector.getInstance(Json.class);
 
    }
 

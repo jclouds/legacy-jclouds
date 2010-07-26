@@ -38,7 +38,7 @@ import org.jclouds.aws.s3.domain.ObjectMetadata.StorageClass;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.util.Utils;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
@@ -61,7 +61,7 @@ public class S3ParserTest extends PerformanceTest {
 
    @BeforeTest
    protected void setUpInjector() {
-      injector = Guice.createInjector(new ParserModule());
+      injector = Guice.createInjector(new SaxParserModule());
       factory = injector.getInstance(ParseSax.Factory.class);
       assert factory != null;
    }

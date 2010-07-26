@@ -26,7 +26,7 @@ import java.net.URI;
 import javax.ws.rs.HttpMethod;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.rackspace.cloudservers.domain.RebootType;
 import org.testng.annotations.Test;
 
@@ -42,7 +42,7 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "cloudservers.BindRebootTypeToJsonPayloadTest")
 public class BindRebootTypeToJsonPayloadTest {
 
-   Injector injector = Guice.createInjector(new ParserModule());
+   Injector injector = Guice.createInjector(new GsonModule());
 
    @Test(expectedExceptions = IllegalStateException.class)
    public void testPostIsIncorrect() {

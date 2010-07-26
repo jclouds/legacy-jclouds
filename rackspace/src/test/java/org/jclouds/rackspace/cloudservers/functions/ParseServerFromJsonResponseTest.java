@@ -26,11 +26,12 @@ import java.util.List;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.rackspace.cloudservers.domain.Addresses;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
+import org.jclouds.rackspace.config.RackspaceParserModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -48,17 +49,15 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "cloudservers.ParseServerFromJsonResponseTest")
 public class ParseServerFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new ParserModule());
+   Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/cloudservers/test_get_server_detail.json");
 
-      UnwrapOnlyJsonValue<Server> parser = i.getInstance(Key
-            .get(new TypeLiteral<UnwrapOnlyJsonValue<Server>>() {
-            }));
-      Server response = parser.apply(new HttpResponse(200, "ok", Payloads
-            .newInputStreamPayload(is)));
-      
+      UnwrapOnlyJsonValue<Server> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Server>>() {
+      }));
+      Server response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+
       assertEquals(response.getId(), 1234);
       assertEquals(response.getName(), "sample-server");
       assertEquals(response.getImageId(), new Integer(2));
@@ -72,8 +71,7 @@ public class ParseServerFromJsonResponseTest {
       addresses1.getPrivateAddresses().addAll(privateAddresses);
       addresses1.getPublicAddresses().addAll(publicAddresses);
       assertEquals(response.getAddresses(), addresses1);
-      assertEquals(response.getMetadata(), ImmutableMap.of("Server Label", "Web Head 1",
-               "Image Version", "2.1"));
+      assertEquals(response.getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));
 
    }
 

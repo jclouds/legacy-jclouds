@@ -25,9 +25,10 @@ import java.net.UnknownHostException;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.rackspace.cloudservers.domain.SharedIpGroup;
+import org.jclouds.rackspace.config.RackspaceParserModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -44,17 +45,15 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "cloudservers.ParseSharedIpGroupFromJsonResponseTest")
 public class ParseSharedIpGroupFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new ParserModule());
+   Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream(
-            "/cloudservers/test_get_sharedipgroup_details.json");
+      InputStream is = getClass().getResourceAsStream("/cloudservers/test_get_sharedipgroup_details.json");
 
       UnwrapOnlyJsonValue<SharedIpGroup> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<SharedIpGroup>>() {
             }));
-      SharedIpGroup response = parser.apply(new HttpResponse(200, "ok",
-            Payloads.newInputStreamPayload(is)));
+      SharedIpGroup response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
       assertEquals(response.getId(), 1234);
       assertEquals(response.getName(), "Shared IP Group 1");

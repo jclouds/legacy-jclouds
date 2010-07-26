@@ -29,7 +29,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
@@ -53,7 +53,7 @@ public class OrgHandlerTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/org.xml");
 
-      Injector injector = Guice.createInjector(new ParserModule(), new AbstractModule() {
+      Injector injector = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
 
          @Override
          protected void configure() {
@@ -98,7 +98,7 @@ public class OrgHandlerTest {
 
    public void testHosting() {
       InputStream is = getClass().getResourceAsStream("/org-hosting.xml");
-      Injector injector = Guice.createInjector(new ParserModule(), new AbstractModule() {
+      Injector injector = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
 
          @Override
          protected void configure() {

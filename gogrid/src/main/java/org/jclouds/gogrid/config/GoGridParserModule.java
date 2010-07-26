@@ -35,7 +35,7 @@ import org.jclouds.gogrid.domain.ObjectType;
 import org.jclouds.gogrid.domain.ServerImageState;
 import org.jclouds.gogrid.domain.ServerImageType;
 import org.jclouds.gogrid.functions.internal.CustomDeserializers;
-import org.jclouds.http.functions.config.ParserModule.DateAdapter;
+import org.jclouds.json.config.GsonModule.DateAdapter;
 
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
@@ -48,7 +48,7 @@ import com.google.inject.Provides;
  * @author Oleksiy Yarmula
  */
 
-public class GoGridJsonAdapterModule extends AbstractModule {
+public class GoGridParserModule extends AbstractModule {
 
    @Provides
    @Singleton
@@ -58,8 +58,7 @@ public class GoGridJsonAdapterModule extends AbstractModule {
       bindings.put(ObjectType.class, new CustomDeserializers.ObjectTypeAdapter());
       bindings.put(LoadBalancerOs.class, new CustomDeserializers.LoadBalancerOsAdapter());
       bindings.put(LoadBalancerState.class, new CustomDeserializers.LoadBalancerStateAdapter());
-      bindings.put(LoadBalancerPersistenceType.class,
-               new CustomDeserializers.LoadBalancerPersistenceTypeAdapter());
+      bindings.put(LoadBalancerPersistenceType.class, new CustomDeserializers.LoadBalancerPersistenceTypeAdapter());
       bindings.put(LoadBalancerType.class, new CustomDeserializers.LoadBalancerTypeAdapter());
       bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());
       bindings.put(JobState.class, new CustomDeserializers.JobStateAdapter());

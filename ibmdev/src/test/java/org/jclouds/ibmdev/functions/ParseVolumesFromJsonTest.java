@@ -24,9 +24,10 @@ import java.util.Date;
 import java.util.Set;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.ibmdev.config.IBMDeveloperCloudParserModule;
 import org.jclouds.ibmdev.domain.Volume;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -46,28 +47,19 @@ public class ParseVolumesFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule() {
-         @Override
-         protected void configure() {
-            bind(DateAdapter.class).to(LongDateAdapter.class);
-            super.configure();
-         }
-      });
+      Injector injector = Guice.createInjector(new IBMDeveloperCloudParserModule(), new GsonModule());
       handler = injector.getInstance(ParseVolumesFromJson.class);
    }
 
    public void test() {
-      Volume volume1 = new Volume("2", 5, 50, "aadelucc@us.ibm.com", new Date(
-            1260469075119l), "1", ImmutableSet.<String> of(), "ext3",
-            "New Storage", "67");
+      Volume volume1 = new Volume("2", 5, 50, "aadelucc@us.ibm.com", new Date(1260469075119l), "1", ImmutableSet
+            .<String> of(), "ext3", "New Storage", "67");
 
-      Volume volume2 = new Volume(null, 6, 51, "aadelucc@us.ibm.com", new Date(
-            1260469075120l), "2", ImmutableSet.<String> of("abrad"), "ext3",
-            "New Storage1", "68");
+      Volume volume2 = new Volume(null, 6, 51, "aadelucc@us.ibm.com", new Date(1260469075120l), "2", ImmutableSet
+            .<String> of("abrad"), "ext3", "New Storage1", "68");
 
-      Set<? extends Volume> compare = handler.apply(new HttpResponse(200, "ok",
-            Payloads.newInputStreamPayload(ParseVolumesFromJsonTest.class
-                  .getResourceAsStream("/volumes.json"))));
+      Set<? extends Volume> compare = handler.apply(new HttpResponse(200, "ok", Payloads
+            .newInputStreamPayload(ParseVolumesFromJsonTest.class.getResourceAsStream("/volumes.json"))));
       assert (compare.contains(volume1));
       assert (compare.contains(volume2));
    }

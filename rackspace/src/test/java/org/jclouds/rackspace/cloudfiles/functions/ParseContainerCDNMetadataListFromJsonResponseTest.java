@@ -27,9 +27,10 @@ import java.util.SortedSet;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
+import org.jclouds.rackspace.config.RackspaceParserModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSortedSet;
@@ -45,39 +46,22 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", testName = "cloudfiles.ParseContainerCDNMetadataListFromJsonResponseTest")
 public class ParseContainerCDNMetadataListFromJsonResponseTest {
-   Injector i = Guice.createInjector(new ParserModule());
+   Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
 
    @Test
    public void testApplyInputStream() {
 
-      InputStream is = getClass().getResourceAsStream(
-            "/cloudfiles/test_list_cdn.json");
-      Set<ContainerCDNMetadata> expects = ImmutableSortedSet
-            .of(
+      InputStream is = getClass().getResourceAsStream("/cloudfiles/test_list_cdn.json");
+      Set<ContainerCDNMetadata> expects = ImmutableSortedSet.of(
 
-                  new ContainerCDNMetadata(
-                        "adriancole-blobstore.testCDNOperationsContainerWithCDN",
-                        false,
-                        3600,
-                        URI
-                              .create("http://c0354712.cdn.cloudfiles.rackspacecloud.com")),
-                  new ContainerCDNMetadata(
-                        "adriancole-blobstore5",
-                        true,
-                        28800,
-                        URI
-                              .create("http://c0404671.cdn.cloudfiles.rackspacecloud.com")),
-                  new ContainerCDNMetadata(
-                        "adriancole-cfcdnint.testCDNOperationsContainerWithCDN",
-                        false,
-                        3600,
-                        URI
-                              .create("http://c0320431.cdn.cloudfiles.rackspacecloud.com")));
-      ParseJson<SortedSet<ContainerCDNMetadata>> parser = i
-            .getInstance(Key
-                  .get(new TypeLiteral<ParseJson<SortedSet<ContainerCDNMetadata>>>() {
-                  }));
-      assertEquals(parser.apply(new HttpResponse(200, "ok", Payloads
-            .newInputStreamPayload(is))), expects);
+      new ContainerCDNMetadata("adriancole-blobstore.testCDNOperationsContainerWithCDN", false, 3600, URI
+            .create("http://c0354712.cdn.cloudfiles.rackspacecloud.com")), new ContainerCDNMetadata(
+            "adriancole-blobstore5", true, 28800, URI.create("http://c0404671.cdn.cloudfiles.rackspacecloud.com")),
+            new ContainerCDNMetadata("adriancole-cfcdnint.testCDNOperationsContainerWithCDN", false, 3600, URI
+                  .create("http://c0320431.cdn.cloudfiles.rackspacecloud.com")));
+      ParseJson<SortedSet<ContainerCDNMetadata>> parser = i.getInstance(Key
+            .get(new TypeLiteral<ParseJson<SortedSet<ContainerCDNMetadata>>>() {
+            }));
+      assertEquals(parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is))), expects);
    }
 }

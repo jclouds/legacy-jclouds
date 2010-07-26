@@ -35,8 +35,8 @@ import org.jclouds.gogrid.domain.ServerImageState;
 import org.jclouds.gogrid.domain.ServerImageType;
 import org.jclouds.gogrid.functions.internal.CustomDeserializers;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Maps;
@@ -52,18 +52,16 @@ public class ParseServerNameToCredentialsMapFromJsonResponseTest {
 
    @Test
    public void testApplyInputStreamDetails() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream(
-            "/test_credentials_list.json");
+      InputStream is = getClass().getResourceAsStream("/test_credentials_list.json");
 
       ParseServerNameToCredentialsMapFromJsonResponse parser = i
             .getInstance(ParseServerNameToCredentialsMapFromJsonResponse.class);
-      Map<String, Credentials> response = parser.apply(new HttpResponse(200,
-            "ok", Payloads.newInputStreamPayload(is)));
+      Map<String, Credentials> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
       assertEquals(response.size(), 6);
    }
 
-   Injector i = Guice.createInjector(new ParserModule() {
+   Injector i = Guice.createInjector(new GsonModule() {
       @Override
       protected void configure() {
          bind(DateAdapter.class).to(DateSecondsAdapter.class);
@@ -77,12 +75,9 @@ public class ParseServerNameToCredentialsMapFromJsonResponseTest {
       public Map<Type, Object> provideCustomAdapterBindings() {
          Map<Type, Object> bindings = Maps.newHashMap();
          bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());
-         bindings.put(ServerImageType.class,
-               new CustomDeserializers.ServerImageTypeAdapter());
-         bindings.put(ServerImageState.class,
-               new CustomDeserializers.ServerImageStateAdapter());
-         bindings.put(ServerImageState.class,
-               new CustomDeserializers.ServerImageStateAdapter());
+         bindings.put(ServerImageType.class, new CustomDeserializers.ServerImageTypeAdapter());
+         bindings.put(ServerImageState.class, new CustomDeserializers.ServerImageStateAdapter());
+         bindings.put(ServerImageState.class, new CustomDeserializers.ServerImageStateAdapter());
          return bindings;
       }
    });

@@ -11,7 +11,7 @@ import java.util.Properties;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressMediaType;
@@ -34,7 +34,7 @@ public class TerremarkOrgHandlerTest extends BaseHandlerTest {
    @Override
    @BeforeTest
    protected void setUpInjector() {
-      injector = Guice.createInjector(new ParserModule() {
+      injector = Guice.createInjector(new SaxParserModule() {
          @Override
          public void configure() {
             super.configure();

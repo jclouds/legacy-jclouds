@@ -16,31 +16,22 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http.functions;
+package org.jclouds.rackspace.config;
 
-import org.jclouds.http.functions.config.SaxParserModule;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import org.jclouds.json.config.GsonModule.DateAdapter;
+import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import com.google.inject.AbstractModule;
 
-public class BaseHandlerTest {
+/**
+ * 
+ * @author Adrian Cole
+ */
+public class RackspaceParserModule extends AbstractModule {
 
-   protected Injector injector = null;
-   protected ParseSax.Factory factory;
-
-   @BeforeTest
-   protected void setUpInjector() {
-      injector = Guice.createInjector(new SaxParserModule());
-      factory = injector.getInstance(ParseSax.Factory.class);
-      assert factory != null;
-   }
-
-   @AfterTest
-   protected void tearDownInjector() {
-      factory = null;
-      injector = null;
+   @Override
+   protected void configure() {
+      bind(DateAdapter.class).to(Iso8601DateAdapter.class);
    }
 
 }

@@ -26,7 +26,7 @@ import java.net.URI;
 import javax.ws.rs.HttpMethod;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -41,7 +41,7 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "cloudsharedIpGroups.CreateSharedIpGroupOptionsTest")
 public class CreateSharedIpGroupOptionsTest {
 
-   Injector injector = Guice.createInjector(new ParserModule());
+   Injector injector = Guice.createInjector(new GsonModule());
 
    @Test
    public void testAddPayloadToRequestMapOfStringStringHttpRequest() {
@@ -73,8 +73,7 @@ public class CreateSharedIpGroupOptionsTest {
    }
 
    private void assertSharedIpGroup(HttpRequest request) {
-      assertEquals("{\"sharedIpGroup\":{\"name\":\"foo\",\"server\":3}}", request.getPayload()
-               .getRawContent());
+      assertEquals("{\"sharedIpGroup\":{\"name\":\"foo\",\"server\":3}}", request.getPayload().getRawContent());
    }
 
 }

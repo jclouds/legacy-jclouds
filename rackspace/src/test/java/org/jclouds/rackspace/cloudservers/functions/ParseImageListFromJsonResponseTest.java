@@ -27,10 +27,11 @@ import java.util.List;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.ImageStatus;
+import org.jclouds.rackspace.config.RackspaceParserModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -46,31 +47,19 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", testName = "cloudImages.ParseImageListFromJsonResponseTest")
 public class ParseImageListFromJsonResponseTest {
-
-   Injector i = Guice.createInjector(new ParserModule() {
-
-      @Override
-      protected void configure() {
-         bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-         super.configure();
-      }
-
-   });
-
+   Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
    DateService dateService = i.getInstance(DateService.class);
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_images.json");
 
-      List<Image> expects = ImmutableList.of(new Image(2, "CentOS 5.2"), new Image(743,
-               "My Server Backup"));
-      
+      List<Image> expects = ImmutableList.of(new Image(2, "CentOS 5.2"), new Image(743, "My Server Backup"));
+
       UnwrapOnlyJsonValue<List<Image>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Image>>>() {
             }));
-      List<Image> response = parser.apply(new HttpResponse(200, "ok", Payloads
-            .newInputStreamPayload(is)));
-      
+      List<Image> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+
       assertEquals(response, expects);
    }
 
@@ -80,29 +69,24 @@ public class ParseImageListFromJsonResponseTest {
       UnwrapOnlyJsonValue<List<Image>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Image>>>() {
             }));
-      List<Image> response = parser.apply(new HttpResponse(200, "ok", Payloads
-            .newInputStreamPayload(is)));
-      
+      List<Image> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+
       assertEquals(response.get(0).getId(), 2);
       assertEquals(response.get(0).getName(), "CentOS 5.2");
-      assertEquals(response.get(0).getCreated(), dateService
-               .iso8601SecondsDateParse("2010-08-10T12:00:00Z"));
+      assertEquals(response.get(0).getCreated(), dateService.iso8601SecondsDateParse("2010-08-10T12:00:00Z"));
       assertEquals(response.get(0).getProgress(), null);
       assertEquals(response.get(0).getServerId(), null);
       assertEquals(response.get(0).getStatus(), ImageStatus.ACTIVE);
-      assertEquals(response.get(0).getUpdated(), dateService
-               .iso8601SecondsDateParse("2010-10-10T12:00:00Z"));
+      assertEquals(response.get(0).getUpdated(), dateService.iso8601SecondsDateParse("2010-10-10T12:00:00Z"));
 
       assertEquals(response.get(1).getId(), 743);
       assertEquals(response.get(1).getName(), "My Server Backup");
-      assertEquals(response.get(1).getCreated(), dateService
-               .iso8601SecondsDateParse("2009-07-07T09:56:16-05:00"));
+      assertEquals(response.get(1).getCreated(), dateService.iso8601SecondsDateParse("2009-07-07T09:56:16-05:00"));
       ;
       assertEquals(response.get(1).getProgress(), new Integer(80));
       assertEquals(response.get(1).getServerId(), new Integer(12));
       assertEquals(response.get(1).getStatus(), ImageStatus.SAVING);
-      assertEquals(response.get(1).getUpdated(), dateService
-               .iso8601SecondsDateParse("2010-10-10T12:00:00Z"));
+      assertEquals(response.get(1).getUpdated(), dateService.iso8601SecondsDateParse("2010-10-10T12:00:00Z"));
    }
 
 }

@@ -26,9 +26,10 @@ import java.util.Date;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.ibmdev.config.IBMDeveloperCloudParserModule;
 import org.jclouds.ibmdev.domain.Key;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -49,26 +50,17 @@ public class ParseKeyFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule() {
-         @Override
-         protected void configure() {
-            bind(DateAdapter.class).to(LongDateAdapter.class);
-            super.configure();
-         }
-      });
-      handler = injector.getInstance(com.google.inject.Key
-            .get(new TypeLiteral<ParseJson<Key>>() {
-            }));
+      Injector injector = Guice.createInjector(new IBMDeveloperCloudParserModule(), new GsonModule());
+      handler = injector.getInstance(com.google.inject.Key.get(new TypeLiteral<ParseJson<Key>>() {
+      }));
    }
 
    public void test() {
-      Key key = new Key(true, ImmutableSet.<String> of("1"),
-            "AAAB3NzaC1yc2EAAAADAQABAAABAQCqBw7a+...", "DEFAULT", new Date(
-                  1260428507510l));
+      Key key = new Key(true, ImmutableSet.<String> of("1"), "AAAB3NzaC1yc2EAAAADAQABAAABAQCqBw7a+...", "DEFAULT",
+            new Date(1260428507510l));
 
-      Key compare = handler.apply(new HttpResponse(200, "ok", Payloads
-            .newInputStreamPayload(ParseKeyFromJsonTest.class
-                  .getResourceAsStream("/key.json"))));
+      Key compare = handler.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(ParseKeyFromJsonTest.class
+            .getResourceAsStream("/key.json"))));
       assertEquals(compare, key);
    }
 }

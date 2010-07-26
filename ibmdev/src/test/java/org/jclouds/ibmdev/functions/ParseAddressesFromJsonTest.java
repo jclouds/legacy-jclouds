@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.Set;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.ibmdev.config.IBMDeveloperCloudParserModule;
 import org.jclouds.ibmdev.domain.Address;
 import org.jclouds.io.Payloads;
 import org.testng.annotations.BeforeTest;
@@ -44,13 +44,7 @@ public class ParseAddressesFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule() {
-         @Override
-         protected void configure() {
-            bind(DateAdapter.class).to(LongDateAdapter.class);
-            super.configure();
-         }
-      });
+      Injector injector = Guice.createInjector(new IBMDeveloperCloudParserModule());
       handler = injector.getInstance(ParseAddressesFromJson.class);
    }
 
@@ -58,8 +52,7 @@ public class ParseAddressesFromJsonTest {
       Address address1 = new Address(2, "1", "129.33.196.243", "1217", "1");
       Address address2 = new Address(3, "2", "129.33.196.244", "1218", null);
       Set<? extends Address> compare = handler.apply(new HttpResponse(200, "ok", Payloads
-               .newInputStreamPayload(ParseAddressesFromJsonTest.class
-                        .getResourceAsStream("/addresses.json"))));
+            .newInputStreamPayload(ParseAddressesFromJsonTest.class.getResourceAsStream("/addresses.json"))));
       assert (compare.contains(address1));
       assert (compare.contains(address2));
    }

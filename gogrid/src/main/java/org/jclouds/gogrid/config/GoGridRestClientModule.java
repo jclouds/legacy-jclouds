@@ -102,7 +102,7 @@ public class GoGridRestClientModule extends RestClientModule<GoGridClient, GoGri
 
    @Override
    protected void configure() {
-      install(new GoGridJsonAdapterModule());
+      install(new GoGridParserModule());
       super.configure();
    }
 

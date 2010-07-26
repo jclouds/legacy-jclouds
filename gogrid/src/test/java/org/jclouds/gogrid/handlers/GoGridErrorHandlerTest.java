@@ -33,7 +33,7 @@ import java.io.InputStream;
 import org.jclouds.gogrid.mock.HttpCommandMock;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.io.Payloads;
 import org.testng.TestException;
 import org.testng.annotations.Test;
@@ -52,7 +52,7 @@ public class GoGridErrorHandlerTest {
       InputStream is = getClass().getResourceAsStream("/test_error_handler.json");
 
      
-      GoGridErrorHandler handler = Guice.createInjector(new ParserModule()).getInstance(GoGridErrorHandler.class);
+      GoGridErrorHandler handler = Guice.createInjector(new SaxParserModule()).getInstance(GoGridErrorHandler.class);
 
       HttpCommand command = createHttpCommand();
       handler.handleError(command, new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));

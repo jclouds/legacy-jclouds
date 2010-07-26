@@ -26,9 +26,10 @@ import java.util.List;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.rackspace.cloudservers.domain.Addresses;
+import org.jclouds.rackspace.config.RackspaceParserModule;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -44,20 +45,15 @@ import com.google.inject.internal.ImmutableList;
  */
 @Test(groups = "unit", testName = "cloudservers.ParseAddressesFromJsonResponseTest")
 public class ParseAddressesFromJsonResponseTest {
-
-   Injector i = Guice.createInjector(new ParserModule());
+   Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream(
-            "/cloudservers/test_list_addresses.json");
+      InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_addresses.json");
 
-      UnwrapOnlyJsonValue<Addresses> parser = i.getInstance(Key
-            .get(new TypeLiteral<UnwrapOnlyJsonValue<Addresses>>() {
-            }));
-      Addresses response = parser.apply(new HttpResponse(200, "ok", Payloads
-            .newInputStreamPayload(is)));
-      List<String> publicAddresses = ImmutableList.of("67.23.10.132",
-            "67.23.10.131");
+      UnwrapOnlyJsonValue<Addresses> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Addresses>>() {
+      }));
+      Addresses response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      List<String> publicAddresses = ImmutableList.of("67.23.10.132", "67.23.10.131");
 
       List<String> privateAddresses = ImmutableList.of("10.176.42.16");
 

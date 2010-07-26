@@ -26,7 +26,7 @@ import java.net.URI;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
@@ -51,7 +51,7 @@ public class CatalogItemHandlerTest {
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/catalog.xml");
-      injector = Guice.createInjector(new ParserModule(), new AbstractModule() {
+      injector = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
 
          @Override
          protected void configure() {
@@ -158,7 +158,7 @@ public class CatalogItemHandlerTest {
 
    public void testHosting() {
       InputStream is = getClass().getResourceAsStream("/catalog-hosting.xml");
-      injector = Guice.createInjector(new ParserModule(), new AbstractModule() {
+      injector = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
 
          @Override
          protected void configure() {

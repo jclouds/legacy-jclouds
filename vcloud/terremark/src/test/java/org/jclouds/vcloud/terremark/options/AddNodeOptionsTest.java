@@ -22,7 +22,7 @@ import static org.jclouds.vcloud.terremark.options.AddNodeOptions.Builder.disabl
 import static org.jclouds.vcloud.terremark.options.AddNodeOptions.Builder.withDescription;
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -36,7 +36,7 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "vcloud.AddNodeOptionsTest")
 public class AddNodeOptionsTest {
 
-   Injector injector = Guice.createInjector(new ParserModule());
+   Injector injector = Guice.createInjector(new SaxParserModule());
 
    @Test
    public void testWithDescription() {

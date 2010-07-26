@@ -37,7 +37,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
- * Tests behavior of {@code ParseFlavorListFromGsonResponseTest}
+ * Tests behavior of {@code ParseFlavorListFromJsonResponseTest}
  * 
  * @author Adrian Cole
  */

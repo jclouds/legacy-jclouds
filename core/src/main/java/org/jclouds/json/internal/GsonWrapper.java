@@ -16,31 +16,44 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http.functions;
+package org.jclouds.json.internal;
 
-import org.jclouds.http.functions.config.SaxParserModule;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import java.lang.reflect.Type;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-public class BaseHandlerTest {
+import org.jclouds.json.Json;
 
-   protected Injector injector = null;
-   protected ParseSax.Factory factory;
+import com.google.gson.Gson;
 
-   @BeforeTest
-   protected void setUpInjector() {
-      injector = Guice.createInjector(new SaxParserModule());
-      factory = injector.getInstance(ParseSax.Factory.class);
-      assert factory != null;
+/**
+ * @author Adrian Cole
+ */
+@Singleton
+public class GsonWrapper implements Json {
+
+   private final Gson gson;
+
+   @Inject
+   public GsonWrapper(Gson gson) {
+      this.gson = gson;
    }
 
-   @AfterTest
-   protected void tearDownInjector() {
-      factory = null;
-      injector = null;
+   @SuppressWarnings("unchecked")
+   @Override
+   public <T> T fromJson(String json, Type type) {
+      return (T) gson.fromJson(json, type);
+   }
+
+   @Override
+   public <T> T fromJson(String json, Class<T> classOfT) {
+      return gson.fromJson(json, classOfT);
+   }
+
+   @Override
+   public String toJson(Object src) {
+      return gson.toJson(src);
    }
 
 }

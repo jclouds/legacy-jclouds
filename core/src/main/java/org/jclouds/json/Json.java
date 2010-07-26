@@ -16,31 +16,29 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http.functions;
+package org.jclouds.json;
 
-import org.jclouds.http.functions.config.SaxParserModule;
-import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeTest;
+import java.lang.reflect.Type;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+/**
+ * @author Adrian Cole
+ */
+public interface Json {
+   /**
+    * Serialize the object into json.
+    */
+   String toJson(Object src);
 
-public class BaseHandlerTest {
+   /**
+    * Deserialize the generic object from json. If the object is not a generic
+    * type, use {@link #fromJson(Object, Class)}
+    */
+   <T> T fromJson(String json, Type type);
 
-   protected Injector injector = null;
-   protected ParseSax.Factory factory;
-
-   @BeforeTest
-   protected void setUpInjector() {
-      injector = Guice.createInjector(new SaxParserModule());
-      factory = injector.getInstance(ParseSax.Factory.class);
-      assert factory != null;
-   }
-
-   @AfterTest
-   protected void tearDownInjector() {
-      factory = null;
-      injector = null;
-   }
+   /**
+    * Deserialize the object from json. If the object is a generic type, use
+    * {@link #fromJson(Object, Type)}
+    */
+   <T> T fromJson(String json, Class<T> classOfT);
 
 }

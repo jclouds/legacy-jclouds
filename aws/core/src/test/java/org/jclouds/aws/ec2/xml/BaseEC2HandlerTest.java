@@ -26,7 +26,7 @@ import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.testng.annotations.BeforeTest;
 
 import com.google.common.collect.ImmutableMap;
@@ -48,7 +48,7 @@ public class BaseEC2HandlerTest extends BaseHandlerTest {
    @BeforeTest
    @Override
    protected void setUpInjector() {
-      injector = Guice.createInjector(new ParserModule(), new AbstractModule() {
+      injector = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
 
          @Override
          protected void configure() {

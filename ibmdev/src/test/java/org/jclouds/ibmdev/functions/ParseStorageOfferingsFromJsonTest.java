@@ -27,11 +27,12 @@ import java.util.Set;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.ibmdev.config.IBMDeveloperCloudParserModule;
 import org.jclouds.ibmdev.domain.Price;
 import org.jclouds.ibmdev.domain.StorageOffering;
 import org.jclouds.ibmdev.domain.StorageOffering.Format;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -49,17 +50,10 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", sequential = true, testName = "ibmdev.ParseStorageOfferingsFromJsonTest")
 public class ParseStorageOfferingsFromJsonTest {
    private UnwrapOnlyJsonValue<Set<StorageOffering>> handler;
-   private Injector injector;
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      injector = Guice.createInjector(new ParserModule() {
-         @Override
-         protected void configure() {
-            bind(DateAdapter.class).to(LongDateAdapter.class);
-            super.configure();
-         }
-      });
+      Injector injector = Guice.createInjector(new IBMDeveloperCloudParserModule(), new GsonModule());
       handler = injector.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Set<StorageOffering>>>() {
       }));
    }

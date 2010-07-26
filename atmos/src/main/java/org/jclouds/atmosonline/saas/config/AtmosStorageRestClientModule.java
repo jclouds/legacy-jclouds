@@ -36,8 +36,6 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.http.functions.config.ParserModule.DateAdapter;
-import org.jclouds.http.functions.config.ParserModule.Iso8601DateAdapter;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
@@ -45,22 +43,21 @@ import com.google.common.base.Supplier;
 import com.google.inject.Provides;
 
 /**
- * Configures the EMC Atmos Online Storage authentication service connection, including logging and
- * http transport.
+ * Configures the EMC Atmos Online Storage authentication service connection,
+ * including logging and http transport.
  * 
  * @author Adrian Cole
  */
 @ConfiguresRestClient
 @RequiresHttp
-public class AtmosStorageRestClientModule extends
-         RestClientModule<AtmosStorageClient, AtmosStorageAsyncClient> {
+public class AtmosStorageRestClientModule extends RestClientModule<AtmosStorageClient, AtmosStorageAsyncClient> {
    public AtmosStorageRestClientModule() {
       super(AtmosStorageClient.class, AtmosStorageAsyncClient.class);
    }
 
    @Override
    protected void configure() {
-      bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+      install(new AtmosStorageParserModule());
       install(new AtmosObjectModule());
       super.configure();
    }
@@ -77,7 +74,7 @@ public class AtmosStorageRestClientModule extends
    @Provides
    @TimeStamp
    Supplier<String> provideTimeStampCache(@Named(Constants.PROPERTY_SESSION_INTERVAL) long seconds,
-            final DateService dateService) {
+         final DateService dateService) {
       return new ExpirableSupplier<String>(new Supplier<String>() {
          public String get() {
             return dateService.rfc822DateFormat();
@@ -87,18 +84,14 @@ public class AtmosStorageRestClientModule extends
 
    @Override
    protected void bindErrorHandlers() {
-      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-               ParseAtmosStorageErrorFromXmlContent.class);
-      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-               ParseAtmosStorageErrorFromXmlContent.class);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-               ParseAtmosStorageErrorFromXmlContent.class);
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseAtmosStorageErrorFromXmlContent.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ParseAtmosStorageErrorFromXmlContent.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseAtmosStorageErrorFromXmlContent.class);
    }
 
    @Override
    protected void bindRetryHandlers() {
-      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(
-               AtmosStorageClientErrorRetryHandler.class);
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(AtmosStorageClientErrorRetryHandler.class);
    }
 
 }

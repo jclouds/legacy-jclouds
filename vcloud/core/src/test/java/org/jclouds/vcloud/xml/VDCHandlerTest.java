@@ -25,7 +25,7 @@ import java.net.URI;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.domain.Capacity;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Quota;
@@ -50,7 +50,7 @@ public class VDCHandlerTest {
 
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/vdc.xml");
-      Injector injector = Guice.createInjector(new ParserModule(), new AbstractModule() {
+      Injector injector = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
 
          @Override
          protected void configure() {
@@ -91,7 +91,7 @@ public class VDCHandlerTest {
 
    public void testApplyHosting() {
       InputStream is = getClass().getResourceAsStream("/vdc-hosting.xml");
-      Injector injector = Guice.createInjector(new ParserModule(), new AbstractModule() {
+      Injector injector = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
 
          @Override
          protected void configure() {

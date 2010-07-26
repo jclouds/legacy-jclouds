@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http.functions.config;
+package org.jclouds.json.config;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
@@ -26,16 +26,13 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.jclouds.Constants;
 import org.jclouds.date.DateService;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.encryption.EncryptionService;
-import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.ParseSax.HandlerWithResult;
-import org.xml.sax.XMLReader;
+import org.jclouds.json.Json;
+import org.jclouds.json.internal.GsonWrapper;
 
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Bytes;
@@ -54,7 +51,6 @@ import com.google.gson.reflect.TypeToken;
 import com.google.inject.AbstractModule;
 import com.google.inject.ImplementedBy;
 import com.google.inject.Provides;
-import com.google.inject.Scopes;
 import com.google.inject.name.Named;
 
 /**
@@ -62,42 +58,12 @@ import com.google.inject.name.Named;
  * 
  * @author Adrian Cole
  */
-public class ParserModule extends AbstractModule {
-
-   protected void configure() {
-      bind(ParseSax.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
-   }
-
-   private static class Factory implements ParseSax.Factory {
-      @Inject
-      private SAXParserFactory factory;
-
-      public <T> ParseSax<T> create(HandlerWithResult<T> handler) {
-         SAXParser saxParser;
-         try {
-            saxParser = factory.newSAXParser();
-            XMLReader parser = saxParser.getXMLReader();
-            return new ParseSax<T>(parser, handler);
-         } catch (Exception e) {
-            throw new RuntimeException(e);
-         }
-
-      }
-   }
-
-   @Provides
-   @Singleton
-   SAXParserFactory provideSAXParserFactory() {
-      SAXParserFactory factory = SAXParserFactory.newInstance();
-      factory.setNamespaceAware(false);
-      factory.setValidating(false);
-      return factory;
-   }
+public class GsonModule extends AbstractModule {
 
    @Provides
    @Singleton
    Gson provideGson(JsonBallAdapter jsonObjectAdapter, DateAdapter adapter, ByteListAdapter byteListAdapter,
-         ByteArrayAdapter byteArrayAdapter, GsonAdapterBindings bindings) throws SecurityException,
+         ByteArrayAdapter byteArrayAdapter, JsonAdapterBindings bindings) throws SecurityException,
          NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
       GsonBuilder builder = new GsonBuilder();
       builder.registerTypeAdapter(JsonBall.class, jsonObjectAdapter);
@@ -260,7 +226,7 @@ public class ParserModule extends AbstractModule {
    }
 
    @Singleton
-   public static class GsonAdapterBindings {
+   public static class JsonAdapterBindings {
       private final Map<Type, Object> bindings = Maps.newHashMap();
 
       @com.google.inject.Inject(optional = true)
@@ -271,5 +237,10 @@ public class ParserModule extends AbstractModule {
       public Map<Type, Object> getBindings() {
          return bindings;
       }
+   }
+
+   @Override
+   protected void configure() {
+      bind(Json.class).to(GsonWrapper.class);
    }
 }

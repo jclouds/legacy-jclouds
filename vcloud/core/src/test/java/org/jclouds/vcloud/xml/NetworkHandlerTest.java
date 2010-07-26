@@ -26,7 +26,7 @@ import java.net.UnknownHostException;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.domain.FenceMode;
 import org.jclouds.vcloud.domain.FirewallRule;
 import org.jclouds.vcloud.domain.NatRule;
@@ -52,7 +52,7 @@ public class NetworkHandlerTest {
 
    public void testTerremark() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/network-terremark.xml");
-      injector = Guice.createInjector(new ParserModule());
+      injector = Guice.createInjector(new SaxParserModule());
       factory = injector.getInstance(ParseSax.Factory.class);
       Network result = factory.create(
             injector.getInstance(NetworkHandler.class)).parse(is);
@@ -71,7 +71,7 @@ public class NetworkHandlerTest {
 
    public void testHosting() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/network-hosting.xml");
-      injector = Guice.createInjector(new ParserModule());
+      injector = Guice.createInjector(new SaxParserModule());
       factory = injector.getInstance(ParseSax.Factory.class);
       Network result = (Network) factory.create(
             injector.getInstance(NetworkHandler.class)).parse(is);

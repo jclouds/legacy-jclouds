@@ -26,13 +26,13 @@ import java.util.Date;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.ibmdev.config.IBMDeveloperCloudParserModule;
 import org.jclouds.ibmdev.domain.Image;
 import org.jclouds.ibmdev.domain.InstanceType;
 import org.jclouds.ibmdev.domain.Price;
 import org.jclouds.ibmdev.domain.Image.Visibility;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -52,7 +52,7 @@ public class ParseImageFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new ParserModule(), new IBMDeveloperCloudParserModule());
+      Injector injector = Guice.createInjector(new IBMDeveloperCloudParserModule(), new GsonModule());
       handler = injector.getInstance(ParseImageFromJson.class);
    }
 

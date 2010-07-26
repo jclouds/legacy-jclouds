@@ -27,8 +27,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.http.functions.config.ParserModule.DateAdapter;
-import org.jclouds.http.functions.config.ParserModule.LongDateAdapter;
+import org.jclouds.json.config.GsonModule.DateAdapter;
+import org.jclouds.json.config.GsonModule.LongDateAdapter;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonDeserializationContext;
@@ -48,7 +48,7 @@ public class IBMDeveloperCloudParserModule extends AbstractModule {
    public static class CurlyBraceCapableURIAdapter implements JsonDeserializer<URI> {
       @Override
       public URI deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context)
-               throws JsonParseException {
+            throws JsonParseException {
          String toParse = jsonElement.getAsJsonPrimitive().getAsString();
          URI toReturn = HttpUtils.createUri(toParse);
          return toReturn;

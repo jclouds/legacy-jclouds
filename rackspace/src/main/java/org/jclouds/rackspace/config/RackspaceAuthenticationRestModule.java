@@ -32,8 +32,6 @@ import org.jclouds.concurrent.ExpirableSupplier;
 import org.jclouds.concurrent.RetryOnTimeOutExceptionSupplier;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.http.functions.config.ParserModule.DateAdapter;
-import org.jclouds.http.functions.config.ParserModule.Iso8601DateAdapter;
 import org.jclouds.rackspace.Authentication;
 import org.jclouds.rackspace.CloudFiles;
 import org.jclouds.rackspace.CloudFilesCDN;
@@ -49,7 +47,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 /**
- * Configures the Rackspace authentication service connection, including logging and http transport.
+ * Configures the Rackspace authentication service connection, including logging
+ * and http transport.
  * 
  * @author Adrian Cole
  */
@@ -58,7 +57,7 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+      install(new RackspaceParserModule());
    }
 
    /**
@@ -67,9 +66,8 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
    @Provides
    @Singleton
    @Authentication
-   protected Supplier<String> provideAuthenticationTokenCache(
-            final Supplier<AuthenticationResponse> supplier) throws InterruptedException,
-            ExecutionException, TimeoutException {
+   protected Supplier<String> provideAuthenticationTokenCache(final Supplier<AuthenticationResponse> supplier)
+         throws InterruptedException, ExecutionException, TimeoutException {
       return new Supplier<String>() {
          public String get() {
             return supplier.get().getAuthToken();
@@ -79,26 +77,22 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Supplier<AuthenticationResponse> provideAuthenticationResponseCache(
-            final AsyncClientFactory factory,
-            @Named(Constants.PROPERTY_IDENTITY) final String user,
-            @Named(Constants.PROPERTY_CREDENTIAL) final String key) {
-      return new ExpirableSupplier<AuthenticationResponse>(
-               new RetryOnTimeOutExceptionSupplier<AuthenticationResponse>(
-                        new Supplier<AuthenticationResponse>() {
-                           public AuthenticationResponse get() {
-                              try {
-                                 ListenableFuture<AuthenticationResponse> response = factory
-                                          .create(RackspaceAuthAsyncClient.class).authenticate(
-                                                   user, key);
-                                 return response.get(30, TimeUnit.SECONDS);
-                              } catch (Exception e) {
-                                 Throwables.propagate(e);
-                                 assert false : e;
-                                 return null;
-                              }
-                           }
-                        }), 23, TimeUnit.HOURS);
+   Supplier<AuthenticationResponse> provideAuthenticationResponseCache(final AsyncClientFactory factory,
+         @Named(Constants.PROPERTY_IDENTITY) final String user, @Named(Constants.PROPERTY_CREDENTIAL) final String key) {
+      return new ExpirableSupplier<AuthenticationResponse>(new RetryOnTimeOutExceptionSupplier<AuthenticationResponse>(
+            new Supplier<AuthenticationResponse>() {
+               public AuthenticationResponse get() {
+                  try {
+                     ListenableFuture<AuthenticationResponse> response = factory.create(RackspaceAuthAsyncClient.class)
+                           .authenticate(user, key);
+                     return response.get(30, TimeUnit.SECONDS);
+                  } catch (Exception e) {
+                     Throwables.propagate(e);
+                     assert false : e;
+                     return null;
+                  }
+               }
+            }), 23, TimeUnit.HOURS);
    }
 
    @Provides
@@ -114,9 +108,8 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected AuthenticationResponse provideAuthenticationResponse(
-            Supplier<AuthenticationResponse> supplier) throws InterruptedException,
-            ExecutionException, TimeoutException {
+   protected AuthenticationResponse provideAuthenticationResponse(Supplier<AuthenticationResponse> supplier)
+         throws InterruptedException, ExecutionException, TimeoutException {
       return supplier.get();
    }
 

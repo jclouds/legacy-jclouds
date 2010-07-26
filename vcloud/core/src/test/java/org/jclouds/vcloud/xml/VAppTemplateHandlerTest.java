@@ -25,7 +25,7 @@ import java.net.URI;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.internal.VAppTemplateImpl;
@@ -48,7 +48,7 @@ public class VAppTemplateHandlerTest {
 
    public void testTerremark() {
       InputStream is = getClass().getResourceAsStream("/vAppTemplate-trmk.xml");
-      injector = Guice.createInjector(new ParserModule());
+      injector = Guice.createInjector(new SaxParserModule());
       factory = injector.getInstance(ParseSax.Factory.class);
       VAppTemplate result = factory.create(injector.getInstance(VAppTemplateHandler.class)).parse(
                is);
@@ -59,7 +59,7 @@ public class VAppTemplateHandlerTest {
 
    public void testHosting() {
       InputStream is = getClass().getResourceAsStream("/vAppTemplate-hosting.xml");
-      injector = Guice.createInjector(new ParserModule());
+      injector = Guice.createInjector(new SaxParserModule());
       factory = injector.getInstance(ParseSax.Factory.class);
       VAppTemplate result = (VAppTemplate) factory.create(
                injector.getInstance(VAppTemplateHandler.class)).parse(is);

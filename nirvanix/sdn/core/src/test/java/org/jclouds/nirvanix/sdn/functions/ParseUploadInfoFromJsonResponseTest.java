@@ -25,7 +25,7 @@ import java.net.URI;
 import java.net.UnknownHostException;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.io.Payloads;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
 import org.testng.annotations.Test;
@@ -41,7 +41,7 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "sdn.ParseUploadInfoFromJsonResponse")
 public class ParseUploadInfoFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new ParserModule());
+   Injector i = Guice.createInjector(new SaxParserModule());
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/authtoken.json");

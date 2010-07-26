@@ -35,8 +35,8 @@ import org.jclouds.gogrid.domain.ServerImageState;
 import org.jclouds.gogrid.domain.ServerImageType;
 import org.jclouds.gogrid.functions.internal.CustomDeserializers;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Maps;
@@ -79,7 +79,7 @@ public class ParseCredentialsFromJsonResponseTest {
 
    }
 
-   Injector i = Guice.createInjector(new ParserModule() {
+   Injector i = Guice.createInjector(new GsonModule() {
       @Override
       protected void configure() {
          bind(DateAdapter.class).to(DateSecondsAdapter.class);

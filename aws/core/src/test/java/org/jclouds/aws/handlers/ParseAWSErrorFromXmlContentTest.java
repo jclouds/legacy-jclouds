@@ -13,7 +13,7 @@ import org.easymock.IArgumentMatcher;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.io.Payloads;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RequestSigner;
@@ -59,7 +59,7 @@ public class ParseAWSErrorFromXmlContentTest {
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String content,
             Class<? extends Exception> expected) {
 
-      ParseAWSErrorFromXmlContent function = Guice.createInjector(new ParserModule(), new AbstractModule() {
+      ParseAWSErrorFromXmlContent function = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
 
          @Override
          protected void configure() {

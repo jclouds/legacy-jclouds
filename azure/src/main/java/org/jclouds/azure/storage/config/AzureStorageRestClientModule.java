@@ -35,8 +35,6 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.http.functions.config.ParserModule.DateAdapter;
-import org.jclouds.http.functions.config.ParserModule.Iso8601DateAdapter;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
@@ -68,7 +66,7 @@ public class AzureStorageRestClientModule<S, A> extends RestClientModule<S, A> {
    @Provides
    @TimeStamp
    protected Supplier<String> provideTimeStampCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final DateService dateService) {
+         final DateService dateService) {
       return new ExpirableSupplier<String>(new Supplier<String>() {
          public String get() {
             return dateService.rfc822DateFormat();
@@ -78,23 +76,19 @@ public class AzureStorageRestClientModule<S, A> extends RestClientModule<S, A> {
 
    @Override
    protected void bindErrorHandlers() {
-      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-               ParseAzureStorageErrorFromXmlContent.class);
-      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-               ParseAzureStorageErrorFromXmlContent.class);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-               ParseAzureStorageErrorFromXmlContent.class);
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseAzureStorageErrorFromXmlContent.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ParseAzureStorageErrorFromXmlContent.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseAzureStorageErrorFromXmlContent.class);
    }
 
    @Override
    protected void bindRetryHandlers() {
-      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(
-               AzureStorageClientErrorRetryHandler.class);
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(AzureStorageClientErrorRetryHandler.class);
    }
 
    @Override
    protected void configure() {
-      bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+      install(new AzureStorageParserModule());
       super.configure();
    }
 

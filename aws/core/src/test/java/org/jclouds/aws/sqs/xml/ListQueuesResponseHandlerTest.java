@@ -39,7 +39,7 @@ import org.jclouds.aws.sqs.domain.Queue;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.io.Payloads;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -76,7 +76,7 @@ public class ListQueuesResponseHandlerTest extends PerformanceTest {
 
       System.out.printf("queue response handle speed test %d threads %d count%n", THREAD_COUNT,
                LOOP_COUNT);
-      injector = Guice.createInjector(new ParserModule(), new AbstractModule() {
+      injector = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
 
          @Override
          protected void configure() {

@@ -30,8 +30,9 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.TransformingHttpCommandImpl;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
@@ -59,32 +60,28 @@ public class RestModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      install(new ParserModule());
+      install(new SaxParserModule());
+      install(new GsonModule());
       bind(UriBuilder.class).to(UriBuilderImpl.class);
-      bind(AsyncRestClientProxy.Factory.class).to(Factory.class).in(
-            Scopes.SINGLETON);
+      bind(AsyncRestClientProxy.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
       BinderUtils.bindAsyncClient(binder(), HttpAsyncClient.class);
-      BinderUtils.bindClient(binder(), HttpClient.class, HttpAsyncClient.class,
-            ImmutableMap.<Class<?>, Class<?>> of(HttpClient.class,
-                  HttpAsyncClient.class));
+      BinderUtils.bindClient(binder(), HttpClient.class, HttpAsyncClient.class, ImmutableMap.<Class<?>, Class<?>> of(
+            HttpClient.class, HttpAsyncClient.class));
    }
 
    @Provides
    @Singleton
    @Named("async")
-   ConcurrentMap<ClassMethodArgs, Object> provideAsyncDelegateMap(
-         CreateAsyncClientForCaller createAsyncClientForCaller) {
+   ConcurrentMap<ClassMethodArgs, Object> provideAsyncDelegateMap(CreateAsyncClientForCaller createAsyncClientForCaller) {
       return new MapMaker().makeComputingMap(createAsyncClientForCaller);
    }
 
-   static class CreateAsyncClientForCaller implements
-         Function<ClassMethodArgs, Object> {
+   static class CreateAsyncClientForCaller implements Function<ClassMethodArgs, Object> {
       private final Injector injector;
       private final AsyncRestClientProxy.Factory factory;
 
       @Inject
-      CreateAsyncClientForCaller(Injector injector,
-            AsyncRestClientProxy.Factory factory) {
+      CreateAsyncClientForCaller(Injector injector, AsyncRestClientProxy.Factory factory) {
          this.injector = injector;
          this.factory = factory;
       }
@@ -94,18 +91,15 @@ public class RestModule extends AbstractModule {
       public Object apply(final ClassMethodArgs from) {
          Class clazz = from.getAsyncClass();
          TypeLiteral typeLiteral = TypeLiteral.get(clazz);
-         RestAnnotationProcessor util = (RestAnnotationProcessor) injector
-               .getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
-                     RestAnnotationProcessor.class, clazz))));
-         // cannot use child injectors due to the super coarse guice lock on 
+         RestAnnotationProcessor util = (RestAnnotationProcessor) injector.getInstance(Key.get(TypeLiteral.get(Types
+               .newParameterizedType(RestAnnotationProcessor.class, clazz))));
+         // cannot use child injectors due to the super coarse guice lock on
          // Singleton
          util.setCaller(from);
-         ConcurrentMap<ClassMethodArgs, Object> delegateMap = injector
-               .getInstance(Key.get(
-                     new TypeLiteral<ConcurrentMap<ClassMethodArgs, Object>>() {
-                     }, Names.named("async")));
-         AsyncRestClientProxy proxy = new AsyncRestClientProxy(injector,
-               factory, util, typeLiteral, delegateMap);
+         ConcurrentMap<ClassMethodArgs, Object> delegateMap = injector.getInstance(Key.get(
+               new TypeLiteral<ConcurrentMap<ClassMethodArgs, Object>>() {
+               }, Names.named("async")));
+         AsyncRestClientProxy proxy = new AsyncRestClientProxy(injector, factory, util, typeLiteral, delegateMap);
          injector.injectMembers(proxy);
          return AsyncClientFactory.create(clazz, proxy);
       }
@@ -116,10 +110,8 @@ public class RestModule extends AbstractModule {
       private TransformingHttpCommandExecutorService executorService;
 
       @SuppressWarnings("unchecked")
-      public TransformingHttpCommand<?> create(HttpRequest request,
-            Function<HttpResponse, ?> transformer) {
-         return new TransformingHttpCommandImpl(executorService, request,
-               transformer);
+      public TransformingHttpCommand<?> create(HttpRequest request, Function<HttpResponse, ?> transformer) {
+         return new TransformingHttpCommandImpl(executorService, request, transformer);
       }
 
    }

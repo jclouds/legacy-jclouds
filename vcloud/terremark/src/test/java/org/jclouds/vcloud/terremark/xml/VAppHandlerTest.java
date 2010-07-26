@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
@@ -59,7 +59,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
    @BeforeTest
    @Override
    protected void setUpInjector() {
-      injector = Guice.createInjector(new ParserModule(), new AbstractModule() {
+      injector = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
 
          @Override
          protected void configure() {

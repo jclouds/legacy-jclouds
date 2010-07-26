@@ -28,7 +28,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.domain.FenceMode;
 import org.testng.annotations.Test;
 
@@ -43,7 +43,7 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "vcloud.InstantiateVAppTemplateOptionsTest")
 public class InstantiateVAppTemplateOptionsTest {
 
-   Injector injector = Guice.createInjector(new ParserModule());
+   Injector injector = Guice.createInjector(new SaxParserModule());
 
    @Test
    public void testInNetwork() {

@@ -26,9 +26,8 @@ import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.HttpRequest;
+import org.jclouds.json.Json;
 import org.jclouds.rest.MapBinder;
-
-import com.google.gson.Gson;
 
 /**
  * Binds the object to the request as a json object.
@@ -39,15 +38,15 @@ import com.google.gson.Gson;
 public class BindToJsonPayload implements MapBinder {
 
    @Inject
-   protected Gson gson;
+   protected Json jsonBinder;
 
    public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
       bindToRequest(request, (Object) postParams);
    }
 
    public void bindToRequest(HttpRequest request, Object toBind) {
-      checkState(gson != null, "Program error: gson should have been injected at this point");
-      String json = gson.toJson(toBind);
+      checkState(jsonBinder != null, "Program error: json should have been injected at this point");
+      String json = jsonBinder.toJson(toBind);
       request.setPayload(json);
       request.getPayload().setContentType(MediaType.APPLICATION_JSON);
    }

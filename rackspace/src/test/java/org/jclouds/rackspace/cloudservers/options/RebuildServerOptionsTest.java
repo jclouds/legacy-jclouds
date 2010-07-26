@@ -27,7 +27,7 @@ import java.util.HashMap;
 import javax.ws.rs.HttpMethod;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -41,7 +41,7 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "cloudsharedIpGroups.RebuildServerOptionsTest")
 public class RebuildServerOptionsTest {
 
-   Injector injector = Guice.createInjector(new ParserModule());
+   Injector injector = Guice.createInjector(new GsonModule());
 
    @Test
    public void testAddPayloadToRequestMapOfStringStringHttpRequest() {

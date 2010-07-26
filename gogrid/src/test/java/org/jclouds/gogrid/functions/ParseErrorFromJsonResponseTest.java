@@ -29,8 +29,8 @@ import java.net.UnknownHostException;
 import org.jclouds.gogrid.config.DateSecondsAdapter;
 import org.jclouds.gogrid.domain.internal.ErrorResponse;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -42,7 +42,7 @@ import com.google.inject.Injector;
  */
 public class ParseErrorFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new ParserModule() {
+   Injector i = Guice.createInjector(new GsonModule() {
       @Override
       protected void configure() {
          bind(DateAdapter.class).to(DateSecondsAdapter.class);
@@ -52,16 +52,12 @@ public class ParseErrorFromJsonResponseTest {
 
    @Test
    public void testApplyInputStreamDetails() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream(
-            "/test_error_handler.json");
+      InputStream is = getClass().getResourceAsStream("/test_error_handler.json");
 
-      ParseErrorFromJsonResponse parser = i
-            .getInstance(ParseErrorFromJsonResponse.class);
-      ErrorResponse response = Iterables.getOnlyElement(parser
-            .apply(new HttpResponse(200, "ok", Payloads
-                  .newInputStreamPayload(is))));
-      assert "No object found that matches your input criteria."
-            .equals(response.getMessage());
+      ParseErrorFromJsonResponse parser = i.getInstance(ParseErrorFromJsonResponse.class);
+      ErrorResponse response = Iterables.getOnlyElement(parser.apply(new HttpResponse(200, "ok", Payloads
+            .newInputStreamPayload(is))));
+      assert "No object found that matches your input criteria.".equals(response.getMessage());
       assert "IllegalArgumentException".equals(response.getErrorCode());
    }
 }

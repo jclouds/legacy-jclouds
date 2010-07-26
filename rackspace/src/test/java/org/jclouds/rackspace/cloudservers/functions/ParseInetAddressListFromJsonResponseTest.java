@@ -26,8 +26,9 @@ import java.util.List;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
+import org.jclouds.rackspace.config.RackspaceParserModule;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -44,30 +45,26 @@ import com.google.inject.internal.ImmutableList;
 @Test(groups = "unit", testName = "cloudservers.ParseInetAddressListFromJsonResponseTest")
 public class ParseInetAddressListFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new ParserModule());
+   Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
 
    public void testPublic() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream(
-            "/cloudservers/test_list_addresses_public.json");
+      InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_addresses_public.json");
 
       UnwrapOnlyJsonValue<List<String>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<String>>>() {
             }));
-      List<String> response = parser.apply(new HttpResponse(200, "ok", Payloads
-            .newInputStreamPayload(is)));
+      List<String> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
       assertEquals(response, ImmutableList.of("67.23.10.132", "67.23.10.131"));
    }
 
    public void testPrivate() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream(
-            "/cloudservers/test_list_addresses_private.json");
+      InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_addresses_private.json");
 
       UnwrapOnlyJsonValue<List<String>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<String>>>() {
             }));
-      List<String> response = parser.apply(new HttpResponse(200, "ok", Payloads
-            .newInputStreamPayload(is)));
+      List<String> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
       assertEquals(response, ImmutableList.of("10.176.42.16"));
    }

@@ -26,10 +26,11 @@ import java.net.UnknownHostException;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.rackspace.cloudservers.domain.Image;
 import org.jclouds.rackspace.cloudservers.domain.ImageStatus;
+import org.jclouds.rackspace.config.RackspaceParserModule;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -44,36 +45,23 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", testName = "cloudservers.ParseImageFromJsonResponseTest")
 public class ParseImageFromJsonResponseTest {
+   Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
 
-   Injector i = Guice.createInjector(new ParserModule() {
-
-      @Override
-      protected void configure() {
-         bind(DateAdapter.class).to(Iso8601DateAdapter.class);
-         super.configure();
-      }
-
-   });
    DateService dateService = i.getInstance(DateService.class);
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream(
-            "/cloudservers/test_get_image_details.json");
+      InputStream is = getClass().getResourceAsStream("/cloudservers/test_get_image_details.json");
 
-      UnwrapOnlyJsonValue<Image> parser = i.getInstance(Key
-            .get(new TypeLiteral<UnwrapOnlyJsonValue<Image>>() {
-            }));
-      Image response = parser.apply(new HttpResponse(200, "ok", Payloads
-            .newInputStreamPayload(is)));
+      UnwrapOnlyJsonValue<Image> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Image>>() {
+      }));
+      Image response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
       assertEquals(response.getId(), 2);
       assertEquals(response.getName(), "CentOS 5.2");
-      assertEquals(response.getCreated(), dateService
-            .iso8601SecondsDateParse("2010-08-10T12:00:00Z"));
+      assertEquals(response.getCreated(), dateService.iso8601SecondsDateParse("2010-08-10T12:00:00Z"));
       assertEquals(response.getProgress(), new Integer(80));
       assertEquals(response.getServerId(), new Integer(12));
       assertEquals(response.getStatus(), ImageStatus.SAVING);
-      assertEquals(response.getUpdated(), dateService
-            .iso8601SecondsDateParse(("2010-10-10T12:00:00Z")));
+      assertEquals(response.getUpdated(), dateService.iso8601SecondsDateParse(("2010-10-10T12:00:00Z")));
    }
 }

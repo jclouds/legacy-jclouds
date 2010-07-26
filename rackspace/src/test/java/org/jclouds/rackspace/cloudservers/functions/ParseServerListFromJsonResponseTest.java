@@ -26,11 +26,12 @@ import java.util.List;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.http.functions.config.ParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.rackspace.cloudservers.domain.Addresses;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
+import org.jclouds.rackspace.config.RackspaceParserModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -49,58 +50,48 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "cloudservers.ParseServerListFromJsonResponseTest")
 public class ParseServerListFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new ParserModule());
+   Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
 
    public void testApplyInputStream() {
-      InputStream is = getClass().getResourceAsStream(
-            "/cloudservers/test_list_servers.json");
+      InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_servers.json");
 
-      List<Server> expects = ImmutableList.of(
-            new Server(1234, "sample-server"), new Server(5678,
-                  "sample-server2"));
+      List<Server> expects = ImmutableList.of(new Server(1234, "sample-server"), new Server(5678, "sample-server2"));
 
       UnwrapOnlyJsonValue<List<Server>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Server>>>() {
             }));
-      List<Server> response = parser.apply(new HttpResponse(200, "ok", Payloads
-            .newInputStreamPayload(is)));
+      List<Server> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
       assertEquals(response, expects);
    }
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream(
-            "/cloudservers/test_list_servers_detail.json");
+      InputStream is = getClass().getResourceAsStream("/cloudservers/test_list_servers_detail.json");
 
       UnwrapOnlyJsonValue<List<Server>> parser = i.getInstance(Key
             .get(new TypeLiteral<UnwrapOnlyJsonValue<List<Server>>>() {
             }));
-      List<Server> response = parser.apply(new HttpResponse(200, "ok", Payloads
-            .newInputStreamPayload(is)));
+      List<Server> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
 
       assertEquals(response.get(0).getId(), 1234);
       assertEquals(response.get(0).getName(), "sample-server");
       assertEquals(response.get(0).getImageId(), new Integer(2));
       assertEquals(response.get(0).getFlavorId(), new Integer(1));
-      assertEquals(response.get(0).getHostId(),
-            "e4d909c290d0fb1ca068ffaddf22cbd0");
+      assertEquals(response.get(0).getHostId(), "e4d909c290d0fb1ca068ffaddf22cbd0");
       assertEquals(response.get(0).getStatus(), ServerStatus.BUILD);
       assertEquals(response.get(0).getProgress(), new Integer(60));
-      List<String> publicAddresses = Lists.newArrayList("67.23.10.132",
-            "67.23.10.131");
+      List<String> publicAddresses = Lists.newArrayList("67.23.10.132", "67.23.10.131");
       List<String> privateAddresses = Lists.newArrayList("10.176.42.16");
       Addresses addresses1 = new Addresses();
       addresses1.getPrivateAddresses().addAll(privateAddresses);
       addresses1.getPublicAddresses().addAll(publicAddresses);
       assertEquals(response.get(0).getAddresses(), addresses1);
-      assertEquals(response.get(0).getMetadata(), ImmutableMap.of(
-            "Server Label", "Web Head 1", "Image Version", "2.1"));
+      assertEquals(response.get(0).getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));
       assertEquals(response.get(1).getId(), 5678);
       assertEquals(response.get(1).getName(), "sample-server2");
       assertEquals(response.get(1).getImageId(), new Integer(2));
       assertEquals(response.get(1).getFlavorId(), new Integer(1));
-      assertEquals(response.get(1).getHostId(),
-            "9e107d9d372bb6826bd81d3542a419d6");
+      assertEquals(response.get(1).getHostId(), "9e107d9d372bb6826bd81d3542a419d6");
       assertEquals(response.get(1).getStatus(), ServerStatus.ACTIVE);
       assertEquals(response.get(1).getProgress(), null);
       List<String> publicAddresses2 = Lists.newArrayList("67.23.10.133");
@@ -109,8 +100,7 @@ public class ParseServerListFromJsonResponseTest {
       addresses2.getPrivateAddresses().addAll(privateAddresses2);
       addresses2.getPublicAddresses().addAll(publicAddresses2);
       assertEquals(response.get(1).getAddresses(), addresses2);
-      assertEquals(response.get(1).getMetadata(), ImmutableMap.of(
-            "Server Label", "DB 1"));
+      assertEquals(response.get(1).getMetadata(), ImmutableMap.of("Server Label", "DB 1"));
 
    }
 

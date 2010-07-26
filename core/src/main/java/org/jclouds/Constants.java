@@ -158,7 +158,7 @@ public interface Constants {
     */
    public static final String LOGGER_SIGNATURE = "jclouds.signature";
    /**
-    * Name of the custom adapter bindings map for Gson
+    * Name of the custom adapter bindings map for Json
     */
    public static final String PROPERTY_GSON_ADAPTERS = "jclouds.gson_adapters";
 

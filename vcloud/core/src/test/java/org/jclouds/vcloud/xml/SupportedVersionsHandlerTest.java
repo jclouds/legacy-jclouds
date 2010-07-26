@@ -26,7 +26,7 @@ import java.util.SortedMap;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSortedMap;
@@ -44,7 +44,7 @@ public class SupportedVersionsHandlerTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/versions.xml");
 
-      Injector injector = Guice.createInjector(new ParserModule());
+      Injector injector = Guice.createInjector(new SaxParserModule());
       Factory factory = injector.getInstance(ParseSax.Factory.class);
 
       SortedMap<String, URI> result = factory.create(

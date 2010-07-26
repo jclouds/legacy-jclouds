@@ -28,7 +28,7 @@ import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.http.functions.config.ParserModule;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -45,7 +45,7 @@ public class DescribeAvailabilityZonesResponseHandlerTest extends BaseHandlerTes
 
    @BeforeTest
    protected void setUpInjector() {
-      injector = Guice.createInjector(new ParserModule() {
+      injector = Guice.createInjector(new SaxParserModule() {
 
          @Override
          protected void configure() {
