@@ -67,6 +67,7 @@ import org.jclouds.encryption.EncryptionService;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
+import org.jclouds.logging.internal.Wire;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
@@ -547,5 +548,18 @@ public class HttpUtils {
          return Long.parseLong(contentRange.substring(contentRange.lastIndexOf('/') + 1));
       }
       return null;
+   }
+
+   public static void checkRequestHasContentLengthOrChunkedEncoding(HttpRequest request, String message) {
+      boolean chunked = "chunked".equals(request.getFirstHeaderOrNull("Transfer-Encoding"));
+      checkArgument(request.getPayload() == null || chunked || request.getPayload().getContentLength() != null, message);
+   }
+
+   public static void wirePayloadIfEnabled(Wire wire, HttpRequest request) {
+      if (request.getPayload() != null && wire.enabled()) {
+         wire.output(request);
+         checkRequestHasContentLengthOrChunkedEncoding(request,
+               "After wiring, the request has neither chunked encoding nor content length: " + request);
+      }
    }
 }

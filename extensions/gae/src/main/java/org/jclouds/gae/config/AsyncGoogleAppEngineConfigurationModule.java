@@ -18,54 +18,30 @@
  */
 package org.jclouds.gae.config;
 
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
-
-import javax.inject.Singleton;
-
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.date.joda.config.JodaDateServiceModule;
-import org.jclouds.gae.GaeHttpCommandExecutorService;
+import org.jclouds.gae.AsyncGaeHttpCommandExecutorService;
 import org.jclouds.http.HttpCommandExecutorService;
-import org.jclouds.http.TransformingHttpCommandExecutorService;
-import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 
-import com.google.appengine.api.urlfetch.URLFetchService;
-import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 import com.google.inject.Injector;
-import com.google.inject.Provides;
 
 /**
- * Configures {@link GaeHttpCommandExecutorService}.
+ * Configures {@link AsyncGaeHttpCommandExecutorService}.
  * 
  * @author Adrian Cole
  */
 @ConfiguresHttpCommandExecutorService
 @ConfiguresExecutorService
 @SingleThreaded
-public class GoogleAppEngineConfigurationModule extends ExecutorServiceModule {
+public class AsyncGoogleAppEngineConfigurationModule extends GoogleAppEngineConfigurationModule {
 
-   public GoogleAppEngineConfigurationModule() {
-      super(sameThreadExecutor(), sameThreadExecutor());
+   public AsyncGoogleAppEngineConfigurationModule() {
+      super();
    }
 
-   @Override
-   protected void configure() {
-      super.configure();
-      install(new JodaDateServiceModule());
-      bind(TransformingHttpCommandExecutorService.class).to(TransformingHttpCommandExecutorServiceImpl.class);
-   }
-
-   @Singleton
-   @Provides
    protected HttpCommandExecutorService providerHttpCommandExecutorService(Injector injector) {
-      return injector.getInstance(GaeHttpCommandExecutorService.class);
+      return injector.getInstance(AsyncGaeHttpCommandExecutorService.class);
    }
 
-   @Provides
-   URLFetchService provideURLFetchService() {
-      return URLFetchServiceFactory.getURLFetchService();
-   }
 }

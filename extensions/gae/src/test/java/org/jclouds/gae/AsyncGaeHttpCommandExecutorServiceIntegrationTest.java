@@ -26,7 +26,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
+import org.jclouds.gae.config.AsyncGoogleAppEngineConfigurationModule;
 import org.jclouds.http.BaseHttpCommandExecutorServiceIntegrationTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -41,22 +41,21 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test
-public class GaeHttpCommandExecutorServiceIntegrationTest extends
-         BaseHttpCommandExecutorServiceIntegrationTest {
+@Test(threadPoolSize = 10, groups = "integration", sequential = true)
+public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpCommandExecutorServiceIntegrationTest {
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000)
-   public void testKillRobotSlowly() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
+   public void testKillRobotSlowly() throws MalformedURLException, ExecutionException, InterruptedException,
+         TimeoutException {
       setupApiProxy();
       super.testKillRobotSlowly();
    }
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000)
-   public void testPostAsInputStream() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
+   public void testPostAsInputStream() throws MalformedURLException, ExecutionException, InterruptedException,
+         TimeoutException {
       setupApiProxy();
       super.testPostAsInputStream();
    }
@@ -64,14 +63,15 @@ public class GaeHttpCommandExecutorServiceIntegrationTest extends
    @Override
    @Test(dependsOnMethods = "testPostAsInputStream")
    public void testPostResults() {
-      // GAE converts everything to byte arrays and so failures are not gonna happen
+      // GAE converts everything to byte arrays and so failures are not gonna
+      // happen
       assertEquals(postFailures.get(), 0);
    }
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000)
-   public void testPostBinder() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
+   public void testPostBinder() throws MalformedURLException, ExecutionException, InterruptedException,
+         TimeoutException {
       setupApiProxy();
       super.testPostBinder();
    }
@@ -83,110 +83,106 @@ public class GaeHttpCommandExecutorServiceIntegrationTest extends
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000)
-   public void testGetAndParseSax() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
+   public void testGetAndParseSax() throws MalformedURLException, ExecutionException, InterruptedException,
+         TimeoutException {
       setupApiProxy();
       super.testGetAndParseSax();
    }
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000)
-   public void testGetString() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
+   public void testGetString() throws MalformedURLException, ExecutionException, InterruptedException, TimeoutException {
       setupApiProxy();
       super.testGetString();
    }
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000, dataProvider = "gets")
-   public void testGetStringSynch(String path) throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
+   public void testGetStringSynch(String path) throws MalformedURLException, ExecutionException, InterruptedException,
+         TimeoutException {
       setupApiProxy();
       super.testGetStringSynch(path);
    }
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000)
-   public void testGetStringRedirect() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
+   public void testGetStringRedirect() throws MalformedURLException, ExecutionException, InterruptedException,
+         TimeoutException {
       setupApiProxy();
       super.testGetStringRedirect();
    }
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000)
-   public void testGetException() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
+   public void testGetException() throws MalformedURLException, ExecutionException, InterruptedException,
+         TimeoutException {
       setupApiProxy();
       super.testGetException();
    }
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000)
-   public void testGetStringPermanentRedirect() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
+   public void testGetStringPermanentRedirect() throws MalformedURLException, ExecutionException, InterruptedException,
+         TimeoutException {
       setupApiProxy();
       super.testGetStringPermanentRedirect();
    }
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000)
-   public void testGetSynchException() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
+   public void testGetSynchException() throws MalformedURLException, ExecutionException, InterruptedException,
+         TimeoutException {
       setupApiProxy();
       super.testGetSynchException();
    }
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000)
-   public void testPost() throws MalformedURLException, ExecutionException, InterruptedException,
-            TimeoutException {
+   public void testPost() throws MalformedURLException, ExecutionException, InterruptedException, TimeoutException {
       setupApiProxy();
       super.testPost();
    }
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000)
-   public void testPut() throws MalformedURLException, ExecutionException, InterruptedException,
-            TimeoutException {
+   public void testPut() throws MalformedURLException, ExecutionException, InterruptedException, TimeoutException {
       setupApiProxy();
       super.testPut();
    }
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000)
-   public void testPutRedirect() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
+   public void testPutRedirect() throws MalformedURLException, ExecutionException, InterruptedException,
+         TimeoutException {
       setupApiProxy();
       super.testPutRedirect();
    }
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000)
-   public void testGetStringWithHeader() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
+   public void testGetStringWithHeader() throws MalformedURLException, ExecutionException, InterruptedException,
+         TimeoutException {
       setupApiProxy();
       super.testGetStringWithHeader();
    }
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000)
-   public void testHead() throws MalformedURLException, ExecutionException, InterruptedException,
-            TimeoutException {
+   public void testHead() throws MalformedURLException, ExecutionException, InterruptedException, TimeoutException {
       setupApiProxy();
       super.testHead();
    }
 
    @Override
    @Test(invocationCount = 50, timeOut = 3000)
-   public void testRequestFilter() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
+   public void testRequestFilter() throws MalformedURLException, ExecutionException, InterruptedException,
+         TimeoutException {
       setupApiProxy();
       super.testRequestFilter();
    }
-   
+
    protected Module createConnectionModule() {
-      return new GoogleAppEngineConfigurationModule();
+      return new AsyncGoogleAppEngineConfigurationModule();
    }
 
    @Override
@@ -195,8 +191,8 @@ public class GaeHttpCommandExecutorServiceIntegrationTest extends
 
    @Override
    @Test(enabled = false)
-   public void testGetBigFile() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
+   public void testGetBigFile() throws MalformedURLException, ExecutionException, InterruptedException,
+         TimeoutException {
       // disabled since test data is too big
    }
 
