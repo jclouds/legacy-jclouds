@@ -210,6 +210,8 @@ public class ChefClientLiveTest {
       System.out.println(clientKey);
       clientConnection = createConnection(PREFIX, clientKey);
       clientConnection.getApi().clientExists(PREFIX);
+      Set<String> clients = adminConnection.getApi().listClients();
+      assert clients.contains(PREFIX) : String.format("client %s not in %s", PREFIX, clients);
    }
 
    @Test(dependsOnMethods = "testCreateClient")
@@ -229,6 +231,8 @@ public class ChefClientLiveTest {
       node = clientConnection.getApi().createNode(new Node(PREFIX, Collections.singleton("role[" + PREFIX + "]")));
       // TODO check recipes
       assertNotNull(node);
+      Set<String> nodes = adminConnection.getApi().listNodes();
+      assert nodes.contains(PREFIX) : String.format("node %s not in %s", PREFIX, nodes);
    }
 
    @Test(dependsOnMethods = "testCreateNode")
