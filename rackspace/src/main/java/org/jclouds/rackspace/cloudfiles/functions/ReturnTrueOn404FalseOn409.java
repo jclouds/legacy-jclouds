@@ -18,23 +18,20 @@
  */
 package org.jclouds.rackspace.cloudfiles.functions;
 
+import static com.google.common.base.Predicates.in;
+import static com.google.common.collect.ImmutableSet.of;
+import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
 import static org.jclouds.util.Utils.propagateOrNull;
 
-import org.jclouds.http.HttpResponseException;
+import javax.inject.Singleton;
 
 import com.google.common.base.Function;
 
+@Singleton
 public class ReturnTrueOn404FalseOn409 implements Function<Exception, Boolean> {
 
    public Boolean apply(Exception from) {
-      if (from instanceof HttpResponseException) {
-         HttpResponseException responseException = (HttpResponseException) from;
-         if (responseException.getResponse().getStatusCode() == 404) {
-            return true;
-         } else if (responseException.getResponse().getStatusCode() == 409) {
-            return false;
-         }
-      }
-      return Boolean.class.cast(propagateOrNull(from));
+      Boolean returnVal = returnValueOnCodeOrNull(from, true, in(of(404, 409)));
+      return returnVal != null ? returnVal : Boolean.class.cast(propagateOrNull(from));
    }
 }

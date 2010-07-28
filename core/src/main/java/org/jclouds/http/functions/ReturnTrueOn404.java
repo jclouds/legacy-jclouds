@@ -18,27 +18,20 @@
  */
 package org.jclouds.http.functions;
 
+import static com.google.common.base.Predicates.equalTo;
+import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
 import static org.jclouds.util.Utils.propagateOrNull;
 
 import javax.inject.Singleton;
 
-import org.jclouds.http.HttpResponseException;
-
 import com.google.common.base.Function;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Iterables;
 
 @Singleton
 public class ReturnTrueOn404 implements Function<Exception, Boolean> {
 
    public Boolean apply(Exception from) {
-      Iterable<HttpResponseException> throwables = Iterables.filter(
-               Throwables.getCausalChain(from), HttpResponseException.class);
-      if (Iterables.size(throwables) >= 1
-               && Iterables.get(throwables, 0).getResponse().getStatusCode() == 404) {
-         return true;
-      }
-      return Boolean.class.cast(propagateOrNull(from));
+      Boolean returnVal = returnValueOnCodeOrNull(from, true, equalTo(404));
+      return returnVal != null ? returnVal : Boolean.class.cast(propagateOrNull(from));
    }
 
 }

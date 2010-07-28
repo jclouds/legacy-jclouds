@@ -18,6 +18,12 @@
  */
 package org.jclouds.aws.s3.functions;
 
+import static com.google.common.base.Predicates.equalTo;
+import static com.google.common.base.Throwables.getCausalChain;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.size;
+import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
 import static org.jclouds.util.Utils.propagateOrNull;
 
 import java.util.List;
@@ -26,11 +32,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.blobstore.ContainerNotFoundException;
-import org.jclouds.http.HttpResponseException;
 
 import com.google.common.base.Function;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -40,28 +43,21 @@ import com.google.common.collect.Iterables;
 public class ReturnTrueOn404OrNotFoundFalseIfNotEmpty implements Function<Exception, Boolean> {
 
    public Boolean apply(Exception from) {
-      List<Throwable> throwables = Throwables.getCausalChain(from);
+      List<Throwable> throwables = getCausalChain(from);
 
-      Iterable<AWSResponseException> matchingAWSResponseException = Iterables.filter(throwables,
-               AWSResponseException.class);
-      if (Iterables.size(matchingAWSResponseException) >= 1) {
-         if (Iterables.get(matchingAWSResponseException, 0).getError().getCode().equals(
-                  "BucketNotEmpty"))
+      Iterable<AWSResponseException> matchingAWSResponseException = filter(throwables, AWSResponseException.class);
+      if (size(matchingAWSResponseException) >= 1 && get(matchingAWSResponseException, 0).getError() != null) {
+         if (get(matchingAWSResponseException, 0).getError().getCode().equals("BucketNotEmpty"))
             return false;
       }
-      
-      Iterable<ContainerNotFoundException> matchingContainerNotFoundException = Iterables.filter(
-               throwables, ContainerNotFoundException.class);
-      if (Iterables.size(matchingContainerNotFoundException) >= 1) {
+
+      Iterable<ContainerNotFoundException> matchingContainerNotFoundException = filter(throwables,
+            ContainerNotFoundException.class);
+      if (size(matchingContainerNotFoundException) >= 1) {
          return true;
       }
-
-      Iterable<HttpResponseException> matchingHttpResponseException = Iterables.filter(throwables,
-               HttpResponseException.class);
-      if (Iterables.size(matchingHttpResponseException) >= 1) {
-         if (Iterables.get(matchingHttpResponseException, 0).getResponse().getStatusCode() == 404)
-            return true;
-      }
+      if (returnValueOnCodeOrNull(from, true, equalTo(404)) != null)
+         return true;
 
       return Boolean.class.cast(propagateOrNull(from));
    }

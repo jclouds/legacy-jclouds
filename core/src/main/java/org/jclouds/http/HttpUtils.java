@@ -20,8 +20,12 @@ package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Throwables.getCausalChain;
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newTreeSet;
 import static com.google.common.io.ByteStreams.toByteArray;
@@ -561,5 +565,14 @@ public class HttpUtils {
          checkRequestHasContentLengthOrChunkedEncoding(request,
                "After wiring, the request has neither chunked encoding nor content length: " + request);
       }
+   }
+
+   public static <T> T returnValueOnCodeOrNull(Exception from, T value, Predicate<Integer> codePredicate) {
+      Iterable<HttpResponseException> throwables = filter(getCausalChain(from), HttpResponseException.class);
+      if (size(throwables) >= 1 && get(throwables, 0).getResponse() != null
+            && codePredicate.apply(get(throwables, 0).getResponse().getStatusCode())) {
+         return value;
+      }
+      return null;
    }
 }

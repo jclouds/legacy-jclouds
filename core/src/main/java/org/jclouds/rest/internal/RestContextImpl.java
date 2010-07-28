@@ -27,10 +27,10 @@ import javax.inject.Inject;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.Utils;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.annotations.Provider;
-import org.jclouds.rest.Utils;
 
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -55,9 +55,9 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
    private final Utils utils;
 
    @Inject
-   RestContextImpl(Closer closer, Utils utils, Injector injector, TypeLiteral<S> syncApi,
-            TypeLiteral<A> asyncApi, @Provider URI endpoint, @Provider String provider,
-            @Identity String identity, @ApiVersion String apiVersion) {
+   protected RestContextImpl(Closer closer, Utils utils, Injector injector, TypeLiteral<S> syncApi,
+         TypeLiteral<A> asyncApi, @Provider URI endpoint, @Provider String provider, @Identity String identity,
+         @ApiVersion String apiVersion) {
       this.utils = utils;
       this.asyncApi = injector.getInstance(Key.get(asyncApi));
       this.syncApi = injector.getInstance(Key.get(syncApi));
@@ -168,7 +168,7 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
 
    @Override
    public String toString() {
-      return "RestContextImpl [provider=" + provider + ", endpoint=" + endpoint + ", apiVersion="
-               + apiVersion + ", identity=" + identity + "]";
+      return "RestContextImpl [provider=" + provider + ", endpoint=" + endpoint + ", apiVersion=" + apiVersion
+            + ", identity=" + identity + "]";
    }
 }

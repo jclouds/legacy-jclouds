@@ -18,11 +18,13 @@
  */
 package org.jclouds.util;
 
+import static com.google.common.base.Predicates.equalTo;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.jclouds.http.HttpUtils.changeSchemeHostAndPortTo;
 import static org.jclouds.http.HttpUtils.parseQueryToMap;
+import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
@@ -35,6 +37,8 @@ import javax.ws.rs.core.UriBuilder;
 import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.PerformanceTest;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.HttpUtils;
 import org.testng.annotations.Test;
 
@@ -67,8 +71,8 @@ public class HttpUtilsTest extends PerformanceTest {
       expects.put("Value", "dGVzdA==");
       expects.put("InstanceId", "1");
       assertEquals(
-               expects,
-               parseQueryToMap("Version=2010-06-15&Action=ModifyInstanceAttribute&Attribute=userData&Value=dGVzdA%3D%3D&InstanceId=1"));
+            expects,
+            parseQueryToMap("Version=2010-06-15&Action=ModifyInstanceAttribute&Attribute=userData&Value=dGVzdA%3D%3D&InstanceId=1"));
    }
 
    @Test
@@ -77,24 +81,21 @@ public class HttpUtilsTest extends PerformanceTest {
       assert parsedMap.keySet().size() == 1 : "Expected 1 key, found: " + parsedMap.keySet().size();
       assert parsedMap.keySet().contains("v") : "Expected v to be a part of the keys";
       String valueForV = Iterables.getOnlyElement(parsedMap.get("v"));
-      assert valueForV.equals("1.3") : "Expected the value for 'v' to be '1.3', found: "
-               + valueForV;
+      assert valueForV.equals("1.3") : "Expected the value for 'v' to be '1.3', found: " + valueForV;
    }
 
    @Test
    public void testParseQueryToMapMultiParam() {
       Multimap<String, String> parsedMap = parseQueryToMap("v=1.3&sig=123");
-      assert parsedMap.keySet().size() == 2 : "Expected 2 keys, found: "
-               + parsedMap.keySet().size();
+      assert parsedMap.keySet().size() == 2 : "Expected 2 keys, found: " + parsedMap.keySet().size();
       assert parsedMap.keySet().contains("v") : "Expected v to be a part of the keys";
       assert parsedMap.keySet().contains("sig") : "Expected sig to be a part of the keys";
       String valueForV = Iterables.getOnlyElement(parsedMap.get("v"));
-      assert valueForV.equals("1.3") : "Expected the value for 'v' to be '1.3', found: "
-               + valueForV;
+      assert valueForV.equals("1.3") : "Expected the value for 'v' to be '1.3', found: " + valueForV;
       String valueForSig = Iterables.getOnlyElement(parsedMap.get("sig"));
-      assert valueForSig.equals("123") : "Expected the value for 'v' to be '123', found: "
-               + valueForSig;
+      assert valueForSig.equals("123") : "Expected the value for 'v' to be '123', found: " + valueForSig;
    }
+
    @Test
    public void testChangeSchemeHostAndPortTo() {
       HttpRequest request = createMock(HttpRequest.class);
@@ -114,28 +115,24 @@ public class HttpUtilsTest extends PerformanceTest {
 
    public void testNoDoubleEncode() {
       assertEquals(HttpUtils.urlEncode("/read-tests/%73%6f%6d%65%20%66%69%6c%65", '/'),
-               "/read-tests/%73%6f%6d%65%20%66%69%6c%65");
+            "/read-tests/%73%6f%6d%65%20%66%69%6c%65");
       assertEquals(HttpUtils.urlEncode("/read-tests/ tep", '/'), "/read-tests/%20tep");
    }
 
    public void testIBM() {
       URI ibm = HttpUtils
-               .createUri("https://www-180.ibm.com/cloud/enterprise/beta/ram/assetDetail/generalDetails.faces?guid={A31FF849-0E97-431A-0324-097385A46298}&v=1.2");
+            .createUri("https://www-180.ibm.com/cloud/enterprise/beta/ram/assetDetail/generalDetails.faces?guid={A31FF849-0E97-431A-0324-097385A46298}&v=1.2");
       assertEquals(ibm.getQuery(), "guid={A31FF849-0E97-431A-0324-097385A46298}&v=1.2");
    }
 
    public void testAtmos() {
-      URI creds = HttpUtils
-               .createUri("compute://domain/user:Base64==@azureblob/container-hyphen/prefix");
-      assertEquals(creds, URI
-               .create("compute://domain%2Fuser:Base64%3D%3D@azureblob/container-hyphen/prefix"));
+      URI creds = HttpUtils.createUri("compute://domain/user:Base64==@azureblob/container-hyphen/prefix");
+      assertEquals(creds, URI.create("compute://domain%2Fuser:Base64%3D%3D@azureblob/container-hyphen/prefix"));
    }
 
    public void testAzure() {
-      URI creds = HttpUtils
-               .createUri("compute://identity:Base64==@azureblob/container-hyphen/prefix");
-      assertEquals(creds, URI
-               .create("compute://identity:Base64==@azureblob/container-hyphen/prefix"));
+      URI creds = HttpUtils.createUri("compute://identity:Base64==@azureblob/container-hyphen/prefix");
+      assertEquals(creds, URI.create("compute://identity:Base64==@azureblob/container-hyphen/prefix"));
    }
 
    public void testHosting() {
@@ -181,13 +178,18 @@ public class HttpUtilsTest extends PerformanceTest {
    }
 
    public void testPercent() {
-      URI creds = HttpUtils
-               .createUri("https://jclouds.blob.core.windows.net/jclouds-getpath/write-tests/file1%.txt");
+      URI creds = HttpUtils.createUri("https://jclouds.blob.core.windows.net/jclouds-getpath/write-tests/file1%.txt");
 
-      assertEquals(
-               creds,
-               URI
-                        .create("https://jclouds.blob.core.windows.net/jclouds-getpath/write-tests/file1%25.txt"));
+      assertEquals(creds, URI.create("https://jclouds.blob.core.windows.net/jclouds-getpath/write-tests/file1%25.txt"));
 
+   }
+
+   public void test404() {
+      Exception from = new HttpResponseException("message", null, new HttpResponse(404, "not found", null));
+      assertEquals(returnValueOnCodeOrNull(from, true, equalTo(404)), Boolean.TRUE);
+   }
+   public void testNullResponse() {
+      Exception from = new HttpResponseException("message", null, null);
+      assertEquals(returnValueOnCodeOrNull(from, true, equalTo(404)), null);
    }
 }

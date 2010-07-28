@@ -67,14 +67,17 @@ import com.google.inject.name.Names;
 import com.google.inject.util.Types;
 
 /**
- * Creates {@link RestContext} or {@link Injector} instances based on the most commonly requested
- * arguments.
+ * Creates {@link RestContext} or {@link Injector} instances based on the most
+ * commonly requested arguments.
  * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
+ * Note that Threadsafe objects will be bound as singletons to the Injector or
+ * Context provided.
  * <p/>
  * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
+ * If no <code>Module</code>s are specified, the default
+ * {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be
+ * installed.
  * 
  * @author Adrian Cole, Andrew Newdigate
  * @see RestContext
@@ -95,22 +98,18 @@ public class RestContextBuilder<S, A> {
          toBind.putAll(System.getProperties());
          Names.bindProperties(binder(), toBind);
          bind(String.class).annotatedWith(Provider.class).toInstance(
-                  checkNotNull(toBind.getProperty(PROPERTY_PROVIDER), PROPERTY_PROVIDER));
+               checkNotNull(toBind.getProperty(PROPERTY_PROVIDER), PROPERTY_PROVIDER));
          bind(URI.class).annotatedWith(Provider.class).toInstance(
-                  URI.create(checkNotNull(toBind.getProperty(PROPERTY_ENDPOINT),
-                           PROPERTY_ENDPOINT)));
+               URI.create(checkNotNull(toBind.getProperty(PROPERTY_ENDPOINT), PROPERTY_ENDPOINT)));
          if (toBind.containsKey(PROPERTY_API))
-            bind(String.class).annotatedWith(Api.class).toInstance(
-                     toBind.getProperty(PROPERTY_API));
+            bind(String.class).annotatedWith(Api.class).toInstance(toBind.getProperty(PROPERTY_API));
          if (toBind.containsKey(PROPERTY_API_VERSION))
-            bind(String.class).annotatedWith(ApiVersion.class).toInstance(
-                     toBind.getProperty(PROPERTY_API_VERSION));
+            bind(String.class).annotatedWith(ApiVersion.class).toInstance(toBind.getProperty(PROPERTY_API_VERSION));
          if (toBind.containsKey(PROPERTY_IDENTITY))
             bind(String.class).annotatedWith(Identity.class).toInstance(
-                     checkNotNull(toBind.getProperty(PROPERTY_IDENTITY), PROPERTY_IDENTITY));
+                  checkNotNull(toBind.getProperty(PROPERTY_IDENTITY), PROPERTY_IDENTITY));
          if (toBind.containsKey(PROPERTY_CREDENTIAL))
-            bind(String.class).annotatedWith(Credential.class).toInstance(
-                     toBind.getProperty(PROPERTY_CREDENTIAL));
+            bind(String.class).annotatedWith(Credential.class).toInstance(toBind.getProperty(PROPERTY_CREDENTIAL));
       }
    }
 
@@ -120,8 +119,7 @@ public class RestContextBuilder<S, A> {
    protected Class<S> syncClientType;
 
    @Inject
-   public RestContextBuilder(Class<S> syncClientClass, Class<A> asyncClientClass,
-            Properties properties) {
+   public RestContextBuilder(Class<S> syncClientClass, Class<A> asyncClientClass, Properties properties) {
       this.asyncClientType = checkNotNull(asyncClientClass, "asyncClientType");
       this.syncClientType = checkNotNull(syncClientClass, "syncClientType");
       this.properties = checkNotNull(properties, "properties");
@@ -184,10 +182,10 @@ public class RestContextBuilder<S, A> {
          @Override
          protected void configure() {
             bind(
-                     (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(RestContext.class,
-                              syncClientType, asyncClientType))).to(
-                     TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class,
-                              syncClientType, asyncClientType))).in(Scopes.SINGLETON);
+                  (TypeLiteral) TypeLiteral.get(Types.newParameterizedType(RestContext.class, syncClientType,
+                        asyncClientType))).to(
+                  TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class, syncClientType, asyncClientType)))
+                  .in(Scopes.SINGLETON);
 
          }
 
@@ -260,9 +258,9 @@ public class RestContextBuilder<S, A> {
    }
 
    @SuppressWarnings("unchecked")
-   public RestContext<S, A> buildContext() {
+   public <T extends RestContext<S, A>> T buildContext() {
       Injector injector = buildInjector();
-      return (RestContext<S, A>) injector.getInstance(Key.get(Types.newParameterizedType(
-               RestContext.class, syncClientType, asyncClientType)));
+      return (T) injector.getInstance(Key.get(Types.newParameterizedType(RestContext.class, syncClientType,
+            asyncClientType)));
    }
 }
