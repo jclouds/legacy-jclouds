@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.ohai;
+package org.jclouds.chef.strategy.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -29,6 +29,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.chef.ChefClient;
 import org.jclouds.chef.domain.Node;
+import org.jclouds.chef.reference.ChefConstants;
+import org.jclouds.chef.strategy.CreateNodeAndPopulateAutomaticAttributes;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.logging.Logger;
 
@@ -41,25 +43,32 @@ import com.google.common.base.Supplier;
  * @author Adrian Cole
  */
 @Singleton
-public class UpdateNode {
+public class CreateNodeAndPopulateAutomaticAttributesImpl implements CreateNodeAndPopulateAutomaticAttributes {
 
    @Resource
+   @Named(ChefConstants.CHEF_LOGGER)
    protected Logger logger = Logger.NULL;
 
    private final ChefClient chef;
    private final Supplier<Map<String, JsonBall>> automaticSupplier;
 
    @Inject
-   public UpdateNode(ChefClient chef, @Named("automatic") Supplier<Map<String, JsonBall>> automaticSupplier) {
+   public CreateNodeAndPopulateAutomaticAttributesImpl(ChefClient chef,
+         @Named("automatic") Supplier<Map<String, JsonBall>> automaticSupplier) {
       this.chef = checkNotNull(chef, "chef");
       this.automaticSupplier = checkNotNull(automaticSupplier, "automaticSupplier");
    }
 
-   public void updateNode(String nodeName) {
-      logger.info("updating node %s", nodeName);
-      Node node = chef.getNode(nodeName);
+   @Override
+   public void execute(Node node) {
+      logger.trace("creating node %s", node.getName());
       node.getAutomatic().putAll(automaticSupplier.get());
-      chef.updateNode(node);
-      logger.debug("done updating node %s", nodeName);
+      chef.createNode(node);
+      logger.debug("created node %s", node.getName());
+   }
+
+   @Override
+   public void execute(String nodeName, Iterable<String> runList) {
+      execute(new Node(nodeName, runList));
    }
 }

@@ -198,7 +198,7 @@ public interface ChefAsyncClient {
     */
    @POST
    @Path("nodes")
-   ListenableFuture<Node> createNode(@BinderParam(BindToJsonPayload.class) Node node);
+   ListenableFuture<Void> createNode(@BinderParam(BindToJsonPayload.class) Node node);
 
    /**
     * @see ChefClient#updateNode
@@ -288,8 +288,7 @@ public interface ChefAsyncClient {
    @ResponseParser(ParseKeySetFromJson.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<String>> listRoles();
-   
-   
+
    /**
     * @see ChefClient#createDataBag
     */
@@ -302,8 +301,8 @@ public interface ChefAsyncClient {
     */
    @PUT
    @Path("data/{path}")
-   ListenableFuture<JsonBall> updateDataBag(
-         @PathParam("path") String path, @BinderParam(BindToJsonPayload.class) JsonBall node);
+   ListenableFuture<JsonBall> updateDataBag(@PathParam("path") String path,
+         @BinderParam(BindToJsonPayload.class) JsonBall node);
 
    /**
     * @see ChefDataBag#nodeExists

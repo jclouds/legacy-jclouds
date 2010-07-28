@@ -18,31 +18,29 @@
  */
 package org.jclouds.ohai.config;
 
+import static org.jclouds.util.Utils.composeMapSupplier;
+
 import java.util.Map;
-import java.util.Properties;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.domain.JsonBall;
-import org.jclouds.ohai.WhiteListCompliantJVM;
 import org.jclouds.ohai.functions.ByteArrayToMacAddress;
-import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableList;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
- * Wires the components needed to parse ohai data from a JVM
+ * Wires the components needed to parse ohai data
  * 
  * @author Adrian Cole
  */
-public class BaseOhaiModule extends AbstractModule {
+public abstract class BaseOhaiModule extends AbstractModule {
 
    @Override
    protected void configure() {
@@ -57,25 +55,17 @@ public class BaseOhaiModule extends AbstractModule {
       return System.nanoTime();
    }
 
-   @Named("systemProperties")
-   @Provides
-   protected Properties systemProperties() {
-      return System.getProperties();
-   }
-
    @Named("automatic")
    @Provides
    @Singleton
    Supplier<Map<String, JsonBall>> automaticSupplier(
          @Named("automatic") Iterable<Supplier<Map<String, JsonBall>>> suppliers) {
-      return Utils.composeMapSupplier(suppliers);
+      return composeMapSupplier(suppliers);
    }
 
    @Named("automatic")
    @Singleton
    @Provides
-   Iterable<Supplier<Map<String, JsonBall>>> suppliers(Injector injector) {
-      return ImmutableList.<Supplier<Map<String, JsonBall>>> of(injector.getInstance(WhiteListCompliantJVM.class));
-   }
+   protected abstract Iterable<Supplier<Map<String, JsonBall>>> suppliers(Injector injector);
 
 }

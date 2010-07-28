@@ -18,37 +18,25 @@
  */
 package org.jclouds.ohai.config;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
 import java.util.Map;
 
-import javax.inject.Singleton;
-
 import org.jclouds.domain.JsonBall;
-import org.jclouds.ohai.JMX;
-import org.jclouds.ohai.WhiteListCompliantJVM;
+import org.jclouds.ohai.plugins.WhiteListCompliantJVM;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.inject.Injector;
-import com.google.inject.Provides;
 
 /**
- * Wires the components needed to parse ohai data from a JVM
+ * Wires the components needed to parse ohai data without violating the GAE JVM
  * 
  * @author Adrian Cole
  */
-public class OhaiModule extends BaseOhaiModule {
-
-   @Provides
-   @Singleton
-   protected RuntimeMXBean provideRuntimeMXBean() {
-      return ManagementFactory.getRuntimeMXBean();
-   }
+@ConfiguresOhai
+public class WhiteListCompliantOhaiJVMModule extends BaseOhaiJVMModule {
 
    @Override
-   Iterable<Supplier<Map<String, JsonBall>>> suppliers(Injector injector) {
-      return ImmutableList.<Supplier<Map<String, JsonBall>>> of(injector.getInstance(WhiteListCompliantJVM.class),
-            injector.getInstance(JMX.class));
+   protected Iterable<Supplier<Map<String, JsonBall>>> suppliers(Injector injector) {
+      return ImmutableList.<Supplier<Map<String, JsonBall>>> of(injector.getInstance(WhiteListCompliantJVM.class));
    }
 }

@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.chef.strategy;
+package org.jclouds.chef.strategy.internal;
 
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.filter;
@@ -38,6 +38,8 @@ import org.jclouds.Constants;
 import org.jclouds.chef.ChefAsyncClient;
 import org.jclouds.chef.ChefClient;
 import org.jclouds.chef.domain.Node;
+import org.jclouds.chef.reference.ChefConstants;
+import org.jclouds.chef.strategy.GetNodes;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
@@ -50,12 +52,13 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class GetAllNodesInList {
+public class GetNodesImpl implements GetNodes {
 
    protected final ChefClient chefClient;
    protected final ChefAsyncClient chefAsyncClient;
    protected final ExecutorService userExecutor;
    @Resource
+   @Named(ChefConstants.CHEF_LOGGER)
    protected Logger logger = Logger.NULL;
 
    @Inject(optional = true)
@@ -63,21 +66,24 @@ public class GetAllNodesInList {
    protected Long maxTime;
 
    @Inject
-   GetAllNodesInList(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor, ChefClient getAllNode,
+   GetNodesImpl(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor, ChefClient getAllNode,
          ChefAsyncClient ablobstore) {
       this.userExecutor = userExecutor;
       this.chefAsyncClient = ablobstore;
       this.chefClient = getAllNode;
    }
 
+   @Override
    public Set<Node> execute() {
       return execute(chefClient.listNodes());
    }
 
+   @Override
    public Set<Node> execute(Predicate<String> nodeNameSelector) {
       return execute(filter(chefClient.listNodes(), nodeNameSelector));
    }
 
+   @Override
    public Set<Node> execute(Iterable<String> toGet) {
       Map<String, Exception> exceptions = newHashMap();
       final Set<Node> nodes = newHashSet();

@@ -235,7 +235,7 @@ public interface ChefClient {
     *            "409 Conflict" if the node already exists
     */
    @Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
-   Node createNode(Node node);
+   void createNode(Node node);
 
    /**
     * Creates or updates (uploads) a node //TODO document

@@ -16,13 +16,30 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.ohai.config;
+package org.jclouds.ohai.Util;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Date;
+
+import org.jclouds.domain.JsonBall;
 
 /**
- * Wires the components needed to parse ohai data without violating the GAE JVM
+ * 
  * 
  * @author Adrian Cole
  */
-public class WhiteListCompliantOhaiModule extends BaseOhaiModule {
+public class OhaiUtils {
 
+   public static Date fromOhaiTime(JsonBall ohaiDate) {
+      return new Date(Long.parseLong(checkNotNull(ohaiDate, "ohaiDate").toString().replaceAll("\\.[0-9]*$", "")));
+   }
+
+   public static JsonBall toOhaiTime(long nanos) {
+      String now = nanos + "";
+      StringBuilder nowBuilder = new StringBuilder(now).insert(now.length() - 6, '.');
+      while (nowBuilder.lastIndexOf("0") != -1 && nowBuilder.lastIndexOf("0") == nowBuilder.length() - 1)
+         nowBuilder.deleteCharAt(nowBuilder.length() - 1);
+      return new JsonBall(nowBuilder.toString());
+   }
 }

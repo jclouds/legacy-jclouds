@@ -50,7 +50,8 @@ public interface ChefConstants {
    /**
     * There are generally 3 types of identities
     * <ul>
-    * <li>validator - used to create clients within an organization; {@code orgname}-validator</li>
+    * <li>validator - used to create clients within an organization; {@code
+    * orgname}-validator</li>
     * <li>client - scoped to an organization, used on nodes to run chef</li>
     * <li>user - used to run commands like knife and access cookbook sites</li>
     * </ul>
@@ -64,4 +65,7 @@ public interface ChefConstants {
    /**
     * how often to refresh timestamps in seconds.
     */
+
+   public static final String CHEF_LOGGER = "jclouds.chef";
+
 }

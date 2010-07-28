@@ -18,18 +18,19 @@
  */
 package org.jclouds.chef.strategy;
 
-import org.jclouds.chef.strategy.internal.DeleteAllClientsAndNodesInListImpl;
+import org.jclouds.chef.strategy.internal.CleanupStaleNodesAndClientsImpl;
 
 import com.google.inject.ImplementedBy;
 
 /**
  * 
+ * Cleans up nodes and clients who have been hanging around too long.
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(DeleteAllClientsAndNodesInListImpl.class)
-public interface DeleteAllClientsAndNodesInList {
+@ImplementedBy(CleanupStaleNodesAndClientsImpl.class)
+public interface CleanupStaleNodesAndClients {
 
-   public void execute(Iterable<String> names);
+   void execute(String prefix, int secondsStale);
 
 }

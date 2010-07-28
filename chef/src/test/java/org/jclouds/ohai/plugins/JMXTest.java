@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.ohai;
+package org.jclouds.ohai.plugins;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
@@ -34,7 +34,7 @@ import java.lang.management.RuntimeMXBean;
 import org.jclouds.chef.config.ChefParserModule;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.ohai.config.OhaiModule;
+import org.jclouds.ohai.config.JMXOhaiJVMModule;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -57,7 +57,7 @@ public class JMXTest {
 
       replay(runtime);
 
-      Injector injector = Guice.createInjector(new ChefParserModule(), new GsonModule(), new OhaiModule() {
+      Injector injector = Guice.createInjector(new ChefParserModule(), new GsonModule(), new JMXOhaiJVMModule() {
          @Override
          protected RuntimeMXBean provideRuntimeMXBean() {
             return runtime;

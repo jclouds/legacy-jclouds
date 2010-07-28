@@ -16,51 +16,47 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.ohai;
+package org.jclouds.ohai.plugins;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.lang.management.RuntimeMXBean;
 import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import org.jclouds.chef.ChefClient;
-import org.jclouds.chef.domain.Node;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Supplier;
+import com.google.common.collect.Maps;
 
 /**
  * 
- * Updates node with new automatic attributes.
+ * Gathers Ohai data from the JVM.
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class CreateNode {
+public class JMX implements Supplier<Map<String, JsonBall>> {
 
    @Resource
    protected Logger logger = Logger.NULL;
-
-   private final ChefClient chef;
-   private final Supplier<Map<String, JsonBall>> automaticSupplier;
+   private final Provider<RuntimeMXBean> runtimeSupplier;
 
    @Inject
-   public CreateNode(ChefClient chef, @Named("automatic") Supplier<Map<String, JsonBall>> automaticSupplier) {
-      this.chef = checkNotNull(chef, "chef");
-      this.automaticSupplier = checkNotNull(automaticSupplier, "automaticSupplier");
+   public JMX(Provider<RuntimeMXBean> runtimeSupplier) {
+      this.runtimeSupplier = checkNotNull(runtimeSupplier, "runtimeSupplier");
    }
 
-   public Node createNode(String nodeName, Iterable<String> runList) {
-      logger.info("creating node %s", nodeName);
-      Node node = new Node(nodeName, runList);
-      node.getAutomatic().putAll(automaticSupplier.get());
-      node = chef.createNode(node);
-      logger.debug("done creating node %s", nodeName);
-      return node;
+   public Map<String, JsonBall> get() {
+      RuntimeMXBean runtime = runtimeSupplier.get();
+      Map<String, JsonBall> automatic = Maps.newLinkedHashMap();
+      long uptimeInSeconds = runtime.getUptime() / 1000;
+      automatic.put("uptime_seconds", new JsonBall(uptimeInSeconds));
+      return automatic;
    }
 }

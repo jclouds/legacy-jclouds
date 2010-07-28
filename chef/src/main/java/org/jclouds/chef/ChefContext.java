@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,9 +16,10 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.chef.strategy;
+package org.jclouds.chef;
 
-import org.jclouds.chef.strategy.internal.DeleteAllClientsAndNodesInListImpl;
+import org.jclouds.chef.internal.ChefContextImpl;
+import org.jclouds.rest.RestContext;
 
 import com.google.inject.ImplementedBy;
 
@@ -26,10 +27,11 @@ import com.google.inject.ImplementedBy;
  * 
  * 
  * @author Adrian Cole
+ * 
  */
-@ImplementedBy(DeleteAllClientsAndNodesInListImpl.class)
-public interface DeleteAllClientsAndNodesInList {
+@ImplementedBy(ChefContextImpl.class)
+public interface ChefContext extends RestContext<ChefClient, ChefAsyncClient>{
 
-   public void execute(Iterable<String> names);
+   ChefService getChefService();
 
 }

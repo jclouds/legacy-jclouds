@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.ohai;
+package org.jclouds.chef.strategy.internal;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
@@ -41,15 +41,15 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Tests behavior of {@code CreateNode}
+ * Tests behavior of {@code UpdateAutomaticAttributesOnNodeImpl}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ohai.CreateNodeTest")
-public class CreateNodeTest {
+@Test(groups = "unit", testName = "ohai.UpdateAutomaticAttributesOnNodeImplTest")
+public class UpdateAutomaticAttributesOnNodeImplTest {
 
    @Test
-   public void testWithNoRunlist() {
+   public void test() {
       ChefClient chef = createMock(ChefClient.class);
 
       Map<String, JsonBall> automatic = ImmutableMap.<String, JsonBall> of();
@@ -61,14 +61,15 @@ public class CreateNodeTest {
       Node nodeWithAutomatic = new Node("name", ImmutableMap.<String, JsonBall> of(), ImmutableMap
             .<String, JsonBall> of(), ImmutableMap.<String, JsonBall> of(), automatic, ImmutableSet.<String> of());
 
+      expect(chef.getNode("name")).andReturn(node);
       node.getAutomatic().putAll(automaticSupplier.get());
-      expect(chef.createNode(nodeWithAutomatic)).andReturn(null);
+      expect(chef.updateNode(nodeWithAutomatic)).andReturn(null);
 
       replay(chef);
 
-      CreateNode updater = new CreateNode(chef, automaticSupplier);
+      UpdateAutomaticAttributesOnNodeImpl updater = new UpdateAutomaticAttributesOnNodeImpl(chef, automaticSupplier);
 
-      updater.createNode("name", ImmutableSet.<String> of());
+      updater.execute("name");
       verify(chef);
 
    }

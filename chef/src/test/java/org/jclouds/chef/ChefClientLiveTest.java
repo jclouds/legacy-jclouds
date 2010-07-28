@@ -44,7 +44,6 @@ import org.jclouds.chef.domain.UploadSandbox;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -65,9 +64,9 @@ import com.google.inject.Module;
 @Test(groups = "live", testName = "chef.ChefClientLiveTest")
 public class ChefClientLiveTest {
 
-   private RestContext<ChefClient, ChefAsyncClient> validatorConnection;
-   private RestContext<ChefClient, ChefAsyncClient> clientConnection;
-   private RestContext<ChefClient, ChefAsyncClient> adminConnection;
+   private ChefContext validatorConnection;
+   private ChefContext clientConnection;
+   private ChefContext adminConnection;
 
    private String clientKey;
    private String endpoint;
@@ -95,11 +94,11 @@ public class ChefClientLiveTest {
       adminConnection = createConnection(user, Files.toString(new File(keyfile), Charsets.UTF_8));
    }
 
-   private RestContext<ChefClient, ChefAsyncClient> createConnection(String identity, String key) throws IOException {
+   private ChefContext createConnection(String identity, String key) throws IOException {
       Properties props = new Properties();
       props.setProperty("chef.endpoint", endpoint);
-      return new RestContextFactory().createContext("chef", identity, key, ImmutableSet
-            .<Module> of(new Log4JLoggingModule()), props);
+      return (ChefContext) new RestContextFactory().<ChefClient, ChefAsyncClient> createContext("chef", identity, key,
+            ImmutableSet.<Module> of(new Log4JLoggingModule()), props);
    }
 
    public void testCreateNewCookbook() throws Exception {
@@ -228,7 +227,8 @@ public class ChefClientLiveTest {
    @Test(dependsOnMethods = "testCreateRole")
    public void testCreateNode() throws Exception {
       adminConnection.getApi().deleteNode(PREFIX);
-      node = clientConnection.getApi().createNode(new Node(PREFIX, Collections.singleton("role[" + PREFIX + "]")));
+      clientConnection.getApi().createNode(new Node(PREFIX, Collections.singleton("role[" + PREFIX + "]")));
+      node = adminConnection.getApi().getNode(PREFIX);
       // TODO check recipes
       assertNotNull(node);
       Set<String> nodes = adminConnection.getApi().listNodes();

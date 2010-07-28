@@ -16,20 +16,25 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.chef.strategy;
+package org.jclouds.ohai.config;
 
-import org.jclouds.chef.strategy.internal.DeleteAllClientsAndNodesInListImpl;
+import java.util.Properties;
 
-import com.google.inject.ImplementedBy;
+import javax.inject.Named;
+
+import com.google.inject.Provides;
 
 /**
- * 
+ * Wires the components needed to parse ohai data from a JVM
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(DeleteAllClientsAndNodesInListImpl.class)
-public interface DeleteAllClientsAndNodesInList {
+public abstract class BaseOhaiJVMModule extends BaseOhaiModule {
 
-   public void execute(Iterable<String> names);
+   @Named("systemProperties")
+   @Provides
+   protected Properties systemProperties() {
+      return System.getProperties();
+   }
 
 }

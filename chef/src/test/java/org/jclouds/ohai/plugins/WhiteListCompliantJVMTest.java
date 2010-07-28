@@ -21,7 +21,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.ohai;
+package org.jclouds.ohai.plugins;
 
 import static org.testng.Assert.assertEquals;
 
@@ -31,7 +31,7 @@ import java.util.Properties;
 import org.jclouds.chef.config.ChefParserModule;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.ohai.config.BaseOhaiModule;
+import org.jclouds.ohai.config.WhiteListCompliantOhaiJVMModule;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -54,18 +54,19 @@ public class WhiteListCompliantJVMTest {
       sysProperties.setProperty("os.version", "10.3.0");
       sysProperties.setProperty("user.name", "user");
 
-      Injector injector = Guice.createInjector(new ChefParserModule(), new GsonModule(), new BaseOhaiModule() {
-         @Override
-         protected Long nanoTime() {
-            return 1279992919325290l;
-         }
+      Injector injector = Guice.createInjector(new ChefParserModule(), new GsonModule(),
+            new WhiteListCompliantOhaiJVMModule() {
+               @Override
+               protected Long nanoTime() {
+                  return 1279992919325290l;
+               }
 
-         @Override
-         protected Properties systemProperties() {
-            return sysProperties;
-         }
+               @Override
+               protected Properties systemProperties() {
+                  return sysProperties;
+               }
 
-      });
+            });
       Json json = injector.getInstance(Json.class);
       WhiteListCompliantJVM WhiteListCompliantJVM = injector.getInstance(WhiteListCompliantJVM.class);
 

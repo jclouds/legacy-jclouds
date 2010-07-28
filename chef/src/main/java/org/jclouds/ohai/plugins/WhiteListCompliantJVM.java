@@ -16,9 +16,11 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.ohai;
+package org.jclouds.ohai.plugins;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.inject.internal.Maps.newLinkedHashMap;
+import static org.jclouds.ohai.Util.OhaiUtils.toOhaiTime;
 
 import java.util.Map;
 import java.util.Properties;
@@ -34,7 +36,6 @@ import org.jclouds.json.Json;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Supplier;
-import com.google.inject.internal.Maps;
 
 /**
  * 
@@ -63,14 +64,10 @@ public class WhiteListCompliantJVM implements Supplier<Map<String, JsonBall>> {
    }
 
    public Map<String, JsonBall> get() {
-      Map<String, JsonBall> returnVal = Maps.newLinkedHashMap();
+      Map<String, JsonBall> returnVal = newLinkedHashMap();
       Properties systemProperties = systemPropertiesProvider.get();
-      String now = nanoTimeProvider.get() + "";
-      StringBuilder nowBuilder = new StringBuilder(now).insert(now.length() - 6, '.');
-      while (nowBuilder.lastIndexOf("0") != -1 && nowBuilder.lastIndexOf("0") == nowBuilder.length() - 1)
-         nowBuilder.deleteCharAt(nowBuilder.length() - 1);
-      now = nowBuilder.toString();
-      returnVal.put("ohai_time", new JsonBall(now));
+
+      returnVal.put("ohai_time", toOhaiTime(nanoTimeProvider.get()));
 
       returnVal.put("java", new JsonBall(json.toJson(systemProperties)));
 

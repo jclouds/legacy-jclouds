@@ -18,18 +18,20 @@
  */
 package org.jclouds.chef.strategy;
 
-import org.jclouds.chef.strategy.internal.DeleteAllClientsAndNodesInListImpl;
+import org.jclouds.chef.domain.Node;
+import org.jclouds.chef.strategy.internal.CreateNodeAndPopulateAutomaticAttributesImpl;
 
 import com.google.inject.ImplementedBy;
 
 /**
  * 
+ * Creates a new node with automatic attributes.
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(DeleteAllClientsAndNodesInListImpl.class)
-public interface DeleteAllClientsAndNodesInList {
+@ImplementedBy(CreateNodeAndPopulateAutomaticAttributesImpl.class)
+public interface CreateNodeAndPopulateAutomaticAttributes {
+   void execute(Node node);
 
-   public void execute(Iterable<String> names);
-
+   void execute(String nodeName, Iterable<String> runList);
 }
