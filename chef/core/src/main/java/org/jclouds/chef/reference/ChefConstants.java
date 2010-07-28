@@ -68,5 +68,6 @@ public interface ChefConstants {
 
    public static final String CHEF_LOGGER = "jclouds.chef";
    public static final String CHEF_SERVICE_CLIENT = "chef.service.client";
-   public static final String CHEF_NODENAME = "chef.nodename";
+   public static final String CHEF_NODE = "chef.node";
+   public static final String CHEF_ROLE = "chef.role";
 }

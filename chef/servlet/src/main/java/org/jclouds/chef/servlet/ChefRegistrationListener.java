@@ -19,10 +19,12 @@
 package org.jclouds.chef.servlet;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.singleton;
-import static org.jclouds.chef.reference.ChefConstants.CHEF_NODENAME;
+import static org.jclouds.chef.reference.ChefConstants.CHEF_NODE;
+import static org.jclouds.chef.reference.ChefConstants.CHEF_ROLE;
 import static org.jclouds.chef.reference.ChefConstants.CHEF_SERVICE_CLIENT;
 
 import java.util.Enumeration;
@@ -38,16 +40,19 @@ import org.jclouds.chef.ChefAsyncClient;
 import org.jclouds.chef.ChefClient;
 import org.jclouds.chef.ChefContext;
 import org.jclouds.chef.ChefService;
+import org.jclouds.chef.reference.ChefConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.jdk.JDKLogger;
 import org.jclouds.rest.RestContextFactory;
 
-import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Registers a new node in Chef and binds its name to {@code chef.nodename} and
- * the {@link ChefService} to {@code chef.service.client}
+ * Registers a new node in Chef and binds its name to
+ * {@link ChefConstants.CHEF_NODE}, its role to {@link ChefConstants.CHEF_ROLE}
+ * and the {@link ChefService} for the client to
+ * {@link ChefConstants.CHEF_SERVICE_CLIENT} upon initialized. Deletes the node
+ * and client when the context is destroyed.
  * 
  * @author Adrian Cole
  */
@@ -67,7 +72,7 @@ public class ChefRegistrationListener implements ServletContextListener {
             overrides.setProperty(propertyName, servletContextEvent.getServletContext().getInitParameter(propertyName));
 
          }
-         String role = getInitParam(servletContextEvent, "chef.role");
+         String role = getInitParam(servletContextEvent, CHEF_ROLE);
 
          logger.trace("creating validator connection");
 
@@ -89,7 +94,8 @@ public class ChefRegistrationListener implements ServletContextListener {
          } finally {
             validatorService.getContext().close();
          }
-         servletContextEvent.getServletContext().setAttribute(CHEF_NODENAME, nodeName);
+         servletContextEvent.getServletContext().setAttribute(CHEF_NODE, nodeName);
+         servletContextEvent.getServletContext().setAttribute(CHEF_ROLE, role);
          servletContextEvent.getServletContext().setAttribute(CHEF_SERVICE_CLIENT, clientService);
          logger.debug("initialized");
       } catch (RuntimeException e) {
@@ -113,10 +119,10 @@ public class ChefRegistrationListener implements ServletContextListener {
          logger.trace("nodeName %s not in %s", nodeName, names);
          return nodeName;
       } catch (InterruptedException e) {
-         Throwables.propagate(e);
+         propagate(e);
          return null;
       } catch (ExecutionException e) {
-         Throwables.propagate(e);
+         propagate(e);
          return null;
       }
    }
@@ -157,10 +163,21 @@ public class ChefRegistrationListener implements ServletContextListener {
       return checkNotNull(servletContextEvent.getServletContext().getInitParameter(name));
    }
 
+   @SuppressWarnings("unchecked")
+   private static <T> T getContextAttributeOrNull(ServletContextEvent servletContextEvent, String name) {
+      return (T) servletContextEvent.getServletContext().getAttribute(name);
+   }
+
+   /**
+    * removes the node and client if found, and closes the client context.
+    */
    @Override
    public void contextDestroyed(ServletContextEvent servletContextEvent) {
-      ChefService clientService = (ChefService) servletContextEvent.getServletContext().getAttribute(
-            CHEF_SERVICE_CLIENT);
+      ChefService clientService = getContextAttributeOrNull(servletContextEvent, CHEF_SERVICE_CLIENT);
+      String nodename = getContextAttributeOrNull(servletContextEvent, CHEF_NODE);
+      if (nodename != null && clientService != null) {
+         clientService.deleteAllClientsAndNodesInList(singleton(nodename));
+      }
       if (clientService != null) {
          clientService.getContext().close();
       }
