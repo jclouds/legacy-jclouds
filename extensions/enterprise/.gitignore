@@ -1,9 +1,0 @@
-# use glob syntax.
-syntax: glob
-target
-.settings
-.classpath
-.project
-jclouds-enterprise.iml
-jclouds-enterprise.ipr
-jclouds-enterprise.iws
