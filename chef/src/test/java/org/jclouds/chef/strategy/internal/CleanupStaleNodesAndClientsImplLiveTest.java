@@ -35,7 +35,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "chef.CleanupStaleNodesAndClientsImplLiveTest")
-public class CleanupStaleNodesAndClientsImplTest extends BaseChefStrategyLiveTest {
+public class CleanupStaleNodesAndClientsImplLiveTest extends BaseChefStrategyLiveTest {
    private CreateNodeAndPopulateAutomaticAttributesImpl creater;
    private CleanupStaleNodesAndClientsImpl strategy;
    private ChefClient chef;
