@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 
 import org.jclouds.date.DateService;
 import org.jclouds.encryption.EncryptionService;
+import org.jclouds.json.Json;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.internal.UtilsImpl;
 
@@ -35,6 +36,13 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(UtilsImpl.class)
 public interface Utils {
+
+   Json getJson();
+
+   /**
+    * #see #getJson
+    */
+   Json json();
 
    HttpAsyncClient getHttpAsyncClient();
 

@@ -27,12 +27,12 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.json.Json;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rimuhosting.miro.domain.internal.RimuHostingResponse;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 /**
@@ -44,11 +44,11 @@ import com.google.gson.reflect.TypeToken;
  */
 @Singleton
 public class ParseRimuHostingException implements Function<Exception, Object> {
-   private Gson gson;
+   private Json json;
 
    @Inject
-   public ParseRimuHostingException(Gson gson) {
-      this.gson = gson;
+   public ParseRimuHostingException(Json json) {
+      this.json = json;
    }
 
    @Override
@@ -59,7 +59,7 @@ public class ParseRimuHostingException implements Function<Exception, Object> {
             Type setType = new TypeToken<Map<String, RimuHostingResponse>>() {
             }.getType();
             String test = responseException.getContent();
-            Map<String, RimuHostingResponse> responseMap = gson.fromJson(test, setType);
+            Map<String, RimuHostingResponse> responseMap = json.fromJson(test, setType);
             RimuHostingResponse firstResponse = Iterables.get(responseMap.values(), 0);
             String errorClass = firstResponse.getErrorInfo().getErrorClass();
             if (errorClass.equals("PermissionException"))

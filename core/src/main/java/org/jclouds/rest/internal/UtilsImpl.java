@@ -26,6 +26,7 @@ import javax.inject.Named;
 import org.jclouds.Constants;
 import org.jclouds.date.DateService;
 import org.jclouds.encryption.EncryptionService;
+import org.jclouds.json.Json;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
@@ -39,6 +40,7 @@ import com.google.inject.Singleton;
 @Singleton
 public class UtilsImpl implements Utils {
 
+   private final Json json;
    private final HttpClient simpleClient;
    private final HttpAsyncClient simpleAsyncClient;
    private final EncryptionService encryption;
@@ -48,11 +50,11 @@ public class UtilsImpl implements Utils {
    private final LoggerFactory loggerFactory;
 
    @Inject
-   protected UtilsImpl(HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
-            EncryptionService encryption, DateService date,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
-            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads,
-            LoggerFactory loggerFactory) {
+   protected UtilsImpl(Json json, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
+         EncryptionService encryption, DateService date,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads, LoggerFactory loggerFactory) {
+      this.json = json;
       this.simpleClient = simpleClient;
       this.simpleAsyncClient = simpleAsyncClient;
       this.encryption = encryption;
@@ -130,6 +132,16 @@ public class UtilsImpl implements Utils {
    @Override
    public LoggerFactory loggerFactory() {
       return loggerFactory;
+   }
+
+   @Override
+   public Json getJson() {
+      return json;
+   }
+
+   @Override
+   public Json json() {
+      return json;
    }
 
 }

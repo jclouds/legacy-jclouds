@@ -33,8 +33,8 @@ import java.io.InputStream;
 import org.jclouds.gogrid.mock.HttpCommandMock;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.TestException;
 import org.testng.annotations.Test;
 
@@ -51,8 +51,7 @@ public class GoGridErrorHandlerTest {
    public void testHandler() {
       InputStream is = getClass().getResourceAsStream("/test_error_handler.json");
 
-     
-      GoGridErrorHandler handler = Guice.createInjector(new SaxParserModule()).getInstance(GoGridErrorHandler.class);
+      GoGridErrorHandler handler = Guice.createInjector(new GsonModule()).getInstance(GoGridErrorHandler.class);
 
       HttpCommand command = createHttpCommand();
       handler.handleError(command, new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
@@ -62,9 +61,9 @@ public class GoGridErrorHandlerTest {
       assertNotNull(createdException, "There should've been an exception generated");
       String message = createdException.getMessage();
       assertTrue(message.contains("No object found that matches your input criteria."),
-               "Didn't find the expected error cause in the exception message");
+            "Didn't find the expected error cause in the exception message");
       assertTrue(message.contains("IllegalArgumentException"),
-               "Didn't find the expected error code in the exception message");
+            "Didn't find the expected error code in the exception message");
 
       // make sure the InputStream is closed
       try {

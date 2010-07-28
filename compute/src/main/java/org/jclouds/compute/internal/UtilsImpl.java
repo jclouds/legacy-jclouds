@@ -27,6 +27,7 @@ import org.jclouds.Constants;
 import org.jclouds.compute.Utils;
 import org.jclouds.date.DateService;
 import org.jclouds.encryption.EncryptionService;
+import org.jclouds.json.Json;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
@@ -44,12 +45,12 @@ public class UtilsImpl extends org.jclouds.rest.internal.UtilsImpl implements Ut
    private Factory sshFactory;
 
    @Inject
-   UtilsImpl(HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
+   UtilsImpl(Json json, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
             EncryptionService encryption, DateService date,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads,
             LoggerFactory loggerFactory) {
-      super(simpleClient, simpleAsyncClient, encryption, date, userThreads, ioThreads,
+      super(json, simpleClient, simpleAsyncClient, encryption, date, userThreads, ioThreads,
                loggerFactory);
    }
 
