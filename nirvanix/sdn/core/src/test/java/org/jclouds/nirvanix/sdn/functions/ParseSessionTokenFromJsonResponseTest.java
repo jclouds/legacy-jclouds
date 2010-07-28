@@ -24,8 +24,8 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -39,15 +39,13 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "sdn.ParseSessionTokenFromJsonResponseTest")
 public class ParseSessionTokenFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new SaxParserModule());
+   Injector i = Guice.createInjector(new GsonModule());
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/login.json");
 
-      ParseSessionTokenFromJsonResponse parser = i
-            .getInstance(ParseSessionTokenFromJsonResponse.class);
-      String response = parser.apply(new HttpResponse(200, "ok", Payloads
-            .newInputStreamPayload(is)));
+      ParseSessionTokenFromJsonResponse parser = i.getInstance(ParseSessionTokenFromJsonResponse.class);
+      String response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
       assertEquals(response, "e4b08449-4501-4b7a-af6a-d4e1e1bd7919");
    }
 

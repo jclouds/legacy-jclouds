@@ -20,9 +20,9 @@ package org.jclouds.http.functions;
 
 import static org.jclouds.http.HttpUtils.releasePayload;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -30,10 +30,11 @@ import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.json.Json;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
-import com.google.gson.Gson;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -47,12 +48,12 @@ public class ParseJson<T> implements Function<HttpResponse, T> {
 
    @Resource
    protected Logger logger = Logger.NULL;
-   protected final Gson gson;
+   protected final Json json;
    protected final TypeLiteral<T> type;
 
    @Inject
-   public ParseJson(Gson gson, TypeLiteral<T> type) {
-      this.gson = gson;
+   public ParseJson(Json json, TypeLiteral<T> type) {
+      this.json = json;
       this.type = type;
    }
 
@@ -67,8 +68,7 @@ public class ParseJson<T> implements Function<HttpResponse, T> {
          StringBuilder message = new StringBuilder();
          message.append("Error parsing input");
          logger.error(e, message.toString());
-         throw new HttpResponseException(message.toString() + "\n" + from,
-               null, from, e);
+         throw new HttpResponseException(message.toString() + "\n" + from, null, from, e);
       } finally {
          releasePayload(from);
       }
@@ -76,12 +76,17 @@ public class ParseJson<T> implements Function<HttpResponse, T> {
    }
 
    @SuppressWarnings("unchecked")
-   public T apply(InputStream stream) {
+   public T apply(InputStream stream) throws IOException {
+      return (T) apply(stream, type.getType());
+   }
+
+   @SuppressWarnings("unchecked")
+   public <V> V apply(InputStream stream, Type type) throws IOException {
       try {
-         return (T) gson.fromJson(new InputStreamReader(stream, "UTF-8"), type
-               .getType());
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
+         return (V) json.fromJson(Utils.toStringAndClose(stream), type);
+      } finally {
+         if (stream != null)
+            stream.close();
       }
    }
 }

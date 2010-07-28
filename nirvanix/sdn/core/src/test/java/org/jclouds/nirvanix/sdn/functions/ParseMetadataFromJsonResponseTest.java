@@ -25,8 +25,8 @@ import java.net.UnknownHostException;
 import java.util.Map;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -41,16 +41,13 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "sdn.ParseMetadataFromJsonResponseTest")
 public class ParseMetadataFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new SaxParserModule());
+   Injector i = Guice.createInjector(new GsonModule());
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/metadata.json");
 
-      ParseMetadataFromJsonResponse parser = i
-            .getInstance(ParseMetadataFromJsonResponse.class);
-      Map<String, String> response = parser.apply(new HttpResponse(200, "ok",
-            Payloads.newInputStreamPayload(is)));
-      assertEquals(response, ImmutableMap.of("MD5", "IGPBYI1uC6+AJJxC4r5YBA==",
-            "test", "1"));
+      ParseMetadataFromJsonResponse parser = i.getInstance(ParseMetadataFromJsonResponse.class);
+      Map<String, String> response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      assertEquals(response, ImmutableMap.of("MD5", "IGPBYI1uC6+AJJxC4r5YBA==", "test", "1"));
    }
 }

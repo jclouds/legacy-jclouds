@@ -27,6 +27,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.ibmdev.config.IBMDeveloperCloudParserModule;
 import org.jclouds.ibmdev.domain.Address;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -45,7 +46,7 @@ public class ParseAddressFromJsonTest {
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
-      Injector injector = Guice.createInjector(new IBMDeveloperCloudParserModule());
+      Injector injector = Guice.createInjector(new IBMDeveloperCloudParserModule(), new GsonModule());
       handler = injector.getInstance(ParseAddressFromJson.class);
    }
 

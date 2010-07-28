@@ -20,9 +20,9 @@ package org.jclouds.twitter.functions;
 
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.UnknownHostException;
 import java.util.SortedSet;
 
 import org.jclouds.date.DateService;
@@ -52,7 +52,7 @@ public class ParseStatusesFromJsonResponseTest {
 
    DateService dateService = new SimpleDateFormatDateService();
 
-   public void testApplyInputStreamDetails() throws UnknownHostException {
+   public void testApplyInputStreamDetails() throws IOException {
       InputStream is = getClass().getResourceAsStream("/test_mentions.json");
 
       SortedSet<Status> expects = ImmutableSortedSet

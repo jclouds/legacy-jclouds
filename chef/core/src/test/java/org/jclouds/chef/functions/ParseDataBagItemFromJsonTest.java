@@ -9,11 +9,11 @@ import org.jclouds.chef.domain.DataBagItem;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.io.Payloads;
+import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -25,14 +25,14 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "chef.ParseDataBagItemFromJsonTest")
 public class ParseDataBagItemFromJsonTest {
    private ParseJson<DataBagItem> handler;
-   private Gson mapper;
+   private Json mapper;
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
       Injector injector = Guice.createInjector(new ChefParserModule(), new GsonModule());
       handler = injector.getInstance(Key.get(new TypeLiteral<ParseJson<DataBagItem>>() {
       }));
-      mapper = injector.getInstance(Gson.class);
+      mapper = injector.getInstance(Json.class);
    }
 
    public void test1() {

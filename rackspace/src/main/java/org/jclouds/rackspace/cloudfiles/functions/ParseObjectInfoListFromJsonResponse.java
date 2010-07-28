@@ -21,9 +21,8 @@ package org.jclouds.rackspace.cloudfiles.functions;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.SortedSet;
 
@@ -33,6 +32,7 @@ import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseJson;
+import org.jclouds.json.Json;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 import org.jclouds.rackspace.cloudfiles.domain.internal.ObjectInfoImpl;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
@@ -42,7 +42,6 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.TypeLiteral;
 
@@ -51,37 +50,31 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class ParseObjectInfoListFromJsonResponse extends
-      ParseJson<PageSet<ObjectInfo>> implements InvocationContext {
+public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<ObjectInfo>> implements InvocationContext {
 
    private GeneratedHttpRequest<?> request;
 
    @Inject
-   public ParseObjectInfoListFromJsonResponse(Gson gson) {
-      super(gson, new TypeLiteral<PageSet<ObjectInfo>>() {
+   public ParseObjectInfoListFromJsonResponse(Json json) {
+      super(json, new TypeLiteral<PageSet<ObjectInfo>>() {
       });
    }
 
    public PageSet<ObjectInfo> apply(InputStream stream) {
       checkState(request != null, "request should be initialized at this point");
-      checkState(request.getArgs() != null,
-            "request.getArgs() should be initialized at this point");
-      checkArgument(request.getArgs()[0] instanceof String,
-            "arg[0] must be a container name");
+      checkState(request.getArgs() != null, "request.getArgs() should be initialized at this point");
+      checkArgument(request.getArgs()[0] instanceof String, "arg[0] must be a container name");
       checkArgument(request.getArgs()[1] instanceof ListContainerOptions[],
             "arg[1] must be an array of ListContainerOptions");
-      ListContainerOptions[] optionsList = (ListContainerOptions[]) request
-            .getArgs()[1];
-      ListContainerOptions options = optionsList.length > 0 ? optionsList[0]
-            : ListContainerOptions.NONE;
+      ListContainerOptions[] optionsList = (ListContainerOptions[]) request.getArgs()[1];
+      ListContainerOptions options = optionsList.length > 0 ? optionsList[0] : ListContainerOptions.NONE;
       Type listType = new TypeToken<SortedSet<ObjectInfoImpl>>() {
       }.getType();
 
       try {
-         SortedSet<ObjectInfoImpl> list = gson.fromJson(new InputStreamReader(
-               stream, "UTF-8"), listType);
-         SortedSet<ObjectInfo> returnVal = Sets.newTreeSet(Iterables.transform(
-               list, new Function<ObjectInfoImpl, ObjectInfo>() {
+         SortedSet<ObjectInfoImpl> list = apply(stream, listType);
+         SortedSet<ObjectInfo> returnVal = Sets.newTreeSet(Iterables.transform(list,
+               new Function<ObjectInfoImpl, ObjectInfo>() {
                   public ObjectInfo apply(ObjectInfoImpl from) {
                      return from;
                   }
@@ -89,16 +82,14 @@ public class ParseObjectInfoListFromJsonResponse extends
          boolean truncated = options.getMaxResults() == returnVal.size();
          String marker = truncated ? returnVal.last().getName() : null;
          return new PageSetImpl<ObjectInfo>(returnVal, marker);
-
-      } catch (UnsupportedEncodingException e) {
-         throw new RuntimeException("jclouds requires UTF-8 encoding", e);
+      } catch (IOException e) {
+         throw new RuntimeException("problem reading response from request: " + request, e);
       }
    }
 
    @Override
    public ParseObjectInfoListFromJsonResponse setContext(HttpRequest request) {
-      checkArgument(request instanceof GeneratedHttpRequest<?>,
-            "note this handler requires a GeneratedHttpRequest");
+      checkArgument(request instanceof GeneratedHttpRequest<?>, "note this handler requires a GeneratedHttpRequest");
       this.request = (GeneratedHttpRequest<?>) request;
       return this;
    }
