@@ -56,7 +56,7 @@ public abstract class ComputeServiceContextBuilder<S, A> extends RestContextBuil
     * {@inheritDoc}
     */
    @Override
-   public ComputeServiceContextBuilder<S, A> withModules(Module... modules) {
+   public ComputeServiceContextBuilder<S, A> withModules(Iterable<Module> modules) {
       return (ComputeServiceContextBuilder<S, A>) super.withModules(modules);
    }
 

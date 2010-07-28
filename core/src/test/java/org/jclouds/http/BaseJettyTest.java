@@ -244,9 +244,9 @@ public abstract class BaseJettyTest {
 
       ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
             "http://localhost:" + testPort, "1", "identity", null, IntegrationTestClient.class,
-            IntegrationTestAsyncClient.class);
+            IntegrationTestAsyncClient.class, ImmutableSet.<Module> copyOf(connectionModules));
 
-      return createContextBuilder(contextSpec, ImmutableSet.<Module> copyOf(connectionModules), properties);
+      return createContextBuilder(contextSpec, properties);
    }
 
    @AfterTest

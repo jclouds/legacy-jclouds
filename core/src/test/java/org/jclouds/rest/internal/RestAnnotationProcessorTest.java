@@ -288,10 +288,10 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    private Injector injectorForClient() {
 
       ContextSpec<Caller, AsyncCaller> contextSpec = contextSpec("test", "http://localhost:9999", "1", "userfoo", null,
-            Caller.class, AsyncCaller.class);
+            Caller.class, AsyncCaller.class, ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(),
+                  new CallerCalleeModule()));
 
-      return createContextBuilder(contextSpec,
-            ImmutableSet.of(new MockModule(), new NullLoggingModule(), new CallerCalleeModule())).buildInjector();
+      return createContextBuilder(contextSpec).buildInjector();
 
    }
 
@@ -1975,17 +1975,17 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    @BeforeClass
    void setupFactory() {
       ContextSpec<String, Integer> contextSpec = contextSpec("test", "http://localhost:9999", "1", "userfoo", null,
-            String.class, Integer.class);
+            String.class, Integer.class, ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(),
+                  new AbstractModule() {
 
-      injector = createContextBuilder(contextSpec,
-            ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(), new AbstractModule() {
+                     @Override
+                     protected void configure() {
+                        bind(URI.class).annotatedWith(Localhost2.class).toInstance(URI.create("http://localhost:1111"));
+                     }
 
-               @Override
-               protected void configure() {
-                  bind(URI.class).annotatedWith(Localhost2.class).toInstance(URI.create("http://localhost:1111"));
-               }
+                  }));
 
-            })).buildInjector();
+      injector = createContextBuilder(contextSpec).buildInjector();
       parserFactory = injector.getInstance(ParseSax.Factory.class);
       encryptionService = injector.getInstance(EncryptionService.class);
    }

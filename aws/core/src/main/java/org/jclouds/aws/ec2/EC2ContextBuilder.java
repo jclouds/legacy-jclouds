@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 
-
 import org.jclouds.aws.ec2.compute.config.EC2ComputeServiceContextModule;
 import org.jclouds.aws.ec2.compute.config.EC2ResolveImagesModule;
 import org.jclouds.aws.ec2.config.EC2RestClientModule;
@@ -42,14 +41,17 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * Creates {@link EC2ComputeServiceContext} or {@link Injector} instances based on the most commonly
- * requested arguments.
+ * Creates {@link EC2ComputeServiceContext} or {@link Injector} instances based
+ * on the most commonly requested arguments.
  * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
+ * Note that Threadsafe objects will be bound as singletons to the Injector or
+ * Context provided.
  * <p/>
  * <p/>
- * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
+ * If no <code>Module</code>s are specified, the default
+ * {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be
+ * installed.
  * 
  * @author Adrian Cole
  * @see EC2ComputeServiceContext
@@ -61,7 +63,7 @@ public class EC2ContextBuilder extends ComputeServiceContextBuilder<EC2Client, E
    }
 
    @Override
-   public EC2ContextBuilder withModules(Module... modules) {
+   public EC2ContextBuilder withModules(Iterable<Module> modules) {
       return (EC2ContextBuilder) super.withModules(modules);
    }
 
@@ -88,9 +90,8 @@ public class EC2ContextBuilder extends ComputeServiceContextBuilder<EC2Client, E
          Iterable<Module> infra = Iterables.filter(modules, new Predicate<Module>() {
             public boolean apply(Module input) {
                return input.getClass().isAnnotationPresent(ConfiguresExecutorService.class)
-                        || input.getClass().isAnnotationPresent(
-                                 ConfiguresHttpCommandExecutorService.class)
-                        || instanceOf(LoggingModule.class).apply(input);
+                     || input.getClass().isAnnotationPresent(ConfiguresHttpCommandExecutorService.class)
+                     || instanceOf(LoggingModule.class).apply(input);
             }
 
          });

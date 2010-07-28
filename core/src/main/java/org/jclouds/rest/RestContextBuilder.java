@@ -29,7 +29,6 @@ import static org.jclouds.Constants.PROPERTY_PROVIDER;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -125,8 +124,8 @@ public class RestContextBuilder<S, A> {
       this.properties = checkNotNull(properties, "properties");
    }
 
-   public RestContextBuilder<S, A> withModules(Module... modules) {
-      this.modules.addAll(Arrays.asList(modules));
+   public RestContextBuilder<S, A> withModules(Iterable<Module> modules) {
+      Iterables.addAll(this.modules, modules);
       return this;
    }
 

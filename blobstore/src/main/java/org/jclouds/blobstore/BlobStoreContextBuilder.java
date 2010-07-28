@@ -30,7 +30,7 @@ import com.google.inject.Module;
 public abstract class BlobStoreContextBuilder<S, A> extends RestContextBuilder<S, A> {
 
    @Override
-   public BlobStoreContextBuilder<S, A> withModules(Module... modules) {
+   public BlobStoreContextBuilder<S, A> withModules(Iterable<Module> modules) {
       return (BlobStoreContextBuilder<S, A>) super.withModules(modules);
    }
 
@@ -38,8 +38,7 @@ public abstract class BlobStoreContextBuilder<S, A> extends RestContextBuilder<S
       this(syncClientType, asyncClientType, new Properties());
    }
 
-   public BlobStoreContextBuilder(Class<S> syncClientType, Class<A> asyncClientType,
-            Properties properties) {
+   public BlobStoreContextBuilder(Class<S> syncClientType, Class<A> asyncClientType, Properties properties) {
       super(syncClientType, asyncClientType, properties);
 
    }

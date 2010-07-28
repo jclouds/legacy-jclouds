@@ -21,6 +21,7 @@ package org.jclouds.rest;
 import static org.testng.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -59,7 +60,7 @@ public class RestContextBuilderTest {
       HttpModule module = new HttpModule();
       modules.add(module);
       new RestContextBuilder<String, String>(String.class, String.class, new Properties())
-               .addHttpModuleIfNeededAndNotPresent(modules);
+            .addHttpModuleIfNeededAndNotPresent(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.remove(0), module);
    }
@@ -70,7 +71,7 @@ public class RestContextBuilderTest {
       LoggingModule module = new NullLoggingModule();
       modules.add(module);
       new RestContextBuilder<String, String>(String.class, String.class, new Properties())
-               .addLoggingModuleIfNotPresent(modules);
+            .addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.remove(0), module);
    }
@@ -82,8 +83,8 @@ public class RestContextBuilderTest {
       modules.add(loggingModule);
       HttpModule httpModule = new HttpModule();
       modules.add(httpModule);
-      RestContextBuilder<String, String> builder = new RestContextBuilder<String, String>(
-               String.class, String.class, new Properties());
+      RestContextBuilder<String, String> builder = new RestContextBuilder<String, String>(String.class, String.class,
+            new Properties());
       builder.addHttpModuleIfNeededAndNotPresent(modules);
       builder.addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 2);
@@ -95,8 +96,8 @@ public class RestContextBuilderTest {
    public void testAddBothWhenDoesntRequireHttp() {
       List<Module> modules = new ArrayList<Module>();
       modules.add(new ConfiguresRestClientModule());
-      RestContextBuilder<String, String> builder = new RestContextBuilder<String, String>(
-               String.class, String.class, new Properties());
+      RestContextBuilder<String, String> builder = new RestContextBuilder<String, String>(String.class, String.class,
+            new Properties());
       builder.addHttpModuleIfNeededAndNotPresent(modules);
       builder.addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 2);
@@ -115,8 +116,8 @@ public class RestContextBuilderTest {
    @Test
    public void testAddBothWhenDefault() {
       List<Module> modules = new ArrayList<Module>();
-      RestContextBuilder<String, String> builder = new RestContextBuilder<String, String>(
-               String.class, String.class, new Properties());
+      RestContextBuilder<String, String> builder = new RestContextBuilder<String, String>(String.class, String.class,
+            new Properties());
       builder.addHttpModuleIfNeededAndNotPresent(modules);
       builder.addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 2);
@@ -136,8 +137,8 @@ public class RestContextBuilderTest {
    public void testAddBothWhenLive() {
       List<Module> modules = new ArrayList<Module>();
       modules.add(new RequiresHttpModule());
-      RestContextBuilder<String, String> builder = new RestContextBuilder<String, String>(
-               String.class, String.class, new Properties());
+      RestContextBuilder<String, String> builder = new RestContextBuilder<String, String>(String.class, String.class,
+            new Properties());
       builder.addHttpModuleIfNeededAndNotPresent(modules);
       builder.addLoggingModuleIfNotPresent(modules);
       assertEquals(modules.size(), 3);
@@ -148,21 +149,21 @@ public class RestContextBuilderTest {
 
    public void testBuilder() {
 
-      AbstractModule module1 = new AbstractModule() {
+      Module module1 = new AbstractModule() {
 
          @Override
          protected void configure() {
          }
       };
-      AbstractModule module2 = new AbstractModule() {
+      Module module2 = new AbstractModule() {
 
          @Override
          protected void configure() {
          }
       };
-      RestContextBuilder<String, String> builder = new RestContextBuilder<String, String>(
-               String.class, String.class, new Properties());
-      builder.withModules(module1, module2);
+      RestContextBuilder<String, String> builder = new RestContextBuilder<String, String>(String.class, String.class,
+            new Properties());
+      builder.withModules(Arrays.asList(module1, module2));
 
    }
 }
