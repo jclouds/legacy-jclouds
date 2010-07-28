@@ -1,9 +1,0 @@
-# use glob syntax.
-syntax: glob
-target
-.settings
-.classpath
-.project
-jclouds-aws-demo-googleappengine.iml
-jclouds-aws-demo-googleappengine.ipr
-jclouds-aws-demo-googleappengine.iws
