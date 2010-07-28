@@ -1,5 +1,7 @@
 package org.jclouds.chef.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -7,6 +9,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.chef.ChefContext;
 import org.jclouds.chef.ChefService;
 import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.reference.ChefConstants;
@@ -30,6 +33,7 @@ public class BaseChefService implements ChefService {
    @Named(ChefConstants.CHEF_LOGGER)
    protected Logger logger = Logger.NULL;
 
+   private final ChefContext chefContext;
    private final CleanupStaleNodesAndClients cleanupStaleNodesAndClients;
    private final CreateNodeAndPopulateAutomaticAttributes createNodeAndPopulateAutomaticAttributes;
    private final DeleteAllClientsAndNodesInList deleteAllClientsAndNodesInList;
@@ -37,20 +41,24 @@ public class BaseChefService implements ChefService {
    private final UpdateAutomaticAttributesOnNode updateAutomaticAttributesOnNode;
 
    @Inject
-   protected BaseChefService(CleanupStaleNodesAndClients cleanupStaleNodesAndClients,
+   protected BaseChefService(ChefContext chefContext, CleanupStaleNodesAndClients cleanupStaleNodesAndClients,
          CreateNodeAndPopulateAutomaticAttributes createNodeAndPopulateAutomaticAttributes,
          DeleteAllClientsAndNodesInList deleteAllClientsAndNodesInList, GetNodes getNodes,
          UpdateAutomaticAttributesOnNode updateAutomaticAttributesOnNode) {
-      this.cleanupStaleNodesAndClients = cleanupStaleNodesAndClients;
-      this.createNodeAndPopulateAutomaticAttributes = createNodeAndPopulateAutomaticAttributes;
-      this.deleteAllClientsAndNodesInList = deleteAllClientsAndNodesInList;
-      this.getNodes = getNodes;
-      this.updateAutomaticAttributesOnNode = updateAutomaticAttributesOnNode;
+      this.chefContext = checkNotNull(chefContext, "chefContext");
+      this.cleanupStaleNodesAndClients = checkNotNull(cleanupStaleNodesAndClients, "cleanupStaleNodesAndClients");
+      this.createNodeAndPopulateAutomaticAttributes = checkNotNull(createNodeAndPopulateAutomaticAttributes,
+            "createNodeAndPopulateAutomaticAttributes");
+      this.deleteAllClientsAndNodesInList = checkNotNull(deleteAllClientsAndNodesInList,
+            "deleteAllClientsAndNodesInList");
+      this.getNodes = checkNotNull(getNodes, "getNodes");
+      this.updateAutomaticAttributesOnNode = checkNotNull(updateAutomaticAttributesOnNode,
+            "updateAutomaticAttributesOnNode");
    }
 
    @Override
-   public void cleanupStaleNodesAndClients(String prefix, int minutesStale) {
-      cleanupStaleNodesAndClients.execute(prefix, minutesStale);
+   public void cleanupStaleNodesAndClients(String prefix, int secondsStale) {
+      cleanupStaleNodesAndClients.execute(prefix, secondsStale);
    }
 
    @Override
@@ -81,6 +89,11 @@ public class BaseChefService implements ChefService {
    @Override
    public void updateAutomaticAttributesOnNode(String nodeName) {
       updateAutomaticAttributesOnNode.execute(nodeName);
+   }
+
+   @Override
+   public ChefContext getContext() {
+      return chefContext;
    }
 
 }

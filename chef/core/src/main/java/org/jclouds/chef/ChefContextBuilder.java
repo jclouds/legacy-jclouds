@@ -55,7 +55,7 @@ public class ChefContextBuilder extends RestContextBuilder<ChefClient, ChefAsync
     * {@inheritDoc}
     */
    @Override
-   public ChefContextBuilder withModules(Module... modules) {
+   public ChefContextBuilder withModules(Iterable<Module> modules) {
       return (ChefContextBuilder) super.withModules(modules);
    }
 

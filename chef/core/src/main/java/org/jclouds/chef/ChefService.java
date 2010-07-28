@@ -15,8 +15,12 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(BaseChefService.class)
 public interface ChefService {
+   /**
+    * @return a reference to the context that created this.
+    */
+   ChefContext getContext();
 
-   void cleanupStaleNodesAndClients(String prefix, int minutesStale);
+   void cleanupStaleNodesAndClients(String prefix, int secondsStale);
 
    void createNodeAndPopulateAutomaticAttributes(String nodeName, Iterable<String> runList);
 
