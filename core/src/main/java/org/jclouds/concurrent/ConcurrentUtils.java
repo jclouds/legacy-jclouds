@@ -51,9 +51,8 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Singleton
 public class ConcurrentUtils {
 
-   public static <T> Map<T, Exception> awaitCompletion(
-            Map<T, ? extends ListenableFuture<?>> responses, ExecutorService executor,
-            @Nullable Long maxTime, final Logger logger, final String logPrefix) {
+   public static <T> Map<T, Exception> awaitCompletion(Map<T, ? extends ListenableFuture<?>> responses,
+            ExecutorService executor, @Nullable Long maxTime, final Logger logger, final String logPrefix) {
       if (responses.size() == 0)
          return ImmutableMap.of();
       final int total = responses.size();
@@ -100,15 +99,15 @@ public class ConcurrentUtils {
       return errorMap;
    }
 
-   private static void logException(Logger logger, String logPrefix, int total, int complete,
-            int errors, long start, Exception e) {
+   private static void logException(Logger logger, String logPrefix, int total, int complete, int errors, long start,
+            Exception e) {
       String message = message(logPrefix, total, complete, errors, start);
       logger.error(e, message);
    }
 
    private static String message(String prefix, int size, int complete, int errors, long start) {
-      return String.format("%s, completed: %d/%d, errors: %d, rate: %dms/op", prefix, complete,
-               size, errors, (long) ((System.currentTimeMillis() - start) / ((double) size)));
+      return String.format("%s, completed: %d/%d, errors: %d, rate: %dms/op", prefix, complete, size, errors,
+               (long) ((System.currentTimeMillis() - start) / ((double) size)));
    }
 
    protected static boolean timeOut(long start, Long maxTime) {
@@ -116,20 +115,11 @@ public class ConcurrentUtils {
    }
 
    /**
-    * Converts an exception into an object, which is useful for transforming to null or false.
-    */
-   public static <T> ListenableFuture<T> convertExceptionToValue(ListenableFuture<T> future,
-            Class<? extends Exception> clazz, T toValue) {
-      return new ConvertFutureExceptionToValue<T>(future, clazz, toValue);
-   }
-
-   /**
     * Just like {@code Futures#makeListenable} except that we pass in an executorService.
     * <p/>
     * Temporary hack until http://code.google.com/p/guava-libraries/issues/detail?id=317 is fixed.
     */
-   public static <T> ListenableFuture<T> makeListenable(Future<T> future,
-            ExecutorService executorService) {
+   public static <T> ListenableFuture<T> makeListenable(Future<T> future, ExecutorService executorService) {
       if (future instanceof ListenableFuture<?>) {
          return (ListenableFuture<T>) future;
       }
@@ -141,8 +131,7 @@ public class ConcurrentUtils {
     * <p/>
     * Temporary hack until http://code.google.com/p/guava-libraries/issues/detail?id=317 is fixed.
     */
-   private static class ListenableFutureAdapter<T> extends ForwardingFuture<T> implements
-            ListenableFuture<T> {
+   private static class ListenableFutureAdapter<T> extends ForwardingFuture<T> implements ListenableFuture<T> {
 
       private final Executor adapterExecutor;
 
