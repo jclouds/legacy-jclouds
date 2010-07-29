@@ -36,10 +36,11 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "performance", sequential = true, testName = "concurrent.ConcurrentUtilsTest")
+@Test(enabled = false, groups = "performance", sequential = true, testName = "concurrent.ConcurrentUtilsTest")
 public class FuturesComposePerformanceTest {
    ExecutorService callableExecutor = newCachedThreadPool();
 
+   @Test(enabled = false)
    public void test1() throws InterruptedException, ExecutionException {
       long expectedMax = CALLABLE_DURATION + LISTENER_DURATION;
       long expectedMin = CALLABLE_DURATION + LISTENER_DURATION;
@@ -51,6 +52,7 @@ public class FuturesComposePerformanceTest {
       checkThresholds(expectedMin, expectedMax, expectedOverhead, callableExecutor, chainExecutor, listenerExecutor);
    }
 
+   @Test(enabled = false)
    public void test2() throws InterruptedException, ExecutionException {
       long expectedMax = CALLABLE_DURATION + LISTENER_DURATION;
       long expectedMin = CALLABLE_DURATION + LISTENER_DURATION;
@@ -62,6 +64,7 @@ public class FuturesComposePerformanceTest {
       checkThresholds(expectedMin, expectedMax, expectedOverhead, callableExecutor, chainExecutor, listenerExecutor);
    }
 
+   @Test(enabled = false)
    public void test3() throws InterruptedException, ExecutionException {
       long expectedMax = (CALLABLE_DURATION * COUNT) + LISTENER_DURATION;
       long expectedMin = CALLABLE_DURATION + LISTENER_DURATION;
@@ -73,6 +76,7 @@ public class FuturesComposePerformanceTest {
       checkThresholds(expectedMin, expectedMax, expectedOverhead, callableExecutor, chainExecutor, listenerExecutor);
    }
 
+   @Test(enabled = false)
    public void test4() throws InterruptedException, ExecutionException {
 
       long expectedMax = (CALLABLE_DURATION * COUNT) + (LISTENER_DURATION * COUNT);
