@@ -44,6 +44,9 @@
 		<repository>
 			<id>jclouds-googlecode-deploy</id>
 			<url>http://jclouds.googlecode.com/svn/repo</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
 		</repository>
 		<repository>
 			<id>jclouds-rimu-snapshots-nexus</id>
