@@ -19,7 +19,6 @@
 package org.jclouds.http.internal;
 
 import static com.google.common.io.ByteStreams.copy;
-import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 import static org.jclouds.http.HttpUtils.checkRequestHasContentLengthOrChunkedEncoding;
 import static org.jclouds.http.HttpUtils.wirePayloadIfEnabled;
 import static org.jclouds.util.Utils.getFirstThrowableOfType;
@@ -29,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -49,7 +49,6 @@ import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.logging.Logger;
 
 import com.google.common.io.NullOutputStream;
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * 
@@ -74,9 +73,9 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
 
    @Inject
    protected BaseHttpCommandExecutorService(HttpUtils utils, EncryptionService encryptionService,
-         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
-         DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
-         DelegatingErrorHandler errorHandler, HttpWire wire) {
+            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
+            DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
+            DelegatingErrorHandler errorHandler, HttpWire wire) {
       this.utils = utils;
       this.encryptionService = encryptionService;
       this.retryHandler = retryHandler;
@@ -123,11 +122,12 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
 
    }
 
-   public ListenableFuture<HttpResponse> submit(HttpCommand command) {
+   public Future<HttpResponse> submit(HttpCommand command) {
       HttpRequest request = command.getRequest();
       checkRequestHasContentLengthOrChunkedEncoding(request,
-            "if the request has a payload, it must be set to chunked encoding or specify a content length: " + request);
-      return makeListenable(ioWorkerExecutor.submit(new HttpResponseCallable(command)), ioWorkerExecutor);
+               "if the request has a payload, it must be set to chunked encoding or specify a content length: "
+                        + request);
+      return ioWorkerExecutor.submit(new HttpResponseCallable(command));
    }
 
    public class HttpResponseCallable implements Callable<HttpResponse> {
@@ -148,7 +148,7 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
                   filter.filter(request);
                }
                checkRequestHasContentLengthOrChunkedEncoding(request,
-                     "After filtering, the request has niether chunked encoding nor content length: " + request);
+                        "After filtering, the request has niether chunked encoding nor content length: " + request);
                logger.debug("Sending request %s: %s", request.hashCode(), request.getRequestLine());
                wirePayloadIfEnabled(wire, request);
                nativeRequest = convert(request);
@@ -174,7 +174,7 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
                   continue;
                } else {
                   command.setException(new HttpResponseException(e.getMessage() + " connecting to "
-                        + command.getRequest().getRequestLine(), command, null, e));
+                           + command.getRequest().getRequestLine(), command, null, e));
                   break;
                }
             } finally {

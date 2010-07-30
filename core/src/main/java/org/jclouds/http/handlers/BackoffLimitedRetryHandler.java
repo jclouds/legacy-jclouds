@@ -79,6 +79,9 @@ import com.google.inject.Inject;
  */
 @Singleton
 public class BackoffLimitedRetryHandler implements HttpRetryHandler, IOExceptionRetryHandler {
+
+   public static BackoffLimitedRetryHandler INSTANCE = new BackoffLimitedRetryHandler();
+
    @Inject(optional = true)
    @Named(Constants.PROPERTY_MAX_RETRIES)
    private int retryCountLimit = 5;
@@ -102,13 +105,11 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler, IOException
          logger.warn("Cannot retry after server error, command is not replayable: %1$s", command);
          return false;
       } else if (command.getFailureCount() > retryCountLimit) {
-         logger.warn(
-                  "Cannot retry after server error, command has exceeded retry limit %1$d: %2$s",
-                  retryCountLimit, command);
+         logger.warn("Cannot retry after server error, command has exceeded retry limit %1$d: %2$s", retryCountLimit,
+                  command);
          return false;
       } else {
-         imposeBackoffExponentialDelay(command.getFailureCount(), "server error: "
-                  + command.toString());
+         imposeBackoffExponentialDelay(command.getFailureCount(), "server error: " + command.toString());
          return true;
       }
    }
@@ -117,11 +118,9 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler, IOException
       imposeBackoffExponentialDelay(50L, 2, failureCount, retryCountLimit, commandDescription);
    }
 
-   public void imposeBackoffExponentialDelay(long period, int pow, int failureCount, int max,
-            String commandDescription) {
+   public void imposeBackoffExponentialDelay(long period, int pow, int failureCount, int max, String commandDescription) {
       long delayMs = (long) (period * Math.pow(failureCount, pow));
-      logger.debug("Retry %d/%d: delaying for %d ms: %s", failureCount, retryCountLimit, delayMs,
-               commandDescription);
+      logger.debug("Retry %d/%d: delaying for %d ms: %s", failureCount, retryCountLimit, delayMs, commandDescription);
       try {
          Thread.sleep(delayMs);
       } catch (InterruptedException e) {

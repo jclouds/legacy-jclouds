@@ -18,8 +18,6 @@
  */
 package org.jclouds.chef.strategy;
 
-import java.util.Set;
-
 import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.strategy.internal.GetNodesImpl;
 
@@ -34,9 +32,9 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(GetNodesImpl.class)
 public interface GetNodes {
 
-   Set<Node> execute();
+   Iterable<? extends Node> execute();
 
-   Set<Node> execute(Predicate<String> nodeNameSelector);
+   Iterable<? extends Node> execute(Predicate<String> nodeNameSelector);
 
-   Set<Node> execute(Iterable<String> toGet);
+   Iterable<? extends Node> execute(Iterable<String> toGet);
 }

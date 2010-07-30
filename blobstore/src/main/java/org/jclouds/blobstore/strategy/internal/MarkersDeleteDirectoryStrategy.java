@@ -38,7 +38,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.Future;
 import com.google.inject.Inject;
 
 /**
@@ -92,7 +92,7 @@ public class MarkersDeleteDirectoryStrategy implements DeleteDirectoryStrategy {
       for (String suffix : BlobStoreConstants.DIRECTORY_SUFFIXES) {
          names.add(directory + suffix);
       }
-      Map<String, ListenableFuture<?>> responses = Maps.newHashMap();
+      Map<String, Future<?>> responses = Maps.newHashMap();
       for (String name : names) {
          responses.put(name, ablobstore.removeBlob(containerName, name));
       }

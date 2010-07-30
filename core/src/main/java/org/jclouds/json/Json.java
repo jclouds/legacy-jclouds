@@ -25,13 +25,20 @@ import java.lang.reflect.Type;
  */
 public interface Json {
    /**
-    * Serialize the object into json.
+    * Serialize the object into json. If the object is a generic type, use
+    * {@link #toJson(Object, Type)}
     */
    String toJson(Object src);
 
    /**
-    * Deserialize the generic object from json. If the object is not a generic
-    * type, use {@link #fromJson(Object, Class)}
+    * Serialize the generic object into json. If the object is not a generic, use
+    * {@link #toJson(Object, Type)}
+    */
+   String toJson(Object src, Type type);
+
+   /**
+    * Deserialize the generic object from json. If the object is not a generic type, use
+    * {@link #fromJson(Object, Class)}
     */
    <T> T fromJson(String json, Type type);
 

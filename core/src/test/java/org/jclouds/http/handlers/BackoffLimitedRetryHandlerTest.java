@@ -110,16 +110,14 @@ public class BackoffLimitedRetryHandlerTest {
       EncryptionService encService = new JCEEncryptionService();
       utils = new HttpUtils(encService, 0, 500, 1, 1);
       RedirectionRetryHandler retry = new RedirectionRetryHandler(uriBuilderProvider, backoff);
-      JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(utils,
-               execService, new DelegatingRetryHandler(backoff, retry),
-               new BackoffLimitedRetryHandler(), new DelegatingErrorHandler(), new HttpWire(),
-               null, encService);
-      executorService = new TransformingHttpCommandExecutorServiceImpl(httpService);
+      JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(utils, execService,
+               new DelegatingRetryHandler(backoff, retry), new BackoffLimitedRetryHandler(),
+               new DelegatingErrorHandler(), new HttpWire(), null, encService);
+      executorService = new TransformingHttpCommandExecutorServiceImpl(httpService, execService);
    }
 
    @Test
-   void testClosesInputStream() throws InterruptedException, IOException, SecurityException,
-            NoSuchMethodException {
+   void testClosesInputStream() throws InterruptedException, IOException, SecurityException, NoSuchMethodException {
       HttpCommand command = createCommand();
 
       HttpResponse response = new HttpResponse(400, null, null);
@@ -161,24 +159,20 @@ public class BackoffLimitedRetryHandlerTest {
       assertEquals(response.getPayload().getInput().read(), -1);
    }
 
-   private final RestAnnotationProcessor<IntegrationTestAsyncClient> processor = BaseJettyTest
-            .newBuilder(8100, new Properties())
-            .buildInjector()
-            .getInstance(
-                     Key
-                              .get(new TypeLiteral<RestAnnotationProcessor<IntegrationTestAsyncClient>>() {
-                              }));
+   private final RestAnnotationProcessor<IntegrationTestAsyncClient> processor = BaseJettyTest.newBuilder(8100,
+            new Properties()).buildInjector().getInstance(
+            Key.get(new TypeLiteral<RestAnnotationProcessor<IntegrationTestAsyncClient>>() {
+            }));
 
    private HttpCommand createCommand() throws SecurityException, NoSuchMethodException {
       Method method = IntegrationTestAsyncClient.class.getMethod("download", String.class);
 
-      return new TransformingHttpCommandImpl<String>(executorService, processor.createRequest(
-               method, "1"), new ReturnStringIf2xx());
+      return new TransformingHttpCommandImpl<String>(executorService, processor.createRequest(method, "1"),
+               new ReturnStringIf2xx());
    }
 
    @Test
-   void testIncrementsFailureCount() throws InterruptedException, IOException, SecurityException,
-            NoSuchMethodException {
+   void testIncrementsFailureCount() throws InterruptedException, IOException, SecurityException, NoSuchMethodException {
       HttpCommand command = createCommand();
       HttpResponse response = new HttpResponse(400, null, null);
 
@@ -193,8 +187,8 @@ public class BackoffLimitedRetryHandlerTest {
    }
 
    @Test
-   void testDisallowsExcessiveRetries() throws InterruptedException, IOException,
-            SecurityException, NoSuchMethodException {
+   void testDisallowsExcessiveRetries() throws InterruptedException, IOException, SecurityException,
+            NoSuchMethodException {
       HttpCommand command = createCommand();
       HttpResponse response = new HttpResponse(400, null, null);
 

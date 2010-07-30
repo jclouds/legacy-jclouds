@@ -18,13 +18,12 @@
  */
 package org.jclouds.concurrent;
 
+import static com.google.common.base.Throwables.propagate;
+import static org.jclouds.util.Utils.getFirstThrowableOfType;
+
 import java.util.concurrent.TimeoutException;
 
-import org.jclouds.util.Utils;
-
 import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
-
 /**
  * 
  * @author Adrian Cole
@@ -44,15 +43,15 @@ public class RetryOnTimeOutExceptionSupplier<T> implements Supplier<T> {
             ex = null;
             return delegate.get();
          } catch (Exception e) {
-            if ((ex = Utils.getFirstThrowableOfType(e, TimeoutException.class)) != null)
+            if ((ex = getFirstThrowableOfType(e, TimeoutException.class)) != null)
                continue;
-            Throwables.propagate(e);
+            propagate(e);
             assert false;
             return null;
          }
       }
       if (ex != null)
-         Throwables.propagate(ex);
+         propagate(ex);
       assert false;
       return null;
    }

@@ -42,24 +42,20 @@ public class CreateNewKeyPairUnlessUserSpecifiedOtherwise {
    final CreateUniqueKeyPair createUniqueKeyPair;
 
    @Inject
-   CreateNewKeyPairUnlessUserSpecifiedOtherwise(
-         ConcurrentMap<OrgAndName, KeyPair> credentialsMap,
-         CreateUniqueKeyPair createUniqueKeyPair) {
+   CreateNewKeyPairUnlessUserSpecifiedOtherwise(ConcurrentMap<OrgAndName, KeyPair> credentialsMap,
+            CreateUniqueKeyPair createUniqueKeyPair) {
       this.credentialsMap = credentialsMap;
       this.createUniqueKeyPair = createUniqueKeyPair;
    }
 
    @VisibleForTesting
-   public void execute(String org, String tag,
-         TerremarkVCloudTemplateOptions options) {
+   public void execute(String org, String tag, TerremarkVCloudTemplateOptions options) {
       String sshKeyFingerprint = options.getSshKeyFingerprint();
-      boolean shouldAutomaticallyCreateKeyPair = options
-            .shouldAutomaticallyCreateKeyPair();
+      boolean shouldAutomaticallyCreateKeyPair = options.shouldAutomaticallyCreateKeyPair();
       if (sshKeyFingerprint == null && shouldAutomaticallyCreateKeyPair) {
          OrgAndName orgAndName = new OrgAndName(org, tag);
          if (credentialsMap.containsKey(orgAndName)) {
-            options.sshKeyFingerprint(credentialsMap.get(orgAndName)
-                  .getFingerPrint());
+            options.sshKeyFingerprint(credentialsMap.get(orgAndName).getFingerPrint());
          } else {
             KeyPair keyPair = createUniqueKeyPair.apply(orgAndName);
             credentialsMap.put(orgAndName, keyPair);

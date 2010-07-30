@@ -33,14 +33,14 @@ import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.GetOptions;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.Future;
 
 /**
  * Provides access to Azure Blob via their REST API.
  * <p/>
- * All commands return a ListenableFuture of the result from Azure Blob. Any exceptions incurred
+ * All commands return a Future of the result from Azure Blob. Any exceptions incurred
  * during processing will be wrapped in an {@link ExecutionException} as documented in
- * {@link ListenableFuture#get()}.
+ * {@link Future#get()}.
  * 
  * @see <a href="http://msdn.microsoft.com/en-us/library/dd135733.aspx" />
  * @author Adrian Cole

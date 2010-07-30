@@ -18,6 +18,8 @@
  */
 package org.jclouds.concurrent;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -27,30 +29,35 @@ import com.google.common.base.Function;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Transforms the result of a future as soon as it is available.
+ * Transforms the exceptions in a future upon get
  * 
  * Temporarily here until the following is resolved: <a
  * href="http://code.google.com/p/guava-libraries/issues/detail?id=310"> guava issue 310</a>
  * 
  * @author Adrian Cole
  */
-public class FutureExceptionParser<T> implements ListenableFuture<T> {
+public class ExceptionParsingListenableFuture<T> implements ListenableFuture<T> {
 
-   private final ListenableFuture<T> delegate;
+   private final ListenableFuture<T> future;
    private final Function<Exception, T> function;
 
-   public FutureExceptionParser(ListenableFuture<T> delegate, Function<Exception, T> function) {
-      this.delegate = delegate;
-      this.function = function;
+   public static <T> ExceptionParsingListenableFuture<T> create(ListenableFuture<T> future,
+            Function<Exception, T> function) {
+      return new ExceptionParsingListenableFuture<T>(future, function);
+   }
+
+   public ExceptionParsingListenableFuture(ListenableFuture<T> future, Function<Exception, T> function) {
+      this.future = checkNotNull(future);
+      this.function = checkNotNull(function);
    }
 
    public boolean cancel(boolean mayInterruptIfRunning) {
-      return delegate.cancel(mayInterruptIfRunning);
+      return future.cancel(mayInterruptIfRunning);
    }
 
    public T get() throws InterruptedException, ExecutionException {
       try {
-         return delegate.get();
+         return future.get();
       } catch (Exception e) {
          return attemptConvert(e);
       }
@@ -60,26 +67,24 @@ public class FutureExceptionParser<T> implements ListenableFuture<T> {
       return function.apply(e instanceof ExecutionException ? (Exception) e.getCause() : e);
    }
 
-   public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
       try {
-         return delegate.get(timeout, unit);
+         return future.get(timeout, unit);
       } catch (Exception e) {
          return attemptConvert(e);
       }
    }
 
    public boolean isCancelled() {
-      return delegate.isCancelled();
+      return future.isCancelled();
    }
 
    public boolean isDone() {
-      return delegate.isDone();
+      return future.isDone();
    }
 
    @Override
    public void addListener(Runnable listener, Executor exec) {
-      delegate.addListener(listener, exec);
+      future.addListener(listener, exec);
    }
-
 }

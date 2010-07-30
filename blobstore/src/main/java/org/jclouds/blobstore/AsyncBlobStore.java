@@ -19,6 +19,7 @@
 package org.jclouds.blobstore;
 
 import java.util.Set;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import javax.annotation.Nullable;
 
@@ -29,8 +30,6 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.domain.Location;
-
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides hooks needed to run a blob store asynchronously
@@ -51,12 +50,12 @@ public interface AsyncBlobStore {
    /**
     * @see BlobStore#listAssignableLocations
     */
-   ListenableFuture<? extends Set<? extends Location>> listAssignableLocations();
+   ListenableFuture<Set<? extends Location>> listAssignableLocations();
 
    /**
     * @see BlobStore#list
     */
-   ListenableFuture<? extends PageSet<? extends StorageMetadata>> list();
+   ListenableFuture<PageSet<? extends StorageMetadata>> list();
 
    /**
     * @see BlobStore#containerExists
@@ -71,13 +70,12 @@ public interface AsyncBlobStore {
    /**
     * @see BlobStore#list(String)
     */
-   ListenableFuture<? extends PageSet<? extends StorageMetadata>> list(String container);
+   ListenableFuture<PageSet<? extends StorageMetadata>> list(String container);
 
    /**
     * @see BlobStore#list(String, ListContainerOptions)
     */
-   ListenableFuture<? extends PageSet<? extends StorageMetadata>> list(String container,
-            ListContainerOptions options);
+   ListenableFuture<PageSet<? extends StorageMetadata>> list(String container, ListContainerOptions options);
 
    /**
     * @see BlobStore#clearContainer(String)
@@ -127,12 +125,12 @@ public interface AsyncBlobStore {
    /**
     * @see BlobStore#getBlob(String, String)
     */
-   ListenableFuture<? extends Blob> getBlob(String container, String key);
+   ListenableFuture<Blob> getBlob(String container, String key);
 
    /**
     * @see BlobStore#getBlob(String, String, GetOptions)
     */
-   ListenableFuture<? extends Blob> getBlob(String container, String key, GetOptions options);
+   ListenableFuture<Blob> getBlob(String container, String key, GetOptions options);
 
    /**
     * @see BlobStore#removeBlob

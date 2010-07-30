@@ -19,24 +19,19 @@
 package org.jclouds.vcloud.bluelock.compute.config;
 
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
-import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.bluelock.compute.BlueLockVCloudComputeClient;
 import org.jclouds.vcloud.bluelock.compute.config.providers.ParseVAppTemplatesInVDCToSizeProvider;
 import org.jclouds.vcloud.bluelock.compute.strategy.DefaultLoginCredentialsFromBlueLockFAQ;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
-import org.jclouds.vcloud.compute.config.providers.VCloudImageProvider;
-import org.jclouds.vcloud.compute.functions.FindLocationForResourceInVDC;
+import org.jclouds.vcloud.compute.functions.FindLocationForResource;
+import org.jclouds.vcloud.compute.functions.ImageForVAppTemplate;
 
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
@@ -52,9 +47,9 @@ public class BlueLockVCloudComputeServiceContextModule extends VCloudComputeServ
    @Override
    protected void configure() {
       super.configure();
+      bind(ImageForVAppTemplate.class).to(BlueLockImageForVAppTemplate.class);
       bind(VCloudComputeClient.class).to(BlueLockVCloudComputeClient.class);
-      bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(
-               DefaultLoginCredentialsFromBlueLockFAQ.class);
+      bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(DefaultLoginCredentialsFromBlueLockFAQ.class);
    }
 
    protected void bindSizes() {
@@ -62,22 +57,13 @@ public class BlueLockVCloudComputeServiceContextModule extends VCloudComputeServ
       }).toProvider(ParseVAppTemplatesInVDCToSizeProvider.class).in(Scopes.SINGLETON);
    }
 
-   protected void bindImages() {
-      bind(new TypeLiteral<Set<? extends Image>>() {
-      }).toProvider(BlueLockVCloudImageProvider.class).in(Scopes.SINGLETON);
-   }
-
    @Singleton
-   private static class BlueLockVCloudImageProvider extends VCloudImageProvider {
+   private static class BlueLockImageForVAppTemplate extends ImageForVAppTemplate {
 
       @Inject
-      protected BlueLockVCloudImageProvider(
-               VCloudClient client,
-               FindLocationForResourceInVDC findLocationForResourceInVDC,
-               PopulateDefaultLoginCredentialsForImageStrategy populateDefaultLoginCredentialsForImageStrategy,
-               @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-         super(client, findLocationForResourceInVDC,
-                  populateDefaultLoginCredentialsForImageStrategy, executor);
+      protected BlueLockImageForVAppTemplate(FindLocationForResource findLocationForResource,
+               PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider) {
+         super(findLocationForResource, credentialsProvider);
       }
 
       // Extremely important, as otherwise the size encoded into the name will throw off the

@@ -37,14 +37,14 @@ import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.Future;
 
 /**
  * Provides access to Cloud Files via their REST API.
  * <p/>
- * All commands return a ListenableFuture of the result from Cloud Files. Any exceptions incurred
+ * All commands return a Future of the result from Cloud Files. Any exceptions incurred
  * during processing will be wrapped in an {@link ExecutionException} as documented in
- * {@link ListenableFuture#get()}.
+ * {@link Future#get()}.
  * 
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
  * @author Adrian Cole

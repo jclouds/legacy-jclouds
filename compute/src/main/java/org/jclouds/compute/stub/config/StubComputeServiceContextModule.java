@@ -180,12 +180,12 @@ public class StubComputeServiceContextModule extends AbstractModule {
       private NodeState state;
       private final ExecutorService service;
 
-      public StubNodeMetadata(String providerId, String name, String id, Location location,
-               URI uri, Map<String, String> userMetadata, String tag, Image image, NodeState state,
-               Iterable<String> publicAddresses, Iterable<String> privateAddresses,
-               Map<String, String> extra, Credentials credentials, ExecutorService service) {
-         super(providerId, name, id, location, uri, userMetadata, tag, image, state,
-                  publicAddresses, privateAddresses, extra, credentials);
+      public StubNodeMetadata(String providerId, String name, String id, Location location, URI uri,
+               Map<String, String> userMetadata, String tag, Image image, NodeState state,
+               Iterable<String> publicAddresses, Iterable<String> privateAddresses, Map<String, String> extra,
+               Credentials credentials, ExecutorService service) {
+         super(providerId, name, id, location, uri, userMetadata, tag, image, state, publicAddresses, privateAddresses,
+                  extra, credentials);
          this.setState(state, 0);
          this.service = service;
       }
@@ -227,12 +227,10 @@ public class StubComputeServiceContextModule extends AbstractModule {
       private final String passwordPrefix;
 
       @Inject
-      public StubAddNodeWithTagStrategy(ConcurrentMap<Integer, StubNodeMetadata> nodes,
-               Location location, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-               @Named("NODE_ID") Provider<Integer> idProvider,
-               @Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
-               @Named("PRIVATE_IP_PREFIX") String privateIpPrefix,
-               @Named("PASSWORD_PREFIX") String passwordPrefix) {
+      public StubAddNodeWithTagStrategy(ConcurrentMap<Integer, StubNodeMetadata> nodes, Location location,
+               @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
+               @Named("NODE_ID") Provider<Integer> idProvider, @Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
+               @Named("PRIVATE_IP_PREFIX") String privateIpPrefix, @Named("PASSWORD_PREFIX") String passwordPrefix) {
          this.nodes = nodes;
          this.location = location;
          this.service = Executors.newCachedThreadPool();
@@ -244,14 +242,12 @@ public class StubComputeServiceContextModule extends AbstractModule {
 
       @Override
       public NodeMetadata execute(String tag, String name, Template template) {
-         checkArgument(location.equals(template.getLocation()), "invalid location: "
-                  + template.getLocation());
+         checkArgument(location.equals(template.getLocation()), "invalid location: " + template.getLocation());
          int id = idProvider.get();
-         StubNodeMetadata node = new StubNodeMetadata(id + "", name, id + "", location, null,
-                  ImmutableMap.<String, String> of(), tag, template.getImage(), NodeState.PENDING,
-                  ImmutableSet.<String> of(publicIpPrefix + id), ImmutableSet
-                           .<String> of(privateIpPrefix + id), ImmutableMap.<String, String> of(),
-                  new Credentials("root", passwordPrefix + id), service);
+         StubNodeMetadata node = new StubNodeMetadata(id + "", name, id + "", location, null, ImmutableMap
+                  .<String, String> of(), tag, template.getImage(), NodeState.PENDING, ImmutableSet
+                  .<String> of(publicIpPrefix + id), ImmutableSet.<String> of(privateIpPrefix + id), ImmutableMap
+                  .<String, String> of(), new Credentials("root", passwordPrefix + id), service);
          nodes.put(id, node);
          node.setState(NodeState.RUNNING, 100);
          return node;
@@ -289,8 +285,7 @@ public class StubComputeServiceContextModule extends AbstractModule {
       }
 
       @Override
-      public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(
-               Predicate<ComputeMetadata> filter) {
+      public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
          return Iterables.filter(nodes.values(), filter);
       }
    }
@@ -363,18 +358,16 @@ public class StubComputeServiceContextModule extends AbstractModule {
    @Provides
    @Singleton
    protected Set<? extends Size> provideSizes() {
-      return ImmutableSet.of(new StubSize("small", 1, 1740, 160, ImmutableSet
-               .of(Architecture.X86_32)), new StubSize("medium", 4, 7680, 850, ImmutableSet
-               .of(Architecture.X86_64)), new StubSize("large", 8, 15360, 1690, ImmutableSet
-               .of(Architecture.X86_64)));
+      return ImmutableSet.<Size> of(new StubSize("small", 1, 1740, 160, ImmutableSet.of(Architecture.X86_32)),
+               new StubSize("medium", 4, 7680, 850, ImmutableSet.of(Architecture.X86_64)), new StubSize("large", 8,
+                        15360, 1690, ImmutableSet.of(Architecture.X86_64)));
    }
 
    private static class StubSize extends org.jclouds.compute.domain.internal.SizeImpl {
       /** The serialVersionUID */
       private static final long serialVersionUID = -1842135761654973637L;
 
-      StubSize(String type, int cores, int ram, int disk,
-               Iterable<Architecture> supportedArchitectures) {
+      StubSize(String type, int cores, int ram, int disk, Iterable<Architecture> supportedArchitectures) {
          super(type, type, type, null, null, ImmutableMap.<String, String> of(), cores, ram, disk,
                   architectureIn(supportedArchitectures));
       }
@@ -383,22 +376,23 @@ public class StubComputeServiceContextModule extends AbstractModule {
    @Provides
    @Singleton
    protected Set<? extends Image> provideImages(Location defaultLocation) {
-      return ImmutableSet.of(new ImageImpl("1", OsFamily.UBUNTU.name(), "1", defaultLocation, null,
-               ImmutableMap.<String, String> of(), "stub ubuntu 32", "", OsFamily.UBUNTU,
-               "ubuntu 64", Architecture.X86_64, new Credentials("root", null)), new ImageImpl("2",
-               OsFamily.UBUNTU.name(), "2", defaultLocation, null, ImmutableMap
-                        .<String, String> of(), "stub ubuntu 64", "", OsFamily.UBUNTU, "ubuntu 64",
-               Architecture.X86_64, new Credentials("root", null)), new ImageImpl("3",
-               OsFamily.CENTOS.name(), "3", defaultLocation, null, ImmutableMap
-                        .<String, String> of(), "stub centos 64", "", OsFamily.CENTOS, "centos 64",
-               Architecture.X86_64, new Credentials("root", null)));
+      String parentId = defaultLocation.getParent().getId();
+      return ImmutableSet.<Image> of(new ImageImpl("1", OsFamily.UBUNTU.name(), parentId + "/1", defaultLocation
+               .getParent(), null, ImmutableMap.<String, String> of(), "stub ubuntu 32", "", OsFamily.UBUNTU,
+               "ubuntu 64", Architecture.X86_64, new Credentials("root", null)), new ImageImpl("2", OsFamily.UBUNTU
+               .name(), parentId + "/2", defaultLocation.getParent(), null, ImmutableMap.<String, String> of(),
+               "stub ubuntu 64", "", OsFamily.UBUNTU, "ubuntu 64", Architecture.X86_64, new Credentials("root", null)),
+               new ImageImpl("3", OsFamily.CENTOS.name(), parentId + "/3", defaultLocation.getParent(), null,
+                        ImmutableMap.<String, String> of(), "stub centos 64", "", OsFamily.CENTOS, "centos 64",
+                        Architecture.X86_64, new Credentials("root", null)));
    }
 
    @Provides
    @Singleton
    Location getLocation(@org.jclouds.rest.annotations.Provider String providerName) {
       Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
-      return new LocationImpl(LocationScope.ZONE, providerName, providerName, provider);
+      Location region = new LocationImpl(LocationScope.REGION, providerName+"region", providerName+"region", provider);
+      return new LocationImpl(LocationScope.ZONE, providerName+"zone", providerName+"zone", region);
    }
 
    @Provides

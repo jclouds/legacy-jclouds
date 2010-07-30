@@ -19,7 +19,7 @@
 package org.jclouds.nirvanix.sdn;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertNotNull;

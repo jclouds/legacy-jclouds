@@ -18,7 +18,14 @@
  */
 package org.jclouds.blobstore.strategy.internal;
 
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newLinkedHashSet;
+
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Singleton;
 
@@ -31,9 +38,6 @@ import org.jclouds.blobstore.strategy.ListContainerStrategy;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 /**
@@ -52,22 +56,20 @@ public class ListContainerAndRecurseThroughFolders implements ListBlobsInContain
    }
 
    @Override
-   public Iterable<? extends BlobMetadata> execute(final String containerName,
-            final ListContainerOptions options) {
-      final List<Iterable<? extends BlobMetadata>> lists = Lists.newArrayList();
+   public Set<? extends BlobMetadata> execute(final String containerName, final ListContainerOptions options) {
+      final List<Iterable<? extends BlobMetadata>> lists = newArrayList();
       Iterable<? extends StorageMetadata> pwdList = lister.execute(containerName, options);
-      for (StorageMetadata md : Iterables.filter(pwdList, new Predicate<StorageMetadata>() {
+      for (StorageMetadata md : filter(pwdList, new Predicate<StorageMetadata>() {
          @Override
          public boolean apply(StorageMetadata input) {
             return (input.getType() == StorageType.FOLDER || input.getType() == StorageType.RELATIVE_PATH)
                      && options.isRecursive();
          }
       })) {
-         String directory = (options.getDir() != null) ? options.getDir() + "/" + md.getName() : md
-                  .getName();
+         String directory = (options.getDir() != null) ? options.getDir() + "/" + md.getName() : md.getName();
          lists.add(execute(containerName, options.clone().inDirectory(directory)));
       }
-      lists.add(Iterables.transform(Iterables.filter(pwdList, new Predicate<StorageMetadata>() {
+      lists.add(transform(filter(pwdList, new Predicate<StorageMetadata>() {
          @Override
          public boolean apply(StorageMetadata input) {
             return input.getType() == StorageType.BLOB;
@@ -78,6 +80,6 @@ public class ListContainerAndRecurseThroughFolders implements ListBlobsInContain
             return (BlobMetadata) from;
          }
       }));
-      return Sets.newHashSet(Iterables.concat(lists));
+      return newLinkedHashSet(concat(lists));
    }
 }

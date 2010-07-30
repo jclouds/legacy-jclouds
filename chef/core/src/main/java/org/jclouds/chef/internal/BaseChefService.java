@@ -2,8 +2,6 @@ package org.jclouds.chef.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -72,17 +70,17 @@ public class BaseChefService implements ChefService {
    }
 
    @Override
-   public Set<Node> getNodes() {
+   public Iterable<? extends Node> getNodes() {
       return getNodes.execute();
    }
 
    @Override
-   public Set<Node> getNodesWithNamesMatching(Predicate<String> nodeNameSelector) {
+   public Iterable<? extends Node> getNodesWithNamesMatching(Predicate<String> nodeNameSelector) {
       return getNodes.execute(nodeNameSelector);
    }
 
    @Override
-   public Set<Node> getNodesNamed(Iterable<String> names) {
+   public Iterable<? extends Node> getNodesNamed(Iterable<String> names) {
       return getNodes.execute(names);
    }
 

@@ -18,7 +18,7 @@
  */
 package org.jclouds.concurrent;
 
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 import static org.jclouds.concurrent.FuturesTestingUtils.CALLABLE_DURATION;
@@ -35,7 +35,7 @@ import java.util.concurrent.ExecutorService;
 import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.Future;
 
 /**
  * Tests behavior of ConcurrentUtils
@@ -54,7 +54,7 @@ public class ConcurrentUtilsTest {
       ExecutorService chainExecutor = sameThreadExecutor();
 
       long start = System.currentTimeMillis();
-      Map<String, ListenableFuture<Long>> responses = runCallables(callableExecutor, chainExecutor);
+      Map<String, Future<Long>> responses = runCallables(callableExecutor, chainExecutor);
       checkTimeThresholds(expectedMin, expectedMax, expectedOverhead, start, responses);
    }
 
@@ -68,7 +68,7 @@ public class ConcurrentUtilsTest {
       ExecutorService chainExecutor = sameThreadExecutor();
 
       long start = System.currentTimeMillis();
-      Map<String, ListenableFuture<Long>> responses = runCallables(callableExecutor, chainExecutor);
+      Map<String, Future<Long>> responses = runCallables(callableExecutor, chainExecutor);
       Map<String, Exception> exceptions = awaitCompletion(responses, sameThreadExecutor(), null, Logger.CONSOLE,
                "test same thread");
       assertEquals(exceptions.size(), 0);

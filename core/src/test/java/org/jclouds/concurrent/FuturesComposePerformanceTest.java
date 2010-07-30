@@ -18,13 +18,14 @@
  */
 package org.jclouds.concurrent;
 
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static java.util.concurrent.Executors.newCachedThreadPool;
+import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static org.jclouds.concurrent.FuturesTestingUtils.CALLABLE_DURATION;
 import static org.jclouds.concurrent.FuturesTestingUtils.COUNT;
 import static org.jclouds.concurrent.FuturesTestingUtils.FUDGE;
 import static org.jclouds.concurrent.FuturesTestingUtils.LISTENER_DURATION;
-import static org.jclouds.concurrent.FuturesTestingUtils.checkThresholds;
+import static org.jclouds.concurrent.FuturesTestingUtils.checkThresholdsUsingConcurrentUtilsCompose;
+import static org.jclouds.concurrent.FuturesTestingUtils.checkThresholdsUsingFuturesCompose;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -32,7 +33,29 @@ import java.util.concurrent.ExecutorService;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of ConcurrentUtils
+ * 
+ * 
+ * <p/>
+ * All of these tests simulate a future by invoking callables in a separate executor. The point of
+ * this test is to see what happens when we chain futures together.
+ * 
+ * <ol>
+ * <li>{@code CALLABLE_DURATION} is the time that the source future spends doing work</li>
+ * <li>{@code LISTENER_DURATION} is the time that the attached listener or function</li>
+ * </ol>
+ * 
+ * The execution time of a composed task within a composite should not be more than {@code
+ * CALLABLE_DURATION} + {@code LISTENER_DURATION} + overhead when a threadpool is used. This is
+ * because the listener should be invoked as soon as the result is available.
+ * <p/>
+ * The execution time of a composed task within a composite should not be more than {@code
+ * CALLABLE_DURATION} + {@code LISTENER_DURATION} * {@code COUNT} + overhead when caller thread is
+ * used for handling the listeners.
+ * <p/>
+ * ConcurrentUtils overcomes a shortcoming found in Google Guava r06, where Futures.compose eagerly
+ * issues a get() on the source future. This has the effect of serializing the futures as you
+ * iterate. It overcomes this by tagging the ExecutorService we associate with sameThread execution
+ * and lazy convert values accordingly.
  * 
  * @author Adrian Cole
  */
@@ -40,53 +63,153 @@ import org.testng.annotations.Test;
 public class FuturesComposePerformanceTest {
    ExecutorService callableExecutor = newCachedThreadPool();
 
+   /**
+    * When Futures.compose is
+    */
    @Test(enabled = false)
-   public void test1() throws InterruptedException, ExecutionException {
+   public void testFuturesCompose1() throws InterruptedException, ExecutionException {
       long expectedMax = CALLABLE_DURATION + LISTENER_DURATION;
       long expectedMin = CALLABLE_DURATION + LISTENER_DURATION;
       long expectedOverhead = COUNT * 4 + FUDGE;
 
-      ExecutorService chainExecutor = callableExecutor;
-      ExecutorService listenerExecutor = callableExecutor;
+      ExecutorService userthreads = newCachedThreadPool();
+      try {
+         ExecutorService chainExecutor = userthreads;
+         ExecutorService listenerExecutor = userthreads;
 
-      checkThresholds(expectedMin, expectedMax, expectedOverhead, callableExecutor, chainExecutor, listenerExecutor);
+         checkThresholdsUsingFuturesCompose(expectedMin, expectedMax, expectedOverhead, callableExecutor,
+                  chainExecutor, listenerExecutor);
+      } finally {
+         userthreads.shutdownNow();
+      }
    }
 
    @Test(enabled = false)
-   public void test2() throws InterruptedException, ExecutionException {
+   public void testFuturesCompose2() throws InterruptedException, ExecutionException {
       long expectedMax = CALLABLE_DURATION + LISTENER_DURATION;
       long expectedMin = CALLABLE_DURATION + LISTENER_DURATION;
       long expectedOverhead = COUNT + FUDGE;
 
-      ExecutorService chainExecutor = callableExecutor;
-      ExecutorService listenerExecutor = sameThreadExecutor();
+      ExecutorService userthreads = newCachedThreadPool();
+      try {
+         ExecutorService chainExecutor = userthreads;
+         ExecutorService listenerExecutor = sameThreadExecutor();
 
-      checkThresholds(expectedMin, expectedMax, expectedOverhead, callableExecutor, chainExecutor, listenerExecutor);
+         checkThresholdsUsingFuturesCompose(expectedMin, expectedMax, expectedOverhead, callableExecutor,
+                  chainExecutor, listenerExecutor);
+      } finally {
+         userthreads.shutdownNow();
+      }
    }
 
    @Test(enabled = false)
-   public void test3() throws InterruptedException, ExecutionException {
+   public void testFuturesCompose3() throws InterruptedException, ExecutionException {
       long expectedMax = (CALLABLE_DURATION * COUNT) + LISTENER_DURATION;
       long expectedMin = CALLABLE_DURATION + LISTENER_DURATION;
       long expectedOverhead = COUNT + FUDGE;
 
-      ExecutorService chainExecutor = sameThreadExecutor();
-      ExecutorService listenerExecutor = callableExecutor;
+      ExecutorService userthreads = newCachedThreadPool();
+      try {
+         ExecutorService chainExecutor = sameThreadExecutor();
+         ExecutorService listenerExecutor = userthreads;
 
-      checkThresholds(expectedMin, expectedMax, expectedOverhead, callableExecutor, chainExecutor, listenerExecutor);
+         checkThresholdsUsingFuturesCompose(expectedMin, expectedMax, expectedOverhead, callableExecutor,
+                  chainExecutor, listenerExecutor);
+      } finally {
+         userthreads.shutdownNow();
+      }
    }
 
    @Test(enabled = false)
-   public void test4() throws InterruptedException, ExecutionException {
+   public void testFuturesCompose4() throws InterruptedException, ExecutionException {
 
       long expectedMax = (CALLABLE_DURATION * COUNT) + (LISTENER_DURATION * COUNT);
       long expectedMin = CALLABLE_DURATION + LISTENER_DURATION;
       long expectedOverhead = COUNT + FUDGE;
 
-      ExecutorService chainExecutor = sameThreadExecutor();
-      ExecutorService listenerExecutor = sameThreadExecutor();
+      ExecutorService userthreads = newCachedThreadPool();
+      try {
+         ExecutorService chainExecutor = sameThreadExecutor();
+         ExecutorService listenerExecutor = sameThreadExecutor();
 
-      checkThresholds(expectedMin, expectedMax, expectedOverhead, callableExecutor, chainExecutor, listenerExecutor);
+         checkThresholdsUsingFuturesCompose(expectedMin, expectedMax, expectedOverhead, callableExecutor,
+                  chainExecutor, listenerExecutor);
+      } finally {
+         userthreads.shutdownNow();
+      }
+   }
+
+   @Test(enabled = false)
+   public void testConcurrentUtilsCompose1() throws InterruptedException, ExecutionException {
+      long expectedMax = CALLABLE_DURATION + LISTENER_DURATION;
+      long expectedMin = CALLABLE_DURATION + LISTENER_DURATION;
+      long expectedOverhead = COUNT * 4 + FUDGE;
+
+      ExecutorService userthreads = newCachedThreadPool();
+      try {
+         ExecutorService chainExecutor = userthreads;
+         ExecutorService listenerExecutor = userthreads;
+
+         checkThresholdsUsingConcurrentUtilsCompose(expectedMin, expectedMax, expectedOverhead, callableExecutor,
+                  chainExecutor, listenerExecutor);
+      } finally {
+         userthreads.shutdownNow();
+      }
+   }
+
+   @Test(enabled = false)
+   public void testConcurrentUtilsCompose2() throws InterruptedException, ExecutionException {
+      long expectedMax = CALLABLE_DURATION + LISTENER_DURATION;
+      long expectedMin = CALLABLE_DURATION + LISTENER_DURATION;
+      long expectedOverhead = COUNT + FUDGE;
+
+      ExecutorService userthreads = newCachedThreadPool();
+      try {
+         ExecutorService chainExecutor = userthreads;
+         ExecutorService listenerExecutor = sameThreadExecutor();
+
+         checkThresholdsUsingConcurrentUtilsCompose(expectedMin, expectedMax, expectedOverhead, callableExecutor,
+                  chainExecutor, listenerExecutor);
+      } finally {
+         userthreads.shutdownNow();
+      }
+   }
+
+   @Test(enabled = false)
+   public void testConcurrentUtilsCompose3() throws InterruptedException, ExecutionException {
+      long expectedMax = CALLABLE_DURATION + (LISTENER_DURATION * COUNT);
+      long expectedMin = CALLABLE_DURATION + LISTENER_DURATION;
+      long expectedOverhead = COUNT + FUDGE;
+
+      ExecutorService userthreads = newCachedThreadPool();
+      try {
+         ExecutorService chainExecutor = sameThreadExecutor();
+         ExecutorService listenerExecutor = userthreads;
+
+         checkThresholdsUsingConcurrentUtilsCompose(expectedMin, expectedMax, expectedOverhead, callableExecutor,
+                  chainExecutor, listenerExecutor);
+      } finally {
+         userthreads.shutdownNow();
+      }
+   }
+
+   @Test(enabled = false)
+   public void testConcurrentUtilsCompose4() throws InterruptedException, ExecutionException {
+
+      long expectedMax = CALLABLE_DURATION + (LISTENER_DURATION * COUNT);
+      long expectedMin = CALLABLE_DURATION;
+      long expectedOverhead = COUNT + FUDGE;
+
+      ExecutorService userthreads = newCachedThreadPool();
+      try {
+         ExecutorService chainExecutor = sameThreadExecutor();
+         ExecutorService listenerExecutor = sameThreadExecutor();
+
+         checkThresholdsUsingConcurrentUtilsCompose(expectedMin, expectedMax, expectedOverhead, callableExecutor,
+                  chainExecutor, listenerExecutor);
+      } finally {
+         userthreads.shutdownNow();
+      }
    }
 
 }

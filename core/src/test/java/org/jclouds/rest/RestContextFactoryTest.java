@@ -215,7 +215,7 @@ public class RestContextFactoryTest {
       }.createContext("test", props);
    }
 
-   static class A extends AbstractModule {
+   public static class A extends AbstractModule {
 
       @Override
       protected void configure() {
@@ -224,7 +224,7 @@ public class RestContextFactoryTest {
 
    }
 
-   static class B extends AbstractModule {
+   public static class B extends AbstractModule {
 
       @Override
       protected void configure() {

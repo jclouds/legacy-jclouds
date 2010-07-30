@@ -18,7 +18,7 @@
  */
 package org.jclouds.gae.config;
 
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 
 import javax.inject.Singleton;
 

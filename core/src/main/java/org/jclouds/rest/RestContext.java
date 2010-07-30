@@ -22,7 +22,7 @@ import java.net.URI;
 
 import org.jclouds.rest.internal.RestContextImpl;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.Future;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -41,7 +41,7 @@ public interface RestContext<S, A> {
    /**
     * low-level api to the cloud. Threadsafe implementations will return a singleton.
     * 
-    * @return a connection to the cloud where all methods return {@link ListenableFuture}s
+    * @return a connection to the cloud where all methods return {@link Future}s
     */
    A getAsyncApi();
 

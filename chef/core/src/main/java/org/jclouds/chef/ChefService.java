@@ -1,7 +1,5 @@
 package org.jclouds.chef;
 
-import java.util.Set;
-
 import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.internal.BaseChefService;
 
@@ -26,11 +24,11 @@ public interface ChefService {
 
    void deleteAllClientsAndNodesInList(Iterable<String> names);
 
-   Set<Node> getNodes();
+   Iterable<? extends Node> getNodes();
 
-   Set<Node> getNodesWithNamesMatching(Predicate<String> nodeNameSelector);
+   Iterable<? extends Node> getNodesWithNamesMatching(Predicate<String> nodeNameSelector);
 
-   Set<Node> getNodesNamed(Iterable<String> names);
+   Iterable<? extends Node> getNodesNamed(Iterable<String> names);
 
    void updateAutomaticAttributesOnNode(String nodeName);
 }

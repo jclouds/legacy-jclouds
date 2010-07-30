@@ -56,4 +56,9 @@ public class GsonWrapper implements Json {
       return gson.toJson(src);
    }
 
+   @Override
+   public String toJson(Object src, Type type) {
+      return gson.toJson(src, type);
+   }
+
 }

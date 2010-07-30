@@ -27,19 +27,14 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.NamedResource;
-
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class FindLocationForResourceInVDC {
+public class FindLocationForResource {
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -48,28 +43,26 @@ public class FindLocationForResourceInVDC {
    final Location defaultLocation;
 
    @Inject
-   public FindLocationForResourceInVDC(Provider<Set<? extends Location>> locations,
-            Location defaultLocation) {
+   public FindLocationForResource(Provider<Set<? extends Location>> locations, Location defaultLocation) {
       this.locations = locations;
       this.defaultLocation = defaultLocation;
    }
 
-   public Location apply(NamedResource resource, final String vdcId) {
-      Location location = null;
-      try {
-         location = Iterables.find(locations.get(), new Predicate<Location>() {
-
-            @Override
-            public boolean apply(Location input) {
-               return input.getId().equals(vdcId);
-            }
-
-         });
-      } catch (NoSuchElementException e) {
-         logger.error("unknown vdc %s for %s %s; not in %s", vdcId, resource.getType(), resource
-                  .getId(), locations);
-         location = new LocationImpl(LocationScope.ZONE, vdcId, vdcId, defaultLocation.getParent());
+   /**
+    * searches for a location associated with this resource.
+    * 
+    * @throws NoSuchElementException
+    *            if not found
+    */
+   public Location apply(NamedResource resource) {
+      for (Location input : locations.get()) {
+         do {
+            if (input.getId().equals(resource.getId()))
+               return input;
+            input = input.getParent();
+         } while (input.getParent() != null);
       }
-      return location;
+      throw new NoSuchElementException(String.format("resource: %s not found in locations: %s", resource, locations
+               .get()));
    }
 }

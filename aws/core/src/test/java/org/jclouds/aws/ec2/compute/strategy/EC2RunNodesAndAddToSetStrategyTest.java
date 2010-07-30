@@ -60,20 +60,17 @@ public class EC2RunNodesAndAddToSetStrategyTest {
 
    @Test
    public void testZoneAsALocation() {
-      assertRegionAndZoneForLocation(ZONE_AP_SOUTHEAST_1A,
-            Region.AP_SOUTHEAST_1, AvailabilityZone.AP_SOUTHEAST_1A);
+      assertRegionAndZoneForLocation(ZONE_AP_SOUTHEAST_1A, Region.AP_SOUTHEAST_1, AvailabilityZone.AP_SOUTHEAST_1A);
    }
 
    @Test
    public void testRegionAsALocation() {
-      assertRegionAndZoneForLocation(REGION_AP_SOUTHEAST_1,
-            Region.AP_SOUTHEAST_1, null);
+      assertRegionAndZoneForLocation(REGION_AP_SOUTHEAST_1, Region.AP_SOUTHEAST_1, null);
    }
 
    // // fixtures
 
-   public static Iterable<NodeMetadata> containsNodeMetadata(
-         final NodeMetadata in) {
+   public static Iterable<NodeMetadata> containsNodeMetadata(final NodeMetadata in) {
       reportMatcher(new IArgumentMatcher() {
 
          @Override
@@ -92,8 +89,8 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       return null;
    }
 
-   private void assertRegionAndZoneForLocation(Location location,
-         String region, String zone) {
+   @SuppressWarnings("unchecked")
+   private void assertRegionAndZoneForLocation(Location location, String region, String zone) {
       String imageId = "ami1";
       String instanceCreatedId = "instance1";
       // setup mocks
@@ -102,37 +99,28 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       InstanceClient instanceClient = createMock(InstanceClient.class);
       RunInstancesOptions ec2Options = createMock(RunInstancesOptions.class);
       RunningInstance instance = createMock(RunningInstance.class);
-      Reservation reservation = new Reservation(region, ImmutableSet
-            .<String> of(), ImmutableSet.<RunningInstance> of(instance),
-            "ownerId", "requesterId", "reservationId");
+      Reservation<? extends RunningInstance> reservation = new Reservation<RunningInstance>(region, ImmutableSet
+               .<String> of(), ImmutableSet.<RunningInstance> of(instance), "ownerId", "requesterId", "reservationId");
       NodeMetadata nodeMetadata = createMock(NodeMetadata.class);
 
       // setup expectations
-      expect(strategy.client.getInstanceServices()).andReturn(instanceClient)
-            .atLeastOnce();
+      expect(strategy.client.getInstanceServices()).andReturn(instanceClient).atLeastOnce();
       expect(
-            strategy.createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions
-                  .execute(region, input.tag, input.template)).andReturn(
-            ec2Options);
-      expect(input.template.getLocation()).andReturn(input.location)
-            .atLeastOnce();
+               strategy.createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.execute(region, input.tag,
+                        input.template)).andReturn(ec2Options);
+      expect(input.template.getLocation()).andReturn(input.location).atLeastOnce();
       expect(input.template.getImage()).andReturn(input.image).atLeastOnce();
       expect(input.image.getProviderId()).andReturn(imageId).atLeastOnce();
-      expect(
-            instanceClient.runInstancesInRegion(region, zone, imageId, 1,
-                  input.count, ec2Options)).andReturn(reservation);
+      expect(instanceClient.runInstancesInRegion(region, zone, imageId, 1, input.count, ec2Options)).andReturn(
+              (Reservation)reservation);
       expect(instance.getId()).andReturn(instanceCreatedId).atLeastOnce();
       expect(strategy.instancePresent.apply(instance)).andReturn(true);
-      expect(input.template.getOptions()).andReturn(input.options)
-            .atLeastOnce();
+      expect(input.template.getOptions()).andReturn(input.options).atLeastOnce();
 
-      expect(strategy.runningInstanceToNodeMetadata.apply(instance)).andReturn(
-            nodeMetadata);
+      expect(strategy.runningInstanceToNodeMetadata.apply(instance)).andReturn(nodeMetadata);
       expect(
-            strategy.utils
-                  .runOptionsOnNodesAndAddToGoodSetOrPutExceptionIntoBadMap(
-                        eq(input.options), containsNodeMetadata(nodeMetadata),
-                        eq(input.nodes), eq(input.badNodes))).andReturn(null);
+               strategy.utils.runOptionsOnNodesAndAddToGoodSetOrPutExceptionIntoBadMap(eq(input.options),
+                        containsNodeMetadata(nodeMetadata), eq(input.nodes), eq(input.badNodes))).andReturn(null);
 
       // replay mocks
       replay(instanceClient);
@@ -143,8 +131,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       replayStrategy(strategy);
 
       // run
-      strategy.execute(input.tag, input.count, input.template, input.nodes,
-            input.badNodes);
+      strategy.execute(input.tag, input.count, input.template, input.nodes, input.badNodes);
 
       // verify mocks
       verify(instanceClient);
@@ -155,12 +142,10 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       verifyStrategy(strategy);
    }
 
-   private static final Location REGION_AP_SOUTHEAST_1 = new LocationImpl(
-         LocationScope.REGION, Region.AP_SOUTHEAST_1, Region.AP_SOUTHEAST_1,
-         new LocationImpl(LocationScope.PROVIDER, "ec2", "ec2", null));
-   private static final Location ZONE_AP_SOUTHEAST_1A = new LocationImpl(
-         LocationScope.ZONE, AvailabilityZone.AP_SOUTHEAST_1A,
-         AvailabilityZone.AP_SOUTHEAST_1A, REGION_AP_SOUTHEAST_1);
+   private static final Location REGION_AP_SOUTHEAST_1 = new LocationImpl(LocationScope.REGION, Region.AP_SOUTHEAST_1,
+            Region.AP_SOUTHEAST_1, new LocationImpl(LocationScope.PROVIDER, "ec2", "ec2", null));
+   private static final Location ZONE_AP_SOUTHEAST_1A = new LocationImpl(LocationScope.ZONE,
+            AvailabilityZone.AP_SOUTHEAST_1A, AvailabilityZone.AP_SOUTHEAST_1A, REGION_AP_SOUTHEAST_1);
 
    // /////////////////////////////////////////////////////////////////////
    @SuppressWarnings("unchecked")
@@ -213,9 +198,8 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       Predicate<RunningInstance> instanceStateRunning = createMock(Predicate.class);
       RunningInstanceToNodeMetadata runningInstanceToNodeMetadata = createMock(RunningInstanceToNodeMetadata.class);
       ComputeUtils utils = createMock(ComputeUtils.class);
-      return new EC2RunNodesAndAddToSetStrategy(client,
-            createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions,
-            instanceStateRunning, runningInstanceToNodeMetadata, utils);
+      return new EC2RunNodesAndAddToSetStrategy(client, createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions,
+               instanceStateRunning, runningInstanceToNodeMetadata, utils);
    }
 
    private void replayStrategy(EC2RunNodesAndAddToSetStrategy strategy) {

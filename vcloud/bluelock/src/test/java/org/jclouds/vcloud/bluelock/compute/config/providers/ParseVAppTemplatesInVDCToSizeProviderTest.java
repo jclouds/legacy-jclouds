@@ -36,7 +36,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.compute.functions.FindLocationForResourceInVDC;
+import org.jclouds.vcloud.compute.functions.FindLocationForResource;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.endpoints.VCloudApi;
@@ -80,13 +80,12 @@ public class ParseVAppTemplatesInVDCToSizeProviderTest {
       VDC vdc = factory.create(injector.getInstance(VDCHandler.class)).parse(is);
 
       VCloudClient client = createMock(VCloudClient.class);
-      FindLocationForResourceInVDC findLocationForResourceInVDC = createMock(FindLocationForResourceInVDC.class);
+      FindLocationForResource findLocationForResourceInVDC = createMock(FindLocationForResource.class);
 
-      ParseVAppTemplatesInVDCToSizeProvider providerParser = new ParseVAppTemplatesInVDCToSizeProvider(
-               client, findLocationForResourceInVDC);
+      ParseVAppTemplatesInVDCToSizeProvider providerParser = new ParseVAppTemplatesInVDCToSizeProvider(client,
+               findLocationForResourceInVDC);
 
-      expect(findLocationForResourceInVDC.apply((NamedResource) anyObject(), (String) anyObject()))
-               .andReturn(null).atLeastOnce();
+      expect(findLocationForResourceInVDC.apply((NamedResource) anyObject())).andReturn(null).atLeastOnce();
 
       replay(client);
       replay(findLocationForResourceInVDC);
@@ -95,16 +94,14 @@ public class ParseVAppTemplatesInVDCToSizeProviderTest {
       providerParser.addSizesFromVAppTemplatesInVDC(vdc, sizes);
       assertEquals(sizes.size(), vdc.getResourceEntities().size());
 
-      assertEquals(Iterables.get(sizes, 0), new SizeImpl("396", "4CPUx2GBx20GB", "396", null, null,
-               ImmutableMap.<String, String> of(), 4.0, 2048, 20, ImagePredicates.idEquals("396")));
+      assertEquals(Iterables.get(sizes, 0), new SizeImpl("396", "4CPUx2GBx20GB", "396", null, null, ImmutableMap
+               .<String, String> of(), 4.0, 2048, 20, ImagePredicates.idEquals("396")));
 
-      assertEquals(Iterables.get(sizes, 116), new SizeImpl("434", "1CPUx512MBx40GB", "434", null,
-               null, ImmutableMap.<String, String> of(), 1.0, 512, 40, ImagePredicates
-                        .idEquals("434")));
+      assertEquals(Iterables.get(sizes, 116), new SizeImpl("434", "1CPUx512MBx40GB", "434", null, null, ImmutableMap
+               .<String, String> of(), 1.0, 512, 40, ImagePredicates.idEquals("434")));
 
-      assertEquals(Iterables.getLast(sizes), new SizeImpl("383", "1CPUx1GBx20GB", "383", null,
-               null, ImmutableMap.<String, String> of(), 1.0, 1024, 20, ImagePredicates
-                        .idEquals("396")));
+      assertEquals(Iterables.getLast(sizes), new SizeImpl("383", "1CPUx1GBx20GB", "383", null, null, ImmutableMap
+               .<String, String> of(), 1.0, 1024, 20, ImagePredicates.idEquals("396")));
 
       verify(client);
       verify(findLocationForResourceInVDC);

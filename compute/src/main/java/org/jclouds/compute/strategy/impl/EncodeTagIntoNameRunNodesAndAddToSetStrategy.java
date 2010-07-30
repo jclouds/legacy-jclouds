@@ -19,13 +19,12 @@
 
 package org.jclouds.compute.strategy.impl;
 
-import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
-
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -47,7 +46,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * creates futures that correlate to
@@ -55,8 +53,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @Singleton
-public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements
-      RunNodesAndAddToSetStrategy {
+public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrategy {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -67,12 +64,9 @@ public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements
    protected final ExecutorService executor;
 
    @Inject
-   protected EncodeTagIntoNameRunNodesAndAddToSetStrategy(
-         AddNodeWithTagStrategy addNodeWithTagStrategy,
-         ListNodesStrategy listNodesStrategy,
-         @Named("NAMING_CONVENTION") String nodeNamingConvention,
-         ComputeUtils utils,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   protected EncodeTagIntoNameRunNodesAndAddToSetStrategy(AddNodeWithTagStrategy addNodeWithTagStrategy,
+            ListNodesStrategy listNodesStrategy, @Named("NAMING_CONVENTION") String nodeNamingConvention,
+            ComputeUtils utils, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.addNodeWithTagStrategy = addNodeWithTagStrategy;
       this.listNodesStrategy = listNodesStrategy;
       this.nodeNamingConvention = nodeNamingConvention;
@@ -81,51 +75,43 @@ public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements
    }
 
    /**
-    * This implementation gets a list of acceptable node names to encode the tag
-    * into, then it simultaneously runs the nodes and applies options to them.
+    * This implementation gets a list of acceptable node names to encode the tag into, then it
+    * simultaneously runs the nodes and applies options to them.
     */
    @Override
-   public Map<?, ListenableFuture<Void>> execute(final String tag,
-         final int count, final Template template,
-         final Set<NodeMetadata> nodes,
-         final Map<NodeMetadata, Exception> badNodes) {
-      Map<String, ListenableFuture<Void>> responses = Maps.newHashMap();
+   public Map<?, Future<Void>> execute(final String tag, final int count, final Template template,
+            final Set<NodeMetadata> nodes, final Map<NodeMetadata, Exception> badNodes) {
+      Map<String, Future<Void>> responses = Maps.newHashMap();
       for (final String name : getNextNames(tag, template, count)) {
-         responses.put(name, makeListenable(executor
-               .submit(new Callable<Void>() {
-                  @Override
-                  public Void call() throws Exception {
-                     NodeMetadata node = null;
-                     logger.debug(">> starting node(%s) tag(%s)", name, tag);
-                     node = addNodeWithTagStrategy.execute(tag, name, template);
-                     logger.debug("<< %s node(%s)", node.getState(), node
-                           .getId());
-                     utils
-                           .runOptionsOnNodeAndAddToGoodSetOrPutExceptionIntoBadMap(
-                                 node, badNodes, nodes, template.getOptions())
-                           .call();
-                     return null;
-                  }
-               }), executor));
+         responses.put(name, executor.submit(new Callable<Void>() {
+            @Override
+            public Void call() throws Exception {
+               NodeMetadata node = null;
+               logger.debug(">> starting node(%s) tag(%s)", name, tag);
+               node = addNodeWithTagStrategy.execute(tag, name, template);
+               logger.debug("<< %s node(%s)", node.getState(), node.getId());
+               utils.runOptionsOnNodeAndAddToGoodSetOrPutExceptionIntoBadMap(node, badNodes, nodes,
+                        template.getOptions()).call();
+               return null;
+            }
+         }));
       }
       return responses;
    }
 
    /**
-    * Find the next node names that can be used. These will be derived from the
-    * tag and the template. We will pre-allocate a specified quantity, and
-    * attempt to verify that there is no name conflict with the current service.
+    * Find the next node names that can be used. These will be derived from the tag and the
+    * template. We will pre-allocate a specified quantity, and attempt to verify that there is no
+    * name conflict with the current service.
     * 
     * @param tag
     * @param count
     * @param template
     * @return
     */
-   protected Set<String> getNextNames(final String tag,
-         final Template template, int count) {
+   protected Set<String> getNextNames(final String tag, final Template template, int count) {
       Set<String> names = Sets.newHashSet();
-      Iterable<? extends ComputeMetadata> currentNodes = listNodesStrategy
-            .list();
+      Iterable<? extends ComputeMetadata> currentNodes = listNodesStrategy.list();
       int maxTries = 100;
       int currentTries = 0;
       while (names.size() < count && currentTries++ < maxTries) {
@@ -145,16 +131,14 @@ public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements
    }
 
    /**
-    * Get a name using a random mechanism that still ties all nodes in a tag
-    * together.
+    * Get a name using a random mechanism that still ties all nodes in a tag together.
     * 
-    * This implementation will pass the tag and a hex formatted random number to
-    * the configured naming convention.
+    * This implementation will pass the tag and a hex formatted random number to the configured
+    * naming convention.
     * 
     */
    protected String getNextName(final String tag, final Template template) {
-      return String.format(nodeNamingConvention, tag, Integer
-            .toHexString(new SecureRandom().nextInt(4095)));
+      return String.format(nodeNamingConvention, tag, Integer.toHexString(new SecureRandom().nextInt(4095)));
    }
 
 }

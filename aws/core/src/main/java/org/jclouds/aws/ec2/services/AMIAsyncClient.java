@@ -23,6 +23,7 @@ import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
 
 import java.util.Map;
 import java.util.Set;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
@@ -56,8 +57,6 @@ import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 /**
  * Provides access to AMI Services.
  * <p/>
@@ -77,7 +76,7 @@ public interface AMIAsyncClient {
    @FormParams(keys = ACTION, values = "DescribeImages")
    @XMLResponseParser(DescribeImagesResponseHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
-   ListenableFuture<? extends Set<Image>> describeImagesInRegion(
+   ListenableFuture<Set<? extends Image>> describeImagesInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region, DescribeImagesOptions... options);
 
    /**
@@ -87,9 +86,8 @@ public interface AMIAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateImage")
    @XMLResponseParser(ImageIdHandler.class)
-   ListenableFuture<String> createImageInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region, @FormParam("Name") String name,
-            @FormParam("InstanceId") String instanceId, CreateImageOptions... options);
+   ListenableFuture<String> createImageInRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @FormParam("Name") String name, @FormParam("InstanceId") String instanceId, CreateImageOptions... options);
 
    /**
     * @see AMIClient#deregisterImageInRegion
@@ -97,8 +95,7 @@ public interface AMIAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeregisterImage")
-   ListenableFuture<Void> deregisterImageInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+   ListenableFuture<Void> deregisterImageInRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("ImageId") String imageId);
 
    /**
@@ -181,7 +178,7 @@ public interface AMIAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeImageAttribute", "productCodes" })
    @XMLResponseParser(ProductCodesHandler.class)
-   ListenableFuture<? extends Set<String>> getProductCodesForImageInRegion(
+   ListenableFuture<Set<String>> getProductCodesForImageInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("ImageId") String imageId);
 
@@ -192,7 +189,7 @@ public interface AMIAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeImageAttribute", "blockDeviceMapping" })
    @XMLResponseParser(BlockDeviceMappingHandler.class)
-   ListenableFuture<? extends Map<String, EbsBlockDevice>> getBlockDeviceMappingsForImageInRegion(
+   ListenableFuture<Map<String, EbsBlockDevice>> getBlockDeviceMappingsForImageInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @FormParam("ImageId") String imageId);
 
@@ -203,8 +200,7 @@ public interface AMIAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION, "OperationType", "Attribute" }, values = { "ModifyImageAttribute", "add",
             "productCodes" })
-   ListenableFuture<Void> addProductCodesToImageInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+   ListenableFuture<Void> addProductCodesToImageInRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
             @BinderParam(BindProductCodesToIndexedFormParams.class) Iterable<String> productCodes,
             @FormParam("ImageId") String imageId);
 

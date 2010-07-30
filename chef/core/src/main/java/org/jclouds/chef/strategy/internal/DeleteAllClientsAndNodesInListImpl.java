@@ -35,7 +35,7 @@ import org.jclouds.chef.reference.ChefConstants;
 import org.jclouds.chef.strategy.DeleteAllClientsAndNodesInList;
 import org.jclouds.logging.Logger;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.Future;
 import com.google.inject.Inject;
 
 /**
@@ -68,7 +68,7 @@ public class DeleteAllClientsAndNodesInListImpl implements DeleteAllClientsAndNo
    @Override
    public void execute(Iterable<String> names) {
       Map<String, Exception> exceptions = newHashMap();
-      Map<String, ListenableFuture<?>> responses = newHashMap();
+      Map<String, Future<?>> responses = newHashMap();
       for (String name : names) {
          responses.put(name, chefAsyncClient.deleteClient(name));
          responses.put(name, chefAsyncClient.deleteNode(name));

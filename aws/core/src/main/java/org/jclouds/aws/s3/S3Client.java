@@ -38,14 +38,14 @@ import org.jclouds.aws.s3.options.PutObjectOptions;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.GetOptions;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.Future;
 
 /**
  * Provides access to S3 via their REST API.
  * <p/>
- * All commands return a ListenableFuture of the result from S3. Any exceptions incurred during
+ * All commands return a Future of the result from S3. Any exceptions incurred during
  * processing will be wrapped in an {@link ExecutionException} as documented in
- * {@link ListenableFuture#get()}.
+ * {@link Future#get()}.
  * 
  * @author Adrian Cole
  * @author James Murty
@@ -85,7 +85,7 @@ public interface S3Client {
     *           namespace of the object you are retrieving
     * @param key
     *           unique key in the s3Bucket identifying the object
-    * @return ListenableFuture reference to a fully populated S3Object including data stored in S3
+    * @return Future reference to a fully populated S3Object including data stored in S3
     *         or {@link S3Object#NOT_FOUND} if not present.
     * 
     * @throws org.jclouds.http.HttpResponseException
@@ -231,7 +231,7 @@ public interface S3Client {
     * 
     * @param bucketName
     *           namespace of the objects you wish to list
-    * @return ListenableFuture reference to a fully populated S3Bucket including metadata of the
+    * @return Future reference to a fully populated S3Bucket including metadata of the
     *         S3Objects it contains or {@link BoundedList<ObjectMetadata>#NOT_FOUND} if not present.
     * @see ListBucketOptions
     * 

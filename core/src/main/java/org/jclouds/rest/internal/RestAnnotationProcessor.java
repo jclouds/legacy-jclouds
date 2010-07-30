@@ -159,7 +159,7 @@ public class RestAnnotationProcessor<T> {
    static final Map<MethodKey, Method> delegationMap = newHashMap();
 
    static Map<Method, Map<Integer, Set<Annotation>>> createMethodToIndexOfParamToAnnotation(
-         final Class<? extends Annotation> annotation) {
+            final Class<? extends Annotation> annotation) {
       return new MapMaker().makeComputingMap(new Function<Method, Map<Integer, Set<Annotation>>>() {
          public Map<Integer, Set<Annotation>> apply(final Method method) {
             return new MapMaker().makeComputingMap(new GetAnnotationsForMethodParameterIndex(method, annotation));
@@ -193,7 +193,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    private static final Class<? extends HttpRequestOptions[]> optionsVarArgsClass = new HttpRequestOptions[] {}
-         .getClass();
+            .getClass();
 
    private static final Function<? super Entry<String, String>, ? extends Part> ENTRY_TO_PART = new Function<Entry<String, String>, Part>() {
 
@@ -205,17 +205,17 @@ public class RestAnnotationProcessor<T> {
    };
 
    private final Map<Method, Set<Integer>> methodToIndexesOfOptions = new MapMaker()
-         .makeComputingMap(new Function<Method, Set<Integer>>() {
-            public Set<Integer> apply(final Method method) {
-               Set<Integer> toReturn = newHashSet();
-               for (int index = 0; index < method.getParameterTypes().length; index++) {
-                  Class<?> type = method.getParameterTypes()[index];
-                  if (HttpRequestOptions.class.isAssignableFrom(type) || optionsVarArgsClass.isAssignableFrom(type))
-                     toReturn.add(index);
+            .makeComputingMap(new Function<Method, Set<Integer>>() {
+               public Set<Integer> apply(final Method method) {
+                  Set<Integer> toReturn = newHashSet();
+                  for (int index = 0; index < method.getParameterTypes().length; index++) {
+                     Class<?> type = method.getParameterTypes()[index];
+                     if (HttpRequestOptions.class.isAssignableFrom(type) || optionsVarArgsClass.isAssignableFrom(type))
+                        toReturn.add(index);
+                  }
+                  return toReturn;
                }
-               return toReturn;
-            }
-         });
+            });
 
    private final ParseSax.Factory parserFactory;
    private final HttpUtils utils;
@@ -233,7 +233,7 @@ public class RestAnnotationProcessor<T> {
 
    @VisibleForTesting
    public static Function<HttpResponse, ?> createResponseParser(ParseSax.Factory parserFactory, Injector injector,
-         Method method, HttpRequest request) {
+            Method method, HttpRequest request) {
       Function<HttpResponse, ?> transformer;
       Class<? extends HandlerWithResult<?>> handler = getSaxResponseParserClassOrNull(method);
       if (handler != null) {
@@ -254,7 +254,7 @@ public class RestAnnotationProcessor<T> {
 
    @VisibleForTesting
    public static Function<Exception, ?> createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(
-         Injector injector, Method method) {
+            Injector injector, Method method) {
       ExceptionParser annotation = method.getAnnotation(ExceptionParser.class);
       if (annotation != null) {
          return injector.getInstance(annotation.value());
@@ -265,7 +265,7 @@ public class RestAnnotationProcessor<T> {
    @SuppressWarnings("unchecked")
    @Inject
    public RestAnnotationProcessor(Injector injector, ParseSax.Factory parserFactory, HttpUtils utils,
-         TypeLiteral<T> typeLiteral) {
+            TypeLiteral<T> typeLiteral) {
       this.declaring = (Class<T>) typeLiteral.getRawType();
       this.injector = injector;
       this.parserFactory = parserFactory;
@@ -380,7 +380,7 @@ public class RestAnnotationProcessor<T> {
    public GeneratedHttpRequest<T> createRequest(Method method, Object... args) {
       inputParamValidator.validateMethodParametersOrThrow(method, args);
       ClassMethodArgs cma = logger.isTraceEnabled() ? new ClassMethodArgs(method.getDeclaringClass(), method, args)
-            : null;
+               : null;
 
       URI endpoint = callerEndpoint;
       try {
@@ -453,7 +453,7 @@ public class RestAnnotationProcessor<T> {
       }
 
       GeneratedHttpRequest<T> request = new GeneratedHttpRequest<T>(httpMethod, endpoint, skips, declaring, method,
-            args);
+               args);
       addHostHeaderIfAnnotatedWithVirtualHost(headers, request.getEndpoint().getHost(), method);
       addFiltersIfAnnotated(method, request);
 
@@ -483,7 +483,7 @@ public class RestAnnotationProcessor<T> {
          builder.path(clazz);
       builder.path(method);
       return builder.buildFromEncodedMap(convertUnsafe(encodeValues(getPathParamKeyValues(method, args), skips)))
-            .getPath();
+               .getPath();
    }
 
    private Multimap<String, String> addPathAndGetTokens(Class<?> clazz, Method method, Object[] args, UriBuilder builder) {
@@ -498,14 +498,14 @@ public class RestAnnotationProcessor<T> {
    }
 
    public static URI replaceQuery(Provider<UriBuilder> uriBuilderProvider, URI in, String newQuery,
-         @Nullable Comparator<Entry<String, String>> sorter, char... skips) {
+            @Nullable Comparator<Entry<String, String>> sorter, char... skips) {
       UriBuilder builder = uriBuilderProvider.get().uri(in);
       builder.replaceQuery(makeQueryLine(parseQueryToMap(newQuery), sorter, skips));
       return builder.build();
    }
 
    private void addMatrixParams(UriBuilder builder, Collection<Entry<String, String>> tokenValues, Method method,
-         Object... args) {
+            Object... args) {
       if (declaring.isAnnotationPresent(MatrixParams.class)) {
          MatrixParams matrix = declaring.getAnnotation(MatrixParams.class);
          addMatrix(builder, matrix, tokenValues);
@@ -522,7 +522,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    private Multimap<String, String> addFormParams(Collection<Entry<String, String>> tokenValues, Method method,
-         Object... args) {
+            Object... args) {
       Multimap<String, String> formMap = LinkedListMultimap.create();
       if (declaring.isAnnotationPresent(FormParams.class)) {
          FormParams form = declaring.getAnnotation(FormParams.class);
@@ -541,7 +541,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    private Multimap<String, String> addQueryParams(Collection<Entry<String, String>> tokenValues, Method method,
-         Object... args) {
+            Object... args) {
       Multimap<String, String> queryMap = LinkedListMultimap.create();
       if (declaring.isAnnotationPresent(QueryParams.class)) {
          QueryParams query = declaring.getAnnotation(QueryParams.class);
@@ -560,7 +560,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    private void addForm(Multimap<String, String> formParams, FormParams form,
-         Collection<Entry<String, String>> tokenValues) {
+            Collection<Entry<String, String>> tokenValues) {
       for (int i = 0; i < form.keys().length; i++) {
          if (form.values()[i].equals(FormParams.NULL)) {
             formParams.removeAll(form.keys()[i]);
@@ -572,7 +572,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    private void addQuery(Multimap<String, String> queryParams, QueryParams query,
-         Collection<Entry<String, String>> tokenValues) {
+            Collection<Entry<String, String>> tokenValues) {
       for (int i = 0; i < query.keys().length; i++) {
          if (query.values()[i].equals(QueryParams.NULL)) {
             queryParams.removeAll(query.keys()[i]);
@@ -615,7 +615,7 @@ public class RestAnnotationProcessor<T> {
    @VisibleForTesting
    public static URI getEndpointInParametersOrNull(Method method, Object[] args, Injector injector) {
       Map<Integer, Set<Annotation>> map = RestAnnotationProcessor.indexWithOnlyOneAnnotation(method, "@EndpointParam",
-            RestAnnotationProcessor.methodToIndexOfParamToEndpointParamAnnotations);
+               RestAnnotationProcessor.methodToIndexOfParamToEndpointParamAnnotations);
       if (map.size() == 1 && args.length > 0) {
          EndpointParam annotation = (EndpointParam) map.values().iterator().next().iterator().next();
          int index = map.keySet().iterator().next();
@@ -623,7 +623,7 @@ public class RestAnnotationProcessor<T> {
          try {
             URI returnVal = parser.apply(args[index]);
             checkArgument(returnVal != null, String.format("endpoint for [%s] not configured for %s", args[index],
-                  method));
+                     method));
             return returnVal;
          } catch (NullPointerException e) {
             throw new IllegalArgumentException(String.format("argument at index %d on method %s", index, method), e);
@@ -666,13 +666,13 @@ public class RestAnnotationProcessor<T> {
       ResponseParser annotation = method.getAnnotation(ResponseParser.class);
       if (annotation == null) {
          if (method.getReturnType().equals(void.class)
-               || TypeLiteral.get(method.getGenericReturnType()).equals(futureVoidLiteral)) {
+                  || TypeLiteral.get(method.getGenericReturnType()).equals(futureVoidLiteral)) {
             return Key.get(ReleasePayloadAndReturn.class);
          } else if (method.getReturnType().equals(boolean.class) || method.getReturnType().equals(Boolean.class)
-               || TypeLiteral.get(method.getGenericReturnType()).equals(futureBooleanLiteral)) {
+                  || TypeLiteral.get(method.getGenericReturnType()).equals(futureBooleanLiteral)) {
             return Key.get(ReturnTrueIf2xx.class);
          } else if (method.getReturnType().equals(InputStream.class)
-               || TypeLiteral.get(method.getGenericReturnType()).equals(futureInputStreamLiteral)) {
+                  || TypeLiteral.get(method.getGenericReturnType()).equals(futureInputStreamLiteral)) {
             return Key.get(ReturnInputStream.class);
          } else if (getAcceptHeadersOrNull(method).contains(MediaType.APPLICATION_JSON)) {
             Type returnVal;
@@ -693,10 +693,10 @@ public class RestAnnotationProcessor<T> {
                parserType = Types.newParameterizedType(ParseJson.class, returnVal);
             return (Key<? extends Function<HttpResponse, ?>>) Key.get(parserType);
          } else if (method.getReturnType().equals(String.class)
-               || TypeLiteral.get(method.getGenericReturnType()).equals(futureStringLiteral)) {
+                  || TypeLiteral.get(method.getGenericReturnType()).equals(futureStringLiteral)) {
             return Key.get(ReturnStringIf2xx.class);
          } else if (method.getReturnType().equals(URI.class)
-               || TypeLiteral.get(method.getGenericReturnType()).equals(futureURILiteral)) {
+                  || TypeLiteral.get(method.getGenericReturnType()).equals(futureURILiteral)) {
             return Key.get(ParseURIFromListOrLocationHeaderIf20x.class);
          } else {
             throw new IllegalStateException("You must specify a ResponseParser annotation on: " + method.toString());
@@ -728,7 +728,7 @@ public class RestAnnotationProcessor<T> {
                } else {
                   if (postBinders[0] instanceof org.jclouds.rest.MapBinder) {
                      throw new IllegalArgumentException("we currently do not support multiple varargs postBinders in: "
-                           + method.getName());
+                              + method.getName());
                   }
                }
             } else if (arg instanceof org.jclouds.rest.MapBinder) {
@@ -765,8 +765,8 @@ public class RestAnnotationProcessor<T> {
       Set<String> requests = IsHttpMethod.getHttpMethods(method);
       if (requests == null || requests.size() != 1) {
          throw new IllegalStateException(
-               "You must use at least one, but no more than one http method or pathparam annotation on: "
-                     + method.toString());
+                  "You must use at least one, but no more than one http method or pathparam annotation on: "
+                           + method.toString());
       }
       return requests.iterator().next();
    }
@@ -789,12 +789,12 @@ public class RestAnnotationProcessor<T> {
          mapBinder.bindToRequest(request, mapParams);
       } else {
          OUTER: for (Entry<Integer, Set<Annotation>> entry : filterValues(
-               methodToIndexOfParamToDecoratorParamAnnotation.get(request.getJavaMethod()),
-               new Predicate<Set<Annotation>>() {
-                  public boolean apply(Set<Annotation> input) {
-                     return input.size() >= 1;
-                  }
-               }).entrySet()) {
+                  methodToIndexOfParamToDecoratorParamAnnotation.get(request.getJavaMethod()),
+                  new Predicate<Set<Annotation>>() {
+                     public boolean apply(Set<Annotation> input) {
+                        return input.size() >= 1;
+                     }
+                  }).entrySet()) {
             boolean shouldBreak = false;
             BinderParam payloadAnnotation = (BinderParam) entry.getValue().iterator().next();
             Binder binder = injector.getInstance(payloadAnnotation.value());
@@ -830,18 +830,18 @@ public class RestAnnotationProcessor<T> {
    }
 
    public static Map<Integer, Set<Annotation>> indexWithOnlyOneAnnotation(Method method, String description,
-         Map<Method, Map<Integer, Set<Annotation>>> toRefine) {
+            Map<Method, Map<Integer, Set<Annotation>>> toRefine) {
       Map<Integer, Set<Annotation>> indexToPayloadAnnotation = filterValues(toRefine.get(method),
-            new Predicate<Set<Annotation>>() {
-               public boolean apply(Set<Annotation> input) {
-                  return input.size() == 1;
-               }
-            });
+               new Predicate<Set<Annotation>>() {
+                  public boolean apply(Set<Annotation> input) {
+                     return input.size() == 1;
+                  }
+               });
 
       if (indexToPayloadAnnotation.size() > 1) {
          throw new IllegalStateException(String.format(
-               "You must not specify more than one %s annotation on: %s; found %s", description, method.toString(),
-               indexToPayloadAnnotation));
+                  "You must not specify more than one %s annotation on: %s; found %s", description, method.toString(),
+                  indexToPayloadAnnotation));
       }
       return indexToPayloadAnnotation;
    }
@@ -861,7 +861,7 @@ public class RestAnnotationProcessor<T> {
                } else {
                   if (options[0] instanceof HttpRequestOptions) {
                      throw new IllegalArgumentException("we currently do not support multiple varargs options in: "
-                           + method.getName());
+                              + method.getName());
                   }
                }
             } else {
@@ -873,7 +873,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    public Multimap<String, String> buildHeaders(Collection<Entry<String, String>> tokenValues, Method method,
-         final Object... args) {
+            final Object... args) {
       Multimap<String, String> headers = LinkedHashMultimap.create();
       addHeaderIfAnnotationPresentOnMethod(headers, method, tokenValues);
       Map<Integer, Set<Annotation>> indexToHeaderParam = methodToIndexOfParamToHeaderParamAnnotations.get(method);
@@ -920,7 +920,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    public void addHeaderIfAnnotationPresentOnMethod(Multimap<String, String> headers, Method method,
-         Collection<Entry<String, String>> tokenValues) {
+            Collection<Entry<String, String>> tokenValues) {
       if (declaring.isAnnotationPresent(Headers.class)) {
          Headers header = declaring.getAnnotation(Headers.class);
          addHeader(headers, header, tokenValues);
@@ -932,7 +932,7 @@ public class RestAnnotationProcessor<T> {
    }
 
    private void addHeader(Multimap<String, String> headers, Headers header,
-         Collection<Entry<String, String>> tokenValues) {
+            Collection<Entry<String, String>> tokenValues) {
       for (int i = 0; i < header.keys().length; i++) {
          String value = header.values()[i];
          value = replaceTokens(value, tokenValues);

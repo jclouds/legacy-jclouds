@@ -19,17 +19,20 @@
 package org.jclouds.rackspace.cloudfiles.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.util.concurrent.Futures.compose;
+import static org.jclouds.concurrent.ConcurrentUtils.compose;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.Constants;
 import org.jclouds.blobstore.TransientAsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
@@ -72,15 +75,16 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
    private final ListContainerOptionsToBlobStoreListContainerOptions container2ContainerListOptions;
    private final ResourceToObjectList resource2ObjectList;
    private final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
+   private final ExecutorService service;
 
    @Inject
-   private StubCloudFilesAsyncClient(TransientAsyncBlobStore blobStore,
-            ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
-            CFObject.Factory objectProvider,
-            HttpGetOptionsListToGetOptions httpGetOptionsConverter, ObjectToBlob object2Blob,
-            BlobToObject blob2Object, ResourceToObjectInfo blob2ObjectInfo,
+   private StubCloudFilesAsyncClient(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
+            TransientAsyncBlobStore blobStore, ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
+            CFObject.Factory objectProvider, HttpGetOptionsListToGetOptions httpGetOptionsConverter,
+            ObjectToBlob object2Blob, BlobToObject blob2Object, ResourceToObjectInfo blob2ObjectInfo,
             ListContainerOptionsToBlobStoreListContainerOptions container2ContainerListOptions,
             ResourceToObjectList resource2ContainerList) {
+      this.service = service;
       this.containerToBlobs = containerToBlobs;
       this.blobStore = blobStore;
       this.objectProvider = objectProvider;
@@ -127,7 +131,7 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
 
    public ListenableFuture<CFObject> getObject(String container, String key, GetOptions... options) {
       org.jclouds.blobstore.options.GetOptions getOptions = httpGetOptionsConverter.apply(options);
-      return compose(blobStore.getBlob(container, key, getOptions), blob2Object);
+      return compose(blobStore.getBlob(container, key, getOptions), blob2Object, service);
    }
 
    public ListenableFuture<MutableObjectInfoWithMetadata> getObjectInfo(String container, String key) {
@@ -140,28 +144,27 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
                      return blob2ObjectInfo.apply(from);
                   }
 
-               });
+               }, service);
    }
 
-   public ListenableFuture<? extends Set<ContainerCDNMetadata>> listCDNContainers(
-            ListCdnContainerOptions... options) {
+   public ListenableFuture<? extends Set<ContainerCDNMetadata>> listCDNContainers(ListCdnContainerOptions... options) {
       throw new UnsupportedOperationException();
    }
 
    public ListenableFuture<? extends Set<ContainerMetadata>> listContainers(
             org.jclouds.rackspace.cloudfiles.options.ListContainerOptions... options) {
-      return immediateFuture(Sets.newHashSet(Iterables.transform(blobStore.getContainerToBlobs()
-               .keySet(), new Function<String, ContainerMetadata>() {
-         public ContainerMetadata apply(String name) {
-            return new ContainerMetadata(name, -1, -1);
-         }
-      })));
+      return immediateFuture(Sets.newHashSet(Iterables.transform(blobStore.getContainerToBlobs().keySet(),
+               new Function<String, ContainerMetadata>() {
+                  public ContainerMetadata apply(String name) {
+                     return new ContainerMetadata(name, -1, -1);
+                  }
+               })));
    }
 
    public ListenableFuture<PageSet<ObjectInfo>> listObjects(String container,
             org.jclouds.rackspace.cloudfiles.options.ListContainerOptions... optionsList) {
       ListContainerOptions options = container2ContainerListOptions.apply(optionsList);
-      return compose(blobStore.list(container, options), resource2ObjectList);
+      return compose(blobStore.list(container, options), resource2ObjectList, service);
    }
 
    public ListenableFuture<String> putObject(String container, CFObject object) {
@@ -172,8 +175,7 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
       return blobStore.removeBlob(container, key);
    }
 
-   public ListenableFuture<Boolean> setObjectInfo(String container, String key,
-            Map<String, String> userMetadata) {
+   public ListenableFuture<Boolean> setObjectInfo(String container, String key, Map<String, String> userMetadata) {
       throw new UnsupportedOperationException();
    }
 

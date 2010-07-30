@@ -27,7 +27,6 @@ import static org.jclouds.chef.reference.ChefConstants.CHEF_NODE;
 import static org.jclouds.chef.reference.ChefConstants.CHEF_ROLE;
 import static org.jclouds.chef.reference.ChefConstants.CHEF_SERVICE_CLIENT;
 
-import java.util.Enumeration;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -41,18 +40,18 @@ import org.jclouds.chef.ChefClient;
 import org.jclouds.chef.ChefContext;
 import org.jclouds.chef.ChefService;
 import org.jclouds.chef.reference.ChefConstants;
+import org.jclouds.chef.servlet.functions.InitParamsToProperties;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.jdk.JDKLogger;
 import org.jclouds.rest.RestContextFactory;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.Future;
 
 /**
- * Registers a new node in Chef and binds its name to
- * {@link ChefConstants.CHEF_NODE}, its role to {@link ChefConstants.CHEF_ROLE}
- * and the {@link ChefService} for the client to
- * {@link ChefConstants.CHEF_SERVICE_CLIENT} upon initialized. Deletes the node
- * and client when the context is destroyed.
+ * Registers a new node in Chef and binds its name to {@link ChefConstants.CHEF_NODE}, its role to
+ * {@link ChefConstants.CHEF_ROLE} and the {@link ChefService} for the client to
+ * {@link ChefConstants.CHEF_SERVICE_CLIENT} upon initialized. Deletes the node and client when the
+ * context is destroyed.
  * 
  * @author Adrian Cole
  */
@@ -60,18 +59,11 @@ public class ChefRegistrationListener implements ServletContextListener {
 
    private Logger logger = new JDKLogger.JDKLoggerFactory().getLogger(ChefRegistrationListener.class.getName());
 
-   @SuppressWarnings("unchecked")
    @Override
    public void contextInitialized(ServletContextEvent servletContextEvent) {
       try {
          logger.debug("starting initialization");
-         Properties overrides = new Properties();
-         Enumeration<String> e = servletContextEvent.getServletContext().getInitParameterNames();
-         while (e.hasMoreElements()) {
-            String propertyName = e.nextElement();
-            overrides.setProperty(propertyName, servletContextEvent.getServletContext().getInitParameter(propertyName));
-
-         }
+         Properties overrides = InitParamsToProperties.INSTANCE.apply(servletContextEvent);
          String role = getInitParam(servletContextEvent, CHEF_ROLE);
 
          logger.trace("creating validator connection");
@@ -105,8 +97,8 @@ public class ChefRegistrationListener implements ServletContextListener {
    }
 
    private String findNextClientAndNodeName(ChefService validatorService, String prefix) {
-      ListenableFuture<Set<String>> nodes = validatorService.getContext().getAsyncApi().listNodes();
-      ListenableFuture<Set<String>> clients = validatorService.getContext().getAsyncApi().listClients();
+      Future<Set<String>> nodes = validatorService.getContext().getAsyncApi().listNodes();
+      Future<Set<String>> clients = validatorService.getContext().getAsyncApi().listClients();
       try {
          String nodeName;
          Set<String> names = newHashSet(concat(nodes.get(), clients.get()));
@@ -156,7 +148,7 @@ public class ChefRegistrationListener implements ServletContextListener {
 
    private ChefService createService(Properties props) {
       return ((ChefContext) new RestContextFactory().<ChefClient, ChefAsyncClient> createContext("chef", props))
-            .getChefService();
+               .getChefService();
    }
 
    private static String getInitParam(ServletContextEvent servletContextEvent, String name) {

@@ -58,7 +58,7 @@ import com.google.common.collect.Multimap;
  * <p/>
  * // this will copy the object, provided it wasn't modified since yesterday.
  * // it will not use metadata from the source, and instead use what we pass in.
- * ListenableFuture<S3Object.Metadata> object = connection.copyObject("sourceBucket", "objectName",
+ * Future<S3Object.Metadata> object = connection.copyObject("sourceBucket", "objectName",
  * "destinationBucket", "destinationName",
  * overrideMetadataWith(meta).
  * ifSourceModifiedSince(new Date().minusDays(1))

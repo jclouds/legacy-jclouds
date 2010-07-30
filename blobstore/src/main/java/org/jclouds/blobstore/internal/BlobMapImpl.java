@@ -33,6 +33,8 @@ import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.PutBlobsStrategy;
 import org.jclouds.blobstore.strategy.internal.ListContainerAndRecurseThroughFolders;
 
+import com.google.common.collect.Sets;
+
 /**
  * Map representation of a live connection to a Blob Service.
  * 
@@ -46,10 +48,8 @@ public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
    @Inject
    public BlobMapImpl(BlobStore blobstore, GetBlobsInListStrategy getAllBlobs,
             ContainsValueInListStrategy containsValueStrategy, PutBlobsStrategy putBlobsStrategy,
-            ListContainerAndRecurseThroughFolders listStrategy, String containerName,
-            ListContainerOptions options) {
-      super(blobstore, getAllBlobs, containsValueStrategy, putBlobsStrategy, listStrategy,
-               containerName, options);
+            ListContainerAndRecurseThroughFolders listStrategy, String containerName, ListContainerOptions options) {
+      super(blobstore, getAllBlobs, containsValueStrategy, putBlobsStrategy, listStrategy, containerName, options);
    }
 
    @Override
@@ -89,10 +89,9 @@ public class BlobMapImpl extends BaseBlobMap<Blob> implements BlobMap {
       return old;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public Collection<Blob> values() {
-      return (Collection<Blob>) getAllBlobs.execute(containerName, options);
+      return Sets.newLinkedHashSet(getAllBlobs.execute(containerName, options));
    }
 
    @Override

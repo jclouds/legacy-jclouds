@@ -61,7 +61,7 @@ public interface InstanceClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeInstances.html"
     *      />
     */
-   Set<Reservation> describeInstancesInRegion(@Nullable String region,
+   Set<? extends Reservation<? extends RunningInstance>> describeInstancesInRegion(@Nullable String region,
          String... instanceIds);
 
    /**
@@ -141,7 +141,7 @@ public interface InstanceClient {
     *      />
     * @see RunInstancesOptions
     */
-   Reservation runInstancesInRegion(@Nullable String region,
+   Reservation<? extends RunningInstance> runInstancesInRegion(@Nullable String region,
          @Nullable String nullableAvailabilityZone, String imageId,
          int minCount, int maxCount, RunInstancesOptions... options);
 
@@ -161,7 +161,7 @@ public interface InstanceClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-TerminateInstances.html"
     *      />
     */
-   Set<InstanceStateChange> terminateInstancesInRegion(@Nullable String region,
+   Set<? extends InstanceStateChange> terminateInstancesInRegion(@Nullable String region,
          String... instanceIds);
 
    /**
@@ -199,7 +199,7 @@ public interface InstanceClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-StopInstances.html"
     *      />
     */
-   Set<InstanceStateChange> stopInstancesInRegion(@Nullable String region,
+   Set<? extends InstanceStateChange> stopInstancesInRegion(@Nullable String region,
          boolean force, String... instanceIds);
 
    /**
@@ -255,7 +255,7 @@ public interface InstanceClient {
     * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-StartInstances.html"
     *      />
     */
-   Set<InstanceStateChange> startInstancesInRegion(@Nullable String region,
+   Set<? extends InstanceStateChange> startInstancesInRegion(@Nullable String region,
          String... instanceIds);
 
    /**

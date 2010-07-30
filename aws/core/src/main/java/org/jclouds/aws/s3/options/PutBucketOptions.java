@@ -46,7 +46,7 @@ import com.google.common.collect.Multimap;
  * import org.jclouds.aws.s3.S3Client;
  * <p/>
  * S3Client connection = // get connection
- * ListenableFuture<Boolean> createdInEu = connection.putBucketIfNotExists("bucketName",createIn(EU));
+ * Future<Boolean> createdInEu = connection.putBucketIfNotExists("bucketName",createIn(EU));
  * <code>
  * 
  * @author Adrian Cole

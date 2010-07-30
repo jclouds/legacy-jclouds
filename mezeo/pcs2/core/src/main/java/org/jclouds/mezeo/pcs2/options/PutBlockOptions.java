@@ -35,7 +35,7 @@ import com.google.common.collect.Multimap;
  * import org.jclouds.mezeo.pcs2.PCSClient;
  * <p/>
  * PCSClient connection = // get connection
- * ListenableFuture<Void> added = connection.appendFile("container",range(0,3));
+ * Future<Void> added = connection.appendFile("container",range(0,3));
  * <code>
  * 
  * @author Adrian Cole

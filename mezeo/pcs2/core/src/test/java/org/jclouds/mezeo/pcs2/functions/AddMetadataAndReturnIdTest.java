@@ -49,7 +49,7 @@ public class AddMetadataAndReturnIdTest {
 //   @SuppressWarnings("unchecked")
 //   PCSUtil createPCSUtil() {
 //      PCSUtil connection = createMock(PCSUtil.class);
-//      final ListenableFuture<Void> voidF = createMock(ListenableFuture.class);
+//      final Future<Void> voidF = createMock(Future.class);
 //      expect(
 //               connection.putMetadata(eq("7F143552-AAF5-11DE-BBB0-0BC388ED913B"), eq("foo"),
 //                        eq("bar"))).andReturn(voidF);

@@ -33,8 +33,8 @@ import com.google.inject.internal.Nullable;
  *      />
  * @author Adrian Cole
  */
-public class Reservation extends LinkedHashSet<RunningInstance> implements Comparable<Reservation>,
-         Set<RunningInstance> {
+public class Reservation<T extends RunningInstance> extends LinkedHashSet<T> implements Comparable<Reservation<T>>,
+         Set<T> {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -9051777593518861395L;
@@ -47,9 +47,8 @@ public class Reservation extends LinkedHashSet<RunningInstance> implements Compa
    private final @Nullable
    String reservationId;
 
-   public Reservation(String region, Iterable<String> groupIds,
-            Iterable<RunningInstance> instances, @Nullable String ownerId,
-            @Nullable String requesterId, @Nullable String reservationId) {
+   public Reservation(String region, Iterable<String> groupIds, Iterable<T> instances,
+            @Nullable String ownerId, @Nullable String requesterId, @Nullable String reservationId) {
       this.region = checkNotNull(region, "region");
       Iterables.addAll(this.groupIds, checkNotNull(groupIds, "groupIds"));
       Iterables.addAll(this, checkNotNull(instances, "instances"));
@@ -65,7 +64,7 @@ public class Reservation extends LinkedHashSet<RunningInstance> implements Compa
       return region;
    }
 
-   public int compareTo(Reservation o) {
+   public int compareTo(Reservation<T> o) {
       return (this == o) ? 0 : getReservationId().compareTo(o.getReservationId());
    }
 
@@ -117,7 +116,7 @@ public class Reservation extends LinkedHashSet<RunningInstance> implements Compa
          return false;
       if (getClass() != obj.getClass())
          return false;
-      Reservation other = (Reservation) obj;
+      Reservation<?> other = (Reservation<?>) obj;
       if (groupIds == null) {
          if (other.groupIds != null)
             return false;

@@ -46,7 +46,7 @@ import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
  * import org.jclouds.aws.s3.S3Client;
  * 
  * S3Client connection = // get connection
- * ListenableFuture<Boolean> publicly readable = connection.putObject("bucketName",new S3Object("key","value"), withAcl(CannedAccessPolicy.PUBLIC_READ));
+ * Future<Boolean> publicly readable = connection.putObject("bucketName",new S3Object("key","value"), withAcl(CannedAccessPolicy.PUBLIC_READ));
  * <code>
  * 
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html?RESTObjectPUT.html?"

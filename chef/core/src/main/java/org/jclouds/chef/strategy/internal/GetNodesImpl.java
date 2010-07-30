@@ -18,17 +18,11 @@
  */
 package org.jclouds.chef.strategy.internal;
 
-import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.collect.Sets.newHashSet;
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
-import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
+import static org.jclouds.concurrent.ConcurrentUtils.transformParallel;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -42,8 +36,8 @@ import org.jclouds.chef.reference.ChefConstants;
 import org.jclouds.chef.strategy.GetNodes;
 import org.jclouds.logging.Logger;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
 /**
@@ -67,46 +61,33 @@ public class GetNodesImpl implements GetNodes {
 
    @Inject
    GetNodesImpl(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor, ChefClient getAllNode,
-         ChefAsyncClient ablobstore) {
+            ChefAsyncClient ablobstore) {
       this.userExecutor = userExecutor;
       this.chefAsyncClient = ablobstore;
       this.chefClient = getAllNode;
    }
 
    @Override
-   public Set<Node> execute() {
+   public Iterable<? extends Node> execute() {
       return execute(chefClient.listNodes());
    }
 
    @Override
-   public Set<Node> execute(Predicate<String> nodeNameSelector) {
+   public Iterable<? extends Node> execute(Predicate<String> nodeNameSelector) {
       return execute(filter(chefClient.listNodes(), nodeNameSelector));
    }
 
    @Override
-   public Set<Node> execute(Iterable<String> toGet) {
-      Map<String, Exception> exceptions = newHashMap();
-      final Set<Node> nodes = newHashSet();
-      Map<String, ListenableFuture<?>> responses = newHashMap();
-      for (String nodeName : toGet) {
-         final ListenableFuture<? extends Node> future = chefAsyncClient.getNode(nodeName);
-         future.addListener(new Runnable() {
-            @Override
-            public void run() {
-               try {
-                  nodes.add(future.get());
-               } catch (InterruptedException e) {
-                  propagate(e);
-               } catch (ExecutionException e) {
-                  propagate(e);
-               }
-            }
-         }, sameThreadExecutor());
-         responses.put(nodeName, future);
-      }
-      exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, String.format("getting nodes: %s", toGet));
-      if (exceptions.size() > 0)
-         throw new RuntimeException(String.format("errors getting  nodes: %s: %s", toGet, exceptions));
-      return nodes;
+   public Iterable<? extends Node> execute(Iterable<String> toGet) {
+      return transformParallel(toGet, new Function<String, Future<Node>>() {
+
+         @Override
+         public Future<Node> apply(String from) {
+            return chefAsyncClient.getNode(from);
+         }
+
+      }, userExecutor, maxTime, logger, "getting nodes");
+
    }
+
 }

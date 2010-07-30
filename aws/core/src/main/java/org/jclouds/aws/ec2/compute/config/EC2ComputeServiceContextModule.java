@@ -18,6 +18,16 @@
  */
 package org.jclouds.aws.ec2.compute.config;
 
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Iterables.toArray;
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static com.google.common.collect.Maps.uniqueIndex;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.imageIds;
 import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.ownedBy;
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
@@ -26,17 +36,18 @@ import static org.jclouds.aws.ec2.util.EC2Utils.getAllRunningInstancesInRegion;
 import static org.jclouds.aws.ec2.util.EC2Utils.parseHandle;
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
-import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
+import static org.jclouds.concurrent.ConcurrentUtils.transformParallel;
 
 import java.net.URI;
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.concurrent.Callable;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -61,6 +72,7 @@ import org.jclouds.aws.ec2.compute.functions.RegionAndIdToImage;
 import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.aws.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
+import org.jclouds.aws.ec2.compute.strategy.DescribeImagesParallel;
 import org.jclouds.aws.ec2.compute.strategy.EC2DestroyLoadBalancerStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2DestroyNodeStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2LoadBalanceNodesStrategy;
@@ -68,8 +80,8 @@ import org.jclouds.aws.ec2.compute.strategy.EC2RunNodesAndAddToSetStrategy;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
+import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
-import org.jclouds.aws.ec2.domain.Image.ImageType;
 import org.jclouds.aws.ec2.functions.RunningInstanceToStorageMappingUnix;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.aws.ec2.predicates.InstancePresent;
@@ -96,7 +108,6 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.LoadBalanceNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
-import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
@@ -108,6 +119,7 @@ import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
@@ -115,8 +127,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -206,13 +216,13 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
       @Named(ComputeServiceConstants.COMPUTE_LOGGER)
       protected Logger logger = Logger.NULL;
 
-      private final EC2Client client;
+      private final EC2AsyncClient client;
       private final Map<String, URI> regionMap;
       private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
       private final ExecutorService executor;
 
       @Inject
-      protected EC2ListNodesStrategy(EC2Client client, @Region Map<String, URI> regionMap,
+      protected EC2ListNodesStrategy(EC2AsyncClient client, @Region Map<String, URI> regionMap,
                RunningInstanceToNodeMetadata runningInstanceToNodeMetadata,
                @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
          this.client = client;
@@ -222,31 +232,25 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
       }
 
       @Override
-      public Iterable<? extends ComputeMetadata> list() {
+      public Set<? extends ComputeMetadata> list() {
          return listDetailsOnNodesMatching(NodePredicates.all());
       }
 
       @Override
-      public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
-         final Set<NodeMetadata> nodes = Sets.newHashSet();
+      public Set<? extends NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
+         Iterable<Set<? extends Reservation<? extends RunningInstance>>> reservations = transformParallel(regionMap
+                  .keySet(), new Function<String, Future<Set<? extends Reservation<? extends RunningInstance>>>>() {
 
-         Map<String, ListenableFuture<?>> parallelResponses = Maps.newHashMap();
+            @Override
+            public Future<Set<? extends Reservation<? extends RunningInstance>>> apply(String from) {
+               return client.getInstanceServices().describeInstancesInRegion(from);
+            }
 
-         for (final String region : regionMap.keySet()) {
-            parallelResponses.put(region, ConcurrentUtils.makeListenable(executor.submit(new Callable<Void>() {
-               @Override
-               public Void call() throws Exception {
-                  Iterables.addAll(nodes, Iterables.transform(Iterables.concat(client.getInstanceServices()
-                           .describeInstancesInRegion(region)), runningInstanceToNodeMetadata));
-                  return null;
-               }
-            }), executor));
-         }
-         Map<String, Exception> exceptions = awaitCompletion(parallelResponses, executor, null, logger, "nodes");
+         }, executor, null, logger, "reservations");
 
-         if (exceptions.size() > 0)
-            throw new RuntimeException(String.format("error parsing nodes in regions: %s", exceptions));
-         return Iterables.filter(nodes, filter);
+         Iterable<? extends RunningInstance> instances = concat(concat(reservations));
+         Iterable<? extends NodeMetadata> nodes = filter(transform(instances, runningInstanceToNodeMetadata), filter);
+         return newLinkedHashSet(nodes);
       }
    }
 
@@ -268,7 +272,7 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
          String region = parts[0];
          String instanceId = parts[1];
          try {
-            RunningInstance runningInstance = Iterables.getOnlyElement(getAllRunningInstancesInRegion(client
+            RunningInstance runningInstance = getOnlyElement(getAllRunningInstancesInRegion(client
                      .getInstanceServices(), region, instanceId));
             return runningInstanceToNodeMetadata.apply(runningInstance);
          } catch (NoSuchElementException e) {
@@ -305,7 +309,7 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
    protected final Map<RegionAndName, KeyPair> credentialsMap(CreateUniqueKeyPair in) {
       // doesn't seem to clear when someone issues remove(key)
       // return new MapMaker().makeComputingMap(in);
-      return Maps.newLinkedHashMap();
+      return newLinkedHashMap();
    }
 
    @Provides
@@ -314,7 +318,7 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
    protected final Map<RegionAndName, String> securityGroupMap(CreateSecurityGroupIfNeeded in) {
       // doesn't seem to clear when someone issues remove(key)
       // return new MapMaker().makeComputingMap(in);
-      return Maps.newLinkedHashMap();
+      return newLinkedHashMap();
    }
 
    @Provides
@@ -323,7 +327,7 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
    protected final Map<RegionAndName, String> placementGroupMap(CreatePlacementGroupIfNeeded in) {
       // doesn't seem to clear when someone issues remove(key)
       // return new MapMaker().makeComputingMap(in);
-      return Maps.newLinkedHashMap();
+      return newLinkedHashMap();
    }
 
    @Provides
@@ -340,10 +344,10 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
    @Provides
    @Singleton
    Set<? extends Size> provideSizes(Set<? extends Location> locations, @Named(PROPERTY_EC2_CC_AMIs) String[] ccAmis) {
-      Set<Size> sizes = Sets.newHashSet();
+      Set<Size> sizes = newHashSet();
       for (String ccAmi : ccAmis) {
          final String region = ccAmi.split("/")[0];
-         Location location = Iterables.find(locations, new Predicate<Location>() {
+         Location location = find(locations, new Predicate<Location>() {
 
             @Override
             public boolean apply(Location input) {
@@ -362,11 +366,11 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
    Set<? extends Location> provideLocations(Map<String, String> availabilityZoneToRegionMap,
             @Provider String providerName) {
       Location ec2 = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
-      Set<Location> locations = Sets.newLinkedHashSet();
-      for (String region : Sets.newLinkedHashSet(availabilityZoneToRegionMap.values())) {
+      Set<Location> locations = newLinkedHashSet();
+      for (String region : newLinkedHashSet(availabilityZoneToRegionMap.values())) {
          locations.add(new LocationImpl(LocationScope.REGION, region, region, ec2));
       }
-      ImmutableMap<String, Location> idToLocation = Maps.uniqueIndex(locations, new Function<Location, String>() {
+      ImmutableMap<String, Location> idToLocation = uniqueIndex(locations, new Function<Location, String>() {
          @Override
          public String apply(Location from) {
             return from.getId();
@@ -391,7 +395,7 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
    String[] amiOwners(@Named(PROPERTY_EC2_AMI_OWNERS) String amiOwners) {
       if (amiOwners.trim().equals(""))
          return new String[] {};
-      return Iterables.toArray(Splitter.on(',').split(amiOwners), String.class);
+      return toArray(Splitter.on(',').split(amiOwners), String.class);
    }
 
    @Provides
@@ -400,7 +404,7 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
    String[] ccAmis(@Named(PROPERTY_EC2_CC_AMIs) String ccAmis) {
       if (ccAmis.trim().equals(""))
          return new String[] {};
-      return Iterables.toArray(Splitter.on(',').split(ccAmis), String.class);
+      return toArray(Splitter.on(',').split(ccAmis), String.class);
    }
 
    @Provides
@@ -416,54 +420,62 @@ public class EC2ComputeServiceContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Map<RegionAndName, ? extends Image> provideImages(final EC2Client sync,
-            @Region Map<String, URI> regionMap, final LogHolder holder, Function<ComputeMetadata, String> indexer,
-            @Named(PROPERTY_EC2_CC_AMIs) String[] ccAmis, @Named(PROPERTY_EC2_AMI_OWNERS) final String[] amiOwners,
-            final ImageParser parser, final ConcurrentMap<RegionAndName, Image> images,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) throws InterruptedException,
-            ExecutionException, TimeoutException {
+   protected Map<RegionAndName, ? extends Image> provideImages(@Region Map<String, URI> regionMap,
+            DescribeImagesParallel describer, LogHolder holder, @Named(PROPERTY_EC2_CC_AMIs) String[] ccAmis,
+            @Named(PROPERTY_EC2_AMI_OWNERS) final String[] amiOwners, final ImageParser parser,
+            final ConcurrentMap<RegionAndName, Image> images) throws InterruptedException, ExecutionException,
+            TimeoutException {
       if (amiOwners.length == 0) {
          holder.logger.debug(">> no owners specified, skipping image parsing");
       } else {
          holder.logger.debug(">> providing images");
 
-         Map<String, ListenableFuture<?>> parallelResponses = Maps.newHashMap();
-         final DescribeImagesOptions options;
-         if (amiOwners.length == 1 && amiOwners[0].equals("*"))
-            options = new DescribeImagesOptions();
-         else
-            options = ownedBy(amiOwners);
-         for (final String region : regionMap.keySet()) {
-            parallelResponses.put(region, ConcurrentUtils.makeListenable(executor.submit(new Callable<Void>() {
-               @Override
-               public Void call() throws Exception {
-                  Set<org.jclouds.aws.ec2.domain.Image> matchingImages = sync.getAMIServices().describeImagesInRegion(
-                           region, options);
-                  for (final org.jclouds.aws.ec2.domain.Image from : matchingImages) {
-                     Image image = parser.apply(from);
-                     if (image != null)
-                        images.put(new RegionAndName(region, image.getProviderId()), image);
-                     else if (from.getImageType() == ImageType.MACHINE)
-                        holder.logger.trace("<< image(%s) didn't parse", from.getId());
-                  }
-                  return null;
-               }
-            }), executor));
-         }
-         Map<String, Exception> exceptions = awaitCompletion(parallelResponses, executor, null, holder.logger, "images");
-         for (String ccAmi : ccAmis) {
-            String region = ccAmi.split("/")[0];
-            org.jclouds.aws.ec2.domain.Image from = Iterables.getOnlyElement(sync.getAMIServices()
-                     .describeImagesInRegion(region, imageIds(ccAmi.split("/")[1])));
-            Image image = parser.apply(from);
-            if (image != null)
-               images.put(new RegionAndName(region, image.getProviderId()), image);
-         }
-         if (exceptions.size() > 0)
-            throw new RuntimeException(String.format("error parsing images in regions: %s", exceptions));
+         Iterable<Entry<String, DescribeImagesOptions>> queries = concat(getDescribeQueriesForOwnersInRegions(
+                  regionMap, amiOwners).entrySet(), ccAmisToDescribeQueries(ccAmis).entrySet());
+
+         Iterable<? extends Image> parsedImages = filter(transform(describer.apply(queries), parser), Predicates
+                  .notNull());
+
+         images.putAll(Maps.uniqueIndex(parsedImages, new Function<Image, RegionAndName>() {
+
+            @Override
+            public RegionAndName apply(Image from) {
+               return new RegionAndName(from.getLocation().getId(), from.getProviderId());
+            }
+
+         }));
 
          holder.logger.debug("<< images(%d)", images.size());
       }
       return images;
+   }
+
+   private Map<String, DescribeImagesOptions> ccAmisToDescribeQueries(String[] ccAmis) {
+      Map<String, DescribeImagesOptions> queries = Maps.newLinkedHashMap();
+      for (String from : ccAmis) {
+         queries.put(from.split("/")[0], imageIds(from.split("/")[1]));
+      }
+      return queries;
+   }
+
+   private Map<String, DescribeImagesOptions> getDescribeQueriesForOwnersInRegions(Map<String, URI> regionMap,
+            final String[] amiOwners) {
+      final DescribeImagesOptions options = getOptionsForOwners(amiOwners);
+
+      return Maps.transformValues(regionMap, new Function<URI, DescribeImagesOptions>() {
+         @Override
+         public DescribeImagesOptions apply(URI from) {
+            return options;
+         }
+      });
+   }
+
+   private DescribeImagesOptions getOptionsForOwners(final String[] amiOwners) {
+      final DescribeImagesOptions options;
+      if (amiOwners.length == 1 && amiOwners[0].equals("*"))
+         options = new DescribeImagesOptions();
+      else
+         options = ownedBy(amiOwners);
+      return options;
    }
 }

@@ -58,7 +58,7 @@ import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeService;
-import org.jclouds.vcloud.terremark.compute.config.providers.QueryCatalogForVAppTemplatesAndConvertToImagesProvider;
+import org.jclouds.vcloud.terremark.compute.config.providers.VAppTemplatesInOrgs;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
 import org.jclouds.vcloud.terremark.compute.functions.NodeMetadataToOrgAndName;
 import org.jclouds.vcloud.terremark.compute.options.TerremarkVCloudTemplateOptions;
@@ -203,7 +203,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
    @Override
    protected void bindImages() {
       bind(new TypeLiteral<Set<? extends Image>>() {
-      }).toProvider(QueryCatalogForVAppTemplatesAndConvertToImagesProvider.class).in(
+      }).toProvider(VAppTemplatesInOrgs.class).in(
                Scopes.SINGLETON);
    }
 

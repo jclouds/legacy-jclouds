@@ -43,6 +43,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit", testName = "ec2.RegionAndIdToImageTest")
 public class RegionAndIdToImageTest {
 
+   @SuppressWarnings("unchecked")
    @Test
    public void testApply() {
 
@@ -51,11 +52,11 @@ public class RegionAndIdToImageTest {
       AMIClient client = createMock(AMIClient.class);
       org.jclouds.aws.ec2.domain.Image ec2Image = createMock(org.jclouds.aws.ec2.domain.Image.class);
       Image image = createNiceMock(Image.class);
-      Set<org.jclouds.aws.ec2.domain.Image> images = ImmutableSet
+      Set<? extends org.jclouds.aws.ec2.domain.Image> images = ImmutableSet
                .<org.jclouds.aws.ec2.domain.Image> of(ec2Image);
 
       expect(caller.getAMIServices()).andReturn(client).atLeastOnce();
-      expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn(images);
+      expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn((Set)images);
       expect(parser.apply(ec2Image)).andReturn(image);
 
       replay(caller);
@@ -74,6 +75,7 @@ public class RegionAndIdToImageTest {
 
    }
 
+   @SuppressWarnings("unchecked")
    @Test
    public void testApplyNotFound() {
 
@@ -82,11 +84,11 @@ public class RegionAndIdToImageTest {
       AMIClient client = createMock(AMIClient.class);
       org.jclouds.aws.ec2.domain.Image ec2Image = createMock(org.jclouds.aws.ec2.domain.Image.class);
       Image image = createNiceMock(Image.class);
-      Set<org.jclouds.aws.ec2.domain.Image> images = ImmutableSet
+      Set<? extends org.jclouds.aws.ec2.domain.Image> images = ImmutableSet
                .<org.jclouds.aws.ec2.domain.Image> of(ec2Image);
 
       expect(caller.getAMIServices()).andReturn(client).atLeastOnce();
-      expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn(images);
+      expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn((Set)images);
       expect(parser.apply(ec2Image)).andThrow(new ResourceNotFoundException());
 
       replay(caller);

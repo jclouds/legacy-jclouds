@@ -19,7 +19,7 @@
 package org.jclouds.rest;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static org.jclouds.Constants.PROPERTY_API;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_CREDENTIAL;

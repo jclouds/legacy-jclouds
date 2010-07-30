@@ -270,11 +270,12 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
       currentText.append(ch, start, length);
    }
 
-   protected Reservation newReservation() {
+   protected Reservation<? extends RunningInstance> newReservation() {
       String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
       if (region == null)
          region = defaultRegion;
-      Reservation info = new Reservation(region, groupIds, instances, ownerId, requesterId, reservationId);
+      Reservation<? extends RunningInstance> info = new Reservation<RunningInstance>(region, groupIds, instances,
+               ownerId, requesterId, reservationId);
       this.groupIds = Sets.newLinkedHashSet();
       this.instances = Sets.newLinkedHashSet();
       this.ownerId = null;

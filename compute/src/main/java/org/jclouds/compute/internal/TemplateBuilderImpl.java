@@ -21,7 +21,6 @@ package org.jclouds.compute.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.and;
 import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.jclouds.util.Utils.multiMax;
 
@@ -79,7 +78,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @VisibleForTesting
    protected Architecture arch;
    @VisibleForTesting
-   protected String locationId;
+   protected Location location;
    @VisibleForTesting
    protected String imageId;
    @VisibleForTesting
@@ -105,8 +104,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
    @Inject
    protected TemplateBuilderImpl(Provider<Set<? extends Location>> locations, Provider<Set<? extends Image>> images,
-         Provider<Set<? extends Size>> sizes, Location defaultLocation, Provider<TemplateOptions> optionsProvider,
-         @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider) {
+            Provider<Set<? extends Size>> sizes, Location defaultLocation, Provider<TemplateOptions> optionsProvider,
+            @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider) {
       this.locations = locations;
       this.images = images;
       this.sizes = sizes;
@@ -115,12 +114,20 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       this.defaultTemplateProvider = defaultTemplateProvider;
    }
 
+   /**
+    * If the current location id is null, then we don't care where to launch a node.
+    * 
+    * If the input location is null, then the data isn't location sensitive
+    * 
+    * If the input location is a parent of the specified location, then we are ok.
+    */
    private final Predicate<ComputeMetadata> locationPredicate = new Predicate<ComputeMetadata>() {
       @Override
       public boolean apply(ComputeMetadata input) {
          boolean returnVal = true;
-         if (locationId != null && input.getLocation() != null)
-            returnVal = locationId.equals(input.getLocation().getId());
+         if (location != null && input.getLocation() != null)
+            returnVal = location.equals(input.getLocation()) || location.getParent() != null
+                     && location.getParent().equals(input.getLocation());
          return returnVal;
       }
    };
@@ -172,7 +179,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                returnVal = false;
             else
                returnVal = input.getOsDescription().contains(osDescription)
-                     || input.getOsDescription().matches(osDescription);
+                        || input.getOsDescription().matches(osDescription);
          }
          return returnVal;
       }
@@ -212,8 +219,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                returnVal = false;
             else
                returnVal = input.getDescription().equals(imageDescription)
-                     || input.getDescription().contains(imageDescription)
-                     || input.getDescription().matches(imageDescription);
+                        || input.getDescription().contains(imageDescription)
+                        || input.getDescription().matches(imageDescription);
          }
          return returnVal;
       }
@@ -247,12 +254,12 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       }
    };
    private final Predicate<Size> sizePredicate = and(sizeIdPredicate, locationPredicate, sizeCoresPredicate,
-         sizeRamPredicate);
+            sizeRamPredicate);
 
    static final Ordering<Size> DEFAULT_SIZE_ORDERING = new Ordering<Size>() {
       public int compare(Size left, Size right) {
          return ComparisonChain.start().compare(left.getCores(), right.getCores()).compare(left.getRam(),
-               right.getRam()).compare(left.getDisk(), right.getDisk()).result();
+                  right.getRam()).compare(left.getDisk(), right.getDisk()).result();
       }
    };
    static final Ordering<Size> BY_CORES_ORDERING = new Ordering<Size>() {
@@ -263,10 +270,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    static final Ordering<Image> DEFAULT_IMAGE_ORDERING = new Ordering<Image>() {
       public int compare(Image left, Image right) {
          return ComparisonChain.start().compare(left.getName(), right.getName(),
-               Ordering.<String> natural().nullsLast()).compare(left.getVersion(), right.getVersion(),
-               Ordering.<String> natural().nullsLast()).compare(left.getOsDescription(), right.getOsDescription(),
-               Ordering.<String> natural().nullsLast()).compare(left.getArchitecture(), right.getArchitecture())
-               .result();
+                  Ordering.<String> natural().nullsLast()).compare(left.getVersion(), right.getVersion(),
+                  Ordering.<String> natural().nullsLast()).compare(left.getOsDescription(), right.getOsDescription(),
+                  Ordering.<String> natural().nullsLast()).compare(left.getArchitecture(), right.getArchitecture())
+                  .result();
       }
    };
 
@@ -286,7 +293,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @Override
    public TemplateBuilder fromSize(Size size) {
       if (size.getLocation() != null)
-         this.locationId = size.getLocation().getId();
+         this.location = size.getLocation();
       this.minCores = size.getCores();
       this.minRam = size.getRam();
       return this;
@@ -298,7 +305,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @Override
    public TemplateBuilder fromImage(Image image) {
       if (image.getLocation() != null)
-         this.locationId = image.getLocation().getId();
+         this.location = image.getLocation();
       if (image.getOsFamily() != null)
          this.os = image.getOsFamily();
       if (image.getName() != null)
@@ -346,7 +353,14 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     */
    @Override
    public TemplateBuilder locationId(final String locationId) {
-      this.locationId = locationId;
+      this.location = Iterables.find(locations.get(), new Predicate<Location>() {
+
+         @Override
+         public boolean apply(Location input) {
+            return input.getId().equals(locationId);
+         }
+
+      });
       return this;
    }
 
@@ -379,12 +393,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             defaultTemplate.options(options);
          return defaultTemplate.build();
       }
-      if (locationId == null)
-         locationId = defaultLocation.getId();
+      if (location == null)
+         location = defaultLocation;
       if (options == null)
          options = optionsProvider.get();
       logger.debug(">> searching params(%s)", this);
-      Location location = resolveLocation();
       Size size = resolveSize(sizeSorter(), getImages());
       Image image = resolveImage(size);
       logger.debug("<<   matched image(%s)", image);
@@ -392,19 +405,6 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       // ensure we have an architecture matching
       this.arch = image.getArchitecture();
       return new TemplateImpl(image, size, location, options);
-   }
-
-   protected Location resolveLocation() {
-      Location location = find(locations.get(), new Predicate<Location>() {
-
-         @Override
-         public boolean apply(Location input) {
-            return input.getId().equals(locationId);
-         }
-
-      });
-      logger.debug("<<   matched location(%s)", location);
-      return location;
    }
 
    protected Size resolveSize(Ordering<Size> sizeOrdering, final Iterable<? extends Image> images) {
@@ -429,7 +429,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          });
          size = sizeOrdering.max(filter(sizesThatAreCompatibleWithOurImages, sizePredicate));
       } catch (NoSuchElementException exception) {
-         throw new NoSuchElementException("size didn't match: " + toString() + "\n" + sizes.get());
+         throw new NoSuchElementException("sizes don't support any images: " + toString() + "\n" + sizes.get() + "\n"
+                  + images);
       }
       logger.debug("<<   matched size(%s)", size);
       return size;
@@ -468,7 +469,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             logger.trace("<<   best images(%s)", maxImages);
          return maxImages.get(maxImages.size() - 1);
       } catch (NoSuchElementException exception) {
-         throw new NoSuchElementException("image didn't match: " + toString() + "\n" + getImages());
+         Set<? extends Image> images = getImages();
+         throw new NoSuchElementException("image didn't match: " + toString() + "\n" + images);
       }
    }
 
@@ -608,9 +610,9 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
    @VisibleForTesting
    boolean nothingChangedExceptOptions() {
-      return os == null && arch == null && locationId == null && imageId == null && sizeId == null
-            && osDescription == null && imageVersion == null && imageName == null && imageDescription == null
-            && minCores == 0 && minRam == 0 && !biggest && !fastest;
+      return os == null && arch == null && location == null && imageId == null && sizeId == null
+               && osDescription == null && imageVersion == null && imageName == null && imageDescription == null
+               && minCores == 0 && minRam == 0 && !biggest && !fastest;
    }
 
    /**
@@ -624,9 +626,9 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @Override
    public String toString() {
       return "[arch=" + arch + ", biggest=" + biggest + ", fastest=" + fastest + ", imageName=" + imageName
-            + ", imageDescription=" + imageDescription + ", imageId=" + imageId + ", imageVersion=" + imageVersion
-            + ", location=" + locationId + ", minCores=" + minCores + ", minRam=" + minRam + ", os=" + os
-            + ", osDescription=" + osDescription + ", sizeId=" + sizeId + "]";
+               + ", imageDescription=" + imageDescription + ", imageId=" + imageId + ", imageVersion=" + imageVersion
+               + ", location=" + location + ", minCores=" + minCores + ", minRam=" + minRam + ", os=" + os
+               + ", osDescription=" + osDescription + ", sizeId=" + sizeId + "]";
    }
 
 }

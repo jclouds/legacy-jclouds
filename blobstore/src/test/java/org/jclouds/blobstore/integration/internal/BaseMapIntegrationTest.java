@@ -56,21 +56,17 @@ import com.google.common.io.Files;
 
 public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegrationTest {
 
-   public abstract void testPutAll() throws InterruptedException, ExecutionException,
-            TimeoutException;
+   public abstract void testPutAll() throws InterruptedException, ExecutionException, TimeoutException;
 
-   public abstract void testEntrySet() throws IOException, InterruptedException,
-            ExecutionException, TimeoutException;
+   public abstract void testEntrySet() throws IOException, InterruptedException, ExecutionException, TimeoutException;
 
-   public abstract void testValues() throws IOException, InterruptedException, ExecutionException,
-            TimeoutException;
+   public abstract void testValues() throws IOException, InterruptedException, ExecutionException, TimeoutException;
 
-   protected Map<String, byte[]> fiveBytes = Maps.transformValues(fiveStrings,
-            new Function<String, byte[]>() {
-               public byte[] apply(String from) {
-                  return from.getBytes();
-               }
-            });
+   protected Map<String, byte[]> fiveBytes = Maps.transformValues(fiveStrings, new Function<String, byte[]>() {
+      public byte[] apply(String from) {
+         return from.getBytes();
+      }
+   });
    protected Map<String, InputStream> fiveInputs;
    protected Map<String, File> fiveFiles;
    String tmpDirectory;
@@ -86,13 +82,13 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
 
    @BeforeClass(groups = { "integration", "live" })
    @Parameters( { "basedir" })
-   protected void setUpTempDir(@Optional String basedir) throws InterruptedException,
-            ExecutionException, FileNotFoundException, IOException, TimeoutException {
+   protected void setUpTempDir(@Optional String basedir) throws InterruptedException, ExecutionException,
+            FileNotFoundException, IOException, TimeoutException {
       if (basedir == null) {
          basedir = System.getProperty("java.io.tmpdir");
       }
-      tmpDirectory = basedir + File.separator + "target" + File.separator + "testFiles"
-               + File.separator + getClass().getSimpleName();
+      tmpDirectory = basedir + File.separator + "target" + File.separator + "testFiles" + File.separator
+               + getClass().getSimpleName();
       new File(tmpDirectory).mkdirs();
       fiveFiles = Maps.newHashMap();
       for (Entry<String, String> entry : fiveStrings.entrySet()) {
@@ -123,8 +119,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
    }
 
    @Test(groups = { "integration", "live" })
-   public abstract void testRemove() throws IOException, InterruptedException, ExecutionException,
-            TimeoutException;
+   public abstract void testRemove() throws IOException, InterruptedException, ExecutionException, TimeoutException;
 
    @Test(groups = { "integration", "live" })
    public void testKeySet() throws InterruptedException, ExecutionException, TimeoutException {
@@ -140,8 +135,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
       }
    }
 
-   protected void addTenObjectsUnderPrefix(String containerName, String prefix)
-            throws InterruptedException {
+   protected void addTenObjectsUnderPrefix(String containerName, String prefix) throws InterruptedException {
       for (int i = 0; i < 10; i++) {
          Blob blob = context.getBlobStore().newBlob(prefix + "/" + i);
          blob.setPayload(i + "content");
@@ -160,14 +154,12 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
    @Test(groups = { "integration", "live" })
    public void testDirectory() throws InterruptedException, UnsupportedEncodingException {
       String containerName = getContainerName();
+      String directory = "apps";
+      Map<String, V> rootMap = createMap(context, containerName);
+      Map<String, V> rootRecursiveMap = createMap(context, containerName, recursive());
+      Map<String, V> inDirectoryMap = createMap(context, containerName, inDirectory(directory));
+      Map<String, V> inDirectoryRecursiveMap = createMap(context, containerName, inDirectory(directory).recursive());
       try {
-         String directory = "apps";
-
-         Map<String, V> rootMap = createMap(context, containerName);
-         Map<String, V> rootRecursiveMap = createMap(context, containerName, recursive());
-         Map<String, V> inDirectoryMap = createMap(context, containerName, inDirectory(directory));
-         Map<String, V> inDirectoryRecursiveMap = createMap(context, containerName, inDirectory(
-                  directory).recursive());
 
          context.getBlobStore().createDirectory(containerName, directory);
          addTenObjectsUnderRoot(containerName);
@@ -206,24 +198,22 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
 
    }
 
-   protected void assertConsistencyAwareKeySetEquals(final Map<String, V> map,
-            final Set<String> expected) throws InterruptedException {
+   protected void assertConsistencyAwareKeySetEquals(final Map<String, V> map, final Set<String> expected)
+            throws InterruptedException {
       assertConsistencyAware(new Runnable() {
          public void run() {
             Set<String> toMatch = map.keySet();
             Set<String> shouldBeEmpty = Sets.difference(expected, toMatch);
-            assert shouldBeEmpty.size() == 0 : "toMatch has less keys than expected. missing: "
-                     + shouldBeEmpty;
+            assert shouldBeEmpty.size() == 0 : "toMatch has less keys than expected. missing: " + shouldBeEmpty;
             shouldBeEmpty = Sets.difference(toMatch, expected);
-            assert shouldBeEmpty.size() == 0 : "toMatch has more keys than expected. extras: "
-                     + shouldBeEmpty;
+            assert shouldBeEmpty.size() == 0 : "toMatch has more keys than expected. extras: " + shouldBeEmpty;
             assertEquals(Sets.newTreeSet(toMatch), Sets.newTreeSet(expected));
          }
       });
    }
 
-   protected void assertConsistencyAwareRemoveEquals(final Map<String, V> map, final String key,
-            final Object equals) throws InterruptedException {
+   protected void assertConsistencyAwareRemoveEquals(final Map<String, V> map, final String key, final Object equals)
+            throws InterruptedException {
       assertConsistencyAware(new Runnable() {
          public void run() {
             assertEquals(map.remove(key), equals);
@@ -231,8 +221,8 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
       });
    }
 
-   protected void assertConsistencyAwareGetEquals(final Map<String, V> map, final String key,
-            final Object equals) throws InterruptedException {
+   protected void assertConsistencyAwareGetEquals(final Map<String, V> map, final String key, final Object equals)
+            throws InterruptedException {
       assertConsistencyAware(new Runnable() {
          public void run() {
             assertEquals(map.get(key), equals);
@@ -240,8 +230,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
       });
    }
 
-   protected void assertConsistencyAwareKeySize(final Map<String, V> map, final int size)
-            throws InterruptedException {
+   protected void assertConsistencyAwareKeySize(final Map<String, V> map, final int size) throws InterruptedException {
       assertConsistencyAware(new Runnable() {
          public void run() {
             assertEquals(map.keySet().size(), size);
@@ -275,8 +264,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
       });
    }
 
-   protected void assertConsistencyAwareContainsKey(final Map<String, V> map)
-            throws InterruptedException {
+   protected void assertConsistencyAwareContainsKey(final Map<String, V> map) throws InterruptedException {
       assertConsistencyAware(new Runnable() {
          public void run() {
             assert map.containsKey("one");
@@ -284,8 +272,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
       });
    }
 
-   protected void assertConsistencyAwareDoesntContainKey(final Map<String, V> map)
-            throws InterruptedException {
+   protected void assertConsistencyAwareDoesntContainKey(final Map<String, V> map) throws InterruptedException {
       assertConsistencyAware(new Runnable() {
          public void run() {
             assert !map.containsKey("one");
@@ -306,8 +293,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
       }
    }
 
-   protected void assertConsistencyAwareNotEmpty(final Map<String, V> map)
-            throws InterruptedException {
+   protected void assertConsistencyAwareNotEmpty(final Map<String, V> map) throws InterruptedException {
       assertConsistencyAware(new Runnable() {
          public void run() {
             assert !map.isEmpty();
@@ -323,18 +309,16 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
       });
    }
 
-   abstract protected void putStringWithMD5(Map<String, V> map, String key, String value)
-            throws InterruptedException, ExecutionException, TimeoutException;
+   abstract protected void putStringWithMD5(Map<String, V> map, String key, String value) throws InterruptedException,
+            ExecutionException, TimeoutException;
 
    protected void fourLeftRemovingOne(Map<String, V> map) throws InterruptedException {
       map.remove("one");
       assertConsistencyAwareMapSize(map, 4);
-      assertConsistencyAwareKeySetEquals(map, new TreeSet<String>(ImmutableSet.of("two", "three",
-               "four", "five")));
+      assertConsistencyAwareKeySetEquals(map, new TreeSet<String>(ImmutableSet.of("two", "three", "four", "five")));
    }
 
-   protected void assertConsistencyAwareMapSize(final Map<String, V> map, final int size)
-            throws InterruptedException {
+   protected void assertConsistencyAwareMapSize(final Map<String, V> map, final int size) throws InterruptedException {
       assertConsistencyAware(new Runnable() {
          public void run() {
             assertEquals(map.size(), size);
@@ -343,12 +327,10 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
    }
 
    @Test(groups = { "integration", "live" })
-   public abstract void testPut() throws IOException, InterruptedException, ExecutionException,
-            TimeoutException;
+   public abstract void testPut() throws IOException, InterruptedException, ExecutionException, TimeoutException;
 
    @Test(groups = { "integration", "live" })
-   public void testListContainer() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testListContainer() throws InterruptedException, ExecutionException, TimeoutException {
       String containerNameName = getContainerName();
       try {
          ListableMap<?, ?> map = (ListableMap<?, ?>) createMap(context, containerNameName);
@@ -358,8 +340,8 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
       }
    }
 
-   protected void assertConsistencyAwareListContainer(final ListableMap<?, ?> map,
-            final String containerNameName) throws InterruptedException {
+   protected void assertConsistencyAwareListContainer(final ListableMap<?, ?> map, final String containerNameName)
+            throws InterruptedException {
       assertConsistencyAware(new Runnable() {
          public void run() {
             assertTrue(Iterables.size(map.list()) >= 0);

@@ -18,14 +18,15 @@
  */
 package org.jclouds.concurrent;
 
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
 import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
+import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static org.jclouds.util.Utils.propagateOrNull;
 import static org.testng.Assert.assertEquals;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -37,42 +38,40 @@ import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Tests behavior of ListenableFutureExceptionParser
+ * Tests behavior of FutureExceptionParser
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "concurrent.ListenableFutureExceptionParserTest")
+@Test(groups = "unit", testName = "concurrent.FutureExceptionParserTest")
 public class FutureExceptionParserTest {
    ExecutorService executorService = sameThreadExecutor();
 
    @Test
    public void testGet() throws InterruptedException, ExecutionException {
-      ListenableFuture<?> future = createListenableFuture(new RuntimeException("foo"));
+      Future<?> future = createFuture(new RuntimeException("foo"));
       assertEquals(future.get(), "foo");
    }
 
    @Test(expectedExceptions = Exception.class)
    public void testGetUnmatched() throws InterruptedException, ExecutionException {
-      ListenableFuture<?> future = createListenableFuture(new Exception("foo"));
+      Future<?> future = createFuture(new Exception("foo"));
       assertEquals(future.get(), "foo");
    }
 
    @Test
-   public void testGetLongTimeUnit() throws InterruptedException, ExecutionException,
-            TimeoutException {
-      ListenableFuture<?> future = createListenableFuture(new RuntimeException("foo"));
+   public void testGetLongTimeUnit() throws InterruptedException, ExecutionException, TimeoutException {
+      Future<?> future = createFuture(new RuntimeException("foo"));
       assertEquals(future.get(1, TimeUnit.SECONDS), "foo");
    }
 
    @Test(expectedExceptions = Exception.class)
-   public void testGetLongTimeUnitUnmatched() throws InterruptedException, ExecutionException,
-            TimeoutException {
-      ListenableFuture<?> future = createListenableFuture(new Exception("foo"));
+   public void testGetLongTimeUnitUnmatched() throws InterruptedException, ExecutionException, TimeoutException {
+      Future<?> future = createFuture(new Exception("foo"));
       assertEquals(future.get(1, TimeUnit.SECONDS), "foo");
    }
 
    @SuppressWarnings("unchecked")
-   private ListenableFuture<?> createListenableFuture(final Exception exception) {
+   private Future<?> createFuture(final Exception exception) {
       ListenableFuture<?> future = makeListenable(executorService.submit(new Callable<String>() {
 
          public String call() throws Exception {
@@ -81,11 +80,10 @@ public class FutureExceptionParserTest {
 
       }), executorService);
 
-      future = new FutureExceptionParser(future, new Function<Exception, String>() {
+      future = new ExceptionParsingListenableFuture(future, new Function<Exception, String>() {
 
          public String apply(Exception from) {
-            if (Iterables.size(Iterables.filter(Throwables.getCausalChain(from),
-                     RuntimeException.class)) >= 1)
+            if (Iterables.size(Iterables.filter(Throwables.getCausalChain(from), RuntimeException.class)) >= 1)
                return from.getMessage();
             return String.class.cast(propagateOrNull(from));
          }

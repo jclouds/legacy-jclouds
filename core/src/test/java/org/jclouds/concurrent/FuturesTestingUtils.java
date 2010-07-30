@@ -20,7 +20,7 @@ package org.jclouds.concurrent;
 
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.common.util.concurrent.Futures.compose;
+import static org.jclouds.concurrent.ConcurrentUtils.compose;
 import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
 import java.util.Collections;
@@ -28,10 +28,12 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -42,15 +44,15 @@ import com.google.common.util.concurrent.ListenableFuture;
 public class FuturesTestingUtils {
    public static final int FUDGE = 5;
    public static final int COUNT = 100;
-   public static final int CALLABLE_DURATION = 10;
-   public static final int LISTENER_DURATION = 10;
+   public static final int CALLABLE_DURATION = 50;
+   public static final int LISTENER_DURATION = 100;
 
-   public static void checkThresholds(long expectedMin, long expectedMax, long expectedOverhead,
+   public static void checkThresholdsUsingFuturesCompose(long expectedMin, long expectedMax, long expectedOverhead,
             ExecutorService callableExecutor, ExecutorService chainExecutor, final ExecutorService listenerExecutor) {
       long start = System.currentTimeMillis();
-      Map<String, ListenableFuture<Long>> responses = newHashMap();
+      Map<String, Future<Long>> responses = newHashMap();
       for (int i = 0; i < COUNT; i++)
-         responses.put(i + "", compose(createListenableFuture(callableExecutor, chainExecutor),
+         responses.put(i + "", Futures.compose(createFuture(callableExecutor, chainExecutor),
                   new Function<Long, Long>() {
 
                      @Override
@@ -67,16 +69,36 @@ public class FuturesTestingUtils {
       checkTimeThresholds(expectedMin, expectedMax, expectedOverhead, start, responses);
    }
 
-   public static Map<String, ListenableFuture<Long>> runCallables(ExecutorService callableExecutor,
-            ExecutorService chainExecutor) {
-      Map<String, ListenableFuture<Long>> responses = newHashMap();
+   public static void checkThresholdsUsingConcurrentUtilsCompose(long expectedMin, long expectedMax,
+            long expectedOverhead, ExecutorService callableExecutor, ExecutorService chainExecutor,
+            final ExecutorService listenerExecutor) {
+      long start = System.currentTimeMillis();
+      Map<String, Future<Long>> responses = newHashMap();
       for (int i = 0; i < COUNT; i++)
-         responses.put(i + "", createListenableFuture(callableExecutor, chainExecutor));
+         responses.put(i + "", compose(createFuture(callableExecutor, chainExecutor), new Function<Long, Long>() {
+
+            @Override
+            public Long apply(Long from) {
+               try {
+                  Thread.sleep(LISTENER_DURATION);
+               } catch (InterruptedException e) {
+                  propagate(e);
+               }
+               return System.currentTimeMillis();
+            }
+
+         }, listenerExecutor));
+      checkTimeThresholds(expectedMin, expectedMax, expectedOverhead, start, responses);
+   }
+
+   public static Map<String, Future<Long>> runCallables(ExecutorService callableExecutor, ExecutorService chainExecutor) {
+      Map<String, Future<Long>> responses = newHashMap();
+      for (int i = 0; i < COUNT; i++)
+         responses.put(i + "", createFuture(callableExecutor, chainExecutor));
       return responses;
    }
 
-   private static ListenableFuture<Long> createListenableFuture(ExecutorService callableExecutor,
-            ExecutorService chainExecutor) {
+   private static ListenableFuture<Long> createFuture(ExecutorService callableExecutor, ExecutorService chainExecutor) {
       return makeListenable(callableExecutor.submit(new Callable<Long>() {
 
          @Override
@@ -88,11 +110,11 @@ public class FuturesTestingUtils {
       }), chainExecutor);
    }
 
-   public static long getMaxIn(Map<String, ListenableFuture<Long>> responses) {
-      Iterable<Long> collection = Iterables.transform(responses.values(), new Function<ListenableFuture<Long>, Long>() {
+   public static long getMaxIn(Map<String, Future<Long>> responses) {
+      Iterable<Long> collection = Iterables.transform(responses.values(), new Function<Future<Long>, Long>() {
 
          @Override
-         public Long apply(ListenableFuture<Long> from) {
+         public Long apply(Future<Long> from) {
             try {
                return from.get();
             } catch (InterruptedException e) {
@@ -106,11 +128,11 @@ public class FuturesTestingUtils {
       return time;
    }
 
-   public static long getMinIn(Map<String, ListenableFuture<Long>> responses) {
-      Iterable<Long> collection = Iterables.transform(responses.values(), new Function<ListenableFuture<Long>, Long>() {
+   public static long getMinIn(Map<String, Future<Long>> responses) {
+      Iterable<Long> collection = Iterables.transform(responses.values(), new Function<Future<Long>, Long>() {
 
          @Override
-         public Long apply(ListenableFuture<Long> from) {
+         public Long apply(Future<Long> from) {
             try {
                return from.get();
             } catch (InterruptedException e) {
@@ -125,17 +147,17 @@ public class FuturesTestingUtils {
    }
 
    public static void checkTimeThresholds(long expectedMin, long expectedMax, long expectedOverhead, long start,
-            Map<String, ListenableFuture<Long>> responses) {
+            Map<String, Future<Long>> responses) {
       long time = getMaxIn(responses) - start;
-      assert time >= expectedMax && time < expectedMax + expectedOverhead : String.format("expected %d, was %d",
+      assert time >= expectedMax && time < expectedMax + expectedOverhead : String.format("expectedMax  %d, max %d",
                expectedMax, time);
 
       time = getMinIn(responses) - start;
-      assert time >= expectedMin && time < expectedMin + expectedOverhead : String.format("expected %d, was %d",
+      assert time >= expectedMin && time < expectedMin + expectedOverhead : String.format("expectedMin  %d, min %d",
                expectedMin, time);
 
       time = getMaxIn(responses) - start;
-      assert time >= expectedMax && time < expectedMax + expectedOverhead : String.format("expected %d, was %d",
+      assert time >= expectedMax && time < expectedMax + expectedOverhead : String.format("expectedMax  %d, max %d",
                expectedMax, time);
    }
 }

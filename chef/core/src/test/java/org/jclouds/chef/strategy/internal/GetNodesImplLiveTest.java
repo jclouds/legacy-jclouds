@@ -23,6 +23,7 @@
  */
 package org.jclouds.chef.strategy.internal;
 
+import static com.google.common.collect.Iterables.size;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -69,24 +70,24 @@ public class GetNodesImplLiveTest extends BaseChefStrategyLiveTest {
 
    @Test
    public void testExecute() {
-      assert strategy.execute().size() > 0;
+      assert size(strategy.execute()) > 0;
    }
 
    @Test
    public void testExecutePredicateOfString() {
-      assertEquals(strategy.execute(new Predicate<String>() {
+      assertEquals(size(strategy.execute(new Predicate<String>() {
 
          @Override
          public boolean apply(String input) {
             return input.startsWith(prefix);
          }
 
-      }).size(), 2);
+      })), 2);
    }
 
    @Test
    public void testExecuteIterableOfString() {
-      assertEquals(strategy.execute(ImmutableSet.of(prefix, prefix + 1)).size(), 2);
+      assertEquals(size(strategy.execute(ImmutableSet.of(prefix, prefix + 1))), 2);
    }
 
 }

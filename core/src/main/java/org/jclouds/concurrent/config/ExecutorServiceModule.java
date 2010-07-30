@@ -32,6 +32,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import static org.jclouds.concurrent.ConcurrentUtils.*;
+import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 
@@ -65,8 +67,7 @@ public class ExecutorServiceModule extends AbstractModule {
       public void close() throws IOException {
          List<Runnable> runnables = service.shutdownNow();
          if (runnables.size() > 0)
-            logger.warn("when shutting down executor %s, runnables outstanding: %s", service,
-                     runnables);
+            logger.warn("when shutting down executor %s, runnables outstanding: %s", service, runnables);
       }
    }
 
@@ -74,11 +75,22 @@ public class ExecutorServiceModule extends AbstractModule {
    private final ExecutorService ioExecutorFromConstructor;
 
    @Inject
-   public ExecutorServiceModule(
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+   public ExecutorServiceModule(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads) {
-      this.userExecutorFromConstructor = userThreads;
-      this.ioExecutorFromConstructor = ioThreads;
+      this.userExecutorFromConstructor = checkNotGuavaSameThreadExecutor(userThreads);
+      this.ioExecutorFromConstructor = checkNotGuavaSameThreadExecutor(ioThreads);
+   }
+
+   private ExecutorService checkNotGuavaSameThreadExecutor(ExecutorService executor) {
+      // we detect behavior based on the class
+      if (executor != null && !(executor.getClass().isAnnotationPresent(SingleThreaded.class))
+               && executor.getClass().getSimpleName().indexOf("SameThread") != -1) {
+         Logger.CONSOLE.warn(
+                  "please switch from %s to %s or annotate your same threaded executor with @SingleThreaded", executor
+                           .getClass().getName(), SameThreadExecutorService.class.getName());
+         return sameThreadExecutor();
+      }
+      return executor;
    }
 
    public ExecutorServiceModule() {
@@ -92,8 +104,7 @@ public class ExecutorServiceModule extends AbstractModule {
    @Provides
    @Singleton
    @Named(Constants.PROPERTY_USER_THREADS)
-   ExecutorService provideExecutorService(@Named(Constants.PROPERTY_USER_THREADS) int count,
-            Closer closer) {
+   ExecutorService provideExecutorService(@Named(Constants.PROPERTY_USER_THREADS) int count, Closer closer) {
       if (userExecutorFromConstructor != null)
          return shutdownOnClose(userExecutorFromConstructor, closer);
       return shutdownOnClose(newThreadPoolNamed("user thread %d", count), closer);
@@ -102,8 +113,7 @@ public class ExecutorServiceModule extends AbstractModule {
    @Provides
    @Singleton
    @Named(Constants.PROPERTY_IO_WORKER_THREADS)
-   ExecutorService provideIOExecutor(@Named(Constants.PROPERTY_IO_WORKER_THREADS) int count,
-            Closer closer) {
+   ExecutorService provideIOExecutor(@Named(Constants.PROPERTY_IO_WORKER_THREADS) int count, Closer closer) {
       if (ioExecutorFromConstructor != null)
          return shutdownOnClose(ioExecutorFromConstructor, closer);
       return shutdownOnClose(newThreadPoolNamed("i/o thread %d", count), closer);
@@ -117,20 +127,19 @@ public class ExecutorServiceModule extends AbstractModule {
 
    @VisibleForTesting
    static ExecutorService newCachedThreadPoolNamed(String name) {
-      return Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat(name)
-               .setThreadFactory(Executors.defaultThreadFactory()).build());
+      return Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat(name).setThreadFactory(
+               Executors.defaultThreadFactory()).build());
    }
 
    @VisibleForTesting
    static ExecutorService newThreadPoolNamed(String name, int maxCount) {
-      return maxCount == 0 ? newCachedThreadPoolNamed(name) : newScalingThreadPoolNamed(name,
-               maxCount);
+      return maxCount == 0 ? newCachedThreadPoolNamed(name) : newScalingThreadPoolNamed(name, maxCount);
    }
 
    @VisibleForTesting
    static ExecutorService newScalingThreadPoolNamed(String name, int maxCount) {
-      return newScalingThreadPool(1, maxCount, 60L * 1000, new ThreadFactoryBuilder()
-               .setNameFormat(name).setThreadFactory(Executors.defaultThreadFactory()).build());
+      return newScalingThreadPool(1, maxCount, 60L * 1000, new ThreadFactoryBuilder().setNameFormat(name)
+               .setThreadFactory(Executors.defaultThreadFactory()).build());
    }
 
 }

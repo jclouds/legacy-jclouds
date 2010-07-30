@@ -22,6 +22,7 @@ import javax.inject.Inject;
 
 import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.Reservation;
+import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.date.DateService;
 
 /**
@@ -32,7 +33,7 @@ import org.jclouds.date.DateService;
  * @author Adrian Cole
  * @see <a href="http: />
  */
-public class RunInstancesResponseHandler extends BaseReservationHandler<Reservation> {
+public class RunInstancesResponseHandler extends BaseReservationHandler<Reservation<? extends RunningInstance>> {
 
    @Inject
    RunInstancesResponseHandler(DateService dateService, @Region String defaultRegion) {
@@ -40,7 +41,7 @@ public class RunInstancesResponseHandler extends BaseReservationHandler<Reservat
    }
 
    @Override
-   public Reservation getResult() {
+   public Reservation<? extends RunningInstance> getResult() {
       return newReservation();
    }
 

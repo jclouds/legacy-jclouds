@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.compute.util.ComputeServiceUtils.installNewCredentials;
 import static org.jclouds.compute.util.ComputeServiceUtils.isKeyAuth;
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
-import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
 import java.util.List;
 import java.util.Map;
@@ -31,6 +30,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
@@ -49,7 +49,6 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.util.ComputeServiceUtils.SshCallable;
-import org.jclouds.concurrent.ConcurrentUtils;
 import org.jclouds.io.Payload;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
@@ -61,7 +60,6 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 
 /**
@@ -84,9 +82,10 @@ public class ComputeUtils {
 
    @Inject
    public ComputeUtils(Predicate<IPSocket> socketTester,
-         @Named("SCRIPT_COMPLETE") Predicate<CommandUsingClient> runScriptNotRunning, GetNodeMetadataStrategy getNode,
-         Timeouts timeouts, @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+            @Named("SCRIPT_COMPLETE") Predicate<CommandUsingClient> runScriptNotRunning,
+            GetNodeMetadataStrategy getNode, Timeouts timeouts,
+            @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.nodeRunning = nodeRunning;
       this.timeouts = timeouts;
       this.getNode = getNode;
@@ -95,19 +94,20 @@ public class ComputeUtils {
       this.executor = executor;
    }
 
-   public Map<?, ListenableFuture<Void>> runOptionsOnNodesAndAddToGoodSetOrPutExceptionIntoBadMap(
-         final TemplateOptions options, Iterable<NodeMetadata> runningNodes, final Set<NodeMetadata> goodNodes,
-         final Map<NodeMetadata, Exception> badNodes) {
-      Map<NodeMetadata, ListenableFuture<Void>> responses = Maps.newHashMap();
+   public Map<?, Future<Void>> runOptionsOnNodesAndAddToGoodSetOrPutExceptionIntoBadMap(final TemplateOptions options,
+            Iterable<NodeMetadata> runningNodes, final Set<NodeMetadata> goodNodes,
+            final Map<NodeMetadata, Exception> badNodes) {
+      Map<NodeMetadata, Future<Void>> responses = Maps.newHashMap();
       for (final NodeMetadata node : runningNodes) {
-         responses.put(node, makeListenable(executor.submit(runOptionsOnNodeAndAddToGoodSetOrPutExceptionIntoBadMap(
-               node, badNodes, goodNodes, options)), executor));
+         responses.put(node, executor.submit(runOptionsOnNodeAndAddToGoodSetOrPutExceptionIntoBadMap(node, badNodes,
+                  goodNodes, options)));
       }
       return responses;
    }
 
    public Callable<Void> runOptionsOnNodeAndAddToGoodSetOrPutExceptionIntoBadMap(final NodeMetadata node,
-         final Map<NodeMetadata, Exception> badNodes, final Set<NodeMetadata> goodNodes, final TemplateOptions options) {
+            final Map<NodeMetadata, Exception> badNodes, final Set<NodeMetadata> goodNodes,
+            final TemplateOptions options) {
       return new Callable<Void>() {
          @Override
          public Void call() throws Exception {
@@ -117,7 +117,7 @@ public class ComputeUtils {
                goodNodes.add(node1);
             } catch (Exception e) {
                logger.error(e, "<< problem applying options to node(%s): ", node.getId(), Throwables.getRootCause(e)
-                     .getMessage());
+                        .getMessage());
                badNodes.put(node, e);
             }
             return null;
@@ -133,8 +133,8 @@ public class ComputeUtils {
          node = installNewCredentials(getNode.execute(node.getId()), node.getCredentials());
       else
          throw new IllegalStateException(String.format(
-               "node didn't achieve the state running on node %s within %d seconds, final state: %s", node.getId(),
-               timeouts.nodeRunning / 1000, node.getState()));
+                  "node didn't achieve the state running on node %s within %d seconds, final state: %s", node.getId(),
+                  timeouts.nodeRunning / 1000, node.getState()));
 
       List<SshCallable<?>> callables = Lists.newArrayList();
       if (options.getRunScript() != null) {
@@ -148,13 +148,13 @@ public class ComputeUtils {
       // fail.
       if (callables.size() > 0 || options.getPrivateKey() != null) {
          runCallablesOnNode(node, callables, options.getPrivateKey() != null ? installKeyOnNode(node, options
-               .getPrivateKey()) : null);
+                  .getPrivateKey()) : null);
       }
 
       if (options.getPort() > 0) {
          checkNodeHasPublicIps(node);
          blockUntilPortIsListeningOnPublicIp(options.getPort(), options.getSeconds(), Iterables.get(node
-               .getPublicAddresses(), 0));
+                  .getPublicAddresses(), 0));
       }
       return node;
    }
@@ -190,11 +190,12 @@ public class ComputeUtils {
       return new RunScriptOnNode(runScriptNotRunning, node, scriptName, script, false);
    }
 
-   public Map<SshCallable<?>, ?> runCallablesOnNode(NodeMetadata node, Iterable<? extends SshCallable<?>> parallel,
-         @Nullable SshCallable<?> last) {
+   public Map<SshCallable<?>, ?> runCallablesOnNode(NodeMetadata node, Iterable<SshCallable<?>> parallel,
+            @Nullable SshCallable<?> last) {
       checkState(this.sshFactory != null, "runScript requested, but no SshModule configured");
       checkNodeHasPublicIps(node);
-      checkNotNull(node.getCredentials().credential, "credentials.key for node " + node.getId());
+      checkNotNull(node.getCredentials(), "credentials for node " + node.getId());
+      checkNotNull(node.getCredentials().credential, "credentials.credential for node " + node.getId());
       SshClient ssh = createSshClientOncePortIsListeningOnNode(node);
       try {
          ssh.connect();
@@ -205,8 +206,8 @@ public class ComputeUtils {
       }
    }
 
-   private Map<SshCallable<?>, ?> runTasksUsingSshClient(Iterable<? extends SshCallable<?>> parallel,
-         SshCallable<?> last, SshClient ssh) {
+   private Map<SshCallable<?>, ?> runTasksUsingSshClient(Iterable<SshCallable<?>> parallel, SshCallable<?> last,
+            SshClient ssh) {
       Map<SshCallable<?>, Object> responses = Maps.newHashMap();
       if (Iterables.size(parallel) > 0) {
          responses.putAll(runCallablesUsingSshClient(parallel, ssh));
@@ -226,18 +227,18 @@ public class ComputeUtils {
       IPSocket socket = new IPSocket(Iterables.get(node.getPublicAddresses(), 0), 22);
       socketTester.apply(socket);
       SshClient ssh = isKeyAuth(node) ? sshFactory.create(socket, node.getCredentials().identity,
-            node.getCredentials().credential.getBytes()) : sshFactory.create(socket, node.getCredentials().identity,
-            node.getCredentials().credential);
+               node.getCredentials().credential.getBytes()) : sshFactory.create(socket, node.getCredentials().identity,
+               node.getCredentials().credential);
       return ssh;
    }
 
-   private Map<SshCallable<?>, Object> runCallablesUsingSshClient(Iterable<? extends SshCallable<?>> parallel,
-         SshClient ssh) {
-      Map<SshCallable<?>, ListenableFuture<?>> parallelResponses = Maps.newHashMap();
+   // TODO refactor
+   private Map<SshCallable<?>, Object> runCallablesUsingSshClient(Iterable<SshCallable<?>> parallel, SshClient ssh) {
+      Map<SshCallable<?>, Future<?>> parallelResponses = Maps.newHashMap();
 
       for (SshCallable<?> callable : parallel) {
          callable.setConnection(ssh, logger);
-         parallelResponses.put(callable, ConcurrentUtils.makeListenable(executor.submit(callable), executor));
+         parallelResponses.put(callable, executor.submit(callable));
       }
 
       Map<SshCallable<?>, Exception> exceptions = awaitCompletion(parallelResponses, executor, null, logger, "ssh");
@@ -248,9 +249,9 @@ public class ComputeUtils {
    }
 
    @SuppressWarnings("unchecked")
-   public <T> Map<SshCallable<?>, T> transform(Map<SshCallable<?>, ListenableFuture<?>> responses) {
+   public <T> Map<SshCallable<?>, T> transform(Map<SshCallable<?>, Future<?>> responses) {
       Map<SshCallable<?>, T> actualResponses = Maps.newHashMap();
-      for (Map.Entry<SshCallable<?>, ListenableFuture<?>> entry : responses.entrySet()) {
+      for (Map.Entry<SshCallable<?>, Future<?>> entry : responses.entrySet()) {
          try {
             actualResponses.put(entry.getKey(), (T) entry.getValue().get());
          } catch (InterruptedException e) {

@@ -24,6 +24,7 @@ import javax.inject.Inject;
 
 import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.Reservation;
+import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.date.DateService;
 
 import com.google.common.collect.Sets;
@@ -37,8 +38,8 @@ import com.google.common.collect.Sets;
  * @see <a href="http: />
  */
 public class DescribeInstancesResponseHandler extends
-         BaseReservationHandler<Set<Reservation>> {
-   private Set<Reservation> reservations = Sets.newLinkedHashSet();
+         BaseReservationHandler<Set<Reservation<? extends RunningInstance>>> {
+   private Set<Reservation<? extends RunningInstance>> reservations = Sets.newLinkedHashSet();
 
    @Inject
    DescribeInstancesResponseHandler(DateService dateService, @Region String defaultRegion) {
@@ -46,7 +47,7 @@ public class DescribeInstancesResponseHandler extends
    }
 
    @Override
-   public Set<Reservation> getResult() {
+   public Set<Reservation<? extends RunningInstance>> getResult() {
       return reservations;
    }
 

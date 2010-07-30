@@ -18,7 +18,6 @@
  */
 package org.jclouds.concurrent.internal;
 
-import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 import static org.testng.Assert.assertEquals;
 
 import java.io.FileNotFoundException;
@@ -30,6 +29,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import static org.jclouds.concurrent.ConcurrentUtils.*;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.internal.ClassMethodArgs;
 import org.testng.annotations.BeforeTest;
@@ -152,8 +152,7 @@ public class SyncProxyTest {
    @BeforeTest
    public void setUp() throws IllegalArgumentException, SecurityException, NoSuchMethodException {
       sync = SyncProxy.proxy(Sync.class, new SyncProxy(Sync.class, new Async(),
-               new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap
-                        .<Class<?>, Class<?>> of()));
+               new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap.<Class<?>, Class<?>> of()));
    }
 
    @Test
@@ -211,11 +210,10 @@ public class SyncProxyTest {
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testWrongTypedException() throws IllegalArgumentException, SecurityException,
-            NoSuchMethodException, IOException {
-      SyncProxy.proxy(SyncWrongException.class, new SyncProxy(SyncWrongException.class,
-               new Async(), new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap
-                        .<Class<?>, Class<?>> of()));
+   public void testWrongTypedException() throws IllegalArgumentException, SecurityException, NoSuchMethodException,
+            IOException {
+      SyncProxy.proxy(SyncWrongException.class, new SyncProxy(SyncWrongException.class, new Async(),
+               new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap.<Class<?>, Class<?>> of()));
    }
 
    private static interface SyncNoTimeOut {
@@ -230,11 +228,10 @@ public class SyncProxyTest {
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testNoTimeOutException() throws IllegalArgumentException, SecurityException,
-            NoSuchMethodException, IOException {
+   public void testNoTimeOutException() throws IllegalArgumentException, SecurityException, NoSuchMethodException,
+            IOException {
       SyncProxy.proxy(SyncNoTimeOut.class, new SyncProxy(SyncNoTimeOut.class, new Async(),
-               new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap
-                        .<Class<?>, Class<?>> of()));
+               new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap.<Class<?>, Class<?>> of()));
    }
 
 }

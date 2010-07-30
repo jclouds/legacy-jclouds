@@ -18,10 +18,13 @@
  */
 package org.jclouds.http;
 
-import static com.google.common.util.concurrent.Futures.compose;
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+
+import org.jclouds.Constants;
+import static org.jclouds.concurrent.ConcurrentUtils.*;
 
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -32,21 +35,22 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole
  */
-public class TransformingHttpCommandExecutorServiceImpl implements
-         TransformingHttpCommandExecutorService {
+public class TransformingHttpCommandExecutorServiceImpl implements TransformingHttpCommandExecutorService {
    private final HttpCommandExecutorService client;
+   private final ExecutorService userThreads;
 
    @Inject
-   public TransformingHttpCommandExecutorServiceImpl(HttpCommandExecutorService client) {
+   public TransformingHttpCommandExecutorServiceImpl(HttpCommandExecutorService client,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads) {
       this.client = client;
+      this.userThreads = userThreads;
    }
 
    /**
     * {@inheritDoc}
     */
-   public <T> ListenableFuture<T> submit(HttpCommand command,
-            Function<HttpResponse, T> responseTransformer) {
-      return compose(client.submit(command), responseTransformer, sameThreadExecutor());
+   public <T> ListenableFuture<T> submit(HttpCommand command, Function<HttpResponse, T> responseTransformer) {
+      return compose(client.submit(command), responseTransformer, userThreads);
    }
 
 }

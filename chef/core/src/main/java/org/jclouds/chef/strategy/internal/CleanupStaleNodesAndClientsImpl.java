@@ -68,7 +68,7 @@ public class CleanupStaleNodesAndClientsImpl implements CleanupStaleNodesAndClie
       final Calendar expired = Calendar.getInstance();
       expired.setTime(new Date());
       expired.add(Calendar.SECOND, -secondsStale);
-      Iterable<Node> staleNodes = filter(getAllNodes.execute(new Predicate<String>() {
+      Iterable<? extends Node> staleNodes = filter(getAllNodes.execute(new Predicate<String>() {
 
          @Override
          public boolean apply(String input) {

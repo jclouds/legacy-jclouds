@@ -23,7 +23,7 @@
  */
 package org.jclouds.opscodeplatform;
 
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;

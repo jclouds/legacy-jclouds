@@ -43,7 +43,7 @@ public interface ${providerName}Client {
    /*
     * Note all these delegate to methods in ${providerName}AsyncClient with a specified or inherited timeout.
     *   The singatures should match those of ${providerName}AsyncClient, except the returnvals should not be 
-    *   wrapped in a ListenableFuture 
+    *   wrapped in a Future 
     */
    
    String list();

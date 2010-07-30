@@ -26,7 +26,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.Future;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -37,6 +37,6 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(EncodeTagIntoNameRunNodesAndAddToSetStrategy.class)
 public interface RunNodesAndAddToSetStrategy {
 
-   Map<?, ListenableFuture<Void>> execute(String tag, int count, Template template,
+   Map<?, Future<Void>> execute(String tag, int count, Template template,
             Set<NodeMetadata> nodes, Map<NodeMetadata, Exception> badNodes);
 }

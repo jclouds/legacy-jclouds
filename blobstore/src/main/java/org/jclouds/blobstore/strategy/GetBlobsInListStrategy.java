@@ -18,8 +18,6 @@
  */
 package org.jclouds.blobstore.strategy;
 
-import java.util.Set;
-
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.GetAllBlobsInListAndRetryOnFailure;
@@ -34,6 +32,6 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(GetAllBlobsInListAndRetryOnFailure.class)
 public interface GetBlobsInListStrategy {
 
-   Set<? extends Blob> execute(String containerName, ListContainerOptions options);
+   Iterable<Blob> execute(String containerName, ListContainerOptions options);
 
 }

@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.sqs;
 
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static org.jclouds.aws.sqs.options.ListQueuesOptions.Builder.queuePrefix;
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 
@@ -38,7 +38,7 @@ import org.jclouds.rest.RestContextFactory;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.Future;
 import com.google.inject.Module;
 
 /**
@@ -133,7 +133,7 @@ public class SpeedTest {
                   queue.getName());
 
          // fire off all the messages for the test
-         Map<QueueMessage, ListenableFuture<byte[]>> responses = Maps.newHashMap();
+         Map<QueueMessage, Future<byte[]>> responses = Maps.newHashMap();
          for (int i = 0; i < messageCount; i++) {
             responses.put(new QueueMessage(queue, message), context.getAsyncApi().sendMessage(
                      queue, message));

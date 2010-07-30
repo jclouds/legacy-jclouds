@@ -35,7 +35,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.compute.functions.FindLocationForResourceInVDC;
+import org.jclouds.vcloud.compute.functions.FindLocationForResource;
 import org.jclouds.vcloud.compute.functions.VCloudGetNodeMetadata;
 import org.jclouds.vcloud.domain.NamedResource;
 
@@ -54,12 +54,11 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
    public Logger logger = Logger.NULL;
    protected final VCloudGetNodeMetadata getNodeMetadata;
    protected final VCloudClient client;
-   protected final FindLocationForResourceInVDC findLocationForResourceInVDC;
+   protected final FindLocationForResource findLocationForResourceInVDC;
 
    @Inject
-   protected VCloudListNodesStrategy(VCloudClient client,
-         VCloudGetNodeMetadata getNodeMetadata,
-         FindLocationForResourceInVDC findLocationForResourceInVDC) {
+   protected VCloudListNodesStrategy(VCloudClient client, VCloudGetNodeMetadata getNodeMetadata,
+            FindLocationForResource findLocationForResourceInVDC) {
       this.client = client;
       this.getNodeMetadata = getNodeMetadata;
       this.findLocationForResourceInVDC = findLocationForResourceInVDC;
@@ -68,10 +67,8 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
    @Override
    public Iterable<ComputeMetadata> list() {
       Set<ComputeMetadata> nodes = Sets.newHashSet();
-      for (NamedResource vdc : client.getDefaultOrganization().getVDCs()
-            .values()) {
-         for (NamedResource resource : client.getVDC(vdc.getId())
-               .getResourceEntities().values()) {
+      for (NamedResource vdc : client.getDefaultOrganization().getVDCs().values()) {
+         for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
             if (resource.getType().equals(VCloudMediaType.VAPP_XML)) {
                nodes.add(convertVAppToComputeMetadata(vdc, resource));
             }
@@ -80,25 +77,19 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
       return nodes;
    }
 
-   private ComputeMetadata convertVAppToComputeMetadata(NamedResource vdc,
-         NamedResource resource) {
-      Location location = findLocationForResourceInVDC.apply(resource, vdc
-            .getId());
-      return new ComputeMetadataImpl(ComputeType.NODE, resource.getId(),
-            resource.getName(), resource.getId(), location, null, ImmutableMap
-                  .<String, String> of());
+   private ComputeMetadata convertVAppToComputeMetadata(NamedResource vdc, NamedResource resource) {
+      Location location = findLocationForResourceInVDC.apply(vdc);
+      return new ComputeMetadataImpl(ComputeType.NODE, resource.getId(), resource.getName(), resource.getId(),
+               location, null, ImmutableMap.<String, String> of());
    }
 
    @Override
-   public Iterable<NodeMetadata> listDetailsOnNodesMatching(
-         Predicate<ComputeMetadata> filter) {
+   public Iterable<NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
       Set<NodeMetadata> nodes = Sets.newHashSet();
-      for (NamedResource vdc : client.getDefaultOrganization().getVDCs()
-            .values()) {
-         for (NamedResource resource : client.getVDC(vdc.getId())
-               .getResourceEntities().values()) {
+      for (NamedResource vdc : client.getDefaultOrganization().getVDCs().values()) {
+         for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
             if (resource.getType().equals(VCloudMediaType.VAPP_XML)
-                  && filter.apply(convertVAppToComputeMetadata(vdc, resource))) {
+                     && filter.apply(convertVAppToComputeMetadata(vdc, resource))) {
                addVAppToSetRetryingIfNotYetPresent(nodes, vdc, resource);
             }
          }
@@ -107,8 +98,7 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
    }
 
    @VisibleForTesting
-   void addVAppToSetRetryingIfNotYetPresent(Set<NodeMetadata> nodes,
-         NamedResource vdc, NamedResource resource) {
+   void addVAppToSetRetryingIfNotYetPresent(Set<NodeMetadata> nodes, NamedResource vdc, NamedResource resource) {
       NodeMetadata node = null;
       int i = 0;
       while (node == null && i++ < 3) {
@@ -116,8 +106,7 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
             node = getNodeMetadata.execute(resource.getId());
             nodes.add(node);
          } catch (NullPointerException e) {
-            logger.warn("vApp %s not yet present in vdc %s", resource.getId(),
-                  vdc.getId());
+            logger.warn("vApp %s not yet present in vdc %s", resource.getId(), vdc.getId());
          }
       }
    }

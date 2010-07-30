@@ -33,10 +33,11 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.util.ComputeUtils;
+import org.jclouds.domain.LocationScope;
 import org.jclouds.vcloud.compute.strategy.EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy;
 import org.jclouds.vcloud.terremark.compute.options.TerremarkVCloudTemplateOptions;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.Future;
 
 /**
  * creates futures that correlate to
@@ -44,32 +45,28 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @Singleton
-public class TerremarkEncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy
-      extends EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy {
+public class TerremarkEncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy extends
+         EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy {
 
    private final CreateNewKeyPairUnlessUserSpecifiedOtherwise createNewKeyPairUnlessUserSpecifiedOtherwise;
 
    @Inject
    protected TerremarkEncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy(
-         AddNodeWithTagStrategy addNodeWithTagStrategy,
-         ListNodesStrategy listNodesStrategy,
-         @Named("NAMING_CONVENTION") String nodeNamingConvention,
-         ComputeUtils utils,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-         SecureRandom random,
-         CreateNewKeyPairUnlessUserSpecifiedOtherwise createNewKeyPairUnlessUserSpecifiedOtherwise) {
-      super(addNodeWithTagStrategy, listNodesStrategy, nodeNamingConvention,
-            utils, executor, random);
+            AddNodeWithTagStrategy addNodeWithTagStrategy, ListNodesStrategy listNodesStrategy,
+            @Named("NAMING_CONVENTION") String nodeNamingConvention, ComputeUtils utils,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, SecureRandom random,
+            CreateNewKeyPairUnlessUserSpecifiedOtherwise createNewKeyPairUnlessUserSpecifiedOtherwise) {
+      super(addNodeWithTagStrategy, listNodesStrategy, nodeNamingConvention, utils, executor, random);
       this.createNewKeyPairUnlessUserSpecifiedOtherwise = createNewKeyPairUnlessUserSpecifiedOtherwise;
    }
 
    @Override
-   public Map<?, ListenableFuture<Void>> execute(String tag, int count,
-         Template template, Set<NodeMetadata> nodes,
-         Map<NodeMetadata, Exception> badNodes) {
-      createNewKeyPairUnlessUserSpecifiedOtherwise.execute(template
-            .getLocation().getParent().getId(), tag, template.getOptions().as(
-            TerremarkVCloudTemplateOptions.class));
+   public Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> nodes,
+            Map<NodeMetadata, Exception> badNodes) {
+      assert template.getLocation().getParent().getScope() == LocationScope.REGION : "template location should have a parent of org, which should be mapped to region: "
+               + template.getLocation();
+      createNewKeyPairUnlessUserSpecifiedOtherwise.execute(template.getLocation().getParent().getId(), tag, template
+               .getOptions().as(TerremarkVCloudTemplateOptions.class));
       return super.execute(tag, count, template, nodes, badNodes);
    }
 }

@@ -36,25 +36,25 @@ import org.jclouds.vcloud.domain.VAppTemplate;
 @Singleton
 public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials implements
          PopulateDefaultLoginCredentialsForImageStrategy {
-   
+
    public static final Pattern USER_PASSWORD_PATTERN = Pattern
             .compile(".*[Uu]sername: ([a-z]+) ?.*\n[Pp]assword: ([^ ]+) ?\n.*");
 
    @Override
    public Credentials execute(Object resourceToAuthenticate) {
       checkNotNull(resourceToAuthenticate);
-      checkArgument(resourceToAuthenticate instanceof VAppTemplate,
-               "Resource must be an VAppTemplate (for Terremark)");
+      checkArgument(resourceToAuthenticate instanceof VAppTemplate, "Resource must be an VAppTemplate (for Terremark)");
       VAppTemplate template = (VAppTemplate) resourceToAuthenticate;
-      if (template.getDescription().indexOf("Windows") >= 0) {
+      String search = template.getDescription() != null ? template.getDescription() : template.getName();
+      if (search.indexOf("Windows") >= 0) {
          return new Credentials("Administrator", null);
       } else {
-         Matcher matcher = USER_PASSWORD_PATTERN.matcher(template.getDescription());
+         Matcher matcher = USER_PASSWORD_PATTERN.matcher(search);
          if (matcher.find()) {
             return new Credentials(matcher.group(1), matcher.group(2));
          } else {
-            throw new RuntimeException("could not parse username/password for image: "
-                     + template.getId() + "\n" + template.getDescription());
+            throw new RuntimeException("could not parse username/password for image: " + template.getId() + "\n"
+                     + search);
          }
       }
    }

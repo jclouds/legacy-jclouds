@@ -49,7 +49,7 @@ import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
 import org.jclouds.vcloud.compute.config.providers.OrgAndVDCToLocationProvider;
 import org.jclouds.vcloud.compute.config.providers.StaticSizeProvider;
-import org.jclouds.vcloud.compute.config.providers.VCloudImageProvider;
+import org.jclouds.vcloud.compute.config.providers.VAppTemplatesInVDCs;
 import org.jclouds.vcloud.compute.strategy.EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudAddNodeWithTagStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
@@ -79,10 +79,9 @@ public class VCloudComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Provides
    Map<VAppStatus, NodeState> provideVAppStatusToNodeState() {
-      return ImmutableMap.<VAppStatus, NodeState> builder()
-               .put(VAppStatus.OFF, NodeState.SUSPENDED).put(VAppStatus.ON, NodeState.RUNNING).put(
-                        VAppStatus.RESOLVED, NodeState.PENDING).put(VAppStatus.SUSPENDED,
-                        NodeState.SUSPENDED).put(VAppStatus.UNRESOLVED, NodeState.PENDING).build();
+      return ImmutableMap.<VAppStatus, NodeState> builder().put(VAppStatus.OFF, NodeState.SUSPENDED).put(VAppStatus.ON,
+               NodeState.RUNNING).put(VAppStatus.RESOLVED, NodeState.PENDING).put(VAppStatus.SUSPENDED,
+               NodeState.SUSPENDED).put(VAppStatus.UNRESOLVED, NodeState.PENDING).build();
    }
 
    @Provides
@@ -101,8 +100,7 @@ public class VCloudComputeServiceContextModule extends AbstractModule {
       bind(new TypeLiteral<RestContext<VCloudClient, VCloudAsyncClient>>() {
       }).to(new TypeLiteral<RestContextImpl<VCloudClient, VCloudAsyncClient>>() {
       }).in(Scopes.SINGLETON);
-      bind(RunNodesAndAddToSetStrategy.class).to(
-               EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy.class);
+      bind(RunNodesAndAddToSetStrategy.class).to(EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy.class);
       bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
       bind(GetNodeMetadataStrategy.class).to(VCloudGetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
@@ -126,7 +124,7 @@ public class VCloudComputeServiceContextModule extends AbstractModule {
 
    protected void bindImages() {
       bind(new TypeLiteral<Set<? extends Image>>() {
-      }).toProvider(VCloudImageProvider.class).in(Scopes.SINGLETON);
+      }).toProvider(VAppTemplatesInVDCs.class).in(Scopes.SINGLETON);
    }
 
    protected void bindSizes() {

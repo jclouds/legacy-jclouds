@@ -18,7 +18,7 @@
  */
 package org.jclouds.azure.azurequeue;
 
-import static com.google.common.util.concurrent.MoreExecutors.sameThreadExecutor;
+import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
 
 import java.util.Map;
@@ -39,7 +39,7 @@ import org.jclouds.rest.RestContextFactory;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.Future;
 import com.google.inject.Module;
 
 /**
@@ -129,7 +129,7 @@ public class SpeedTest {
       logger.info("context: %s, queueName: %s", contextName, queueName);
 
       // fire off all the messages for the test
-      Map<QueueMessage, ListenableFuture<Void>> responses = Maps.newHashMap();
+      Map<QueueMessage, Future<Void>> responses = Maps.newHashMap();
       for (int i = 0; i < messageCount; i++) {
          responses.put(new QueueMessage(queueName, message), context.getAsyncApi().putMessage(
                   queueName, message));

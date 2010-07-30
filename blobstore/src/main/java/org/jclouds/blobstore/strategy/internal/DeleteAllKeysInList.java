@@ -43,7 +43,7 @@ import org.jclouds.logging.Logger;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.Future;
 import com.google.inject.Inject;
 
 /**
@@ -93,7 +93,7 @@ public class DeleteAllKeysInList implements ClearListStrategy, ClearContainerStr
       Map<StorageMetadata, Exception> exceptions = Maps.newHashMap();
       Iterable<? extends StorageMetadata> toDelete = getResourcesToDelete(containerName, options);
       for (int i = 0; i < 3; i++) { // TODO parameterize
-         Map<StorageMetadata, ListenableFuture<?>> responses = Maps.newHashMap();
+         Map<StorageMetadata, Future<?>> responses = Maps.newHashMap();
          try {
             for (final StorageMetadata md : toDelete) {
                String fullPath = parentIsFolder(options, md) ? options.getDir() + "/"

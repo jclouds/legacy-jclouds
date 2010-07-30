@@ -18,6 +18,8 @@
  */
 package org.jclouds.blobstore.strategy;
 
+import java.util.Set;
+
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.ListContainerAndRecurseThroughFolders;
@@ -32,6 +34,6 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(ListContainerAndRecurseThroughFolders.class)
 public interface ListBlobsInContainer {
 
-   Iterable<? extends BlobMetadata> execute(String containerName, ListContainerOptions options);
+   Set<? extends BlobMetadata> execute(String containerName, ListContainerOptions options);
 
 }

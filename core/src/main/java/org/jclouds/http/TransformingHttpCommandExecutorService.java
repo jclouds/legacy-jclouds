@@ -18,6 +18,8 @@
  */
 package org.jclouds.http;
 
+import java.util.concurrent.Future;
+
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -30,7 +32,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface TransformingHttpCommandExecutorService {
    /**
     * 
-    * Submits the command and transforms the result before requested via {@link ListenableFuture#get()}.
+    * Submits the command and transforms the result before requested via {@link Future#get()}.
     * 
     * @param <T>
     *           type that is required from the value.

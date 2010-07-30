@@ -19,11 +19,12 @@
 package org.jclouds.azure.storage.blob.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.util.concurrent.Futures.compose;
+import static org.jclouds.concurrent.ConcurrentUtils.compose;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
 
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -58,7 +59,6 @@ import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * @author Adrian Cole
@@ -76,21 +76,19 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
 
    @Inject
    AzureAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-            Location defaultLocation, Set<? extends Location> locations,
-
-            AzureBlobAsyncClient async, ContainerToResourceMetadata container2ResourceMd,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Location defaultLocation,
+            Set<? extends Location> locations, AzureBlobAsyncClient async,
+            ContainerToResourceMetadata container2ResourceMd,
             ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions,
-            ListBlobsResponseToResourceList azure2BlobStoreResourceList,
-            AzureBlobToBlob azureBlob2Blob, BlobToAzureBlob blob2AzureBlob,
-            BlobPropertiesToBlobMetadata blob2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions) {
+            ListBlobsResponseToResourceList azure2BlobStoreResourceList, AzureBlobToBlob azureBlob2Blob,
+            BlobToAzureBlob blob2AzureBlob, BlobPropertiesToBlobMetadata blob2BlobMd,
+            BlobToHttpGetOptions blob2ObjectGetOptions) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.async = checkNotNull(async, "async");
       this.container2ResourceMd = checkNotNull(container2ResourceMd, "container2ResourceMd");
       this.blobStore2AzureContainerListOptions = checkNotNull(blobStore2AzureContainerListOptions,
                "blobStore2AzureContainerListOptions");
-      this.azure2BlobStoreResourceList = checkNotNull(azure2BlobStoreResourceList,
-               "azure2BlobStoreResourceList");
+      this.azure2BlobStoreResourceList = checkNotNull(azure2BlobStoreResourceList, "azure2BlobStoreResourceList");
       this.azureBlob2Blob = checkNotNull(azureBlob2Blob, "azureBlob2Blob");
       this.blob2AzureBlob = checkNotNull(blob2AzureBlob, "blob2AzureBlob");
       this.blob2BlobMd = checkNotNull(blob2BlobMd, "blob2BlobMd");
@@ -102,14 +100,14 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
     * {@link org.jclouds.azure.storage.options.ListOptions#includeMetadata} option.
     */
    @Override
-   public ListenableFuture<? extends org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>> list() {
+   public ListenableFuture<org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>> list() {
       return compose(
                async.listContainers(includeMetadata()),
                new Function<BoundedSet<ContainerProperties>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
                   public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(
                            BoundedSet<ContainerProperties> from) {
-                     return new PageSetImpl<StorageMetadata>(Iterables.transform(from,
-                              container2ResourceMd), from.getNextMarker());
+                     return new PageSetImpl<StorageMetadata>(Iterables.transform(from, container2ResourceMd), from
+                              .getNextMarker());
                   }
                }, service);
    }
@@ -145,11 +143,9 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
     *           container name
     */
    @Override
-   public ListenableFuture<? extends PageSet<? extends StorageMetadata>> list(String container,
-            ListContainerOptions options) {
+   public ListenableFuture<PageSet<? extends StorageMetadata>> list(String container, ListContainerOptions options) {
       ListBlobsOptions azureOptions = blobStore2AzureContainerListOptions.apply(options);
-      ListenableFuture<ListBlobsResponse> returnVal = async.listBlobs(container, azureOptions
-               .includeMetadata());
+      ListenableFuture<ListBlobsResponse> returnVal = async.listBlobs(container, azureOptions.includeMetadata());
       return compose(returnVal, azure2BlobStoreResourceList, service);
    }
 
@@ -173,8 +169,7 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
     *           blob key
     */
    @Override
-   public ListenableFuture<Blob> getBlob(String container, String key,
-            org.jclouds.blobstore.options.GetOptions options) {
+   public ListenableFuture<Blob> getBlob(String container, String key, org.jclouds.blobstore.options.GetOptions options) {
       GetOptions azureOptions = blob2ObjectGetOptions.apply(options);
       ListenableFuture<AzureBlob> returnVal = async.getBlob(container, key, azureOptions);
       return compose(returnVal, azureBlob2Blob, service);
@@ -229,15 +224,14 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
-      return compose(async.getBlobProperties(container, key),
-               new Function<BlobProperties, BlobMetadata>() {
+      return compose(async.getBlobProperties(container, key), new Function<BlobProperties, BlobMetadata>() {
 
-                  @Override
-                  public BlobMetadata apply(BlobProperties from) {
-                     return blob2BlobMd.apply(from);
-                  }
+         @Override
+         public BlobMetadata apply(BlobProperties from) {
+            return blob2BlobMd.apply(from);
+         }
 
-               }, service);
+      }, service);
    }
 
    @Override

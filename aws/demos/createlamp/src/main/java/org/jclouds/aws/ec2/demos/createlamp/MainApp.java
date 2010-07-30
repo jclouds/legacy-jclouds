@@ -72,8 +72,8 @@ public class MainApp {
       String name = args[3];
 
       // Init
-      RestContext<EC2Client, EC2AsyncClient> context = new RestContextFactory().createContext(
-               "ec2", accesskeyid, secretkey);
+      RestContext<EC2Client, EC2AsyncClient> context = new RestContextFactory().createContext("ec2", accesskeyid,
+               secretkey);
 
       // Get a synchronous client
       EC2Client client = context.getApi();
@@ -107,8 +107,7 @@ public class MainApp {
       try {
          String id = findInstanceByKeyName(client, name).getId();
          System.out.printf("%d: %s terminating instance%n", System.currentTimeMillis(), id);
-         client.getInstanceServices().terminateInstancesInRegion(null,
-                  findInstanceByKeyName(client, name).getId());
+         client.getInstanceServices().terminateInstancesInRegion(null, findInstanceByKeyName(client, name).getId());
       } catch (NoSuchElementException e) {
       } catch (Exception e) {
          e.printStackTrace();
@@ -129,8 +128,8 @@ public class MainApp {
       }
    }
 
-   private static RunningInstance createSecurityGroupKeyPairAndInstance(EC2Client client,
-            String name) throws TimeoutException {
+   private static RunningInstance createSecurityGroupKeyPairAndInstance(EC2Client client, String name)
+            throws TimeoutException {
       // create a new security group
       createSecurityGroupAndAuthorizePorts(client, name);
 
@@ -145,8 +144,8 @@ public class MainApp {
       System.out.printf("%d: creating security group: %s%n", System.currentTimeMillis(), name);
       client.getSecurityGroupServices().createSecurityGroupInRegion(null, name, name);
       for (int port : new int[] { 80, 8080, 443, 22 }) {
-         client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(null, name,
-                  IpProtocol.TCP, port, port, "0.0.0.0/0");
+         client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(null, name, IpProtocol.TCP, port,
+                  port, "0.0.0.0/0");
       }
    }
 
@@ -163,7 +162,7 @@ public class MainApp {
                .build(OsFamily.UNIX);
 
       System.out.printf("%d: running instance%n", System.currentTimeMillis());
-      Reservation reservation = client.getInstanceServices().runInstancesInRegion(null, null, // allow
+      Reservation<? extends RunningInstance> reservation = client.getInstanceServices().runInstancesInRegion(null, null, // allow
                // ec2
                // to
                // chose
@@ -182,43 +181,38 @@ public class MainApp {
 
    }
 
-   static RunningInstance blockUntilInstanceRunning(EC2Client client, RunningInstance instance)
-            throws TimeoutException {
+   static RunningInstance blockUntilInstanceRunning(EC2Client client, RunningInstance instance) throws TimeoutException {
       // create utilities that wait for the instance to finish
       RetryablePredicate<RunningInstance> runningTester = new RetryablePredicate<RunningInstance>(
                new InstanceStateRunning(client), 180, 5, TimeUnit.SECONDS);
 
-      System.out.printf("%d: %s awaiting instance to run %n", System.currentTimeMillis(), instance
-               .getId());
+      System.out.printf("%d: %s awaiting instance to run %n", System.currentTimeMillis(), instance.getId());
       if (!runningTester.apply(instance))
          throw new TimeoutException("timeout waiting for instance to run: " + instance.getId());
 
       instance = findInstanceById(client, instance.getId());
 
-      RetryablePredicate<IPSocket> socketTester = new RetryablePredicate<IPSocket>(
-               new InetSocketAddressConnect(), 300, 1, TimeUnit.SECONDS);
-      System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(),
-               instance.getIpAddress());
+      RetryablePredicate<IPSocket> socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 300,
+               1, TimeUnit.SECONDS);
+      System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(), instance.getIpAddress());
       if (!socketTester.apply(new IPSocket(instance.getIpAddress(), 22)))
          throw new TimeoutException("timeout waiting for ssh to start: " + instance.getIpAddress());
 
-      System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), instance
-               .getIpAddress());
+      System.out.printf("%d: %s ssh service started%n", System.currentTimeMillis(), instance.getIpAddress());
 
-      System.out.printf("%d: %s awaiting http service to start%n", System.currentTimeMillis(),
-               instance.getIpAddress());
+      System.out.printf("%d: %s awaiting http service to start%n", System.currentTimeMillis(), instance.getIpAddress());
       if (!socketTester.apply(new IPSocket(instance.getIpAddress(), 80)))
          throw new TimeoutException("timeout waiting for http to start: " + instance.getIpAddress());
 
-      System.out.printf("%d: %s http service started%n", System.currentTimeMillis(), instance
-               .getIpAddress());
+      System.out.printf("%d: %s http service started%n", System.currentTimeMillis(), instance.getIpAddress());
       return instance;
    }
 
    private static RunningInstance findInstanceById(EC2Client client, String instanceId) {
       // search my account for the instance I just created
-      Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(null,
-               instanceId); // last parameter (ids) narrows the search
+      Set<? extends Reservation<? extends RunningInstance>> reservations = client.getInstanceServices()
+               .describeInstancesInRegion(null, instanceId); // last parameter (ids) narrows the
+      // search
 
       // since we refined by instanceId there should only be one instance
       return Iterables.getOnlyElement(Iterables.getOnlyElement(reservations));
@@ -226,11 +220,12 @@ public class MainApp {
 
    private static RunningInstance findInstanceByKeyName(EC2Client client, final String keyName) {
       // search my account for the instance I just created
-      Set<Reservation> reservations = client.getInstanceServices().describeInstancesInRegion(null);
+      Set<? extends Reservation<? extends RunningInstance>> reservations = client.getInstanceServices()
+               .describeInstancesInRegion(null);
 
       // extract all the instances from all reservations
       Set<RunningInstance> allInstances = Sets.newHashSet();
-      for (Reservation reservation : reservations) {
+      for (Reservation<? extends RunningInstance> reservation : reservations) {
          allInstances.addAll(reservation);
       }
 
@@ -239,8 +234,7 @@ public class MainApp {
 
          @Override
          public boolean apply(RunningInstance input) {
-            return input.getKeyName().equals(keyName)
-                     && input.getInstanceState() != InstanceState.TERMINATED;
+            return input.getKeyName().equals(keyName) && input.getInstanceState() != InstanceState.TERMINATED;
          }
 
       });

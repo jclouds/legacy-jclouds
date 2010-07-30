@@ -160,8 +160,8 @@ public abstract class BaseBlobMap<V> implements ListableMap<String, V> {
       return (int) blobstore.countBlobs(containerName, options);
    }
 
-   protected Set<? extends Blob> getAllBlobs() {
-      Set<? extends Blob> returnVal = getAllBlobs.execute(containerName, options);
+   protected Iterable<Blob> getAllBlobs() {
+      Iterable<Blob> returnVal = getAllBlobs.execute(containerName, options);
       if (options != null) {
          for (Blob from : returnVal)
             stripPrefix(from);

@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +43,7 @@ import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobsInContainer;
+import static org.jclouds.concurrent.ConcurrentUtils.*;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Throwables;
@@ -70,10 +72,8 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
    protected Long maxTime;
 
    @Inject
-   private FindMD5InUserMetadata(
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
-            ObjectMD5 objectMD5, ListBlobsInContainer getAllBlobMetadata,
-            AtmosStorageAsyncClient client) {
+   private FindMD5InUserMetadata(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
+            ObjectMD5 objectMD5, ListBlobsInContainer getAllBlobMetadata, AtmosStorageAsyncClient client) {
       this.objectMD5 = objectMD5;
       this.getAllBlobMetadata = getAllBlobMetadata;
       this.client = client;
@@ -83,10 +83,10 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
    public boolean execute(final String containerName, Object value, ListContainerOptions options) {
       final byte[] toSearch = objectMD5.apply(value);
       final BlockingQueue<Boolean> queue = new SynchronousQueue<Boolean>();
-      Map<String, ListenableFuture<?>> responses = Maps.newHashMap();
+      Map<String, Future<?>> responses = Maps.newHashMap();
       for (BlobMetadata md : getAllBlobMetadata.execute(containerName, options)) {
-         final ListenableFuture<AtmosObject> future = client.headFile(containerName + "/"
-                  + md.getName());
+         final ListenableFuture<AtmosObject> future = makeListenable(client.headFile(containerName
+                  + "/" + md.getName()), userExecutor);
          future.addListener(new Runnable() {
             public void run() {
                try {
@@ -97,8 +97,7 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
                         queue.put(true);
                      }
                   } else {
-                     logger.debug("object %s has no content md5", object.getSystemMetadata()
-                              .getObjectID());
+                     logger.debug("object %s has no content md5", object.getSystemMetadata().getObjectID());
                   }
                } catch (InterruptedException e) {
                   Throwables.propagate(e);
@@ -109,11 +108,11 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
          }, userExecutor);
          responses.put(md.getName(), future);
       }
-      Map<String, Exception> exceptions = awaitCompletion(responses, userExecutor, maxTime, logger,
-               String.format("searching for md5 in container %s", containerName));
+      Map<String, Exception> exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, String.format(
+               "searching for md5 in container %s", containerName));
       if (exceptions.size() > 0)
-         throw new BlobRuntimeException(String.format("searching for md5 in container %s: %s",
-                  containerName, exceptions));
+         throw new BlobRuntimeException(String.format("searching for md5 in container %s: %s", containerName,
+                  exceptions));
       try {
          return queue.poll(1, TimeUnit.MICROSECONDS) != null;
       } catch (InterruptedException e) {
@@ -121,9 +120,8 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
          return false;
       } catch (Exception e) {
          Throwables.propagateIfPossible(e, BlobRuntimeException.class);
-         throw new BlobRuntimeException(String.format(
-                  "Error searching for ETAG of value: [%s] in container:%s", value, containerName),
-                  e);
+         throw new BlobRuntimeException(String.format("Error searching for ETAG of value: [%s] in container:%s", value,
+                  containerName), e);
       }
    }
 }

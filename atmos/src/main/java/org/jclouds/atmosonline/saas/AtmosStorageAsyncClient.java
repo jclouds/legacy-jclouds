@@ -82,7 +82,7 @@ public interface AtmosStorageAsyncClient {
    @Path("/rest/namespace")
    @ResponseParser(ParseDirectoryListFromContentAndHeaders.class)
    @Consumes(MediaType.TEXT_XML)
-   ListenableFuture<? extends BoundedSet<? extends DirectoryEntry>> listDirectories(
+   ListenableFuture<BoundedSet<? extends DirectoryEntry>> listDirectories(
             ListOptions... options);
 
    /**
@@ -93,7 +93,7 @@ public interface AtmosStorageAsyncClient {
    @ResponseParser(ParseDirectoryListFromContentAndHeaders.class)
    @ExceptionParser(ThrowContainerNotFoundOn404.class)
    @Consumes(MediaType.TEXT_XML)
-   ListenableFuture<? extends BoundedSet<? extends DirectoryEntry>> listDirectory(
+   ListenableFuture<BoundedSet<? extends DirectoryEntry>> listDirectory(
             @PathParam("directoryName") String directoryName, ListOptions... options);
 
    /**

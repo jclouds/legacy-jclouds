@@ -19,11 +19,12 @@
 package org.jclouds.rackspace.cloudfiles.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.util.concurrent.Futures.compose;
+import static org.jclouds.concurrent.ConcurrentUtils.compose;
 import static org.jclouds.blobstore.util.BlobStoreUtils.createParentIfNeededAsync;
 
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import com.google.common.util.concurrent.ListenableFuture;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -59,7 +60,6 @@ import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * 
@@ -80,13 +80,12 @@ public class CloudFilesAsyncBlobStore extends BaseAsyncBlobStore {
 
    @Inject
    CloudFilesAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-            Location defaultLocation, Set<? extends Location> locations, CloudFilesClient sync,
-            CloudFilesAsyncClient async, ContainerToResourceMetadata container2ResourceMd,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Location defaultLocation,
+            Set<? extends Location> locations, CloudFilesClient sync, CloudFilesAsyncClient async,
+            ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
-            ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob,
-            BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
-            BlobToHttpGetOptions blob2ObjectGetOptions,
+            ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob, BlobToObject blob2Object,
+            ObjectToBlobMetadata object2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions,
             Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.sync = sync;
@@ -98,22 +97,19 @@ public class CloudFilesAsyncBlobStore extends BaseAsyncBlobStore {
       this.blob2Object = blob2Object;
       this.object2BlobMd = object2BlobMd;
       this.blob2ObjectGetOptions = blob2ObjectGetOptions;
-      this.fetchBlobMetadataProvider = checkNotNull(fetchBlobMetadataProvider,
-               "fetchBlobMetadataProvider");
+      this.fetchBlobMetadataProvider = checkNotNull(fetchBlobMetadataProvider, "fetchBlobMetadataProvider");
    }
 
    /**
     * This implementation invokes {@link CloudFilesAsyncClient#listContainers}
     */
    @Override
-   public ListenableFuture<? extends PageSet<? extends StorageMetadata>> list() {
-      return compose(
-               async.listContainers(),
+   public ListenableFuture<PageSet<? extends StorageMetadata>> list() {
+      return compose(async.listContainers(),
                new Function<Set<ContainerMetadata>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
                   public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(
                            Set<ContainerMetadata> from) {
-                     return new PageSetImpl<StorageMetadata>(Iterables.transform(from,
-                              container2ResourceMd), null);
+                     return new PageSetImpl<StorageMetadata>(Iterables.transform(from, container2ResourceMd), null);
                   }
                }, service);
    }
@@ -144,15 +140,13 @@ public class CloudFilesAsyncBlobStore extends BaseAsyncBlobStore {
     *           container name
     */
    @Override
-   public ListenableFuture<? extends PageSet<? extends StorageMetadata>> list(String container,
-            ListContainerOptions options) {
+   public ListenableFuture<PageSet<? extends StorageMetadata>> list(String container, ListContainerOptions options) {
       org.jclouds.rackspace.cloudfiles.options.ListContainerOptions httpOptions = container2ContainerListOptions
                .apply(options);
       ListenableFuture<PageSet<ObjectInfo>> returnVal = async.listObjects(container, httpOptions);
-      ListenableFuture<PageSet<? extends StorageMetadata>> list = compose(returnVal,
-               container2ResourceList, service);
-      return options.isDetailed() ? compose(list, fetchBlobMetadataProvider.get().setContainerName(
-               container), service) : list;
+      ListenableFuture<PageSet<? extends StorageMetadata>> list = compose(returnVal, container2ResourceList, service);
+      return options.isDetailed() ? compose(list, fetchBlobMetadataProvider.get().setContainerName(container), service)
+               : list;
    }
 
    /**
@@ -178,16 +172,14 @@ public class CloudFilesAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
+      return compose(async.getObjectInfo(container, key), new Function<MutableObjectInfoWithMetadata, BlobMetadata>() {
 
-      return compose(async.getObjectInfo(container, key),
-               new Function<MutableObjectInfoWithMetadata, BlobMetadata>() {
+         @Override
+         public BlobMetadata apply(MutableObjectInfoWithMetadata from) {
+            return object2BlobMd.apply(from);
+         }
 
-                  @Override
-                  public BlobMetadata apply(MutableObjectInfoWithMetadata from) {
-                     return object2BlobMd.apply(from);
-                  }
-
-               }, service);
+      }, service);
    }
 
    /**
@@ -199,8 +191,7 @@ public class CloudFilesAsyncBlobStore extends BaseAsyncBlobStore {
     *           object key
     */
    @Override
-   public ListenableFuture<Blob> getBlob(String container, String key,
-            org.jclouds.blobstore.options.GetOptions options) {
+   public ListenableFuture<Blob> getBlob(String container, String key, org.jclouds.blobstore.options.GetOptions options) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(options);
       ListenableFuture<CFObject> returnVal = async.getObject(container, key, httpOptions);
       return compose(returnVal, object2Blob, service);

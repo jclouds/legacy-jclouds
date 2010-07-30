@@ -33,7 +33,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.concurrent.FutureExceptionParser;
+import org.jclouds.concurrent.ExceptionParsingListenableFuture;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommand;
@@ -70,7 +70,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
    @SuppressWarnings("unchecked")
    @Inject
    public AsyncRestClientProxy(Injector injector, Factory factory, RestAnnotationProcessor<T> util,
-         TypeLiteral<T> typeLiteral, @Named("async") ConcurrentMap<ClassMethodArgs, Object> delegateMap) {
+            TypeLiteral<T> typeLiteral, @Named("async") ConcurrentMap<ClassMethodArgs, Object> delegateMap) {
       this.injector = injector;
       this.annotationProcessor = util;
       this.declaring = (Class<T>) typeLiteral.getRawType();
@@ -90,19 +90,19 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       } else if (method.isAnnotationPresent(Delegate.class)) {
          return delegateMap.get(new ClassMethodArgs(method.getReturnType(), method, args));
       } else if (annotationProcessor.getDelegateOrNull(method) != null
-            && ListenableFuture.class.isAssignableFrom(method.getReturnType())) {
-         return createFuture(method, args);
+               && ListenableFuture.class.isAssignableFrom(method.getReturnType())) {
+         return createListenableFuture(method, args);
       } else {
          throw new RuntimeException("method is intended solely to set constants: " + method);
       }
    }
 
    @SuppressWarnings("unchecked")
-   private ListenableFuture<?> createFuture(Method method, Object[] args) throws ExecutionException {
+   private ListenableFuture<?> createListenableFuture(Method method, Object[] args) throws ExecutionException {
       method = annotationProcessor.getDelegateOrNull(method);
       logger.trace("Converting %s.%s", declaring.getSimpleName(), method.getName());
       Function<Exception, ?> exceptionParser = annotationProcessor
-            .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method);
+               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method);
       // in case there is an exception creating the request, we should at least
       // pass in args
       if (exceptionParser instanceof InvocationContext) {
@@ -128,15 +128,15 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
 
       Function<HttpResponse, ?> transformer = annotationProcessor.createResponseParser(method, request);
       logger.trace("Response from %s.%s is parsed by %s", declaring.getSimpleName(), method.getName(), transformer
-            .getClass().getSimpleName());
+               .getClass().getSimpleName());
 
       logger.debug("Invoking %s.%s", declaring.getSimpleName(), method.getName());
       ListenableFuture<?> result = commandFactory.create(request, transformer).execute();
 
       if (exceptionParser != null) {
          logger.trace("Exceptions from %s.%s are parsed by %s", declaring.getSimpleName(), method.getName(),
-               exceptionParser.getClass().getSimpleName());
-         result = new FutureExceptionParser(result, exceptionParser);
+                  exceptionParser.getClass().getSimpleName());
+         result = new ExceptionParsingListenableFuture(result, exceptionParser);
       }
       return result;
    }

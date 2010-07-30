@@ -18,6 +18,8 @@
  */
 package org.jclouds.compute.domain;
 
+import java.util.NoSuchElementException;
+
 import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.TemplateOptions;
 
@@ -73,6 +75,9 @@ public interface TemplateBuilder {
 
    /**
     * Configure this template to start in a specific location
+    * 
+    * @throws NoSuchElementException
+    *            if location matches the id specified
     */
    TemplateBuilder locationId(String locationId);
 

@@ -58,8 +58,7 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "ec2.RunningInstanceToNodeMetadataTest")
 public class RunningInstanceToNodeMetadataTest {
-   private static class ImageProvider implements
-            Provider<Set<? extends org.jclouds.compute.domain.Image>> {
+   private static class ImageProvider implements Provider<Set<? extends org.jclouds.compute.domain.Image>> {
       private final Set<? extends org.jclouds.compute.domain.Image> images;
 
       private ImageProvider(org.jclouds.compute.domain.Image jcImage) {
@@ -117,8 +116,8 @@ public class RunningInstanceToNodeMetadataTest {
       replay(credentialProvider);
       replay(instance);
 
-      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client,
-               credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
+               credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
@@ -168,8 +167,8 @@ public class RunningInstanceToNodeMetadataTest {
       expect(jcImage.getProviderId()).andReturn("notImageId").atLeastOnce();
       expect(instance.getRegion()).andReturn("us-east-1").atLeastOnce();
 
-      expect(imageMap.get(new RegionAndName("us-east-1", "imageId"))).andThrow(
-               new NullPointerException()).atLeastOnce();
+      expect(imageMap.get(new RegionAndName("us-east-1", "imageId"))).andThrow(new NullPointerException())
+               .atLeastOnce();
 
       expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
 
@@ -181,8 +180,8 @@ public class RunningInstanceToNodeMetadataTest {
       replay(credentialProvider);
       replay(instance);
 
-      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client,
-               credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
+               credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
@@ -234,8 +233,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       org.jclouds.compute.domain.Image lateImage = createMock(org.jclouds.compute.domain.Image.class);
 
-      expect(imageMap.get(new RegionAndName("us-east-1", "imageId"))).andReturn(lateImage)
-               .atLeastOnce();
+      expect(imageMap.get(new RegionAndName("us-east-1", "imageId"))).andReturn(lateImage).atLeastOnce();
 
       expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
 
@@ -248,8 +246,8 @@ public class RunningInstanceToNodeMetadataTest {
       replay(credentialProvider);
       replay(instance);
 
-      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client,
-               credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
+               credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
@@ -270,8 +268,7 @@ public class RunningInstanceToNodeMetadataTest {
 
    @SuppressWarnings("unchecked")
    @Test
-   public void testApplyWithNoSecurityGroupCreatesTagOfIdPrefixedByTagAndNullCredentials()
-            throws UnknownHostException {
+   public void testApplyWithNoSecurityGroupCreatesTagOfIdPrefixedByTagAndNullCredentials() throws UnknownHostException {
       EC2Client client = createMock(EC2Client.class);
       AMIClient amiClient = createMock(AMIClient.class);
       Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
@@ -312,8 +309,8 @@ public class RunningInstanceToNodeMetadataTest {
       replay(credentialProvider);
       replay(instance);
 
-      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client,
-               credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
+               credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
@@ -333,8 +330,7 @@ public class RunningInstanceToNodeMetadataTest {
 
    @SuppressWarnings("unchecked")
    @Test
-   public void testApplyWithNoKeyPairCreatesTagOfParsedSecurityGroupAndNullCredentials()
-            throws UnknownHostException {
+   public void testApplyWithNoKeyPairCreatesTagOfParsedSecurityGroupAndNullCredentials() throws UnknownHostException {
       EC2Client client = createMock(EC2Client.class);
       AMIClient amiClient = createMock(AMIClient.class);
       Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
@@ -374,8 +370,8 @@ public class RunningInstanceToNodeMetadataTest {
       replay(credentialProvider);
       replay(instance);
 
-      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client,
-               credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
+               credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
@@ -395,8 +391,7 @@ public class RunningInstanceToNodeMetadataTest {
 
    @SuppressWarnings("unchecked")
    @Test
-   public void testApplyWithKeyPairCreatesTagOfParsedSecurityGroupAndCredentialsBasedOnIt()
-            throws UnknownHostException {
+   public void testApplyWithKeyPairCreatesTagOfParsedSecurityGroupAndCredentialsBasedOnIt() throws UnknownHostException {
       EC2Client client = createMock(EC2Client.class);
       AMIClient amiClient = createMock(AMIClient.class);
       expect(client.getAMIServices()).andReturn(amiClient).atLeastOnce();
@@ -429,7 +424,7 @@ public class RunningInstanceToNodeMetadataTest {
       expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
 
       expect(amiClient.describeImagesInRegion(Region.US_EAST_1, imageIds("imageId"))).andReturn(
-               ImmutableSet.<Image> of(image));
+               (Set) ImmutableSet.<Image> of(image));
 
       expect(credentialProvider.execute(image)).andReturn(new Credentials("user", "pass"));
 
@@ -448,8 +443,8 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
       replay(jcImage);
 
-      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client,
-               credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
+               credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
       NodeMetadata metadata = parser.apply(instance);
 
@@ -483,8 +478,7 @@ public class RunningInstanceToNodeMetadataTest {
       Image image = createMock(Image.class);
 
       expect(instance.getId()).andReturn("id").atLeastOnce();
-      expect(instance.getGroupIds()).andReturn(ImmutableSet.of("jclouds1", "jclouds2"))
-               .atLeastOnce();
+      expect(instance.getGroupIds()).andReturn(ImmutableSet.of("jclouds1", "jclouds2")).atLeastOnce();
       expect(instance.getKeyName()).andReturn("jclouds#tag#us-east-1#50").atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
       expect(instance.getVirtualizationType()).andReturn("paravirtual");
@@ -505,7 +499,7 @@ public class RunningInstanceToNodeMetadataTest {
       expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
 
       expect(amiClient.describeImagesInRegion(Region.US_EAST_1, imageIds("imageId"))).andReturn(
-               ImmutableSet.<Image> of(image));
+               (Set) ImmutableSet.<Image> of(image));
 
       expect(credentialProvider.execute(image)).andReturn(new Credentials("user", "pass"));
 
@@ -524,8 +518,8 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
       replay(jcImage);
 
-      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client,
-               credentialsMap, credentialProvider, new ImageProvider(jcImage), imageMap, locations,
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
+               credentialProvider, new ImageProvider(jcImage), imageMap, locations,
                new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);

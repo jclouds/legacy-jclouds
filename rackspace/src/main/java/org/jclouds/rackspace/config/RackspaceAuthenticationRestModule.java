@@ -42,7 +42,7 @@ import org.jclouds.rest.AsyncClientFactory;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.Future;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -83,7 +83,7 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
             new Supplier<AuthenticationResponse>() {
                public AuthenticationResponse get() {
                   try {
-                     ListenableFuture<AuthenticationResponse> response = factory.create(RackspaceAuthAsyncClient.class)
+                     Future<AuthenticationResponse> response = factory.create(RackspaceAuthAsyncClient.class)
                            .authenticate(user, key);
                      return response.get(30, TimeUnit.SECONDS);
                   } catch (Exception e) {

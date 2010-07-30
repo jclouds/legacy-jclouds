@@ -19,7 +19,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.compute.functions.FindLocationForResourceInVDC;
+import org.jclouds.vcloud.compute.functions.FindLocationForResource;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.VDC;
 
@@ -33,23 +33,23 @@ import com.google.common.collect.Sets;
 @Singleton
 public class ParseVAppTemplatesInVDCToSizeProvider implements Provider<Set<? extends Size>> {
    // ex Ubuntu904Serverx64 1CPUx16GBx20GB
-   public static final Pattern GBRAM_PATTERN = Pattern
-            .compile("[^ ] ([0-9]+)CPUx([0-9]+)GBx([0-9]+)GB");
+   public static final Pattern GBRAM_PATTERN = Pattern.compile("[^ ] ([0-9]+)CPUx([0-9]+)GBx([0-9]+)GB");
 
    // ex Windows2008stdx64 1CPUx512MBx30GB
-   public static final Pattern MBRAM_PATTERN = Pattern
-            .compile("[^ ] ([0-9]+)CPUx([0-9]+)MBx([0-9]+)GB");
+   public static final Pattern MBRAM_PATTERN = Pattern.compile("[^ ] ([0-9]+)CPUx([0-9]+)MBx([0-9]+)GB");
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
 
    private final VCloudClient client;
-   private final FindLocationForResourceInVDC findLocationForResourceInVDC;
 
+   private final FindLocationForResource findLocationForResourceInVDC;
+
+   // TODO fix to work with multiple orgs. this currently assumes only one per user which is ok for
+   // now
    @Inject
-   ParseVAppTemplatesInVDCToSizeProvider(VCloudClient client,
-            FindLocationForResourceInVDC findLocationForResourceInVDC) {
+   ParseVAppTemplatesInVDCToSizeProvider(VCloudClient client, FindLocationForResource findLocationForResourceInVDC) {
       this.client = client;
       this.findLocationForResourceInVDC = findLocationForResourceInVDC;
    }
@@ -69,7 +69,7 @@ public class ParseVAppTemplatesInVDCToSizeProvider implements Provider<Set<? ext
    void addSizesFromVAppTemplatesInVDC(VDC vdc, Set<Size> sizes) {
       for (NamedResource resource : vdc.getResourceEntities().values()) {
          if (resource.getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-            Location location = findLocationForResourceInVDC.apply(resource, vdc.getId());
+            Location location = findLocationForResourceInVDC.apply(vdc);
             try {
                Matcher matcher = getMatcherAndFind(resource.getName());
                double cores = Double.parseDouble(matcher.group(1));
@@ -78,9 +78,9 @@ public class ParseVAppTemplatesInVDCToSizeProvider implements Provider<Set<? ext
                   ram *= 1024;
                int disk = Integer.parseInt(matcher.group(3));
                String name = resource.getName().split(" ")[1];
-               sizes.add(new SizeImpl(resource.getId(), name, resource.getId(), location, null,
-                        ImmutableMap.<String, String> of(), cores, ram, disk, ImagePredicates
-                                 .idEquals(resource.getId())));
+               String id = vdc.getId() + "/" + resource.getId();
+               sizes.add(new SizeImpl(resource.getId(), name, id, location, null, ImmutableMap.<String, String> of(),
+                        cores, ram, disk, ImagePredicates.idEquals(id)));
             } catch (NoSuchElementException e) {
                logger.debug("<< didn't match at all(%s)", resource);
             }

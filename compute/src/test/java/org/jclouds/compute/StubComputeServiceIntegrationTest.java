@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.easymock.IArgumentMatcher;
 import org.jclouds.compute.domain.Architecture;
@@ -86,7 +88,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
       assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getLocation().getId(), provider);
+      assertEquals(defaultTemplate.getLocation().getId(), provider + "zone");
       assertEquals(defaultTemplate.getSize().getCores(), 4.0d);
    }
 
@@ -109,17 +111,17 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             expect(open.apply(new IPSocket("144.175.1.4", 22))).andReturn(true);
 
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.1", 22)), eq("root"), aryEq(keyPair.get("private")
-                        .getBytes()))).andReturn(client1).atLeastOnce();
+                     factory.create(eq(new IPSocket("144.175.1.1", 22)), eq("root"), aryEq(keyPair.get("private")
+                              .getBytes()))).andReturn(client1).atLeastOnce();
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.2", 22)), eq("root"), aryEq(keyPair.get("private")
-                        .getBytes()))).andReturn(client2).atLeastOnce();
+                     factory.create(eq(new IPSocket("144.175.1.2", 22)), eq("root"), aryEq(keyPair.get("private")
+                              .getBytes()))).andReturn(client2).atLeastOnce();
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.3", 22)), eq("root"), aryEq(keyPair.get("private")
-                        .getBytes()))).andReturn(client3).atLeastOnce();
+                     factory.create(eq(new IPSocket("144.175.1.3", 22)), eq("root"), aryEq(keyPair.get("private")
+                              .getBytes()))).andReturn(client3).atLeastOnce();
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.4", 22)), eq("root"), aryEq(keyPair.get("private")
-                        .getBytes()))).andReturn(client4).atLeastOnce();
+                     factory.create(eq(new IPSocket("144.175.1.4", 22)), eq("root"), aryEq(keyPair.get("private")
+                              .getBytes()))).andReturn(client4).atLeastOnce();
 
             helloAndJava(client1);
             helloAndJava(client2);
@@ -163,20 +165,20 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             SshClient client4 = createMock(SshClient.class);
 
             expect(factory.create(new IPSocket("144.175.1.1", 22), "root", "romeo")).andThrow(
-                  new SshException("Auth fail"));
+                     new SshException("Auth fail"));
             expect(factory.create(new IPSocket("144.175.1.1", 22), "root", "password1")).andReturn(client1)
-                  .atLeastOnce();
+                     .atLeastOnce();
 
             client1.connect();
             runScript(client1, "computeserv", 1);
             client1.disconnect();
 
             expect(factory.create(new IPSocket("144.175.1.2", 22), "root", "password2")).andReturn(client2)
-                  .atLeastOnce();
+                     .atLeastOnce();
             expect(factory.create(new IPSocket("144.175.1.3", 22), "root", "password3")).andReturn(client3)
-                  .atLeastOnce();
+                     .atLeastOnce();
             expect(factory.create(new IPSocket("144.175.1.4", 22), "root", "password4")).andReturn(client4)
-                  .atLeastOnce();
+                     .atLeastOnce();
 
             runScriptAndInstallSsh(client2, "runscript", 2);
             runScriptAndInstallSsh(client3, "runscript", 3);
@@ -240,9 +242,9 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
 
    public static String initScript(String scriptName, String script) {
       return new InitBuilder(scriptName, "/tmp/" + scriptName, "/tmp/" + scriptName,
-            ImmutableMap.<String, String> of(), Iterables.toArray(Splitter.on("\n").split(
-                  new String(checkNotNull(script, "script"))), String.class))
-            .build(org.jclouds.scriptbuilder.domain.OsFamily.UNIX);
+               ImmutableMap.<String, String> of(), Iterables.toArray(Splitter.on("\n").split(
+                        new String(checkNotNull(script, "script"))), String.class))
+               .build(org.jclouds.scriptbuilder.domain.OsFamily.UNIX);
    }
 
    public static Payload payloadEq(String value) {
@@ -253,7 +255,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<ConcurrentMap<Integer, StubNodeMetadata>, ConcurrentMap<Integer, StubNodeMetadata>> stubContext = new ComputeServiceContextFactory()
-            .createContext(provider, identity, credential).getProviderSpecificContext();
+               .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
    private static class PayloadEquals implements IArgumentMatcher, Serializable {
@@ -303,7 +305,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             return false;
          PayloadEquals other = (PayloadEquals) o;
          return this.expected == null && other.expected == null || this.expected != null
-               && this.expected.equals(other.expected);
+                  && this.expected.equals(other.expected);
       }
 
       @Override
@@ -359,6 +361,11 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    @Test(enabled = true, dependsOnMethods = { "testImagesCache" })
    public void testTemplateMatch() throws Exception {
       super.testTemplateMatch();
+   }
+
+   @Override
+   protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
+      super.cleanup();
    }
 
 }

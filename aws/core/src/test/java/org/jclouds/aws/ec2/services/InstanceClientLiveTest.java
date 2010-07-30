@@ -28,6 +28,7 @@ import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.domain.Reservation;
+import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
@@ -64,9 +65,9 @@ public class InstanceClientLiveTest {
 
    @Test
    void testDescribeInstances() {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
-               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
-         Set<Reservation> allResults = client.describeInstancesInRegion(region);
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
+               Region.AP_SOUTHEAST_1)) {
+         Set<? extends Reservation<? extends RunningInstance>> allResults = client.describeInstancesInRegion(region);
          assertNotNull(allResults);
          assert allResults.size() >= 0 : allResults.size();
       }

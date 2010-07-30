@@ -27,6 +27,7 @@ import static org.jclouds.aws.ec2.compute.util.EC2ComputeUtils.instanceToId;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -48,7 +49,6 @@ import org.jclouds.logging.Logger;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
-import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * creates futures that correlate to
@@ -56,8 +56,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @Singleton
-public class EC2RunNodesAndAddToSetStrategy implements
-      RunNodesAndAddToSetStrategy {
+public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrategy {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -76,11 +75,10 @@ public class EC2RunNodesAndAddToSetStrategy implements
 
    @Inject
    EC2RunNodesAndAddToSetStrategy(
-         EC2Client client,
-         CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions,
-         @Named("PRESENT") Predicate<RunningInstance> instancePresent,
-         RunningInstanceToNodeMetadata runningInstanceToNodeMetadata,
-         ComputeUtils utils) {
+            EC2Client client,
+            CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions,
+            @Named("PRESENT") Predicate<RunningInstance> instancePresent,
+            RunningInstanceToNodeMetadata runningInstanceToNodeMetadata, ComputeUtils utils) {
       this.client = client;
       this.instancePresent = instancePresent;
       this.createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions = createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions;
@@ -89,12 +87,11 @@ public class EC2RunNodesAndAddToSetStrategy implements
    }
 
    @Override
-   public Map<?, ListenableFuture<Void>> execute(String tag, int count,
-         Template template, Set<NodeMetadata> goodNodes,
-         Map<NodeMetadata, Exception> badNodes) {
+   public Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> goodNodes,
+            Map<NodeMetadata, Exception> badNodes) {
 
-      Reservation reservation = createKeyPairAndSecurityGroupsAsNeededThenRunInstances(
-            tag, count, template);
+      Reservation<? extends RunningInstance> reservation = createKeyPairAndSecurityGroupsAsNeededThenRunInstances(tag,
+               count, template);
 
       Iterable<String> ids = transform(reservation, instanceToId);
 
@@ -104,28 +101,25 @@ public class EC2RunNodesAndAddToSetStrategy implements
       all(reservation, instancePresent);
       logger.debug("<< present instances(%s)", idsString);
 
-      return utils.runOptionsOnNodesAndAddToGoodSetOrPutExceptionIntoBadMap(
-            template.getOptions(), transform(reservation,
-                  runningInstanceToNodeMetadata), goodNodes, badNodes);
+      return utils.runOptionsOnNodesAndAddToGoodSetOrPutExceptionIntoBadMap(template.getOptions(), transform(
+               reservation, runningInstanceToNodeMetadata), goodNodes, badNodes);
    }
 
    @VisibleForTesting
-   Reservation createKeyPairAndSecurityGroupsAsNeededThenRunInstances(
-         String tag, int count, Template template) {
+   Reservation<? extends RunningInstance> createKeyPairAndSecurityGroupsAsNeededThenRunInstances(String tag, int count,
+            Template template) {
       String region = getRegionFromLocationOrNull(template.getLocation());
       String zone = getZoneFromLocationOrNull(template.getLocation());
 
-      RunInstancesOptions instanceOptions = createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions
-            .execute(region, tag, template);
+      RunInstancesOptions instanceOptions = createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.execute(region,
+               tag, template);
 
       if (logger.isDebugEnabled())
-         logger.debug(
-               ">> running %d instance region(%s) zone(%s) ami(%s) params(%s)",
-               count, region, zone, template.getImage().getProviderId(),
-               instanceOptions.buildFormParameters());
+         logger.debug(">> running %d instance region(%s) zone(%s) ami(%s) params(%s)", count, region, zone, template
+                  .getImage().getProviderId(), instanceOptions.buildFormParameters());
 
-      return client.getInstanceServices().runInstancesInRegion(region, zone,
-            template.getImage().getProviderId(), 1, count, instanceOptions);
+      return client.getInstanceServices().runInstancesInRegion(region, zone, template.getImage().getProviderId(), 1,
+               count, instanceOptions);
    }
 
 }

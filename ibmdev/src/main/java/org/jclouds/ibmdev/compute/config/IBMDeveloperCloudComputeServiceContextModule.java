@@ -80,7 +80,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.Future;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -151,7 +151,7 @@ public class IBMDeveloperCloudComputeServiceContextModule extends AbstractModule
       }
 
       @Override
-      public Map<?, ListenableFuture<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> nodes,
+      public Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> nodes,
             Map<NodeMetadata, Exception> badNodes) {
          Payload key = template.getOptions().getPublicKey();
          if (key != null) {

@@ -57,7 +57,7 @@ public interface AMIClient {
     * @see DescribeImagesOptions
     */
    @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
-   Set<Image> describeImagesInRegion(@Nullable String region, DescribeImagesOptions... options);
+   Set<? extends Image> describeImagesInRegion(@Nullable String region, DescribeImagesOptions... options);
 
    /**
     * Returns the Product Codes of an image.

@@ -32,7 +32,7 @@ import org.jclouds.azure.storage.queue.options.PutMessageOptions;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpResponseException;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.Future;
 
 /**
  * Provides access to Azure Queue via their REST API.
@@ -47,9 +47,9 @@ import com.google.common.util.concurrent.ListenableFuture;
  * If you need to store messages larger than 8 KB, you can store message data as a blob or in a
  * table, and then store a reference to the data as a message in a queue.
  * <p/>
- * All commands return a ListenableFuture of the result from Azure Queue. Any exceptions incurred
+ * All commands return a Future of the result from Azure Queue. Any exceptions incurred
  * during processing will be wrapped in an {@link ExecutionException} as documented in
- * {@link ListenableFuture#get()}.
+ * {@link Future#get()}.
  * 
  * @see AzureQueueAsyncClient
  * @see <a href="http://msdn.microsoft.com/en-us/library/dd135733.aspx" />

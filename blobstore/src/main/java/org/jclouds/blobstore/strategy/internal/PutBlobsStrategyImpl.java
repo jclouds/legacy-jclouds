@@ -36,7 +36,7 @@ import org.jclouds.blobstore.strategy.PutBlobsStrategy;
 import org.jclouds.logging.Logger;
 
 import com.google.common.collect.Maps;
-import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.Future;
 import com.google.inject.Inject;
 
 /**
@@ -67,7 +67,7 @@ public class PutBlobsStrategyImpl implements PutBlobsStrategy {
 
    @Override
    public void execute(String containerName, Iterable<? extends Blob> blobs) {
-      Map<Blob, ListenableFuture<?>> responses = Maps.newHashMap();
+      Map<Blob, Future<?>> responses = Maps.newHashMap();
       for (Blob blob : blobs) {
          responses.put(blob, ablobstore.putBlob(containerName, blob));
       }

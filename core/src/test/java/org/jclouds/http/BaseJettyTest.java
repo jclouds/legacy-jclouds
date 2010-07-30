@@ -53,6 +53,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
@@ -93,6 +94,14 @@ public abstract class BaseJettyTest {
                throws IOException, ServletException {
             if (failIfNoContentLength(request, response)) {
                return;
+            } else if (target.indexOf("sleep") > 0) {
+               try {
+                  Thread.sleep(100);
+               } catch (InterruptedException e) {
+                  Throwables.propagate(e);
+               }
+               response.setContentType("text/xml");
+               response.setStatus(HttpServletResponse.SC_OK);
             } else if (target.indexOf("redirect") > 0) {
                response.sendRedirect("http://localhost:" + (testPort + 1) + "/");
             } else if (target.indexOf("101constitutions") > 0) {
