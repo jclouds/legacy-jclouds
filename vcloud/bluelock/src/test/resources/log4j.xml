@@ -2,7 +2,7 @@
     <!--
 
 
-        Copyright (C) 2009 Cloud Conscious, LLC.
+        Copyright (C) 2010 Cloud Conscious, LLC.
         <info@cloudconscious.com>
 
         ====================================================================
@@ -70,7 +70,7 @@
             -->
         </layout>
     </appender>
-
+    
     <!-- A time/date based rolling appender -->
     <appender name="COMPUTEFILE" class="org.apache.log4j.DailyRollingFileAppender">
         <param name="File" value="target/test-data/jclouds-compute.log" />
@@ -93,8 +93,34 @@
         </layout>
     </appender>
 
+    <!-- A time/date based rolling appender -->
+    <appender name="SSHFILE" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="target/test-data/jclouds-ssh.log" />
+        <param name="Append" value="true" />
+
+        <!-- Rollover at midnight each day -->
+        <param name="DatePattern" value="'.'yyyy-MM-dd" />
+
+        <param name="Threshold" value="TRACE" />
+
+        <layout class="org.apache.log4j.PatternLayout">
+            <!-- The default pattern: Date Priority [Category] Message\n -->
+            <param name="ConversionPattern" value="%d %-5p [%c] (%t) %m%n" />
+
+            <!--
+                The full pattern: Date MS Priority [Category]
+                (Thread:NDC) Message\n <param name="ConversionPattern"
+                value="%d %-5r %-5p [%c] (%t:%x) %m%n"/>
+            -->
+        </layout>
+    </appender>
+
     <appender name="ASYNCCOMPUTE" class="org.apache.log4j.AsyncAppender">
         <appender-ref ref="COMPUTEFILE" />
+    </appender>
+    
+    <appender name="ASYNCSSH" class="org.apache.log4j.AsyncAppender">
+        <appender-ref ref="SSHFILE" />
     </appender>
 
     <appender name="ASYNC" class="org.apache.log4j.AsyncAppender">
@@ -118,9 +144,14 @@
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
     </category>
-
-    <category name="org.jclouds.predicates.SocketOpen">
-        <priority value="TRACE" />
+    
+    <category name="jclouds.ssh">
+        <priority value="DEBUG" />
+        <appender-ref ref="ASYNCSSH" />
+    </category>
+    
+    <category name="jclouds.wire">
+        <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
     </category>
 
@@ -128,12 +159,6 @@
         <priority value="TRACE" />
         <appender-ref ref="ASYNCCOMPUTE" />
     </category>
-
-    <category name="jclouds.wire">
-        <priority value="DEBUG" />
-        <appender-ref ref="ASYNCWIRE" />
-    </category>
-
     <!-- ======================= -->
     <!-- Setup the Root category -->
     <!-- ======================= -->
