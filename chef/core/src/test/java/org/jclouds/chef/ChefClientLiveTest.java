@@ -98,7 +98,7 @@ public class ChefClientLiveTest {
       Properties props = new Properties();
       props.setProperty("chef.endpoint", endpoint);
       return (ChefContext) new RestContextFactory().<ChefClient, ChefAsyncClient> createContext("chef", identity, key,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), props);
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), props);
    }
 
    public void testCreateNewCookbook() throws Exception {
@@ -142,7 +142,9 @@ public class ChefClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateClient")
    public void testGenerateKeyForClient() throws Exception {
-      clientKey = validatorConnection.getApi().generateKeyForClient(PREFIX);
+      clientKey = validatorConnection.utils().encryption().toPem(
+               validatorConnection.getApi().generateKeyForClient(PREFIX).getPrivateKey());
+
       assertNotNull(clientKey);
       clientConnection.close();
       clientConnection = createConnection(PREFIX, clientKey);
@@ -156,9 +158,9 @@ public class ChefClientLiveTest {
             System.err.printf("%s/%s:%n", cookbook, version);
             CookbookVersion cookbookO = adminConnection.getApi().getCookbook(cookbook, version);
             for (Resource resource : ImmutableList.<Resource> builder().addAll(cookbookO.getDefinitions()).addAll(
-                  cookbookO.getFiles()).addAll(cookbookO.getLibraries()).addAll(cookbookO.getProviders()).addAll(
-                  cookbookO.getRecipes()).addAll(cookbookO.getResources()).addAll(cookbookO.getRootFiles()).addAll(
-                  cookbookO.getTemplates()).build()) {
+                     cookbookO.getFiles()).addAll(cookbookO.getLibraries()).addAll(cookbookO.getProviders()).addAll(
+                     cookbookO.getRecipes()).addAll(cookbookO.getResources()).addAll(cookbookO.getRootFiles()).addAll(
+                     cookbookO.getTemplates()).build()) {
                try {
                   InputStream stream = adminConnection.utils().http().get(resource.getUrl());
                   byte[] md5 = adminConnection.utils().encryption().md5(stream);
@@ -189,28 +191,30 @@ public class ChefClientLiveTest {
             CookbookVersion cook = adminConnection.getApi().getCookbook(cookbook, version);
             adminConnection.getApi().deleteCookbook(cookbook, version);
             assert adminConnection.getApi().getCookbook(cookbook, version) == null : cookbook + version;
-
             adminConnection.getApi().updateCookbook(cookbook, version, cook);
          }
    }
 
    @Test
    public void testListClients() throws Exception {
-      Set<String> clients = validatorConnection.getApi().listClients();
-      assertNotNull(clients);
-      assert clients.contains(validator) : "validator: " + validator + " not in: " + clients;
+      for (String client : validatorConnection.getApi().listClients())
+         assertNotNull(validatorConnection.getApi().getClient(client));
    }
 
    @Test(dependsOnMethods = "testListClients")
    public void testCreateClient() throws Exception {
       validatorConnection.getApi().deleteClient(PREFIX);
-      clientKey = validatorConnection.getApi().createClient(PREFIX);
-      assertNotNull(clientKey);
+
+      clientKey = validatorConnection.utils().encryption().toPem(
+               validatorConnection.getApi().createClient(PREFIX).getPrivateKey());
+
       System.out.println(clientKey);
+      assertNotNull(clientKey);
       clientConnection = createConnection(PREFIX, clientKey);
       clientConnection.getApi().clientExists(PREFIX);
-      Set<String> clients = adminConnection.getApi().listClients();
+      Set<String> clients = validatorConnection.getApi().listClients();
       assert clients.contains(PREFIX) : String.format("client %s not in %s", PREFIX, clients);
+      assertNotNull(validatorConnection.getApi().getClient(PREFIX));
    }
 
    @Test(dependsOnMethods = "testCreateClient")

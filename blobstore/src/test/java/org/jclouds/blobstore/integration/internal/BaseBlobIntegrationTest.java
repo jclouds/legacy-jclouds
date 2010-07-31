@@ -25,6 +25,7 @@ import static org.jclouds.blobstore.options.GetOptions.Builder.ifUnmodifiedSince
 import static org.jclouds.blobstore.options.GetOptions.Builder.range;
 import static org.jclouds.blobstore.util.BlobStoreUtils.getContentAsStringOrNullAndClose;
 import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
+import static org.jclouds.concurrent.ConcurrentUtils.compose;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -36,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -49,7 +51,6 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
-import static org.jclouds.concurrent.ConcurrentUtils.*;
 import org.jclouds.encryption.EncryptionService;
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.BaseJettyTest;
@@ -428,6 +429,8 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       try {
          encryptionService = new JCEEncryptionService();
       } catch (NoSuchAlgorithmException e) {
+         Throwables.propagate(e);
+      } catch (CertificateException e) {
          Throwables.propagate(e);
       }
    }

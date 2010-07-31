@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.Key;
 import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.cert.X509Certificate;
 
 import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.PayloadEnclosing;
@@ -46,7 +48,7 @@ public interface EncryptionService {
 
    byte[] fromHex(String encoded);
 
-   byte[] rsaSign(String toSign, Key privateKey);
+   byte[] rsaEncrypt(Payload payload, Key key);
 
    byte[] hmacSha256(String toEncode, byte[] key);
 
@@ -64,7 +66,8 @@ public interface EncryptionService {
     * <h2>Note</h2>
     * <p/>
     * If this is an InputStream, it will be converted to a byte array first.
-    * @throws IOException 
+    * 
+    * @throws IOException
     */
    <T extends PayloadEnclosing> T generateMD5BufferingIfNotRepeatable(T payloadEnclosing);
 
@@ -74,8 +77,8 @@ public interface EncryptionService {
 
    MD5OutputStream md5OutputStream(OutputStream out);
 
-   PrivateKey readPrivateKeyFromPEM(byte [] pem);
-   
+   PrivateKey privateKeyFromPEM(byte[] pem);
+
    public static abstract class MD5OutputStream extends FilterOutputStream {
       public MD5OutputStream(OutputStream out) {
          super(out);
@@ -83,5 +86,17 @@ public interface EncryptionService {
 
       public abstract byte[] getMD5();
    }
+
+   PublicKey publicKeyFromPEM(byte[] pem);
+
+   X509Certificate x509CertificateFromPEM(byte[] pem);
+
+   byte[] rsaDecrypt(Payload payload, Key key);
+
+   String toPem(X509Certificate cert);
+
+   String toPem(PublicKey key);
+
+   String toPem(PrivateKey key);
 
 }

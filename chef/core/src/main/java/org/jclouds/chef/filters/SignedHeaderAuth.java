@@ -81,9 +81,8 @@ public class SignedHeaderAuth implements HttpRequestFilter {
    Logger signatureLog = Logger.NULL;
 
    @Inject
-   public SignedHeaderAuth(SignatureWire signatureWire, @Named(PROPERTY_IDENTITY) String userId,
-            PrivateKey privateKey, @TimeStamp Provider<String> timeStampProvider,
-            EncryptionService encryptionService, HttpUtils utils) {
+   public SignedHeaderAuth(SignatureWire signatureWire, @Named(PROPERTY_IDENTITY) String userId, PrivateKey privateKey,
+            @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService, HttpUtils utils) {
       this.signatureWire = signatureWire;
       this.userId = userId;
       this.privateKey = privateKey;
@@ -96,48 +95,41 @@ public class SignedHeaderAuth implements HttpRequestFilter {
    public void filter(HttpRequest request) throws HttpException {
 
       String contentHash = hashBody(request.getPayload());
-      request.getHeaders().replaceValues("X-Ops-Content-Hash",
-               Collections.singletonList(contentHash));
+      request.getHeaders().replaceValues("X-Ops-Content-Hash", Collections.singletonList(contentHash));
       String timestamp = timeStampProvider.get();
-      String toSign = createStringToSign(request.getMethod(), hashPath(request.getEndpoint()
-               .getPath()), contentHash, timestamp);
+      String toSign = createStringToSign(request.getMethod(), hashPath(request.getEndpoint().getPath()), contentHash,
+               timestamp);
       request.getHeaders().replaceValues("X-Ops-Userid", Collections.singletonList(userId));
-      request.getHeaders().replaceValues("X-Ops-Sign",
-               Collections.singletonList(SIGNING_DESCRIPTION));
+      request.getHeaders().replaceValues("X-Ops-Sign", Collections.singletonList(SIGNING_DESCRIPTION));
       calculateAndReplaceAuthorizationHeaders(request, toSign);
       request.getHeaders().replaceValues("X-Ops-Timestamp", Collections.singletonList(timestamp));
       utils.logRequest(signatureLog, request, "<<");
    }
 
    @VisibleForTesting
-   void calculateAndReplaceAuthorizationHeaders(HttpRequest request, String toSign)
-            throws HttpException {
+   void calculateAndReplaceAuthorizationHeaders(HttpRequest request, String toSign) throws HttpException {
       String signature = sign(toSign);
       if (signatureWire.enabled())
          signatureWire.input(Utils.toInputStream(signature));
-      String[] signatureLines = Iterables.toArray(Splitter.fixedLength(60).split(signature),
-               String.class);
+      String[] signatureLines = Iterables.toArray(Splitter.fixedLength(60).split(signature), String.class);
       for (int i = 0; i < signatureLines.length; i++) {
          request.getHeaders().replaceValues("X-Ops-Authorization-" + (i + 1),
                   Collections.singletonList(signatureLines[i]));
       }
    }
 
-   public String createStringToSign(String request, String hashedPath, String contentHash,
-            String timestamp) {
+   public String createStringToSign(String request, String hashedPath, String contentHash, String timestamp) {
 
-      return new StringBuilder().append("Method:").append(request).append("\n").append(
-               "Hashed Path:").append(hashedPath).append("\n").append("X-Ops-Content-Hash:")
-               .append(contentHash).append("\n").append("X-Ops-Timestamp:").append(timestamp)
-               .append("\n").append("X-Ops-UserId:").append(userId).toString();
+      return new StringBuilder().append("Method:").append(request).append("\n").append("Hashed Path:").append(
+               hashedPath).append("\n").append("X-Ops-Content-Hash:").append(contentHash).append("\n").append(
+               "X-Ops-Timestamp:").append(timestamp).append("\n").append("X-Ops-UserId:").append(userId).toString();
 
    }
 
    @VisibleForTesting
    String hashPath(String path) {
       try {
-         return encryptionService.base64(encryptionService.sha1(Utils
-                  .toInputStream(canonicalPath(path))));
+         return encryptionService.base64(encryptionService.sha1(Utils.toInputStream(canonicalPath(path))));
       } catch (Exception e) {
          Throwables.propagateIfPossible(e);
          throw new HttpException("error creating sigature for path: " + path, e);
@@ -190,7 +182,7 @@ public class SignedHeaderAuth implements HttpRequestFilter {
 
    public String sign(String toSign) {
       try {
-         byte[] encrypted = encryptionService.rsaSign(toSign, privateKey);
+         byte[] encrypted = encryptionService.rsaEncrypt(Payloads.newStringPayload(toSign), privateKey);
          return encryptionService.base64(encrypted);
       } catch (Exception e) {
          throw new HttpException("error signing request", e);

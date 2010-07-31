@@ -31,6 +31,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -39,13 +40,12 @@ import org.jclouds.chef.ChefAsyncClient;
 import org.jclouds.chef.ChefClient;
 import org.jclouds.chef.ChefContext;
 import org.jclouds.chef.ChefService;
+import org.jclouds.chef.domain.Client;
 import org.jclouds.chef.reference.ChefConstants;
 import org.jclouds.chef.servlet.functions.InitParamsToProperties;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.jdk.JDKLogger;
 import org.jclouds.rest.RestContextFactory;
-
-import java.util.concurrent.Future;
 
 /**
  * Registers a new node in Chef and binds its name to {@link ChefConstants.CHEF_NODE}, its role to
@@ -121,7 +121,7 @@ public class ChefRegistrationListener implements ServletContextListener {
 
    private ChefService createClientAndNode(ChefService validatorClient, String role, String id, Properties overrides) {
       logger.trace("attempting to create client %s", id);
-      String clientKey = validatorClient.getContext().getApi().createClient(id);
+      Client client = validatorClient.getContext().getApi().createClient(id);
       logger.debug("created client %s", id);
       ChefService clientService = null;
       try {
@@ -129,7 +129,8 @@ public class ChefRegistrationListener implements ServletContextListener {
          clientProperties.putAll(overrides);
          removeCredentials(clientProperties);
          clientProperties.setProperty("chef.identity", id);
-         clientProperties.setProperty("chef.credential", clientKey);
+         clientProperties.setProperty("chef.credential", validatorClient.getContext().utils().encryption().toPem(
+                  client.getPrivateKey()));
          clientService = createService(clientProperties);
          clientService.createNodeAndPopulateAutomaticAttributes(id, singleton("role[" + role + "]"));
          return clientService;

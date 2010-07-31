@@ -88,7 +88,7 @@ public class BaseChefRestClientModule<S, A> extends RestClientModule<S, A> {
    @Singleton
    public PrivateKey provideKey(EncryptionService encryptionService, @Named(PROPERTY_CREDENTIAL) String pem)
          throws UnsupportedEncodingException {
-      return encryptionService.readPrivateKeyFromPEM(pem.getBytes("UTF-8"));
+      return encryptionService.privateKeyFromPEM(pem.getBytes("UTF-8"));
    }
 
    @Override

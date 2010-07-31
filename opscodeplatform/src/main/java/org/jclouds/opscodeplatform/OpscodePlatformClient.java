@@ -64,7 +64,7 @@ public interface OpscodePlatformClient {
     *            <p/>
     *            "403 Forbidden" if the caller is not authorized to create a user.
     */
-   String createUser(User user);
+   User createUser(User user);
 
    /**
     * updates an existing user. Note: you must have update rights on the user.
@@ -109,7 +109,7 @@ public interface OpscodePlatformClient {
     *            <p/>
     *            "403 Forbidden" if the caller is not authorized to create a organization.
     */
-   String createOrg(Organization organization);
+   Organization createOrg(Organization organization);
 
    /**
     * updates an existing organization. Note: you must have update rights on the organization.

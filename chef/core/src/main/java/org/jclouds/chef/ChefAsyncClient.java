@@ -49,7 +49,6 @@ import org.jclouds.chef.domain.Role;
 import org.jclouds.chef.domain.Sandbox;
 import org.jclouds.chef.domain.UploadSandbox;
 import org.jclouds.chef.filters.SignedHeaderAuth;
-import org.jclouds.chef.functions.ParseKeyFromJson;
 import org.jclouds.chef.functions.ParseKeySetFromJson;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.rest.annotations.BinderParam;
@@ -86,7 +85,7 @@ public interface ChefAsyncClient {
    @POST
    @Path("sandboxes")
    ListenableFuture<UploadSandbox> getUploadSandboxForChecksums(
-         @BinderParam(BindChecksumsToJsonPayload.class) Set<List<Byte>> md5s);
+            @BinderParam(BindChecksumsToJsonPayload.class) Set<List<Byte>> md5s);
 
    @PUT
    ListenableFuture<Void> uploadContent(@BinderParam(BindChecksumsToJsonPayload.class) Set<List<Byte>> md5s);
@@ -97,7 +96,7 @@ public interface ChefAsyncClient {
    @PUT
    @Path("sandboxes/{id}")
    ListenableFuture<Sandbox> commitSandbox(@PathParam("id") String id,
-         @BinderParam(BindIsCompletedToJsonPayload.class) boolean isCompleted);
+            @BinderParam(BindIsCompletedToJsonPayload.class) boolean isCompleted);
 
    /**
     * @see ChefCookbooks#listCookbooks
@@ -114,7 +113,7 @@ public interface ChefAsyncClient {
    @PUT
    @Path("cookbooks/{cookbookname}/{version}")
    ListenableFuture<CookbookVersion> updateCookbook(@PathParam("cookbookname") String cookbookName,
-         @PathParam("version") String version, @BinderParam(BindToJsonPayload.class) CookbookVersion cookbook);
+            @PathParam("version") String version, @BinderParam(BindToJsonPayload.class) CookbookVersion cookbook);
 
    /**
     * @see ChefCookbook#deleteCookbook(String)
@@ -123,7 +122,7 @@ public interface ChefAsyncClient {
    @Path("cookbooks/{cookbookname}/{version}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<CookbookVersion> deleteCookbook(@PathParam("cookbookname") String cookbookName,
-         @PathParam("version") String version);
+            @PathParam("version") String version);
 
    /**
     * @see ChefCookbook#getVersionsOfCookbook
@@ -141,24 +140,22 @@ public interface ChefAsyncClient {
    @Path("cookbooks/{cookbookname}/{version}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<CookbookVersion> getCookbook(@PathParam("cookbookname") String cookbookName,
-         @PathParam("version") String version);
+            @PathParam("version") String version);
 
    /**
     * @see ChefClient#createClient
     */
    @POST
    @Path("clients")
-   @ResponseParser(ParseKeyFromJson.class)
-   ListenableFuture<String> createClient(@BinderParam(BindClientnameToJsonPayload.class) String clientname);
+   ListenableFuture<Client> createClient(@BinderParam(BindClientnameToJsonPayload.class) String clientname);
 
    /**
     * @see ChefClient#generateKeyForClient
     */
    @PUT
    @Path("clients/{clientname}")
-   @ResponseParser(ParseKeyFromJson.class)
-   ListenableFuture<String> generateKeyForClient(
-         @PathParam("clientname") @BinderParam(BindGenerateKeyForClientToJsonPayload.class) String clientname);
+   ListenableFuture<Client> generateKeyForClient(
+            @PathParam("clientname") @BinderParam(BindGenerateKeyForClientToJsonPayload.class) String clientname);
 
    /**
     * @see ChefClient#clientExists
@@ -206,7 +203,7 @@ public interface ChefAsyncClient {
    @PUT
    @Path("nodes/{nodename}")
    ListenableFuture<Node> updateNode(
-         @PathParam("nodename") @ParamParser(NodeName.class) @BinderParam(BindToJsonPayload.class) Node node);
+            @PathParam("nodename") @ParamParser(NodeName.class) @BinderParam(BindToJsonPayload.class) Node node);
 
    /**
     * @see ChefNode#nodeExists
@@ -254,7 +251,7 @@ public interface ChefAsyncClient {
    @PUT
    @Path("roles/{rolename}")
    ListenableFuture<Role> updateRole(
-         @PathParam("rolename") @ParamParser(RoleName.class) @BinderParam(BindToJsonPayload.class) Role role);
+            @PathParam("rolename") @ParamParser(RoleName.class) @BinderParam(BindToJsonPayload.class) Role role);
 
    /**
     * @see ChefRole#roleExists
@@ -302,7 +299,7 @@ public interface ChefAsyncClient {
    @PUT
    @Path("data/{path}")
    ListenableFuture<JsonBall> updateDataBag(@PathParam("path") String path,
-         @BinderParam(BindToJsonPayload.class) JsonBall node);
+            @BinderParam(BindToJsonPayload.class) JsonBall node);
 
    /**
     * @see ChefDataBag#nodeExists

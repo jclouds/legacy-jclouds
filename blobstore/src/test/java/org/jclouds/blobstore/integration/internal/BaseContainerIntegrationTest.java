@@ -79,21 +79,21 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       // normalize the
       // providers.
       object.getMetadata().getUserMetadata().put("Adrian", "powderpuff");
-      object.getMetadata().setContentMD5(encryptionService.md5(toInputStream(TEST_STRING)));
+      object.getMetadata().setContentMD5(context.utils().encryption().md5(toInputStream(TEST_STRING)));
       String containerName = getContainerName();
       try {
          addBlobToContainer(containerName, object);
          validateContent(containerName, key);
 
          PageSet<? extends StorageMetadata> container = context.getBlobStore().list(containerName,
-               maxResults(1).withDetails());
+                  maxResults(1).withDetails());
 
          BlobMetadata metadata = BlobMetadata.class.cast(get(container, 0));
 
          assert metadata.getContentType().startsWith("text/plain") : metadata.getContentType();
          assertEquals(metadata.getSize(), new Long(TEST_STRING.length()));
          assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
-         assertEquals(metadata.getContentMD5(), encryptionService.md5(toInputStream(TEST_STRING)));
+         assertEquals(metadata.getContentMD5(), context.utils().encryption().md5(toInputStream(TEST_STRING)));
       } finally {
          returnContainer(containerName);
       }
@@ -125,7 +125,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
          container = context.getBlobStore().list(containerName, afterMarker(marker));
          assertEquals(container.getNextMarker(), null);
          assert container.size() == 25 : String.format("size should have been 25, but was %d: %s", container.size(),
-               container);
+                  container);
          assert container.getNextMarker() == null;
 
       } finally {
@@ -295,7 +295,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
          public void run() {
             try {
                assert !context.getBlobStore().containerExists(containerName) : "container " + containerName
-                     + " still exists";
+                        + " still exists";
             } catch (Exception e) {
                propagateIfPossible(e);
             }
@@ -305,7 +305,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    @Test(groups = { "integration", "live" })
    public void testListContainer() throws InterruptedException, ExecutionException, TimeoutException,
-         UnsupportedEncodingException {
+            UnsupportedEncodingException {
       String containerName = getContainerName();
       try {
          add15UnderRoot(containerName);

@@ -23,7 +23,6 @@ import static org.jclouds.blobstore.util.BlobStoreUtils.getContentAsStringOrNull
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
@@ -40,8 +39,6 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
-import org.jclouds.encryption.EncryptionService;
-import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.testng.ITestContext;
 import org.testng.annotations.AfterClass;
@@ -62,13 +59,13 @@ public class BaseBlobStoreIntegrationTest {
    protected static final String TEST_STRING = String.format(XML_STRING_FORMAT, "apple");
 
    protected Map<String, String> fiveStrings = ImmutableMap.of("one", String.format(XML_STRING_FORMAT, "apple"), "two",
-         String.format(XML_STRING_FORMAT, "bear"), "three", String.format(XML_STRING_FORMAT, "candy"), "four", String
-               .format(XML_STRING_FORMAT, "dogma"), "five", String.format(XML_STRING_FORMAT, "emma"));
+            String.format(XML_STRING_FORMAT, "bear"), "three", String.format(XML_STRING_FORMAT, "candy"), "four",
+            String.format(XML_STRING_FORMAT, "dogma"), "five", String.format(XML_STRING_FORMAT, "emma"));
 
    protected Map<String, String> fiveStringsUnderPath = ImmutableMap.of("path/1", String.format(XML_STRING_FORMAT,
-         "apple"), "path/2", String.format(XML_STRING_FORMAT, "bear"), "path/3", String.format(XML_STRING_FORMAT,
-         "candy"), "path/4", String.format(XML_STRING_FORMAT, "dogma"), "path/5", String.format(XML_STRING_FORMAT,
-         "emma"));
+            "apple"), "path/2", String.format(XML_STRING_FORMAT, "bear"), "path/3", String.format(XML_STRING_FORMAT,
+            "candy"), "path/4", String.format(XML_STRING_FORMAT, "dogma"), "path/5", String.format(XML_STRING_FORMAT,
+            "emma"));
 
    public static long INCONSISTENCY_WINDOW = 10000;
    protected static volatile AtomicInteger containerIndex = new AtomicInteger(0);
@@ -81,18 +78,8 @@ public class BaseBlobStoreIntegrationTest {
     */
    private volatile static BlockingQueue<String> containerNames = new ArrayBlockingQueue<String>(containerCount);
 
-   protected volatile static EncryptionService encryptionService;
-   static {
-      try {
-         encryptionService = new JCEEncryptionService();
-      } catch (NoSuchAlgorithmException e) {
-         Throwables.propagate(e);
-      }
-   }
-
    /**
-    * There are a lot of retries here mainly from experience running inside
-    * amazon EC2.
+    * There are a lot of retries here mainly from experience running inside amazon EC2.
     */
    @BeforeSuite
    public void setUpResourcesForAllThreads(ITestContext testContext) throws Exception {
@@ -102,7 +89,7 @@ public class BaseBlobStoreIntegrationTest {
 
    @SuppressWarnings("unchecked")
    private BlobStoreContext getCloudResources(ITestContext testContext) throws ClassNotFoundException,
-         InstantiationException, IllegalAccessException, Exception {
+            InstantiationException, IllegalAccessException, Exception {
       String initializerClass = checkNotNull(System.getProperty("jclouds.test.initializer"), "jclouds.test.initializer");
       Class<BaseTestInitializer> clazz = (Class<BaseTestInitializer>) Class.forName(initializerClass);
       BaseTestInitializer initializer = clazz.newInstance();
@@ -112,11 +99,10 @@ public class BaseBlobStoreIntegrationTest {
    protected ExecutorService exec;
 
    /**
-    * we are doing this at a class level, as the context.getBlobStore() object
-    * is going to be shared for all methods in the class. We don't want to do
-    * this for group, as some test classes may want to have a different
-    * implementation of context.getBlobStore(). For example, one class may want
-    * non-blocking i/o and another class google appengine.
+    * we are doing this at a class level, as the context.getBlobStore() object is going to be shared
+    * for all methods in the class. We don't want to do this for group, as some test classes may
+    * want to have a different implementation of context.getBlobStore(). For example, one class may
+    * want non-blocking i/o and another class google appengine.
     */
    @BeforeClass(groups = { "integration", "live" })
    public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
@@ -136,7 +122,7 @@ public class BaseBlobStoreIntegrationTest {
    private static volatile boolean initialized = false;
 
    protected void createContainersSharedByAllThreads(BlobStoreContext context, ITestContext testContext)
-         throws Exception {
+            throws Exception {
       while (!initialized) {
          synchronized (BaseBlobStoreIntegrationTest.class) {
             if (!initialized) {
@@ -187,12 +173,12 @@ public class BaseBlobStoreIntegrationTest {
       try {
          for (int i = 0; i < 2; i++) {
             Iterable<? extends StorageMetadata> testContainers = Iterables.filter(context.getBlobStore().list(),
-                  new Predicate<StorageMetadata>() {
-                     public boolean apply(StorageMetadata input) {
-                        return (input.getType() == StorageType.CONTAINER || input.getType() == StorageType.FOLDER)
-                              && input.getName().startsWith(CONTAINER_PREFIX.toLowerCase());
-                     }
-                  });
+                     new Predicate<StorageMetadata>() {
+                        public boolean apply(StorageMetadata input) {
+                           return (input.getType() == StorageType.CONTAINER || input.getType() == StorageType.FOLDER)
+                                    && input.getName().startsWith(CONTAINER_PREFIX.toLowerCase());
+                        }
+                     });
             for (StorageMetadata container : testContainers) {
                deleteContainerOrWarnIfUnable(context, container.getName());
             }
@@ -209,12 +195,11 @@ public class BaseBlobStoreIntegrationTest {
    public static boolean SANITY_CHECK_RETURNED_BUCKET_NAME = false;
 
    /**
-    * Due to eventual consistency, container commands may not return correctly
-    * immediately. Hence, we will try up to the inconsistency window to see if
-    * the assertion completes.
+    * Due to eventual consistency, container commands may not return correctly immediately. Hence,
+    * we will try up to the inconsistency window to see if the assertion completes.
     */
    protected static void assertConsistencyAware(BlobStoreContext context, Runnable assertion)
-         throws InterruptedException {
+            throws InterruptedException {
       if (context.getConsistencyModel() == ConsistencyModel.STRICT) {
          assertion.run();
          return;
@@ -240,7 +225,7 @@ public class BaseBlobStoreIntegrationTest {
    }
 
    protected static void createContainerAndEnsureEmpty(BlobStoreContext context, final String containerName)
-         throws InterruptedException {
+            throws InterruptedException {
       context.getBlobStore().createContainerInLocation(null, containerName);
       if (context.getConsistencyModel() == ConsistencyModel.EVENTUAL)
          Thread.sleep(1000);
@@ -284,19 +269,19 @@ public class BaseBlobStoreIntegrationTest {
    }
 
    protected void assertConsistencyAwareContainerSize(final String containerName, final int count)
-         throws InterruptedException {
+            throws InterruptedException {
       assertConsistencyAware(new Runnable() {
          public void run() {
             try {
                assert context.getBlobStore().countBlobs(containerName) == count : String.format(
-                     "expected only %d values in %s: %s", count, containerName, Sets.newHashSet(Iterables.transform(
-                           context.getBlobStore().list(containerName), new Function<StorageMetadata, String>() {
+                        "expected only %d values in %s: %s", count, containerName, Sets.newHashSet(Iterables.transform(
+                                 context.getBlobStore().list(containerName), new Function<StorageMetadata, String>() {
 
-                              public String apply(StorageMetadata from) {
-                                 return from.getName();
-                              }
+                                    public String apply(StorageMetadata from) {
+                                       return from.getName();
+                                    }
 
-                           })));
+                                 })));
             } catch (Exception e) {
                Throwables.propagateIfPossible(e);
             }
@@ -312,9 +297,9 @@ public class BaseBlobStoreIntegrationTest {
    }
 
    /**
-    * requestor will create a container using the name returned from this. This
-    * method will take care not to exceed the maximum containers permitted by a
-    * provider by deleting an existing container first.
+    * requestor will create a container using the name returned from this. This method will take
+    * care not to exceed the maximum containers permitted by a provider by deleting an existing
+    * container first.
     * 
     * @throws InterruptedException
     */
@@ -326,13 +311,12 @@ public class BaseBlobStoreIntegrationTest {
       if (containerName != null) {
          containerNames.add(containerName);
          /*
-          * Ensure that any returned container name actually exists on the
-          * server. Return of a non-existent container introduces subtle testing
-          * bugs, where later unrelated tests will fail.
+          * Ensure that any returned container name actually exists on the server. Return of a
+          * non-existent container introduces subtle testing bugs, where later unrelated tests will
+          * fail.
           * 
-          * NOTE: This sanity check should only be run for Stub-based
-          * Integration testing -- it will *substantially* slow down tests on a
-          * real server over a network.
+          * NOTE: This sanity check should only be run for Stub-based Integration testing -- it will
+          * *substantially* slow down tests on a real server over a network.
           */
          if (SANITY_CHECK_RETURNED_BUCKET_NAME) {
             if (!Iterables.any(context.getBlobStore().list(), new Predicate<StorageMetadata>() {
@@ -347,8 +331,7 @@ public class BaseBlobStoreIntegrationTest {
    }
 
    /**
-    * abandon old container name instead of waiting for the container to be
-    * created.
+    * abandon old container name instead of waiting for the container to be created.
     * 
     * @throws InterruptedException
     */

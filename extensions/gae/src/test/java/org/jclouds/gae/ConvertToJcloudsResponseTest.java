@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,6 +59,8 @@ public class ConvertToJcloudsResponseTest {
       try {
          encryptionService = new JCEEncryptionService();
       } catch (NoSuchAlgorithmException e) {
+         Throwables.propagate(e);
+      } catch (CertificateException e) {
          Throwables.propagate(e);
       }
    }

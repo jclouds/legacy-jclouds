@@ -24,15 +24,12 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 import java.util.SortedSet;
 
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.sqs.domain.Queue;
-import org.jclouds.encryption.EncryptionService;
-import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
@@ -41,7 +38,6 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.inject.Module;
@@ -58,15 +54,6 @@ public class SQSClientLiveTest {
    private SQSClient client;
 
    private RestContext<SQSClient, SQSAsyncClient> context;
-
-   protected volatile static EncryptionService encryptionService;
-   static {
-      try {
-         encryptionService = new JCEEncryptionService();
-      } catch (NoSuchAlgorithmException e) {
-         Throwables.propagate(e);
-      }
-   }
 
    private Set<Queue> queues = Sets.newHashSet();
 
@@ -136,7 +123,7 @@ public class SQSClientLiveTest {
    @Test(dependsOnMethods = "testCreateQueue")
    void testSendMessage() throws InterruptedException {
       String message = "hardyharhar";
-      byte[] md5 = encryptionService.md5(Utils.toInputStream(message));
+      byte[] md5 = context.utils().encryption().md5(Utils.toInputStream(message));
       for (Queue queue : queues) {
          assertEquals(client.sendMessage(queue, message), md5);
       }

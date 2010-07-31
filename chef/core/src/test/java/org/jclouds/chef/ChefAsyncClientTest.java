@@ -36,7 +36,6 @@ import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.domain.Role;
 import org.jclouds.chef.filters.SignedHeaderAuth;
 import org.jclouds.chef.filters.SignedHeaderAuthTest;
-import org.jclouds.chef.functions.ParseKeyFromJson;
 import org.jclouds.chef.functions.ParseKeySetFromJson;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.encryption.EncryptionService;
@@ -74,9 +73,9 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
       Method method = ChefAsyncClient.class.getMethod("commitSandbox", String.class, boolean.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
-            "0189e76ccc476701d6b374e5a1a27347", true);
+               "0189e76ccc476701d6b374e5a1a27347", true);
       assertRequestLineEquals(httpRequest,
-            "PUT http://localhost:4000/sandboxes/0189e76ccc476701d6b374e5a1a27347 HTTP/1.1");
+               "PUT http://localhost:4000/sandboxes/0189e76ccc476701d6b374e5a1a27347 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, "{\"is_completed\":\"true\"}", "application/json", false);
 
@@ -92,15 +91,15 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       EncryptionService encryptionService = injector.getInstance(EncryptionService.class);
       Method method = ChefAsyncClient.class.getMethod("getUploadSandboxForChecksums", Set.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, ImmutableSet.of(Bytes
-            .asList(encryptionService.fromHex("0189e76ccc476701d6b374e5a1a27347")), Bytes.asList(encryptionService
-            .fromHex("0c5ecd7788cf4f6c7de2a57193897a6c")), Bytes.asList(encryptionService
-            .fromHex("1dda05ed139664f1f89b9dec482b77c0"))));
+               .asList(encryptionService.fromHex("0189e76ccc476701d6b374e5a1a27347")), Bytes.asList(encryptionService
+               .fromHex("0c5ecd7788cf4f6c7de2a57193897a6c")), Bytes.asList(encryptionService
+               .fromHex("1dda05ed139664f1f89b9dec482b77c0"))));
       assertRequestLineEquals(httpRequest, "POST http://localhost:4000/sandboxes HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
-            httpRequest,
-            "{\"checksums\":{\"0189e76ccc476701d6b374e5a1a27347\":null,\"0c5ecd7788cf4f6c7de2a57193897a6c\":null,\"1dda05ed139664f1f89b9dec482b77c0\":null}}",
-            "application/json", false);
+               httpRequest,
+               "{\"checksums\":{\"0189e76ccc476701d6b374e5a1a27347\":null,\"0c5ecd7788cf4f6c7de2a57193897a6c\":null,\"1dda05ed139664f1f89b9dec482b77c0\":null}}",
+               "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -142,16 +141,16 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    public void testUpdateCookbook() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ChefAsyncClient.class.getMethod("updateCookbook", String.class, String.class,
-            CookbookVersion.class);
+               CookbookVersion.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "cookbook", "1.0.1",
-            new CookbookVersion("cookbook", "1.0.1"));
+               new CookbookVersion("cookbook", "1.0.1"));
 
       assertRequestLineEquals(httpRequest, "PUT http://localhost:4000/cookbooks/cookbook/1.0.1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
-            httpRequest,
-            "{\"name\":\"cookbook-1.0.1\",\"definitions\":[],\"attributes\":[],\"files\":[],\"metadata\":{\"suggestions\":{},\"dependencies\":{},\"conflicting\":{},\"providing\":{},\"platforms\":{},\"recipes\":{},\"replacing\":{},\"groupings\":{},\"attributes\":{},\"recommendations\":{}},\"providers\":[],\"cookbook_name\":\"cookbook\",\"resources\":[],\"templates\":[],\"libraries\":[],\"version\":\"1.0.1\",\"recipes\":[],\"root_files\":[],\"json_class\":\"Chef::CookbookVersion\",\"chef_type\":\"cookbook_version\"}",
-            "application/json", false);
+               httpRequest,
+               "{\"name\":\"cookbook-1.0.1\",\"definitions\":[],\"attributes\":[],\"files\":[],\"metadata\":{\"suggestions\":{},\"dependencies\":{},\"conflicting\":{},\"providing\":{},\"platforms\":{},\"recipes\":{},\"replacing\":{},\"groupings\":{},\"attributes\":{},\"recommendations\":{}},\"providers\":[],\"cookbook_name\":\"cookbook\",\"resources\":[],\"templates\":[],\"libraries\":[],\"version\":\"1.0.1\",\"recipes\":[],\"root_files\":[],\"json_class\":\"Chef::CookbookVersion\",\"chef_type\":\"cookbook_version\"}",
+               "application/json", false);
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
@@ -214,7 +213,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, "{\"clientname\":\"client\"}", "application/json", false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseKeyFromJson.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -245,7 +244,7 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, "{\"clientname\":\"client\", \"private_key\": true}", "application/json", false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseKeyFromJson.class);
+      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -286,14 +285,14 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
    public void testCreateNode() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ChefAsyncClient.class.getMethod("createNode", Node.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, new Node("testnode",
-            ImmutableSet.of("recipe[java]")));
+               ImmutableSet.of("recipe[java]")));
 
       assertRequestLineEquals(httpRequest, "POST http://localhost:4000/nodes HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
-            httpRequest,
-            "{\"name\":\"testnode\",\"normal\":{},\"override\":{},\"default\":{},\"automatic\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Node\",\"chef_type\":\"node\"}",
-            "application/json", false);
+               httpRequest,
+               "{\"name\":\"testnode\",\"normal\":{},\"override\":{},\"default\":{},\"automatic\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Node\",\"chef_type\":\"node\"}",
+               "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -306,14 +305,14 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
    public void testUpdateNode() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ChefAsyncClient.class.getMethod("updateNode", Node.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, new Node("testnode",
-            ImmutableSet.of("recipe[java]")));
+               ImmutableSet.of("recipe[java]")));
 
       assertRequestLineEquals(httpRequest, "PUT http://localhost:4000/nodes/testnode HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
-            httpRequest,
-            "{\"name\":\"testnode\",\"normal\":{},\"override\":{},\"default\":{},\"automatic\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Node\",\"chef_type\":\"node\"}",
-            "application/json", false);
+               httpRequest,
+               "{\"name\":\"testnode\",\"normal\":{},\"override\":{},\"default\":{},\"automatic\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Node\",\"chef_type\":\"node\"}",
+               "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -372,14 +371,14 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
    public void testCreateRole() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ChefAsyncClient.class.getMethod("createRole", Role.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, new Role("testrole",
-            ImmutableSet.of("recipe[java]")));
+               ImmutableSet.of("recipe[java]")));
 
       assertRequestLineEquals(httpRequest, "POST http://localhost:4000/roles HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
-            httpRequest,
-            "{\"name\":\"testrole\",\"override_attributes\":{},\"default_attributes\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Role\",\"chef_type\":\"role\"}",
-            "application/json", false);
+               httpRequest,
+               "{\"name\":\"testrole\",\"override_attributes\":{},\"default_attributes\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Role\",\"chef_type\":\"role\"}",
+               "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -392,14 +391,14 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
    public void testUpdateRole() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ChefAsyncClient.class.getMethod("updateRole", Role.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, new Role("testrole",
-            ImmutableSet.of("recipe[java]")));
+               ImmutableSet.of("recipe[java]")));
 
       assertRequestLineEquals(httpRequest, "PUT http://localhost:4000/roles/testrole HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
-            httpRequest,
-            "{\"name\":\"testrole\",\"override_attributes\":{},\"default_attributes\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Role\",\"chef_type\":\"role\"}",
-            "application/json", false);
+               httpRequest,
+               "{\"name\":\"testrole\",\"override_attributes\":{},\"default_attributes\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Role\",\"chef_type\":\"role\"}",
+               "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -455,6 +454,6 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
    @Override
    public ContextSpec<ChefClient, ChefAsyncClient> createContextSpec() {
       return new RestContextFactory().createContextSpec("chef", "user", SignedHeaderAuthTest.PRIVATE_KEY,
-            new Properties());
+               new Properties());
    }
 }

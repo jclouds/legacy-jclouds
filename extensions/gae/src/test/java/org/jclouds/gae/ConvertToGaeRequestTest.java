@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Date;
 
 import javax.ws.rs.HttpMethod;
@@ -59,6 +60,8 @@ public class ConvertToGaeRequestTest {
       try {
          encryptionService = new JCEEncryptionService();
       } catch (NoSuchAlgorithmException e) {
+         Throwables.propagate(e);
+      } catch (CertificateException e) {
          Throwables.propagate(e);
       }
    }
@@ -152,7 +155,7 @@ public class ConvertToGaeRequestTest {
          builder.append(header.getName()).append(": ").append(header.getValue()).append("\n");
       }
       assertEquals(builder.toString(),
-            "User-Agent: jclouds/1.0 urlfetch/1.3.5\nContent-MD5: AQIDBA==\nContent-Type: text/plain\nContent-Length: 5\n");
+               "User-Agent: jclouds/1.0 urlfetch/1.3.5\nContent-MD5: AQIDBA==\nContent-Type: text/plain\nContent-Length: 5\n");
       assertEquals(new String(gaeRequest.getPayload()), "hoot!");
    }
 }

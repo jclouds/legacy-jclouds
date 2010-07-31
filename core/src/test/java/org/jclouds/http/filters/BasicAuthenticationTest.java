@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 import javax.ws.rs.core.HttpHeaders;
 
@@ -40,7 +41,7 @@ public class BasicAuthenticationTest {
    private static final String USER = "Aladdin";
    private static final String PASSWORD = "open sesame";
 
-   public void testAuth() throws UnsupportedEncodingException, NoSuchAlgorithmException {
+   public void testAuth() throws UnsupportedEncodingException, NoSuchAlgorithmException, CertificateException {
       BasicAuthentication filter = new BasicAuthentication(USER, PASSWORD, new JCEEncryptionService());
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
       filter.filter(request);

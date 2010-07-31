@@ -67,12 +67,11 @@ public class OpscodePlatformClientLiveTest {
       String keyfile = System.getProperty("jclouds.test.credential");
       if (keyfile == null || keyfile.equals(""))
          keyfile = "/etc/chef/validation.pem";
-      validatorConnection = createConnection(orgname + "-validator", Files.toString(new File(
-               keyfile), Charsets.UTF_8));
+      validatorConnection = createConnection(orgname + "-validator", Files.toString(new File(keyfile), Charsets.UTF_8));
    }
 
-   private RestContext<OpscodePlatformClient, OpscodePlatformAsyncClient> createConnection(
-            String identity, String key) throws IOException {
+   private RestContext<OpscodePlatformClient, OpscodePlatformAsyncClient> createConnection(String identity, String key)
+            throws IOException {
       Properties props = new Properties();
       return new RestContextFactory().createContext("opscodeplatform", identity, key, ImmutableSet
                .<Module> of(new Log4JLoggingModule()), props);
@@ -88,7 +87,8 @@ public class OpscodePlatformClientLiveTest {
    @Test(dependsOnMethods = "testListClientsInOrg")
    public void testCreateClientInOrg() throws Exception {
       validatorConnection.getApi().getChefClientForOrg(orgname).deleteClient(PREFIX);
-      clientKey = validatorConnection.getApi().getChefClientForOrg(orgname).createClient(PREFIX);
+      clientKey = validatorConnection.utils().encryption().toPem(
+               validatorConnection.getApi().getChefClientForOrg(orgname).createClient(PREFIX).getPrivateKey());
       assertNotNull(clientKey);
       System.out.println(clientKey);
       clientConnection = createConnection(PREFIX, clientKey);
@@ -97,8 +97,8 @@ public class OpscodePlatformClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateClientInOrg")
    public void testGenerateKeyForClientInOrg() throws Exception {
-      clientKey = validatorConnection.getApi().getChefClientForOrg(orgname).generateKeyForClient(
-               PREFIX);
+      clientKey = validatorConnection.utils().encryption().toPem(
+               validatorConnection.getApi().getChefClientForOrg(orgname).createClient(PREFIX).getPrivateKey());
       assertNotNull(clientKey);
       clientConnection.close();
       clientConnection = createConnection(PREFIX, clientKey);

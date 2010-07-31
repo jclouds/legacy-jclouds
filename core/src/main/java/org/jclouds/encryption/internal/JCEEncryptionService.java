@@ -27,12 +27,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.DigestOutputStream;
 import java.security.InvalidKeyException;
-import java.security.Key;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 
-import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -44,12 +44,12 @@ import org.jclouds.io.payloads.ByteArrayPayload;
  */
 public class JCEEncryptionService extends BaseEncryptionService {
 
-   public JCEEncryptionService(KeyFactory rsaKeyFactory) {
-      super(rsaKeyFactory);
+   public JCEEncryptionService(KeyFactory rsaKeyFactory, CertificateFactory certFactory) {
+      super(rsaKeyFactory, certFactory);
    }
 
-   public JCEEncryptionService() throws NoSuchAlgorithmException {
-      super(KeyFactory.getInstance("RSA"));
+   public JCEEncryptionService() throws NoSuchAlgorithmException, CertificateException {
+      this(KeyFactory.getInstance("RSA"), CertificateFactory.getInstance("X.509"));
    }
 
    @Override
@@ -197,19 +197,6 @@ public class JCEEncryptionService extends BaseEncryptionService {
       }
 
       return digest.digest();
-   }
-
-   @Override
-   public byte[] rsaSign(String toSign, Key key) {
-      Cipher cipher;
-      try {
-         cipher = Cipher.getInstance("RSA");
-         cipher.init(Cipher.ENCRYPT_MODE, key);
-         return cipher.doFinal(toSign.getBytes());
-      } catch (Exception e) {
-         propagate(e);
-         return null;
-      }
    }
 
 }

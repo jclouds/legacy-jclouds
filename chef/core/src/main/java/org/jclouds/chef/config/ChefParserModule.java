@@ -18,17 +18,24 @@
  */
 package org.jclouds.chef.config;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.cert.X509Certificate;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.chef.domain.DataBagItem;
+import org.jclouds.encryption.EncryptionService;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
@@ -47,6 +54,87 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 public class ChefParserModule extends AbstractModule {
+   @ImplementedBy(PrivateKeyAdapterImpl.class)
+   public static interface PrivateKeyAdapter extends JsonDeserializer<PrivateKey> {
+
+   }
+
+   @Singleton
+   public static class PrivateKeyAdapterImpl implements PrivateKeyAdapter {
+      private final EncryptionService encryptionService;
+
+      @Inject
+      PrivateKeyAdapterImpl(EncryptionService encryptionService) {
+         this.encryptionService = encryptionService;
+      }
+
+      @Override
+      public PrivateKey deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+               throws JsonParseException {
+         String keyText = json.getAsString().replaceAll("\\n", "\n");
+         try {
+            return encryptionService.privateKeyFromPEM(keyText.getBytes("UTF-8"));
+         } catch (UnsupportedEncodingException e) {
+            Throwables.propagate(e);
+            return null;
+         }
+      }
+   }
+
+   @ImplementedBy(PublicKeyAdapterImpl.class)
+   public static interface PublicKeyAdapter extends JsonDeserializer<PublicKey> {
+
+   }
+
+   @Singleton
+   public static class PublicKeyAdapterImpl implements PublicKeyAdapter {
+      private final EncryptionService encryptionService;
+
+      @Inject
+      PublicKeyAdapterImpl(EncryptionService encryptionService) {
+         this.encryptionService = encryptionService;
+      }
+
+      @Override
+      public PublicKey deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+               throws JsonParseException {
+         String keyText = json.getAsString().replaceAll("\\n", "\n");
+         try {
+            return encryptionService.publicKeyFromPEM(keyText.getBytes("UTF-8"));
+         } catch (UnsupportedEncodingException e) {
+            Throwables.propagate(e);
+            return null;
+         }
+      }
+   }
+
+   @ImplementedBy(X509CertificateAdapterImpl.class)
+   public static interface X509CertificateAdapter extends JsonDeserializer<X509Certificate> {
+
+   }
+
+   @Singleton
+   public static class X509CertificateAdapterImpl implements X509CertificateAdapter {
+      private final EncryptionService encryptionService;
+
+      @Inject
+      X509CertificateAdapterImpl(EncryptionService encryptionService) {
+         this.encryptionService = encryptionService;
+      }
+
+      @Override
+      public X509Certificate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+               throws JsonParseException {
+         String keyText = json.getAsString().replaceAll("\\n", "\n");
+         try {
+            return encryptionService.x509CertificateFromPEM(keyText.getBytes("UTF-8"));
+         } catch (UnsupportedEncodingException e) {
+            Throwables.propagate(e);
+            return null;
+         }
+      }
+   }
+
    @ImplementedBy(DataBagItemAdapterImpl.class)
    public static interface DataBagItemAdapter extends JsonSerializer<DataBagItem>, JsonDeserializer<DataBagItem> {
 
@@ -62,7 +150,7 @@ public class ChefParserModule extends AbstractModule {
 
       @Override
       public DataBagItem deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
+               throws JsonParseException {
          IdHolder idHolder = context.deserialize(json, IdHolder.class);
          return new DataBagItem(idHolder.id, json.toString());
       }
@@ -75,8 +163,10 @@ public class ChefParserModule extends AbstractModule {
    @Provides
    @Singleton
    @Named(Constants.PROPERTY_GSON_ADAPTERS)
-   public Map<Type, Object> provideCustomAdapterBindings(DataBagItemAdapter adapter) {
-      return ImmutableMap.<Type, Object> of(DataBagItem.class, adapter);
+   public Map<Type, Object> provideCustomAdapterBindings(DataBagItemAdapter adapter, PrivateKeyAdapter privateAdapter,
+            PublicKeyAdapter publicAdapter, X509CertificateAdapter certAdapter) {
+      return ImmutableMap.<Type, Object> of(DataBagItem.class, adapter, PrivateKey.class, privateAdapter,
+               PublicKey.class, publicAdapter, X509Certificate.class, certAdapter);
    }
 
    @Override

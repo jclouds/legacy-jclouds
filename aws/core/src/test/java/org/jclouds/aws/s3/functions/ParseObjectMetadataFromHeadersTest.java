@@ -24,6 +24,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.Date;
 import java.util.Map;
 
@@ -58,6 +59,8 @@ public class ParseObjectMetadataFromHeadersTest {
          encryptionService = new JCEEncryptionService();
       } catch (NoSuchAlgorithmException e) {
          Throwables.propagate(e);
+      } catch (CertificateException e) {
+         Throwables.propagate(e);
       }
    }
 
@@ -70,7 +73,7 @@ public class ParseObjectMetadataFromHeadersTest {
       http.getHeaders().put("Content-Disposition", "contentDisposition");
       http.getHeaders().put(HttpHeaders.CONTENT_ENCODING, "encoding");
       ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(blobParser(http, "\"abc\""),
-            blobToObjectMetadata, encryptionService, "x-amz-meta-");
+               blobToObjectMetadata, encryptionService, "x-amz-meta-");
       MutableObjectMetadata response = parser.apply(http);
       assertEquals(response, expects);
    }
@@ -86,7 +89,7 @@ public class ParseObjectMetadataFromHeadersTest {
       http.getHeaders().put(HttpHeaders.CONTENT_ENCODING, "encoding");
       http.getHeaders().put("x-amz-meta-object-eTag", "\"abc\"");
       ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(blobParser(http, null),
-            blobToObjectMetadata, encryptionService, "x-amz-meta-");
+               blobToObjectMetadata, encryptionService, "x-amz-meta-");
       MutableObjectMetadata response = parser.apply(http);
       assertEquals(response, expects);
    }

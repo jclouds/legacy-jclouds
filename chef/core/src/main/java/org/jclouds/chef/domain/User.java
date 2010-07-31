@@ -18,6 +18,8 @@
  */
 package org.jclouds.chef.domain;
 
+import java.security.PrivateKey;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -37,6 +39,8 @@ public class User implements Comparable<User> {
    private String displayName;
    private String email;
    private String password;
+   @SerializedName("private_key")
+   private PrivateKey privateKey;
 
    public User(String username) {
       this.username = username;
@@ -108,6 +112,10 @@ public class User implements Comparable<User> {
       return password;
    }
 
+   public PrivateKey getPrivateKey() {
+      return privateKey;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
@@ -172,7 +180,7 @@ public class User implements Comparable<User> {
    @Override
    public String toString() {
       return "User [displayName=" + displayName + ", email=" + email + ", firstName=" + firstName + ", lastName="
-            + lastName + ", middleName=" + middleName + ", password=" + password + ", username=" + username + "]";
+               + lastName + ", middleName=" + middleName + ", password=" + password + ", username=" + username + "]";
    }
 
 }

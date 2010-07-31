@@ -26,11 +26,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 
-import javax.crypto.Cipher;
 import javax.inject.Singleton;
 
 import org.bouncycastle.crypto.Digest;
@@ -50,12 +50,12 @@ import org.jclouds.io.payloads.ByteArrayPayload;
  */
 @Singleton
 public class BouncyCastleEncryptionService extends BaseEncryptionService {
-   public BouncyCastleEncryptionService(KeyFactory rsaKeyFactory) {
-      super(rsaKeyFactory);
+   public BouncyCastleEncryptionService(KeyFactory rsaKeyFactory, CertificateFactory certFactory) {
+      super(rsaKeyFactory, certFactory);
    }
 
-   public BouncyCastleEncryptionService() throws NoSuchAlgorithmException {
-      super(KeyFactory.getInstance("RSA"));
+   public BouncyCastleEncryptionService() throws NoSuchAlgorithmException, CertificateException {
+      this(KeyFactory.getInstance("RSA"), CertificateFactory.getInstance("X.509"));
    }
 
    @Override
@@ -187,19 +187,6 @@ public class BouncyCastleEncryptionService extends BaseEncryptionService {
       }
       digest.doFinal(resBuf, 0);
       return resBuf;
-   }
-
-   @Override
-   public byte[] rsaSign(String toSign, Key key) {
-      // TODO convert this to BC code
-      try {
-         Cipher cipher = Cipher.getInstance("RSA");
-         cipher.init(Cipher.ENCRYPT_MODE, key);
-         return cipher.doFinal(toSign.getBytes());
-      } catch (Exception e) {
-         propagate(e);
-         return null;
-      }
    }
 
 }

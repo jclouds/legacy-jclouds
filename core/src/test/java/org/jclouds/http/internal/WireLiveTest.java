@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -56,6 +57,9 @@ public class WireLiveTest {
       try {
          encryptionService = new JCEEncryptionService();
       } catch (NoSuchAlgorithmException e) {
+         Throwables.propagate(e);
+         encryptionService = null;
+      } catch (CertificateException e) {
          Throwables.propagate(e);
          encryptionService = null;
       }
