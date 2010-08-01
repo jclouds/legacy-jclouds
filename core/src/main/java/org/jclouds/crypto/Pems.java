@@ -45,7 +45,6 @@ import org.jclouds.crypto.Pems.PemProcessor.ResultParser;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.io.ByteProcessor;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.InputSupplier;
 

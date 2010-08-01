@@ -18,7 +18,7 @@
  */
 package org.jclouds.aws.s3;
 
-import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
+import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -144,8 +144,12 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
       Map<Integer, ListenableFuture<?>> responses = Maps.newHashMap();
       for (int i = 0; i < loopCount; i++)
          responses.put(i, provider.get());
-      assert awaitCompletion(responses, exec, null, logger,
-            String.format("putting into containerName: %s", containerName)).size() == 0;
+
+      Map<Integer, Exception> exceptions = awaitCompletion(responses, exec, null, Logger.NULL, String.format(
+            "putting into containerName: %s", containerName));
+
+      assert exceptions.size() == 0 : exceptions;
+
    }
 
    class PutBytesFuture implements Provider<ListenableFuture<?>> {
