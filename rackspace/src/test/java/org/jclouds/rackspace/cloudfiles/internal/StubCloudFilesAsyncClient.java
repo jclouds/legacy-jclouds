@@ -19,7 +19,6 @@
 package org.jclouds.rackspace.cloudfiles.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.concurrent.ConcurrentUtils.compose;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import java.net.URI;
@@ -39,6 +38,7 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.concurrent.Futures;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.BlobToObject;
@@ -131,11 +131,11 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
 
    public ListenableFuture<CFObject> getObject(String container, String key, GetOptions... options) {
       org.jclouds.blobstore.options.GetOptions getOptions = httpGetOptionsConverter.apply(options);
-      return compose(blobStore.getBlob(container, key, getOptions), blob2Object, service);
+      return Futures.compose(blobStore.getBlob(container, key, getOptions), blob2Object, service);
    }
 
    public ListenableFuture<MutableObjectInfoWithMetadata> getObjectInfo(String container, String key) {
-      return compose(blobStore.blobMetadata(container, key),
+      return Futures.compose(blobStore.blobMetadata(container, key),
                new Function<BlobMetadata, MutableObjectInfoWithMetadata>() {
 
                   @Override
@@ -164,7 +164,7 @@ public class StubCloudFilesAsyncClient implements CloudFilesAsyncClient {
    public ListenableFuture<PageSet<ObjectInfo>> listObjects(String container,
             org.jclouds.rackspace.cloudfiles.options.ListContainerOptions... optionsList) {
       ListContainerOptions options = container2ContainerListOptions.apply(optionsList);
-      return compose(blobStore.list(container, options), resource2ObjectList, service);
+      return Futures.compose(blobStore.list(container, options), resource2ObjectList, service);
    }
 
    public ListenableFuture<String> putObject(String container, CFObject object) {

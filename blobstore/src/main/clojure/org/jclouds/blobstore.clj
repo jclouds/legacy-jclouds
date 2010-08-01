@@ -43,7 +43,7 @@ See http://code.google.com/p/jclouds for details."
             AsyncBlobStore BlobStore BlobStoreContext BlobStoreContextFactory
             domain.BlobMetadata domain.StorageMetadata domain.Blob
             options.ListContainerOptions]
-           [org.jclouds.encryption.internal JCEEncryptionService]
+           [org.jclouds.io Payloads]
            [java.util Arrays]
            [java.security DigestOutputStream MessageDigest]
            [com.google.common.collect ImmutableSet]))
@@ -135,12 +135,12 @@ Options can also be specified for extension modules
       (.list blobstore container-name list-options))
     (apply list-container *blobstore* blobstore args)))
 
-(defn- list-blobs-chunk [container prefix blobstore & [marker]]
+(defn- list-blobs-chunk [container prefix #^BlobStore blobstore & [marker]]
   (apply list-container blobstore container
          :in-directory prefix (when (string? marker)
                                 [:after-marker marker])))
 
-(defn- list-blobs-chunks [container prefix blobstore marker]
+(defn- list-blobs-chunks [container prefix #^BlobStore blobstore marker]
   (when marker
     (let [chunk (list-blobs-chunk container prefix blobstore marker)]
       (lazy-seq (cons chunk
@@ -149,7 +149,7 @@ Options can also be specified for extension modules
 
 (defn list-blobs
   "Returns a lazy seq of all blobs in the given container."
-  ([container prefix blobstore]
+  ([container prefix #^BlobStore blobstore]
      (apply concat (list-blobs-chunks container prefix blobstore :start))))
 
 (defn locations
@@ -164,84 +164,84 @@ Options can also be specified for extension modules
      (create-container container-name nil *blobstore*))
   ([container-name location]
      (create-container container-name location *blobstore*))
-  ([container-name location blobstore]
+  ([container-name location #^BlobStore blobstore]
      (.createContainerInLocation blobstore location container-name)))
 
 (defn clear-container
   "Clear a container."
   ([container-name]
      (clear-container container-name *blobstore*))
-  ([container-name blobstore]
+  ([container-name #^BlobStore blobstore]
      (.clearContainer blobstore container-name)))
 
 (defn delete-container
   "Delete a container."
   ([container-name]
      (delete-container container-name *blobstore*))
-  ([container-name blobstore]
+  ([container-name #^BlobStore blobstore]
      (.deleteContainer blobstore container-name)))
 
 (defn container-exists?
   "Predicate to check presence of a container"
   ([container-name]
      (container-exists? container-name *blobstore*))
-  ([container-name blobstore]
+  ([container-name #^BlobStore blobstore]
      (.containerExists blobstore container-name)))
 
 (defn directory-exists?
   "Predicate to check presence of a directory"
   ([container-name path]
      (directory-exists? container-name path *blobstore*))
-  ([container-name path blobstore]
+  ([container-name path #^BlobStore blobstore]
      (.directoryExists blobstore container-name path)))
 
 (defn create-directory
   "Create a directory path."
   ([container-name path]
      (create-directory container-name path *blobstore*))
-  ([container-name path blobstore]
+  ([container-name path #^BlobStore blobstore]
      (.createDirectory blobstore container-name path)))
 
 (defn delete-directory
   "Delete a directory path."
   ([container-name path]
      (delete-directory container-name path *blobstore*))
-  ([container-name path blobstore]
+  ([container-name path #^BlobStore blobstore]
      (.deleteDirectory blobstore container-name path)))
 
 (defn blob-exists?
   "Predicate to check presence of a blob"
   ([container-name path]
      (blob-exists? container-name path *blobstore*))
-  ([container-name path blobstore]
+  ([container-name path #^BlobStore blobstore]
      (.blobExists blobstore container-name path)))
 
 (defn put-blob
   "Put a blob.  Metadata in the blob determines location."
   ([container-name blob]
      (put-blob container-name blob *blobstore*))
-  ([container-name blob blobstore]
+  ([container-name blob #^BlobStore blobstore]
      (.putBlob blobstore container-name blob)))
 
 (defn blob-metadata
   "Get metadata from given path"
   ([container-name path]
      (blob-metadata container-name path *blobstore*))
-  ([container-name path blobstore]
+  ([container-name path #^BlobStore blobstore]
      (.blobMetadata blobstore container-name path)))
 
 (defn get-blob
   "Get blob from given path"
   ([container-name path]
      (get-blob container-name path *blobstore*))
-  ([container-name path blobstore]
+  ([container-name path #^BlobStore blobstore]
      (.getBlob blobstore container-name path)))
 
 (defn remove-blob
   "Remove blob from given path"
   ([container-name path]
      (remove-blob container-name path *blobstore*))
-  ([container-name path blobstore]
+  ([container-name path #^BlobStore blobstore]
      (.removeBlob blobstore container-name path)))
 
 (defn count-blobs
@@ -281,23 +281,18 @@ example:
   "add a content md5 to a blob, or make a new blob that has an md5.
 note that this implies rebuffering, if the blob's payload isn't repeatable"
     ([#^Blob blob]
-     (md5-blob *blobstore*))
-    ([blob-or-name blobstore-or-payload]
-      (if (blobstore? blobstore-or-payload)
-        (-> (blobstore-context blobstore-or-payload)
-            .utils
-            .encryption
-            (.generateMD5BufferingIfNotRepeatable blob-or-name))
-       (md5-blob blob-or-name blobstore-or-payload *blobstore*)))
+      (Payloads/calculateMD5 blob))
+    ([#^String name payload]
+     (blob name payload *blobstore*))
     ([#^String name payload #^BlobStore blobstore]
-     (md5-blob (blob name payload blobstore) blobstore)))
+     (md5-blob (blob name payload blobstore))))
 
 (defn upload-blob
   "Create anrepresenting text data:
 container, name, string -> etag"
   ([container-name name data]
      (upload-blob container-name name data *blobstore*))
-  ([container-name name data blobstore]
+  ([container-name name data #^BlobStore blobstore]
      (put-blob container-name
        (md5-blob name data blobstore) blobstore)))
 

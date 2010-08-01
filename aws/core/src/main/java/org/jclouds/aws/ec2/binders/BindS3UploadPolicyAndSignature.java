@@ -25,9 +25,12 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
+
+import com.google.common.base.Charsets;
 
 /**
  * 
@@ -36,16 +39,14 @@ import org.jclouds.rest.Binder;
 @Singleton
 public class BindS3UploadPolicyAndSignature implements Binder {
    private final FormSigner signer;
-   private final EncryptionService encryptionService;
 
    @Inject
-   BindS3UploadPolicyAndSignature(FormSigner signer, EncryptionService encryptionService) {
+   BindS3UploadPolicyAndSignature(FormSigner signer, Crypto crypto) {
       this.signer = signer;
-      this.encryptionService = encryptionService;
    }
 
    public void bindToRequest(HttpRequest request, Object input) {
-      String encodedJson = encryptionService.base64(checkNotNull(input, "json").toString().getBytes());
+      String encodedJson = CryptoStreams.base64(checkNotNull(input, "json").toString().getBytes(Charsets.UTF_8));
       addFormParamTo(request, "Storage.S3.UploadPolicy", encodedJson);
       String signature = signer.sign(encodedJson);
       addFormParamTo(request, "Storage.S3.UploadPolicySignature", signature);

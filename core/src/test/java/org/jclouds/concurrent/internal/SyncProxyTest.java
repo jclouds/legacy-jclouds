@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static org.jclouds.concurrent.ConcurrentUtils.*;
+import org.jclouds.concurrent.Futures;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.internal.ClassMethodArgs;
 import org.testng.annotations.BeforeTest;
@@ -78,7 +78,7 @@ public class SyncProxyTest {
       }
 
       public ListenableFuture<String> getString() {
-         return makeListenable(executorService.submit(new Callable<String>() {
+         return Futures.makeListenable(executorService.submit(new Callable<String>() {
 
             public String call() throws Exception {
                return "foo";
@@ -88,7 +88,7 @@ public class SyncProxyTest {
       }
 
       public ListenableFuture<String> getRuntimeException() {
-         return makeListenable(executorService.submit(new Callable<String>() {
+         return Futures.makeListenable(executorService.submit(new Callable<String>() {
 
             public String call() throws Exception {
                throw new RuntimeException();
@@ -98,7 +98,7 @@ public class SyncProxyTest {
       }
 
       public ListenableFuture<String> getTypedException() throws FileNotFoundException {
-         return makeListenable(executorService.submit(new Callable<String>() {
+         return Futures.makeListenable(executorService.submit(new Callable<String>() {
 
             public String call() throws FileNotFoundException {
                throw new FileNotFoundException();
@@ -112,7 +112,7 @@ public class SyncProxyTest {
       }
 
       public ListenableFuture<String> take20Milliseconds() {
-         return makeListenable(executorService.submit(new Callable<String>() {
+         return Futures.makeListenable(executorService.submit(new Callable<String>() {
 
             public String call() {
                try {
@@ -127,7 +127,7 @@ public class SyncProxyTest {
       }
 
       public ListenableFuture<String> take100MillisecondsAndTimeout() {
-         return makeListenable(executorService.submit(new Callable<String>() {
+         return Futures.makeListenable(executorService.submit(new Callable<String>() {
 
             public String call() {
                try {

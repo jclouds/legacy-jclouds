@@ -31,7 +31,7 @@ import java.net.URI;
 import javax.ws.rs.HttpMethod;
 
 import org.jclouds.chef.config.ChefParserModule;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
@@ -58,8 +58,7 @@ public class BindHexEncodedMD5sToJsonPayloadTest {
    @Test(enabled = false)
    public void testCorrect() {
       HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
-      binder.bindToRequest(request, ImmutableSet.of(injector.getInstance(EncryptionService.class).fromHex("abddef"),
-            injector.getInstance(EncryptionService.class).fromHex("1234")));
+      binder.bindToRequest(request, ImmutableSet.of(CryptoStreams.hex("abddef"), CryptoStreams.hex("1234")));
       assertEquals(request.getPayload().getRawContent(), "{\"checksums\":{\"abddef\":null,\"1234\":null}}");
    }
 

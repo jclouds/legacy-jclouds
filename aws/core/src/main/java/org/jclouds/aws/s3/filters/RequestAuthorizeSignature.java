@@ -43,13 +43,15 @@ import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
 import org.jclouds.aws.s3.Bucket;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
+import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -71,13 +73,13 @@ import com.google.common.collect.Iterables;
 public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSigner {
    private final String[] firstHeadersToSign = new String[] { HttpHeaders.DATE };
 
-   public static Set<String> SPECIAL_QUERIES = ImmutableSet.of("acl", "torrent", "logging",
-            "location", "requestPayment");
+   public static Set<String> SPECIAL_QUERIES = ImmutableSet.of("acl", "torrent", "logging", "location",
+            "requestPayment");
    private final SignatureWire signatureWire;
    private final String accessKey;
    private final String secretKey;
    private final Provider<String> timeStampProvider;
-   private final EncryptionService encryptionService;
+   private final Crypto crypto;
    private final HttpUtils utils;
 
    @Resource
@@ -90,15 +92,11 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    private final boolean isVhostStyle;
 
    @Inject
-   public RequestAuthorizeSignature(SignatureWire signatureWire,
-            @Named(PROPERTY_AUTH_TAG) String authTag,
+   public RequestAuthorizeSignature(SignatureWire signatureWire, @Named(PROPERTY_AUTH_TAG) String authTag,
             @Named(PROPERTY_S3_VIRTUAL_HOST_BUCKETS) boolean isVhostStyle,
-            @Named(PROPERTY_S3_SERVICE_PATH) String servicePath,
-            @Named(PROPERTY_HEADER_TAG) String headerTag,
-            @Named(PROPERTY_IDENTITY) String accessKey,
-            @Named(PROPERTY_CREDENTIAL) String secretKey,
-            @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService,
-            HttpUtils utils) {
+            @Named(PROPERTY_S3_SERVICE_PATH) String servicePath, @Named(PROPERTY_HEADER_TAG) String headerTag,
+            @Named(PROPERTY_IDENTITY) String accessKey, @Named(PROPERTY_CREDENTIAL) String secretKey,
+            @TimeStamp Provider<String> timeStampProvider, Crypto crypto, HttpUtils utils) {
       this.isVhostStyle = isVhostStyle;
       this.servicePath = servicePath;
       this.headerTag = headerTag;
@@ -107,7 +105,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       this.accessKey = accessKey;
       this.secretKey = secretKey;
       this.timeStampProvider = timeStampProvider;
-      this.encryptionService = encryptionService;
+      this.crypto = crypto;
       this.utils = utils;
    }
 
@@ -145,8 +143,8 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    public String sign(String toSign) {
       String signature;
       try {
-         signature = encryptionService.base64(encryptionService.hmacSha1(toSign, secretKey
-                  .getBytes()));
+         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(toSign), crypto.hmacSHA1(secretKey
+                  .getBytes())));
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }
@@ -158,8 +156,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    }
 
    void replaceDateHeader(HttpRequest request) {
-      request.getHeaders().replaceValues(HttpHeaders.DATE,
-               Collections.singletonList(timeStampProvider.get()));
+      request.getHeaders().replaceValues(HttpHeaders.DATE, Collections.singletonList(timeStampProvider.get()));
    }
 
    void appendAmzHeaders(HttpRequest request, StringBuilder toSign) {
@@ -177,12 +174,10 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    }
 
    void appendPayloadMetadata(HttpRequest request, StringBuilder buffer) {
-      buffer.append(
-               utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload()
-                        .getContentMD5())).append("\n");
-      buffer.append(
-               utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload()
-                        .getContentType())).append("\n");
+      buffer.append(utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMD5()))
+               .append("\n");
+      buffer.append(utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentType()))
+               .append("\n");
    }
 
    void appendHttpHeaders(HttpRequest request, StringBuilder toSign) {
@@ -192,8 +187,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
 
    @VisibleForTesting
    void appendBucketName(HttpRequest req, StringBuilder toSign) {
-      checkArgument(req instanceof GeneratedHttpRequest<?>,
-               "this should be a generated http request");
+      checkArgument(req instanceof GeneratedHttpRequest<?>, "this should be a generated http request");
       GeneratedHttpRequest<?> request = GeneratedHttpRequest.class.cast(req);
 
       String bucketName = null;

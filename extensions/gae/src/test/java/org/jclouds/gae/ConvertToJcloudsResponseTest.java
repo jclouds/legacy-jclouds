@@ -33,8 +33,8 @@ import java.util.List;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.encryption.EncryptionService;
-import org.jclouds.encryption.internal.JCEEncryptionService;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.util.Utils;
@@ -54,10 +54,10 @@ public class ConvertToJcloudsResponseTest {
    ConvertToJcloudsResponse req;
    URI endPoint;
 
-   protected volatile static EncryptionService encryptionService;
+   protected volatile static Crypto crypto;
    static {
       try {
-         encryptionService = new JCEEncryptionService();
+         crypto = new JCECrypto();
       } catch (NoSuchAlgorithmException e) {
          Throwables.propagate(e);
       } catch (CertificateException e) {
@@ -68,7 +68,7 @@ public class ConvertToJcloudsResponseTest {
    @BeforeTest
    void setupClient() throws MalformedURLException {
       endPoint = URI.create("http://localhost:80/foo");
-      req = new ConvertToJcloudsResponse(new HttpUtils(encryptionService, 0, 0, 0, 0));
+      req = new ConvertToJcloudsResponse(new HttpUtils(0, 0, 0, 0));
    }
 
    @Test

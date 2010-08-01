@@ -18,17 +18,18 @@
  */
 package org.jclouds.azure.azurequeue;
 
-import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
-import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
+import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.concurrent.Future;
 
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.azure.storage.queue.AzureQueueAsyncClient;
 import org.jclouds.azure.storage.queue.AzureQueueClient;
 import org.jclouds.azure.storage.queue.domain.QueueMetadata;
+import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.enterprise.config.EnterpriseConfigurationModule;
 import org.jclouds.logging.ConsoleLogger;
 import org.jclouds.logging.Logger;
@@ -39,7 +40,6 @@ import org.jclouds.rest.RestContextFactory;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import java.util.concurrent.Future;
 import com.google.inject.Module;
 
 /**
@@ -135,7 +135,7 @@ public class SpeedTest {
                   queueName, message));
       }
 
-      Map<QueueMessage, Exception> exceptions = awaitCompletion(responses, sameThreadExecutor(),
+      Map<QueueMessage, Exception> exceptions = awaitCompletion(responses, MoreExecutors.sameThreadExecutor(),
                timeOut, traceLogger, String.format("context: %s", contextName));
 
       if (exceptions.size() > 0)

@@ -41,6 +41,9 @@ import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.domain.Resource;
 import org.jclouds.chef.domain.Role;
 import org.jclouds.chef.domain.UploadSandbox;
+import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.crypto.Pems;
+import org.jclouds.io.InputSuppliers;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -108,7 +111,7 @@ public class ChefClientLiveTest {
       content.setContentType("application/x-binary");
 
       // get an md5 so that you can see if the server already has it or not
-      adminConnection.utils().encryption().generateMD5BufferingIfNotRepeatable(content);
+      Payloads.calculateMD5(content);
 
       // Note that java collections cannot effectively do equals or hashcodes on
       // byte arrays,
@@ -142,8 +145,7 @@ public class ChefClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateClient")
    public void testGenerateKeyForClient() throws Exception {
-      clientKey = validatorConnection.utils().encryption().toPem(
-               validatorConnection.getApi().generateKeyForClient(PREFIX).getPrivateKey());
+      clientKey = Pems.pem(validatorConnection.getApi().generateKeyForClient(PREFIX).getPrivateKey());
 
       assertNotNull(clientKey);
       clientConnection.close();
@@ -163,7 +165,7 @@ public class ChefClientLiveTest {
                      cookbookO.getTemplates()).build()) {
                try {
                   InputStream stream = adminConnection.utils().http().get(resource.getUrl());
-                  byte[] md5 = adminConnection.utils().encryption().md5(stream);
+                  byte[] md5 = CryptoStreams.md5(InputSuppliers.of(stream));
                   assertEquals(md5, resource.getChecksum());
                } catch (NullPointerException e) {
                   assert false : "resource not found: " + resource;
@@ -205,8 +207,7 @@ public class ChefClientLiveTest {
    public void testCreateClient() throws Exception {
       validatorConnection.getApi().deleteClient(PREFIX);
 
-      clientKey = validatorConnection.utils().encryption().toPem(
-               validatorConnection.getApi().createClient(PREFIX).getPrivateKey());
+      clientKey = Pems.pem(validatorConnection.getApi().createClient(PREFIX).getPrivateKey());
 
       System.out.println(clientKey);
       assertNotNull(clientKey);

@@ -19,7 +19,6 @@
 package org.jclouds.vcloud;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertNotNull;
@@ -27,6 +26,7 @@ import static org.testng.Assert.assertNotNull;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -73,21 +73,19 @@ public class VCloudLoginLiveTest {
 
    @BeforeClass
    void setupFactory() {
-      String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
-               "jclouds.test.endpoint")
+      String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"), "jclouds.test.endpoint")
                + "/v0.8/login";
 
       String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
       String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
-      ContextSpec<VCloudLoginClient, VCloudLoginAsyncClient> contextSpec = contextSpec("test",
-               endpoint, "1", identity, credential, VCloudLoginClient.class,
-               VCloudLoginAsyncClient.class);
+      ContextSpec<VCloudLoginClient, VCloudLoginAsyncClient> contextSpec = contextSpec("test", endpoint, "1", identity,
+               credential, VCloudLoginClient.class, VCloudLoginAsyncClient.class);
 
       context = createContextBuilder(
                contextSpec,
-               ImmutableSet.<Module> of(new Log4JLoggingModule(), new ExecutorServiceModule(
-                        sameThreadExecutor(), sameThreadExecutor()), new AbstractModule() {
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new ExecutorServiceModule(MoreExecutors
+                        .sameThreadExecutor(), MoreExecutors.sameThreadExecutor()), new AbstractModule() {
 
                   @Override
                   protected void configure() {

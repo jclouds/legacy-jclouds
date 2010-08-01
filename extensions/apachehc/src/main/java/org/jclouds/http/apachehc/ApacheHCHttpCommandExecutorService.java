@@ -31,7 +31,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.jclouds.Constants;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
@@ -53,17 +53,15 @@ import com.google.inject.Inject;
  * @author Sam Tunnicliffe
  * @author Adrian Cole
  */
-public class ApacheHCHttpCommandExecutorService extends
-         BaseHttpCommandExecutorService<HttpUriRequest> {
+public class ApacheHCHttpCommandExecutorService extends BaseHttpCommandExecutorService<HttpUriRequest> {
    private final HttpClient client;
 
    @Inject
-   ApacheHCHttpCommandExecutorService(HttpUtils utils, EncryptionService encryptionService,
+   ApacheHCHttpCommandExecutorService(HttpUtils utils,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
             DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
             DelegatingErrorHandler errorHandler, HttpWire wire, HttpClient client) {
-      super(utils, encryptionService, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler,
-               wire);
+      super(utils, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       this.client = client;
    }
 
@@ -71,8 +69,7 @@ public class ApacheHCHttpCommandExecutorService extends
    protected HttpUriRequest convert(HttpRequest request) throws IOException {
       HttpUriRequest returnVal = ApacheHCUtils.convertToApacheRequest(request);
       if (request.getPayload() != null && request.getPayload().getContentMD5() != null)
-         returnVal.addHeader("Content-MD5", encryptionService.base64(request.getPayload()
-                  .getContentMD5()));
+         returnVal.addHeader("Content-MD5", CryptoStreams.md5Base64(request.getPayload()));
       return returnVal;
    }
 
@@ -83,19 +80,17 @@ public class ApacheHCHttpCommandExecutorService extends
       Payload payload = null;
       if (apacheResponse.getEntity() != null)
          try {
-            payload = Payloads.newInputStreamPayload(consumeOnClose(apacheResponse.getEntity()
-                     .getContent()));
+            payload = Payloads.newInputStreamPayload(consumeOnClose(apacheResponse.getEntity().getContent()));
             if (apacheResponse.getEntity().getContentLength() >= 0)
                payload.setContentLength(apacheResponse.getEntity().getContentLength());
             if (apacheResponse.getEntity().getContentType() != null)
                payload.setContentType(apacheResponse.getEntity().getContentType().getValue());
          } catch (IOException e) {
-            logger.warn(e, "couldn't receive payload for request: %s", nativeRequest
-                     .getRequestLine());
+            logger.warn(e, "couldn't receive payload for request: %s", nativeRequest.getRequestLine());
             throw e;
          }
-      HttpResponse response = new HttpResponse(apacheResponse.getStatusLine().getStatusCode(),
-               apacheResponse.getStatusLine().getReasonPhrase(), payload);
+      HttpResponse response = new HttpResponse(apacheResponse.getStatusLine().getStatusCode(), apacheResponse
+               .getStatusLine().getReasonPhrase(), payload);
       Multimap<String, String> headers = LinkedHashMultimap.create();
       for (Header header : apacheResponse.getAllHeaders()) {
          headers.put(header.getName(), header.getValue());
@@ -104,8 +99,8 @@ public class ApacheHCHttpCommandExecutorService extends
       return response;
    }
 
-   private org.apache.http.HttpResponse executeRequest(HttpUriRequest nativeRequest)
-            throws IOException, ClientProtocolException {
+   private org.apache.http.HttpResponse executeRequest(HttpUriRequest nativeRequest) throws IOException,
+            ClientProtocolException {
       URI endpoint = URI.create(nativeRequest.getRequestLine().getUri());
       HttpHost host = new HttpHost(endpoint.getHost(), endpoint.getPort(), endpoint.getScheme());
       org.apache.http.HttpResponse nativeResponse = client.execute(host, nativeRequest);

@@ -37,17 +37,20 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
+import org.jclouds.io.InputSuppliers;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.MultipartForm;
 import org.jclouds.io.payloads.Part;
+import org.jclouds.io.payloads.RSAEncryptingPayload;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 
@@ -56,6 +59,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
+import com.google.common.io.ByteStreams;
 
 /**
  * Ported from mixlib-authentication in order to sign Chef requests.
@@ -72,7 +76,7 @@ public class SignedHeaderAuth implements HttpRequestFilter {
    private final String userId;
    private final PrivateKey privateKey;
    private final Provider<String> timeStampProvider;
-   private final EncryptionService encryptionService;
+   private final Crypto crypto;
    private final String emptyStringHash;
    private final HttpUtils utils;
 
@@ -82,12 +86,12 @@ public class SignedHeaderAuth implements HttpRequestFilter {
 
    @Inject
    public SignedHeaderAuth(SignatureWire signatureWire, @Named(PROPERTY_IDENTITY) String userId, PrivateKey privateKey,
-            @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService, HttpUtils utils) {
+            @TimeStamp Provider<String> timeStampProvider, Crypto crypto, HttpUtils utils) {
       this.signatureWire = signatureWire;
       this.userId = userId;
       this.privateKey = privateKey;
       this.timeStampProvider = timeStampProvider;
-      this.encryptionService = encryptionService;
+      this.crypto = crypto;
       this.emptyStringHash = hashBody(Payloads.newStringPayload(""));
       this.utils = utils;
    }
@@ -129,7 +133,7 @@ public class SignedHeaderAuth implements HttpRequestFilter {
    @VisibleForTesting
    String hashPath(String path) {
       try {
-         return encryptionService.base64(encryptionService.sha1(Utils.toInputStream(canonicalPath(path))));
+         return CryptoStreams.base64(CryptoStreams.digest(InputSuppliers.of(canonicalPath(path)), crypto.sha1()));
       } catch (Exception e) {
          Throwables.propagateIfPossible(e);
          throw new HttpException("error creating sigature for path: " + path, e);
@@ -154,7 +158,7 @@ public class SignedHeaderAuth implements HttpRequestFilter {
       checkArgument(payload != null, "payload was null");
       checkArgument(payload.isRepeatable(), "payload must be repeatable: " + payload);
       try {
-         return encryptionService.base64(encryptionService.sha1(payload.getInput()));
+         return CryptoStreams.base64(CryptoStreams.digest(payload, crypto.sha1()));
       } catch (Exception e) {
          Throwables.propagateIfPossible(e);
          throw new HttpException("error creating sigature for payload: " + payload, e);
@@ -182,8 +186,9 @@ public class SignedHeaderAuth implements HttpRequestFilter {
 
    public String sign(String toSign) {
       try {
-         byte[] encrypted = encryptionService.rsaEncrypt(Payloads.newStringPayload(toSign), privateKey);
-         return encryptionService.base64(encrypted);
+         byte[] encrypted = ByteStreams.toByteArray(new RSAEncryptingPayload(Payloads.newStringPayload(toSign),
+                  privateKey));
+         return CryptoStreams.base64(encrypted);
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }

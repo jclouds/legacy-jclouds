@@ -18,7 +18,6 @@
  */
 package org.jclouds.nirvanix.sdn.filters;
 
-import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static org.testng.Assert.assertEquals;
 
 import java.lang.reflect.Method;
@@ -27,6 +26,7 @@ import java.util.Properties;
 
 import javax.ws.rs.POST;
 
+import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
@@ -69,8 +69,7 @@ public class AddSessionTokenToRequestTest {
                }));
 
       Method method = TestService.class.getMethod("foo", URI.class);
-      return new Object[][] {
-               { factory.createRequest(method, new Object[] { URI.create("https://host:443") }) },
+      return new Object[][] { { factory.createRequest(method, new Object[] { URI.create("https://host:443") }) },
                { factory.createRequest(method, new Object[] { URI.create("https://host/path") }) },
                { factory.createRequest(method, new Object[] { URI.create("https://host/?query") })
 
@@ -83,8 +82,8 @@ public class AddSessionTokenToRequestTest {
 
       String query = request.getEndpoint().getQuery();
       filter.filter(request);
-      assertEquals(request.getEndpoint().getQuery(), query == null ? "sessionToken=" + token
-               : query + "&sessionToken=" + token);
+      assertEquals(request.getEndpoint().getQuery(), query == null ? "sessionToken=" + token : query + "&sessionToken="
+               + token);
    }
 
    @Test
@@ -101,14 +100,14 @@ public class AddSessionTokenToRequestTest {
     */
    @BeforeClass
    protected void createFilter() {
-      injector = Guice.createInjector(new RestModule(), new ExecutorServiceModule(
-               sameThreadExecutor(), sameThreadExecutor()),
-               new JavaUrlHttpCommandExecutorServiceModule(), new AbstractModule() {
+      injector = Guice.createInjector(new RestModule(), new ExecutorServiceModule(MoreExecutors.sameThreadExecutor(),
+               MoreExecutors.sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule(),
+               new AbstractModule() {
 
                   protected void configure() {
                      bind(DateService.class);
-                     Names.bindProperties(this.binder(), new SDNPropertiesBuilder(new Properties())
-                              .credentials("appkey/appname/username", "password").build());
+                     Names.bindProperties(this.binder(), new SDNPropertiesBuilder(new Properties()).credentials(
+                              "appkey/appname/username", "password").build());
                      bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
                         public Logger getLogger(String category) {
                            return Logger.NULL;

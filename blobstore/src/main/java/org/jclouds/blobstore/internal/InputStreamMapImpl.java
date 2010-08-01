@@ -23,6 +23,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.jclouds.io.Payloads.newPayload;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
@@ -38,8 +39,9 @@ import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.GetBlobsInListStrategy;
 import org.jclouds.blobstore.strategy.PutBlobsStrategy;
 import org.jclouds.blobstore.strategy.internal.ListContainerAndRecurseThroughFolders;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.Crypto;
 import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.ByteArrayPayload;
 import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.io.payloads.InputStreamPayload;
@@ -47,6 +49,7 @@ import org.jclouds.io.payloads.StringPayload;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 /**
  * Map representation of a live connection to a BlobStore. All put operations will result in ETag
@@ -59,16 +62,16 @@ import com.google.common.base.Function;
  * @see BaseBlobMap
  */
 public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements InputStreamMap {
-   protected final EncryptionService encryptionService;
+   protected final Crypto crypto;
 
    @Inject
    public InputStreamMapImpl(BlobStore connection, Blob.Factory blobFactory,
             GetBlobsInListStrategy getAllBlobs, ListContainerAndRecurseThroughFolders listStrategy,
             ContainsValueInListStrategy containsValueStrategy, PutBlobsStrategy putBlobsStrategy,
-            String containerName, ListContainerOptions options, EncryptionService encryptionService) {
+            String containerName, ListContainerOptions options, Crypto crypto) {
       super(connection, getAllBlobs, containsValueStrategy, putBlobsStrategy, listStrategy,
                containerName, options);
-      this.encryptionService = encryptionService;
+      this.crypto = crypto;
    }
 
    @Override
@@ -144,7 +147,11 @@ public class InputStreamMapImpl extends BaseBlobMap<InputStream> implements Inpu
    Blob newBlobWithMD5(String name, Object value) {
       Blob blob = blobstore.newBlob(prefixer.apply(name));
       blob.setPayload(newPayload(value));
-      encryptionService.generateMD5BufferingIfNotRepeatable(blob);
+      try {
+         Payloads.calculateMD5(blob, crypto.md5());
+      } catch (IOException e) {
+         Throwables.propagate(e);
+      }
       return blob;
    }
 

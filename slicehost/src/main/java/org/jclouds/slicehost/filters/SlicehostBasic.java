@@ -27,7 +27,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
@@ -39,17 +39,15 @@ import org.jclouds.http.HttpRequestFilter;
 @Singleton
 public class SlicehostBasic implements HttpRequestFilter {
    private final String apikey;
-   private final EncryptionService encryptionService;
 
    @Inject
-   public SlicehostBasic(@Named(Constants.PROPERTY_IDENTITY) String apikey, EncryptionService encryptionService) {
+   public SlicehostBasic(@Named(Constants.PROPERTY_IDENTITY) String apikey) {
       this.apikey = checkNotNull(apikey, "apikey");
-      this.encryptionService = checkNotNull(encryptionService, "encryptionService");
    }
 
    @Override
    public void filter(HttpRequest request) throws HttpException {
       request.getHeaders().replaceValues("Authorization",
-            Collections.singleton(String.format("Basic %s", encryptionService.base64(apikey.getBytes()))));
+               Collections.singleton(String.format("Basic %s", CryptoStreams.base64(apikey.getBytes()))));
    }
 }

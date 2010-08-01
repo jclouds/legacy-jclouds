@@ -18,7 +18,7 @@
  */
 package org.jclouds.vcloud.functions;
 
-import static org.jclouds.concurrent.ConcurrentUtils.transformParallel;
+import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;

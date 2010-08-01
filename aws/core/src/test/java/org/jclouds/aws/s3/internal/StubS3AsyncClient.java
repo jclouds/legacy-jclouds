@@ -21,7 +21,6 @@ package org.jclouds.aws.s3.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.util.concurrent.Futures.immediateFailedFuture;
 import static com.google.common.util.concurrent.Futures.immediateFuture;
-import static org.jclouds.concurrent.ConcurrentUtils.compose;
 
 import java.util.Date;
 import java.util.Map;
@@ -67,6 +66,7 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.concurrent.Futures;
 import org.jclouds.date.DateService;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -144,7 +144,7 @@ public class StubS3AsyncClient implements S3AsyncClient {
 
    public ListenableFuture<ListBucketResponse> listBucket(final String name, ListBucketOptions... optionsList) {
       ListContainerOptions options = bucket2ContainerListOptions.apply(optionsList);
-      return compose(blobStore.list(name, options), resource2BucketList, service);
+      return Futures.compose(blobStore.list(name, options), resource2BucketList, service);
    }
 
    public ListenableFuture<ObjectMetadata> copyObject(final String sourceBucket, final String sourceObject,
@@ -272,11 +272,11 @@ public class StubS3AsyncClient implements S3AsyncClient {
 
    public ListenableFuture<S3Object> getObject(final String bucketName, final String key, final GetOptions... options) {
       org.jclouds.blobstore.options.GetOptions getOptions = httpGetOptionsConverter.apply(options);
-      return compose(blobStore.getBlob(bucketName, key, getOptions), blob2Object, service);
+      return Futures.compose(blobStore.getBlob(bucketName, key, getOptions), blob2Object, service);
    }
 
    public ListenableFuture<ObjectMetadata> headObject(String bucketName, String key) {
-      return compose(blobStore.blobMetadata(bucketName, key), new Function<BlobMetadata, ObjectMetadata>() {
+      return Futures.compose(blobStore.blobMetadata(bucketName, key), new Function<BlobMetadata, ObjectMetadata>() {
          @Override
          public ObjectMetadata apply(BlobMetadata from) {
             return blob2ObjectMetadata.apply(from);

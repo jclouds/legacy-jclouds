@@ -24,8 +24,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
+import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.HttpAsyncClient;
@@ -43,7 +43,7 @@ public class UtilsImpl implements Utils {
    private final Json json;
    private final HttpClient simpleClient;
    private final HttpAsyncClient simpleAsyncClient;
-   private final EncryptionService encryption;
+   private final Crypto encryption;
    private final DateService date;
    private final ExecutorService userExecutor;
    private final ExecutorService ioExecutor;
@@ -51,7 +51,7 @@ public class UtilsImpl implements Utils {
 
    @Inject
    protected UtilsImpl(Json json, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
-         EncryptionService encryption, DateService date,
+         Crypto encryption, DateService date,
          @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
          @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads, LoggerFactory loggerFactory) {
       this.json = json;
@@ -75,7 +75,7 @@ public class UtilsImpl implements Utils {
    }
 
    @Override
-   public EncryptionService encryption() {
+   public Crypto crypto() {
       return encryption;
    }
 
@@ -85,7 +85,7 @@ public class UtilsImpl implements Utils {
    }
 
    @Override
-   public EncryptionService getEncryptionService() {
+   public Crypto getCrypto() {
       return encryption;
    }
 

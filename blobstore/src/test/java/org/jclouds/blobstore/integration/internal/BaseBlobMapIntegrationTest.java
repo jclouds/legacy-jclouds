@@ -36,6 +36,7 @@ import org.jclouds.blobstore.BlobMap;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.io.Payloads;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
@@ -74,7 +75,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
    }
 
    @Test(groups = { "integration", "live" })
-   public void testRemove() throws InterruptedException, ExecutionException, TimeoutException {
+   public void testRemove() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       String bucketName = getContainerName();
       try {
          Map<String, Blob> map = createMap(context, bucketName);
@@ -118,7 +119,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
                      .getValue()));
             Blob blob = entry.getValue();
             blob.setPayload("");
-            context.utils().encryption().generateMD5BufferingIfNotRepeatable(blob);
+            Payloads.calculateMD5(blob);
             entry.setValue(blob);
          }
          assertConsistencyAware(new Runnable() {
@@ -139,14 +140,14 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
    }
 
    @Test(groups = { "integration", "live" })
-   public void testContains() throws InterruptedException, ExecutionException, TimeoutException {
+   public void testContains() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       String bucketName = getContainerName();
       try {
          Map<String, Blob> map = createMap(context, bucketName);
          putStringWithMD5(map, "one", "apple");
          Blob blob = context.getBlobStore().newBlob("one");
          blob.setPayload("apple");
-         context.utils().encryption().generateMD5BufferingIfNotRepeatable(blob);
+         Payloads.calculateMD5(blob);
          assertConsistencyAwareContainsValue(map, blob);
       } finally {
          returnContainer(bucketName);
@@ -174,11 +175,11 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
          Map<String, Blob> map = createMap(context, bucketName);
          Blob blob = context.getBlobStore().newBlob("one");
          blob.setPayload(Utils.toInputStream("apple"));
-         context.utils().encryption().generateMD5BufferingIfNotRepeatable(blob);
+         Payloads.calculateMD5(blob);
          Blob old = map.put(blob.getMetadata().getName(), blob);
          getOneReturnsAppleAndOldValueIsNull(map, old);
          blob.setPayload(Utils.toInputStream("bear"));
-         context.utils().encryption().generateMD5BufferingIfNotRepeatable(blob);
+         Payloads.calculateMD5(blob);
          Blob apple = map.put(blob.getMetadata().getName(), blob);
          getOneReturnsBearAndOldValueIsApple(map, apple);
       } finally {
@@ -239,10 +240,10 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
    }
 
    @Override
-   protected void putStringWithMD5(Map<String, Blob> map, String key, String text) {
+   protected void putStringWithMD5(Map<String, Blob> map, String key, String text) throws IOException {
       Blob blob = context.getBlobStore().newBlob(key);
       blob.setPayload(text);
-      context.utils().encryption().generateMD5BufferingIfNotRepeatable(blob);
+      Payloads.calculateMD5(blob);
       map.put(key, blob);
    }
 

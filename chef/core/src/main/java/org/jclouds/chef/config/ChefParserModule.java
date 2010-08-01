@@ -18,11 +18,14 @@
  */
 package org.jclouds.chef.config;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -31,7 +34,9 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.chef.domain.DataBagItem;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.crypto.Pems;
+import org.jclouds.io.InputSuppliers;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 
@@ -61,11 +66,11 @@ public class ChefParserModule extends AbstractModule {
 
    @Singleton
    public static class PrivateKeyAdapterImpl implements PrivateKeyAdapter {
-      private final EncryptionService encryptionService;
+      private final Crypto crypto;
 
       @Inject
-      PrivateKeyAdapterImpl(EncryptionService encryptionService) {
-         this.encryptionService = encryptionService;
+      PrivateKeyAdapterImpl(Crypto crypto) {
+         this.crypto = crypto;
       }
 
       @Override
@@ -73,8 +78,14 @@ public class ChefParserModule extends AbstractModule {
                throws JsonParseException {
          String keyText = json.getAsString().replaceAll("\\n", "\n");
          try {
-            return encryptionService.privateKeyFromPEM(keyText.getBytes("UTF-8"));
+            return crypto.rsaKeyFactory().generatePrivate(Pems.privateKeySpec(InputSuppliers.of(keyText)));
          } catch (UnsupportedEncodingException e) {
+            Throwables.propagate(e);
+            return null;
+         } catch (InvalidKeySpecException e) {
+            Throwables.propagate(e);
+            return null;
+         } catch (IOException e) {
             Throwables.propagate(e);
             return null;
          }
@@ -88,11 +99,11 @@ public class ChefParserModule extends AbstractModule {
 
    @Singleton
    public static class PublicKeyAdapterImpl implements PublicKeyAdapter {
-      private final EncryptionService encryptionService;
+      private final Crypto crypto;
 
       @Inject
-      PublicKeyAdapterImpl(EncryptionService encryptionService) {
-         this.encryptionService = encryptionService;
+      PublicKeyAdapterImpl(Crypto crypto) {
+         this.crypto = crypto;
       }
 
       @Override
@@ -100,8 +111,14 @@ public class ChefParserModule extends AbstractModule {
                throws JsonParseException {
          String keyText = json.getAsString().replaceAll("\\n", "\n");
          try {
-            return encryptionService.publicKeyFromPEM(keyText.getBytes("UTF-8"));
+            return crypto.rsaKeyFactory().generatePublic(Pems.publicKeySpec(InputSuppliers.of(keyText)));
          } catch (UnsupportedEncodingException e) {
+            Throwables.propagate(e);
+            return null;
+         } catch (InvalidKeySpecException e) {
+            Throwables.propagate(e);
+            return null;
+         } catch (IOException e) {
             Throwables.propagate(e);
             return null;
          }
@@ -115,11 +132,11 @@ public class ChefParserModule extends AbstractModule {
 
    @Singleton
    public static class X509CertificateAdapterImpl implements X509CertificateAdapter {
-      private final EncryptionService encryptionService;
+      private final Crypto crypto;
 
       @Inject
-      X509CertificateAdapterImpl(EncryptionService encryptionService) {
-         this.encryptionService = encryptionService;
+      X509CertificateAdapterImpl(Crypto crypto) {
+         this.crypto = crypto;
       }
 
       @Override
@@ -127,8 +144,14 @@ public class ChefParserModule extends AbstractModule {
                throws JsonParseException {
          String keyText = json.getAsString().replaceAll("\\n", "\n");
          try {
-            return encryptionService.x509CertificateFromPEM(keyText.getBytes("UTF-8"));
+            return Pems.x509Certificate(InputSuppliers.of(keyText), crypto.certFactory());
          } catch (UnsupportedEncodingException e) {
+            Throwables.propagate(e);
+            return null;
+         } catch (IOException e) {
+            Throwables.propagate(e);
+            return null;
+         } catch (CertificateException e) {
             Throwables.propagate(e);
             return null;
          }

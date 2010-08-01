@@ -25,8 +25,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.Utils;
+import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.HttpAsyncClient;
@@ -46,7 +46,7 @@ public class UtilsImpl extends org.jclouds.rest.internal.UtilsImpl implements Ut
 
    @Inject
    UtilsImpl(Json json, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
-            EncryptionService encryption, DateService date,
+            Crypto encryption, DateService date,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads,
             LoggerFactory loggerFactory) {

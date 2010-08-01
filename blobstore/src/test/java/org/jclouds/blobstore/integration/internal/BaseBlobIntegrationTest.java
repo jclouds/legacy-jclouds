@@ -24,8 +24,7 @@ import static org.jclouds.blobstore.options.GetOptions.Builder.ifModifiedSince;
 import static org.jclouds.blobstore.options.GetOptions.Builder.ifUnmodifiedSince;
 import static org.jclouds.blobstore.options.GetOptions.Builder.range;
 import static org.jclouds.blobstore.util.BlobStoreUtils.getContentAsStringOrNullAndClose;
-import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
-import static org.jclouds.concurrent.ConcurrentUtils.compose;
+import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -51,11 +50,13 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
-import org.jclouds.encryption.EncryptionService;
-import org.jclouds.encryption.internal.JCEEncryptionService;
+import org.jclouds.concurrent.Futures;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.io.Payload;
+import org.jclouds.io.InputSuppliers;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
@@ -76,16 +77,15 @@ import com.google.common.io.InputSupplier;
  * @author Adrian Cole
  */
 public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
-   private byte[] oneHundredOneConstitutions;
+   private InputSupplier<InputStream> oneHundredOneConstitutions;
    private byte[] oneHundredOneConstitutionsMD5;
 
    @BeforeClass(groups = { "integration", "live" })
    @Override
    public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
       super.setUpResourcesOnThisThread(testContext);
-      Payload result = context.utils().encryption().generatePayloadWithMD5For(getTestDataSupplier().getInput());
-      oneHundredOneConstitutions = (byte[]) result.getRawContent();
-      oneHundredOneConstitutionsMD5 = result.getContentMD5();
+      oneHundredOneConstitutions = getTestDataSupplier();
+      oneHundredOneConstitutionsMD5 = CryptoStreams.md5(oneHundredOneConstitutions);
    }
 
    @SuppressWarnings("unchecked")
@@ -112,13 +112,16 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
          Map<Integer, Future<?>> responses = Maps.newHashMap();
          for (int i = 0; i < 10; i++) {
 
-            responses.put(i, compose(context.getAsyncBlobStore().getBlob(containerName, key),
+            responses.put(i, Futures.compose(context.getAsyncBlobStore().getBlob(containerName, key),
                      new Function<Blob, Void>() {
 
                         @Override
                         public Void apply(Blob from) {
-                           assertEquals(context.utils().encryption().md5(from.getPayload().getInput()),
-                                    oneHundredOneConstitutionsMD5);
+                           try {
+                              assertEquals(CryptoStreams.md5(from.getPayload()), oneHundredOneConstitutionsMD5);
+                           } catch (IOException e) {
+                              Throwables.propagate(e);
+                           }
                            return null;
                         }
 
@@ -138,7 +141,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       Blob sourceObject = context.getBlobStore().newBlob(key);
       sourceObject.getMetadata().setContentType("text/plain");
       sourceObject.getMetadata().setContentMD5(oneHundredOneConstitutionsMD5);
-      sourceObject.setPayload(oneHundredOneConstitutions);
+      sourceObject.setPayload(oneHundredOneConstitutions.getInput());
       context.getBlobStore().putBlob(containerName, sourceObject);
    }
 
@@ -409,7 +412,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       blob.getMetadata().setContentType(type);
       blob.setPayload(Payloads.newPayload(content));
       if (content instanceof InputStream) {
-         context.utils().encryption().generateMD5BufferingIfNotRepeatable(blob);
+         Payloads.calculateMD5(blob, context.utils().crypto().md5());
       }
       String containerName = getContainerName();
       try {
@@ -424,10 +427,10 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
-   protected volatile static EncryptionService encryptionService;
+   protected volatile static Crypto crypto;
    static {
       try {
-         encryptionService = new JCEEncryptionService();
+         crypto = new JCECrypto();
       } catch (NoSuchAlgorithmException e) {
          Throwables.propagate(e);
       } catch (CertificateException e) {
@@ -436,7 +439,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testMetadata() throws InterruptedException {
+   public void testMetadata() throws InterruptedException, IOException {
       String key = "hello";
 
       Blob blob = context.getBlobStore().newBlob(key);
@@ -447,7 +450,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       // normalize the
       // providers.
       blob.getMetadata().getUserMetadata().put("Adrian", "powderpuff");
-      blob.getMetadata().setContentMD5(encryptionService.md5(Utils.toInputStream(TEST_STRING)));
+      Payloads.calculateMD5(blob, context.utils().crypto().md5());
       String containerName = getContainerName();
       try {
          assertNull(context.getBlobStore().blobMetadata(containerName, "powderpuff"));
@@ -473,11 +476,11 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
-   protected void validateMetadata(BlobMetadata metadata) {
+   protected void validateMetadata(BlobMetadata metadata) throws IOException {
       assert metadata.getContentType().startsWith("text/plain") : metadata.getContentType();
       assertEquals(metadata.getSize(), new Long(TEST_STRING.length()));
       assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
-      assertEquals(metadata.getContentMD5(), encryptionService.md5(Utils.toInputStream(TEST_STRING)));
+      assertEquals(metadata.getContentMD5(), CryptoStreams.md5(InputSuppliers.of(TEST_STRING)));
    }
 
 }

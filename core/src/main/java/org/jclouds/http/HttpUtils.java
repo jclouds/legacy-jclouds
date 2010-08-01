@@ -67,8 +67,10 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.Constants;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.io.InputSuppliers;
 import org.jclouds.io.Payload;
+import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.internal.Wire;
@@ -96,13 +98,12 @@ public class HttpUtils {
    @Inject(optional = true)
    @Named(Constants.PROPERTY_PROXY_SYSTEM)
    private boolean systemProxies = System.getProperty("java.net.useSystemProxies") != null ? Boolean
-         .parseBoolean(System.getProperty("java.net.useSystemProxies")) : false;
+            .parseBoolean(System.getProperty("java.net.useSystemProxies")) : false;
 
    private final int globalMaxConnections;
    private final int globalMaxConnectionsPerHost;
    private final int connectionTimeout;
    private final int soTimeout;
-   private final EncryptionService encryptionService;
    @Inject(optional = true)
    @Named(Constants.PROPERTY_PROXY_HOST)
    private String proxyHost;
@@ -117,12 +118,10 @@ public class HttpUtils {
    private String proxyPassword;
 
    @Inject
-   public HttpUtils(EncryptionService encryptionService,
-         @Named(Constants.PROPERTY_CONNECTION_TIMEOUT) int connectionTimeout,
-         @Named(Constants.PROPERTY_SO_TIMEOUT) int soTimeout,
-         @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT) int globalMaxConnections,
-         @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST) int globalMaxConnectionsPerHost) {
-      this.encryptionService = encryptionService;
+   public HttpUtils(@Named(Constants.PROPERTY_CONNECTION_TIMEOUT) int connectionTimeout,
+            @Named(Constants.PROPERTY_SO_TIMEOUT) int soTimeout,
+            @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT) int globalMaxConnections,
+            @Named(Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST) int globalMaxConnectionsPerHost) {
       this.soTimeout = soTimeout;
       this.connectionTimeout = connectionTimeout;
       this.globalMaxConnections = globalMaxConnections;
@@ -182,8 +181,8 @@ public class HttpUtils {
    }
 
    /**
-    * keys to the map are only used for socket information, not path. In this
-    * case, you should remove any path or query details from the URI.
+    * keys to the map are only used for socket information, not path. In this case, you should
+    * remove any path or query details from the URI.
     */
    public static URI createBaseEndpointFor(URI endpoint) {
       if (endpoint.getPort() == -1) {
@@ -194,8 +193,7 @@ public class HttpUtils {
    }
 
    /**
-    * Web browsers do not always handle '+' characters well, use the
-    * well-supported '%20' instead.
+    * Web browsers do not always handle '+' characters well, use the well-supported '%20' instead.
     */
    public static String urlEncode(String in, char... skipEncode) {
       if (isUrlEncoded(in))
@@ -241,8 +239,7 @@ public class HttpUtils {
    }
 
    /**
-    * Content stream may need to be read. However, we should always close the
-    * http stream.
+    * Content stream may need to be read. However, we should always close the http stream.
     * 
     * @throws IOException
     */
@@ -262,11 +259,11 @@ public class HttpUtils {
       String scheme = redirectURI.getScheme();
 
       checkState(redirectURI.getScheme().startsWith("http"), String.format(
-            "header %s didn't parse an http scheme: [%s]", hostHeader, scheme));
+               "header %s didn't parse an http scheme: [%s]", hostHeader, scheme));
       int port = redirectURI.getPort() > 0 ? redirectURI.getPort() : redirectURI.getScheme().equals("https") ? 443 : 80;
       String host = redirectURI.getHost();
       checkState(host.indexOf('/') == -1, String.format("header %s didn't parse an http host correctly: [%s]",
-            hostHeader, host));
+               hostHeader, host));
       URI endPoint = URI.create(String.format("%s://%s:%d", scheme, host, port));
       return endPoint;
    }
@@ -276,11 +273,10 @@ public class HttpUtils {
    }
 
    /**
-    * Used to extract the URI and authentication data from a String. Note that
-    * the java URI class breaks, if there are special characters like '/'
-    * present. Otherwise, we wouldn't need this class, and we could simply use
-    * URI.create("uri").getUserData(); Also, URI breaks if there are curly
-    * braces.
+    * Used to extract the URI and authentication data from a String. Note that the java URI class
+    * breaks, if there are special characters like '/' present. Otherwise, we wouldn't need this
+    * class, and we could simply use URI.create("uri").getUserData(); Also, URI breaks if there are
+    * curly braces.
     * 
     */
    public static URI createUri(String uriPath) {
@@ -339,8 +335,12 @@ public class HttpUtils {
          if (message.getPayload().getContentLength() != null)
             logger.debug("%s %s: %s", prefix, HttpHeaders.CONTENT_LENGTH, message.getPayload().getContentLength());
          if (message.getPayload().getContentMD5() != null)
-            logger.debug("%s %s: %s", prefix, "Content-MD5", encryptionService.base64(message.getPayload()
-                  .getContentMD5()));
+            try {
+               logger.debug("%s %s: %s", prefix, "Content-MD5", CryptoStreams.base64Encode(InputSuppliers.of(message
+                        .getPayload().getContentMD5())));
+            } catch (IOException e) {
+               logger.warn(e, " error getting md5 for %s", message);
+            }
       }
    }
 
@@ -363,13 +363,12 @@ public class HttpUtils {
    }
 
    /**
-    * change the destination of the current http command. typically used in
-    * handling redirects.
+    * change the destination of the current http command. typically used in handling redirects.
     * 
     * @param string
     */
    public static void changeSchemeHostAndPortTo(HttpRequest request, String scheme, String host, int port,
-         UriBuilder builder) {
+            UriBuilder builder) {
       builder.uri(request.getEndpoint());
       builder.scheme(scheme);
       builder.host(host);
@@ -403,7 +402,7 @@ public class HttpUtils {
    }
 
    public static void addQueryParamTo(HttpRequest request, String key, Iterable<?> values, UriBuilder builder,
-         char... skips) {
+            char... skips) {
       builder.uri(request.getEndpoint());
       Multimap<String, String> map = parseQueryToMap(request.getEndpoint().getQuery());
       for (Object o : values)
@@ -460,16 +459,16 @@ public class HttpUtils {
    }
 
    public static SortedSet<Entry<String, String>> sortEntries(Collection<Map.Entry<String, String>> in,
-         Comparator<Map.Entry<String, String>> sorter) {
+            Comparator<Map.Entry<String, String>> sorter) {
       SortedSet<Entry<String, String>> entries = newTreeSet(sorter);
       entries.addAll(in);
       return entries;
    }
 
    public static String makeQueryLine(Multimap<String, String> params,
-         @Nullable Comparator<Map.Entry<String, String>> sorter, char... skips) {
+            @Nullable Comparator<Map.Entry<String, String>> sorter, char... skips) {
       Iterator<Map.Entry<String, String>> pairs = ((sorter == null) ? params.entries() : sortEntries(params.entries(),
-            sorter)).iterator();
+               sorter)).iterator();
       StringBuilder formBuilder = new StringBuilder();
       while (pairs.hasNext()) {
          Map.Entry<String, String> pair = pairs.next();
@@ -499,7 +498,7 @@ public class HttpUtils {
                payload.setContentLength(new Long(header.getValue()));
          } else if ("Content-MD5".equalsIgnoreCase(header.getKey())) {
             if (payload != null)
-               payload.setContentMD5(encryptionService.fromBase64(header.getValue()));
+               payload.setContentMD5(CryptoStreams.base64(header.getValue()));
          } else if (CONTENT_TYPE.equalsIgnoreCase(header.getKey())) {
             if (payload != null)
                payload.setContentType(header.getValue());
@@ -510,20 +509,20 @@ public class HttpUtils {
 
       if (message instanceof HttpRequest) {
          checkArgument(
-               message.getPayload() == null || message.getFirstHeaderOrNull(CONTENT_TYPE) == null,
-               "configuration error please use request.getPayload().setContentType(value) as opposed to adding a content type   header: "
-                     + message);
+                  message.getPayload() == null || message.getFirstHeaderOrNull(CONTENT_TYPE) == null,
+                  "configuration error please use request.getPayload().setContentType(value) as opposed to adding a content type   header: "
+                           + message);
          checkArgument(
-               message.getPayload() == null || message.getFirstHeaderOrNull(CONTENT_LENGTH) == null,
-               "configuration error please use request.getPayload().setContentLength(value) as opposed to adding a content length header: "
-                     + message);
+                  message.getPayload() == null || message.getFirstHeaderOrNull(CONTENT_LENGTH) == null,
+                  "configuration error please use request.getPayload().setContentLength(value) as opposed to adding a content length header: "
+                           + message);
          checkArgument(message.getPayload() == null || message.getPayload().getContentLength() != null
-               || "chunked".equalsIgnoreCase(message.getFirstHeaderOrNull("Transfer-Encoding")),
-               "either chunked encoding must be set on the http request or contentlength set on the payload: "
-                     + message);
+                  || "chunked".equalsIgnoreCase(message.getFirstHeaderOrNull("Transfer-Encoding")),
+                  "either chunked encoding must be set on the http request or contentlength set on the payload: "
+                           + message);
          checkArgument(message.getPayload() == null || message.getFirstHeaderOrNull("Content-MD5") == null,
-               "configuration error please use request.getPayload().setContentMD5(value) as opposed to adding a content md5 header: "
-                     + message);
+                  "configuration error please use request.getPayload().setContentMD5(value) as opposed to adding a content md5 header: "
+                           + message);
       }
    }
 
@@ -537,7 +536,7 @@ public class HttpUtils {
    }
 
    public String valueOrEmpty(byte[] md5) {
-      return md5 != null ? encryptionService.base64(md5) : "";
+      return md5 != null ? CryptoStreams.base64(md5) : "";
    }
 
    public String valueOrEmpty(Collection<String> collection) {
@@ -563,14 +562,14 @@ public class HttpUtils {
       if (request.getPayload() != null && wire.enabled()) {
          wire.output(request);
          checkRequestHasContentLengthOrChunkedEncoding(request,
-               "After wiring, the request has neither chunked encoding nor content length: " + request);
+                  "After wiring, the request has neither chunked encoding nor content length: " + request);
       }
    }
 
    public static <T> T returnValueOnCodeOrNull(Exception from, T value, Predicate<Integer> codePredicate) {
       Iterable<HttpResponseException> throwables = filter(getCausalChain(from), HttpResponseException.class);
       if (size(throwables) >= 1 && get(throwables, 0).getResponse() != null
-            && codePredicate.apply(get(throwables, 0).getResponse().getStatusCode())) {
+               && codePredicate.apply(get(throwables, 0).getResponse().getStatusCode())) {
          return value;
       }
       return null;

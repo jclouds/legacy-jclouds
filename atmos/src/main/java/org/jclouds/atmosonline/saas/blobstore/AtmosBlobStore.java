@@ -44,8 +44,8 @@ import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
+import org.jclouds.crypto.Crypto;
 import org.jclouds.domain.Location;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.options.GetOptions;
 
 /**
@@ -59,7 +59,7 @@ public class AtmosBlobStore extends BaseBlobStore {
    private final BlobToObject blob2Object;
    private final BlobStoreListOptionsToListOptions container2ContainerListOptions;
    private final DirectoryEntryListToResourceMetadataList container2ResourceList;
-   private final EncryptionService encryptionService;
+   private final Crypto crypto;
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
@@ -69,7 +69,7 @@ public class AtmosBlobStore extends BaseBlobStore {
             ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
             DirectoryEntryListToResourceMetadataList container2ResourceList,
-            EncryptionService encryptionService, BlobToHttpGetOptions blob2ObjectGetOptions,
+            Crypto crypto, BlobToHttpGetOptions blob2ObjectGetOptions,
             Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
       super(context, blobUtils, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
@@ -80,7 +80,7 @@ public class AtmosBlobStore extends BaseBlobStore {
       this.object2Blob = checkNotNull(object2Blob, "object2Blob");
       this.blob2Object = checkNotNull(blob2Object, "blob2Object");
       this.object2BlobMd = checkNotNull(object2BlobMd, "object2BlobMd");
-      this.encryptionService = checkNotNull(encryptionService, "encryptionService");
+      this.crypto = checkNotNull(crypto, "crypto");
       this.fetchBlobMetadataProvider = checkNotNull(fetchBlobMetadataProvider,
                "fetchBlobMetadataProvider");
    }
@@ -204,7 +204,7 @@ public class AtmosBlobStore extends BaseBlobStore {
     */
    @Override
    public String putBlob(final String container, final Blob blob) {
-      return AtmosStorageUtils.putBlob(sync, encryptionService, blob2Object, container, blob);
+      return AtmosStorageUtils.putBlob(sync, crypto, blob2Object, container, blob);
    }
 
    /**

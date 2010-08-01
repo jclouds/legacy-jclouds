@@ -47,7 +47,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -68,8 +68,7 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 @Singleton
-public class JavaUrlHttpCommandExecutorService extends
-         BaseHttpCommandExecutorService<HttpURLConnection> {
+public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorService<HttpURLConnection> {
 
    public static final String USER_AGENT = "jclouds/1.0 java/" + System.getProperty("java.version");
    @Resource
@@ -80,18 +79,15 @@ public class JavaUrlHttpCommandExecutorService extends
    public JavaUrlHttpCommandExecutorService(HttpUtils utils,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
             DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
-            DelegatingErrorHandler errorHandler, HttpWire wire, HostnameVerifier verifier,
-            EncryptionService encryptionService) {
-      super(utils, encryptionService, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler,
-               wire);
+            DelegatingErrorHandler errorHandler, HttpWire wire, HostnameVerifier verifier) {
+      super(utils, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       if (utils.getMaxConnections() > 0)
-         System.setProperty("http.maxConnections", String.valueOf(utils.getMaxConnections()));
-      this.verifier = verifier;
+         System.setProperty("http.maxConnections", String.valueOf(checkNotNull(utils, "utils").getMaxConnections()));
+      this.verifier = checkNotNull(verifier, "verifier");
    }
 
    @Override
-   protected HttpResponse invoke(HttpURLConnection connection) throws IOException,
-            InterruptedException {
+   protected HttpResponse invoke(HttpURLConnection connection) throws IOException, InterruptedException {
       InputStream in = null;
       try {
          in = consumeOnClose(connection.getInputStream());
@@ -109,8 +105,7 @@ public class JavaUrlHttpCommandExecutorService extends
       }
 
       Payload payload = in != null ? Payloads.newInputStreamPayload(in) : null;
-      HttpResponse response = new HttpResponse(connection.getResponseCode(), connection
-               .getResponseMessage(), payload);
+      HttpResponse response = new HttpResponse(connection.getResponseCode(), connection.getResponseMessage(), payload);
       Multimap<String, String> headers = LinkedHashMultimap.create();
       for (String header : connection.getHeaderFields().keySet()) {
          headers.putAll(header, connection.getHeaderFields().get(header));
@@ -133,8 +128,7 @@ public class JavaUrlHttpCommandExecutorService extends
    }
 
    @Override
-   protected HttpURLConnection convert(HttpRequest request) throws IOException,
-            InterruptedException {
+   protected HttpURLConnection convert(HttpRequest request) throws IOException, InterruptedException {
       boolean chunked = "chunked".equals(request.getFirstHeaderOrNull("Transfer-Encoding"));
       URL url = request.getEndpoint().toURL();
 
@@ -150,8 +144,7 @@ public class JavaUrlHttpCommandExecutorService extends
          Proxy proxy = new Proxy(Proxy.Type.HTTP, addr);
          Authenticator authenticator = new Authenticator() {
             public PasswordAuthentication getPasswordAuthentication() {
-               return (new PasswordAuthentication(utils.getProxyUser(), utils.getProxyPassword()
-                        .toCharArray()));
+               return (new PasswordAuthentication(utils.getProxyUser(), utils.getProxyPassword().toCharArray()));
             }
          };
          Authenticator.setDefault(authenticator);
@@ -182,16 +175,13 @@ public class JavaUrlHttpCommandExecutorService extends
          OutputStream out = null;
          try {
             if (request.getPayload().getContentMD5() != null)
-               connection.setRequestProperty("Content-MD5", encryptionService.base64(request
-                        .getPayload().getContentMD5()));
+               connection.setRequestProperty("Content-MD5", CryptoStreams.base64(request.getPayload().getContentMD5()));
             if (request.getPayload().getContentType() != null)
-               connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, request.getPayload()
-                        .getContentType());
+               connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, request.getPayload().getContentType());
             if (chunked) {
                connection.setChunkedStreamingMode(8196);
             } else {
-               Long length = checkNotNull(request.getPayload().getContentLength(),
-                        "payload.getContentLength");
+               Long length = checkNotNull(request.getPayload().getContentLength(), "payload.getContentLength");
                connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, length.toString());
                connection.setFixedLengthStreamingMode(length.intValue());
             }

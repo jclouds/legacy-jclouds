@@ -19,20 +19,27 @@
 package org.jclouds.io;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.io.ByteStreams.toByteArray;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Comparator;
 import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.payloads.ByteArrayPayload;
 import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.io.payloads.InputStreamPayload;
 import org.jclouds.io.payloads.StringPayload;
 import org.jclouds.io.payloads.UrlEncodedFormPayload;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Multimap;
 
 /**
@@ -40,6 +47,8 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 public class Payloads {
+   private Payloads() {
+   }
 
    public static Payload newPayload(Object data) {
       checkNotNull(data, "data");
@@ -74,14 +83,84 @@ public class Payloads {
       return new FilePayload(checkNotNull(data, "data"));
    }
 
-   public static UrlEncodedFormPayload newUrlEncodedFormPayload(
-            Multimap<String, String> formParams, char... skips) {
+   public static UrlEncodedFormPayload newUrlEncodedFormPayload(Multimap<String, String> formParams, char... skips) {
       return new UrlEncodedFormPayload(formParams, skips);
    }
 
-   public static UrlEncodedFormPayload newUrlEncodedFormPayload(
-            Multimap<String, String> formParams,
+   public static UrlEncodedFormPayload newUrlEncodedFormPayload(Multimap<String, String> formParams,
             @Nullable Comparator<Map.Entry<String, String>> sorter, char... skips) {
       return new UrlEncodedFormPayload(formParams, sorter, skips);
+   }
+
+   /**
+    * Calculates and sets {@link Payload#setContentMD5} on the payload.
+    * 
+    * <p/>
+    * note that this will rebuffer in memory if the payload is not repeatable.
+    * 
+    * @param payload
+    *           payload to calculate
+    * @param md5
+    *           digester to calculate payloads with.
+    * @return new Payload with md5 set.
+    * @throws IOException
+    */
+   public static Payload calculateMD5(Payload payload, MessageDigest md5) throws IOException {
+      checkNotNull(payload, "payload");
+      if (!payload.isRepeatable()) {
+         String oldContentType = payload.getContentType();
+         Payload oldPayload = payload;
+         try {
+            payload = newByteArrayPayload(toByteArray(payload));
+         } finally {
+            oldPayload.release();
+         }
+         payload.setContentType(oldContentType);
+      }
+      payload.setContentMD5(CryptoStreams.digest(payload, md5));
+      return payload;
+   }
+   
+   /**
+    * Uses default md5 generator.
+    * 
+    * @see #calculateMD5(Payload, MessageDigest)
+    */
+   public static Payload calculateMD5(Payload payload) throws IOException {
+      try {
+         return calculateMD5(payload, MessageDigest.getInstance("MD5"));
+      } catch (NoSuchAlgorithmException e) {
+         Throwables.propagate(e);
+         return null;
+      }
+   }
+
+   /**
+    * Calculates the md5 on a payload, replacing as necessary.
+    * 
+    * @see #calculateMD5(Payload, MessageDigest)
+    */
+   public static <T extends PayloadEnclosing> T calculateMD5(T payloadEnclosing, MessageDigest md5) throws IOException {
+      checkState(payloadEnclosing != null, "payloadEnclosing");
+      Payload newPayload = calculateMD5(payloadEnclosing.getPayload(), md5);
+      if (newPayload != payloadEnclosing.getPayload())
+         payloadEnclosing.setPayload(newPayload);
+      return payloadEnclosing;
+   }
+
+   /**
+    * Calculates the md5 on a payload, replacing as necessary.
+    * <p/>
+    * uses default md5 generator.
+    * 
+    * @see #calculateMD5(Payload, MessageDigest)
+    */
+   public static <T extends PayloadEnclosing> T calculateMD5(T payloadEnclosing) throws IOException {
+      try {
+         return calculateMD5(payloadEnclosing, MessageDigest.getInstance("MD5"));
+      } catch (NoSuchAlgorithmException e) {
+         Throwables.propagate(e);
+         return null;
+      }
    }
 }

@@ -37,8 +37,8 @@ import org.jclouds.chef.domain.Role;
 import org.jclouds.chef.filters.SignedHeaderAuth;
 import org.jclouds.chef.filters.SignedHeaderAuthTest;
 import org.jclouds.chef.functions.ParseKeySetFromJson;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseJson;
@@ -88,12 +88,11 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
    }
 
    public void testGetUploadSandboxForChecksums() throws SecurityException, NoSuchMethodException, IOException {
-      EncryptionService encryptionService = injector.getInstance(EncryptionService.class);
       Method method = ChefAsyncClient.class.getMethod("getUploadSandboxForChecksums", Set.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, ImmutableSet.of(Bytes
-               .asList(encryptionService.fromHex("0189e76ccc476701d6b374e5a1a27347")), Bytes.asList(encryptionService
-               .fromHex("0c5ecd7788cf4f6c7de2a57193897a6c")), Bytes.asList(encryptionService
-               .fromHex("1dda05ed139664f1f89b9dec482b77c0"))));
+               .asList(CryptoStreams.hex("0189e76ccc476701d6b374e5a1a27347")), Bytes.asList(CryptoStreams
+               .hex("0c5ecd7788cf4f6c7de2a57193897a6c")), Bytes.asList(CryptoStreams
+               .hex("1dda05ed139664f1f89b9dec482b77c0"))));
       assertRequestLineEquals(httpRequest, "POST http://localhost:4000/sandboxes HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(

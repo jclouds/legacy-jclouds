@@ -43,9 +43,12 @@ import org.jclouds.chef.ChefService;
 import org.jclouds.chef.domain.Client;
 import org.jclouds.chef.reference.ChefConstants;
 import org.jclouds.chef.servlet.functions.InitParamsToProperties;
+import org.jclouds.crypto.Pems;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.jdk.JDKLogger;
 import org.jclouds.rest.RestContextFactory;
+
+import com.google.common.base.Throwables;
 
 /**
  * Registers a new node in Chef and binds its name to {@link ChefConstants.CHEF_NODE}, its role to
@@ -129,14 +132,14 @@ public class ChefRegistrationListener implements ServletContextListener {
          clientProperties.putAll(overrides);
          removeCredentials(clientProperties);
          clientProperties.setProperty("chef.identity", id);
-         clientProperties.setProperty("chef.credential", validatorClient.getContext().utils().encryption().toPem(
-                  client.getPrivateKey()));
+         clientProperties.setProperty("chef.credential", Pems.pem(client.getPrivateKey()));
          clientService = createService(clientProperties);
          clientService.createNodeAndPopulateAutomaticAttributes(id, singleton("role[" + role + "]"));
          return clientService;
-      } catch (RuntimeException e) {
+      } catch (Exception e) {
          logger.error(e, "error creating node %s", id);
-         throw e;
+         Throwables.propagate(e);
+         return null;
       }
    }
 

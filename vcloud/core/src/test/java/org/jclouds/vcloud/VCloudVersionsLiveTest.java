@@ -19,7 +19,6 @@
 package org.jclouds.vcloud;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertNotNull;
@@ -28,6 +27,7 @@ import java.net.URI;
 import java.util.SortedMap;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -59,8 +59,7 @@ public class VCloudVersionsLiveTest {
    public void testGetSupportedVersions() throws Exception {
       VCloudVersionsAsyncClient authentication = context.getAsyncApi();
       for (int i = 0; i < 5; i++) {
-         SortedMap<String, URI> response = authentication.getSupportedVersions().get(45,
-                  TimeUnit.SECONDS);
+         SortedMap<String, URI> response = authentication.getSupportedVersions().get(45, TimeUnit.SECONDS);
          assertNotNull(response);
          assertNotNull(response.containsKey("0.8"));
       }
@@ -68,18 +67,16 @@ public class VCloudVersionsLiveTest {
 
    @BeforeClass
    void setupFactory() {
-      String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
-               "jclouds.test.endpoint");
+      String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"), "jclouds.test.endpoint");
       String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
       String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
-      ContextSpec<VCloudVersionsClient, VCloudVersionsAsyncClient> contextSpec = contextSpec(
-               "test", endpoint, "1", identity, credential, VCloudVersionsClient.class,
-               VCloudVersionsAsyncClient.class);
+      ContextSpec<VCloudVersionsClient, VCloudVersionsAsyncClient> contextSpec = contextSpec("test", endpoint, "1",
+               identity, credential, VCloudVersionsClient.class, VCloudVersionsAsyncClient.class);
 
       context = createContextBuilder(
                contextSpec,
-               ImmutableSet.<Module> of(new Log4JLoggingModule(), new ExecutorServiceModule(
-                        sameThreadExecutor(), sameThreadExecutor()))).buildContext();
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new ExecutorServiceModule(MoreExecutors
+                        .sameThreadExecutor(), MoreExecutors.sameThreadExecutor()))).buildContext();
    }
 }

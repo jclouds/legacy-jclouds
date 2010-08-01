@@ -31,8 +31,8 @@ import java.util.Date;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.encryption.EncryptionService;
-import org.jclouds.encryption.internal.JCEEncryptionService;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.Payloads;
 import org.jclouds.util.Utils;
@@ -55,10 +55,10 @@ public class ConvertToGaeRequestTest {
    ConvertToGaeRequest req;
    URI endPoint;
 
-   protected volatile static EncryptionService encryptionService;
+   protected volatile static Crypto crypto;
    static {
       try {
-         encryptionService = new JCEEncryptionService();
+         crypto = new JCECrypto();
       } catch (NoSuchAlgorithmException e) {
          Throwables.propagate(e);
       } catch (CertificateException e) {
@@ -69,7 +69,7 @@ public class ConvertToGaeRequestTest {
    @BeforeTest
    void setupClient() throws MalformedURLException {
       endPoint = URI.create("http://localhost:80/foo");
-      req = new ConvertToGaeRequest(encryptionService);
+      req = new ConvertToGaeRequest();
    }
 
    @Test

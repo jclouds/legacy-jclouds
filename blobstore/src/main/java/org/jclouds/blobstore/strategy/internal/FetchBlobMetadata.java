@@ -19,7 +19,7 @@
 package org.jclouds.blobstore.strategy.internal;
 
 import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.concurrent.ConcurrentUtils.transformParallel;
+import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;

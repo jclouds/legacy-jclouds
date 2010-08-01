@@ -18,9 +18,8 @@
  */
 package org.jclouds.concurrent;
 
-import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static java.util.concurrent.Executors.newCachedThreadPool;
-import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
+import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 import static org.jclouds.concurrent.FuturesTestingUtils.CALLABLE_DURATION;
 import static org.jclouds.concurrent.FuturesTestingUtils.COUNT;
 import static org.jclouds.concurrent.FuturesTestingUtils.FUDGE;
@@ -31,19 +30,18 @@ import static org.testng.Assert.assertEquals;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
 
-import java.util.concurrent.Future;
-
 /**
- * Tests behavior of ConcurrentUtils
+ * Tests behavior of FutureIterables
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true, testName = "concurrent.ConcurrentUtilsTest")
-public class ConcurrentUtilsTest {
+@Test(groups = "unit", sequential = true, testName = "concurrent.FutureIterablesTest")
+public class FutureIterablesTest {
 
    public void testMakeListenableDoesntSerializeFutures() throws InterruptedException, ExecutionException {
       long expectedMax = CALLABLE_DURATION;
@@ -51,7 +49,7 @@ public class ConcurrentUtilsTest {
       long expectedOverhead = COUNT + FUDGE;
 
       ExecutorService callableExecutor = newCachedThreadPool();
-      ExecutorService chainExecutor = sameThreadExecutor();
+      ExecutorService chainExecutor = MoreExecutors.sameThreadExecutor();
 
       long start = System.currentTimeMillis();
       Map<String, Future<Long>> responses = runCallables(callableExecutor, chainExecutor);
@@ -65,11 +63,11 @@ public class ConcurrentUtilsTest {
       long expectedOverhead = COUNT + FUDGE;
 
       ExecutorService callableExecutor = newCachedThreadPool();
-      ExecutorService chainExecutor = sameThreadExecutor();
+      ExecutorService chainExecutor = MoreExecutors.sameThreadExecutor();
 
       long start = System.currentTimeMillis();
       Map<String, Future<Long>> responses = runCallables(callableExecutor, chainExecutor);
-      Map<String, Exception> exceptions = awaitCompletion(responses, sameThreadExecutor(), null, Logger.CONSOLE,
+      Map<String, Exception> exceptions = awaitCompletion(responses, MoreExecutors.sameThreadExecutor(), null, Logger.CONSOLE,
                "test same thread");
       assertEquals(exceptions.size(), 0);
       checkTimeThresholds(expectedMin, expectedMax, expectedOverhead, start, responses);

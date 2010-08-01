@@ -27,7 +27,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.concurrent.SingleThreaded;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -59,13 +58,11 @@ public class GaeHttpCommandExecutorService extends BaseHttpCommandExecutorServic
 
    @Inject
    public GaeHttpCommandExecutorService(URLFetchService urlFetchService, HttpUtils utils,
-            EncryptionService encryptionService,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioExecutor,
             IOExceptionRetryHandler ioRetryHandler, DelegatingRetryHandler retryHandler,
-            DelegatingErrorHandler errorHandler, HttpWire wire,
-            ConvertToGaeRequest convertToGaeRequest,
+            DelegatingErrorHandler errorHandler, HttpWire wire, ConvertToGaeRequest convertToGaeRequest,
             ConvertToJcloudsResponse convertToJcloudsResponse) {
-      super(utils, encryptionService, ioExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
+      super(utils, ioExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       this.urlFetchService = urlFetchService;
       this.convertToGaeRequest = convertToGaeRequest;
       this.convertToJcloudsResponse = convertToJcloudsResponse;

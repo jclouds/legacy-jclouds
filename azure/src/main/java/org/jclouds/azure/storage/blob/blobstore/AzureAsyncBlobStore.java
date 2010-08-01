@@ -19,12 +19,10 @@
 package org.jclouds.azure.storage.blob.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.concurrent.ConcurrentUtils.compose;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
 
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import com.google.common.util.concurrent.ListenableFuture;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -54,11 +52,13 @@ import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.BlobUtils;
+import org.jclouds.concurrent.Futures;
 import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * @author Adrian Cole
@@ -101,15 +101,16 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>> list() {
-      return compose(
-               async.listContainers(includeMetadata()),
-               new Function<BoundedSet<ContainerProperties>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
-                  public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(
-                           BoundedSet<ContainerProperties> from) {
-                     return new PageSetImpl<StorageMetadata>(Iterables.transform(from, container2ResourceMd), from
-                              .getNextMarker());
-                  }
-               }, service);
+      return Futures
+               .compose(
+                        async.listContainers(includeMetadata()),
+                        new Function<BoundedSet<ContainerProperties>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
+                           public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(
+                                    BoundedSet<ContainerProperties> from) {
+                              return new PageSetImpl<StorageMetadata>(Iterables.transform(from, container2ResourceMd),
+                                       from.getNextMarker());
+                           }
+                        }, service);
    }
 
    /**
@@ -146,7 +147,7 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<PageSet<? extends StorageMetadata>> list(String container, ListContainerOptions options) {
       ListBlobsOptions azureOptions = blobStore2AzureContainerListOptions.apply(options);
       ListenableFuture<ListBlobsResponse> returnVal = async.listBlobs(container, azureOptions.includeMetadata());
-      return compose(returnVal, azure2BlobStoreResourceList, service);
+      return Futures.compose(returnVal, azure2BlobStoreResourceList, service);
    }
 
    /**
@@ -172,7 +173,7 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<Blob> getBlob(String container, String key, org.jclouds.blobstore.options.GetOptions options) {
       GetOptions azureOptions = blob2ObjectGetOptions.apply(options);
       ListenableFuture<AzureBlob> returnVal = async.getBlob(container, key, azureOptions);
-      return compose(returnVal, azureBlob2Blob, service);
+      return Futures.compose(returnVal, azureBlob2Blob, service);
    }
 
    /**
@@ -224,7 +225,7 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
-      return compose(async.getBlobProperties(container, key), new Function<BlobProperties, BlobMetadata>() {
+      return Futures.compose(async.getBlobProperties(container, key), new Function<BlobProperties, BlobMetadata>() {
 
          @Override
          public BlobMetadata apply(BlobProperties from) {

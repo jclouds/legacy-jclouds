@@ -27,6 +27,7 @@ import static org.easymock.EasyMock.reportMatcher;
 import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
+import static org.jclouds.io.Payloads.calculateMD5;
 import static org.jclouds.io.Payloads.newInputStreamPayload;
 import static org.jclouds.io.Payloads.newStringPayload;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
@@ -46,6 +47,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -76,16 +78,15 @@ import javax.ws.rs.core.UriBuilder;
 import org.easymock.IArgumentMatcher;
 import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.IOExceptionRetryHandler;
-import org.jclouds.http.PayloadEnclosing;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.functions.ParseJson;
@@ -101,7 +102,7 @@ import org.jclouds.http.options.BaseHttpRequestOptions;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.io.Payload;
-import org.jclouds.io.Payloads;
+import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.BaseRestClientTest;
@@ -805,7 +806,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Wrapper> parser = (Function<HttpResponse, Wrapper>) RestAnnotationProcessor
                .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok", Payloads.newStringPayload("{ foo:\"bar\"}"))).foo, "bar");
+      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{ foo:\"bar\"}"))).foo, "bar");
 
    }
 
@@ -820,8 +821,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
                .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok", Payloads.newStringPayload("{ foo:\"bar\"}"))), ImmutableMap
-               .of("foo", "bar"));
+      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{ foo:\"bar\"}"))), ImmutableMap.of(
+               "foo", "bar"));
 
    }
 
@@ -836,8 +837,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
                .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok", Payloads.newStringPayload("{ foo:\"bar\"}"))), ImmutableMap
-               .of("foo", "bar"));
+      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{ foo:\"bar\"}"))), ImmutableMap.of(
+               "foo", "bar"));
 
    }
 
@@ -852,8 +853,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
                .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok", Payloads.newStringPayload("{ foo:\"bar\"}"))), ImmutableMap
-               .of("foo", "bar"));
+      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{ foo:\"bar\"}"))), ImmutableMap.of(
+               "foo", "bar"));
 
    }
 
@@ -868,7 +869,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
                .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok", Payloads.newStringPayload("{ foo:\"bar\"}"))), "bar");
+      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{ foo:\"bar\"}"))), "bar");
 
    }
 
@@ -883,7 +884,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
                .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok", Payloads.newStringPayload("{ foo:\"bar\"}"))), "bar");
+      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{ foo:\"bar\"}"))), "bar");
 
    }
 
@@ -898,8 +899,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
                .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok", Payloads
-               .newStringPayload("{\"runit\":[\"0.7.0\",\"0.7.1\"]}"))), ImmutableSet.of("0.7.0", "0.7.1"));
+      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":[\"0.7.0\",\"0.7.1\"]}"))),
+               ImmutableSet.of("0.7.0", "0.7.1"));
    }
 
    @SuppressWarnings("unchecked")
@@ -913,8 +914,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Function<HttpResponse, Map<String, String>> parser = (Function<HttpResponse, Map<String, String>>) RestAnnotationProcessor
                .createResponseParser(parserFactory, injector, method, request);
 
-      assertEquals(parser.apply(new HttpResponse(200, "ok", Payloads
-               .newStringPayload("{\"runit\":[\"0.7.0\",\"0.7.1\"]}"))), ImmutableSet.of("0.7.0", "0.7.1"));
+      assertEquals(parser.apply(new HttpResponse(200, "ok", newStringPayload("{\"runit\":[\"0.7.0\",\"0.7.1\"]}"))),
+               ImmutableSet.of("0.7.0", "0.7.1"));
    }
 
    static class TestRequestFilter1 implements HttpRequestFilter {
@@ -1427,8 +1428,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testPutPayloadEnclosingGenerateMD5() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestTransformers.class.getMethod("put", PayloadEnclosing.class);
       PayloadEnclosing payloadEnclosing = new PayloadEnclosingImpl(newStringPayload("whoops"));
-
-      encryptionService.generateMD5BufferingIfNotRepeatable(payloadEnclosing);
+      calculateMD5(payloadEnclosing, crypto.md5());
       HttpRequest request = factory(TestQuery.class).createRequest(method, payloadEnclosing);
       assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -1441,7 +1441,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Method method = TestTransformers.class.getMethod("put", PayloadEnclosing.class);
       PayloadEnclosing payloadEnclosing = new PayloadEnclosingImpl(newInputStreamPayload(toInputStream("whoops")));
 
-      encryptionService.generateMD5BufferingIfNotRepeatable(payloadEnclosing);
+      calculateMD5(payloadEnclosing, crypto.md5());
       HttpRequest request = factory(TestQuery.class).createRequest(method, payloadEnclosing);
       assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -1468,21 +1468,12 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testPutPayloadWithGeneratedMD5AndNoContentType() throws SecurityException, NoSuchMethodException,
             IOException {
       Payload payload = newStringPayload("whoops");
-      payload = encryptionService.generateMD5BufferingIfNotRepeatable(payload);
+      calculateMD5(payload, crypto.md5());
       Method method = TestTransformers.class.getMethod("put", Payload.class);
       HttpRequest request = factory(TestQuery.class).createRequest(method, payload);
       assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "whoops", "application/unknown", true);
-   }
-
-   @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testPutInputStreamPayloadWithNoLengthThrowsException() throws SecurityException, NoSuchMethodException,
-            IOException {
-      Payload payload = newInputStreamPayload(toInputStream("whoops"));
-      encryptionService.generateMD5BufferingIfNotRepeatable(payload);
-      Method method = TestTransformers.class.getMethod("put", Payload.class);
-      factory(TestQuery.class).createRequest(method, payload);
    }
 
    public void testPutInputStreamPayload() throws SecurityException, NoSuchMethodException, IOException {
@@ -1495,10 +1486,11 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertPayloadEquals(request, "whoops", "application/unknown", false);
    }
 
-   public void testPutInputStreamPayloadWithMD5() throws SecurityException, NoSuchMethodException, IOException {
+   public void testPutInputStreamPayloadWithMD5() throws NoSuchAlgorithmException, IOException, SecurityException,
+            NoSuchMethodException {
       Payload payload = newStringPayload("whoops");
       payload.setContentLength((long) "whoops".length());
-      payload.setContentMD5(encryptionService.md5(toInputStream("whoops")));
+      calculateMD5(payload, crypto.md5());
       Method method = TestTransformers.class.getMethod("put", Payload.class);
       HttpRequest request = factory(TestQuery.class).createRequest(method, payload);
       assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
@@ -1991,7 +1983,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       injector = createContextBuilder(contextSpec).buildInjector();
       parserFactory = injector.getInstance(ParseSax.Factory.class);
-      encryptionService = injector.getInstance(EncryptionService.class);
+      crypto = injector.getInstance(Crypto.class);
    }
 
 }

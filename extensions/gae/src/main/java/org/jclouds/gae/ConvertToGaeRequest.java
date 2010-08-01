@@ -28,11 +28,10 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.Payload;
 
@@ -51,16 +50,9 @@ import com.google.common.base.Function;
 public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
    public static final String USER_AGENT = "jclouds/1.0 urlfetch/1.3.5";
 
-   private final EncryptionService encryptionService;
-
-   @Inject
-   public ConvertToGaeRequest(EncryptionService encryptionService) {
-      this.encryptionService = encryptionService;
-   }
-
    /**
-    * byte [] content is replayable and the only content type supportable by
-    * GAE. As such, we convert the original request content to a byte array.
+    * byte [] content is replayable and the only content type supportable by GAE. As such, we
+    * convert the original request content to a byte array.
     */
    @Override
    public HTTPRequest apply(HttpRequest request) {
@@ -84,8 +76,8 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
       }
       gaeRequest.addHeader(new HTTPHeader(HttpHeaders.USER_AGENT, USER_AGENT));
       /**
-       * byte [] content is replayable and the only content type supportable by
-       * GAE. As such, we convert the original request content to a byte array.
+       * byte [] content is replayable and the only content type supportable by GAE. As such, we
+       * convert the original request content to a byte array.
        */
       if (request.getPayload() != null) {
          InputStream input = request.getPayload().getInput();
@@ -106,8 +98,8 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
             closeQuietly(input);
          }
          if (request.getPayload().getContentMD5() != null)
-            gaeRequest.setHeader(new HTTPHeader("Content-MD5", encryptionService.base64(request.getPayload()
-                  .getContentMD5())));
+            gaeRequest.setHeader(new HTTPHeader("Content-MD5", CryptoStreams.base64(request.getPayload()
+                     .getContentMD5())));
          if (request.getPayload().getContentType() != null)
             gaeRequest.setHeader(new HTTPHeader(HttpHeaders.CONTENT_TYPE, request.getPayload().getContentType()));
          Long length = checkNotNull(request.getPayload().getContentLength(), "payload.getContentLength");

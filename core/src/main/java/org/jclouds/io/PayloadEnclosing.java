@@ -16,24 +16,36 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.encryption.bouncycastle.config;
+package org.jclouds.io;
 
-import org.jclouds.encryption.EncryptionService;
-import org.jclouds.encryption.bouncycastle.BouncyCastleEncryptionService;
+import java.io.File;
+import java.io.InputStream;
 
-import com.google.inject.AbstractModule;
 
 /**
- * Configures EncryptionService of type {@link BouncyCastleEncryptionService}
  * 
  * @author Adrian Cole
- * 
  */
-public class BouncyCastleEncryptionServiceModule extends AbstractModule {
+public interface PayloadEnclosing {
 
-   @Override
-   protected void configure() {
-      bind(EncryptionService.class).to(BouncyCastleEncryptionService.class);
-   }
+   /**
+    * Sets payload for the request or the content from the response. If size isn't set, this will
+    * attempt to discover it.
+    * 
+    * @param data
+    *           typically InputStream for downloads, or File, byte [], String, or InputStream for
+    *           uploads.
+    */
+   void setPayload(Payload data);
+
+   void setPayload(File data);
+
+   void setPayload(byte[] data);
+
+   void setPayload(InputStream data);
+
+   void setPayload(String data);
+
+   Payload getPayload();
 
 }

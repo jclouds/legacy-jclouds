@@ -19,7 +19,7 @@
 package org.jclouds.blobstore.strategy.internal;
 
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.recursive;
-import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
+import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;

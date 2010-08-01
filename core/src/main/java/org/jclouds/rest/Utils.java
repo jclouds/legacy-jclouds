@@ -20,8 +20,8 @@ package org.jclouds.rest;
 
 import java.util.concurrent.ExecutorService;
 
+import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.internal.UtilsImpl;
@@ -58,12 +58,12 @@ public interface Utils {
     */
    HttpClient http();
 
-   EncryptionService getEncryptionService();
+   Crypto getCrypto();
 
    /**
-    * #see #getEncryptionService
+    * #see #getCrypto
     */
-   EncryptionService encryption();
+   Crypto crypto();
 
    DateService getDateService();
 

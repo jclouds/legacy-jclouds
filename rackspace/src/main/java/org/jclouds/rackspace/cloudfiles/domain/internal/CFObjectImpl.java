@@ -22,9 +22,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
 
-import org.jclouds.http.PayloadEnclosing;
 import org.jclouds.http.internal.PayloadEnclosingImpl;
 import org.jclouds.io.Payload;
+import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.io.payloads.DelegatingPayload;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;

@@ -18,36 +18,39 @@
  */
 package org.jclouds.rest;
 
-import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
+import static com.google.common.base.Throwables.propagate;
 import static org.easymock.classextension.EasyMock.createMock;
+import static org.jclouds.http.HttpUtils.sortAndConcatHeadersIntoString;
+import static org.jclouds.util.Utils.toStringAndClose;
+import static org.mortbay.jetty.HttpHeaders.TRANSFER_ENCODING;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import javax.annotation.Nullable;
+
+import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Utils;
-import org.mortbay.jetty.HttpHeaders;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
-import com.google.inject.internal.Nullable;
 
 public abstract class BaseRestClientTest {
 
    protected Injector injector;
    protected ParseSax.Factory parserFactory;
-   protected EncryptionService encryptionService;
+   protected Crypto crypto;
 
    @ConfiguresHttpCommandExecutorService
    @ConfiguresExecutorService
@@ -64,35 +67,41 @@ public abstract class BaseRestClientTest {
 
       @Override
       protected void configure() {
-         install(new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
+         install(new ExecutorServiceModule(MoreExecutors.sameThreadExecutor(), MoreExecutors.sameThreadExecutor()));
          bind(TransformingHttpCommandExecutorService.class).toInstance(mock);
       }
    }
 
-   protected void assertPayloadEquals(HttpRequest request, String toMatch, String contentType,
-            boolean contentMD5) throws IOException {
+   protected void assertPayloadEquals(HttpRequest request, String toMatch, String contentType, boolean contentMD5) {
       if (request.getPayload() == null) {
          assertNull(toMatch);
       } else {
-         String payload = Utils.toStringAndClose(request.getPayload().getInput());
+         String payload = null;
+         try {
+            payload = toStringAndClose(request.getPayload().getInput());
+         } catch (IOException e) {
+            propagate(e);
+         }
          assertEquals(payload, toMatch);
-         if (request.getFirstHeaderOrNull(HttpHeaders.TRANSFER_ENCODING) == null) {
-            assertEquals(request.getPayload().getContentLength(), new Long(
-                     payload.getBytes().length));
+         if (request.getFirstHeaderOrNull(TRANSFER_ENCODING) == null) {
+            assertEquals(request.getPayload().getContentLength(), new Long(payload.getBytes().length));
          } else {
-            assertEquals(request.getFirstHeaderOrNull(HttpHeaders.TRANSFER_ENCODING), "chunked");
+            assertEquals(request.getFirstHeaderOrNull(TRANSFER_ENCODING), "chunked");
             assert request.getPayload().getContentLength() == null
-                     || request.getPayload().getContentLength().equals(
-                              new Long(payload.getBytes().length));
+                     || request.getPayload().getContentLength().equals(new Long(payload.getBytes().length));
          }
          assertEquals(request.getPayload().getContentType(), contentType);
-         assertEquals(request.getPayload().getContentMD5(), contentMD5 ? encryptionService
-                  .md5(request.getPayload().getInput()) : null);
+         try {
+            assertEquals(request.getPayload().getContentMD5(), contentMD5 ? CryptoStreams.md5(request.getPayload())
+                     : null);
+         } catch (IOException e) {
+            propagate(e);
+         }
       }
    }
 
    protected void assertNonPayloadHeadersEqual(HttpRequest request, String toMatch) {
-      assertEquals(HttpUtils.sortAndConcatHeadersIntoString(request.getHeaders()), toMatch);
+      assertEquals(sortAndConcatHeadersIntoString(request.getHeaders()), toMatch);
    }
 
    protected void assertRequestLineEquals(HttpRequest request, String toMatch) {
@@ -101,25 +110,20 @@ public abstract class BaseRestClientTest {
 
    protected void assertExceptionParserClassEquals(Method method, @Nullable Class<?> parserClass) {
       if (parserClass == null)
-         assertEquals(
-                  RestAnnotationProcessor
-                           .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(
-                                    injector, method).getClass(), MapHttp4xxCodesToExceptions.class);
+         assertEquals(RestAnnotationProcessor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(injector,
+                  method).getClass(), MapHttp4xxCodesToExceptions.class);
       else
-         assertEquals(
-                  RestAnnotationProcessor
-                           .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(
-                                    injector, method).getClass(), parserClass);
+         assertEquals(RestAnnotationProcessor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(injector,
+                  method).getClass(), parserClass);
    }
 
    protected void assertSaxResponseParserClassEquals(Method method, @Nullable Class<?> parserClass) {
       assertEquals(RestAnnotationProcessor.getSaxResponseParserClassOrNull(method), parserClass);
    }
 
-   protected void assertResponseParserClassEquals(Method method, HttpRequest request,
-            @Nullable Class<?> parserClass) {
-      assertEquals(RestAnnotationProcessor.createResponseParser(parserFactory, injector, method,
-               request).getClass(), parserClass);
+   protected void assertResponseParserClassEquals(Method method, HttpRequest request, @Nullable Class<?> parserClass) {
+      assertEquals(RestAnnotationProcessor.createResponseParser(parserFactory, injector, method, request).getClass(),
+               parserClass);
    }
 
 }

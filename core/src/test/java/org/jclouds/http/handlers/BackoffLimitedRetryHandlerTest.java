@@ -29,11 +29,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.inject.Provider;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jboss.resteasy.specimpl.UriBuilderImpl;
-import org.jclouds.encryption.EncryptionService;
-import org.jclouds.encryption.internal.JCEEncryptionService;
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
@@ -107,12 +107,16 @@ public class BackoffLimitedRetryHandlerTest {
    void setupExecutorService() throws Exception {
       ExecutorService execService = Executors.newCachedThreadPool();
       BackoffLimitedRetryHandler backoff = new BackoffLimitedRetryHandler();
-      EncryptionService encService = new JCEEncryptionService();
-      utils = new HttpUtils(encService, 0, 500, 1, 1);
+      utils = new HttpUtils(0, 500, 1, 1);
       RedirectionRetryHandler retry = new RedirectionRetryHandler(uriBuilderProvider, backoff);
       JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(utils, execService,
                new DelegatingRetryHandler(backoff, retry), new BackoffLimitedRetryHandler(),
-               new DelegatingErrorHandler(), new HttpWire(), null, encService);
+               new DelegatingErrorHandler(), new HttpWire(), new HostnameVerifier(){
+
+                  @Override
+                  public boolean verify(String hostname, SSLSession session) {
+                     return false;
+                  }});
       executorService = new TransformingHttpCommandExecutorServiceImpl(httpService, execService);
    }
 

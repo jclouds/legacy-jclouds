@@ -26,8 +26,8 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Set;
 
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 import org.jclouds.rackspace.cloudfiles.functions.ParseObjectInfoListFromJsonResponse;
@@ -55,14 +55,14 @@ public class ParseObjectInfoListFromJsonResponseTest {
       Set<ObjectInfo> expects = Sets.newHashSet();
       ObjectInfoImpl one = i.getInstance(ObjectInfoImpl.class);
       one.name = "test_obj_1";
-      one.hash = i.getInstance(EncryptionService.class).fromHex("4281c348eaf83e70ddce0e07221c3d28");
+      one.hash = CryptoStreams.hex("4281c348eaf83e70ddce0e07221c3d28");
       one.bytes = 14l;
       one.content_type = "application/octet-stream";
       one.last_modified = new SimpleDateFormatDateService().iso8601DateParse("2009-02-03T05:26:32.612Z");
       expects.add(one);
       ObjectInfoImpl two = i.getInstance(ObjectInfoImpl.class);
       two.name = ("test_obj_2");
-      two.hash = (i.getInstance(EncryptionService.class).fromHex("b039efe731ad111bc1b0ef221c3849d0"));
+      two.hash = CryptoStreams.hex("b039efe731ad111bc1b0ef221c3849d0");
       two.bytes = (64l);
       two.content_type = ("application/octet-stream");
       two.last_modified = (new SimpleDateFormatDateService().iso8601DateParse("2009-02-03T05:26:32.612Z"));
@@ -70,7 +70,7 @@ public class ParseObjectInfoListFromJsonResponseTest {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       ListContainerOptions options = new ListContainerOptions();
       expect(request.getArgs()).andReturn(new Object[] { "containter", new ListContainerOptions[] { options } })
-            .atLeastOnce();
+               .atLeastOnce();
       replay(request);
       ParseObjectInfoListFromJsonResponse parser = i.getInstance(ParseObjectInfoListFromJsonResponse.class);
       parser.setContext(request);

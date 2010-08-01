@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 
@@ -40,11 +40,9 @@ import com.google.inject.Singleton;
 public class RegexMD5Handler implements Function<HttpResponse, byte[]> {
    Pattern pattern = Pattern.compile("<MD5OfMessageBody>([\\S&&[^<]]+)</MD5OfMessageBody>");
    private final ReturnStringIf2xx returnStringIf200;
-   private final EncryptionService encryptionService;
 
    @Inject
-   RegexMD5Handler(EncryptionService encryptionService, ReturnStringIf2xx returnStringIf200) {
-      this.encryptionService = encryptionService;
+   RegexMD5Handler(ReturnStringIf2xx returnStringIf200) {
       this.returnStringIf200 = returnStringIf200;
    }
 
@@ -55,7 +53,7 @@ public class RegexMD5Handler implements Function<HttpResponse, byte[]> {
       if (content != null) {
          Matcher matcher = pattern.matcher(content);
          if (matcher.find()) {
-            value = encryptionService.fromHex(matcher.group(1));
+            value = CryptoStreams.hex(matcher.group(1));
          }
       }
       return value;

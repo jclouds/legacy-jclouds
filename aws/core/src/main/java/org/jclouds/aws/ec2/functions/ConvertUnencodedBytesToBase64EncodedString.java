@@ -21,10 +21,9 @@ package org.jclouds.aws.ec2.functions;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 
 import com.google.common.base.Function;
 
@@ -36,17 +35,13 @@ import com.google.common.base.Function;
 @Singleton
 public class ConvertUnencodedBytesToBase64EncodedString implements Function<Object, String> {
 
-   @Inject
-   EncryptionService encryptionService;
-
    @Override
    public String apply(Object from) {
-      checkArgument(checkNotNull(from, "input") instanceof byte[],
-               "this binder is only valid for byte []!");
+      checkArgument(checkNotNull(from, "input") instanceof byte[], "this binder is only valid for byte []!");
 
       byte[] unencodedData = (byte[]) from;
       checkArgument(checkNotNull(unencodedData, "unencodedData").length <= 16 * 1024,
                "userData cannot be larger than 16kb");
-      return encryptionService.base64(unencodedData);
+      return CryptoStreams.base64(unencodedData);
    }
 }

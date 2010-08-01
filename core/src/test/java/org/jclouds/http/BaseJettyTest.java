@@ -18,8 +18,16 @@
  */
 package org.jclouds.http;
 
+import static com.google.common.base.Throwables.propagate;
+import static com.google.common.collect.Maps.newHashMap;
+import static com.google.common.io.ByteStreams.copy;
+import static com.google.common.io.ByteStreams.join;
+import static com.google.common.io.ByteStreams.newInputStreamSupplier;
+import static com.google.common.io.ByteStreams.toByteArray;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
+import static org.jclouds.util.Utils.toStringAndClose;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -34,14 +42,12 @@ import java.util.zip.GZIPInputStream;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.encryption.EncryptionService;
-import org.jclouds.encryption.internal.Base64;
+import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.io.InputSuppliers;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
-import org.jclouds.util.Utils;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.Server;
@@ -51,12 +57,8 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.google.common.io.ByteStreams;
 import com.google.common.io.InputSupplier;
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
@@ -72,7 +74,6 @@ public abstract class BaseJettyTest {
    private Server server2;
    protected RestContext<IntegrationTestClient, IntegrationTestAsyncClient> context;
    protected int testPort;
-   protected EncryptionService encryptionService;
    protected String md5;
    static final Pattern actionPattern = Pattern.compile("/objects/(.*)/action/([a-z]*);?(.*)");
 
@@ -83,9 +84,7 @@ public abstract class BaseJettyTest {
 
       final InputSupplier<InputStream> oneHundredOneConstitutions = getTestDataSupplier();
 
-      encryptionService = Guice.createInjector().getInstance(EncryptionService.class);
-
-      md5 = encryptionService.base64(encryptionService.md5(oneHundredOneConstitutions.getInput()));
+      md5 = CryptoStreams.md5Base64(oneHundredOneConstitutions);
 
       Handler server1Handler = new AbstractHandler() {
          public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch)
@@ -96,7 +95,7 @@ public abstract class BaseJettyTest {
                try {
                   Thread.sleep(100);
                } catch (InterruptedException e) {
-                  Throwables.propagate(e);
+                  propagate(e);
                }
                response.setContentType("text/xml");
                response.setStatus(HttpServletResponse.SC_OK);
@@ -106,11 +105,11 @@ public abstract class BaseJettyTest {
                response.setContentType("text/plain");
                response.setHeader("Content-MD5", md5);
                response.setStatus(HttpServletResponse.SC_OK);
-               ByteStreams.copy(oneHundredOneConstitutions.getInput(), response.getOutputStream());
+               copy(oneHundredOneConstitutions.getInput(), response.getOutputStream());
             } else if (request.getMethod().equals("PUT")) {
                if (request.getContentLength() > 0) {
                   response.setStatus(HttpServletResponse.SC_OK);
-                  response.getWriter().println(Utils.toStringAndClose(request.getInputStream()) + "PUT");
+                  response.getWriter().println(toStringAndClose(request.getInputStream()) + "PUT");
                } else {
                   response.sendError(500, "no content");
                }
@@ -122,7 +121,7 @@ public abstract class BaseJettyTest {
                if (request.getContentLength() > 0) {
                   if (request.getHeader("Content-MD5") != null) {
                      String expectedMd5 = request.getHeader("Content-MD5");
-                     String realMd5FromRequest = Base64.encodeBytes(encryptionService.md5(request.getInputStream()));
+                     String realMd5FromRequest = CryptoStreams.md5Base64(InputSuppliers.of(request.getInputStream()));
                      boolean matched = expectedMd5.equals(realMd5FromRequest);
                      if (matched) {
                         response.setContentType("text/xml");
@@ -131,7 +130,7 @@ public abstract class BaseJettyTest {
                      }
                   } else {
                      response.setStatus(HttpServletResponse.SC_OK);
-                     response.getWriter().println(Utils.toStringAndClose(request.getInputStream()) + "POST");
+                     response.getWriter().println(toStringAndClose(request.getInputStream()) + "POST");
                   }
                } else {
                   handleAction(request, response);
@@ -170,14 +169,14 @@ public abstract class BaseJettyTest {
             if (request.getMethod().equals("PUT")) {
                if (request.getContentLength() > 0) {
                   response.setStatus(HttpServletResponse.SC_OK);
-                  response.getWriter().println(Utils.toStringAndClose(request.getInputStream()) + "PUTREDIRECT");
+                  response.getWriter().println(toStringAndClose(request.getInputStream()) + "PUTREDIRECT");
                }
             } else if (request.getMethod().equals("POST")) {
                if (request.getContentLength() > 0) {
                   if (request.getHeader("Content-MD5") != null) {
                      String expectedMd5 = request.getHeader("Content-MD5");
                      String realMd5FromRequest;
-                     realMd5FromRequest = Base64.encodeBytes(encryptionService.md5(request.getInputStream()));
+                     realMd5FromRequest = CryptoStreams.md5Base64(InputSuppliers.of(request.getInputStream()));
                      boolean matched = expectedMd5.equals(realMd5FromRequest);
                      if (matched) {
                         response.setContentType("text/xml");
@@ -186,7 +185,7 @@ public abstract class BaseJettyTest {
                      }
                   } else {
                      response.setStatus(HttpServletResponse.SC_OK);
-                     response.getWriter().println(Utils.toStringAndClose(request.getInputStream()) + "POST");
+                     response.getWriter().println(toStringAndClose(request.getInputStream()) + "POST");
                   }
                } else {
                   handleAction(request, response);
@@ -221,14 +220,13 @@ public abstract class BaseJettyTest {
 
    @SuppressWarnings("unchecked")
    public static InputSupplier<InputStream> getTestDataSupplier() throws IOException {
-      byte[] oneConstitution = ByteStreams.toByteArray(new GZIPInputStream(BaseJettyTest.class
-               .getResourceAsStream("/const.txt.gz")));
-      InputSupplier<ByteArrayInputStream> constitutionSupplier = ByteStreams.newInputStreamSupplier(oneConstitution);
+      byte[] oneConstitution = toByteArray(new GZIPInputStream(BaseJettyTest.class.getResourceAsStream("/const.txt.gz")));
+      InputSupplier<ByteArrayInputStream> constitutionSupplier = newInputStreamSupplier(oneConstitution);
 
-      InputSupplier<InputStream> temp = ByteStreams.join(constitutionSupplier);
+      InputSupplier<InputStream> temp = join(constitutionSupplier);
 
       for (int i = 0; i < 100; i++) {
-         temp = ByteStreams.join(temp, constitutionSupplier);
+         temp = join(temp, constitutionSupplier);
       }
       return temp;
    }
@@ -282,7 +280,7 @@ public abstract class BaseJettyTest {
    }
 
    protected boolean failIfNoContentLength(HttpServletRequest request, HttpServletResponse response) throws IOException {
-      if (request.getHeader(HttpHeaders.CONTENT_LENGTH) == null) {
+      if (request.getHeader(CONTENT_LENGTH) == null) {
          response.sendError(500);
          ((Request) request).setHandled(true);
          return true;
@@ -296,7 +294,7 @@ public abstract class BaseJettyTest {
       if (matchFound) {
          String objectId = matcher.group(1);
          String action = matcher.group(2);
-         Map<String, String> options = Maps.newHashMap();
+         Map<String, String> options = newHashMap();
          if (matcher.groupCount() == 3) {
             String optionsGroup = matcher.group(3);
             for (String entry : optionsGroup.split(";")) {

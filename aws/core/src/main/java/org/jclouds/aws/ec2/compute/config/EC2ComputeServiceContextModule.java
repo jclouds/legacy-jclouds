@@ -36,7 +36,7 @@ import static org.jclouds.aws.ec2.util.EC2Utils.getAllRunningInstancesInRegion;
 import static org.jclouds.aws.ec2.util.EC2Utils.parseHandle;
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
-import static org.jclouds.concurrent.ConcurrentUtils.transformParallel;
+import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.net.URI;
 import java.security.SecureRandom;
@@ -124,7 +124,6 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;

@@ -24,7 +24,7 @@ import javax.inject.Inject;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ResourceToObjectInfo;
@@ -39,22 +39,19 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 public class ParseObjectInfoFromHeaders implements Function<HttpResponse, MutableObjectInfoWithMetadata>,
-      InvocationContext {
+         InvocationContext {
    private final ParseSystemAndUserMetadataFromHeaders blobMetadataParser;
    private final ResourceToObjectInfo blobToObjectInfo;
-   private final EncryptionService encryptionService;
 
    @Inject
    public ParseObjectInfoFromHeaders(ParseSystemAndUserMetadataFromHeaders blobMetadataParser,
-         ResourceToObjectInfo blobToObjectInfo, EncryptionService encryptionService) {
+            ResourceToObjectInfo blobToObjectInfo) {
       this.blobMetadataParser = blobMetadataParser;
       this.blobToObjectInfo = blobToObjectInfo;
-      this.encryptionService = encryptionService;
    }
 
    /**
-    * parses the http response headers to create a new
-    * {@link MutableObjectInfoWithMetadata} object.
+    * parses the http response headers to create a new {@link MutableObjectInfoWithMetadata} object.
     */
    public MutableObjectInfoWithMetadata apply(HttpResponse from) {
       BlobMetadata base = blobMetadataParser.apply(from);
@@ -62,7 +59,7 @@ public class ParseObjectInfoFromHeaders implements Function<HttpResponse, Mutabl
       to.setBytes(attemptToParseSizeAndRangeFromHeaders(from));
       String eTagHeader = from.getFirstHeaderOrNull("Etag");
       if (eTagHeader != null) {
-         to.setHash(encryptionService.fromHex(eTagHeader));
+         to.setHash(CryptoStreams.hex(eTagHeader));
       }
       return to;
    }

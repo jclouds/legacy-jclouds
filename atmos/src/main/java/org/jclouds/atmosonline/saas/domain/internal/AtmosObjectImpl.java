@@ -26,9 +26,9 @@ import org.jclouds.atmosonline.saas.domain.AtmosObject;
 import org.jclouds.atmosonline.saas.domain.MutableContentMetadata;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.domain.UserMetadata;
-import org.jclouds.http.PayloadEnclosing;
 import org.jclouds.http.internal.PayloadEnclosingImpl;
 import org.jclouds.io.Payload;
+import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.io.payloads.DelegatingPayload;
 
 import com.google.common.collect.LinkedHashMultimap;

@@ -104,7 +104,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
             ListContainerOptions options);
 
    @Test(groups = { "integration", "live" })
-   public void testClear() throws InterruptedException, ExecutionException, TimeoutException {
+   public void testClear() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       String containerNameName = getContainerName();
       try {
          Map<String, V> map = createMap(context, containerNameName);
@@ -122,7 +122,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
    public abstract void testRemove() throws IOException, InterruptedException, ExecutionException, TimeoutException;
 
    @Test(groups = { "integration", "live" })
-   public void testKeySet() throws InterruptedException, ExecutionException, TimeoutException {
+   public void testKeySet() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       String containerNameName = getContainerName();
       try {
          Map<String, V> map = createMap(context, containerNameName);
@@ -239,7 +239,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
    }
 
    @Test(groups = { "integration", "live" })
-   public void testContainsKey() throws InterruptedException, ExecutionException, TimeoutException {
+   public void testContainsKey() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       String containerNameName = getContainerName();
       try {
          Map<String, V> map = createMap(context, containerNameName);
@@ -281,7 +281,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
    }
 
    @Test(groups = { "integration", "live" })
-   public void testIsEmpty() throws InterruptedException, ExecutionException, TimeoutException {
+   public void testIsEmpty() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       String containerNameName = getContainerName();
       try {
          Map<String, V> map = createMap(context, containerNameName);
@@ -310,7 +310,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
    }
 
    abstract protected void putStringWithMD5(Map<String, V> map, String key, String value) throws InterruptedException,
-            ExecutionException, TimeoutException;
+            ExecutionException, TimeoutException, IOException;
 
    protected void fourLeftRemovingOne(Map<String, V> map) throws InterruptedException {
       map.remove("one");

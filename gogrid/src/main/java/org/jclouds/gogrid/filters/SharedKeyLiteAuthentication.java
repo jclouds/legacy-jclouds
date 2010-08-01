@@ -36,13 +36,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Utils;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -55,7 +55,6 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    private final String apiKey;
    private final String secret;
    private final Long timeStamp;
-   private final EncryptionService encryptionService;
    private final HttpUtils utils;
 
    @Resource
@@ -64,9 +63,7 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
 
    @Inject
    public SharedKeyLiteAuthentication(@Named(PROPERTY_IDENTITY) String apiKey,
-            @Named(PROPERTY_CREDENTIAL) String secret, @TimeStamp Long timeStamp,
-            EncryptionService encryptionService, HttpUtils utils) {
-      this.encryptionService = encryptionService;
+            @Named(PROPERTY_CREDENTIAL) String secret, @TimeStamp Long timeStamp, HttpUtils utils) {
       this.apiKey = apiKey;
       this.secret = secret;
       this.timeStamp = timeStamp;
@@ -86,8 +83,7 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
 
       String updatedQuery = makeQueryLine(decodedParams, null);
       String requestBasePart = request.getEndpoint().toASCIIString();
-      String updatedEndpoint = requestBasePart.substring(0, requestBasePart.indexOf("?") + 1)
-               + updatedQuery;
+      String updatedEndpoint = requestBasePart.substring(0, requestBasePart.indexOf("?") + 1) + updatedQuery;
       request.setEndpoint(URI.create(updatedEndpoint));
 
       utils.logRequest(signatureLog, request, "<<");
@@ -99,7 +95,7 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
 
    private String getMd5For(String stringToHash) {
       try {
-         return encryptionService.hex(encryptionService.md5(Utils.toInputStream(stringToHash)));
+         return CryptoStreams.md5Hex(InputSuppliers.of(stringToHash));
       } catch (Exception e) {
          throw new RuntimeException(e);
       }

@@ -18,7 +18,6 @@
  */
 package org.jclouds.concurrent;
 
-import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
@@ -41,7 +40,7 @@ import com.google.common.base.Supplier;
  */
 @Test(groups = "unit", testName = "concurrent.RetryOnTimeOutExceptionSupplierTest")
 public class RetryOnTimeOutExceptionSupplierTest {
-   ExecutorService executorService = sameThreadExecutor();
+   ExecutorService executorService = MoreExecutors.sameThreadExecutor();
 
    @SuppressWarnings("unchecked")
    @Test

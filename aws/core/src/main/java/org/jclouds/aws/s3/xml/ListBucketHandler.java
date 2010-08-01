@@ -29,8 +29,8 @@ import org.jclouds.aws.s3.domain.ObjectMetadata;
 import org.jclouds.aws.s3.domain.ObjectMetadata.StorageClass;
 import org.jclouds.aws.s3.domain.internal.BucketListObjectMetadata;
 import org.jclouds.aws.s3.domain.internal.ListBucketResponseImpl;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.Utils;
 import org.xml.sax.Attributes;
@@ -54,7 +54,6 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
    private StringBuilder currentText = new StringBuilder();
 
    private final DateService dateParser;
-   private final EncryptionService encryptionService;
 
    private String bucketName;
    private String prefix;
@@ -64,16 +63,15 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
    private boolean isTruncated;
 
    @Inject
-   public ListBucketHandler(DateService dateParser, EncryptionService encryptionService) {
+   public ListBucketHandler(DateService dateParser) {
       this.dateParser = dateParser;
-      this.encryptionService = encryptionService;
       this.contents = Sets.newLinkedHashSet();
       this.commonPrefixes = Sets.newLinkedHashSet();
    }
 
    public ListBucketResponse getResult() {
-      return new ListBucketResponseImpl(bucketName, contents, prefix, marker, nextMarker,
-               maxResults, delimiter, isTruncated, commonPrefixes);
+      return new ListBucketResponseImpl(bucketName, contents, prefix, marker, nextMarker, maxResults, delimiter,
+               isTruncated, commonPrefixes);
    }
 
    private boolean inCommonPrefixes;
@@ -102,15 +100,15 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
          currentLastModified = dateParser.iso8601DateParse(currentText.toString().trim());
       } else if (qName.equals("ETag")) {
          currentETag = currentText.toString().trim();
-         currentMD5 = encryptionService.fromHex(Utils.replaceAll(currentETag, '"', ""));
+         currentMD5 = CryptoStreams.hex(Utils.replaceAll(currentETag, '"', ""));
       } else if (qName.equals("Size")) {
          currentSize = new Long(currentText.toString().trim());
       } else if (qName.equals("Owner")) {
       } else if (qName.equals("StorageClass")) {
          currentStorageClass = ObjectMetadata.StorageClass.valueOf(currentText.toString().trim());
       } else if (qName.equals("Contents")) {
-         contents.add(new BucketListObjectMetadata(currentKey, currentLastModified, currentETag,
-                  currentMD5, currentSize, currentOwner, currentStorageClass));
+         contents.add(new BucketListObjectMetadata(currentKey, currentLastModified, currentETag, currentMD5,
+                  currentSize, currentOwner, currentStorageClass));
       } else if (qName.equals("Name")) {
          this.bucketName = currentText.toString().trim();
       } else if (qName.equals("Prefix")) {

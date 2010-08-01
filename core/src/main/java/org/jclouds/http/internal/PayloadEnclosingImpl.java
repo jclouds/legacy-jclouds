@@ -26,8 +26,8 @@ import java.io.InputStream;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.http.PayloadEnclosing;
 import org.jclouds.io.Payload;
+import org.jclouds.io.PayloadEnclosing;
 
 /**
  * 

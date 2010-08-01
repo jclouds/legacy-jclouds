@@ -58,6 +58,7 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.ConcatenateContainerLists;
+import org.jclouds.io.Payloads;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Predicate;
@@ -76,8 +77,8 @@ public class BlobStoreFileObject extends AbstractFileObject {
    private static final Logger logger = Logger.getLogger(BlobStoreFileObject.class);
    private static final Pattern UNDESCRIBED = Pattern.compile("[^/]*//*");
 
-   public BlobStoreFileObject(FileName fileName, BlobStoreFileSystem fileSystem,
-            BlobStoreContext context, String container) throws FileSystemException {
+   public BlobStoreFileObject(FileName fileName, BlobStoreFileSystem fileSystem, BlobStoreContext context,
+            String container) throws FileSystemException {
       super(fileName, fileSystem);
       this.context = checkNotNull(context, "context");
       this.container = checkNotNull(container, "container");
@@ -91,8 +92,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
       private final Blob blob;
       private final File file;
 
-      public BlobStoreOutputStream(File file, BlobStore context, Blob blob)
-               throws FileNotFoundException {
+      public BlobStoreOutputStream(File file, BlobStore context, Blob blob) throws FileNotFoundException {
          super(Channels.newOutputStream(new RandomAccessFile(file, "rw").getChannel()));
          this.context = context;
          this.file = file;
@@ -102,12 +102,11 @@ public class BlobStoreFileObject extends AbstractFileObject {
       protected void onClose() throws IOException {
          try {
             blob.setPayload(file);
-            context.getContext().utils().encryption().generateMD5BufferingIfNotRepeatable(blob);
-            logger.info(String.format(">> put: %s/%s %d bytes", getContainer(),
-                     getNameTrimLeadingSlashes(), blob.getPayload().getContentLength()));
+            Payloads.calculateMD5(blob);
+            logger.info(String.format(">> put: %s/%s %d bytes", getContainer(), getNameTrimLeadingSlashes(), blob
+                     .getPayload().getContentLength()));
             String tag = context.putBlob(getContainer(), blob);
-            logger.info(String.format("<< tag %s: %s/%s", tag, getContainer(),
-                     getNameTrimLeadingSlashes()));
+            logger.info(String.format("<< tag %s: %s/%s", tag, getContainer(), getNameTrimLeadingSlashes()));
          } finally {
             file.delete();
          }
@@ -176,9 +175,10 @@ public class BlobStoreFileObject extends AbstractFileObject {
             }
             String childName = Utils.replaceAll(md.getName(), UNDESCRIBED, "");
             BlobStoreFileObject fo = (BlobStoreFileObject) FileObjectUtils
-                     .getAbstractFileObject(getFileSystem().resolveFile(
-                              getFileSystem().getFileSystemManager().resolveName(getName(),
-                                       childName, NameScope.CHILD)));
+                     .getAbstractFileObject(getFileSystem()
+                              .resolveFile(
+                                       getFileSystem().getFileSystemManager().resolveName(getName(), childName,
+                                                NameScope.CHILD)));
             children.add(fo);
          }
       }
@@ -232,8 +232,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
 
    private void deleteBlob(String id) {
       getBlobStore().removeBlob(getContainer(), getNameTrimLeadingSlashes());
-      logger.info(String.format("<< deleted blob: %s/%s", getContainer(),
-               getNameTrimLeadingSlashes()));
+      logger.info(String.format("<< deleted blob: %s/%s", getContainer(), getNameTrimLeadingSlashes()));
    }
 
    @Override
@@ -243,15 +242,13 @@ public class BlobStoreFileObject extends AbstractFileObject {
       if (metadata != null) {
          return new BlobStoreOutputStream(file, getBlobStore(), newBlob(getBlobStore(), metadata));
       } else {
-         return new BlobStoreOutputStream(file, getBlobStore(), getBlobStore().newBlob(
-                  getNameTrimLeadingSlashes()));
+         return new BlobStoreOutputStream(file, getBlobStore(), getBlobStore().newBlob(getNameTrimLeadingSlashes()));
       }
    }
 
    @Override
    protected void doCreateFolder() throws Exception {
-      logger.info(String
-               .format(">> put folder: %s/%s", getContainer(), getNameTrimLeadingSlashes()));
+      logger.info(String.format(">> put folder: %s/%s", getContainer(), getNameTrimLeadingSlashes()));
       getBlobStore().createDirectory(getContainer(), getNameTrimLeadingSlashes());
    }
 
@@ -298,13 +295,12 @@ public class BlobStoreFileObject extends AbstractFileObject {
             options.inDirectory(dir);
       }
       try {
-         metadata = Iterables.find(lister.execute(getContainer(), options),
-                  new Predicate<StorageMetadata>() {
-                     @Override
-                     public boolean apply(StorageMetadata input) {
-                        return input.getType() != StorageType.BLOB && input.getName().equals(name);
-                     }
-                  });
+         metadata = Iterables.find(lister.execute(getContainer(), options), new Predicate<StorageMetadata>() {
+            @Override
+            public boolean apply(StorageMetadata input) {
+               return input.getType() != StorageType.BLOB && input.getName().equals(name);
+            }
+         });
          logger.info(String.format("<< dir: %s/%s", getContainer(), name));
       } catch (NoSuchElementException nse) {
          metadata = null;
@@ -320,8 +316,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
    }
 
    @Override
-   protected RandomAccessContent doGetRandomAccessContent(final RandomAccessMode mode)
-            throws Exception {
+   protected RandomAccessContent doGetRandomAccessContent(final RandomAccessMode mode) throws Exception {
       return new BlobStoreRandomAccessContent(this, mode);
    }
 
@@ -334,8 +329,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
       if (metadata == null || metadata.getLastModified() == null) {
          getMetadataAtPath(getNameTrimLeadingSlashes());
       }
-      return metadata.getLastModified() != null ? metadata.getLastModified().getTime() : super
-               .doGetLastModifiedTime();
+      return metadata.getLastModified() != null ? metadata.getLastModified().getTime() : super.doGetLastModifiedTime();
    }
 
    @SuppressWarnings("unchecked")
@@ -344,8 +338,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
       if (metadata == null || metadata.getUserMetadata() == null) {
          getMetadataAtPath(getNameTrimLeadingSlashes());
       }
-      return metadata.getUserMetadata() != null ? metadata.getUserMetadata() : super
-               .doGetAttributes();
+      return metadata.getUserMetadata() != null ? metadata.getUserMetadata() : super.doGetAttributes();
    }
 
    @Override

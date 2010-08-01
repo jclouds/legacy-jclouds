@@ -25,7 +25,6 @@ package org.jclouds.opscodeplatform;
 
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
-import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertEquals;
 
@@ -38,6 +37,7 @@ import org.jclouds.chef.domain.Organization;
 import org.jclouds.chef.domain.User;
 import org.jclouds.chef.filters.SignedHeaderAuth;
 import org.jclouds.chef.filters.SignedHeaderAuthTest;
+import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.TimeStamp;
@@ -276,7 +276,7 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
       @Override
       protected void configure() {
          bind(TransformingHttpCommandExecutorService.class).toInstance(httpExecutor);
-         install(new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
+         install(new ExecutorServiceModule(MoreExecutors.sameThreadExecutor(), MoreExecutors.sameThreadExecutor()));
       }
    }
 

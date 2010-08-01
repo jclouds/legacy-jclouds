@@ -27,7 +27,7 @@ import java.security.cert.CertificateException;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.encryption.internal.JCEEncryptionService;
+import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
 
@@ -42,7 +42,7 @@ public class BasicAuthenticationTest {
    private static final String PASSWORD = "open sesame";
 
    public void testAuth() throws UnsupportedEncodingException, NoSuchAlgorithmException, CertificateException {
-      BasicAuthentication filter = new BasicAuthentication(USER, PASSWORD, new JCEEncryptionService());
+      BasicAuthentication filter = new BasicAuthentication(USER, PASSWORD, new JCECrypto(null));
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
       filter.filter(request);
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION), "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==");

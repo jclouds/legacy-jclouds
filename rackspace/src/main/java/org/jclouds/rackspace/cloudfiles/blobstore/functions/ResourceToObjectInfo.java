@@ -20,13 +20,12 @@ package org.jclouds.rackspace.cloudfiles.blobstore.functions;
 
 import java.util.Map.Entry;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.internal.MutableObjectInfoWithMetadataImpl;
 
@@ -36,14 +35,7 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class ResourceToObjectInfo implements
-         Function<StorageMetadata, MutableObjectInfoWithMetadata> {
-   private final EncryptionService encryptionService;
-
-   @Inject
-   public ResourceToObjectInfo(EncryptionService encryptionService) {
-      this.encryptionService = encryptionService;
-   }
+public class ResourceToObjectInfo implements Function<StorageMetadata, MutableObjectInfoWithMetadata> {
 
    public MutableObjectInfoWithMetadata apply(StorageMetadata from) {
       if (from == null)
@@ -56,7 +48,7 @@ public class ResourceToObjectInfo implements
          to.setContentType("application/directory");
       }
       if (from.getETag() != null && to.getHash() == null)
-         to.setHash(encryptionService.fromHex(from.getETag()));
+         to.setHash(CryptoStreams.hex(from.getETag()));
       to.setName(from.getName());
       to.setLastModified(from.getLastModified());
       if (from.getSize() != null)

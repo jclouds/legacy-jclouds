@@ -18,27 +18,23 @@
  */
 package org.jclouds.encryption.bouncycastle;
 
-import org.jclouds.encryption.EncryptionService;
-import org.jclouds.encryption.EncryptionServiceTest;
-import org.jclouds.encryption.bouncycastle.config.BouncyCastleEncryptionServiceModule;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
+import javax.inject.Singleton;
+
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.jclouds.encryption.internal.JCECrypto;
 
 /**
- * This tests the performance of Digest commands.
  * 
  * @author Adrian Cole
  */
-@Test(groups = "performance", sequential = true, testName = "jclouds.BouncyCastleEncryptionServiceTest")
-public class BouncyCastleEncryptionServiceTest extends EncryptionServiceTest {
+@Singleton
+public class BouncyCastleCrypto extends JCECrypto {
 
-   @BeforeTest
-   protected void createEncryptionService() {
-      Injector i = Guice.createInjector(new BouncyCastleEncryptionServiceModule());
-      encryptionService = i.getInstance(EncryptionService.class);
-      assert encryptionService instanceof BouncyCastleEncryptionService;
+   public BouncyCastleCrypto() throws NoSuchAlgorithmException, CertificateException {
+      super(new BouncyCastleProvider());
    }
+
 }

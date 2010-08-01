@@ -21,8 +21,9 @@ package org.jclouds.chef.config;
 import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 import java.security.PrivateKey;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -31,15 +32,17 @@ import javax.inject.Singleton;
 
 import org.jclouds.chef.handlers.ChefClientErrorRetryHandler;
 import org.jclouds.chef.handlers.ChefErrorHandler;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.crypto.Pems;
 import org.jclouds.date.DateService;
 import org.jclouds.date.TimeStamp;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.io.InputSuppliers;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
@@ -61,7 +64,7 @@ public class BaseChefRestClientModule<S, A> extends RestClientModule<S, A> {
    }
 
    protected BaseChefRestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
-         Map<Class<?>, Class<?>> delegates) {
+            Map<Class<?>, Class<?>> delegates) {
       super(syncClientType, asyncClientType, delegates);
    }
 
@@ -86,9 +89,9 @@ public class BaseChefRestClientModule<S, A> extends RestClientModule<S, A> {
 
    @Provides
    @Singleton
-   public PrivateKey provideKey(EncryptionService encryptionService, @Named(PROPERTY_CREDENTIAL) String pem)
-         throws UnsupportedEncodingException {
-      return encryptionService.privateKeyFromPEM(pem.getBytes("UTF-8"));
+   public PrivateKey provideKey(Crypto crypto, @Named(PROPERTY_CREDENTIAL) String pem) throws InvalidKeySpecException,
+            IOException {
+      return crypto.rsaKeyFactory().generatePrivate(Pems.privateKeySpec(InputSuppliers.of(pem)));
    }
 
    @Override

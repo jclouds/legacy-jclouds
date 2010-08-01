@@ -19,7 +19,7 @@
 package org.jclouds.atmosonline.saas.blobstore.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
+import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -43,7 +43,7 @@ import org.jclouds.blobstore.internal.BlobRuntimeException;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
 import org.jclouds.blobstore.strategy.ListBlobsInContainer;
-import static org.jclouds.concurrent.ConcurrentUtils.*;
+import org.jclouds.concurrent.Futures;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Throwables;
@@ -85,7 +85,7 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
       final BlockingQueue<Boolean> queue = new SynchronousQueue<Boolean>();
       Map<String, Future<?>> responses = Maps.newHashMap();
       for (BlobMetadata md : getAllBlobMetadata.execute(containerName, options)) {
-         final ListenableFuture<AtmosObject> future = makeListenable(client.headFile(containerName
+         final ListenableFuture<AtmosObject> future = Futures.makeListenable(client.headFile(containerName
                   + "/" + md.getName()), userExecutor);
          future.addListener(new Runnable() {
             public void run() {

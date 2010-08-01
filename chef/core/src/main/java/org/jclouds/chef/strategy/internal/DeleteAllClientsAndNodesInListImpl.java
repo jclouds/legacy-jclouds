@@ -19,7 +19,7 @@
 package org.jclouds.chef.strategy.internal;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
+import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;

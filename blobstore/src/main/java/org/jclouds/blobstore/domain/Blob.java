@@ -18,7 +18,7 @@
  */
 package org.jclouds.blobstore.domain;
 
-import org.jclouds.http.PayloadEnclosing;
+import org.jclouds.io.PayloadEnclosing;
 
 import com.google.common.collect.Multimap;
 import com.google.inject.internal.Nullable;

@@ -43,13 +43,15 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
+import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.util.Utils;
@@ -69,13 +71,13 @@ import com.google.common.collect.Multimap;
 @Singleton
 public class FormSigner implements HttpRequestFilter, RequestSigner {
 
-   public static String[] mandatoryParametersForSignature = new String[] { ACTION,
-            SIGNATURE_METHOD, SIGNATURE_VERSION, VERSION };
+   public static String[] mandatoryParametersForSignature = new String[] { ACTION, SIGNATURE_METHOD, SIGNATURE_VERSION,
+            VERSION };
    private final SignatureWire signatureWire;
    private final String accessKey;
    private final String secretKey;
    private final Provider<String> dateService;
-   private final EncryptionService encryptionService;
+   private final Crypto crypto;
    private final HttpUtils utils;
 
    @Resource
@@ -83,24 +85,20 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    private Logger signatureLog = Logger.NULL;
 
    @Inject
-   public FormSigner(SignatureWire signatureWire,
-            @Named(Constants.PROPERTY_IDENTITY) String accessKey,
-            @Named(Constants.PROPERTY_CREDENTIAL) String secretKey,
-            @TimeStamp Provider<String> dateService, EncryptionService encryptionService,
-            HttpUtils utils) {
+   public FormSigner(SignatureWire signatureWire, @Named(Constants.PROPERTY_IDENTITY) String accessKey,
+            @Named(Constants.PROPERTY_CREDENTIAL) String secretKey, @TimeStamp Provider<String> dateService,
+            Crypto crypto, HttpUtils utils) {
       this.signatureWire = signatureWire;
       this.accessKey = accessKey;
       this.secretKey = secretKey;
       this.dateService = dateService;
-      this.encryptionService = encryptionService;
+      this.crypto = crypto;
       this.utils = utils;
    }
 
    public void filter(HttpRequest request) throws HttpException {
-      checkNotNull(request.getFirstHeaderOrNull(HttpHeaders.HOST),
-               "request is not ready to sign; host not present");
-      Multimap<String, String> decodedParams = parseQueryToMap(request.getPayload().getRawContent()
-               .toString());
+      checkNotNull(request.getFirstHeaderOrNull(HttpHeaders.HOST), "request is not ready to sign; host not present");
+      Multimap<String, String> decodedParams = parseQueryToMap(request.getPayload().getRawContent().toString());
       addSigningParams(decodedParams);
       validateParams(decodedParams);
       String stringToSign = createStringToSign(request, decodedParams);
@@ -141,8 +139,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    @VisibleForTesting
    void validateParams(Multimap<String, String> params) {
       for (String parameter : mandatoryParametersForSignature) {
-         checkState(params.containsKey(parameter), "parameter " + parameter
-                  + " is required for signature");
+         checkState(params.containsKey(parameter), "parameter " + parameter + " is required for signature");
       }
    }
 
@@ -155,8 +152,8 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    public String sign(String stringToSign) {
       String signature;
       try {
-         signature = encryptionService.base64(encryptionService.hmacSha256(stringToSign, secretKey
-                  .getBytes()));
+         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(stringToSign), crypto
+                  .hmacSHA256(secretKey.getBytes())));
          if (signatureWire.enabled())
             signatureWire.input(Utils.toInputStream(signature));
       } catch (Exception e) {
@@ -172,8 +169,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
       // StringToSign = HTTPVerb + "\n" +
       stringToSign.append(request.getMethod()).append("\n");
       // ValueOfHostHeaderInLowercase + "\n" +
-      stringToSign.append(request.getFirstHeaderOrNull(HttpHeaders.HOST).toLowerCase())
-               .append("\n");
+      stringToSign.append(request.getFirstHeaderOrNull(HttpHeaders.HOST).toLowerCase()).append("\n");
       // HTTPRequestURI + "\n" +
       stringToSign.append(request.getEndpoint().getPath()).append("\n");
       // CanonicalizedFormString <from the preceding step>
@@ -204,8 +200,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    }
 
    public String createStringToSign(HttpRequest input) {
-      return createStringToSign(input, parseQueryToMap(input.getPayload().getRawContent()
-               .toString()));
+      return createStringToSign(input, parseQueryToMap(input.getPayload().getRawContent().toString()));
    }
 
 }

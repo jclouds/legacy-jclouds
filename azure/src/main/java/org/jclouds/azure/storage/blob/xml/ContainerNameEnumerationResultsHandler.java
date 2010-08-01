@@ -31,8 +31,8 @@ import org.jclouds.azure.storage.blob.domain.LeaseStatus;
 import org.jclouds.azure.storage.blob.domain.ListBlobsResponse;
 import org.jclouds.azure.storage.blob.domain.internal.BlobPropertiesImpl;
 import org.jclouds.azure.storage.blob.domain.internal.HashSetListBlobsResponse;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.Attributes;
@@ -49,8 +49,7 @@ import com.google.common.collect.Sets;
  * @see <a href="http://msdn.microsoft.com/en-us/library/dd135734.aspx#samplerequestandresponse" />
  * @author Adrian Cole
  */
-public class ContainerNameEnumerationResultsHandler extends
-         ParseSax.HandlerWithResult<ListBlobsResponse> {
+public class ContainerNameEnumerationResultsHandler extends ParseSax.HandlerWithResult<ListBlobsResponse> {
    private Set<BlobProperties> blobMetadata = Sets.newLinkedHashSet();
    private String prefix;
    private String marker;
@@ -63,7 +62,6 @@ public class ContainerNameEnumerationResultsHandler extends
 
    private StringBuilder currentText = new StringBuilder();
 
-   private final EncryptionService encryptionService;
    private final DateService dateParser;
    private String delimiter;
    private String currentName;
@@ -81,20 +79,17 @@ public class ContainerNameEnumerationResultsHandler extends
    private LeaseStatus currentLeaseStatus;
 
    @Inject
-   public ContainerNameEnumerationResultsHandler(EncryptionService encryptionService,
-            DateService dateParser) {
-      this.encryptionService = encryptionService;
+   public ContainerNameEnumerationResultsHandler(DateService dateParser) {
       this.dateParser = dateParser;
    }
 
    public ListBlobsResponse getResult() {
-      return new HashSetListBlobsResponse(blobMetadata, containerUrl, prefix, marker, maxResults,
-               nextMarker, delimiter, blobPrefixes);
+      return new HashSetListBlobsResponse(blobMetadata, containerUrl, prefix, marker, maxResults, nextMarker,
+               delimiter, blobPrefixes);
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if (qName.equals("Blob")) {
          inBlob = true;
          inBlobPrefix = false;
@@ -134,10 +129,9 @@ public class ContainerNameEnumerationResultsHandler extends
       } else if (qName.equals("LeaseStatus")) {
          currentLeaseStatus = LeaseStatus.fromValue(currentText.toString().trim());
       } else if (qName.equals("Blob")) {
-         BlobProperties md = new BlobPropertiesImpl(currentBlobType, currentName, currentUrl,
-                  currentLastModified, currentETag, currentSize, currentContentType,
-                  currentContentMD5, currentContentEncoding, currentContentLanguage,
-                  currentLeaseStatus, currentMetadata);
+         BlobProperties md = new BlobPropertiesImpl(currentBlobType, currentName, currentUrl, currentLastModified,
+                  currentETag, currentSize, currentContentType, currentContentMD5, currentContentEncoding,
+                  currentContentLanguage, currentLeaseStatus, currentMetadata);
          blobMetadata.add(md);
          currentBlobType = null;
          currentName = null;
@@ -166,7 +160,7 @@ public class ContainerNameEnumerationResultsHandler extends
          currentSize = Long.parseLong(currentText.toString().trim());
       } else if (qName.equals("Content-MD5")) {
          if (!currentText.toString().trim().equals(""))
-            currentContentMD5 = encryptionService.fromBase64(currentText.toString().trim());
+            currentContentMD5 = CryptoStreams.base64(currentText.toString().trim());
       } else if (qName.equals("Content-Type")) {
          currentContentType = currentText.toString().trim();
       } else if (qName.equals("Content-Encoding")) {

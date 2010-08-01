@@ -89,8 +89,7 @@ public class AtmosStorageClientLiveTest {
       private final String metadataValue;
       private final String compare;
 
-      private ObjectMatches(AtmosStorageClient connection, String name, String metadataValue,
-               String compare) {
+      private ObjectMatches(AtmosStorageClient connection, String name, String metadataValue, String compare) {
          this.connection = connection;
          this.name = name;
          this.metadataValue = metadataValue;
@@ -115,16 +114,12 @@ public class AtmosStorageClientLiveTest {
    private BlobStoreContext context;
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
-            IOException {
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"),
-               "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"),
-               "jclouds.test.credential");
-      context = new BlobStoreContextFactory().createContext("atmosonline", identity, credential,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()));
-      RestContext<AtmosStorageClient, AtmosStorageAsyncClient> restContext = context
-               .getProviderSpecificContext();
+   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      context = new BlobStoreContextFactory().createContext("atmosonline", identity, credential, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()));
+      RestContext<AtmosStorageClient, AtmosStorageAsyncClient> restContext = context.getProviderSpecificContext();
       connection = restContext.getApi();
       for (DirectoryEntry entry : connection.listDirectories()) {
          if (entry.getObjectName().startsWith(containerPrefix)) {
@@ -169,8 +164,8 @@ public class AtmosStorageClientLiveTest {
       createOrReplaceObject("object2", "here is my data!", "meta-value1");
       createOrReplaceObject("object3", "here is my data!", "meta-value1");
       createOrReplaceObject("object4", "here is my data!", "meta-value1");
-      BoundedSet<? extends DirectoryEntry> r2 = connection.listDirectory(privateDirectory,
-               ListOptions.Builder.limit(1));
+      BoundedSet<? extends DirectoryEntry> r2 = connection
+               .listDirectory(privateDirectory, ListOptions.Builder.limit(1));
       assertEquals(r2.size(), 1);
       assert r2.getToken() != null;
       assertEquals(Iterables.getLast(Sets.newTreeSet(r2)).getObjectName(), "object2");
@@ -196,8 +191,7 @@ public class AtmosStorageClientLiveTest {
       // loop to gather metrics
       for (boolean stream : new Boolean[] { true, false }) {
          for (int i = 0; i < 10; i++) {
-            System.err.printf("upload/delete/create attempt %d type %s%n", i + 1, stream ? "stream"
-                     : "string");
+            System.err.printf("upload/delete/create attempt %d type %s%n", i + 1, stream ? "stream" : "string");
             // try updating
             createOrUpdateWithErrorLoop(stream, "there is my data", "2");
 
@@ -209,8 +203,7 @@ public class AtmosStorageClientLiveTest {
       }
    }
 
-   private void createOrUpdateWithErrorLoop(boolean stream, String data, String metadataValue)
-            throws Exception {
+   private void createOrUpdateWithErrorLoop(boolean stream, String data, String metadataValue) throws Exception {
       createOrReplaceObject("object", makeData(data, stream), metadataValue);
       assertEventuallyObjectMatches("object", data, metadataValue);
    }
@@ -219,14 +212,13 @@ public class AtmosStorageClientLiveTest {
       return stream ? Utils.toInputStream(in) : in;
    }
 
-   private void createOrReplaceObject(String name, Object data, String metadataValue)
-            throws Exception {
+   private void createOrReplaceObject(String name, Object data, String metadataValue) throws Exception {
       // Test PUT with string data, ETag hash, and a piece of metadata
       AtmosObject object = connection.newObject();
       object.getContentMetadata().setName(name);
       object.setPayload(Payloads.newPayload(data));
       object.getContentMetadata().setContentLength(16l);
-      context.utils().encryption().generateMD5BufferingIfNotRepeatable(object);
+      Payloads.calculateMD5(object);
       object.getContentMetadata().setContentType("text/plain");
       object.getUserMetadata().getMetadata().put("Metadata", metadataValue);
       replaceObject(object);
@@ -243,9 +235,8 @@ public class AtmosStorageClientLiveTest {
          try {
             assertion.run();
             if (i > 0)
-               System.err.printf("%d attempts and %dms asserting %s%n", i + 1, System
-                        .currentTimeMillis()
-                        - start, assertion.getClass().getSimpleName());
+               System.err.printf("%d attempts and %dms asserting %s%n", i + 1, System.currentTimeMillis() - start,
+                        assertion.getClass().getSimpleName());
             return;
          } catch (AssertionError e) {
             error = e;
@@ -257,10 +248,9 @@ public class AtmosStorageClientLiveTest {
 
    }
 
-   protected void assertEventuallyObjectMatches(final String name, final String compare,
-            final String metadataValue) throws InterruptedException {
-      assertEventually(new ObjectMatches(connection, privateDirectory + "/" + name, metadataValue,
-               compare));
+   protected void assertEventuallyObjectMatches(final String name, final String compare, final String metadataValue)
+            throws InterruptedException {
+      assertEventually(new ObjectMatches(connection, privateDirectory + "/" + name, metadataValue, compare));
    }
 
    protected void assertEventuallyHeadMatches(final String name, final String metadataValue)
@@ -268,17 +258,15 @@ public class AtmosStorageClientLiveTest {
       assertEventually(new HeadMatches(connection, privateDirectory + "/" + name, metadataValue));
    }
 
-   private static void verifyHeadObject(AtmosStorageClient connection, String path,
-            String metadataValue) throws InterruptedException, ExecutionException,
-            TimeoutException, IOException {
+   private static void verifyHeadObject(AtmosStorageClient connection, String path, String metadataValue)
+            throws InterruptedException, ExecutionException, TimeoutException, IOException {
       AtmosObject getBlob = connection.headFile(path);
       assertEquals(Utils.toStringAndClose(getBlob.getPayload().getInput()), "");
       verifyMetadata(metadataValue, getBlob);
    }
 
-   private static void verifyObject(AtmosStorageClient connection, String path, String compare,
-            String metadataValue) throws InterruptedException, ExecutionException,
-            TimeoutException, IOException {
+   private static void verifyObject(AtmosStorageClient connection, String path, String compare, String metadataValue)
+            throws InterruptedException, ExecutionException, TimeoutException, IOException {
       AtmosObject getBlob = connection.readFile(path);
       assertEquals(Utils.toStringAndClose(getBlob.getPayload().getInput()), compare);
       verifyMetadata(metadataValue, getBlob);
@@ -304,8 +292,8 @@ public class AtmosStorageClientLiveTest {
 
       try {
          Utils.toStringAndClose(URI.create(
-                  "http://accesspoint.emccis.com/rest/objects/"
-                           + getBlob.getSystemMetadata().getObjectID()).toURL().openStream());
+                  "http://accesspoint.emccis.com/rest/objects/" + getBlob.getSystemMetadata().getObjectID()).toURL()
+                  .openStream());
          assert false : "shouldn't have worked, since it is private";
       } catch (IOException e) {
 
@@ -323,29 +311,25 @@ public class AtmosStorageClientLiveTest {
       long time = System.currentTimeMillis();
       try {
          connection.createFile(privateDirectory, object);
-         System.err.printf("%s %s; %dms%n", "created",
-                  object.getPayload() instanceof InputStreamPayload ? "stream" : "string", System
-                           .currentTimeMillis()
-                           - time);
+         System.err.printf("%s %s; %dms%n", "created", object.getPayload() instanceof InputStreamPayload ? "stream"
+                  : "string", System.currentTimeMillis() - time);
       } catch (Exception e) {
          String message = Throwables.getRootCause(e).getMessage();
          System.err.printf("failure %s %s; %dms: [%s]%n", "creating",
-                  object.getPayload() instanceof InputStreamPayload ? "stream" : "string", System
-                           .currentTimeMillis()
+                  object.getPayload() instanceof InputStreamPayload ? "stream" : "string", System.currentTimeMillis()
                            - time, message);
          throw e;
       }
    }
 
-   private void deleteConfirmed(final String path) throws InterruptedException, ExecutionException,
-            TimeoutException {
+   private void deleteConfirmed(final String path) throws InterruptedException, ExecutionException, TimeoutException {
       long time = System.currentTimeMillis();
       deleteConsistencyAware(path);
       System.err.printf("confirmed deletion after %dms%n", System.currentTimeMillis() - time);
    }
 
-   protected void deleteImmediateAndVerifyWithHead(final String path) throws InterruptedException,
-            ExecutionException, TimeoutException {
+   protected void deleteImmediateAndVerifyWithHead(final String path) throws InterruptedException, ExecutionException,
+            TimeoutException {
       try {
          connection.deletePath(path);
       } catch (KeyNotFoundException ex) {
@@ -357,8 +341,8 @@ public class AtmosStorageClientLiveTest {
 
    }
 
-   protected void deleteConsistencyAware(final String path) throws InterruptedException,
-            ExecutionException, TimeoutException {
+   protected void deleteConsistencyAware(final String path) throws InterruptedException, ExecutionException,
+            TimeoutException {
       try {
          connection.deletePath(path);
       } catch (KeyNotFoundException ex) {
@@ -370,8 +354,7 @@ public class AtmosStorageClientLiveTest {
       }, INCONSISTENCY_WINDOW);
    }
 
-   protected void retryAndCheckSystemMetadataAndPutIfPresentReplaceStrategy(AtmosObject object)
-            throws Exception {
+   protected void retryAndCheckSystemMetadataAndPutIfPresentReplaceStrategy(AtmosObject object) throws Exception {
 
       int failures = 0;
       while (true) {
@@ -390,8 +373,7 @@ public class AtmosStorageClientLiveTest {
                   object.getPayload() instanceof InputStreamPayload ? "stream" : "string");
    }
 
-   private void checkSystemMetadataAndPutIfPresentReplaceStrategy(AtmosObject object)
-            throws Exception {
+   private void checkSystemMetadataAndPutIfPresentReplaceStrategy(AtmosObject object) throws Exception {
       long time = System.currentTimeMillis();
       boolean update = true;
       try {
@@ -405,15 +387,13 @@ public class AtmosStorageClientLiveTest {
          else
             connection.createFile(privateDirectory, object);
          System.err.printf("%s %s; %dms%n", update ? "updated" : "created",
-                  object.getPayload() instanceof InputStreamPayload ? "stream" : "string", System
-                           .currentTimeMillis()
+                  object.getPayload() instanceof InputStreamPayload ? "stream" : "string", System.currentTimeMillis()
                            - time);
       } catch (Exception e) {
          String message = Throwables.getRootCause(e).getMessage();
-         System.err.printf("failure %s %s; %dms: [%s]%n", update ? "updating" : "creating", object
-                  .getPayload() instanceof InputStreamPayload ? "stream" : "string", System
-                  .currentTimeMillis()
-                  - time, message);
+         System.err.printf("failure %s %s; %dms: [%s]%n", update ? "updating" : "creating",
+                  object.getPayload() instanceof InputStreamPayload ? "stream" : "string", System.currentTimeMillis()
+                           - time, message);
          throw e;
       }
    }

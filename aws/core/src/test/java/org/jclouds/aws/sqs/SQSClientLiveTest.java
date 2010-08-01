@@ -30,10 +30,10 @@ import java.util.SortedSet;
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.sqs.domain.Queue;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.util.Utils;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -63,14 +63,14 @@ public class SQSClientLiveTest {
       String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
       context = new RestContextFactory().createContext("sqs", identity, credential, ImmutableSet
-            .<Module> of(new Log4JLoggingModule()));
+               .<Module> of(new Log4JLoggingModule()));
       this.client = context.getApi();
    }
 
    @Test
    void testListQueuesInRegion() throws InterruptedException {
       for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-            Region.AP_SOUTHEAST_1)) {
+               Region.AP_SOUTHEAST_1)) {
          SortedSet<Queue> allResults = Sets.newTreeSet(client.listQueuesInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
@@ -87,7 +87,7 @@ public class SQSClientLiveTest {
       String queueName = PREFIX + "1";
 
       for (final String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-            Region.AP_SOUTHEAST_1)) {
+               Region.AP_SOUTHEAST_1)) {
          try {
             SortedSet<Queue> result = Sets.newTreeSet(client.listQueuesInRegion(region, queuePrefix(queueName)));
             if (result.size() >= 1) {
@@ -121,9 +121,9 @@ public class SQSClientLiveTest {
    }
 
    @Test(dependsOnMethods = "testCreateQueue")
-   void testSendMessage() throws InterruptedException {
+   void testSendMessage() throws InterruptedException, IOException {
       String message = "hardyharhar";
-      byte[] md5 = context.utils().encryption().md5(Utils.toInputStream(message));
+      byte[] md5 = CryptoStreams.md5(message.getBytes());
       for (Queue queue : queues) {
          assertEquals(client.sendMessage(queue, message), md5);
       }
@@ -144,9 +144,8 @@ public class SQSClientLiveTest {
    private static final int INCONSISTENCY_WINDOW = 10000;
 
    /**
-    * Due to eventual consistency, container commands may not return correctly
-    * immediately. Hence, we will try up to the inconsistency window to see if
-    * the assertion completes.
+    * Due to eventual consistency, container commands may not return correctly immediately. Hence,
+    * we will try up to the inconsistency window to see if the assertion completes.
     */
    protected static void assertEventually(Runnable assertion) throws InterruptedException {
       long start = System.currentTimeMillis();
@@ -156,7 +155,7 @@ public class SQSClientLiveTest {
             assertion.run();
             if (i > 0)
                System.err.printf("%d attempts and %dms asserting %s%n", i + 1, System.currentTimeMillis() - start,
-                     assertion.getClass().getSimpleName());
+                        assertion.getClass().getSimpleName());
             return;
          } catch (AssertionError e) {
             error = e;

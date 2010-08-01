@@ -19,7 +19,6 @@
 package org.jclouds.concurrent;
 
 import static java.util.concurrent.Executors.newCachedThreadPool;
-import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static org.jclouds.concurrent.FuturesTestingUtils.CALLABLE_DURATION;
 import static org.jclouds.concurrent.FuturesTestingUtils.COUNT;
 import static org.jclouds.concurrent.FuturesTestingUtils.FUDGE;
@@ -93,7 +92,7 @@ public class FuturesComposePerformanceTest {
       ExecutorService userthreads = newCachedThreadPool();
       try {
          ExecutorService chainExecutor = userthreads;
-         ExecutorService listenerExecutor = sameThreadExecutor();
+         ExecutorService listenerExecutor = MoreExecutors.sameThreadExecutor();
 
          checkThresholdsUsingFuturesCompose(expectedMin, expectedMax, expectedOverhead, callableExecutor,
                   chainExecutor, listenerExecutor);
@@ -110,7 +109,7 @@ public class FuturesComposePerformanceTest {
 
       ExecutorService userthreads = newCachedThreadPool();
       try {
-         ExecutorService chainExecutor = sameThreadExecutor();
+         ExecutorService chainExecutor = MoreExecutors.sameThreadExecutor();
          ExecutorService listenerExecutor = userthreads;
 
          checkThresholdsUsingFuturesCompose(expectedMin, expectedMax, expectedOverhead, callableExecutor,
@@ -129,8 +128,8 @@ public class FuturesComposePerformanceTest {
 
       ExecutorService userthreads = newCachedThreadPool();
       try {
-         ExecutorService chainExecutor = sameThreadExecutor();
-         ExecutorService listenerExecutor = sameThreadExecutor();
+         ExecutorService chainExecutor = MoreExecutors.sameThreadExecutor();
+         ExecutorService listenerExecutor = MoreExecutors.sameThreadExecutor();
 
          checkThresholdsUsingFuturesCompose(expectedMin, expectedMax, expectedOverhead, callableExecutor,
                   chainExecutor, listenerExecutor);
@@ -166,7 +165,7 @@ public class FuturesComposePerformanceTest {
       ExecutorService userthreads = newCachedThreadPool();
       try {
          ExecutorService chainExecutor = userthreads;
-         ExecutorService listenerExecutor = sameThreadExecutor();
+         ExecutorService listenerExecutor = MoreExecutors.sameThreadExecutor();
 
          checkThresholdsUsingConcurrentUtilsCompose(expectedMin, expectedMax, expectedOverhead, callableExecutor,
                   chainExecutor, listenerExecutor);
@@ -183,7 +182,7 @@ public class FuturesComposePerformanceTest {
 
       ExecutorService userthreads = newCachedThreadPool();
       try {
-         ExecutorService chainExecutor = sameThreadExecutor();
+         ExecutorService chainExecutor = MoreExecutors.sameThreadExecutor();
          ExecutorService listenerExecutor = userthreads;
 
          checkThresholdsUsingConcurrentUtilsCompose(expectedMin, expectedMax, expectedOverhead, callableExecutor,
@@ -202,8 +201,8 @@ public class FuturesComposePerformanceTest {
 
       ExecutorService userthreads = newCachedThreadPool();
       try {
-         ExecutorService chainExecutor = sameThreadExecutor();
-         ExecutorService listenerExecutor = sameThreadExecutor();
+         ExecutorService chainExecutor = MoreExecutors.sameThreadExecutor();
+         ExecutorService listenerExecutor = MoreExecutors.sameThreadExecutor();
 
          checkThresholdsUsingConcurrentUtilsCompose(expectedMin, expectedMax, expectedOverhead, callableExecutor,
                   chainExecutor, listenerExecutor);

@@ -19,7 +19,6 @@
 package org.jclouds.nirvanix.sdn;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
 import static org.testng.Assert.assertNotNull;
@@ -27,6 +26,7 @@ import static org.testng.Assert.assertNotNull;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -73,12 +73,12 @@ public class SDNAuthenticationLiveTest {
       identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
       credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
-      ContextSpec<SDNAuthClient, SDNAuthAsyncClient> contextSpec = contextSpec("test", endpoint,
-               "1", identity, credential, SDNAuthClient.class, SDNAuthAsyncClient.class);
+      ContextSpec<SDNAuthClient, SDNAuthAsyncClient> contextSpec = contextSpec("test", endpoint, "1", identity,
+               credential, SDNAuthClient.class, SDNAuthAsyncClient.class);
 
       context = createContextBuilder(
                contextSpec,
-               ImmutableSet.<Module> of(new Log4JLoggingModule(), new ExecutorServiceModule(
-                        sameThreadExecutor(), sameThreadExecutor()))).buildContext();
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new ExecutorServiceModule(MoreExecutors
+                        .sameThreadExecutor(), MoreExecutors.sameThreadExecutor()))).buildContext();
    }
 }

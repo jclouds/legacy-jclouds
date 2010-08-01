@@ -19,7 +19,7 @@
 package org.jclouds.aws.ec2.compute.strategy;
 
 import static com.google.common.collect.Iterables.concat;
-import static org.jclouds.concurrent.ConcurrentUtils.transformParallel;
+import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.util.Set;
 import java.util.Map.Entry;

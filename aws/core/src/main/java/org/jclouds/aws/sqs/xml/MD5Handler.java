@@ -18,9 +18,7 @@
  */
 package org.jclouds.aws.sqs.xml;
 
-import javax.inject.Inject;
-
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.functions.ParseSax;
 
 /**
@@ -34,13 +32,6 @@ public class MD5Handler extends ParseSax.HandlerWithResult<byte[]> {
    private StringBuilder currentText = new StringBuilder();
    byte[] md5;
 
-   private final EncryptionService encryptionService;
-
-   @Inject
-   MD5Handler(EncryptionService encryptionService) {
-      this.encryptionService = encryptionService;
-   }
-
    public byte[] getResult() {
       return md5;
    }
@@ -48,7 +39,7 @@ public class MD5Handler extends ParseSax.HandlerWithResult<byte[]> {
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("MD5OfMessageBody")) {
          String md5Hex = currentText.toString().trim();
-         this.md5 = encryptionService.fromHex(md5Hex);
+         this.md5 = CryptoStreams.hex(md5Hex);
       }
       currentText = new StringBuilder();
    }

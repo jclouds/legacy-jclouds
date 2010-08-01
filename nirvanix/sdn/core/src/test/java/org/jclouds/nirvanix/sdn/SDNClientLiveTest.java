@@ -22,6 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -30,6 +31,7 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.encryption.internal.Base64;
+import org.jclouds.io.Payloads;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.nirvanix.sdn.domain.UploadInfo;
 import org.jclouds.rest.RestContext;
@@ -67,7 +69,7 @@ public class SDNClientLiveTest {
       this.connection = context.getApi();
    }
 
-   public void testUploadToken() throws InterruptedException, ExecutionException, TimeoutException {
+   public void testUploadToken() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       String containerName = containerPrefix + ".testObjectOperations";
       long size = 1024;
 
@@ -78,7 +80,7 @@ public class SDNClientLiveTest {
       Blob blob = connection.newBlob();
       blob.getMetadata().setName("test.txt");
       blob.setPayload("value");
-      context.utils().encryption().generateMD5BufferingIfNotRepeatable(blob);
+      Payloads.calculateMD5(blob);
 
       byte[] md5 = blob.getMetadata().getContentMD5();
       connection.upload(uploadInfo.getHost(), uploadInfo.getToken(), containerName, blob);

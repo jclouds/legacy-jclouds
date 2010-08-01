@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
-import static org.jclouds.concurrent.ConcurrentUtils.*;
+import org.jclouds.concurrent.Futures;
 
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -50,7 +50,7 @@ public class TransformingHttpCommandExecutorServiceImpl implements TransformingH
     * {@inheritDoc}
     */
    public <T> ListenableFuture<T> submit(HttpCommand command, Function<HttpResponse, T> responseTransformer) {
-      return compose(client.submit(command), responseTransformer, userThreads);
+      return Futures.compose(client.submit(command), responseTransformer, userThreads);
    }
 
 }

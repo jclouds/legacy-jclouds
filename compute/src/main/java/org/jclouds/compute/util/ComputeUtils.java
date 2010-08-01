@@ -22,7 +22,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.compute.util.ComputeServiceUtils.installNewCredentials;
 import static org.jclouds.compute.util.ComputeServiceUtils.isKeyAuth;
-import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
+import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 import java.util.List;
 import java.util.Map;

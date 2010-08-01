@@ -77,19 +77,22 @@ import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
 import org.jclouds.blobstore.util.BlobUtils;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
 import org.jclouds.domain.Location;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.ByteArrayPayload;
 import org.jclouds.io.payloads.DelegatingPayload;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimaps;
 import com.google.common.io.Closeables;
@@ -106,7 +109,7 @@ import com.google.inject.internal.Nullable;
 public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
 
    protected final DateService dateService;
-   protected final EncryptionService encryptionService;
+   protected final Crypto crypto;
    protected final ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs;
    protected final ConcurrentMap<String, Location> containerToLocation;
    protected final HttpGetOptionsListToGetOptions httpGetOptionsConverter;
@@ -114,8 +117,8 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    protected final Factory blobFactory;
 
    @Inject
-   protected TransientAsyncBlobStore(BlobStoreContext context, DateService dateService,
-            EncryptionService encryptionService, ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
+   protected TransientAsyncBlobStore(BlobStoreContext context, DateService dateService, Crypto crypto,
+            ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
             ConcurrentMap<String, Location> containerToLocation,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter,
             IfDirectoryReturnNameStrategy ifDirectoryReturnName, Blob.Factory blobFactory, BlobUtils blobUtils,
@@ -124,7 +127,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       super(context, blobUtils, service, defaultLocation, locations);
       this.blobFactory = blobFactory;
       this.dateService = dateService;
-      this.encryptionService = encryptionService;
+      this.crypto = crypto;
       this.containerToBlobs = containerToBlobs;
       this.containerToLocation = containerToLocation;
       this.httpGetOptionsConverter = httpGetOptionsConverter;
@@ -464,20 +467,23 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          payload = (object.getPayload() instanceof DelegatingPayload) ? (DelegatingPayload.class.cast(
                   object.getPayload()).getDelegate() instanceof ByteArrayPayload) ? ByteArrayPayload.class
                   .cast(DelegatingPayload.class.cast(object.getPayload()).getDelegate()) : null : null;
-      if (payload == null || !(payload instanceof ByteArrayPayload)) {
-         InputStream input = object.getPayload().getInput();
-         try {
-            String oldContentType = object.getPayload().getContentType();
-            payload = encryptionService.generatePayloadWithMD5For(input);
-            payload.setContentType(oldContentType);
-         } finally {
-            Closeables.closeQuietly(input);
+      try {
+         if (payload == null || !(payload instanceof ByteArrayPayload)) {
+            InputStream input = object.getPayload().getInput();
+            try {
+               String oldContentType = object.getPayload().getContentType();
+               payload = (ByteArrayPayload) Payloads.calculateMD5(Payloads.newPayload(object.getPayload().getInput()));
+               payload.setContentType(oldContentType);
+            } finally {
+               Closeables.closeQuietly(input);
+            }
+         } else {
+            if (payload.getContentMD5() == null)
+               Payloads.calculateMD5(object, crypto.md5());
          }
-      } else {
-         if (payload.getContentMD5() == null)
-            payload = (ByteArrayPayload) encryptionService.generateMD5BufferingIfNotRepeatable(payload);
+      } catch (IOException e) {
+         Throwables.propagate(e);
       }
-
       Blob blob = blobFactory.create(copy(object.getMetadata()));
       blob.setPayload(payload);
       blob.getMetadata().setLastModified(new Date());
@@ -485,7 +491,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       blob.getMetadata().setContentMD5(payload.getContentMD5());
       blob.getMetadata().setContentType(payload.getContentType());
 
-      String eTag = encryptionService.hex(payload.getContentMD5());
+      String eTag = CryptoStreams.hex(payload.getContentMD5());
       blob.getMetadata().setETag(eTag);
       container.put(blob.getMetadata().getName(), blob);
 
@@ -495,7 +501,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       blob.getAllHeaders().put(HttpHeaders.ETAG, eTag);
       blob.getAllHeaders().put(HttpHeaders.CONTENT_TYPE, payload.getContentType());
       blob.getAllHeaders().put(HttpHeaders.CONTENT_LENGTH, payload.getContentLength() + "");
-      blob.getAllHeaders().put("Content-MD5", encryptionService.base64(payload.getContentMD5()));
+      blob.getAllHeaders().put("Content-MD5", CryptoStreams.base64(payload.getContentMD5()));
       blob.getAllHeaders().putAll(Multimaps.forMap(blob.getMetadata().getUserMetadata()));
 
       return immediateFuture(eTag);

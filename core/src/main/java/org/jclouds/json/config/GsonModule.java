@@ -28,9 +28,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
 import org.jclouds.domain.JsonBall;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.json.Json;
 import org.jclouds.json.internal.GsonWrapper;
 
@@ -63,8 +63,8 @@ public class GsonModule extends AbstractModule {
    @Provides
    @Singleton
    Gson provideGson(JsonBallAdapter jsonObjectAdapter, DateAdapter adapter, ByteListAdapter byteListAdapter,
-         ByteArrayAdapter byteArrayAdapter, JsonAdapterBindings bindings) throws SecurityException,
-         NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+            ByteArrayAdapter byteArrayAdapter, JsonAdapterBindings bindings) throws SecurityException,
+            NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
       GsonBuilder builder = new GsonBuilder();
       builder.registerTypeAdapter(JsonBall.class, jsonObjectAdapter);
       builder.registerTypeAdapter(Date.class, adapter);
@@ -101,44 +101,32 @@ public class GsonModule extends AbstractModule {
 
    @Singleton
    public static class HexByteListAdapter implements ByteListAdapter {
-      private final EncryptionService encryptionService;
-
-      @Inject
-      HexByteListAdapter(EncryptionService encryptionService) {
-         this.encryptionService = encryptionService;
-      }
 
       @Override
       public List<Byte> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
-         return Bytes.asList(encryptionService.fromHex(json.getAsString()));
+               throws JsonParseException {
+         return Bytes.asList(CryptoStreams.hex(json.getAsString()));
       }
 
       @Override
       public JsonElement serialize(List<Byte> src, Type typeOfSrc, JsonSerializationContext context) {
-         return new JsonPrimitive(encryptionService.hex(Bytes.toArray(src)));
+         return new JsonPrimitive(CryptoStreams.hex(Bytes.toArray(src)));
       }
 
    }
 
    @Singleton
    public static class HexByteArrayAdapter implements ByteArrayAdapter {
-      private final EncryptionService encryptionService;
-
-      @Inject
-      HexByteArrayAdapter(EncryptionService encryptionService) {
-         this.encryptionService = encryptionService;
-      }
 
       @Override
       public byte[] deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
-         return encryptionService.fromHex(json.getAsString());
+               throws JsonParseException {
+         return CryptoStreams.hex(json.getAsString());
       }
 
       @Override
       public JsonElement serialize(byte[] src, Type typeOfSrc, JsonSerializationContext context) {
-         return new JsonPrimitive(encryptionService.hex(src));
+         return new JsonPrimitive(CryptoStreams.hex(src));
       }
    }
 
@@ -156,7 +144,7 @@ public class GsonModule extends AbstractModule {
       }
 
       public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
+               throws JsonParseException {
          String toParse = json.getAsJsonPrimitive().getAsString();
          try {
             return dateService.iso8601DateParse(toParse);
@@ -181,7 +169,7 @@ public class GsonModule extends AbstractModule {
       }
 
       public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
+               throws JsonParseException {
          String toParse = json.getAsJsonPrimitive().getAsString();
          Date toReturn = dateService.cDateParse(toParse);
          return toReturn;
@@ -202,7 +190,7 @@ public class GsonModule extends AbstractModule {
       }
 
       public JsonBall deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
+               throws JsonParseException {
          return new JsonBall(json.toString());
       }
 
@@ -216,7 +204,7 @@ public class GsonModule extends AbstractModule {
       }
 
       public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
+               throws JsonParseException {
          long toParse = json.getAsJsonPrimitive().getAsLong();
          if (toParse == -1)
             return null;

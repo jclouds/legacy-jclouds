@@ -26,7 +26,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.encryption.internal.JCEEncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -41,25 +41,20 @@ import org.testng.annotations.Test;
 @Test(groups = { "live" }, testName = "blobstore.BlobLiveTest")
 public class BaseBlobLiveTest extends BaseBlobStoreIntegrationTest {
 
-   private static final String sysHttpStreamUrl = System
-            .getProperty("jclouds.blobstore.httpstream.url");
-   private static final String sysHttpStreamETag = System
-            .getProperty("jclouds.blobstore.httpstream.md5");
+   private static final String sysHttpStreamUrl = System.getProperty("jclouds.blobstore.httpstream.url");
+   private static final String sysHttpStreamETag = System.getProperty("jclouds.blobstore.httpstream.md5");
 
    @Test
    @Parameters( { "jclouds.blobstore.httpstream.url", "jclouds.blobstore.httpstream.md5" })
-   public void testCopyUrl(@Optional String httpStreamUrl, @Optional String httpStreamETag)
-            throws Exception {
-      httpStreamUrl = checkNotNull(httpStreamUrl != null ? httpStreamUrl : sysHttpStreamUrl,
-               "httpStreamUrl");
+   public void testCopyUrl(@Optional String httpStreamUrl, @Optional String httpStreamETag) throws Exception {
+      httpStreamUrl = checkNotNull(httpStreamUrl != null ? httpStreamUrl : sysHttpStreamUrl, "httpStreamUrl");
 
-      httpStreamETag = checkNotNull(httpStreamETag != null ? httpStreamETag : sysHttpStreamETag,
-               "httpStreamMd5");
+      httpStreamETag = checkNotNull(httpStreamETag != null ? httpStreamETag : sysHttpStreamETag, "httpStreamMd5");
 
       String key = "hello";
 
       URL url = new URL(httpStreamUrl);
-      byte[] md5 = new JCEEncryptionService().fromHex(httpStreamETag);
+      byte[] md5 = CryptoStreams.hex(httpStreamETag);
 
       URLConnection connection = url.openConnection();
       long length = connection.getContentLength();

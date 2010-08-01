@@ -18,8 +18,6 @@
  */
 package org.jclouds.concurrent;
 
-import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
-import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static org.jclouds.util.Utils.propagateOrNull;
 import static org.testng.Assert.assertEquals;
 
@@ -44,7 +42,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @Test(groups = "unit", testName = "concurrent.FutureExceptionParserTest")
 public class FutureExceptionParserTest {
-   ExecutorService executorService = sameThreadExecutor();
+   ExecutorService executorService = MoreExecutors.sameThreadExecutor();
 
    @Test
    public void testGet() throws InterruptedException, ExecutionException {
@@ -72,7 +70,7 @@ public class FutureExceptionParserTest {
 
    @SuppressWarnings("unchecked")
    private Future<?> createFuture(final Exception exception) {
-      ListenableFuture<?> future = makeListenable(executorService.submit(new Callable<String>() {
+      ListenableFuture<?> future = Futures.makeListenable(executorService.submit(new Callable<String>() {
 
          public String call() throws Exception {
             throw exception;

@@ -20,7 +20,7 @@ package org.jclouds.azure.storage.blob.domain;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.http.PayloadEnclosing;
+import org.jclouds.io.PayloadEnclosing;
 
 import com.google.common.collect.Multimap;
 

@@ -23,8 +23,6 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.Date;
 import java.util.Map;
 
@@ -37,14 +35,12 @@ import org.jclouds.aws.s3.domain.internal.MutableObjectMetadataImpl;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
-import org.jclouds.encryption.EncryptionService;
-import org.jclouds.encryption.internal.JCEEncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -52,17 +48,6 @@ import com.google.common.collect.ImmutableMap;
  */
 @Test(testName = "s3.ParseObjectMetadataFromHeadersTest")
 public class ParseObjectMetadataFromHeadersTest {
-
-   protected volatile static EncryptionService encryptionService;
-   static {
-      try {
-         encryptionService = new JCEEncryptionService();
-      } catch (NoSuchAlgorithmException e) {
-         Throwables.propagate(e);
-      } catch (CertificateException e) {
-         Throwables.propagate(e);
-      }
-   }
 
    @Test
    void testNormal() throws Exception {
@@ -72,8 +57,8 @@ public class ParseObjectMetadataFromHeadersTest {
       http.getHeaders().put(HttpHeaders.CACHE_CONTROL, "cacheControl");
       http.getHeaders().put("Content-Disposition", "contentDisposition");
       http.getHeaders().put(HttpHeaders.CONTENT_ENCODING, "encoding");
-      ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(blobParser(http, "\"abc\""),
-               blobToObjectMetadata, encryptionService, "x-amz-meta-");
+      ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(blobParser(http, "\"abcd\""),
+               blobToObjectMetadata, "x-amz-meta-");
       MutableObjectMetadata response = parser.apply(http);
       assertEquals(response, expects);
    }
@@ -87,9 +72,9 @@ public class ParseObjectMetadataFromHeadersTest {
       http.getHeaders().put(HttpHeaders.CACHE_CONTROL, "cacheControl");
       http.getHeaders().put("Content-Disposition", "contentDisposition");
       http.getHeaders().put(HttpHeaders.CONTENT_ENCODING, "encoding");
-      http.getHeaders().put("x-amz-meta-object-eTag", "\"abc\"");
+      http.getHeaders().put("x-amz-meta-object-eTag", "\"abcd\"");
       ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(blobParser(http, null),
-               blobToObjectMetadata, encryptionService, "x-amz-meta-");
+               blobToObjectMetadata, "x-amz-meta-");
       MutableObjectMetadata response = parser.apply(http);
       assertEquals(response, expects);
    }
@@ -120,9 +105,9 @@ public class ParseObjectMetadataFromHeadersTest {
       expects.setCacheControl("cacheControl");
       expects.setContentDisposition("contentDisposition");
       expects.setContentEncoding("encoding");
-      expects.setContentMD5(encryptionService.fromHex("abc"));
+      expects.setContentMD5(CryptoStreams.hex("abcd"));
       expects.setContentType("type");
-      expects.setETag("\"abc\"");
+      expects.setETag("\"abcd\"");
       expects.setKey("key");
       expects.setLastModified(now);
       expects.setOwner(null);

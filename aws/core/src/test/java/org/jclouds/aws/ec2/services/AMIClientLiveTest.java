@@ -37,7 +37,6 @@ import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.Image.ImageType;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.AfterTest;
@@ -78,9 +77,8 @@ public class AMIClientLiveTest {
       client = context.getApi().getAMIServices();
    }
 
-   @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testDescribeImageNotExists() {
-      client.describeImagesInRegion(null, imageIds("ami-cdf819a3"));
+      assertEquals(client.describeImagesInRegion(null, imageIds("ami-cdf819a3")).size(), 0);
    }
 
    @Test(expectedExceptions = AWSResponseException.class)

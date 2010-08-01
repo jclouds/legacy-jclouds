@@ -18,6 +18,7 @@
  */
 package org.jclouds.http.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.io.ByteStreams.copy;
 import static org.jclouds.http.HttpUtils.checkRequestHasContentLengthOrChunkedEncoding;
 import static org.jclouds.http.HttpUtils.wirePayloadIfEnabled;
@@ -35,7 +36,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
@@ -56,7 +56,6 @@ import com.google.common.io.NullOutputStream;
  */
 public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandExecutorService {
    protected final HttpUtils utils;
-   protected final EncryptionService encryptionService;
 
    private final DelegatingRetryHandler retryHandler;
    private final IOExceptionRetryHandler ioRetryHandler;
@@ -72,17 +71,16 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
    protected final HttpWire wire;
 
    @Inject
-   protected BaseHttpCommandExecutorService(HttpUtils utils, EncryptionService encryptionService,
+   protected BaseHttpCommandExecutorService(HttpUtils utils,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
             DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
             DelegatingErrorHandler errorHandler, HttpWire wire) {
-      this.utils = utils;
-      this.encryptionService = encryptionService;
-      this.retryHandler = retryHandler;
-      this.ioRetryHandler = ioRetryHandler;
-      this.errorHandler = errorHandler;
-      this.ioWorkerExecutor = ioWorkerExecutor;
-      this.wire = wire;
+      this.utils = checkNotNull(utils, "utils");
+      this.retryHandler = checkNotNull(retryHandler, "retryHandler");
+      this.ioRetryHandler = checkNotNull(ioRetryHandler, "ioRetryHandler");
+      this.errorHandler = checkNotNull(errorHandler, "errorHandler");
+      this.ioWorkerExecutor = checkNotNull(ioWorkerExecutor, "ioWorkerExecutor");
+      this.wire = checkNotNull(wire, "wire");
    }
 
    public static InputStream consumeOnClose(InputStream in) {

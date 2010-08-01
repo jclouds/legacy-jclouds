@@ -19,27 +19,22 @@
 package org.jclouds.http.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.io.ByteStreams.copy;
 import static java.util.concurrent.Executors.newCachedThreadPool;
 import static org.testng.Assert.assertEquals;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.encryption.EncryptionService;
-import org.jclouds.encryption.internal.JCEEncryptionService;
+import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Throwables;
-import com.google.common.io.ByteStreams;
 
 /**
  * 
@@ -50,20 +45,6 @@ public class WireLiveTest {
 
    private static final String sysHttpStreamUrl = System.getProperty("jclouds.wire.httpstream.url");
    private static final String sysHttpStreamMd5 = System.getProperty("jclouds.wire.httpstream.md5");
-
-   private static EncryptionService encryptionService;
-
-   static {
-      try {
-         encryptionService = new JCEEncryptionService();
-      } catch (NoSuchAlgorithmException e) {
-         Throwables.propagate(e);
-         encryptionService = null;
-      } catch (CertificateException e) {
-         Throwables.propagate(e);
-         encryptionService = null;
-      }
-   }
 
    private static class ConnectionTester implements Callable<Void> {
       private final InputStream fromServer;
@@ -76,10 +57,10 @@ public class WireLiveTest {
          HttpWire wire = setUp();
          InputStream in = wire.input(fromServer);
          ByteArrayOutputStream out = new ByteArrayOutputStream();// TODO
-         ByteStreams.copy(in, out);
-         byte[] compare = encryptionService.md5(new ByteArrayInputStream(out.toByteArray()));
+         copy(in, out);
+         byte[] compare = CryptoStreams.md5(out.toByteArray());
          Thread.sleep(100);
-         assertEquals(encryptionService.hex(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
+         assertEquals(CryptoStreams.hex(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
          assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
          return null;
       }
@@ -155,10 +136,10 @@ public class WireLiveTest {
       URL url = new URL(checkNotNull(sysHttpStreamUrl, "sysHttpStreamUrl"));
       URLConnection connection = url.openConnection();
       HttpWire wire = setUp();
-      InputStream in = wire.input(connection.getInputStream());
-      byte[] compare = encryptionService.md5(in);
+      final InputStream in = wire.input(connection.getInputStream());
+      byte[] compare = CryptoStreams.md5(InputSuppliers.of(in));
       Thread.sleep(100);
-      assertEquals(encryptionService.hex(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
+      assertEquals(CryptoStreams.hex(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
       assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
    }
 
@@ -176,10 +157,10 @@ public class WireLiveTest {
       URL url = new URL(checkNotNull(sysHttpStreamUrl, "sysHttpStreamUrl"));
       URLConnection connection = url.openConnection();
       HttpWire wire = setUpSynch();
-      InputStream in = wire.input(connection.getInputStream());
-      byte[] compare = encryptionService.md5(in);
+      final InputStream in = wire.input(connection.getInputStream());
+      byte[] compare = CryptoStreams.md5(InputSuppliers.of(in));
       Thread.sleep(100);
-      assertEquals(encryptionService.hex(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
+      assertEquals(CryptoStreams.hex(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
       assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
    }
 

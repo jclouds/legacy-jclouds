@@ -35,8 +35,10 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.options.GetOptions;
+import org.jclouds.io.Payloads;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
@@ -303,8 +305,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          byte[] md5 = object.getPayload().getContentMD5();
          String newEtag = getApi().putObject(containerName, object);
          assert newEtag != null;
-         assertEquals(context.utils().encryption().hex(md5), context.utils().encryption().hex(
-                  object.getPayload().getContentMD5()));
+         assertEquals(CryptoStreams.hex(md5), CryptoStreams.hex(object.getPayload().getContentMD5()));
 
          // Test HEAD of missing object
          assert getApi().getObjectInfo(containerName, "non-existent-object") == null;
@@ -320,8 +321,8 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          // assertEquals(metadata.getBytes(), new Long(data.length()));
          // assertEquals(metadata.getContentType(), "text/plain");
 
-         assertEquals(context.utils().encryption().hex(md5), context.utils().encryption().hex(metadata.getHash()));
-         assertEquals(metadata.getHash(), context.utils().encryption().fromHex(newEtag));
+         assertEquals(CryptoStreams.hex(md5), CryptoStreams.hex(metadata.getHash()));
+         assertEquals(metadata.getHash(), CryptoStreams.hex(newEtag));
          assertEquals(metadata.getMetadata().entrySet().size(), 1);
          assertEquals(metadata.getMetadata().get("metadata"), "metadata-value");
 
@@ -340,9 +341,8 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          // object.getMetadata().getName());
          assertEquals(getBlob.getInfo().getBytes(), new Long(data.length()));
          assertEquals(getBlob.getInfo().getContentType(), "text/plain");
-         assertEquals(context.utils().encryption().hex(md5), context.utils().encryption().hex(
-                  getBlob.getInfo().getHash()));
-         assertEquals(context.utils().encryption().fromHex(newEtag), getBlob.getInfo().getHash());
+         assertEquals(CryptoStreams.hex(md5), CryptoStreams.hex(getBlob.getInfo().getHash()));
+         assertEquals(CryptoStreams.hex(newEtag), getBlob.getInfo().getHash());
          assertEquals(getBlob.getInfo().getMetadata().entrySet().size(), 2);
          assertEquals(getBlob.getInfo().getMetadata().get("new-metadata-1"), "value-1");
          assertEquals(getBlob.getInfo().getMetadata().get("new-metadata-2"), "value-2");
@@ -351,7 +351,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          // transit)
          String correctEtag = newEtag;
          String incorrectEtag = "0" + correctEtag.substring(1);
-         object.getInfo().setHash(context.utils().encryption().fromHex(incorrectEtag));
+         object.getInfo().setHash(CryptoStreams.hex(incorrectEtag));
          try {
             getApi().putObject(containerName, object);
          } catch (HttpResponseException e) {
@@ -364,8 +364,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          blob.getInfo().setName("chunked-object");
          blob.setPayload(bais);
          newEtag = getApi().putObject(containerName, blob);
-         assertEquals(context.utils().encryption().hex(md5), context.utils().encryption().hex(
-                  getBlob.getInfo().getHash()));
+         assertEquals(CryptoStreams.hex(md5), CryptoStreams.hex(getBlob.getInfo().getHash()));
 
          // Test GET with options
          // Non-matching ETag
@@ -380,7 +379,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          // Matching ETag
          getBlob = getApi().getObject(containerName, object.getInfo().getName(),
                   GetOptions.Builder.ifETagMatches(newEtag));
-         assertEquals(getBlob.getInfo().getHash(), context.utils().encryption().fromHex(newEtag));
+         assertEquals(getBlob.getInfo().getHash(), CryptoStreams.hex(newEtag));
          getBlob = getApi().getObject(containerName, object.getInfo().getName(), GetOptions.Builder.startAt(8));
          assertEquals(Utils.toStringAndClose(getBlob.getPayload().getInput()), data.substring(8));
 
@@ -393,7 +392,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
       CFObject object = getApi().newCFObject();
       object.getInfo().setName(key);
       object.setPayload(data);
-      context.utils().encryption().generateMD5BufferingIfNotRepeatable(object);
+      Payloads.calculateMD5(object);
       object.getInfo().setContentType("text/plain");
       object.getInfo().getMetadata().put("Metadata", "metadata-value");
       return object;

@@ -30,7 +30,8 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
@@ -50,11 +51,10 @@ public class BasicAuthentication implements HttpRequestFilter {
    private final Set<String> credentialList;
 
    @Inject
-   BasicAuthentication(@Named(PROPERTY_IDENTITY) String user,
-            @Named(PROPERTY_CREDENTIAL) String password, EncryptionService encryptionService)
+   BasicAuthentication(@Named(PROPERTY_IDENTITY) String user, @Named(PROPERTY_CREDENTIAL) String password, Crypto crypto)
             throws UnsupportedEncodingException {
       this.credentialList = ImmutableSet.of("Basic "
-               + encryptionService.base64(String.format("%s:%s", checkNotNull(user, "user"),
+               + CryptoStreams.base64(String.format("%s:%s", checkNotNull(user, "user"),
                         checkNotNull(password, "password")).getBytes("UTF-8")));
    }
 

@@ -18,7 +18,6 @@
  */
 package org.jclouds.nirvanix.sdn.filters;
 
-import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
@@ -30,6 +29,7 @@ import java.util.Properties;
 
 import javax.ws.rs.POST;
 
+import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.Logger;
@@ -65,8 +65,7 @@ public class InsertUserContextIntoPathTest {
    }
 
    public void testRequestInvalid() {
-      GeneratedHttpRequest<TestService> request = factory.createRequest(method, URI
-               .create("https://host/path"));
+      GeneratedHttpRequest<TestService> request = factory.createRequest(method, URI.create("https://host/path"));
       filter.filter(request);
       filter.filter(request);
       assertEquals(request.getEndpoint().getPath(), "/token/appname/username/path");
@@ -74,8 +73,7 @@ public class InsertUserContextIntoPathTest {
    }
 
    public void testRequestNoSession() {
-      GeneratedHttpRequest<TestService> request = factory.createRequest(method, URI
-               .create("https://host/path"));
+      GeneratedHttpRequest<TestService> request = factory.createRequest(method, URI.create("https://host/path"));
       filter.filter(request);
       assertEquals(request.getEndpoint().getPath(), "/token/appname/username/path");
       assertEquals(request.getEndpoint().getHost(), "host");
@@ -91,9 +89,9 @@ public class InsertUserContextIntoPathTest {
 
    @BeforeClass
    protected void createFilter() throws SecurityException, NoSuchMethodException {
-      injector = Guice.createInjector(new RestModule(), new ExecutorServiceModule(
-               sameThreadExecutor(), sameThreadExecutor()),
-               new JavaUrlHttpCommandExecutorServiceModule(), new AbstractModule() {
+      injector = Guice.createInjector(new RestModule(), new ExecutorServiceModule(MoreExecutors.sameThreadExecutor(),
+               MoreExecutors.sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule(),
+               new AbstractModule() {
 
                   protected void configure() {
                      install(new SDNAuthRestClientModule());
@@ -106,15 +104,14 @@ public class InsertUserContextIntoPathTest {
                      expect(sessionManager.getSessionToken()).andReturn("token").anyTimes();
                      replay(sessionManager);
                      bind(AddSessionTokenToRequest.class).toInstance(sessionManager);
-                     Names.bindProperties(this.binder(), new SDNPropertiesBuilder(new Properties())
-                              .credentials("appkey/appname/username", "password").build());
+                     Names.bindProperties(this.binder(), new SDNPropertiesBuilder(new Properties()).credentials(
+                              "appkey/appname/username", "password").build());
                   }
 
                });
       filter = injector.getInstance(InsertUserContextIntoPath.class);
-      factory = injector.getInstance(Key
-               .get(new TypeLiteral<RestAnnotationProcessor<TestService>>() {
-               }));
+      factory = injector.getInstance(Key.get(new TypeLiteral<RestAnnotationProcessor<TestService>>() {
+      }));
       method = TestService.class.getMethod("foo", URI.class);
    }
 

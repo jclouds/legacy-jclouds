@@ -19,7 +19,6 @@
 package org.jclouds.rest;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
 import static org.jclouds.Constants.PROPERTY_API;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
@@ -34,6 +33,7 @@ import java.util.Properties;
 
 import javax.inject.Inject;
 
+import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
@@ -244,7 +244,7 @@ public class RestContextBuilder<S, A> {
                return input.getClass().isAnnotationPresent(SingleThreaded.class);
             }
          })) {
-            modules.add(new ExecutorServiceModule(sameThreadExecutor(), sameThreadExecutor()));
+            modules.add(new ExecutorServiceModule(MoreExecutors.sameThreadExecutor(), MoreExecutors.sameThreadExecutor()));
          } else {
             modules.add(new ExecutorServiceModule());
          }

@@ -23,7 +23,7 @@ import java.util.concurrent.ExecutorService;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.date.joda.config.JodaDateServiceModule;
-import org.jclouds.encryption.bouncycastle.config.BouncyCastleEncryptionServiceModule;
+import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
 
 /**
  * Configures Enterprise-grade components
@@ -44,7 +44,7 @@ public class EnterpriseConfigurationModule extends ExecutorServiceModule {
 
    @Override
    protected void configure() {
-      install(new BouncyCastleEncryptionServiceModule());
+      install(new BouncyCastleCryptoModule());
       install(new JodaDateServiceModule());
    }
 

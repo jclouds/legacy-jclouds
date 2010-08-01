@@ -18,9 +18,7 @@
  */
 package org.jclouds.gae;
 
-import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
-import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
-import static org.jclouds.concurrent.ConcurrentUtils.sameThreadExecutor;
+import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -32,6 +30,8 @@ import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.concurrent.Futures;
+import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
@@ -76,7 +76,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
          @Override
          public ListenableFuture<?> get() {
             try {
-               return makeListenable(service.fetchAsync(fetch.toURL()), sameThreadExecutor());
+               return Futures.makeListenable(service.fetchAsync(fetch.toURL()), MoreExecutors.sameThreadExecutor());
             } catch (MalformedURLException e) {
                Throwables.propagate(e);
                return null;
@@ -159,7 +159,8 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
          responses.put(i + "", getSupplier.get());
       results.createFutures = System.currentTimeMillis() - start;
       start = System.currentTimeMillis();
-      Map<String, Exception> exceptions = awaitCompletion(responses, sameThreadExecutor(), null, logger, who);
+      Map<String, Exception> exceptions = awaitCompletion(responses, MoreExecutors.sameThreadExecutor(), null, logger,
+               who);
       results.futuresReady = System.currentTimeMillis() - start;
       assert exceptions.size() == 0 : exceptions;
       start = System.currentTimeMillis();

@@ -34,7 +34,7 @@ import javax.inject.Provider;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.Crypto;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
@@ -173,7 +173,7 @@ public class SignedHeaderAuthTest {
    }
 
    private SignedHeaderAuth signing_obj;
-   private EncryptionService encryptionService;
+   private Crypto crypto;
 
    /**
     * before class, as we need to ensure that the filter is threadsafe.
@@ -187,7 +187,7 @@ public class SignedHeaderAuthTest {
       Injector injector = new RestContextFactory().createContextBuilder("chef", USER_ID, PRIVATE_KEY,
             ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule()), new Properties()).buildInjector();
 
-      encryptionService = injector.getInstance(EncryptionService.class);
+      crypto = injector.getInstance(Crypto.class);
       HttpUtils utils = injector.getInstance(HttpUtils.class);
 
       PrivateKey privateKey = injector.getInstance(PrivateKey.class);
@@ -199,7 +199,7 @@ public class SignedHeaderAuthTest {
             return TIMESTAMP_ISO8601;
          }
 
-      }, encryptionService, utils);
+      }, crypto, utils);
    }
 
 }

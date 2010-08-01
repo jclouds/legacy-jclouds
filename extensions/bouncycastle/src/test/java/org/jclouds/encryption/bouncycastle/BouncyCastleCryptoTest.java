@@ -16,37 +16,29 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.http;
+package org.jclouds.encryption.bouncycastle;
 
-import java.io.File;
-import java.io.InputStream;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule;
+import org.jclouds.io.CryptoTest;
+import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
-import org.jclouds.io.Payload;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
+ * This tests the performance of Digest commands.
  * 
  * @author Adrian Cole
  */
-public interface PayloadEnclosing {
+@Test(groups = "performance", sequential = true, testName = "jclouds.BouncyCastleCryptoTest")
+public class BouncyCastleCryptoTest extends CryptoTest {
 
-   /**
-    * Sets payload for the request or the content from the response. If size isn't set, this will
-    * attempt to discover it.
-    * 
-    * @param data
-    *           typically InputStream for downloads, or File, byte [], String, or InputStream for
-    *           uploads.
-    */
-   void setPayload(Payload data);
-
-   void setPayload(File data);
-
-   void setPayload(byte[] data);
-
-   void setPayload(InputStream data);
-
-   void setPayload(String data);
-
-   Payload getPayload();
-
+   @BeforeTest
+   protected void createCrypto() {
+      Injector i = Guice.createInjector(new BouncyCastleCryptoModule());
+      crypto = i.getInstance(Crypto.class);
+      assert crypto instanceof BouncyCastleCrypto;
+   }
 }

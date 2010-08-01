@@ -26,8 +26,8 @@ package org.jclouds.compute.internal;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.installNewCredentials;
-import static org.jclouds.concurrent.ConcurrentUtils.awaitCompletion;
-import static org.jclouds.concurrent.ConcurrentUtils.transformParallel;
+import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
+import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
 import java.util.Map;
 import java.util.Set;

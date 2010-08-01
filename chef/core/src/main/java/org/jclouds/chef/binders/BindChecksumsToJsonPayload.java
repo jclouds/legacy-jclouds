@@ -29,11 +29,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.binders.BindToStringPayload;
 
@@ -46,17 +45,10 @@ import com.google.common.primitives.Bytes;
  */
 @Singleton
 public class BindChecksumsToJsonPayload extends BindToStringPayload {
-   private final EncryptionService encryptionService;
-
-   @Inject
-   BindChecksumsToJsonPayload(EncryptionService encryptionService) {
-      this.encryptionService = encryptionService;
-   }
 
    @SuppressWarnings("unchecked")
    public void bindToRequest(HttpRequest request, Object input) {
-      checkArgument(checkNotNull(input, "input") instanceof Set,
-               "this binder is only valid for Set!");
+      checkArgument(checkNotNull(input, "input") instanceof Set, "this binder is only valid for Set!");
 
       Set<List<Byte>> md5s = (Set<List<Byte>>) input;
 
@@ -64,7 +56,7 @@ public class BindChecksumsToJsonPayload extends BindToStringPayload {
       builder.append("{\"checksums\":{");
 
       for (List<Byte> md5 : md5s)
-         builder.append(String.format("\"%s\":null,", encryptionService.hex(Bytes.toArray(md5))));
+         builder.append(String.format("\"%s\":null,", CryptoStreams.hex(Bytes.toArray(md5))));
       builder.deleteCharAt(builder.length() - 1);
       builder.append("}}");
       super.bindToRequest(request, builder.toString());

@@ -18,7 +18,6 @@
  */
 package org.jclouds.ohai.functions;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.partition;
 import static com.google.common.primitives.Bytes.asList;
@@ -26,10 +25,9 @@ import static com.google.common.primitives.Bytes.toArray;
 
 import java.util.List;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -42,12 +40,6 @@ import com.google.common.base.Joiner;
  */
 @Singleton
 public class ByteArrayToMacAddress implements Function<byte[], String> {
-   private final EncryptionService encryptionService;
-
-   @Inject
-   ByteArrayToMacAddress(EncryptionService encryptionService) {
-      this.encryptionService = checkNotNull(encryptionService, "encryptionService");
-   }
 
    @Override
    public String apply(byte[] from) {
@@ -55,7 +47,7 @@ public class ByteArrayToMacAddress implements Function<byte[], String> {
 
          @Override
          public String apply(List<Byte> from) {
-            return encryptionService.hex(toArray(from));
+            return CryptoStreams.hex(toArray(from));
          }
 
       }));

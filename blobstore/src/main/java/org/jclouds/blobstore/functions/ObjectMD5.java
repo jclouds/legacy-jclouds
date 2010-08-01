@@ -18,23 +18,26 @@
  */
 package org.jclouds.blobstore.functions;
 
+import java.io.IOException;
+
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.Crypto;
 import org.jclouds.io.Payloads;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 public class ObjectMD5 implements Function<Object, byte[]> {
 
    protected final Blob.Factory blobFactory;
-   protected final EncryptionService encryptionService;
+   protected final Crypto crypto;
 
    @Inject
-   ObjectMD5(EncryptionService encryptionService, Blob.Factory blobFactory) {
+   ObjectMD5(Crypto crypto, Blob.Factory blobFactory) {
       this.blobFactory = blobFactory;
-      this.encryptionService = encryptionService;
+      this.crypto = crypto;
    }
 
    public byte[] apply(Object from) {
@@ -46,7 +49,11 @@ public class ObjectMD5 implements Function<Object, byte[]> {
          object.setPayload(Payloads.newPayload(from));
       }
       if (object.getMetadata().getContentMD5() == null)
-         encryptionService.generateMD5BufferingIfNotRepeatable(object);
+         try {
+            Payloads.calculateMD5(object, crypto.md5());
+         } catch (IOException e) {
+            Throwables.propagate(e);
+         }
       return object.getPayload().getContentMD5();
    }
 

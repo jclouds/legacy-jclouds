@@ -38,7 +38,6 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.blobstore.util.internal.BlobUtilsImpl;
-import static org.jclouds.concurrent.ConcurrentUtils.*;
 import org.jclouds.domain.Location;
 import org.jclouds.util.Utils;
 
@@ -114,7 +113,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
     */
    @Override
    public ListenableFuture<Long> countBlobs(final String containerName, final ListContainerOptions options) {
-      return makeListenable(service.submit(new Callable<Long>() {
+      return org.jclouds.concurrent.Futures.makeListenable(service.submit(new Callable<Long>() {
          public Long call() throws Exception {
             return blobUtils.countBlobs(containerName, options);
          }
@@ -142,7 +141,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
     */
    @Override
    public ListenableFuture<Void> clearContainer(final String containerName, final ListContainerOptions options) {
-      return makeListenable(service.submit(new Callable<Void>() {
+      return org.jclouds.concurrent.Futures.makeListenable(service.submit(new Callable<Void>() {
 
          public Void call() throws Exception {
             blobUtils.clearContainer(containerName, options);
@@ -160,7 +159,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
     */
    @Override
    public ListenableFuture<Void> deleteDirectory(final String containerName, final String directory) {
-      return makeListenable(service.submit(new Callable<Void>() {
+      return org.jclouds.concurrent.Futures.makeListenable(service.submit(new Callable<Void>() {
 
          public Void call() throws Exception {
             blobUtils.deleteDirectory(containerName, directory);
@@ -179,7 +178,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
     *           virtual path
     */
    public ListenableFuture<Boolean> directoryExists(final String containerName, final String directory) {
-      return makeListenable(service.submit(new Callable<Boolean>() {
+      return org.jclouds.concurrent.Futures.makeListenable(service.submit(new Callable<Boolean>() {
 
          public Boolean call() throws Exception {
             return blobUtils.directoryExists(containerName, directory);
@@ -200,7 +199,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
    public ListenableFuture<Void> createDirectory(final String containerName, final String directory) {
 
       return blobUtils.directoryExists(containerName, directory) ? Futures.immediateFuture((Void) null)
-               : makeListenable(service.submit(new Callable<Void>() {
+               : org.jclouds.concurrent.Futures.makeListenable(service.submit(new Callable<Void>() {
                   public Void call() throws Exception {
                      blobUtils.createDirectory(containerName, directory);
                      return null;
@@ -230,7 +229,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
     */
    @Override
    public ListenableFuture<Void> deleteContainer(final String container) {
-      return makeListenable(service.submit(new Callable<Void>() {
+      return org.jclouds.concurrent.Futures.makeListenable(service.submit(new Callable<Void>() {
 
          public Void call() throws Exception {
             deleteAndEnsurePathGone(container);

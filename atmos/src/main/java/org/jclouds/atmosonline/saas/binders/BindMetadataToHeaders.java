@@ -22,7 +22,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.Crypto;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 
@@ -32,7 +32,7 @@ public class BindMetadataToHeaders implements Binder {
 
    @Inject
    protected BindMetadataToHeaders(BindUserMetadataToHeaders metaBinder,
-            EncryptionService encryptionService) {
+            Crypto crypto) {
       this.metaBinder = metaBinder;
    }
 

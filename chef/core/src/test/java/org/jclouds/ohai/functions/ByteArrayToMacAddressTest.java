@@ -27,7 +27,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -43,16 +43,14 @@ import com.google.inject.Injector;
 public class ByteArrayToMacAddressTest {
 
    private ByteArrayToMacAddress converter;
-   private EncryptionService encryptionService;
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
       Injector injector = Guice.createInjector();
       converter = injector.getInstance(ByteArrayToMacAddress.class);
-      encryptionService = injector.getInstance(EncryptionService.class);
    }
 
    public void test() {
-      assertEquals(converter.apply(encryptionService.fromHex("0026bb09e6c4")), "00:26:bb:09:e6:c4");
+      assertEquals(converter.apply(CryptoStreams.hex("0026bb09e6c4")), "00:26:bb:09:e6:c4");
    }
 }

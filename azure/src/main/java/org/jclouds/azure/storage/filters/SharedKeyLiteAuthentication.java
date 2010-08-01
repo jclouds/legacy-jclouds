@@ -32,13 +32,15 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
+import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 
@@ -59,7 +61,7 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    private final String identity;
    private final byte[] key;
    private final Provider<String> timeStampProvider;
-   private final EncryptionService encryptionService;
+   private final Crypto crypto;
    private final HttpUtils utils;
 
    @Resource
@@ -67,16 +69,14 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    Logger signatureLog = Logger.NULL;
 
    @Inject
-   public SharedKeyLiteAuthentication(SignatureWire signatureWire,
-            @Named(Constants.PROPERTY_IDENTITY) String identity,
-            @Named(Constants.PROPERTY_CREDENTIAL) String encodedKey,
-            @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService,
-            HttpUtils utils) {
-      this.encryptionService = encryptionService;
+   public SharedKeyLiteAuthentication(SignatureWire signatureWire, @Named(Constants.PROPERTY_IDENTITY) String identity,
+            @Named(Constants.PROPERTY_CREDENTIAL) String encodedKey, @TimeStamp Provider<String> timeStampProvider,
+            Crypto crypto, HttpUtils utils) {
+      this.crypto = crypto;
       this.utils = utils;
       this.signatureWire = signatureWire;
       this.identity = identity;
-      this.key = encryptionService.fromBase64(encodedKey);
+      this.key = CryptoStreams.base64(encodedKey);
       this.timeStampProvider = timeStampProvider;
    }
 
@@ -102,16 +102,13 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    }
 
    private void appendPayloadMetadata(HttpRequest request, StringBuilder buffer) {
-      buffer.append(
-               utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload()
-                        .getContentMD5())).append("\n");
-      buffer.append(
-               utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload()
-                        .getContentType())).append("\n");
+      buffer.append(utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMD5()))
+               .append("\n");
+      buffer.append(utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentType()))
+               .append("\n");
    }
 
-   private void calculateAndReplaceAuthHeader(HttpRequest request, String toSign)
-            throws HttpException {
+   private void calculateAndReplaceAuthHeader(HttpRequest request, String toSign) throws HttpException {
       String signature = signString(toSign);
       if (signatureWire.enabled())
          signatureWire.input(Utils.toInputStream(signature));
@@ -122,7 +119,7 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    public String signString(String toSign) {
       String signature;
       try {
-         signature = encryptionService.base64(encryptionService.hmacSha256(toSign, key));
+         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(toSign), crypto.hmacSHA256(key)));
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }
@@ -134,8 +131,7 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    }
 
    private void replaceDateHeader(HttpRequest request) {
-      request.getHeaders().replaceValues(HttpHeaders.DATE,
-               Collections.singletonList(timeStampProvider.get()));
+      request.getHeaders().replaceValues(HttpHeaders.DATE, Collections.singletonList(timeStampProvider.get()));
    }
 
    private void appendCanonicalizedHeaders(HttpRequest request, StringBuilder toSign) {

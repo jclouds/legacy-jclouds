@@ -32,7 +32,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import static org.jclouds.concurrent.ConcurrentUtils.*;
+import org.jclouds.concurrent.Futures;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandExecutorService;
@@ -111,10 +111,10 @@ public class AsyncGaeHttpCommandExecutorService implements HttpCommandExecutorSe
 
       HTTPRequest nativeRequest = filterLogAndConvertRe(command.getRequest());
 
-      ListenableFuture<HttpResponse> response = compose(urlFetchService.fetchAsync(nativeRequest),
+      ListenableFuture<HttpResponse> response = Futures.compose(urlFetchService.fetchAsync(nativeRequest),
                convertToJcloudsResponse, service);
 
-      return compose(response, new Function<HttpResponse, HttpResponse>() {
+      return Futures.compose(response, new Function<HttpResponse, HttpResponse>() {
 
          @Override
          public HttpResponse apply(HttpResponse response) {

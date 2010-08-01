@@ -32,7 +32,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import static org.jclouds.concurrent.ConcurrentUtils.*;
+import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
@@ -87,8 +87,8 @@ public class ExecutorServiceModule extends AbstractModule {
                && executor.getClass().getSimpleName().indexOf("SameThread") != -1) {
          Logger.CONSOLE.warn(
                   "please switch from %s to %s or annotate your same threaded executor with @SingleThreaded", executor
-                           .getClass().getName(), SameThreadExecutorService.class.getName());
-         return sameThreadExecutor();
+                           .getClass().getName(), MoreExecutors.SameThreadExecutorService.class.getName());
+         return MoreExecutors.sameThreadExecutor();
       }
       return executor;
    }

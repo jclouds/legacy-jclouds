@@ -56,7 +56,7 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.Crypto;
 
 import ${package}.${providerName};
 import ${package}.${providerName}Client;
@@ -85,9 +85,9 @@ public class ${providerName}RestClientModule  extends
    public BasicAuthentication provideBasicAuthentication(
             @Named(${providerName}Constants.PROPERTY_${ucaseProviderName}_USER) String user,
             @Named(${providerName}Constants.PROPERTY_${ucaseProviderName}_PASSWORD) String password,
-            EncryptionService encryptionService)
+            Crypto crypto)
             throws UnsupportedEncodingException {
-      return new BasicAuthentication(user, password, encryptionService);
+      return new BasicAuthentication(user, password, crypto);
    }
 
    @Provides

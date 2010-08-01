@@ -32,6 +32,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.chef.domain.User;
+import org.jclouds.crypto.Pems;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContext;
@@ -87,8 +88,8 @@ public class OpscodePlatformClientLiveTest {
    @Test(dependsOnMethods = "testListClientsInOrg")
    public void testCreateClientInOrg() throws Exception {
       validatorConnection.getApi().getChefClientForOrg(orgname).deleteClient(PREFIX);
-      clientKey = validatorConnection.utils().encryption().toPem(
-               validatorConnection.getApi().getChefClientForOrg(orgname).createClient(PREFIX).getPrivateKey());
+      clientKey = Pems.pem(validatorConnection.getApi().getChefClientForOrg(orgname).createClient(PREFIX)
+               .getPrivateKey());
       assertNotNull(clientKey);
       System.out.println(clientKey);
       clientConnection = createConnection(PREFIX, clientKey);
@@ -97,8 +98,8 @@ public class OpscodePlatformClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateClientInOrg")
    public void testGenerateKeyForClientInOrg() throws Exception {
-      clientKey = validatorConnection.utils().encryption().toPem(
-               validatorConnection.getApi().getChefClientForOrg(orgname).createClient(PREFIX).getPrivateKey());
+      clientKey = Pems.pem(validatorConnection.getApi().getChefClientForOrg(orgname).createClient(PREFIX)
+               .getPrivateKey());
       assertNotNull(clientKey);
       clientConnection.close();
       clientConnection = createConnection(PREFIX, clientKey);

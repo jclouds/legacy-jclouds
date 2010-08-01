@@ -36,13 +36,15 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.atmosonline.saas.reference.AtmosStorageHeaders;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
-import org.jclouds.encryption.EncryptionService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
+import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 
@@ -62,7 +64,7 @@ public class SignRequest implements HttpRequestFilter {
    private final String uid;
    private final byte[] key;
    private final Provider<String> timeStampProvider;
-   private final EncryptionService encryptionService;
+   private final Crypto crypto;
    private final HttpUtils utils;
 
    @Resource
@@ -74,20 +76,19 @@ public class SignRequest implements HttpRequestFilter {
 
    @Inject
    public SignRequest(SignatureWire signatureWire, @Named(PROPERTY_IDENTITY) String uid,
-            @Named(PROPERTY_CREDENTIAL) String encodedKey,
-            @TimeStamp Provider<String> timeStampProvider, EncryptionService encryptionService,
-            HttpUtils utils) {
+            @Named(PROPERTY_CREDENTIAL) String encodedKey, @TimeStamp Provider<String> timeStampProvider,
+            Crypto crypto, HttpUtils utils) {
       this.signatureWire = signatureWire;
       this.uid = uid;
-      this.key = encryptionService.fromBase64(encodedKey);
+      this.key = CryptoStreams.base64(encodedKey);
       this.timeStampProvider = timeStampProvider;
-      this.encryptionService = encryptionService;
+      this.crypto = crypto;
       this.utils = utils;
    }
 
    public void filter(HttpRequest request) throws HttpException {
-      String toSign = replaceUIDHeader(request).removeOldSignature(request).replaceDateHeader(
-               request).createStringToSign(request);
+      String toSign = replaceUIDHeader(request).removeOldSignature(request).replaceDateHeader(request)
+               .createStringToSign(request);
       calculateAndReplaceAuthHeader(request, toSign);
       utils.logRequest(signatureLog, request, "<<");
    }
@@ -111,19 +112,17 @@ public class SignRequest implements HttpRequestFilter {
       return buffer.toString();
    }
 
-   private void calculateAndReplaceAuthHeader(HttpRequest request, String toSign)
-            throws HttpException {
+   private void calculateAndReplaceAuthHeader(HttpRequest request, String toSign) throws HttpException {
       String signature = signString(toSign);
       if (signatureWire.enabled())
          signatureWire.input(Utils.toInputStream(signature));
-      request.getHeaders().replaceValues(AtmosStorageHeaders.SIGNATURE,
-               Collections.singletonList(signature));
+      request.getHeaders().replaceValues(AtmosStorageHeaders.SIGNATURE, Collections.singletonList(signature));
    }
 
    public String signString(String toSign) {
       String signature;
       try {
-         signature = encryptionService.base64(encryptionService.hmacSha1(toSign, key));
+         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(toSign), crypto.hmacSHA1(key)));
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }
@@ -140,8 +139,7 @@ public class SignRequest implements HttpRequestFilter {
    }
 
    SignRequest replaceDateHeader(HttpRequest request) {
-      request.getHeaders().replaceValues(HttpHeaders.DATE,
-               Collections.singletonList(timeStampProvider.get()));
+      request.getHeaders().replaceValues(HttpHeaders.DATE, Collections.singletonList(timeStampProvider.get()));
       return this;
    }
 
@@ -172,9 +170,8 @@ public class SignRequest implements HttpRequestFilter {
    }
 
    private void appendPayloadMetadata(HttpRequest request, StringBuilder buffer) {
-      buffer.append(
-               utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload()
-                        .getContentType())).append("\n");
+      buffer.append(utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentType()))
+               .append("\n");
    }
 
    @VisibleForTesting
@@ -182,8 +179,7 @@ public class SignRequest implements HttpRequestFilter {
       // Only the value is used, not the header
       // name. If a request does not include the header, this is an empty string.
       for (String header : new String[] { "Range" })
-         toSign.append(utils.valueOrEmpty(request.getHeaders().get(header)).toLowerCase()).append(
-                  "\n");
+         toSign.append(utils.valueOrEmpty(request.getHeaders().get(header)).toLowerCase()).append("\n");
       // Standard HTTP header, in UTC format. Only the date value is used, not the header name.
       toSign.append(request.getHeaders().get(HttpHeaders.DATE).iterator().next()).append("\n");
    }

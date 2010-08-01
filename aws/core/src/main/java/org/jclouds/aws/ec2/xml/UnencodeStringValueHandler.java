@@ -18,9 +18,7 @@
  */
 package org.jclouds.aws.ec2.xml;
 
-import javax.inject.Inject;
-
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 
 import com.google.common.base.Charsets;
 
@@ -32,12 +30,8 @@ import com.google.common.base.Charsets;
  */
 public class UnencodeStringValueHandler extends StringValueHandler {
 
-   @Inject
-   private EncryptionService encryptionService;
-
    @Override
    public String getResult() {
-      return super.getResult() == null ? null : new String(encryptionService.fromBase64(super
-               .getResult()), Charsets.UTF_8);
+      return super.getResult() == null ? null : new String(CryptoStreams.base64(super.getResult()), Charsets.UTF_8);
    }
 }

@@ -34,18 +34,18 @@ import javax.inject.Singleton;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.http.Payload;
-import org.jclouds.http.Payloads;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.BaseHttpCommandExecutorService;
+import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
@@ -78,8 +78,7 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
    private final DelegatingErrorHandler errorHandler;
 
    @Inject
-   public NingHttpCommandExecutorService(AsyncHttpClient client,
-            ConvertToNingRequest convertToNingRequest,
+   public NingHttpCommandExecutorService(AsyncHttpClient client, ConvertToNingRequest convertToNingRequest,
             ConvertToJCloudsResponse convertToJCloudsResponse, DelegatingRetryHandler retryHandler,
             DelegatingErrorHandler errorHandler) {
       this.client = client;
@@ -93,8 +92,7 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
    public ListenableFuture<HttpResponse> submit(HttpCommand command) {
       try {
          for (;;) {
-            Future<Response> responseF = client.executeRequest(convertToNingRequest.apply(command
-                     .getRequest()));
+            Future<Response> responseF = client.executeRequest(convertToNingRequest.apply(command.getRequest()));
             final HttpResponse httpResponse = convertToJCloudsResponse.apply(responseF.get());
             int statusCode = httpResponse.getStatusCode();
             if (statusCode >= 300) {
@@ -129,12 +127,6 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
 
    @Singleton
    public static class ConvertToNingRequest implements Function<HttpRequest, Request> {
-      private final EncryptionService encryptionService;
-
-      @Inject
-      ConvertToNingRequest(EncryptionService encryptionService) {
-         this.encryptionService = encryptionService;
-      }
 
       private static class PayloadEntityWriter implements EntityWriter {
          private final Payload payload;
@@ -177,14 +169,12 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
             boolean chunked = "chunked".equals(request.getFirstHeaderOrNull("Transfer-Encoding"));
 
             if (request.getPayload().getContentMD5() != null)
-               nativeRequestBuilder.addHeader("Content-MD5", encryptionService.base64(request
-                        .getPayload().getContentMD5()));
+               nativeRequestBuilder
+                        .addHeader("Content-MD5", CryptoStreams.base64(request.getPayload().getContentMD5()));
             if (request.getPayload().getContentType() != null)
-               nativeRequestBuilder.addHeader(HttpHeaders.CONTENT_TYPE, request.getPayload()
-                        .getContentType());
+               nativeRequestBuilder.addHeader(HttpHeaders.CONTENT_TYPE, request.getPayload().getContentType());
             if (!chunked) {
-               Long length = checkNotNull(request.getPayload().getContentLength(),
-                        "payload.getContentLength");
+               Long length = checkNotNull(request.getPayload().getContentLength(), "payload.getContentLength");
                nativeRequestBuilder.addHeader(HttpHeaders.CONTENT_LENGTH, length.toString());
             }
             setPayload(nativeRequestBuilder, payload);
@@ -220,8 +210,7 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
 
          InputStream in = null;
          try {
-            in = BaseHttpCommandExecutorService.consumeOnClose(nativeResponse
-                     .getResponseBodyAsStream());
+            in = BaseHttpCommandExecutorService.consumeOnClose(nativeResponse.getResponseBodyAsStream());
          } catch (IOException e) {
             Closeables.closeQuietly(in);
             propagate(e);
@@ -229,8 +218,8 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
          }
 
          Payload payload = in != null ? Payloads.newInputStreamPayload(in) : null;
-         HttpResponse response = new HttpResponse(nativeResponse.getStatusCode(), nativeResponse
-                  .getStatusText(), payload);
+         HttpResponse response = new HttpResponse(nativeResponse.getStatusCode(), nativeResponse.getStatusText(),
+                  payload);
          Multimap<String, String> headers = LinkedHashMultimap.create();
          for (Entry<String, List<String>> header : nativeResponse.getHeaders()) {
             headers.putAll(header.getKey(), header.getValue());

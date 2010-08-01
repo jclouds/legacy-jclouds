@@ -19,11 +19,9 @@
 package org.jclouds.aws.s3.blobstore;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.concurrent.ConcurrentUtils.compose;
 
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import com.google.common.util.concurrent.ListenableFuture;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -56,11 +54,13 @@ import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
+import org.jclouds.concurrent.Futures;
 import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * 
@@ -106,7 +106,7 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<PageSet<? extends StorageMetadata>> list() {
-      return compose(async.listOwnedBuckets(),
+      return Futures.compose(async.listOwnedBuckets(),
                new Function<Set<BucketMetadata>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
                   public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(Set<BucketMetadata> from) {
                      return new PageSetImpl<StorageMetadata>(Iterables.transform(from, bucket2ResourceMd), null);
@@ -150,9 +150,10 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
    public ListenableFuture<PageSet<? extends StorageMetadata>> list(String container, ListContainerOptions options) {
       ListBucketOptions httpOptions = container2BucketListOptions.apply(options);
       ListenableFuture<ListBucketResponse> returnVal = async.listBucket(container, httpOptions);
-      ListenableFuture<PageSet<? extends StorageMetadata>> list = compose(returnVal, bucket2ResourceList, service);
-      return (options.isDetailed()) ? compose(list, fetchBlobMetadataProvider.get().setContainerName(container),
-               service) : list;
+      ListenableFuture<PageSet<? extends StorageMetadata>> list = Futures.compose(returnVal, bucket2ResourceList,
+               service);
+      return (options.isDetailed()) ? Futures.compose(list,
+               fetchBlobMetadataProvider.get().setContainerName(container), service) : list;
    }
 
    /**
@@ -185,7 +186,7 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<BlobMetadata> blobMetadata(String container, String key) {
-      return compose(async.headObject(container, key), new Function<ObjectMetadata, BlobMetadata>() {
+      return Futures.compose(async.headObject(container, key), new Function<ObjectMetadata, BlobMetadata>() {
 
          @Override
          public BlobMetadata apply(ObjectMetadata from) {
@@ -206,7 +207,7 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
    @Override
    public ListenableFuture<Blob> getBlob(String container, String key, org.jclouds.blobstore.options.GetOptions options) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(options);
-      return compose(async.getObject(container, key, httpOptions), object2Blob, service);
+      return Futures.compose(async.getObject(container, key, httpOptions), object2Blob, service);
    }
 
    /**

@@ -20,8 +20,6 @@ package org.jclouds.concurrent;
 
 import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Maps.newHashMap;
-import static org.jclouds.concurrent.ConcurrentUtils.compose;
-import static org.jclouds.concurrent.ConcurrentUtils.makeListenable;
 
 import java.util.Collections;
 import java.util.Map;
@@ -75,7 +73,7 @@ public class FuturesTestingUtils {
       long start = System.currentTimeMillis();
       Map<String, Future<Long>> responses = newHashMap();
       for (int i = 0; i < COUNT; i++)
-         responses.put(i + "", compose(createFuture(callableExecutor, chainExecutor), new Function<Long, Long>() {
+         responses.put(i + "", org.jclouds.concurrent.Futures.compose(createFuture(callableExecutor, chainExecutor), new Function<Long, Long>() {
 
             @Override
             public Long apply(Long from) {
@@ -99,7 +97,7 @@ public class FuturesTestingUtils {
    }
 
    private static ListenableFuture<Long> createFuture(ExecutorService callableExecutor, ExecutorService chainExecutor) {
-      return makeListenable(callableExecutor.submit(new Callable<Long>() {
+      return org.jclouds.concurrent.Futures.makeListenable(callableExecutor.submit(new Callable<Long>() {
 
          @Override
          public Long call() throws Exception {

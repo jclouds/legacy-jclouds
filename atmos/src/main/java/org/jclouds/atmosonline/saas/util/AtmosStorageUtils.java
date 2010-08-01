@@ -30,7 +30,8 @@ import org.jclouds.atmosonline.saas.domain.AtmosStorageError;
 import org.jclouds.atmosonline.saas.filters.SignRequest;
 import org.jclouds.atmosonline.saas.xml.ErrorHandler;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.Crypto;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
@@ -56,10 +57,9 @@ public class AtmosStorageUtils {
    @Inject
    Provider<ErrorHandler> errorHandlerProvider;
 
-   public AtmosStorageError parseAtmosStorageErrorFromContent(HttpCommand command,
-            HttpResponse response, InputStream content) throws HttpException {
-      AtmosStorageError error = (AtmosStorageError) factory.create(errorHandlerProvider.get())
-               .parse(content);
+   public AtmosStorageError parseAtmosStorageErrorFromContent(HttpCommand command, HttpResponse response,
+            InputStream content) throws HttpException {
+      AtmosStorageError error = (AtmosStorageError) factory.create(errorHandlerProvider.get()).parse(content);
       if (error.getCode() == 1032) {
          error.setStringSigned(signer.createStringToSign(command.getRequest()));
       }
@@ -67,13 +67,12 @@ public class AtmosStorageUtils {
 
    }
 
-   public static String putBlob(final AtmosStorageClient sync, EncryptionService encryptionService,
-            BlobToObject blob2Object, String container, Blob blob) {
+   public static String putBlob(final AtmosStorageClient sync, Crypto crypto, BlobToObject blob2Object,
+            String container, Blob blob) {
       final String path = container + "/" + blob.getMetadata().getName();
       deleteAndEnsureGone(sync, path);
       if (blob.getMetadata().getContentMD5() != null)
-         blob.getMetadata().getUserMetadata().put("content-md5",
-                  encryptionService.hex(blob.getMetadata().getContentMD5()));
+         blob.getMetadata().getUserMetadata().put("content-md5", CryptoStreams.hex(blob.getMetadata().getContentMD5()));
       sync.createFile(container, blob2Object.apply(blob));
       return path;
    }
@@ -93,10 +92,9 @@ public class AtmosStorageUtils {
       }
    }
 
-   public AtmosStorageError parseAtmosStorageErrorFromContent(HttpCommand command,
-            HttpResponse response, String content) throws HttpException {
-      return parseAtmosStorageErrorFromContent(command, response, new ByteArrayInputStream(content
-               .getBytes()));
+   public AtmosStorageError parseAtmosStorageErrorFromContent(HttpCommand command, HttpResponse response, String content)
+            throws HttpException {
+      return parseAtmosStorageErrorFromContent(command, response, new ByteArrayInputStream(content.getBytes()));
    }
 
    public static String adjustContainerIfDirOptionPresent(String container,

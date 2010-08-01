@@ -29,7 +29,7 @@ import org.jclouds.aws.s3.blobstore.functions.BlobToObjectMetadata;
 import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
-import org.jclouds.encryption.EncryptionService;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
@@ -45,20 +45,16 @@ import com.google.common.base.Function;
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/RESTObjectGET.html" />
  * @author Adrian Cole
  */
-public class ParseObjectMetadataFromHeaders implements
-         Function<HttpResponse, MutableObjectMetadata>, InvocationContext {
+public class ParseObjectMetadataFromHeaders implements Function<HttpResponse, MutableObjectMetadata>, InvocationContext {
    private final ParseSystemAndUserMetadataFromHeaders blobMetadataParser;
    private final BlobToObjectMetadata blobToObjectMetadata;
-   private final EncryptionService encryptionService;
    private final String userMdPrefix;
 
    @Inject
    public ParseObjectMetadataFromHeaders(ParseSystemAndUserMetadataFromHeaders blobMetadataParser,
-            BlobToObjectMetadata blobToObjectMetadata, EncryptionService encryptionService,
-            @Named(PROPERTY_USER_METADATA_PREFIX) String userMdPrefix) {
+            BlobToObjectMetadata blobToObjectMetadata, @Named(PROPERTY_USER_METADATA_PREFIX) String userMdPrefix) {
       this.blobMetadataParser = blobMetadataParser;
       this.blobToObjectMetadata = blobToObjectMetadata;
-      this.encryptionService = encryptionService;
       this.userMdPrefix = userMdPrefix;
    }
 
@@ -71,7 +67,7 @@ public class ParseObjectMetadataFromHeaders implements
       MutableObjectMetadata to = blobToObjectMetadata.apply(base);
       addETagTo(from, to);
       to.setSize(attemptToParseSizeAndRangeFromHeaders(from));
-      to.setContentMD5(encryptionService.fromHex(Utils.replaceAll(to.getETag(), '"', "")));
+      to.setContentMD5(CryptoStreams.hex(Utils.replaceAll(to.getETag(), '"', "")));
       to.setCacheControl(from.getFirstHeaderOrNull(HttpHeaders.CACHE_CONTROL));
       to.setContentDisposition(from.getFirstHeaderOrNull("Content-Disposition"));
       to.setContentEncoding(from.getFirstHeaderOrNull(HttpHeaders.CONTENT_ENCODING));

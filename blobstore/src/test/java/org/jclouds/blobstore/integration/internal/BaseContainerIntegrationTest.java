@@ -23,9 +23,9 @@ import static com.google.common.collect.Iterables.get;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.afterMarker;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.inDirectory;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
-import static org.jclouds.util.Utils.toInputStream;
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -37,6 +37,9 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.io.InputSuppliers;
+import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;
 
 /**
@@ -68,7 +71,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
    }
 
    @Test(groups = { "integration", "live" })
-   public void testWithDetails() throws InterruptedException {
+   public void testWithDetails() throws InterruptedException, IOException {
       String key = "hello";
 
       Blob object = context.getBlobStore().newBlob(key);
@@ -79,7 +82,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
       // normalize the
       // providers.
       object.getMetadata().getUserMetadata().put("Adrian", "powderpuff");
-      object.getMetadata().setContentMD5(context.utils().encryption().md5(toInputStream(TEST_STRING)));
+      Payloads.calculateMD5(object, context.utils().crypto().md5());
       String containerName = getContainerName();
       try {
          addBlobToContainer(containerName, object);
@@ -93,7 +96,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
          assert metadata.getContentType().startsWith("text/plain") : metadata.getContentType();
          assertEquals(metadata.getSize(), new Long(TEST_STRING.length()));
          assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
-         assertEquals(metadata.getContentMD5(), context.utils().encryption().md5(toInputStream(TEST_STRING)));
+         assertEquals(metadata.getContentMD5(), CryptoStreams.md5(InputSuppliers.of(TEST_STRING)));
       } finally {
          returnContainer(containerName);
       }
