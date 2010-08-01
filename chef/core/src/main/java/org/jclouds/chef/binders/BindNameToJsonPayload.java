@@ -21,52 +21,26 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.chef.domain;
+package org.jclouds.chef.binders;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import javax.inject.Singleton;
+import javax.ws.rs.core.MediaType;
 
-import org.jclouds.domain.JsonBall;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.binders.BindToStringPayload;
 
 /**
  * 
  * @author Adrian Cole
+ * 
  */
-public class DatabagItem extends JsonBall {
-
-   private static final long serialVersionUID = 7905637919304343493L;
-   private final String id;
-
-   public DatabagItem(String id, String value) {
-      super(value);
-      this.id = checkNotNull(id, "id");
-   }
+@Singleton
+public class BindNameToJsonPayload extends BindToStringPayload {
 
    @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
-      return result;
+   public void bindToRequest(HttpRequest request, Object payload) {
+      super.bindToRequest(request, String.format("{\"name\":\"%s\"}", payload));
+      request.getPayload().setContentType(MediaType.APPLICATION_JSON);
    }
 
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      DatabagItem other = (DatabagItem) obj;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
-         return false;
-      return true;
-   }
-
-   public String getId() {
-      return id;
-   }
 }

@@ -23,9 +23,12 @@
  */
 package org.jclouds.opscodeplatform;
 
+import java.util.Set;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -34,17 +37,21 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.chef.ChefAsyncClient;
 import org.jclouds.chef.ChefClient;
-import org.jclouds.chef.domain.Organization;
-import org.jclouds.chef.domain.User;
 import org.jclouds.chef.filters.SignedHeaderAuth;
-import org.jclouds.chef.functions.OrganizationName;
-import org.jclouds.chef.functions.Username;
+import org.jclouds.chef.functions.ParseKeySetFromJson;
+import org.jclouds.opscodeplatform.config.OrganizationName;
+import org.jclouds.opscodeplatform.config.Username;
+import org.jclouds.opscodeplatform.domain.Organization;
+import org.jclouds.opscodeplatform.domain.User;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.binders.BindToJsonPayload;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -61,33 +68,50 @@ import com.google.common.util.concurrent.ListenableFuture;
 @Consumes(MediaType.APPLICATION_JSON)
 public interface OpscodePlatformAsyncClient {
    /**
-    * @see ChefCookbooks#listCookbooksInOrg
+    * @see ChefCookbooks#listCookbooksInOrganization
     */
    @Delegate
-   @Path("/organizations/{orgname}")
-   ChefAsyncClient getChefClientForOrg(@PathParam("orgname") String orgname);
+   @Path("organizations/{orgname}")
+   ChefAsyncClient getChefClientForOrganization(@PathParam("orgname") String orgname);
+
+   /**
+    * @see ChefUser#listUsers
+    */
+   @GET
+   @Path("users")
+   @ResponseParser(ParseKeySetFromJson.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<Set<String>> listUsers();
+
+   /**
+    * @see ChefRole#userExists
+    */
+   @HEAD
+   @Path("users/{username}")
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   ListenableFuture<Boolean> userExists(@PathParam("username") String username);
 
    /**
     * @see ChefClient#createUser
     */
    @POST
-   @Path("/users")
+   @Path("users")
    ListenableFuture<User> createUser(@BinderParam(BindToJsonPayload.class) User user);
 
    /**
     * @see ChefClient#updateUser
     */
    @PUT
-   @Path("/users/{username}")
+   @Path("users/{username}")
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<User> updateUser(
-            @PathParam("username") @ParamParser(Username.class) @BinderParam(BindToJsonPayload.class) User user);
+         @PathParam("username") @ParamParser(Username.class) @BinderParam(BindToJsonPayload.class) User user);
 
    /**
     * @see ChefClient#getUser
     */
    @GET
-   @Path("/users/{username}")
+   @Path("users/{username}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<User> getUser(@PathParam("username") String username);
@@ -96,43 +120,60 @@ public interface OpscodePlatformAsyncClient {
     * @see ChefClient#deleteUser
     */
    @DELETE
-   @Path("/users/{username}")
+   @Path("users/{username}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(MediaType.APPLICATION_JSON)
    ListenableFuture<User> deleteUser(@PathParam("username") String username);
 
    /**
-    * @see ChefClient#createOrg
-    */
-   @POST
-   @Path("/organizations")
-   ListenableFuture<Organization> createOrg(@BinderParam(BindToJsonPayload.class) Organization org);
-
-   /**
-    * @see ChefClient#updateOrg
-    */
-   @PUT
-   @Path("/organizations/{orgname}")
-   @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Organization> updateOrg(
-            @PathParam("orgname") @ParamParser(OrganizationName.class) @BinderParam(BindToJsonPayload.class) Organization org);
-
-   /**
-    * @see ChefClient#getOrg
+    * @see ChefOrganization#listOrganizations
     */
    @GET
-   @Path("/organizations/{orgname}")
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Organization> getOrg(@PathParam("orgname") String orgname);
+   @Path("organizations")
+   @ResponseParser(ParseKeySetFromJson.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<Set<String>> listOrganizations();
 
    /**
-    * @see ChefClient#deleteOrg
+    * @see ChefRole#organizationExists
     */
-   @DELETE
-   @Path("/organizations/{orgname}")
+   @HEAD
+   @Path("organizations/{organizationname}")
+   @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
+   ListenableFuture<Boolean> organizationExists(@PathParam("organizationname") String organizationname);
+
+   /**
+    * @see ChefClient#createOrganization
+    */
+   @POST
+   @Path("organizations")
+   ListenableFuture<Organization> createOrganization(@BinderParam(BindToJsonPayload.class) Organization org);
+
+   /**
+    * @see ChefClient#updateOrganization
+    */
+   @PUT
+   @Path("organizations/{orgname}")
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Organization> updateOrganization(
+         @PathParam("orgname") @ParamParser(OrganizationName.class) @BinderParam(BindToJsonPayload.class) Organization org);
+
+   /**
+    * @see ChefClient#getOrganization
+    */
+   @GET
+   @Path("organizations/{orgname}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(MediaType.APPLICATION_JSON)
-   ListenableFuture<Organization> deleteOrg(@PathParam("orgname") String orgname);
+   ListenableFuture<Organization> getOrganization(@PathParam("orgname") String orgname);
+
+   /**
+    * @see ChefClient#deleteOrganization
+    */
+   @DELETE
+   @Path("organizations/{orgname}")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Consumes(MediaType.APPLICATION_JSON)
+   ListenableFuture<Organization> deleteOrganization(@PathParam("orgname") String orgname);
 
 }

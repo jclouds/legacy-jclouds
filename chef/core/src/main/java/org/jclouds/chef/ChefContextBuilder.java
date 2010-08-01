@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,19 +22,15 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.chef.config.ChefRestClientModule;
-import org.jclouds.ohai.config.ConfiguresOhai;
-import org.jclouds.ohai.config.JMXOhaiJVMModule;
-import org.jclouds.rest.RestContextBuilder;
+import org.jclouds.ohai.OhaiContextBuilder;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
  * @author Adrian Cole
  */
-public class ChefContextBuilder extends RestContextBuilder<ChefClient, ChefAsyncClient> {
+public class ChefContextBuilder extends OhaiContextBuilder<ChefClient, ChefAsyncClient> {
 
    public ChefContextBuilder(Properties props) {
       super(ChefClient.class, ChefAsyncClient.class, props);
@@ -64,20 +60,5 @@ public class ChefContextBuilder extends RestContextBuilder<ChefClient, ChefAsync
    public ChefContext buildContext() {
       Injector injector = buildInjector();
       return injector.getInstance(ChefContext.class);
-   }
-
-   protected void addOhaiModuleIfNotPresent() {
-      if (!Iterables.any(modules, new Predicate<Module>() {
-         public boolean apply(Module input) {
-            return input.getClass().isAnnotationPresent(ConfiguresOhai.class);
-         }
-
-      })) {
-         addOhaiModule();
-      }
-   }
-
-   protected void addOhaiModule() {
-      modules.add(new JMXOhaiJVMModule());
    }
 }

@@ -39,7 +39,7 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.opscodeplatform.config;
+package org.jclouds.opscodeplatform.functions;
 
 import java.util.Map;
 

@@ -16,22 +16,23 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.chef;
+package org.jclouds.chef.binders;
 
-import org.jclouds.chef.internal.ChefContextImpl;
-import org.jclouds.rest.RestContext;
+import javax.inject.Singleton;
 
-import com.google.inject.ImplementedBy;
+import org.jclouds.chef.domain.DatabagItem;
+
+import com.google.common.base.Function;
 
 /**
  * 
- * 
  * @author Adrian Cole
- * 
  */
-@ImplementedBy(ChefContextImpl.class)
-public interface ChefContext extends RestContext<ChefClient, ChefAsyncClient>{
+@Singleton
+public class DatabagItemId implements Function<Object, String> {
 
-   ChefService getChefService();
+   public String apply(Object from) {
+      return ((DatabagItem) from).getId();
+   }
 
 }

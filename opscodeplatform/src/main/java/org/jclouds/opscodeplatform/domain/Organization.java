@@ -16,7 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.chef.domain;
+package org.jclouds.opscodeplatform.domain;
 
 import java.security.PrivateKey;
 

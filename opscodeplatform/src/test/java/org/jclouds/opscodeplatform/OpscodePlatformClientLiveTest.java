@@ -24,6 +24,7 @@
 package org.jclouds.opscodeplatform;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.File;
@@ -31,19 +32,26 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jclouds.chef.domain.User;
-import org.jclouds.crypto.Pems;
+import org.jclouds.chef.BaseChefClientLiveTest;
+import org.jclouds.chef.ChefClient;
+import org.jclouds.chef.config.ChefParserModule;
+import org.jclouds.http.HttpResponseException;
+import org.jclouds.json.Json;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.RestContext;
+import org.jclouds.opscodeplatform.domain.Organization;
+import org.jclouds.opscodeplatform.domain.User;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContextFactory;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.io.Files;
+import com.google.inject.Guice;
 import com.google.inject.Module;
 
 /**
@@ -52,122 +60,163 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", testName = "chef.OpscodePlatformClientLiveTest")
-public class OpscodePlatformClientLiveTest {
+public class OpscodePlatformClientLiveTest extends BaseChefClientLiveTest {
 
-   private RestContext<OpscodePlatformClient, OpscodePlatformAsyncClient> validatorConnection;
-   private RestContext<OpscodePlatformClient, OpscodePlatformAsyncClient> clientConnection;
+   private OpscodePlatformContext validatorConnection;
+   private OpscodePlatformContext clientConnection;
+   private OpscodePlatformContext adminConnection;
 
-   private String orgname;
-   private String clientKey;
+   private String validator;
 
-   public static final String PREFIX = System.getProperty("user.name") + "-jcloudstest";
-
+   @Override
    @BeforeClass(groups = { "live" })
    public void setupClient() throws IOException {
-      orgname = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
+      validator = checkNotNull(System.getProperty("jclouds.test.validator"), "jclouds.test.validator");
+      orgname = Iterables.get(Splitter.on('-').split(validator), 0);
+      String validatorKey = System.getProperty("jclouds.test.validator.key");
+      if (validatorKey == null || validatorKey.equals(""))
+         validatorKey = System.getProperty("user.home") + "/.chef/" + orgname + "-validator.pem";
+      user = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
       String keyfile = System.getProperty("jclouds.test.credential");
       if (keyfile == null || keyfile.equals(""))
-         keyfile = "/etc/chef/validation.pem";
-      validatorConnection = createConnection(orgname + "-validator", Files.toString(new File(keyfile), Charsets.UTF_8));
+         keyfile = System.getProperty("user.home") + "/.chef/" + user + ".pem";
+
+      validatorConnection = createConnection(validator, Files.toString(new File(validatorKey), Charsets.UTF_8));
+      adminConnection = createConnection(user, Files.toString(new File(keyfile), Charsets.UTF_8));
+      json = Guice.createInjector(new GsonModule(), new ChefParserModule()).getInstance(Json.class);
    }
 
-   private RestContext<OpscodePlatformClient, OpscodePlatformAsyncClient> createConnection(String identity, String key)
-            throws IOException {
+   private OpscodePlatformContext createConnection(String identity, String key) throws IOException {
       Properties props = new Properties();
-      return new RestContextFactory().createContext("opscodeplatform", identity, key, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()), props);
+      return (OpscodePlatformContext) new RestContextFactory()
+            .<OpscodePlatformClient, OpscodePlatformAsyncClient> createContext("opscodeplatform", identity, key,
+                  ImmutableSet.<Module> of(new Log4JLoggingModule()), props);
    }
 
-   @Test
-   public void testListClientsInOrg() throws Exception {
-      Set<String> clients = validatorConnection.getApi().getChefClientForOrg(orgname).listClients();
-      assertNotNull(clients);
-      assert clients.contains(orgname + "-validator");
+   @Override
+   protected HttpClient getHttp() {
+      return adminConnection.utils().http();
    }
 
-   @Test(dependsOnMethods = "testListClientsInOrg")
-   public void testCreateClientInOrg() throws Exception {
-      validatorConnection.getApi().getChefClientForOrg(orgname).deleteClient(PREFIX);
-      clientKey = Pems.pem(validatorConnection.getApi().getChefClientForOrg(orgname).createClient(PREFIX)
-               .getPrivateKey());
-      assertNotNull(clientKey);
-      System.out.println(clientKey);
+   @Override
+   protected ChefClient getAdminConnection() {
+      return adminConnection.getApi().getChefClientForOrganization(orgname);
+   }
+
+   @Override
+   protected ChefClient getValidatorConnection() {
+      return validatorConnection.getApi().getChefClientForOrganization(orgname);
+   }
+
+   @Override
+   protected ChefClient getClientConnection() {
+      return clientConnection.getApi().getChefClientForOrganization(orgname);
+   }
+
+   @Override
+   protected void recreateClientConnection() throws IOException {
+      if (clientConnection != null)
+         clientConnection.close();
       clientConnection = createConnection(PREFIX, clientKey);
-      clientConnection.getApi().getChefClientForOrg(orgname).clientExists(PREFIX);
    }
 
-   @Test(dependsOnMethods = "testCreateClientInOrg")
-   public void testGenerateKeyForClientInOrg() throws Exception {
-      clientKey = Pems.pem(validatorConnection.getApi().getChefClientForOrg(orgname).createClient(PREFIX)
-               .getPrivateKey());
-      assertNotNull(clientKey);
-      clientConnection.close();
-      clientConnection = createConnection(PREFIX, clientKey);
-      clientConnection.getApi().getChefClientForOrg(orgname).clientExists(PREFIX);
-   }
-
-   @Test(dependsOnMethods = "testCreateClientInOrg")
-   public void testClientExistsInOrg() throws Exception {
-      assertNotNull(validatorConnection.getApi().getChefClientForOrg(orgname).clientExists(PREFIX));
-   }
-
-   @Test(expectedExceptions = AuthorizationException.class)
-   public void testGetOrgFailsForValidationKey() throws Exception {
-      validatorConnection.getApi().getOrg(orgname);
-   }
-
-   @Test(dependsOnMethods = "testGenerateKeyForClientInOrg", expectedExceptions = AuthorizationException.class)
-   public void testGetOrgFailsForClient() throws Exception {
-      clientConnection.getApi().getOrg(orgname);
-   }
-
-   @Test(enabled = false)
-   public void testGetUser() throws Exception {
-      User user = validatorConnection.getApi().getUser(orgname);
-      assertNotNull(user);
-   }
-
-   @Test(enabled = false)
-   public void testCreateUser() throws Exception {
-      // TODO
-   }
-
-   @Test(enabled = false)
-   public void testUpdateUser() throws Exception {
-      // TODO
-   }
-
-   @Test(enabled = false)
-   public void testDeleteUser() throws Exception {
-      // TODO
-   }
-
-   @Test(enabled = false)
-   public void testCreateOrg() throws Exception {
-      // TODO
-   }
-
-   @Test(enabled = false)
-   public void testUpdateOrg() throws Exception {
-      // TODO
-   }
-
-   @Test(enabled = false)
-   public void testDeleteOrg() throws Exception {
-      // TODO
-
-   }
-
-   @Test(dependsOnMethods = "testGenerateKeyForClientInOrg")
-   public void testListCookbooksInOrg() throws Exception {
-      System.err.println(clientConnection.getApi().getChefClientForOrg(orgname).listCookbooks());
-   }
-
-   @AfterClass(groups = { "live" })
-   public void teardownClient() throws IOException {
+   @Override
+   protected void closeContexts() {
+      if (orgUser != null)
+         adminConnection.getApi().deleteUser(PREFIX);
+      if (org != null)
+         adminConnection.getApi().deleteOrganization(PREFIX);
       if (clientConnection != null)
          clientConnection.close();
       if (validatorConnection != null)
          validatorConnection.close();
+      if (adminConnection != null)
+         adminConnection.close();
+   }
+
+   private String orgname;
+   private Organization org;
+   private User orgUser;
+
+   // http://tickets.corp.opscode.com/browse/PL-524
+   @Test(expectedExceptions = HttpResponseException.class)
+   public void testListOrganizations() throws Exception {
+      Set<String> orgs = adminConnection.getApi().listOrganizations();
+      assertNotNull(orgs);
+   }
+
+   // http://tickets.corp.opscode.com/browse/PL-524
+   @Test(expectedExceptions = HttpResponseException.class)
+   public void testCreateOrganization() throws Exception {
+      adminConnection.getApi().deleteOrganization(PREFIX);
+      adminConnection.getApi().createOrganization(new Organization(PREFIX));
+      org = adminConnection.getApi().getOrganization(PREFIX);
+      assertNotNull(org);
+      assertEquals(org.getName(), PREFIX);
+      assertEquals(org.getClientname(), PREFIX + "-validator");
+   }
+
+   // http://tickets.corp.opscode.com/browse/PL-524
+   @Test(expectedExceptions = HttpResponseException.class)
+   public void testOrganizationExists() throws Exception {
+      assertNotNull(adminConnection.getApi().organizationExists(orgname));
+   }
+
+   @Test(enabled = false, dependsOnMethods = "testCreateOrganization")
+   public void testUpdateOrganization() throws Exception {
+      Organization org = adminConnection.getApi().getOrganization(PREFIX);
+      adminConnection.getApi().updateOrganization(org);
+   }
+
+   // http://tickets.corp.opscode.com/browse/PL-524
+   @Test(expectedExceptions = HttpResponseException.class)
+   public void testGetOrganization() throws Exception {
+      adminConnection.getApi().getOrganization(orgname);
+   }
+
+   // http://tickets.corp.opscode.com/browse/PL-524
+   @Test(expectedExceptions = HttpResponseException.class)
+   public void testListUsers() throws Exception {
+      Set<String> orgs = adminConnection.getApi().listUsers();
+      assertNotNull(orgs);
+   }
+
+   // http://tickets.corp.opscode.com/browse/PL-524
+   @Test(expectedExceptions = HttpResponseException.class)
+   public void testCreateUser() throws Exception {
+      adminConnection.getApi().deleteUser(PREFIX);
+      adminConnection.getApi().createUser(new User(PREFIX));
+      orgUser = adminConnection.getApi().getUser(PREFIX);
+      assertNotNull(orgUser);
+      assertEquals(orgUser.getUsername(), PREFIX);
+      assertNotNull(orgUser.getPrivateKey());
+   }
+
+   // http://tickets.corp.opscode.com/browse/PL-524
+   @Test(expectedExceptions = HttpResponseException.class)
+   public void testUserExists() throws Exception {
+      assertNotNull(adminConnection.getApi().userExists(user));
+   }
+
+   // http://tickets.corp.opscode.com/browse/PL-524
+   @Test(expectedExceptions = HttpResponseException.class)
+   public void testGetUser() throws Exception {
+      adminConnection.getApi().getUser(user);
+   }
+
+   @Test(enabled = false, dependsOnMethods = "testCreateUser")
+   public void testUpdateUser() throws Exception {
+      User user = adminConnection.getApi().getUser(PREFIX);
+      adminConnection.getApi().updateUser(user);
+   }
+
+   @Test(expectedExceptions = HttpResponseException.class)
+   public void testGetOrganizationFailsForValidationKey() throws Exception {
+      validatorConnection.getApi().getOrganization(orgname);
+   }
+
+   @Test(dependsOnMethods = "testGenerateKeyForClient", expectedExceptions = HttpResponseException.class)
+   public void testGetOrganizationFailsForClient() throws Exception {
+      clientConnection.getApi().getOrganization(orgname);
    }
 }

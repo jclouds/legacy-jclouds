@@ -16,18 +16,17 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.chef.internal;
+package org.jclouds.opscodeplatform.internal;
 
 import java.net.URI;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.chef.ChefAsyncClient;
-import org.jclouds.chef.ChefClient;
-import org.jclouds.chef.ChefContext;
-import org.jclouds.chef.ChefService;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.opscodeplatform.OpscodePlatformAsyncClient;
+import org.jclouds.opscodeplatform.OpscodePlatformClient;
+import org.jclouds.opscodeplatform.OpscodePlatformContext;
 import org.jclouds.rest.Utils;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.annotations.Identity;
@@ -41,20 +40,14 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 @Singleton
-public class ChefContextImpl extends RestContextImpl<ChefClient, ChefAsyncClient> implements ChefContext {
-   private final ChefService chefService;
+public class OpscodePlatformContextImpl extends RestContextImpl<OpscodePlatformClient, OpscodePlatformAsyncClient>
+      implements OpscodePlatformContext {
 
    @Inject
-   protected ChefContextImpl(Closer closer, Utils utils, Injector injector, TypeLiteral<ChefClient> syncApi,
-         TypeLiteral<ChefAsyncClient> asyncApi, @Provider URI endpoint, @Provider String provider,
-         @Identity String identity, @ApiVersion String apiVersion, ChefService chefService) {
+   protected OpscodePlatformContextImpl(Closer closer, Utils utils, Injector injector,
+         TypeLiteral<OpscodePlatformClient> syncApi, TypeLiteral<OpscodePlatformAsyncClient> asyncApi,
+         @Provider URI endpoint, @Provider String provider, @Identity String identity, @ApiVersion String apiVersion) {
       super(closer, utils, injector, syncApi, asyncApi, endpoint, provider, identity, apiVersion);
-      this.chefService = chefService;
-   }
-
-   @Override
-   public ChefService getChefService() {
-      return chefService;
    }
 
 }

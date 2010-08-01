@@ -32,6 +32,7 @@ import java.util.Set;
 
 import org.jclouds.chef.config.ChefRestClientModule;
 import org.jclouds.chef.domain.CookbookVersion;
+import org.jclouds.chef.domain.DatabagItem;
 import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.domain.Role;
 import org.jclouds.chef.filters.SignedHeaderAuth;
@@ -51,6 +52,7 @@ import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
@@ -73,9 +75,9 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
       Method method = ChefAsyncClient.class.getMethod("commitSandbox", String.class, boolean.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method,
-               "0189e76ccc476701d6b374e5a1a27347", true);
+            "0189e76ccc476701d6b374e5a1a27347", true);
       assertRequestLineEquals(httpRequest,
-               "PUT http://localhost:4000/sandboxes/0189e76ccc476701d6b374e5a1a27347 HTTP/1.1");
+            "PUT http://localhost:4000/sandboxes/0189e76ccc476701d6b374e5a1a27347 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, "{\"is_completed\":\"true\"}", "application/json", false);
 
@@ -90,15 +92,15 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
    public void testGetUploadSandboxForChecksums() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ChefAsyncClient.class.getMethod("getUploadSandboxForChecksums", Set.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, ImmutableSet.of(Bytes
-               .asList(CryptoStreams.hex("0189e76ccc476701d6b374e5a1a27347")), Bytes.asList(CryptoStreams
-               .hex("0c5ecd7788cf4f6c7de2a57193897a6c")), Bytes.asList(CryptoStreams
-               .hex("1dda05ed139664f1f89b9dec482b77c0"))));
+            .asList(CryptoStreams.hex("0189e76ccc476701d6b374e5a1a27347")), Bytes.asList(CryptoStreams
+            .hex("0c5ecd7788cf4f6c7de2a57193897a6c")), Bytes.asList(CryptoStreams
+            .hex("1dda05ed139664f1f89b9dec482b77c0"))));
       assertRequestLineEquals(httpRequest, "POST http://localhost:4000/sandboxes HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
-               httpRequest,
-               "{\"checksums\":{\"0189e76ccc476701d6b374e5a1a27347\":null,\"0c5ecd7788cf4f6c7de2a57193897a6c\":null,\"1dda05ed139664f1f89b9dec482b77c0\":null}}",
-               "application/json", false);
+            httpRequest,
+            "{\"checksums\":{\"0189e76ccc476701d6b374e5a1a27347\":null,\"0c5ecd7788cf4f6c7de2a57193897a6c\":null,\"1dda05ed139664f1f89b9dec482b77c0\":null}}",
+            "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -140,16 +142,16 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
 
    public void testUpdateCookbook() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ChefAsyncClient.class.getMethod("updateCookbook", String.class, String.class,
-               CookbookVersion.class);
+            CookbookVersion.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "cookbook", "1.0.1",
-               new CookbookVersion("cookbook", "1.0.1"));
+            new CookbookVersion("cookbook", "1.0.1"));
 
       assertRequestLineEquals(httpRequest, "PUT http://localhost:4000/cookbooks/cookbook/1.0.1 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
-               httpRequest,
-               "{\"name\":\"cookbook-1.0.1\",\"definitions\":[],\"attributes\":[],\"files\":[],\"metadata\":{\"suggestions\":{},\"dependencies\":{},\"conflicting\":{},\"providing\":{},\"platforms\":{},\"recipes\":{},\"replacing\":{},\"groupings\":{},\"attributes\":{},\"recommendations\":{}},\"providers\":[],\"cookbook_name\":\"cookbook\",\"resources\":[],\"templates\":[],\"libraries\":[],\"version\":\"1.0.1\",\"recipes\":[],\"root_files\":[],\"json_class\":\"Chef::CookbookVersion\",\"chef_type\":\"cookbook_version\"}",
-               "application/json", false);
+            httpRequest,
+            "{\"name\":\"cookbook-1.0.1\",\"definitions\":[],\"attributes\":[],\"files\":[],\"metadata\":{\"suggestions\":{},\"dependencies\":{},\"conflicting\":{},\"providing\":{},\"platforms\":{},\"recipes\":{},\"replacing\":{},\"groupings\":{},\"attributes\":{},\"recommendations\":{}},\"providers\":[],\"cookbook_name\":\"cookbook\",\"resources\":[],\"templates\":[],\"libraries\":[],\"version\":\"1.0.1\",\"recipes\":[],\"root_files\":[],\"json_class\":\"Chef::CookbookVersion\",\"chef_type\":\"cookbook_version\"}",
+            "application/json", false);
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
@@ -284,14 +286,14 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
    public void testCreateNode() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ChefAsyncClient.class.getMethod("createNode", Node.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, new Node("testnode",
-               ImmutableSet.of("recipe[java]")));
+            ImmutableSet.of("recipe[java]")));
 
       assertRequestLineEquals(httpRequest, "POST http://localhost:4000/nodes HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
-               httpRequest,
-               "{\"name\":\"testnode\",\"normal\":{},\"override\":{},\"default\":{},\"automatic\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Node\",\"chef_type\":\"node\"}",
-               "application/json", false);
+            httpRequest,
+            "{\"name\":\"testnode\",\"normal\":{},\"override\":{},\"default\":{},\"automatic\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Node\",\"chef_type\":\"node\"}",
+            "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -304,14 +306,14 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
    public void testUpdateNode() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ChefAsyncClient.class.getMethod("updateNode", Node.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, new Node("testnode",
-               ImmutableSet.of("recipe[java]")));
+            ImmutableSet.of("recipe[java]")));
 
       assertRequestLineEquals(httpRequest, "PUT http://localhost:4000/nodes/testnode HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
-               httpRequest,
-               "{\"name\":\"testnode\",\"normal\":{},\"override\":{},\"default\":{},\"automatic\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Node\",\"chef_type\":\"node\"}",
-               "application/json", false);
+            httpRequest,
+            "{\"name\":\"testnode\",\"normal\":{},\"override\":{},\"default\":{},\"automatic\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Node\",\"chef_type\":\"node\"}",
+            "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -370,16 +372,16 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
    public void testCreateRole() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ChefAsyncClient.class.getMethod("createRole", Role.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, new Role("testrole",
-               ImmutableSet.of("recipe[java]")));
+            ImmutableSet.of("recipe[java]")));
 
       assertRequestLineEquals(httpRequest, "POST http://localhost:4000/roles HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
-               httpRequest,
-               "{\"name\":\"testrole\",\"override_attributes\":{},\"default_attributes\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Role\",\"chef_type\":\"role\"}",
-               "application/json", false);
+            httpRequest,
+            "{\"name\":\"testrole\",\"override_attributes\":{},\"default_attributes\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Role\",\"chef_type\":\"role\"}",
+            "application/json", false);
 
-      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
@@ -390,14 +392,14 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
    public void testUpdateRole() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ChefAsyncClient.class.getMethod("updateRole", Role.class);
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, new Role("testrole",
-               ImmutableSet.of("recipe[java]")));
+            ImmutableSet.of("recipe[java]")));
 
       assertRequestLineEquals(httpRequest, "PUT http://localhost:4000/roles/testrole HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(
-               httpRequest,
-               "{\"name\":\"testrole\",\"override_attributes\":{},\"default_attributes\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Role\",\"chef_type\":\"role\"}",
-               "application/json", false);
+            httpRequest,
+            "{\"name\":\"testrole\",\"override_attributes\":{},\"default_attributes\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::Role\",\"chef_type\":\"role\"}",
+            "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -412,6 +414,210 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:4000/roles HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseKeySetFromJson.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testDatabagExists() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("databagExists", String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "databag");
+      assertRequestLineEquals(httpRequest, "HEAD http://localhost:4000/data/databag HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ReturnTrueIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnFalseOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testDeleteDatabag() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("deleteDatabag", String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "databag");
+      assertRequestLineEquals(httpRequest, "DELETE http://localhost:4000/data/databag HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testCreateDatabag() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("createDatabag", String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "name");
+
+      assertRequestLineEquals(httpRequest, "POST http://localhost:4000/data HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(httpRequest, "{\"name\":\"name\"}", "application/json", false);
+
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testListDatabags() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("listDatabags");
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "GET http://localhost:4000/data HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseKeySetFromJson.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testDatabagItemExists() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("databagItemExists", String.class, String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "name", "databagItem");
+      assertRequestLineEquals(httpRequest, "HEAD http://localhost:4000/data/name/databagItem HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ReturnTrueIf2xx.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnFalseOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testDeleteDatabagItem() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("deleteDatabagItem", String.class, String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "name", "databagItem");
+      assertRequestLineEquals(httpRequest, "DELETE http://localhost:4000/data/name/databagItem HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testCreateDatabagItemThrowsIllegalArgumentOnPrimitive() throws SecurityException, NoSuchMethodException,
+         IOException {
+      Method method = ChefAsyncClient.class.getMethod("createDatabagItem", String.class, DatabagItem.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "name", new DatabagItem("id",
+            "100"));
+
+      assertRequestLineEquals(httpRequest, "POST http://localhost:4000/data/name HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(
+            httpRequest,
+            "{\"name\":\"testdatabagItem\",\"override_attributes\":{},\"default_attributes\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::DatabagItem\",\"chef_type\":\"databagItem\"}",
+            "application/json", false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+
+   }
+
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testCreateDatabagItemThrowsIllegalArgumentOnWrongId() throws SecurityException, NoSuchMethodException,
+         IOException {
+      Method method = ChefAsyncClient.class.getMethod("createDatabagItem", String.class, DatabagItem.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "name", new DatabagItem("id",
+            "{\"id\": \"item1\",\"my_key\": \"my_data\"}"));
+
+      assertRequestLineEquals(httpRequest, "POST http://localhost:4000/data/name HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(
+            httpRequest,
+            "{\"name\":\"testdatabagItem\",\"override_attributes\":{},\"default_attributes\":{},\"run_list\":[\"recipe[java]\"],\"json_class\":\"Chef::DatabagItem\",\"chef_type\":\"databagItem\"}",
+            "application/json", false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testCreateDatabagItem() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("createDatabagItem", String.class, DatabagItem.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "name", new DatabagItem("id",
+            "{\"id\": \"id\",\"my_key\": \"my_data\"}"));
+
+      assertRequestLineEquals(httpRequest, "POST http://localhost:4000/data/name HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(httpRequest, "{\"id\": \"id\",\"my_key\": \"my_data\"}", "application/json", false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testCreateDatabagItemEvenWhenUserForgotId() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("createDatabagItem", String.class, DatabagItem.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "name", new DatabagItem("id",
+            "{\"my_key\": \"my_data\"}"));
+
+      assertRequestLineEquals(httpRequest, "POST http://localhost:4000/data/name HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(httpRequest, "{\"id\":\"id\",\"my_key\": \"my_data\"}", "application/json", false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testUpdateDatabagItem() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("updateDatabagItem", String.class, DatabagItem.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "name", new DatabagItem("id",
+            "{\"my_key\": \"my_data\"}"));
+
+      assertRequestLineEquals(httpRequest, "PUT http://localhost:4000/data/name/id HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+
+      assertPayloadEquals(httpRequest, "{\"id\":\"id\",\"my_key\": \"my_data\"}", "application/json", false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testListDatabagItems() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("listDatabagItems", String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "name");
+
+      assertRequestLineEquals(httpRequest, "GET http://localhost:4000/data/name HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
@@ -453,6 +659,6 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
    @Override
    public ContextSpec<ChefClient, ChefAsyncClient> createContextSpec() {
       return new RestContextFactory().createContextSpec("chef", "user", SignedHeaderAuthTest.PRIVATE_KEY,
-               new Properties());
+            new Properties());
    }
 }

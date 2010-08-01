@@ -16,11 +16,11 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.chef.functions;
+package org.jclouds.opscodeplatform.config;
 
 import javax.inject.Singleton;
 
-import org.jclouds.chef.domain.Organization;
+import org.jclouds.opscodeplatform.domain.Organization;
 
 import com.google.common.base.Function;
 

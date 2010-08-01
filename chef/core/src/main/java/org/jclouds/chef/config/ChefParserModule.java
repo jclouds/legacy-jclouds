@@ -18,6 +18,9 @@
  */
 package org.jclouds.chef.config;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
@@ -33,10 +36,11 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.chef.domain.DataBagItem;
+import org.jclouds.chef.domain.DatabagItem;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.Pems;
 import org.jclouds.io.InputSuppliers;
+import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 
@@ -75,7 +79,7 @@ public class ChefParserModule extends AbstractModule {
 
       @Override
       public PrivateKey deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-               throws JsonParseException {
+            throws JsonParseException {
          String keyText = json.getAsString().replaceAll("\\n", "\n");
          try {
             return crypto.rsaKeyFactory().generatePrivate(Pems.privateKeySpec(InputSuppliers.of(keyText)));
@@ -108,7 +112,7 @@ public class ChefParserModule extends AbstractModule {
 
       @Override
       public PublicKey deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-               throws JsonParseException {
+            throws JsonParseException {
          String keyText = json.getAsString().replaceAll("\\n", "\n");
          try {
             return crypto.rsaKeyFactory().generatePublic(Pems.publicKeySpec(InputSuppliers.of(keyText)));
@@ -141,7 +145,7 @@ public class ChefParserModule extends AbstractModule {
 
       @Override
       public X509Certificate deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-               throws JsonParseException {
+            throws JsonParseException {
          String keyText = json.getAsString().replaceAll("\\n", "\n");
          try {
             return Pems.x509Certificate(InputSuppliers.of(keyText), crypto.certFactory());
@@ -159,23 +163,45 @@ public class ChefParserModule extends AbstractModule {
    }
 
    @ImplementedBy(DataBagItemAdapterImpl.class)
-   public static interface DataBagItemAdapter extends JsonSerializer<DataBagItem>, JsonDeserializer<DataBagItem> {
+   public static interface DataBagItemAdapter extends JsonSerializer<DatabagItem>, JsonDeserializer<DatabagItem> {
 
    }
 
    @Singleton
    public static class DataBagItemAdapterImpl implements DataBagItemAdapter {
+      private final Json json;
 
-      @Override
-      public JsonElement serialize(DataBagItem src, Type typeOfSrc, JsonSerializationContext context) {
-         return new JsonLiteral(src.toString());
+      @Inject
+      DataBagItemAdapterImpl(Json json) {
+         this.json = json;
       }
 
       @Override
-      public DataBagItem deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-               throws JsonParseException {
-         IdHolder idHolder = context.deserialize(json, IdHolder.class);
-         return new DataBagItem(idHolder.id, json.toString());
+      public JsonElement serialize(DatabagItem src, Type typeOfSrc, JsonSerializationContext context) {
+         String text = src.toString();
+         try {
+            IdHolder idHolder = json.fromJson(text, IdHolder.class);
+            if (idHolder.id == null)
+               text = text.replaceFirst("\\{", String.format("{\"id\":\"%s\",", src.getId()));
+            else
+               checkArgument(src.getId().equals(idHolder.id), "incorrect id in databagItem text, should be %s: was %s",
+                     src.getId(), idHolder.id);
+            return new JsonLiteral(text);
+         } catch (JsonParseException e) {
+            throw new IllegalArgumentException(String.format(
+                  "databag item must be a json hash ex. {\"id\":\"item1\",\"my_key\":\"my_data\"}; was %s", text), e);
+         }
+      }
+
+      @Override
+      public DatabagItem deserialize(JsonElement jsonElement, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
+         String text = jsonElement.toString();
+         IdHolder idHolder = json.fromJson(text, IdHolder.class);
+         checkState(idHolder.id != null,
+               "databag item must be a json hash ex. {\"id\":\"item1\",\"my_key\":\"my_data\"}; was %s", text);
+         text = text.replaceFirst(String.format("\\{\"id\"[ ]?:\"%s\",", idHolder.id), "{");
+         return new DatabagItem(idHolder.id, text);
       }
    }
 
@@ -187,9 +213,9 @@ public class ChefParserModule extends AbstractModule {
    @Singleton
    @Named(Constants.PROPERTY_GSON_ADAPTERS)
    public Map<Type, Object> provideCustomAdapterBindings(DataBagItemAdapter adapter, PrivateKeyAdapter privateAdapter,
-            PublicKeyAdapter publicAdapter, X509CertificateAdapter certAdapter) {
-      return ImmutableMap.<Type, Object> of(DataBagItem.class, adapter, PrivateKey.class, privateAdapter,
-               PublicKey.class, publicAdapter, X509Certificate.class, certAdapter);
+         PublicKeyAdapter publicAdapter, X509CertificateAdapter certAdapter) {
+      return ImmutableMap.<Type, Object> of(DatabagItem.class, adapter, PrivateKey.class, privateAdapter,
+            PublicKey.class, publicAdapter, X509Certificate.class, certAdapter);
    }
 
    @Override

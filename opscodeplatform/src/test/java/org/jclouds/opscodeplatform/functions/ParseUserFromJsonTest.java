@@ -1,15 +1,15 @@
-package org.jclouds.chef.functions;
+package org.jclouds.opscodeplatform.functions;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
 import org.jclouds.chef.config.ChefParserModule;
-import org.jclouds.chef.domain.User;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
+import org.jclouds.opscodeplatform.domain.User;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;

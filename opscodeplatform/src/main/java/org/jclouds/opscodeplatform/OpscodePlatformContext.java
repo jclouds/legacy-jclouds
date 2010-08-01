@@ -16,9 +16,9 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.chef;
+package org.jclouds.opscodeplatform;
 
-import org.jclouds.chef.internal.ChefContextImpl;
+import org.jclouds.opscodeplatform.internal.OpscodePlatformContextImpl;
 import org.jclouds.rest.RestContext;
 
 import com.google.inject.ImplementedBy;
@@ -29,9 +29,7 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  * 
  */
-@ImplementedBy(ChefContextImpl.class)
-public interface ChefContext extends RestContext<ChefClient, ChefAsyncClient>{
-
-   ChefService getChefService();
+@ImplementedBy(OpscodePlatformContextImpl.class)
+public interface OpscodePlatformContext extends RestContext<OpscodePlatformClient, OpscodePlatformAsyncClient> {
 
 }
