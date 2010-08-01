@@ -30,6 +30,7 @@ import javax.ws.rs.Path;
 
 import org.jclouds.aws.ec2.xml.CreateLoadBalancerResponseHandler;
 import org.jclouds.aws.ec2.xml.RegisterInstancesWithLoadBalancerResponseHandler;
+import org.jclouds.aws.elb.binders.BindAvailabilityZonesToIndexedFormParams;
 import org.jclouds.aws.elb.binders.BindELBInstanceIdsToIndexedFormParams;
 import org.jclouds.aws.elb.domain.LoadBalancer;
 import org.jclouds.aws.elb.xml.DescribeLoadBalancersResponseHandler;
@@ -69,7 +70,7 @@ public interface ELBAsyncClient {
             @FormParam("Listeners.member.1.Protocol") String protocol,
             @FormParam("Listeners.member.1.LoadBalancerPort") int loadBalancerPort,
             @FormParam("Listeners.member.1.InstancePort") int instancePort,
-            @FormParam("AvailabilityZones.member.1") String availabilityZone);
+            @BinderParam(BindAvailabilityZonesToIndexedFormParams.class) String... availabilityZones);
 
    /**
     * @see ELBClient#deleteLoadBalancerInRegion
