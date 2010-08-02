@@ -59,11 +59,13 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.chef.domain.ChecksumStatus;
+import org.jclouds.chef.domain.Client;
 import org.jclouds.chef.domain.CookbookVersion;
 import org.jclouds.chef.domain.DatabagItem;
 import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.domain.Resource;
 import org.jclouds.chef.domain.Role;
+import org.jclouds.chef.domain.SearchResult;
 import org.jclouds.chef.domain.UploadSandbox;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.crypto.Pems;
@@ -72,6 +74,7 @@ import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.json.Json;
 import org.jclouds.rest.HttpClient;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
@@ -335,6 +338,45 @@ public abstract class BaseChefClientLiveTest {
          DatabagItem databagItem = getAdminConnection().getDatabagItem(PREFIX, databagItemId);
          getAdminConnection().updateDatabagItem(PREFIX, databagItem);
       }
+   }
+
+   @Test
+   public void testListSearchIndexes() throws Exception {
+      Set<String> indexes = getAdminConnection().listSearchIndexes();
+      assertNotNull(indexes);
+      assert indexes.contains("node") : indexes;
+      assert indexes.contains("client") : indexes;
+      assert indexes.contains("role") : indexes;
+   }
+
+   @Test
+   public void testSearchNodes() throws Exception {
+      SearchResult<? extends Node> results = getAdminConnection().searchNodes();
+      assertNotNull(results);
+   }
+
+   @Test
+   public void testSearchClients() throws Exception {
+      SearchResult<? extends Client> results = getAdminConnection().searchClients();
+      assertNotNull(results);
+   }
+
+   @Test
+   public void testSearchRoles() throws Exception {
+      SearchResult<? extends Role> results = getAdminConnection().searchRoles();
+      assertNotNull(results);
+   }
+
+   @Test(dependsOnMethods = "testDatabagItemExists")
+   public void testSearchDatabag() throws Exception {
+      SearchResult<? extends DatabagItem> results = getAdminConnection().searchDatabag(PREFIX);
+      assertNotNull(results);
+   }
+
+   @Test(expectedExceptions = ResourceNotFoundException.class)
+   public void testSearchDatabagNotFound() throws Exception {
+      SearchResult<? extends DatabagItem> results = getAdminConnection().searchDatabag("whoopie");
+      assertNotNull(results);
    }
 
    @AfterClass(groups = { "live" })

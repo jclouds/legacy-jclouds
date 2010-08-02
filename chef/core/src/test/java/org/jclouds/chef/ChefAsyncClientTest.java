@@ -38,6 +38,10 @@ import org.jclouds.chef.domain.Role;
 import org.jclouds.chef.filters.SignedHeaderAuth;
 import org.jclouds.chef.filters.SignedHeaderAuthTest;
 import org.jclouds.chef.functions.ParseKeySetFromJson;
+import org.jclouds.chef.functions.ParseSearchClientsFromJson;
+import org.jclouds.chef.functions.ParseSearchDatabagFromJson;
+import org.jclouds.chef.functions.ParseSearchNodesFromJson;
+import org.jclouds.chef.functions.ParseSearchRolesFromJson;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
@@ -49,6 +53,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -624,6 +629,86 @@ public class ChefAsyncClientTest extends RestClientTest<ChefAsyncClient> {
       assertResponseParserClassEquals(method, httpRequest, ParseKeySetFromJson.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testListSearchIndexes() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("listSearchIndexes");
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "GET http://localhost:4000/search HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseKeySetFromJson.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testSearchRoles() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("searchRoles");
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "GET http://localhost:4000/search/role HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseSearchRolesFromJson.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testSearchClients() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("searchClients");
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "GET http://localhost:4000/search/client HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseSearchClientsFromJson.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testSearchNodes() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("searchNodes");
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "GET http://localhost:4000/search/node HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseSearchNodesFromJson.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testSearchDatabag() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ChefAsyncClient.class.getMethod("searchDatabag", String.class);
+      GeneratedHttpRequest<ChefAsyncClient> httpRequest = processor.createRequest(method, "foo");
+
+      assertRequestLineEquals(httpRequest, "GET http://localhost:4000/search/foo HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ParseSearchDatabagFromJson.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
       checkFilters(httpRequest);
 

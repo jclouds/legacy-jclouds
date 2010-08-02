@@ -50,9 +50,14 @@ import org.jclouds.chef.domain.DatabagItem;
 import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.domain.Role;
 import org.jclouds.chef.domain.Sandbox;
+import org.jclouds.chef.domain.SearchResult;
 import org.jclouds.chef.domain.UploadSandbox;
 import org.jclouds.chef.filters.SignedHeaderAuth;
 import org.jclouds.chef.functions.ParseKeySetFromJson;
+import org.jclouds.chef.functions.ParseSearchClientsFromJson;
+import org.jclouds.chef.functions.ParseSearchDatabagFromJson;
+import org.jclouds.chef.functions.ParseSearchNodesFromJson;
+import org.jclouds.chef.functions.ParseSearchRolesFromJson;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.Headers;
@@ -290,7 +295,7 @@ public interface ChefAsyncClient {
    ListenableFuture<Set<String>> listRoles();
 
    /**
-    * @see ChefDatabag#listDatabags
+    * @see ChefClient#listDatabags
     */
    @GET
    @Path("data")
@@ -306,7 +311,7 @@ public interface ChefAsyncClient {
    ListenableFuture<Void> createDatabag(@BinderParam(BindNameToJsonPayload.class) String databagName);
 
    /**
-    * @see ChefDatabag#databagExists
+    * @see ChefClient#databagExists
     */
    @HEAD
    @Path("data/{name}")
@@ -314,7 +319,7 @@ public interface ChefAsyncClient {
    ListenableFuture<Boolean> databagExists(@PathParam("name") String databagName);
 
    /**
-    * @see ChefDatabag#deleteDatabag
+    * @see ChefClient#deleteDatabag
     */
    @DELETE
    @Path("data/{name}")
@@ -322,7 +327,7 @@ public interface ChefAsyncClient {
    ListenableFuture<Void> deleteDatabag(@PathParam("name") String databagName);
 
    /**
-    * @see ChefDatabag#listDatabagItems
+    * @see ChefClient#listDatabagItems
     */
    @GET
    @Path("data/{name}")
@@ -348,7 +353,7 @@ public interface ChefAsyncClient {
          @PathParam("databagItemId") @ParamParser(DatabagItemId.class) @BinderParam(BindToJsonPayload.class) DatabagItem item);
 
    /**
-    * @see ChefDatabag#databagItemExists
+    * @see ChefClient#databagItemExists
     */
    @HEAD
    @Path("data/{databagName}/{databagItemId}")
@@ -357,7 +362,7 @@ public interface ChefAsyncClient {
          @PathParam("databagItemId") String databagItemId);
 
    /**
-    * @see ChefDatabag#getDatabagItem
+    * @see ChefClient#getDatabagItem
     */
    @GET
    @Path("data/{databagName}/{databagItemId}")
@@ -366,7 +371,7 @@ public interface ChefAsyncClient {
          @PathParam("databagItemId") String databagItemId);
 
    /**
-    * @see ChefDatabag#deleteDatabagItem
+    * @see ChefClient#deleteDatabagItem
     */
    @DELETE
    @Path("data/{databagName}/{databagItemId}")
@@ -374,4 +379,45 @@ public interface ChefAsyncClient {
    ListenableFuture<DatabagItem> deleteDatabagItem(@PathParam("databagName") String databagName,
          @PathParam("databagItemId") String databagItemId);
 
+   /**
+    * @see ChefClient#listSearchIndexes
+    */
+   @GET
+   @Path("search")
+   @ResponseParser(ParseKeySetFromJson.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<Set<String>> listSearchIndexes();
+
+   /**
+    * @see ChefClient#searchRoles
+    */
+   @GET
+   @Path("search/role")
+   @ResponseParser(ParseSearchRolesFromJson.class)
+   ListenableFuture<? extends SearchResult<? extends Role>> searchRoles();
+
+   /**
+    * @see ChefClient#searchClients
+    */
+   @GET
+   @Path("search/client")
+   @ResponseParser(ParseSearchClientsFromJson.class)
+   ListenableFuture<? extends SearchResult<? extends Client>> searchClients();
+
+   /**
+    * @see ChefClient#searchNodes
+    */
+   @GET
+   @Path("search/node")
+   @ResponseParser(ParseSearchNodesFromJson.class)
+   ListenableFuture<? extends SearchResult<? extends Node>> searchNodes();
+
+   /**
+    * @see ChefClient#searchDatabag
+    */
+   @GET
+   @Path("search/{databagName}")
+   @ResponseParser(ParseSearchDatabagFromJson.class)
+   ListenableFuture<? extends SearchResult<? extends DatabagItem>> searchDatabag(
+         @PathParam("databagName") String databagName);
 }

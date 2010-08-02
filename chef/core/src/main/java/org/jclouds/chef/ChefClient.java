@@ -51,6 +51,7 @@ import org.jclouds.chef.domain.DatabagItem;
 import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.domain.Role;
 import org.jclouds.chef.domain.Sandbox;
+import org.jclouds.chef.domain.SearchResult;
 import org.jclouds.chef.domain.UploadSandbox;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpResponseException;
@@ -483,5 +484,72 @@ public interface ChefClient {
     *            "403 Forbidden" if you do not have view rights on the databag.
     */
    DatabagItem deleteDatabagItem(String databagName, String databagItemId);
+
+   /**
+    * Show indexes you can search on
+    * <p/>
+    * By default, the "role", "node" and "client" indexes will always be
+    * available.
+    * <p/>
+    * Note that the search indexes may lag behind the most current data by at
+    * least 10 seconds at any given time - so if you need to write data and
+    * immediately query it, you likely need to produce an artificial delay (or
+    * simply retry until the data is available.)
+    * 
+    * @throws AuthorizationException
+    *            <p/>
+    *            "401 Unauthorized" if you are not a recognized user.
+    *            <p/>
+    *            "403 Forbidden" if you do not have view rights on the databag.
+    */
+   Set<String> listSearchIndexes();
+
+   /**
+    * search all roles.
+    * <p/>
+    * Note that without any request parameters this will return all of the data
+    * within the index.
+    * 
+    * @return The response contains the total number of rows that matched your
+    *         request, the position this result set returns (useful for paging)
+    *         and the rows themselves.
+    */
+   SearchResult<? extends Role> searchRoles();
+
+   /**
+    * search all clients.
+    * <p/>
+    * Note that without any request parameters this will return all of the data
+    * within the index.
+    * 
+    * @return The response contains the total number of rows that matched your
+    *         request, the position this result set returns (useful for paging)
+    *         and the rows themselves.
+    */
+   SearchResult<? extends Client> searchClients();
+
+   /**
+    * search all nodes.
+    * <p/>
+    * Note that without any request parameters this will return all of the data
+    * within the index.
+    * 
+    * @return The response contains the total number of rows that matched your
+    *         request, the position this result set returns (useful for paging)
+    *         and the rows themselves.
+    */
+   SearchResult<? extends Node> searchNodes();
+
+   /**
+    * search all items in a databag.
+    * <p/>
+    * Note that without any request parameters this will return all of the data
+    * within the index.
+    * 
+    * @return The response contains the total number of rows that matched your
+    *         request, the position this result set returns (useful for paging)
+    *         and the rows themselves.
+    */
+   SearchResult<? extends DatabagItem> searchDatabag(String databagName);
 
 }
