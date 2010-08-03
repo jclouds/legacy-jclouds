@@ -18,7 +18,7 @@
  */
 package org.jclouds.chef.strategy;
 
-import org.jclouds.chef.strategy.internal.DeleteAllClientsAndNodesInListImpl;
+import org.jclouds.chef.strategy.internal.DeleteAllNodesInListImpl;
 
 import com.google.inject.ImplementedBy;
 
@@ -27,8 +27,8 @@ import com.google.inject.ImplementedBy;
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(DeleteAllClientsAndNodesInListImpl.class)
-public interface DeleteAllClientsAndNodesInList {
+@ImplementedBy(DeleteAllNodesInListImpl.class)
+public interface DeleteAllNodesInList {
 
    public void execute(Iterable<String> names);
 

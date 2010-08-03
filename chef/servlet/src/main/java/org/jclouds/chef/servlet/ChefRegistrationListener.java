@@ -19,8 +19,6 @@
 package org.jclouds.chef.servlet;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Throwables.propagate;
-import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.singleton;
 import static org.jclouds.chef.reference.ChefConstants.CHEF_NODE;
@@ -29,9 +27,6 @@ import static org.jclouds.chef.reference.ChefConstants.CHEF_SERVICE_CLIENT;
 
 import java.util.Properties;
 import java.util.Set;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -40,21 +35,18 @@ import org.jclouds.chef.ChefAsyncClient;
 import org.jclouds.chef.ChefClient;
 import org.jclouds.chef.ChefContext;
 import org.jclouds.chef.ChefService;
-import org.jclouds.chef.domain.Client;
 import org.jclouds.chef.reference.ChefConstants;
 import org.jclouds.chef.servlet.functions.InitParamsToProperties;
-import org.jclouds.crypto.Pems;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.jdk.JDKLogger;
 import org.jclouds.rest.RestContextFactory;
 
-import com.google.common.base.Throwables;
-
 /**
- * Registers a new node in Chef and binds its name to {@link ChefConstants.CHEF_NODE}, its role to
- * {@link ChefConstants.CHEF_ROLE} and the {@link ChefService} for the client to
- * {@link ChefConstants.CHEF_SERVICE_CLIENT} upon initialized. Deletes the node and client when the
- * context is destroyed.
+ * Registers a new node in Chef and binds its name to
+ * {@link ChefConstants.CHEF_NODE}, its role to {@link ChefConstants.CHEF_ROLE}
+ * and the {@link ChefService} for the client to
+ * {@link ChefConstants.CHEF_SERVICE_CLIENT} upon initialized. Deletes the node
+ * and client when the context is destroyed.
  * 
  * @author Adrian Cole
  */
@@ -69,29 +61,28 @@ public class ChefRegistrationListener implements ServletContextListener {
          Properties overrides = InitParamsToProperties.INSTANCE.apply(servletContextEvent);
          String role = getInitParam(servletContextEvent, CHEF_ROLE);
 
-         logger.trace("creating validator connection");
+         logger.trace("creating client connection");
 
-         ChefService validatorService = createService(overrides);
-         logger.debug("created validator connection");
+         ChefService client = createService(overrides);
+         logger.debug("created client connection");
 
-         ChefService clientService = null;
          String nodeName;
          try {
             while (true) {
-               nodeName = findNextClientAndNodeName(validatorService, role);
+               nodeName = findNextNodeName(client, role);
                try {
-                  clientService = createClientAndNode(validatorService, role, nodeName, overrides);
+                  client.createNodeAndPopulateAutomaticAttributes(nodeName, singleton("role[" + role + "]"));
                   break;
                } catch (IllegalStateException ex) {
-                  logger.debug("node or client already exists %s: %s", nodeName, ex.getMessage());
+                  logger.debug("client already exists %s: %s", nodeName, ex.getMessage());
                }
             }
          } finally {
-            validatorService.getContext().close();
+            client.getContext().close();
          }
          servletContextEvent.getServletContext().setAttribute(CHEF_NODE, nodeName);
          servletContextEvent.getServletContext().setAttribute(CHEF_ROLE, role);
-         servletContextEvent.getServletContext().setAttribute(CHEF_SERVICE_CLIENT, clientService);
+         servletContextEvent.getServletContext().setAttribute(CHEF_SERVICE_CLIENT, client);
          logger.debug("initialized");
       } catch (RuntimeException e) {
          logger.error(e, "error registering");
@@ -99,60 +90,22 @@ public class ChefRegistrationListener implements ServletContextListener {
       }
    }
 
-   private String findNextClientAndNodeName(ChefService validatorService, String prefix) {
-      Future<Set<String>> nodes = validatorService.getContext().getAsyncApi().listNodes();
-      Future<Set<String>> clients = validatorService.getContext().getAsyncApi().listClients();
-      try {
-         String nodeName;
-         Set<String> names = newHashSet(concat(nodes.get(), clients.get()));
-         int index = 0;
-         while (true) {
-            nodeName = prefix + "-" + index++;
-            if (!names.contains(nodeName))
-               break;
-         }
-         logger.trace("nodeName %s not in %s", nodeName, names);
-         return nodeName;
-      } catch (InterruptedException e) {
-         propagate(e);
-         return null;
-      } catch (ExecutionException e) {
-         propagate(e);
-         return null;
+   private String findNextNodeName(ChefService client, String prefix) {
+      Set<String> nodes = client.getContext().getApi().listNodes();
+      String nodeName;
+      Set<String> names = newHashSet(nodes);
+      int index = 0;
+      while (true) {
+         nodeName = prefix + "-" + index++;
+         if (!names.contains(nodeName))
+            break;
       }
-   }
-
-   private ChefService createClientAndNode(ChefService validatorClient, String role, String id, Properties overrides) {
-      logger.trace("attempting to create client %s", id);
-      Client client = validatorClient.getContext().getApi().createClient(id);
-      logger.debug("created client %s", id);
-      ChefService clientService = null;
-      try {
-         Properties clientProperties = new Properties();
-         clientProperties.putAll(overrides);
-         removeCredentials(clientProperties);
-         clientProperties.setProperty("chef.identity", id);
-         clientProperties.setProperty("chef.credential", Pems.pem(client.getPrivateKey()));
-         clientService = createService(clientProperties);
-         clientService.createNodeAndPopulateAutomaticAttributes(id, singleton("role[" + role + "]"));
-         return clientService;
-      } catch (Exception e) {
-         logger.error(e, "error creating node %s", id);
-         Throwables.propagate(e);
-         return null;
-      }
-   }
-
-   private void removeCredentials(Properties clientProperties) {
-      for (Entry<Object, Object> entry : clientProperties.entrySet()) {
-         if (entry.getKey().toString().indexOf("credential") != -1)
-            clientProperties.remove(entry.getKey());
-      }
+      return nodeName;
    }
 
    private ChefService createService(Properties props) {
       return ((ChefContext) new RestContextFactory().<ChefClient, ChefAsyncClient> createContext("chef", props))
-               .getChefService();
+            .getChefService();
    }
 
    private static String getInitParam(ServletContextEvent servletContextEvent, String name) {
@@ -169,13 +122,13 @@ public class ChefRegistrationListener implements ServletContextListener {
     */
    @Override
    public void contextDestroyed(ServletContextEvent servletContextEvent) {
-      ChefService clientService = getContextAttributeOrNull(servletContextEvent, CHEF_SERVICE_CLIENT);
+      ChefService client = getContextAttributeOrNull(servletContextEvent, CHEF_SERVICE_CLIENT);
       String nodename = getContextAttributeOrNull(servletContextEvent, CHEF_NODE);
-      if (nodename != null && clientService != null) {
-         clientService.deleteAllClientsAndNodesInList(singleton(nodename));
+      if (nodename != null && client != null) {
+         client.deleteAllNodesInList(singleton(nodename));
       }
-      if (clientService != null) {
-         clientService.getContext().close();
+      if (client != null) {
+         client.getContext().close();
       }
    }
 }

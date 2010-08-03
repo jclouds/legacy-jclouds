@@ -49,9 +49,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.io.Files;
 import com.google.inject.Guice;
 import com.google.inject.Module;
@@ -74,7 +72,7 @@ public class OpscodePlatformClientLiveTest extends BaseChefClientLiveTest {
    @BeforeClass(groups = { "live" })
    public void setupClient() throws IOException {
       validator = checkNotNull(System.getProperty("jclouds.test.validator"), "jclouds.test.validator");
-      orgname = Iterables.get(Splitter.on('-').split(validator), 0);
+      orgname = validator.substring(0, validator.lastIndexOf('-'));
       String validatorKey = System.getProperty("jclouds.test.validator.key");
       if (validatorKey == null || validatorKey.equals(""))
          validatorKey = System.getProperty("user.home") + "/.chef/" + orgname + "-validator.pem";
@@ -141,7 +139,7 @@ public class OpscodePlatformClientLiveTest extends BaseChefClientLiveTest {
    private User orgUser;
    private String createdOrgname;
 
-   // @Test(expectedExceptions = AuthorizationException.class)
+   @Test(expectedExceptions = AuthorizationException.class)
    public void testListOrganizations() throws Exception {
       Set<String> orgs = adminConnection.getApi().listOrganizations();
       assertNotNull(orgs);

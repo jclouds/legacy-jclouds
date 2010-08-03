@@ -22,7 +22,7 @@ public interface ChefService {
 
    void createNodeAndPopulateAutomaticAttributes(String nodeName, Iterable<String> runList);
 
-   void deleteAllClientsAndNodesInList(Iterable<String> names);
+   void deleteAllNodesInList(Iterable<String> names);
 
    Iterable<? extends Node> getNodes();
 

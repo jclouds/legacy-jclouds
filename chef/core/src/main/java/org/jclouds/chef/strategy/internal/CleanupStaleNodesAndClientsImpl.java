@@ -55,10 +55,10 @@ public class CleanupStaleNodesAndClientsImpl implements CleanupStaleNodesAndClie
    protected Logger logger = Logger.NULL;
 
    private final GetNodesImpl getAllNodes;
-   private final DeleteAllClientsAndNodesInListImpl deleter;
+   private final DeleteAllNodesInListImpl deleter;
 
    @Inject
-   public CleanupStaleNodesAndClientsImpl(DeleteAllClientsAndNodesInListImpl deleter, GetNodesImpl getAllNodes) {
+   public CleanupStaleNodesAndClientsImpl(DeleteAllNodesInListImpl deleter, GetNodesImpl getAllNodes) {
       this.getAllNodes = checkNotNull(getAllNodes, "getAllNodes");
       this.deleter = checkNotNull(deleter, "deleter");
    }

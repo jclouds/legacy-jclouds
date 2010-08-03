@@ -36,14 +36,14 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "live", testName = "chef.DeleteAllClientsAndNodesInListImplTest")
 public class DeleteAllClientsAndNodesInListImplLiveTest extends BaseChefStrategyLiveTest {
-   private DeleteAllClientsAndNodesInListImpl strategy;
+   private DeleteAllNodesInListImpl strategy;
    private CreateNodeAndPopulateAutomaticAttributesImpl creater;
    private ChefClient chef;
 
    @BeforeTest(groups = "live", dependsOnMethods = "setupClient")
    void setupStrategy() {
       this.creater = injector.getInstance(CreateNodeAndPopulateAutomaticAttributesImpl.class);
-      this.strategy = injector.getInstance(DeleteAllClientsAndNodesInListImpl.class);
+      this.strategy = injector.getInstance(DeleteAllNodesInListImpl.class);
       this.chef = injector.getInstance(ChefClient.class);
    }
 

@@ -13,7 +13,7 @@ import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.reference.ChefConstants;
 import org.jclouds.chef.strategy.CleanupStaleNodesAndClients;
 import org.jclouds.chef.strategy.CreateNodeAndPopulateAutomaticAttributes;
-import org.jclouds.chef.strategy.DeleteAllClientsAndNodesInList;
+import org.jclouds.chef.strategy.DeleteAllNodesInList;
 import org.jclouds.chef.strategy.GetNodes;
 import org.jclouds.chef.strategy.UpdateAutomaticAttributesOnNode;
 import org.jclouds.logging.Logger;
@@ -34,21 +34,20 @@ public class BaseChefService implements ChefService {
    private final ChefContext chefContext;
    private final CleanupStaleNodesAndClients cleanupStaleNodesAndClients;
    private final CreateNodeAndPopulateAutomaticAttributes createNodeAndPopulateAutomaticAttributes;
-   private final DeleteAllClientsAndNodesInList deleteAllClientsAndNodesInList;
+   private final DeleteAllNodesInList deleteAllNodesInList;
    private final GetNodes getNodes;
    private final UpdateAutomaticAttributesOnNode updateAutomaticAttributesOnNode;
 
    @Inject
    protected BaseChefService(ChefContext chefContext, CleanupStaleNodesAndClients cleanupStaleNodesAndClients,
          CreateNodeAndPopulateAutomaticAttributes createNodeAndPopulateAutomaticAttributes,
-         DeleteAllClientsAndNodesInList deleteAllClientsAndNodesInList, GetNodes getNodes,
+         DeleteAllNodesInList deleteAllNodesInList, GetNodes getNodes,
          UpdateAutomaticAttributesOnNode updateAutomaticAttributesOnNode) {
       this.chefContext = checkNotNull(chefContext, "chefContext");
       this.cleanupStaleNodesAndClients = checkNotNull(cleanupStaleNodesAndClients, "cleanupStaleNodesAndClients");
       this.createNodeAndPopulateAutomaticAttributes = checkNotNull(createNodeAndPopulateAutomaticAttributes,
             "createNodeAndPopulateAutomaticAttributes");
-      this.deleteAllClientsAndNodesInList = checkNotNull(deleteAllClientsAndNodesInList,
-            "deleteAllClientsAndNodesInList");
+      this.deleteAllNodesInList = checkNotNull(deleteAllNodesInList, "deleteAllNodesInList");
       this.getNodes = checkNotNull(getNodes, "getNodes");
       this.updateAutomaticAttributesOnNode = checkNotNull(updateAutomaticAttributesOnNode,
             "updateAutomaticAttributesOnNode");
@@ -65,8 +64,8 @@ public class BaseChefService implements ChefService {
    }
 
    @Override
-   public void deleteAllClientsAndNodesInList(Iterable<String> names) {
-      deleteAllClientsAndNodesInList.execute(names);
+   public void deleteAllNodesInList(Iterable<String> names) {
+      deleteAllNodesInList.execute(names);
    }
 
    @Override

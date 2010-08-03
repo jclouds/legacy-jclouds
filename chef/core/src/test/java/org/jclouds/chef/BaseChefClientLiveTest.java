@@ -73,6 +73,7 @@ import org.jclouds.io.InputSuppliers;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.json.Json;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.AfterClass;
@@ -159,7 +160,7 @@ public abstract class BaseChefClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateClient")
    public void testGenerateKeyForClient() throws Exception {
-      clientKey = Pems.pem(getValidatorConnection().generateKeyForClient(PREFIX).getPrivateKey());
+      clientKey = Pems.pem(getClientConnection().generateKeyForClient(PREFIX).getPrivateKey());
 
       assertNotNull(clientKey);
       recreateClientConnection();
@@ -210,23 +211,33 @@ public abstract class BaseChefClientLiveTest {
          }
    }
 
-   @Test
-   public void testListClients() throws Exception {
+   @Test(expectedExceptions = AuthorizationException.class)
+   public void testValidatorCannotListClients() throws Exception {
       for (String client : getValidatorConnection().listClients())
          assertNotNull(getValidatorConnection().getClient(client));
    }
 
-   @Test(dependsOnMethods = "testListClients")
-   public void testCreateClient() throws Exception {
+   @Test(expectedExceptions = AuthorizationException.class)
+   public void testValidatorCannotDeleteClient() throws Exception {
       getValidatorConnection().deleteClient(PREFIX);
+   }
 
-      clientKey = Pems.pem(getValidatorConnection().createClient(PREFIX).getPrivateKey());
+   @Test(expectedExceptions = AuthorizationException.class)
+   public void testValidatorCannotCreateClient() throws Exception {
+      getValidatorConnection().createClient(PREFIX);
+   }
+
+   @Test
+   public void testCreateClient() throws Exception {
+      getAdminConnection().deleteClient(PREFIX);
+
+      clientKey = Pems.pem(getAdminConnection().createClient(PREFIX).getPrivateKey());
 
       recreateClientConnection();
       getClientConnection().clientExists(PREFIX);
-      Set<String> clients = getValidatorConnection().listClients();
+      Set<String> clients = getAdminConnection().listClients();
       assert clients.contains(PREFIX) : String.format("client %s not in %s", PREFIX, clients);
-      assertNotNull(getValidatorConnection().getClient(PREFIX));
+      assertNotNull(getClientConnection().getClient(PREFIX));
    }
 
    @Test(dependsOnMethods = "testCreateClient")

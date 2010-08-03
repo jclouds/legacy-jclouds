@@ -23,6 +23,7 @@ import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -32,10 +33,9 @@ import org.jclouds.Constants;
 import org.jclouds.chef.ChefAsyncClient;
 import org.jclouds.chef.ChefClient;
 import org.jclouds.chef.reference.ChefConstants;
-import org.jclouds.chef.strategy.DeleteAllClientsAndNodesInList;
+import org.jclouds.chef.strategy.DeleteAllNodesInList;
 import org.jclouds.logging.Logger;
 
-import java.util.concurrent.Future;
 import com.google.inject.Inject;
 
 /**
@@ -44,7 +44,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class DeleteAllClientsAndNodesInListImpl implements DeleteAllClientsAndNodesInList {
+public class DeleteAllNodesInListImpl implements DeleteAllNodesInList {
 
    protected final ChefClient chefClient;
    protected final ChefAsyncClient chefAsyncClient;
@@ -58,7 +58,7 @@ public class DeleteAllClientsAndNodesInListImpl implements DeleteAllClientsAndNo
    protected Long maxTime;
 
    @Inject
-   DeleteAllClientsAndNodesInListImpl(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
+   DeleteAllNodesInListImpl(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
          ChefClient getAllNode, ChefAsyncClient ablobstore) {
       this.userExecutor = userExecutor;
       this.chefAsyncClient = ablobstore;
@@ -70,12 +70,11 @@ public class DeleteAllClientsAndNodesInListImpl implements DeleteAllClientsAndNo
       Map<String, Exception> exceptions = newHashMap();
       Map<String, Future<?>> responses = newHashMap();
       for (String name : names) {
-         responses.put(name, chefAsyncClient.deleteClient(name));
          responses.put(name, chefAsyncClient.deleteNode(name));
       }
       exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, String.format(
-            "getting deleting clients and nodes: %s", names));
+            "getting deleting nodes: %s", names));
       if (exceptions.size() > 0)
-         throw new RuntimeException(String.format("errors deleting clients and nodes: %s: %s", names, exceptions));
+         throw new RuntimeException(String.format("errors deleting nodes: %s: %s", names, exceptions));
    }
 }
