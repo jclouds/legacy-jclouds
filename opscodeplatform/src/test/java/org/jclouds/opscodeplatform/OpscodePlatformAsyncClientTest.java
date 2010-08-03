@@ -104,7 +104,7 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
       GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest, "GET https://api.opscode.com/users HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseKeySetFromJson.class);
@@ -119,7 +119,7 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
       Method method = OpscodePlatformAsyncClient.class.getMethod("userExists", String.class);
       GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(method, "user");
       assertRequestLineEquals(httpRequest, "HEAD https://api.opscode.com/users/user HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ReturnTrueIf2xx.class);
@@ -134,7 +134,7 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
       Method method = OpscodePlatformAsyncClient.class.getMethod("organizationExists", String.class);
       GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(method, "organization");
       assertRequestLineEquals(httpRequest, "HEAD https://api.opscode.com/organizations/organization HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ReturnTrueIf2xx.class);
@@ -145,13 +145,12 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
 
    }
 
-
    public void testListOrganizations() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OpscodePlatformAsyncClient.class.getMethod("listOrganizations");
       GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest, "GET https://api.opscode.com/organizations HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseKeySetFromJson.class);
@@ -168,7 +167,7 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
             .createRequest(method, new User("myuser"));
 
       assertRequestLineEquals(httpRequest, "POST https://api.opscode.com/users HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, "{\"username\":\"myuser\"}", "application/json", false);
 
       // now make sure request filters apply by replaying
@@ -177,6 +176,7 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
 
       assertRequestLineEquals(httpRequest, "POST https://api.opscode.com/users HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, new StringBuilder("Accept: application/json").append("\n").append(
+            "X-Chef-Version: 0.9.8").append("\n").append(
             "X-Ops-Authorization-1: kfrkDpfgNU26k70R1vl1bEWk0Q0f9Fs/3kxOX7gHd7iNoJq03u7RrcrAOSgL").append("\n").append(
             "X-Ops-Authorization-2: ETj5JNeCk18BmFkHMAbCA9hXVo1T4rlHCpbuzAzFlFxUGAT4wj8UoO7V886X").append("\n").append(
             "X-Ops-Authorization-3: Kf8DvihP6ElthCNuu1xuhN0B4GEmWC9+ut7UMLe0L2T34VzkbCtuInGbf42/").append("\n").append(
@@ -202,7 +202,7 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
             .createRequest(method, new User("myuser"));
 
       assertRequestLineEquals(httpRequest, "PUT https://api.opscode.com/users/myuser HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, "{\"username\":\"myuser\"}", "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
@@ -218,7 +218,7 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
       GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(method, "myuser");
 
       assertRequestLineEquals(httpRequest, "GET https://api.opscode.com/users/myuser HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
@@ -234,7 +234,7 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
       GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(method, "myuser");
 
       assertRequestLineEquals(httpRequest, "DELETE https://api.opscode.com/users/myuser HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
@@ -248,11 +248,13 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
    public void testCreateOrg() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OpscodePlatformAsyncClient.class.getMethod("createOrganization", Organization.class);
       GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(method, new Organization(
-            "myorganization"));
+            "myorganization", "myorganization", "myorganization-validator", Organization.Type.BUSINESS));
 
       assertRequestLineEquals(httpRequest, "POST https://api.opscode.com/organizations HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, "{\"name\":\"myorganization\"}", "application/json", false);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(httpRequest,
+            "{\"name\":\"myorganization\",\"full_name\":\"myorganization\",\"clientname\":\"myorganization-validator\",\"org_type\":\"Business\"}",
+            "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -265,11 +267,13 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
    public void testUpdateOrg() throws SecurityException, NoSuchMethodException, IOException {
       Method method = OpscodePlatformAsyncClient.class.getMethod("updateOrganization", Organization.class);
       GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(method, new Organization(
-            "myorganization"));
+            "myorganization", "myorganization", "myorganization-validator", Organization.Type.BUSINESS));
 
       assertRequestLineEquals(httpRequest, "PUT https://api.opscode.com/organizations/myorganization HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, "{\"name\":\"myorganization\"}", "application/json", false);
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
+      assertPayloadEquals(httpRequest,
+            "{\"name\":\"myorganization\",\"full_name\":\"myorganization\",\"clientname\":\"myorganization-validator\",\"org_type\":\"Business\"}",
+            "application/json", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -284,7 +288,7 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
       GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(method, "myorganization");
 
       assertRequestLineEquals(httpRequest, "GET https://api.opscode.com/organizations/myorganization HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);
@@ -300,7 +304,7 @@ public class OpscodePlatformAsyncClientTest extends RestClientTest<OpscodePlatfo
       GeneratedHttpRequest<OpscodePlatformAsyncClient> httpRequest = processor.createRequest(method, "myorganization");
 
       assertRequestLineEquals(httpRequest, "DELETE https://api.opscode.com/organizations/myorganization HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nX-Chef-Version: 0.9.8\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseJson.class);

@@ -55,13 +55,10 @@ public class ParseOrganizationFromJsonTest {
 
    public void test() {
 
-      Organization org = new Organization("opscode");
-      org.setFullName("Opscode, Inc.");
-      org.setOrgType("Business");
-      org.setClientname("opscode-validator");
+      Organization org = new Organization("486ca3ac66264fea926aa0b4ff74341c", "jclouds", "jclouds",
+            "jclouds-validator", "Business", null);
 
-      String toParse = "{\"name\": \"opscode\",\"full_name\": \"Opscode, Inc.\", \"org_type\": \"Business\",\"clientname\": \"opscode-validator\" }";
-
+      String toParse = "{\"guid\":\"486ca3ac66264fea926aa0b4ff74341c\",\"name\":\"jclouds\",\"full_name\":\"jclouds\",\"clientname\":\"jclouds-validator\",\"org_type\":\"Business\",\"name\":\"jclouds\"}";
       assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(toParse))), org);
    }
 }

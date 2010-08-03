@@ -26,6 +26,7 @@ package org.jclouds.opscodeplatform;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,12 +36,13 @@ import java.util.Set;
 import org.jclouds.chef.BaseChefClientLiveTest;
 import org.jclouds.chef.ChefClient;
 import org.jclouds.chef.config.ChefParserModule;
-import org.jclouds.http.HttpResponseException;
+import org.jclouds.crypto.Pems;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.opscodeplatform.domain.Organization;
 import org.jclouds.opscodeplatform.domain.User;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.BeforeClass;
@@ -124,8 +126,8 @@ public class OpscodePlatformClientLiveTest extends BaseChefClientLiveTest {
    protected void closeContexts() {
       if (orgUser != null)
          adminConnection.getApi().deleteUser(PREFIX);
-      if (org != null)
-         adminConnection.getApi().deleteOrganization(PREFIX);
+      if (createdOrgname != null)
+         adminConnection.getApi().deleteOrganization(createdOrgname);
       if (clientConnection != null)
          clientConnection.close();
       if (validatorConnection != null)
@@ -137,52 +139,60 @@ public class OpscodePlatformClientLiveTest extends BaseChefClientLiveTest {
    private String orgname;
    private Organization org;
    private User orgUser;
+   private String createdOrgname;
 
-   // http://tickets.corp.opscode.com/browse/PL-524
-   @Test(expectedExceptions = HttpResponseException.class)
+   // @Test(expectedExceptions = AuthorizationException.class)
    public void testListOrganizations() throws Exception {
       Set<String> orgs = adminConnection.getApi().listOrganizations();
       assertNotNull(orgs);
    }
 
-   // http://tickets.corp.opscode.com/browse/PL-524
-   @Test(expectedExceptions = HttpResponseException.class)
+   /**
+    * this test only works when you have a super user not yet supported in the
+    * official api
+    */
+   @Test(enabled = false, expectedExceptions = AuthorizationException.class)
    public void testCreateOrganization() throws Exception {
-      adminConnection.getApi().deleteOrganization(PREFIX);
-      adminConnection.getApi().createOrganization(new Organization(PREFIX));
-      org = adminConnection.getApi().getOrganization(PREFIX);
+      createdOrgname = orgname + 1;
+      adminConnection.getApi().deleteOrganization(createdOrgname);
+      org = adminConnection.getApi().createOrganization(new Organization(createdOrgname, Organization.Type.BUSINESS));
       assertNotNull(org);
-      assertEquals(org.getName(), PREFIX);
-      assertEquals(org.getClientname(), PREFIX + "-validator");
+      assertNull(org.getName());
+      assertNull(org.getFullName());
+      assertEquals(org.getClientname(), createdOrgname + "-validator");
+      assertNull(org.getOrgType());
+      assertNotNull(org.getPrivateKey());
+      OpscodePlatformContext connection = null;
+      try {
+         connection = createConnection(org.getClientname(), Pems.pem(org.getPrivateKey()));
+      } finally {
+         if (connection != null)
+            connection.close();
+      }
    }
 
-   // http://tickets.corp.opscode.com/browse/PL-524
-   @Test(expectedExceptions = HttpResponseException.class)
    public void testOrganizationExists() throws Exception {
       assertNotNull(adminConnection.getApi().organizationExists(orgname));
    }
 
-   @Test(enabled = false, dependsOnMethods = "testCreateOrganization")
+   @Test(enabled = false, dependsOnMethods = "testCreateOrganization", expectedExceptions = AuthorizationException.class)
    public void testUpdateOrganization() throws Exception {
-      Organization org = adminConnection.getApi().getOrganization(PREFIX);
+      Organization org = adminConnection.getApi().getOrganization(createdOrgname);
       adminConnection.getApi().updateOrganization(org);
    }
 
-   // http://tickets.corp.opscode.com/browse/PL-524
-   @Test(expectedExceptions = HttpResponseException.class)
    public void testGetOrganization() throws Exception {
       adminConnection.getApi().getOrganization(orgname);
    }
 
-   // http://tickets.corp.opscode.com/browse/PL-524
-   @Test(expectedExceptions = HttpResponseException.class)
+   @Test(expectedExceptions = AuthorizationException.class)
    public void testListUsers() throws Exception {
       Set<String> orgs = adminConnection.getApi().listUsers();
       assertNotNull(orgs);
    }
 
-   // http://tickets.corp.opscode.com/browse/PL-524
-   @Test(expectedExceptions = HttpResponseException.class)
+   // @Test(expectedExceptions = HttpResponseException.class)
+   @Test(enabled = false, expectedExceptions = AuthorizationException.class)
    public void testCreateUser() throws Exception {
       adminConnection.getApi().deleteUser(PREFIX);
       adminConnection.getApi().createUser(new User(PREFIX));
@@ -192,30 +202,27 @@ public class OpscodePlatformClientLiveTest extends BaseChefClientLiveTest {
       assertNotNull(orgUser.getPrivateKey());
    }
 
-   // http://tickets.corp.opscode.com/browse/PL-524
-   @Test(expectedExceptions = HttpResponseException.class)
    public void testUserExists() throws Exception {
       assertNotNull(adminConnection.getApi().userExists(user));
    }
 
-   // http://tickets.corp.opscode.com/browse/PL-524
-   @Test(expectedExceptions = HttpResponseException.class)
    public void testGetUser() throws Exception {
       adminConnection.getApi().getUser(user);
    }
 
-   @Test(enabled = false, dependsOnMethods = "testCreateUser")
+   // disabled while create user fails
+   @Test(dependsOnMethods = "testCreateUser", enabled = false)
    public void testUpdateUser() throws Exception {
       User user = adminConnection.getApi().getUser(PREFIX);
       adminConnection.getApi().updateUser(user);
    }
 
-   @Test(expectedExceptions = HttpResponseException.class)
+   @Test(expectedExceptions = AuthorizationException.class)
    public void testGetOrganizationFailsForValidationKey() throws Exception {
       validatorConnection.getApi().getOrganization(orgname);
    }
 
-   @Test(dependsOnMethods = "testGenerateKeyForClient", expectedExceptions = HttpResponseException.class)
+   @Test(dependsOnMethods = "testGenerateKeyForClient", expectedExceptions = AuthorizationException.class)
    public void testGetOrganizationFailsForClient() throws Exception {
       clientConnection.getApi().getOrganization(orgname);
    }

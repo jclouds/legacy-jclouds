@@ -46,6 +46,7 @@ import org.jclouds.opscodeplatform.domain.User;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.ParamParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
@@ -66,6 +67,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(SignedHeaderAuth.class)
 @Consumes(MediaType.APPLICATION_JSON)
+@Headers(keys = "X-Chef-Version", values = ChefAsyncClient.VERSION)
 public interface OpscodePlatformAsyncClient {
    /**
     * @see ChefCookbooks#listCookbooksInOrganization

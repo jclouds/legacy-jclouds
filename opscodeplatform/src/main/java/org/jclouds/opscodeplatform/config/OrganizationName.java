@@ -32,7 +32,7 @@ import com.google.common.base.Function;
 public class OrganizationName implements Function<Object, String> {
 
    public String apply(Object from) {
-      return ((Organization) from).getName();
+      return ((Organization) from).getFullName();
    }
 
 }
