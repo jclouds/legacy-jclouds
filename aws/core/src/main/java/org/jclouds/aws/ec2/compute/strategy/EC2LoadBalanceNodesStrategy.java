@@ -28,7 +28,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.domain.AvailabilityZone;
+import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.aws.ec2.util.EC2Utils.GetRegionFromLocation;
 import org.jclouds.aws.elb.ELBClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -60,16 +60,9 @@ public class EC2LoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
             int instancePort, Set<String> instanceIds) {
       String region = getRegionFromLocation.apply(location);
       String dnsName = new String();
-
-      // TODO: Fix temp hack
-      String availabilityZone = new String();
-      for (String az : AvailabilityZone.zones) {
-         if (az.startsWith(region))
-            availabilityZone = az;
-      }
-
+      
       dnsName = elbClient.createLoadBalancerInRegion(region, name, protocol, loadBalancerPort,
-               instancePort, availabilityZone);
+               instancePort, EC2Utils.getAvailabilityZonesForRegion(region));
 
       List<String> instanceIdlist = new ArrayList<String>(instanceIds);
       String[] instanceIdArray = new String[instanceIdlist.size()];

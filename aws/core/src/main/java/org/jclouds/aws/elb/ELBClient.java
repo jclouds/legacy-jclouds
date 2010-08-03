@@ -44,11 +44,13 @@ public interface ELBClient {
     *           Port for the load balancer to listen on
     * @param instancePort
     *           Port to forward the request to
+    * @param availabilityZones
+    *           load balancer availability zones
     * @return dns the DNS name for the load balancer
     * @see <a href="http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/DeveloperGuide/"
     */
    String createLoadBalancerInRegion(@Nullable String region, String name, String protocol,
-            int loadBalancerPort, int instancePort, String availabilityZone);
+            int loadBalancerPort, int instancePort, String... availabilityZones);
 
    /**
     * Delete load balancer

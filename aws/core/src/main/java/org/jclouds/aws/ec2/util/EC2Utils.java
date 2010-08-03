@@ -22,7 +22,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.http.HttpUtils.addFormParamTo;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,6 +55,17 @@ public class EC2Utils {
                   .getParent().getId();
          return region;
       }
+   }
+   
+   public static String[] getAvailabilityZonesForRegion(String region)
+   {
+       Set<String> availabilityZones = new HashSet<String>();
+       for (String az : AvailabilityZone.zones) {
+          if (az.startsWith(region))
+              availabilityZones.add(az);
+       }
+       
+       return (String[])availabilityZones.toArray(new String[availabilityZones.size()]);
    }
 
    public static void indexStringArrayToFormValuesWithPrefix(HttpRequest request, String prefix,
