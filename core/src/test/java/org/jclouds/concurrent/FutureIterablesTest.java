@@ -40,9 +40,9 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true, testName = "concurrent.FutureIterablesTest")
+@Test(enabled = false, groups = "performance", sequential = true, testName = "concurrent.FutureIterablesTest")
 public class FutureIterablesTest {
-
+   @Test(enabled = false)
    public void testMakeListenableDoesntSerializeFutures() throws InterruptedException, ExecutionException {
       long expectedMax = CALLABLE_DURATION;
       long expectedMin = CALLABLE_DURATION;
@@ -56,8 +56,9 @@ public class FutureIterablesTest {
       checkTimeThresholds(expectedMin, expectedMax, expectedOverhead, start, responses);
    }
 
+   @Test(enabled = false)
    public void testAwaitCompletionUsingSameThreadExecutorDoesntSerializeFutures() throws InterruptedException,
-            ExecutionException {
+         ExecutionException {
       long expectedMax = CALLABLE_DURATION;
       long expectedMin = CALLABLE_DURATION;
       long expectedOverhead = COUNT + FUDGE;
@@ -67,8 +68,8 @@ public class FutureIterablesTest {
 
       long start = System.currentTimeMillis();
       Map<String, Future<Long>> responses = runCallables(callableExecutor, chainExecutor);
-      Map<String, Exception> exceptions = awaitCompletion(responses, MoreExecutors.sameThreadExecutor(), null, Logger.CONSOLE,
-               "test same thread");
+      Map<String, Exception> exceptions = awaitCompletion(responses, MoreExecutors.sameThreadExecutor(), null,
+            Logger.CONSOLE, "test same thread");
       assertEquals(exceptions.size(), 0);
       checkTimeThresholds(expectedMin, expectedMax, expectedOverhead, start, responses);
    }
