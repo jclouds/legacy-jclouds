@@ -63,6 +63,7 @@ import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.CatalogIdToUri;
 import org.jclouds.vcloud.functions.VAppId;
+import org.jclouds.vcloud.functions.VAppTemplateIdToUri;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.binders.BindNodeConfigurationToXmlPayload;
 import org.jclouds.vcloud.terremark.binders.BindVAppConfigurationToXmlPayload;
@@ -158,7 +159,7 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @MapBinder(TerremarkBindInstantiateVAppTemplateParamsToXmlPayload.class)
    ListenableFuture<? extends VApp> instantiateVAppTemplateInVDC(@PathParam("vDCId") String vDCId,
             @MapPayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName,
-            @MapPayloadParam("template") @ParamParser(CatalogIdToUri.class) String templateId,
+            @MapPayloadParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
             InstantiateVAppTemplateOptions... options);
 
    /**
