@@ -16,39 +16,35 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.ohai.Util;
+package org.jclouds.ohai.suppliers;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import java.lang.management.RuntimeMXBean;
 
-import java.util.Date;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.domain.JsonBall;
-import org.jclouds.ohai.Automatic;
-import org.jclouds.ohai.config.multibindings.MapBinder;
 
 import com.google.common.base.Supplier;
-import com.google.inject.Binder;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
- * 
  * @author Adrian Cole
  */
-public class OhaiUtils {
+@Singleton
+public class UptimeSecondsSupplier implements Supplier<JsonBall> {
 
-   public static Date fromOhaiTime(JsonBall ohaiDate) {
-      return new Date(Long.parseLong(checkNotNull(ohaiDate, "ohaiDate").toString().replaceAll("\\.[0-9]*$", "")));
+   @Inject
+   UptimeSecondsSupplier(RuntimeMXBean runtime) {
+      this.runtime = runtime;
    }
 
-   public static JsonBall toOhaiTime(long millis) {
-      return new JsonBall(millis + "");
+   private final RuntimeMXBean runtime;
+
+   @Override
+   public JsonBall get() {
+      long uptimeInSeconds = runtime.getUptime() / 1000;
+      return new JsonBall(uptimeInSeconds);
    }
 
-   public static MapBinder<String, Supplier<JsonBall>> ohaiAutomaticAttributeBinder(Binder binder) {
-      MapBinder<String, Supplier<JsonBall>> mapbinder = MapBinder.newMapBinder(binder, new TypeLiteral<String>() {
-      }, new TypeLiteral<Supplier<JsonBall>>() {
-      }, Automatic.class);
-      return mapbinder;
-   }
 }

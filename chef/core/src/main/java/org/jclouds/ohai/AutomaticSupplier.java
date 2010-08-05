@@ -16,40 +16,40 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.ohai.config;
+package org.jclouds.ohai;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.domain.JsonBall;
-import org.jclouds.ohai.plugins.JMX;
-import org.jclouds.ohai.plugins.WhiteListCompliantJVM;
+import org.jclouds.ohai.functions.NestSlashKeys;
 
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableList;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
+import com.google.common.collect.Multimap;
 
 /**
- * Wires the components needed to parse ohai data from a JVM
  * 
  * @author Adrian Cole
+ * 
  */
-@ConfiguresOhai
-public class JMXOhaiJVMModule extends BaseOhaiJVMModule {
+@Singleton
+public class AutomaticSupplier implements Supplier<Map<String, JsonBall>> {
+   private final Multimap<String,Supplier<JsonBall>> autoAttrs;
+   private final NestSlashKeys nester;
 
-   @Provides
-   @Singleton
-   protected RuntimeMXBean provideRuntimeMXBean() {
-      return ManagementFactory.getRuntimeMXBean();
+   @Inject
+   AutomaticSupplier(@Automatic Multimap<String,Supplier<JsonBall>> autoAttrs, NestSlashKeys nester) {
+      this.autoAttrs = checkNotNull(autoAttrs, "autoAttrs");
+      this.nester = checkNotNull(nester, "nester");
    }
 
    @Override
-   protected Iterable<Supplier<Map<String, JsonBall>>> suppliers(Injector injector) {
-      return ImmutableList.<Supplier<Map<String, JsonBall>>> of(injector.getInstance(WhiteListCompliantJVM.class),
-            injector.getInstance(JMX.class));
+   public Map<String, JsonBall> get() {
+      return nester.apply(autoAttrs);
    }
+
 }

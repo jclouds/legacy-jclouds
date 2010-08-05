@@ -38,16 +38,16 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "unit", sequential = true, testName = "ohai.OhaiUtilsTest")
 public class OhaiUtilsTest {
-   public static long nanotime = 1280251180727244000l;
-   public static String nanotimeString = "1280251180727.244";
+   public static long millis = 1280251180727l;
+   public static String millisString = "1280251180727";
    public static Date now = new Date(1280251180727l);
 
    public void testToOhaiTime() {
-      assertEquals(OhaiUtils.toOhaiTime(nanotime).toString(), nanotimeString);
+      assertEquals(OhaiUtils.toOhaiTime(millis).toString(), millisString);
    }
 
    public void testFromOhaiTime() {
-      assertEquals(OhaiUtils.fromOhaiTime(new JsonBall(nanotimeString)), now);
+      assertEquals(OhaiUtils.fromOhaiTime(new JsonBall(millisString)), now);
 
    }
 

@@ -174,7 +174,7 @@ public abstract class BaseChefClientLiveTest {
             System.err.printf("%s/%s:%n", cookbook, version);
             CookbookVersion cookbookO = getAdminConnection().getCookbook(cookbook, version);
             for (Resource resource : ImmutableList.<Resource> builder().addAll(cookbookO.getDefinitions()).addAll(
-                  cookbookO.getFiles()).addAll(cookbookO.getLibraries()).addAll(cookbookO.getProviders()).addAll(
+                  cookbookO.getFiles()).addAll(cookbookO.getLibraries()).addAll(cookbookO.getSuppliers()).addAll(
                   cookbookO.getRecipes()).addAll(cookbookO.getResources()).addAll(cookbookO.getRootFiles()).addAll(
                   cookbookO.getTemplates()).build()) {
                try {

@@ -31,17 +31,16 @@ import java.util.Set;
 import org.jclouds.chef.ChefClient;
 import org.jclouds.chef.domain.Node;
 import org.jclouds.domain.JsonBall;
-import org.jclouds.ohai.config.BaseOhaiModule;
+import org.jclouds.ohai.AutomaticSupplier;
 import org.jclouds.ohai.config.ConfiguresOhai;
+import org.jclouds.ohai.config.OhaiModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
@@ -57,13 +56,11 @@ public class CreateNodeAndPopulateAutomaticAttributesImplLiveTest extends BaseCh
    private ChefClient chef;
 
    @ConfiguresOhai
-   static class TestOhaiModule extends BaseOhaiModule {
+   static class TestOhaiModule extends OhaiModule {
 
       @Override
-      protected Iterable<Supplier<Map<String, JsonBall>>> suppliers(Injector injector) {
-         Supplier<Map<String, JsonBall>> supplier = Suppliers.<Map<String, JsonBall>> ofInstance(ImmutableMap
-               .<String, JsonBall> of("foo", new JsonBall("bar")));
-         return ImmutableList.<Supplier<Map<String, JsonBall>>> of(supplier);
+      protected Supplier<Map<String, JsonBall>> provideAutomatic(AutomaticSupplier in) {
+         return Suppliers.<Map<String, JsonBall>> ofInstance(ImmutableMap.of("foo", new JsonBall("bar")));
       }
    }
 

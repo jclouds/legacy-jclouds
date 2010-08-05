@@ -16,27 +16,24 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.ohai.config;
+package org.jclouds.ohai;
 
-import java.util.Map;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import org.jclouds.domain.JsonBall;
-import org.jclouds.ohai.plugins.WhiteListCompliantJVM;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableList;
-import com.google.inject.Injector;
+import javax.inject.Qualifier;
 
 /**
- * Wires the components needed to parse ohai data without violating the GAE JVM
  * 
  * @author Adrian Cole
  */
-@ConfiguresOhai
-public class WhiteListCompliantOhaiJVMModule extends BaseOhaiJVMModule {
-
-   @Override
-   protected Iterable<Supplier<Map<String, JsonBall>>> suppliers(Injector injector) {
-      return ImmutableList.<Supplier<Map<String, JsonBall>>> of(injector.getInstance(WhiteListCompliantJVM.class));
-   }
+@Retention(RUNTIME)
+@Target( { TYPE, METHOD, PARAMETER })
+@Qualifier
+public @interface Automatic {
 }

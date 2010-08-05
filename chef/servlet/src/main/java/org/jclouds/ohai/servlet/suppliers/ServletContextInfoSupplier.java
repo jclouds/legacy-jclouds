@@ -16,32 +16,34 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.chef.servlet.functions;
+package org.jclouds.ohai.servlet.suppliers;
 
-import java.util.Enumeration;
-import java.util.Properties;
-
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.ServletContext;
 
-import com.google.common.base.Function;
+import org.jclouds.chef.servlet.functions.InitParamsToProperties;
+import org.jclouds.json.Json;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class InitParamsToProperties implements Function<ServletContext, Properties> {
+public class ServletContextInfoSupplier extends ServletContextSupplier {
+   private final InitParamsToProperties converter;
+   private final Json json;
 
-   public static final InitParamsToProperties INSTANCE = new InitParamsToProperties();
+   @Inject
+   public ServletContextInfoSupplier(ServletContext servletContext, InitParamsToProperties converter, Json json) {
+      super(servletContext);
+      this.converter = converter;
+      this.json = json;
+   }
 
-   public Properties apply(ServletContext servletContext) {
-      Properties overrides = new Properties();
-      Enumeration<?> e = servletContext.getInitParameterNames();
-      while (e.hasMoreElements()) {
-         String propertyName = e.nextElement().toString();
-         overrides.setProperty(propertyName, servletContext.getInitParameter(propertyName));
-      }
-      return overrides;
+   @Override
+   protected String provideJson(ServletContext servletContext) {
+      return String.format("{\"server_info\":\"%s\",\"init_params\":%s}", servletContext.getServerInfo(), json
+            .toJson(converter.apply(servletContext)));
    }
 }

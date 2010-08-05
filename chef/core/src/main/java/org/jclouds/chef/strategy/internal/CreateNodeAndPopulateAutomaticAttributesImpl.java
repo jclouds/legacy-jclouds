@@ -33,6 +33,7 @@ import org.jclouds.chef.reference.ChefConstants;
 import org.jclouds.chef.strategy.CreateNodeAndPopulateAutomaticAttributes;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.logging.Logger;
+import org.jclouds.ohai.Automatic;
 
 import com.google.common.base.Supplier;
 
@@ -54,7 +55,7 @@ public class CreateNodeAndPopulateAutomaticAttributesImpl implements CreateNodeA
 
    @Inject
    public CreateNodeAndPopulateAutomaticAttributesImpl(ChefClient chef,
-         @Named("automatic") Supplier<Map<String, JsonBall>> automaticSupplier) {
+         @Automatic Supplier<Map<String, JsonBall>> automaticSupplier) {
       this.chef = checkNotNull(chef, "chef");
       this.automaticSupplier = checkNotNull(automaticSupplier, "automaticSupplier");
    }

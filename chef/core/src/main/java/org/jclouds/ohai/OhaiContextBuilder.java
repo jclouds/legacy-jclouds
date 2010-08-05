@@ -23,7 +23,7 @@ import java.util.Properties;
 import javax.inject.Inject;
 
 import org.jclouds.ohai.config.ConfiguresOhai;
-import org.jclouds.ohai.config.JMXOhaiJVMModule;
+import org.jclouds.ohai.config.JMXOhaiModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 
@@ -54,7 +54,7 @@ public class OhaiContextBuilder<S, A> extends RestContextBuilder<S, A> {
    }
 
    protected void addOhaiModule() {
-      modules.add(new JMXOhaiJVMModule());
+      modules.add(new JMXOhaiModule());
    }
 
 }

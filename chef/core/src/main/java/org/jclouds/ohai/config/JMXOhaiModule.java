@@ -16,47 +16,37 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.ohai.plugins;
+package org.jclouds.ohai.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.domain.JsonBall;
-import org.jclouds.logging.Logger;
+import org.jclouds.ohai.config.multibindings.MapBinder;
+import org.jclouds.ohai.suppliers.UptimeSecondsSupplier;
 
 import com.google.common.base.Supplier;
-import com.google.common.collect.Maps;
+import com.google.inject.Provides;
 
 /**
- * 
- * Gathers Ohai data from the JVM.
+ * Wires the components needed to parse ohai data from a JVM
  * 
  * @author Adrian Cole
  */
-@Singleton
-public class JMX implements Supplier<Map<String, JsonBall>> {
+@ConfiguresOhai
+public class JMXOhaiModule extends OhaiModule {
 
-   @Resource
-   protected Logger logger = Logger.NULL;
-   private final Provider<RuntimeMXBean> runtimeSupplier;
-
-   @Inject
-   public JMX(Provider<RuntimeMXBean> runtimeSupplier) {
-      this.runtimeSupplier = checkNotNull(runtimeSupplier, "runtimeSupplier");
+   @Provides
+   @Singleton
+   protected RuntimeMXBean provideRuntimeMXBean() {
+      return ManagementFactory.getRuntimeMXBean();
    }
 
-   public Map<String, JsonBall> get() {
-      RuntimeMXBean runtime = runtimeSupplier.get();
-      Map<String, JsonBall> automatic = Maps.newLinkedHashMap();
-      long uptimeInSeconds = runtime.getUptime() / 1000;
-      automatic.put("uptime_seconds", new JsonBall(uptimeInSeconds));
-      return automatic;
+   public MapBinder<String, Supplier<JsonBall>> bindOhai() {
+      MapBinder<String, Supplier<JsonBall>> mapBinder = super.bindOhai();
+      mapBinder.addBinding("uptime_seconds").to(UptimeSecondsSupplier.class);
+      return mapBinder;
    }
 }

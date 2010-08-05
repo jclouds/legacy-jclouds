@@ -21,22 +21,27 @@
  * under the License.
  * ====================================================================
  */
-package org.jclouds.ohai.plugins;
+package org.jclouds.ohai.config;
 
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
 import java.lang.management.RuntimeMXBean;
+import java.util.Map;
+
+import javax.inject.Inject;
 
 import org.jclouds.chef.config.ChefParserModule;
+import org.jclouds.domain.JsonBall;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.ohai.config.JMXOhaiJVMModule;
+import org.jclouds.ohai.Automatic;
+import org.jclouds.ohai.config.JMXOhaiModule;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -57,18 +62,23 @@ public class JMXTest {
 
       replay(runtime);
 
-      Injector injector = Guice.createInjector(new ChefParserModule(), new GsonModule(), new JMXOhaiJVMModule() {
+      Injector injector = Guice.createInjector(new ChefParserModule(), new GsonModule(), new JMXOhaiModule() {
          @Override
          protected RuntimeMXBean provideRuntimeMXBean() {
             return runtime;
          }
       });
       Json json = injector.getInstance(Json.class);
-      JMX jmx = injector.getInstance(JMX.class);
+      Ohai ohai = injector.getInstance(Ohai.class);
+      assertEquals(json.toJson(ohai.ohai.get().get("uptime_seconds")), "69876");
+   }
 
-      assertEquals(json.toJson(jmx.get()), "{\"uptime_seconds\":69876}");
+   static class Ohai {
+      private Supplier<Map<String, JsonBall>> ohai;
 
-      verify(runtime);
-
+      @Inject
+      public Ohai(@Automatic Supplier<Map<String, JsonBall>> ohai) {
+         this.ohai = ohai;
+      }
    }
 }

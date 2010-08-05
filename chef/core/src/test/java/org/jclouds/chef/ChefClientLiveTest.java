@@ -34,7 +34,6 @@ import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.HttpClient;
-import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -80,8 +79,8 @@ public class ChefClientLiveTest extends BaseChefClientLiveTest {
    private ChefContext createConnection(String identity, String key) throws IOException {
       Properties props = new Properties();
       props.setProperty("chef.endpoint", endpoint);
-      return (ChefContext) new RestContextFactory().<ChefClient, ChefAsyncClient> createContext("chef", identity, key,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), props);
+      return new ChefContextFactory().createContext(identity, key, ImmutableSet.<Module> of(new Log4JLoggingModule()),
+            props);
    }
 
    @Override

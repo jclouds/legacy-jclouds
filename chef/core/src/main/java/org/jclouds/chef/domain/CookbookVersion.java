@@ -105,7 +105,7 @@ public class CookbookVersion {
       return metadata;
    }
 
-   public Set<Resource> getProviders() {
+   public Set<Resource> getSuppliers() {
       return providers;
    }
 

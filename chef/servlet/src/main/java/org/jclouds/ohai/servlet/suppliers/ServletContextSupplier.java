@@ -16,39 +16,36 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.ohai.Util;
+package org.jclouds.ohai.servlet.suppliers;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.Date;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import javax.servlet.ServletContext;
 
 import org.jclouds.domain.JsonBall;
-import org.jclouds.ohai.Automatic;
-import org.jclouds.ohai.config.multibindings.MapBinder;
 
 import com.google.common.base.Supplier;
-import com.google.inject.Binder;
-import com.google.inject.TypeLiteral;
 
 /**
  * 
- * 
  * @author Adrian Cole
  */
-public class OhaiUtils {
+@Singleton
+public abstract class ServletContextSupplier implements Supplier<JsonBall> {
+   private final ServletContext servletContext;
 
-   public static Date fromOhaiTime(JsonBall ohaiDate) {
-      return new Date(Long.parseLong(checkNotNull(ohaiDate, "ohaiDate").toString().replaceAll("\\.[0-9]*$", "")));
+   @Inject
+   public ServletContextSupplier(ServletContext servletContext) {
+      this.servletContext = servletContext;
    }
 
-   public static JsonBall toOhaiTime(long millis) {
-      return new JsonBall(millis + "");
+   @Override
+   public JsonBall get() {
+      String path = servletContext.getContextPath();
+      if (path == null || path.equals(""))
+         path = "/";
+      return new JsonBall(String.format("{\"%s\":%s}", path, provideJson(servletContext)));
    }
 
-   public static MapBinder<String, Supplier<JsonBall>> ohaiAutomaticAttributeBinder(Binder binder) {
-      MapBinder<String, Supplier<JsonBall>> mapbinder = MapBinder.newMapBinder(binder, new TypeLiteral<String>() {
-      }, new TypeLiteral<Supplier<JsonBall>>() {
-      }, Automatic.class);
-      return mapbinder;
-   }
+   protected abstract String provideJson(ServletContext servletContext);
 }

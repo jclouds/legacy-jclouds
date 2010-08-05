@@ -28,18 +28,19 @@ import static org.jclouds.chef.reference.ChefConstants.CHEF_SERVICE_CLIENT;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.jclouds.chef.ChefAsyncClient;
-import org.jclouds.chef.ChefClient;
-import org.jclouds.chef.ChefContext;
+import org.jclouds.chef.ChefContextFactory;
 import org.jclouds.chef.ChefService;
 import org.jclouds.chef.reference.ChefConstants;
 import org.jclouds.chef.servlet.functions.InitParamsToProperties;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.jdk.JDKLogger;
-import org.jclouds.rest.RestContextFactory;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.AbstractModule;
 
 /**
  * Registers a new node in Chef and binds its name to
@@ -58,12 +59,12 @@ public class ChefRegistrationListener implements ServletContextListener {
    public void contextInitialized(ServletContextEvent servletContextEvent) {
       try {
          logger.debug("starting initialization");
-         Properties overrides = InitParamsToProperties.INSTANCE.apply(servletContextEvent);
+         Properties overrides = InitParamsToProperties.INSTANCE.apply(servletContextEvent.getServletContext());
          String role = getInitParam(servletContextEvent, CHEF_ROLE);
 
          logger.trace("creating client connection");
 
-         ChefService client = createService(overrides);
+         ChefService client = createService(overrides, servletContextEvent);
          logger.debug("created client connection");
 
          String nodeName;
@@ -103,9 +104,15 @@ public class ChefRegistrationListener implements ServletContextListener {
       return nodeName;
    }
 
-   private ChefService createService(Properties props) {
-      return ((ChefContext) new RestContextFactory().<ChefClient, ChefAsyncClient> createContext("chef", props))
-            .getChefService();
+   private ChefService createService(Properties props, final ServletContextEvent servletContextEvent) {
+      return new ChefContextFactory().createContext(ImmutableSet.of(new AbstractModule() {
+
+         @Override
+         protected void configure() {
+            bind(ServletContext.class).toInstance(servletContextEvent.getServletContext());
+         }
+
+      }), props).getChefService();
    }
 
    private static String getInitParam(ServletContextEvent servletContextEvent, String name) {

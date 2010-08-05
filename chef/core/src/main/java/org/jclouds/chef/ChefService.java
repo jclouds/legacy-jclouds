@@ -1,9 +1,13 @@
 package org.jclouds.chef;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.internal.BaseChefService;
 
 import com.google.common.base.Predicate;
+import com.google.common.io.InputSupplier;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -17,6 +21,10 @@ public interface ChefService {
     * @return a reference to the context that created this.
     */
    ChefContext getContext();
+
+   byte[] encrypt(InputSupplier<? extends InputStream> supplier) throws IOException;
+
+   byte[] decrypt(InputSupplier<? extends InputStream> supplier) throws IOException;
 
    void cleanupStaleNodesAndClients(String prefix, int secondsStale);
 

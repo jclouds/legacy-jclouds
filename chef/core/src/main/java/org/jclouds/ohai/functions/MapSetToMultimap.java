@@ -16,25 +16,33 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.ohai.config;
+package org.jclouds.ohai.functions;
 
-import java.util.Properties;
+import java.util.Map;
+import java.util.Set;
+import java.util.Map.Entry;
 
-import javax.inject.Named;
+import javax.inject.Singleton;
 
-import com.google.inject.Provides;
+import com.google.common.base.Function;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 
 /**
- * Wires the components needed to parse ohai data from a JVM
  * 
  * @author Adrian Cole
  */
-public abstract class BaseOhaiJVMModule extends BaseOhaiModule {
+@Singleton
+public class MapSetToMultimap<K, V> implements Function<Map<K, Set<V>>, Multimap<K, V>> {
 
-   @Named("systemProperties")
-   @Provides
-   protected Properties systemProperties() {
-      return System.getProperties();
+   @Override
+   public Multimap<K, V> apply(Map<K, Set<V>> from) {
+      Multimap<K, V> returnV = LinkedHashMultimap.create();
+      for (Entry<K, Set<V>> entry : from.entrySet()) {
+         for (V value : entry.getValue())
+            returnV.put(entry.getKey(), value);
+      }
+      return returnV;
    }
 
 }
