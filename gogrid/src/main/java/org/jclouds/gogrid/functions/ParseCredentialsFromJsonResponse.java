@@ -24,7 +24,6 @@
 package org.jclouds.gogrid.functions;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.inject.internal.Iterables.getOnlyElement;
 
 import java.util.Map;
 
@@ -35,6 +34,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpResponse;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -58,6 +58,6 @@ public class ParseCredentialsFromJsonResponse implements
       checkState(!(returnVal.size() > 1),
             "expecting only 1 credential in response, but had more: "
                   + returnVal.keySet());
-      return (returnVal.size() > 0) ? getOnlyElement(returnVal.values()) : null;
+      return (returnVal.size() > 0) ? Iterables.getOnlyElement(returnVal.values()) : null;
    }
 }

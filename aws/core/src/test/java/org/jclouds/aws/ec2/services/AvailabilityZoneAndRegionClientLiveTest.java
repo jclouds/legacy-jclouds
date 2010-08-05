@@ -27,8 +27,8 @@ import static org.testng.Assert.assertNotNull;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Iterator;
-import java.util.SortedMap;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.Map.Entry;
 
 import org.jclouds.aws.domain.Region;
@@ -43,10 +43,10 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Module;
-import com.google.inject.internal.Lists;
 
 /**
  * Tests behavior of {@code AvailabilityZoneAndRegionClient}

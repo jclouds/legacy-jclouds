@@ -35,8 +35,8 @@ import org.jclouds.internal.ClassMethodArgs;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.google.inject.internal.ImmutableMap;
 
 /**
  * Tests behavior of ListenableFutureExceptionParser
@@ -152,7 +152,7 @@ public class SyncProxyTest {
    @BeforeTest
    public void setUp() throws IllegalArgumentException, SecurityException, NoSuchMethodException {
       sync = SyncProxy.proxy(Sync.class, new SyncProxy(Sync.class, new Async(),
-               new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap.<Class<?>, Class<?>> of()));
+            new ConcurrentHashMap<ClassMethodArgs, Object>(), ImmutableMap.<Class<?>, Class<?>> of()));
    }
 
    @Test

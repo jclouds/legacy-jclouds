@@ -26,7 +26,7 @@ import javax.inject.Singleton;
 import org.jclouds.http.HttpResponse;
 
 import com.google.common.base.Function;
-import com.google.inject.internal.Iterables;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole

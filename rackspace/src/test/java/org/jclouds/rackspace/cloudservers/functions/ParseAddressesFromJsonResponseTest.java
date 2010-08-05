@@ -32,11 +32,11 @@ import org.jclouds.rackspace.cloudservers.domain.Addresses;
 import org.jclouds.rackspace.config.RackspaceParserModule;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
-import com.google.inject.internal.ImmutableList;
 
 /**
  * Tests behavior of {@code ParseAddressesFromJsonResponse}

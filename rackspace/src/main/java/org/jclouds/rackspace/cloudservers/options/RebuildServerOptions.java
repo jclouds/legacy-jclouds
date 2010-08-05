@@ -26,7 +26,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.internal.Maps;
+import com.google.common.collect.Maps;
 
 /**
  * 

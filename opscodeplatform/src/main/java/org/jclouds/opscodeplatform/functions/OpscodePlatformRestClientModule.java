@@ -61,11 +61,10 @@ import com.google.common.collect.ImmutableMap;
 @RequiresHttp
 @ConfiguresRestClient
 public class OpscodePlatformRestClientModule extends
-         BaseChefRestClientModule<OpscodePlatformClient, OpscodePlatformAsyncClient> {
-   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap
-            .<Class<?>, Class<?>> builder()//
-            .put(ChefClient.class, ChefAsyncClient.class)//
-            .build();
+      BaseChefRestClientModule<OpscodePlatformClient, OpscodePlatformAsyncClient> {
+   public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
+         .put(ChefClient.class, ChefAsyncClient.class)//
+         .build();
 
    public OpscodePlatformRestClientModule() {
       super(OpscodePlatformClient.class, OpscodePlatformAsyncClient.class, DELEGATE_MAP);

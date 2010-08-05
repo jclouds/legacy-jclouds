@@ -31,7 +31,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 
 import com.google.common.base.Function;
-import com.google.inject.internal.Iterables;
+import com.google.common.collect.Iterables;
 
 /**
  * 

@@ -18,7 +18,11 @@
  */
 package org.jclouds.gogrid.predicates;
 
-import com.google.inject.internal.ImmutableSet;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.testng.Assert.assertTrue;
+
 import org.jclouds.gogrid.domain.Job;
 import org.jclouds.gogrid.domain.JobState;
 import org.jclouds.gogrid.domain.Server;
@@ -26,10 +30,7 @@ import org.jclouds.gogrid.options.GetJobListOptions;
 import org.jclouds.gogrid.services.GridJobClient;
 import org.testng.annotations.Test;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.testng.Assert.assertTrue;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Oleksiy Yarmula

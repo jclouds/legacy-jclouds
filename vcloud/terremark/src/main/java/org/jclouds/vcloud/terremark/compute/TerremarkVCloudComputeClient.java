@@ -49,8 +49,8 @@ import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import com.google.inject.internal.ImmutableSet;
 
 /**
  * @author Adrian Cole

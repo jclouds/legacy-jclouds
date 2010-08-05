@@ -20,7 +20,7 @@ package org.jclouds.rackspace.cloudservers.domain;
 
 import java.util.List;
 
-import com.google.inject.internal.Lists;
+import com.google.common.collect.Lists;
 
 public class Limits {
 

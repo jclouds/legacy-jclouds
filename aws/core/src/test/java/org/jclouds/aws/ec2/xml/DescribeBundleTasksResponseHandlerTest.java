@@ -31,7 +31,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
-import com.google.inject.internal.Iterables;
+import com.google.common.collect.Iterables;
 
 /**
  * Tests behavior of {@code DescribeBundleTasksResponseHandler}

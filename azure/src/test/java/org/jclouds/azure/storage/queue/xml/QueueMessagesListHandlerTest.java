@@ -29,7 +29,7 @@ import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import com.google.inject.internal.ImmutableSet;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code QueueMessagesListHandler}

@@ -20,14 +20,13 @@ package org.jclouds.rackspace.cloudservers.domain;
 
 import java.util.Map;
 
-import com.google.inject.internal.Maps;
+import com.google.common.collect.Maps;
 
 /**
  * A server is a virtual machine instance in the Cloud Servers system. Flavor and image are
  * requisite elements when creating a server.
  * 
  * @author Adrian Cole
- * @since 4.0
  */
 public class Server {
    private int id;

@@ -26,8 +26,8 @@ import org.jclouds.aws.ec2.services.ElasticBlockStoreClient;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
-import com.google.inject.internal.Iterables;
 
 /**
  * 

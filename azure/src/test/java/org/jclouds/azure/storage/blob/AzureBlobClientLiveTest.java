@@ -54,8 +54,8 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.inject.Module;
-import com.google.inject.internal.Iterables;
 
 /**
  * Tests behavior of {@code AzureBlobClient}

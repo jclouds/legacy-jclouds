@@ -75,8 +75,8 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.inject.Provides;
-import com.google.inject.internal.Maps;
 
 /**
  * Configures the VCloud authentication service connection, including logging

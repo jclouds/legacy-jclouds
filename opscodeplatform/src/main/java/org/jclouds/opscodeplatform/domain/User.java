@@ -20,7 +20,6 @@ package org.jclouds.opscodeplatform.domain;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 
 import com.google.gson.annotations.SerializedName;
@@ -254,7 +253,7 @@ public class User {
       return privateKey;
    }
 
-   public Certificate getCertificate() {
+   public X509Certificate getCertificate() {
       return certificate;
    }
 

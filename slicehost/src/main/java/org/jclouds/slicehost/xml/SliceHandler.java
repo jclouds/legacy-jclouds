@@ -27,7 +27,7 @@ import org.jclouds.slicehost.domain.Slice;
 import org.jclouds.slicehost.domain.Slice.Status;
 import org.xml.sax.SAXException;
 
-import com.google.inject.internal.Sets;
+import com.google.common.collect.Sets;
 
 /**
  * @author Adrian Cole

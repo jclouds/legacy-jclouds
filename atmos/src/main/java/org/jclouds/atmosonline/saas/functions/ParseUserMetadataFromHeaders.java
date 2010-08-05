@@ -30,9 +30,9 @@ import org.jclouds.atmosonline.saas.reference.AtmosStorageHeaders;
 import org.jclouds.http.HttpResponse;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.inject.internal.ImmutableSet;
 
 /**
  * @author Adrian Cole

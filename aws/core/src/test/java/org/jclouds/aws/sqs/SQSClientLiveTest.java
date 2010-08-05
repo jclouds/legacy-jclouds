@@ -39,9 +39,9 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Module;
-import com.google.inject.internal.Lists;
 
 /**
  * Tests behavior of {@code SQSClient}

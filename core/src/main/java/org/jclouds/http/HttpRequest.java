@@ -20,7 +20,7 @@ package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.inject.internal.Lists.newArrayList;
+import static com.google.common.collect.Lists.newArrayList;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -33,7 +33,8 @@ import org.jclouds.io.Payload;
 import com.google.common.collect.Multimap;
 
 /**
- * Represents a request that can be executed within {@link HttpCommandExecutorService}
+ * Represents a request that can be executed within
+ * {@link HttpCommandExecutorService}
  * 
  * @author Adrian Cole
  */
@@ -58,8 +59,7 @@ public class HttpRequest extends HttpMessage {
    public HttpRequest(String method, URI endpoint, char[] skips) {
       this.setMethod(checkNotNull(method, "method"));
       this.setEndpoint(checkNotNull(endpoint, "endpoint"));
-      checkArgument(endpoint.getHost() != null, String.format("endpoint.getHost() is null for %s",
-               endpoint));
+      checkArgument(endpoint.getHost() != null, String.format("endpoint.getHost() is null for %s", endpoint));
       this.skips = skips;
    }
 
@@ -82,8 +82,7 @@ public class HttpRequest extends HttpMessage {
     * @param method
     *           If the request is HEAD, this may change to GET due to redirects
     */
-   protected HttpRequest(String method, URI endpoint, Multimap<String, String> headers,
-            @Nullable Payload payload) {
+   protected HttpRequest(String method, URI endpoint, Multimap<String, String> headers, @Nullable Payload payload) {
       this(method, endpoint);
       getHeaders().putAll(checkNotNull(headers, "headers"));
       setPayload(payload);
@@ -94,10 +93,12 @@ public class HttpRequest extends HttpMessage {
    }
 
    /**
-    * We cannot return an enum, as per specification custom methods are allowed. Enums are not
-    * extensible.
+    * We cannot return an enum, as per specification custom methods are allowed.
+    * Enums are not extensible.
     * 
-    * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1.1" >rfc2616</a>
+    * @see <a
+    *      href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1.1"
+    *      >rfc2616</a>
     */
    public String getMethod() {
       return method;
@@ -188,8 +189,7 @@ public class HttpRequest extends HttpMessage {
 
    @Override
    public String toString() {
-      return "[method=" + method + ", endpoint=" + endpoint + ", headers=" + headers + ", payload="
-               + payload + "]";
+      return "[method=" + method + ", endpoint=" + endpoint + ", headers=" + headers + ", payload=" + payload + "]";
    }
 
 }

@@ -74,11 +74,11 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Injector;
 import com.google.inject.Module;
-import com.google.inject.internal.ImmutableMap;
 
 /**
  * Adapted from the following sources: {@link http://gist.github.com/249915}, {@link http

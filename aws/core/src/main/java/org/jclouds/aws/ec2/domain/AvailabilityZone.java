@@ -18,9 +18,9 @@
  */
 package org.jclouds.aws.ec2.domain;
 
-import com.google.inject.internal.ImmutableSet;
-
 import java.util.Set;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
