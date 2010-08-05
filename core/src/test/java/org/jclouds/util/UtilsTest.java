@@ -27,12 +27,12 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.rest.AuthorizationException;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import com.google.inject.ProvisionException;
-import com.google.inject.internal.ImmutableList;
 import com.google.inject.spi.Message;
 
 /**
@@ -68,8 +68,7 @@ public class UtilsTest {
    }
 
    public void testReplaceTokens() throws UnsupportedEncodingException {
-      assertEquals(Utils.replaceTokens("hello {where}", ImmutableMap.of("where", "world")),
-               "hello world");
+      assertEquals(Utils.replaceTokens("hello {where}", ImmutableMap.of("where", "world")), "hello world");
    }
 
    public void testMultiMax() {
