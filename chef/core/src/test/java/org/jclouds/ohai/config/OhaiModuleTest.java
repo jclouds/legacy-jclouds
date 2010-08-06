@@ -23,7 +23,7 @@
  */
 package org.jclouds.ohai.config;
 
-import static org.jclouds.ohai.Util.OhaiUtils.ohaiAutomaticAttributeBinder;
+import static org.jclouds.chef.util.ChefUtils.ohaiAutomaticAttributeBinder;
 import static org.testng.Assert.assertEquals;
 
 import java.net.SocketException;

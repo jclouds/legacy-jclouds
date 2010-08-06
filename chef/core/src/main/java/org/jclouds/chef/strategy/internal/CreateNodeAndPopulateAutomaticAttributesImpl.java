@@ -61,15 +61,16 @@ public class CreateNodeAndPopulateAutomaticAttributesImpl implements CreateNodeA
    }
 
    @Override
-   public void execute(Node node) {
+   public Node execute(Node node) {
       logger.trace("creating node %s", node.getName());
       node.getAutomatic().putAll(automaticSupplier.get());
       chef.createNode(node);
       logger.debug("created node %s", node.getName());
+      return node;
    }
 
    @Override
-   public void execute(String nodeName, Iterable<String> runList) {
-      execute(new Node(nodeName, runList));
+   public Node execute(String nodeName, Iterable<String> runList) {
+      return execute(new Node(nodeName, runList));
    }
 }

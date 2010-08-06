@@ -18,8 +18,8 @@
  */
 package org.jclouds.ohai.config;
 
-import static org.jclouds.ohai.Util.OhaiUtils.ohaiAutomaticAttributeBinder;
-import static org.jclouds.ohai.Util.OhaiUtils.toOhaiTime;
+import static org.jclouds.chef.util.ChefUtils.ohaiAutomaticAttributeBinder;
+import static org.jclouds.chef.util.ChefUtils.toOhaiTime;
 
 import java.util.Map;
 import java.util.Properties;

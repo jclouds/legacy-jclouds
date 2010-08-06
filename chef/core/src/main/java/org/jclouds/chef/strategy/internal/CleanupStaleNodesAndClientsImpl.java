@@ -23,7 +23,7 @@ import static com.google.common.base.Predicates.and;
 import static com.google.common.base.Predicates.notNull;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
-import static org.jclouds.ohai.Util.OhaiUtils.fromOhaiTime;
+import static org.jclouds.chef.util.ChefUtils.fromOhaiTime;
 
 import java.util.Calendar;
 import java.util.Date;

@@ -28,7 +28,13 @@ public interface ChefService {
 
    void cleanupStaleNodesAndClients(String prefix, int secondsStale);
 
-   void createNodeAndPopulateAutomaticAttributes(String nodeName, Iterable<String> runList);
+   /**
+    * 
+    * @param nodeName
+    * @param runList
+    * @return node sent to the server containing the automatic attributes
+    */
+   Node createNodeAndPopulateAutomaticAttributes(String nodeName, Iterable<String> runList);
 
    void deleteAllNodesInList(Iterable<String> names);
 

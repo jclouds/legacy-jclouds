@@ -19,7 +19,7 @@
 package org.jclouds.ohai.servlet.config;
 
 
-import static org.jclouds.ohai.Util.OhaiUtils.ohaiAutomaticAttributeBinder;
+import static org.jclouds.chef.util.ChefUtils.ohaiAutomaticAttributeBinder;
 
 import org.jclouds.domain.JsonBall;
 import org.jclouds.ohai.config.multibindings.MapBinder;

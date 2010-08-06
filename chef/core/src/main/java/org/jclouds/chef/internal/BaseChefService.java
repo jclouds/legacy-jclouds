@@ -71,8 +71,8 @@ public class BaseChefService implements ChefService {
    }
 
    @Override
-   public void createNodeAndPopulateAutomaticAttributes(String nodeName, Iterable<String> runList) {
-      createNodeAndPopulateAutomaticAttributes.execute(nodeName, runList);
+   public Node createNodeAndPopulateAutomaticAttributes(String nodeName, Iterable<String> runList) {
+      return createNodeAndPopulateAutomaticAttributes.execute(nodeName, runList);
    }
 
    @Override

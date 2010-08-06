@@ -22,7 +22,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Sets.newHashSet;
 import static java.util.Collections.singleton;
 import static org.jclouds.chef.reference.ChefConstants.CHEF_NODE;
-import static org.jclouds.chef.reference.ChefConstants.CHEF_ROLE;
+import static org.jclouds.chef.reference.ChefConstants.CHEF_NODE_PATTERN;
+import static org.jclouds.chef.reference.ChefConstants.CHEF_RUN_LIST;
 import static org.jclouds.chef.reference.ChefConstants.CHEF_SERVICE_CLIENT;
 
 import java.util.Properties;
@@ -34,11 +35,13 @@ import javax.servlet.ServletContextListener;
 
 import org.jclouds.chef.ChefContextFactory;
 import org.jclouds.chef.ChefService;
+import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.reference.ChefConstants;
 import org.jclouds.chef.servlet.functions.InitParamsToProperties;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.jdk.JDKLogger;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 
@@ -60,29 +63,26 @@ public class ChefRegistrationListener implements ServletContextListener {
       try {
          logger.debug("starting initialization");
          Properties overrides = InitParamsToProperties.INSTANCE.apply(servletContextEvent.getServletContext());
-         String role = getInitParam(servletContextEvent, CHEF_ROLE);
 
          logger.trace("creating client connection");
 
          ChefService client = createService(overrides, servletContextEvent);
          logger.debug("created client connection");
 
+         Node node;
          String nodeName;
-         try {
-            while (true) {
-               nodeName = findNextNodeName(client, role);
-               try {
-                  client.createNodeAndPopulateAutomaticAttributes(nodeName, singleton("role[" + role + "]"));
-                  break;
-               } catch (IllegalStateException ex) {
-                  logger.debug("client already exists %s: %s", nodeName, ex.getMessage());
-               }
+         while (true) {
+            nodeName = findNextNodeName(client, getInitParam(servletContextEvent, CHEF_NODE_PATTERN));
+            try {
+               node = client.createNodeAndPopulateAutomaticAttributes(nodeName, Splitter.on(',').split(
+                     getInitParam(servletContextEvent, CHEF_RUN_LIST)));
+               break;
+            } catch (IllegalStateException ex) {
+               logger.debug("client already exists %s: %s", nodeName, ex.getMessage());
             }
-         } finally {
-            client.getContext().close();
          }
-         servletContextEvent.getServletContext().setAttribute(CHEF_NODE, nodeName);
-         servletContextEvent.getServletContext().setAttribute(CHEF_ROLE, role);
+
+         servletContextEvent.getServletContext().setAttribute(CHEF_NODE, node);
          servletContextEvent.getServletContext().setAttribute(CHEF_SERVICE_CLIENT, client);
          logger.debug("initialized");
       } catch (RuntimeException e) {
@@ -91,13 +91,13 @@ public class ChefRegistrationListener implements ServletContextListener {
       }
    }
 
-   private String findNextNodeName(ChefService client, String prefix) {
+   private String findNextNodeName(ChefService client, String pattern) {
       Set<String> nodes = client.getContext().getApi().listNodes();
       String nodeName;
       Set<String> names = newHashSet(nodes);
       int index = 0;
       while (true) {
-         nodeName = prefix + "-" + index++;
+         nodeName = String.format(pattern, index++);
          if (!names.contains(nodeName))
             break;
       }
@@ -130,9 +130,9 @@ public class ChefRegistrationListener implements ServletContextListener {
    @Override
    public void contextDestroyed(ServletContextEvent servletContextEvent) {
       ChefService client = getContextAttributeOrNull(servletContextEvent, CHEF_SERVICE_CLIENT);
-      String nodename = getContextAttributeOrNull(servletContextEvent, CHEF_NODE);
-      if (nodename != null && client != null) {
-         client.deleteAllNodesInList(singleton(nodename));
+      Node node = getContextAttributeOrNull(servletContextEvent, CHEF_NODE);
+      if (node != null && client != null) {
+         client.deleteAllNodesInList(singleton(node.getName()));
       }
       if (client != null) {
          client.getContext().close();
