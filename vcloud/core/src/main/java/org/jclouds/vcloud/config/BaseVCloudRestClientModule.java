@@ -29,6 +29,7 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEO
 import java.net.URI;
 import java.util.Map;
 import java.util.SortedMap;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -81,15 +82,14 @@ import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
- * Configures the VCloud authentication service connection, including logging
- * and http transport.
+ * Configures the VCloud authentication service connection, including logging and http transport.
  * 
  * @author Adrian Cole
  */
 @RequiresHttp
 @ConfiguresRestClient
 public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A extends VCloudAsyncClient> extends
-      RestClientModule<S, A> {
+         RestClientModule<S, A> {
 
    public BaseVCloudRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
       super(syncClientType, asyncClientType);
@@ -110,7 +110,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Provides
    @Singleton
    protected Predicate<String> successTester(TaskSuccess success,
-         @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long completed) {
+            @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long completed) {
       return new RetryablePredicate<String>(success, completed);
    }
 
@@ -135,16 +135,43 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    }
 
    @Provides
-   @Named("VDC_TO_ORG")
    @Singleton
-   protected Map<String, String> provideVDCtoORG(@Org Iterable<NamedResource> orgs, VCloudClient client) {
-      Map<String, String> returnVal = Maps.newLinkedHashMap();
-      for (NamedResource orgr : orgs) {
-         for (NamedResource vdc : client.getOrganizationNamed(orgr.getName()).getVDCs().values()) {
-            returnVal.put(vdc.getId(), orgr.getName());
-         }
-      }
-      return returnVal;
+   @VDC
+   protected Supplier<Map<String, String>> provideVDCtoORG(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+            final @VDC Supplier<Map<String, Map<String, NamedResource>>> orgToVDCSupplier) {
+      return Suppliers.memoizeWithExpiration(new RetryOnTimeOutExceptionSupplier<Map<String, String>>(
+               new Supplier<Map<String, String>>() {
+                  public Map<String, String> get() {
+                     // http://code.google.com/p/google-guice/issues/detail?id=483
+                     // guice doesn't remember when singleton providers throw
+                     // exceptions.
+                     // in this case, if describeRegions fails, it is called
+                     // again for
+                     // each provider method that depends on it. To
+                     // short-circuit this,
+                     // we remember the last exception trusting that guice is
+                     // single-threaded
+                     if (authException != null)
+                        throw authException;
+                     try {
+                        Map<String, String> returnVal = Maps.newLinkedHashMap();
+                        for (Entry<String, Map<String, NamedResource>> orgr : orgToVDCSupplier.get().entrySet()) {
+                           for (String vdc : orgr.getValue().keySet()) {
+                              returnVal.put(vdc, orgr.getKey());
+                           }
+                        }
+                        return returnVal;
+                     } catch (AuthorizationException e) {
+                        authException = e;
+                        throw e;
+                     } catch (Exception e) {
+                        Throwables.propagate(e);
+                        assert false : e;
+                        return null;
+                     }
+                  }
+
+               }), seconds, TimeUnit.SECONDS);
    }
 
    @Provides
@@ -168,41 +195,99 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Provides
    @Singleton
    protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final VCloudLoginAsyncClient login) {
+            final VCloudLoginAsyncClient login) {
       return Suppliers.memoizeWithExpiration(new RetryOnTimeOutExceptionSupplier<VCloudSession>(
-            new Supplier<VCloudSession>() {
-               public VCloudSession get() {
-                  // http://code.google.com/p/google-guice/issues/detail?id=483
-                  // guice doesn't remember when singleton providers throw
-                  // exceptions.
-                  // in this case, if describeRegions fails, it is called
-                  // again for
-                  // each provider method that depends on it. To
-                  // short-circuit this,
-                  // we remember the last exception trusting that guice is
-                  // single-threaded
-                  if (authException != null)
-                     throw authException;
-                  try {
-                     return login.login().get(10, TimeUnit.SECONDS);
-                  } catch (AuthorizationException e) {
-                     BaseVCloudRestClientModule.this.authException = e;
-                     throw e;
-                  } catch (Exception e) {
-                     Throwables.propagate(e);
-                     assert false : e;
-                     return null;
+               new Supplier<VCloudSession>() {
+                  public VCloudSession get() {
+                     // http://code.google.com/p/google-guice/issues/detail?id=483
+                     // guice doesn't remember when singleton providers throw
+                     // exceptions.
+                     // in this case, if describeRegions fails, it is called
+                     // again for
+                     // each provider method that depends on it. To
+                     // short-circuit this,
+                     // we remember the last exception trusting that guice is
+                     // single-threaded
+                     if (authException != null)
+                        throw authException;
+                     try {
+                        return login.login().get(10, TimeUnit.SECONDS);
+                     } catch (AuthorizationException e) {
+                        BaseVCloudRestClientModule.this.authException = e;
+                        throw e;
+                     } catch (Exception e) {
+                        Throwables.propagate(e);
+                        assert false : e;
+                        return null;
+                     }
                   }
-               }
 
-            }), seconds, TimeUnit.SECONDS);
+               }), seconds, TimeUnit.SECONDS);
+   }
+
+   @Provides
+   @Singleton
+   @VDC
+   protected Supplier<Map<String, Map<String, NamedResource>>> provideOrgToVDCCache(
+            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrgNameToVDCSupplier supplier) {
+      return Suppliers.memoizeWithExpiration(
+               new RetryOnTimeOutExceptionSupplier<Map<String, Map<String, NamedResource>>>(
+                        new Supplier<Map<String, Map<String, NamedResource>>>() {
+                           public Map<String, Map<String, NamedResource>> get() {
+                              // http://code.google.com/p/google-guice/issues/detail?id=483
+                              // guice doesn't remember when singleton providers throw
+                              // exceptions.
+                              // in this case, if describeRegions fails, it is called
+                              // again for
+                              // each provider method that depends on it. To
+                              // short-circuit this,
+                              // we remember the last exception trusting that guice is
+                              // single-threaded
+                              if (authException != null)
+                                 throw authException;
+                              try {
+                                 return supplier.get();
+                              } catch (AuthorizationException e) {
+                                 authException = e;
+                                 throw e;
+                              } catch (Exception e) {
+                                 Throwables.propagate(e);
+                                 assert false : e;
+                                 return null;
+                              }
+                           }
+
+                        }), seconds, TimeUnit.SECONDS);
+   }
+
+   @Singleton
+   public static class OrgNameToVDCSupplier implements Supplier<Map<String, Map<String, NamedResource>>> {
+      protected final Supplier<VCloudSession> sessionSupplier;
+      private final VCloudClient client;
+
+      @Inject
+      protected OrgNameToVDCSupplier(Supplier<VCloudSession> sessionSupplier, VCloudClient client) {
+         this.sessionSupplier = sessionSupplier;
+         this.client = client;
+      }
+
+      @Override
+      public Map<String, Map<String, NamedResource>> get() {
+         Map<String, Map<String, NamedResource>> returnVal = Maps.newLinkedHashMap();
+         for (String orgName : sessionSupplier.get().getOrgs().keySet()) {
+            returnVal.put(orgName, client.getOrganizationNamed(orgName).getVDCs());
+         }
+         return returnVal;
+      }
+
    }
 
    @Provides
    @Singleton
    @org.jclouds.vcloud.endpoints.VCloudLogin
    protected URI provideAuthenticationURI(VCloudVersionsAsyncClient versionService,
-         @Named(PROPERTY_API_VERSION) String version) throws InterruptedException, ExecutionException, TimeoutException {
+            @Named(PROPERTY_API_VERSION) String version) throws InterruptedException, ExecutionException,
+            TimeoutException {
       SortedMap<String, URI> versions = versionService.getSupportedVersions().get(180, TimeUnit.SECONDS);
       checkState(versions.size() > 0, "No versions present");
       checkState(versions.containsKey(version), "version " + version + " not present in: " + versions);
@@ -262,7 +347,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Provides
    @Singleton
    protected Organization provideOrganization(VCloudClient discovery) throws ExecutionException, TimeoutException,
-         InterruptedException {
+            InterruptedException {
       if (authException != null)
          throw authException;
       try {
@@ -293,7 +378,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Network
    @Singleton
    protected URI provideDefaultNetwork(VCloudClient client) throws InterruptedException, ExecutionException,
-         TimeoutException {
+            TimeoutException {
       if (authException != null)
          throw authException;
       try {

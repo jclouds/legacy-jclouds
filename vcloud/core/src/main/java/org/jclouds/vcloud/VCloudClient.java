@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -37,8 +38,7 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx"
- *      />
+ * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
  * @author Adrian Cole
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
@@ -56,8 +56,8 @@ public interface VCloudClient {
    Organization getOrganization(String orgId);
 
    /**
-    * This call returns a list of all vCloud Data Centers (vdcs), catalogs, and
-    * task lists within the organization.
+    * This call returns a list of all vCloud Data Centers (vdcs), catalogs, and task lists within
+    * the organization.
     * 
     * @param name
     *           organization name, or null for the default
@@ -74,7 +74,13 @@ public interface VCloudClient {
 
    Network getNetwork(String networkId);
 
+   /**
+    * please use {@link #getVDC(URI)}
+    */
+   @Deprecated
    VDC getVDC(String vDCId);
+
+   VDC getVDC(URI vdc);
 
    VDC getDefaultVDC();
 
@@ -89,14 +95,12 @@ public interface VCloudClient {
    Task undeployVApp(String vAppId);
 
    /**
-    * This call powers on the vApp, as specified in the vApp's ovf:Startup
-    * element.
+    * This call powers on the vApp, as specified in the vApp's ovf:Startup element.
     */
    Task powerOnVApp(String vAppId);
 
    /**
-    * This call powers off the vApp, as specified in the vApp's ovf:Startup
-    * element.
+    * This call powers off the vApp, as specified in the vApp's ovf:Startup element.
     */
    Task powerOffVApp(String vAppId);
 
@@ -122,7 +126,7 @@ public interface VCloudClient {
    VApp getVApp(String appId);
 
    VApp instantiateVAppTemplateInVDC(String vDCId, String appName, String templateId,
-         InstantiateVAppTemplateOptions... options);
+            InstantiateVAppTemplateOptions... options);
 
    Task cloneVAppInVDC(String vDCId, String vAppIdToClone, String newName, CloneVAppOptions... options);
 }

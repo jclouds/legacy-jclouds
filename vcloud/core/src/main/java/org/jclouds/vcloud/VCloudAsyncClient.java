@@ -28,6 +28,8 @@ import static org.jclouds.vcloud.VCloudMediaType.VAPPTEMPLATE_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 
+import java.net.URI;
+
 import javax.annotation.Nullable;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -184,8 +186,9 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends VDC> getDefaultVDC();
 
    /**
-    * @see VCloudClient#getVDC
+    * @see VCloudClient#getVDC(String)
     */
+   @Deprecated
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vdc/{vDCId}")
@@ -193,6 +196,15 @@ public interface VCloudAsyncClient {
    @Consumes(VDC_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends VDC> getVDC(@PathParam("vDCId") String vDCId);
+
+   /**
+    * @see VCloudClient#getVDC(URI)
+    */
+   @GET
+   @XMLResponseParser(VDCHandler.class)
+   @Consumes(VDC_XML)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends VDC> getVDC(@EndpointParam URI vDCId);
 
    /**
     * @see VCloudClient#getTasksList

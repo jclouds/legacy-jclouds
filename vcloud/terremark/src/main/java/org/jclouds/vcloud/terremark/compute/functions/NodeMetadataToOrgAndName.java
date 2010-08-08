@@ -28,9 +28,11 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
+import org.jclouds.vcloud.endpoints.VDC;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 /**
  * 
@@ -38,27 +40,25 @@ import com.google.common.base.Function;
  * 
  */
 @Singleton
-public class NodeMetadataToOrgAndName implements
-      Function<NodeMetadata, OrgAndName> {
+public class NodeMetadataToOrgAndName implements Function<NodeMetadata, OrgAndName> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   final Map<String, String> vdcToOrg;
+   final Supplier<Map<String, String>> vdcToOrg;
 
    @Inject
-   NodeMetadataToOrgAndName(@Named("VDC_TO_ORG") Map<String, String> vdcToOrg) {
+   NodeMetadataToOrgAndName(@VDC Supplier<Map<String, String>> vdcToOrg) {
       this.vdcToOrg = vdcToOrg;
    }
 
    @Override
    public OrgAndName apply(NodeMetadata from) {
       if (from.getTag() != null) {
-         String org = vdcToOrg.get(from.getLocation().getId());
+         String org = vdcToOrg.get().get(from.getLocation().getId());
          if (org == null) {
-            logger.warn("did not find an association for vdc %s in %s", from
-                  .getLocation().getId(), vdcToOrg);
+            logger.warn("did not find an association for vdc %s in %s", from.getLocation().getId(), vdcToOrg);
          } else {
             return new OrgAndName(org, from.getTag());
          }
