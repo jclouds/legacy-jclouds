@@ -27,7 +27,6 @@ import org.jclouds.aws.ec2.domain.BundleTask;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
  * 
@@ -54,7 +53,7 @@ public class BundleTaskHandler extends ParseSax.HandlerForGeneratedRequestWithRe
    private Date updateTime;
 
    public BundleTask getResult() {
-      String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
+      String region = EC2Utils.findRegionInArgsOrNull(getRequest());
       if (region == null)
          region = defaultRegion;
       BundleTask.Error error = null;

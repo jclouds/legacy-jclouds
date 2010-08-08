@@ -34,7 +34,6 @@ import org.jclouds.aws.ec2.domain.Image.ImageType;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Maps;
@@ -158,7 +157,7 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
             this.deleteOnTermination = true;
          } else if (!inProductCodes) {
             try {
-               String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
+               String region = EC2Utils.findRegionInArgsOrNull(getRequest());
                if (region == null)
                   region = defaultRegion;
                contents.add(new Image(region, architecture, this.name, description, imageId, imageLocation,

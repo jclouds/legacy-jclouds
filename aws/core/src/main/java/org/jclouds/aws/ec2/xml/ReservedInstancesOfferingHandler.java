@@ -24,7 +24,6 @@ import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.ReservedInstancesOffering;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
  * 
@@ -32,7 +31,8 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
  *      />
  * @author Adrian Cole
  */
-public class ReservedInstancesOfferingHandler extends ParseSax.HandlerWithResult<ReservedInstancesOffering> {
+public class ReservedInstancesOfferingHandler extends
+      ParseSax.HandlerForGeneratedRequestWithResult<ReservedInstancesOffering> {
    @Inject
    @Region
    String defaultRegion;
@@ -48,7 +48,7 @@ public class ReservedInstancesOfferingHandler extends ParseSax.HandlerWithResult
    private float usagePrice = 0;
 
    public ReservedInstancesOffering getResult() {
-      String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
+      String region = EC2Utils.findRegionInArgsOrNull(getRequest());
       if (region == null)
          region = defaultRegion;
 

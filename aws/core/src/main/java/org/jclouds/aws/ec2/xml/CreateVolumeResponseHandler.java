@@ -35,7 +35,6 @@ import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;
@@ -158,9 +157,9 @@ public class CreateVolumeResponseHandler extends
    @Override
    public CreateVolumeResponseHandler setContext(HttpRequest request) {
       super.setContext(request);
-      region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
+      region = EC2Utils.findRegionInArgsOrNull(getRequest());
       if (region == null) {
-         String zone = EC2Utils.findAvailabilityZoneInArgsOrNull((GeneratedHttpRequest<?>) request);
+         String zone = EC2Utils.findAvailabilityZoneInArgsOrNull(getRequest());
          if (zone != null) {
             region = checkNotNull(availabilityZoneToRegion.get(zone), String.format(
                      "zone %s not in %s", zone, availabilityZoneToRegion));

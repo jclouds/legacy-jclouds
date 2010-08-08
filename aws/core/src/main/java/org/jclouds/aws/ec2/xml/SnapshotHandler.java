@@ -28,7 +28,6 @@ import org.jclouds.aws.ec2.domain.Snapshot.Status;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
  * 
@@ -57,7 +56,7 @@ public class SnapshotHandler extends ParseSax.HandlerForGeneratedRequestWithResu
    }
 
    public Snapshot getResult() {
-      String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
+      String region = EC2Utils.findRegionInArgsOrNull(getRequest());
       if (region == null)
          region = defaultRegion;
       Snapshot snapshot = new Snapshot(region, id, volumeId, volumeSize, status, startTime,

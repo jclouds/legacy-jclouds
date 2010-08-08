@@ -41,22 +41,10 @@
  */
 package org.jclouds.chef.config;
 
-import static org.jclouds.Constants.PROPERTY_IDENTITY;
-
-import java.io.IOException;
-import java.security.cert.X509Certificate;
-import java.security.spec.InvalidKeySpecException;
-
-import javax.inject.Named;
-import javax.inject.Singleton;
-
 import org.jclouds.chef.ChefAsyncClient;
 import org.jclouds.chef.ChefClient;
-import org.jclouds.crypto.Crypto;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
-
-import com.google.inject.Provides;
 
 /**
  * Configures the Chef connection.

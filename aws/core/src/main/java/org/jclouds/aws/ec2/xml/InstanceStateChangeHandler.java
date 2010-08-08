@@ -27,7 +27,6 @@ import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceStateChange;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax.HandlerForGeneratedRequestWithResult;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;
@@ -91,7 +90,7 @@ public class InstanceStateChangeHandler extends
             previousState = InstanceState.fromValue(currentOrNull());
          }
       } else if (qName.equals("item")) {
-         String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
+         String region = EC2Utils.findRegionInArgsOrNull(getRequest());
          if (region == null)
             region = defaultRegion;
          instances.add(new InstanceStateChange(region, instanceId, shutdownState, previousState));

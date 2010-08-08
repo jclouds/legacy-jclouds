@@ -29,7 +29,6 @@ import org.jclouds.aws.ec2.domain.SecurityGroup;
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;
@@ -118,7 +117,7 @@ public class DescribeSecurityGroupsResponseHandler extends
             this.userId = null;
             this.userIdGroupName = null;
          } else if (!inIpPermissions && !inIpRanges && !inGroups) {
-            String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
+            String region = EC2Utils.findRegionInArgsOrNull(getRequest());
             if (region == null)
                region = defaultRegion;
             securtyGroups.add(new SecurityGroup(region, groupName, ownerId, groupDescription,

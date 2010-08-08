@@ -29,7 +29,6 @@ import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
  * 
@@ -52,7 +51,7 @@ public class AttachmentHandler extends ParseSax.HandlerForGeneratedRequestWithRe
    private Date attachTime;
 
    public Attachment getResult() {
-      String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
+      String region = EC2Utils.findRegionInArgsOrNull(getRequest());
       if (region == null)
          region = defaultRegion;
       return new Attachment(region, volumeId, instanceId, device, attachmentStatus, attachTime);

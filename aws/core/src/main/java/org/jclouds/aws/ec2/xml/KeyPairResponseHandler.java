@@ -24,7 +24,6 @@ import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 /**
  * 
@@ -43,7 +42,7 @@ public class KeyPairResponseHandler extends ParseSax.HandlerForGeneratedRequestW
    private String keyName;
 
    public KeyPair getResult() {
-      String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
+      String region = EC2Utils.findRegionInArgsOrNull(getRequest());
       if (region == null)
          region = defaultRegion;
       return new KeyPair(region, keyName, keyFingerprint, keyMaterial);

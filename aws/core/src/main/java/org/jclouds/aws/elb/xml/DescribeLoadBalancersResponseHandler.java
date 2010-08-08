@@ -130,7 +130,7 @@ public class DescribeLoadBalancersResponseHandler extends
          } else if (!(inListenerDescriptions || inAppCookieStickinessPolicies || inInstances
                   || inLBCookieStickinessPolicies || inAvailabilityZones)) {
             try {
-               String region = EC2Utils.findRegionInArgsOrNull((GeneratedHttpRequest<?>) request);
+               String region = EC2Utils.findRegionInArgsOrNull(getRequest());
                if (region == null)
                   region = defaultRegion;
 
