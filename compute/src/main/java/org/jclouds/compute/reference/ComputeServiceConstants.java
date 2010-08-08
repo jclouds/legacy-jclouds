@@ -35,6 +35,11 @@ public interface ComputeServiceConstants {
    public static final String PROPERTY_TIMEOUT_NODE_RUNNING = "jclouds.compute.timeout.node-running";
    public static final String PROPERTY_TIMEOUT_SCRIPT_COMPLETE = "jclouds.compute.timeout.script-complete";
    public static final String PROPERTY_TIMEOUT_PORT_OPEN = "jclouds.compute.timeout.port-open";
+   /**
+    * comma-separated nodes that we shouldn't attempt to list as they are dead
+    * in the provider for some reason.
+    */
+   public static final String PROPERTY_BLACKLIST_NODES = "jclouds.compute.blacklist.nodes";
 
    @Singleton
    static class Timeouts {

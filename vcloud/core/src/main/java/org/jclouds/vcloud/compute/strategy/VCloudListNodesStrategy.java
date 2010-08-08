@@ -18,10 +18,13 @@
  */
 package org.jclouds.vcloud.compute.strategy;
 
+import static org.jclouds.compute.reference.ComputeServiceConstants.COMPUTE_LOGGER;
+import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_BLACKLIST_NODES;
+
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -29,7 +32,6 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.internal.ComputeMetadataImpl;
-import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
@@ -38,11 +40,16 @@ import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
 import org.jclouds.vcloud.compute.functions.VCloudGetNodeMetadata;
 import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.endpoints.Org;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
+import com.google.inject.Inject;
+import com.google.inject.internal.util.ImmutableSet;
 
 /**
  * @author Adrian Cole
@@ -50,16 +57,26 @@ import com.google.common.collect.Sets;
 @Singleton
 public class VCloudListNodesStrategy implements ListNodesStrategy {
    @Resource
-   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   @Named(COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
    protected final VCloudGetNodeMetadata getNodeMetadata;
    protected final VCloudClient client;
    protected final FindLocationForResource findLocationForResourceInVDC;
+   Set<String> blackListVAppNames = ImmutableSet.<String> of();
+
+   @Inject(optional = true)
+   void setBlackList(@Named(PROPERTY_BLACKLIST_NODES) String blackListNodes) {
+      if (blackListNodes != null && !"".equals(blackListNodes))
+         this.blackListVAppNames = ImmutableSet.copyOf(Splitter.on(',').split(blackListNodes));
+   }
+
+   private final Supplier<Map<String, NamedResource>> orgNameToEndpoint;
 
    @Inject
-   protected VCloudListNodesStrategy(VCloudClient client, VCloudGetNodeMetadata getNodeMetadata,
-            FindLocationForResource findLocationForResourceInVDC) {
+   protected VCloudListNodesStrategy(VCloudClient client, @Org Supplier<Map<String, NamedResource>> orgNameToEndpoint,
+         VCloudGetNodeMetadata getNodeMetadata, FindLocationForResource findLocationForResourceInVDC) {
       this.client = client;
+      this.orgNameToEndpoint = orgNameToEndpoint;
       this.getNodeMetadata = getNodeMetadata;
       this.findLocationForResourceInVDC = findLocationForResourceInVDC;
    }
@@ -67,30 +84,37 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
    @Override
    public Iterable<ComputeMetadata> list() {
       Set<ComputeMetadata> nodes = Sets.newHashSet();
-      for (NamedResource vdc : client.getDefaultOrganization().getVDCs().values()) {
-         for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
-            if (resource.getType().equals(VCloudMediaType.VAPP_XML)) {
-               nodes.add(convertVAppToComputeMetadata(vdc, resource));
+      for (String org : orgNameToEndpoint.get().keySet()) {
+         for (NamedResource vdc : client.getOrganizationNamed(org).getVDCs().values()) {
+            for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
+               if (validVApp(resource)) {
+                  nodes.add(convertVAppToComputeMetadata(vdc, resource));
+               }
             }
          }
       }
       return nodes;
    }
 
+   private boolean validVApp(NamedResource resource) {
+      return resource.getType().equals(VCloudMediaType.VAPP_XML) && !blackListVAppNames.contains(resource.getName());
+   }
+
    private ComputeMetadata convertVAppToComputeMetadata(NamedResource vdc, NamedResource resource) {
       Location location = findLocationForResourceInVDC.apply(vdc);
       return new ComputeMetadataImpl(ComputeType.NODE, resource.getId(), resource.getName(), resource.getId(),
-               location, null, ImmutableMap.<String, String> of());
+            location, null, ImmutableMap.<String, String> of());
    }
 
    @Override
    public Iterable<NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
       Set<NodeMetadata> nodes = Sets.newHashSet();
-      for (NamedResource vdc : client.getDefaultOrganization().getVDCs().values()) {
-         for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
-            if (resource.getType().equals(VCloudMediaType.VAPP_XML)
-                     && filter.apply(convertVAppToComputeMetadata(vdc, resource))) {
-               addVAppToSetRetryingIfNotYetPresent(nodes, vdc, resource);
+      for (String org : orgNameToEndpoint.get().keySet()) {
+         for (NamedResource vdc : client.getOrganizationNamed(org).getVDCs().values()) {
+            for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
+               if (validVApp(resource) && filter.apply(convertVAppToComputeMetadata(vdc, resource))) {
+                  addVAppToSetRetryingIfNotYetPresent(nodes, vdc, resource);
+               }
             }
          }
       }
