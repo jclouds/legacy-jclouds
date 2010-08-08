@@ -191,9 +191,9 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
          })).substring(8).replaceAll("#" + instance.getRegion() + "$", "");
       } catch (NoSuchElementException e) {
-         logger.warn("no tag parsed from %s's groups: %s", instance.getId(), instance.getGroupIds());
+         logger.debug("no tag parsed from %s's groups: %s", instance.getId(), instance.getGroupIds());
       } catch (IllegalArgumentException e) {
-         logger.warn("too many groups match %s; %s's groups: %s", "jclouds#", instance.getId(), instance.getGroupIds());
+         logger.debug("too many groups match %s; %s's groups: %s", "jclouds#", instance.getId(), instance.getGroupIds());
       }
       return tag;
    }
@@ -222,7 +222,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
          try {
             image = imageMap.get(key);
          } catch (NullPointerException nex) {
-            logger.warn("could not find a matching image for instance %s in location %s", instance, location);
+            logger.debug("could not find a matching image for instance %s in location %s", instance, location);
          }
       }
       return image;
