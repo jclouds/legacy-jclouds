@@ -18,36 +18,56 @@
  */
 package org.jclouds.vcloud.terremark;
 
+import java.net.URI;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.terremark.domain.KeyPair;
 
 /**
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
+ * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx"
+ *      />
  * @author Adrian Cole
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkVCloudExpressClient extends TerremarkVCloudClient {
 
    /**
-    * This call returns the keys previously created for your organization.
+    * @param orgName
+    *           null if use the default org
+    * @throws ResourceNotFoundException
+    *            if the orgName is not a valid organization
     */
-   Set<KeyPair> listKeyPairs();
+   Set<KeyPair> listKeyPairsInOrg(@Nullable String orgName);
 
-   Set<KeyPair> listKeyPairsInOrg(String orgId);
+   /**
+    * @param orgName
+    *           null if use the default org
+    * @throws ResourceNotFoundException
+    *            if the orgName is not a valid organization
+    */
+   KeyPair generateKeyPairInOrg(@Nullable String orgName, String name, boolean makeDefault);
 
-   KeyPair generateKeyPairInOrg(String orgId, String name, boolean makeDefault);
+   /**
+    * @param orgName
+    *           null if use the default org
+    * @throws ResourceNotFoundException
+    *            if the orgName is not a valid organization
+    */
+   KeyPair getKeyPairInOrg(@Nullable String orgName, String keyPairName);
 
-   KeyPair getKeyPair(int keyPairId);
+   KeyPair getKeyPair(URI keyPair);
 
    // TODO
    // KeyPair configureKeyPair(int keyPairId, KeyPairConfiguration
    // keyPairConfiguration);
 
-   void deleteKeyPair(int keyPairId);
+   void deleteKeyPair(URI keyPair);
 }

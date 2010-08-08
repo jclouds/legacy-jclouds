@@ -76,7 +76,7 @@ public class OrganizatonsForLocations implements
          @SuppressWarnings("unchecked")
          @Override
          public Future<Organization> apply(Location from) {
-            return (Future<Organization>) aclient.getOrganization(from.getParent().getId());
+            return (Future<Organization>) aclient.getOrganizationNamed(from.getParent().getId());
          }
 
       }, executor, null, logger, "organizations for locations");

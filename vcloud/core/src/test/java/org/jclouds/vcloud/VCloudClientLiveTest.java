@@ -57,11 +57,11 @@ public class VCloudClientLiveTest {
    public void testOrganization() throws Exception {
       Organization response = connection.getDefaultOrganization();
       assertNotNull(response);
-      assertNotNull(response.getId());
+      assertNotNull(response.getName());
       assert response.getCatalogs().size() >= 1;
       assert response.getTasksLists().size() >= 1;
       assert response.getVDCs().size() >= 1;
-      assertEquals(connection.getOrganization(response.getId()), response);
+      assertEquals(connection.getOrganizationNamed(response.getName()), response);
    }
 
    @Test
@@ -161,15 +161,14 @@ public class VCloudClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"),
-               "jclouds.test.endpoint");
+      String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"), "jclouds.test.endpoint");
       identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
       String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
       Properties props = new Properties();
       props.setProperty("vcloud.endpoint", endpoint);
       context = new RestContextFactory().createContext("vcloud", identity, credential, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()), props);
+            .<Module> of(new Log4JLoggingModule()), props);
 
       connection = context.getApi();
    }

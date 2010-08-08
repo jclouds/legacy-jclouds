@@ -45,7 +45,7 @@ public class OrgAndVDCToLocationProvider implements Provider<Set<? extends Locat
 
    @Inject
    OrgAndVDCToLocationProvider(@org.jclouds.rest.annotations.Provider String providerName,
-            Supplier<VCloudSession> cache, VCloudClient client) {
+         Supplier<VCloudSession> cache, VCloudClient client) {
       this.providerName = providerName;
       this.cache = cache;
       this.client = client;
@@ -57,9 +57,9 @@ public class OrgAndVDCToLocationProvider implements Provider<Set<? extends Locat
       Set<Location> locations = Sets.newLinkedHashSet();
 
       for (NamedResource org : cache.get().getOrgs().values()) {
-         Location orgL = new LocationImpl(LocationScope.REGION, org.getId(), org.getName(),
-                  provider);
-         for (NamedResource vdc : client.getOrganization(org.getId()).getVDCs().values()) {
+         Location orgL = new LocationImpl(LocationScope.REGION, org.getName(), org.getLocation().toASCIIString(),
+               provider);
+         for (NamedResource vdc : client.getOrganizationNamed(org.getName()).getVDCs().values()) {
             locations.add(new LocationImpl(LocationScope.ZONE, vdc.getId(), vdc.getName(), orgL));
          }
       }

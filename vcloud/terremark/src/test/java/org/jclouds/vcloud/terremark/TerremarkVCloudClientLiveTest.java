@@ -48,10 +48,10 @@ public class TerremarkVCloudClientLiveTest extends TerremarkClientLiveTest {
    public void testKeysList() throws Exception {
       TerremarkVCloudExpressClient vCloudExpressClient = TerremarkVCloudExpressClient.class.cast(tmClient);
       TerremarkOrganization org = vCloudExpressClient.getDefaultOrganization();
-      Set<KeyPair> response = vCloudExpressClient.listKeyPairs();
+      Set<KeyPair> response = vCloudExpressClient.listKeyPairsInOrg(null);
       assertNotNull(response);
       System.err.println(response);
-      assertEquals(response, vCloudExpressClient.listKeyPairsInOrg(org.getId()));
+      assertEquals(response, vCloudExpressClient.listKeyPairsInOrg(org.getName()));
    }
 
    @Override
@@ -59,21 +59,22 @@ public class TerremarkVCloudClientLiveTest extends TerremarkClientLiveTest {
       TerremarkVCloudExpressClient vCloudExpressClient = TerremarkVCloudExpressClient.class.cast(tmClient);
 
       TerremarkOrganization org = vCloudExpressClient.getDefaultOrganization();
-      key = vCloudExpressClient.generateKeyPairInOrg(org.getId(), "livetest", false);
+      key = vCloudExpressClient.generateKeyPairInOrg(org.getName(), "livetest", false);
       assertNotNull(key);
       System.err.println(key);
       assertEquals(key.getName(), "livetest");
       assertNotNull(key.getPrivateKey());
       assertNotNull(key.getFingerPrint());
       assertEquals(key.isDefault(), false);
-      assertEquals(key.getFingerPrint(), vCloudExpressClient.getKeyPair(key.getId()).getFingerPrint());
+      assertEquals(key.getFingerPrint(), vCloudExpressClient.getKeyPairInOrg(org.getName(), key.getName())
+            .getFingerPrint());
    }
 
    @AfterTest
    void cleanup1() throws InterruptedException, ExecutionException, TimeoutException {
       if (key != null) {
          TerremarkVCloudExpressClient vCloudExpressClient = TerremarkVCloudExpressClient.class.cast(tmClient);
-         vCloudExpressClient.deleteKeyPair(key.getId());
+         vCloudExpressClient.deleteKeyPair(key.getLocation());
       }
    }
 

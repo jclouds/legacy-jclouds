@@ -23,6 +23,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
+import java.net.URI;
 import java.util.concurrent.ConcurrentMap;
 
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressClient;
@@ -46,8 +47,7 @@ public class DeleteKeyPairTest {
       DeleteKeyPair strategy = setupStrategy();
 
       // setup expectations
-      expect(strategy.terremarkClient.listKeyPairsInOrg(orgTag.getOrg()))
-            .andReturn(ImmutableSet.<KeyPair> of());
+      expect(strategy.terremarkClient.listKeyPairsInOrg(orgTag.getOrg())).andReturn(ImmutableSet.<KeyPair> of());
 
       // replay mocks
       replayStrategy(strategy);
@@ -68,12 +68,10 @@ public class DeleteKeyPairTest {
       KeyPair keyPair = createMock(KeyPair.class);
 
       // setup expectations
-      expect(strategy.terremarkClient.listKeyPairsInOrg(orgTag.getOrg()))
-            .andReturn(ImmutableSet.<KeyPair> of(keyPair));
-      expect(keyPair.getName()).andReturn(
-            "jclouds#" + orgTag.getName() + "-123").atLeastOnce();
-      expect(keyPair.getId()).andReturn(1234);
-      strategy.terremarkClient.deleteKeyPair(1234);
+      expect(strategy.terremarkClient.listKeyPairsInOrg(orgTag.getOrg())).andReturn(ImmutableSet.<KeyPair> of(keyPair));
+      expect(keyPair.getName()).andReturn("jclouds#" + orgTag.getName() + "-123").atLeastOnce();
+      expect(keyPair.getLocation()).andReturn(URI.create("1245"));
+      strategy.terremarkClient.deleteKeyPair(URI.create("1245"));
       expect(strategy.credentialsMap.remove(orgTag)).andReturn(null);
 
       // replay mocks
@@ -97,10 +95,8 @@ public class DeleteKeyPairTest {
       KeyPair keyPair = createMock(KeyPair.class);
 
       // setup expectations
-      expect(strategy.terremarkClient.listKeyPairsInOrg(orgTag.getOrg()))
-            .andReturn(ImmutableSet.<KeyPair> of(keyPair));
-      expect(keyPair.getName()).andReturn(
-            "kclouds#" + orgTag.getName() + "-123");
+      expect(strategy.terremarkClient.listKeyPairsInOrg(orgTag.getOrg())).andReturn(ImmutableSet.<KeyPair> of(keyPair));
+      expect(keyPair.getName()).andReturn("kclouds#" + orgTag.getName() + "-123");
 
       // replay mocks
       replay(keyPair);

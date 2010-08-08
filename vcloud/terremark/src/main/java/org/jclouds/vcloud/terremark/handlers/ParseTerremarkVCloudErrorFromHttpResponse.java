@@ -36,29 +36,32 @@ public class ParseTerremarkVCloudErrorFromHttpResponse implements HttpErrorHandl
       try {
          String content = parseErrorFromContentOrNull(command, response);
          switch (response.getStatusCode()) {
-            case 401:
-               exception = new AuthorizationException(command.getRequest(), content);
-               break;
-            case 403: // TODO temporary as terremark mistakenly uses this for vApp not found.
-            case 404:
-               if (!command.getRequest().getMethod().equals("DELETE")) {
-                  String path = command.getRequest().getEndpoint().getPath();
-                  Matcher matcher = RESOURCE_PATTERN.matcher(path);
-                  String message;
-                  if (matcher.find()) {
-                     message = String.format("%s %s not found", matcher.group(1), matcher.group(2));
-                  } else {
-                     message = path;
-                  }
-                  exception = new ResourceNotFoundException(message);
+         case 401:
+            exception = new AuthorizationException(command.getRequest(), content);
+            break;
+         case 403: // TODO temporary as terremark mistakenly uses this for vApp
+                   // not found.
+         case 404:
+            if (!command.getRequest().getMethod().equals("DELETE")) {
+               String path = command.getRequest().getEndpoint().getPath();
+               Matcher matcher = RESOURCE_PATTERN.matcher(path);
+               String message;
+               if (matcher.find()) {
+                  message = String.format("%s %s not found", matcher.group(1), matcher.group(2));
+               } else {
+                  message = path;
                }
-               break;
-            case 500:
-               if (response.getMessage().indexOf("because there is a pending task running") != -1)
-                  exception = new IllegalStateException(response.getMessage(), exception);
-               break;
-            default:
-               exception = new HttpResponseException(command, response, content);
+               exception = new ResourceNotFoundException(message);
+            }
+            break;
+         case 500:
+            if (response.getMessage().indexOf("because there is a pending task running") != -1)
+               exception = new IllegalStateException(response.getMessage(), exception);
+            else if (response.getMessage().indexOf("because it is already powered off") != -1)
+               exception = new IllegalStateException(response.getMessage(), exception);
+            break;
+         default:
+            exception = new HttpResponseException(command, response, content);
          }
       } finally {
          releasePayload(response);

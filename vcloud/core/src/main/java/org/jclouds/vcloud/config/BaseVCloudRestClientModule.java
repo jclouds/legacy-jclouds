@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -77,6 +78,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * Configures the VCloud authentication service connection, including logging
@@ -96,6 +98,9 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Override
    protected void configure() {
       requestInjection(this);
+      bind(new TypeLiteral<Supplier<Map<String, NamedResource>>>() {
+      }).annotatedWith(Org.class).to(new TypeLiteral<OrgNameToOrgSupplier>() {
+      });
       super.configure();
    }
 
@@ -123,13 +128,20 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    }
 
    @Provides
+   @Org
+   @Singleton
+   protected String provideOrgName(@Org Iterable<NamedResource> orgs) {
+      return Iterables.getLast(orgs).getName();
+   }
+
+   @Provides
    @Named("VDC_TO_ORG")
    @Singleton
    protected Map<String, String> provideVDCtoORG(@Org Iterable<NamedResource> orgs, VCloudClient client) {
       Map<String, String> returnVal = Maps.newLinkedHashMap();
       for (NamedResource orgr : orgs) {
-         for (NamedResource vdc : client.getOrganization(orgr.getId()).getVDCs().values()) {
-            returnVal.put(vdc.getId(), orgr.getId());
+         for (NamedResource vdc : client.getOrganizationNamed(orgr.getName()).getVDCs().values()) {
+            returnVal.put(vdc.getId(), orgr.getName());
          }
       }
       return returnVal;
@@ -151,14 +163,11 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
       return URI.create(vcloudUri.toASCIIString().replace("/login", ""));
    }
 
-   private AuthorizationException authException = null;
+   protected AuthorizationException authException = null;
 
-   /**
-    * borrowing concurrency code to ensure that caching takes place properly
-    */
    @Provides
    @Singleton
-   Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+   protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
          final VCloudLoginAsyncClient login) {
       return Suppliers.memoizeWithExpiration(new RetryOnTimeOutExceptionSupplier<VCloudSession>(
             new Supplier<VCloudSession>() {
@@ -198,6 +207,23 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
       checkState(versions.size() > 0, "No versions present");
       checkState(versions.containsKey(version), "version " + version + " not present in: " + versions);
       return versions.get(version);
+   }
+
+   @Singleton
+   private static class OrgNameToOrgSupplier implements Supplier<Map<String, NamedResource>> {
+      private final Supplier<VCloudSession> sessionSupplier;
+
+      @SuppressWarnings("unused")
+      @Inject
+      OrgNameToOrgSupplier(Supplier<VCloudSession> sessionSupplier) {
+         this.sessionSupplier = sessionSupplier;
+      }
+
+      @Override
+      public Map<String, NamedResource> get() {
+         return sessionSupplier.get().getOrgs();
+      }
+
    }
 
    @Provides

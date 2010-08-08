@@ -57,8 +57,7 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
    protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
 
    @Inject
-   public BaseVCloudComputeClient(VCloudClient client,
-         Predicate<String> successTester,
+   public BaseVCloudComputeClient(VCloudClient client, Predicate<String> successTester,
          Map<VAppStatus, NodeState> vAppStatusToNodeState) {
       this.client = client;
       this.taskTester = successTester;
@@ -66,16 +65,13 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
    }
 
    @Override
-   public Map<String, String> start(String vDCId, String name,
-         String templateId, InstantiateVAppTemplateOptions options,
-         int... portsToOpen) {
+   public Map<String, String> start(String vDCId, String name, String templateId,
+         InstantiateVAppTemplateOptions options, int... portsToOpen) {
       checkNotNull(options, "options");
-      logger.debug(
-            ">> instantiating vApp vDC(%s) name(%s) template(%s) options(%s) ",
-            vDCId, name, templateId, options);
+      logger
+            .debug(">> instantiating vApp vDC(%s) name(%s) template(%s) options(%s) ", vDCId, name, templateId, options);
 
-      VApp vAppResponse = client.instantiateVAppTemplateInVDC(vDCId, name,
-            templateId, options);
+      VApp vAppResponse = client.instantiateVAppTemplateInVDC(vDCId, name, templateId, options);
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getId());
 
       logger.debug(">> deploying vApp(%s)", vAppResponse.getId());
@@ -97,20 +93,15 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
       return parseAndValidateResponse(templateId, vAppResponse);
    }
 
-   protected Map<String, String> parseAndValidateResponse(String templateId,
-         VApp vAppResponse) {
+   protected Map<String, String> parseAndValidateResponse(String templateId, VApp vAppResponse) {
       Map<String, String> response = parseResponse(templateId, vAppResponse);
-      checkState(response.containsKey("id"),
-            "bad configuration: [id] should be in response");
-      checkState(response.containsKey("username"),
-            "bad configuration: [username] should be in response");
-      checkState(response.containsKey("password"),
-            "bad configuration: [password] should be in response");
+      checkState(response.containsKey("id"), "bad configuration: [id] should be in response");
+      checkState(response.containsKey("username"), "bad configuration: [username] should be in response");
+      checkState(response.containsKey("password"), "bad configuration: [password] should be in response");
       return response;
    }
 
-   protected Map<String, String> parseResponse(String templateId,
-         VApp vAppResponse) {
+   protected Map<String, String> parseResponse(String templateId, VApp vAppResponse) {
       Map<String, String> config = Maps.newLinkedHashMap();// Allows nulls
       config.put("id", vAppResponse.getId());
       config.put("username", null);
@@ -143,8 +134,7 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
 
    private VApp undeployVAppIfDeployed(VApp vApp) {
       if (vApp.getStatus().compareTo(VAppStatus.RESOLVED) > 0) {
-         logger.debug(">> undeploying vApp(%s), current status: %s", vApp
-               .getId(), vApp.getStatus());
+         logger.debug(">> undeploying vApp(%s), current status: %s", vApp.getId(), vApp.getStatus());
          Task task = client.undeployVApp(vApp.getId());
          if (!taskTester.apply(task.getId())) {
             throw new TaskException("undeploy", vApp, task);
@@ -157,8 +147,7 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
 
    private VApp powerOffVAppIfDeployed(VApp vApp) {
       if (vApp.getStatus().compareTo(VAppStatus.OFF) > 0) {
-         logger.debug(">> powering off vApp(%s), current status: %s", vApp
-               .getId(), vApp.getStatus());
+         logger.debug(">> powering off vApp(%s), current status: %s", vApp.getId(), vApp.getStatus());
          Task task = client.powerOffVApp(vApp.getId());
          if (!taskTester.apply(task.getId())) {
             throw new TaskException("powerOff", vApp, task);
@@ -176,10 +165,8 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
       private static final long serialVersionUID = 251801929573211256L;
 
       public TaskException(String type, VApp vApp, Task task) {
-         super(String.format(
-               "failed to %s vApp %s status %s;task %s status %s", type, vApp
-                     .getId(), vApp.getStatus(), task.getLocation(), task
-                     .getStatus()), vApp);
+         super(String.format("failed to %s vApp %s status %s;task %s status %s", type, vApp.getId(), vApp.getStatus(),
+               task.getLocation(), task.getStatus()), vApp);
          this.task = task;
       }
 

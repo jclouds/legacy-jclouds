@@ -40,15 +40,20 @@ import org.jclouds.vcloud.terremark.options.AddNodeOptions;
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
+ * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx"
+ *      />
  * @author Adrian Cole
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkVCloudClient extends VCloudClient {
-
+   @Override
    TerremarkOrganization getDefaultOrganization();
 
+   @Override
    TerremarkOrganization getOrganization(String orgId);
+
+   @Override
+   TerremarkOrganization getOrganizationNamed(String orgName);
 
    CustomizationParameters getCustomizationOptionsOfCatalogItem(String catalogItemId);
 
@@ -68,20 +73,21 @@ public interface TerremarkVCloudClient extends VCloudClient {
    PublicIpAddress activatePublicIpInVDC(String vDCId);
 
    /**
-    * The call creates a new internet server, including protocol and port information. The public IP
-    * is dynamically allocated.
+    * The call creates a new internet server, including protocol and port
+    * information. The public IP is dynamically allocated.
     * 
     */
-   InternetService addInternetServiceToVDC(String vDCId, String serviceName, Protocol protocol,
-            int port, AddInternetServiceOptions... options);
+   InternetService addInternetServiceToVDC(String vDCId, String serviceName, Protocol protocol, int port,
+         AddInternetServiceOptions... options);
 
    /**
-    * This call adds an internet service to a known, existing public IP. This call is identical to
-    * Add Internet Service except you specify the public IP in the request.
+    * This call adds an internet service to a known, existing public IP. This
+    * call is identical to Add Internet Service except you specify the public IP
+    * in the request.
     * 
     */
-   InternetService addInternetServiceToExistingIp(int existingIpId, String serviceName,
-            Protocol protocol, int port, AddInternetServiceOptions... options);
+   InternetService addInternetServiceToExistingIp(int existingIpId, String serviceName, Protocol protocol, int port,
+         AddInternetServiceOptions... options);
 
    void deleteInternetService(int internetServiceId);
 
@@ -99,9 +105,10 @@ public interface TerremarkVCloudClient extends VCloudClient {
    /**
     * This call adds a node to an existing internet service.
     * <p/>
-    * Every vDC is assigned a network of 60 IP addresses that can be used as nodes. Each node can
-    * associated with multiple internet service. You can get a list of the available IP addresses by
-    * calling Get IP Addresses for a Network.
+    * Every vDC is assigned a network of 60 IP addresses that can be used as
+    * nodes. Each node can associated with multiple internet service. You can
+    * get a list of the available IP addresses by calling Get IP Addresses for a
+    * Network.
     * 
     * @param internetServiceId
     * @param ipAddress
@@ -110,8 +117,7 @@ public interface TerremarkVCloudClient extends VCloudClient {
     * @param options
     * @return
     */
-   Node addNode(int internetServiceId, String ipAddress, String name, int port,
-            AddNodeOptions... options);
+   Node addNode(int internetServiceId, String ipAddress, String name, int port, AddNodeOptions... options);
 
    Node getNode(int nodeId);
 
@@ -122,8 +128,9 @@ public interface TerremarkVCloudClient extends VCloudClient {
    Set<Node> getNodes(int internetServiceId);
 
    /**
-    * This call configures the settings of an existing vApp by passing the new configuration. The
-    * existing vApp must be in a powered off state (status = 2).
+    * This call configures the settings of an existing vApp by passing the new
+    * configuration. The existing vApp must be in a powered off state (status =
+    * 2).
     * <p/>
     * You can change the following items for a vApp.
     * <ol>
@@ -132,8 +139,9 @@ public interface TerremarkVCloudClient extends VCloudClient {
     * <li>Add a virtual disk</li>
     * <li>Delete a virtual disk</li>
     * </ol>
-    * You can make more than one change in a single request. For example, you can increase the
-    * number of virtual CPUs and the amount of virtual memory in the same request.
+    * You can make more than one change in a single request. For example, you
+    * can increase the number of virtual CPUs and the amount of virtual memory
+    * in the same request.
     * 
     * @param vApp
     *           vApp to change in power state off

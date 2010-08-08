@@ -36,13 +36,12 @@ public class TerremarkOrgHandler extends OrgHandler {
    private NamedResource keysList;
 
    public TerremarkOrganization getResult() {
-      return new TerremarkOrganizationImpl(org.getId(), org.getName(), org.getLocation(), catalogs,
-               vdcs, tasksLists, keysList);
+      return new TerremarkOrganizationImpl(org.getId(), org.getName(), org.getLocation(), catalogs, vdcs, tasksLists,
+            keysList);
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       super.startElement(uri, localName, qName, attributes);
       if (qName.equals("Link")) {
          int typeIndex = attributes.getIndex("type");

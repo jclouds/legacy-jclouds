@@ -103,8 +103,8 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
 
       @Inject
       protected TerremarkVCloudAddNodeWithTagStrategy(TerremarkVCloudClient client,
-               TerremarkVCloudComputeClient computeClient, GetNodeMetadataStrategy getNode,
-               TemplateToInstantiateOptions getOptions) {
+            TerremarkVCloudComputeClient computeClient, GetNodeMetadataStrategy getNode,
+            TemplateToInstantiateOptions getOptions) {
          this.client = client;
          this.computeClient = computeClient;
          this.getNode = getNode;
@@ -114,9 +114,8 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       @Override
       public NodeMetadata execute(String tag, String name, Template template) {
          TerremarkInstantiateVAppTemplateOptions options = getOptions.apply(template);
-         Map<String, String> metaMap = computeClient.start(template.getLocation().getId(), name,
-                  template.getImage().getProviderId(), options, template.getOptions()
-                           .getInboundPorts());
+         Map<String, String> metaMap = computeClient.start(template.getLocation().getId(), name, template.getImage()
+               .getProviderId(), options, template.getOptions().getInboundPorts());
          return getNode.execute(metaMap.get("id"));
       }
 
@@ -124,17 +123,15 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
 
    @Singleton
    public static class TemplateToInstantiateOptions implements
-            Function<Template, TerremarkInstantiateVAppTemplateOptions> {
+         Function<Template, TerremarkInstantiateVAppTemplateOptions> {
 
       @Override
       public TerremarkInstantiateVAppTemplateOptions apply(Template from) {
          TerremarkInstantiateVAppTemplateOptions options = processorCount(
-                  Double.valueOf(from.getSize().getCores()).intValue()).memory(
-                  from.getSize().getRam());
+               Double.valueOf(from.getSize().getCores()).intValue()).memory(from.getSize().getRam());
          if (!from.getOptions().shouldBlockUntilRunning())
             options.blockOnDeploy(false);
-         String sshKeyFingerprint = TerremarkVCloudTemplateOptions.class.cast(from.getOptions())
-                  .getSshKeyFingerprint();
+         String sshKeyFingerprint = TerremarkVCloudTemplateOptions.class.cast(from.getOptions()).getSshKeyFingerprint();
          if (sshKeyFingerprint != null)
             options.sshKeyFingerprint(sshKeyFingerprint);
 
@@ -151,8 +148,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudAsyncClient>>() {
       }).in(Scopes.SINGLETON);
       // NOTE
-      bind(RunNodesAndAddToSetStrategy.class).to(
-               TerremarkEncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy.class);
+      bind(RunNodesAndAddToSetStrategy.class).to(TerremarkEncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy.class);
       bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
       // NOTE
       bind(GetNodeMetadataStrategy.class).to(TerremarkVCloudGetNodeMetadataStrategy.class);
@@ -170,7 +166,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       bind(ComputeService.class).to(TerremarkVCloudComputeService.class);
       bind(VCloudComputeClient.class).to(TerremarkVCloudComputeClient.class);
       bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(
-               ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
+            ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
       bind(SecureRandom.class).toInstance(new SecureRandom());
 
    }
@@ -203,8 +199,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
    @Override
    protected void bindImages() {
       bind(new TypeLiteral<Set<? extends Image>>() {
-      }).toProvider(VAppTemplatesInOrgs.class).in(
-               Scopes.SINGLETON);
+      }).toProvider(VAppTemplatesInOrgs.class).in(Scopes.SINGLETON);
    }
 
 }

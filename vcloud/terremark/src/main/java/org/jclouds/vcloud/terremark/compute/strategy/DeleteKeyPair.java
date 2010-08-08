@@ -46,18 +46,16 @@ public class DeleteKeyPair {
    final ConcurrentMap<OrgAndName, KeyPair> credentialsMap;
 
    @Inject
-   DeleteKeyPair(TerremarkVCloudExpressClient terremarkClient,
-         ConcurrentMap<OrgAndName, KeyPair> credentialsMap) {
+   DeleteKeyPair(TerremarkVCloudExpressClient terremarkClient, ConcurrentMap<OrgAndName, KeyPair> credentialsMap) {
       this.terremarkClient = terremarkClient;
       this.credentialsMap = credentialsMap;
    }
 
    public void execute(OrgAndName orgTag) {
       for (KeyPair keyPair : terremarkClient.listKeyPairsInOrg(orgTag.getOrg())) {
-         if (keyPair.getName().matches(
-               "jclouds#" + orgTag.getName() + "-[0-9]+")) {
+         if (keyPair.getName().matches("jclouds#" + orgTag.getName() + "-[0-9]+")) {
             logger.debug(">> deleting keyPair(%s)", keyPair.getName());
-            terremarkClient.deleteKeyPair(keyPair.getId());
+            terremarkClient.deleteKeyPair(keyPair.getLocation());
             // TODO: test this clear happens
             credentialsMap.remove(orgTag);
             logger.debug("<< deleted keyPair(%s)", keyPair.getName());

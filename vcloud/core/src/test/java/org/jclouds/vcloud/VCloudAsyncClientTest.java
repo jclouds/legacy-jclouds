@@ -20,6 +20,7 @@ package org.jclouds.vcloud;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.testng.Assert.assertEquals;
 
@@ -27,10 +28,10 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.inject.Named;
-import javax.inject.Provider;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
@@ -47,8 +48,10 @@ import org.jclouds.util.Utils;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
 import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.jclouds.vcloud.options.CloneVAppOptions;
@@ -65,6 +68,8 @@ import org.jclouds.vcloud.xml.VDCHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
@@ -184,6 +189,21 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    public void testOrganization() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("getOrganization", String.class);
       HttpRequest request = processor.createRequest(method, "1");
+
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/org/1 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.org+xml\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, OrgHandler.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
+   public void testOrganizationNamed() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("getOrganizationNamed", String.class);
+      HttpRequest request = processor.createRequest(method, "org");
 
       assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/org/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.org+xml\n");
@@ -572,17 +592,25 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       }
 
       @Override
-      protected void configure() {
-         super.configure();
-         bind(SetVCloudTokenCookie.class).toInstance(new SetVCloudTokenCookie(new Provider<String>() {
+      protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+            final VCloudLoginAsyncClient login) {
+         return Suppliers.<VCloudSession> ofInstance(new VCloudSession() {
 
-            public String get() {
+            @Override
+            public Map<String, NamedResource> getOrgs() {
+               return ImmutableMap.<String, NamedResource> of("org", new NamedResourceImpl("1", "org",
+                     VCloudMediaType.ORG_XML, URI.create("https://vcloud.safesecureweb.com/api/v0.8/org/1")));
+            }
+
+            @Override
+            public String getVCloudToken() {
                return "token";
             }
 
-         }));
+         });
 
       }
+
    }
 
 }
