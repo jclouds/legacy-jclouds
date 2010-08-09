@@ -75,10 +75,16 @@
         <repository>
             <id>repo2</id>
             <url>http://repo2.maven.org/maven2</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>jclouds-googlecode-deploy</id>
             <url>http://jclouds.googlecode.com/svn/repo</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>jclouds-rimu-snapshots-nexus</id>
@@ -90,22 +96,37 @@
         <repository>
             <id>jboss</id>
             <url>http://repository.jboss.org/maven2/</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>googlecode.java-xmlbuilder</id>
             <url>http://java-xmlbuilder.googlecode.com/svn/repo</url>       
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>clojure</id>
             <url>http://build.clojure.org/releases</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>clojars.org</id>
             <url>http://clojars.org/repo</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>sonatype-github-releases</id>
             <url>http://oss.sonatype.org/content/repositories/github-releases</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
@@ -285,34 +306,38 @@
         </testResource>
       </testResources>
       <plugins>
-        <plugin>
-          <groupId>com.theoryinpractise</groupId>
-          <artifactId>clojure-maven-plugin</artifactId>
-          <!-- snapshot repo is blank, so reverted to 1.3.2 -->
-          <version>1.3.2</version>
-          <executions>
-            <execution>
-              <id>compile-clojure</id>
-              <phase>compile</phase>
-              <goals>
-                <goal>compile</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>test-clojure</id>
-              <phase>test</phase>
-              <goals>
-                <goal>test</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <!-- we want the AOT compile sanity check, but still only ship source -->
-            <outputDirectory>${project.build.directory}/clojure-classes</outputDirectory>
-            <clojureOptions>-Xms128m -Xmx512m</clojureOptions>
-            <testDeclaredNamespaceOnly>false</testDeclaredNamespaceOnly>
-          </configuration>
-        </plugin>
+            <plugin>
+                <groupId>com.theoryinpractise</groupId>
+                <artifactId>clojure-maven-plugin</artifactId>
+                <version>1.3.3</version>
+                <configuration>
+                    <sourceDirectories>
+                        <sourceDirectory>src/main/clojure</sourceDirectory>
+                    </sourceDirectories>
+                    <testSourceDirectories>
+                        <testSourceDirectory>src/test/clojure</testSourceDirectory>
+                    </testSourceDirectories>
+                    <clojureOptions>-Xmx512m -Djava.awt.headless=true -XX:MaxPermSize=256m</clojureOptions>
+                    <warnOnReflection>true</warnOnReflection>
+                    <testDeclaredNamespaceOnly>false</testDeclaredNamespaceOnly>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>compile-clojure</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-clojure</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <executions>
@@ -644,13 +669,13 @@ pageTracker._trackPageview();
 	    <dependency>
 	      <groupId>org.clojure</groupId>
 	      <artifactId>clojure</artifactId>
-	      <version>1.2.0-master-SNAPSHOT</version>
+	      <version>1.2.0-RC2</version>
           <optional>true</optional>
 	    </dependency>
 	    <dependency>
 	      <groupId>org.clojure</groupId>
 	      <artifactId>clojure-contrib</artifactId>
-	      <version>1.2.0-SNAPSHOT</version>
+	      <version>1.2.0-RC2</version>
           <optional>true</optional>
 	    </dependency>
 	  </dependencies>
