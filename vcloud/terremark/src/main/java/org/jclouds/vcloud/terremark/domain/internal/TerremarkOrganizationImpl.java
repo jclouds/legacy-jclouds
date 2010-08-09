@@ -31,14 +31,12 @@ import org.jclouds.vcloud.terremark.domain.TerremarkOrganization;
  * @author Adrian Cole
  * 
  */
-public class TerremarkOrganizationImpl extends OrganizationImpl implements
-      TerremarkOrganization {
+public class TerremarkOrganizationImpl extends OrganizationImpl implements TerremarkOrganization {
 
    private final NamedResource keysList;
 
-   public TerremarkOrganizationImpl(String id, String name, URI location,
-         Map<String, NamedResource> catalogs, Map<String, NamedResource> vdcs,
-         Map<String, NamedResource> tasksLists, NamedResource keysList) {
+   public TerremarkOrganizationImpl(String id, String name, URI location, Map<String, NamedResource> catalogs,
+         Map<String, NamedResource> vdcs, Map<String, NamedResource> tasksLists, NamedResource keysList) {
       super(id, name, location, catalogs, vdcs, tasksLists);
       this.keysList = keysList;
    }

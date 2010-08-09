@@ -64,6 +64,7 @@ import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.functions.OrgNameAndVDCNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameToEndpoint;
 import org.jclouds.vcloud.functions.VAppIdToUri;
 import org.jclouds.vcloud.functions.VAppTemplateIdToUri;
@@ -196,6 +197,17 @@ public interface VCloudAsyncClient {
    @Consumes(VDC_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends VDC> getVDC(@PathParam("vDCId") String vDCId);
+
+   /**
+    * @see VCloudClient#getVDCInOrg(String, String)
+    */
+   @GET
+   @XMLResponseParser(VDCHandler.class)
+   @Consumes(VDC_XML)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends VDC> getVDCInOrg(
+         @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String orgName,
+         @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String vdcName);
 
    /**
     * @see VCloudClient#getVDC(URI)
@@ -334,8 +346,25 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends VApp> getVApp(@PathParam("vAppId") String appId);
 
    /**
+    * @see VCloudClient#instantiateVAppTemplate
+    */
+   @POST
+   @Path("/action/instantiateVAppTemplate")
+   @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
+   @Consumes(VAPP_XML)
+   @XMLResponseParser(VAppHandler.class)
+   @MapBinder(BindInstantiateVAppTemplateParamsToXmlPayload.class)
+   ListenableFuture<? extends VApp> instantiateVAppTemplateInOrg(
+         @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String orgName,
+         @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String vdcName,
+         @MapPayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName,
+         @MapPayloadParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
+         InstantiateVAppTemplateOptions... options);
+
+   /**
     * @see VCloudClient#instantiateVAppTemplateInVDC
     */
+   @Deprecated
    @POST
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vdc/{vDCId}/action/instantiateVAppTemplate")
@@ -349,8 +378,25 @@ public interface VCloudAsyncClient {
          InstantiateVAppTemplateOptions... options);
 
    /**
-    * @see VCloudClient#cloneVAppInVDC
+    * @see VCloudClient#cloneVApp
     */
+   @POST
+   @Path("/action/cloneVApp")
+   @Produces("application/vnd.vmware.vcloud.cloneVAppParams+xml")
+   @Consumes(TASK_XML)
+   @XMLResponseParser(TaskHandler.class)
+   @MapBinder(BindCloneVAppParamsToXmlPayload.class)
+   ListenableFuture<? extends Task> cloneVAppInOrg(
+         @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String orgName,
+         @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String vdcName,
+         @MapPayloadParam("vApp") @ParamParser(VAppIdToUri.class) String vAppIdToClone,
+         @MapPayloadParam("newName") @ParamValidators(DnsNameValidator.class) String newName,
+         CloneVAppOptions... options);
+
+   /**
+    * - * @see VCloudClient#cloneVAppInVDC
+    */
+   @Deprecated
    @POST
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vdc/{vDCId}/action/cloneVApp")
@@ -362,4 +408,5 @@ public interface VCloudAsyncClient {
          @MapPayloadParam("vApp") @ParamParser(VAppIdToUri.class) String vAppIdToClone,
          @MapPayloadParam("newName") @ParamValidators(DnsNameValidator.class) String newName,
          CloneVAppOptions... options);
+
 }

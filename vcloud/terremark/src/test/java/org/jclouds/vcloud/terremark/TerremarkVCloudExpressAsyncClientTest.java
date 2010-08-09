@@ -144,11 +144,13 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
    }
 
    public void testInstantiateVAppTemplate() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod("instantiateVAppTemplateInVDC", String.class,
-            String.class, String.class, Array.newInstance(InstantiateVAppTemplateOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, "1", "name", 3 + "");
+      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod("instantiateVAppTemplateInOrg", String.class,
+            String.class, String.class, String.class, Array.newInstance(InstantiateVAppTemplateOptions.class, 0)
+                  .getClass());
+      HttpRequest request = processor.createRequest(method, "org", "vdc", "name", 3 + "");
 
-      assertRequestLineEquals(request, "POST https://vcloud/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
+      assertRequestLineEquals(request,
+            "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
       assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
             "/terremark/InstantiateVAppTemplateParams-test.xml")),
@@ -162,13 +164,15 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
    }
 
    public void testInstantiateVAppTemplateOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod("instantiateVAppTemplateInVDC", String.class,
-            String.class, String.class, Array.newInstance(InstantiateVAppTemplateOptions.class, 0).getClass());
-      HttpRequest request = processor.createRequest(method, "1", "name", 3 + "",
+      Method method = TerremarkVCloudExpressAsyncClient.class.getMethod("instantiateVAppTemplateInOrg", String.class,
+            String.class, String.class, String.class, Array.newInstance(InstantiateVAppTemplateOptions.class, 0)
+                  .getClass());
+      HttpRequest request = processor.createRequest(method, "org", "vdc", "name", 3 + "",
             TerremarkInstantiateVAppTemplateOptions.Builder.processorCount(2).memory(512).inRow("row").inGroup("group")
                   .withPassword("password").inNetwork(URI.create("http://network")));
 
-      assertRequestLineEquals(request, "POST https://vcloud/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
+      assertRequestLineEquals(request,
+            "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
       assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
             "/terremark/InstantiateVAppTemplateParams-options-test.xml")),
@@ -443,7 +447,7 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
 
    public void testListKeyPairsInOrgNull() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TerremarkVCloudExpressAsyncClient.class.getMethod("listKeyPairsInOrg", String.class);
-      HttpRequest request = processor.createRequest(method,(String) null);
+      HttpRequest request = processor.createRequest(method, (String) null);
 
       assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/org/1/keysList HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.vcloudExpress.keysList+xml\n");
@@ -567,6 +571,7 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
       protected void configure() {
          super.configure();
          bind(OrgNameToKeysListSupplier.class).to(TestOrgNameToKeysListSupplier.class);
+         bind(OrgNameToVDCSupplier.class).to(TestOrgNameToVDCSupplier.class);
       }
 
       @Override
@@ -638,6 +643,21 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
 
          }
 
+      }
+
+      @Singleton
+      public static class TestOrgNameToVDCSupplier extends OrgNameToVDCSupplier {
+         @Inject
+         protected TestOrgNameToVDCSupplier() {
+            super(null, null);
+         }
+
+         @Override
+         public Map<String, Map<String, NamedResource>> get() {
+            return ImmutableMap.<String, Map<String, NamedResource>> of("org", ImmutableMap.<String, NamedResource> of(
+                  "vdc", new NamedResourceImpl("1", "vdc", VCloudMediaType.VDC_XML, URI
+                        .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"))));
+         }
       }
 
       @Override

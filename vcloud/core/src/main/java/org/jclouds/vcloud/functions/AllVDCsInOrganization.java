@@ -57,17 +57,17 @@ public class AllVDCsInOrganization implements Function<Organization, Iterable<? 
    }
 
    @Override
-   public Iterable<? extends VDC> apply(Organization from) {
+   public Iterable<? extends VDC> apply(final Organization org) {
 
-      Iterable<VDC> catalogItems = transformParallel(from.getVDCs().values(),
-               new Function<NamedResource, Future<VDC>>() {
-                  @SuppressWarnings("unchecked")
-                  @Override
-                  public Future<VDC> apply(NamedResource from) {
-                     return (Future<VDC>) aclient.getVDC(from.getId());
-                  }
+      Iterable<VDC> catalogItems = transformParallel(org.getVDCs().values(),
+            new Function<NamedResource, Future<VDC>>() {
+               @SuppressWarnings("unchecked")
+               @Override
+               public Future<VDC> apply(NamedResource from) {
+                  return (Future<VDC>) aclient.getVDCInOrg(org.getName(), from.getName());
+               }
 
-               }, executor, null, logger, "vdcs in " + from.getId());
+            }, executor, null, logger, "vdcs in " + org.getName());
       return catalogItems;
    }
 

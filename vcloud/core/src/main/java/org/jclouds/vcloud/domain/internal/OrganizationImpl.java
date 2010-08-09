@@ -43,7 +43,7 @@ public class OrganizationImpl implements Organization {
    private final Map<String, NamedResource> tasksLists;
 
    public OrganizationImpl(String id, String name, URI location, Map<String, NamedResource> catalogs,
-            Map<String, NamedResource> vdcs, Map<String, NamedResource> tasksLists) {
+         Map<String, NamedResource> vdcs, Map<String, NamedResource> tasksLists) {
       this.id = id;
       this.name = name;
       this.location = location;
@@ -143,4 +143,8 @@ public class OrganizationImpl implements Organization {
       return (this == o) ? 0 : getId().compareTo(o.getId());
    }
 
+   @Override
+   public String toString() {
+      return "[id=" + id + ", name=" + name + ", type=" + getType() + ", location=" + location + "]";
+   }
 }

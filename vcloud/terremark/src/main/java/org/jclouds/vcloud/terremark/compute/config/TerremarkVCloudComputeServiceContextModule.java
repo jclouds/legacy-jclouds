@@ -114,8 +114,9 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       @Override
       public NodeMetadata execute(String tag, String name, Template template) {
          TerremarkInstantiateVAppTemplateOptions options = getOptions.apply(template);
-         Map<String, String> metaMap = computeClient.start(template.getLocation().getId(), name, template.getImage()
-               .getProviderId(), options, template.getOptions().getInboundPorts());
+         Map<String, String> metaMap = computeClient.start(template.getLocation().getParent().getId(), template
+               .getLocation().getId(), name, template.getImage().getProviderId(), options, template.getOptions()
+               .getInboundPorts());
          return getNode.execute(metaMap.get("id"));
       }
 

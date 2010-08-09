@@ -18,6 +18,7 @@
  */
 package org.jclouds.vcloud.compute.config.providers;
 
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -27,9 +28,9 @@ import javax.inject.Singleton;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
+import org.jclouds.vcloud.endpoints.Org;
+import org.jclouds.vcloud.endpoints.VDC;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Sets;
@@ -39,16 +40,17 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class OrgAndVDCToLocationProvider implements Provider<Set<? extends Location>> {
-   private final Supplier<VCloudSession> cache;
-   private final VCloudClient client;
    private final String providerName;
+   private final Supplier<Map<String, NamedResource>> orgNameToResource;
+   private final Supplier<Map<String, Map<String, NamedResource>>> orgNameToVDCResource;
 
    @Inject
    OrgAndVDCToLocationProvider(@org.jclouds.rest.annotations.Provider String providerName,
-         Supplier<VCloudSession> cache, VCloudClient client) {
+         @Org Supplier<Map<String, NamedResource>> orgNameToResource,
+         @VDC Supplier<Map<String, Map<String, NamedResource>>> orgNameToVDCResource) {
       this.providerName = providerName;
-      this.cache = cache;
-      this.client = client;
+      this.orgNameToResource = orgNameToResource;
+      this.orgNameToVDCResource = orgNameToVDCResource;
    }
 
    @Override
@@ -56,11 +58,11 @@ public class OrgAndVDCToLocationProvider implements Provider<Set<? extends Locat
       Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
       Set<Location> locations = Sets.newLinkedHashSet();
 
-      for (NamedResource org : cache.get().getOrgs().values()) {
+      for (NamedResource org : orgNameToResource.get().values()) {
          Location orgL = new LocationImpl(LocationScope.REGION, org.getName(), org.getLocation().toASCIIString(),
                provider);
-         for (NamedResource vdc : client.getOrganizationNamed(org.getName()).getVDCs().values()) {
-            locations.add(new LocationImpl(LocationScope.ZONE, vdc.getId(), vdc.getName(), orgL));
+         for (NamedResource vdc : orgNameToVDCResource.get().get(org.getName()).values()) {
+            locations.add(new LocationImpl(LocationScope.ZONE, vdc.getName(), vdc.getLocation().toASCIIString(), orgL));
          }
       }
       return locations;

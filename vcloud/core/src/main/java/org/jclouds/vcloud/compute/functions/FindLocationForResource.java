@@ -57,14 +57,14 @@ public class FindLocationForResource {
    public Location apply(NamedResource resource) {
       for (Location input : locations.get()) {
          do {
-            if (input.getId().equals(resource.getName()))
-               return input;
-            else if (input.getId().equals(resource.getId()))
+            // The "name" isn't always present, ex inside a vApp we have a rel
+            // link that only includes href and type.
+            if (input.getDescription().equals(resource.getLocation().toASCIIString()))
                return input;
             input = input.getParent();
          } while (input.getParent() != null);
       }
       throw new NoSuchElementException(String.format("resource: %s not found in locations: %s", resource, locations
-               .get()));
+            .get()));
    }
 }

@@ -69,8 +69,8 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.util.Providers;
 
 /**
- * Configures the {@link VCloudComputeServiceContext}; requires {@link BaseVCloudComputeClient}
- * bound.
+ * Configures the {@link VCloudComputeServiceContext}; requires
+ * {@link BaseVCloudComputeClient} bound.
  * 
  * @author Adrian Cole
  */
@@ -80,8 +80,8 @@ public class VCloudComputeServiceContextModule extends AbstractModule {
    @Provides
    Map<VAppStatus, NodeState> provideVAppStatusToNodeState() {
       return ImmutableMap.<VAppStatus, NodeState> builder().put(VAppStatus.OFF, NodeState.SUSPENDED).put(VAppStatus.ON,
-               NodeState.RUNNING).put(VAppStatus.RESOLVED, NodeState.PENDING).put(VAppStatus.SUSPENDED,
-               NodeState.SUSPENDED).put(VAppStatus.UNRESOLVED, NodeState.PENDING).build();
+            NodeState.RUNNING).put(VAppStatus.RESOLVED, NodeState.PENDING).put(VAppStatus.SUSPENDED,
+            NodeState.SUSPENDED).put(VAppStatus.UNRESOLVED, NodeState.PENDING).build();
    }
 
    @Provides
@@ -151,7 +151,7 @@ public class VCloudComputeServiceContextModule extends AbstractModule {
    @Provides
    @Singleton
    Location getVDC(VCloudClient client, Set<? extends Location> locations) {
-      final String vdc = client.getDefaultVDC().getId();
+      final String vdc = client.getDefaultVDC().getName();
       return Iterables.find(locations, new Predicate<Location>() {
 
          @Override

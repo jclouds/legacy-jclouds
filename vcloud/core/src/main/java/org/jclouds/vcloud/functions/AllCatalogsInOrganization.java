@@ -51,8 +51,7 @@ public class AllCatalogsInOrganization implements Function<Organization, Iterabl
    private final ExecutorService executor;
 
    @Inject
-   AllCatalogsInOrganization(VCloudAsyncClient aclient,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   AllCatalogsInOrganization(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }
@@ -68,8 +67,7 @@ public class AllCatalogsInOrganization implements Function<Organization, Iterabl
                      return (Future<Catalog>) aclient.getCatalog(from.getId());
                   }
 
-               }, executor, null, logger, "catalogs in " + from.getId());
+               }, executor, null, logger, "catalogs in " + from.getName());
       return catalogItems;
    }
-
 }

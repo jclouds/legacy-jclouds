@@ -106,7 +106,6 @@ public class NamedResourceImpl implements NamedResource {
 
    @Override
    public String toString() {
-      return "NamedResourceImpl [id=" + id + ", name=" + name + ", type=" + type + ", location="
-               + location + "]";
+      return "[id=" + id + ", name=" + name + ", type=" + type + ", location=" + location + "]";
    }
 }

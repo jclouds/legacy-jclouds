@@ -51,8 +51,7 @@ public class TerremarkVCloudComputeClientTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testStartWindows() throws IOException {
-      InputStream is = getClass().getResourceAsStream(
-            "/terremark/windows_description.txt");
+      InputStream is = getClass().getResourceAsStream("/terremark/windows_description.txt");
       String description = new String(ByteStreams.toByteArray(is));
       VAppTemplate template = createMock(VAppTemplate.class);
       expect(template.getDescription()).andReturn(description).atLeastOnce();
@@ -61,9 +60,8 @@ public class TerremarkVCloudComputeClientTest {
       VApp vApp = createMock(VApp.class);
 
       expect(
-            client.instantiateVAppTemplateInVDC("vDCId", "name", "templateId",
-                  new TerremarkInstantiateVAppTemplateOptions()
-                        .productProperty("password", "password"))).andReturn(
+            client.instantiateVAppTemplateInOrg("org", "vDC", "name", "templateId",
+                  new TerremarkInstantiateVAppTemplateOptions().productProperty("password", "password"))).andReturn(
             vApp);
       Task task = createMock(Task.class);
 
@@ -78,10 +76,8 @@ public class TerremarkVCloudComputeClientTest {
       Predicate<VApp> notFoundTester = createMock(Predicate.class);
       Map<VAppStatus, NodeState> vAppStatusToNodeState = createMock(Map.class);
 
-      TerremarkVCloudComputeClient computeClient = new TerremarkVCloudComputeClient(
-            client,
-            new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(),
-            new Provider<String>() {
+      TerremarkVCloudComputeClient computeClient = new TerremarkVCloudComputeClient(client,
+            new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(), new Provider<String>() {
 
                @Override
                public String get() {
@@ -98,8 +94,8 @@ public class TerremarkVCloudComputeClientTest {
       replay(notFoundTester);
       replay(vAppStatusToNodeState);
 
-      Map<String, String> response = computeClient.start("vDCId", "name",
-            "templateId", new TerremarkInstantiateVAppTemplateOptions());
+      Map<String, String> response = computeClient.start("org", "vDC", "name", "templateId",
+            new TerremarkInstantiateVAppTemplateOptions());
 
       assertEquals(response.get("id"), "1");
       assertEquals(response.get("username"), "Administrator");

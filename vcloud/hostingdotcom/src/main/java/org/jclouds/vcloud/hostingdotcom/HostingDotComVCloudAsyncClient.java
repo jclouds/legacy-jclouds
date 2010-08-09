@@ -21,6 +21,7 @@ package org.jclouds.vcloud.hostingdotcom;
 import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -29,6 +30,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapPayloadParam;
@@ -40,6 +42,7 @@ import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.functions.OrgNameAndVDCNameToEndpoint;
 import org.jclouds.vcloud.functions.VAppTemplateIdToUri;
 import org.jclouds.vcloud.hostingdotcom.domain.HostingDotComVApp;
 import org.jclouds.vcloud.hostingdotcom.xml.HostingDotComVAppHandler;
@@ -52,7 +55,8 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
+ * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx"
+ *      />
  * @author Adrian Cole
  */
 @RequestFilters(SetVCloudTokenCookie.class)
@@ -77,6 +81,22 @@ public interface HostingDotComVCloudAsyncClient extends VCloudAsyncClient {
    ListenableFuture<? extends HostingDotComVApp> getVApp(@PathParam("vAppId") String appId);
 
    @POST
+   @Path("/action/instantiateVAppTemplate")
+   @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
+   @Consumes(VAPP_XML)
+   // required for hosting.com to operate
+   @XMLResponseParser(HostingDotComVAppHandler.class)
+   @MapBinder(BindInstantiateVAppTemplateParamsToXmlPayload.class)
+   @Override
+   ListenableFuture<? extends HostingDotComVApp> instantiateVAppTemplateInOrg(
+         @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String orgName,
+         @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String vdcName,
+         @MapPayloadParam("name") String appName,
+         @MapPayloadParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
+         InstantiateVAppTemplateOptions... options);
+
+   @Deprecated
+   @POST
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/vdc/{vDCId}/action/instantiateVAppTemplate")
    @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
@@ -85,8 +105,9 @@ public interface HostingDotComVCloudAsyncClient extends VCloudAsyncClient {
    @XMLResponseParser(HostingDotComVAppHandler.class)
    @MapBinder(BindInstantiateVAppTemplateParamsToXmlPayload.class)
    @Override
-   ListenableFuture<? extends HostingDotComVApp> instantiateVAppTemplateInVDC(
-            @PathParam("vDCId") String vDCId, @MapPayloadParam("name") String appName,
-            @MapPayloadParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
-            InstantiateVAppTemplateOptions... options);
+   ListenableFuture<? extends HostingDotComVApp> instantiateVAppTemplateInVDC(@PathParam("vDCId") String vDCId,
+         @MapPayloadParam("name") String appName,
+         @MapPayloadParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
+         InstantiateVAppTemplateOptions... options);
+
 }

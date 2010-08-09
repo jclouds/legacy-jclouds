@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkState;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -65,13 +66,13 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
    }
 
    @Override
-   public Map<String, String> start(String vDCId, String name, String templateId,
+   public Map<String, String> start(@Nullable String orgName, @Nullable String vDCName, String name, String templateId,
          InstantiateVAppTemplateOptions options, int... portsToOpen) {
       checkNotNull(options, "options");
-      logger
-            .debug(">> instantiating vApp vDC(%s) name(%s) template(%s) options(%s) ", vDCId, name, templateId, options);
+      logger.debug(">> instantiating vApp org(%s) vDC(%s) name(%s) template(%s) options(%s) ", orgName, vDCName, name,
+            templateId, options);
 
-      VApp vAppResponse = client.instantiateVAppTemplateInVDC(vDCId, name, templateId, options);
+      VApp vAppResponse = client.instantiateVAppTemplateInOrg(orgName, vDCName, name, templateId, options);
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getId());
 
       logger.debug(">> deploying vApp(%s)", vAppResponse.getId());

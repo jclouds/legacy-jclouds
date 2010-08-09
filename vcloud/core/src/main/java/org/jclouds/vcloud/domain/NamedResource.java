@@ -34,7 +34,8 @@ import com.google.inject.ImplementedBy;
 public interface NamedResource extends Comparable<NamedResource> {
 
    /**
-    * name is not a safe means to identify a resource. Please use name.
+    * name is not a safe means to identify a resource. Please use name or
+    * location
     */
    @Deprecated
    String getId();

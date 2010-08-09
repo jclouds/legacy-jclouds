@@ -21,6 +21,8 @@ package org.jclouds.vcloud.compute;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.inject.ImplementedBy;
@@ -32,15 +34,19 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(BaseVCloudComputeClient.class)
 public interface VCloudComputeClient {
    /**
-    * Runs through all commands necessary to startup a vApp, opening at least one ip address to the
-    * public network. These are the steps:
+    * Runs through all commands necessary to startup a vApp, opening at least
+    * one ip address to the public network. These are the steps:
     * <p/>
     * instantiate -> deploy -> powerOn
     * <p/>
     * This command blocks until the vApp is in state {@code VAppStatus#ON}
     * 
-    * @param vDCId
-    *           id of the virtual datacenter {@code VCloudClient#getDefaultVDC}
+    * @param orgName
+    *           name of the organization
+    * 
+    * @param vDCName
+    *           name of the virtual datacenter {@code
+    *           VCloudClient#getDefaultVDC}
     * @param name
     *           name of the vApp
     * @param templateId
@@ -55,12 +61,12 @@ public interface VCloudComputeClient {
     *           opens the following ports on the public ip address
     * @return map contains at least the following properties
     *         <ol>
-    *         <li>id - vApp id</li> <li>username - console login user</li> <li>password - console
-    *         login password</li>
+    *         <li>id - vApp id</li> <li>username - console login user</li> <li>
+    *         password - console login password</li>
     *         </ol>
     */
-   Map<String, String> start(String vDCId, String name, String templateId,
-            InstantiateVAppTemplateOptions options, int... portsToOpen);
+   Map<String, String> start(@Nullable String orgName, @Nullable String vDCName, String name, String templateId,
+         InstantiateVAppTemplateOptions options, int... portsToOpen);
 
    /**
     * returns a set of addresses that are only visible to the private network.
@@ -73,7 +79,8 @@ public interface VCloudComputeClient {
    Set<String> getPublicAddresses(String vAppId);
 
    /**
-    * reboots the vApp, blocking until the following state transition is complete:
+    * reboots the vApp, blocking until the following state transition is
+    * complete:
     * <p/>
     * current -> {@code VAppStatus#OFF} -> {@code VAppStatus#ON}
     * 
@@ -83,8 +90,8 @@ public interface VCloudComputeClient {
    void reboot(String vAppId);
 
    /**
-    * Destroys dependent resources, powers off and deletes the vApp, blocking until the following
-    * state transition is complete:
+    * Destroys dependent resources, powers off and deletes the vApp, blocking
+    * until the following state transition is complete:
     * <p/>
     * current -> {@code VAppStatus#OFF} -> deleted
     * 
