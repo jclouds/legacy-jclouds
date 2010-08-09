@@ -28,6 +28,7 @@ import javax.inject.Singleton;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.vcloud.compute.domain.VCloudLocation;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.endpoints.VDC;
@@ -59,10 +60,9 @@ public class OrgAndVDCToLocationProvider implements Provider<Set<? extends Locat
       Set<Location> locations = Sets.newLinkedHashSet();
 
       for (NamedResource org : orgNameToResource.get().values()) {
-         Location orgL = new LocationImpl(LocationScope.REGION, org.getName(), org.getLocation().toASCIIString(),
-               provider);
+         Location orgL = new VCloudLocation(org, provider);
          for (NamedResource vdc : orgNameToVDCResource.get().get(org.getName()).values()) {
-            locations.add(new LocationImpl(LocationScope.ZONE, vdc.getName(), vdc.getLocation().toASCIIString(), orgL));
+            locations.add(new VCloudLocation(vdc, orgL));
          }
       }
       return locations;

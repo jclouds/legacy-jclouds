@@ -28,6 +28,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
+import org.jclouds.vcloud.compute.domain.VCloudLocation;
 import org.jclouds.vcloud.domain.NamedResource;
 
 /**
@@ -59,7 +60,7 @@ public class FindLocationForResource {
          do {
             // The "name" isn't always present, ex inside a vApp we have a rel
             // link that only includes href and type.
-            if (input.getDescription().equals(resource.getLocation().toASCIIString()))
+            if (VCloudLocation.class.cast(input).getResource().getLocation().equals(resource.getLocation()))
                return input;
             input = input.getParent();
          } while (input.getParent() != null);

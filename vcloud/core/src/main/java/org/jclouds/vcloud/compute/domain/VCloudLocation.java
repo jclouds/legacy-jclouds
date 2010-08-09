@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,33 +16,36 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.vcloud.compute.strategy;
+package org.jclouds.vcloud.compute.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.vcloud.compute.functions.VCloudGetNodeMetadata;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.vcloud.domain.NamedResource;
 
 /**
+ * 
  * @author Adrian Cole
  */
-@Singleton
-public class VCloudGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
+public class VCloudLocation extends LocationImpl {
 
-   protected final VCloudGetNodeMetadata getNodeMetadata;
+   private final NamedResource resource;
 
-   @Inject
-   protected VCloudGetNodeMetadataStrategy(VCloudGetNodeMetadata getNodeMetadata) {
-      this.getNodeMetadata = getNodeMetadata;
+   public NamedResource getResource() {
+      return resource;
    }
 
-   @Override
-   public NodeMetadata execute(String id) {
-      return getNodeMetadata.execute(checkNotNull(id, "node.id"));
+   public VCloudLocation(NamedResource resource, Location parent) {
+      super(checkNotNull(resource, "resource").getType().endsWith("org+xml") ? LocationScope.REGION
+            : LocationScope.ZONE, resource.getName(), resource.getName(), parent);
+      this.resource = resource;
    }
+
+   /**
+    * 
+    */
+   private static final long serialVersionUID = -5052812549904524841L;
 
 }

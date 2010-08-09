@@ -58,7 +58,7 @@ public class TerremarkVCloudComputeServiceLiveTest extends VCloudComputeServiceL
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
       assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getLocation().getId(), "32");
+      assertEquals(defaultTemplate.getLocation().getId(), "Miami Environment 1");
       assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
    }
 
