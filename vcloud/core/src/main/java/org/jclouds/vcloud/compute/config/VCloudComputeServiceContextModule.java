@@ -58,6 +58,7 @@ import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
 import org.jclouds.vcloud.domain.VAppStatus;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
@@ -76,12 +77,16 @@ import com.google.inject.util.Providers;
  */
 public class VCloudComputeServiceContextModule extends AbstractModule {
 
+   @VisibleForTesting
+   static final Map<VAppStatus, NodeState> vAppStatusToNodeState = ImmutableMap.<VAppStatus, NodeState> builder().put(
+         VAppStatus.OFF, NodeState.SUSPENDED).put(VAppStatus.ON, NodeState.RUNNING).put(VAppStatus.RESOLVED,
+         NodeState.PENDING).put(VAppStatus.SUSPENDED, NodeState.SUSPENDED)
+         .put(VAppStatus.UNRESOLVED, NodeState.PENDING).build();
+
    @Singleton
    @Provides
    Map<VAppStatus, NodeState> provideVAppStatusToNodeState() {
-      return ImmutableMap.<VAppStatus, NodeState> builder().put(VAppStatus.OFF, NodeState.SUSPENDED).put(VAppStatus.ON,
-            NodeState.RUNNING).put(VAppStatus.RESOLVED, NodeState.PENDING).put(VAppStatus.SUSPENDED,
-            NodeState.SUSPENDED).put(VAppStatus.UNRESOLVED, NodeState.PENDING).build();
+      return vAppStatusToNodeState;
    }
 
    @Provides

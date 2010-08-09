@@ -33,6 +33,7 @@ import org.jclouds.gogrid.config.DateSecondsAdapter;
 import org.jclouds.gogrid.domain.IpState;
 import org.jclouds.gogrid.domain.ServerImageState;
 import org.jclouds.gogrid.domain.ServerImageType;
+import org.jclouds.gogrid.domain.ServerState;
 import org.jclouds.gogrid.functions.internal.CustomDeserializers;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
@@ -77,7 +78,7 @@ public class ParseServerNameToCredentialsMapFromJsonResponseTest {
          bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());
          bindings.put(ServerImageType.class, new CustomDeserializers.ServerImageTypeAdapter());
          bindings.put(ServerImageState.class, new CustomDeserializers.ServerImageStateAdapter());
-         bindings.put(ServerImageState.class, new CustomDeserializers.ServerImageStateAdapter());
+         bindings.put(ServerState.class, new CustomDeserializers.ServerStateAdapter());
          return bindings;
       }
    });

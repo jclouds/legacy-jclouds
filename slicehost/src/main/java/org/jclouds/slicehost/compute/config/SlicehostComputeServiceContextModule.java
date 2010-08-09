@@ -74,6 +74,7 @@ import org.jclouds.slicehost.compute.functions.SliceToNodeMetadata;
 import org.jclouds.slicehost.domain.Flavor;
 import org.jclouds.slicehost.domain.Slice;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
@@ -244,15 +245,19 @@ public class SlicehostComputeServiceContextModule extends AbstractModule {
       }
    }
 
+   @VisibleForTesting
+   static final Map<Slice.Status, NodeState> sliceStatusToNodeState = ImmutableMap.<Slice.Status, NodeState> builder()
+         .put(Slice.Status.ACTIVE, NodeState.RUNNING)//
+         .put(Slice.Status.BUILD, NodeState.PENDING)//
+         .put(Slice.Status.REBOOT, NodeState.PENDING)//
+         .put(Slice.Status.HARD_REBOOT, NodeState.PENDING)//
+         .put(Slice.Status.TERMINATED, NodeState.TERMINATED)//
+         .build();
+
    @Singleton
    @Provides
    Map<Slice.Status, NodeState> provideSliceToNodeState() {
-      return ImmutableMap.<Slice.Status, NodeState> builder().put(Slice.Status.ACTIVE, NodeState.RUNNING)//
-            .put(Slice.Status.BUILD, NodeState.PENDING)//
-            .put(Slice.Status.REBOOT, NodeState.PENDING)//
-            .put(Slice.Status.HARD_REBOOT, NodeState.PENDING)//
-            .put(Slice.Status.TERMINATED, NodeState.TERMINATED)//
-            .build();
+      return sliceStatusToNodeState;
    }
 
    @Provides

@@ -77,6 +77,7 @@ import org.jclouds.rackspace.config.RackspaceLocationsModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
@@ -238,32 +239,36 @@ public class CloudServersComputeServiceContextModule extends AbstractModule {
       }
    }
 
+   @VisibleForTesting
+   static final Map<ServerStatus, NodeState> serverToNodeState = ImmutableMap.<ServerStatus, NodeState> builder().put(
+         ServerStatus.ACTIVE, NodeState.RUNNING)//
+         .put(ServerStatus.SUSPENDED, NodeState.SUSPENDED)//
+         .put(ServerStatus.DELETED, NodeState.TERMINATED)//
+         .put(ServerStatus.QUEUE_RESIZE, NodeState.PENDING)//
+         .put(ServerStatus.PREP_RESIZE, NodeState.PENDING)//
+         .put(ServerStatus.RESIZE, NodeState.PENDING)//
+         .put(ServerStatus.VERIFY_RESIZE, NodeState.PENDING)//
+         .put(ServerStatus.QUEUE_MOVE, NodeState.PENDING)//
+         .put(ServerStatus.PREP_MOVE, NodeState.PENDING)//
+         .put(ServerStatus.MOVE, NodeState.PENDING)//
+         .put(ServerStatus.VERIFY_MOVE, NodeState.PENDING)//
+         .put(ServerStatus.RESCUE, NodeState.PENDING)//
+         .put(ServerStatus.ERROR, NodeState.ERROR)//
+         .put(ServerStatus.BUILD, NodeState.PENDING)//
+         .put(ServerStatus.RESTORING, NodeState.PENDING)//
+         .put(ServerStatus.PASSWORD, NodeState.PENDING)//
+         .put(ServerStatus.REBUILD, NodeState.PENDING)//
+         .put(ServerStatus.DELETE_IP, NodeState.PENDING)//
+         .put(ServerStatus.SHARE_IP_NO_CONFIG, NodeState.PENDING)//
+         .put(ServerStatus.SHARE_IP, NodeState.PENDING)//
+         .put(ServerStatus.REBOOT, NodeState.PENDING)//
+         .put(ServerStatus.HARD_REBOOT, NodeState.PENDING)//
+         .put(ServerStatus.UNKNOWN, NodeState.UNKNOWN).build();
+
    @Singleton
    @Provides
    Map<ServerStatus, NodeState> provideServerToNodeState() {
-      return ImmutableMap.<ServerStatus, NodeState> builder().put(ServerStatus.ACTIVE, NodeState.RUNNING)//
-            .put(ServerStatus.SUSPENDED, NodeState.SUSPENDED)//
-            .put(ServerStatus.DELETED, NodeState.TERMINATED)//
-            .put(ServerStatus.QUEUE_RESIZE, NodeState.PENDING)//
-            .put(ServerStatus.PREP_RESIZE, NodeState.PENDING)//
-            .put(ServerStatus.RESIZE, NodeState.PENDING)//
-            .put(ServerStatus.VERIFY_RESIZE, NodeState.PENDING)//
-            .put(ServerStatus.QUEUE_MOVE, NodeState.PENDING)//
-            .put(ServerStatus.PREP_MOVE, NodeState.PENDING)//
-            .put(ServerStatus.MOVE, NodeState.PENDING)//
-            .put(ServerStatus.VERIFY_MOVE, NodeState.PENDING)//
-            .put(ServerStatus.RESCUE, NodeState.PENDING)//
-            .put(ServerStatus.ERROR, NodeState.ERROR)//
-            .put(ServerStatus.BUILD, NodeState.PENDING)//
-            .put(ServerStatus.RESTORING, NodeState.PENDING)//
-            .put(ServerStatus.PASSWORD, NodeState.PENDING)//
-            .put(ServerStatus.REBUILD, NodeState.PENDING)//
-            .put(ServerStatus.DELETE_IP, NodeState.PENDING)//
-            .put(ServerStatus.SHARE_IP_NO_CONFIG, NodeState.PENDING)//
-            .put(ServerStatus.SHARE_IP, NodeState.PENDING)//
-            .put(ServerStatus.REBOOT, NodeState.PENDING)//
-            .put(ServerStatus.HARD_REBOOT, NodeState.PENDING)//
-            .put(ServerStatus.UNKNOWN, NodeState.UNKNOWN).build();
+      return serverToNodeState;
    }
 
    @Provides

@@ -58,6 +58,15 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "ec2.RunningInstanceToNodeMetadataTest")
 public class RunningInstanceToNodeMetadataTest {
+
+   public void testAllStatesCovered() {
+
+      for (InstanceState state : InstanceState.values()) {
+         assert RunningInstanceToNodeMetadata.instanceToNodeState.containsKey(state) : state;
+      }
+
+   }
+
    private static class ImageProvider implements Provider<Set<? extends org.jclouds.compute.domain.Image>> {
       private final Set<? extends org.jclouds.compute.domain.Image> images;
 
@@ -117,8 +126,8 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-               credentialProvider, new ImageProvider(jcImage), imageMap, locations,
-               new RunningInstanceToStorageMappingUnix());
+            credentialProvider, new ImageProvider(jcImage), imageMap, locations,
+            new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
       assertEquals(metadata.getLocation(), locations.iterator().next());
@@ -168,7 +177,7 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getRegion()).andReturn("us-east-1").atLeastOnce();
 
       expect(imageMap.get(new RegionAndName("us-east-1", "imageId"))).andThrow(new NullPointerException())
-               .atLeastOnce();
+            .atLeastOnce();
 
       expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
 
@@ -181,8 +190,8 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-               credentialProvider, new ImageProvider(jcImage), imageMap, locations,
-               new RunningInstanceToStorageMappingUnix());
+            credentialProvider, new ImageProvider(jcImage), imageMap, locations,
+            new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
       assertEquals(metadata.getLocation(), locations.iterator().next());
@@ -247,8 +256,8 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-               credentialProvider, new ImageProvider(jcImage), imageMap, locations,
-               new RunningInstanceToStorageMappingUnix());
+            credentialProvider, new ImageProvider(jcImage), imageMap, locations,
+            new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
       assertEquals(metadata.getLocation(), locations.iterator().next());
@@ -310,8 +319,8 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-               credentialProvider, new ImageProvider(jcImage), imageMap, locations,
-               new RunningInstanceToStorageMappingUnix());
+            credentialProvider, new ImageProvider(jcImage), imageMap, locations,
+            new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
       assertEquals(metadata.getLocation(), locations.iterator().next());
@@ -371,8 +380,8 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-               credentialProvider, new ImageProvider(jcImage), imageMap, locations,
-               new RunningInstanceToStorageMappingUnix());
+            credentialProvider, new ImageProvider(jcImage), imageMap, locations,
+            new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
       assertEquals(metadata.getLocation(), locations.iterator().next());
@@ -424,12 +433,12 @@ public class RunningInstanceToNodeMetadataTest {
       expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
 
       expect(amiClient.describeImagesInRegion(Region.US_EAST_1, imageIds("imageId"))).andReturn(
-               (Set) ImmutableSet.<Image> of(image));
+            (Set) ImmutableSet.<Image> of(image));
 
       expect(credentialProvider.execute(image)).andReturn(new Credentials("user", "pass"));
 
       expect(credentialsMap.get(new RegionAndName(Region.US_EAST_1, "jclouds#tag#us-east-1#50"))).andReturn(
-               new KeyPair(Region.US_EAST_1, "jclouds#tag#us-east-1#50", "keyFingerprint", "pass"));
+            new KeyPair(Region.US_EAST_1, "jclouds#tag#us-east-1#50", "keyFingerprint", "pass"));
 
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
@@ -444,8 +453,8 @@ public class RunningInstanceToNodeMetadataTest {
       replay(jcImage);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-               credentialProvider, new ImageProvider(jcImage), imageMap, locations,
-               new RunningInstanceToStorageMappingUnix());
+            credentialProvider, new ImageProvider(jcImage), imageMap, locations,
+            new RunningInstanceToStorageMappingUnix());
       NodeMetadata metadata = parser.apply(instance);
 
       assertEquals(metadata.getTag(), "tag");
@@ -499,12 +508,12 @@ public class RunningInstanceToNodeMetadataTest {
       expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
 
       expect(amiClient.describeImagesInRegion(Region.US_EAST_1, imageIds("imageId"))).andReturn(
-               (Set) ImmutableSet.<Image> of(image));
+            (Set) ImmutableSet.<Image> of(image));
 
       expect(credentialProvider.execute(image)).andReturn(new Credentials("user", "pass"));
 
       expect(credentialsMap.get(new RegionAndName(Region.US_EAST_1, "jclouds#tag#us-east-1#50"))).andReturn(
-               new KeyPair(Region.US_EAST_1, "jclouds#tag#us-east-1#50", "keyFingerprint", "pass"));
+            new KeyPair(Region.US_EAST_1, "jclouds#tag#us-east-1#50", "keyFingerprint", "pass"));
 
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
@@ -519,8 +528,8 @@ public class RunningInstanceToNodeMetadataTest {
       replay(jcImage);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-               credentialProvider, new ImageProvider(jcImage), imageMap, locations,
-               new RunningInstanceToStorageMappingUnix());
+            credentialProvider, new ImageProvider(jcImage), imageMap, locations,
+            new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
 

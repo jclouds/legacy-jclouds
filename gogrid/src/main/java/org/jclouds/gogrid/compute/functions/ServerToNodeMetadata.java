@@ -38,6 +38,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.domain.Server;
+import org.jclouds.gogrid.domain.ServerState;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
@@ -56,7 +57,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Resource
    protected Logger logger = Logger.NULL;
-   private final Map<String, NodeState> serverStateToNodeState;
+   private final Map<ServerState, NodeState> serverStateToNodeState;
    private final GoGridClient client;
    private final Set<? extends Image> images;
    private final Map<String, ? extends Location> locations;
@@ -72,14 +73,14 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       @Override
       public boolean apply(Image input) {
          return input.getProviderId().equals(instance.getImage().getId() + "")
-                  && (input.getLocation() == null || input.getLocation().getId().equals(
-                           instance.getDatacenter().getId() + ""));
+               && (input.getLocation() == null || input.getLocation().getId().equals(
+                     instance.getDatacenter().getId() + ""));
       }
    }
 
    @Inject
-   ServerToNodeMetadata(Map<String, NodeState> serverStateToNodeState, GoGridClient client,
-            Set<? extends Image> images, Map<String, ? extends Location> locations) {
+   ServerToNodeMetadata(Map<ServerState, NodeState> serverStateToNodeState, GoGridClient client,
+         Set<? extends Image> images, Map<String, ? extends Location> locations) {
       this.serverStateToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
       this.client = checkNotNull(client, "client");
       this.images = checkNotNull(images, "images");
@@ -91,7 +92,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       Matcher matcher = ALL_BEFORE_HYPHEN_HEX.matcher(from.getName());
       final String tag = matcher.find() ? matcher.group(1) : null;
       Set<String> ipSet = ImmutableSet.of(from.getIp().getIp());
-      NodeState state = serverStateToNodeState.get(from.getState().getName());
+      NodeState state = serverStateToNodeState.get(from.getState());
       Credentials creds = client.getServerServices().getServerCredentialsList().get(from.getName());
       Image image = null;
       try {
@@ -99,9 +100,9 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       } catch (NoSuchElementException e) {
          logger.warn("could not find a matching image for server %s", from);
       }
-      return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", locations
-               .get(from.getDatacenter().getId() + ""), null, ImmutableMap.<String, String> of(),
-               tag, image, state, ipSet, ImmutableList.<String> of(), ImmutableMap
-                        .<String, String> of(), creds);
+      return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", locations.get(from
+            .getDatacenter().getId()
+            + ""), null, ImmutableMap.<String, String> of(), tag, image, state, ipSet, ImmutableList.<String> of(),
+            ImmutableMap.<String, String> of(), creds);
    }
 }

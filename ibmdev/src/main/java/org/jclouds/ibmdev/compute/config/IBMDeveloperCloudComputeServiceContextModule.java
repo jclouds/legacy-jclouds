@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -74,13 +75,13 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.util.Utils;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import java.util.concurrent.Future;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -216,21 +217,26 @@ public class IBMDeveloperCloudComputeServiceContextModule extends AbstractModule
       }
    }
 
+   @VisibleForTesting
+   static final Map<Instance.Status, NodeState> instanceStatusToNodeState = ImmutableMap
+         .<Instance.Status, NodeState> builder().put(Instance.Status.ACTIVE, NodeState.RUNNING)//
+         .put(Instance.Status.STOPPED, NodeState.SUSPENDED)//
+         .put(Instance.Status.REMOVED, NodeState.TERMINATED)//
+         .put(Instance.Status.DEPROVISIONING, NodeState.PENDING)//
+         .put(Instance.Status.FAILED, NodeState.ERROR)//
+         .put(Instance.Status.NEW, NodeState.PENDING)//
+         .put(Instance.Status.PROVISIONING, NodeState.PENDING)//
+         .put(Instance.Status.REJECTED, NodeState.ERROR)//
+         .put(Instance.Status.RESTARTING, NodeState.PENDING)//
+         .put(Instance.Status.STARTING, NodeState.PENDING)//
+         .put(Instance.Status.STOPPING, NodeState.PENDING)//
+         .put(Instance.Status.DEPROVISION_PENDING, NodeState.PENDING)//
+         .put(Instance.Status.UNKNOWN, NodeState.UNKNOWN).build();
+
    @Singleton
    @Provides
    Map<Instance.Status, NodeState> provideServerToNodeState() {
-      return ImmutableMap.<Instance.Status, NodeState> builder().put(Instance.Status.ACTIVE, NodeState.RUNNING)//
-            .put(Instance.Status.STOPPED, NodeState.SUSPENDED)//
-            .put(Instance.Status.REMOVED, NodeState.TERMINATED)//
-            .put(Instance.Status.DEPROVISIONING, NodeState.PENDING)//
-            .put(Instance.Status.FAILED, NodeState.ERROR)//
-            .put(Instance.Status.NEW, NodeState.PENDING)//
-            .put(Instance.Status.PROVISIONING, NodeState.PENDING)//
-            .put(Instance.Status.REJECTED, NodeState.ERROR)//
-            .put(Instance.Status.RESTARTING, NodeState.PENDING)//
-            .put(Instance.Status.STARTING, NodeState.PENDING)//
-            .put(Instance.Status.STOPPING, NodeState.PENDING)//
-            .put(Instance.Status.UNKNOWN, NodeState.UNKNOWN).build();
+      return instanceStatusToNodeState;
    }
 
    @Singleton

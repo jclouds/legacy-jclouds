@@ -77,8 +77,8 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       @Override
       public boolean apply(Image input) {
          return input.getProviderId().equals(instance.getImageId())
-                  && (input.getLocation() == null || input.getLocation().equals(location) || input.getLocation()
-                           .equals(location.getParent()));
+               && (input.getLocation() == null || input.getLocation().equals(location) || input.getLocation().equals(
+                     location.getParent()));
       }
 
       @Override
@@ -113,10 +113,11 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       }
    }
 
-   private static final Map<InstanceState, NodeState> instanceToNodeState = ImmutableMap
-            .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING).put(
-                     InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN, NodeState.PENDING).put(
-                     InstanceState.TERMINATED, NodeState.TERMINATED).build();
+   @VisibleForTesting
+   static final Map<InstanceState, NodeState> instanceToNodeState = ImmutableMap.<InstanceState, NodeState> builder()
+         .put(InstanceState.PENDING, NodeState.PENDING).put(InstanceState.RUNNING, NodeState.RUNNING).put(
+               InstanceState.SHUTTING_DOWN, NodeState.PENDING).put(InstanceState.TERMINATED, NodeState.TERMINATED).put(
+               InstanceState.STOPPING, NodeState.PENDING).put(InstanceState.STOPPED, NodeState.SUSPENDED).build();
 
    private final EC2Client client;
    private final Map<RegionAndName, KeyPair> credentialsMap;
@@ -128,10 +129,11 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
    @Inject
    RunningInstanceToNodeMetadata(EC2Client client, Map<RegionAndName, KeyPair> credentialsMap,
-            PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
-            Provider<Set<? extends Image>> images, // to facilitate on-demand refresh of image list
-            ConcurrentMap<RegionAndName, Image> imageMap, Set<? extends Location> locations,
-            @Named("volumeMapping") Function<RunningInstance, Map<String, String>> instanceToStorageMapping) {
+         PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
+         Provider<Set<? extends Image>> images, // to facilitate on-demand
+         // refresh of image list
+         ConcurrentMap<RegionAndName, Image> imageMap, Set<? extends Location> locations,
+         @Named("volumeMapping") Function<RunningInstance, Map<String, String>> instanceToStorageMapping) {
       this.client = checkNotNull(client, "client");
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
       this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");
@@ -166,7 +168,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       Image image = resolveImageForInstanceInLocation(instance, location);
 
       return new NodeMetadataImpl(id, name, instance.getRegion() + "/" + instance.getId(), location, uri, userMetadata,
-               tag, image, state, publicAddresses, privateAddresses, extra, credentials);
+            tag, image, state, publicAddresses, privateAddresses, extra, credentials);
    }
 
    private Credentials getCredentialsForInstanceWithTag(final RunningInstance instance, String tag) {
@@ -193,7 +195,8 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       } catch (NoSuchElementException e) {
          logger.debug("no tag parsed from %s's groups: %s", instance.getId(), instance.getGroupIds());
       } catch (IllegalArgumentException e) {
-         logger.debug("too many groups match %s; %s's groups: %s", "jclouds#", instance.getId(), instance.getGroupIds());
+         logger
+               .debug("too many groups match %s; %s's groups: %s", "jclouds#", instance.getId(), instance.getGroupIds());
       }
       return tag;
    }
@@ -261,7 +264,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    @VisibleForTesting
    String getLoginAccountFor(RunningInstance from) {
       org.jclouds.aws.ec2.domain.Image image = Iterables.getOnlyElement(client.getAMIServices().describeImagesInRegion(
-               from.getRegion(), DescribeImagesOptions.Builder.imageIds(from.getImageId())));
+            from.getRegion(), DescribeImagesOptions.Builder.imageIds(from.getImageId())));
       return checkNotNull(credentialProvider.execute(image), "login from image: " + from.getImageId()).identity;
    }
 

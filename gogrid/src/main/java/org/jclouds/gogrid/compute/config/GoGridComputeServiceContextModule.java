@@ -70,6 +70,7 @@ import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.domain.PowerCommand;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.domain.ServerImage;
+import org.jclouds.gogrid.domain.ServerState;
 import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.gogrid.util.GoGridUtils;
 import org.jclouds.logging.Logger;
@@ -78,6 +79,7 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.rest.annotations.Provider;
 import org.jclouds.rest.internal.RestContextImpl;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
@@ -93,6 +95,7 @@ import com.google.inject.util.Providers;
 
 /**
  * @author Oleksiy Yarmula
+ * @author Adrian Cole
  */
 public class GoGridComputeServiceContextModule extends AbstractModule {
 
@@ -149,22 +152,18 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
       private final GetNodeMetadataStrategy getNode;
 
       @Inject
-      protected GoGridRebootNodeStrategy(GoGridClient client, GetNodeMetadataStrategy getNode,
-               Timeouts timeouts) {
+      protected GoGridRebootNodeStrategy(GoGridClient client, GetNodeMetadataStrategy getNode, Timeouts timeouts) {
          this.client = client;
-         this.serverLatestJobCompleted = new RetryablePredicate<Server>(
-                  new ServerLatestJobCompleted(client.getJobServices()),
-                  timeouts.nodeRunning * 9l / 10l);
-         this.serverLatestJobCompletedShort = new RetryablePredicate<Server>(
-                  new ServerLatestJobCompleted(client.getJobServices()),
-                  timeouts.nodeRunning * 1l / 10l);
+         this.serverLatestJobCompleted = new RetryablePredicate<Server>(new ServerLatestJobCompleted(client
+               .getJobServices()), timeouts.nodeRunning * 9l / 10l);
+         this.serverLatestJobCompletedShort = new RetryablePredicate<Server>(new ServerLatestJobCompleted(client
+               .getJobServices()), timeouts.nodeRunning * 1l / 10l);
          this.getNode = getNode;
       }
 
       @Override
       public NodeMetadata execute(String id) {
-         Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(
-                  new Long(id)));
+         Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(new Long(id)));
          client.getServerServices().power(server.getName(), PowerCommand.RESTART);
          serverLatestJobCompleted.apply(server);
          client.getServerServices().power(server.getName(), PowerCommand.START);
@@ -179,8 +178,7 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
       private final Function<Server, NodeMetadata> serverToNodeMetadata;
 
       @Inject
-      protected GoGridListNodesStrategy(GoGridClient client,
-               Function<Server, NodeMetadata> serverToNodeMetadata) {
+      protected GoGridListNodesStrategy(GoGridClient client, Function<Server, NodeMetadata> serverToNodeMetadata) {
          this.client = client;
          this.serverToNodeMetadata = serverToNodeMetadata;
       }
@@ -191,10 +189,9 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
       }
 
       @Override
-      public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(
-               Predicate<ComputeMetadata> filter) {
-         return Iterables.filter(Iterables.transform(client.getServerServices().getServerList(),
-                  serverToNodeMetadata), filter);
+      public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
+         return Iterables.filter(Iterables.transform(client.getServerServices().getServerList(), serverToNodeMetadata),
+               filter);
       }
    }
 
@@ -204,8 +201,7 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
       private final Function<Server, NodeMetadata> serverToNodeMetadata;
 
       @Inject
-      protected GoGridGetNodeMetadataStrategy(GoGridClient client,
-               Function<Server, NodeMetadata> serverToNodeMetadata) {
+      protected GoGridGetNodeMetadataStrategy(GoGridClient client, Function<Server, NodeMetadata> serverToNodeMetadata) {
          this.client = client;
          this.serverToNodeMetadata = serverToNodeMetadata;
       }
@@ -214,7 +210,7 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
       public NodeMetadata execute(String id) {
          try {
             Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(
-                     new Long(checkNotNull(id, "id"))));
+                  new Long(checkNotNull(id, "id"))));
             return server == null ? null : serverToNodeMetadata.apply(server);
          } catch (NoSuchElementException e) {
             return null;
@@ -241,21 +237,31 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
 
    }
 
+   @VisibleForTesting
+   static final Map<ServerState, NodeState> serverStateToNodeState = ImmutableMap.<ServerState, NodeState> builder()
+         .put(ServerState.ON, NodeState.RUNNING)//
+         .put(ServerState.STARTING, NodeState.PENDING)//
+         .put(ServerState.OFF, NodeState.SUSPENDED)//
+         .put(ServerState.STOPPING, NodeState.PENDING)//
+         .put(ServerState.RESTARTING, NodeState.PENDING)//
+         .put(ServerState.SAVING, NodeState.PENDING)//
+         .put(ServerState.RESTORING, NodeState.PENDING)//
+         .put(ServerState.UPDATING, NodeState.PENDING).build();
+
    @Singleton
    @Provides
-   Map<String, NodeState> provideServerToNodeState() {
-      return ImmutableMap.<String, NodeState> builder().put("On", NodeState.RUNNING).put(
-               "Starting", NodeState.PENDING).put("Off", NodeState.SUSPENDED).put("Saving",
-               NodeState.PENDING).put("Restarting", NodeState.PENDING).put("Stopping",
-               NodeState.PENDING).build();
+   Map<ServerState, NodeState> provideServerToNodeState() {
+      return serverStateToNodeState;
    }
 
    /**
-    * Finds matches to required configurations. GoGrid's documentation only specifies how much RAM
-    * one can get with different instance types. The # of cores and disk sizes are purely empyrical
-    * and aren't guaranteed. However, these are the matches found: Ram: 512MB, CPU: 1 core, HDD: 28
-    * GB Ram: 1GB, CPU: 1 core, HDD: 57 GB Ram: 2GB, CPU: 1 core, HDD: 113 GB Ram: 4GB, CPU: 3
-    * cores, HDD: 233 GB Ram: 8GB, CPU: 6 cores, HDD: 462 GB (as of March 2010)
+    * Finds matches to required configurations. GoGrid's documentation only
+    * specifies how much RAM one can get with different instance types. The # of
+    * cores and disk sizes are purely empyrical and aren't guaranteed. However,
+    * these are the matches found: Ram: 512MB, CPU: 1 core, HDD: 28 GB Ram: 1GB,
+    * CPU: 1 core, HDD: 57 GB Ram: 2GB, CPU: 1 core, HDD: 113 GB Ram: 4GB, CPU:
+    * 3 cores, HDD: 233 GB Ram: 8GB, CPU: 6 cores, HDD: 462 GB (as of March
+    * 2010)
     * 
     * @return matched size
     */
@@ -281,7 +287,7 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
    @Provides
    @Singleton
    Location getDefaultLocation(@Named(PROPERTY_GOGRID_DEFAULT_DC) final String defaultDC,
-            Set<? extends Location> locations) {
+         Set<? extends Location> locations) {
       return Iterables.find(locations, new Predicate<Location>() {
 
          @Override
@@ -294,14 +300,13 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Set<? extends Location> getAssignableLocations(@Provider String providerName, GoGridClient sync,
-            LogHolder holder, Function<ComputeMetadata, String> indexer) {
+   Set<? extends Location> getAssignableLocations(@Provider String providerName, GoGridClient sync, LogHolder holder,
+         Function<ComputeMetadata, String> indexer) {
       final Set<Location> locations = Sets.newHashSet();
       holder.logger.debug(">> providing locations");
       Location parent = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
       for (Option dc : sync.getServerServices().getDatacenters())
-         locations.add(new LocationImpl(LocationScope.ZONE, dc.getId() + "", dc.getDescription(),
-                  parent));
+         locations.add(new LocationImpl(LocationScope.ZONE, dc.getId() + "", dc.getDescription(), parent));
       holder.logger.debug("<< locations(%d)", locations.size());
       return locations;
    }
@@ -319,27 +324,21 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Set<? extends Size> provideSizes(GoGridClient sync, Set<? extends Image> images,
-            LogHolder holder, Function<ComputeMetadata, String> indexer)
-            throws InterruptedException, TimeoutException, ExecutionException {
+   protected Set<? extends Size> provideSizes(GoGridClient sync, Set<? extends Image> images, LogHolder holder,
+         Function<ComputeMetadata, String> indexer) throws InterruptedException, TimeoutException, ExecutionException {
       final Set<Size> sizes = Sets.newHashSet();
       holder.logger.debug(">> providing sizes");
 
-      sizes.add(new SizeImpl("1", "1", "1", null, null, ImmutableMap.<String, String> of(), 0.5,
-               512, 30, architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32,
-                        Architecture.X86_64))));
-      sizes.add(new SizeImpl("2", "2", "2", null, null, ImmutableMap.<String, String> of(), 1,
-               1024, 60, architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32,
-                        Architecture.X86_64))));
-      sizes.add(new SizeImpl("3", "3", "3", null, null, ImmutableMap.<String, String> of(), 2,
-               2048, 120, architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32,
-                        Architecture.X86_64))));
-      sizes.add(new SizeImpl("4", "4", "4", null, null, ImmutableMap.<String, String> of(), 4,
-               4096, 240, architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32,
-                        Architecture.X86_64))));
-      sizes.add(new SizeImpl("5", "5", "5", null, null, ImmutableMap.<String, String> of(), 8,
-               8192, 480, architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32,
-                        Architecture.X86_64))));
+      sizes.add(new SizeImpl("1", "1", "1", null, null, ImmutableMap.<String, String> of(), 0.5, 512, 30,
+            architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64))));
+      sizes.add(new SizeImpl("2", "2", "2", null, null, ImmutableMap.<String, String> of(), 1, 1024, 60,
+            architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64))));
+      sizes.add(new SizeImpl("3", "3", "3", null, null, ImmutableMap.<String, String> of(), 2, 2048, 120,
+            architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64))));
+      sizes.add(new SizeImpl("4", "4", "4", null, null, ImmutableMap.<String, String> of(), 4, 4096, 240,
+            architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64))));
+      sizes.add(new SizeImpl("5", "5", "5", null, null, ImmutableMap.<String, String> of(), 8, 8192, 480,
+            architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64))));
       holder.logger.debug("<< sizes(%d)", sizes.size());
       return sizes;
    }
@@ -355,32 +354,32 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
    @Provides
    @Singleton
    protected Set<? extends Image> provideImages(final GoGridClient sync, LogHolder holder,
-            Function<ComputeMetadata, String> indexer, Location location,
-            PopulateDefaultLoginCredentialsForImageStrategy authenticator)
-            throws InterruptedException, ExecutionException, TimeoutException {
+         Function<ComputeMetadata, String> indexer, Location location,
+         PopulateDefaultLoginCredentialsForImageStrategy authenticator) throws InterruptedException,
+         ExecutionException, TimeoutException {
       final Set<Image> images = Sets.newHashSet();
       holder.logger.debug(">> providing images");
       Set<ServerImage> allImages = sync.getImageServices().getImageList();
       for (ServerImage from : allImages) {
          OsFamily os = null;
-         Architecture arch = (from.getOs().getName().indexOf("64") == -1 && from.getDescription()
-                  .indexOf("64") == -1) ? Architecture.X86_32 : Architecture.X86_64;
+         Architecture arch = (from.getOs().getName().indexOf("64") == -1 && from.getDescription().indexOf("64") == -1) ? Architecture.X86_32
+               : Architecture.X86_64;
          String osDescription;
          String version = "";
 
          osDescription = from.getOs().getName();
 
-         String matchedOs = GoGridUtils.parseStringByPatternAndGetNthMatchGroup(from.getOs()
-                  .getName(), GOGRID_OS_NAME_PATTERN, 1);
+         String matchedOs = GoGridUtils.parseStringByPatternAndGetNthMatchGroup(from.getOs().getName(),
+               GOGRID_OS_NAME_PATTERN, 1);
          try {
             os = OsFamily.fromValue(matchedOs.toLowerCase());
          } catch (IllegalArgumentException e) {
             holder.logger.debug("<< didn't match os(%s)", matchedOs);
          }
          Credentials defaultCredentials = authenticator.execute(from);
-         images.add(new ImageImpl(from.getId() + "", from.getFriendlyName(), from.getId() + "",
-                  location, null, ImmutableMap.<String, String> of(), from.getDescription(),
-                  version, os, osDescription, arch, defaultCredentials));
+         images.add(new ImageImpl(from.getId() + "", from.getFriendlyName(), from.getId() + "", location, null,
+               ImmutableMap.<String, String> of(), from.getDescription(), version, os, osDescription, arch,
+               defaultCredentials));
       }
       holder.logger.debug("<< images(%d)", images.size());
       return images;

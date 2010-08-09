@@ -23,18 +23,18 @@
  */
 package org.jclouds.gogrid.domain;
 
+
 import com.google.common.primitives.Longs;
 
 /**
  * @author Oleksiy Yarmula
  */
 public class Server implements Comparable<Server> {
-
    private long id;
    private boolean isSandbox;
    private String name;
    private String description;
-   private Option state;
+   private ServerState state;
    private Option datacenter;
 
    private Option type;
@@ -47,11 +47,11 @@ public class Server implements Comparable<Server> {
    /**
     * A no-args constructor is required for deserialization
     */
-   public Server() {
+   Server() {
    }
 
-   public Server(long id, Option datacenter, boolean sandbox, String name, String description,
-            Option state, Option type, Option ram, Option os, Ip ip, ServerImage image) {
+   public Server(long id, Option datacenter, boolean sandbox, String name, String description, ServerState state,
+         Option type, Option ram, Option os, Ip ip, ServerImage image) {
       this.id = id;
       this.isSandbox = sandbox;
       this.name = name;
@@ -85,7 +85,7 @@ public class Server implements Comparable<Server> {
       return description;
    }
 
-   public Option getState() {
+   public ServerState getState() {
       return state;
    }
 
@@ -195,8 +195,8 @@ public class Server implements Comparable<Server> {
 
    @Override
    public String toString() {
-      return "Server [datacenter=" + datacenter + ", description=" + description + ", id=" + id
-               + ", image=" + image + ", ip=" + ip + ", isSandbox=" + isSandbox + ", name=" + name
-               + ", os=" + os + ", ram=" + ram + ", state=" + state + ", type=" + type + "]";
+      return "Server [datacenter=" + datacenter + ", description=" + description + ", id=" + id + ", image=" + image
+            + ", ip=" + ip + ", isSandbox=" + isSandbox + ", name=" + name + ", os=" + os + ", ram=" + ram + ", state="
+            + state + ", type=" + type + "]";
    }
 }

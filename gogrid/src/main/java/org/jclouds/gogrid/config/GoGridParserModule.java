@@ -34,6 +34,7 @@ import org.jclouds.gogrid.domain.LoadBalancerType;
 import org.jclouds.gogrid.domain.ObjectType;
 import org.jclouds.gogrid.domain.ServerImageState;
 import org.jclouds.gogrid.domain.ServerImageType;
+import org.jclouds.gogrid.domain.ServerState;
 import org.jclouds.gogrid.functions.internal.CustomDeserializers;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 
@@ -60,6 +61,7 @@ public class GoGridParserModule extends AbstractModule {
       bindings.put(LoadBalancerState.class, new CustomDeserializers.LoadBalancerStateAdapter());
       bindings.put(LoadBalancerPersistenceType.class, new CustomDeserializers.LoadBalancerPersistenceTypeAdapter());
       bindings.put(LoadBalancerType.class, new CustomDeserializers.LoadBalancerTypeAdapter());
+      bindings.put(ServerState.class, new CustomDeserializers.ServerStateAdapter());
       bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());
       bindings.put(JobState.class, new CustomDeserializers.JobStateAdapter());
       bindings.put(ServerImageState.class, new CustomDeserializers.ServerImageStateAdapter());

@@ -21,6 +21,7 @@ import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.domain.ServerImage;
+import org.jclouds.gogrid.domain.ServerState;
 import org.jclouds.gogrid.services.GridServerClient;
 import org.testng.annotations.Test;
 
@@ -39,7 +40,7 @@ public class ServerToNodeMetadataTest {
       GoGridClient caller = createMock(GoGridClient.class);
       GridServerClient client = createMock(GridServerClient.class);
       expect(caller.getServerServices()).andReturn(client).atLeastOnce();
-      Map<String, NodeState> serverStateToNodeState = createMock(Map.class);
+      Map<ServerState, NodeState> serverStateToNodeState = createMock(Map.class);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
       Option dc = new Option(1l, "US-West-1", "US West 1 Datacenter");
 
@@ -48,9 +49,9 @@ public class ServerToNodeMetadataTest {
 
       expect(server.getId()).andReturn(1000l).atLeastOnce();
       expect(server.getName()).andReturn("tag-ff").atLeastOnce();
-      expect(server.getState()).andReturn(new Option("NODE_RUNNING")).atLeastOnce();
+      expect(server.getState()).andReturn(ServerState.ON).atLeastOnce();
 
-      expect(serverStateToNodeState.get("NODE_RUNNING")).andReturn(NodeState.RUNNING);
+      expect(serverStateToNodeState.get(ServerState.ON)).andReturn(NodeState.RUNNING);
       LocationImpl location = new LocationImpl(LocationScope.ZONE, "1", "US-West-1", null);
       Map<String, ? extends Location> locations = ImmutableMap.<String, Location> of("1", location);
 
@@ -75,8 +76,7 @@ public class ServerToNodeMetadataTest {
       replay(jcImage);
       replay(credentialsMap);
 
-      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, caller,
-               images, locations);
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, caller, images, locations);
 
       NodeMetadata metadata = parser.apply(server);
       assertEquals(metadata.getLocation(), location);
