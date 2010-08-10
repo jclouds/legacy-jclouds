@@ -109,12 +109,14 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
 
    @GET
+   @Deprecated
    @Endpoint(Org.class)
    @Consumes(ORG_XML)
    @XMLResponseParser(TerremarkOrgHandler.class)
    ListenableFuture<? extends TerremarkOrganization> getDefaultOrganization();
 
    @GET
+   @Deprecated
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/org/{orgId}")
    @XMLResponseParser(TerremarkOrgHandler.class)

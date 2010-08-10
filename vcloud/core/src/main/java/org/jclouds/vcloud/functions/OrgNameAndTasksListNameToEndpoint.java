@@ -30,7 +30,7 @@ import javax.inject.Singleton;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.endpoints.Org;
-import org.jclouds.vcloud.endpoints.VDC;
+import org.jclouds.vcloud.endpoints.TasksList;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -41,35 +41,35 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class OrgNameAndVDCNameToEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, Organization>> orgNameToVDCEndpoint;
+public class OrgNameAndTasksListNameToEndpoint implements Function<Object, URI> {
+   private final Supplier<Map<String, Organization>> orgMap;
    private final String defaultOrg;
    private final URI defaultUri;
 
    @Inject
-   public OrgNameAndVDCNameToEndpoint(Supplier<Map<String, Organization>> orgNameToVDCEndpoint, @Org String defaultOrg,
-         @VDC URI defaultUri) {
-      this.orgNameToVDCEndpoint = orgNameToVDCEndpoint;
+   public OrgNameAndTasksListNameToEndpoint(Supplier<Map<String, Organization>> orgMap, @Org String defaultOrg,
+         @TasksList URI defaultUri) {
+      this.orgMap = orgMap;
       this.defaultOrg = defaultOrg;
       this.defaultUri = defaultUri;
    }
 
    @SuppressWarnings("unchecked")
    public URI apply(Object from) {
-      Iterable<Object> orgVdc = (Iterable<Object>) checkNotNull(from, "args");
-      Object org = Iterables.get(orgVdc, 0);
-      Object vdc = Iterables.get(orgVdc, 1);
-      if (org == null && vdc == null)
+      Iterable<Object> orgTasksList = (Iterable<Object>) checkNotNull(from, "args");
+      Object org = Iterables.get(orgTasksList, 0);
+      Object tasksList = Iterables.get(orgTasksList, 1);
+      if (org == null && tasksList == null)
          return defaultUri;
       else if (org == null)
          org = defaultOrg;
 
       try {
-         Map<String, NamedResource> vdcs = checkNotNull(orgNameToVDCEndpoint.get().get(org)).getVDCs();
-
-         return vdc == null ? Iterables.getLast(vdcs.values()).getLocation() : vdcs.get(vdc).getLocation();
+         Map<String, NamedResource> tasksLists = checkNotNull(orgMap.get().get(org)).getTasksLists();
+         return tasksList == null ? Iterables.getLast(tasksLists.values()).getLocation() : tasksLists.get(tasksList)
+               .getLocation();
       } catch (NullPointerException e) {
-         throw new NoSuchElementException(org + "/" + vdc + " not found in " + orgNameToVDCEndpoint.get());
+         throw new NoSuchElementException(org + "/" + tasksList + " not found in " + orgMap.get());
       }
    }
 

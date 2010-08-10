@@ -18,7 +18,6 @@
  */
 package org.jclouds.vcloud;
 
-import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -51,7 +50,7 @@ public interface VCloudClient {
    Organization getDefaultOrganization();
 
    /**
-    * Please use #getOrganizationByName
+    * Please use #getOrganizationNamed
     */
    @Deprecated
    Organization getOrganization(String orgId);
@@ -65,9 +64,19 @@ public interface VCloudClient {
     */
    Organization getOrganizationNamed(String name);
 
+   /**
+    * Please use #getCatalogInOrg(null, null)
+    */
+   @Deprecated
    Catalog getDefaultCatalog();
 
+   /**
+    * Please use #getCatalogInOrg
+    */
+   @Deprecated
    Catalog getCatalog(String catalogId);
+
+   Catalog getCatalogInOrg(String orgName, String catalogName);
 
    CatalogItem getCatalogItem(String catalogItemId);
 
@@ -76,19 +85,31 @@ public interface VCloudClient {
    Network getNetwork(String networkId);
 
    /**
-    * please use {@link #getVDC(URI)}
+    * please use {@link #getVDCInOrg}
     */
    @Deprecated
    VDC getVDC(String vDCId);
 
    VDC getVDCInOrg(String orgName, String vdcName);
 
-   VDC getVDC(URI vdc);
-
+   /**
+    * Please use #getVDCInOrg(null, null)
+    */
+   @Deprecated
    VDC getDefaultVDC();
 
+   /**
+    * Please use #getTasksListInOrg
+    */
+   @Deprecated
    TasksList getTasksList(String tasksListId);
 
+   TasksList getTasksListInOrg(String orgName, String tasksListName);
+
+   /**
+    * Please use #getTasksListInOrg(null, null)
+    */
+   @Deprecated
    TasksList getDefaultTasksList();
 
    Task deployVApp(String vAppId);

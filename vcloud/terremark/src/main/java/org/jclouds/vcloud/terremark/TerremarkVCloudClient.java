@@ -46,9 +46,11 @@ import org.jclouds.vcloud.terremark.options.AddNodeOptions;
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkVCloudClient extends VCloudClient {
+   @Deprecated
    @Override
    TerremarkOrganization getDefaultOrganization();
 
+   @Deprecated
    @Override
    TerremarkOrganization getOrganization(String orgId);
 

@@ -54,6 +54,7 @@ import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.internal.OrganizationImpl;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
@@ -571,7 +572,7 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
       protected void configure() {
          super.configure();
          bind(OrgNameToKeysListSupplier.class).to(TestOrgNameToKeysListSupplier.class);
-         bind(OrgNameToVDCSupplier.class).to(TestOrgNameToVDCSupplier.class);
+         bind(OrganizationMapSupplier.class).to(TestOrganizationMapSupplier.class);
       }
 
       @Override
@@ -646,17 +647,23 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
       }
 
       @Singleton
-      public static class TestOrgNameToVDCSupplier extends OrgNameToVDCSupplier {
+      public static class TestOrganizationMapSupplier extends OrganizationMapSupplier {
          @Inject
-         protected TestOrgNameToVDCSupplier() {
+         protected TestOrganizationMapSupplier() {
             super(null, null);
          }
 
          @Override
-         public Map<String, Map<String, NamedResource>> get() {
-            return ImmutableMap.<String, Map<String, NamedResource>> of("org", ImmutableMap.<String, NamedResource> of(
-                  "vdc", new NamedResourceImpl("1", "vdc", VCloudMediaType.VDC_XML, URI
-                        .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"))));
+         public Map<String, Organization> get() {
+            return ImmutableMap.<String, Organization> of("org", new OrganizationImpl("1", "org", URI
+                  .create("https://vcloud.safesecureweb.com/api/v0.8/org/1"), ImmutableMap.<String, NamedResource> of(
+                  "catalog", new NamedResourceImpl("1", "catalog", VCloudMediaType.CATALOG_XML, URI
+                        .create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"))), ImmutableMap
+                  .<String, NamedResource> of("vdc", new NamedResourceImpl("1", "vdc", VCloudMediaType.VDC_XML, URI
+                        .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"))), ImmutableMap
+                  .<String, NamedResource> of("tasksList", new NamedResourceImpl("1", "tasksList",
+                        VCloudMediaType.TASKSLIST_XML, URI
+                              .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/1")))));
          }
       }
 

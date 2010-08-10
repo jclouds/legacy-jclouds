@@ -52,6 +52,7 @@ import org.jclouds.vcloud.config.VCloudRestClientModule;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.internal.OrganizationImpl;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
@@ -331,6 +332,21 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       checkFilters(request);
    }
 
+   public void testCatalogInOrg() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("getCatalogInOrg", String.class, String.class);
+      HttpRequest request = processor.createRequest(method, "org", "catalog");
+
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/catalog/1 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, CatalogHandler.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
    public void testNetwork() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("getNetwork", String.class);
       HttpRequest request = processor.createRequest(method, "2");
@@ -463,22 +479,6 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       checkFilters(request);
    }
 
-   public void testGetVDCURI() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("getVDC", URI.class);
-      HttpRequest request = processor.createRequest(method, URI
-            .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"));
-
-      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/vdc/1 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vdc+xml\n");
-      assertPayloadEquals(request, null, null, false);
-
-      assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, VDCHandler.class);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
-
-      checkFilters(request);
-   }
-
    public void testGetDefaultTasksList() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("getDefaultTasksList");
       HttpRequest request = processor.createRequest(method);
@@ -497,6 +497,21 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    public void testGetTasksList() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("getTasksList", String.class);
       HttpRequest request = processor.createRequest(method, "1");
+
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/tasksList/1 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.tasksList+xml\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TasksListHandler.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
+   public void testGetTasksListInOrg() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("getTasksListInOrg", String.class, String.class);
+      HttpRequest request = processor.createRequest(method, "org", "tasksList");
 
       assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/tasksList/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.tasksList+xml\n");
@@ -715,7 +730,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       @Override
       protected void configure() {
          super.configure();
-         bind(OrgNameToVDCSupplier.class).to(TestOrgNameToVDCSupplier.class);
+         bind(OrganizationMapSupplier.class).to(TestOrganizationMapSupplier.class);
       }
 
       @Override
@@ -781,17 +796,23 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       }
 
       @Singleton
-      public static class TestOrgNameToVDCSupplier extends OrgNameToVDCSupplier {
+      public static class TestOrganizationMapSupplier extends OrganizationMapSupplier {
          @Inject
-         protected TestOrgNameToVDCSupplier() {
+         protected TestOrganizationMapSupplier() {
             super(null, null);
          }
 
          @Override
-         public Map<String, Map<String, NamedResource>> get() {
-            return ImmutableMap.<String, Map<String, NamedResource>> of("org", ImmutableMap.<String, NamedResource> of(
-                  "vdc", new NamedResourceImpl("1", "vdc", VCloudMediaType.VDC_XML, URI
-                        .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"))));
+         public Map<String, Organization> get() {
+            return ImmutableMap.<String, Organization> of("org", new OrganizationImpl("1", "org", URI
+                  .create("https://vcloud.safesecureweb.com/api/v0.8/org/1"), ImmutableMap.<String, NamedResource> of(
+                  "catalog", new NamedResourceImpl("1", "catalog", VCloudMediaType.CATALOG_XML, URI
+                        .create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"))), ImmutableMap
+                  .<String, NamedResource> of("vdc", new NamedResourceImpl("1", "vdc", VCloudMediaType.VDC_XML, URI
+                        .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"))), ImmutableMap
+                  .<String, NamedResource> of("tasksList", new NamedResourceImpl("1", "tasksList",
+                        VCloudMediaType.TASKSLIST_XML, URI
+                              .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/1")))));
          }
       }
 

@@ -82,14 +82,15 @@ import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
 /**
- * Configures the VCloud authentication service connection, including logging and http transport.
+ * Configures the VCloud authentication service connection, including logging
+ * and http transport.
  * 
  * @author Adrian Cole
  */
 @RequiresHttp
 @ConfiguresRestClient
 public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A extends VCloudAsyncClient> extends
-         RestClientModule<S, A> {
+      RestClientModule<S, A> {
 
    public BaseVCloudRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
       super(syncClientType, asyncClientType);
@@ -110,7 +111,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Provides
    @Singleton
    protected Predicate<String> successTester(TaskSuccess success,
-            @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long completed) {
+         @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long completed) {
       return new RetryablePredicate<String>(success, completed);
    }
 
@@ -138,20 +139,20 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Singleton
    @VDC
    protected Supplier<Map<String, String>> provideVDCtoORG(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final @VDC Supplier<Map<String, Map<String, NamedResource>>> orgToVDCSupplier) {
+         final Supplier<Map<String, Organization>> orgToVDCSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, String>>(authException, seconds,
-               new Supplier<Map<String, String>>() {
-                  @Override
-                  public Map<String, String> get() {
-                     Map<String, String> returnVal = Maps.newLinkedHashMap();
-                     for (Entry<String, Map<String, NamedResource>> orgr : orgToVDCSupplier.get().entrySet()) {
-                        for (String vdc : orgr.getValue().keySet()) {
-                           returnVal.put(vdc, orgr.getKey());
-                        }
+            new Supplier<Map<String, String>>() {
+               @Override
+               public Map<String, String> get() {
+                  Map<String, String> returnVal = Maps.newLinkedHashMap();
+                  for (Entry<String, Organization> orgr : orgToVDCSupplier.get().entrySet()) {
+                     for (String vdc : orgr.getValue().getVDCs().keySet()) {
+                        returnVal.put(vdc, orgr.getKey());
                      }
-                     return returnVal;
                   }
-               });
+                  return returnVal;
+               }
+            });
 
    }
 
@@ -176,55 +177,54 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Provides
    @Singleton
    protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final VCloudLoginAsyncClient login) {
+         final VCloudLoginAsyncClient login) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<VCloudSession>(authException, seconds,
-               new Supplier<VCloudSession>() {
+            new Supplier<VCloudSession>() {
 
-                  @Override
-                  public VCloudSession get() {
-                     try {
-                        return login.login().get(10, TimeUnit.SECONDS);
-                     } catch (Exception e) {
-                        Throwables.propagate(e);
-                        assert false : e;
-                        return null;
-                     }
+               @Override
+               public VCloudSession get() {
+                  try {
+                     return login.login().get(10, TimeUnit.SECONDS);
+                  } catch (Exception e) {
+                     Throwables.propagate(e);
+                     assert false : e;
+                     return null;
                   }
+               }
 
-               });
+            });
    }
 
    @Provides
    @Singleton
-   @VDC
-   protected Supplier<Map<String, Map<String, NamedResource>>> provideOrgToVDCCache(
-            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrgNameToVDCSupplier supplier) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, NamedResource>>>(
-               authException, seconds, new Supplier<Map<String, Map<String, NamedResource>>>() {
-                  @Override
-                  public Map<String, Map<String, NamedResource>> get() {
-                     return supplier.get();
-                  }
+   protected Supplier<Map<String, Organization>> provideOrgMapCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+         final OrganizationMapSupplier supplier) {
+      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Organization>>(authException,
+            seconds, new Supplier<Map<String, Organization>>() {
+               @Override
+               public Map<String, Organization> get() {
+                  return supplier.get();
+               }
 
-               });
+            });
    }
 
    @Singleton
-   public static class OrgNameToVDCSupplier implements Supplier<Map<String, Map<String, NamedResource>>> {
+   public static class OrganizationMapSupplier implements Supplier<Map<String, Organization>> {
       protected final Supplier<VCloudSession> sessionSupplier;
       private final VCloudClient client;
 
       @Inject
-      protected OrgNameToVDCSupplier(Supplier<VCloudSession> sessionSupplier, VCloudClient client) {
+      protected OrganizationMapSupplier(Supplier<VCloudSession> sessionSupplier, VCloudClient client) {
          this.sessionSupplier = sessionSupplier;
          this.client = client;
       }
 
       @Override
-      public Map<String, Map<String, NamedResource>> get() {
-         Map<String, Map<String, NamedResource>> returnVal = Maps.newLinkedHashMap();
+      public Map<String, Organization> get() {
+         Map<String, Organization> returnVal = Maps.newLinkedHashMap();
          for (String orgName : sessionSupplier.get().getOrgs().keySet()) {
-            returnVal.put(orgName, client.getOrganizationNamed(orgName).getVDCs());
+            returnVal.put(orgName, client.getOrganizationNamed(orgName));
          }
          return returnVal;
       }
@@ -235,8 +235,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Singleton
    @org.jclouds.vcloud.endpoints.VCloudLogin
    protected URI provideAuthenticationURI(VCloudVersionsAsyncClient versionService,
-            @Named(PROPERTY_API_VERSION) String version) throws InterruptedException, ExecutionException,
-            TimeoutException {
+         @Named(PROPERTY_API_VERSION) String version) throws InterruptedException, ExecutionException, TimeoutException {
       SortedMap<String, URI> versions = versionService.getSupportedVersions().get(180, TimeUnit.SECONDS);
       checkState(versions.size() > 0, "No versions present");
       checkState(versions.containsKey(version), "version " + version + " not present in: " + versions);
@@ -296,7 +295,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Provides
    @Singleton
    protected Organization provideOrganization(VCloudClient discovery) throws ExecutionException, TimeoutException,
-            InterruptedException {
+         InterruptedException {
       if (authException.get() != null)
          throw authException.get();
       try {
@@ -327,7 +326,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Network
    @Singleton
    protected URI provideDefaultNetwork(VCloudClient client) throws InterruptedException, ExecutionException,
-            TimeoutException {
+         TimeoutException {
       if (authException.get() != null)
          throw authException.get();
       try {
