@@ -38,9 +38,9 @@ public interface ChefService {
 
    void deleteAllNodesInList(Iterable<String> names);
 
-   Iterable<? extends Node> getNodes();
+   Iterable<? extends Node> listNodesDetails();
 
-   Iterable<? extends Node> getNodesWithNamesMatching(Predicate<String> nodeNameSelector);
+   Iterable<? extends Node> listNodesDetailsMatching(Predicate<String> nodeNameSelector);
 
    Iterable<? extends Node> getNodesNamed(Iterable<String> names);
 

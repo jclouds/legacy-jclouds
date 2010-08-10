@@ -81,12 +81,12 @@ public class BaseChefService implements ChefService {
    }
 
    @Override
-   public Iterable<? extends Node> getNodes() {
+   public Iterable<? extends Node> listNodesDetails() {
       return getNodes.execute();
    }
 
    @Override
-   public Iterable<? extends Node> getNodesWithNamesMatching(Predicate<String> nodeNameSelector) {
+   public Iterable<? extends Node> listNodesDetailsMatching(Predicate<String> nodeNameSelector) {
       return getNodes.execute(nodeNameSelector);
    }
 
