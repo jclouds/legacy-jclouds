@@ -319,6 +319,7 @@
                     </testSourceDirectories>
                     <clojureOptions>-Xmx512m -Djava.awt.headless=true -XX:MaxPermSize=256m</clojureOptions>
                     <warnOnReflection>true</warnOnReflection>
+                    <compileDeclaredNamespaceOnly>true</compileDeclaredNamespaceOnly>
                     <testDeclaredNamespaceOnly>false</testDeclaredNamespaceOnly>
                 </configuration>
                 <executions>
