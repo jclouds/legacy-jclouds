@@ -32,7 +32,7 @@
           :only [wall-hack-field]
           :rename {wall-hack-field get-field}])))
 
-(defn pem
+(defn load-pem
   "get the pem associated with the supplied identity"
   ([#^String identity]
      (slurp (str (. System getProperty "user.home") "/.chef/" identity ".pem"))))
