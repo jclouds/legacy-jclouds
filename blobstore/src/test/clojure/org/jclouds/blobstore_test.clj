@@ -20,7 +20,8 @@
   (:use [org.jclouds.blobstore] :reload-all)
   (:use [clojure.test])
   (:import [org.jclouds.blobstore BlobStoreContextFactory]
-           [java.io ByteArrayOutputStream]))
+           [java.io ByteArrayOutputStream]
+           [org.jclouds.util Utils]))
 
 (defn clean-stub-fixture
   "This should allow basic tests to easily be run with another service."
@@ -72,6 +73,12 @@
   (is (= 4 (count (list-container "container" :recursive true))))
   (is (= 3 (count (list-container "container" :with-details true))))
   (is (= 1 (count (list-container "container" :in-directory "dir")))))
+
+(deftest get-blob-test
+  (is (create-container "blob"))
+  (is (upload-blob "blob" "blob1" "blob1"))
+  (is (upload-blob "blob" "blob2" "blob2"))
+  (is (= "blob2" (Utils/toStringAndClose (get-blob-stream "blob" "blob2")))))
 
 (deftest download-blob-test
   (let [name "test"

@@ -237,6 +237,13 @@ Options can also be specified for extension modules
   ([container-name path #^BlobStore blobstore]
      (.getBlob blobstore container-name path)))
 
+(defn get-blob-stream
+  "Get an inputstream from the blob at a given path"
+  ([container-name path]
+     (get-blob-stream container-name path *blobstore*))
+  ([container-name path #^BlobStore blobstore]
+     (.getInput(.getPayload(.getBlob blobstore container-name path)))))
+
 (defn remove-blob
   "Remove blob from given path"
   ([container-name path]
@@ -311,7 +318,7 @@ container, name, string -> etag"
                                        & [retries]]
   (let [blob (get-blob container-name name blobstore)
         digest-stream (DigestOutputStream.
-                       target (MessageDigest/getInstance "MD5"))]
+                       target (.md5(.crypto (.utils (blobstore-context blobstore)))))]
     (.writeTo (.getPayload blob) digest-stream)
     (let [digest (.digest (.getMessageDigest digest-stream))
           metadata-digest (.getContentMD5 (.getPayload blob))]
