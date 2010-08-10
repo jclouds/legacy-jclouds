@@ -42,6 +42,7 @@ import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
+import org.jclouds.vcloud.terremark.TerremarkECloudClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressClient;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
@@ -129,11 +130,22 @@ public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
             break;
          }
          if (ip == null) {
-            logger.debug(">> creating InternetService in vDC %s:%s:%d", vApp.getVDC().getId(), protocol, port);
-            is = client.addInternetServiceToVDC(vApp.getVDC().getId(), vApp.getName() + "-" + port, protocol, port,
-                  withDescription(String.format("port %d access to serverId: %s name: %s", port, vApp.getId(), vApp
-                        .getName())));
-            ip = is.getPublicIpAddress();
+            if (client instanceof TerremarkVCloudExpressClient) {
+               is = TerremarkVCloudExpressClient.class.cast(client).addInternetServiceToVDC(
+                     vApp.getVDC().getId(),
+                     vApp.getName() + "-" + port,
+                     protocol,
+                     port,
+                     withDescription(String.format("port %d access to serverId: %s name: %s", port, vApp.getId(), vApp
+                           .getName())));
+               ip = is.getPublicIpAddress();
+            } else {
+               logger.debug(">> creating InternetService in vDC %s:%s:%d", vApp.getVDC().getName(), protocol, port);
+               ip = TerremarkECloudClient.class.cast(client).activatePublicIpInVDC(vApp.getVDC().getId());
+               is = client.addInternetServiceToExistingIp(ip.getId(), vApp.getName() + "-" + port, protocol, port,
+                     withDescription(String.format("port %d access to serverId: %s name: %s", port, vApp.getId(), vApp
+                           .getName())));
+            }
          } else {
             logger.debug(">> adding InternetService %s:%s:%d", ip.getAddress(), protocol, port);
             is = client.addInternetServiceToExistingIp(ip.getId(), vApp.getName() + "-" + port, protocol, port,

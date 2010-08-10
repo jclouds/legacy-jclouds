@@ -20,6 +20,7 @@ package org.jclouds.vcloud.terremark;
 
 import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.INTERNETSERVICESLIST_XML;
 import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.INTERNETSERVICE_XML;
+import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.PUBLICIP_XML;
 
 import java.util.Set;
 
@@ -38,12 +39,15 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Protocol;
+import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.xml.InternetServiceHandler;
 import org.jclouds.vcloud.terremark.xml.InternetServicesHandler;
+import org.jclouds.vcloud.terremark.xml.PublicIpAddressesHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -51,26 +55,13 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to eCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href="http://support.theenterprisecloud.com/kb/default.asp?id=645&Lang=1&SID=" />
+ * @see <a href=
+ *      "http://support.theenterprisecloud.com/kb/default.asp?id=645&Lang=1&SID="
+ *      />
  * @author Adrian Cole
  */
 @RequestFilters(SetVCloudTokenCookie.class)
 public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
-
-   /**
-    * @see TerremarkVCloudExpressClient#addInternetService
-    */
-   @POST
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/extensions/vdc/{vDCId}/internetServices")
-   @Produces(INTERNETSERVICE_XML)
-   @Consumes(INTERNETSERVICE_XML)
-   @XMLResponseParser(InternetServiceHandler.class)
-   @MapBinder(AddInternetServiceOptions.class)
-   @Override
-   ListenableFuture<? extends InternetService> addInternetServiceToVDC(@PathParam("vDCId") String vDCId,
-            @MapPayloadParam("name") String serviceName, @MapPayloadParam("protocol") Protocol protocol,
-            @MapPayloadParam("port") int port, AddInternetServiceOptions... options);
 
    /**
     * @see TerremarkVCloudExpressClient#getAllInternetServices
@@ -80,8 +71,20 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @Path("/extensions/vdc/{vDCId}/internetServices")
    @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServicesHandler.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @Override
    ListenableFuture<? extends Set<InternetService>> getAllInternetServicesInVDC(@PathParam("vDCId") String vDCId);
+
+   /**
+    * @see TerremarkVCloudExpressClient#activatePublicIpInVDC
+    */
+   @POST
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/extensions/vdc/{vDCId}/publicIps")
+   @Consumes(PUBLICIP_XML)
+   @XMLResponseParser(PublicIpAddressesHandler.class)
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<PublicIpAddress> activatePublicIpInVDC(@PathParam("vDCId") String vDCId);
 
    /**
     * @see TerremarkVCloudExpressClient#addInternetServiceToExistingIp
@@ -95,8 +98,8 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @MapBinder(AddInternetServiceOptions.class)
    @Override
    ListenableFuture<? extends InternetService> addInternetServiceToExistingIp(@PathParam("ipId") int existingIpId,
-            @MapPayloadParam("name") String serviceName, @MapPayloadParam("protocol") Protocol protocol,
-            @MapPayloadParam("port") int port, AddInternetServiceOptions... options);
+         @MapPayloadParam("name") String serviceName, @MapPayloadParam("protocol") Protocol protocol,
+         @MapPayloadParam("port") int port, AddInternetServiceOptions... options);
 
    /**
     * @see TerremarkVCloudExpressClient#getInternetServicesOnPublicIP

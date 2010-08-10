@@ -199,20 +199,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
          InstantiateVAppTemplateOptions... options);
 
    /**
-    * @see TerremarkVCloudExpressClient#addInternetService
-    */
-   @POST
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/extensions/vdc/{vDCId}/internetServices")
-   @Produces(INTERNETSERVICE_XML)
-   @Consumes(INTERNETSERVICE_XML)
-   @XMLResponseParser(InternetServiceHandler.class)
-   @MapBinder(AddInternetServiceOptions.class)
-   ListenableFuture<? extends InternetService> addInternetServiceToVDC(@PathParam("vDCId") String vDCId,
-         @MapPayloadParam("name") String serviceName, @MapPayloadParam("protocol") Protocol protocol,
-         @MapPayloadParam("port") int port, AddInternetServiceOptions... options);
-
-   /**
     * @see TerremarkVCloudExpressClient#getAllInternetServices
     */
    @GET
@@ -278,16 +264,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @XMLResponseParser(PublicIpAddressesHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<PublicIpAddress>> getPublicIpsAssociatedWithVDC(@PathParam("vDCId") String vDCId);
-
-   /**
-    * @see TerremarkVCloudExpressClient#activatePublicIpInVDC
-    */
-   @POST
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/extensions/{vDCId}/publicIps")
-   @XMLResponseParser(PublicIpAddressesHandler.class)
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<PublicIpAddress> activatePublicIpInVDC(@PathParam("vDCId") String vDCId);
 
    /**
     * @see TerremarkVCloudExpressClient#deleteInternetService

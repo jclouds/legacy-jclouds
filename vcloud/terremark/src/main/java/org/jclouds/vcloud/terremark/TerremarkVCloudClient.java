@@ -66,21 +66,6 @@ public interface TerremarkVCloudClient extends VCloudClient {
 
    void deletePublicIp(int ipId);
 
-   /**
-    * Allocate a new public IP
-    * 
-    * @param vDCId
-    * @return
-    */
-   PublicIpAddress activatePublicIpInVDC(String vDCId);
-
-   /**
-    * The call creates a new internet server, including protocol and port
-    * information. The public IP is dynamically allocated.
-    * 
-    */
-   InternetService addInternetServiceToVDC(String vDCId, String serviceName, Protocol protocol, int port,
-         AddInternetServiceOptions... options);
 
    /**
     * This call adds an internet service to a known, existing public IP. This

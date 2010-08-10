@@ -21,16 +21,25 @@ package org.jclouds.vcloud.terremark;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 
 /**
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href="http://support.theenterprisecloud.com/kb/default.asp?id=645&Lang=1&SID=" />
+ * @see <a href=
+ *      "http://support.theenterprisecloud.com/kb/default.asp?id=645&Lang=1&SID="
+ *      />
  * @author Adrian Cole
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkECloudClient extends TerremarkVCloudClient {
 
-   //TODO
+   /**
+    * Allocate a new public IP
+    * 
+    * @param vDCId
+    * @return
+    */
+   PublicIpAddress activatePublicIpInVDC(String vDCId);
 }

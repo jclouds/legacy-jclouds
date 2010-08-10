@@ -9,6 +9,16 @@ import javax.ws.rs.core.MediaType;
  */
 public interface TerremarkECloudMediaType extends TerremarkVCloudMediaType {
    /**
+    * "application/vnd.tmrk.ecloud.publicIp+xml"
+    */
+   public final static String PUBLICIP_XML = "application/vnd.tmrk.ecloud.publicIp+xml";
+
+   /**
+    * "application/vnd.tmrk.ecloud.publicIp+xml"
+    */
+   public final static MediaType PUBLICIP_XML_TYPE = new MediaType("application", "vnd.tmrk.ecloud.publicIp+xml");
+  
+   /**
     * "application/vnd.tmrk.ecloud.internetService+xml"
     */
    public final static String INTERNETSERVICE_XML = "application/vnd.tmrk.ecloud.internetService+xml";
@@ -17,7 +27,7 @@ public interface TerremarkECloudMediaType extends TerremarkVCloudMediaType {
     * "application/vnd.tmrk.ecloud.internetService+xml"
     */
    public final static MediaType INTERNETSERVICE_XML_TYPE = new MediaType("application",
-            "vnd.tmrk.ecloud.internetService+xml");
+         "vnd.tmrk.ecloud.internetService+xml");
    /**
     * "application/vnd.tmrk.ecloud.internetServicesList+xml"
     */
@@ -27,6 +37,6 @@ public interface TerremarkECloudMediaType extends TerremarkVCloudMediaType {
     * "application/vnd.tmrk.ecloud.internetServicesList+xml"
     */
    public final static MediaType INTERNETSERVICESLIST_XML_TYPE = new MediaType("application",
-            "vnd.tmrk.ecloud.internetServicesList+xml");
+         "vnd.tmrk.ecloud.internetServicesList+xml");
 
 }

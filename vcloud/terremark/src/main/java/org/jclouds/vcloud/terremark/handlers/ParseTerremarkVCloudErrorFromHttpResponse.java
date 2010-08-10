@@ -40,7 +40,7 @@ public class ParseTerremarkVCloudErrorFromHttpResponse implements HttpErrorHandl
             exception = new AuthorizationException(command.getRequest(), content);
             break;
          case 403: // TODO temporary as terremark mistakenly uses this for vApp
-                   // not found.
+            // not found.
          case 404:
             if (!command.getRequest().getMethod().equals("DELETE")) {
                String path = command.getRequest().getEndpoint().getPath();
@@ -55,9 +55,10 @@ public class ParseTerremarkVCloudErrorFromHttpResponse implements HttpErrorHandl
             }
             break;
          case 500:
-            if (response.getMessage().indexOf("because there is a pending task running") != -1)
-               exception = new IllegalStateException(response.getMessage(), exception);
-            else if (response.getMessage().indexOf("because it is already powered off") != -1)
+            if ((response.getMessage().indexOf("because there is a pending task running") != -1)
+                  || (response.getMessage().indexOf("because it is already powered off") != -1)
+                  || (response.getMessage().indexOf("already exists") != -1)
+                  || (response.getMessage().indexOf("same name exists") != -1))
                exception = new IllegalStateException(response.getMessage(), exception);
             break;
          default:

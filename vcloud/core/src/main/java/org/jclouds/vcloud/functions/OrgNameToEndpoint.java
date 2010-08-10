@@ -25,7 +25,6 @@ import java.util.NoSuchElementException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.rest.annotations.Provider;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.endpoints.Org;
 
@@ -42,7 +41,7 @@ public class OrgNameToEndpoint implements Function<Object, URI> {
    private final URI defaultUri;
 
    @Inject
-   public OrgNameToEndpoint(@Org Supplier<Map<String, NamedResource>> orgNameToEndpoint, @Provider URI defaultUri) {
+   public OrgNameToEndpoint(@Org Supplier<Map<String, NamedResource>> orgNameToEndpoint, @Org URI defaultUri) {
       this.orgNameToEndpoint = orgNameToEndpoint;
       this.defaultUri = defaultUri;
    }

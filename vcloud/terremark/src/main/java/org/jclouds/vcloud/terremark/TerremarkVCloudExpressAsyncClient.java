@@ -20,6 +20,7 @@ package org.jclouds.vcloud.terremark;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_XML;
 import static org.jclouds.vcloud.terremark.TerremarkVCloudExpressMediaType.KEYSLIST_XML;
+import static org.jclouds.vcloud.terremark.TerremarkVCloudMediaType.INTERNETSERVICE_XML;
 
 import java.net.URI;
 import java.util.Set;
@@ -29,8 +30,11 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
+import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
@@ -42,8 +46,12 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.terremark.binders.BindCreateKeyToXmlPayload;
+import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.KeyPair;
+import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.functions.OrgNameToKeysListEndpoint;
+import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
+import org.jclouds.vcloud.terremark.xml.InternetServiceHandler;
 import org.jclouds.vcloud.terremark.xml.KeyPairByNameHandler;
 import org.jclouds.vcloud.terremark.xml.KeyPairHandler;
 import org.jclouds.vcloud.terremark.xml.KeyPairsHandler;
@@ -60,6 +68,19 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(SetVCloudTokenCookie.class)
 public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncClient {
+   /**
+    * @see TerremarkVCloudExpressClient#addInternetServiceToVDC
+    */
+   @POST
+   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
+   @Path("/extensions/vdc/{vDCId}/internetServices")
+   @Produces(INTERNETSERVICE_XML)
+   @Consumes(INTERNETSERVICE_XML)
+   @XMLResponseParser(InternetServiceHandler.class)
+   @MapBinder(AddInternetServiceOptions.class)
+   ListenableFuture<? extends InternetService> addInternetServiceToVDC(@PathParam("vDCId") String vDCId,
+         @MapPayloadParam("name") String serviceName, @MapPayloadParam("protocol") Protocol protocol,
+         @MapPayloadParam("port") int port, AddInternetServiceOptions... options);
 
    /**
     * @see TerremarkVCloudExpressClient#listKeyPairsInOrg

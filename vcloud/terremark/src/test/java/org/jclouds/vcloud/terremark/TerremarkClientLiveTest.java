@@ -32,6 +32,7 @@ import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -78,6 +79,13 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
+
+   // Terremark service call 695,490
+   @Override
+   @Test(expectedExceptions = NoSuchElementException.class)
+   public void testCatalog() throws Exception {
+      super.testCatalog();
+   }
 
    protected String provider = "trmk-vcloudexpress";
    protected String expectedOs = "Ubuntu Linux (32-bit)";
@@ -222,8 +230,17 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
 
    @Test
    public void testAddInternetService() throws InterruptedException, ExecutionException, TimeoutException, IOException {
-      is = tmClient.addInternetServiceToVDC(tmClient.getDefaultVDC().getId(), "SSH", Protocol.TCP, 22);
-      publicIp = is.getPublicIpAddress().getAddress();
+      PublicIpAddress ip;
+      if (tmClient instanceof TerremarkVCloudExpressClient) {
+         is = TerremarkVCloudExpressClient.class.cast(tmClient).addInternetServiceToVDC(
+               tmClient.getVDCInOrg(null, null).getId(), "SSH", Protocol.TCP, 22);
+         ip = is.getPublicIpAddress();
+      } else {
+         ip = TerremarkECloudClient.class.cast(tmClient)
+               .activatePublicIpInVDC(tmClient.getVDCInOrg(null, null).getId());
+         is = tmClient.addInternetServiceToExistingIp(ip.getId(), "SSH", Protocol.TCP, 22);
+      }
+      publicIp = ip.getAddress();
    }
 
    @Test(enabled = true, dependsOnMethods = "testInstantiateAndPowerOn")

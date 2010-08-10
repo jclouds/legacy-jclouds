@@ -47,7 +47,7 @@ public class TerremarkVCloudClientLiveTest extends TerremarkClientLiveTest {
    @Test
    public void testKeysList() throws Exception {
       TerremarkVCloudExpressClient vCloudExpressClient = TerremarkVCloudExpressClient.class.cast(tmClient);
-      TerremarkOrganization org = vCloudExpressClient.getDefaultOrganization();
+      TerremarkOrganization org = vCloudExpressClient.getOrganizationNamed(null);
       Set<KeyPair> response = vCloudExpressClient.listKeyPairsInOrg(null);
       assertNotNull(response);
       System.err.println(response);
@@ -58,8 +58,14 @@ public class TerremarkVCloudClientLiveTest extends TerremarkClientLiveTest {
    protected void prepare() {
       TerremarkVCloudExpressClient vCloudExpressClient = TerremarkVCloudExpressClient.class.cast(tmClient);
 
-      TerremarkOrganization org = vCloudExpressClient.getDefaultOrganization();
-      key = vCloudExpressClient.generateKeyPairInOrg(org.getName(), "livetest", false);
+      TerremarkOrganization org = vCloudExpressClient.getOrganizationNamed(null);
+      try {
+         key = vCloudExpressClient.generateKeyPairInOrg(org.getName(), "livetest", false);
+      } catch (IllegalStateException e) {
+         key = vCloudExpressClient.getKeyPairInOrg(org.getName(), "livetest");
+         vCloudExpressClient.deleteKeyPair(key.getLocation());
+         key = vCloudExpressClient.generateKeyPairInOrg(org.getName(), "livetest", false);
+      }
       assertNotNull(key);
       System.err.println(key);
       assertEquals(key.getName(), "livetest");

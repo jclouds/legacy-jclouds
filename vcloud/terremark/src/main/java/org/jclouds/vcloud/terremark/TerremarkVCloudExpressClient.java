@@ -26,7 +26,10 @@ import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.KeyPair;
+import org.jclouds.vcloud.terremark.domain.Protocol;
+import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 
 /**
  * Provides access to VCloud resources via their REST API.
@@ -52,6 +55,8 @@ public interface TerremarkVCloudExpressClient extends TerremarkVCloudClient {
     *           null if use the default org
     * @throws ResourceNotFoundException
     *            if the orgName is not a valid organization
+    * @throws IllegalStateException
+    *            if a key of the same name already exists
     */
    KeyPair generateKeyPairInOrg(@Nullable String orgName, String name, boolean makeDefault);
 
@@ -70,4 +75,7 @@ public interface TerremarkVCloudExpressClient extends TerremarkVCloudClient {
    // keyPairConfiguration);
 
    void deleteKeyPair(URI keyPair);
+
+   InternetService addInternetServiceToVDC(String vDCId, String serviceName, Protocol protocol, int port,
+         AddInternetServiceOptions... options);
 }
