@@ -324,13 +324,6 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>compile-clojure</id>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                    <execution>
                         <id>test-clojure</id>
                         <phase>test</phase>
                         <goals>
