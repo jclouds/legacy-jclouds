@@ -268,18 +268,18 @@
             <version>2.4</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-           <groupId>org.clojure</groupId>
-           <artifactId>clojure</artifactId>
-           <version>1.1.0</version>
-           <optional>true</optional>
-        </dependency>
-        <dependency>
-           <groupId>org.clojure</groupId>
-           <artifactId>clojure-contrib</artifactId>
-           <version>1.1.0</version>
-           <optional>true</optional>
-        </dependency>
+	    <dependency>
+	      <groupId>org.clojure</groupId>
+	      <artifactId>clojure</artifactId>
+	      <version>1.2.0-RC2</version>
+          <optional>true</optional>
+	    </dependency>
+	    <dependency>
+	      <groupId>org.clojure</groupId>
+	      <artifactId>clojure-contrib</artifactId>
+	      <version>1.2.0-RC2</version>
+          <optional>true</optional>
+	    </dependency>
         <dependency>
           <groupId>swank-clojure</groupId>
           <artifactId>swank-clojure</artifactId>
@@ -658,20 +658,20 @@ pageTracker._trackPageview();
             </build>
         </profile>
 	<profile>
-	  <id>clojure-1.2</id>
+	  <id>clojure-1.1</id>
 	  <dependencies>
-	    <dependency>
-	      <groupId>org.clojure</groupId>
-	      <artifactId>clojure</artifactId>
-	      <version>1.2.0-RC2</version>
-          <optional>true</optional>
-	    </dependency>
-	    <dependency>
-	      <groupId>org.clojure</groupId>
-	      <artifactId>clojure-contrib</artifactId>
-	      <version>1.2.0-RC2</version>
-          <optional>true</optional>
-	    </dependency>
+        <dependency>
+           <groupId>org.clojure</groupId>
+           <artifactId>clojure</artifactId>
+           <version>1.1.0</version>
+           <optional>true</optional>
+        </dependency>
+        <dependency>
+           <groupId>org.clojure</groupId>
+           <artifactId>clojure-contrib</artifactId>
+           <version>1.1.0</version>
+           <optional>true</optional>
+        </dependency>
 	  </dependencies>
 	</profile>
     </profiles>
