@@ -20,9 +20,9 @@ package org.jclouds.gae;
 
 import static com.google.appengine.api.urlfetch.FetchOptions.Builder.disallowTruncate;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -51,8 +51,8 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
    public static final String USER_AGENT = "jclouds/1.0 urlfetch/1.3.5";
 
    /**
-    * byte [] content is replayable and the only content type supportable by GAE. As such, we
-    * convert the original request content to a byte array.
+    * byte [] content is replayable and the only content type supportable by
+    * GAE. As such, we convert the original request content to a byte array.
     */
    @Override
    public HTTPRequest apply(HttpRequest request) {
@@ -76,13 +76,15 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
       }
       gaeRequest.addHeader(new HTTPHeader(HttpHeaders.USER_AGENT, USER_AGENT));
       /**
-       * byte [] content is replayable and the only content type supportable by GAE. As such, we
-       * convert the original request content to a byte array.
+       * byte [] content is replayable and the only content type supportable by
+       * GAE. As such, we convert the original request content to a byte array.
        */
       if (request.getPayload() != null) {
          InputStream input = request.getPayload().getInput();
          try {
-            byte[] array = toByteArray(input);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            request.getPayload().writeTo(out);
+            byte[] array = out.toByteArray();
             if (!request.getPayload().isRepeatable()) {
                Payload oldPayload = request.getPayload();
                request.setPayload(array);
@@ -99,7 +101,7 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
          }
          if (request.getPayload().getContentMD5() != null)
             gaeRequest.setHeader(new HTTPHeader("Content-MD5", CryptoStreams.base64(request.getPayload()
-                     .getContentMD5())));
+                  .getContentMD5())));
          if (request.getPayload().getContentType() != null)
             gaeRequest.setHeader(new HTTPHeader(HttpHeaders.CONTENT_TYPE, request.getPayload().getContentType()));
          Long length = checkNotNull(request.getPayload().getContentLength(), "payload.getContentLength");

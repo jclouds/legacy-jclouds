@@ -34,11 +34,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.zip.GZIPInputStream;
 
@@ -58,6 +60,8 @@ import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.io.Payloads;
+import org.jclouds.io.WriteTo;
+import org.jclouds.io.payloads.StreamingPayload;
 import org.jclouds.logging.Logger;
 import org.jclouds.util.Utils;
 import org.testng.ITestContext;
@@ -91,7 +95,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    @SuppressWarnings("unchecked")
    public static InputSupplier<InputStream> getTestDataSupplier() throws IOException {
       byte[] oneConstitution = ByteStreams.toByteArray(new GZIPInputStream(BaseJettyTest.class
-               .getResourceAsStream("/const.txt.gz")));
+            .getResourceAsStream("/const.txt.gz")));
       InputSupplier<ByteArrayInputStream> constitutionSupplier = ByteStreams.newInputStreamSupplier(oneConstitution);
 
       InputSupplier<InputStream> temp = ByteStreams.join(constitutionSupplier);
@@ -113,22 +117,22 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
          for (int i = 0; i < 10; i++) {
 
             responses.put(i, Futures.compose(context.getAsyncBlobStore().getBlob(containerName, key),
-                     new Function<Blob, Void>() {
+                  new Function<Blob, Void>() {
 
-                        @Override
-                        public Void apply(Blob from) {
-                           try {
-                              assertEquals(CryptoStreams.md5(from.getPayload()), oneHundredOneConstitutionsMD5);
-                           } catch (IOException e) {
-                              Throwables.propagate(e);
-                           }
-                           return null;
+                     @Override
+                     public Void apply(Blob from) {
+                        try {
+                           assertEquals(CryptoStreams.md5(from.getPayload()), oneHundredOneConstitutionsMD5);
+                        } catch (IOException e) {
+                           Throwables.propagate(e);
                         }
+                        return null;
+                     }
 
-                     }, this.exec));
+                  }, this.exec));
          }
          Map<Integer, Exception> exceptions = awaitCompletion(responses, exec, 30000l, Logger.CONSOLE,
-                  "get constitution");
+               "get constitution");
          assert exceptions.size() == 0 : exceptions;
 
       } finally {
@@ -353,8 +357,8 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    @DataProvider(name = "delete")
    public Object[][] createData() {
-      return new Object[][] { { "normal" }, { "sp ace" }, { "qu?stion" }, { "unic₪de" }, { "path/foo" }, { "colon:" },
-               { "asteri*k" }, { "quote\"" }, { "{great<r}" }, { "lesst>en" }, { "p|pe" } };
+      return new Object[][] { { "normal" }, { "sp ace" }, { "qu?stion" }, { "unic₪de" }, { "path/foo" },
+            { "colon:" }, { "asteri*k" }, { "quote\"" }, { "{great<r}" }, { "lesst>en" }, { "p|pe" } };
    }
 
    @Test(groups = { "integration", "live" }, dataProvider = "delete")
@@ -371,17 +375,17 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    private void assertContainerEmptyDeleting(String containerName, String key) {
       Iterable<? extends StorageMetadata> listing = Iterables.filter(context.getBlobStore().list(containerName),
-               new Predicate<StorageMetadata>() {
+            new Predicate<StorageMetadata>() {
 
-                  @Override
-                  public boolean apply(StorageMetadata input) {
-                     return input.getType() == StorageType.BLOB;
-                  }
+               @Override
+               public boolean apply(StorageMetadata input) {
+                  return input.getType() == StorageType.BLOB;
+               }
 
-               });
+            });
       assertEquals(Iterables.size(listing), 0, String.format(
-               "deleting %s, we still have %s blobs left in container %s, using encoding %s", key, Iterables
-                        .size(listing), containerName, LOCAL_ENCODING));
+            "deleting %s, we still have %s blobs left in container %s, using encoding %s", key,
+            Iterables.size(listing), containerName, LOCAL_ENCODING));
    }
 
    @Test(groups = { "integration", "live" })
@@ -401,13 +405,13 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       String realObject = Utils.toStringAndClose(new FileInputStream("pom.xml"));
 
       return new Object[][] { { "file", "text/xml", new File("pom.xml"), realObject },
-               { "string", "text/xml", realObject, realObject },
-               { "bytes", "application/octet-stream", realObject.getBytes(), realObject } };
+            { "string", "text/xml", realObject, realObject },
+            { "bytes", "application/octet-stream", realObject.getBytes(), realObject } };
    }
 
    @Test(groups = { "integration", "live" }, dataProvider = "putTests")
    public void testPutObject(String key, String type, Object content, Object realObject) throws InterruptedException,
-            IOException {
+         IOException {
       Blob blob = context.getBlobStore().newBlob(key);
       blob.getMetadata().setContentType(type);
       blob.setPayload(Payloads.newPayload(content));
@@ -420,6 +424,33 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
          blob = context.getBlobStore().getBlob(containerName, blob.getMetadata().getName());
          String returnedString = getContentAsStringOrNullAndClose(blob);
          assertEquals(returnedString, realObject);
+         PageSet<? extends StorageMetadata> set = context.getBlobStore().list(containerName);
+         assert set.size() == 1 : set;
+      } finally {
+         returnContainer(containerName);
+      }
+   }
+
+   @Test(groups = { "integration", "live" })
+   public void testPutObjectStream() throws InterruptedException, IOException, ExecutionException {
+      Blob blob = context.getBlobStore().newBlob("streaming");
+      blob.setPayload(new StreamingPayload(new WriteTo() {
+         @Override
+         public void writeTo(OutputStream outstream) throws IOException {
+            outstream.write("foo".getBytes());
+         }
+      }));
+      blob.getMetadata().setContentType("text/csv");
+
+      String containerName = getContainerName();
+      try {
+
+         assertNotNull(context.getBlobStore().putBlob(containerName, blob));
+
+         blob = context.getBlobStore().getBlob(containerName, blob.getMetadata().getName());
+         String returnedString = getContentAsStringOrNullAndClose(blob);
+         assertEquals(returnedString, "foo");
+         assertEquals(blob.getPayload().getContentType(), "text/csv");
          PageSet<? extends StorageMetadata> set = context.getBlobStore().list(containerName);
          assert set.size() == 1 : set;
       } finally {

@@ -38,7 +38,6 @@ import static com.google.common.util.concurrent.Futures.immediateFuture;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
@@ -95,13 +94,13 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimaps;
-import com.google.common.io.Closeables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.internal.Nullable;
 
 /**
- * Implementation of {@link BaseAsyncBlobStore} which keeps all data in a local Map object.
+ * Implementation of {@link BaseAsyncBlobStore} which keeps all data in a local
+ * Map object.
  * 
  * @author Adrian Cole
  * @author James Murty
@@ -118,12 +117,11 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
 
    @Inject
    protected TransientAsyncBlobStore(BlobStoreContext context, DateService dateService, Crypto crypto,
-            ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
-            ConcurrentMap<String, Location> containerToLocation,
-            HttpGetOptionsListToGetOptions httpGetOptionsConverter,
-            IfDirectoryReturnNameStrategy ifDirectoryReturnName, Blob.Factory blobFactory, BlobUtils blobUtils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Location defaultLocation,
-            Set<Location> locations) {
+         ConcurrentMap<String, ConcurrentMap<String, Blob>> containerToBlobs,
+         ConcurrentMap<String, Location> containerToLocation, HttpGetOptionsListToGetOptions httpGetOptionsConverter,
+         IfDirectoryReturnNameStrategy ifDirectoryReturnName, Blob.Factory blobFactory, BlobUtils blobUtils,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Location defaultLocation,
+         Set<Location> locations) {
       super(context, blobUtils, service, defaultLocation, locations);
       this.blobFactory = blobFactory;
       this.dateService = dateService;
@@ -147,21 +145,21 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          return immediateFailedFuture(cnfe(container));
 
       SortedSet<StorageMetadata> contents = newTreeSet(transform(realContents.keySet(),
-               new Function<String, StorageMetadata>() {
-                  public StorageMetadata apply(String key) {
-                     Blob oldBlob = realContents.get(key);
-                     checkState(oldBlob != null, "blob " + key + " is not present although it was in the list of "
-                              + container);
-                     checkState(oldBlob.getMetadata() != null, "blob " + container + "/" + key + " has no metadata");
-                     MutableBlobMetadata md = copy(oldBlob.getMetadata());
-                     String directoryName = ifDirectoryReturnName.execute(md);
-                     if (directoryName != null) {
-                        md.setName(directoryName);
-                        md.setType(StorageType.RELATIVE_PATH);
-                     }
-                     return md;
+            new Function<String, StorageMetadata>() {
+               public StorageMetadata apply(String key) {
+                  Blob oldBlob = realContents.get(key);
+                  checkState(oldBlob != null, "blob " + key + " is not present although it was in the list of "
+                        + container);
+                  checkState(oldBlob.getMetadata() != null, "blob " + container + "/" + key + " has no metadata");
+                  MutableBlobMetadata md = copy(oldBlob.getMetadata());
+                  String directoryName = ifDirectoryReturnName.execute(md);
+                  if (directoryName != null) {
+                     md.setName(directoryName);
+                     md.setType(StorageType.RELATIVE_PATH);
                   }
-               }));
+                  return md;
+               }
+            }));
 
       if (options.getMarker() != null) {
          final String finalMarker = options.getMarker();
@@ -206,14 +204,14 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          contents = newTreeSet(filter(contents, new DelimiterFilter(prefix != null ? prefix : null, delimiter)));
 
          Iterables.<StorageMetadata> addAll(contents, transform(commonPrefixes,
-                  new Function<String, StorageMetadata>() {
-                     public StorageMetadata apply(String o) {
-                        MutableStorageMetadata md = new MutableStorageMetadataImpl();
-                        md.setType(StorageType.RELATIVE_PATH);
-                        md.setName(o);
-                        return md;
-                     }
-                  }));
+               new Function<String, StorageMetadata>() {
+                  public StorageMetadata apply(String o) {
+                     MutableStorageMetadata md = new MutableStorageMetadataImpl();
+                     md.setType(StorageType.RELATIVE_PATH);
+                     md.setName(o);
+                     return md;
+                  }
+               }));
       }
 
       // trim metadata, if the response isn't supposed to be detailed.
@@ -224,13 +222,13 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       }
 
       return Futures.<PageSet<? extends StorageMetadata>> immediateFuture(new PageSetImpl<StorageMetadata>(contents,
-               marker));
+            marker));
 
    }
 
    private ContainerNotFoundException cnfe(final String name) {
       return new ContainerNotFoundException(name, String.format("container %s not in %s", name, getContainerToBlobs()
-               .keySet()));
+            .keySet()));
    }
 
    public static MutableBlobMetadata copy(MutableBlobMetadata in) {
@@ -320,15 +318,15 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
    @Override
    public ListenableFuture<PageSet<? extends StorageMetadata>> list() {
       return Futures.<PageSet<? extends StorageMetadata>> immediateFuture(new PageSetImpl<StorageMetadata>(transform(
-               getContainerToBlobs().keySet(), new Function<String, StorageMetadata>() {
-                  public StorageMetadata apply(String name) {
-                     MutableStorageMetadata cmd = create();
-                     cmd.setName(name);
-                     cmd.setType(StorageType.CONTAINER);
-                     cmd.setLocation(getContainerToLocation().get(name));
-                     return cmd;
-                  }
-               }), null));
+            getContainerToBlobs().keySet(), new Function<String, StorageMetadata>() {
+               public StorageMetadata apply(String name) {
+                  MutableStorageMetadata cmd = create();
+                  cmd.setName(name);
+                  cmd.setType(StorageType.CONTAINER);
+                  cmd.setLocation(getContainerToLocation().get(name));
+                  return cmd;
+               }
+            }), null));
    }
 
    protected MutableStorageMetadata create() {
@@ -462,21 +460,18 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       }
 
       ByteArrayPayload payload = (object.getPayload() instanceof ByteArrayPayload) ? ByteArrayPayload.class.cast(object
-               .getPayload()) : null;
+            .getPayload()) : null;
       if (payload == null)
          payload = (object.getPayload() instanceof DelegatingPayload) ? (DelegatingPayload.class.cast(
-                  object.getPayload()).getDelegate() instanceof ByteArrayPayload) ? ByteArrayPayload.class
-                  .cast(DelegatingPayload.class.cast(object.getPayload()).getDelegate()) : null : null;
+               object.getPayload()).getDelegate() instanceof ByteArrayPayload) ? ByteArrayPayload.class
+               .cast(DelegatingPayload.class.cast(object.getPayload()).getDelegate()) : null : null;
       try {
          if (payload == null || !(payload instanceof ByteArrayPayload)) {
-            InputStream input = object.getPayload().getInput();
-            try {
-               String oldContentType = object.getPayload().getContentType();
-               payload = (ByteArrayPayload) Payloads.calculateMD5(Payloads.newPayload(object.getPayload().getInput()));
-               payload.setContentType(oldContentType);
-            } finally {
-               Closeables.closeQuietly(input);
-            }
+            String oldContentType = object.getPayload().getContentType();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            object.getPayload().writeTo(out);
+            payload = (ByteArrayPayload) Payloads.calculateMD5(Payloads.newPayload(out.toByteArray()));
+            payload.setContentType(oldContentType);
          } else {
             if (payload.getContentMD5() == null)
                Payloads.calculateMD5(object, crypto.md5());
@@ -497,7 +492,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
 
       // Set HTTP headers to match metadata
       blob.getAllHeaders().put(HttpHeaders.LAST_MODIFIED,
-               dateService.rfc822DateFormat(blob.getMetadata().getLastModified()));
+            dateService.rfc822DateFormat(blob.getMetadata().getLastModified()));
       blob.getAllHeaders().put(HttpHeaders.ETAG, eTag);
       blob.getAllHeaders().put(HttpHeaders.CONTENT_TYPE, payload.getContentType());
       blob.getAllHeaders().put(HttpHeaders.CONTENT_LENGTH, payload.getContentLength() + "");
@@ -544,7 +539,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          if (object.getMetadata().getLastModified().before(modifiedSince)) {
             HttpResponse response = new HttpResponse(304, null, null);
             return immediateFailedFuture(new HttpResponseException(String.format("%1$s is before %2$s", object
-                     .getMetadata().getLastModified(), modifiedSince), null, response));
+                  .getMetadata().getLastModified(), modifiedSince), null, response));
          }
 
       }
@@ -553,7 +548,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          if (object.getMetadata().getLastModified().after(unmodifiedSince)) {
             HttpResponse response = new HttpResponse(412, null, null);
             return immediateFailedFuture(new HttpResponseException(String.format("%1$s is after %2$s", object
-                     .getMetadata().getLastModified(), unmodifiedSince), null, response));
+                  .getMetadata().getLastModified(), unmodifiedSince), null, response));
          }
       }
       Blob returnVal = copyBlob(object);

@@ -19,9 +19,7 @@
 package org.jclouds.io;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import javax.annotation.Nullable;
 
@@ -30,7 +28,7 @@ import com.google.common.io.InputSupplier;
 /**
  * @author Adrian Cole
  */
-public interface Payload extends InputSupplier<InputStream>, Closeable{
+public interface Payload extends InputSupplier<InputStream>, WriteTo, Closeable {
 
    /**
     * Creates a new InputStream object of the payload.
@@ -47,22 +45,16 @@ public interface Payload extends InputSupplier<InputStream>, Closeable{
     */
    boolean isRepeatable();
 
-   /**
-    * Writes the payload content to the output stream.
-    * 
-    * @throws IOException
-    */
-   void writeTo(OutputStream outstream) throws IOException;
-
    void setContentLength(@Nullable Long contentLength);
 
    /**
     * Returns the total size of the payload, or the chunk that's available.
     * <p/>
-    * Chunking is only used when {@link org.jclouds.http.GetOptions} is called with options like
-    * tail, range, or startAt.
+    * Chunking is only used when {@link org.jclouds.http.GetOptions} is called
+    * with options like tail, range, or startAt.
     * 
-    * @return the length in bytes that can be be obtained from {@link #getInput()}
+    * @return the length in bytes that can be be obtained from
+    *         {@link #getInput()}
     * @see javax.ws.rs.core.HttpHeaders#CONTENT_LENGTH
     * @see org.jclouds.http.options.GetOptions
     */
@@ -80,7 +72,8 @@ public interface Payload extends InputSupplier<InputStream>, Closeable{
    String getContentType();
 
    /**
-    * release resources used by this entity. This should be called when data is discarded.
+    * release resources used by this entity. This should be called when data is
+    * discarded.
     */
    void release();
 }
