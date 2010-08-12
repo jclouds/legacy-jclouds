@@ -21,10 +21,12 @@
      :doc "A clojure binding to the jclouds chef interface."}
   org.jclouds.chef
   (:use  org.jclouds.core (core))
+  (:require (org.danlarkin [json :as json]))
   (:import 
         java.util.Properties
         [org.jclouds.chef ChefClient
-          ChefService ChefContext ChefContextFactory]))
+          ChefService ChefContext ChefContextFactory]
+        [org.jclouds.chef.domain DatabagItem]))
 (try
  (use '[clojure.contrib.reflect :only [get-field]])
  (catch Exception e
@@ -71,6 +73,14 @@
    (chef-context? (first args)) (.getChefService (first args))
    :else (apply chef-service args)))
 
+(defn as-chef-api
+  "Tries hard to produce a chef client from its input arguments"
+  [& args]
+  (cond
+   (chef-service? (first args)) (.getApi (.getContext (first args)))
+   (chef-context? (first args)) (.getApi (first args))
+   :else (.getApi (.getContext (apply chef-service args)))))
+
 (def *chef*)
 
 (defmacro with-chef-service
@@ -83,10 +93,71 @@
   "Retrieve the names of the existing nodes in your chef server."
   ([] (nodes *chef*))
   ([#^ChefService chef]
-    (seq (.listNodes (.getApi (.getContext chef))))))
+    (seq (.listNodes (as-chef-api chef)))))
 
 (defn nodes-with-details
   "Retrieve the existing nodes in your chef server including all details."
   ([] (nodes *chef*))
   ([#^ChefService chef]
     (seq (.listNodesDetails chef))))
+
+(defn databags
+  "Retrieve the names of the existing data bags in your chef server."
+  ([] (databags *chef*))
+  ([#^ChefService chef]
+    (seq (.listDatabags (as-chef-api chef)))))
+
+(defn delete-databag
+  "Delete a data bag, including its items"
+  ([databag]
+    (delete-databag databag *chef*))
+  ([databag chef]
+    (.deleteDatabag (as-chef-api chef) databag)))
+
+(defn create-databag
+  "create a data bag"
+  ([databag]
+    (create-databag databag *chef*))
+  ([databag chef]
+    (.createDatabag (as-chef-api chef) databag)))
+
+(defn databag-items
+  "Retrieve the names of the existing items in a data bag in your chef server."
+  ([databag]
+    (databag-items databag *chef*))
+  ([databag chef]
+    (seq (.listDatabagItems (as-chef-api chef) databag))))
+
+(defn databag-item
+  "Get an item from the data bag"
+  ([databag item-id]
+    (databag-item databag item-id *chef*))
+  ([databag item-id chef]
+    (json/decode-from-str (str (.getDatabagItem (as-chef-api chef) databag item-id)))))
+
+(defn delete-databag-item
+  "delete an item from the data bag"
+  ([databag item-id]
+    (delete-databag-item databag item-id *chef*))
+  ([databag item-id chef]
+    (.deleteDatabagItem (as-chef-api chef) databag item-id)))
+
+(defn create-databag-item
+  "put a new item in the data bag"
+  ([databag value]
+    (create-databag-item databag value *chef*))
+  ([databag value chef]
+    (let [value-str (json/encode-to-str value)]
+      (let [value-json (json/decode-from-str value-str)]
+        (json/decode-from-str (str  (.createDatabagItem  (as-chef-api chef) databag 
+          (DatabagItem. (get value-json :id) value-str))))))))
+
+(defn update-databag-item
+  "updates an existing item in the data bag"
+  ([databag value]
+    (update-databag-item databag value *chef*))
+  ([databag value chef]
+    (let [value-str (json/encode-to-str value)]
+      (let [value-json (json/decode-from-str value-str)]
+        (json/decode-from-str (str (.updateDatabagItem  (as-chef-api chef) databag 
+          (DatabagItem. (get value-json :id) value-str))))))))

@@ -383,7 +383,7 @@ public interface ChefClient {
    Set<String> listDatabags();
 
    /**
-    * gets an existing databag.
+    * creates a databag.
     * 
     * @throws AuthorizationException
     *            <p/>

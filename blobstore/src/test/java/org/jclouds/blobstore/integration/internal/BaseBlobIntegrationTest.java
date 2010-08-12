@@ -450,7 +450,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
          blob = context.getBlobStore().getBlob(containerName, blob.getMetadata().getName());
          String returnedString = getContentAsStringOrNullAndClose(blob);
          assertEquals(returnedString, "foo");
-         assertEquals(blob.getPayload().getContentType(), "text/csv");
+         assert blob.getPayload().getContentType().startsWith("text/csv") : blob.getPayload().getContentType();
          PageSet<? extends StorageMetadata> set = context.getBlobStore().list(containerName);
          assert set.size() == 1 : set;
       } finally {
