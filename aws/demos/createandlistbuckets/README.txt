@@ -1,6 +1,6 @@
 ====
 
-    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+    Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
 
     ====================================================================
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
     limitations under the License.
     ====================================================================
 ====
+
 #
 # this is a simple example command line client that creates a bucket, then displays all buckets you own
 # 1. execute 'mvn install' to build the sample

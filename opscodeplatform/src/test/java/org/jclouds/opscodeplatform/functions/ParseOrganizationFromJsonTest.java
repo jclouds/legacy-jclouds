@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.opscodeplatform.functions;
 
 import static org.testng.Assert.assertEquals;

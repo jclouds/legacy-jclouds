@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.compute.config;
 
 import java.lang.annotation.Retention;

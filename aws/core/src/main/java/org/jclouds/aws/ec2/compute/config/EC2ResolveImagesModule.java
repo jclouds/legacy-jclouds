@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.aws.ec2.compute.config;
 
 import com.google.inject.AbstractModule;

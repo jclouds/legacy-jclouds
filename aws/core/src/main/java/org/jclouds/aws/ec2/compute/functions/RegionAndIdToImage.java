@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.aws.ec2.compute.functions;
 
 import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.imageIds;

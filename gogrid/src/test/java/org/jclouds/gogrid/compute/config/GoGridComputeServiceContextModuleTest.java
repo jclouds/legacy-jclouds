@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.gogrid.compute.config;
 
 import org.jclouds.gogrid.domain.ServerState;

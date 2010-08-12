@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.compute.strategy;
 
 import org.jclouds.compute.strategy.impl.ReturnNullCredentials;

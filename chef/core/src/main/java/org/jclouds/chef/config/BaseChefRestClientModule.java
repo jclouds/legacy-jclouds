@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.chef.config;
 
 import static org.jclouds.Constants.PROPERTY_CREDENTIAL;

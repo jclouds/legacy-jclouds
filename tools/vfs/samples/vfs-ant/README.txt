@@ -1,6 +1,6 @@
 ====
 
-    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+    Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
 
     ====================================================================
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
     limitations under the License.
     ====================================================================
 ====
+
  this is a simple ant script that copyies a remote zip file to a blobstore container
    1. export ANT_OPTS to include log4j.xml as the property 'log4j.configuration'
       - ex. export ANT_OPTS="-Dlog4j.configuration=file://`pwd`/log4j.xml"

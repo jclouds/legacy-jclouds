@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.ohai.suppliers;
 
 import java.lang.management.RuntimeMXBean;

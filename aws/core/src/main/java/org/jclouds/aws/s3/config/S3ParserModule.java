@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.aws.s3.config;
 
 import org.jclouds.json.config.GsonModule.DateAdapter;

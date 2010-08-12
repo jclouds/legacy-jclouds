@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.opscodeplatform;
 
 import org.jclouds.opscodeplatform.internal.OpscodePlatformContextImpl;

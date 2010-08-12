@@ -1,6 +1,6 @@
 ====
 
-    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+    Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
 
     ====================================================================
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
     limitations under the License.
     ====================================================================
 ====
+
 #
 # A JetS3t (http://jets3t.s3.amazonaws.com/) S3Service implementation using
 # jclouds. Can be used on Google App Engine.

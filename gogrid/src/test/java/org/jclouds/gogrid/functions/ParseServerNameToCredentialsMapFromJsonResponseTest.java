@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.gogrid.functions;
 
 import static org.testng.Assert.assertEquals;

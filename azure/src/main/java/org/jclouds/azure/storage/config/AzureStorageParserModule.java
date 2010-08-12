@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.azure.storage.config;
 
 import org.jclouds.json.config.GsonModule.DateAdapter;

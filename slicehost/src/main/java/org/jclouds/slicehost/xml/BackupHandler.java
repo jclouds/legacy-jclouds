@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.slicehost.xml;
 
 import java.text.DateFormat;

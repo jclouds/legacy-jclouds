@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.ohai;
 
 import static java.lang.annotation.ElementType.METHOD;

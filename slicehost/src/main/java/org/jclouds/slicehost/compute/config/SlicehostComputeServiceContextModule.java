@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.slicehost.compute.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;

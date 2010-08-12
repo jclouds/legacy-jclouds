@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.gogrid.predicates;
 
 import com.google.common.base.Predicate;

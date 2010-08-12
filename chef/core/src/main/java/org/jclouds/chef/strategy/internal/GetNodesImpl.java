@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.chef.strategy.internal;
 
 import static com.google.common.collect.Iterables.filter;

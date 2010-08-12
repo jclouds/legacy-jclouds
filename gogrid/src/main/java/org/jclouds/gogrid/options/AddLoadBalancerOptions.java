@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.gogrid.options;
 
 import org.jclouds.gogrid.domain.LoadBalancerPersistenceType;

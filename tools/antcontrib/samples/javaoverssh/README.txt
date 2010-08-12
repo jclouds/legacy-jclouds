@@ -1,6 +1,6 @@
 ====
 
-    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+    Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
 
     ====================================================================
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
     limitations under the License.
     ====================================================================
 ====
+
  this is a simple ant script that executes a java command on a remote machine via ssh
    1. find or download a copy of jclouds-antcontrib-1.0-SNAPSHOT-jar-with-dependencies.jar
       - ex. ~/.m2/repository/org/jclouds/jclouds-antcontrib/1.0-SNAPSHOT/jclouds-antcontrib-1.0-SNAPSHOT-jar-with-dependencies.jar

@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.aws.ec2.functions;
 
 import org.jclouds.aws.ec2.domain.InstanceType;

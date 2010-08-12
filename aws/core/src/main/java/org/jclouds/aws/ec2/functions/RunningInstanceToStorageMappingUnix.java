@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.aws.ec2.functions;
 
 import com.google.common.base.Function;

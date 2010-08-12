@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.vcloud.compute.config;
 
 import org.jclouds.vcloud.domain.VAppStatus;

@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.chef.strategy;
 
 import org.jclouds.chef.domain.Node;

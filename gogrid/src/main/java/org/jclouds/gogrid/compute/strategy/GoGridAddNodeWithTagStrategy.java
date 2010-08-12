@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.gogrid.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;

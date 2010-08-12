@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.vcloud.terremark.xml;
 
 import static org.easymock.EasyMock.expect;

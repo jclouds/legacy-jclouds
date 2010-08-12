@@ -1,6 +1,6 @@
 ====
 
-    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+    Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
 
     ====================================================================
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
     limitations under the License.
     ====================================================================
 ====
+
 #
 # An extension to use the Bouncy Castle Crypto API (http://www.bouncycastle.org/) 
 # as an encryption library in jclouds.

@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.chef.servlet.suppliers;
 
 import static org.easymock.EasyMock.expect;

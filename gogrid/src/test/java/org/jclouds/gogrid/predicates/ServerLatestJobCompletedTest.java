@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.gogrid.predicates;
 
 import static org.easymock.EasyMock.expect;

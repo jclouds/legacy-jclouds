@@ -2,7 +2,7 @@
 <!--
 
 
-    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+    Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
 
     ====================================================================
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,8 @@
     limitations under the License.
     ====================================================================
 
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jclouds</groupId>
@@ -96,21 +97,22 @@ pageTracker._trackPageview();
             <plugin>
                 <groupId>com.mycila.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
-                <version>1.5.0</version>
+                <version>1.8.0</version>
                 <configuration>
+                    <strictCheck>true</strictCheck>
                     <encoding>${sourceEncoding}</encoding>
                     <aggregate>true</aggregate>
                     <header>project/src/etc/header.txt</header>
+                    <mapping>
+                        <clj>SEMICOLON_STYLE</clj>
+                    </mapping>
                     <excludes>
-                        <!-- amazon files have their own license  -->
-                        <exclude>**/src/main/java/com/amazon/**</exclude>
-                        <exclude>**/S3Driver.java</exclude>
                         <exclude>thirdparty/**</exclude>
                         <exclude>**/src/**/resources/**</exclude>
                         <exclude>**/LICENSE.txt</exclude>
                     </excludes>
                     <properties>
-                        <year>${project.inceptionYear}</year>
+                        <year>2010</year>
                         <email>info@cloudconscious.com</email>
                         <copyrightHolder>Cloud Conscious, LLC</copyrightHolder>
                     </properties>

@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.gogrid.config;
 
 import static org.jclouds.Constants.PROPERTY_GSON_ADAPTERS;

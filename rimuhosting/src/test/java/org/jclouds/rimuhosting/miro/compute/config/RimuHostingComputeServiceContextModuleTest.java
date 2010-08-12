@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.rimuhosting.miro.compute.config;
 
 import org.jclouds.rimuhosting.miro.domain.internal.RunningState;

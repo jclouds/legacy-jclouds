@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.ohai.config;
 
 import static org.jclouds.chef.util.ChefUtils.ohaiAutomaticAttributeBinder;
