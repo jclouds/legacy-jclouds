@@ -18,9 +18,26 @@
 
 (ns 
   #^{:author "Adrian Cole"
-     :doc "A clojure binding to the jclouds chef interface."}
+     :doc "A clojure binding to the jclouds chef interface.
+
+Here's a quick example of how to manipulate a databag on the Opscode Platform, 
+which is basically Chef Server as a Service.
+
+(use 'org.jclouds.chef)
+
+(def client \"YOUR_CLIENT\")
+;; load the rsa key from ~/.chef/CLIENT_NAME.pem
+(def credential (load-pem client))
+
+(def chef (chef-service client credential :chef.endpoint \"https://api.opscode.com/organizations/YOUR_ORG\"))
+
+(with-chef-service [chef]
+  (create-databag \"cluster-config\")
+  (update-databag-item \"cluster-config\" {:id \"master\" :name \"myhost.com\"})) 
+
+See http://code.google.com/p/jclouds for details."}
   org.jclouds.chef
-  (:use  org.jclouds.core (core))
+  (:use  [org.jclouds.core])
   (:require (org.danlarkin [json :as json]))
   (:import 
         java.util.Properties
@@ -143,21 +160,27 @@
     (.deleteDatabagItem (as-chef-api chef) databag item-id)))
 
 (defn create-databag-item
-  "put a new item in the data bag"
+  "put a new item in the data bag.  Note the Map you pass must have an :id key:
+
+ex.
+  (create-databag-item \"cluster-config\" {:id \"master\" :name \"myhost.com\"}))"
   ([databag value]
     (create-databag-item databag value *chef*))
   ([databag value chef]
     (let [value-str (json/encode-to-str value)]
       (let [value-json (json/decode-from-str value-str)]
-        (json/decode-from-str (str  (.createDatabagItem  (as-chef-api chef) databag 
-          (DatabagItem. (get value-json :id) value-str))))))))
+        (.createDatabagItem  (as-chef-api chef) databag 
+          (DatabagItem. (get value-json :id) value-str))))))
 
 (defn update-databag-item
-  "updates an existing item in the data bag"
+  "updates an existing item in the data bag.  Note the Map you pass must have an :id key:
+
+ex.
+  (update-databag-item \"cluster-config\" {:id \"master\" :name \"myhost.com\"}))"
   ([databag value]
     (update-databag-item databag value *chef*))
   ([databag value chef]
     (let [value-str (json/encode-to-str value)]
       (let [value-json (json/decode-from-str value-str)]
-        (json/decode-from-str (str (.updateDatabagItem  (as-chef-api chef) databag 
-          (DatabagItem. (get value-json :id) value-str))))))))
+        (.updateDatabagItem  (as-chef-api chef) databag 
+          (DatabagItem. (get value-json :id) value-str))))))
