@@ -30,11 +30,15 @@ which is basically Chef Server as a Service.
 ;; load the rsa key from ~/.chef/CLIENT_NAME.pem
 (def credential (load-pem client))
 
-(def chef (chef-service client credential :chef.endpoint \"https://api.opscode.com/organizations/YOUR_ORG\"))
+;; create a connection to the opscode platform
+(def chef (chef-service \"chef\" client credential :chef.endpoint \"https://api.opscode.com/organizations/YOUR_ORG\"))
 
 (with-chef-service [chef]
   (create-databag \"cluster-config\")
   (update-databag-item \"cluster-config\" {:id \"master\" :name \"myhost.com\"})) 
+
+;; note that you can create your chef connection like this to do in-memory testing
+(def chef (chef-service \"transientchef\" \"\" \"\"))
 
 See http://code.google.com/p/jclouds for details."}
   org.jclouds.chef
@@ -57,18 +61,26 @@ See http://code.google.com/p/jclouds for details."}
   ([#^String identity]
      (slurp (str (. System getProperty "user.home") "/.chef/" identity ".pem"))))
 
+;; TODO find a way to pass the chef provider by default
+
 (defn chef-service
-  "Create a logged in context."
-  ([#^String identity #^String credential & options]
-     (let [module-keys (set (keys module-lookup))
-           ext-modules (filter #(module-keys %) options)
-           opts (apply hash-map (filter #(not (module-keys %)) options))]
-       (.. (ChefContextFactory.)
-           (createContext identity credential 
-            (apply modules (concat ext-modules (opts :extensions)))
-            (reduce #(do (.put %1 (name (first %2)) (second %2)) %1)
-                    (Properties.) (dissoc opts :extensions)))
-           (getChefService)))))
+  "Create a logged in context to a chef server.
+
+provider \"chef\" is a remote connection, and you can pass the option
+   :chef.endpoint \"https://url\" to override the endpoint
+
+provider \"transientchef\" is for in-memory when you are looking to do 
+unit testing"
+  ([#^String provider #^String identity #^String credential & options]
+    (let [module-keys (set (keys module-lookup))
+          ext-modules (filter #(module-keys %) options)
+          opts (apply hash-map (filter #(not (module-keys %)) options))]
+      (.. (ChefContextFactory.)
+        (createContext provider identity credential 
+          (apply modules (concat ext-modules (opts :extensions)))
+          (reduce #(do (.put %1 (name (first %2)) (second %2)) %1)
+                   (Properties.) (dissoc opts :extensions)))
+        (getChefService)))))
 
 (defn chef-context
   "Returns a chef context from a chef service."
@@ -125,6 +137,13 @@ See http://code.google.com/p/jclouds for details."}
   ([#^ChefService chef]
     (seq (.listDatabags (as-chef-api chef)))))
 
+(defn databag-exists?
+  "Predicate to check presence of a databag"
+  ([databag-name]
+     (databag-exists? databag-name *chef*))
+  ([databag-name #^ChefService chef]
+     (.databagExists (as-chef-api chef) databag-name)))
+
 (defn delete-databag
   "Delete a data bag, including its items"
   ([databag]
@@ -145,6 +164,13 @@ See http://code.google.com/p/jclouds for details."}
     (databag-items databag *chef*))
   ([databag chef]
     (seq (.listDatabagItems (as-chef-api chef) databag))))
+
+(defn databag-item-exists?
+  "Predicate to check presence of a databag item"
+  ([databag-name item-id]
+     (databag-item-exists? databag-name item-id *chef*))
+  ([databag-name item-id #^ChefService chef]
+     (.databagExists (as-chef-api chef) databag-name item-id)))
 
 (defn databag-item
   "Get an item from the data bag"

@@ -75,50 +75,87 @@ public class ChefContextFactory {
    }
 
    /**
-    * @see RestContextFactory#createContextBuilder(String, String)
+    * @see #createContext(String, String, String)
     */
    public ChefContext createContext(String identity, String credential) {
-      RestContextBuilder<?, ?> builder = RestContextBuilder.class.cast(contextFactory.createContextBuilder("chef",
+      return createContext("chef", identity, credential);
+   }
+
+   /**
+    * @see RestContextFactory#createContextBuilder(String, String, String)
+    */
+   public ChefContext createContext(String provider, String identity, String credential) {
+      RestContextBuilder<?, ?> builder = RestContextBuilder.class.cast(contextFactory.createContextBuilder(provider,
             identity, credential));
       return buildContextUnwrappingExceptions(builder);
    }
 
    /**
-    * @see RestContextFactory#createContextBuilder(Properties)
+    * @see #createContext(String, Properties)
     */
    public ChefContext createContext(Properties overrides) {
-      RestContextBuilder<?, ?> builder = RestContextBuilder.class.cast(contextFactory.createContextBuilder("chef",
+      return createContext("chef", overrides);
+   }
+
+   /**
+    * @see RestContextFactory#createContextBuilder(String, Properties)
+    */
+   public ChefContext createContext(String provider, Properties overrides) {
+      RestContextBuilder<?, ?> builder = RestContextBuilder.class.cast(contextFactory.createContextBuilder(provider,
             overrides));
       return buildContextUnwrappingExceptions(builder);
    }
 
    /**
-    * @see RestContextFactory#createContextBuilder(Iterable)
+    * @see #createContext(String, Iterable, Properties)
     */
    public ChefContext createContext(Iterable<? extends Module> modules, Properties overrides) {
-      RestContextBuilder<?, ?> builder = RestContextBuilder.class.cast(contextFactory.createContextBuilder("chef",
-            modules, overrides));
-      return buildContextUnwrappingExceptions(builder);
-
+      return createContext("chef", modules, overrides);
    }
 
    /**
-    * @see RestContextFactory#createContextBuilder(String,String, Iterable)
+    * @see RestContextFactory#createContextBuilder(String, Iterable, Properties)
+    */
+   public ChefContext createContext(String provider, Iterable<? extends Module> modules, Properties overrides) {
+      RestContextBuilder<?, ?> builder = RestContextBuilder.class.cast(contextFactory.createContextBuilder(provider,
+            modules, overrides));
+      return buildContextUnwrappingExceptions(builder);
+   }
+
+   /**
+    * @see #createContext(String,String,String,Iterable)
     */
    public ChefContext createContext(@Nullable String identity, @Nullable String credential,
          Iterable<? extends Module> modules) {
-      RestContextBuilder<?, ?> builder = RestContextBuilder.class.cast(contextFactory.createContextBuilder("chef",
+      return createContext("chef", identity, credential, modules);
+   }
+
+   /**
+    * @see RestContextFactory#createContextBuilder(String,String String,
+    *      Iterable)
+    */
+   public ChefContext createContext(String provider, @Nullable String identity, @Nullable String credential,
+         Iterable<? extends Module> modules) {
+      RestContextBuilder<?, ?> builder = RestContextBuilder.class.cast(contextFactory.createContextBuilder(provider,
             identity, credential, modules));
       return buildContextUnwrappingExceptions(builder);
    }
 
    /**
-    * @see RestContextFactory#createContextBuilder(String,String, Iterable,
-    *      Properties)
+    * @see #createContext(String,String, String, Iterable, Properties)
     */
    public ChefContext createContext(@Nullable String identity, @Nullable String credential,
          Iterable<? extends Module> modules, Properties overrides) {
-      RestContextBuilder<?, ?> builder = RestContextBuilder.class.cast(contextFactory.createContextBuilder("chef",
+      return createContext("chef", identity, credential, modules, overrides);
+   }
+
+   /**
+    * @see RestContextFactory#createContextBuilder(String,String,String,
+    *      Iterable, Properties)
+    */
+   public ChefContext createContext(String provider, @Nullable String identity, @Nullable String credential,
+         Iterable<? extends Module> modules, Properties overrides) {
+      RestContextBuilder<?, ?> builder = RestContextBuilder.class.cast(contextFactory.createContextBuilder(provider,
             identity, credential, modules, overrides));
       return buildContextUnwrappingExceptions(builder);
    }

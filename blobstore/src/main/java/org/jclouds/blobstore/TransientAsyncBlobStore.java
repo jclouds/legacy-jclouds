@@ -45,6 +45,7 @@ import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -274,6 +275,13 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       return immediateFuture(null);
    }
 
+   public ListenableFuture<Blob> removeBlobAndReturnOld(String container, String key) {
+      if (getContainerToBlobs().containsKey(container)) {
+         return immediateFuture(getContainerToBlobs().get(container).remove(key));
+      }
+      return immediateFuture(null);
+   }
+
    /**
     * {@inheritDoc}
     */
@@ -344,6 +352,20 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
          getContainerToLocation().put(name, location != null ? location : defaultLocation);
       }
       return immediateFuture(getContainerToBlobs().containsKey(name));
+   }
+
+   /**
+    * throws IllegalStateException if the container already exists
+    */
+   public ListenableFuture<Void> createContainerInLocationIfAbsent(final Location location, final String name) {
+      ConcurrentMap<String, Blob> container = getContainerToBlobs().putIfAbsent(name,
+            new ConcurrentHashMap<String, Blob>());
+      if (container == null) {
+         getContainerToLocation().put(name, location != null ? location : defaultLocation);
+         return immediateFuture((Void) null);
+      } else {
+         return Futures.immediateFailedFuture(new IllegalStateException("container " + name + " already exists"));
+      }
    }
 
    public String getFirstQueryOrNull(String string, @Nullable HttpRequestOptions options) {
@@ -454,33 +476,54 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
     * {@inheritDoc}
     */
    @Override
-   public ListenableFuture<String> putBlob(String containerName, Blob object) {
-      Map<String, Blob> container = getContainerToBlobs().get(containerName);
+   public ListenableFuture<String> putBlob(String containerName, Blob in) {
+      ConcurrentMap<String, Blob> container = getContainerToBlobs().get(containerName);
       if (container == null) {
-         new RuntimeException("containerName not found: " + containerName);
+         new IllegalStateException("containerName not found: " + containerName);
       }
 
-      ByteArrayPayload payload = (object.getPayload() instanceof ByteArrayPayload) ? ByteArrayPayload.class.cast(object
+      Blob blob = createUpdatedCopyOfBlob(in);
+
+      container.put(blob.getMetadata().getName(), blob);
+
+      return immediateFuture(Iterables.getOnlyElement(blob.getAllHeaders().get(HttpHeaders.ETAG)));
+   }
+
+   public ListenableFuture<Blob> putBlobAndReturnOld(String containerName, Blob in) {
+      ConcurrentMap<String, Blob> container = getContainerToBlobs().get(containerName);
+      if (container == null) {
+         new IllegalStateException("containerName not found: " + containerName);
+      }
+
+      Blob blob = createUpdatedCopyOfBlob(in);
+
+      Blob old = container.put(blob.getMetadata().getName(), blob);
+
+      return immediateFuture(old);
+   }
+
+   protected Blob createUpdatedCopyOfBlob(Blob in) {
+      ByteArrayPayload payload = (in.getPayload() instanceof ByteArrayPayload) ? ByteArrayPayload.class.cast(in
             .getPayload()) : null;
       if (payload == null)
-         payload = (object.getPayload() instanceof DelegatingPayload) ? (DelegatingPayload.class.cast(
-               object.getPayload()).getDelegate() instanceof ByteArrayPayload) ? ByteArrayPayload.class
-               .cast(DelegatingPayload.class.cast(object.getPayload()).getDelegate()) : null : null;
+         payload = (in.getPayload() instanceof DelegatingPayload) ? (DelegatingPayload.class.cast(in.getPayload())
+               .getDelegate() instanceof ByteArrayPayload) ? ByteArrayPayload.class.cast(DelegatingPayload.class.cast(
+               in.getPayload()).getDelegate()) : null : null;
       try {
          if (payload == null || !(payload instanceof ByteArrayPayload)) {
-            String oldContentType = object.getPayload().getContentType();
+            String oldContentType = in.getPayload().getContentType();
             ByteArrayOutputStream out = new ByteArrayOutputStream();
-            object.getPayload().writeTo(out);
+            in.getPayload().writeTo(out);
             payload = (ByteArrayPayload) Payloads.calculateMD5(Payloads.newPayload(out.toByteArray()));
             payload.setContentType(oldContentType);
          } else {
             if (payload.getContentMD5() == null)
-               Payloads.calculateMD5(object, crypto.md5());
+               Payloads.calculateMD5(in, crypto.md5());
          }
       } catch (IOException e) {
          Throwables.propagate(e);
       }
-      Blob blob = blobFactory.create(copy(object.getMetadata()));
+      Blob blob = blobFactory.create(copy(in.getMetadata()));
       blob.setPayload(payload);
       blob.getMetadata().setLastModified(new Date());
       blob.getMetadata().setSize(payload.getContentLength());
@@ -489,18 +532,17 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
 
       String eTag = CryptoStreams.hex(payload.getContentMD5());
       blob.getMetadata().setETag(eTag);
-      container.put(blob.getMetadata().getName(), blob);
-
       // Set HTTP headers to match metadata
-      blob.getAllHeaders().put(HttpHeaders.LAST_MODIFIED,
-            dateService.rfc822DateFormat(blob.getMetadata().getLastModified()));
-      blob.getAllHeaders().put(HttpHeaders.ETAG, eTag);
-      blob.getAllHeaders().put(HttpHeaders.CONTENT_TYPE, payload.getContentType());
-      blob.getAllHeaders().put(HttpHeaders.CONTENT_LENGTH, payload.getContentLength() + "");
-      blob.getAllHeaders().put("Content-MD5", CryptoStreams.base64(payload.getContentMD5()));
+      blob.getAllHeaders().replaceValues(HttpHeaders.LAST_MODIFIED,
+            Collections.singleton(dateService.rfc822DateFormat(blob.getMetadata().getLastModified())));
+      blob.getAllHeaders().replaceValues(HttpHeaders.ETAG, Collections.singleton(eTag));
+      blob.getAllHeaders().replaceValues(HttpHeaders.CONTENT_TYPE, Collections.singleton(payload.getContentType()));
+      blob.getAllHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,
+            Collections.singleton(payload.getContentLength() + ""));
+      blob.getAllHeaders().replaceValues("Content-MD5",
+            Collections.singleton(CryptoStreams.base64(payload.getContentMD5())));
       blob.getAllHeaders().putAll(Multimaps.forMap(blob.getMetadata().getUserMetadata()));
-
-      return immediateFuture(eTag);
+      return blob;
    }
 
    /**

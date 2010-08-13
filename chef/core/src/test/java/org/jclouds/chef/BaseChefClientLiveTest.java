@@ -84,7 +84,7 @@ public abstract class BaseChefClientLiveTest {
    private Node node;
    private Role role;
    protected Json json;
-   private DatabagItem databagItem;
+   protected DatabagItem databagItem;
    public static final String PREFIX = System.getProperty("user.name") + "-jcloudstest";
 
    public BaseChefClientLiveTest() {
