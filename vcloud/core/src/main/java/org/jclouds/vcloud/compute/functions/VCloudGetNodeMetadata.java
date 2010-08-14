@@ -22,7 +22,6 @@ package org.jclouds.vcloud.compute.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,13 +45,11 @@ import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 
 /**
- * Configures the {@link VCloudComputeServiceContext}; requires {@link BaseVCloudComputeClient}
- * bound.
+ * Configures the {@link VCloudComputeServiceContext}; requires
+ * {@link BaseVCloudComputeClient} bound.
  * 
  * @author Adrian Cole
  */
@@ -69,16 +66,12 @@ public class VCloudGetNodeMetadata {
    protected final GetExtra getExtra;
    protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
 
-   // hex [][][] are templateId, last two are instanceId
-   public static final Pattern TAG_PATTERN_WITH_TEMPLATE = Pattern
-            .compile("([^-]+)-([0-9a-f][0-9a-f][0-9a-f])[0-9a-f]+");
-
    public static final Pattern TAG_PATTERN_WITHOUT_TEMPLATE = Pattern.compile("([^-]+)-[0-9]+");
 
    @Inject
    VCloudGetNodeMetadata(VCloudClient client, VCloudComputeClient computeClient,
-            Map<VAppStatus, NodeState> vAppStatusToNodeState, GetExtra getExtra,
-            FindLocationForResource findLocationForResourceInVDC, Provider<Set<? extends Image>> images) {
+         Map<VAppStatus, NodeState> vAppStatusToNodeState, GetExtra getExtra,
+         FindLocationForResource findLocationForResourceInVDC, Provider<Set<? extends Image>> images) {
       this.client = checkNotNull(client, "client");
       this.images = checkNotNull(images, "images");
       this.getExtra = checkNotNull(getExtra, "getExtra");
@@ -94,37 +87,15 @@ public class VCloudGetNodeMetadata {
 
       String tag = null;
       Image image = null;
-      Matcher matcher = vApp.getName() != null ? TAG_PATTERN_WITH_TEMPLATE.matcher(vApp.getName()) : null;
-
-      final Location location = findLocationForResourceInVDC.apply(vApp.getVDC());
-      if (matcher != null && matcher.find()) {
+      Matcher matcher = TAG_PATTERN_WITHOUT_TEMPLATE.matcher(vApp.getName());
+      if (matcher.find()) {
          tag = matcher.group(1);
-         String templateIdInHexWithoutLeadingZeros = matcher.group(2).replaceAll("^[0]+", "");
-         final String templateId = Integer.parseInt(templateIdInHexWithoutLeadingZeros, 16) + "";
-         try {
-            image = Iterables.find(images.get(), new Predicate<Image>() {
-
-               @Override
-               public boolean apply(Image input) {
-                  return input.getProviderId().equals(templateId)
-                           && (input.getLocation().equals(location) || input.getLocation().equals(location.getParent()));
-               }
-
-            });
-         } catch (NoSuchElementException e) {
-            logger.warn("could not find a matching image for vapp %s; vapptemplate %s in location %s", vApp,
-                     templateId, location);
-         }
       } else {
-         matcher = TAG_PATTERN_WITHOUT_TEMPLATE.matcher(vApp.getName());
-         if (matcher.find()) {
-            tag = matcher.group(1);
-         } else {
-            tag = "NOTAG-" + vApp.getName();
-         }
+         tag = "NOTAG-" + vApp.getName();
       }
+      Location location = findLocationForResourceInVDC.apply(vApp.getVDC());
       return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vApp.getId(), location, vApp.getLocation(),
-               ImmutableMap.<String, String> of(), tag, image, vAppStatusToNodeState.get(vApp.getStatus()),
-               computeClient.getPublicAddresses(id), computeClient.getPrivateAddresses(id), getExtra.apply(vApp), null);
+            ImmutableMap.<String, String> of(), tag, image, vAppStatusToNodeState.get(vApp.getStatus()), computeClient
+                  .getPublicAddresses(id), computeClient.getPrivateAddresses(id), getExtra.apply(vApp), null);
    }
 }

@@ -22,8 +22,8 @@ package org.jclouds.vcloud.domain.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Catalog;
@@ -37,7 +37,7 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  * 
  */
-public class CatalogImpl extends TreeMap<String, NamedResource> implements Catalog {
+public class CatalogImpl extends LinkedHashMap<String, NamedResource> implements Catalog {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
@@ -47,7 +47,7 @@ public class CatalogImpl extends TreeMap<String, NamedResource> implements Catal
    private final URI location;
 
    public CatalogImpl(String id, String name, URI location, @Nullable String description,
-            SortedMap<String, NamedResource> contents) {
+            Map<String, NamedResource> contents) {
       this.id = checkNotNull(id, "id");
       this.name = checkNotNull(name, "name");
       this.description = description;

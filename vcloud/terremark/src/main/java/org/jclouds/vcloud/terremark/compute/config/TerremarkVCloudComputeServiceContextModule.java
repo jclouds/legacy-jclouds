@@ -22,6 +22,7 @@ package org.jclouds.vcloud.terremark.compute.config;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
 
+import java.net.URI;
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Set;
@@ -49,6 +50,7 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
@@ -64,7 +66,6 @@ import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
 import org.jclouds.vcloud.terremark.compute.functions.NodeMetadataToOrgAndName;
 import org.jclouds.vcloud.terremark.compute.options.TerremarkVCloudTemplateOptions;
 import org.jclouds.vcloud.terremark.compute.strategy.ParseVAppTemplateDescriptionToGetDefaultLoginCredentials;
-import org.jclouds.vcloud.terremark.compute.strategy.TerremarkEncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy;
 import org.jclouds.vcloud.terremark.compute.strategy.TerremarkVCloudGetNodeMetadataStrategy;
 import org.jclouds.vcloud.terremark.domain.KeyPair;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
@@ -115,9 +116,8 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       @Override
       public NodeMetadata execute(String tag, String name, Template template) {
          TerremarkInstantiateVAppTemplateOptions options = getOptions.apply(template);
-         Map<String, String> metaMap = computeClient.start(template.getLocation().getParent().getId(), template
-               .getLocation().getId(), name, template.getImage().getProviderId(), options, template.getOptions()
-               .getInboundPorts());
+         Map<String, String> metaMap = computeClient.start(URI.create(template.getLocation().getId()), URI
+               .create(template.getImage().getId()), name, options, template.getOptions().getInboundPorts());
          return getNode.execute(metaMap.get("id"));
       }
 
@@ -150,7 +150,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudAsyncClient>>() {
       }).in(Scopes.SINGLETON);
       // NOTE
-      bind(RunNodesAndAddToSetStrategy.class).to(TerremarkEncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy.class);
+      bind(RunNodesAndAddToSetStrategy.class).to(EncodeTagIntoNameRunNodesAndAddToSetStrategy.class);
       bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
       // NOTE
       bind(GetNodeMetadataStrategy.class).to(TerremarkVCloudGetNodeMetadataStrategy.class);

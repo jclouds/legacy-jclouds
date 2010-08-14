@@ -46,7 +46,7 @@ public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
 
    @Inject
    protected ImageForVAppTemplate(FindLocationForResource findLocationForResource,
-            PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider) {
+         PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider) {
       this.findLocationForResource = findLocationForResource;
       this.credentialsProvider = credentialsProvider;
    }
@@ -63,8 +63,9 @@ public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
       Location location = findLocationForResource.apply(parent);
       String name = getName(from.getName());
       String desc = from.getDescription() != null ? from.getDescription() : from.getName();
-      return new ImageImpl(from.getId(), name, parent.getId() + "/" + from.getId(), location, from.getLocation(),
-               ImmutableMap.<String, String> of(), desc, "", myOs, name, arch, credentialsProvider.execute(from));
+      return new ImageImpl(from.getLocation().toASCIIString(), name, from.getLocation().toASCIIString(), location, from
+            .getLocation(), ImmutableMap.<String, String> of(), desc, "", myOs, name, arch, credentialsProvider
+            .execute(from));
    }
 
    protected String getName(String name) {

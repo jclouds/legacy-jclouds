@@ -33,9 +33,7 @@ import org.jclouds.Constants;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
-import org.jclouds.vcloud.domain.VDC;
 
 import com.google.common.base.Function;
 
@@ -43,33 +41,30 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class AllVDCsInOrganization implements Function<Organization, Iterable<? extends VDC>> {
+public class OrganizationsForNames implements Function<Iterable<String>, Iterable<? extends Organization>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
-
    private final VCloudAsyncClient aclient;
    private final ExecutorService executor;
 
    @Inject
-   AllVDCsInOrganization(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   OrganizationsForNames(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }
 
    @Override
-   public Iterable<? extends VDC> apply(final Organization org) {
+   public Iterable<? extends Organization> apply(Iterable<String> from) {
+      return transformParallel(from, new Function<String, Future<Organization>>() {
 
-      Iterable<VDC> catalogItems = transformParallel(org.getVDCs().values(),
-            new Function<NamedResource, Future<VDC>>() {
-               @SuppressWarnings("unchecked")
-               @Override
-               public Future<VDC> apply(NamedResource from) {
-                  return (Future<VDC>) aclient.findVDCInOrgNamed(org.getName(), from.getName());
-               }
+         @SuppressWarnings("unchecked")
+         @Override
+         public Future<Organization> apply(String from) {
+            return (Future<Organization>) aclient.findOrganizationNamed(from);
+         }
 
-            }, executor, null, logger, "vdcs in " + org.getName());
-      return catalogItems;
+      }, executor, null, logger, "organizations for names");
    }
 
 }

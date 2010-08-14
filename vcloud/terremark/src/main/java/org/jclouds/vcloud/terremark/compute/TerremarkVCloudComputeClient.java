@@ -23,11 +23,13 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.getLast;
 import static org.jclouds.vcloud.terremark.options.AddInternetServiceOptions.Builder.withDescription;
 
+import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
@@ -42,6 +44,7 @@ import org.jclouds.vcloud.domain.TaskStatus;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.TerremarkECloudClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressClient;
@@ -76,16 +79,16 @@ public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
    }
 
    @Override
-   protected Map<String, String> parseAndValidateResponse(String templateId, VApp vAppResponse) {
-      Credentials credentials = credentialsProvider.execute(client.getVAppTemplate(templateId));
-      Map<String, String> toReturn = super.parseResponse(templateId, vAppResponse);
+   protected Map<String, String> parseAndValidateResponse(VAppTemplate template, VApp vAppResponse) {
+      Credentials credentials = credentialsProvider.execute(template);
+      Map<String, String> toReturn = super.parseResponse(template, vAppResponse);
       toReturn.put("username", credentials.identity);
       toReturn.put("password", credentials.credential);
       return toReturn;
    }
 
    @Override
-   public Map<String, String> start(String org, String vDC, String name, String templateId,
+   public Map<String, String> start(@Nullable URI VDC, URI templateId, String name,
          InstantiateVAppTemplateOptions options, int... portsToOpen) {
       if (options.getDiskSizeKilobytes() != null) {
          logger.warn("trmk does not support resizing the primary disk; unsetting disk size");
@@ -94,11 +97,12 @@ public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
       if (portsToOpen.length > 0 && !options.shouldBlockOnDeploy())
          throw new IllegalArgumentException("We cannot open ports on terremark unless we can deploy the vapp");
       String password = null;
-      if (client.getVAppTemplate(templateId).getDescription().indexOf("Windows") != -1) {
+      VAppTemplate template = client.getVAppTemplate(templateId);
+      if (template.getDescription().indexOf("Windows") != -1) {
          password = passwordGenerator.get();
          options.getProperties().put("password", password);
       }
-      Map<String, String> response = super.start(org, vDC, name, templateId, options, portsToOpen);
+      Map<String, String> response = super.start(VDC, templateId, name, options, portsToOpen);
       if (password != null) {
          response = new LinkedHashMap<String, String>(response);
          response.put("password", password);

@@ -22,6 +22,7 @@ package org.jclouds.vcloud.compute;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,6 +38,8 @@ import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.base.Predicate;
@@ -67,13 +70,15 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
    }
 
    @Override
-   public Map<String, String> start(@Nullable String orgName, @Nullable String vDCName, String name, String templateId,
+   public Map<String, String> start(@Nullable URI VDC, URI templateId, String name,
          InstantiateVAppTemplateOptions options, int... portsToOpen) {
       checkNotNull(options, "options");
-      logger.debug(">> instantiating vApp org(%s) vDC(%s) name(%s) template(%s) options(%s) ", orgName, vDCName, name,
-            templateId, options);
+      logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
 
-      VApp vAppResponse = client.instantiateVAppTemplateInOrg(orgName, vDCName, name, templateId, options);
+      VDC vdc = client.getVDC(VDC);
+      VAppTemplate template = client.getVAppTemplate(templateId);
+
+      VApp vAppResponse = client.instantiateVAppTemplateInVDC(vdc.getLocation(), template.getLocation(), name, options);
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getId());
 
       logger.debug(">> deploying vApp(%s)", vAppResponse.getId());
@@ -92,18 +97,18 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
          }
          logger.debug("<< on vApp(%s)", vAppResponse.getId());
       }
-      return parseAndValidateResponse(templateId, vAppResponse);
+      return parseAndValidateResponse(template, vAppResponse);
    }
 
-   protected Map<String, String> parseAndValidateResponse(String templateId, VApp vAppResponse) {
-      Map<String, String> response = parseResponse(templateId, vAppResponse);
+   protected Map<String, String> parseAndValidateResponse(VAppTemplate template, VApp vAppResponse) {
+      Map<String, String> response = parseResponse(template, vAppResponse);
       checkState(response.containsKey("id"), "bad configuration: [id] should be in response");
       checkState(response.containsKey("username"), "bad configuration: [username] should be in response");
       checkState(response.containsKey("password"), "bad configuration: [password] should be in response");
       return response;
    }
 
-   protected Map<String, String> parseResponse(String templateId, VApp vAppResponse) {
+   protected Map<String, String> parseResponse(VAppTemplate template, VApp vAppResponse) {
       Map<String, String> config = Maps.newLinkedHashMap();// Allows nulls
       config.put("id", vAppResponse.getId());
       config.put("username", null);

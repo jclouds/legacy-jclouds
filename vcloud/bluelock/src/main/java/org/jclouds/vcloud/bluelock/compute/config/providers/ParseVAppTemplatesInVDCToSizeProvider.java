@@ -65,7 +65,8 @@ public class ParseVAppTemplatesInVDCToSizeProvider implements Provider<Set<? ext
 
    private final FindLocationForResource findLocationForResourceInVDC;
 
-   // TODO fix to work with multiple orgs. this currently assumes only one per user which is ok for
+   // TODO fix to work with multiple orgs. this currently assumes only one per
+   // user which is ok for
    // now
    @Inject
    ParseVAppTemplatesInVDCToSizeProvider(VCloudClient client, FindLocationForResource findLocationForResourceInVDC) {
@@ -78,7 +79,7 @@ public class ParseVAppTemplatesInVDCToSizeProvider implements Provider<Set<? ext
       final Set<Size> sizes = Sets.newHashSet();
       logger.debug(">> providing vAppTemplates");
       for (final NamedResource vDC : client.getDefaultOrganization().getVDCs().values()) {
-         VDC vdc = client.getVDC(vDC.getId());
+         VDC vdc = client.getVDC(vDC.getLocation());
          addSizesFromVAppTemplatesInVDC(vdc, sizes);
       }
       return sizes;
@@ -99,7 +100,7 @@ public class ParseVAppTemplatesInVDCToSizeProvider implements Provider<Set<? ext
                String name = resource.getName().split(" ")[1];
                String id = vdc.getId() + "/" + resource.getId();
                sizes.add(new SizeImpl(resource.getId(), name, id, location, null, ImmutableMap.<String, String> of(),
-                        cores, ram, disk, ImagePredicates.idEquals(id)));
+                     cores, ram, disk, ImagePredicates.idEquals(id)));
             } catch (NoSuchElementException e) {
                logger.debug("<< didn't match at all(%s)", resource);
             }

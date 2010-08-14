@@ -42,6 +42,7 @@ import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -51,13 +52,14 @@ import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
 import org.jclouds.vcloud.compute.config.providers.OrgAndVDCToLocationProvider;
 import org.jclouds.vcloud.compute.config.providers.StaticSizeProvider;
 import org.jclouds.vcloud.compute.config.providers.VAppTemplatesInVDCs;
-import org.jclouds.vcloud.compute.strategy.EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy;
+import org.jclouds.vcloud.compute.domain.VCloudLocation;
 import org.jclouds.vcloud.compute.strategy.VCloudAddNodeWithTagStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudGetNodeMetadataStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
 import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.VDC;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -106,7 +108,7 @@ public class VCloudComputeServiceContextModule extends AbstractModule {
       bind(new TypeLiteral<RestContext<VCloudClient, VCloudAsyncClient>>() {
       }).to(new TypeLiteral<RestContextImpl<VCloudClient, VCloudAsyncClient>>() {
       }).in(Scopes.SINGLETON);
-      bind(RunNodesAndAddToSetStrategy.class).to(EncodeTemplateIdIntoNameRunNodesAndAddToSetStrategy.class);
+      bind(RunNodesAndAddToSetStrategy.class).to(EncodeTagIntoNameRunNodesAndAddToSetStrategy.class);
       bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
       bind(GetNodeMetadataStrategy.class).to(VCloudGetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
@@ -121,7 +123,7 @@ public class VCloudComputeServiceContextModule extends AbstractModule {
    @Named("NAMING_CONVENTION")
    @Singleton
    protected String provideNamingConvention() {
-      return "%s-%s%s";
+      return "%s-%s";
    }
 
    protected void bindLoadBalancer() {
@@ -157,12 +159,12 @@ public class VCloudComputeServiceContextModule extends AbstractModule {
    @Provides
    @Singleton
    Location getVDC(VCloudClient client, Set<? extends Location> locations) {
-      final String vdc = client.getDefaultVDC().getName();
+      final VDC vdc = client.findVDCInOrgNamed(null, null);
       return Iterables.find(locations, new Predicate<Location>() {
 
          @Override
          public boolean apply(Location input) {
-            return input.getId().equals(vdc);
+            return VCloudLocation.class.cast(input).getResource().getLocation().equals(vdc.getLocation());
          }
 
       });

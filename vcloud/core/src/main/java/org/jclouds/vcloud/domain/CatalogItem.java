@@ -19,22 +19,22 @@
 
 package org.jclouds.vcloud.domain;
 
-import java.util.SortedMap;
+import java.util.Map;
 
-import org.jclouds.vcloud.domain.internal.CatalogImpl;
+import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
 
 import com.google.inject.ImplementedBy;
 
 /**
  * @author Adrian Cole
  */
-@ImplementedBy(CatalogImpl.class)
+@ImplementedBy(CatalogItemImpl.class)
 public interface CatalogItem extends NamedResource {
 
    String getDescription();
 
    NamedResource getEntity();
 
-   SortedMap<String, String> getProperties();
+   Map<String, String> getProperties();
 
 }

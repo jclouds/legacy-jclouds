@@ -21,6 +21,9 @@ package org.jclouds.rest.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.Collections2.filter;
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.filterValues;
@@ -28,6 +31,7 @@ import static com.google.common.collect.Maps.newHashMap;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Sets.difference;
 import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newTreeSet;
 import static java.util.Arrays.asList;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
@@ -53,6 +57,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
@@ -122,7 +127,6 @@ import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.MapMaker;
@@ -460,10 +464,10 @@ public class RestAnnotationProcessor<T> {
 
       if (payload == null)
          payload = findPayloadInArgs(args);
-      List<? extends Part> parts = getParts(method, args, Iterables.concat(tokenValues.entries(), formParams.entries()));
+      List<? extends Part> parts = getParts(method, args, concat(tokenValues.entries(), formParams.entries()));
       if (parts.size() > 0) {
          if (formParams.size() > 0) {
-            parts = newLinkedList(Iterables.concat(Iterables.transform(formParams.entries(), ENTRY_TO_PART), parts));
+            parts = newLinkedList(concat(transform(formParams.entries(), ENTRY_TO_PART), parts));
          }
          payload = new MultipartForm(BOUNDARY, parts);
       } else if (formParams.size() > 0) {
@@ -618,7 +622,7 @@ public class RestAnnotationProcessor<T> {
       Map<Integer, Set<Annotation>> map = indexWithAtLeastOneAnnotation(method,
             methodToIndexOfParamToEndpointParamAnnotations);
       if (map.size() >= 1 && args.length > 0) {
-         EndpointParam firstAnnotation = (EndpointParam) Iterables.get(Iterables.get(map.values(), 0), 0);
+         EndpointParam firstAnnotation = (EndpointParam) get(get(map.values(), 0), 0);
          Function<Object, URI> parser = injector.getInstance(firstAnnotation.parser());
 
          if (map.size() == 1) {
@@ -632,7 +636,8 @@ public class RestAnnotationProcessor<T> {
                throw new IllegalArgumentException(String.format("argument at index %d on method %s", index, method), e);
             }
          } else {
-            Iterable<Object> argsToParse = Iterables.transform(map.keySet(), new Function<Integer, Object>() {
+            SortedSet<Integer> keys = newTreeSet(map.keySet());
+            Iterable<Object> argsToParse = transform(keys, new Function<Integer, Object>() {
 
                @Override
                public Object apply(Integer from) {
@@ -1145,9 +1150,8 @@ public class RestAnnotationProcessor<T> {
             if (extractors != null && extractors.size() > 0) {
                ParamParser extractor = (ParamParser) extractors.iterator().next();
                paramValue = injector.getInstance(extractor.value()).apply(args[entry.getKey()]);
-
             } else {
-               paramValue = args[entry.getKey()].toString();
+               paramValue = args[entry.getKey()] != null ? args[entry.getKey()].toString() : null;
             }
             postParams.put(paramKey, paramValue);
 

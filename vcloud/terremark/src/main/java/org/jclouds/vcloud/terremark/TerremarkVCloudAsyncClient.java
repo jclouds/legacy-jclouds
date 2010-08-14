@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.terremark;
 
+import static org.jclouds.vcloud.VCloudMediaType.CATALOGITEM_XML;
 import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
 import static org.jclouds.vcloud.VCloudMediaType.ORG_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
@@ -30,6 +31,7 @@ import static org.jclouds.vcloud.terremark.TerremarkVCloudMediaType.NODESERVICE_
 import static org.jclouds.vcloud.terremark.TerremarkVCloudMediaType.PUBLICIPSLIST_XML;
 import static org.jclouds.vcloud.terremark.TerremarkVCloudMediaType.PUBLICIP_XML;
 
+import java.net.URI;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -43,7 +45,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.jclouds.predicates.validators.DnsNameValidator;
-import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -66,9 +67,9 @@ import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.OrgNameAndVDCNameToEndpoint;
+import org.jclouds.vcloud.functions.OrgNameCatalogNameItemNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameToEndpoint;
 import org.jclouds.vcloud.functions.VAppId;
-import org.jclouds.vcloud.functions.VAppTemplateIdToUri;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.binders.BindNodeConfigurationToXmlPayload;
 import org.jclouds.vcloud.terremark.binders.BindVAppConfigurationToXmlPayload;
@@ -76,10 +77,11 @@ import org.jclouds.vcloud.terremark.binders.TerremarkBindInstantiateVAppTemplate
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
-import org.jclouds.vcloud.terremark.domain.NodeConfiguration;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
+import org.jclouds.vcloud.terremark.domain.TerremarkCatalogItem;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrganization;
+import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
 import org.jclouds.vcloud.terremark.functions.ParseTaskFromLocationHeader;
 import org.jclouds.vcloud.terremark.functions.ReturnVoidOnDeleteDefaultIp;
@@ -91,6 +93,7 @@ import org.jclouds.vcloud.terremark.xml.InternetServicesHandler;
 import org.jclouds.vcloud.terremark.xml.NodeHandler;
 import org.jclouds.vcloud.terremark.xml.NodesHandler;
 import org.jclouds.vcloud.terremark.xml.PublicIpAddressesHandler;
+import org.jclouds.vcloud.terremark.xml.TerremarkCatalogItemHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkOrgHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
 import org.jclouds.vcloud.xml.CatalogHandler;
@@ -108,6 +111,27 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(SetVCloudTokenCookie.class)
 public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
+   /**
+    * @see VCloudClient#getCatalogItemInOrg
+    */
+   @GET
+   @Consumes(CATALOGITEM_XML)
+   @XMLResponseParser(TerremarkCatalogItemHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends TerremarkCatalogItem> findCatalogItemInOrgCatalogNamed(
+         @Nullable @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String orgName,
+         @Nullable @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String catalogName,
+         @Nullable @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String itemName);
+
+   /**
+    * @see VCloudClient#getCatalogItem
+    */
+   @Override
+   @GET
+   @Consumes(CATALOGITEM_XML)
+   @XMLResponseParser(TerremarkCatalogItemHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends TerremarkCatalogItem> getCatalogItem(@EndpointParam URI catalogItem);
 
    @GET
    @Deprecated
@@ -117,22 +141,20 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    ListenableFuture<? extends TerremarkOrganization> getDefaultOrganization();
 
    @GET
-   @Deprecated
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/org/{orgId}")
    @XMLResponseParser(TerremarkOrgHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(ORG_XML)
-   ListenableFuture<? extends TerremarkOrganization> getOrganization(@PathParam("orgId") String orgId);
+   ListenableFuture<? extends TerremarkOrganization> getOrganization(@EndpointParam URI orgId);
 
    /**
-    * @see VCloudClient#getOrganizationNamed
+    * @see VCloudClient#findOrganizationNamed
     */
+   @Override
    @GET
    @XMLResponseParser(TerremarkOrgHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(ORG_XML)
-   ListenableFuture<? extends TerremarkOrganization> getOrganizationNamed(
+   ListenableFuture<? extends TerremarkOrganization> findOrganizationNamed(
          @Nullable @EndpointParam(parser = OrgNameToEndpoint.class) String orgName);
 
    /**
@@ -147,7 +169,9 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    /**
     * Terremark does not have multiple catalogs, so we ignore this parameter.
     */
+   @Deprecated
    @GET
+   @Override
    @Endpoint(org.jclouds.vcloud.endpoints.Catalog.class)
    @XMLResponseParser(CatalogHandler.class)
    @Consumes(CATALOG_XML)
@@ -157,46 +181,37 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    /**
     * @see TerremarkVCloudExpressClient#getVDC
     */
+   @Override
    @GET
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/vdc/{vDCId}")
    @XMLResponseParser(TerremarkVDCHandler.class)
    @Consumes(VDC_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends VDC> getVDC(@PathParam("vDCId") String vDCId);
+   ListenableFuture<? extends TerremarkVDC> getVDC(@EndpointParam URI vdc);
 
    /**
-    * @see VCloudClient#instantiateVAppTemplate
+    * @see VCloudClient#findVDCInOrgNamed
     */
+   @GET
    @Override
-   @POST
-   @Path("/action/instantiateVAppTemplate")
-   @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
-   @Consumes(VAPP_XML)
-   @XMLResponseParser(VAppHandler.class)
-   @MapBinder(TerremarkBindInstantiateVAppTemplateParamsToXmlPayload.class)
-   ListenableFuture<? extends VApp> instantiateVAppTemplateInOrg(
+   @XMLResponseParser(TerremarkVDCHandler.class)
+   @Consumes(VDC_XML)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends VDC> findVDCInOrgNamed(
          @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String orgName,
-         @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String vdcName,
-         @MapPayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName,
-         @MapPayloadParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
-         InstantiateVAppTemplateOptions... options);
+         @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String vdcName);
 
    /**
     * @see VCloudClient#instantiateVAppTemplateInVDC
     */
-   @Deprecated
-   @Override
    @POST
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/vdc/{vDCId}/action/instantiateVAppTemplate")
+   @Path("action/instantiateVAppTemplate")
    @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
    @Consumes(VAPP_XML)
    @XMLResponseParser(VAppHandler.class)
    @MapBinder(TerremarkBindInstantiateVAppTemplateParamsToXmlPayload.class)
-   ListenableFuture<? extends VApp> instantiateVAppTemplateInVDC(@PathParam("vDCId") String vDCId,
+   ListenableFuture<? extends VApp> instantiateVAppTemplateInVDC(@EndpointParam URI vdc,
+         @MapPayloadParam("template") URI template,
          @MapPayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName,
-         @MapPayloadParam("template") @ParamParser(VAppTemplateIdToUri.class) String templateId,
          InstantiateVAppTemplateOptions... options);
 
    /**
@@ -331,8 +346,10 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Produces(NODESERVICE_XML)
    @Consumes(NODESERVICE_XML)
    @XMLResponseParser(NodeHandler.class)
+   @MapBinder(BindNodeConfigurationToXmlPayload.class)
    ListenableFuture<? extends Node> configureNode(@PathParam("nodeId") int nodeId,
-         @BinderParam(BindNodeConfigurationToXmlPayload.class) NodeConfiguration nodeConfiguration);
+         @MapPayloadParam("name") String name, @MapPayloadParam("enabled") boolean enabled,
+         @Nullable @MapPayloadParam("description") String description);
 
    /**
     * @see TerremarkVCloudExpressClient#deleteNode
@@ -357,8 +374,9 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
          VAppConfiguration configuration);
 
    /**
-    * @see TerremarkVCloudExpressClient#getCustomizationOptionsOfCatalogItem
+    * @see TerremarkVCloudClient#getCustomizationOptionsOfCatalogItem
     */
+   @Deprecated
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
    @Path("/extensions/template/{catalogItemId}/options/customization")
@@ -366,5 +384,13 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    @Consumes(CATALOGITEMCUSTOMIZATIONPARAMETERS_XML)
    ListenableFuture<? extends CustomizationParameters> getCustomizationOptionsOfCatalogItem(
          @PathParam("catalogItemId") String catalogItemId);
+
+   /**
+    * @see TerremarkVCloudClient#getCustomizationOptions
+    */
+   @GET
+   @XMLResponseParser(CustomizationParametersHandler.class)
+   @Consumes(CATALOGITEMCUSTOMIZATIONPARAMETERS_XML)
+   ListenableFuture<? extends CustomizationParameters> getCustomizationOptions(@EndpointParam URI customization);
 
 }

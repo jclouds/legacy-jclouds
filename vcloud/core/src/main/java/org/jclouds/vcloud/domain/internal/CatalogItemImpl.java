@@ -22,7 +22,7 @@ package org.jclouds.vcloud.domain.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.SortedMap;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -43,10 +43,10 @@ public class CatalogItemImpl extends NamedResourceImpl implements CatalogItem {
    private static final long serialVersionUID = 8464716396538298809L;
    private final String description;
    private final NamedResource entity;
-   private final SortedMap<String, String> properties = Maps.newTreeMap();
+   private final Map<String, String> properties = Maps.newLinkedHashMap();
 
-   public CatalogItemImpl(String id, String name, URI location, @Nullable String description,
-            NamedResource entity, SortedMap<String, String> properties) {
+   public CatalogItemImpl(String id, String name, URI location, @Nullable String description, NamedResource entity,
+         Map<String, String> properties) {
       super(id, name, VCloudMediaType.CATALOGITEM_XML, location);
       this.description = description;
       this.entity = checkNotNull(entity, "entity");
@@ -67,15 +67,15 @@ public class CatalogItemImpl extends NamedResourceImpl implements CatalogItem {
       return description;
    }
 
-   public SortedMap<String, String> getProperties() {
+   public Map<String, String> getProperties() {
       return properties;
    }
 
    @Override
    public String toString() {
-      return "CatalogItemImpl [id=" + getId() + ", name=" + getName() + ", location="
-               + getLocation() + ", type=" + getType() + ", description=" + getDescription()
-               + ", entity=" + entity + ", properties=" + properties + "]";
+      return "CatalogItemImpl [id=" + getId() + ", name=" + getName() + ", location=" + getLocation() + ", type="
+            + getType() + ", description=" + getDescription() + ", entity=" + entity + ", properties=" + properties
+            + "]";
    }
 
    @Override

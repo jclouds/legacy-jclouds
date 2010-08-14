@@ -21,6 +21,7 @@ package org.jclouds.vcloud.compute.strategy;
 
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 
+import java.net.URI;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -63,9 +64,8 @@ public class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
             .memory(template.getSize().getRam()).disk(template.getSize().getDisk() * 1024 * 1024l);
       if (!template.getOptions().shouldBlockUntilRunning())
          options.blockOnDeploy(false);
-      Map<String, String> metaMap = computeClient.start(template.getLocation().getParent().getId(), template
-            .getLocation().getId(), name, template.getImage().getProviderId(), options, template.getOptions()
-            .getInboundPorts());
+      Map<String, String> metaMap = computeClient.start(URI.create(template.getLocation().getDescription()), URI
+            .create(template.getImage().getId()), name, options, template.getOptions().getInboundPorts());
       VApp vApp = client.getVApp(metaMap.get("id"));
       return newCreateNodeResponse(tag, template, metaMap, vApp);
    }

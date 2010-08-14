@@ -19,10 +19,10 @@
 
 package org.jclouds.vcloud.terremark.binders;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NS;
 
+import java.util.Map;
 import java.util.Properties;
 
 import javax.inject.Inject;
@@ -33,9 +33,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
-import org.jclouds.vcloud.terremark.domain.NodeConfiguration;
 
+import com.google.common.base.Throwables;
 import com.jamesmurty.utils.XMLBuilder;
 
 /**
@@ -44,51 +45,41 @@ import com.jamesmurty.utils.XMLBuilder;
  * 
  */
 @Singleton
-public class BindNodeConfigurationToXmlPayload extends BindToStringPayload {
+public class BindNodeConfigurationToXmlPayload implements MapBinder {
 
    private final String ns;
+   private final BindToStringPayload stringBinder;
 
    @Inject
-   BindNodeConfigurationToXmlPayload(@Named(PROPERTY_TERREMARK_EXTENSION_NS) String ns) {
+   BindNodeConfigurationToXmlPayload(@Named(PROPERTY_TERREMARK_EXTENSION_NS) String ns, BindToStringPayload stringBinder) {
       this.ns = ns;
+      this.stringBinder = stringBinder;
    }
 
-   @Override
-   public void bindToRequest(HttpRequest request, Object input) {
-      NodeConfiguration nodeConfiguration = (NodeConfiguration) checkNotNull(input,
-               "nodeConfiguration");
-      checkArgument(nodeConfiguration.getDescription() != null
-               || nodeConfiguration.getEnabled() != null || nodeConfiguration.getName() != null,
-               "no configuration set");
-      try {
-         super.bindToRequest(request, generateXml(nodeConfiguration));
-      } catch (ParserConfigurationException e) {
-         throw new RuntimeException(e);
-      } catch (FactoryConfigurationError e) {
-         throw new RuntimeException(e);
-      } catch (TransformerException e) {
-         throw new RuntimeException(e);
-      }
-
-   }
-
-   protected String generateXml(NodeConfiguration nodeConfiguration)
-            throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
+   protected String generateXml(Map<String, String> postParams) throws ParserConfigurationException,
+         FactoryConfigurationError, TransformerException {
       XMLBuilder rootBuilder = XMLBuilder.create("NodeService").a("xmlns", ns).a("xmlns:xsi",
-               "http://www.w3.org/2001/XMLSchema-instance").a("xmlns:xsd",
-               "http://www.w3.org/2001/XMLSchema");
-      if (nodeConfiguration.getDescription() != null)
-         rootBuilder.e("Description").t(nodeConfiguration.getDescription());
-      if (nodeConfiguration.getName() != null)
-         rootBuilder.e("Name").t(nodeConfiguration.getName());
-      if (nodeConfiguration.getEnabled() != null)
-         rootBuilder.e("Enabled").t(nodeConfiguration.getEnabled());
+            "http://www.w3.org/2001/XMLSchema-instance").a("xmlns:xsd", "http://www.w3.org/2001/XMLSchema");
+      rootBuilder.e("Name").t(checkNotNull(postParams.get("name"), "name"));
+      rootBuilder.e("Enabled").t(checkNotNull(postParams.get("enabled"), "enabled"));
+      if (postParams.containsKey("description") && postParams.get("description") != null)
+         rootBuilder.e("Description").t(postParams.get("description"));
       Properties outputProperties = new Properties();
       outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
       return rootBuilder.asString(outputProperties);
    }
 
-   protected String ifNullDefaultTo(String value, String defaultValue) {
-      return value != null ? value : checkNotNull(defaultValue, "defaultValue");
+   @Override
+   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+      try {
+         stringBinder.bindToRequest(request, generateXml(postParams));
+      } catch (Exception e) {
+         Throwables.propagate(e);
+      }
+   }
+
+   @Override
+   public void bindToRequest(HttpRequest request, Object input) {
+      throw new IllegalArgumentException("this is a map binder");
    }
 }

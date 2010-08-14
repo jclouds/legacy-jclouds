@@ -17,33 +17,22 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.compute.domain;
+package org.jclouds.vcloud.terremark.domain;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.terremark.domain.internal.TerremarkCatalogItemImpl;
+
+import com.google.inject.ImplementedBy;
 
 /**
- * 
  * @author Adrian Cole
  */
-public class VCloudLocation extends LocationImpl {
+@ImplementedBy(TerremarkCatalogItemImpl.class)
+public interface TerremarkCatalogItem extends CatalogItem {
 
-   private static final long serialVersionUID = -5052812549904524841L;
+   NamedResource getComputeOptions();
 
-   private final NamedResource resource;
-
-   public VCloudLocation(NamedResource resource, Location parent) {
-      super(checkNotNull(resource, "resource").getType().endsWith("org+xml") ? LocationScope.REGION
-            : LocationScope.ZONE, resource.getLocation().toASCIIString(), resource.getName(), parent);
-      this.resource = resource;
-   }
-
-   public NamedResource getResource() {
-      return resource;
-   }
+   NamedResource getCustomizationOptions();
 
 }

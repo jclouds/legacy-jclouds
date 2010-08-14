@@ -47,21 +47,22 @@ import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.VCloudClientLiveTest;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Catalog;
-import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
-import org.jclouds.vcloud.terremark.domain.NodeConfiguration;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
+import org.jclouds.vcloud.terremark.domain.TerremarkCatalogItem;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
 import org.testng.annotations.AfterTest;
@@ -96,6 +97,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
    private RetryablePredicate<IPSocket> socketTester;
    private RetryablePredicate<String> successTester;
    private VApp clone;
+   private VDC vdc;
    public static final String PREFIX = System.getProperty("user.name") + "-terremark";
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -106,14 +108,15 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
 
    @Test
    public void testGetAllInternetServices() throws Exception {
-      for (InternetService service : tmClient.getAllInternetServicesInVDC(tmClient.getDefaultVDC().getId())) {
+      for (InternetService service : tmClient.getAllInternetServicesInVDC(tmClient.findVDCInOrgNamed(null, null)
+            .getId())) {
          assertNotNull(tmClient.getNodes(service.getId()));
       }
    }
 
    @Test
    public void testGetPublicIpsAssociatedWithVDC() throws Exception {
-      for (PublicIpAddress ip : tmClient.getPublicIpsAssociatedWithVDC(tmClient.getDefaultVDC().getId())) {
+      for (PublicIpAddress ip : tmClient.getPublicIpsAssociatedWithVDC(tmClient.findVDCInOrgNamed(null, null).getId())) {
          assertNotNull(tmClient.getInternetServicesOnPublicIp(ip.getId()));
          assertNotNull(tmClient.getPublicIp(ip.getId()));
       }
@@ -121,11 +124,11 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
 
    @Test
    public void testGetConfigCustomizationOptions() throws Exception {
-      Catalog response = connection.getDefaultCatalog();
+      Catalog response = connection.findCatalogInOrgNamed(null, null);
       for (NamedResource resource : response.values()) {
          if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-            CatalogItem item = connection.getCatalogItem(resource.getId());
-            assert tmClient.getCustomizationOptionsOfCatalogItem(item.getId()) != null;
+            TerremarkCatalogItem item = tmClient.findCatalogItemInOrgCatalogNamed(null, null, resource.getName());
+            assert tmClient.getCustomizationOptions(item.getCustomizationOptions().getLocation()) != null;
          }
       }
    }
@@ -133,7 +136,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
    @Test
    public void testDefaultVDC() throws Exception {
       super.testDefaultVDC();
-      TerremarkVDC response = (TerremarkVDC) tmClient.getDefaultVDC();
+      TerremarkVDC response = (TerremarkVDC) tmClient.findVDCInOrgNamed(null, null);
       assertNotNull(response);
       assertNotNull(response.getCatalog());
       assertNotNull(response.getInternetServices());
@@ -155,27 +158,26 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
       // String catalogOs = "CentOS 5.3 (32-bit)";
       // String expectedOs = "Red Hat Enterprise Linux 5 (32-bit)";
 
-      // lookup the name of the datacenter you are deploying into
-      String vdc = tmClient.getDefaultVDC().getName();
+      // lookup the datacenter you are deploying into
+      vdc = tmClient.findVDCInOrgNamed(null, null);
 
-      // lookup the id of the item in the catalog you wish to deploy by name
-      Catalog catalog = tmClient.getDefaultCatalog();
-      String itemId = catalog.get(itemName).getId();
       // create an options object to collect the configuration we want.
       TerremarkInstantiateVAppTemplateOptions instantiateOptions = createInstantiateOptions();
 
+      TerremarkCatalogItem item = tmClient.findCatalogItemInOrgCatalogNamed(null, null, itemName);
+
       // if this template supports setting the root password, let's add it to
       // our options
-      CustomizationParameters customizationOptions = tmClient.getCustomizationOptionsOfCatalogItem(itemId);
+      CustomizationParameters customizationOptions = tmClient.getCustomizationOptions(item.getCustomizationOptions()
+            .getLocation());
       if (customizationOptions.canCustomizePassword())
          instantiateOptions.withPassword("robotsarefun");
 
-      // the vAppTemplateId tends to be the same as the itemId, but just in
-      // case, convert
-      String vAppTemplateId = tmClient.getCatalogItem(itemId).getEntity().getId();
+      VAppTemplate vAppTemplate = tmClient.getVAppTemplate(item.getEntity().getLocation());
 
       // instantiate, noting vApp returned has minimal details
-      vApp = tmClient.instantiateVAppTemplateInOrg(null, vdc, serverName, vAppTemplateId, instantiateOptions);
+      vApp = tmClient.instantiateVAppTemplateInVDC(vdc.getLocation(), vAppTemplate.getLocation(), serverName,
+            instantiateOptions);
 
       assertEquals(vApp.getStatus(), VAppStatus.RESOLVED);
 
@@ -203,7 +205,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
 
       vApp = tmClient.getVApp(vApp.getId());
 
-      NamedResource vAppResource = tmClient.getDefaultVDC().getResourceEntities().get(serverName);
+      NamedResource vAppResource = tmClient.findVDCInOrgNamed(null, null).getResourceEntities().get(serverName);
       assertEquals(vAppResource.getId(), vApp.getId());
 
       int processorCount = 1;
@@ -229,11 +231,11 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
       PublicIpAddress ip;
       if (tmClient instanceof TerremarkVCloudExpressClient) {
          is = TerremarkVCloudExpressClient.class.cast(tmClient).addInternetServiceToVDC(
-               tmClient.getVDCInOrg(null, null).getId(), "SSH", Protocol.TCP, 22);
+               tmClient.findVDCInOrgNamed(null, null).getId(), "SSH", Protocol.TCP, 22);
          ip = is.getPublicIpAddress();
       } else {
-         ip = TerremarkECloudClient.class.cast(tmClient)
-               .activatePublicIpInVDC(tmClient.getVDCInOrg(null, null).getId());
+         ip = TerremarkECloudClient.class.cast(tmClient).activatePublicIpInVDC(
+               tmClient.findVDCInOrgNamed(null, null).getId());
          is = tmClient.addInternetServiceToExistingIp(ip.getId(), "SSH", Protocol.TCP, 22);
       }
       publicIp = ip.getAddress();
@@ -244,11 +246,6 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
       assert successTester.apply(tmClient.powerOffVApp(vApp.getId()).getId());
       System.out.printf("%d: done powering off vApp%n", System.currentTimeMillis());
 
-      // lookup the id of the datacenter you are deploying into
-      String vdc = tmClient.getDefaultVDC().getName();
-
-      String vAppIdToClone = vApp.getId();
-
       StringBuffer name = new StringBuffer();
       for (int i = 0; i < 15; i++)
          name.append("b");
@@ -257,7 +254,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
       CloneVAppOptions options = deploy().powerOn().withDescription("The description of " + newName);
 
       System.out.printf("%d: cloning vApp%n", System.currentTimeMillis());
-      Task task = tmClient.cloneVAppInOrg(null, vdc, vAppIdToClone, newName, options);
+      Task task = tmClient.cloneVAppInVDC(vdc.getLocation(), vApp.getLocation(), newName, options);
 
       // wait for the task to complete
       assert successTester.apply(task.getId());
@@ -300,8 +297,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testPublicIp")
    public void testConfigureNode() throws InterruptedException, ExecutionException, TimeoutException, IOException {
-      node = tmClient.configureNode(node.getId(), new NodeConfiguration().changeDescriptionTo("holy cow"));
-      assertEquals(node.getDescription(), "holy cow");
+      tmClient.configureNode(node.getId(), node.getName(), node.isEnabled(), "holy cow");
    }
 
    @Test(enabled = true, dependsOnMethods = "testPublicIp")

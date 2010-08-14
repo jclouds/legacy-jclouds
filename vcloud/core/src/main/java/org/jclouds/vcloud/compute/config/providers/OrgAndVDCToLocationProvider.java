@@ -44,12 +44,12 @@ import com.google.common.collect.Sets;
 public class OrgAndVDCToLocationProvider implements Provider<Set<? extends Location>> {
    private final String providerName;
    private final Supplier<Map<String, NamedResource>> orgNameToResource;
-   private final Supplier<Map<String, Organization>> orgNameToVDCResource;
+   private final Supplier<Map<String, ? extends Organization>> orgNameToVDCResource;
 
    @Inject
    OrgAndVDCToLocationProvider(@org.jclouds.rest.annotations.Provider String providerName,
          @Org Supplier<Map<String, NamedResource>> orgNameToResource,
-         Supplier<Map<String, Organization>> orgNameToVDCResource) {
+         Supplier<Map<String, ? extends Organization>> orgNameToVDCResource) {
       this.providerName = providerName;
       this.orgNameToResource = orgNameToResource;
       this.orgNameToVDCResource = orgNameToVDCResource;

@@ -34,7 +34,15 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "unit" })
 public class ParseTerremarkVCloudErrorFromHttpResponseTest extends BaseHttpErrorHandlerTest {
-
+   @Test
+   public void testGet400SetsIllegalArgumentException() {
+      assertCodeMakes(
+               "GET",
+               URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"),
+               400,
+               "HTTP/1.1 400 Service name is required.",
+               "", IllegalArgumentException.class);
+   }
    @Test
    public void testGet403SetsResourceNotFoundException() {
       assertCodeMakes(

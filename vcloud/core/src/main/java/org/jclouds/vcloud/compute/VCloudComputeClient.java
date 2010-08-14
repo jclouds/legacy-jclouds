@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.compute;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
@@ -66,8 +67,8 @@ public interface VCloudComputeClient {
     *         password - console login password</li>
     *         </ol>
     */
-   Map<String, String> start(@Nullable String orgName, @Nullable String vDCName, String name, String templateId,
-         InstantiateVAppTemplateOptions options, int... portsToOpen);
+   Map<String, String> start(@Nullable URI VDC, URI templateId, String name, InstantiateVAppTemplateOptions options,
+         int... portsToOpen);
 
    /**
     * returns a set of addresses that are only visible to the private network.

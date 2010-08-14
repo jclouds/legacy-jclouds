@@ -27,13 +27,14 @@ import static org.easymock.classextension.EasyMock.verify;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressPropertiesBuilder;
-import org.jclouds.vcloud.terremark.domain.NodeConfiguration;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -51,51 +52,35 @@ public class BindNodeConfigurationToXmlPayloadTest {
       @Override
       protected void configure() {
          Properties props = new Properties();
-         Names.bindProperties(binder(), checkNotNull(new TerremarkVCloudExpressPropertiesBuilder(
-                  props).build(), "properties"));
+         Names.bindProperties(binder(), checkNotNull(new TerremarkVCloudExpressPropertiesBuilder(props).build(),
+               "properties"));
       }
    });
 
-   public void testChangeName() throws IOException {
-      NodeConfiguration config = new NodeConfiguration().changeNameTo("willie");
-      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>willie</Name></NodeService>";
-      assertConfigMakesPayload(config, expectedPayload);
-   }
-
    public void testChangeDescription() throws IOException {
-      NodeConfiguration config = new NodeConfiguration().changeDescriptionTo("description");
-      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Description>description</Description></NodeService>";
-      assertConfigMakesPayload(config, expectedPayload);
-   }
-
-   public void testEnableTraffic() throws IOException {
-      NodeConfiguration config = new NodeConfiguration().enableTraffic();
-      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Enabled>true</Enabled></NodeService>";
-      assertConfigMakesPayload(config, expectedPayload);
+      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>willie</Name><Enabled>true</Enabled><Description>description</Description></NodeService>";
+      assertConfigMakesPayload(ImmutableMap.<String, String> of("name", "willie", "enabled", "true", "description",
+            "description"), expectedPayload);
    }
 
    public void testDisableTraffic() throws IOException {
-      NodeConfiguration config = new NodeConfiguration().disableTraffic();
-      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Enabled>false</Enabled></NodeService>";
-      assertConfigMakesPayload(config, expectedPayload);
+      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>willie</Name><Enabled>false</Enabled></NodeService>";
+      assertConfigMakesPayload(ImmutableMap.<String, String> of("name", "willie", "enabled", "false"), expectedPayload);
    }
 
    public void testTwoOptions() throws IOException {
-      NodeConfiguration config = new NodeConfiguration().disableTraffic().changeNameTo("willie");
-      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>willie</Name><Enabled>false</Enabled></NodeService>";
-      assertConfigMakesPayload(config, expectedPayload);
+      String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>willie</Name><Enabled>true</Enabled></NodeService>";
+      assertConfigMakesPayload(ImmutableMap.<String, String> of("name", "willie", "enabled", "true"), expectedPayload);
    }
 
-   @Test(expectedExceptions = IllegalArgumentException.class)
+   @Test(expectedExceptions = NullPointerException.class)
    public void testNoOptions() throws IOException {
-      NodeConfiguration config = new NodeConfiguration();
       String expectedPayload = "<NodeService xmlns=\"urn:tmrk:vCloudExpressExtensions-1.6\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><Name>willie</Name><Enabled>false</Enabled></NodeService>";
-      assertConfigMakesPayload(config, expectedPayload);
+      assertConfigMakesPayload(ImmutableMap.<String, String> of(), expectedPayload);
    }
 
-   private void assertConfigMakesPayload(NodeConfiguration config, String expectedPayload) {
-      BindNodeConfigurationToXmlPayload binder = injector
-               .getInstance(BindNodeConfigurationToXmlPayload.class);
+   private void assertConfigMakesPayload(Map<String, String> config, String expectedPayload) {
+      BindNodeConfigurationToXmlPayload binder = injector.getInstance(BindNodeConfigurationToXmlPayload.class);
       HttpRequest request = createMock(HttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       request.setPayload(expectedPayload);

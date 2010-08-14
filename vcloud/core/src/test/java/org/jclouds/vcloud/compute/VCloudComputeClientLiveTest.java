@@ -36,6 +36,7 @@ import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
@@ -64,7 +65,7 @@ public class VCloudComputeClientLiveTest {
 
    protected String id;
    protected String publicAddress;
-   protected String templateId;
+   protected String templateName;
 
    public static class Expectation {
       final long hardDisk;
@@ -88,10 +89,11 @@ public class VCloudComputeClientLiveTest {
       int processorCount = 1;
       int memory = 512;
 
+      VAppTemplate template = client.findVAppTemplateInOrgCatalogNamed(null, null, templateName);
       InstantiateVAppTemplateOptions options = processorCount(1).memory(512).disk(10 * 1025 * 1024).productProperties(
             ImmutableMap.of("foo", "bar"));
 
-      id = computeClient.start(null, null, serverName, templateId, options).get("id");
+      id = computeClient.start(null, template.getLocation(), templateName, options).get("id");
       Expectation expectation = expectationMap.get(toTest);
 
       VApp vApp = client.getVApp(id);
@@ -149,7 +151,7 @@ public class VCloudComputeClientLiveTest {
       expectationMap = ImmutableMap.<OsFamily, Expectation> builder().put(OsFamily.CENTOS,
             new Expectation(4194304 / 2 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).build();
       provider = "vcloudtest";
-      templateId = "3";
+      templateName = "Ubuntu JeOS 9.10 (32-bit)";
    }
 
 }

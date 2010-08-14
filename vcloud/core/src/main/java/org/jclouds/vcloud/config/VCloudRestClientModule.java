@@ -25,14 +25,14 @@ import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 
 /**
- * Configures the VCloud authentication service connection, including logging and http transport.
+ * Configures the VCloud authentication service connection, including logging
+ * and http transport.
  * 
  * @author Adrian Cole
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class VCloudRestClientModule extends
-         BaseVCloudRestClientModule<VCloudClient, VCloudAsyncClient> {
+public class VCloudRestClientModule extends BaseVCloudRestClientModule<VCloudClient, VCloudAsyncClient> {
 
    public VCloudRestClientModule() {
       super(VCloudClient.class, VCloudAsyncClient.class);

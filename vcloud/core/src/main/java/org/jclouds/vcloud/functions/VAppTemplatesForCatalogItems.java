@@ -40,12 +40,13 @@ import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+
 /**
  * @author Adrian Cole
  */
 @Singleton
 public class VAppTemplatesForCatalogItems implements
-         Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>> {
+      Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
@@ -54,7 +55,7 @@ public class VAppTemplatesForCatalogItems implements
 
    @Inject
    VAppTemplatesForCatalogItems(VCloudAsyncClient aclient,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }
@@ -73,7 +74,7 @@ public class VAppTemplatesForCatalogItems implements
          @SuppressWarnings("unchecked")
          @Override
          public Future<VAppTemplate> apply(CatalogItem from) {
-            return (Future<VAppTemplate>) aclient.getVAppTemplate(from.getEntity().getId());
+            return (Future<VAppTemplate>) aclient.getVAppTemplate(from.getEntity().getLocation());
          }
 
       }, executor, null, logger, "vappTemplates in");

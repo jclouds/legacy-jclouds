@@ -55,6 +55,9 @@ public class ParseTerremarkVCloudErrorFromHttpResponse implements HttpErrorHandl
       try {
          String content = parseErrorFromContentOrNull(command, response);
          switch (response.getStatusCode()) {
+         case 400:
+            exception = new IllegalArgumentException(response.getMessage(), exception);
+            break;
          case 401:
             exception = new AuthorizationException(command.getRequest(), content);
             break;

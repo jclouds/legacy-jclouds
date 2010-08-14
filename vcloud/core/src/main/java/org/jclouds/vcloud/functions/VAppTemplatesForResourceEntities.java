@@ -40,12 +40,13 @@ import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+
 /**
  * @author Adrian Cole
  */
 @Singleton
 public class VAppTemplatesForResourceEntities implements
-         Function<Iterable<? extends NamedResource>, Iterable<? extends VAppTemplate>> {
+      Function<Iterable<? extends NamedResource>, Iterable<? extends VAppTemplate>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
@@ -54,7 +55,7 @@ public class VAppTemplatesForResourceEntities implements
 
    @Inject
    VAppTemplatesForResourceEntities(VCloudAsyncClient aclient,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }
@@ -73,7 +74,7 @@ public class VAppTemplatesForResourceEntities implements
          @SuppressWarnings("unchecked")
          @Override
          public Future<VAppTemplate> apply(NamedResource from) {
-            return (Future<VAppTemplate>) aclient.getVAppTemplate(from.getId());
+            return (Future<VAppTemplate>) aclient.getVAppTemplate(from.getLocation());
          }
 
       }, executor, null, logger, "vappTemplates in");

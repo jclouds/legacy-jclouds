@@ -102,7 +102,7 @@ public class TerremarkVCloudExpressRestClientModule extends
 
             @Override
             public NamedResource apply(NamedResource from) {
-               return client.getOrganizationNamed(from.getName()).getKeysList();
+               return client.findOrganizationNamed(from.getName()).getKeysList();
             }
 
          });

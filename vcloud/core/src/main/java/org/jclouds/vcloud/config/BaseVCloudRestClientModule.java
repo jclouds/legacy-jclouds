@@ -21,6 +21,12 @@ package org.jclouds.vcloud.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Throwables.propagate;
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.getLast;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static com.google.common.collect.Maps.transformValues;
+import static com.google.common.collect.Maps.uniqueIndex;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
@@ -56,6 +62,7 @@ import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSu
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudToken;
+import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.endpoints.Catalog;
@@ -68,17 +75,18 @@ import org.jclouds.vcloud.endpoints.VDC;
 import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
 import org.jclouds.vcloud.endpoints.internal.VAppRoot;
 import org.jclouds.vcloud.endpoints.internal.VAppTemplateRoot;
+import org.jclouds.vcloud.functions.AllCatalogItemsInCatalog;
+import org.jclouds.vcloud.functions.AllCatalogsInOrganization;
+import org.jclouds.vcloud.functions.OrganizationsForNames;
 import org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponse;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
 import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.jclouds.vcloud.predicates.TaskSuccess;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.base.Throwables;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
@@ -126,27 +134,27 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Org
    @Singleton
    protected URI provideOrg(@Org Iterable<NamedResource> orgs) {
-      return Iterables.getLast(orgs).getLocation();
+      return getLast(orgs).getLocation();
    }
 
    @Provides
    @Org
    @Singleton
    protected String provideOrgName(@Org Iterable<NamedResource> orgs) {
-      return Iterables.getLast(orgs).getName();
+      return getLast(orgs).getName();
    }
 
    @Provides
    @Singleton
    @VDC
    protected Supplier<Map<String, String>> provideVDCtoORG(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final Supplier<Map<String, Organization>> orgToVDCSupplier) {
+         final Supplier<Map<String, ? extends Organization>> orgToVDCSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, String>>(authException, seconds,
             new Supplier<Map<String, String>>() {
                @Override
                public Map<String, String> get() {
-                  Map<String, String> returnVal = Maps.newLinkedHashMap();
-                  for (Entry<String, Organization> orgr : orgToVDCSupplier.get().entrySet()) {
+                  Map<String, String> returnVal = newLinkedHashMap();
+                  for (Entry<String, ? extends Organization> orgr : orgToVDCSupplier.get().entrySet()) {
                      for (String vdc : orgr.getValue().getVDCs().keySet()) {
                         returnVal.put(vdc, orgr.getKey());
                      }
@@ -187,7 +195,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
                   try {
                      return login.login().get(10, TimeUnit.SECONDS);
                   } catch (Exception e) {
-                     Throwables.propagate(e);
+                     propagate(e);
                      assert false : e;
                      return null;
                   }
@@ -198,12 +206,83 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
 
    @Provides
    @Singleton
-   protected Supplier<Map<String, Organization>> provideOrgMapCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final OrganizationMapSupplier supplier) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Organization>>(authException,
-            seconds, new Supplier<Map<String, Organization>>() {
+   protected Supplier<Map<String, ? extends Organization>> provideOrgMapCache(
+         @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrganizationMapSupplier supplier) {
+      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ? extends Organization>>(
+            authException, seconds, new Supplier<Map<String, ? extends Organization>>() {
                @Override
-               public Map<String, Organization> get() {
+               public Map<String, ? extends Organization> get() {
+                  return supplier.get();
+               }
+
+            });
+   }
+
+   private final static Function<NamedResource, String> name = new Function<NamedResource, String>() {
+
+      @Override
+      public String apply(NamedResource from) {
+         return from.getName();
+      }
+
+   };
+
+   @Singleton
+   public static class OrganizationMapSupplier implements Supplier<Map<String, ? extends Organization>> {
+      protected final Supplier<VCloudSession> sessionSupplier;
+      private final OrganizationsForNames organizationsForNames;
+
+      @Inject
+      protected OrganizationMapSupplier(Supplier<VCloudSession> sessionSupplier,
+            OrganizationsForNames organizationsForNames) {
+         this.sessionSupplier = sessionSupplier;
+         this.organizationsForNames = organizationsForNames;
+      }
+
+      @Override
+      public Map<String, ? extends Organization> get() {
+         return uniqueIndex(organizationsForNames.apply(sessionSupplier.get().getOrgs().keySet()), name);
+      }
+   }
+
+   @Singleton
+   public static class OrganizationCatalogSupplier implements
+         Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> {
+      protected final Supplier<Map<String, ? extends Organization>> orgSupplier;
+      private final AllCatalogsInOrganization allCatalogsInOrganization;
+
+      @Inject
+      protected OrganizationCatalogSupplier(Supplier<Map<String, ? extends Organization>> orgSupplier,
+            AllCatalogsInOrganization allCatalogsInOrganization) {
+         this.orgSupplier = orgSupplier;
+         this.allCatalogsInOrganization = allCatalogsInOrganization;
+      }
+
+      @Override
+      public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> get() {
+         return transformValues(
+               transformValues(orgSupplier.get(), allCatalogsInOrganization),
+               new Function<Iterable<? extends org.jclouds.vcloud.domain.Catalog>, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>() {
+
+                  @Override
+                  public Map<String, ? extends org.jclouds.vcloud.domain.Catalog> apply(
+                        Iterable<? extends org.jclouds.vcloud.domain.Catalog> from) {
+                     return uniqueIndex(from, name);
+                  }
+
+               });
+      }
+   }
+
+   @Provides
+   @Singleton
+   protected Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> provideOrganizationCatalogItemMapSupplierCache(
+         @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrganizationCatalogSupplier supplier) {
+      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>>(
+            authException, seconds,
+            new Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>>() {
+               @Override
+               public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> get() {
                   return supplier.get();
                }
 
@@ -211,25 +290,55 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    }
 
    @Singleton
-   public static class OrganizationMapSupplier implements Supplier<Map<String, Organization>> {
-      protected final Supplier<VCloudSession> sessionSupplier;
-      private final VCloudClient client;
+   public static class OrganizationCatalogItemSupplier implements
+         Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>> {
+      protected final Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> catalogSupplier;
+      private final AllCatalogItemsInCatalog allCatalogItemsInCatalog;
 
       @Inject
-      protected OrganizationMapSupplier(Supplier<VCloudSession> sessionSupplier, VCloudClient client) {
-         this.sessionSupplier = sessionSupplier;
-         this.client = client;
+      protected OrganizationCatalogItemSupplier(
+            Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> catalogSupplier,
+            AllCatalogItemsInCatalog allCatalogItemsInCatalog) {
+         this.catalogSupplier = catalogSupplier;
+         this.allCatalogItemsInCatalog = allCatalogItemsInCatalog;
       }
 
       @Override
-      public Map<String, Organization> get() {
-         Map<String, Organization> returnVal = Maps.newLinkedHashMap();
-         for (String orgName : sessionSupplier.get().getOrgs().keySet()) {
-            returnVal.put(orgName, client.getOrganizationNamed(orgName));
-         }
-         return returnVal;
-      }
+      public Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>> get() {
+         return transformValues(
+               catalogSupplier.get(),
+               new Function<Map<String, ? extends org.jclouds.vcloud.domain.Catalog>, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>() {
 
+                  @Override
+                  public Map<String, Map<String, ? extends CatalogItem>> apply(
+                        Map<String, ? extends org.jclouds.vcloud.domain.Catalog> from) {
+                     return transformValues(
+                           from,
+                           new Function<org.jclouds.vcloud.domain.Catalog, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>() {
+
+                              @Override
+                              public Map<String, ? extends CatalogItem> apply(org.jclouds.vcloud.domain.Catalog from) {
+                                 return uniqueIndex(allCatalogItemsInCatalog.apply(from), name);
+                              }
+                           });
+
+                  }
+               });
+      }
+   }
+
+   @Provides
+   @Singleton
+   protected Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>> provideOrganizationCatalogItemSupplierCache(
+         @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrganizationCatalogItemSupplier supplier) {
+      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>>(
+            authException, seconds,
+            new Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>>() {
+               @Override
+               public Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>> get() {
+                  return supplier.get();
+               }
+            });
    }
 
    @Provides
@@ -312,7 +421,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Singleton
    protected URI provideDefaultVDC(Organization org) {
       checkState(org.getVDCs().size() > 0, "No vdcs present in org: " + org.getName());
-      return Iterables.get(org.getVDCs().values(), 0).getLocation();
+      return get(org.getVDCs().values(), 0).getLocation();
    }
 
    @Provides
@@ -320,7 +429,15 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Singleton
    protected URI provideCatalog(Organization org, @Named(PROPERTY_IDENTITY) String user) {
       checkState(org.getCatalogs().size() > 0, "No catalogs present in org: " + org.getName());
-      return Iterables.get(org.getCatalogs().values(), 0).getLocation();
+      return get(org.getCatalogs().values(), 0).getLocation();
+   }
+
+   @Provides
+   @Catalog
+   @Singleton
+   protected String provideCatalogName(
+         Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> catalogs) {
+      return getLast(getLast(catalogs.get().values()).keySet());
    }
 
    @Provides
@@ -334,7 +451,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
          org.jclouds.vcloud.domain.VDC vDC = client.getDefaultVDC();
          Map<String, NamedResource> networks = vDC.getAvailableNetworks();
          checkState(networks.size() > 0, "No networks present in vDC: " + vDC.getName());
-         return Iterables.get(networks.values(), 0).getLocation();
+         return get(networks.values(), 0).getLocation();
       } catch (AuthorizationException e) {
          authException.set(e);
          throw e;
@@ -360,6 +477,6 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Singleton
    protected URI provideDefaultTasksList(Organization org) {
       checkState(org.getTasksLists().size() > 0, "No tasks lists present in org: " + org.getName());
-      return Iterables.get(org.getTasksLists().values(), 0).getLocation();
+      return get(org.getTasksLists().values(), 0).getLocation();
    }
 }

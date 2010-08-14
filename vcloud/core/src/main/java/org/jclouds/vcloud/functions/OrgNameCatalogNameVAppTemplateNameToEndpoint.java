@@ -28,10 +28,9 @@ import java.util.NoSuchElementException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.domain.CatalogItem;
+import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Org;
-import org.jclouds.vcloud.endpoints.VDC;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -42,35 +41,36 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class OrgNameAndVDCNameToEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, ? extends Organization>> orgNameToVDCEndpoint;
+public class OrgNameCatalogNameVAppTemplateNameToEndpoint implements Function<Object, URI> {
+   private final Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>> orgCatalogItemMap;
    private final String defaultOrg;
-   private final URI defaultUri;
+   private final String defaultCatalog;
 
    @Inject
-   public OrgNameAndVDCNameToEndpoint(Supplier<Map<String, ? extends Organization>> orgNameToVDCEndpoint,
-         @Org String defaultOrg, @VDC URI defaultUri) {
-      this.orgNameToVDCEndpoint = orgNameToVDCEndpoint;
+   public OrgNameCatalogNameVAppTemplateNameToEndpoint(
+         Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>> orgCatalogItemMap,
+         @Org String defaultOrg, @Catalog String defaultCatalog) {
+      this.orgCatalogItemMap = orgCatalogItemMap;
       this.defaultOrg = defaultOrg;
-      this.defaultUri = defaultUri;
+      this.defaultCatalog = defaultCatalog;
    }
 
    @SuppressWarnings("unchecked")
    public URI apply(Object from) {
-      Iterable<Object> orgVdc = (Iterable<Object>) checkNotNull(from, "args");
-      Object org = Iterables.get(orgVdc, 0);
-      Object vdc = Iterables.get(orgVdc, 1);
-      if (org == null && vdc == null)
-         return defaultUri;
-      else if (org == null)
+      Iterable<Object> orgCatalog = (Iterable<Object>) checkNotNull(from, "args");
+      Object org = Iterables.get(orgCatalog, 0);
+      Object catalog = Iterables.get(orgCatalog, 1);
+      Object catalogItem = Iterables.get(orgCatalog, 2);
+      if (org == null)
          org = defaultOrg;
-
+      if (catalog == null)
+         catalog = defaultCatalog;
       try {
-         Map<String, NamedResource> vdcs = checkNotNull(orgNameToVDCEndpoint.get().get(org)).getVDCs();
-
-         return vdc == null ? Iterables.getLast(vdcs.values()).getLocation() : vdcs.get(vdc).getLocation();
+         Map<String, Map<String, ? extends CatalogItem>> catalogs = checkNotNull(orgCatalogItemMap.get().get(org));
+         return catalogs.get(catalog).get(catalogItem).getEntity().getLocation();
       } catch (NullPointerException e) {
-         throw new NoSuchElementException(org + "/" + vdc + " not found in " + orgNameToVDCEndpoint.get());
+         throw new NoSuchElementException(org + "/" + catalog + "/" + catalogItem + " not found in "
+               + orgCatalogItemMap.get());
       }
    }
 

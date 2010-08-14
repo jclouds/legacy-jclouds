@@ -43,12 +43,12 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class OrgNameAndCatalogNameToEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, Organization>> orgMap;
+   private final Supplier<Map<String, ? extends Organization>> orgMap;
    private final String defaultOrg;
    private final URI defaultUri;
 
    @Inject
-   public OrgNameAndCatalogNameToEndpoint(Supplier<Map<String, Organization>> orgMap, @Org String defaultOrg,
+   public OrgNameAndCatalogNameToEndpoint(Supplier<Map<String, ? extends Organization>> orgMap, @Org String defaultOrg,
          @Catalog URI defaultUri) {
       this.orgMap = orgMap;
       this.defaultOrg = defaultOrg;

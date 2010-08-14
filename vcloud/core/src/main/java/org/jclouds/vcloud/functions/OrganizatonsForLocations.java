@@ -20,8 +20,10 @@
 package org.jclouds.vcloud.functions;
 
 import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
+import java.net.URI;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -36,17 +38,19 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudAsyncClient;
+import org.jclouds.vcloud.compute.domain.VCloudLocation;
 import org.jclouds.vcloud.domain.Organization;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Sets;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
 public class OrganizatonsForLocations implements
-         Function<Iterable<? extends Location>, Iterable<? extends Organization>> {
+      Function<Iterable<? extends Location>, Iterable<? extends Organization>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
@@ -60,27 +64,35 @@ public class OrganizatonsForLocations implements
    }
 
    /**
-    * regions are not currently an assignable location, so they don't show up in the list. As such,
-    * we'll blindly look for all zones, and get their "parents"
+    * Zones are assignable, but we want regions. so we look for zones, whose
+    * parent is region. then, we use a set to extract the unique set.
     */
    @Override
    public Iterable<? extends Organization> apply(Iterable<? extends Location> from) {
-      return transformParallel(filter(from, new Predicate<Location>() {
+
+      return transformParallel(Sets.newLinkedHashSet(transform(filter(from, new Predicate<Location>() {
 
          @Override
          public boolean apply(Location input) {
             return input.getScope() == LocationScope.ZONE;
          }
 
-      }), new Function<Location, Future<Organization>>() {
+      }), new Function<Location, URI>() {
+
+         @Override
+         public URI apply(Location from) {
+            return VCloudLocation.class.cast(from.getParent()).getResource().getLocation();
+         }
+
+      })), new Function<URI, Future<Organization>>() {
 
          @SuppressWarnings("unchecked")
          @Override
-         public Future<Organization> apply(Location from) {
-            return (Future<Organization>) aclient.getOrganizationNamed(from.getParent().getId());
+         public Future<Organization> apply(URI from) {
+            return (Future<Organization>) aclient.getOrganization(from);
          }
 
-      }, executor, null, logger, "organizations for locations");
+      }, executor, null, logger, "organizations for uris");
    }
 
 }

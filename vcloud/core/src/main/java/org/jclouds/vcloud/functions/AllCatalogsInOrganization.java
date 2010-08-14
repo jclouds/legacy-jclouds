@@ -58,17 +58,16 @@ public class AllCatalogsInOrganization implements Function<Organization, Iterabl
    }
 
    @Override
-   public Iterable<? extends Catalog> apply(Organization from) {
+   public Iterable<? extends Catalog> apply(final Organization org) {
+      Iterable<Catalog> catalogs = transformParallel(org.getCatalogs().values(),
+            new Function<NamedResource, Future<Catalog>>() {
+               @SuppressWarnings("unchecked")
+               @Override
+               public Future<Catalog> apply(NamedResource from) {
+                  return (Future<Catalog>) aclient.findCatalogInOrgNamed(org.getName(), from.getName());
+               }
 
-      Iterable<Catalog> catalogItems = transformParallel(from.getCatalogs().values(),
-               new Function<NamedResource, Future<Catalog>>() {
-                  @SuppressWarnings("unchecked")
-                  @Override
-                  public Future<Catalog> apply(NamedResource from) {
-                     return (Future<Catalog>) aclient.getCatalog(from.getId());
-                  }
-
-               }, executor, null, logger, "catalogs in " + from.getName());
-      return catalogItems;
+            }, executor, null, logger, "catalogs in " + org.getName());
+      return catalogs;
    }
 }

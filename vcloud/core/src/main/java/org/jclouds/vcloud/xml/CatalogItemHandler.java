@@ -37,15 +37,15 @@ import com.google.common.collect.Maps;
 public class CatalogItemHandler extends ParseSax.HandlerWithResult<CatalogItem> {
    private StringBuilder currentText = new StringBuilder();
 
-   private NamedResource catalog;
-   private NamedResource entity;
+   protected NamedResource catalogItem;
+   protected NamedResource entity;
 
-   private String description;
-   private String key;
-   private SortedMap<String, String> properties = Maps.newTreeMap();
+   protected String description;
+   protected String key;
+   protected SortedMap<String, String> properties = Maps.newTreeMap();
 
    public CatalogItem getResult() {
-      return new CatalogItemImpl(catalog.getId(), catalog.getName(), catalog.getLocation(),
+      return new CatalogItemImpl(catalogItem.getId(), catalogItem.getName(), catalogItem.getLocation(),
                description, entity, properties);
    }
 
@@ -53,7 +53,7 @@ public class CatalogItemHandler extends ParseSax.HandlerWithResult<CatalogItem> 
    public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException {
       if (qName.equals("CatalogItem")) {
-         catalog = Utils.newNamedResource(attributes);
+         catalogItem = Utils.newNamedResource(attributes);
       } else if (qName.equals("Entity")) {
          entity = Utils.newNamedResource(attributes);
       } else if (qName.equals("Property")) {

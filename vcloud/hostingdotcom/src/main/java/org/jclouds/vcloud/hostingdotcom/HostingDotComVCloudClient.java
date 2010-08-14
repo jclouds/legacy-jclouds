@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.hostingdotcom;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -39,12 +40,7 @@ public interface HostingDotComVCloudClient extends VCloudClient {
 
    @Override
    @Timeout(duration = 600, timeUnit = TimeUnit.SECONDS)
-   HostingDotComVApp instantiateVAppTemplateInOrg(String org, String vDC, String appName, String templateId,
-         InstantiateVAppTemplateOptions... options);
-
-   @Override
-   @Timeout(duration = 600, timeUnit = TimeUnit.SECONDS)
-   HostingDotComVApp instantiateVAppTemplateInVDC(String vDC, String appName, String templateId,
+   HostingDotComVApp instantiateVAppTemplateInVDC(URI vDC, URI template, String appName,
          InstantiateVAppTemplateOptions... options);
 
    @Override

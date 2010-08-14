@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -44,17 +45,14 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface VCloudClient {
+
    /**
-    * Please use {@link #getOrganizationNamed(String)} passing null
+    * Please use {@link #findOrganizationNamed(String)} passing null
     */
    @Deprecated
    Organization getDefaultOrganization();
 
-   /**
-    * Please use #getOrganizationNamed
-    */
-   @Deprecated
-   Organization getOrganization(String orgId);
+   Organization getOrganization(URI orgId);
 
    /**
     * This call returns a list of all vCloud Data Centers (vdcs), catalogs, and
@@ -63,49 +61,49 @@ public interface VCloudClient {
     * @param name
     *           organization name, or null for the default
     */
-   Organization getOrganizationNamed(String name);
+   Organization findOrganizationNamed(String name);
 
    /**
-    * Please use #getCatalogInOrg(null, null)
+    * Please use #findCatalogInOrgNamed(null, null)
     */
    @Deprecated
    Catalog getDefaultCatalog();
 
    /**
-    * Please use #getCatalogInOrg
+    * Please use #findCatalogInOrgNamed
     */
    @Deprecated
    Catalog getCatalog(String catalogId);
 
-   Catalog getCatalogInOrg(String orgName, String catalogName);
+   Catalog findCatalogInOrgNamed(String orgName, String catalogName);
 
-   CatalogItem getCatalogItem(String catalogItemId);
+   CatalogItem getCatalogItem(URI catalogItem);
 
-   VAppTemplate getVAppTemplate(String vAppTemplateId);
+   CatalogItem findCatalogItemInOrgCatalogNamed(String orgName, String catalogName, String itemName);
+
+   VAppTemplate getVAppTemplate(URI vAppTemplate);
+
+   VAppTemplate findVAppTemplateInOrgCatalogNamed(String orgName, String catalogName, String templateName);
 
    Network getNetwork(String networkId);
 
-   /**
-    * please use {@link #getVDCInOrg}
-    */
-   @Deprecated
-   VDC getVDC(String vDCId);
+   VDC getVDC(URI vdc);
 
-   VDC getVDCInOrg(String orgName, String vdcName);
+   VDC findVDCInOrgNamed(String orgName, String vdcName);
 
    /**
-    * Please use #getVDCInOrg(null, null)
+    * Please use #findVDCInOrgNamed
     */
    @Deprecated
    VDC getDefaultVDC();
 
    /**
-    * Please use #getTasksListInOrg
+    * Please use #findTasksListInOrgNamed
     */
    @Deprecated
    TasksList getTasksList(String tasksListId);
 
-   TasksList getTasksListInOrg(String orgName, String tasksListName);
+   TasksList findTasksListInOrgNamed(String orgName, String tasksListName);
 
    /**
     * Please use #getTasksListInOrg(null, null)
@@ -152,16 +150,8 @@ public interface VCloudClient {
 
    VApp getVApp(String appId);
 
-   @Deprecated
-   VApp instantiateVAppTemplateInVDC(String vDCId, String appName, String templateId,
-         InstantiateVAppTemplateOptions... options);
+   VApp instantiateVAppTemplateInVDC(URI vDC, URI template, String appName, InstantiateVAppTemplateOptions... options);
 
-   VApp instantiateVAppTemplateInOrg(String org, String vdc, String appName, String templateId,
-         InstantiateVAppTemplateOptions... options);
-
-   @Deprecated
-   Task cloneVAppInVDC(String vDCId, String vAppIdToClone, String newName, CloneVAppOptions... options);
-
-   Task cloneVAppInOrg(String org, String vdc, String vAppIdToClone, String newName, CloneVAppOptions... options);
+   Task cloneVAppInVDC(URI vDC, URI toClone, String newName, CloneVAppOptions... options);
 
 }

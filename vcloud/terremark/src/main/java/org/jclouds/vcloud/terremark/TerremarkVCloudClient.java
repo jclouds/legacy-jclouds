@@ -19,8 +19,11 @@
 
 package org.jclouds.vcloud.terremark;
 
+import java.net.URI;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.VCloudClient;
@@ -29,10 +32,11 @@ import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
-import org.jclouds.vcloud.terremark.domain.NodeConfiguration;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
+import org.jclouds.vcloud.terremark.domain.TerremarkCatalogItem;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrganization;
+import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.options.AddNodeOptions;
@@ -47,18 +51,30 @@ import org.jclouds.vcloud.terremark.options.AddNodeOptions;
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkVCloudClient extends VCloudClient {
+
+   @Override
+   TerremarkCatalogItem getCatalogItem(URI catalogItem);
+
+   @Override
+   TerremarkVDC getVDC(URI catalogItem);
+
+   @Override
+   TerremarkCatalogItem findCatalogItemInOrgCatalogNamed(String orgName, String catalogName, String itemName);
+
    @Deprecated
    @Override
    TerremarkOrganization getDefaultOrganization();
 
+   @Override
+   TerremarkOrganization getOrganization(URI orgId);
+
+   @Override
+   TerremarkOrganization findOrganizationNamed(String orgName);
+
    @Deprecated
-   @Override
-   TerremarkOrganization getOrganization(String orgId);
-
-   @Override
-   TerremarkOrganization getOrganizationNamed(String orgName);
-
    CustomizationParameters getCustomizationOptionsOfCatalogItem(String catalogItemId);
+
+   CustomizationParameters getCustomizationOptions(URI customizationOptions);
 
    /**
     * This call returns a list of public IP addresses.
@@ -66,7 +82,6 @@ public interface TerremarkVCloudClient extends VCloudClient {
    Set<PublicIpAddress> getPublicIpsAssociatedWithVDC(String vDCId);
 
    void deletePublicIp(int ipId);
-
 
    /**
     * This call adds an internet service to a known, existing public IP. This
@@ -109,7 +124,7 @@ public interface TerremarkVCloudClient extends VCloudClient {
 
    Node getNode(int nodeId);
 
-   Node configureNode(int nodeId, NodeConfiguration nodeConfiguration);
+   Node configureNode(int nodeId, String name, boolean enabled, @Nullable String description);
 
    void deleteNode(int nodeId);
 
