@@ -238,7 +238,7 @@ public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
    }
 
    void blockOnLastTask(VApp vApp) {
-      TasksList list = client.getTasksList(vApp.getVDC());
+      TasksList list = client.findTasksListInOrgNamed(null, null);
       try {
          Task lastTask = getLast(filter(list.getTasks(), new Predicate<Task>() {
 

@@ -86,7 +86,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
 
 /**
  * Configures the VCloud authentication service connection, including logging
@@ -106,12 +105,6 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Override
    protected void configure() {
       requestInjection(this);
-      bind(new TypeLiteral<Supplier<Map<String, NamedResource>>>() {
-      }).annotatedWith(Org.class).to(new TypeLiteral<OrgNameToOrgSupplier>() {
-      });
-      bind(new TypeLiteral<Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>>>() {
-      }).to(new TypeLiteral<URItoVDC>() {
-      });
       super.configure();
    }
 
@@ -143,6 +136,33 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Singleton
    protected String provideOrgName(@Org Iterable<NamedResource> orgs) {
       return getLast(orgs).getName();
+   }
+
+   @Provides
+   @Org
+   @Singleton
+   protected Supplier<Map<String, NamedResource>> provideVDCtoORG(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+         final OrgNameToOrgSupplier supplier) {
+      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, NamedResource>>(authException,
+            seconds, new Supplier<Map<String, NamedResource>>() {
+               @Override
+               public Map<String, NamedResource> get() {
+                  return supplier.get();
+               }
+            });
+   }
+
+   @Provides
+   @Singleton
+   protected Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>> provideVDCtoORG(
+         @Named(PROPERTY_SESSION_INTERVAL) long seconds, final URItoVDC supplier) {
+      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>>(
+            authException, seconds, new Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>>() {
+               @Override
+               public Map<URI, ? extends org.jclouds.vcloud.domain.VDC> get() {
+                  return supplier.get();
+               }
+            });
    }
 
    @Provides
