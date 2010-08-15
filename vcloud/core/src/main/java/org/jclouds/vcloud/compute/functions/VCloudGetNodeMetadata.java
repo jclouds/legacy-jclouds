@@ -67,7 +67,7 @@ public class VCloudGetNodeMetadata {
    protected final GetExtra getExtra;
    protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
 
-   public static final Pattern TAG_PATTERN_WITHOUT_TEMPLATE = Pattern.compile("([^-]+)-[0-9]+");
+   public static final Pattern TAG_PATTERN_WITHOUT_TEMPLATE = Pattern.compile("([^-]+)-[0-9a-f]+");
 
    @Inject
    VCloudGetNodeMetadata(VCloudClient client, VCloudComputeClient computeClient,

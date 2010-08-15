@@ -60,7 +60,7 @@ public class GetExtra implements Function<VApp, Map<String, String>> {
                .getVirtualQuantity()
                + "");
          for (ResourceAllocation disk : filter(vApp.getResourceAllocations(), resourceType(ResourceType.DISK_DRIVE))) {
-            extra.put(String.format("disk_drive/%s/kb", disk.getId()), disk.getVirtualQuantity() + "");
+            extra.put(String.format("disk_drive/%s/kb", disk.getAddressOnParent()), disk.getVirtualQuantity() + "");
          }
 
          for (Entry<String, String> net : vApp.getNetworkToAddresses().entries()) {
