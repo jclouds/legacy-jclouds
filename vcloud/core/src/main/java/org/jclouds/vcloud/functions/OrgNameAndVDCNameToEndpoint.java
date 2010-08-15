@@ -67,8 +67,7 @@ public class OrgNameAndVDCNameToEndpoint implements Function<Object, URI> {
 
       try {
          Map<String, NamedResource> vdcs = checkNotNull(orgNameToVDCEndpoint.get().get(org)).getVDCs();
-
-         return vdc == null ? Iterables.getLast(vdcs.values()).getLocation() : vdcs.get(vdc).getLocation();
+         return vdc == null ? Iterables.getLast(vdcs.values()).getId() : vdcs.get(vdc).getId();
       } catch (NullPointerException e) {
          throw new NoSuchElementException(org + "/" + vdc + " not found in " + orgNameToVDCEndpoint.get());
       }

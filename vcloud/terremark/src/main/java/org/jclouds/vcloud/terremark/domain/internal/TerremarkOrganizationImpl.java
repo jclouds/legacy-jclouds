@@ -36,9 +36,9 @@ public class TerremarkOrganizationImpl extends OrganizationImpl implements Terre
 
    private final NamedResource keysList;
 
-   public TerremarkOrganizationImpl(String id, String name, URI location, Map<String, NamedResource> catalogs,
+   public TerremarkOrganizationImpl(String name, URI id, Map<String, NamedResource> catalogs,
          Map<String, NamedResource> vdcs, Map<String, NamedResource> tasksLists, NamedResource keysList) {
-      super(id, name, location, catalogs, vdcs, tasksLists);
+      super(name, id, catalogs, vdcs, tasksLists);
       this.keysList = keysList;
    }
 

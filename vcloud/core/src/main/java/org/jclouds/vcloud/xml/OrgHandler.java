@@ -46,13 +46,11 @@ public class OrgHandler extends ParseSax.HandlerWithResult<Organization> {
    protected Map<String, NamedResource> catalogs = Maps.newLinkedHashMap();
 
    public Organization getResult() {
-      return new OrganizationImpl(org.getId(), org.getName(), org.getLocation(), catalogs, vdcs,
-               tasksLists);
+      return new OrganizationImpl(org.getName(), org.getId(), catalogs, vdcs, tasksLists);
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if (qName.equals("Org")) {
          org = newNamedResource(attributes);
       } else if (qName.equals("Link")) {

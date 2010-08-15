@@ -63,8 +63,8 @@ public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
       Location location = findLocationForResource.apply(parent);
       String name = getName(from.getName());
       String desc = from.getDescription() != null ? from.getDescription() : from.getName();
-      return new ImageImpl(from.getLocation().toASCIIString(), name, from.getLocation().toASCIIString(), location, from
-            .getLocation(), ImmutableMap.<String, String> of(), desc, "", myOs, name, arch, credentialsProvider
+      return new ImageImpl(from.getId().toASCIIString(), name, from.getId().toASCIIString(), location, from
+            .getId(), ImmutableMap.<String, String> of(), desc, "", myOs, name, arch, credentialsProvider
             .execute(from));
    }
 

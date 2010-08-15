@@ -87,7 +87,7 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
       Set<ComputeMetadata> nodes = Sets.newHashSet();
       for (String org : orgNameToEndpoint.get().keySet()) {
          for (NamedResource vdc : client.findOrganizationNamed(org).getVDCs().values()) {
-            for (NamedResource resource : client.getVDC(vdc.getLocation()).getResourceEntities().values()) {
+            for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
                if (validVApp(resource)) {
                   nodes.add(convertVAppToComputeMetadata(vdc, resource));
                }
@@ -103,8 +103,8 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
 
    private ComputeMetadata convertVAppToComputeMetadata(NamedResource vdc, NamedResource resource) {
       Location location = findLocationForResourceInVDC.apply(vdc);
-      return new ComputeMetadataImpl(ComputeType.NODE, resource.getId(), resource.getName(), resource.getId(),
-            location, null, ImmutableMap.<String, String> of());
+      return new ComputeMetadataImpl(ComputeType.NODE, resource.getId().toASCIIString(), resource.getName(),
+            resource.getId().toASCIIString(), location, null, ImmutableMap.<String, String> of());
    }
 
    @Override
@@ -112,7 +112,7 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
       Set<NodeMetadata> nodes = Sets.newHashSet();
       for (String org : orgNameToEndpoint.get().keySet()) {
          for (NamedResource vdc : client.findOrganizationNamed(org).getVDCs().values()) {
-            for (NamedResource resource : client.getVDC(vdc.getLocation()).getResourceEntities().values()) {
+            for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
                if (validVApp(resource) && filter.apply(convertVAppToComputeMetadata(vdc, resource))) {
                   addVAppToSetRetryingIfNotYetPresent(nodes, vdc, resource);
                }
@@ -128,10 +128,10 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
       int i = 0;
       while (node == null && i++ < 3) {
          try {
-            node = getNodeMetadata.execute(resource.getId());
+            node = getNodeMetadata.execute(resource.getId().toASCIIString());
             nodes.add(node);
          } catch (NullPointerException e) {
-            logger.warn("vApp %s not yet present in vdc %s", resource.getId(), vdc.getId());
+            logger.warn("vApp %s not yet present in vdc %s", resource.getName(), vdc.getName());
          }
       }
    }

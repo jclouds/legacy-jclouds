@@ -385,6 +385,7 @@ See http://code.google.com/p/jclouds for details."
       (f builder value)
       (println "Unknown option" option))))
 
+;; TODO look at clojure-datalog
 (defn build-template 
   "Creates a template that can be used to run nodes.
 

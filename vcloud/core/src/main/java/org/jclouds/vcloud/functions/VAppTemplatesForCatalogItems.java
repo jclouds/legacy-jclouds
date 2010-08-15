@@ -74,7 +74,7 @@ public class VAppTemplatesForCatalogItems implements
          @SuppressWarnings("unchecked")
          @Override
          public Future<VAppTemplate> apply(CatalogItem from) {
-            return (Future<VAppTemplate>) aclient.getVAppTemplate(from.getEntity().getLocation());
+            return (Future<VAppTemplate>) aclient.getVAppTemplate(from.getEntity().getId());
          }
 
       }, executor, null, logger, "vappTemplates in");

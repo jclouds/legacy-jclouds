@@ -65,10 +65,10 @@ public class AllVDCsInOrganization implements Function<Organization, Iterable<? 
                @SuppressWarnings("unchecked")
                @Override
                public Future<VDC> apply(NamedResource from) {
-                  return (Future<VDC>) aclient.findVDCInOrgNamed(org.getName(), from.getName());
+                  return (Future<VDC>) aclient.getVDC(from.getId());
                }
 
-            }, executor, null, logger, "vdcs in " + org.getName());
+            }, executor, null, logger, "vdcs in org " + org.getName());
       return catalogItems;
    }
 

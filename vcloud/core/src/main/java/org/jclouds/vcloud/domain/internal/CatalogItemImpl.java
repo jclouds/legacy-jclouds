@@ -45,9 +45,9 @@ public class CatalogItemImpl extends NamedResourceImpl implements CatalogItem {
    private final NamedResource entity;
    private final Map<String, String> properties = Maps.newLinkedHashMap();
 
-   public CatalogItemImpl(String id, String name, URI location, @Nullable String description, NamedResource entity,
+   public CatalogItemImpl(String name, URI id, @Nullable String description, NamedResource entity,
          Map<String, String> properties) {
-      super(id, name, VCloudMediaType.CATALOGITEM_XML, location);
+      super(name, VCloudMediaType.CATALOGITEM_XML, id);
       this.description = description;
       this.entity = checkNotNull(entity, "entity");
       this.properties.putAll(checkNotNull(properties, "properties"));
@@ -73,9 +73,8 @@ public class CatalogItemImpl extends NamedResourceImpl implements CatalogItem {
 
    @Override
    public String toString() {
-      return "CatalogItemImpl [id=" + getId() + ", name=" + getName() + ", location=" + getLocation() + ", type="
-            + getType() + ", description=" + getDescription() + ", entity=" + entity + ", properties=" + properties
-            + "]";
+      return "CatalogItemImpl [id=" + getId() + ", name=" + getName() + ", type=" + getType() + ", description="
+            + getDescription() + ", entity=" + entity + ", properties=" + properties + "]";
    }
 
    @Override

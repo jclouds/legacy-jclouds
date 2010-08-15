@@ -66,16 +66,16 @@ public class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
          options.blockOnDeploy(false);
       Map<String, String> metaMap = computeClient.start(URI.create(template.getLocation().getDescription()), URI
             .create(template.getImage().getId()), name, options, template.getOptions().getInboundPorts());
-      VApp vApp = client.getVApp(metaMap.get("id"));
+      VApp vApp = client.getVApp(URI.create(metaMap.get("id")));
       return newCreateNodeResponse(tag, template, metaMap, vApp);
    }
 
    protected NodeMetadata newCreateNodeResponse(String tag, Template template, Map<String, String> metaMap, VApp vApp) {
-      return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vApp.getId(), template.getLocation(), vApp
-            .getLocation(), ImmutableMap.<String, String> of(), tag, template.getImage(), vAppStatusToNodeState
-            .get(vApp.getStatus()), computeClient.getPublicAddresses(vApp.getId()), computeClient
-            .getPrivateAddresses(vApp.getId()), ImmutableMap.<String, String> of(), new Credentials(metaMap
-            .get("username"), metaMap.get("password")));
+      return new NodeMetadataImpl(vApp.getId().toASCIIString(), vApp.getName(), vApp.getId()
+            .toASCIIString(), template.getLocation(), vApp.getId(), ImmutableMap.<String, String> of(), tag,
+            template.getImage(), vAppStatusToNodeState.get(vApp.getStatus()), computeClient.getPublicAddresses(vApp
+                  .getId()), computeClient.getPrivateAddresses(vApp.getId()), ImmutableMap
+                  .<String, String> of(), new Credentials(metaMap.get("username"), metaMap.get("password")));
    }
 
 }

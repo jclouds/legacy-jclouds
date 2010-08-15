@@ -67,7 +67,7 @@ public class OrgNameCatalogNameVAppTemplateNameToEndpoint implements Function<Ob
          catalog = defaultCatalog;
       try {
          Map<String, Map<String, ? extends CatalogItem>> catalogs = checkNotNull(orgCatalogItemMap.get().get(org));
-         return catalogs.get(catalog).get(catalogItem).getEntity().getLocation();
+         return catalogs.get(catalog).get(catalogItem).getEntity().getId();
       } catch (NullPointerException e) {
          throw new NoSuchElementException(org + "/" + catalog + "/" + catalogItem + " not found in "
                + orgCatalogItemMap.get());

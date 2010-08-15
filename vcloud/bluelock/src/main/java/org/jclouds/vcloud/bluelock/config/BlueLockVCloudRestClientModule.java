@@ -40,7 +40,8 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 /**
- * Configures the VCloud authentication service connection, including logging and http transport.
+ * Configures the VCloud authentication service connection, including logging
+ * and http transport.
  * 
  * @author Adrian Cole
  */
@@ -49,33 +50,31 @@ import com.google.common.collect.Iterables;
 public class BlueLockVCloudRestClientModule extends VCloudRestClientModule {
 
    @Override
-   protected URI provideDefaultNetwork(VCloudClient client) throws InterruptedException,
-            ExecutionException, TimeoutException {
-      org.jclouds.vcloud.domain.VDC vDC = client.getDefaultVDC();
+   protected URI provideDefaultNetwork(VCloudClient client) throws InterruptedException, ExecutionException,
+         TimeoutException {
+      org.jclouds.vcloud.domain.VDC vDC = client.findVDCInOrgNamed(null, null);
       Map<String, NamedResource> networks = vDC.getAvailableNetworks();
       checkState(networks.size() > 0, "No networks present in vDC: " + vDC.getName());
-      return Iterables.getOnlyElement(
-               Iterables.filter(networks.values(), new Predicate<NamedResource>() {
+      return Iterables.getOnlyElement(Iterables.filter(networks.values(), new Predicate<NamedResource>() {
 
-                  @Override
-                  public boolean apply(NamedResource input) {
-                     return input.getName().equals("Internal In and Out");
-                  }
+         @Override
+         public boolean apply(NamedResource input) {
+            return input.getName().equals("Internal In and Out");
+         }
 
-               })).getLocation();
+      })).getId();
    }
 
    @Override
    protected URI provideCatalog(Organization org, @Named(PROPERTY_IDENTITY) final String user) {
       checkState(org.getCatalogs().size() > 0, "No catalogs present in org: " + org.getName());
-      return Iterables.getOnlyElement(
-               Iterables.filter(org.getCatalogs().values(), new Predicate<NamedResource>() {
+      return Iterables.getOnlyElement(Iterables.filter(org.getCatalogs().values(), new Predicate<NamedResource>() {
 
-                  @Override
-                  public boolean apply(NamedResource input) {
-                     return input.getName().startsWith(user);
-                  }
+         @Override
+         public boolean apply(NamedResource input) {
+            return input.getName().startsWith(user);
+         }
 
-               })).getLocation();
+      })).getId();
    }
 }

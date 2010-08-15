@@ -36,10 +36,10 @@ import org.jclouds.vcloud.domain.VAppTemplate;
  */
 @Singleton
 public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials implements
-         PopulateDefaultLoginCredentialsForImageStrategy {
+      PopulateDefaultLoginCredentialsForImageStrategy {
 
    public static final Pattern USER_PASSWORD_PATTERN = Pattern
-            .compile(".*[Uu]sername: ([a-z]+) ?.*\n[Pp]assword: ([^ ]+) ?\n.*");
+         .compile(".*[Uu]sername: ([a-z]+) ?.*\n[Pp]assword: ([^ ]+) ?\n.*");
 
    @Override
    public Credentials execute(Object resourceToAuthenticate) {
@@ -55,7 +55,7 @@ public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials implements
             return new Credentials(matcher.group(1), matcher.group(2));
          } else {
             throw new RuntimeException("could not parse username/password for image: " + template.getId() + "\n"
-                     + search);
+                  + search);
          }
       }
    }

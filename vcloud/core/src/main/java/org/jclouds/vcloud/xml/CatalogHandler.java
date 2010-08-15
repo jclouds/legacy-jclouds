@@ -43,13 +43,11 @@ public class CatalogHandler extends ParseSax.HandlerWithResult<Catalog> {
    private String description;
 
    public Catalog getResult() {
-      return new CatalogImpl(catalog.getId(), catalog.getName(), catalog.getLocation(),
-               description, contents);
+      return new CatalogImpl(catalog.getName(), catalog.getId(), description, contents);
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if (qName.equals("Catalog")) {
          catalog = Utils.newNamedResource(attributes);
       } else if (qName.equals("CatalogItem")) {

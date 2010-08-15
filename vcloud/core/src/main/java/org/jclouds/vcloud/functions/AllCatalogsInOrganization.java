@@ -64,7 +64,7 @@ public class AllCatalogsInOrganization implements Function<Organization, Iterabl
                @SuppressWarnings("unchecked")
                @Override
                public Future<Catalog> apply(NamedResource from) {
-                  return (Future<Catalog>) aclient.findCatalogInOrgNamed(org.getName(), from.getName());
+                  return (Future<Catalog>) aclient.getCatalog(from.getId());
                }
 
             }, executor, null, logger, "catalogs in " + org.getName());

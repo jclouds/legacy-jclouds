@@ -53,8 +53,7 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public VAppHandler(VirtualSystemHandler systemHandler,
-            ResourceAllocationHandler allocationHandler) {
+   public VAppHandler(VirtualSystemHandler systemHandler, ResourceAllocationHandler allocationHandler) {
       this.systemHandler = systemHandler;
       this.allocationHandler = allocationHandler;
    }
@@ -68,30 +67,26 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
    protected boolean inOs;
    protected String networkName;
    protected String name;
-   protected String id;
    protected URI location;
    protected Long size;
    protected NamedResource vDC;
 
    public VApp getResult() {
-      return new VAppImpl(id, name, location, status, size, vDC, networkToAddresses,
-               operatingSystemDescription, system, allocations);
+      return new VAppImpl(name, location, status, size, vDC, networkToAddresses, operatingSystemDescription, system,
+            allocations);
    }
 
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if (qName.equals("VApp")) {
          NamedResource resource = Utils.newNamedResource(attributes);
          name = resource.getName();
-         id = resource.getId();
-         location = resource.getLocation();
+         location = resource.getId();
          status = VAppStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
          if (attributes.getIndex("size") != -1)
             size = new Long(attributes.getValue(attributes.getIndex("size")));
       } else if (qName.equals("Link")) { // type should never be missing
          if (attributes.getIndex("type") != -1
-                  && attributes.getValue(attributes.getIndex("type")).equals(
-                           VCloudMediaType.VDC_XML)) {
+               && attributes.getValue(attributes.getIndex("type")).equals(VCloudMediaType.VDC_XML)) {
             vDC = Utils.newNamedResource(attributes);
          }
       } else if (qName.equals("OperatingSystemSection")) {

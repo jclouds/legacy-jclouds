@@ -72,24 +72,21 @@ public class TerremarkCatalogItemHandlerTest extends BaseHandlerTest {
       assertEquals(
             result,
             new TerremarkCatalogItemImpl(
-                  "37-159",
                   "CentOS 5.3 (32-bit)",
                   URI.create("https://services.vCloudexpress.terremark.com/api/v0.8a-13ext1.6/catalogItem/37-159"),
                   null,
                   new NamedResourceImpl(
-                        "compute",
                         "Compute Options",
                         "application/vnd.tmrk.vcloudExpress.vappComputeOptionParameters+xml",
                         URI
                               .create("https://services.vCloudexpress.terremark.com/api/v0.8a-ext1.6/extensions/template/37-159/options/compute")),
                   new NamedResourceImpl(
-                        "customization",
                         "Customization Options",
                         "application/vnd.tmrk.vcloudExpress.vappCustomizationParameters+xml",
                         URI
                               .create("https://services.vCloudexpress.terremark.com/api/v0.8a-ext1.6/extensions/template/37-159/options/customization")),
-                  new NamedResourceImpl("37", "CentOS 5.3 (32-bit)", "application/vnd.vmware.vCloud.vAppTemplate+xml",
-                        URI.create("https://services.vCloudexpress.terremark.com/api/v0.8a-ext1.6/vappTemplate/37")),
+                  new NamedResourceImpl("CentOS 5.3 (32-bit)", "application/vnd.vmware.vCloud.vAppTemplate+xml", URI
+                        .create("https://services.vCloudexpress.terremark.com/api/v0.8a-ext1.6/vappTemplate/37")),
                   ImmutableMap.<String, String> of("LicensingCost", "0")));
    }
 }

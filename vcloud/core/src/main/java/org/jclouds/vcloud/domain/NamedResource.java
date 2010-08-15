@@ -33,17 +33,10 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(NamedResourceImpl.class)
 public interface NamedResource extends Comparable<NamedResource> {
-
-   /**
-    * name is not a safe means to identify a resource. Please use name or
-    * location
-    */
-   @Deprecated
-   String getId();
+   URI getId();
 
    String getName();
 
    String getType();
 
-   URI getLocation();
 }

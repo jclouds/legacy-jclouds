@@ -78,8 +78,9 @@ public class ParseVAppTemplatesInVDCToSizeProvider implements Provider<Set<? ext
    public Set<? extends Size> get() {
       final Set<Size> sizes = Sets.newHashSet();
       logger.debug(">> providing vAppTemplates");
-      for (final NamedResource vDC : client.getDefaultOrganization().getVDCs().values()) {
-         VDC vdc = client.getVDC(vDC.getLocation());
+      // TODO all orgs!
+      for (final NamedResource vDC : client.findOrganizationNamed(null).getVDCs().values()) {
+         VDC vdc = client.getVDC(vDC.getId());
          addSizesFromVAppTemplatesInVDC(vdc, sizes);
       }
       return sizes;
@@ -98,9 +99,9 @@ public class ParseVAppTemplatesInVDCToSizeProvider implements Provider<Set<? ext
                   ram *= 1024;
                int disk = Integer.parseInt(matcher.group(3));
                String name = resource.getName().split(" ")[1];
-               String id = vdc.getId() + "/" + resource.getId();
-               sizes.add(new SizeImpl(resource.getId(), name, id, location, null, ImmutableMap.<String, String> of(),
-                     cores, ram, disk, ImagePredicates.idEquals(id)));
+               String id = resource.getId().toASCIIString();
+               sizes.add(new SizeImpl(id, name, id, location, null, ImmutableMap.<String, String> of(), cores, ram,
+                     disk, ImagePredicates.idEquals(id)));
             } catch (NoSuchElementException e) {
                logger.debug("<< didn't match at all(%s)", resource);
             }

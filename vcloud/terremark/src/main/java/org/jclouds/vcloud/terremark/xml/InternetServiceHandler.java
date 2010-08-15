@@ -41,8 +41,6 @@ public class InternetServiceHandler extends HandlerWithResult<InternetService> {
    private StringBuilder currentText = new StringBuilder();
 
    private boolean inPublicIpAddress;
-   private int addressId;
-   private int id;
    private URI location;
    private URI addressLocation;
    private String serviceName;
@@ -61,25 +59,18 @@ public class InternetServiceHandler extends HandlerWithResult<InternetService> {
 
    @Override
    public InternetService getResult() {
-      return new InternetService(id, serviceName, location, publicIpAddress, port, protocol,
-               enabled, timeout, description);
+      return new InternetService(serviceName, location, publicIpAddress, port, protocol, enabled, timeout, description);
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if (qName.equals("PublicIpAddress")) {
          inPublicIpAddress = true;
       }
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("Id")) {
-         if (inPublicIpAddress)
-            addressId = Integer.parseInt(currentOrNull());
-         else
-            id = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("Href") && currentOrNull() != null) {
+      if (qName.equals("Href") && currentOrNull() != null) {
          if (inPublicIpAddress)
             addressLocation = URI.create(currentOrNull());
          else
@@ -90,8 +81,7 @@ public class InternetServiceHandler extends HandlerWithResult<InternetService> {
          else
             serviceName = currentOrNull();
       } else if (qName.equals("PublicIpAddress")) {
-         publicIpAddress = new PublicIpAddress(addressId, address, addressLocation);
-         addressId = -1;
+         publicIpAddress = new PublicIpAddress(address, addressLocation);
          address = null;
          addressLocation = null;
          inPublicIpAddress = false;

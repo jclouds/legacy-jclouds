@@ -67,9 +67,7 @@ public class OrgNameAndCatalogNameToEndpoint implements Function<Object, URI> {
 
       try {
          Map<String, NamedResource> catalogs = checkNotNull(orgMap.get().get(org)).getCatalogs();
-
-         return catalog == null ? Iterables.getLast(catalogs.values()).getLocation() : catalogs.get(catalog)
-               .getLocation();
+         return catalog == null ? Iterables.getLast(catalogs.values()).getId() : catalogs.get(catalog).getId();
       } catch (NullPointerException e) {
          throw new NoSuchElementException(org + "/" + catalog + " not found in " + orgMap.get());
       }

@@ -29,7 +29,6 @@ import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
-import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -42,19 +41,11 @@ import com.google.common.collect.ImmutableMap;
 @Test(groups = "unit", testName = "vcloud.OrgListHandlerTest")
 public class OrgListHandlerTest extends BaseHandlerTest {
 
-   @BeforeTest
-   @Override
-   protected void setUpInjector() {
-      super.setUpInjector();
-   }
-
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/orglist.xml");
 
-      Map<String, NamedResource> result = factory.create(injector.getInstance(OrgListHandler.class))
-               .parse(is);
-      assertEquals(result, ImmutableMap.of("adrian@jclouds.org", new NamedResourceImpl("48",
-               "adrian@jclouds.org", VCloudMediaType.ORG_XML, URI
-                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
+      Map<String, NamedResource> result = factory.create(injector.getInstance(OrgListHandler.class)).parse(is);
+      assertEquals(result, ImmutableMap.of("adrian@jclouds.org", new NamedResourceImpl("adrian@jclouds.org",
+            VCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
    }
 }

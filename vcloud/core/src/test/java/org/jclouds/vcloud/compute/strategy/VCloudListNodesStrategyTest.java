@@ -42,33 +42,25 @@ import com.google.common.collect.ListMultimap;
 public class VCloudListNodesStrategyTest {
    @SuppressWarnings("unused")
    private VApp newVApp() throws UnknownHostException {
-      ListMultimap<String, String> networkToAddresses = ImmutableListMultimap
-            .<String, String> of("Network 1", "127.0.0.1");
+      ListMultimap<String, String> networkToAddresses = ImmutableListMultimap.<String, String> of("Network 1",
+            "127.0.0.1");
 
-      VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family",
-            "SimpleVM", "vmx-07");
+      VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family", "SimpleVM", "vmx-07");
 
-      SortedSet<ResourceAllocation> resourceAllocations = ImmutableSortedSet
-            .<ResourceAllocation> naturalOrder().add(
-                  new ResourceAllocation(1, "1 virtual CPU(s)",
-                        "Number of Virtual CPUs", ResourceType.PROCESSOR, null,
-                        null, null, null, null, null, 1, "hertz * 10^6"),
-                  new ResourceAllocation(2, "512MB of memory", "Memory Size",
-                        ResourceType.MEMORY, null, null, null, null, null,
-                        null, 512, "byte * 2^20")).add(
+      SortedSet<ResourceAllocation> resourceAllocations = ImmutableSortedSet.<ResourceAllocation> naturalOrder().add(
+            new ResourceAllocation(1, "1 virtual CPU(s)", "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null,
+                  null, null, null, null, 1, "hertz * 10^6"),
+            new ResourceAllocation(2, "512MB of memory", "Memory Size", ResourceType.MEMORY, null, null, null, null,
+                  null, null, 512, "byte * 2^20")).add(
 
-                  new ResourceAllocation(3, "SCSI Controller 0",
-                        "SCSI Controller", ResourceType.SCSI_CONTROLLER,
-                        "lsilogic", null, 0, null, null, null, 1, null)).add(
+            new ResourceAllocation(3, "SCSI Controller 0", "SCSI Controller", ResourceType.SCSI_CONTROLLER, "lsilogic",
+                  null, 0, null, null, null, 1, null)).add(
 
-                  new ResourceAllocation(9, "Hard Disk 1", null,
-                        ResourceType.DISK_DRIVE, null, "20971520", null, 0, 3,
-                        null, 20971520, "byte * 2^20")).build();
+            new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE, null, "20971520", null, 0, 3, null,
+                  20971520, "byte * 2^20")).build();
 
-      return new VAppImpl("10", "10", URI
-            .create("https://vcloud.safesecureweb.com/api/v0.8/vapp/10"),
-            VAppStatus.OFF, new Long(20971520), null, networkToAddresses, null,
-            system, resourceAllocations);
+      return new VAppImpl("10", URI.create("https://vcloud.safesecureweb.com/api/v0.8/vapp/10"), VAppStatus.OFF,
+            new Long(20971520), null, networkToAddresses, null, system, resourceAllocations);
    }
 
    // TODO rewrite this test

@@ -24,13 +24,13 @@ import java.util.Set;
 import org.jclouds.vcloud.domain.internal.VAppImpl;
 
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Multimap;
 import com.google.inject.ImplementedBy;
 
 /**
- * A virtual application (vApp) is a software solution, packaged in OVF containing one or more
- * virtual machines. A vApp can be authored by Developers at ISVs and VARs or by IT Administrators
- * in Enterprises and Service Providers.
+ * A virtual application (vApp) is a software solution, packaged in OVF
+ * containing one or more virtual machines. A vApp can be authored by Developers
+ * at ISVs and VARs or by IT Administrators in Enterprises and Service
+ * Providers.
  * 
  * @author Adrian Cole
  */
@@ -49,7 +49,5 @@ public interface VApp extends NamedResource {
    VirtualSystem getSystem();
 
    Set<ResourceAllocation> getResourceAllocations();
-
-   Multimap<ResourceType, ResourceAllocation> getResourceAllocationByType();
 
 }

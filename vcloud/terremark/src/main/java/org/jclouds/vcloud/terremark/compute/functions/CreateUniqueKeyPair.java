@@ -21,6 +21,8 @@ package org.jclouds.vcloud.terremark.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -50,8 +52,7 @@ public class CreateUniqueKeyPair implements Function<OrgAndName, KeyPair> {
    protected Supplier<String> randomSuffix;
 
    @Inject
-   CreateUniqueKeyPair(TerremarkVCloudExpressClient trmkClient,
-         Supplier<String> randomSuffix) {
+   CreateUniqueKeyPair(TerremarkVCloudExpressClient trmkClient, Supplier<String> randomSuffix) {
       this.trmkClient = trmkClient;
       this.randomSuffix = randomSuffix;
    }
@@ -61,23 +62,19 @@ public class CreateUniqueKeyPair implements Function<OrgAndName, KeyPair> {
       return createNewKeyPairInRegion(from.getOrg(), from.getName());
    }
 
-   private KeyPair createNewKeyPairInRegion(String org, String keyPairName) {
+   private KeyPair createNewKeyPairInRegion(URI org, String keyPairName) {
       checkNotNull(org, "org");
       checkNotNull(keyPairName, "keyPairName");
       logger.debug(">> creating keyPair org(%s) name(%s)", org, keyPairName);
       KeyPair keyPair = null;
       while (keyPair == null) {
          try {
-            keyPair = trmkClient.generateKeyPairInOrg(org,
-                  getNextName(keyPairName), false);
+            keyPair = trmkClient.generateKeyPairInOrg(org, getNextName(keyPairName), false);
             logger.debug("<< created keyPair(%s)", keyPair.getName());
          } catch (RuntimeException e) {
-            HttpResponseException ht = Utils.getFirstThrowableOfType(e,
-                  HttpResponseException.class);
-            if (ht == null
-                  || ht.getContent() == null
-                  || ht.getContent().indexOf(
-                        "Security key with same name exists") == -1)
+            HttpResponseException ht = Utils.getFirstThrowableOfType(e, HttpResponseException.class);
+            if (ht == null || ht.getContent() == null
+                  || ht.getContent().indexOf("Security key with same name exists") == -1)
                throw e;
          }
       }

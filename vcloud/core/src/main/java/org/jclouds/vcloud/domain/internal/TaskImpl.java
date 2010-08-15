@@ -42,8 +42,7 @@ public class TaskImpl implements Task {
       private final String majorErrorCode;
       private final String minorErrorCode;
 
-      public ErrorImpl(String message, String majorErrorCode,
-            String minorErrorCode) {
+      public ErrorImpl(String message, String majorErrorCode, String minorErrorCode) {
          this.message = message;
          this.majorErrorCode = majorErrorCode;
          this.minorErrorCode = minorErrorCode;
@@ -65,11 +64,9 @@ public class TaskImpl implements Task {
       public int hashCode() {
          final int prime = 31;
          int result = 1;
-         result = prime * result
-               + ((majorErrorCode == null) ? 0 : majorErrorCode.hashCode());
+         result = prime * result + ((majorErrorCode == null) ? 0 : majorErrorCode.hashCode());
          result = prime * result + ((message == null) ? 0 : message.hashCode());
-         result = prime * result
-               + ((minorErrorCode == null) ? 0 : minorErrorCode.hashCode());
+         result = prime * result + ((minorErrorCode == null) ? 0 : minorErrorCode.hashCode());
          return result;
       }
 
@@ -102,13 +99,12 @@ public class TaskImpl implements Task {
 
       @Override
       public String toString() {
-         return "ErrorImpl [majorErrorCode=" + majorErrorCode + ", message="
-               + message + ", minorErrorCode=" + minorErrorCode + "]";
+         return "ErrorImpl [majorErrorCode=" + majorErrorCode + ", message=" + message + ", minorErrorCode="
+               + minorErrorCode + "]";
       }
    }
 
-   private final String id;
-   private final URI location;
+   private final URI id;
    private final TaskStatus status;
    private final Date startTime;
    @Nullable
@@ -121,11 +117,9 @@ public class TaskImpl implements Task {
    @Nullable
    private final Error error;
 
-   public TaskImpl(String id, URI location, TaskStatus status, Date startTime,
-         @Nullable Date endTime,@Nullable Date expiryTime, NamedResource owner,
-         @Nullable NamedResource result, Error error) {
+   public TaskImpl(URI id, TaskStatus status, Date startTime, @Nullable Date endTime, @Nullable Date expiryTime,
+         NamedResource owner, @Nullable NamedResource result, Error error) {
       this.id = checkNotNull(id, "id");
-      this.location = checkNotNull(location, "location");
       this.status = checkNotNull(status, "status");
       this.startTime = startTime;
       this.endTime = endTime;
@@ -135,38 +129,42 @@ public class TaskImpl implements Task {
       this.error = error;
    }
 
+   @Override
    public TaskStatus getStatus() {
       return status;
    }
 
+   @Override
    public Date getStartTime() {
       return startTime;
    }
 
+   @Override
    public NamedResource getOwner() {
       return owner;
    }
 
+   @Override
    public NamedResource getResult() {
       return result;
    }
 
+   @Override
    public Date getEndTime() {
       return endTime;
    }
 
+   @Override
    public int compareTo(Task o) {
-      return (this == o) ? 0 : getId().compareTo(o.getId());
+      return (this == o) ? 0 : getLocation().compareTo(o.getLocation());
    }
 
-   public String getId() {
+   @Override
+   public URI getLocation() {
       return id;
    }
 
-   public URI getLocation() {
-      return location;
-   }
-
+   @Override
    public Error getError() {
       return error;
    }
@@ -179,7 +177,6 @@ public class TaskImpl implements Task {
       result = prime * result + ((error == null) ? 0 : error.hashCode());
       result = prime * result + ((expiryTime == null) ? 0 : expiryTime.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((owner == null) ? 0 : owner.hashCode());
       result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
       result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
@@ -216,11 +213,6 @@ public class TaskImpl implements Task {
             return false;
       } else if (!id.equals(other.id))
          return false;
-      if (location == null) {
-         if (other.location != null)
-            return false;
-      } else if (!location.equals(other.location))
-         return false;
       if (owner == null) {
          if (other.owner != null)
             return false;
@@ -246,9 +238,8 @@ public class TaskImpl implements Task {
 
    @Override
    public String toString() {
-      return "TaskImpl [endTime=" + endTime + ", error=" + error + ", id=" + id
-            + ", location=" + location + ", owner=" + owner + ", result="
-            + result + ", startTime=" + startTime + ", status=" + status + "]";
+      return "TaskImpl [endTime=" + endTime + ", error=" + error + ", id=" + id + ", owner=" + owner
+            + ", result=" + result + ", startTime=" + startTime + ", status=" + status + "]";
    }
 
    public Date getExpiryTime() {

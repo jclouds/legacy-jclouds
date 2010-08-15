@@ -49,16 +49,15 @@ public class TasksListHandler extends ParseSax.HandlerWithResult<TasksList> {
    }
 
    public TasksList getResult() {
-      return new TasksListImpl(resource.getId(), resource.getLocation(), tasks);
+      return new TasksListImpl(resource.getId(), tasks);
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if (qName.equals("TasksList")) {
          resource = Utils.newNamedResource(attributes);
       } else if (qName.equals("Link") && attributes.getIndex("rel") != -1
-               && attributes.getValue(attributes.getIndex("rel")).equals("self")) {
+            && attributes.getValue(attributes.getIndex("rel")).equals("self")) {
          resource = Utils.newNamedResource(attributes);
       } else {
          taskHandler.startElement(uri, localName, qName, attributes);

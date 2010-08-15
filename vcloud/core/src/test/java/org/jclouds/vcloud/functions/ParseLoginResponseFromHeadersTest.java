@@ -51,34 +51,31 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
    @Test
    public void testApply() {
       HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
-               .getResourceAsStream("/orglist.xml")));
+            .getResourceAsStream("/orglist.xml")));
       response.getPayload().setContentType("Content-Type: application/xml; charset=utf-8");
       response.getPayload().setContentLength(307l);
 
-      response.getHeaders().put(HttpHeaders.SET_COOKIE,
-               "vcloud-token=9er4d061-4bff-48fa-84b1-5da7166764d2; path=/");
+      response.getHeaders().put(HttpHeaders.SET_COOKIE, "vcloud-token=9er4d061-4bff-48fa-84b1-5da7166764d2; path=/");
       VCloudSession reply = parser.apply(response);
       assertEquals(reply.getVCloudToken(), "9er4d061-4bff-48fa-84b1-5da7166764d2");
-      assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new NamedResourceImpl(
-               "48", "adrian@jclouds.org", VCloudMediaType.ORG_XML, URI
-                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
+      assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new NamedResourceImpl("adrian@jclouds.org",
+            VCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
 
    }
 
    @Test
    public void testApplyBlueLock() {
       HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
-               .getResourceAsStream("/orglist.xml")));
+            .getResourceAsStream("/orglist.xml")));
       response.getPayload().setContentType("Content-Type: application/xml; charset=utf-8");
       response.getPayload().setContentLength(307l);
 
       response.getHeaders().put(HttpHeaders.SET_COOKIE,
-               "vcloud-token=c9f232506df9b65d7b7d97b7499eddd7; Domain=.bluelock.com; Path=/");
+            "vcloud-token=c9f232506df9b65d7b7d97b7499eddd7; Domain=.bluelock.com; Path=/");
       VCloudSession reply = parser.apply(response);
       assertEquals(reply.getVCloudToken(), "c9f232506df9b65d7b7d97b7499eddd7");
-      assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new NamedResourceImpl(
-               "48", "adrian@jclouds.org", VCloudMediaType.ORG_XML, URI
-                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
+      assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new NamedResourceImpl("adrian@jclouds.org",
+            VCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
 
    }
 

@@ -17,17 +17,17 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.functions;
+package org.jclouds.vcloud.terremark.functions;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.endpoints.Org;
+import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.vcloud.endpoints.VDC;
+import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -37,21 +37,23 @@ import com.google.common.base.Supplier;
  * @author Adrian Cole
  */
 @Singleton
-public class OrgNameToEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, NamedResource>> orgNameToEndpoint;
-   private final URI defaultUri;
+public class VDCURIToInternetServicesEndpoint implements Function<Object, URI> {
+   private final Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>> orgVDCMap;
+   private final URI defaultVDC;
 
    @Inject
-   public OrgNameToEndpoint(@Org Supplier<Map<String, NamedResource>> orgNameToEndpoint, @Org URI defaultUri) {
-      this.orgNameToEndpoint = orgNameToEndpoint;
-      this.defaultUri = defaultUri;
+   public VDCURIToInternetServicesEndpoint(Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>> orgVDCMap,
+         @VDC URI defaultVDC) {
+      this.orgVDCMap = orgVDCMap;
+      this.defaultVDC = defaultVDC;
    }
 
    public URI apply(Object from) {
       try {
-         return from == null ? defaultUri : orgNameToEndpoint.get().get(from).getId();
+         return TerremarkVDC.class.cast(orgVDCMap.get().get(from == null ? defaultVDC : from)).getInternetServices()
+               .getId();
       } catch (NullPointerException e) {
-         throw new NoSuchElementException("org " + from + " not found in " + orgNameToEndpoint.get().keySet());
+         throw new ResourceNotFoundException("vdc " + from + " not found in " + orgVDCMap.get());
       }
    }
 

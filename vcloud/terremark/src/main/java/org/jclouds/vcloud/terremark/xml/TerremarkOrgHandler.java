@@ -37,8 +37,7 @@ public class TerremarkOrgHandler extends OrgHandler {
    private NamedResource keysList;
 
    public TerremarkOrganization getResult() {
-      return new TerremarkOrganizationImpl(org.getId(), org.getName(), org.getLocation(), catalogs, vdcs, tasksLists,
-            keysList);
+      return new TerremarkOrganizationImpl(org.getName(), org.getId(), catalogs, vdcs, tasksLists, keysList);
    }
 
    @Override

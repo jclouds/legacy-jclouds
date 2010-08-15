@@ -19,15 +19,17 @@
 
 package org.jclouds.vcloud.terremark.compute.domain;
 
+import java.net.URI;
+
 /**
  * 
  * @author Adrian Cole
  */
 public class OrgAndName {
-   protected final String org;
+   protected final URI org;
    protected final String name;
 
-   public OrgAndName(String org, String name) {
+   public OrgAndName(URI org, String name) {
       this.org = org;
       this.name = name;
    }
@@ -63,7 +65,7 @@ public class OrgAndName {
       return true;
    }
 
-   public String getOrg() {
+   public URI getOrg() {
       return org;
    }
 

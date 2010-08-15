@@ -51,11 +51,9 @@ public class NetworkImpl extends NamedResourceImpl implements Network {
    private final Set<NatRule> natRules = Sets.newHashSet();
    private final Set<FirewallRule> firewallRules = Sets.newHashSet();
 
-   public NetworkImpl(String id, String name, URI location, String description,
-         Set<String> dnsServers, String gateway, String netmask,
-         Set<String> fenceModes, Boolean dhcp, Set<NatRule> natRules,
-         Set<FirewallRule> firewallRules) {
-      super(id, name, VCloudMediaType.NETWORK_XML, location);
+   public NetworkImpl(String name, URI id, String description, Set<String> dnsServers, String gateway,
+         String netmask, Set<String> fenceModes, Boolean dhcp, Set<NatRule> natRules, Set<FirewallRule> firewallRules) {
+      super(name, VCloudMediaType.NETWORK_XML, id);
       this.description = description;
       this.dnsServers.addAll(dnsServers);
       this.gateway = gateway;
@@ -131,15 +129,11 @@ public class NetworkImpl extends NamedResourceImpl implements Network {
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result
-            + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((dhcp == null) ? 0 : dhcp.hashCode());
-      result = prime * result
-            + ((dnsServers == null) ? 0 : dnsServers.hashCode());
-      result = prime * result
-            + ((fenceModes == null) ? 0 : fenceModes.hashCode());
-      result = prime * result
-            + ((firewallRules == null) ? 0 : firewallRules.hashCode());
+      result = prime * result + ((dnsServers == null) ? 0 : dnsServers.hashCode());
+      result = prime * result + ((fenceModes == null) ? 0 : fenceModes.hashCode());
+      result = prime * result + ((firewallRules == null) ? 0 : firewallRules.hashCode());
       result = prime * result + ((gateway == null) ? 0 : gateway.hashCode());
       result = prime * result + ((natRules == null) ? 0 : natRules.hashCode());
       result = prime * result + ((netmask == null) ? 0 : netmask.hashCode());
@@ -200,11 +194,9 @@ public class NetworkImpl extends NamedResourceImpl implements Network {
 
    @Override
    public String toString() {
-      return "NetworkImpl [id=" + getId() + ", location=" + getLocation()
-            + ", name=" + getName() + ", type=" + getType() + ", description="
-            + description + ", dhcp=" + dhcp + ", dnsServers=" + dnsServers
-            + ", fenceModes=" + fenceModes + ", firewallRules=" + firewallRules
-            + ", gateway=" + gateway + ", natRules=" + natRules + ", netmask="
+      return "NetworkImpl [id=" + getId() + ", name=" + getName() + ", type=" + getType() + ", description="
+            + description + ", dhcp=" + dhcp + ", dnsServers=" + dnsServers + ", fenceModes=" + fenceModes
+            + ", firewallRules=" + firewallRules + ", gateway=" + gateway + ", natRules=" + natRules + ", netmask="
             + netmask + "]";
    }
 

@@ -36,7 +36,6 @@ public class KeyPairHandler extends HandlerWithResult<KeyPair> {
    protected Logger logger = Logger.NULL;
    private StringBuilder currentText = new StringBuilder();
 
-   private int id;
    private URI location;
    private String name;
    private boolean isDefault;
@@ -50,13 +49,11 @@ public class KeyPairHandler extends HandlerWithResult<KeyPair> {
 
    @Override
    public KeyPair getResult() {
-      return new KeyPair(id, location, name, isDefault, privateKey, fingerPrint);
+      return new KeyPair(location, name, isDefault, privateKey, fingerPrint);
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("Id")) {
-         id = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("Href") && currentOrNull() != null) {
+      if (qName.equals("Href") && currentOrNull() != null) {
          location = URI.create(currentOrNull());
       } else if (qName.equals("Name")) {
          this.name = currentOrNull();

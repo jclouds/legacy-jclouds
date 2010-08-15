@@ -19,11 +19,13 @@
 
 package org.jclouds.vcloud.terremark.compute.strategy;
 
+import java.net.URI;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.vcloud.terremark.compute.domain.KeyPairCredentials;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
 import org.jclouds.vcloud.terremark.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.vcloud.terremark.compute.options.TerremarkVCloudTemplateOptions;
@@ -38,28 +40,28 @@ import com.google.common.annotations.VisibleForTesting;
  */
 @Singleton
 public class CreateNewKeyPairUnlessUserSpecifiedOtherwise {
-   final ConcurrentMap<OrgAndName, KeyPair> credentialsMap;
+   final ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap;
    @VisibleForTesting
    final CreateUniqueKeyPair createUniqueKeyPair;
 
    @Inject
-   CreateNewKeyPairUnlessUserSpecifiedOtherwise(ConcurrentMap<OrgAndName, KeyPair> credentialsMap,
-            CreateUniqueKeyPair createUniqueKeyPair) {
+   CreateNewKeyPairUnlessUserSpecifiedOtherwise(ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap,
+         CreateUniqueKeyPair createUniqueKeyPair) {
       this.credentialsMap = credentialsMap;
       this.createUniqueKeyPair = createUniqueKeyPair;
    }
 
    @VisibleForTesting
-   public void execute(String org, String tag, TerremarkVCloudTemplateOptions options) {
+   public void execute(URI org, String tag, String identity, TerremarkVCloudTemplateOptions options) {
       String sshKeyFingerprint = options.getSshKeyFingerprint();
       boolean shouldAutomaticallyCreateKeyPair = options.shouldAutomaticallyCreateKeyPair();
       if (sshKeyFingerprint == null && shouldAutomaticallyCreateKeyPair) {
          OrgAndName orgAndName = new OrgAndName(org, tag);
          if (credentialsMap.containsKey(orgAndName)) {
-            options.sshKeyFingerprint(credentialsMap.get(orgAndName).getFingerPrint());
+            options.sshKeyFingerprint(credentialsMap.get(orgAndName).getKeyPair().getFingerPrint());
          } else {
             KeyPair keyPair = createUniqueKeyPair.apply(orgAndName);
-            credentialsMap.put(orgAndName, keyPair);
+            credentialsMap.put(orgAndName, new KeyPairCredentials(identity, keyPair));
             options.sshKeyFingerprint(keyPair.getFingerPrint());
          }
       }

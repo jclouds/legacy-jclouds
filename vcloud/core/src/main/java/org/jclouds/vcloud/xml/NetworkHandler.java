@@ -71,14 +71,12 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
    private String sourcePort;
 
    public Network getResult() {
-      return new NetworkImpl(network.getId(), network.getName(), network
-            .getLocation(), description, dnsServers, gateway, netmask,
+      return new NetworkImpl(network.getName(), network.getId(), description, dnsServers, gateway, netmask,
             fenceModes, dhcp, natRules, firewallRules);
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName,
-         Attributes attributes) throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if (qName.equals("Network")) {
          network = Utils.newNamedResource(attributes);
       }
@@ -98,8 +96,7 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
       } else if (qName.equals("Dhcp")) {
          dhcp = new Boolean(currentOrNull());
       } else if (qName.equals("NatRule")) {
-         natRules.add(new NatRule(externalIP, externalPort, internalIP,
-               internalPort));
+         natRules.add(new NatRule(externalIP, externalPort, internalIP, internalPort));
          externalIP = null;
          externalPort = null;
          internalIP = null;
@@ -113,8 +110,7 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
       } else if (qName.equals("InternalPort")) {
          internalPort = Integer.parseInt(currentOrNull());
       } else if (qName.equals("FirewallRule")) {
-         firewallRules.add(new FirewallRule(policy, protocol, sourceIP,
-               sourcePort));
+         firewallRules.add(new FirewallRule(policy, protocol, sourceIP, sourcePort));
          policy = null;
          protocol = null;
          sourceIP = null;

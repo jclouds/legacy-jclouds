@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.terremark;
 
+import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
@@ -42,5 +43,5 @@ public interface TerremarkECloudClient extends TerremarkVCloudClient {
     * @param vDCId
     * @return
     */
-   PublicIpAddress activatePublicIpInVDC(String vDCId);
+   PublicIpAddress activatePublicIpInVDC(URI vDCId);
 }

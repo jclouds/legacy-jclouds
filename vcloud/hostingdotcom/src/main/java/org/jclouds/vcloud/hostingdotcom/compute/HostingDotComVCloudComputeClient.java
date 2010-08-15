@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.hostingdotcom.compute;
 
+import java.net.URI;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -42,7 +43,7 @@ import com.google.common.collect.ImmutableMap;
 public class HostingDotComVCloudComputeClient extends BaseVCloudComputeClient {
 
    @Inject
-   protected HostingDotComVCloudComputeClient(VCloudClient client, Predicate<String> successTester,
+   protected HostingDotComVCloudComputeClient(VCloudClient client, Predicate<URI> successTester,
          Map<VAppStatus, NodeState> vAppStatusToNodeState) {
       super(client, successTester, vAppStatusToNodeState);
    }
@@ -50,8 +51,8 @@ public class HostingDotComVCloudComputeClient extends BaseVCloudComputeClient {
    @Override
    protected Map<String, String> parseResponse(VAppTemplate template, VApp vAppResponse) {
       HostingDotComVApp hVApp = HostingDotComVApp.class.cast(vAppResponse);
-      return ImmutableMap.<String, String> of("id", vAppResponse.getId(), "username", hVApp.getUsername(), "password",
-            hVApp.getPassword());
+      return ImmutableMap.<String, String> of("id", vAppResponse.getId().toASCIIString(), "username", hVApp
+            .getUsername(), "password", hVApp.getPassword());
    }
 
 }

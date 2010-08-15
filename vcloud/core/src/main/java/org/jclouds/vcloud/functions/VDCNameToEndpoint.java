@@ -46,7 +46,7 @@ public class VDCNameToEndpoint implements Function<Object, URI> {
 
    public URI apply(Object from) {
       try {
-         return from == null ? defaultVDC : org.getVDCs().get(from).getLocation();
+         return from == null ? defaultVDC : org.getVDCs().get(from).getId();
       } catch (NullPointerException e) {
          throw new IllegalArgumentException("vdc name: " + from + " not in " + org.getVDCs());
       }

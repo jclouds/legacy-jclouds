@@ -49,21 +49,19 @@ public class CleanupOrphanKeys {
    final ListNodesStrategy listNodes;
 
    @Inject
-   CleanupOrphanKeys(Function<NodeMetadata, OrgAndName> nodeToOrgAndName,
-         DeleteKeyPair deleteKeyPair, ListNodesStrategy listNodes) {
+   CleanupOrphanKeys(Function<NodeMetadata, OrgAndName> nodeToOrgAndName, DeleteKeyPair deleteKeyPair,
+         ListNodesStrategy listNodes) {
       this.nodeToOrgAndName = nodeToOrgAndName;
       this.deleteKeyPair = deleteKeyPair;
       this.listNodes = listNodes;
    }
 
    public void execute(Iterable<? extends NodeMetadata> deadOnes) {
-      Iterable<OrgAndName> orgTags = filter(transform(deadOnes,
-            nodeToOrgAndName), notNull());
+      Iterable<OrgAndName> orgTags = filter(transform(deadOnes, nodeToOrgAndName), notNull());
       for (OrgAndName orgTag : orgTags) {
-         Iterable<? extends NodeMetadata> nodesInOrg = listNodes
-               .listDetailsOnNodesMatching(parentLocationId(orgTag.getOrg()));
-         Iterable<? extends NodeMetadata> nodesWithTag = filter(nodesInOrg,
-               withTag(orgTag.getName()));
+         Iterable<? extends NodeMetadata> nodesInOrg = listNodes.listDetailsOnNodesMatching(parentLocationId(orgTag
+               .getOrg().toASCIIString()));
+         Iterable<? extends NodeMetadata> nodesWithTag = filter(nodesInOrg, withTag(orgTag.getName()));
          if (size(nodesWithTag) == 0 || all(nodesWithTag, TERMINATED))
             deleteKeyPair.execute(orgTag);
       }

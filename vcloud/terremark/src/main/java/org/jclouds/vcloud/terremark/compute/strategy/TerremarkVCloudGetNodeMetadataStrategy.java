@@ -22,6 +22,7 @@ package org.jclouds.vcloud.terremark.compute.strategy;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.installNewCredentials;
 
+import java.net.URI;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Resource;
@@ -33,10 +34,11 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
+import org.jclouds.vcloud.compute.domain.VCloudLocation;
 import org.jclouds.vcloud.compute.functions.VCloudGetNodeMetadata;
 import org.jclouds.vcloud.compute.strategy.VCloudGetNodeMetadataStrategy;
+import org.jclouds.vcloud.terremark.compute.domain.KeyPairCredentials;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
-import org.jclouds.vcloud.terremark.domain.KeyPair;
 
 /**
  * @author Adrian Cole
@@ -47,11 +49,11 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudGetNodeMetadat
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final ConcurrentMap<OrgAndName, KeyPair> credentialsMap;
+   private final ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap;
 
    @Inject
    protected TerremarkVCloudGetNodeMetadataStrategy(VCloudGetNodeMetadata getNodeMetadata,
-            ConcurrentMap<OrgAndName, KeyPair> credentialsMap) {
+         ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
       super(getNodeMetadata);
       this.credentialsMap = credentialsMap;
    }
@@ -72,29 +74,16 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudGetNodeMetadat
    NodeMetadata installCredentialsFromCache(NodeMetadata node) {
       OrgAndName orgAndName = getOrgAndNameFromNode(node);
       if (credentialsMap.containsKey(orgAndName)) {
-         String identity = getLoginAccountForNode(node);
-         if (identity != null) {
-            String privateKey = credentialsMap.get(orgAndName).getPrivateKey();
-            Credentials creds = new Credentials(identity, privateKey);
-            node = installNewCredentials(node, creds);
-         }
+         Credentials creds = credentialsMap.get(orgAndName);
+         node = installNewCredentials(node, creds);
       }
       return node;
    }
 
    OrgAndName getOrgAndNameFromNode(NodeMetadata node) {
-      String orgId = node.getLocation().getParent().getId();
+      URI orgId = VCloudLocation.class.cast(node.getLocation().getParent()).getResource().getId();
       OrgAndName orgAndName = new OrgAndName(orgId, node.getTag());
       return orgAndName;
-   }
-
-   String getLoginAccountForNode(NodeMetadata node) {
-      String identity = null;
-      if (node.getCredentials() != null)
-         identity = node.getCredentials().identity;
-      else if (node.getImage() != null && node.getImage().getDefaultCredentials() != null)
-         identity = node.getImage().getDefaultCredentials().identity;
-      return identity;
    }
 
    NodeMetadata installDefaultCredentialsFromImage(NodeMetadata node) {

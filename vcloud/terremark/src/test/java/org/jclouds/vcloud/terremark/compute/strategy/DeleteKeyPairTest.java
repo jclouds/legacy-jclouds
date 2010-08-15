@@ -28,6 +28,7 @@ import java.net.URI;
 import java.util.concurrent.ConcurrentMap;
 
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressClient;
+import org.jclouds.vcloud.terremark.compute.domain.KeyPairCredentials;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
 import org.jclouds.vcloud.terremark.domain.KeyPair;
 import org.testng.annotations.Test;
@@ -41,8 +42,10 @@ import com.google.common.collect.ImmutableSet;
 public class DeleteKeyPairTest {
 
    public void testWhenNoKeyPairsInOrg() {
+      URI org = URI.create("org1");
+
       // setup constants
-      OrgAndName orgTag = new OrgAndName("org1", "tag");
+      OrgAndName orgTag = new OrgAndName(org, "tag");
 
       // create mocks
       DeleteKeyPair strategy = setupStrategy();
@@ -61,8 +64,10 @@ public class DeleteKeyPairTest {
    }
 
    public void testWhenKeyPairMatches() {
+      URI org = URI.create("org1");
+
       // setup constants
-      OrgAndName orgTag = new OrgAndName("org1", "tag");
+      OrgAndName orgTag = new OrgAndName(org, "tag");
 
       // create mocks
       DeleteKeyPair strategy = setupStrategy();
@@ -71,7 +76,7 @@ public class DeleteKeyPairTest {
       // setup expectations
       expect(strategy.terremarkClient.listKeyPairsInOrg(orgTag.getOrg())).andReturn(ImmutableSet.<KeyPair> of(keyPair));
       expect(keyPair.getName()).andReturn("jclouds#" + orgTag.getName() + "-123").atLeastOnce();
-      expect(keyPair.getLocation()).andReturn(URI.create("1245"));
+      expect(keyPair.getId()).andReturn(URI.create("1245"));
       strategy.terremarkClient.deleteKeyPair(URI.create("1245"));
       expect(strategy.credentialsMap.remove(orgTag)).andReturn(null);
 
@@ -88,8 +93,10 @@ public class DeleteKeyPairTest {
    }
 
    public void testWhenKeyPairDoesntMatch() {
+      URI org = URI.create("org1");
+
       // setup constants
-      OrgAndName orgTag = new OrgAndName("org1", "tag");
+      OrgAndName orgTag = new OrgAndName(org, "tag");
 
       // create mocks
       DeleteKeyPair strategy = setupStrategy();
@@ -118,7 +125,7 @@ public class DeleteKeyPairTest {
 
    @SuppressWarnings("unchecked")
    private DeleteKeyPair setupStrategy() {
-      ConcurrentMap<OrgAndName, KeyPair> credentialsMap = createMock(ConcurrentMap.class);
+      ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap = createMock(ConcurrentMap.class);
       TerremarkVCloudExpressClient terremarkClient = createMock(TerremarkVCloudExpressClient.class);
 
       return new DeleteKeyPair(terremarkClient, credentialsMap);

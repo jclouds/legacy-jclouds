@@ -19,15 +19,19 @@
 
 package org.jclouds.vcloud.compute.functions;
 
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.transform;
+
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.vcloud.domain.Organization;
-import org.jclouds.vcloud.functions.AllVDCsInOrganization;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
+import com.google.common.base.Supplier;
 
 /**
  * @author Adrian Cole
@@ -35,18 +39,21 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class ImagesInOrganization implements Function<Organization, Iterable<? extends Image>> {
 
-   private final AllVDCsInOrganization allVDCsInOrganization;
+   private final Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> allVDCsInOrganization;
    private final ImagesInVDC imagesInVDC;
 
    @Inject
-   public ImagesInOrganization(AllVDCsInOrganization allVDCsInOrganization, ImagesInVDC imagesInVDC) {
+   public ImagesInOrganization(
+         Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> allVDCsInOrganization,
+         ImagesInVDC imagesInVDC) {
       this.allVDCsInOrganization = allVDCsInOrganization;
       this.imagesInVDC = imagesInVDC;
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    public Iterable<? extends Image> apply(Organization from) {
-      return Iterables.concat(Iterables.transform(allVDCsInOrganization.apply(from), imagesInVDC));
+      return concat(transform(concat(allVDCsInOrganization.get().get(from).values()), imagesInVDC));
    }
 
 }

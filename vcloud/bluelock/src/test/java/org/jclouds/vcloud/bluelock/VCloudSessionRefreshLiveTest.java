@@ -53,9 +53,9 @@ public class VCloudSessionRefreshLiveTest {
 
    @Test
    public void testSessionRefresh() throws Exception {
-      connection.getDefaultOrganization();
+      connection.findOrganizationNamed(null);
       Thread.sleep(timeOut * 1000);
-      connection.getDefaultOrganization();
+      connection.findOrganizationNamed(null);
    }
 
    @BeforeGroups(groups = { "live" })
@@ -66,8 +66,8 @@ public class VCloudSessionRefreshLiveTest {
       Properties props = new Properties();
       props.setProperty(PROPERTY_SESSION_INTERVAL, 40 + "");
 
-      context = new ComputeServiceContextFactory().createContext("bluelock", identity, credential,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), props);
+      context = new ComputeServiceContextFactory().createContext("bluelock", identity, credential, ImmutableSet
+            .<Module> of(new Log4JLoggingModule()), props);
 
       connection = VCloudClient.class.cast(context.getProviderSpecificContext().getApi());
    }

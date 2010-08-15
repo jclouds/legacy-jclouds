@@ -29,6 +29,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressClient;
+import org.jclouds.vcloud.terremark.compute.domain.KeyPairCredentials;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
 import org.jclouds.vcloud.terremark.domain.KeyPair;
 
@@ -44,10 +45,10 @@ public class DeleteKeyPair {
    protected Logger logger = Logger.NULL;
 
    final TerremarkVCloudExpressClient terremarkClient;
-   final ConcurrentMap<OrgAndName, KeyPair> credentialsMap;
+   final ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap;
 
    @Inject
-   DeleteKeyPair(TerremarkVCloudExpressClient terremarkClient, ConcurrentMap<OrgAndName, KeyPair> credentialsMap) {
+   DeleteKeyPair(TerremarkVCloudExpressClient terremarkClient, ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
       this.terremarkClient = terremarkClient;
       this.credentialsMap = credentialsMap;
    }
@@ -56,7 +57,7 @@ public class DeleteKeyPair {
       for (KeyPair keyPair : terremarkClient.listKeyPairsInOrg(orgTag.getOrg())) {
          if (keyPair.getName().matches("jclouds#" + orgTag.getName() + "-[0-9]+")) {
             logger.debug(">> deleting keyPair(%s)", keyPair.getName());
-            terremarkClient.deleteKeyPair(keyPair.getLocation());
+            terremarkClient.deleteKeyPair(keyPair.getId());
             // TODO: test this clear happens
             credentialsMap.remove(orgTag);
             logger.debug("<< deleted keyPair(%s)", keyPair.getName());

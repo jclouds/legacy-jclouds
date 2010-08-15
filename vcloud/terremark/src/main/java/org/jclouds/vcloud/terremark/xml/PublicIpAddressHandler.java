@@ -37,7 +37,6 @@ public class PublicIpAddressHandler extends HandlerWithResult<PublicIpAddress> {
 
    private StringBuilder currentText = new StringBuilder();
 
-   private int id;
    private String address;
 
    private URI location;
@@ -49,13 +48,11 @@ public class PublicIpAddressHandler extends HandlerWithResult<PublicIpAddress> {
 
    @Override
    public PublicIpAddress getResult() {
-      return new PublicIpAddress(id, address, location);
+      return new PublicIpAddress(address, location);
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("Id")) {
-         id = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("Href") && currentOrNull() != null) {
+      if (qName.equals("Href") && currentOrNull() != null) {
          location = URI.create(currentOrNull());
       } else if (qName.equals("Name")) {
          address = currentOrNull();

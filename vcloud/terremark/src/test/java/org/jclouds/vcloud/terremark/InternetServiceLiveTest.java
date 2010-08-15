@@ -21,6 +21,7 @@ package org.jclouds.vcloud.terremark;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -58,11 +59,11 @@ public class InternetServiceLiveTest {
 
    @Test
    public void testGetAllInternetServices() throws Exception {
-      tmClient.getAllInternetServicesInVDC(tmClient.getDefaultVDC().getId());
+      tmClient.getAllInternetServicesInVDC(tmClient.findVDCInOrgNamed(null, null).getId());
    }
 
    private void delete(Set<InternetService> set) {
-      Set<Integer> publicIps = Sets.newHashSet();
+      Set<URI> publicIps = Sets.newHashSet();
       for (InternetService service : set) {
          for (Node node : tmClient.getNodes(service.getId())) {
             tmClient.deleteNode(node.getId());
@@ -70,15 +71,15 @@ public class InternetServiceLiveTest {
          tmClient.deleteInternetService(service.getId());
          publicIps.add(service.getPublicIpAddress().getId());
       }
-      for (int id : publicIps) {
+      for (URI id : publicIps) {
          tmClient.deletePublicIp(id);
       }
    }
 
    @Test
    public void testGetAllPublicIps() throws Exception {
-      for (PublicIpAddress ip : tmClient.getPublicIpsAssociatedWithVDC(tmClient.getDefaultVDC()
-               .getId())) {
+      for (PublicIpAddress ip : tmClient.getPublicIpsAssociatedWithVDC(tmClient.findVDCInOrgNamed(null, null)
+            .getId())) {
          tmClient.getInternetServicesOnPublicIp(ip.getId());
       }
    }
@@ -98,7 +99,7 @@ public class InternetServiceLiveTest {
       if (endpoint != null && !"".equals(endpoint))
          props.setProperty("terremark.endpoint", endpoint);
       context = new RestContextFactory().createContext("trmk-vcloudexpress", identity, credential, ImmutableSet
-               .<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), props);
+            .<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), props);
 
       tmClient = context.getApi();
 
@@ -106,10 +107,10 @@ public class InternetServiceLiveTest {
 
    void print(Set<InternetService> set) {
       for (InternetService service : set) {
-         System.out.printf("%d (%s:%d%n)", service.getId(), service.getPublicIpAddress()
-                  .getAddress(), service.getPort());
+         System.out.printf("%d (%s:%d%n)", service.getName(), service.getPublicIpAddress().getAddress(), service
+               .getPort());
          for (Node node : tmClient.getNodes(service.getId())) {
-            System.out.printf("   %d (%s:%d%n)", node.getId(), node.getIpAddress(), node.getPort());
+            System.out.printf("   %d (%s:%d%n)", node.getName(), node.getIpAddress(), node.getPort());
          }
       }
    }

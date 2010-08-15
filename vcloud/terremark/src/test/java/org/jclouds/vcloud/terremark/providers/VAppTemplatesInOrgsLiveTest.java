@@ -66,7 +66,7 @@ public class VAppTemplatesInOrgsLiveTest {
       if (endpoint != null && !"".equals(endpoint))
          props.setProperty("terremark.endpoint", endpoint);
       Injector injector = new RestContextFactory().createContextBuilder("trmk-vcloudexpress", identity, credential,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), props).buildInjector();
+            ImmutableSet.<Module> of(new Log4JLoggingModule()), props).buildInjector();
 
       tmClient = injector.getInstance(TerremarkVCloudClient.class);
       allCatalogItemsInOrganization = injector.getInstance(AllCatalogItemsInOrganization.class);
@@ -79,8 +79,8 @@ public class VAppTemplatesInOrgsLiveTest {
 
       Set<? extends Image> images = parser.get();
 
-      Iterable<? extends CatalogItem> templates = allCatalogItemsInOrganization
-               .apply(tmClient.getDefaultOrganization());
+      Iterable<? extends CatalogItem> templates = allCatalogItemsInOrganization.apply(tmClient
+            .findOrganizationNamed(null));
 
       assertEquals(images.size(), Iterables.size(templates));
       assert images.size() > 0;

@@ -38,7 +38,7 @@ public class VCloudLocation extends LocationImpl {
 
    public VCloudLocation(NamedResource resource, Location parent) {
       super(checkNotNull(resource, "resource").getType().endsWith("org+xml") ? LocationScope.REGION
-            : LocationScope.ZONE, resource.getLocation().toASCIIString(), resource.getName(), parent);
+            : LocationScope.ZONE, resource.getId().toASCIIString(), resource.getName(), parent);
       this.resource = resource;
    }
 

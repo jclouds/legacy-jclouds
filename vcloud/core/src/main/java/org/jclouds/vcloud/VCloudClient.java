@@ -20,7 +20,10 @@
 package org.jclouds.vcloud;
 
 import java.net.URI;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.domain.Catalog;
@@ -60,8 +63,10 @@ public interface VCloudClient {
     * 
     * @param name
     *           organization name, or null for the default
+    * @throws NoSuchElementException
+    *            if you specified an org name that isn't present
     */
-   Organization findOrganizationNamed(String name);
+   Organization findOrganizationNamed(@Nullable String name);
 
    /**
     * Please use #findCatalogInOrgNamed(null, null)
@@ -69,26 +74,79 @@ public interface VCloudClient {
    @Deprecated
    Catalog getDefaultCatalog();
 
-   /**
-    * Please use #findCatalogInOrgNamed
-    */
-   @Deprecated
-   Catalog getCatalog(String catalogId);
+   Catalog getCatalog(URI catalogId);
 
-   Catalog findCatalogInOrgNamed(String orgName, String catalogName);
+   /**
+    * returns the catalog in the organization associated with the specified
+    * name. Note that both parameters can be null to choose default.
+    * 
+    * @param orgName
+    *           organization name, or null for the default
+    * @param catalogName
+    *           catalog name, or null for the default
+    * @throws NoSuchElementException
+    *            if you specified an org or catalog name that isn't present
+    */
+   Catalog findCatalogInOrgNamed(@Nullable String orgName, @Nullable String catalogName);
 
    CatalogItem getCatalogItem(URI catalogItem);
 
-   CatalogItem findCatalogItemInOrgCatalogNamed(String orgName, String catalogName, String itemName);
+   /**
+    * returns the catalog item in the catalog associated with the specified
+    * name. Note that the org and catalog parameters can be null to choose
+    * default.
+    * 
+    * @param orgName
+    *           organization name, or null for the default
+    * @param catalogName
+    *           catalog name, or null for the default
+    * @param itemName
+    *           item you wish to lookup
+    * 
+    * @throws NoSuchElementException
+    *            if you specified an org, catalog, or catalog item name that
+    *            isn't present
+    */
+   CatalogItem findCatalogItemInOrgCatalogNamed(@Nullable String orgName, @Nullable String catalogName, String itemName);
 
    VAppTemplate getVAppTemplate(URI vAppTemplate);
 
-   VAppTemplate findVAppTemplateInOrgCatalogNamed(String orgName, String catalogName, String templateName);
+   /**
+    * returns the vapp template corresponding to a catalog item in the catalog
+    * associated with the specified name. Note that the org and catalog
+    * parameters can be null to choose default.
+    * 
+    * @param orgName
+    *           organization name, or null for the default
+    * @param catalogName
+    *           catalog name, or null for the default
+    * @param itemName
+    *           item you wish to lookup
+    * 
+    * @throws NoSuchElementException
+    *            if you specified an org, catalog, or catalog item name that
+    *            isn't present
+    */
+   VAppTemplate findVAppTemplateInOrgCatalogNamed(@Nullable String orgName, @Nullable String catalogName,
+         String itemName);
 
-   Network getNetwork(String networkId);
+   Network findNetworkInOrgVDCNamed(@Nullable String orgName, @Nullable String catalogName, String networkName);
+
+   Network getNetwork(URI network);
 
    VDC getVDC(URI vdc);
 
+   /**
+    * returns the VDC in the organization associated with the specified name.
+    * Note that both parameters can be null to choose default.
+    * 
+    * @param orgName
+    *           organization name, or null for the default
+    * @param vdcName
+    *           catalog name, or null for the default
+    * @throws NoSuchElementException
+    *            if you specified an org or vdc name that isn't present
+    */
    VDC findVDCInOrgNamed(String orgName, String vdcName);
 
    /**
@@ -97,11 +155,7 @@ public interface VCloudClient {
    @Deprecated
    VDC getDefaultVDC();
 
-   /**
-    * Please use #findTasksListInOrgNamed
-    */
-   @Deprecated
-   TasksList getTasksList(String tasksListId);
+   TasksList getTasksList(URI tasksListId);
 
    TasksList findTasksListInOrgNamed(String orgName, String tasksListName);
 
@@ -111,44 +165,46 @@ public interface VCloudClient {
    @Deprecated
    TasksList getDefaultTasksList();
 
-   Task deployVApp(String vAppId);
+   Task deployVApp(URI vAppId);
 
-   void deleteVApp(String vAppId);
+   void deleteVApp(URI vAppId);
 
-   Task undeployVApp(String vAppId);
+   Task undeployVApp(URI vAppId);
 
    /**
     * This call powers on the vApp, as specified in the vApp's ovf:Startup
     * element.
     */
-   Task powerOnVApp(String vAppId);
+   Task powerOnVApp(URI vAppId);
 
    /**
     * This call powers off the vApp, as specified in the vApp's ovf:Startup
     * element.
     */
-   Task powerOffVApp(String vAppId);
+   Task powerOffVApp(URI vAppId);
 
    /**
     * This call shuts down the vApp.
     */
-   void shutdownVApp(String vAppId);
+   void shutdownVApp(URI vAppId);
 
    /**
     * This call resets the vApp.
     */
-   Task resetVApp(String vAppId);
+   Task resetVApp(URI vAppId);
 
    /**
     * This call suspends the vApp.
     */
-   Task suspendVApp(String vAppId);
+   Task suspendVApp(URI vAppId);
 
-   Task getTask(String taskId);
+   Task getTask(URI taskId);
 
-   void cancelTask(String taskId);
+   void cancelTask(URI taskId);
 
-   VApp getVApp(String appId);
+   VApp findVAppInOrgVDCNamed(@Nullable String orgName, @Nullable String catalogName, String vAppName);
+
+   VApp getVApp(URI vApp);
 
    VApp instantiateVAppTemplateInVDC(URI vDC, URI template, String appName, InstantiateVAppTemplateOptions... options);
 

@@ -45,8 +45,8 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @BeforeClass
    @Override
    public void setServiceDefaults() {
-      System.setProperty("vcloud.endpoint", checkNotNull(System
-            .getProperty("jclouds.test.endpoint"), "jclouds.test.endpoint"));
+      System.setProperty("vcloud.endpoint", checkNotNull(System.getProperty("jclouds.test.endpoint"),
+            "jclouds.test.endpoint"));
       provider = "vcloud";
    }
 
@@ -57,9 +57,8 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
-      RestContext<VCloudClient, VCloudAsyncClient> tmContext = new ComputeServiceContextFactory()
-            .createContext(provider, identity, credential)
-            .getProviderSpecificContext();
+      RestContext<VCloudClient, VCloudAsyncClient> tmContext = new ComputeServiceContextFactory().createContext(
+            provider, identity, credential).getProviderSpecificContext();
    }
 
    @Override
@@ -69,9 +68,9 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assert node.getLocation() != null;
          assertEquals(node.getType(), ComputeType.NODE);
          NodeMetadata allData = client.getNodeMetadata(node.getId());
-         assert allData.getExtra().get("processor/count") != null;
-         assert allData.getExtra().get("disk_drive/1/kb") != null;
-         assert allData.getExtra().get("memory/mb") != null;
+         assert allData.getExtra().get("processor/count") != null : allData.getExtra();
+         assert allData.getExtra().get("disk_drive/1/kb") != null : allData.getExtra();
+         assert allData.getExtra().get("memory/mb") != null : allData.getExtra();
          System.out.println(allData.getExtra());
       }
    }

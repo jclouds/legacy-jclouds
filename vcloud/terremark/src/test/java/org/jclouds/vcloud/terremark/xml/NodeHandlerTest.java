@@ -41,8 +41,8 @@ public class NodeHandlerTest extends BaseHandlerTest {
       InputStream is = getClass().getResourceAsStream("/terremark/NodeService.xml");
 
       Node result = (Node) factory.create(injector.getInstance(NodeHandler.class)).parse(is);
-      assertEquals(result, new Node(242, "Node for Jim", URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8/NodeServices/242"),
-               "172.16.20.3", 80, false, "Some test node"));
+      assertEquals(result, new Node("Node for Jim", URI
+            .create("https://services.vcloudexpress.terremark.com/api/v0.8/NodeServices/242"), "172.16.20.3", 80,
+            false, "Some test node"));
    }
 }

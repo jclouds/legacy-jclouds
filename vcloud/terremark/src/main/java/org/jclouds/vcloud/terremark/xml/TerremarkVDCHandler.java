@@ -40,16 +40,13 @@ public class TerremarkVDCHandler extends VDCHandler {
 
    public TerremarkVDC getResult() {
       VDC vDC = super.getResult();
-      return new TerremarkVDCImpl(vDC.getId(), vDC.getName(), vDC.getLocation(), vDC
-               .getDescription(), vDC.getStorageCapacity(), vDC.getCpuCapacity(), vDC
-               .getMemoryCapacity(), vDC.getInstantiatedVmsQuota(), vDC.getDeployedVmsQuota(), vDC
-               .getResourceEntities(), vDC.getAvailableNetworks(), catalog, publicIps,
-               internetServices);
+      return new TerremarkVDCImpl(vDC.getName(), vDC.getId(), vDC.getDescription(), vDC.getStorageCapacity(), vDC
+            .getCpuCapacity(), vDC.getMemoryCapacity(), vDC.getInstantiatedVmsQuota(), vDC.getDeployedVmsQuota(), vDC
+            .getResourceEntities(), vDC.getAvailableNetworks(), catalog, publicIps, internetServices);
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       super.startElement(uri, localName, qName, attributes);
       if (qName.equals("Link")) {
          String name = attributes.getValue(attributes.getIndex("name"));

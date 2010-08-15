@@ -50,7 +50,6 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
-import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
@@ -62,12 +61,13 @@ import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeService;
 import org.jclouds.vcloud.terremark.compute.config.providers.VAppTemplatesInOrgs;
+import org.jclouds.vcloud.terremark.compute.domain.KeyPairCredentials;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
 import org.jclouds.vcloud.terremark.compute.functions.NodeMetadataToOrgAndName;
 import org.jclouds.vcloud.terremark.compute.options.TerremarkVCloudTemplateOptions;
 import org.jclouds.vcloud.terremark.compute.strategy.ParseVAppTemplateDescriptionToGetDefaultLoginCredentials;
+import org.jclouds.vcloud.terremark.compute.strategy.TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy;
 import org.jclouds.vcloud.terremark.compute.strategy.TerremarkVCloudGetNodeMetadataStrategy;
-import org.jclouds.vcloud.terremark.domain.KeyPair;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
 
 import com.google.common.base.Function;
@@ -136,7 +136,6 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
          String sshKeyFingerprint = TerremarkVCloudTemplateOptions.class.cast(from.getOptions()).getSshKeyFingerprint();
          if (sshKeyFingerprint != null)
             options.sshKeyFingerprint(sshKeyFingerprint);
-
          return options;
       }
    }
@@ -150,7 +149,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudAsyncClient>>() {
       }).in(Scopes.SINGLETON);
       // NOTE
-      bind(RunNodesAndAddToSetStrategy.class).to(EncodeTagIntoNameRunNodesAndAddToSetStrategy.class);
+      bind(RunNodesAndAddToSetStrategy.class).to(TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy.class);
       bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
       // NOTE
       bind(GetNodeMetadataStrategy.class).to(TerremarkVCloudGetNodeMetadataStrategy.class);
@@ -175,8 +174,8 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
 
    @Provides
    @Singleton
-   ConcurrentMap<OrgAndName, KeyPair> credentialsMap() {
-      return new ConcurrentHashMap<OrgAndName, KeyPair>();
+   ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap() {
+      return new ConcurrentHashMap<OrgAndName, KeyPairCredentials>();
    }
 
    // TODO

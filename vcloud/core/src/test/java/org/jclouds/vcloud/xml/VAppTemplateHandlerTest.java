@@ -51,21 +51,19 @@ public class VAppTemplateHandlerTest {
       InputStream is = getClass().getResourceAsStream("/vAppTemplate-trmk.xml");
       injector = Guice.createInjector(new SaxParserModule());
       factory = injector.getInstance(ParseSax.Factory.class);
-      VAppTemplate result = factory.create(injector.getInstance(VAppTemplateHandler.class)).parse(
-               is);
-      assertEquals(result, new VAppTemplateImpl("5", "CentOS 5.3 (32-bit)", URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8/vAppTemplate/5"),
-               "description of CentOS 5.3 (32-bit)", null));
+      VAppTemplate result = factory.create(injector.getInstance(VAppTemplateHandler.class)).parse(is);
+      assertEquals(result, new VAppTemplateImpl("CentOS 5.3 (32-bit)", URI
+            .create("https://services.vcloudexpress.terremark.com/api/v0.8/vAppTemplate/5"),
+            "description of CentOS 5.3 (32-bit)", null));
    }
 
    public void testHosting() {
       InputStream is = getClass().getResourceAsStream("/vAppTemplate-hosting.xml");
       injector = Guice.createInjector(new SaxParserModule());
       factory = injector.getInstance(ParseSax.Factory.class);
-      VAppTemplate result = (VAppTemplate) factory.create(
-               injector.getInstance(VAppTemplateHandler.class)).parse(is);
-      assertEquals(result, new VAppTemplateImpl("4", "cPanel (Linux) 64 Bit", URI
-               .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/4"),
-               "cPanel (Linux) 64 Bit", VAppStatus.RESOLVED));
+      VAppTemplate result = (VAppTemplate) factory.create(injector.getInstance(VAppTemplateHandler.class)).parse(is);
+      assertEquals(result, new VAppTemplateImpl("cPanel (Linux) 64 Bit", URI
+            .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/4"), "cPanel (Linux) 64 Bit",
+            VAppStatus.RESOLVED));
    }
 }

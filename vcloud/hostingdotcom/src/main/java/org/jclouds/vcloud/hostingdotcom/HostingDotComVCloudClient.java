@@ -45,6 +45,6 @@ public interface HostingDotComVCloudClient extends VCloudClient {
 
    @Override
    @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-   HostingDotComVApp getVApp(String vAppId);
+   HostingDotComVApp getVApp(URI vAppId);
 
 }

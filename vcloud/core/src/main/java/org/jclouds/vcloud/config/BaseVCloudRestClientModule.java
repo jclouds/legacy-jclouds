@@ -22,8 +22,10 @@ package org.jclouds.vcloud.config;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Throwables.propagate;
+import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getLast;
+import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
@@ -69,14 +71,10 @@ import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.endpoints.TasksList;
-import org.jclouds.vcloud.endpoints.VCloudApi;
-import org.jclouds.vcloud.endpoints.VCloudLogin;
 import org.jclouds.vcloud.endpoints.VDC;
-import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
-import org.jclouds.vcloud.endpoints.internal.VAppRoot;
-import org.jclouds.vcloud.endpoints.internal.VAppTemplateRoot;
 import org.jclouds.vcloud.functions.AllCatalogItemsInCatalog;
 import org.jclouds.vcloud.functions.AllCatalogsInOrganization;
+import org.jclouds.vcloud.functions.AllVDCsInOrganization;
 import org.jclouds.vcloud.functions.OrganizationsForNames;
 import org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponse;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
@@ -111,6 +109,9 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
       bind(new TypeLiteral<Supplier<Map<String, NamedResource>>>() {
       }).annotatedWith(Org.class).to(new TypeLiteral<OrgNameToOrgSupplier>() {
       });
+      bind(new TypeLiteral<Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>>>() {
+      }).to(new TypeLiteral<URItoVDC>() {
+      });
       super.configure();
    }
 
@@ -119,9 +120,9 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
 
    @Provides
    @Singleton
-   protected Predicate<String> successTester(TaskSuccess success,
+   protected Predicate<URI> successTester(TaskSuccess success,
          @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long completed) {
-      return new RetryablePredicate<String>(success, completed);
+      return new RetryablePredicate<URI>(success, completed);
    }
 
    @VCloudToken
@@ -134,7 +135,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Org
    @Singleton
    protected URI provideOrg(@Org Iterable<NamedResource> orgs) {
-      return getLast(orgs).getLocation();
+      return getLast(orgs).getId();
    }
 
    @Provides
@@ -165,6 +166,40 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
 
    }
 
+   @Singleton
+   public static class URItoVDC implements Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>> {
+      private final Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> orgVDCMap;
+
+      @Inject
+      URItoVDC(Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> orgVDCMap) {
+         this.orgVDCMap = orgVDCMap;
+      }
+
+      @Override
+      public Map<URI, ? extends org.jclouds.vcloud.domain.VDC> get() {
+         return uniqueIndex(
+               concat(transform(
+                     orgVDCMap.get().values(),
+                     new Function<Map<String, ? extends org.jclouds.vcloud.domain.VDC>, Iterable<? extends org.jclouds.vcloud.domain.VDC>>() {
+
+                        @Override
+                        public Iterable<? extends org.jclouds.vcloud.domain.VDC> apply(
+                              Map<String, ? extends org.jclouds.vcloud.domain.VDC> from) {
+                           return from.values();
+                        }
+
+                     })), new Function<org.jclouds.vcloud.domain.VDC, URI>() {
+
+                  @Override
+                  public URI apply(org.jclouds.vcloud.domain.VDC from) {
+                     return from.getId();
+                  }
+
+               });
+      }
+
+   }
+
    @Provides
    @Org
    @Singleton
@@ -172,13 +207,6 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
       VCloudSession discovery = cache.get();
       checkState(discovery.getOrgs().size() > 0, "No orgs present for user: " + user);
       return discovery.getOrgs().values();
-   }
-
-   @Provides
-   @VCloudApi
-   @Singleton
-   URI provideVCloudApi(@VCloudLogin URI vcloudUri) {
-      return URI.create(vcloudUri.toASCIIString().replace("/login", ""));
    }
 
    protected AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
@@ -289,6 +317,49 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
             });
    }
 
+   @Provides
+   @Singleton
+   protected Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> provideOrganizationVDCSupplierCache(
+         @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrganizationVDCSupplier supplier) {
+      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>>(
+            authException, seconds, new Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>>() {
+               @Override
+               public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>> get() {
+                  return supplier.get();
+               }
+
+            });
+   }
+
+   @Singleton
+   public static class OrganizationVDCSupplier implements
+         Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> {
+      protected final Supplier<Map<String, ? extends Organization>> orgSupplier;
+      private final AllVDCsInOrganization allVDCsInOrganization;
+
+      @Inject
+      protected OrganizationVDCSupplier(Supplier<Map<String, ? extends Organization>> orgSupplier,
+            AllVDCsInOrganization allVDCsInOrganization) {
+         this.orgSupplier = orgSupplier;
+         this.allVDCsInOrganization = allVDCsInOrganization;
+      }
+
+      @Override
+      public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>> get() {
+         return transformValues(
+               transformValues(orgSupplier.get(), allVDCsInOrganization),
+               new Function<Iterable<? extends org.jclouds.vcloud.domain.VDC>, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>() {
+
+                  @Override
+                  public Map<String, ? extends org.jclouds.vcloud.domain.VDC> apply(
+                        Iterable<? extends org.jclouds.vcloud.domain.VDC> from) {
+                     return uniqueIndex(from, name);
+                  }
+
+               });
+      }
+   }
+
    @Singleton
    public static class OrganizationCatalogItemSupplier implements
          Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>> {
@@ -382,34 +453,13 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    }
 
    @Provides
-   @CatalogItemRoot
-   @Singleton
-   String provideCatalogItemRoot(@VCloudLogin URI vcloudUri) {
-      return vcloudUri.toASCIIString().replace("/login", "/catalogItem");
-   }
-
-   @Provides
-   @VAppRoot
-   @Singleton
-   String provideVAppRoot(@VCloudLogin URI vcloudUri) {
-      return vcloudUri.toASCIIString().replace("/login", "/vapp");
-   }
-
-   @Provides
-   @VAppTemplateRoot
-   @Singleton
-   String provideVAppTemplateRoot(@VCloudLogin URI vcloudUri) {
-      return vcloudUri.toASCIIString().replace("/login", "/vAppTemplate");
-   }
-
-   @Provides
    @Singleton
    protected Organization provideOrganization(VCloudClient discovery) throws ExecutionException, TimeoutException,
          InterruptedException {
       if (authException.get() != null)
          throw authException.get();
       try {
-         return discovery.getDefaultOrganization();
+         return discovery.findOrganizationNamed(null);
       } catch (AuthorizationException e) {
          authException.set(e);
          throw e;
@@ -421,7 +471,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Singleton
    protected URI provideDefaultVDC(Organization org) {
       checkState(org.getVDCs().size() > 0, "No vdcs present in org: " + org.getName());
-      return get(org.getVDCs().values(), 0).getLocation();
+      return get(org.getVDCs().values(), 0).getId();
    }
 
    @Provides
@@ -429,7 +479,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Singleton
    protected URI provideCatalog(Organization org, @Named(PROPERTY_IDENTITY) String user) {
       checkState(org.getCatalogs().size() > 0, "No catalogs present in org: " + org.getName());
-      return get(org.getCatalogs().values(), 0).getLocation();
+      return get(org.getCatalogs().values(), 0).getId();
    }
 
    @Provides
@@ -448,10 +498,10 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
       if (authException.get() != null)
          throw authException.get();
       try {
-         org.jclouds.vcloud.domain.VDC vDC = client.getDefaultVDC();
+         org.jclouds.vcloud.domain.VDC vDC = client.findVDCInOrgNamed(null, null);
          Map<String, NamedResource> networks = vDC.getAvailableNetworks();
          checkState(networks.size() > 0, "No networks present in vDC: " + vDC.getName());
-         return get(networks.values(), 0).getLocation();
+         return get(networks.values(), 0).getId();
       } catch (AuthorizationException e) {
          authException.set(e);
          throw e;
@@ -477,6 +527,6 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
    @Singleton
    protected URI provideDefaultTasksList(Organization org) {
       checkState(org.getTasksLists().size() > 0, "No tasks lists present in org: " + org.getName());
-      return get(org.getTasksLists().values(), 0).getLocation();
+      return get(org.getTasksLists().values(), 0).getId();
    }
 }

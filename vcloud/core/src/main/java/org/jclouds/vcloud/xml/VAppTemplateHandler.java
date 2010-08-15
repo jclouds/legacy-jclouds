@@ -39,13 +39,11 @@ public class VAppTemplateHandler extends ParseSax.HandlerWithResult<VAppTemplate
    private VAppStatus status;
 
    public VAppTemplate getResult() {
-      return new VAppTemplateImpl(catalog.getId(), catalog.getName(), catalog.getLocation(),
-               description, status);
+      return new VAppTemplateImpl(catalog.getName(), catalog.getId(), description, status);
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if (qName.equals("VAppTemplate")) {
          catalog = Utils.newNamedResource(attributes);
          if (attributes.getIndex("status") != -1)

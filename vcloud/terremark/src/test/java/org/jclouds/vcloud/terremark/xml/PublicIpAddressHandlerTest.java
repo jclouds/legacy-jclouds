@@ -40,9 +40,8 @@ public class PublicIpAddressHandlerTest extends BaseHandlerTest {
    public void test1() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/terremark/PublicIpAddress.xml");
 
-      PublicIpAddress result = factory.create(injector.getInstance(PublicIpAddressHandler.class))
-               .parse(is);
-      assertEquals(result, new PublicIpAddress(8720, "204.51.112.91", URI
-               .create("https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/8720")));
+      PublicIpAddress result = factory.create(injector.getInstance(PublicIpAddressHandler.class)).parse(is);
+      assertEquals(result, new PublicIpAddress("204.51.112.91", URI
+            .create("https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/8720")));
    }
 }

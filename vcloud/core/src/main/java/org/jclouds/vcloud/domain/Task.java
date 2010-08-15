@@ -31,7 +31,6 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(TaskImpl.class)
 public interface Task extends Comparable<Task> {
-   String getId();
 
    URI getLocation();
 
@@ -40,8 +39,9 @@ public interface Task extends Comparable<Task> {
    Date getStartTime();
 
    Date getEndTime();
-   
+
    Date getExpiryTime();
+
    /**
     * A link to the vDC in which the task was started
     */
@@ -51,13 +51,15 @@ public interface Task extends Comparable<Task> {
     * A link to the result of the task
     */
    NamedResource getResult();
-   
+
    Error getError();
-   
+
    @ImplementedBy(TaskImpl.ErrorImpl.class)
    static interface Error {
-     String getMessage();
-     String getMajorErrorCode();
-     String getMinorErrorCode();
+      String getMessage();
+
+      String getMajorErrorCode();
+
+      String getMinorErrorCode();
    }
 }

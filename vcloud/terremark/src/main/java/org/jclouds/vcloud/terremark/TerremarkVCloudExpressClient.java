@@ -23,10 +23,7 @@ import java.net.URI;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.KeyPair;
 import org.jclouds.vcloud.terremark.domain.Protocol;
@@ -44,30 +41,19 @@ import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 public interface TerremarkVCloudExpressClient extends TerremarkVCloudClient {
 
    /**
-    * @param orgName
-    *           null if use the default org
-    * @throws ResourceNotFoundException
-    *            if the orgName is not a valid organization
+
     */
-   Set<KeyPair> listKeyPairsInOrg(@Nullable String orgName);
+   Set<KeyPair> listKeyPairsInOrg(URI org);
 
    /**
-    * @param orgName
-    *           null if use the default org
-    * @throws ResourceNotFoundException
-    *            if the orgName is not a valid organization
     * @throws IllegalStateException
     *            if a key of the same name already exists
     */
-   KeyPair generateKeyPairInOrg(@Nullable String orgName, String name, boolean makeDefault);
+   KeyPair generateKeyPairInOrg(URI org, String name, boolean makeDefault);
 
    /**
-    * @param orgName
-    *           null if use the default org
-    * @throws ResourceNotFoundException
-    *            if the orgName is not a valid organization
     */
-   KeyPair getKeyPairInOrg(@Nullable String orgName, String keyPairName);
+   KeyPair findKeyPairInOrg(URI org, String keyPairName);
 
    KeyPair getKeyPair(URI keyPair);
 
@@ -77,6 +63,6 @@ public interface TerremarkVCloudExpressClient extends TerremarkVCloudClient {
 
    void deleteKeyPair(URI keyPair);
 
-   InternetService addInternetServiceToVDC(String vDCId, String serviceName, Protocol protocol, int port,
+   InternetService addInternetServiceToVDC(URI vDCId, String serviceName, Protocol protocol, int port,
          AddInternetServiceOptions... options);
 }

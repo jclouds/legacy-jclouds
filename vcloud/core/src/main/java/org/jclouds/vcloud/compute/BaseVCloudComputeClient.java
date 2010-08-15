@@ -58,11 +58,11 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
    protected Logger logger = Logger.NULL;
 
    protected final VCloudClient client;
-   protected final Predicate<String> taskTester;
+   protected final Predicate<URI> taskTester;
    protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
 
    @Inject
-   public BaseVCloudComputeClient(VCloudClient client, Predicate<String> successTester,
+   public BaseVCloudComputeClient(VCloudClient client, Predicate<URI> successTester,
          Map<VAppStatus, NodeState> vAppStatusToNodeState) {
       this.client = client;
       this.taskTester = successTester;
@@ -78,24 +78,24 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
       VDC vdc = client.getVDC(VDC);
       VAppTemplate template = client.getVAppTemplate(templateId);
 
-      VApp vAppResponse = client.instantiateVAppTemplateInVDC(vdc.getLocation(), template.getLocation(), name, options);
-      logger.debug("<< instantiated VApp(%s)", vAppResponse.getId());
+      VApp vAppResponse = client.instantiateVAppTemplateInVDC(vdc.getId(), template.getId(), name, options);
+      logger.debug("<< instantiated VApp(%s)", vAppResponse.getName());
 
-      logger.debug(">> deploying vApp(%s)", vAppResponse.getId());
+      logger.debug(">> deploying vApp(%s)", vAppResponse.getName());
 
       Task task = client.deployVApp(vAppResponse.getId());
       if (options.shouldBlockOnDeploy()) {
-         if (!taskTester.apply(task.getId())) {
+         if (!taskTester.apply(task.getLocation())) {
             throw new TaskException("deploy", vAppResponse, task);
          }
-         logger.debug("<< deployed vApp(%s)", vAppResponse.getId());
+         logger.debug("<< deployed vApp(%s)", vAppResponse.getName());
 
-         logger.debug(">> powering vApp(%s)", vAppResponse.getId());
+         logger.debug(">> powering vApp(%s)", vAppResponse.getName());
          task = client.powerOnVApp(vAppResponse.getId());
-         if (!taskTester.apply(task.getId())) {
+         if (!taskTester.apply(task.getLocation())) {
             throw new TaskException("powerOn", vAppResponse, task);
          }
-         logger.debug("<< on vApp(%s)", vAppResponse.getId());
+         logger.debug("<< on vApp(%s)", vAppResponse.getName());
       }
       return parseAndValidateResponse(template, vAppResponse);
    }
@@ -110,57 +110,59 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
 
    protected Map<String, String> parseResponse(VAppTemplate template, VApp vAppResponse) {
       Map<String, String> config = Maps.newLinkedHashMap();// Allows nulls
-      config.put("id", vAppResponse.getId());
+      config.put("id", vAppResponse.getId().toASCIIString());
       config.put("username", null);
       config.put("password", null);
       return config;
    }
 
-   public void reboot(String id) {
+   @Override
+   public void reboot(URI id) {
       VApp vApp = client.getVApp(id);
-      logger.debug(">> resetting vApp(%s)", vApp.getId());
+      logger.debug(">> resetting vApp(%s)", vApp.getName());
       Task task = client.resetVApp(vApp.getId());
-      if (!taskTester.apply(task.getId())) {
+      if (!taskTester.apply(task.getLocation())) {
          throw new TaskException("resetVApp", vApp, task);
       }
-      logger.debug("<< on vApp(%s)", vApp.getId());
+      logger.debug("<< on vApp(%s)", vApp.getName());
    }
 
-   public void stop(String id) {
+   @Override
+   public void stop(URI id) {
       VApp vApp = client.getVApp(id);
       vApp = powerOffVAppIfDeployed(vApp);
       vApp = undeployVAppIfDeployed(vApp);
       deleteVApp(vApp);
-      logger.debug("<< deleted vApp(%s)", vApp.getId());
+      logger.debug("<< deleted vApp(%s)", vApp.getName());
    }
 
    private void deleteVApp(VApp vApp) {
-      logger.debug(">> deleting vApp(%s)", vApp.getId());
+      logger.debug(">> deleting vApp(%s)", vApp.getName());
       client.deleteVApp(vApp.getId());
    }
 
    private VApp undeployVAppIfDeployed(VApp vApp) {
       if (vApp.getStatus().compareTo(VAppStatus.RESOLVED) > 0) {
-         logger.debug(">> undeploying vApp(%s), current status: %s", vApp.getId(), vApp.getStatus());
+         logger.debug(">> undeploying vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
          Task task = client.undeployVApp(vApp.getId());
-         if (!taskTester.apply(task.getId())) {
+         if (!taskTester.apply(task.getLocation())) {
             throw new TaskException("undeploy", vApp, task);
          }
          vApp = client.getVApp(vApp.getId());
-         logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getId());
+         logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
       }
       return vApp;
    }
 
    private VApp powerOffVAppIfDeployed(VApp vApp) {
       if (vApp.getStatus().compareTo(VAppStatus.OFF) > 0) {
-         logger.debug(">> powering off vApp(%s), current status: %s", vApp.getId(), vApp.getStatus());
+         logger.debug(">> powering off vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
          Task task = client.powerOffVApp(vApp.getId());
-         if (!taskTester.apply(task.getId())) {
+         if (!taskTester.apply(task.getLocation())) {
             throw new TaskException("powerOff", vApp, task);
          }
          vApp = client.getVApp(vApp.getId());
-         logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getId());
+         logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
       }
       return vApp;
    }
@@ -172,8 +174,8 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
       private static final long serialVersionUID = 251801929573211256L;
 
       public TaskException(String type, VApp vApp, Task task) {
-         super(String.format("failed to %s vApp %s status %s;task %s status %s", type, vApp.getId(), vApp.getStatus(),
-               task.getLocation(), task.getStatus()), vApp);
+         super(String.format("failed to %s vApp %s status %s;task %s status %s", type, vApp.getName(),
+               vApp.getStatus(), task.getLocation(), task.getStatus()), vApp);
          this.task = task;
       }
 
@@ -201,12 +203,12 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
    }
 
    @Override
-   public Set<String> getPrivateAddresses(String id) {
+   public Set<String> getPrivateAddresses(URI id) {
       return ImmutableSet.of();
    }
 
    @Override
-   public Set<String> getPublicAddresses(String id) {
+   public Set<String> getPublicAddresses(URI id) {
       VApp vApp = client.getVApp(id);
       return Sets.newHashSet(vApp.getNetworkToAddresses().values());
    }

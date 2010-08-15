@@ -19,6 +19,11 @@
 
 package org.jclouds.vcloud.compute.functions;
 
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Maps.newHashMap;
+import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
+
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -32,12 +37,10 @@ import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.VApp;
 
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 
 /**
- * Configures the {@link VCloudComputeServiceContext}; requires {@link BaseVCloudComputeClient}
- * bound.
+ * Configures the {@link VCloudComputeServiceContext}; requires
+ * {@link BaseVCloudComputeClient} bound.
  * 
  * @author Adrian Cole
  */
@@ -48,19 +51,16 @@ public class GetExtra implements Function<VApp, Map<String, String>> {
    protected Logger logger = Logger.NULL;
 
    public Map<String, String> apply(VApp vApp) {
-      Map<String, String> extra = Maps.newHashMap();
+      Map<String, String> extra = newHashMap();
       try {
-         extra.put("memory/mb", Iterables.getOnlyElement(
-                  vApp.getResourceAllocationByType().get(ResourceType.MEMORY)).getVirtualQuantity()
-                  + "");
-         extra.put("processor/count", Iterables.getOnlyElement(
-                  vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR))
-                  .getVirtualQuantity()
-                  + "");
-         for (ResourceAllocation disk : vApp.getResourceAllocationByType().get(
-                  ResourceType.PROCESSOR)) {
-            extra.put(String.format("disk_drive/%s/kb", disk.getId()), disk.getVirtualQuantity()
-                     + "");
+         extra.put("memory/mb", find(vApp.getResourceAllocations(), resourceType(ResourceType.MEMORY))
+               .getVirtualQuantity()
+               + "");
+         extra.put("processor/count", find(vApp.getResourceAllocations(), resourceType(ResourceType.PROCESSOR))
+               .getVirtualQuantity()
+               + "");
+         for (ResourceAllocation disk : filter(vApp.getResourceAllocations(), resourceType(ResourceType.DISK_DRIVE))) {
+            extra.put(String.format("disk_drive/%s/kb", disk.getId()), disk.getVirtualQuantity() + "");
          }
 
          for (Entry<String, String> net : vApp.getNetworkToAddresses().entries()) {

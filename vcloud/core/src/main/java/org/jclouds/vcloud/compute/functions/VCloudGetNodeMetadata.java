@@ -21,6 +21,7 @@ package org.jclouds.vcloud.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -80,7 +81,8 @@ public class VCloudGetNodeMetadata {
       this.vAppStatusToNodeState = checkNotNull(vAppStatusToNodeState, "vAppStatusToNodeState");
    }
 
-   public NodeMetadata execute(String id) {
+   public NodeMetadata execute(String in) {
+      URI id = URI.create(in);
       VApp vApp = client.getVApp(id);
       if (vApp == null)
          return null;
@@ -94,8 +96,9 @@ public class VCloudGetNodeMetadata {
          tag = "NOTAG-" + vApp.getName();
       }
       Location location = findLocationForResourceInVDC.apply(vApp.getVDC());
-      return new NodeMetadataImpl(vApp.getId(), vApp.getName(), vApp.getId(), location, vApp.getLocation(),
-            ImmutableMap.<String, String> of(), tag, image, vAppStatusToNodeState.get(vApp.getStatus()), computeClient
-                  .getPublicAddresses(id), computeClient.getPrivateAddresses(id), getExtra.apply(vApp), null);
+      return new NodeMetadataImpl(vApp.getId().toASCIIString(), vApp.getName(), vApp.getId()
+            .toASCIIString(), location, vApp.getId(), ImmutableMap.<String, String> of(), tag, image,
+            vAppStatusToNodeState.get(vApp.getStatus()), computeClient.getPublicAddresses(id), computeClient
+                  .getPrivateAddresses(id), getExtra.apply(vApp), null);
    }
 }

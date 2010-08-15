@@ -38,19 +38,17 @@ public class HostingDotComVAppHandler extends VAppHandler {
    private String password;
 
    @Inject
-   public HostingDotComVAppHandler(VirtualSystemHandler systemHandler,
-            ResourceAllocationHandler allocationHandler) {
+   public HostingDotComVAppHandler(VirtualSystemHandler systemHandler, ResourceAllocationHandler allocationHandler) {
       super(systemHandler, allocationHandler);
    }
 
    public HostingDotComVApp getResult() {
-      return new HostingDotComVAppImpl(id, name, location, status, size, vDC, networkToAddresses,
-               operatingSystemDescription, system, allocations, username, password);
+      return new HostingDotComVAppImpl(name, location, status, size, vDC, networkToAddresses,
+            operatingSystemDescription, system, allocations, username, password);
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       super.startElement(uri, localName, qName, attributes);
       if (attributes.getIndex("key") != -1) {
          String key = attributes.getValue(attributes.getIndex("key"));

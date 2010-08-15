@@ -66,10 +66,10 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if (qName.equalsIgnoreCase("Task")) {
-         if (attributes.getIndex("href") != -1)// queued tasks may not have an href yet
+         if (attributes.getIndex("href") != -1)// queued tasks may not have an
+                                               // href yet
             taskLink = Utils.newNamedResource(attributes);
          status = TaskStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
          if (attributes.getIndex("startTime") != -1)
@@ -81,7 +81,7 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
       } else if (qName.equals("Owner")) {
          owner = Utils.newNamedResource(attributes);
       } else if (qName.equals("Link") && attributes.getIndex("rel") != -1
-               && attributes.getValue(attributes.getIndex("rel")).equals("self")) {
+            && attributes.getValue(attributes.getIndex("rel")).equals("self")) {
          taskLink = Utils.newNamedResource(attributes);
       } else if (qName.equals("Result")) {
          result = Utils.newNamedResource(attributes);
@@ -113,8 +113,7 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    @Override
    public void endElement(String uri, String localName, String qName) throws SAXException {
       if (qName.equalsIgnoreCase("Task")) {
-         this.task = new TaskImpl(taskLink.getId(), taskLink.getLocation(), status, startTime,
-                  endTime, expiryTime, owner, result, error);
+         this.task = new TaskImpl(taskLink.getId(), status, startTime, endTime, expiryTime, owner, result, error);
          taskLink = null;
          status = null;
          startTime = null;

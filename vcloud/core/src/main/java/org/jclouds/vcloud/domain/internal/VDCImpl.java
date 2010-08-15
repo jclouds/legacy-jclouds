@@ -38,9 +38,8 @@ import org.jclouds.vcloud.domain.VDC;
  */
 public class VDCImpl implements VDC {
 
-   private final String id;
    private final String name;
-   private final URI location;
+   private final URI id;
    private final String description;
    private final Capacity storageCapacity;
    private final Capacity cpuCapacity;
@@ -50,14 +49,11 @@ public class VDCImpl implements VDC {
    private final Map<String, NamedResource> availableNetworks;
    private final Map<String, NamedResource> resourceEntities;
 
-   public VDCImpl(String id, String name, URI location, String description,
-            Capacity storageCapacity, Capacity cpuCapacity, Capacity memoryCapacity,
-            Quota instantiatedVmsQuota, Quota deployedVmsQuota,
-            Map<String, NamedResource> resourceEntities,
-            Map<String, NamedResource> availableNetworks) {
-      this.id = id;
+   public VDCImpl(String name, URI id, String description, Capacity storageCapacity, Capacity cpuCapacity,
+         Capacity memoryCapacity, Quota instantiatedVmsQuota, Quota deployedVmsQuota,
+         Map<String, NamedResource> resourceEntities, Map<String, NamedResource> availableNetworks) {
       this.name = checkNotNull(name, "name");
-      this.location = checkNotNull(location, "location");
+      this.id = checkNotNull(id, "id");
       this.description = description;
       this.storageCapacity = storageCapacity;
       this.cpuCapacity = cpuCapacity;
@@ -71,22 +67,22 @@ public class VDCImpl implements VDC {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public String getId() {
-      return id;
-   }
-
+   @Override
    public String getName() {
       return name;
    }
 
-   public URI getLocation() {
-      return location;
+   @Override
+   public URI getId() {
+      return id;
    }
 
+   @Override
    public Map<String, NamedResource> getAvailableNetworks() {
       return availableNetworks;
    }
 
+   @Override
    public Map<String, NamedResource> getResourceEntities() {
       return resourceEntities;
    }
@@ -99,10 +95,8 @@ public class VDCImpl implements VDC {
       result = prime * result + ((cpuCapacity == null) ? 0 : cpuCapacity.hashCode());
       result = prime * result + ((deployedVmsQuota == null) ? 0 : deployedVmsQuota.hashCode());
       result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + ((instantiatedVmsQuota == null) ? 0 : instantiatedVmsQuota.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result
-               + ((instantiatedVmsQuota == null) ? 0 : instantiatedVmsQuota.hashCode());
-      result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((memoryCapacity == null) ? 0 : memoryCapacity.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((resourceEntities == null) ? 0 : resourceEntities.hashCode());
@@ -139,20 +133,15 @@ public class VDCImpl implements VDC {
             return false;
       } else if (!description.equals(other.description))
          return false;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
-         return false;
       if (instantiatedVmsQuota == null) {
          if (other.instantiatedVmsQuota != null)
             return false;
       } else if (!instantiatedVmsQuota.equals(other.instantiatedVmsQuota))
          return false;
-      if (location == null) {
-         if (other.location != null)
+      if (id == null) {
+         if (other.id != null)
             return false;
-      } else if (!location.equals(other.location))
+      } else if (!id.equals(other.id))
          return false;
       if (memoryCapacity == null) {
          if (other.memoryCapacity != null)
@@ -177,26 +166,32 @@ public class VDCImpl implements VDC {
       return true;
    }
 
+   @Override
    public String getDescription() {
       return description;
    }
 
+   @Override
    public Capacity getStorageCapacity() {
       return storageCapacity;
    }
 
+   @Override
    public Capacity getCpuCapacity() {
       return cpuCapacity;
    }
 
+   @Override
    public Capacity getMemoryCapacity() {
       return memoryCapacity;
    }
 
+   @Override
    public Quota getInstantiatedVmsQuota() {
       return instantiatedVmsQuota;
    }
 
+   @Override
    public Quota getDeployedVmsQuota() {
       return deployedVmsQuota;
    }

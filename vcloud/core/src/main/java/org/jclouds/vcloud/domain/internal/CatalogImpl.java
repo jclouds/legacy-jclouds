@@ -41,28 +41,23 @@ public class CatalogImpl extends LinkedHashMap<String, NamedResource> implements
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
-   private final String id;
    private final String name;
    private final String description;
-   private final URI location;
+   private final URI id;
 
-   public CatalogImpl(String id, String name, URI location, @Nullable String description,
-            Map<String, NamedResource> contents) {
-      this.id = checkNotNull(id, "id");
+   public CatalogImpl(String name, URI id, @Nullable String description, Map<String, NamedResource> contents) {
       this.name = checkNotNull(name, "name");
       this.description = description;
-      this.location = checkNotNull(location, "location");
+      this.id = checkNotNull(id, "id");
       putAll(checkNotNull(contents, "contents"));
    }
 
-   public URI getLocation() {
-      return location;
-   }
-
-   public String getId() {
+   @Override
+   public URI getId() {
       return id;
    }
 
+   @Override
    public String getName() {
       return name;
    }
@@ -72,7 +67,7 @@ public class CatalogImpl extends LinkedHashMap<String, NamedResource> implements
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((location == null) ? 0 : location.hashCode());
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       return result;
    }
@@ -91,10 +86,10 @@ public class CatalogImpl extends LinkedHashMap<String, NamedResource> implements
             return false;
       } else if (!description.equals(other.description))
          return false;
-      if (location == null) {
-         if (other.location != null)
+      if (id == null) {
+         if (other.id != null)
             return false;
-      } else if (!location.equals(other.location))
+      } else if (!id.equals(other.id))
          return false;
       if (name == null) {
          if (other.name != null)

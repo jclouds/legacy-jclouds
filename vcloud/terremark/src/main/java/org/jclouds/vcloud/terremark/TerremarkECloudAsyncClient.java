@@ -23,16 +23,16 @@ import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.INTERNETSERV
 import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.INTERNETSERVICE_XML;
 import static org.jclouds.vcloud.terremark.TerremarkECloudMediaType.PUBLICIP_XML;
 
+import java.net.URI;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapPayloadParam;
@@ -45,6 +45,8 @@ import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
+import org.jclouds.vcloud.terremark.functions.VDCURIToInternetServicesEndpoint;
+import org.jclouds.vcloud.terremark.functions.VDCURIToPublicIPsEndpoint;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.xml.InternetServiceHandler;
 import org.jclouds.vcloud.terremark.xml.InternetServicesHandler;
@@ -68,37 +70,34 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     * @see TerremarkVCloudExpressClient#getAllInternetServices
     */
    @GET
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/extensions/vdc/{vDCId}/internetServices")
    @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServicesHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @Override
-   ListenableFuture<? extends Set<InternetService>> getAllInternetServicesInVDC(@PathParam("vDCId") String vDCId);
+   ListenableFuture<? extends Set<InternetService>> getAllInternetServicesInVDC(
+         @EndpointParam(parser = VDCURIToInternetServicesEndpoint.class) URI vDCId);
 
    /**
     * @see TerremarkVCloudExpressClient#activatePublicIpInVDC
     */
    @POST
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/extensions/vdc/{vDCId}/publicIps")
    @Consumes(PUBLICIP_XML)
    @XMLResponseParser(PublicIpAddressesHandler.class)
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<PublicIpAddress> activatePublicIpInVDC(@PathParam("vDCId") String vDCId);
+   ListenableFuture<PublicIpAddress> activatePublicIpInVDC(
+         @EndpointParam(parser = VDCURIToPublicIPsEndpoint.class) URI vDCId);
 
    /**
     * @see TerremarkVCloudExpressClient#addInternetServiceToExistingIp
     */
    @POST
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/extensions/publicIp/{ipId}/internetServices")
+   @Path("/internetServices")
    @Produces(INTERNETSERVICE_XML)
    @Consumes(INTERNETSERVICE_XML)
    @XMLResponseParser(InternetServiceHandler.class)
    @MapBinder(AddInternetServiceOptions.class)
    @Override
-   ListenableFuture<? extends InternetService> addInternetServiceToExistingIp(@PathParam("ipId") int existingIpId,
+   ListenableFuture<? extends InternetService> addInternetServiceToExistingIp(@EndpointParam URI existingIpId,
          @MapPayloadParam("name") String serviceName, @MapPayloadParam("protocol") Protocol protocol,
          @MapPayloadParam("port") int port, AddInternetServiceOptions... options);
 
@@ -106,24 +105,21 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     * @see TerremarkVCloudExpressClient#getInternetServicesOnPublicIP
     */
    @GET
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/extensions/publicIp/{ipId}/internetServices")
+   @Path("/internetServices")
    @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServicesHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @Override
-   ListenableFuture<? extends Set<InternetService>> getInternetServicesOnPublicIp(@PathParam("ipId") int ipId);
+   ListenableFuture<? extends Set<InternetService>> getInternetServicesOnPublicIp(@EndpointParam URI ipId);
 
    /**
     * @see TerremarkVCloudExpressClient#getInternetService
     */
    @GET
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/extensions/internetService/{internetServiceId}")
    @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServiceHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Override
-   ListenableFuture<? extends InternetService> getInternetService(@PathParam("internetServiceId") int internetServiceId);
+   ListenableFuture<? extends InternetService> getInternetService(@EndpointParam URI internetServiceId);
 
 }

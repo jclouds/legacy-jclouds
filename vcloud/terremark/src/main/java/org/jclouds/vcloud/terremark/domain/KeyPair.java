@@ -29,30 +29,23 @@ import javax.annotation.Nullable;
  * @author Adrian Cole
  */
 public class KeyPair {
-   private final int id;
-   private final URI location;
+   private final URI id;
    private final String name;
    private final boolean isDefault;
    @Nullable
    private final String privateKey;
    private final String fingerPrint;
 
-   public KeyPair(int id, URI location, String name, boolean isDefault,
-         @Nullable String privateKey, String fingerPrint) {
+   public KeyPair(URI id, String name, boolean isDefault, @Nullable String privateKey, String fingerPrint) {
       this.id = id;
-      this.location = location;
       this.name = name;
       this.isDefault = isDefault;
       this.privateKey = privateKey;
       this.fingerPrint = fingerPrint;
    }
 
-   public int getId() {
+   public URI getId() {
       return id;
-   }
-
-   public URI getLocation() {
-      return location;
    }
 
    public String getName() {
@@ -76,14 +69,11 @@ public class KeyPair {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result
-            + ((fingerPrint == null) ? 0 : fingerPrint.hashCode());
-      result = prime * result + ((location == null) ? 0 : location.hashCode());
-      result = prime * result + id;
+      result = prime * result + ((fingerPrint == null) ? 0 : fingerPrint.hashCode());
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + (isDefault ? 1231 : 1237);
       result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result
-            + ((privateKey == null) ? 0 : privateKey.hashCode());
+      result = prime * result + ((privateKey == null) ? 0 : privateKey.hashCode());
       return result;
    }
 
@@ -101,12 +91,10 @@ public class KeyPair {
             return false;
       } else if (!fingerPrint.equals(other.fingerPrint))
          return false;
-      if (location == null) {
-         if (other.location != null)
+      if (id == null) {
+         if (other.id != null)
             return false;
-      } else if (!location.equals(other.location))
-         return false;
-      if (id != other.id)
+      } else if (!id.equals(other.id))
          return false;
       if (isDefault != other.isDefault)
          return false;
@@ -125,8 +113,7 @@ public class KeyPair {
 
    @Override
    public String toString() {
-      return "Key [fingerPrint=" + fingerPrint + ", location=" + location + ", id="
-            + id + ", isDefault=" + isDefault + ", name=" + name
+      return "Key [fingerPrint=" + fingerPrint + ", id=" + id + ", isDefault=" + isDefault + ", name=" + name
             + ", privateKey=" + (privateKey != null) + "]";
    }
 

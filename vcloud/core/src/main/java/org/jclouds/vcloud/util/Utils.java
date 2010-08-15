@@ -36,26 +36,20 @@ public class Utils {
 
    public static NamedResource newNamedResource(Attributes attributes) {
       String uri = attributes.getValue(attributes.getIndex("href"));
-      String id = uri.substring(uri.lastIndexOf('/') + 1);
-      return new NamedResourceImpl(id, attributes.getValue(attributes
-            .getIndex("name")), attributes
-            .getValue(attributes.getIndex("type")), URI.create(uri));
+      return new NamedResourceImpl(attributes.getValue(attributes.getIndex("name")), attributes.getValue(attributes
+            .getIndex("type")), URI.create(uri));
    }
 
    public static Task.Error newError(Attributes attributes) {
-      return new ErrorImpl(attrOrNull(attributes, "message"), attrOrNull(
-            attributes, "majorErrorCode"), attrOrNull(attributes,
-            "minorErrorCode"));
+      return new ErrorImpl(attrOrNull(attributes, "message"), attrOrNull(attributes, "majorErrorCode"), attrOrNull(
+            attributes, "minorErrorCode"));
    }
 
    private static String attrOrNull(Attributes attributes, String attr) {
-      return attributes.getIndex(attr) >= 0 ? attributes.getValue(attributes
-            .getIndex(attr)) : null;
+      return attributes.getIndex(attr) >= 0 ? attributes.getValue(attributes.getIndex(attr)) : null;
    }
 
-   public static void putNamedResource(Map<String, NamedResource> map,
-         Attributes attributes) {
-      map.put(attributes.getValue(attributes.getIndex("name")),
-            newNamedResource(attributes));
+   public static void putNamedResource(Map<String, NamedResource> map, Attributes attributes) {
+      map.put(attributes.getValue(attributes.getIndex("name")), newNamedResource(attributes));
    }
 }

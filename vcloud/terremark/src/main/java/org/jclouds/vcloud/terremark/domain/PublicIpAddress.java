@@ -25,22 +25,16 @@ import java.net.URI;
  * @author Adrian Cole
  */
 public class PublicIpAddress implements Comparable<PublicIpAddress> {
-   private final int id;
    private final String address;
-   private final URI location;
+   private final URI id;
 
-   public PublicIpAddress(int id, String address, URI location) {
-      this.id = id;
+   public PublicIpAddress(String address, URI id) {
       this.address = address;
-      this.location = location;
+      this.id = id;
    }
 
-   public int getId() {
+   public URI getId() {
       return id;
-   }
-
-   public URI getLocation() {
-      return location;
    }
 
    public String getAddress() {
@@ -48,18 +42,7 @@ public class PublicIpAddress implements Comparable<PublicIpAddress> {
    }
 
    public int compareTo(PublicIpAddress that) {
-      final int BEFORE = -1;
-      final int EQUAL = 0;
-      final int AFTER = 1;
-
-      if (this == that)
-         return EQUAL;
-
-      if (this.id < that.getId())
-         return BEFORE;
-      if (this.id > that.getId())
-         return AFTER;
-      return EQUAL;
+      return (this == that) ? 0 : getId().compareTo(that.getId());
    }
 
    @Override
@@ -67,8 +50,7 @@ public class PublicIpAddress implements Comparable<PublicIpAddress> {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((address == null) ? 0 : address.hashCode());
-      result = prime * result + id;
-      result = prime * result + ((location == null) ? 0 : location.hashCode());
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       return result;
    }
 
@@ -86,19 +68,17 @@ public class PublicIpAddress implements Comparable<PublicIpAddress> {
             return false;
       } else if (!address.equals(other.address))
          return false;
-      if (id != other.id)
-         return false;
-      if (location == null) {
-         if (other.location != null)
+      if (id == null) {
+         if (other.id != null)
             return false;
-      } else if (!location.equals(other.location))
+      } else if (!id.equals(other.id))
          return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "PublicIpAddress [address=" + address + ", id=" + id + ", location=" + location + "]";
+      return "PublicIpAddress [address=" + address + ", id=" + id + "]";
    }
 
 }

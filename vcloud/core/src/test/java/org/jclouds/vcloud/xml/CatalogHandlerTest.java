@@ -50,15 +50,13 @@ public class CatalogHandlerTest {
       Factory factory = injector.getInstance(ParseSax.Factory.class);
       CatalogItem result = factory.create(injector.getInstance(CatalogItemHandler.class)).parse(is);
 
-      assertEquals(result, new CatalogItemImpl("2", "Windows 2008 Datacenter 64 Bit", URI
-               .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2"),
-               "Windows 2008 Datacenter 64 Bit", new NamedResourceImpl("2",
-                        "Windows 2008 Datacenter 64 Bit",
-                        "application/vnd.vmware.vcloud.vAppTemplate+xml",
-                        URI.create("https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/2")),
-               ImmutableSortedMap.of("Foo", "Bar", "Hello", "World"
+      assertEquals(result, new CatalogItemImpl("Windows 2008 Datacenter 64 Bit", URI
+            .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2"), "Windows 2008 Datacenter 64 Bit",
+            new NamedResourceImpl("Windows 2008 Datacenter 64 Bit", "application/vnd.vmware.vcloud.vAppTemplate+xml",
+                  URI.create("https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/2")), ImmutableSortedMap.of("Foo",
+                  "Bar", "Hello", "World"
 
-               )));
+            )));
 
    }
 }

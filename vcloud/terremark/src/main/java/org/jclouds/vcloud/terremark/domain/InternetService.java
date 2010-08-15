@@ -25,9 +25,8 @@ import java.net.URI;
  * @author Adrian Cole
  */
 public class InternetService implements Comparable<InternetService> {
-   private final int id;
    private final String name;
-   private final URI location;
+   private final URI id;
    private final PublicIpAddress publicIpAddress;
    private final int port;
    private final Protocol protocol;
@@ -35,11 +34,10 @@ public class InternetService implements Comparable<InternetService> {
    private final int timeout;
    private final String description;
 
-   public InternetService(int id, String name, URI location, PublicIpAddress publicIpAddress,
-            int port, Protocol protocol, boolean enabled, int timeout, String description) {
-      this.id = id;
+   public InternetService(String name, URI id, PublicIpAddress publicIpAddress, int port, Protocol protocol,
+         boolean enabled, int timeout, String description) {
       this.name = name;
-      this.location = location;
+      this.id = id;
       this.publicIpAddress = publicIpAddress;
       this.port = port;
       this.protocol = protocol;
@@ -72,33 +70,23 @@ public class InternetService implements Comparable<InternetService> {
       return description;
    }
 
-   public int getId() {
-      return id;
-   }
-
    public String getName() {
       return name;
    }
 
-   public URI getLocation() {
-      return location;
+   public URI getId() {
+      return id;
    }
-   
+
    public int compareTo(InternetService that) {
-      if (this == that)
-         return 0;
-      if (this.id < that.id)
-         return -1;
-      if (this.id > that.id)
-         return 1;
-      return 0;
+      return (this == that) ? 0 : getId().compareTo(that.getId());
    }
 
    @Override
    public String toString() {
-      return "InternetService [description=" + description + ", enabled=" + enabled + ", id=" + id
-               + ", location=" + location + ", name=" + name + ", port=" + port + ", protocol="
-               + protocol + ", publicIpAddress=" + publicIpAddress + ", timeout=" + timeout + "]";
+      return "InternetService [description=" + description + ", enabled=" + enabled + ", id=" + id + ", name="
+            + name + ", port=" + port + ", protocol=" + protocol + ", publicIpAddress=" + publicIpAddress
+            + ", timeout=" + timeout + "]";
    }
 
    @Override
@@ -107,8 +95,7 @@ public class InternetService implements Comparable<InternetService> {
       int result = 1;
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + (enabled ? 1231 : 1237);
-      result = prime * result + id;
-      result = prime * result + ((location == null) ? 0 : location.hashCode());
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + port;
       result = prime * result + ((protocol == null) ? 0 : protocol.hashCode());
@@ -133,12 +120,10 @@ public class InternetService implements Comparable<InternetService> {
          return false;
       if (enabled != other.enabled)
          return false;
-      if (id != other.id)
-         return false;
-      if (location == null) {
-         if (other.location != null)
+      if (id == null) {
+         if (other.id != null)
             return false;
-      } else if (!location.equals(other.location))
+      } else if (!id.equals(other.id))
          return false;
       if (name == null) {
          if (other.name != null)

@@ -52,7 +52,7 @@ public class TerremarkVCloudClientLiveTest extends TerremarkClientLiveTest {
       Set<KeyPair> response = vCloudExpressClient.listKeyPairsInOrg(null);
       assertNotNull(response);
       System.err.println(response);
-      assertEquals(response, vCloudExpressClient.listKeyPairsInOrg(org.getName()));
+      assertEquals(response, vCloudExpressClient.listKeyPairsInOrg(org.getId()));
    }
 
    @Override
@@ -61,11 +61,11 @@ public class TerremarkVCloudClientLiveTest extends TerremarkClientLiveTest {
 
       TerremarkOrganization org = vCloudExpressClient.findOrganizationNamed(null);
       try {
-         key = vCloudExpressClient.generateKeyPairInOrg(org.getName(), "livetest", false);
+         key = vCloudExpressClient.generateKeyPairInOrg(org.getId(), "livetest", false);
       } catch (IllegalStateException e) {
-         key = vCloudExpressClient.getKeyPairInOrg(org.getName(), "livetest");
-         vCloudExpressClient.deleteKeyPair(key.getLocation());
-         key = vCloudExpressClient.generateKeyPairInOrg(org.getName(), "livetest", false);
+         key = vCloudExpressClient.findKeyPairInOrg(org.getId(), "livetest");
+         vCloudExpressClient.deleteKeyPair(key.getId());
+         key = vCloudExpressClient.generateKeyPairInOrg(org.getId(), "livetest", false);
       }
       assertNotNull(key);
       System.err.println(key);
@@ -73,7 +73,7 @@ public class TerremarkVCloudClientLiveTest extends TerremarkClientLiveTest {
       assertNotNull(key.getPrivateKey());
       assertNotNull(key.getFingerPrint());
       assertEquals(key.isDefault(), false);
-      assertEquals(key.getFingerPrint(), vCloudExpressClient.getKeyPairInOrg(org.getName(), key.getName())
+      assertEquals(key.getFingerPrint(), vCloudExpressClient.findKeyPairInOrg(org.getId(), key.getName())
             .getFingerPrint());
    }
 
@@ -81,7 +81,7 @@ public class TerremarkVCloudClientLiveTest extends TerremarkClientLiveTest {
    void cleanup1() throws InterruptedException, ExecutionException, TimeoutException {
       if (key != null) {
          TerremarkVCloudExpressClient vCloudExpressClient = TerremarkVCloudExpressClient.class.cast(tmClient);
-         vCloudExpressClient.deleteKeyPair(key.getLocation());
+         vCloudExpressClient.deleteKeyPair(key.getId());
       }
    }
 

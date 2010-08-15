@@ -37,8 +37,8 @@ public class TerremarkCatalogItemHandler extends CatalogItemHandler {
    private NamedResource computeOptions;
 
    public TerremarkCatalogItem getResult() {
-      return new TerremarkCatalogItemImpl(catalogItem.getId(), catalogItem.getName(), catalogItem.getLocation(),
-            description, computeOptions, customizationOptions, entity, properties);
+      return new TerremarkCatalogItemImpl(catalogItem.getName(), catalogItem.getId(), description,
+            computeOptions, customizationOptions, entity, properties);
    }
 
    @Override

@@ -26,34 +26,44 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.endpoints.Org;
-import org.jclouds.vcloud.terremark.endpoints.KeysList;
+import org.jclouds.vcloud.terremark.domain.TerremarkOrganization;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Maps;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class OrgNameToKeysListEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, NamedResource>> orgNameToEndpoint;
-   private final String defaultOrg;
+public class OrgURIToKeysListEndpoint implements Function<Object, URI> {
+   private final Supplier<Map<String, ? extends Organization>> orgMap;
+   private final URI defaultOrg;
 
    @Inject
-   public OrgNameToKeysListEndpoint(@KeysList Supplier<Map<String, NamedResource>> orgNameToEndpoint,
-         @Org String defaultUri) {
-      this.orgNameToEndpoint = orgNameToEndpoint;
+   public OrgURIToKeysListEndpoint(Supplier<Map<String, ? extends Organization>> orgMap, @Org URI defaultUri) {
+      this.orgMap = orgMap;
       this.defaultOrg = defaultUri;
    }
 
    public URI apply(Object from) {
+      Map<URI, ? extends Organization> uriToOrg = Maps.uniqueIndex(orgMap.get().values(),
+            new Function<Organization, URI>() {
+
+               @Override
+               public URI apply(Organization from) {
+                  return from.getId();
+               }
+
+            });
       try {
-         return orgNameToEndpoint.get().get(from == null ? defaultOrg : from).getLocation();
+         return TerremarkOrganization.class.cast(uriToOrg.get(from == null ? defaultOrg : from)).getKeysList()
+               .getId();
       } catch (NullPointerException e) {
-         throw new ResourceNotFoundException("org " + from + " not found in " + orgNameToEndpoint.get().keySet());
+         throw new ResourceNotFoundException("org " + from + " not found in " + uriToOrg);
       }
    }
 

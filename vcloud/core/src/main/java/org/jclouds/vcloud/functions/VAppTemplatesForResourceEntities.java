@@ -74,7 +74,7 @@ public class VAppTemplatesForResourceEntities implements
          @SuppressWarnings("unchecked")
          @Override
          public Future<VAppTemplate> apply(NamedResource from) {
-            return (Future<VAppTemplate>) aclient.getVAppTemplate(from.getLocation());
+            return (Future<VAppTemplate>) aclient.getVAppTemplate(from.getId());
          }
 
       }, executor, null, logger, "vappTemplates in");

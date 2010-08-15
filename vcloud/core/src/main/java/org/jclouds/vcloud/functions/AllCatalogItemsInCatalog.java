@@ -75,10 +75,10 @@ public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<? ex
          @SuppressWarnings("unchecked")
          @Override
          public Future<CatalogItem> apply(NamedResource from) {
-            return (Future<CatalogItem>) aclient.getCatalogItem(from.getLocation());
+            return (Future<CatalogItem>) aclient.getCatalogItem(from.getId());
          }
 
-      }, executor, null, logger, "catalogItems in " + from.getLocation());
+      }, executor, null, logger, "catalogItems in " + from.getId());
       return catalogItems;
    }
 

@@ -25,6 +25,8 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.jclouds.compute.predicates.NodePredicates.parentLocationId;
 
+import java.net.URI;
+
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.strategy.ListNodesStrategy;
@@ -41,8 +43,7 @@ import com.google.common.collect.ImmutableSet;
 public class CleanupOrphanKeysTest {
 
    public void testWhenNoDeletedNodes() {
-      Iterable<? extends NodeMetadata> deadOnes = ImmutableSet
-            .<NodeMetadata> of();
+      Iterable<? extends NodeMetadata> deadOnes = ImmutableSet.<NodeMetadata> of();
       // create mocks
       CleanupOrphanKeys strategy = setupStrategy();
 
@@ -62,12 +63,10 @@ public class CleanupOrphanKeysTest {
       // create mocks
       CleanupOrphanKeys strategy = setupStrategy();
       NodeMetadata nodeMetadata = createMock(NodeMetadata.class);
-      Iterable<? extends NodeMetadata> deadOnes = ImmutableSet
-            .<NodeMetadata> of(nodeMetadata);
+      Iterable<? extends NodeMetadata> deadOnes = ImmutableSet.<NodeMetadata> of(nodeMetadata);
 
       // setup expectations
-      expect(strategy.nodeToOrgAndName.apply(nodeMetadata)).andReturn(null)
-            .atLeastOnce();
+      expect(strategy.nodeToOrgAndName.apply(nodeMetadata)).andReturn(null).atLeastOnce();
 
       // replay mocks
       replay(nodeMetadata);
@@ -85,20 +84,15 @@ public class CleanupOrphanKeysTest {
       // create mocks
       CleanupOrphanKeys strategy = setupStrategy();
       NodeMetadata nodeMetadata = createMock(NodeMetadata.class);
-      Iterable<? extends NodeMetadata> deadOnes = ImmutableSet
-            .<NodeMetadata> of(nodeMetadata);
-      OrgAndName orgTag = new OrgAndName("location", "tag");
+      Iterable<? extends NodeMetadata> deadOnes = ImmutableSet.<NodeMetadata> of(nodeMetadata);
+      OrgAndName orgTag = new OrgAndName(URI.create("location"), "tag");
 
       // setup expectations
-      expect(strategy.nodeToOrgAndName.apply(nodeMetadata)).andReturn(orgTag)
-            .atLeastOnce();
-      expect(
-            (Object) strategy.listNodes
-                  .listDetailsOnNodesMatching(parentLocationId(orgTag.getOrg())))
+      expect(strategy.nodeToOrgAndName.apply(nodeMetadata)).andReturn(orgTag).atLeastOnce();
+      expect((Object) strategy.listNodes.listDetailsOnNodesMatching(parentLocationId(orgTag.getOrg().toASCIIString())))
             .andReturn(ImmutableSet.of(nodeMetadata));
       expect(nodeMetadata.getTag()).andReturn(orgTag.getName()).atLeastOnce();
-      expect(nodeMetadata.getState()).andReturn(NodeState.RUNNING)
-            .atLeastOnce();
+      expect(nodeMetadata.getState()).andReturn(NodeState.RUNNING).atLeastOnce();
 
       // replay mocks
       replay(nodeMetadata);
@@ -116,20 +110,15 @@ public class CleanupOrphanKeysTest {
       // create mocks
       CleanupOrphanKeys strategy = setupStrategy();
       NodeMetadata nodeMetadata = createMock(NodeMetadata.class);
-      Iterable<? extends NodeMetadata> deadOnes = ImmutableSet
-            .<NodeMetadata> of(nodeMetadata);
-      OrgAndName orgTag = new OrgAndName("location", "tag");
+      Iterable<? extends NodeMetadata> deadOnes = ImmutableSet.<NodeMetadata> of(nodeMetadata);
+      OrgAndName orgTag = new OrgAndName(URI.create("location"), "tag");
 
       // setup expectations
-      expect(strategy.nodeToOrgAndName.apply(nodeMetadata)).andReturn(orgTag)
-            .atLeastOnce();
-      expect(
-            (Object) strategy.listNodes
-                  .listDetailsOnNodesMatching(parentLocationId(orgTag.getOrg())))
+      expect(strategy.nodeToOrgAndName.apply(nodeMetadata)).andReturn(orgTag).atLeastOnce();
+      expect((Object) strategy.listNodes.listDetailsOnNodesMatching(parentLocationId(orgTag.getOrg().toASCIIString())))
             .andReturn(ImmutableSet.of(nodeMetadata));
       expect(nodeMetadata.getTag()).andReturn(orgTag.getName()).atLeastOnce();
-      expect(nodeMetadata.getState()).andReturn(NodeState.TERMINATED)
-            .atLeastOnce();
+      expect(nodeMetadata.getState()).andReturn(NodeState.TERMINATED).atLeastOnce();
       strategy.deleteKeyPair.execute(orgTag);
 
       // replay mocks
@@ -148,16 +137,12 @@ public class CleanupOrphanKeysTest {
       // create mocks
       CleanupOrphanKeys strategy = setupStrategy();
       NodeMetadata nodeMetadata = createMock(NodeMetadata.class);
-      Iterable<? extends NodeMetadata> deadOnes = ImmutableSet
-            .<NodeMetadata> of(nodeMetadata);
-      OrgAndName orgTag = new OrgAndName("location", "tag");
+      Iterable<? extends NodeMetadata> deadOnes = ImmutableSet.<NodeMetadata> of(nodeMetadata);
+      OrgAndName orgTag = new OrgAndName(URI.create("location"), "tag");
 
       // setup expectations
-      expect(strategy.nodeToOrgAndName.apply(nodeMetadata)).andReturn(orgTag)
-            .atLeastOnce();
-      expect(
-            (Object) strategy.listNodes
-                  .listDetailsOnNodesMatching(parentLocationId(orgTag.getOrg())))
+      expect(strategy.nodeToOrgAndName.apply(nodeMetadata)).andReturn(orgTag).atLeastOnce();
+      expect((Object) strategy.listNodes.listDetailsOnNodesMatching(parentLocationId(orgTag.getOrg().toASCIIString())))
             .andReturn(ImmutableSet.of());
       strategy.deleteKeyPair.execute(orgTag);
 

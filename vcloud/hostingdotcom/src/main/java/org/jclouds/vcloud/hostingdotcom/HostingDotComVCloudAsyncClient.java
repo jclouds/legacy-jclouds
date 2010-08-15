@@ -28,7 +28,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.jclouds.predicates.validators.DnsNameValidator;
@@ -74,12 +73,10 @@ public interface HostingDotComVCloudAsyncClient extends VCloudAsyncClient {
 
    @GET
    @Consumes(VAPP_XML)
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/vapp/{vAppId}")
    @XMLResponseParser(HostingDotComVAppHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Override
-   ListenableFuture<? extends HostingDotComVApp> getVApp(@PathParam("vAppId") String appId);
+   ListenableFuture<? extends HostingDotComVApp> getVApp(@EndpointParam URI appId);
 
    @POST
    @Path("/action/instantiateVAppTemplate")

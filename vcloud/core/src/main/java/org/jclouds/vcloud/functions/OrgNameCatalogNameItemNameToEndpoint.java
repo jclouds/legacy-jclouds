@@ -66,7 +66,7 @@ public class OrgNameCatalogNameItemNameToEndpoint implements Function<Object, UR
          catalog = defaultCatalog;
       try {
          Map<String, ? extends org.jclouds.vcloud.domain.Catalog> catalogs = checkNotNull(orgCatalogMap.get().get(org));
-         return catalogs.get(catalog).get(catalogItem).getLocation();
+         return catalogs.get(catalog).get(catalogItem).getId();
       } catch (NullPointerException e) {
          throw new NoSuchElementException(org + "/" + catalog + "/" + catalogItem + " not found in "
                + orgCatalogMap.get());

@@ -43,22 +43,10 @@ public class PublicIpAddressesHandlerTest extends BaseHandlerTest {
    public void test1() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/terremark/PublicIpAddresses.xml");
 
-      Set<PublicIpAddress> result = factory.create(
-               injector.getInstance(PublicIpAddressesHandler.class)).parse(is);
-      assertEquals(
-               result,
-               ImmutableSet
-                        .of(
-                                 new PublicIpAddress(
-                                          8720,
-                                          "204.51.112.91",
-                                          URI
-                                                   .create("https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/8720")),
-                                 new PublicIpAddress(
-                                          14965,
-                                          "204.51.114.79",
-                                          URI
-                                                   .create("https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/14965"))));
+      Set<PublicIpAddress> result = factory.create(injector.getInstance(PublicIpAddressesHandler.class)).parse(is);
+      assertEquals(result, ImmutableSet.of(new PublicIpAddress("204.51.112.91", URI
+            .create("https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/8720")), new PublicIpAddress(
+            "204.51.114.79", URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/14965"))));
 
    }
 }

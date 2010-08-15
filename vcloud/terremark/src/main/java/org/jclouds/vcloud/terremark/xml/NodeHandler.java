@@ -36,7 +36,6 @@ public class NodeHandler extends HandlerWithResult<Node> {
    protected Logger logger = Logger.NULL;
    private StringBuilder currentText = new StringBuilder();
 
-   private int id;
    private URI location;
    private String serviceName;
    private String address;
@@ -51,13 +50,11 @@ public class NodeHandler extends HandlerWithResult<Node> {
 
    @Override
    public Node getResult() {
-      return new Node(id, serviceName, location, address, port, enabled, description);
+      return new Node(serviceName, location, address, port, enabled, description);
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("Id")) {
-         id = Integer.parseInt(currentOrNull());
-      } else if (qName.equals("Href") && currentOrNull() != null) {
+      if (qName.equals("Href") && currentOrNull() != null) {
          location = URI.create(currentOrNull());
       } else if (qName.equals("Name")) {
          serviceName = currentOrNull();

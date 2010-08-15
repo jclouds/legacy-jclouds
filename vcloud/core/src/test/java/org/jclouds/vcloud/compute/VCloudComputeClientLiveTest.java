@@ -20,10 +20,13 @@
 package org.jclouds.vcloud.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
+import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
@@ -63,7 +66,7 @@ public class VCloudComputeClientLiveTest {
    protected VCloudComputeClient computeClient;
    protected VCloudClient client;
 
-   protected String id;
+   protected URI id;
    protected String publicAddress;
    protected String templateName;
 
@@ -93,7 +96,7 @@ public class VCloudComputeClientLiveTest {
       InstantiateVAppTemplateOptions options = processorCount(1).memory(512).disk(10 * 1025 * 1024).productProperties(
             ImmutableMap.of("foo", "bar"));
 
-      id = computeClient.start(null, template.getLocation(), templateName, options).get("id");
+      id = URI.create(computeClient.start(null, template.getId(), templateName, options).get("id"));
       Expectation expectation = expectationMap.get(toTest);
 
       VApp vApp = client.getVApp(id);
@@ -117,14 +120,16 @@ public class VCloudComputeClientLiveTest {
          int memory, long hardDisk) {
       // assertEquals(vApp.getName(), serverName);
       // assertEquals(vApp.getOperatingSystemDescription(), expectedOs);
-      assertEquals(Iterables.getOnlyElement(vApp.getResourceAllocationByType().get(ResourceType.PROCESSOR))
+      assertEquals(Iterables
+            .getOnlyElement(filter(vApp.getResourceAllocations(), resourceType(ResourceType.PROCESSOR)))
             .getVirtualQuantity(), processorCount);
-      assertEquals(Iterables.getOnlyElement(vApp.getResourceAllocationByType().get(ResourceType.SCSI_CONTROLLER))
-            .getVirtualQuantity(), 1);
-      assertEquals(Iterables.getOnlyElement(vApp.getResourceAllocationByType().get(ResourceType.MEMORY))
+      assertEquals(Iterables.getOnlyElement(
+            filter(vApp.getResourceAllocations(), resourceType(ResourceType.SCSI_CONTROLLER))).getVirtualQuantity(), 1);
+      assertEquals(Iterables.getOnlyElement(filter(vApp.getResourceAllocations(), resourceType(ResourceType.MEMORY)))
             .getVirtualQuantity(), memory);
-      assertEquals(Iterables.getOnlyElement(vApp.getResourceAllocationByType().get(ResourceType.DISK_DRIVE))
-            .getVirtualQuantity(), hardDisk);
+      assertEquals(Iterables.getOnlyElement(
+            filter(vApp.getResourceAllocations(), resourceType(ResourceType.DISK_DRIVE))).getVirtualQuantity(),
+            hardDisk);
    }
 
    @AfterTest

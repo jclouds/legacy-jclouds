@@ -73,7 +73,7 @@ public class ParseTerremarkVCloudErrorFromHttpResponse implements HttpErrorHandl
                } else {
                   message = path;
                }
-               exception = new ResourceNotFoundException(message);
+               exception = new ResourceNotFoundException(message, exception);
             }
             break;
          case 500:

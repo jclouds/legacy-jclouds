@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.bluelock.compute;
 
+import java.net.URI;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -44,7 +45,7 @@ public class BlueLockVCloudComputeClient extends BaseVCloudComputeClient {
 
    @Inject
    protected BlueLockVCloudComputeClient(PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
-         VCloudClient client, Predicate<String> successTester, Map<VAppStatus, NodeState> vAppStatusToNodeState) {
+         VCloudClient client, Predicate<URI> successTester, Map<VAppStatus, NodeState> vAppStatusToNodeState) {
       super(client, successTester, vAppStatusToNodeState);
       this.credentialsProvider = credentialsProvider;
    }

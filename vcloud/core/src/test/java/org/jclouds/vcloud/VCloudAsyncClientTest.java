@@ -55,6 +55,7 @@ import org.jclouds.vcloud.domain.internal.CatalogImpl;
 import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.domain.internal.OrganizationImpl;
+import org.jclouds.vcloud.domain.internal.VDCImpl;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
@@ -242,8 +243,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    public void testCatalog() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("getCatalog", String.class);
-      HttpRequest request = processor.createRequest(method, "1");
+      Method method = VCloudAsyncClient.class.getMethod("getCatalog", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+            .create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"));
 
       assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/catalog/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
@@ -272,8 +274,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    public void testNetwork() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("getNetwork", String.class);
-      HttpRequest request = processor.createRequest(method, "2");
+      Method method = VCloudAsyncClient.class.getMethod("getNetwork", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+            .create("https://vcloud.safesecureweb.com/api/v0.8/network/2"));
 
       assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/network/2 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.network+xml\n");
@@ -454,8 +457,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    public void testGetTasksList() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("getTasksList", String.class);
-      HttpRequest request = processor.createRequest(method, "1");
+      Method method = VCloudAsyncClient.class.getMethod("getTasksList", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+            .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/1"));
 
       assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/tasksList/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.tasksList+xml\n");
@@ -484,8 +488,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    public void testDeployVApp() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("deployVApp", String.class);
-      HttpRequest request = processor.createRequest(method, 1);
+      Method method = VCloudAsyncClient.class.getMethod("deployVApp", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+            .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/1"));
 
       assertRequestLineEquals(request, "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/action/deploy HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
@@ -499,8 +504,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    public void testGetVApp() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("getVApp", String.class);
-      HttpRequest request = processor.createRequest(method, 1);
+      Method method = VCloudAsyncClient.class.getMethod("getVApp", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+            .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/1"));
 
       assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/vApp/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
@@ -514,8 +520,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    public void testUndeployVApp() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("undeployVApp", String.class);
-      HttpRequest request = processor.createRequest(method, 1);
+      Method method = VCloudAsyncClient.class.getMethod("undeployVApp", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+            .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/1"));
 
       assertRequestLineEquals(request, "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/action/undeploy HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
@@ -529,8 +536,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    public void testDeleteVApp() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("deleteVApp", String.class);
-      HttpRequest request = processor.createRequest(method, 1);
+      Method method = VCloudAsyncClient.class.getMethod("deleteVApp", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+            .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/1"));
 
       assertRequestLineEquals(request, "DELETE https://vcloud.safesecureweb.com/api/v0.8/vApp/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -544,8 +552,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    public void testPowerOn() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("powerOnVApp", String.class);
-      HttpRequest request = processor.createRequest(method, 1);
+      Method method = VCloudAsyncClient.class.getMethod("powerOnVApp", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+            .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/1"));
 
       assertRequestLineEquals(request,
             "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/powerOn HTTP/1.1");
@@ -560,8 +569,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    public void testPowerOff() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("powerOffVApp", String.class);
-      HttpRequest request = processor.createRequest(method, 1);
+      Method method = VCloudAsyncClient.class.getMethod("powerOffVApp", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+            .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/1"));
 
       assertRequestLineEquals(request,
             "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/powerOff HTTP/1.1");
@@ -576,8 +586,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    public void testReset() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("resetVApp", String.class);
-      HttpRequest request = processor.createRequest(method, 1);
+      Method method = VCloudAsyncClient.class.getMethod("resetVApp", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+            .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/1"));
 
       assertRequestLineEquals(request,
             "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/reset HTTP/1.1");
@@ -592,8 +603,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    public void testSuspend() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("suspendVApp", String.class);
-      HttpRequest request = processor.createRequest(method, 1);
+      Method method = VCloudAsyncClient.class.getMethod("suspendVApp", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+            .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/1"));
 
       assertRequestLineEquals(request,
             "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/suspend HTTP/1.1");
@@ -608,8 +620,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    public void testShutdown() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("shutdownVApp", String.class);
-      HttpRequest request = processor.createRequest(method, 1);
+      Method method = VCloudAsyncClient.class.getMethod("shutdownVApp", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+            .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/1"));
 
       assertRequestLineEquals(request,
             "POST https://vcloud.safesecureweb.com/api/v0.8/vApp/1/power/action/shutdown HTTP/1.1");
@@ -624,8 +637,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    public void testGetTask() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("getTask", String.class);
-      HttpRequest request = processor.createRequest(method, "1");
+      Method method = VCloudAsyncClient.class.getMethod("getTask", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+            .create("https://vcloud.safesecureweb.com/api/v0.8/task/1"));
 
       assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/task/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
@@ -639,8 +653,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    public void testCancelTask() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("cancelTask", String.class);
-      HttpRequest request = processor.createRequest(method, "1");
+      Method method = VCloudAsyncClient.class.getMethod("cancelTask", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+            .create("https://vcloud.safesecureweb.com/api/v0.8/task/1"));
 
       assertRequestLineEquals(request, "POST https://vcloud.safesecureweb.com/api/v0.8/task/1/action/cancel HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
@@ -684,14 +699,6 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       protected URI provideAuthenticationURI(VCloudVersionsAsyncClient versionService,
             @Named(PROPERTY_API_VERSION) String version) {
          return URI.create("https://vcloud.safesecureweb.com/api/v0.8/login");
-      }
-
-      @Override
-      protected void configure() {
-         super.configure();
-         bind(OrganizationMapSupplier.class).to(TestOrganizationMapSupplier.class);
-         bind(OrganizationCatalogSupplier.class).to(TestOrganizationCatalogItemMapSupplier.class);
-         bind(OrganizationCatalogItemSupplier.class).to(TestOrganizationCatalogItemSupplier.class);
       }
 
       @Override
@@ -743,7 +750,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
             @Override
             public Map<String, NamedResource> getOrgs() {
-               return ImmutableMap.<String, NamedResource> of("org", new NamedResourceImpl("1", "org",
+               return ImmutableMap.<String, NamedResource> of("org", new NamedResourceImpl("org",
                      VCloudMediaType.ORG_XML, URI.create("https://vcloud.safesecureweb.com/api/v0.8/org/1")));
             }
 
@@ -756,6 +763,30 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       }
 
+      @Override
+      protected void configure() {
+         super.configure();
+         bind(OrganizationMapSupplier.class).to(TestOrganizationMapSupplier.class);
+         bind(OrganizationCatalogSupplier.class).to(TestOrganizationCatalogSupplier.class);
+         bind(OrganizationCatalogItemSupplier.class).to(TestOrganizationCatalogItemSupplier.class);
+      }
+
+      protected Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> provideOrganizationVDCSupplierCache(
+            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrganizationVDCSupplier supplier) {
+
+         return Suppliers.<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> ofInstance(ImmutableMap
+               .<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>> of("org",
+
+               ImmutableMap.<String, org.jclouds.vcloud.domain.VDC> of("vdc", new VDCImpl("vdc", URI
+                     .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"), "description", null, null, null, null,
+                     null, ImmutableMap.<String, NamedResource> of("vapp", new NamedResourceImpl("vapp",
+                           "application/vnd.vmware.vcloud.vApp+xml", URI
+                                 .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/188849-1")), "network",
+                           new NamedResourceImpl("network", "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
+                                 .create("https://vcloud.safesecureweb.com/api/v0.8/vdcItem/2"))), null))));
+
+      }
+
       @Singleton
       public static class TestOrganizationMapSupplier extends OrganizationMapSupplier {
          @Inject
@@ -765,22 +796,22 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
          @Override
          public Map<String, Organization> get() {
-            return ImmutableMap.<String, Organization> of("org", new OrganizationImpl("1", "org", URI
+            return ImmutableMap.<String, Organization> of("org", new OrganizationImpl("org", URI
                   .create("https://vcloud.safesecureweb.com/api/v0.8/org/1"), ImmutableMap.<String, NamedResource> of(
-                  "catalog", new NamedResourceImpl("1", "catalog", VCloudMediaType.CATALOG_XML, URI
+                  "catalog", new NamedResourceImpl("catalog", VCloudMediaType.CATALOG_XML, URI
                         .create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"))), ImmutableMap
-                  .<String, NamedResource> of("vdc", new NamedResourceImpl("1", "vdc", VCloudMediaType.VDC_XML, URI
+                  .<String, NamedResource> of("vdc", new NamedResourceImpl("vdc", VCloudMediaType.VDC_XML, URI
                         .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"))), ImmutableMap
-                  .<String, NamedResource> of("tasksList", new NamedResourceImpl("1", "tasksList",
+                  .<String, NamedResource> of("tasksList", new NamedResourceImpl("tasksList",
                         VCloudMediaType.TASKSLIST_XML, URI
                               .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/1")))));
          }
       }
 
       @Singleton
-      public static class TestOrganizationCatalogItemMapSupplier extends OrganizationCatalogSupplier {
+      public static class TestOrganizationCatalogSupplier extends OrganizationCatalogSupplier {
          @Inject
-         protected TestOrganizationCatalogItemMapSupplier() {
+         protected TestOrganizationCatalogSupplier() {
             super(null, null);
          }
 
@@ -788,12 +819,12 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
          public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> get() {
             return ImmutableMap.<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> of("org",
 
-            ImmutableMap.<String, org.jclouds.vcloud.domain.Catalog> of("catalog", new CatalogImpl("1", "catalog", URI
+            ImmutableMap.<String, org.jclouds.vcloud.domain.Catalog> of("catalog", new CatalogImpl("catalog", URI
                   .create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"), "description", ImmutableMap
-                  .<String, NamedResource> of("item", new NamedResourceImpl("1", "item",
+                  .<String, NamedResource> of("item", new NamedResourceImpl("item",
                         "application/vnd.vmware.vcloud.catalogItem+xml", URI
                               .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/1")), "template",
-                        new NamedResourceImpl("2", "template", "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
+                        new NamedResourceImpl("template", "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
                               .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2"))))));
          }
       }
@@ -809,11 +840,10 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
             return ImmutableMap.<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>> of(
                   "org", ImmutableMap.<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>> of(
                         "catalog", ImmutableMap.<String, org.jclouds.vcloud.domain.CatalogItem> of("template",
-                              new CatalogItemImpl("2", "template", URI
+                              new CatalogItemImpl("template", URI
                                     .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2"), "description",
-                                    new NamedResourceImpl("2", "template",
-                                          "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
-                                                .create("https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/2")),
+                                    new NamedResourceImpl("template", "application/vnd.vmware.vcloud.vAppTemplate+xml",
+                                          URI.create("https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/2")),
                                     ImmutableMap.<String, String> of()))));
 
          }

@@ -66,14 +66,12 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
    private int limit;
 
    public VDC getResult() {
-      return new VDCImpl(vDC.getId(), vDC.getName(), vDC.getLocation(), description,
-               storageCapacity, cpuCapacity, memoryCapacity, instantiatedVmsQuota,
-               deployedVmsQuota, resourceEntities, availableNetworks);
+      return new VDCImpl(vDC.getName(), vDC.getId(), description, storageCapacity, cpuCapacity, memoryCapacity,
+            instantiatedVmsQuota, deployedVmsQuota, resourceEntities, availableNetworks);
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if (qName.equals("Vdc")) {
          vDC = newNamedResource(attributes);
       } else if (qName.equals("Network")) {

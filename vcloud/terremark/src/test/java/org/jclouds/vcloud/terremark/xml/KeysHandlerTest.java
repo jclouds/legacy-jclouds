@@ -41,20 +41,12 @@ import com.google.common.collect.ImmutableSet;
 public class KeysHandlerTest extends BaseHandlerTest {
 
    public void test1() throws UnknownHostException {
-      InputStream is = getClass()
-            .getResourceAsStream("/terremark/keysList.xml");
+      InputStream is = getClass().getResourceAsStream("/terremark/keysList.xml");
 
-      Set<KeyPair> result = factory.create(injector.getInstance(KeyPairsHandler.class))
-            .parse(is);
-      assertEquals(
-            result,
-            ImmutableSet
-                  .of(new KeyPair(
-                        9,
-                        URI
-                              .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/extensions/key/9"),
-                        "default", true, null,
-                        "4e:af:8a:9f:e9:d2:72:d7:4b:a0:da:98:72:98:4d:7d")));
+      Set<KeyPair> result = factory.create(injector.getInstance(KeyPairsHandler.class)).parse(is);
+      assertEquals(result, ImmutableSet.of(new KeyPair(URI
+            .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/extensions/key/9"), "default", true,
+            null, "4e:af:8a:9f:e9:d2:72:d7:4b:a0:da:98:72:98:4d:7d")));
 
    }
 }

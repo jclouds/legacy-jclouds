@@ -31,11 +31,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
@@ -50,7 +47,8 @@ import org.jclouds.vcloud.terremark.binders.BindCreateKeyToXmlPayload;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.KeyPair;
 import org.jclouds.vcloud.terremark.domain.Protocol;
-import org.jclouds.vcloud.terremark.functions.OrgNameToKeysListEndpoint;
+import org.jclouds.vcloud.terremark.functions.OrgURIToKeysListEndpoint;
+import org.jclouds.vcloud.terremark.functions.VDCURIToInternetServicesEndpoint;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.xml.InternetServiceHandler;
 import org.jclouds.vcloud.terremark.xml.KeyPairByNameHandler;
@@ -73,25 +71,43 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
     * @see TerremarkVCloudExpressClient#addInternetServiceToVDC
     */
    @POST
-   @Endpoint(org.jclouds.vcloud.endpoints.VCloudApi.class)
-   @Path("/extensions/vdc/{vDCId}/internetServices")
    @Produces(INTERNETSERVICE_XML)
    @Consumes(INTERNETSERVICE_XML)
    @XMLResponseParser(InternetServiceHandler.class)
    @MapBinder(AddInternetServiceOptions.class)
-   ListenableFuture<? extends InternetService> addInternetServiceToVDC(@PathParam("vDCId") String vDCId,
+   ListenableFuture<? extends InternetService> addInternetServiceToVDC(
+         @EndpointParam(parser = VDCURIToInternetServicesEndpoint.class) URI vDCId,
          @MapPayloadParam("name") String serviceName, @MapPayloadParam("protocol") Protocol protocol,
          @MapPayloadParam("port") int port, AddInternetServiceOptions... options);
 
    /**
-    * @see TerremarkVCloudExpressClient#listKeyPairsInOrg
+    * @see TerremarkVCloudExpressClient#findKeyPairInOrgNamed
+    */
+   @GET
+   @XMLResponseParser(KeyPairByNameHandler.class)
+   @Consumes(KEYSLIST_XML)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends KeyPair> findKeyPairInOrg(
+         @Nullable @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org, String keyName);
+
+   /**
+    * @see TerremarkVCloudExpressClient#listKeyPairsInOrgNamed
     */
    @GET
    @Consumes(KEYSLIST_XML)
    @XMLResponseParser(KeyPairsHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<KeyPair>> listKeyPairsInOrg(
-         @Nullable @EndpointParam(parser = OrgNameToKeysListEndpoint.class) String orgName);
+         @Nullable @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org);
+
+   /**
+    * @see TerremarkVCloudExpressClient#listKeyPairs
+    */
+   @GET
+   @Consumes(KEYSLIST_XML)
+   @XMLResponseParser(KeyPairsHandler.class)
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   ListenableFuture<? extends Set<KeyPair>> listKeyPairs(@EndpointParam URI keysList);
 
    /**
     * @see TerremarkVCloudExpressClient#generateKeyPairInOrg
@@ -102,8 +118,8 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
    @XMLResponseParser(KeyPairHandler.class)
    @MapBinder(BindCreateKeyToXmlPayload.class)
    ListenableFuture<? extends KeyPair> generateKeyPairInOrg(
-         @Nullable @EndpointParam(parser = OrgNameToKeysListEndpoint.class) String orgName,
-         @MapPayloadParam("name") String name, @MapPayloadParam("isDefault") boolean makeDefault);
+         @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org, @MapPayloadParam("name") String name,
+         @MapPayloadParam("isDefault") boolean makeDefault);
 
    /**
     * @see TerremarkVCloudExpressClient#getKeyPair
@@ -113,16 +129,6 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
    @Consumes(APPLICATION_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends KeyPair> getKeyPair(@EndpointParam URI keyId);
-
-   /**
-    * @see TerremarkVCloudExpressClient#getKeyPairInOrg
-    */
-   @GET
-   @XMLResponseParser(KeyPairByNameHandler.class)
-   @Consumes(KEYSLIST_XML)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends KeyPair> getKeyPairInOrg(
-         @Nullable @EndpointParam(parser = OrgNameToKeysListEndpoint.class) String orgName, String keyName);
 
    // TODO
    // /**

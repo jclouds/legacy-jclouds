@@ -71,17 +71,14 @@ public interface TerremarkVCloudClient extends VCloudClient {
    @Override
    TerremarkOrganization findOrganizationNamed(String orgName);
 
-   @Deprecated
-   CustomizationParameters getCustomizationOptionsOfCatalogItem(String catalogItemId);
-
    CustomizationParameters getCustomizationOptions(URI customizationOptions);
 
    /**
     * This call returns a list of public IP addresses.
     */
-   Set<PublicIpAddress> getPublicIpsAssociatedWithVDC(String vDCId);
+   Set<PublicIpAddress> getPublicIpsAssociatedWithVDC(URI vDCId);
 
-   void deletePublicIp(int ipId);
+   void deletePublicIp(URI ipId);
 
    /**
     * This call adds an internet service to a known, existing public IP. This
@@ -89,21 +86,21 @@ public interface TerremarkVCloudClient extends VCloudClient {
     * in the request.
     * 
     */
-   InternetService addInternetServiceToExistingIp(int existingIpId, String serviceName, Protocol protocol, int port,
+   InternetService addInternetServiceToExistingIp(URI existingIpId, String serviceName, Protocol protocol, int port,
          AddInternetServiceOptions... options);
 
-   void deleteInternetService(int internetServiceId);
+   void deleteInternetService(URI internetServiceId);
 
-   InternetService getInternetService(int internetServiceId);
+   InternetService getInternetService(URI internetServiceId);
 
-   Set<InternetService> getAllInternetServicesInVDC(String vDCId);
+   Set<InternetService> getAllInternetServicesInVDC(URI vDCId);
 
    /**
     * This call returns information about the internet service on a public IP.
     */
-   Set<InternetService> getInternetServicesOnPublicIp(int ipId);
+   Set<InternetService> getInternetServicesOnPublicIp(URI ipId);
 
-   Set<InternetService> getPublicIp(int ipId);
+   Set<InternetService> getPublicIp(URI ipId);
 
    /**
     * This call adds a node to an existing internet service.
@@ -120,15 +117,15 @@ public interface TerremarkVCloudClient extends VCloudClient {
     * @param options
     * @return
     */
-   Node addNode(int internetServiceId, String ipAddress, String name, int port, AddNodeOptions... options);
+   Node addNode(URI internetServiceId, String ipAddress, String name, int port, AddNodeOptions... options);
 
-   Node getNode(int nodeId);
+   Node getNode(URI nodeId);
 
-   Node configureNode(int nodeId, String name, boolean enabled, @Nullable String description);
+   Node configureNode(URI nodeId, String name, boolean enabled, @Nullable String description);
 
-   void deleteNode(int nodeId);
+   void deleteNode(URI nodeId);
 
-   Set<Node> getNodes(int internetServiceId);
+   Set<Node> getNodes(URI internetServiceId);
 
    /**
     * This call configures the settings of an existing vApp by passing the new
@@ -146,7 +143,7 @@ public interface TerremarkVCloudClient extends VCloudClient {
     * can increase the number of virtual CPUs and the amount of virtual memory
     * in the same request.
     * 
-    * @param vApp
+    * @param VApp
     *           vApp to change in power state off
     * @param configuration
     *           (s) to change

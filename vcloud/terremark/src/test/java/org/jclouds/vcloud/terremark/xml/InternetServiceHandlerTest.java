@@ -49,29 +49,20 @@ public class InternetServiceHandlerTest extends BaseHandlerTest {
    public void test1() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/terremark/InternetService.xml");
 
-      InternetService result = (InternetService) factory.create(
-               injector.getInstance(InternetServiceHandler.class)).parse(is);
-      assertEquals(result, new InternetService(523, "IS_for_Jim", null, new PublicIpAddress(4208,
-               "10.1.22.159", null), 80, Protocol.HTTP, false, 1, "Some test service"));
+      InternetService result = (InternetService) factory.create(injector.getInstance(InternetServiceHandler.class))
+            .parse(is);
+      assertEquals(result, new InternetService("IS_for_Jim", null, new PublicIpAddress("10.1.22.159", null), 80,
+            Protocol.HTTP, false, 1, "Some test service"));
    }
 
    public void test2() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/terremark/InternetService2.xml");
 
-      InternetService result = (InternetService) factory.create(
-               injector.getInstance(InternetServiceHandler.class)).parse(is);
-      assertEquals(
-               result,
-               new InternetService(
-                        524,
-                        "IS_for_Jim2",
-                        URI
-                                 .create("https://services.vcloudexpress.terremark.com/api/v0.8/InternetServices/524"),
-                        new PublicIpAddress(
-                                 4208,
-                                 "10.1.22.159",
-                                 URI
-                                          .create("https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/4208")),
-                        45, Protocol.HTTP, false, 1, "Some test service"));
+      InternetService result = (InternetService) factory.create(injector.getInstance(InternetServiceHandler.class))
+            .parse(is);
+      assertEquals(result, new InternetService("IS_for_Jim2", URI
+            .create("https://services.vcloudexpress.terremark.com/api/v0.8/InternetServices/524"), new PublicIpAddress(
+            "10.1.22.159", URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/PublicIps/4208")), 45,
+            Protocol.HTTP, false, 1, "Some test service"));
    }
 }

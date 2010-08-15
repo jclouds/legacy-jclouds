@@ -19,6 +19,8 @@
 
 package org.jclouds.vcloud.predicates;
 
+import java.net.URI;
+
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
@@ -37,7 +39,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class TaskSuccess implements Predicate<String> {
+public class TaskSuccess implements Predicate<URI> {
 
    private final VCloudClient client;
 
@@ -49,14 +51,14 @@ public class TaskSuccess implements Predicate<String> {
       this.client = client;
    }
 
-   public boolean apply(String taskId) {
+   public boolean apply(URI taskId) {
       logger.trace("looking for status on task %s", taskId);
 
       Task task = client.getTask(taskId);
       logger.trace("%s: looking for status %s: currently: %s", task, TaskStatus.SUCCESS, task
                .getStatus());
       if (task.getStatus() == TaskStatus.ERROR)
-         throw new RuntimeException("error on task: " + task.getId() + " error: " + task.getError());
+         throw new RuntimeException("error on task: " + task.getLocation() + " error: " + task.getError());
       return task.getStatus() == TaskStatus.SUCCESS;
    }
 

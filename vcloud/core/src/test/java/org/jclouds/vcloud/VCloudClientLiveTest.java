@@ -69,9 +69,8 @@ public class VCloudClientLiveTest {
    public void testCatalog() throws Exception {
       Catalog response = connection.findCatalogInOrgNamed(null, null);
       assertNotNull(response);
-      assertNotNull(response.getId());
       assertNotNull(response.getName());
-      assertNotNull(response.getLocation());
+      assertNotNull(response.getId());
       assertEquals(connection.findCatalogInOrgNamed(null, response.getName()), response);
    }
 
@@ -95,7 +94,6 @@ public class VCloudClientLiveTest {
             assertNotNull(item);
             assertNotNull(item.getEntity());
             assertNotNull(item.getId());
-            assertNotNull(item.getLocation());
             assertNotNull(item.getProperties());
             assertNotNull(item.getType());
          }
@@ -107,7 +105,7 @@ public class VCloudClientLiveTest {
       Catalog response = connection.findCatalogInOrgNamed(null, null);
       for (NamedResource resource : response.values()) {
          if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-            CatalogItem item = connection.getCatalogItem(resource.getLocation());
+            CatalogItem item = connection.getCatalogItem(resource.getId());
             if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
                assertNotNull(connection.findVAppTemplateInOrgCatalogNamed(null, null, item.getEntity().getName()));
             }
@@ -119,22 +117,20 @@ public class VCloudClientLiveTest {
    public void testDefaultVDC() throws Exception {
       VDC response = connection.findVDCInOrgNamed(null, null);
       assertNotNull(response);
-      assertNotNull(response.getId());
       assertNotNull(response.getName());
-      assertNotNull(response.getLocation());
+      assertNotNull(response.getId());
       assertNotNull(response.getResourceEntities());
       assertNotNull(response.getAvailableNetworks());
-      assertEquals(connection.getVDC(response.getLocation()), response);
+      assertEquals(connection.getVDC(response.getId()), response);
    }
 
    @Test
    public void testDefaultTasksList() throws Exception {
       org.jclouds.vcloud.domain.TasksList response = connection.findTasksListInOrgNamed(null, null);
       assertNotNull(response);
-      assertNotNull(response.getId());
       assertNotNull(response.getLocation());
       assertNotNull(response.getTasks());
-      assertEquals(connection.getTasksList(response.getId()).getId(), response.getId());
+      assertEquals(connection.getTasksList(response.getLocation()).getLocation(), response.getLocation());
    }
 
    @Test
@@ -145,7 +141,7 @@ public class VCloudClientLiveTest {
       assertNotNull(response.getTasks());
       if (response.getTasks().size() > 0) {
          Task task = response.getTasks().last();
-         assertEquals(connection.getTask(task.getId()).getLocation(), task.getLocation());
+         assertEquals(connection.getTask(task.getLocation()).getLocation(), task.getLocation());
       }
    }
 

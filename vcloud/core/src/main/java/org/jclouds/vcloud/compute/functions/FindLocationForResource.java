@@ -61,7 +61,7 @@ public class FindLocationForResource {
          do {
             // The "name" isn't always present, ex inside a vApp we have a rel
             // link that only includes href and type.
-            if (VCloudLocation.class.cast(input).getResource().getLocation().equals(resource.getLocation()))
+            if (VCloudLocation.class.cast(input).getResource().getId().equals(resource.getId()))
                return input;
             input = input.getParent();
          } while (input.getParent() != null);

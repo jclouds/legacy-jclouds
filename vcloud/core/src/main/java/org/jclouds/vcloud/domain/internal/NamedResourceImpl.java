@@ -30,36 +30,34 @@ import org.jclouds.vcloud.domain.NamedResource;
  * 
  */
 public class NamedResourceImpl implements NamedResource {
-   private final String id;
    private final String name;
    private final String type;
-   private final URI location;
+   private final URI id;
 
-   public NamedResourceImpl(String id, String name, String type, URI location) {
-      this.id = id;
+   public NamedResourceImpl(String name, String type, URI id) {
       this.name = name;
       this.type = type;
-      this.location = location;
+      this.id = id;
    }
 
-   public String getId() {
-      return id;
-   }
-
+   @Override
    public String getName() {
       return name;
    }
 
+   @Override
    public String getType() {
       return type;
    }
 
-   public URI getLocation() {
-      return location;
+   @Override
+   public URI getId() {
+      return id;
    }
 
+   @Override
    public int compareTo(NamedResource that) {
-      return (this == that) ? 0 : this.id.compareTo(that.getId());
+      return (this == that) ? 0 : getId().compareTo(that.getId());
    }
 
    @Override
@@ -67,7 +65,6 @@ public class NamedResourceImpl implements NamedResource {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((type == null) ? 0 : type.hashCode());
       return result;
@@ -87,11 +84,6 @@ public class NamedResourceImpl implements NamedResource {
             return false;
       } else if (!id.equals(other.id))
          return false;
-      if (location == null) {
-         if (other.location != null)
-            return false;
-      } else if (!location.equals(other.location))
-         return false;
       if (name == null) {
          if (other.name != null)
             return false;
@@ -107,6 +99,6 @@ public class NamedResourceImpl implements NamedResource {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", name=" + name + ", type=" + type + ", location=" + location + "]";
+      return "[id=" + id + ", name=" + name + ", type=" + type + "]";
    }
 }

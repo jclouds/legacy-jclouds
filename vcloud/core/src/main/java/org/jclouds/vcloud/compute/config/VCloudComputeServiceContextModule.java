@@ -164,7 +164,7 @@ public class VCloudComputeServiceContextModule extends AbstractModule {
 
          @Override
          public boolean apply(Location input) {
-            return VCloudLocation.class.cast(input).getResource().getLocation().equals(vdc.getLocation());
+            return VCloudLocation.class.cast(input).getResource().getId().equals(vdc.getId());
          }
 
       });

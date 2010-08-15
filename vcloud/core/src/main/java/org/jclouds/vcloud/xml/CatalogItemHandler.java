@@ -45,13 +45,11 @@ public class CatalogItemHandler extends ParseSax.HandlerWithResult<CatalogItem> 
    protected SortedMap<String, String> properties = Maps.newTreeMap();
 
    public CatalogItem getResult() {
-      return new CatalogItemImpl(catalogItem.getId(), catalogItem.getName(), catalogItem.getLocation(),
-               description, entity, properties);
+      return new CatalogItemImpl(catalogItem.getName(), catalogItem.getId(), description, entity, properties);
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if (qName.equals("CatalogItem")) {
          catalogItem = Utils.newNamedResource(attributes);
       } else if (qName.equals("Entity")) {

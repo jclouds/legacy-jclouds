@@ -39,9 +39,8 @@ public class VAppTemplateImpl extends NamedResourceImpl implements VAppTemplate 
    private final String description;
    private final VAppStatus status;
 
-   public VAppTemplateImpl(String id, String name, URI location, @Nullable String description,
-            @Nullable VAppStatus status) {
-      super(id, name, VCloudMediaType.VAPPTEMPLATE_XML, location);
+   public VAppTemplateImpl(String name, URI id, @Nullable String description, @Nullable VAppStatus status) {
+      super(name, VCloudMediaType.VAPPTEMPLATE_XML, id);
       this.description = description;
       this.status = status;
    }

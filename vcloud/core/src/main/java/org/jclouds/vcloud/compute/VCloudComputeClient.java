@@ -43,16 +43,12 @@ public interface VCloudComputeClient {
     * <p/>
     * This command blocks until the vApp is in state {@code VAppStatus#ON}
     * 
-    * @param orgName
-    *           name of the organization
-    * 
-    * @param vDCName
-    *           name of the virtual datacenter {@code
-    *           VCloudClient#getDefaultVDC}
-    * @param name
-    *           name of the vApp
+    * @param VDC
+    *           id of the virtual datacenter {@code VCloudClient#getDefaultVDC}
     * @param templateId
     *           id of the vAppTemplate you wish to instantiate
+    * @param name
+    *           name of the vApp
     * @param cores
     *           amount of virtual cpu cores
     * @param megs
@@ -73,12 +69,12 @@ public interface VCloudComputeClient {
    /**
     * returns a set of addresses that are only visible to the private network.
     */
-   Set<String> getPrivateAddresses(String vAppId);
+   Set<String> getPrivateAddresses(URI vAppId);
 
    /**
     * returns a set of addresses that are publically visible
     */
-   Set<String> getPublicAddresses(String vAppId);
+   Set<String> getPublicAddresses(URI vAppId);
 
    /**
     * reboots the vApp, blocking until the following state transition is
@@ -89,7 +85,7 @@ public interface VCloudComputeClient {
     * @param vAppId
     *           vApp to reboot
     */
-   void reboot(String vAppId);
+   void reboot(URI vAppId);
 
    /**
     * Destroys dependent resources, powers off and deletes the vApp, blocking
@@ -100,6 +96,6 @@ public interface VCloudComputeClient {
     * @param vAppId
     *           vApp to stop
     */
-   void stop(String vAppId);
+   void stop(URI vAppId);
 
 }

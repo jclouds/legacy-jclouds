@@ -17,31 +17,40 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.functions;
+package org.jclouds.vcloud.predicates;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import org.jclouds.vcloud.domain.ResourceAllocation;
+import org.jclouds.vcloud.domain.ResourceType;
 
-import org.jclouds.vcloud.endpoints.internal.CatalogItemRoot;
-
-import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 
 /**
+ * 
  * @author Adrian Cole
  */
-@Singleton
-public class CatalogIdToUri implements Function<Object, String> {
-   @Inject
-   @CatalogItemRoot
-   private String catalogItemRoot;
+public class VCloudPredicates {
 
-   public String apply(Object from) {
-      checkArgument(checkNotNull(from, "from") instanceof String,
-               "this binder is only valid for String!");
-      return String.format("%s/%s", catalogItemRoot, from);
+   /**
+    * Return resource allocations of the specific type.
+    * 
+    * @param type
+    *           type to match the items
+    * @return predicate
+    */
+   public static Predicate<ResourceAllocation> resourceType(final ResourceType type) {
+      checkNotNull(type, "type");
+      return new Predicate<ResourceAllocation>() {
+         @Override
+         public boolean apply(ResourceAllocation in) {
+            return type.equals(in.getType());
+         }
+
+         @Override
+         public String toString() {
+            return "resourceAllocationType(" + type + ")";
+         }
+      };
    }
-
 }

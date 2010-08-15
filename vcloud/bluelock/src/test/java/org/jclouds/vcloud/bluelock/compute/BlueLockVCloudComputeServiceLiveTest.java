@@ -26,8 +26,6 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.http.HttpResponseException;
-import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -63,17 +61,4 @@ public class BlueLockVCloudComputeServiceLiveTest extends VCloudComputeServiceLi
       return template;
    }
 
-   @Test
-   public void testErrorWhereAllNetworksReturn403() throws Exception {
-      VCloudClient bluelockClient = VCloudClient.class.cast(context.getProviderSpecificContext()
-               .getApi());
-      for (String i : new String[] { "1", "2", "3", "4" }) {
-         try {
-            bluelockClient.getNetwork(i);
-         } catch (HttpResponseException e) {
-            assertEquals(e.getResponse().getStatusCode(), 403);
-         }
-      }
-
-   }
 }

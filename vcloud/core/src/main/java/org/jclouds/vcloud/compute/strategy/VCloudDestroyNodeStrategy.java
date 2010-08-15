@@ -21,6 +21,8 @@ package org.jclouds.vcloud.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -35,11 +37,10 @@ import org.jclouds.vcloud.compute.VCloudComputeClient;
 @Singleton
 public class VCloudDestroyNodeStrategy implements DestroyNodeStrategy {
    protected final VCloudComputeClient computeClient;
-   protected final  GetNodeMetadataStrategy getNode;
+   protected final GetNodeMetadataStrategy getNode;
 
    @Inject
-   protected VCloudDestroyNodeStrategy(VCloudComputeClient computeClient,
-         GetNodeMetadataStrategy getNode) {
+   protected VCloudDestroyNodeStrategy(VCloudComputeClient computeClient, GetNodeMetadataStrategy getNode) {
       this.computeClient = computeClient;
       this.getNode = getNode;
 
@@ -47,7 +48,7 @@ public class VCloudDestroyNodeStrategy implements DestroyNodeStrategy {
 
    @Override
    public NodeMetadata execute(String id) {
-      computeClient.stop(checkNotNull(id, "node.id"));
+      computeClient.stop(URI.create(checkNotNull(id, "node.id")));
       return getNode.execute(id);
    }
 

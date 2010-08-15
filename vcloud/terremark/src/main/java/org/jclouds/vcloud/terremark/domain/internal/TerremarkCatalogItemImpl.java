@@ -36,10 +36,9 @@ public class TerremarkCatalogItemImpl extends CatalogItemImpl implements Terrema
    private final NamedResource computeOptions;
    private final NamedResource customizationOptions;
 
-   public TerremarkCatalogItemImpl(String id, String name, URI location, String description,
-         NamedResource computeOptions, NamedResource customizationOptions, NamedResource entity,
-         Map<String, String> properties) {
-      super(id, name, location, description, entity, properties);
+   public TerremarkCatalogItemImpl(String name, URI id, String description, NamedResource computeOptions,
+         NamedResource customizationOptions, NamedResource entity, Map<String, String> properties) {
+      super(name, id, description, entity, properties);
       this.computeOptions = computeOptions;
       this.customizationOptions = customizationOptions;
    }

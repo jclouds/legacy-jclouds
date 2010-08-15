@@ -70,20 +70,23 @@ public class TerremarkVCloudComputeClientTest {
       // TODO make this call only once
       expect(client.getVAppTemplate(templateURI)).andReturn(template);
 
-      expect(vdc.getLocation()).andReturn(vdcURI);
-      expect(template.getLocation()).andReturn(templateURI);
+      expect(vdc.getId()).andReturn(vdcURI);
+      expect(template.getId()).andReturn(templateURI);
       expect(
             client.instantiateVAppTemplateInVDC(vdcURI, templateURI, "name",
                   new TerremarkInstantiateVAppTemplateOptions().productProperty("password", "password"))).andReturn(
             vApp);
       Task task = createMock(Task.class);
+      URI vappLocation = URI.create("vapp");
+      URI taskLocation = URI.create("task");
 
-      expect(vApp.getId()).andReturn("1").atLeastOnce();
-      expect(client.deployVApp("1")).andReturn(task);
-      expect(task.getId()).andReturn("1").atLeastOnce();
-      Predicate<String> successTester = createMock(Predicate.class);
-      expect(successTester.apply("1")).andReturn(true).atLeastOnce();
-      expect(client.powerOnVApp("1")).andReturn(task);
+      expect(vApp.getId()).andReturn(vappLocation).atLeastOnce();
+      expect(vApp.getName()).andReturn("name").atLeastOnce();
+      expect(client.deployVApp(vappLocation)).andReturn(task);
+      expect(task.getLocation()).andReturn(taskLocation).atLeastOnce();
+      Predicate<URI> successTester = createMock(Predicate.class);
+      expect(successTester.apply(taskLocation)).andReturn(true).atLeastOnce();
+      expect(client.powerOnVApp(vappLocation)).andReturn(task);
 
       Predicate<VApp> notFoundTester = createMock(Predicate.class);
       Map<VAppStatus, NodeState> vAppStatusToNodeState = createMock(Map.class);
@@ -110,7 +113,7 @@ public class TerremarkVCloudComputeClientTest {
       Map<String, String> response = computeClient.start(vdcURI, templateURI, "name",
             new TerremarkInstantiateVAppTemplateOptions());
 
-      assertEquals(response.get("id"), "1");
+      assertEquals(response.get("id"), "vapp");
       assertEquals(response.get("username"), "Administrator");
       assertEquals(response.get("password"), "password");
 

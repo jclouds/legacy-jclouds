@@ -20,35 +20,40 @@
 package org.jclouds.vcloud.terremark.functions;
 
 import java.net.URI;
-import java.util.Date;
+import java.util.Map;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpResponseException;
-import org.jclouds.vcloud.domain.Task;
-import org.jclouds.vcloud.domain.TaskStatus;
-import org.jclouds.vcloud.domain.internal.TaskImpl;
+import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.vcloud.endpoints.VDC;
+import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class ParseTaskFromLocationHeader implements Function<HttpResponse, Task> {
+public class VDCURIToPublicIPsEndpoint implements Function<Object, URI> {
+   private final Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>> orgVDCMap;
+   private final URI defaultVDC;
 
-   public Task apply(HttpResponse from) {
-      String location = from.getFirstHeaderOrNull(HttpHeaders.LOCATION);
-      if (location == null)
-         location = from.getFirstHeaderOrNull("location");
-      if (location != null) {
-         return new TaskImpl(URI.create(location), TaskStatus.QUEUED, new Date(), null, null, null, null, null);
-      } else {
-         throw new HttpResponseException("no uri in headers or content", null, from);
-      }
-
+   @Inject
+   public VDCURIToPublicIPsEndpoint(Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>> orgVDCMap,
+         @VDC URI defaultVDC) {
+      this.orgVDCMap = orgVDCMap;
+      this.defaultVDC = defaultVDC;
    }
+
+   public URI apply(Object from) {
+      try {
+         return TerremarkVDC.class.cast(orgVDCMap.get().get(from == null ? defaultVDC : from)).getPublicIps().getId();
+      } catch (NullPointerException e) {
+         throw new ResourceNotFoundException("vdc " + from + " not found in " + orgVDCMap.get());
+      }
+   }
+
 }

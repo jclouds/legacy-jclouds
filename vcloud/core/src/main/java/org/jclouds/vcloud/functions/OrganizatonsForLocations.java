@@ -81,7 +81,7 @@ public class OrganizatonsForLocations implements
 
          @Override
          public URI apply(Location from) {
-            return VCloudLocation.class.cast(from.getParent()).getResource().getLocation();
+            return VCloudLocation.class.cast(from.getParent()).getResource().getId();
          }
 
       })), new Function<URI, Future<Organization>>() {

@@ -45,14 +45,12 @@ public class TerremarkVDCImpl extends VDCImpl implements TerremarkVDC {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public TerremarkVDCImpl(String id, String name, URI location, String description,
-            Capacity storageCapacity, Capacity cpuCapacity, Capacity memoryCapacity,
-            Quota instantiatedVmsQuota, Quota deployedVmsQuota,
-            Map<String, NamedResource> availableNetworks,
-            Map<String, NamedResource> resourceEntities, NamedResource catalog, NamedResource publicIps,
-            NamedResource internetServices) {
-      super(id, name, location, description, storageCapacity, cpuCapacity, memoryCapacity,
-               instantiatedVmsQuota, deployedVmsQuota, availableNetworks, resourceEntities);
+   public TerremarkVDCImpl(String name, URI id, String description, Capacity storageCapacity,
+         Capacity cpuCapacity, Capacity memoryCapacity, Quota instantiatedVmsQuota, Quota deployedVmsQuota,
+         Map<String, NamedResource> availableNetworks, Map<String, NamedResource> resourceEntities,
+         NamedResource catalog, NamedResource publicIps, NamedResource internetServices) {
+      super(name, id, description, storageCapacity, cpuCapacity, memoryCapacity, instantiatedVmsQuota,
+            deployedVmsQuota, availableNetworks, resourceEntities);
       this.catalog = checkNotNull(catalog, "catalog");
       this.publicIps = checkNotNull(publicIps, "publicIps");
       this.internetServices = checkNotNull(internetServices, "internetServices");
