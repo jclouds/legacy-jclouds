@@ -20,12 +20,11 @@
 package org.jclouds.vcloud.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseTagFromName;
 
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -49,8 +48,8 @@ import org.jclouds.vcloud.domain.VAppStatus;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * Configures the {@link VCloudComputeServiceContext}; requires
- * {@link BaseVCloudComputeClient} bound.
+ * Configures the {@link VCloudComputeServiceContext}; requires {@link BaseVCloudComputeClient}
+ * bound.
  * 
  * @author Adrian Cole
  */
@@ -67,12 +66,10 @@ public class VCloudGetNodeMetadata {
    protected final GetExtra getExtra;
    protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
 
-   public static final Pattern TAG_PATTERN_WITHOUT_TEMPLATE = Pattern.compile("([^-]+)-[0-9a-f]+");
-
    @Inject
    VCloudGetNodeMetadata(VCloudClient client, VCloudComputeClient computeClient,
-         Map<VAppStatus, NodeState> vAppStatusToNodeState, GetExtra getExtra,
-         FindLocationForResource findLocationForResourceInVDC, Provider<Set<? extends Image>> images) {
+            Map<VAppStatus, NodeState> vAppStatusToNodeState, GetExtra getExtra,
+            FindLocationForResource findLocationForResourceInVDC, Provider<Set<? extends Image>> images) {
       this.client = checkNotNull(client, "client");
       this.images = checkNotNull(images, "images");
       this.getExtra = checkNotNull(getExtra, "getExtra");
@@ -83,22 +80,14 @@ public class VCloudGetNodeMetadata {
 
    public NodeMetadata execute(String in) {
       URI id = URI.create(in);
-      VApp vApp = client.getVApp(id);
-      if (vApp == null)
+      VApp from = client.getVApp(id);
+      if (from == null)
          return null;
-
-      String tag = null;
-      Image image = null;
-      Matcher matcher = TAG_PATTERN_WITHOUT_TEMPLATE.matcher(vApp.getName());
-      if (matcher.find()) {
-         tag = matcher.group(1);
-      } else {
-         tag = "NOTAG-" + vApp.getName();
-      }
-      Location location = findLocationForResourceInVDC.apply(vApp.getVDC());
-      return new NodeMetadataImpl(vApp.getId().toASCIIString(), vApp.getName(), vApp.getId()
-            .toASCIIString(), location, vApp.getId(), ImmutableMap.<String, String> of(), tag, image,
-            vAppStatusToNodeState.get(vApp.getStatus()), computeClient.getPublicAddresses(id), computeClient
-                  .getPrivateAddresses(id), getExtra.apply(vApp), null);
+      String tag = parseTagFromName(from.getName());
+      Location location = findLocationForResourceInVDC.apply(from.getVDC());
+      return new NodeMetadataImpl(in, from.getName(), in, location, from.getId(), ImmutableMap.<String, String> of(),
+               tag, null, vAppStatusToNodeState.get(from.getStatus()), computeClient.getPublicAddresses(id),
+               computeClient.getPrivateAddresses(id), getExtra.apply(from), null);
    }
+
 }

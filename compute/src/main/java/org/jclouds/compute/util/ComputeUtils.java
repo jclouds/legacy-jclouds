@@ -195,8 +195,8 @@ public class ComputeUtils {
             @Nullable SshCallable<?> last) {
       checkState(this.sshFactory != null, "runScript requested, but no SshModule configured");
       checkNodeHasPublicIps(node);
-      checkNotNull(node.getCredentials(), "credentials for node " + node.getId());
-      checkNotNull(node.getCredentials().credential, "credentials.credential for node " + node.getId());
+      checkNotNull(node.getCredentials(), "credentials for node " + node.getName());
+      checkNotNull(node.getCredentials().credential, "credentials.credential for node " + node.getName());
       SshClient ssh = createSshClientOncePortIsListeningOnNode(node);
       try {
          ssh.connect();

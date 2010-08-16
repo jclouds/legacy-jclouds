@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.compute.domain.Architecture;
@@ -45,22 +47,24 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 public class ComputeServiceUtils {
+   public static final Pattern DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX = Pattern.compile("([^-]+)-[0-9a-f]+");
+
+   public static String parseTagFromName(String from) {
+      Matcher matcher = DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX.matcher(from);
+      return matcher.find() ? matcher.group(1) : "NOTAG-" + from;
+   }
 
    public static final Map<org.jclouds.compute.domain.OsFamily, Map<String, String>> NAME_VERSION_MAP = ImmutableMap
-            .<org.jclouds.compute.domain.OsFamily, Map<String, String>> of(
-                     org.jclouds.compute.domain.OsFamily.CENTOS, ImmutableMap
-                              .<String, String> builder().put("5.3", "5.3").put("5.4", "5.4").put(
-                                       "5.5", "5.5").build(),
-                     org.jclouds.compute.domain.OsFamily.RHEL, ImmutableMap
-                              .<String, String> builder().put("5.3", "5.3").put("5.4", "5.4").put(
-                                       "5.5", "5.5").build(),
-                     org.jclouds.compute.domain.OsFamily.UBUNTU, ImmutableMap
-                              .<String, String> builder().put("hardy", "8.04").put("intrepid",
-                                       "8.10").put("jaunty", "9.04").put("karmic", "9.10").put(
-                                       "lucid", "10.04").put("maverick", "10.10").build());
+            .<org.jclouds.compute.domain.OsFamily, Map<String, String>> of(org.jclouds.compute.domain.OsFamily.CENTOS,
+                     ImmutableMap.<String, String> builder().put("5.3", "5.3").put("5.4", "5.4").put("5.5", "5.5")
+                              .build(), org.jclouds.compute.domain.OsFamily.RHEL,
+                     ImmutableMap.<String, String> builder().put("5.3", "5.3").put("5.4", "5.4").put("5.5", "5.5")
+                              .build(), org.jclouds.compute.domain.OsFamily.UBUNTU, ImmutableMap
+                              .<String, String> builder().put("hardy", "8.04").put("intrepid", "8.10").put("jaunty",
+                                       "9.04").put("karmic", "9.10").put("lucid", "10.04").put("maverick", "10.10")
+                              .build());
 
-   public static String parseVersionOrReturnEmptyString(org.jclouds.compute.domain.OsFamily family,
-            final String in) {
+   public static String parseVersionOrReturnEmptyString(org.jclouds.compute.domain.OsFamily family, final String in) {
       if (NAME_VERSION_MAP.containsKey(family)) {
          CONTAINS_SUBSTRING contains = new CONTAINS_SUBSTRING(in.replace('-', '.'));
          try {
@@ -94,27 +98,24 @@ public class ComputeServiceUtils {
       Formatter fmt = new Formatter().format("Execution failures:%n%n");
       int index = 1;
       for (Entry<?, Exception> errorMessage : executionExceptions.entrySet()) {
-         fmt.format("%s) %s on %s:%n%s%n%n", index++, errorMessage.getValue().getClass()
-                  .getSimpleName(), errorMessage.getKey(), Throwables
-                  .getStackTraceAsString(errorMessage.getValue()));
+         fmt.format("%s) %s on %s:%n%s%n%n", index++, errorMessage.getValue().getClass().getSimpleName(), errorMessage
+                  .getKey(), Throwables.getStackTraceAsString(errorMessage.getValue()));
       }
       return fmt.format("%s error[s]", executionExceptions.size()).toString();
    }
 
-   public static String createNodeErrorMessage(
-            Map<? extends NodeMetadata, ? extends Throwable> failedNodes) {
+   public static String createNodeErrorMessage(Map<? extends NodeMetadata, ? extends Throwable> failedNodes) {
       Formatter fmt = new Formatter().format("Node failures:%n%n");
       int index = 1;
       for (Entry<? extends NodeMetadata, ? extends Throwable> errorMessage : failedNodes.entrySet()) {
-         fmt.format("%s) %s on node %s:%n%s%n%n", index++, errorMessage.getValue().getClass()
-                  .getSimpleName(), errorMessage.getKey().getId(), Throwables
-                  .getStackTraceAsString(errorMessage.getValue()));
+         fmt.format("%s) %s on node %s:%n%s%n%n", index++, errorMessage.getValue().getClass().getSimpleName(),
+                  errorMessage.getKey().getId(), Throwables.getStackTraceAsString(errorMessage.getValue()));
       }
       return fmt.format("%s error[s]", failedNodes.size()).toString();
    }
 
-   public static Iterable<? extends ComputeMetadata> filterByName(
-            Iterable<? extends ComputeMetadata> nodes, final String name) {
+   public static Iterable<? extends ComputeMetadata> filterByName(Iterable<? extends ComputeMetadata> nodes,
+            final String name) {
       return Iterables.filter(nodes, new Predicate<ComputeMetadata>() {
          @Override
          public boolean apply(ComputeMetadata input) {
@@ -144,8 +145,7 @@ public class ComputeServiceUtils {
 
    public static boolean isKeyAuth(NodeMetadata createdNode) {
       return createdNode.getCredentials().credential != null
-               && createdNode.getCredentials().credential
-                        .startsWith("-----BEGIN RSA PRIVATE KEY-----");
+               && createdNode.getCredentials().credential.startsWith("-----BEGIN RSA PRIVATE KEY-----");
    }
 
    /**
@@ -153,10 +153,9 @@ public class ComputeServiceUtils {
     * returns a new instance of {@link NodeMetadata} that has new credentials
     */
    public static NodeMetadata installNewCredentials(NodeMetadata node, Credentials newCredentials) {
-      return new NodeMetadataImpl(node.getProviderId(), node.getName(), node.getId(), node
-               .getLocation(), node.getUri(), node.getUserMetadata(), node.getTag(), node
-               .getImage(), node.getState(), node.getPublicAddresses(), node.getPrivateAddresses(),
-               node.getExtra(), newCredentials);
+      return new NodeMetadataImpl(node.getProviderId(), node.getName(), node.getId(), node.getLocation(),
+               node.getUri(), node.getUserMetadata(), node.getTag(), node.getImage(), node.getState(), node
+                        .getPublicAddresses(), node.getPrivateAddresses(), node.getExtra(), newCredentials);
    }
 
    public static Iterable<String> getSupportedProviders() {

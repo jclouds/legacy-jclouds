@@ -20,12 +20,11 @@
 package org.jclouds.slicehost.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseTagFromName;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -47,7 +46,6 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
-   public static final Pattern DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX = Pattern.compile("([^-]+)-[0-9a-f]+");
    private final Location location;
    private final Map<Slice.Status, NodeState> sliceToNodeState;
    private final Set<? extends Image> images;
@@ -70,7 +68,7 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
 
    @Inject
    SliceToNodeMetadata(Map<Slice.Status, NodeState> sliceStateToNodeState, Set<? extends Image> images,
-         Location location) {
+            Location location) {
       this.sliceToNodeState = checkNotNull(sliceStateToNodeState, "sliceStateToNodeState");
       this.images = checkNotNull(images, "images");
       this.location = checkNotNull(location, "location");
@@ -78,8 +76,7 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
 
    @Override
    public NodeMetadata apply(Slice from) {
-      Matcher matcher = DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX.matcher(from.getName());
-      final String tag = matcher.find() ? matcher.group(1) : null;
+      String tag = parseTagFromName(from.getName());
       Image image = null;
       try {
          image = Iterables.find(images, new FindImageForSlice(from));
@@ -88,8 +85,8 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
       }
 
       return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", location, null, ImmutableMap
-            .<String, String> of(), tag, image, sliceToNodeState.get(from.getStatus()), Iterables.filter(from
-            .getAddresses(), new Predicate<String>() {
+               .<String, String> of(), tag, image, sliceToNodeState.get(from.getStatus()), Iterables.filter(from
+               .getAddresses(), new Predicate<String>() {
 
          @Override
          public boolean apply(String input) {
