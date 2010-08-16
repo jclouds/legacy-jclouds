@@ -113,10 +113,11 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       expect(input.template.getImage()).andReturn(input.image).atLeastOnce();
       expect(input.image.getProviderId()).andReturn(imageId).atLeastOnce();
       expect(instanceClient.runInstancesInRegion(region, zone, imageId, 1, input.count, ec2Options)).andReturn(
-              (Reservation)reservation);
+               (Reservation) reservation);
       expect(instance.getId()).andReturn(instanceCreatedId).atLeastOnce();
       expect(strategy.instancePresent.apply(instance)).andReturn(true);
       expect(input.template.getOptions()).andReturn(input.options).atLeastOnce();
+      expect(input.options.isMonitoringEnabled()).andReturn(false);
 
       expect(strategy.runningInstanceToNodeMetadata.apply(instance)).andReturn(nodeMetadata);
       expect(

@@ -57,8 +57,7 @@ public class AWSUtilsTest {
    protected void setUpInjector() throws IOException {
 
       Injector injector = new RestContextFactory().createContextBuilder("s3", "foo", "bar",
-               ImmutableSet.of(new MockModule(), new NullLoggingModule()), new Properties())
-               .buildInjector();
+               ImmutableSet.of(new MockModule(), new NullLoggingModule()), new Properties()).buildInjector();
 
       utils = injector.getInstance(AWSUtils.class);
 
@@ -74,6 +73,7 @@ public class AWSUtilsTest {
 
    HttpResponse response(InputStream content) {
       HttpResponse response = new HttpResponse(400, "boa", Payloads.newInputStreamPayload(content));
+      response.getPayload().setContentType("text/xml");
       response.getHeaders().put("x-amz-request-id", "requestid");
       response.getHeaders().put("x-amz-id-2", "requesttoken");
       return response;
@@ -81,8 +81,8 @@ public class AWSUtilsTest {
 
    @Test
    public void testParseAWSErrorFromContentHttpCommandHttpResponseInputStream() {
-      AWSError error = utils.parseAWSErrorFromContent(command.getRequest(), response(getClass()
-               .getResourceAsStream("/error.xml")));
+      AWSError error = utils.parseAWSErrorFromContent(command.getRequest(), response(getClass().getResourceAsStream(
+               "/error.xml")));
       assertEquals(error.getCode(), "NoSuchKey");
       assertEquals(error.getMessage(), "The resource you requested does not exist");
       assertEquals(error.getRequestToken(), "requesttoken");

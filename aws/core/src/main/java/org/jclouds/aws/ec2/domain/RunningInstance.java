@@ -133,7 +133,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    @Nullable
    private final String keyName;
    private final Date launchTime;
-   private final boolean monitoring;
+   private final MonitoringState monitoringState;
    private final String availabilityZone;
    @Nullable
    private final String placementGroup;
@@ -165,7 +165,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    public RunningInstance(String region, Iterable<String> groupIds, @Nullable String amiLaunchIndex,
             @Nullable String dnsName, String imageId, String instanceId, InstanceState instanceState,
             String instanceType, @Nullable String ipAddress, @Nullable String kernelId, @Nullable String keyName,
-            Date launchTime, boolean monitoring, String availabilityZone, @Nullable String placementGroup,
+            Date launchTime, MonitoringState monitoringState, String availabilityZone, @Nullable String placementGroup,
             String virtualizationType, @Nullable String platform, @Nullable String privateDnsName,
             @Nullable String privateIpAddress, Set<String> productCodes, @Nullable String ramdiskId,
             @Nullable String reason, @Nullable String subnetId, @Nullable String vpcId, RootDeviceType rootDeviceType,
@@ -182,7 +182,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       this.kernelId = kernelId;
       this.keyName = keyName;
       this.launchTime = checkNotNull(launchTime, "launchTime");
-      this.monitoring = checkNotNull(monitoring, "monitoring");
+      this.monitoringState = monitoringState;
       this.availabilityZone = checkNotNull(availabilityZone, "availabilityZone");
       this.placementGroup = placementGroup;
       this.virtualizationType = virtualizationType;
@@ -282,10 +282,10 @@ public class RunningInstance implements Comparable<RunningInstance> {
    }
 
    /**
-    * Specifies whether monitoring is enabled for the instance.
+    * State of monitoring for the instance.
     */
-   public boolean isMonitoring() {
-      return monitoring;
+   public MonitoringState getMonitoringState() {
+      return monitoringState;
    }
 
    /**
@@ -407,7 +407,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       result = prime * result + ((kernelId == null) ? 0 : kernelId.hashCode());
       result = prime * result + ((keyName == null) ? 0 : keyName.hashCode());
       result = prime * result + ((launchTime == null) ? 0 : launchTime.hashCode());
-      result = prime * result + (monitoring ? 1231 : 1237);
+      result = prime * result + ((monitoringState == null) ? 0 : monitoringState.hashCode());
       result = prime * result + ((platform == null) ? 0 : platform.hashCode());
       result = prime * result + ((privateDnsName == null) ? 0 : privateDnsName.hashCode());
       result = prime * result + ((privateIpAddress == null) ? 0 : privateIpAddress.hashCode());
@@ -504,7 +504,10 @@ public class RunningInstance implements Comparable<RunningInstance> {
             return false;
       } else if (!launchTime.equals(other.launchTime))
          return false;
-      if (monitoring != other.monitoring)
+      if (monitoringState == null) {
+         if (other.monitoringState != null)
+            return false;
+      } else if (!monitoringState.equals(other.monitoringState))
          return false;
       if (platform == null) {
          if (other.platform != null)
@@ -561,7 +564,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
                + dnsName + ", ebsBlockDevices=" + ebsBlockDevices + ", groupIds=" + groupIds + ", imageId=" + imageId
                + ", instanceId=" + instanceId + ", instanceState=" + instanceState + ", instanceType=" + instanceType
                + ", ipAddress=" + ipAddress + ", kernelId=" + kernelId + ", keyName=" + keyName + ", launchTime="
-               + launchTime + ", monitoring=" + monitoring + ", platform=" + platform + ", privateDnsName="
+               + launchTime + ", monitoringState=" + monitoringState + ", platform=" + platform + ", privateDnsName="
                + privateDnsName + ", privateIpAddress=" + privateIpAddress + ", productCodes=" + productCodes
                + ", ramdiskId=" + ramdiskId + ", reason=" + reason + ", region=" + region + ", rootDeviceName="
                + rootDeviceName + ", rootDeviceType=" + rootDeviceType + ", subnetId=" + subnetId + ", vpcId=" + vpcId

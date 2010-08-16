@@ -24,7 +24,7 @@
         <availabilityZone>us-east-1b</availabilityZone>
       </placement>
       <monitoring>
-        <enabled>true</enabled>
+        <state>enabled</state>
       </monitoring>
     </item>
     <item>
@@ -44,7 +44,7 @@
 		  <availabilityZone>us-east-1b</availabilityZone>
       </placement>
       <monitoring>
-        <enabled>true</enabled>
+        <state>enabled</state>
       </monitoring>
     </item>
     <item>
@@ -64,7 +64,7 @@
 		  <availabilityZone>us-east-1b</availabilityZone>
       </placement>
       <monitoring>
-        <enabled>true</enabled>
+        <state>enabled</state>
       </monitoring>
     </item>
   </instancesSet>

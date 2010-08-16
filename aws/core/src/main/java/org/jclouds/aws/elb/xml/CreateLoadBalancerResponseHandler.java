@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.ec2.xml;
+package org.jclouds.aws.elb.xml;
 
 import javax.annotation.Resource;
 

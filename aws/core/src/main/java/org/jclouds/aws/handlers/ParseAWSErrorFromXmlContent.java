@@ -71,11 +71,11 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                   .getRequestLine(), response.getStatusLine());
          switch (response.getStatusCode()) {
             case 400:
-               if (error.getCode().endsWith(".NotFound") || error.getCode().endsWith(".Unknown"))
+               if (error != null && error.getCode().endsWith(".NotFound") || error.getCode().endsWith(".Unknown"))
                   exception = new ResourceNotFoundException(notFoundMessage, exception);
-               else if (error.getCode().equals("IncorrectState"))
+               else if (error != null && error.getCode().equals("IncorrectState"))
                   exception = new IllegalStateException(error.getMessage(), exception);
-               else if (error.getCode().equals("AuthFailure"))
+               else if (error != null && error.getCode().equals("AuthFailure"))
                   exception = new AuthorizationException(command.getRequest(), error != null ? error.getMessage()
                            : response.getStatusLine());
                break;

@@ -21,12 +21,17 @@ package org.jclouds.aws.ec2.compute;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.Date;
 import java.util.Set;
 
+import org.jclouds.aws.cloudwatch.CloudWatchAsyncClient;
+import org.jclouds.aws.cloudwatch.CloudWatchClient;
+import org.jclouds.aws.cloudwatch.domain.Datapoint;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.KeyPair;
+import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.domain.SecurityGroup;
 import org.jclouds.aws.ec2.services.InstanceClient;
@@ -40,12 +45,18 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Credentials;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
+import com.google.inject.Module;
 
 /**
  * 
@@ -100,8 +111,11 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
       TemplateOptions options = client.templateOptions();
 
+      Date before = new Date();
+
       options.as(EC2TemplateOptions.class).securityGroups(tag);
       options.as(EC2TemplateOptions.class).keyPair(tag);
+      options.as(EC2TemplateOptions.class).enableMonitoring();
 
       String startedId = null;
       try {
@@ -125,13 +139,15 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          RunningInstance instance = getInstance(instanceClient, startedId);
 
          assertEquals(instance.getKeyName(), tag);
+         checkMonitoringEnabled(before, instance);
 
          // make sure we made our dummy group and also let in the user's group
-         assertEquals(instance.getGroupIds(), ImmutableSet.<String> of(tag, "jclouds#" + tag));
+         assertEquals(Sets.newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of("jclouds#" + tag + "#"
+                  + instance.getRegion(), tag));
 
          // make sure our dummy group has no rules
          SecurityGroup group = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
-                  "jclouds#" + tag));
+                  "jclouds#" + tag + "#" + instance.getRegion()));
          assert group.getIpPermissions().size() == 0 : group;
 
          // try to run a script with the original keyPair
@@ -146,6 +162,21 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
             assertEquals(securityGroupClient.describeSecurityGroupsInRegion(null, tag).size(), 1);
          }
          cleanupExtendedStuff(securityGroupClient, keyPairClient, tag);
+      }
+   }
+
+   private void checkMonitoringEnabled(Date before, RunningInstance instance) {
+      assertEquals(instance.getMonitoringState(), MonitoringState.ENABLED);
+
+      RestContext<CloudWatchClient, CloudWatchAsyncClient> monitoringContext = new RestContextFactory().createContext(
+               "cloudwatch", identity, credential, ImmutableSet.<Module> of(new Log4JLoggingModule()));
+
+      try {
+         Set<Datapoint> datapoints = monitoringContext.getApi().getMetricStatisticsInRegion(instance.getRegion(),
+                  "CPUUtilization", before, new Date(), 60, "Average");
+         assert datapoints != null;
+      } finally {
+         monitoringContext.close();
       }
    }
 

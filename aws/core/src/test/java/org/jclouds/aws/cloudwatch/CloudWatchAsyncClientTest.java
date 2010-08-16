@@ -17,19 +17,20 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.elb;
+package org.jclouds.aws.cloudwatch;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.inject.Named;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.elb.config.ELBRestClientModule;
-import org.jclouds.aws.elb.xml.RegisterInstancesWithLoadBalancerResponseHandler;
+import org.jclouds.aws.cloudwatch.config.CloudWatchRestClientModule;
+import org.jclouds.aws.cloudwatch.xml.GetMetricStatisticsResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
@@ -46,45 +47,42 @@ import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code ELBAsyncClient}
+ * Tests behavior of {@code CloudWatchAsyncClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "elb.ELBAsyncClientTest")
-public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
+@Test(groups = "unit", testName = "cloudwatch.MonitoringAsyncClientTest")
+public class CloudWatchAsyncClientTest extends RestClientTest<CloudWatchAsyncClient> {
 
-   public void testRegisterInstancesWithLoadBalancer() throws SecurityException,
-            NoSuchMethodException, IOException {
-      Method method = ELBAsyncClient.class.getMethod("registerInstancesWithLoadBalancerInRegion",
-               String.class, String.class, String[].class);
+   public void testRegisterInstancesWithMeasure() throws SecurityException, NoSuchMethodException, IOException {
+      Date date = new Date(10000000l);
+      Method method = CloudWatchAsyncClient.class.getMethod("getMetricStatisticsInRegion", String.class, String.class,
+               Date.class, Date.class, int.class, String.class);
+      HttpRequest request = processor.createRequest(method, (String) null, "CPUUtilization", date, date, 60, "Average");
 
-      HttpRequest request = processor.createRequest(method, null, "ReferenceAP1", "i-6055fa09");
-
-      assertRequestLineEquals(request,
-               "POST https://elasticloadbalancing.us-east-1.amazonaws.com/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: elasticloadbalancing.us-east-1.amazonaws.com\n");
+      assertRequestLineEquals(request, "POST https://monitoring.us-east-1.amazonaws.com/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: monitoring.us-east-1.amazonaws.com\n");
       assertPayloadEquals(
                request,
-               "Version=2009-11-25&Action=RegisterInstancesWithLoadBalancer&LoadBalancerName=ReferenceAP1&Instances.member.1.InstanceId=i-6055fa09",
+               "Version=2009-05-15&Action=GetMetricStatistics&Statistics.member.1=Average&StartTime=1970-01-01T02%3A46%3A40Z&MeasureName=CPUUtilization&EndTime=1970-01-01T02%3A46%3A40Z&Period=60",
                "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method,
-               RegisterInstancesWithLoadBalancerResponseHandler.class);
+      assertSaxResponseParserClassEquals(method, GetMetricStatisticsResponseHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);
    }
 
    @Override
-   protected TypeLiteral<RestAnnotationProcessor<ELBAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<ELBAsyncClient>>() {
+   protected TypeLiteral<RestAnnotationProcessor<CloudWatchAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<CloudWatchAsyncClient>>() {
       };
    }
 
    @RequiresHttp
    @ConfiguresRestClient
-   private static final class TestELBRestClientModule extends ELBRestClientModule {
+   private static final class TestMonitoringRestClientModule extends CloudWatchRestClientModule {
       @Override
       protected void configure() {
          super.configure();
@@ -99,13 +97,12 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
 
    @Override
    protected Module createModule() {
-      return new TestELBRestClientModule();
+      return new TestMonitoringRestClientModule();
    }
 
    @Override
    public ContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("elb", "identity", "credential",
-               new Properties());
+      return new RestContextFactory().createContextSpec("cloudwatch", "identity", "credential", new Properties());
    }
 
    @Override

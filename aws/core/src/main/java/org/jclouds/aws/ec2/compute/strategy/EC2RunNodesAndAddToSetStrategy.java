@@ -36,6 +36,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
+import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
@@ -113,6 +114,9 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
 
       RunInstancesOptions instanceOptions = createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.execute(region,
                tag, template);
+
+      if (EC2TemplateOptions.class.cast(template.getOptions()).isMonitoringEnabled())
+         instanceOptions.enableMonitoring();
 
       if (logger.isDebugEnabled())
          logger.debug(">> running %d instance region(%s) zone(%s) ami(%s) params(%s)", count, region, zone, template

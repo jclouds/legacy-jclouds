@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.domain.InstanceState;
+import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.RunningInstance;
@@ -75,7 +76,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
    private String kernelId;
    private String keyName;
    private Date launchTime;
-   private boolean monitoring;
+   private MonitoringState monitoringState;
    private String availabilityZone;
    private String placementGroup;
    private String virtualizationType = "paravirtual";
@@ -90,6 +91,8 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
    protected boolean inInstances;
    protected boolean inProductCodes;
    protected boolean inGroups;
+   protected boolean inMonitoring;
+
    private boolean inBlockDeviceMapping;
    private Map<String, RunningInstance.EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
 
@@ -111,6 +114,8 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
       } else if (qName.equals("blockDeviceMapping")) {
          inBlockDeviceMapping = true;
       }
+      if (qName.equals("monitoring"))
+         inMonitoring = true;
    }
 
    protected String currentOrNull() {
@@ -155,8 +160,8 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
             // Eucalyptus
             launchTime = dateService.iso8601SecondsDateParse(currentOrNull());
          }
-      } else if (qName.equals("enabled")) {
-         monitoring = Boolean.parseBoolean(currentOrNull());
+      } else if (qName.equals("state") && inMonitoring) {
+         monitoringState = MonitoringState.fromValue(currentOrNull());
       } else if (qName.equals("availabilityZone")) {
          availabilityZone = currentOrNull();
       } else if (qName.equals("groupName")) {
@@ -188,6 +193,8 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
          inInstances = false;
       } else if (qName.equals("groupSet")) {
          inGroups = false;
+      } else if (qName.equals("monitoring")) {
+         inMonitoring = false;
       } else if (qName.equals("blockDeviceMapping")) {
          inBlockDeviceMapping = false;
       } else if (qName.equals("deviceName")) {
@@ -213,7 +220,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
    protected void inItem() {
       if (inBlockDeviceMapping) {
          ebsBlockDevices.put(deviceName, new RunningInstance.EbsBlockDevice(volumeId, attachmentStatus, attachTime,
-               deleteOnTermination));
+                  deleteOnTermination));
          this.deviceName = null;
          this.volumeId = null;
          this.attachmentStatus = null;
@@ -235,9 +242,9 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
          if (region == null)
             region = defaultRegion;
          instances.add(new RunningInstance(region, groupIds, amiLaunchIndex, dnsName, imageId, instanceId,
-               instanceState, instanceType, ipAddress, kernelId, keyName, launchTime, monitoring, availabilityZone,
-               placementGroup, virtualizationType, platform, privateDnsName, privateIpAddress, productCodes, ramdiskId,
-               reason, subnetId, vpcId, rootDeviceType, rootDeviceName, ebsBlockDevices));
+                  instanceState, instanceType, ipAddress, kernelId, keyName, launchTime, monitoringState,
+                  availabilityZone, placementGroup, virtualizationType, platform, privateDnsName, privateIpAddress,
+                  productCodes, ramdiskId, reason, subnetId, vpcId, rootDeviceType, rootDeviceName, ebsBlockDevices));
          this.amiLaunchIndex = null;
          this.dnsName = null;
          this.imageId = null;
@@ -248,7 +255,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
          this.kernelId = null;
          this.keyName = null;
          this.launchTime = null;
-         this.monitoring = false;
+         this.monitoringState = null;
          this.availabilityZone = null;
          this.placementGroup = null;
          this.virtualizationType = "paravirtual";
@@ -275,7 +282,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
       if (region == null)
          region = defaultRegion;
       Reservation<? extends RunningInstance> info = new Reservation<RunningInstance>(region, groupIds, instances,
-            ownerId, requesterId, reservationId);
+               ownerId, requesterId, reservationId);
       this.groupIds = Sets.newLinkedHashSet();
       this.instances = Sets.newLinkedHashSet();
       this.ownerId = null;

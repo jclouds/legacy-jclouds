@@ -92,6 +92,8 @@ public class ParseAWSErrorFromXmlContentTest {
       HttpRequest request = new HttpRequest(method, uri);
       HttpResponse response = new HttpResponse(statusCode, message, Payloads.newInputStreamPayload(Utils
                .toInputStream(content)));
+      response.getPayload().setContentType("text/xml");
+      //TODO also check application/unknown
 
       expect(command.getRequest()).andReturn(request).atLeastOnce();
       command.setException(classEq(expected));

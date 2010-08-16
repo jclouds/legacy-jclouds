@@ -29,12 +29,12 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.jclouds.aws.ec2.xml.CreateLoadBalancerResponseHandler;
-import org.jclouds.aws.ec2.xml.RegisterInstancesWithLoadBalancerResponseHandler;
 import org.jclouds.aws.elb.binders.BindAvailabilityZonesToIndexedFormParams;
 import org.jclouds.aws.elb.binders.BindELBInstanceIdsToIndexedFormParams;
 import org.jclouds.aws.elb.domain.LoadBalancer;
+import org.jclouds.aws.elb.xml.CreateLoadBalancerResponseHandler;
 import org.jclouds.aws.elb.xml.DescribeLoadBalancersResponseHandler;
+import org.jclouds.aws.elb.xml.RegisterInstancesWithLoadBalancerResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.functions.RegionToEndpoint;
 import org.jclouds.rest.annotations.BinderParam;

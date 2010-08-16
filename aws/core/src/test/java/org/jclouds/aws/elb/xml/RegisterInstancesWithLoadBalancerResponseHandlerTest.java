@@ -17,13 +17,14 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.ec2.xml;
+package org.jclouds.aws.elb.xml;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.util.Set;
 
+import org.jclouds.aws.ec2.xml.BaseEC2HandlerTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Sets;

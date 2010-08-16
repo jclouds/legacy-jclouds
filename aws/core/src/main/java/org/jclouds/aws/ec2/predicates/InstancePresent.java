@@ -19,6 +19,8 @@
 
 package org.jclouds.aws.ec2.predicates;
 
+import java.util.NoSuchElementException;
+
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
@@ -57,12 +59,13 @@ public class InstancePresent implements Predicate<RunningInstance> {
          return true;
       } catch (ResourceNotFoundException e) {
          return false;
+      } catch (NoSuchElementException e) {
+         return false;
       }
    }
 
    private RunningInstance refresh(RunningInstance instance) {
-      return Iterables.getOnlyElement(Iterables.getOnlyElement(client
-            .getInstanceServices().describeInstancesInRegion(
-                  instance.getRegion(), instance.getId())));
+      return Iterables.getOnlyElement(Iterables.getOnlyElement(client.getInstanceServices().describeInstancesInRegion(
+               instance.getRegion(), instance.getId())));
    }
 }

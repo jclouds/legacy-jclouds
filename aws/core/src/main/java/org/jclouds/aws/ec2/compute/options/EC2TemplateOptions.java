@@ -34,11 +34,11 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
- * Contains options supported in the {@code ComputeService#runNode} operation on
- * the "ec2" provider. <h2>
- * Usage</h2> The recommended way to instantiate a EC2TemplateOptions object is
- * to statically import EC2TemplateOptions.* and invoke a static creation method
- * followed by an instance mutator (if needed):
+ * Contains options supported in the {@code ComputeService#runNode} operation on the "ec2" provider.
+ * <h2>
+ * Usage</h2> The recommended way to instantiate a EC2TemplateOptions object is to statically import
+ * EC2TemplateOptions.* and invoke a static creation method followed by an instance mutator (if
+ * needed):
  * <p/>
  * <code>
  * import static org.jclouds.aws.ec2.compute.options.EC2TemplateOptions.Builder.*;
@@ -55,6 +55,7 @@ public class EC2TemplateOptions extends TemplateOptions {
    private Set<String> groupIds = ImmutableSet.of();
    private String keyPair = null;
    private boolean noKeyPair;
+   private boolean monitoringEnabled;
    private String placementGroup = null;
    private boolean noPlacementGroup;
    private String subnetId;
@@ -77,6 +78,16 @@ public class EC2TemplateOptions extends TemplateOptions {
       for (String groupId : groupIds)
          Utils.checkNotEmpty(groupId, "all security groups must be non-empty");
       this.groupIds = ImmutableSet.copyOf(groupIds);
+      return this;
+   }
+
+   /**
+    * Enable Cloudwatch monitoring
+    * 
+    * @see CloudWatchClient
+    */
+   public EC2TemplateOptions enableMonitoring() {
+      this.monitoringEnabled = true;
       return this;
    }
 
@@ -180,6 +191,14 @@ public class EC2TemplateOptions extends TemplateOptions {
          return EC2TemplateOptions.class.cast(options.noPlacementGroup());
       }
 
+      /**
+       * @see EC2TemplateOptions#enableMonitoring
+       */
+      public static EC2TemplateOptions enableMonitoring() {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return EC2TemplateOptions.class.cast(options.enableMonitoring());
+      }
+
       // methods that only facilitate returning the correct object type
       /**
        * @see TemplateOptions#inboundPorts
@@ -251,10 +270,9 @@ public class EC2TemplateOptions extends TemplateOptions {
 
    /**
     * 
-    * special thing is that we do assume if you are passing groups that you have
-    * everything you need already defined. for example, our option inboundPorts
-    * normally creates ingress rules accordingly but if we notice you've
-    * specified securityGroups, we do not mess with rules at all
+    * special thing is that we do assume if you are passing groups that you have everything you need
+    * already defined. for example, our option inboundPorts normally creates ingress rules
+    * accordingly but if we notice you've specified securityGroups, we do not mess with rules at all
     * 
     * @see TemplateOptions#inboundPorts
     */
@@ -323,16 +341,15 @@ public class EC2TemplateOptions extends TemplateOptions {
    }
 
    /**
-    * @return groupIds the user specified to run instances with, or zero length
-    *         set to create an implicit group
+    * @return groupIds the user specified to run instances with, or zero length set to create an
+    *         implicit group
     */
    public Set<String> getGroupIds() {
       return groupIds;
    }
 
    /**
-    * @return keyPair to use when running the instance or null, to generate a
-    *         keypair.
+    * @return keyPair to use when running the instance or null, to generate a keypair.
     */
    public String getKeyPair() {
       return keyPair;
@@ -346,8 +363,7 @@ public class EC2TemplateOptions extends TemplateOptions {
    }
 
    /**
-    * @return placementGroup to use when running the instance or null, to
-    *         generate a placementGroup.
+    * @return placementGroup to use when running the instance or null, to generate a placementGroup.
     */
    public String getPlacementGroup() {
       return placementGroup;
@@ -358,6 +374,13 @@ public class EC2TemplateOptions extends TemplateOptions {
     */
    public boolean shouldAutomaticallyCreatePlacementGroup() {
       return !noPlacementGroup;
+   }
+
+   /**
+    * @return true (default) if we are supposed to enable cloudwatch
+    */
+   public boolean isMonitoringEnabled() {
+      return monitoringEnabled;
    }
 
    /**
@@ -375,6 +398,7 @@ public class EC2TemplateOptions extends TemplateOptions {
       result = prime * result + ((keyPair == null) ? 0 : keyPair.hashCode());
       result = prime * result + (noKeyPair ? 1231 : 1237);
       result = prime * result + (noPlacementGroup ? 1231 : 1237);
+      result = prime * result + (monitoringEnabled ? 1231 : 1237);
       result = prime * result + ((placementGroup == null) ? 0 : placementGroup.hashCode());
       result = prime * result + ((subnetId == null) ? 0 : subnetId.hashCode());
       return result;
@@ -403,6 +427,8 @@ public class EC2TemplateOptions extends TemplateOptions {
          return false;
       if (noPlacementGroup != other.noPlacementGroup)
          return false;
+      if (monitoringEnabled != other.monitoringEnabled)
+         return false;
       if (placementGroup == null) {
          if (other.placementGroup != null)
             return false;
@@ -419,10 +445,10 @@ public class EC2TemplateOptions extends TemplateOptions {
    @Override
    public String toString() {
       return "[groupIds=" + groupIds + ", keyPair=" + keyPair + ", noKeyPair=" + noKeyPair + ", placementGroup="
-            + placementGroup + ", noPlacementGroup=" + noPlacementGroup + ", inboundPorts="
-            + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
-            + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port + ":" + seconds
-            + ", subnetId=" + subnetId + ", metadata/details: " + includeMetadata + "]";
+               + placementGroup + ", noPlacementGroup=" + noPlacementGroup + ", monitoringEnabled=" + monitoringEnabled
+               + ", inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null)
+               + ", publicKey=" + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port
+               + ":" + seconds + ", subnetId=" + subnetId + ", metadata/details: " + includeMetadata + "]";
    }
 
 }
