@@ -52,7 +52,7 @@ public class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
 
    @Inject
    protected VCloudAddNodeWithTagStrategy(VCloudClient client, VCloudComputeClient computeClient,
-         Map<VAppStatus, NodeState> vAppStatusToNodeState) {
+            Map<VAppStatus, NodeState> vAppStatusToNodeState) {
       this.client = client;
       this.computeClient = computeClient;
       this.vAppStatusToNodeState = vAppStatusToNodeState;
@@ -61,21 +61,21 @@ public class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
    @Override
    public NodeMetadata execute(String tag, String name, Template template) {
       InstantiateVAppTemplateOptions options = processorCount(Double.valueOf(template.getSize().getCores()).intValue())
-            .memory(template.getSize().getRam()).disk(template.getSize().getDisk() * 1024 * 1024l);
+               .memory(template.getSize().getRam()).disk(template.getSize().getDisk() * 1024 * 1024l);
       if (!template.getOptions().shouldBlockUntilRunning())
          options.blockOnDeploy(false);
-      Map<String, String> metaMap = computeClient.start(URI.create(template.getLocation().getDescription()), URI
-            .create(template.getImage().getId()), name, options, template.getOptions().getInboundPorts());
+      Map<String, String> metaMap = computeClient.start(URI.create(template.getLocation().getId()), URI.create(template
+               .getImage().getId()), name, options, template.getOptions().getInboundPorts());
       VApp vApp = client.getVApp(URI.create(metaMap.get("id")));
       return newCreateNodeResponse(tag, template, metaMap, vApp);
    }
 
    protected NodeMetadata newCreateNodeResponse(String tag, Template template, Map<String, String> metaMap, VApp vApp) {
-      return new NodeMetadataImpl(vApp.getId().toASCIIString(), vApp.getName(), vApp.getId()
-            .toASCIIString(), template.getLocation(), vApp.getId(), ImmutableMap.<String, String> of(), tag,
-            template.getImage(), vAppStatusToNodeState.get(vApp.getStatus()), computeClient.getPublicAddresses(vApp
-                  .getId()), computeClient.getPrivateAddresses(vApp.getId()), ImmutableMap
-                  .<String, String> of(), new Credentials(metaMap.get("username"), metaMap.get("password")));
+      return new NodeMetadataImpl(vApp.getId().toASCIIString(), vApp.getName(), vApp.getId().toASCIIString(), template
+               .getLocation(), vApp.getId(), ImmutableMap.<String, String> of(), tag, template.getImage(),
+               vAppStatusToNodeState.get(vApp.getStatus()), computeClient.getPublicAddresses(vApp.getId()),
+               computeClient.getPrivateAddresses(vApp.getId()), ImmutableMap.<String, String> of(), new Credentials(
+                        metaMap.get("username"), metaMap.get("password")));
    }
 
 }

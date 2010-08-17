@@ -19,22 +19,18 @@
 
 package org.jclouds.vcloud.compute.config;
 
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
-
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.LoadBalancerService;
+import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
-import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
@@ -49,53 +45,43 @@ import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
-import org.jclouds.vcloud.compute.config.providers.OrgAndVDCToLocationProvider;
-import org.jclouds.vcloud.compute.config.providers.StaticSizeProvider;
-import org.jclouds.vcloud.compute.config.providers.VAppTemplatesInVDCs;
-import org.jclouds.vcloud.compute.domain.VCloudLocation;
 import org.jclouds.vcloud.compute.strategy.VCloudAddNodeWithTagStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudGetNodeMetadataStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
+import org.jclouds.vcloud.compute.suppliers.OrgAndVDCToLocationSupplier;
+import org.jclouds.vcloud.compute.suppliers.StaticSizeSupplier;
+import org.jclouds.vcloud.compute.suppliers.VCloudImageSupplier;
 import org.jclouds.vcloud.domain.VAppStatus;
-import org.jclouds.vcloud.domain.VDC;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Providers;
 
 /**
- * Configures the {@link VCloudComputeServiceContext}; requires
- * {@link BaseVCloudComputeClient} bound.
+ * Configures the {@link VCloudComputeServiceContext}; requires {@link BaseVCloudComputeClient}
+ * bound.
  * 
  * @author Adrian Cole
  */
-public class VCloudComputeServiceContextModule extends AbstractModule {
+public class VCloudComputeServiceContextModule extends BaseComputeServiceContextModule {
 
    @VisibleForTesting
    static final Map<VAppStatus, NodeState> vAppStatusToNodeState = ImmutableMap.<VAppStatus, NodeState> builder().put(
-         VAppStatus.OFF, NodeState.SUSPENDED).put(VAppStatus.ON, NodeState.RUNNING).put(VAppStatus.RESOLVED,
-         NodeState.PENDING).put(VAppStatus.SUSPENDED, NodeState.SUSPENDED)
-         .put(VAppStatus.UNRESOLVED, NodeState.PENDING).build();
+            VAppStatus.OFF, NodeState.SUSPENDED).put(VAppStatus.ON, NodeState.RUNNING).put(VAppStatus.RESOLVED,
+            NodeState.PENDING).put(VAppStatus.SUSPENDED, NodeState.SUSPENDED).put(VAppStatus.UNRESOLVED,
+            NodeState.PENDING).build();
 
    @Singleton
    @Provides
    Map<VAppStatus, NodeState> provideVAppStatusToNodeState() {
       return vAppStatusToNodeState;
-   }
-
-   @Provides
-   @Named("DEFAULT")
-   protected TemplateBuilder provideTemplate(TemplateBuilder template) {
-      return template.osFamily(UBUNTU);
    }
 
    @Override
@@ -114,60 +100,25 @@ public class VCloudComputeServiceContextModule extends AbstractModule {
       bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(VCloudDestroyNodeStrategy.class);
       bindLoadBalancer();
-      bindSizes();
-      bindImages();
-      bindLocations();
-   }
-
-   @Provides
-   @Named("NAMING_CONVENTION")
-   @Singleton
-   protected String provideNamingConvention() {
-      return "%s-%s";
    }
 
    protected void bindLoadBalancer() {
       bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
    }
 
-   protected void bindImages() {
-      bind(new TypeLiteral<Set<? extends Image>>() {
-      }).toProvider(VAppTemplatesInVDCs.class).in(Scopes.SINGLETON);
+   @Override
+   protected Supplier<Set<? extends Image>> getSourceImageSupplier(Injector injector) {
+      return injector.getInstance(VCloudImageSupplier.class);
    }
 
-   protected void bindSizes() {
-      bind(new TypeLiteral<Set<? extends Size>>() {
-      }).toProvider(StaticSizeProvider.class).in(Scopes.SINGLETON);
+   @Override
+   protected Supplier<Set<? extends Location>> getSourceLocationSupplier(Injector injector) {
+      return injector.getInstance(OrgAndVDCToLocationSupplier.class);
    }
 
-   protected void bindLocations() {
-      bind(new TypeLiteral<Set<? extends Location>>() {
-      }).toProvider(OrgAndVDCToLocationProvider.class).in(Scopes.SINGLETON);
-   }
-
-   @Provides
-   @Singleton
-   protected Function<ComputeMetadata, String> indexer() {
-      return new Function<ComputeMetadata, String>() {
-         @Override
-         public String apply(ComputeMetadata from) {
-            return from.getProviderId();
-         }
-      };
-   }
-
-   @Provides
-   @Singleton
-   Location getVDC(VCloudClient client, Set<? extends Location> locations) {
-      final VDC vdc = client.findVDCInOrgNamed(null, null);
-      return Iterables.find(locations, new Predicate<Location>() {
-
-         @Override
-         public boolean apply(Location input) {
-            return VCloudLocation.class.cast(input).getResource().getId().equals(vdc.getId());
-         }
-
-      });
+   @Override
+   protected Supplier<Set<? extends Size>> getSourceSizeSupplier(Injector injector) {
+      return injector.getInstance(StaticSizeSupplier.class);
    }
 
 }

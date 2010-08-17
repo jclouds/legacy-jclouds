@@ -19,19 +19,28 @@
 
 package org.jclouds.rackspace.cloudfiles.blobstore.config;
 
+import java.util.Set;
+
+import javax.inject.Singleton;
+
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
+import org.jclouds.domain.Location;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesAsyncBlobStore;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStore;
 import org.jclouds.rackspace.config.RackspaceLocationsModule;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.Iterables;
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
@@ -50,9 +59,20 @@ public class CloudFilesBlobStoreContextModule extends AbstractModule {
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(AsyncBlobStore.class).to(CloudFilesAsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(CloudFilesBlobStore.class).in(Scopes.SINGLETON);
-      bind(BlobStoreContext.class).to(
-               new TypeLiteral<BlobStoreContextImpl<CloudFilesClient, CloudFilesAsyncClient>>() {
-               }).in(Scopes.SINGLETON);
+      bind(BlobStoreContext.class).to(new TypeLiteral<BlobStoreContextImpl<CloudFilesClient, CloudFilesAsyncClient>>() {
+      }).in(Scopes.SINGLETON);
+   }
+
+   @Provides
+   @Singleton
+   protected Supplier<Set<? extends Location>> getSourceLocationSupplier(Set<? extends Location> locations) {
+      return Suppliers.<Set<? extends Location>> ofInstance(locations);
+   }
+
+   @Provides
+   @Singleton
+   protected Supplier<Location> getLocation(Set<? extends Location> locations) {
+      return Suppliers.<Location> ofInstance(Iterables.get(locations, 0));
    }
 
 }

@@ -19,86 +19,66 @@
 
 package org.jclouds.gogrid.compute.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
-import static org.jclouds.compute.predicates.ImagePredicates.architectureIn;
 import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_DEFAULT_DC;
 
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.LoadBalancerService;
+import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
-import org.jclouds.compute.domain.Architecture;
-import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.domain.internal.ImageImpl;
-import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.compute.predicates.NodePredicates;
-import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.compute.functions.ServerToNodeMetadata;
 import org.jclouds.gogrid.compute.strategy.GoGridAddNodeWithTagStrategy;
-import org.jclouds.gogrid.domain.Option;
-import org.jclouds.gogrid.domain.PowerCommand;
+import org.jclouds.gogrid.compute.strategy.GoGridDestroyNodeStrategy;
+import org.jclouds.gogrid.compute.strategy.GoGridGetNodeMetadataStrategy;
+import org.jclouds.gogrid.compute.strategy.GoGridListNodesStrategy;
+import org.jclouds.gogrid.compute.strategy.GoGridRebootNodeStrategy;
+import org.jclouds.gogrid.compute.suppliers.GoGridImageSupplier;
+import org.jclouds.gogrid.compute.suppliers.GoGridLocationSupplier;
+import org.jclouds.gogrid.compute.suppliers.GoGridSizeSupplier;
 import org.jclouds.gogrid.domain.Server;
-import org.jclouds.gogrid.domain.ServerImage;
 import org.jclouds.gogrid.domain.ServerState;
-import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
-import org.jclouds.gogrid.util.GoGridUtils;
-import org.jclouds.logging.Logger;
-import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.annotations.Provider;
 import org.jclouds.rest.internal.RestContextImpl;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 import com.google.inject.util.Providers;
 
 /**
  * @author Oleksiy Yarmula
  * @author Adrian Cole
  */
-public class GoGridComputeServiceContextModule extends AbstractModule {
+public class GoGridComputeServiceContextModule extends BaseComputeServiceContextModule {
 
    @Override
    protected void configure() {
@@ -119,135 +99,21 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
       bind(DestroyNodeStrategy.class).to(GoGridDestroyNodeStrategy.class);
    }
 
-   @Provides
-   @Singleton
-   protected Map<String, ? extends Location> provideLocationMap(Set<? extends Location> locations) {
-      return Maps.uniqueIndex(locations, new Function<Location, String>() {
-
-         @Override
-         public String apply(Location from) {
-            return from.getId();
-         }
-
-      });
-   }
-
-   @Provides
-   @Named("DEFAULT")
-   protected TemplateBuilder provideTemplate(TemplateBuilder template) {
+   @Override
+   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       return template.osFamily(CENTOS).imageNameMatches(".*w/ None.*");
-   }
-
-   @Provides
-   @Named("NAMING_CONVENTION")
-   @Singleton
-   String provideNamingConvention() {
-      return "%s-%s";
-   }
-
-   @Singleton
-   public static class GoGridRebootNodeStrategy implements RebootNodeStrategy {
-      private final GoGridClient client;
-      private final RetryablePredicate<Server> serverLatestJobCompleted;
-      private final RetryablePredicate<Server> serverLatestJobCompletedShort;
-      private final GetNodeMetadataStrategy getNode;
-
-      @Inject
-      protected GoGridRebootNodeStrategy(GoGridClient client, GetNodeMetadataStrategy getNode, Timeouts timeouts) {
-         this.client = client;
-         this.serverLatestJobCompleted = new RetryablePredicate<Server>(new ServerLatestJobCompleted(client
-               .getJobServices()), timeouts.nodeRunning * 9l / 10l);
-         this.serverLatestJobCompletedShort = new RetryablePredicate<Server>(new ServerLatestJobCompleted(client
-               .getJobServices()), timeouts.nodeRunning * 1l / 10l);
-         this.getNode = getNode;
-      }
-
-      @Override
-      public NodeMetadata execute(String id) {
-         Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(new Long(id)));
-         client.getServerServices().power(server.getName(), PowerCommand.RESTART);
-         serverLatestJobCompleted.apply(server);
-         client.getServerServices().power(server.getName(), PowerCommand.START);
-         serverLatestJobCompletedShort.apply(server);
-         return getNode.execute(id);
-      }
-   }
-
-   @Singleton
-   public static class GoGridListNodesStrategy implements ListNodesStrategy {
-      private final GoGridClient client;
-      private final Function<Server, NodeMetadata> serverToNodeMetadata;
-
-      @Inject
-      protected GoGridListNodesStrategy(GoGridClient client, Function<Server, NodeMetadata> serverToNodeMetadata) {
-         this.client = client;
-         this.serverToNodeMetadata = serverToNodeMetadata;
-      }
-
-      @Override
-      public Iterable<? extends ComputeMetadata> list() {
-         return listDetailsOnNodesMatching(NodePredicates.all());
-      }
-
-      @Override
-      public Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
-         return Iterables.filter(Iterables.transform(client.getServerServices().getServerList(), serverToNodeMetadata),
-               filter);
-      }
-   }
-
-   @Singleton
-   public static class GoGridGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
-      private final GoGridClient client;
-      private final Function<Server, NodeMetadata> serverToNodeMetadata;
-
-      @Inject
-      protected GoGridGetNodeMetadataStrategy(GoGridClient client, Function<Server, NodeMetadata> serverToNodeMetadata) {
-         this.client = client;
-         this.serverToNodeMetadata = serverToNodeMetadata;
-      }
-
-      @Override
-      public NodeMetadata execute(String id) {
-         try {
-            Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(
-                  new Long(checkNotNull(id, "id"))));
-            return server == null ? null : serverToNodeMetadata.apply(server);
-         } catch (NoSuchElementException e) {
-            return null;
-         }
-      }
-   }
-
-   @Singleton
-   public static class GoGridDestroyNodeStrategy implements DestroyNodeStrategy {
-      private final GoGridClient client;
-      private final GetNodeMetadataStrategy getNode;
-
-      @Inject
-      protected GoGridDestroyNodeStrategy(GoGridClient client, GetNodeMetadataStrategy getNode) {
-         this.client = client;
-         this.getNode = getNode;
-      }
-
-      @Override
-      public NodeMetadata execute(String id) {
-         client.getServerServices().deleteById(new Long(id));
-         return getNode.execute(id);
-      }
-
    }
 
    @VisibleForTesting
    static final Map<ServerState, NodeState> serverStateToNodeState = ImmutableMap.<ServerState, NodeState> builder()
-         .put(ServerState.ON, NodeState.RUNNING)//
-         .put(ServerState.STARTING, NodeState.PENDING)//
-         .put(ServerState.OFF, NodeState.SUSPENDED)//
-         .put(ServerState.STOPPING, NodeState.PENDING)//
-         .put(ServerState.RESTARTING, NodeState.PENDING)//
-         .put(ServerState.SAVING, NodeState.PENDING)//
-         .put(ServerState.RESTORING, NodeState.PENDING)//
-         .put(ServerState.UPDATING, NodeState.PENDING).build();
+            .put(ServerState.ON, NodeState.RUNNING)//
+            .put(ServerState.STARTING, NodeState.PENDING)//
+            .put(ServerState.OFF, NodeState.SUSPENDED)//
+            .put(ServerState.STOPPING, NodeState.PENDING)//
+            .put(ServerState.RESTARTING, NodeState.PENDING)//
+            .put(ServerState.SAVING, NodeState.PENDING)//
+            .put(ServerState.RESTORING, NodeState.PENDING)//
+            .put(ServerState.UPDATING, NodeState.PENDING).build();
 
    @Singleton
    @Provides
@@ -256,13 +122,11 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
    }
 
    /**
-    * Finds matches to required configurations. GoGrid's documentation only
-    * specifies how much RAM one can get with different instance types. The # of
-    * cores and disk sizes are purely empyrical and aren't guaranteed. However,
-    * these are the matches found: Ram: 512MB, CPU: 1 core, HDD: 28 GB Ram: 1GB,
-    * CPU: 1 core, HDD: 57 GB Ram: 2GB, CPU: 1 core, HDD: 113 GB Ram: 4GB, CPU:
-    * 3 cores, HDD: 233 GB Ram: 8GB, CPU: 6 cores, HDD: 462 GB (as of March
-    * 2010)
+    * Finds matches to required configurations. GoGrid's documentation only specifies how much RAM
+    * one can get with different instance types. The # of cores and disk sizes are purely empyrical
+    * and aren't guaranteed. However, these are the matches found: Ram: 512MB, CPU: 1 core, HDD: 28
+    * GB Ram: 1GB, CPU: 1 core, HDD: 57 GB Ram: 2GB, CPU: 1 core, HDD: 113 GB Ram: 4GB, CPU: 3
+    * cores, HDD: 233 GB Ram: 8GB, CPU: 6 cores, HDD: 462 GB (as of March 2010)
     * 
     * @return matched size
     */
@@ -285,104 +149,39 @@ public class GoGridComputeServiceContextModule extends AbstractModule {
       };
    }
 
-   @Provides
-   @Singleton
-   Location getDefaultLocation(@Named(PROPERTY_GOGRID_DEFAULT_DC) final String defaultDC,
-         Set<? extends Location> locations) {
-      return Iterables.find(locations, new Predicate<Location>() {
+   @Override
+   protected Supplier<Location> supplyDefaultLocation(Injector injector, Supplier<Set<? extends Location>> locations) {
+      final String defaultDC = injector.getInstance(Key.get(String.class, Names.named(PROPERTY_GOGRID_DEFAULT_DC)));
+      return Suppliers.compose(new Function<Set<? extends Location>, Location>() {
 
          @Override
-         public boolean apply(Location input) {
-            return input.getId().equals(defaultDC);
+         public Location apply(Set<? extends Location> from) {
+            return Iterables.find(from, new Predicate<Location>() {
+
+               @Override
+               public boolean apply(Location input) {
+                  return input.getId().equals(defaultDC);
+               }
+
+            });
          }
 
-      });
+      }, locations);
+
    }
 
-   @Provides
-   @Singleton
-   Set<? extends Location> getAssignableLocations(@Provider String providerName, GoGridClient sync, LogHolder holder,
-         Function<ComputeMetadata, String> indexer) {
-      final Set<Location> locations = Sets.newHashSet();
-      holder.logger.debug(">> providing locations");
-      Location parent = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
-      for (Option dc : sync.getServerServices().getDatacenters())
-         locations.add(new LocationImpl(LocationScope.ZONE, dc.getId() + "", dc.getDescription(), parent));
-      holder.logger.debug("<< locations(%d)", locations.size());
-      return locations;
+   @Override
+   protected Supplier<Set<? extends Image>> getSourceImageSupplier(Injector injector) {
+      return injector.getInstance(GoGridImageSupplier.class);
    }
 
-   @Provides
-   @Singleton
-   protected Function<ComputeMetadata, String> indexer() {
-      return new Function<ComputeMetadata, String>() {
-         @Override
-         public String apply(ComputeMetadata from) {
-            return from.getProviderId();
-         }
-      };
+   @Override
+   protected Supplier<Set<? extends Location>> getSourceLocationSupplier(Injector injector) {
+      return injector.getInstance(GoGridLocationSupplier.class);
    }
 
-   @Provides
-   @Singleton
-   protected Set<? extends Size> provideSizes(GoGridClient sync, Set<? extends Image> images, LogHolder holder,
-         Function<ComputeMetadata, String> indexer) throws InterruptedException, TimeoutException, ExecutionException {
-      final Set<Size> sizes = Sets.newHashSet();
-      holder.logger.debug(">> providing sizes");
-
-      sizes.add(new SizeImpl("1", "1", "1", null, null, ImmutableMap.<String, String> of(), 0.5, 512, 30,
-            architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64))));
-      sizes.add(new SizeImpl("2", "2", "2", null, null, ImmutableMap.<String, String> of(), 1, 1024, 60,
-            architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64))));
-      sizes.add(new SizeImpl("3", "3", "3", null, null, ImmutableMap.<String, String> of(), 2, 2048, 120,
-            architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64))));
-      sizes.add(new SizeImpl("4", "4", "4", null, null, ImmutableMap.<String, String> of(), 4, 4096, 240,
-            architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64))));
-      sizes.add(new SizeImpl("5", "5", "5", null, null, ImmutableMap.<String, String> of(), 8, 8192, 480,
-            architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64))));
-      holder.logger.debug("<< sizes(%d)", sizes.size());
-      return sizes;
-   }
-
-   private static class LogHolder {
-      @Resource
-      @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-      protected Logger logger = Logger.NULL;
-   }
-
-   public static final Pattern GOGRID_OS_NAME_PATTERN = Pattern.compile("([a-zA-Z]*)(.*)");
-
-   @Provides
-   @Singleton
-   protected Set<? extends Image> provideImages(final GoGridClient sync, LogHolder holder,
-         Function<ComputeMetadata, String> indexer, Location location,
-         PopulateDefaultLoginCredentialsForImageStrategy authenticator) throws InterruptedException,
-         ExecutionException, TimeoutException {
-      final Set<Image> images = Sets.newHashSet();
-      holder.logger.debug(">> providing images");
-      Set<ServerImage> allImages = sync.getImageServices().getImageList();
-      for (ServerImage from : allImages) {
-         OsFamily os = null;
-         Architecture arch = (from.getOs().getName().indexOf("64") == -1 && from.getDescription().indexOf("64") == -1) ? Architecture.X86_32
-               : Architecture.X86_64;
-         String osDescription;
-         String version = "";
-
-         osDescription = from.getOs().getName();
-
-         String matchedOs = GoGridUtils.parseStringByPatternAndGetNthMatchGroup(from.getOs().getName(),
-               GOGRID_OS_NAME_PATTERN, 1);
-         try {
-            os = OsFamily.fromValue(matchedOs.toLowerCase());
-         } catch (IllegalArgumentException e) {
-            holder.logger.debug("<< didn't match os(%s)", matchedOs);
-         }
-         Credentials defaultCredentials = authenticator.execute(from);
-         images.add(new ImageImpl(from.getId() + "", from.getFriendlyName(), from.getId() + "", location, null,
-               ImmutableMap.<String, String> of(), from.getDescription(), version, os, osDescription, arch,
-               defaultCredentials));
-      }
-      holder.logger.debug("<< images(%d)", images.size());
-      return images;
+   @Override
+   protected Supplier<Set<? extends Size>> getSourceSizeSupplier(Injector injector) {
+      return injector.getInstance(GoGridSizeSupplier.class);
    }
 }

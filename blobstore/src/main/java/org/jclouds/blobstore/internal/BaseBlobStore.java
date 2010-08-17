@@ -48,12 +48,12 @@ public abstract class BaseBlobStore implements BlobStore {
 
    protected final BlobStoreContext context;
    protected final BlobUtils blobUtils;
-   protected final Location defaultLocation;
-   protected final Set<? extends Location> locations;
+   protected final Supplier<Location> defaultLocation;
+   protected final Supplier<Set<? extends Location>> locations;
 
    @Inject
-   protected BaseBlobStore(BlobStoreContext context, BlobUtils blobUtils,
-            Location defaultLocation, Set<? extends Location> locations) {
+   protected BaseBlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
+            Supplier<Set<? extends Location>> locations) {
       this.context = checkNotNull(context, "context");
       this.blobUtils = checkNotNull(blobUtils, "blobUtils");
       this.defaultLocation = checkNotNull(defaultLocation, "defaultLocation");
@@ -215,7 +215,7 @@ public abstract class BaseBlobStore implements BlobStore {
 
    @Override
    public Set<? extends Location> listAssignableLocations() {
-      return locations;
+      return locations.get();
    }
 
    protected abstract boolean deleteAndVerifyContainerGone(String container);

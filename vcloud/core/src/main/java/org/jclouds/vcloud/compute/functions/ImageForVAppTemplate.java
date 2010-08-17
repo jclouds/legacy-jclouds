@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.compute.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseArchitectureOrNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseOsFamilyOrNull;
 
@@ -27,9 +28,9 @@ import javax.inject.Inject;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Location;
+import org.jclouds.vcloud.compute.domain.VCloudImage;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
@@ -46,9 +47,9 @@ public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
 
    @Inject
    protected ImageForVAppTemplate(FindLocationForResource findLocationForResource,
-         PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider) {
-      this.findLocationForResource = findLocationForResource;
-      this.credentialsProvider = credentialsProvider;
+            PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider) {
+      this.findLocationForResource = checkNotNull(findLocationForResource, "findLocationForResource");
+      this.credentialsProvider = checkNotNull(credentialsProvider, "credentialsProvider");
    }
 
    public ImageForVAppTemplate withParent(NamedResource parent) {
@@ -58,14 +59,14 @@ public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
 
    @Override
    public Image apply(VAppTemplate from) {
-      OsFamily myOs = parseOsFamilyOrNull(from.getName());
+      OsFamily myOs = parseOsFamilyOrNull(checkNotNull(from, "vapp template").getName());
       Architecture arch = parseArchitectureOrNull(from.getName());
-      Location location = findLocationForResource.apply(parent);
+      Location location = findLocationForResource.apply(checkNotNull(parent, "parent"));
       String name = getName(from.getName());
       String desc = from.getDescription() != null ? from.getDescription() : from.getName();
-      return new ImageImpl(from.getId().toASCIIString(), name, from.getId().toASCIIString(), location, from
-            .getId(), ImmutableMap.<String, String> of(), desc, "", myOs, name, arch, credentialsProvider
-            .execute(from));
+      return new VCloudImage(from, from.getId().toASCIIString(), name, from.getId().toASCIIString(), location, from
+               .getId(), ImmutableMap.<String, String> of(), desc, "", myOs, name, arch, credentialsProvider
+               .execute(from));
    }
 
    protected String getName(String name) {

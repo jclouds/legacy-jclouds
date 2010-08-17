@@ -40,6 +40,8 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.rest.annotations.Provider;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -59,21 +61,22 @@ public class AzureBlobStoreContextModule extends AbstractModule {
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(AsyncBlobStore.class).to(AzureAsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(AzureBlobStore.class).in(Scopes.SINGLETON);
-      bind(BlobStoreContext.class).to(
-               new TypeLiteral<BlobStoreContextImpl<AzureBlobClient, AzureBlobAsyncClient>>() {
-               }).in(Scopes.SINGLETON);
+      bind(BlobStoreContext.class).to(new TypeLiteral<BlobStoreContextImpl<AzureBlobClient, AzureBlobAsyncClient>>() {
+      }).in(Scopes.SINGLETON);
       bind(ContainsValueInListStrategy.class).to(FindMD5InBlobProperties.class);
    }
 
    @Provides
    @Singleton
-   Location getLocation(@Provider String name) {
-      return new LocationImpl(LocationScope.PROVIDER, name, name, null);
+   Supplier<Set<? extends Location>> provideLocations(Supplier<Location> defaultLocation) {
+      return Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet.of(defaultLocation.get()));
    }
 
    @Provides
    @Singleton
-   Set<? extends Location> provideLocations(Location location) {
-      return ImmutableSet.of(location);
+   Supplier<Location> provideDefaultLocation(@Provider String providerName) {
+      return Suppliers
+               .<Location> ofInstance(new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null));
    }
+
 }

@@ -19,8 +19,9 @@
 
 package org.jclouds.vcloud.compute.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
@@ -37,20 +38,20 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class ImagesInVDC implements Function<VDC, Iterable<? extends Image>> {
    private final VAppTemplatesForResourceEntities vAppTemplatesForResourceEntities;
-   private final Provider<ImageForVAppTemplate> imageForVAppTemplateProvider;
+   private final ImageForVAppTemplate imageForVAppTemplateProvider;
 
    @Inject
    public ImagesInVDC(VAppTemplatesForResourceEntities vAppTemplatesForResourceEntities,
-            Provider<ImageForVAppTemplate> imageForVAppTemplateProvider) {
-      this.vAppTemplatesForResourceEntities = vAppTemplatesForResourceEntities;
-      this.imageForVAppTemplateProvider = imageForVAppTemplateProvider;
+            ImageForVAppTemplate imageForVAppTemplateProvider) {
+      this.vAppTemplatesForResourceEntities = checkNotNull(vAppTemplatesForResourceEntities, "vAppTemplatesForResourceEntities");
+      this.imageForVAppTemplateProvider = checkNotNull(imageForVAppTemplateProvider, "imageForVAppTemplateProvider");
    }
 
    @Override
    public Iterable<? extends Image> apply(VDC from) {
-      Iterable<? extends VAppTemplate> vAppTemplates = vAppTemplatesForResourceEntities.apply(from
+      Iterable<? extends VAppTemplate> vAppTemplates = vAppTemplatesForResourceEntities.apply(checkNotNull(from, "vdc")
                .getResourceEntities().values());
-      return Iterables.transform(vAppTemplates, imageForVAppTemplateProvider.get().withParent(from));
+      return Iterables.transform(vAppTemplates, imageForVAppTemplateProvider.withParent(from));
    }
 
 }

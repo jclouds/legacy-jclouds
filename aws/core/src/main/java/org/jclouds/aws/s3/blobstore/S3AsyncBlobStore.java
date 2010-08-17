@@ -60,6 +60,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -83,8 +84,8 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
 
    @Inject
    S3AsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Location defaultLocation,
-            Set<? extends Location> locations, S3AsyncClient async, S3Client sync,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
+            Supplier<Set<? extends Location>> locations, S3AsyncClient async, S3Client sync,
             BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
             BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
             BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
@@ -136,7 +137,7 @@ public class S3AsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<Boolean> createContainerInLocation(Location location, String container) {
-      location = location != null ? location : defaultLocation;
+      location = location != null ? location : defaultLocation.get();
       return async.putBucketInRegion(location.getId(), container);
    }
 

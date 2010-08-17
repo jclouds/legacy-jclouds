@@ -40,6 +40,7 @@ import org.jclouds.ibmdev.domain.Instance;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -53,14 +54,14 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
    @Resource
    protected Logger logger = Logger.NULL;
    private final Map<Instance.Status, NodeState> instanceStateToNodeState;
-   private final Map<String, ? extends Image> images;
+   private final Supplier<Map<String, ? extends Image>> images;
    private final Map<String, String> credentialsMap;
-   private final Map<String, ? extends Location> locations;
+   private final Supplier<Map<String, ? extends Location>> locations;
 
    @Inject
    InstanceToNodeMetadata(Map<Instance.Status, NodeState> instanceStateToNodeState,
-            Map<String, ? extends Image> images, @Named("CREDENTIALS") Map<String, String> credentialsMap,
-            Map<String, ? extends Location> locations) {
+            Supplier<Map<String, ? extends Image>> images, @Named("CREDENTIALS") Map<String, String> credentialsMap,
+            Supplier<Map<String, ? extends Location>> locations) {
       this.instanceStateToNodeState = checkNotNull(instanceStateToNodeState, "instanceStateToNodeState");
       this.images = checkNotNull(images, "images");
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
@@ -72,10 +73,10 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
       String tag = parseTagFromName(from.getName());
       Set<String> ipSet = from.getIp() != null ? ImmutableSet.of(from.getIp()) : ImmutableSet.<String> of();
       NodeState state = instanceStateToNodeState.get(from.getStatus());
-      Image image = images.get(from.getImageId());
+      Image image = images.get().get(from.getImageId());
       String key = tag != null ? credentialsMap.get(tag) : null;
-      return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", locations.get(image
-               .getLocation()), null, ImmutableMap.<String, String> of(), tag, image, state, ipSet, ImmutableList
+      return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", locations.get().get(
+               image.getLocation()), null, ImmutableMap.<String, String> of(), tag, image, state, ipSet, ImmutableList
                .<String> of(), ImmutableMap.<String, String> of(), new Credentials(
                image.getDefaultCredentials().identity, key));
    }

@@ -55,6 +55,7 @@ import com.google.inject.internal.util.ImmutableSet;
 /**
  * @author Adrian Cole
  */
+//TODO REFACTOR!!! needs to be parallel
 @Singleton
 public class VCloudListNodesStrategy implements ListNodesStrategy {
    @Resource

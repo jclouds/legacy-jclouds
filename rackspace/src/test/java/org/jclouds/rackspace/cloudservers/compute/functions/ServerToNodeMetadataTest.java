@@ -29,6 +29,7 @@ import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Location;
@@ -39,6 +40,7 @@ import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -86,8 +88,8 @@ public class ServerToNodeMetadataTest {
       replay(serverStateToNodeState);
       replay(server);
 
-      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, images,
-               provider);
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, Suppliers
+               .<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider));
 
       NodeMetadata metadata = parser.apply(server);
       assertEquals(metadata.getLocation(), location);

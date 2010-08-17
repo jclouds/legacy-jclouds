@@ -29,6 +29,5 @@ public interface IBMDeveloperCloudConstants {
    public static final String CAPABILITY_FORMAT = "oss.storage.format";
    public static final String CAPABILITY_I386 = "oss.instance.spec.i386";
    public static final String CAPABILITY_x86_64 = "oss.instance.spec.x86_64";
-   public static final String PROPERTY_IBMDEVELOPERCLOUD_LOCATION = "jclouds.ibmdev.location";
 
 }

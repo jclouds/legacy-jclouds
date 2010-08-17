@@ -26,14 +26,15 @@ import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 import org.jclouds.vcloud.hostingdotcom.compute.HostingDotComVCloudComputeClient;
 
+import com.google.inject.Injector;
+
 /**
  * Configures the {@link HostingDotComVCloudComputeServiceContext}; requires
  * {@link HostingDotComVCloudComputeClient} bound.
  * 
  * @author Adrian Cole
  */
-public class HostingDotComVCloudComputeServiceContextModule extends
-         VCloudComputeServiceContextModule {
+public class HostingDotComVCloudComputeServiceContextModule extends VCloudComputeServiceContextModule {
 
    @Override
    protected void configure() {
@@ -42,7 +43,7 @@ public class HostingDotComVCloudComputeServiceContextModule extends
    }
 
    @Override
-   protected TemplateBuilder provideTemplate(TemplateBuilder template) {
+   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       return template.osFamily(CENTOS);
    }
 

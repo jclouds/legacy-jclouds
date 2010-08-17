@@ -50,6 +50,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -67,12 +68,12 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   protected final Provider<Set<? extends Image>> images;
-   protected final Provider<Set<? extends Size>> sizes;
-   protected final Provider<Set<? extends Location>> locations;
+   protected final Supplier<Set<? extends Image>> images;
+   protected final Supplier<Set<? extends Size>> sizes;
+   protected final Supplier<Set<? extends Location>> locations;
+   protected final Supplier<Location> defaultLocation;
    protected final Provider<TemplateOptions> optionsProvider;
    protected final Provider<TemplateBuilder> defaultTemplateProvider;
-   protected final Location defaultLocation;
 
    @VisibleForTesting
    protected OsFamily os;
@@ -104,13 +105,14 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    protected TemplateOptions options;
 
    @Inject
-   protected TemplateBuilderImpl(Provider<Set<? extends Location>> locations, Provider<Set<? extends Image>> images,
-            Provider<Set<? extends Size>> sizes, Location defaultLocation, Provider<TemplateOptions> optionsProvider,
+   protected TemplateBuilderImpl(Supplier<Set<? extends Location>> locations, Supplier<Set<? extends Image>> images,
+            Supplier<Set<? extends Size>> sizes, Supplier<Location> defaultLocation2,
+            Provider<TemplateOptions> optionsProvider,
             @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider) {
       this.locations = locations;
       this.images = images;
       this.sizes = sizes;
-      this.defaultLocation = defaultLocation;
+      this.defaultLocation = defaultLocation2;
       this.optionsProvider = optionsProvider;
       this.defaultTemplateProvider = defaultTemplateProvider;
    }
@@ -395,12 +397,14 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          return defaultTemplate.build();
       }
       if (location == null)
-         location = defaultLocation;
+         location = defaultLocation.get();
       if (options == null)
          options = optionsProvider.get();
       logger.debug(">> searching params(%s)", this);
-      Size size = resolveSize(sizeSorter(), getImages());
-      Image image = resolveImage(size);
+      Set<? extends Image> images = getImages();
+      Iterable<? extends Image> supportedImages = filter(images, buildImagePredicate());
+      Size size = resolveSize(sizeSorter(), supportedImages);
+      Image image = resolveImage(size, supportedImages);
       logger.debug("<<   matched image(%s)", image);
 
       // ensure we have an architecture matching
@@ -409,28 +413,26 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    }
 
    protected Size resolveSize(Ordering<Size> sizeOrdering, final Iterable<? extends Image> images) {
+      Set<? extends Size> sizesl = sizes.get();
       Size size;
       try {
-         Iterable<? extends Size> sizesThatAreCompatibleWithOurImages = filter(sizes.get(), new Predicate<Size>() {
+         Iterable<? extends Size> sizesThatAreCompatibleWithOurImages = filter(sizesl, new Predicate<Size>() {
             @Override
             public boolean apply(final Size size) {
-               boolean returnVal = false;
-               if (size != null) {
-                  returnVal = Iterables.any(images, new Predicate<Image>() {
+               return Iterables.any(images, new Predicate<Image>() {
 
-                     @Override
-                     public boolean apply(Image input) {
-                        return size.supportsImage(input);
-                     }
+                  @Override
+                  public boolean apply(Image input) {
+                     return size.supportsImage(input);
+                  }
 
-                  });
-               }
-               return returnVal;
+               });
+
             }
          });
          size = sizeOrdering.max(filter(sizesThatAreCompatibleWithOurImages, sizePredicate));
       } catch (NoSuchElementException exception) {
-         throw new NoSuchElementException("sizes don't support any images: " + toString() + "\n" + sizes.get() + "\n"
+         throw new NoSuchElementException("sizes don't support any images: " + toString() + "\n" + sizesl + "\n"
                   + images);
       }
       logger.debug("<<   matched size(%s)", size);
@@ -449,20 +451,21 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    /**
     * 
     * @param size
+    * @param supportedImages
     * @throws NoSuchElementException
     *            if there's no image that matches the predicate
     */
-   protected Image resolveImage(final Size size) {
-      Predicate<Image> imagePredicate = and(buildImagePredicate(), new Predicate<Image>() {
+   protected Image resolveImage(final Size size, Iterable<? extends Image> supportedImages) {
+      Predicate<Image> imagePredicate = new Predicate<Image>() {
 
          @Override
          public boolean apply(Image arg0) {
             return size.supportsImage(arg0);
          }
 
-      });
+      };
       try {
-         Iterable<? extends Image> matchingImages = filter(getImages(), imagePredicate);
+         Iterable<? extends Image> matchingImages = filter(supportedImages, imagePredicate);
          if (logger.isTraceEnabled())
             logger.trace("<<   matched images(%s)", matchingImages);
          List<? extends Image> maxImages = multiMax(DEFAULT_IMAGE_ORDERING, matchingImages);
@@ -470,8 +473,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             logger.trace("<<   best images(%s)", maxImages);
          return maxImages.get(maxImages.size() - 1);
       } catch (NoSuchElementException exception) {
-         Set<? extends Image> images = getImages();
-         throw new NoSuchElementException("image didn't match: " + toString() + "\n" + images);
+         throw new NoSuchElementException("image didn't match: " + toString() + "\n" + supportedImages);
       }
    }
 

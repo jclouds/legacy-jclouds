@@ -45,14 +45,8 @@ public class RackspaceLocationsModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Location getLocation(@Provider String providerName) {
+   Set<? extends Location> provideLocations(@Provider String providerName) {
       Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
-      return new LocationImpl(LocationScope.ZONE, "DFW1", "Dallas, TX", provider);
-   }
-
-   @Provides
-   @Singleton
-   Set<? extends Location> provideLocations(Location location) {
-      return ImmutableSet.of(location);
+      return ImmutableSet.of(new LocationImpl(LocationScope.ZONE, "DFW1", "Dallas, TX", provider));
    }
 }

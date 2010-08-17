@@ -29,7 +29,6 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
@@ -45,6 +44,7 @@ import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -61,7 +61,7 @@ public class VCloudGetNodeMetadata {
    public Logger logger = Logger.NULL;
    protected final VCloudClient client;
    protected final VCloudComputeClient computeClient;
-   protected final Provider<Set<? extends Image>> images;
+   protected final Supplier<Set<? extends Image>> images;
    protected final FindLocationForResource findLocationForResourceInVDC;
    protected final GetExtra getExtra;
    protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
@@ -69,7 +69,7 @@ public class VCloudGetNodeMetadata {
    @Inject
    VCloudGetNodeMetadata(VCloudClient client, VCloudComputeClient computeClient,
             Map<VAppStatus, NodeState> vAppStatusToNodeState, GetExtra getExtra,
-            FindLocationForResource findLocationForResourceInVDC, Provider<Set<? extends Image>> images) {
+            FindLocationForResource findLocationForResourceInVDC, Supplier<Set<? extends Image>> images) {
       this.client = checkNotNull(client, "client");
       this.images = checkNotNull(images, "images");
       this.getExtra = checkNotNull(getExtra, "getExtra");

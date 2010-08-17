@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.gogrid;
+package org.jclouds.gogrid.compute;
 
 import static org.testng.Assert.assertEquals;
 
@@ -26,6 +26,8 @@ import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.gogrid.GoGridAsyncClient;
+import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.BeforeClass;

@@ -55,7 +55,7 @@ public class DeleteKeyPair {
 
    public void execute(OrgAndName orgTag) {
       for (KeyPair keyPair : terremarkClient.listKeyPairsInOrg(orgTag.getOrg())) {
-         if (keyPair.getName().matches("jclouds#" + orgTag.getName() + "-[0-9]+")) {
+         if (keyPair.getName().matches("jclouds#" + orgTag.getName() + "-[0-9a-f]+")) {
             logger.debug(">> deleting keyPair(%s)", keyPair.getName());
             terremarkClient.deleteKeyPair(keyPair.getId());
             // TODO: test this clear happens

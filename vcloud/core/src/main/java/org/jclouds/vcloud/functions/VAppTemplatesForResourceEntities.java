@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
@@ -46,7 +47,7 @@ import com.google.common.base.Predicate;
  */
 @Singleton
 public class VAppTemplatesForResourceEntities implements
-      Function<Iterable<? extends NamedResource>, Iterable<? extends VAppTemplate>> {
+         Function<Iterable<? extends NamedResource>, Iterable<? extends VAppTemplate>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
@@ -55,14 +56,14 @@ public class VAppTemplatesForResourceEntities implements
 
    @Inject
    VAppTemplatesForResourceEntities(VCloudAsyncClient aclient,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }
 
    @Override
    public Iterable<? extends VAppTemplate> apply(Iterable<? extends NamedResource> from) {
-      return transformParallel(filter(from, new Predicate<NamedResource>() {
+      return transformParallel(filter(checkNotNull(from, "named resources"), new Predicate<NamedResource>() {
 
          @Override
          public boolean apply(NamedResource input) {

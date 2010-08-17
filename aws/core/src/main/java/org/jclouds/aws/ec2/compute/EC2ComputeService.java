@@ -59,6 +59,7 @@ import org.jclouds.domain.Location;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Maps;
 
 /**
@@ -73,8 +74,8 @@ public class EC2ComputeService extends BaseComputeService {
    private final Predicate<PlacementGroup> placementGroupDeleted;
 
    @Inject
-   protected EC2ComputeService(ComputeServiceContext context, Provider<Set<? extends Image>> images,
-            Provider<Set<? extends Size>> sizes, Provider<Set<? extends Location>> locations,
+   protected EC2ComputeService(ComputeServiceContext context, Supplier<Set<? extends Image>> images,
+            Supplier<Set<? extends Size>> sizes, Supplier<Set<? extends Location>> locations,
             ListNodesStrategy listNodesStrategy, GetNodeMetadataStrategy getNodeMetadataStrategy,
             RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy, RebootNodeStrategy rebootNodeStrategy,
             DestroyNodeStrategy destroyNodeStrategy, Provider<TemplateBuilder> templateBuilderProvider,

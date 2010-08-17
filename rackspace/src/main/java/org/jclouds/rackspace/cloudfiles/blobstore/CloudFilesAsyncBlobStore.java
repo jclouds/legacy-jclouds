@@ -59,6 +59,7 @@ import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -81,8 +82,8 @@ public class CloudFilesAsyncBlobStore extends BaseAsyncBlobStore {
 
    @Inject
    CloudFilesAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Location defaultLocation,
-            Set<? extends Location> locations, CloudFilesClient sync, CloudFilesAsyncClient async,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
+            Supplier<Set<? extends Location>> locations, CloudFilesClient sync, CloudFilesAsyncClient async,
             ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob, BlobToObject blob2Object,

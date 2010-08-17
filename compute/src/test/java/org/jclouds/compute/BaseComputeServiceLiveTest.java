@@ -138,7 +138,7 @@ public abstract class BaseComputeServiceLiveTest {
       String secret = Files.toString(new File(secretKeyFile), Charsets.UTF_8);
       assert secret.startsWith("-----BEGIN RSA PRIVATE KEY-----") : "invalid key:\n" + secret;
       return ImmutableMap.<String, String> of("private", secret, "public", Files.toString(new File(secretKeyFile
-            + ".pub"), Charsets.UTF_8));
+               + ".pub"), Charsets.UTF_8));
    }
 
    protected void setupCredentials() {
@@ -154,7 +154,7 @@ public abstract class BaseComputeServiceLiveTest {
       if (context != null)
          context.close();
       context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet.of(
-            new Log4JLoggingModule(), getSshModule()));
+               new Log4JLoggingModule(), getSshModule()));
       client = context.getComputeService();
    }
 
@@ -170,8 +170,16 @@ public abstract class BaseComputeServiceLiveTest {
    // wait up to 5 seconds for an auth exception
    @Test(enabled = true, expectedExceptions = AuthorizationException.class)
    public void testCorrectAuthException() throws Exception {
-      new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA",
-            ImmutableSet.<Module> of(new Log4JLoggingModule())).close();
+      ComputeServiceContext context = null;
+      try {
+         context = new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA", ImmutableSet
+                  .<Module> of(new Log4JLoggingModule()));
+         context.getComputeService().listNodes();
+      } finally {
+         if (context != null)
+            context.close();
+      }
+
    }
 
    @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
@@ -185,7 +193,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    // since surefire and eclipse don't otherwise guarantee the order, we are
    // starting this one alphabetically before create2nodes..
-   @Test(enabled = true, dependsOnMethods = { "testImagesCache" })
+   @Test(enabled = true, dependsOnMethods = { "testCompareSizes" })
    public void testAScriptExecutionAfterBootWithBasicTemplate() throws Exception {
       String tag = this.tag + "run";
       try {
@@ -204,7 +212,7 @@ public abstract class BaseComputeServiceLiveTest {
          Image image = get(nodes, 0).getImage();
          try {
             Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(tag, image.getOsFamily(),
-                  new Credentials(good.identity, "romeo"));
+                     new Credentials(good.identity, "romeo"));
             assert false : "shouldn't pass with a bad password\n" + responses;
          } catch (RunScriptOnNodesException e) {
             assert getRootCause(e).getMessage().contains("Auth fail") : e;
@@ -226,7 +234,7 @@ public abstract class BaseComputeServiceLiveTest {
       assertEquals(toMatch.getImage(), template.getImage());
    }
 
-   @Test(enabled = true, dependsOnMethods = "testTemplateMatch")
+   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testCreateTwoNodesWithRunScript() throws Exception {
       try {
          client.destroyNodesMatching(withTag(tag));
@@ -238,8 +246,8 @@ public abstract class BaseComputeServiceLiveTest {
       template = buildTemplate(client.templateBuilder());
 
       template.getOptions().installPrivateKey(newStringPayload(keyPair.get("private"))).authorizePublicKey(
-            newStringPayload(keyPair.get("public"))).runScript(
-            newStringPayload(buildScript(template.getImage().getOsFamily())));
+               newStringPayload(keyPair.get("public"))).runScript(
+               newStringPayload(buildScript(template.getImage().getOsFamily())));
       try {
          nodes = newTreeSet(client.runNodesWithTag(tag, 2, template));
       } catch (RunNodesException e) {
@@ -283,10 +291,10 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String tag, OsFamily osFamily,
-         Credentials creds) throws RunScriptOnNodesException {
+            Credentials creds) throws RunScriptOnNodesException {
       try {
          return client.runScriptOnNodesMatching(runningWithTag(tag), newStringPayload(buildScript(osFamily)),
-               overrideCredentialsWith(creds));
+                  overrideCredentialsWith(creds));
       } catch (SshException e) {
          if (getRootCause(e).getMessage().contains("Auth fail")) {
             // System.err.printf("bad credentials: %s:%s for %s%n",
@@ -319,31 +327,32 @@ public abstract class BaseComputeServiceLiveTest {
 
    public static String buildScript(OsFamily osFamily) {
       switch (osFamily) {
-      case UBUNTU:
-         return new StringBuilder()//
-               .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
-               .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
-               .append(
-                     "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
-               .append("apt-get update\n")//
-               .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
-               .append("wget -qO/usr/bin/runurl run.alestic.com/runurl\n")//
-               .append("chmod 755 /usr/bin/runurl\n")//
-               .toString();
-      case CENTOS:
-      case RHEL:
-         return new StringBuilder()
-               .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")
-               .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-               .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-               .append(
-                     "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-               .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n").append(
-                     "yum --nogpgcheck -y install java-1.6.0-openjdk\n").append(
-                     "echo \"export PATH=\\\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\\$PATH\\\"\" >> /root/.bashrc\n")
-               .toString();
-      default:
-         throw new IllegalArgumentException(osFamily.toString());
+         case UBUNTU:
+            return new StringBuilder()//
+                     .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
+                     .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
+                     .append(
+                              "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
+                     .append("apt-get update\n")//
+                     .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
+                     .append("wget -qO/usr/bin/runurl run.alestic.com/runurl\n")//
+                     .append("chmod 755 /usr/bin/runurl\n")//
+                     .toString();
+         case CENTOS:
+         case RHEL:
+            return new StringBuilder()
+                     .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")
+                     .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+                     .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+                     .append(
+                              "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+                     .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+                     .append("yum --nogpgcheck -y install java-1.6.0-openjdk\n")
+                     .append(
+                              "echo \"export PATH=\\\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\\$PATH\\\"\" >> /root/.bashrc\n")
+                     .toString();
+         default:
+            throw new IllegalArgumentException(osFamily.toString());
       }
    }
 
@@ -367,7 +376,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected void assertNodeZero(Set<? extends NodeMetadata> metadataSet) {
       assert metadataSet.size() == 0 : String.format("nodes left in set: [%s] which didn't match set: [%s]",
-            metadataSet, nodes);
+               metadataSet, nodes);
    }
 
    @Test(enabled = true, dependsOnMethods = "testGet")
@@ -377,7 +386,7 @@ public abstract class BaseComputeServiceLiveTest {
       testGet();
    }
 
-   @Test(enabled = true/* , dependsOnMethods = "testTemplateMatch" */)
+   @Test(enabled = true/* , dependsOnMethods = "testCompareSizes" */)
    public void testTemplateOptions() throws Exception {
       TemplateOptions options = new TemplateOptions().withMetadata();
       Template t = client.templateBuilder().smallest().options(options).build();
@@ -428,26 +437,26 @@ public abstract class BaseComputeServiceLiveTest {
          assert location != location.getParent() : location;
          assert location.getScope() != null : location;
          switch (location.getScope()) {
-         case PROVIDER:
-            assertProvider(location);
-            break;
-         case REGION:
-            assertProvider(location.getParent());
-            break;
-         case ZONE:
-            Location provider = location.getParent().getParent();
-            // zone can be a direct descendant of provider
-            if (provider == null)
-               provider = location.getParent();
-            assertProvider(provider);
-            break;
-         case HOST:
-            Location provider2 = location.getParent().getParent().getParent();
-            // zone can be a direct descendant of provider
-            if (provider2 == null)
-               provider2 = location.getParent().getParent();
-            assertProvider(provider2);
-            break;
+            case PROVIDER:
+               assertProvider(location);
+               break;
+            case REGION:
+               assertProvider(location.getParent());
+               break;
+            case ZONE:
+               Location provider = location.getParent().getParent();
+               // zone can be a direct descendant of provider
+               if (provider == null)
+                  provider = location.getParent();
+               assertProvider(provider);
+               break;
+            case HOST:
+               Location provider2 = location.getParent().getParent().getParent();
+               // zone can be a direct descendant of provider
+               if (provider2 == null)
+                  provider2 = location.getParent().getParent();
+               assertProvider(provider2);
+               break;
          }
       }
    }
@@ -487,6 +496,30 @@ public abstract class BaseComputeServiceLiveTest {
          assert size.getRam() > 0;
          assertEquals(size.getType(), ComputeType.SIZE);
       }
+   }
+
+   @Test(enabled = true)
+   public void testCompareSizes() throws Exception {
+      Size defaultSize = client.templateBuilder().build().getSize();
+
+      Size smallest = client.templateBuilder().smallest().build().getSize();
+      Size fastest = client.templateBuilder().fastest().build().getSize();
+      Size biggest = client.templateBuilder().biggest().build().getSize();
+
+      System.out.printf("smallest %s%n", smallest);
+      System.out.printf("fastest %s%n", fastest);
+      System.out.printf("biggest %s%n", biggest);
+
+      assertEquals(defaultSize, smallest);
+
+      assert smallest.getCores() <= fastest.getCores() : String.format("%d ! <= %d", smallest, fastest);
+      assert biggest.getCores() <= fastest.getCores() : String.format("%d ! <= %d", biggest, fastest);
+
+      assert biggest.getRam() >= fastest.getRam() : String.format("%d ! >= %d", biggest, fastest);
+      assert biggest.getRam() >= smallest.getRam() : String.format("%d ! >= %d", biggest, smallest);
+
+      assert fastest.getCores() >= biggest.getCores() : String.format("%d ! >= %d", fastest, biggest);
+      assert fastest.getCores() >= smallest.getCores() : String.format("%d ! >= %d", fastest, smallest);
    }
 
    private void sshPing(NodeMetadata node) throws IOException {

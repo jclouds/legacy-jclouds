@@ -30,23 +30,24 @@ import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
 import org.jclouds.domain.Location;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
 public class ContainerToResourceMetadata implements Function<ContainerProperties, StorageMetadata> {
-   private Location defaultLocation;
+   private Supplier<Location> defaultLocation;
 
    @Inject
-   ContainerToResourceMetadata(Location defaultLocation) {
+   ContainerToResourceMetadata(Supplier<Location> defaultLocation) {
       this.defaultLocation = defaultLocation;
    }
 
    public StorageMetadata apply(ContainerProperties from) {
       MutableStorageMetadata to = new MutableStorageMetadataImpl();
       to.setName(from.getName());
-      to.setLocation(defaultLocation);
+      to.setLocation(defaultLocation.get());
       to.setETag(from.getETag());
       to.setLastModified(from.getLastModified());
       to.setUri(from.getUrl());

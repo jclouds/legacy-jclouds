@@ -59,6 +59,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -79,8 +80,8 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
 
    @Inject
    AtmosAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Location defaultLocation,
-            Set<? extends Location> locations, AtmosStorageAsyncClient async, AtmosStorageClient sync,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
+            Supplier<Set<? extends Location>> locations, AtmosStorageAsyncClient async, AtmosStorageClient sync,
             ObjectToBlob object2Blob, ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
             DirectoryEntryListToResourceMetadataList container2ResourceList, Crypto crypto,

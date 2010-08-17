@@ -17,57 +17,55 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.compute.config.providers;
+package org.jclouds.ibmdev.compute.suppliers;
 
-import static com.google.common.collect.Sets.newLinkedHashSet;
-
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
+import org.jclouds.ibmdev.IBMDeveloperCloudClient;
+import org.jclouds.ibmdev.compute.domain.IBMImage;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.compute.functions.ImagesInOrganization;
-import org.jclouds.vcloud.functions.OrganizatonsForLocations;
 
-import com.google.common.collect.Iterables;
+import com.google.common.base.Supplier;
+import com.google.common.collect.Sets;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class VAppTemplatesInVDCs implements Provider<Set<? extends Image>> {
+public class IBMDeveloperCloudImageSupplier implements Supplier<Set<? extends Image>> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-   public Logger logger = Logger.NULL;
-
-   private final Set<? extends Location> locations;
-   private final OrganizatonsForLocations organizatonsForLocations;
-   private final ImagesInOrganization imagesInOrganization;
+   protected Logger logger = Logger.NULL;
+   private final IBMDeveloperCloudClient sync;
+   private final Supplier<Map<String, ? extends Location>> locations;
 
    @Inject
-   VAppTemplatesInVDCs(Set<? extends Location> locations, OrganizatonsForLocations organizatonsForLocations,
-            ImagesInOrganization imagesInOrganization) {
+   IBMDeveloperCloudImageSupplier(final IBMDeveloperCloudClient sync,
+            Supplier<Map<String, ? extends Location>> locations) {
+      this.sync = sync;
       this.locations = locations;
-      this.organizatonsForLocations = organizatonsForLocations;
-      this.imagesInOrganization = imagesInOrganization;
    }
 
-   /**
-    * Terremark does not provide vApp templates in the vDC resourceEntity list. Rather, you must
-    * query the catalog.
-    */
    @Override
    public Set<? extends Image> get() {
-      logger.debug(">> providing vAppTemplates");
-      return newLinkedHashSet(Iterables.concat(Iterables.transform(organizatonsForLocations.apply(locations),
-               imagesInOrganization)));
+      final Set<Image> images = Sets.newHashSet();
+      logger.debug(">> providing images");
+
+      for (org.jclouds.ibmdev.domain.Image image : sync.listImages())
+         images.add(new IBMImage(image, locations.get().get(image.getLocation())));
+
+      logger.debug("<< images(%d)", images.size());
+      return images;
    }
+
 }

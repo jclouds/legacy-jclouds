@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.config;
+package org.jclouds.aws.suppliers;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -30,18 +30,19 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class DefaultLocationProvider implements javax.inject.Provider<Location> {
+public class DefaultLocationSupplier implements Supplier<Location> {
    private final String region;
-   private final Set<? extends Location> set;
+   private final Supplier<Set<? extends Location>> set;
 
    @Inject
-   DefaultLocationProvider(@Region final String region, Set<? extends Location> set) {
+   DefaultLocationSupplier(@Region final String region, Supplier<Set<? extends Location>> set) {
       this.region = region;
       this.set = set;
    }
@@ -50,7 +51,7 @@ public class DefaultLocationProvider implements javax.inject.Provider<Location> 
    @Singleton
    public Location get() {
       try {
-         Location toReturn = Iterables.find(set, new Predicate<Location>() {
+         Location toReturn = Iterables.find(set.get(), new Predicate<Location>() {
 
             @Override
             public boolean apply(Location input) {

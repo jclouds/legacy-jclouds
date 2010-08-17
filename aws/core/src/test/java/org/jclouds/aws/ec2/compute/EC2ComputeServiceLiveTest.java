@@ -96,7 +96,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
    }
 
-   @Test(enabled = true, dependsOnMethods = "testDefaultTemplateBuilder")
+   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsAndLogin() throws Exception {
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
                .getSecurityGroupServices();
@@ -180,7 +180,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true, dependsOnMethods = "testDefaultTemplateBuilder")
+   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsNoKeyPair() throws Exception {
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
                .getSecurityGroupServices();
@@ -234,7 +234,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true, dependsOnMethods = "testDefaultTemplateBuilder")
+   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsWithSubnetId() throws Exception {
 
       String subnetId = System.getProperty("jclouds.test.subnetId");

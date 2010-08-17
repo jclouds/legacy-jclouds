@@ -39,6 +39,7 @@ import org.jclouds.slicehost.domain.Slice;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
@@ -46,9 +47,9 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
-   private final Location location;
+   private final Supplier<Location> location;
    private final Map<Slice.Status, NodeState> sliceToNodeState;
-   private final Set<? extends Image> images;
+   private final Supplier<Set<? extends Image>> images;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -67,8 +68,8 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
    }
 
    @Inject
-   SliceToNodeMetadata(Map<Slice.Status, NodeState> sliceStateToNodeState, Set<? extends Image> images,
-            Location location) {
+   SliceToNodeMetadata(Map<Slice.Status, NodeState> sliceStateToNodeState, Supplier<Set<? extends Image>> images,
+            Supplier<Location> location) {
       this.sliceToNodeState = checkNotNull(sliceStateToNodeState, "sliceStateToNodeState");
       this.images = checkNotNull(images, "images");
       this.location = checkNotNull(location, "location");
@@ -79,27 +80,27 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
       String tag = parseTagFromName(from.getName());
       Image image = null;
       try {
-         image = Iterables.find(images, new FindImageForSlice(from));
+         image = Iterables.find(images.get(), new FindImageForSlice(from));
       } catch (NoSuchElementException e) {
          logger.warn("could not find a matching image for slice %s in location %s", from, location);
       }
 
-      return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", location, null, ImmutableMap
-               .<String, String> of(), tag, image, sliceToNodeState.get(from.getStatus()), Iterables.filter(from
-               .getAddresses(), new Predicate<String>() {
+      return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", location.get(), null,
+               ImmutableMap.<String, String> of(), tag, image, sliceToNodeState.get(from.getStatus()), Iterables
+                        .filter(from.getAddresses(), new Predicate<String>() {
 
-         @Override
-         public boolean apply(String input) {
-            return !input.startsWith("10.");
-         }
+                           @Override
+                           public boolean apply(String input) {
+                              return !input.startsWith("10.");
+                           }
 
-      }), Iterables.filter(from.getAddresses(), new Predicate<String>() {
+                        }), Iterables.filter(from.getAddresses(), new Predicate<String>() {
 
-         @Override
-         public boolean apply(String input) {
-            return input.startsWith("10.");
-         }
+                  @Override
+                  public boolean apply(String input) {
+                     return input.startsWith("10.");
+                  }
 
-      }), ImmutableMap.<String, String> of(), null);
+               }), ImmutableMap.<String, String> of(), null);
    }
 }

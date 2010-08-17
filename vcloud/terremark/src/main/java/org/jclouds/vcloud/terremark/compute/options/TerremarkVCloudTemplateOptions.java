@@ -30,7 +30,7 @@ import org.jclouds.util.Utils;
 
 /**
  * Contains options supported in the {@code ComputeService#runNode} operation on
- * the "ec2" provider. <h2>
+ * the "trmk-vcloudexpress" provider. <h2>
  * Usage</h2> The recommended way to instantiate a
  * TerremarkVCloudTemplateOptions object is to statically import
  * TerremarkVCloudTemplateOptions.* and invoke a static creation method followed

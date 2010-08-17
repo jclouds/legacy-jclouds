@@ -22,7 +22,6 @@ package org.jclouds.ibmdev;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_NODE_RUNNING;
-import static org.jclouds.ibmdev.reference.IBMDeveloperCloudConstants.PROPERTY_IBMDEVELOPERCLOUD_LOCATION;
 
 import java.util.Properties;
 
@@ -39,7 +38,6 @@ public class IBMDeveloperCloudPropertiesBuilder extends PropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_API_VERSION, IBMDeveloperCloudAsyncClient.VERSION);
       properties.setProperty(PROPERTY_ENDPOINT, "https://www-147.ibm.com/computecloud/enterprise/api/rest");
-      properties.setProperty(PROPERTY_IBMDEVELOPERCLOUD_LOCATION, "1");
       properties.setProperty(PROPERTY_TIMEOUT_NODE_RUNNING, (15 * 60 * 1000) + "");
       return properties;
    }

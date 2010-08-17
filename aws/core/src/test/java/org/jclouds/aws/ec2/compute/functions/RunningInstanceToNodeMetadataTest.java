@@ -31,8 +31,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
-import javax.inject.Provider;
-
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
@@ -52,6 +50,8 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -68,19 +68,6 @@ public class RunningInstanceToNodeMetadataTest {
 
    }
 
-   private static class ImageProvider implements Provider<Set<? extends org.jclouds.compute.domain.Image>> {
-      private final Set<? extends org.jclouds.compute.domain.Image> images;
-
-      private ImageProvider(org.jclouds.compute.domain.Image jcImage) {
-         this.images = ImmutableSet.<org.jclouds.compute.domain.Image> of(jcImage);
-      }
-
-      @Override
-      public Set<? extends org.jclouds.compute.domain.Image> get() {
-         return images;
-      }
-   }
-
    @SuppressWarnings("unchecked")
    @Test
    public void testImageNotFoundAndLazyReturnsNull() throws UnknownHostException {
@@ -93,7 +80,8 @@ public class RunningInstanceToNodeMetadataTest {
       ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
 
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
-      Set<Location> locations = ImmutableSet.<Location> of(location);
+      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+               .<Location> of(location));
       PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
       RunningInstance instance = createMock(RunningInstance.class);
 
@@ -111,7 +99,6 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getProviderId()).andReturn("notImageId").atLeastOnce();
       expect(instance.getRegion()).andReturn("us-east-1").atLeastOnce();
 
       expect(imageMap.get(new RegionAndName("us-east-1", "imageId"))).andReturn(null);
@@ -127,11 +114,10 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-            credentialProvider, new ImageProvider(jcImage), imageMap, locations,
-            new RunningInstanceToStorageMappingUnix());
+               credentialProvider, imageMap, locations, new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
-      assertEquals(metadata.getLocation(), locations.iterator().next());
+      assertEquals(metadata.getLocation(), locations.get().iterator().next());
       assertEquals(metadata.getImage(), null);
       assertEquals(metadata.getTag(), "NOTAG-id");
       assertEquals(metadata.getCredentials(), null);
@@ -156,7 +142,8 @@ public class RunningInstanceToNodeMetadataTest {
       ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
 
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
-      Set<Location> locations = ImmutableSet.<Location> of(location);
+      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+               .<Location> of(location));
       PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
       RunningInstance instance = createMock(RunningInstance.class);
 
@@ -174,11 +161,10 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getProviderId()).andReturn("notImageId").atLeastOnce();
       expect(instance.getRegion()).andReturn("us-east-1").atLeastOnce();
 
       expect(imageMap.get(new RegionAndName("us-east-1", "imageId"))).andThrow(new NullPointerException())
-            .atLeastOnce();
+               .atLeastOnce();
 
       expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
 
@@ -191,11 +177,10 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-            credentialProvider, new ImageProvider(jcImage), imageMap, locations,
-            new RunningInstanceToStorageMappingUnix());
+               credentialProvider, imageMap, locations, new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
-      assertEquals(metadata.getLocation(), locations.iterator().next());
+      assertEquals(metadata.getLocation(), locations.get().iterator().next());
       assertEquals(metadata.getImage(), null);
       assertEquals(metadata.getTag(), "NOTAG-id");
       assertEquals(metadata.getCredentials(), null);
@@ -220,7 +205,8 @@ public class RunningInstanceToNodeMetadataTest {
       ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
 
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
-      Set<Location> locations = ImmutableSet.<Location> of(location);
+      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+               .<Location> of(location));
       PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
       RunningInstance instance = createMock(RunningInstance.class);
 
@@ -238,7 +224,6 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getProviderId()).andReturn("notImageId").atLeastOnce();
       expect(instance.getRegion()).andReturn("us-east-1").atLeastOnce();
 
       org.jclouds.compute.domain.Image lateImage = createMock(org.jclouds.compute.domain.Image.class);
@@ -257,11 +242,10 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-            credentialProvider, new ImageProvider(jcImage), imageMap, locations,
-            new RunningInstanceToStorageMappingUnix());
+               credentialProvider, imageMap, locations, new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
-      assertEquals(metadata.getLocation(), locations.iterator().next());
+      assertEquals(metadata.getLocation(), locations.get().iterator().next());
       assertEquals(metadata.getImage(), lateImage);
       assertEquals(metadata.getTag(), "NOTAG-id");
       assertEquals(metadata.getCredentials(), null);
@@ -287,7 +271,8 @@ public class RunningInstanceToNodeMetadataTest {
       ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
 
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
-      Set<Location> locations = ImmutableSet.<Location> of(location);
+      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+               .<Location> of(location));
       PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
       RunningInstance instance = createMock(RunningInstance.class);
 
@@ -306,8 +291,7 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getProviderId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
+      expect(imageMap.get(new RegionAndName(Region.US_EAST_1, "imageId"))).andReturn(jcImage);
 
       expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
 
@@ -320,11 +304,10 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-            credentialProvider, new ImageProvider(jcImage), imageMap, locations,
-            new RunningInstanceToStorageMappingUnix());
+               credentialProvider, imageMap, locations, new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
-      assertEquals(metadata.getLocation(), locations.iterator().next());
+      assertEquals(metadata.getLocation(), locations.get().iterator().next());
       assertEquals(metadata.getImage(), jcImage);
       assertEquals(metadata.getTag(), "NOTAG-id");
       assertEquals(metadata.getCredentials(), null);
@@ -348,7 +331,8 @@ public class RunningInstanceToNodeMetadataTest {
       ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
 
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
-      Set<Location> locations = ImmutableSet.<Location> of(location);
+      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+               .<Location> of(location));
       PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
       RunningInstance instance = createMock(RunningInstance.class);
 
@@ -367,8 +351,7 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getProviderId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
+      expect(imageMap.get(new RegionAndName(Region.US_EAST_1, "imageId"))).andReturn(jcImage);
 
       expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
 
@@ -381,11 +364,10 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-            credentialProvider, new ImageProvider(jcImage), imageMap, locations,
-            new RunningInstanceToStorageMappingUnix());
+               credentialProvider, imageMap, locations, new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
-      assertEquals(metadata.getLocation(), locations.iterator().next());
+      assertEquals(metadata.getLocation(), locations.get().iterator().next());
       assertEquals(metadata.getImage(), jcImage);
       assertEquals(metadata.getTag(), "tag");
       assertEquals(metadata.getCredentials(), null);
@@ -421,7 +403,8 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getSubnetId()).andReturn(null);
 
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
-      Set<Location> locations = ImmutableSet.<Location> of(location);
+      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+               .<Location> of(location));
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
 
       expect(instance.getIpAddress()).andReturn("127.0.0.1");
@@ -430,16 +413,15 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getRegion()).andReturn(Region.US_EAST_1).atLeastOnce();
 
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getProviderId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
+      expect(imageMap.get(new RegionAndName(Region.US_EAST_1, "imageId"))).andReturn(jcImage);
 
       expect(amiClient.describeImagesInRegion(Region.US_EAST_1, imageIds("imageId"))).andReturn(
-            (Set) ImmutableSet.<Image> of(image));
+               (Set) ImmutableSet.<Image> of(image));
 
       expect(credentialProvider.execute(image)).andReturn(new Credentials("user", "pass"));
 
       expect(credentialsMap.get(new RegionAndName(Region.US_EAST_1, "jclouds#tag#us-east-1#50"))).andReturn(
-            new KeyPair(Region.US_EAST_1, "jclouds#tag#us-east-1#50", "keyFingerprint", "pass"));
+               new KeyPair(Region.US_EAST_1, "jclouds#tag#us-east-1#50", "keyFingerprint", "pass"));
 
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
@@ -454,8 +436,7 @@ public class RunningInstanceToNodeMetadataTest {
       replay(jcImage);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-            credentialProvider, new ImageProvider(jcImage), imageMap, locations,
-            new RunningInstanceToStorageMappingUnix());
+               credentialProvider, imageMap, locations, new RunningInstanceToStorageMappingUnix());
       NodeMetadata metadata = parser.apply(instance);
 
       assertEquals(metadata.getTag(), "tag");
@@ -496,7 +477,8 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getSubnetId()).andReturn(null);
 
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
-      Set<Location> locations = ImmutableSet.<Location> of(location);
+      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+               .<Location> of(location));
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
 
       expect(instance.getIpAddress()).andReturn("127.0.0.1");
@@ -505,16 +487,15 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getRegion()).andReturn(Region.US_EAST_1).atLeastOnce();
 
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getProviderId()).andReturn("imageId").atLeastOnce();
-      expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
+      expect(imageMap.get(new RegionAndName(Region.US_EAST_1, "imageId"))).andReturn(jcImage);
 
       expect(amiClient.describeImagesInRegion(Region.US_EAST_1, imageIds("imageId"))).andReturn(
-            (Set) ImmutableSet.<Image> of(image));
+               (Set) ImmutableSet.<Image> of(image));
 
       expect(credentialProvider.execute(image)).andReturn(new Credentials("user", "pass"));
 
       expect(credentialsMap.get(new RegionAndName(Region.US_EAST_1, "jclouds#tag#us-east-1#50"))).andReturn(
-            new KeyPair(Region.US_EAST_1, "jclouds#tag#us-east-1#50", "keyFingerprint", "pass"));
+               new KeyPair(Region.US_EAST_1, "jclouds#tag#us-east-1#50", "keyFingerprint", "pass"));
 
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
@@ -529,8 +510,7 @@ public class RunningInstanceToNodeMetadataTest {
       replay(jcImage);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-            credentialProvider, new ImageProvider(jcImage), imageMap, locations,
-            new RunningInstanceToStorageMappingUnix());
+               credentialProvider, imageMap, locations, new RunningInstanceToStorageMappingUnix());
 
       NodeMetadata metadata = parser.apply(instance);
 

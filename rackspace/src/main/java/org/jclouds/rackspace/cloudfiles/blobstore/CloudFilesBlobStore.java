@@ -51,6 +51,7 @@ import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlobMetadata
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 
 /**
@@ -70,13 +71,12 @@ public class CloudFilesBlobStore extends BaseBlobStore {
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
-   CloudFilesBlobStore(BlobStoreContext context, BlobUtils blobUtils, Location defaultLocation,
-            Set<? extends Location> locations, CloudFilesClient sync,
+   CloudFilesBlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
+            Supplier<Set<? extends Location>> locations, CloudFilesClient sync,
             ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
-            ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob,
-            BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
-            BlobToHttpGetOptions blob2ObjectGetOptions,
+            ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob, BlobToObject blob2Object,
+            ObjectToBlobMetadata object2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions,
             Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
       super(context, blobUtils, defaultLocation, locations);
       this.sync = sync;
@@ -87,8 +87,7 @@ public class CloudFilesBlobStore extends BaseBlobStore {
       this.blob2Object = blob2Object;
       this.object2BlobMd = object2BlobMd;
       this.blob2ObjectGetOptions = blob2ObjectGetOptions;
-      this.fetchBlobMetadataProvider = checkNotNull(fetchBlobMetadataProvider,
-               "fetchBlobMetadataProvider");
+      this.fetchBlobMetadataProvider = checkNotNull(fetchBlobMetadataProvider, "fetchBlobMetadataProvider");
    }
 
    /**
@@ -97,10 +96,8 @@ public class CloudFilesBlobStore extends BaseBlobStore {
    @Override
    public PageSet<? extends StorageMetadata> list() {
       return new Function<Set<ContainerMetadata>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
-         public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(
-                  Set<ContainerMetadata> from) {
-            return new PageSetImpl<StorageMetadata>(
-                     Iterables.transform(from, container2ResourceMd), null);
+         public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(Set<ContainerMetadata> from) {
+            return new PageSetImpl<StorageMetadata>(Iterables.transform(from, container2ResourceMd), null);
          }
       }.apply(sync.listContainers());
    }
@@ -139,10 +136,8 @@ public class CloudFilesBlobStore extends BaseBlobStore {
    public PageSet<? extends StorageMetadata> list(String container, ListContainerOptions options) {
       org.jclouds.rackspace.cloudfiles.options.ListContainerOptions httpOptions = container2ContainerListOptions
                .apply(options);
-      PageSet<? extends StorageMetadata> list = container2ResourceList.apply(sync.listObjects(
-               container, httpOptions));
-      return options.isDetailed() ? fetchBlobMetadataProvider.get().setContainerName(container)
-               .apply(list) : list;
+      PageSet<? extends StorageMetadata> list = container2ResourceList.apply(sync.listObjects(container, httpOptions));
+      return options.isDetailed() ? fetchBlobMetadataProvider.get().setContainerName(container).apply(list) : list;
    }
 
    /**
@@ -180,8 +175,7 @@ public class CloudFilesBlobStore extends BaseBlobStore {
     *           file name
     */
    @Override
-   public Blob getBlob(String container, String key,
-            org.jclouds.blobstore.options.GetOptions optionsList) {
+   public Blob getBlob(String container, String key, org.jclouds.blobstore.options.GetOptions optionsList) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(optionsList);
       return object2Blob.apply(sync.getObject(container, key, httpOptions));
    }

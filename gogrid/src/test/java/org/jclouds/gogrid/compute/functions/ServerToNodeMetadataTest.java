@@ -29,6 +29,7 @@ import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
@@ -44,6 +45,7 @@ import org.jclouds.gogrid.domain.ServerState;
 import org.jclouds.gogrid.services.GridServerClient;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -63,7 +65,7 @@ public class ServerToNodeMetadataTest {
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
       Option dc = new Option(1l, "US-West-1", "US West 1 Datacenter");
 
-      Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
+      Set<? extends org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
       Server server = createMock(Server.class);
 
       expect(server.getId()).andReturn(1000l).atLeastOnce();
@@ -95,7 +97,9 @@ public class ServerToNodeMetadataTest {
       replay(jcImage);
       replay(credentialsMap);
 
-      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, caller, images, locations);
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, caller, Suppliers
+               .<Set<? extends Image>> ofInstance(images), Suppliers
+               .<Map<String, ? extends Location>> ofInstance(locations));
 
       NodeMetadata metadata = parser.apply(server);
       assertEquals(metadata.getLocation(), location);

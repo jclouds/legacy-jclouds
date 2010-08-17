@@ -17,17 +17,17 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.compute.config.providers;
+package org.jclouds.vcloud.compute.suppliers;
 
 import java.util.Set;
 
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
@@ -35,7 +35,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Singleton
-public class StaticSizeProvider implements Provider<Set<? extends Size>> {
+public class StaticSizeSupplier implements Supplier<Set<? extends Size>> {
 
    @Override
    public Set<? extends Size> get() {

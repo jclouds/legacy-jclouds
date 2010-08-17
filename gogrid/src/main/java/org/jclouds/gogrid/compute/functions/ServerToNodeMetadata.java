@@ -43,6 +43,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -58,8 +59,8 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    protected Logger logger = Logger.NULL;
    private final Map<ServerState, NodeState> serverStateToNodeState;
    private final GoGridClient client;
-   private final Set<? extends Image> images;
-   private final Map<String, ? extends Location> locations;
+   private final Supplier<Set<? extends Image>> images;
+   private final Supplier<Map<String, ? extends Location>> locations;
 
    private static class FindImageForServer implements Predicate<Image> {
       private final Server instance;
@@ -79,7 +80,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Inject
    ServerToNodeMetadata(Map<ServerState, NodeState> serverStateToNodeState, GoGridClient client,
-            Set<? extends Image> images, Map<String, ? extends Location> locations) {
+            Supplier<Set<? extends Image>> images, Supplier<Map<String, ? extends Location>> locations) {
       this.serverStateToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
       this.client = checkNotNull(client, "client");
       this.images = checkNotNull(images, "images");
@@ -94,13 +95,12 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       Credentials creds = client.getServerServices().getServerCredentialsList().get(from.getName());
       Image image = null;
       try {
-         image = Iterables.find(images, new FindImageForServer(from));
+         image = Iterables.find(images.get(), new FindImageForServer(from));
       } catch (NoSuchElementException e) {
          logger.warn("could not find a matching image for server %s", from);
       }
-      return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", locations.get(from
-               .getDatacenter().getId()
-               + ""), null, ImmutableMap.<String, String> of(), tag, image, state, ipSet, ImmutableList.<String> of(),
-               ImmutableMap.<String, String> of(), creds);
+      return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", locations.get().get(
+               from.getDatacenter().getId() + ""), null, ImmutableMap.<String, String> of(), tag, image, state, ipSet,
+               ImmutableList.<String> of(), ImmutableMap.<String, String> of(), creds);
    }
 }

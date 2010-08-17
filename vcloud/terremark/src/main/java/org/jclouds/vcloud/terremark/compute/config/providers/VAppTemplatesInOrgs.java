@@ -26,34 +26,34 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
+import org.jclouds.vcloud.compute.functions.ImagesInOrganization;
 import org.jclouds.vcloud.functions.OrganizatonsForLocations;
-import org.jclouds.vcloud.terremark.compute.functions.ImagesInOrganization;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class VAppTemplatesInOrgs implements Provider<Set<? extends Image>> {
+public class VAppTemplatesInOrgs implements Supplier<Set<? extends Image>> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
 
-   private final Set<? extends Location> locations;
+   private final Supplier<Set<? extends Location>> locations;
    private final OrganizatonsForLocations organizatonsForLocations;
    private final ImagesInOrganization imagesInOrganization;
 
    @Inject
-   VAppTemplatesInOrgs(Set<? extends Location> locations, OrganizatonsForLocations organizatonsForLocations,
+   VAppTemplatesInOrgs(Supplier<Set<? extends Location>> locations, OrganizatonsForLocations organizatonsForLocations,
             ImagesInOrganization imagesInOrganization) {
       this.locations = locations;
       this.organizatonsForLocations = organizatonsForLocations;
@@ -67,7 +67,7 @@ public class VAppTemplatesInOrgs implements Provider<Set<? extends Image>> {
    @Override
    public Set<? extends Image> get() {
       logger.debug(">> providing vAppTemplates");
-      return newLinkedHashSet(Iterables.concat(Iterables.transform(organizatonsForLocations.apply(locations),
+      return newLinkedHashSet(Iterables.concat(Iterables.transform(organizatonsForLocations.apply(locations.get()),
                imagesInOrganization)));
    }
 }

@@ -40,6 +40,8 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.rest.annotations.Provider;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -52,7 +54,6 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class AtmosBlobStoreContextModule extends AbstractModule {
- 
 
    @Override
    protected void configure() {
@@ -60,22 +61,22 @@ public class AtmosBlobStoreContextModule extends AbstractModule {
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.EVENTUAL);
       bind(AsyncBlobStore.class).to(AtmosAsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(AtmosBlobStore.class).in(Scopes.SINGLETON);
-      bind(BlobStoreContext.class)
-               .to(
-                        new TypeLiteral<BlobStoreContextImpl<AtmosStorageClient, AtmosStorageAsyncClient>>() {
-                        }).in(Scopes.SINGLETON);
+      bind(BlobStoreContext.class).to(
+               new TypeLiteral<BlobStoreContextImpl<AtmosStorageClient, AtmosStorageAsyncClient>>() {
+               }).in(Scopes.SINGLETON);
       bind(ContainsValueInListStrategy.class).to(FindMD5InUserMetadata.class);
    }
 
    @Provides
    @Singleton
-   Location getLocation(@Provider String providerName) {
-      return new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
+   Supplier<Set<? extends Location>> provideLocations(Supplier<Location> defaultLocation) {
+      return Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet.of(defaultLocation.get()));
    }
 
    @Provides
    @Singleton
-   Set<? extends Location> provideLocations(Location location) {
-      return ImmutableSet.of(location);
+   Supplier<Location> provideDefaultLocation(@Provider String providerName) {
+      return Suppliers
+               .<Location> ofInstance(new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null));
    }
 }

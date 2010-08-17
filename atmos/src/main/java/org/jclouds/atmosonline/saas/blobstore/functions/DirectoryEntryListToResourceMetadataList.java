@@ -34,6 +34,7 @@ import org.jclouds.blobstore.domain.internal.StorageMetadataImpl;
 import org.jclouds.domain.Location;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
@@ -43,10 +44,10 @@ import com.google.common.collect.Maps;
 @Singleton
 public class DirectoryEntryListToResourceMetadataList implements
          Function<BoundedSet<? extends DirectoryEntry>, PageSet<? extends StorageMetadata>> {
-   private Location defaultLocation;
+   private Supplier<Location> defaultLocation;
 
    @Inject
-   DirectoryEntryListToResourceMetadataList(Location defaultLocation) {
+   DirectoryEntryListToResourceMetadataList(Supplier<Location> defaultLocation) {
       this.defaultLocation = defaultLocation;
    }
 
@@ -56,16 +57,13 @@ public class DirectoryEntryListToResourceMetadataList implements
                new Function<DirectoryEntry, StorageMetadata>() {
 
                   public StorageMetadata apply(DirectoryEntry from) {
-                     StorageType type = from.getType() == FileType.DIRECTORY ? StorageType.FOLDER
-                              : StorageType.BLOB;
+                     StorageType type = from.getType() == FileType.DIRECTORY ? StorageType.FOLDER : StorageType.BLOB;
                      if (type == StorageType.FOLDER)
-                        return new StorageMetadataImpl(type, from.getObjectID(), from
-                                 .getObjectName(), defaultLocation, null, null, null, null, Maps
-                                 .<String, String> newHashMap());
+                        return new StorageMetadataImpl(type, from.getObjectID(), from.getObjectName(), defaultLocation.get(),
+                                 null, null, null, null, Maps.<String, String> newHashMap());
                      else
-                        return new BlobMetadataImpl(from.getObjectID(), from.getObjectName(),
-                                 defaultLocation, null, null, null, null, Maps
-                                          .<String, String> newHashMap(), null, null);
+                        return new BlobMetadataImpl(from.getObjectID(), from.getObjectName(), defaultLocation.get(), null,
+                                 null, null, null, Maps.<String, String> newHashMap(), null, null);
                   }
 
                }), from.getToken());

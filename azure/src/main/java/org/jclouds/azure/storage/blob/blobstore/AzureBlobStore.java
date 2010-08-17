@@ -51,6 +51,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 
 /**
@@ -68,20 +69,19 @@ public class AzureBlobStore extends BaseBlobStore {
    private final BlobToHttpGetOptions blob2ObjectGetOptions;
 
    @Inject
-   AzureBlobStore(BlobStoreContext context, BlobUtils blobUtils, Location defaultLocation,
-            Set<? extends Location> locations, AzureBlobClient sync,
+   AzureBlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
+            Supplier<Set<? extends Location>> locations, AzureBlobClient sync,
             ContainerToResourceMetadata container2ResourceMd,
             ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions,
-            ListBlobsResponseToResourceList azure2BlobStoreResourceList,
-            AzureBlobToBlob azureBlob2Blob, BlobToAzureBlob blob2AzureBlob,
-            BlobPropertiesToBlobMetadata blob2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions) {
+            ListBlobsResponseToResourceList azure2BlobStoreResourceList, AzureBlobToBlob azureBlob2Blob,
+            BlobToAzureBlob blob2AzureBlob, BlobPropertiesToBlobMetadata blob2BlobMd,
+            BlobToHttpGetOptions blob2ObjectGetOptions) {
       super(context, blobUtils, defaultLocation, locations);
       this.sync = checkNotNull(sync, "sync");
       this.container2ResourceMd = checkNotNull(container2ResourceMd, "container2ResourceMd");
       this.blobStore2AzureContainerListOptions = checkNotNull(blobStore2AzureContainerListOptions,
                "blobStore2AzureContainerListOptions");
-      this.azure2BlobStoreResourceList = checkNotNull(azure2BlobStoreResourceList,
-               "azure2BlobStoreResourceList");
+      this.azure2BlobStoreResourceList = checkNotNull(azure2BlobStoreResourceList, "azure2BlobStoreResourceList");
       this.azureBlob2Blob = checkNotNull(azureBlob2Blob, "azureBlob2Blob");
       this.blob2AzureBlob = checkNotNull(blob2AzureBlob, "blob2AzureBlob");
       this.blob2BlobMd = checkNotNull(blob2BlobMd, "blob2BlobMd");
@@ -96,8 +96,8 @@ public class AzureBlobStore extends BaseBlobStore {
       return new Function<BoundedSet<ContainerProperties>, org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata>>() {
          public org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> apply(
                   BoundedSet<ContainerProperties> from) {
-            return new PageSetImpl<StorageMetadata>(
-                     Iterables.transform(from, container2ResourceMd), from.getNextMarker());
+            return new PageSetImpl<StorageMetadata>(Iterables.transform(from, container2ResourceMd), from
+                     .getNextMarker());
          }
          // TODO this may be a list that isn't complete due to 1000 container limit
       }.apply(sync.listContainers(includeMetadata()));
@@ -136,8 +136,7 @@ public class AzureBlobStore extends BaseBlobStore {
    @Override
    public PageSet<? extends StorageMetadata> list(String container, ListContainerOptions options) {
       ListBlobsOptions azureOptions = blobStore2AzureContainerListOptions.apply(options);
-      return azure2BlobStoreResourceList.apply(sync.listBlobs(container, azureOptions
-               .includeMetadata()));
+      return azure2BlobStoreResourceList.apply(sync.listBlobs(container, azureOptions.includeMetadata()));
    }
 
    /**
@@ -173,8 +172,7 @@ public class AzureBlobStore extends BaseBlobStore {
     *           blob key
     */
    @Override
-   public Blob getBlob(String container, String key,
-            org.jclouds.blobstore.options.GetOptions options) {
+   public Blob getBlob(String container, String key, org.jclouds.blobstore.options.GetOptions options) {
       GetOptions azureOptions = blob2ObjectGetOptions.apply(options);
       return azureBlob2Blob.apply(sync.getBlob(container, key, azureOptions));
 

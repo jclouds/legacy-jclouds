@@ -154,7 +154,7 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
 
    @Provides
    @Singleton
-   protected Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>> provideVDCtoORG(
+   protected Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>> provideURIToVDC(
          @Named(PROPERTY_SESSION_INTERVAL) long seconds, final URItoVDC supplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>>(
             authException, seconds, new Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>>() {

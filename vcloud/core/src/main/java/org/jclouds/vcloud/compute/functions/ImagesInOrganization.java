@@ -19,19 +19,19 @@
 
 package org.jclouds.vcloud.compute.functions;
 
-import static com.google.common.collect.Iterables.concat;
-import static com.google.common.collect.Iterables.transform;
-
-import java.util.Map;
-
 import javax.inject.Inject;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
+import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.functions.AllCatalogItemsInOrganization;
+import org.jclouds.vcloud.functions.VAppTemplatesForCatalogItems;
 
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
@@ -39,21 +39,24 @@ import com.google.common.base.Supplier;
 @Singleton
 public class ImagesInOrganization implements Function<Organization, Iterable<? extends Image>> {
 
-   private final Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> allVDCsInOrganization;
-   private final ImagesInVDC imagesInVDC;
+   private final AllCatalogItemsInOrganization allCatalogItemsInOrganization;
+   private final VAppTemplatesForCatalogItems vAppTemplatesForCatalogItems;
+   private final Provider<ImageForVAppTemplate> imageForVAppTemplateProvider;
 
    @Inject
-   public ImagesInOrganization(
-         Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> allVDCsInOrganization,
-         ImagesInVDC imagesInVDC) {
-      this.allVDCsInOrganization = allVDCsInOrganization;
-      this.imagesInVDC = imagesInVDC;
+   ImagesInOrganization(AllCatalogItemsInOrganization allCatalogItemsInOrganization,
+            Provider<ImageForVAppTemplate> imageForVAppTemplateProvider,
+            VAppTemplatesForCatalogItems vAppTemplatesForCatalogItems) {
+      this.imageForVAppTemplateProvider = imageForVAppTemplateProvider;
+      this.allCatalogItemsInOrganization = allCatalogItemsInOrganization;
+      this.vAppTemplatesForCatalogItems = vAppTemplatesForCatalogItems;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public Iterable<? extends Image> apply(Organization from) {
-      return concat(transform(concat(allVDCsInOrganization.get().get(from).values()), imagesInVDC));
+      Iterable<? extends CatalogItem> catalogs = allCatalogItemsInOrganization.apply(from);
+      Iterable<? extends VAppTemplate> vAppTemplates = vAppTemplatesForCatalogItems.apply(catalogs);
+      return Iterables.transform(vAppTemplates, imageForVAppTemplateProvider.get().withParent(from));
    }
 
 }

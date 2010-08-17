@@ -35,7 +35,10 @@ import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.rest.annotations.Provider;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -69,20 +72,20 @@ public class TransientBlobStoreContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   Set<Location> provideLocations(Location defaultLocation) {
-      return ImmutableSet.of(defaultLocation);
-   }
-
-   @Provides
-   @Singleton
    BlobStore provide(TransientBlobStore in) {
       return in;
    }
 
    @Provides
    @Singleton
-   Location provideDefaultLocation() {
-      return new LocationImpl(LocationScope.PROVIDER, "transient", "transient", null);
+   Supplier<Set<? extends Location>> provideLocations(Supplier<Location> defaultLocation) {
+      return Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet.of(defaultLocation.get()));
    }
 
+   @Provides
+   @Singleton
+   Supplier<Location> provideDefaultLocation(@Provider String providerName) {
+      return Suppliers
+               .<Location> ofInstance(new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null));
+   }
 }

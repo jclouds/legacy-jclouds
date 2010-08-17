@@ -49,6 +49,8 @@ import org.jclouds.crypto.Crypto;
 import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
 
+import com.google.common.base.Supplier;
+
 /**
  * @author Adrian Cole
  */
@@ -65,13 +67,12 @@ public class AtmosBlobStore extends BaseBlobStore {
    private final Provider<FetchBlobMetadata> fetchBlobMetadataProvider;
 
    @Inject
-   AtmosBlobStore(BlobStoreContext context, BlobUtils blobUtils, Location defaultLocation,
-            Set<? extends Location> locations, AtmosStorageClient sync, ObjectToBlob object2Blob,
+   AtmosBlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
+            Supplier<Set<? extends Location>> locations, AtmosStorageClient sync, ObjectToBlob object2Blob,
             ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
-            DirectoryEntryListToResourceMetadataList container2ResourceList,
-            Crypto crypto, BlobToHttpGetOptions blob2ObjectGetOptions,
-            Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
+            DirectoryEntryListToResourceMetadataList container2ResourceList, Crypto crypto,
+            BlobToHttpGetOptions blob2ObjectGetOptions, Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
       super(context, blobUtils, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
@@ -82,8 +83,7 @@ public class AtmosBlobStore extends BaseBlobStore {
       this.blob2Object = checkNotNull(blob2Object, "blob2Object");
       this.object2BlobMd = checkNotNull(object2BlobMd, "object2BlobMd");
       this.crypto = checkNotNull(crypto, "crypto");
-      this.fetchBlobMetadataProvider = checkNotNull(fetchBlobMetadataProvider,
-               "fetchBlobMetadataProvider");
+      this.fetchBlobMetadataProvider = checkNotNull(fetchBlobMetadataProvider, "fetchBlobMetadataProvider");
    }
 
    /**
@@ -169,8 +169,7 @@ public class AtmosBlobStore extends BaseBlobStore {
     * This implementation invokes {@link AtmosStorageClient#readFile}
     */
    @Override
-   public Blob getBlob(String container, String key,
-            org.jclouds.blobstore.options.GetOptions options) {
+   public Blob getBlob(String container, String key, org.jclouds.blobstore.options.GetOptions options) {
       GetOptions httpOptions = blob2ObjectGetOptions.apply(options);
       return object2Blob.apply(sync.readFile(container + "/" + key, httpOptions));
    }
@@ -192,10 +191,9 @@ public class AtmosBlobStore extends BaseBlobStore {
       container = AtmosStorageUtils.adjustContainerIfDirOptionPresent(container, options);
       ListOptions nativeOptions = container2ContainerListOptions.apply(options);
       // until includeMeta() option works for namespace interface
-      PageSet<? extends StorageMetadata> list = container2ResourceList.apply(sync.listDirectory(
-               container, nativeOptions));
-      return options.isDetailed() ? fetchBlobMetadataProvider.get().setContainerName(container)
-               .apply(list) : list;
+      PageSet<? extends StorageMetadata> list = container2ResourceList.apply(sync.listDirectory(container,
+               nativeOptions));
+      return options.isDetailed() ? fetchBlobMetadataProvider.get().setContainerName(container).apply(list) : list;
    }
 
    /**

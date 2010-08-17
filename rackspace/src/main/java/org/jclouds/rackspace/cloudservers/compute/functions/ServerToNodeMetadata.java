@@ -28,6 +28,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -42,16 +43,18 @@ import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
  */
+@Singleton
 public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
-   private final Location location;
+   private final Supplier<Location> location;
    private final Map<ServerStatus, NodeState> serverToNodeState;
-   private final Set<? extends Image> images;
+   private final Supplier<Set<? extends Image>> images;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -73,8 +76,8 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    }
 
    @Inject
-   ServerToNodeMetadata(Map<ServerStatus, NodeState> serverStateToNodeState, Set<? extends Image> images,
-            Location location) {
+   ServerToNodeMetadata(Map<ServerStatus, NodeState> serverStateToNodeState, Supplier<Set<? extends Image>> images,
+            Supplier<Location> location) {
       this.serverToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
       this.images = checkNotNull(images, "images");
       this.location = checkNotNull(location, "location");
@@ -83,10 +86,10 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    @Override
    public NodeMetadata apply(Server from) {
       String tag = parseTagFromName(from.getName());
-      Location host = new LocationImpl(LocationScope.HOST, from.getHostId(), from.getHostId(), location);
+      Location host = new LocationImpl(LocationScope.HOST, from.getHostId(), from.getHostId(), location.get());
       Image image = null;
       try {
-         image = Iterables.find(images, new FindImageForServer(host, from));
+         image = Iterables.find(images.get(), new FindImageForServer(host, from));
       } catch (NoSuchElementException e) {
          logger.warn("could not find a matching image for server %s in location %s", from, location);
       }

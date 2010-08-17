@@ -48,7 +48,7 @@ public class BlueLockVCloudComputeServiceLiveTest extends VCloudComputeServiceLi
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
       assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getLocation().getId(), "133");
+      assertEquals(defaultTemplate.getLocation().getId(), "https://express3.bluelock.com/api/v0.8/vdc/133");
       assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
    }
 

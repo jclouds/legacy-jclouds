@@ -17,55 +17,60 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.compute.config.providers;
+package org.jclouds.rimuhosting.miro.compute.suppliers;
 
-import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Provider;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.vcloud.compute.domain.VCloudLocation;
-import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.Organization;
-import org.jclouds.vcloud.endpoints.Org;
+import org.jclouds.logging.Logger;
+import org.jclouds.rest.annotations.Provider;
+import org.jclouds.rimuhosting.miro.RimuHostingClient;
+import org.jclouds.rimuhosting.miro.domain.PricingPlan;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Sets;
 
 /**
+ * 
  * @author Adrian Cole
  */
 @Singleton
-public class OrgAndVDCToLocationProvider implements Provider<Set<? extends Location>> {
-   private final String providerName;
-   private final Supplier<Map<String, NamedResource>> orgNameToResource;
-   private final Supplier<Map<String, ? extends Organization>> orgNameToVDCResource;
+public class RimuHostingLocationSupplier implements Supplier<Set<? extends Location>> {
+
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
+   private RimuHostingClient sync;
+   private String providerName;
 
    @Inject
-   OrgAndVDCToLocationProvider(@org.jclouds.rest.annotations.Provider String providerName,
-         @Org Supplier<Map<String, NamedResource>> orgNameToResource,
-         Supplier<Map<String, ? extends Organization>> orgNameToVDCResource) {
+   RimuHostingLocationSupplier(RimuHostingClient sync, @Provider String providerName) {
       this.providerName = providerName;
-      this.orgNameToResource = orgNameToResource;
-      this.orgNameToVDCResource = orgNameToVDCResource;
+      this.sync = sync;
    }
 
    @Override
    public Set<? extends Location> get() {
+      final Set<Location> locations = Sets.newHashSet();
+      logger.debug(">> providing locations");
       Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
-      Set<Location> locations = Sets.newLinkedHashSet();
-
-      for (NamedResource org : orgNameToResource.get().values()) {
-         Location orgL = new VCloudLocation(org, provider);
-         for (NamedResource vdc : orgNameToVDCResource.get().get(org.getName()).getVDCs().values()) {
-            locations.add(new VCloudLocation(vdc, orgL));
+      for (final PricingPlan from : sync.getPricingPlanList()) {
+         try {
+            locations.add(new LocationImpl(LocationScope.ZONE, from.getDataCenter().getId(), from.getDataCenter()
+                     .getName(), provider));
+         } catch (NullPointerException e) {
+            logger.warn("datacenter not present in " + from.getId());
          }
       }
+      logger.debug("<< locations(%d)", locations.size());
       return locations;
    }
 }

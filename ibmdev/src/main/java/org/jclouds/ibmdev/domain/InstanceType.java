@@ -19,12 +19,14 @@
 
 package org.jclouds.ibmdev.domain;
 
+import com.google.common.collect.ComparisonChain;
+
 /**
  * 
  * 
  * @author Adrian Cole
  */
-public class InstanceType {
+public class InstanceType implements Comparable<InstanceType> {
 
    protected String label;
    protected Price price;
@@ -95,4 +97,8 @@ public class InstanceType {
       return "[id=" + id + ", label=" + label + ", price=" + price + "]";
    }
 
+   @Override
+   public int compareTo(InstanceType o) {
+      return ComparisonChain.start().compare(this.getPrice().getRate(), o.getPrice().getRate()).result();
+   }
 }

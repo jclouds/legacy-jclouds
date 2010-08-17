@@ -87,9 +87,9 @@ public class VCloudListNodesStrategyTest {
    // replay(computeClient);
    //
    // Location vdcL = new LocationImpl(LocationScope.ZONE, "1", "1", null);
-   // Provider<Set<? extends Location>> locations = Providers
+   // Supplier<Set<? extends Location>> locations = Providers
    // .<Set<? extends Location>> of(ImmutableSet.of(vdcL));
-   // Provider<Set<? extends Image>> images = Providers
+   // Supplier<Set<? extends Image>> images = Providers
    // .<Set<? extends Image>> of(ImmutableSet.<Image> of());
    // FindLocationForResourceInVDC findLocationForResourceInVDC = new
    // FindLocationForResourceInVDC(

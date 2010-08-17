@@ -24,11 +24,11 @@ import java.util.Set;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.Region;
-import org.jclouds.aws.config.DefaultLocationProvider;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.blobstore.S3AsyncBlobStore;
 import org.jclouds.aws.s3.blobstore.S3BlobStore;
+import org.jclouds.aws.suppliers.DefaultLocationSupplier;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -40,6 +40,8 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.rest.annotations.Provider;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Sets;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -56,25 +58,24 @@ public class S3BlobStoreContextModule extends AbstractModule {
    @Override
    protected void configure() {
       install(new BlobStoreMapModule());
-      bind(Location.class).toProvider(DefaultLocationProvider.class).in(Scopes.SINGLETON);
+      bind(new TypeLiteral<Supplier<Location>>() {
+      }).to(new TypeLiteral<DefaultLocationSupplier>() {
+      });
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.EVENTUAL);
       bind(AsyncBlobStore.class).to(S3AsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(S3BlobStore.class).in(Scopes.SINGLETON);
-      bind(BlobStoreContext.class).to(
-               new TypeLiteral<BlobStoreContextImpl<S3Client, S3AsyncClient>>() {
-               }).in(Scopes.SINGLETON);
+      bind(BlobStoreContext.class).to(new TypeLiteral<BlobStoreContextImpl<S3Client, S3AsyncClient>>() {
+      }).in(Scopes.SINGLETON);
    }
 
    @Provides
    @Singleton
-   Set<? extends Location> provideLocations(@Region Set<String> regions,
-            @Provider String providerName) {
+   Supplier<Set<? extends Location>> provideLocations(@Region Set<String> regions, @Provider String providerName) {
       Set<Location> locations = Sets.newHashSet();
       Location s3 = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
       for (String zone : regions) {
-         locations
-                  .add(new LocationImpl(LocationScope.REGION, zone.toString(), zone.toString(), s3));
+         locations.add(new LocationImpl(LocationScope.REGION, zone.toString(), zone.toString(), s3));
       }
-      return locations;
+      return Suppliers.<Set<? extends Location>> ofInstance(locations);
    }
 }

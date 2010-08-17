@@ -38,6 +38,7 @@ import org.jclouds.compute.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -49,8 +50,9 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
    private final ConcurrentMap<RegionAndName, Image> imageMap;
 
    @Inject
-   protected EC2TemplateBuilderImpl(Provider<Set<? extends Location>> locations, Provider<Set<? extends Image>> images,
-            Provider<Set<? extends Size>> sizes, Location defaultLocation, Provider<TemplateOptions> optionsProvider,
+   protected EC2TemplateBuilderImpl(Supplier<Set<? extends Location>> locations, Supplier<Set<? extends Image>> images,
+            Supplier<Set<? extends Size>> sizes, Supplier<Location> defaultLocation,
+            Provider<TemplateOptions> optionsProvider,
             @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider,
             ConcurrentMap<RegionAndName, Image> imageMap) {
       super(locations, images, sizes, defaultLocation, optionsProvider, defaultTemplateProvider);
@@ -102,9 +104,9 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
     *            if the image is not found
     */
    @Override
-   protected Image resolveImage(Size size) {
+   protected Image resolveImage(Size size, Iterable<? extends Image> supportedImages) {
       try {
-         return super.resolveImage(size);
+         return super.resolveImage(size, supportedImages);
       } catch (NoSuchElementException e) {
          Image returnVal = lazyImageProvider.get();
          if (returnVal != null)

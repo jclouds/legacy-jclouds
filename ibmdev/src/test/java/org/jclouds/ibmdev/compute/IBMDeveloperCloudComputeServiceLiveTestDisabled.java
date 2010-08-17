@@ -38,7 +38,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = false, sequential = true, testName = "ibmdevelopercloud.IBMDeveloperCloudComputeServiceLiveTest")
+@Test(groups = "live", enabled = true, sequential = true, testName = "ibmdevelopercloud.IBMDeveloperCloudComputeServiceLiveTest")
 public class IBMDeveloperCloudComputeServiceLiveTestDisabled extends BaseComputeServiceLiveTest {
 
    @BeforeClass

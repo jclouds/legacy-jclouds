@@ -21,21 +21,18 @@ package org.jclouds.vcloud.bluelock.compute.config;
 
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.vcloud.bluelock.compute.BlueLockVCloudComputeClient;
-import org.jclouds.vcloud.bluelock.compute.config.providers.ParseVAppTemplatesInVDCToSizeProvider;
+import org.jclouds.vcloud.bluelock.compute.config.suppliers.ParseSizeFromImageSupplier;
+import org.jclouds.vcloud.bluelock.compute.functions.BlueLockImageForVAppTemplate;
 import org.jclouds.vcloud.bluelock.compute.strategy.DefaultLoginCredentialsFromBlueLockFAQ;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
-import org.jclouds.vcloud.compute.functions.FindLocationForResource;
 import org.jclouds.vcloud.compute.functions.ImageForVAppTemplate;
 
-import com.google.inject.Scopes;
-import com.google.inject.TypeLiteral;
+import com.google.common.base.Supplier;
+import com.google.inject.Injector;
 
 /**
  * Configures the {@link BlueLockVCloudComputeServiceContext}; requires
@@ -53,24 +50,8 @@ public class BlueLockVCloudComputeServiceContextModule extends VCloudComputeServ
       bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(DefaultLoginCredentialsFromBlueLockFAQ.class);
    }
 
-   protected void bindSizes() {
-      bind(new TypeLiteral<Set<? extends Size>>() {
-      }).toProvider(ParseVAppTemplatesInVDCToSizeProvider.class).in(Scopes.SINGLETON);
-   }
-
-   @Singleton
-   private static class BlueLockImageForVAppTemplate extends ImageForVAppTemplate {
-
-      @Inject
-      protected BlueLockImageForVAppTemplate(FindLocationForResource findLocationForResource,
-               PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider) {
-         super(findLocationForResource, credentialsProvider);
-      }
-
-      // Extremely important, as otherwise the size encoded into the name will throw off the
-      // template matching, accidentally choosing the largest size by default
-      protected String getName(String name) {
-         return name.split(" ")[0];
-      }
+   @Override
+   protected Supplier<Set<? extends Size>> getSourceSizeSupplier(Injector injector) {
+      return injector.getInstance(ParseSizeFromImageSupplier.class);
    }
 }

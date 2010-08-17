@@ -24,13 +24,14 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.compute.domain.VCloudLocation;
 import org.jclouds.vcloud.domain.NamedResource;
+
+import com.google.common.base.Supplier;
 
 /**
  * @author Adrian Cole
@@ -41,13 +42,11 @@ public class FindLocationForResource {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   final Provider<Set<? extends Location>> locations;
-   final Location defaultLocation;
+   final Supplier<Set<? extends Location>> locations;
 
    @Inject
-   public FindLocationForResource(Provider<Set<? extends Location>> locations, Location defaultLocation) {
+   public FindLocationForResource(Supplier<Set<? extends Location>> locations) {
       this.locations = locations;
-      this.defaultLocation = defaultLocation;
    }
 
    /**
@@ -67,6 +66,6 @@ public class FindLocationForResource {
          } while (input.getParent() != null);
       }
       throw new NoSuchElementException(String.format("resource: %s not found in locations: %s", resource, locations
-            .get()));
+               .get()));
    }
 }

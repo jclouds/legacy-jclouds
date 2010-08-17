@@ -19,17 +19,12 @@
 
 package org.jclouds.vcloud.terremark.compute.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
 
-import java.net.URI;
 import java.security.SecureRandom;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -38,9 +33,6 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
@@ -57,7 +49,6 @@ import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
-import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeService;
 import org.jclouds.vcloud.terremark.compute.config.providers.VAppTemplatesInOrgs;
@@ -67,11 +58,12 @@ import org.jclouds.vcloud.terremark.compute.functions.NodeMetadataToOrgAndName;
 import org.jclouds.vcloud.terremark.compute.options.TerremarkVCloudTemplateOptions;
 import org.jclouds.vcloud.terremark.compute.strategy.ParseVAppTemplateDescriptionToGetDefaultLoginCredentials;
 import org.jclouds.vcloud.terremark.compute.strategy.TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy;
+import org.jclouds.vcloud.terremark.compute.strategy.TerremarkVCloudAddNodeWithTagStrategy;
 import org.jclouds.vcloud.terremark.compute.strategy.TerremarkVCloudGetNodeMetadataStrategy;
-import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
@@ -96,50 +88,6 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
 
    }
 
-   @Singleton
-   public static class TerremarkVCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
-      protected final TerremarkVCloudClient client;
-      protected final TerremarkVCloudComputeClient computeClient;
-      protected final GetNodeMetadataStrategy getNode;
-      protected final TemplateToInstantiateOptions getOptions;
-
-      @Inject
-      protected TerremarkVCloudAddNodeWithTagStrategy(TerremarkVCloudClient client,
-            TerremarkVCloudComputeClient computeClient, GetNodeMetadataStrategy getNode,
-            TemplateToInstantiateOptions getOptions) {
-         this.client = client;
-         this.computeClient = computeClient;
-         this.getNode = getNode;
-         this.getOptions = checkNotNull(getOptions, "getOptions");
-      }
-
-      @Override
-      public NodeMetadata execute(String tag, String name, Template template) {
-         TerremarkInstantiateVAppTemplateOptions options = getOptions.apply(template);
-         Map<String, String> metaMap = computeClient.start(URI.create(template.getLocation().getId()), URI
-               .create(template.getImage().getId()), name, options, template.getOptions().getInboundPorts());
-         return getNode.execute(metaMap.get("id"));
-      }
-
-   }
-
-   @Singleton
-   public static class TemplateToInstantiateOptions implements
-         Function<Template, TerremarkInstantiateVAppTemplateOptions> {
-
-      @Override
-      public TerremarkInstantiateVAppTemplateOptions apply(Template from) {
-         TerremarkInstantiateVAppTemplateOptions options = processorCount(
-               Double.valueOf(from.getSize().getCores()).intValue()).memory(from.getSize().getRam());
-         if (!from.getOptions().shouldBlockUntilRunning())
-            options.blockOnDeploy(false);
-         String sshKeyFingerprint = TerremarkVCloudTemplateOptions.class.cast(from.getOptions()).getSshKeyFingerprint();
-         if (sshKeyFingerprint != null)
-            options.sshKeyFingerprint(sshKeyFingerprint);
-         return options;
-      }
-   }
-
    @Override
    protected void configure() {
       install(new ComputeServiceTimeoutsModule());
@@ -156,9 +104,6 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(VCloudDestroyNodeStrategy.class);
       bindLoadBalancer();
-      bindSizes();
-      bindImages();
-      bindLocations();
       // MORE specifics...
       bind(new TypeLiteral<Function<NodeMetadata, OrgAndName>>() {
       }).to(new TypeLiteral<NodeMetadataToOrgAndName>() {
@@ -167,7 +112,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       bind(ComputeService.class).to(TerremarkVCloudComputeService.class);
       bind(VCloudComputeClient.class).to(TerremarkVCloudComputeClient.class);
       bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(
-            ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
+               ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
       bind(SecureRandom.class).toInstance(new SecureRandom());
 
    }
@@ -193,14 +138,8 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
    }
 
    @Override
-   protected TemplateBuilder provideTemplate(TemplateBuilder template) {
-      return template.osFamily(OsFamily.UBUNTU);
-   }
-
-   @Override
-   protected void bindImages() {
-      bind(new TypeLiteral<Set<? extends Image>>() {
-      }).toProvider(VAppTemplatesInOrgs.class).in(Scopes.SINGLETON);
+   protected Supplier<Set<? extends Image>> getSourceImageSupplier(Injector injector) {
+      return injector.getInstance(VAppTemplatesInOrgs.class);
    }
 
 }

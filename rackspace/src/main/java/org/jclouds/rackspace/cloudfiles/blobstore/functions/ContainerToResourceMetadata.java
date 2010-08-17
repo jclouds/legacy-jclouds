@@ -30,23 +30,24 @@ import org.jclouds.domain.Location;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
 public class ContainerToResourceMetadata implements Function<ContainerMetadata, StorageMetadata> {
-   private Location defaultLocation;
+   private Supplier<Location> defaultLocation;
 
    @Inject
-   ContainerToResourceMetadata(Location defaultLocation) {
+   ContainerToResourceMetadata(Supplier<Location> defaultLocation) {
       this.defaultLocation = defaultLocation;
    }
 
    public StorageMetadata apply(ContainerMetadata from) {
       MutableStorageMetadata to = new MutableStorageMetadataImpl();
       to.setName(from.getName());
-      to.setLocation(defaultLocation);
+      to.setLocation(defaultLocation.get());
       to.setType(StorageType.CONTAINER);
       return to;
    }

@@ -55,13 +55,13 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
    protected final BlobStoreContext context;
    protected final BlobUtils blobUtils;
    protected final ExecutorService service;
-   protected final Location defaultLocation;
-   protected final Set<? extends Location> locations;
+   protected final Supplier<Location> defaultLocation;
+   protected final Supplier<Set<? extends Location>> locations;
 
    @Inject
    protected BaseAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Location defaultLocation,
-            Set<? extends Location> locations) {
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
+            Supplier<Set<? extends Location>> locations) {
       this.context = checkNotNull(context, "context");
       this.blobUtils = checkNotNull(blobUtils, "blobUtils");
       this.service = checkNotNull(service, "service");
@@ -262,7 +262,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
 
    @Override
    public ListenableFuture<Set<? extends Location>> listAssignableLocations() {
-      return Futures.<Set<? extends Location>> immediateFuture(locations);
+      return Futures.<Set<? extends Location>> immediateFuture(locations.get());
    }
 
    protected abstract boolean deleteAndVerifyContainerGone(String container);

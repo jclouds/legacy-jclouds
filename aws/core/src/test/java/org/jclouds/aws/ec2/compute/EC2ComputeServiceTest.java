@@ -46,9 +46,10 @@ import org.jclouds.domain.internal.LocationImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.inject.util.Providers;
 
 /**
  * Tests compute service specifically to EC2.
@@ -63,8 +64,8 @@ import com.google.inject.util.Providers;
 public class EC2ComputeServiceTest {
    private static final Location location = new LocationImpl(LocationScope.REGION, "us-east-1", "us east", null);
 
-   public static final EC2Size CC1_4XLARGE = new EC2Size(location,
-                                 InstanceType.CC1_4XLARGE, 33.5, 23 * 1024, 1690, new String[]{"us-east-1/cc-image"});
+   public static final EC2Size CC1_4XLARGE = new EC2Size(location, InstanceType.CC1_4XLARGE, 33.5, 23 * 1024, 1690,
+            new String[] { "us-east-1/cc-image" });
 
    /**
     * Verifies that {@link TemplateBuilderImpl} would choose the correct size of the instance, based
@@ -74,13 +75,13 @@ public class EC2ComputeServiceTest {
     */
    @Test
    public void testTemplateChoiceForInstanceBySizeId() throws Exception {
-      Template template = newTemplateBuilder().architecture(Architecture.X86_64)
-               .sizeId("m2.xlarge").locationId("us-east-1").build();
+      Template template = newTemplateBuilder().architecture(Architecture.X86_64).sizeId("m2.xlarge").locationId(
+               "us-east-1").build();
 
       assert template != null : "The returned template was null, but it should have a value.";
       assert EC2Size.M2_XLARGE.equals(template.getSize()) : format(
-               "Incorrect image determined by the template. Expected: %s. Found: %s.", "m2.xlarge",
-               String.valueOf(template.getSize()));
+               "Incorrect image determined by the template. Expected: %s. Found: %s.", "m2.xlarge", String
+                        .valueOf(template.getSize()));
    }
 
    @Test
@@ -89,11 +90,10 @@ public class EC2ComputeServiceTest {
 
       assert template != null : "The returned template was null, but it should have a value.";
       assert CC1_4XLARGE.equals(template.getSize()) : format(
-               "Incorrect image determined by the template. Expected: %s. Found: %s.", CC1_4XLARGE.getId(),
-               String.valueOf(template.getSize()));
+               "Incorrect image determined by the template. Expected: %s. Found: %s.", CC1_4XLARGE.getId(), String
+                        .valueOf(template.getSize()));
    }
 
-   
    /**
     * Verifies that {@link TemplateBuilderImpl} would choose the correct size of the instance, based
     * on physical attributes (# of cores, ram, etc).
@@ -102,13 +102,13 @@ public class EC2ComputeServiceTest {
     */
    @Test
    public void testTemplateChoiceForInstanceByAttributes() throws Exception {
-      Template template = newTemplateBuilder().architecture(Architecture.X86_64).minRam(17510)
-               .minCores(6.5).smallest().locationId("us-east-1").build();
+      Template template = newTemplateBuilder().architecture(Architecture.X86_64).minRam(17510).minCores(6.5).smallest()
+               .locationId("us-east-1").build();
 
       assert template != null : "The returned template was null, but it should have a value.";
       assert EC2Size.M2_XLARGE.equals(template.getSize()) : format(
-               "Incorrect image determined by the template. Expected: %s. Found: %s.", "m2.xlarge",
-               String.valueOf(template.getSize()));
+               "Incorrect image determined by the template. Expected: %s. Found: %s.", "m2.xlarge", String
+                        .valueOf(template.getSize()));
    }
 
    /**
@@ -121,13 +121,13 @@ public class EC2ComputeServiceTest {
     */
    @Test
    public void testNegativeTemplateChoiceForInstanceByAttributes() throws Exception {
-      Template template = newTemplateBuilder().architecture(Architecture.X86_64).minRam(17510)
-               .minCores(6.7).smallest().locationId("us-east-1").build();
+      Template template = newTemplateBuilder().architecture(Architecture.X86_64).minRam(17510).minCores(6.7).smallest()
+               .locationId("us-east-1").build();
 
       assert template != null : "The returned template was null, but it should have a value.";
       assert !EC2Size.M2_XLARGE.equals(template.getSize()) : format(
-               "Incorrect image determined by the template. Expected: not %s. Found: %s.",
-               "m2.xlarge", String.valueOf(template.getSize()));
+               "Incorrect image determined by the template. Expected: not %s. Found: %s.", "m2.xlarge", String
+                        .valueOf(template.getSize()));
    }
 
    @SuppressWarnings("unchecked")
@@ -140,20 +140,19 @@ public class EC2ComputeServiceTest {
       expect(optionsProvider.get()).andReturn(defaultOptions);
 
       Image image = new ImageImpl("cc-image", "image", "us-east-1/cc-image", location, null, Maps
-               .<String, String> newHashMap(), "description", "1.0", null, "ubuntu",
-               Architecture.X86_64, new Credentials("root", null));
+               .<String, String> newHashMap(), "description", "1.0", null, "ubuntu", Architecture.X86_64,
+               new Credentials("root", null));
       replay(optionsProvider);
       replay(templateBuilderProvider);
-      Provider<Set<? extends Location>> locations = Providers
-               .<Set<? extends Location>> of(ImmutableSet.<Location> of(location));
-      Provider<Set<? extends Image>> images = Providers.<Set<? extends Image>> of(ImmutableSet
+      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+               .<Location> of(location));
+      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet
                .<Image> of(image));
-      Provider<Set<? extends Size>> sizes = Providers.<Set<? extends Size>> of(ImmutableSet
-               .<Size> of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE, EC2Size.M1_SMALL,
-                        EC2Size.M1_XLARGE, EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE,
-                        EC2Size.M2_4XLARGE, CC1_4XLARGE ));
+      Supplier<Set<? extends Size>> sizes = Suppliers.<Set<? extends Size>> ofInstance(ImmutableSet.<Size> of(
+               EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE, EC2Size.M1_SMALL, EC2Size.M1_XLARGE,
+               EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE, EC2Size.M2_4XLARGE, CC1_4XLARGE));
 
-      return new TemplateBuilderImpl(locations, images, sizes, location, optionsProvider,
+      return new TemplateBuilderImpl(locations, images, sizes, Suppliers.ofInstance(location), optionsProvider,
                templateBuilderProvider) {
 
       };
