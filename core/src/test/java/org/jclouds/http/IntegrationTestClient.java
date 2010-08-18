@@ -33,6 +33,7 @@ import org.jclouds.http.options.HttpRequestOptions;
  */
 @Timeout(duration = 40, timeUnit = TimeUnit.SECONDS)
 public interface IntegrationTestClient {
+   String rowdy(String path);
 
    boolean exists(String path);
 

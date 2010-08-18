@@ -20,11 +20,16 @@
 package org.jclouds.http;
 
 import java.io.File;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -53,6 +58,15 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 public interface IntegrationTestAsyncClient {
+   @Target( { ElementType.METHOD })
+   @Retention(RetentionPolicy.RUNTIME)
+   @HttpMethod("ROWDY")
+   public @interface ROWDY {
+   }
+
+   @ROWDY
+   @Path("objects/{id}")
+   ListenableFuture<String> rowdy(@PathParam("id") String path);
 
    @HEAD
    @Path("objects/{id}")
@@ -82,18 +96,15 @@ public interface IntegrationTestAsyncClient {
    @GET
    @Path("objects/{id}")
    @ExceptionParser(FooOnException.class)
-   ListenableFuture<String> synchException(@PathParam("id") String id,
-            @HeaderParam("Range") String header);
+   ListenableFuture<String> synchException(@PathParam("id") String id, @HeaderParam("Range") String header);
 
    @PUT
    @Path("objects/{id}")
-   ListenableFuture<String> upload(@PathParam("id") String id,
-            @BinderParam(BindToStringPayload.class) String toPut);
+   ListenableFuture<String> upload(@PathParam("id") String id, @BinderParam(BindToStringPayload.class) String toPut);
 
    @POST
    @Path("objects/{id}")
-   ListenableFuture<String> post(@PathParam("id") String id,
-            @BinderParam(BindToStringPayload.class) String toPut);
+   ListenableFuture<String> post(@PathParam("id") String id, @BinderParam(BindToStringPayload.class) String toPut);
 
    @POST
    @Path("objects/{id}")
@@ -111,8 +122,7 @@ public interface IntegrationTestAsyncClient {
 
    @POST
    @Path("objects/{id}")
-   ListenableFuture<String> postWithMd5(@PathParam("id") String id,
-            @HeaderParam("Content-MD5") String base64MD5,
+   ListenableFuture<String> postWithMd5(@PathParam("id") String id, @HeaderParam("Content-MD5") String base64MD5,
             @BinderParam(BindToFilePayload.class) File file);
 
    static class BindToFilePayload implements Binder {
@@ -126,8 +136,7 @@ public interface IntegrationTestAsyncClient {
    @POST
    @Path("objects/{id}")
    @MapBinder(BindToJsonPayload.class)
-   ListenableFuture<String> postJson(@PathParam("id") String id,
-            @MapPayloadParam("key") String toPut);
+   ListenableFuture<String> postJson(@PathParam("id") String id, @MapPayloadParam("key") String toPut);
 
    @POST
    @Path("objects/{id}/action/{action}")
@@ -137,8 +146,7 @@ public interface IntegrationTestAsyncClient {
    @GET
    @Path("objects/{id}")
    @RequestFilters(Filter.class)
-   ListenableFuture<String> downloadFilter(@PathParam("id") String id,
-            @HeaderParam("filterme") String header);
+   ListenableFuture<String> downloadFilter(@PathParam("id") String id, @HeaderParam("filterme") String header);
 
    static class Filter implements HttpRequestFilter {
       public void filter(HttpRequest request) throws HttpException {

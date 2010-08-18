@@ -29,10 +29,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.PasswordAuthentication;
+import java.net.ProtocolException;
 import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.SocketAddress;
@@ -60,6 +62,7 @@ import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
@@ -75,16 +78,20 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
    @Resource
    protected Logger logger = Logger.NULL;
    private final HostnameVerifier verifier;
+   private final Field methodField;
 
    @Inject
    public JavaUrlHttpCommandExecutorService(HttpUtils utils,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
             DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
-            DelegatingErrorHandler errorHandler, HttpWire wire, HostnameVerifier verifier) {
+            DelegatingErrorHandler errorHandler, HttpWire wire, HostnameVerifier verifier) throws SecurityException,
+            NoSuchFieldException {
       super(utils, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       if (utils.getMaxConnections() > 0)
          System.setProperty("http.maxConnections", String.valueOf(checkNotNull(utils, "utils").getMaxConnections()));
       this.verifier = checkNotNull(verifier, "verifier");
+      this.methodField = HttpURLConnection.class.getDeclaredField("method");
+      methodField.setAccessible(true);
    }
 
    @Override
@@ -163,7 +170,17 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
       // ex. Caused by: java.io.IOException: HTTPS hostname wrong: should be
       // <adriancole.s3int0.s3-external-3.amazonaws.com>
       connection.setInstanceFollowRedirects(false);
-      connection.setRequestMethod(request.getMethod().toString());
+      try {
+         connection.setRequestMethod(request.getMethod());
+      } catch (ProtocolException e) {
+         try {
+            methodField.set(connection, request.getMethod());
+         } catch (Exception e1) {
+            logger.error(e, "could not set request method: ", request.getMethod());
+            Throwables.propagate(e1);
+         }
+      }
+
       for (String header : request.getHeaders().keySet()) {
          for (String value : request.getHeaders().get(header)) {
             connection.setRequestProperty(header, value);

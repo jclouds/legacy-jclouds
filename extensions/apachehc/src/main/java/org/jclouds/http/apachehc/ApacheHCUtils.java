@@ -32,10 +32,12 @@ import javax.ws.rs.core.HttpHeaders;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.FileEntity;
@@ -73,7 +75,26 @@ public class ApacheHCUtils {
       } else if (request.getMethod().equals(HttpMethod.POST)) {
          apacheRequest = new HttpPost(request.getEndpoint());
       } else {
-         throw new UnsupportedOperationException(request.getMethod());
+         final String method = request.getMethod();
+         if (request.getPayload() != null)
+            apacheRequest = new HttpEntityEnclosingRequestBase() {
+
+               @Override
+               public String getMethod() {
+                  return method;
+               }
+
+            };
+         else
+            apacheRequest = new HttpRequestBase() {
+
+               @Override
+               public String getMethod() {
+                  return method;
+               }
+
+            };
+         HttpRequestBase.class.cast(apacheRequest).setURI(request.getEndpoint());
       }
       Payload payload = request.getPayload();
 
