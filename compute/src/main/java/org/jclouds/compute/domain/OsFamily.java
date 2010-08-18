@@ -26,14 +26,16 @@ import com.google.common.base.CaseFormat;
 /**
  * Running Operating system
  * 
+ * 
  * @author Adrian Cole
  */
 public enum OsFamily {
-   CENTOS,
+   UNKNOWN, AIX, ARCH, CENTOS, DARWIN, DEBIAN, ESX, FEDORA, FREEBSD, GENTOO, HPUX, LINUX, MANDRIVA, NETBSD,
    /**
+    * 
     * Oracle Enterprise Linux
     */
-   OEL, RHEL, FEDORA, DEBIAN, UBUNTU, TTYLINUX, ARCH, SUSE, SOLARIS, GENTOO, WINDOWS;
+   OEL, OPENBSD, RHEL, SIGAR, SOLARIS, SUSE, TURBOLINUX, UBUNTU, WINDOWS;
    public String value() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
    }
@@ -43,8 +45,11 @@ public enum OsFamily {
       return value();
    }
 
-   public static OsFamily fromValue(String operatingSystem) {
-      return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE,
-            checkNotNull(operatingSystem, "region")));
+   public static OsFamily fromValue(String osFamily) {
+      try {
+         return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(osFamily, "osFamily")));
+      } catch (IllegalArgumentException e) {
+         return UNKNOWN;
+      }
    }
 }

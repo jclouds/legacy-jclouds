@@ -316,7 +316,7 @@ See http://code.google.com/p/jclouds for details."
 (define-accessors NodeMetadata "node" credentials extra state tag)
 
 (defn builder-options [builder]
-  (or (get-field org.jclouds.compute.internal.TemplateBuilderImpl :options builder)
+  (or (get-field org.jclouds.compute.domain.internal.TemplateBuilderImpl :options builder)
       (TemplateOptions.)))
 
 (defmacro option-option-fn-0arg [key]
@@ -341,7 +341,8 @@ See http://code.google.com/p/jclouds for details."
             (concat
              (make-option-map option-fn-1arg
                               [:os-family :location-id :architecture :image-id :size-id
-                               :os-description-matches :image-version-matches :image-name-matches
+                               :os-name-matches :os-version-matches :os-description-matches 
+                               :os-64-bit :image-version-matches :image-name-matches
                                :image-description-matches :min-cores :min-ram])
              (make-option-map option-option-fn-1arg
                               [:run-script :install-private-key :authorize-public-key :inbound-ports]))))

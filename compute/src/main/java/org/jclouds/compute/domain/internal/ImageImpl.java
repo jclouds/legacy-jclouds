@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -41,24 +42,40 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
    /** The serialVersionUID */
    private static final long serialVersionUID = 7856744554191025307L;
 
+   private final OperatingSystem operatingSystem;
+
    private final String version;
    private final String description;
-   private final OsFamily osFamily;
-   private final String osDescription;
+   @Nullable
    private final Architecture architecture;
    private final Credentials defaultCredentials;
 
    public ImageImpl(String providerId, String name, String id, Location location, URI uri,
-            Map<String, String> userMetadata, String description, String version,
-            @Nullable OsFamily osFamily, String osDescription, Architecture architecture,
-            Credentials defaultCredentials) {
+         Map<String, String> userMetadata, OperatingSystem operatingSystem, String description, String version,
+         @Nullable Architecture architecture, Credentials defaultCredentials) {
       super(ComputeType.IMAGE, providerId, name, id, location, uri, userMetadata);
+      this.operatingSystem = checkNotNull(operatingSystem, "operatingSystem");
       this.version = checkNotNull(version, "version");
-      this.osFamily = osFamily;
       this.description = checkNotNull(description, "description");
-      this.osDescription = checkNotNull(osDescription, "osDescription");
-      this.architecture = checkNotNull(architecture, "architecture");
+      this.architecture = architecture;
       this.defaultCredentials = defaultCredentials;
+   }
+
+   @Deprecated
+   public ImageImpl(String providerId, String name, String id, Location location, URI uri,
+         Map<String, String> userMetadata, String description, String version, @Nullable OsFamily osFamily,
+         String osDescription, @Nullable Architecture architecture, Credentials defaultCredentials) {
+      this(providerId, name, id, location, uri, userMetadata, new OperatingSystem(osFamily, null, null,
+            architecture != null ? architecture.toString() : null, osDescription, architecture != null ? architecture
+                  .equals(Architecture.X86_64) : false), description, version, architecture, defaultCredentials);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public OperatingSystem getOperatingSystem() {
+      return operatingSystem;
    }
 
    /**
@@ -82,21 +99,24 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
     */
    @Override
    public OsFamily getOsFamily() {
-      return osFamily;
+      return operatingSystem.getFamily();
    }
 
    /**
     * {@inheritDoc}
     */
+   @Deprecated
    @Override
    public String getOsDescription() {
-      return osDescription;
+      return operatingSystem.getDescription();
    }
 
    /**
     * {@inheritDoc}
     */
+   @Deprecated
    @Override
+   @Nullable
    public Architecture getArchitecture() {
       return architecture;
    }
@@ -111,10 +131,8 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
 
    @Override
    public String toString() {
-      return "[id=" + getId() + ", providerId=" + getProviderId() + ", name=" + getName()
-               + ", locationId=" + (getLocation() != null ? getLocation().getId() : "null")
-               + ", architecture=" + architecture + ", osDescription=" + osDescription
-               + ", version=" + version + ", osFamily=" + osFamily + "]";
+      return "[id=" + getId() + ", name=" + getName() + ", operatingSystem=" + operatingSystem + ", description="
+            + description + ", version=" + version + ", location=" + getLocation() + "]";
    }
 
    @Override
@@ -122,9 +140,9 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((architecture == null) ? 0 : architecture.hashCode());
+      result = prime * result + ((defaultCredentials == null) ? 0 : defaultCredentials.hashCode());
       result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((osDescription == null) ? 0 : osDescription.hashCode());
-      result = prime * result + ((osFamily == null) ? 0 : osFamily.hashCode());
+      result = prime * result + ((operatingSystem == null) ? 0 : operatingSystem.hashCode());
       result = prime * result + ((version == null) ? 0 : version.hashCode());
       return result;
    }
@@ -143,20 +161,20 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
             return false;
       } else if (!architecture.equals(other.architecture))
          return false;
+      if (defaultCredentials == null) {
+         if (other.defaultCredentials != null)
+            return false;
+      } else if (!defaultCredentials.equals(other.defaultCredentials))
+         return false;
       if (description == null) {
          if (other.description != null)
             return false;
       } else if (!description.equals(other.description))
          return false;
-      if (osDescription == null) {
-         if (other.osDescription != null)
+      if (operatingSystem == null) {
+         if (other.operatingSystem != null)
             return false;
-      } else if (!osDescription.equals(other.osDescription))
-         return false;
-      if (osFamily == null) {
-         if (other.osFamily != null)
-            return false;
-      } else if (!osFamily.equals(other.osFamily))
+      } else if (!operatingSystem.equals(other.operatingSystem))
          return false;
       if (version == null) {
          if (other.version != null)

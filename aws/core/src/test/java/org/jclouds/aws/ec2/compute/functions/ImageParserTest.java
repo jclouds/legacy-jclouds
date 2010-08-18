@@ -57,8 +57,8 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(result.size(), 7);
 
       ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), Suppliers
-               .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
-               .ofInstance(defaultLocation));
+            .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
+            .ofInstance(defaultLocation));
       org.jclouds.compute.domain.Image ubuntuHardy = parser.apply(Iterables.get(result, 0));
 
       assertEquals(ubuntuHardy.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_32);
@@ -67,7 +67,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(ubuntuHardy.getLocation(), defaultLocation);
       assertEquals(ubuntuHardy.getName(), "8.04");
       assertEquals(ubuntuHardy.getOsDescription(),
-               "ubuntu-images-us/ubuntu-hardy-8.04-i386-server-20091130.manifest.xml");
+            "ubuntu-images-us/ubuntu-hardy-8.04-i386-server-20091130.manifest.xml");
       assertEquals(ubuntuHardy.getOsFamily(), OsFamily.UBUNTU);
       assertEquals(ubuntuHardy.getUserMetadata(), ImmutableMap.<String, String> of("owner", "099720109477"));
       assertEquals(ubuntuHardy.getVersion(), "20091130");
@@ -88,12 +88,12 @@ public class ImageParserTest extends BaseEC2HandlerTest {
 
       assertEquals(ubuntuKarmic.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_32);
       assertEquals(ubuntuKarmic.getDescription(),
-               "ubuntu-images-us/ubuntu-karmic-9.10-i386-server-20100121.manifest.xml");
+            "ubuntu-images-us/ubuntu-karmic-9.10-i386-server-20100121.manifest.xml");
       assertEquals(ubuntuKarmic.getProviderId(), "ami-bb709dd2");
       assertEquals(ubuntuKarmic.getLocation(), defaultLocation);
       assertEquals(ubuntuKarmic.getName(), "9.10");
       assertEquals(ubuntuKarmic.getOsDescription(),
-               "ubuntu-images-us/ubuntu-karmic-9.10-i386-server-20100121.manifest.xml");
+            "ubuntu-images-us/ubuntu-karmic-9.10-i386-server-20100121.manifest.xml");
       assertEquals(ubuntuKarmic.getOsFamily(), OsFamily.UBUNTU);
       assertEquals(ubuntuKarmic.getUserMetadata(), ImmutableMap.<String, String> of("owner", "099720109477"));
       assertEquals(ubuntuKarmic.getVersion(), "20100121");
@@ -117,12 +117,12 @@ public class ImageParserTest extends BaseEC2HandlerTest {
 
       assertEquals(ubuntuLucid.getArchitecture(), org.jclouds.compute.domain.Architecture.X86_32);
       assertEquals(ubuntuLucid.getDescription(),
-               "ubuntu-images-us-west-1/ubuntu-lucid-10.04-i386-server-20100427.1.manifest.xml");
+            "ubuntu-images-us-west-1/ubuntu-lucid-10.04-i386-server-20100427.1.manifest.xml");
       assertEquals(ubuntuLucid.getProviderId(), "ami-c597c680");
       assertEquals(ubuntuLucid.getLocation(), defaultLocation);
       assertEquals(ubuntuLucid.getName(), "10.04");
       assertEquals(ubuntuLucid.getOsDescription(),
-               "ubuntu-images-us-west-1/ubuntu-lucid-10.04-i386-server-20100427.1.manifest.xml");
+            "ubuntu-images-us-west-1/ubuntu-lucid-10.04-i386-server-20100427.1.manifest.xml");
       assertEquals(ubuntuLucid.getOsFamily(), OsFamily.UBUNTU);
       assertEquals(ubuntuLucid.getUserMetadata(), ImmutableMap.<String, String> of("owner", "099720109477"));
       assertEquals(ubuntuLucid.getVersion(), "20100427.1");
@@ -139,8 +139,8 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       Set<Image> result = parseImages(is);
 
       ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), Suppliers
-               .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
-               .ofInstance(defaultLocation));
+            .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
+            .ofInstance(defaultLocation));
 
       org.jclouds.compute.domain.Image image = parser.apply(Iterables.get(result, 0));
 
@@ -150,9 +150,9 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(image.getLocation(), defaultLocation);
       assertEquals(image.getName(), "");
       assertEquals(image.getOsDescription(), "vostok-builds/vostok-0.95-5622/vostok-0.95-5622.manifest.xml");
-      assertEquals(image.getOsFamily(), null);
+      assertEquals(image.getOsFamily(), OsFamily.UNKNOWN);
       assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "133804938231"));
-      assertEquals(image.getVersion(), "");
+      assertEquals(image.getVersion(), "5622");
 
    }
 
@@ -162,8 +162,8 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       Set<Image> result = parseImages(is);
 
       ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), Suppliers
-               .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
-               .ofInstance(defaultLocation));
+            .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
+            .ofInstance(defaultLocation));
 
       org.jclouds.compute.domain.Image image = parser.apply(Iterables.get(result, 0));
 
@@ -197,8 +197,8 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       Set<Image> result = parseImages(is);
       assertEquals(result.size(), 4);
       ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), Suppliers
-               .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
-               .ofInstance(defaultLocation));
+            .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
+            .ofInstance(defaultLocation));
 
       org.jclouds.compute.domain.Image image = parser.apply(Iterables.get(result, 0));
 

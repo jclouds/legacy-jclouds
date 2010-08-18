@@ -19,19 +19,17 @@
 
 package org.jclouds.gogrid.compute.suppliers;
 
-import static org.jclouds.compute.predicates.ImagePredicates.architectureIn;
+import static org.jclouds.compute.predicates.ImagePredicates.any;
 
 import java.util.Set;
 
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.internal.SizeImpl;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
 /**
@@ -45,16 +43,11 @@ public class GoGridSizeSupplier implements Supplier<Set<? extends Size>> {
    public Set<? extends Size> get() {
       final Set<Size> sizes = Sets.newHashSet();
 
-      sizes.add(new SizeImpl("1", "1", "1", null, null, ImmutableMap.<String, String> of(), 0.5, 512, 30,
-               architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64))));
-      sizes.add(new SizeImpl("2", "2", "2", null, null, ImmutableMap.<String, String> of(), 1, 1024, 60,
-               architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64))));
-      sizes.add(new SizeImpl("3", "3", "3", null, null, ImmutableMap.<String, String> of(), 2, 2048, 120,
-               architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64))));
-      sizes.add(new SizeImpl("4", "4", "4", null, null, ImmutableMap.<String, String> of(), 4, 4096, 240,
-               architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64))));
-      sizes.add(new SizeImpl("5", "5", "5", null, null, ImmutableMap.<String, String> of(), 8, 8192, 480,
-               architectureIn(ImmutableSet.<Architecture> of(Architecture.X86_32, Architecture.X86_64))));
+      sizes.add(new SizeImpl("1", "1", "1", null, null, ImmutableMap.<String, String> of(), 0.5, 512, 30, any()));
+      sizes.add(new SizeImpl("2", "2", "2", null, null, ImmutableMap.<String, String> of(), 1, 1024, 60, any()));
+      sizes.add(new SizeImpl("3", "3", "3", null, null, ImmutableMap.<String, String> of(), 2, 2048, 120, any()));
+      sizes.add(new SizeImpl("4", "4", "4", null, null, ImmutableMap.<String, String> of(), 4, 4096, 240, any()));
+      sizes.add(new SizeImpl("5", "5", "5", null, null, ImmutableMap.<String, String> of(), 8, 8192, 480, any()));
       return sizes;
    }
 }

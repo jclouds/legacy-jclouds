@@ -22,8 +22,12 @@ package org.jclouds.compute.domain;
 /**
  * Architecture of a node
  * 
+ * <p/>
+ * Please transition to {@link OperatingSystem}
+ * 
  * @author Adrian Cole
  */
+@Deprecated
 public enum Architecture {
 
    /**

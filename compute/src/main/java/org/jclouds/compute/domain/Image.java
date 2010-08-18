@@ -19,10 +19,13 @@
 
 package org.jclouds.compute.domain;
 
-import org.jclouds.compute.domain.internal.ImageImpl;
+import javax.annotation.Nullable;
 
-import com.google.inject.ImplementedBy;
+import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.domain.Credentials;
+
+import com.google.common.annotations.Beta;
+import com.google.inject.ImplementedBy;
 
 /**
  * Running Operating system
@@ -31,6 +34,11 @@ import org.jclouds.domain.Credentials;
  */
 @ImplementedBy(ImageImpl.class)
 public interface Image extends ComputeMetadata {
+   /**
+    * The operating system installed on this image
+    */
+   @Beta
+   OperatingSystem getOperatingSystem();
 
    /**
     * Version of the image
@@ -43,23 +51,33 @@ public interface Image extends ComputeMetadata {
    String getDescription();
 
    /**
-    * Operating System
+    * please use {#link {@link #getOperatingSystem()}
+    * 
+    * @see OperatingSystem#getFamily()
     */
+   @Deprecated
    OsFamily getOsFamily();
 
    /**
-    * Description of the operating system including the version.
+    * please use {#link {@link #getOperatingSystem()}
+    * 
+    * @see OperatingSystem#getDescription()
     */
+   @Deprecated
    String getOsDescription();
 
    /**
-    * Operating System
+    * please use {#link {@link #getOperatingSystem()}
+    * 
+    * @see OperatingSystem#getDescription()
     */
+   @Nullable
+   @Deprecated
    Architecture getArchitecture();
 
-    /**
-     * Default credentials for the current image
-     */
+   /**
+    * Default credentials for the current image
+    */
    Credentials getDefaultCredentials();
 
 }

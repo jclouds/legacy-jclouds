@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
 
 import com.google.common.base.Predicate;
@@ -84,19 +83,19 @@ public class ImagePredicates {
       };
    }
 
-   public static Predicate<Image> architectureIn(
-         Iterable<Architecture> architectures) {
-      checkNotNull(architectures, "architectures must be defined");
-      final Set<Architecture> search = Sets.newHashSet(architectures);
+   /**
+    * return true if this is a 64bit image.
+    */
+   public static Predicate<Image> is64Bit() {
       return new Predicate<Image>() {
          @Override
          public boolean apply(Image image) {
-            return search.contains(image.getArchitecture());
+            return image.getOperatingSystem().is64Bit();
          }
 
          @Override
          public String toString() {
-            return "architectureIn(" + search + ")";
+            return "is64Bit()";
          }
       };
    }
