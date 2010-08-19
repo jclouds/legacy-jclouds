@@ -24,7 +24,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.jclouds</groupId>
     <artifactId>jclouds-project</artifactId>
-    <version>1.0-SNAPSHOT</version>    
+    <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>jclouds Project</name>
     <url>http://www.jclouds.org</url>
@@ -102,7 +102,7 @@
         </repository>
         <repository>
             <id>googlecode.java-xmlbuilder</id>
-            <url>http://java-xmlbuilder.googlecode.com/svn/repo</url>       
+            <url>http://java-xmlbuilder.googlecode.com/svn/repo</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
@@ -134,12 +134,12 @@
         <repository>
             <id>jclouds-googlecode-deploy</id>
             <url>dav:https://jclouds.googlecode.com/svn/repo</url>
-            <uniqueVersion>false</uniqueVersion>            
+            <uniqueVersion>false</uniqueVersion>
         </repository>
         <snapshotRepository>
       	    <id>jclouds-rimu-snapshots-nexus</id>
             <url>http://jclouds.rimuhosting.com:8081/nexus/content/repositories/snapshots</url>
-        </snapshotRepository>        
+        </snapshotRepository>
         <site>
             <id>website</id>
             <name>website</name>
@@ -181,7 +181,7 @@
                 <role>Clojure Developer</role>
             </roles>
             <timezone>-8</timezone>
-        </developer> 
+        </developer>
         <developer>
             <name>Phil Hagelberg</name>
             <id>technomancy</id>
@@ -190,7 +190,7 @@
                 <role>Clojure Developer</role>
             </roles>
             <timezone>-8</timezone>
-        </developer>                 
+        </developer>
         <developer>
             <name>Ivan Meredith</name>
             <id>barefootnz</id>
@@ -199,7 +199,7 @@
                 <role>Java Developer</role>
             </roles>
             <timezone>+13</timezone>
-        </developer>          
+        </developer>
         <developer>
             <name>Andrew Phillips</name>
             <id>demobox</id>
@@ -208,7 +208,7 @@
                 <role>Apprentice</role>
             </roles>
             <timezone>+1</timezone>
-        </developer>    
+        </developer>
         <developer>
             <name>Alex Yarmuda</name>
             <id>alexstaytuned</id>
@@ -271,13 +271,13 @@
 	    <dependency>
 	      <groupId>org.clojure</groupId>
 	      <artifactId>clojure</artifactId>
-	      <version>1.2.0-RC2</version>
+	      <version>1.2.0</version>
           <optional>true</optional>
 	    </dependency>
 	    <dependency>
 	      <groupId>org.clojure</groupId>
 	      <artifactId>clojure-contrib</artifactId>
-	      <version>1.2.0-RC2</version>
+	      <version>1.2.0</version>
           <optional>true</optional>
 	    </dependency>
         <dependency>
@@ -425,7 +425,7 @@
                 </executions>
                 <configuration>
                     <additionalJOption>-J-Xmx128m</additionalJOption>
-                    <encoding>${sourceEncoding}</encoding>                        
+                    <encoding>${sourceEncoding}</encoding>
                     <quiet>true</quiet>
                     <links>
                         <link>http://download.oracle.com/docs/cd/E17409_01/javase/6/docs/api/</link>
@@ -477,7 +477,7 @@ pageTracker._trackPageview();
                                 </requireMavenVersion>
                             </rules>
                         </configuration>
-                    </execution>                    
+                    </execution>
                 </executions>
             </plugin>
             <plugin>
@@ -493,7 +493,7 @@ pageTracker._trackPageview();
                 <configuration>
                     <encoding>${sourceEncoding}</encoding>
                 </configuration>
-            </plugin>                
+            </plugin>
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
@@ -549,10 +549,10 @@ pageTracker._trackPageview();
                                         <include>**/*LiveTest.java</include>
                                     </includes>
                                     <systemProperties>
-                                    <!--                                        
+                                    <!--
                                         If you're behind a proxy, set this here
                                         http://java.sun.com/javase/6/docs/technotes/guides/net/proxies.html
-                                        
+
                                         <property>
                                            <name>https.proxyHost</name>
                                            <value>proxy</value>
@@ -638,7 +638,7 @@ pageTracker._trackPageview();
                                 </goals>
                                 <configuration>
                                     <!-- also default since 2.2-SNAPSHOT -->
-                                    <ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>                                
+                                    <ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>
                                     <descriptors>
                                         <descriptor>src-descriptor.xml</descriptor>
                                         <descriptor>jar-with-dependencies-descriptor.xml</descriptor>
@@ -652,7 +652,7 @@ pageTracker._trackPageview();
                                 <artifactId>jclouds-assemblies</artifactId>
                                 <version>${project.version}</version>
                             </dependency>
-                        </dependencies>                        
+                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
@@ -711,7 +711,7 @@ pageTracker._trackPageview();
                         </reports>
                     </reportSet>
                 </reportSets>
-            </plugin>            
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>emma-maven-plugin</artifactId>
