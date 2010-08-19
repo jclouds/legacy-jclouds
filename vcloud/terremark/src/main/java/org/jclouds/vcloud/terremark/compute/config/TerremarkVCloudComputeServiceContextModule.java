@@ -114,7 +114,6 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(
                ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
       bind(SecureRandom.class).toInstance(new SecureRandom());
-
    }
 
    @Provides

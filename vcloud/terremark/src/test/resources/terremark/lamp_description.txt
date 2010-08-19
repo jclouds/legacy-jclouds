@@ -1,0 +1,8 @@
+NOTE: This template does not support automated OS configuration.
+
+Username: ecloud
+Password: $Ep455l0ud!2
+
+mySQL root password is the same as ecloud.
+
+This template contains a base install of Ubuntu Server 8.04 + LAMP.

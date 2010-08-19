@@ -55,6 +55,20 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
    }
 
    @Test
+   public void testLamp() throws IOException {
+      InputStream is = getClass().getResourceAsStream("/terremark/lamp_description.txt");
+      String description = new String(ByteStreams.toByteArray(is));
+      VAppTemplate template = createMock(VAppTemplate.class);
+      expect(template.getDescription()).andReturn(description).atLeastOnce();
+      replay(template);
+      ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials();
+      Credentials creds = converter.execute(template);
+      assertEquals(creds.identity, "ecloud");
+      assertEquals(creds.credential, "$Ep455l0ud!2");
+      verify(template);
+   }
+
+   @Test
    public void testFt() throws IOException {
       InputStream is = getClass().getResourceAsStream("/terremark/ft_description.txt");
       String description = new String(ByteStreams.toByteArray(is));

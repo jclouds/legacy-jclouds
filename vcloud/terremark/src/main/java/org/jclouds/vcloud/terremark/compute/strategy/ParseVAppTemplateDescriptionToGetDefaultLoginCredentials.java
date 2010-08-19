@@ -39,7 +39,7 @@ public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials implements
       PopulateDefaultLoginCredentialsForImageStrategy {
 
    public static final Pattern USER_PASSWORD_PATTERN = Pattern
-         .compile(".*[Uu]sername: ([a-z]+) ?.*\n[Pp]assword: ([^ ]+) ?\n.*");
+         .compile(".*[Uu]sername: ([a-z]+) ?.*\n[Pp]assword: ([^ \n\r]+) ?\r?\n.*");
 
    @Override
    public Credentials execute(Object resourceToAuthenticate) {
