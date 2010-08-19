@@ -22,14 +22,13 @@ package org.jclouds.vcloud.terremark;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
@@ -78,8 +77,7 @@ public class InternetServiceLiveTest {
 
    @Test
    public void testGetAllPublicIps() throws Exception {
-      for (PublicIpAddress ip : tmClient.getPublicIpsAssociatedWithVDC(tmClient.findVDCInOrgNamed(null, null)
-            .getId())) {
+      for (PublicIpAddress ip : tmClient.getPublicIpsAssociatedWithVDC(tmClient.findVDCInOrgNamed(null, null).getId())) {
          tmClient.getInternetServicesOnPublicIp(ip.getId());
       }
    }
@@ -91,15 +89,11 @@ public class InternetServiceLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      String identity = checkNotNull(System.getProperty("trmk-vcloudexpress.identity"), "trmk-vcloudexpress.identity");
+      String credential = checkNotNull(System.getProperty("trmk-vcloudexpress.credential"), "trmk-vcloudexpress.credential");
 
-      String endpoint = System.getProperty("jclouds.test.endpoint");
-      Properties props = new Properties();
-      if (endpoint != null && !"".equals(endpoint))
-         props.setProperty("terremark.endpoint", endpoint);
-      context = new RestContextFactory().createContext("trmk-vcloudexpress", identity, credential, ImmutableSet
-            .<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), props);
+      context = new ComputeServiceContextFactory().createContext("trmk-vcloudexpress", identity, credential, ImmutableSet
+               .<Module> of(new Log4JLoggingModule(), new JschSshClientModule())).getProviderSpecificContext();
 
       tmClient = context.getApi();
 
@@ -108,7 +102,7 @@ public class InternetServiceLiveTest {
    void print(Set<InternetService> set) {
       for (InternetService service : set) {
          System.out.printf("%d (%s:%d%n)", service.getName(), service.getPublicIpAddress().getAddress(), service
-               .getPort());
+                  .getPort());
          for (Node node : tmClient.getNodes(service.getId())) {
             System.out.printf("   %d (%s:%d%n)", node.getName(), node.getIpAddress(), node.getPort());
          }

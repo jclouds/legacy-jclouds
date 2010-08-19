@@ -31,7 +31,6 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -42,7 +41,6 @@ import org.testng.annotations.Test;
 @Test(groups = "live", enabled = true, sequential = true, testName = "vcloud.VCloudComputeServiceLiveTest")
 public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
-   @BeforeClass
    @Override
    public void setServiceDefaults() {
       System.setProperty("vcloud.endpoint", checkNotNull(System.getProperty("jclouds.test.endpoint"),

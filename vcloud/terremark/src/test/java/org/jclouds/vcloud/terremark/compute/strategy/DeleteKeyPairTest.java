@@ -75,7 +75,7 @@ public class DeleteKeyPairTest {
 
       // setup expectations
       expect(strategy.terremarkClient.listKeyPairsInOrg(orgTag.getOrg())).andReturn(ImmutableSet.<KeyPair> of(keyPair));
-      expect(keyPair.getName()).andReturn("jclouds#" + orgTag.getName() + "-123").atLeastOnce();
+      expect(keyPair.getName()).andReturn("jclouds#" + orgTag.getName() + "#123").atLeastOnce();
       expect(keyPair.getId()).andReturn(URI.create("1245"));
       strategy.terremarkClient.deleteKeyPair(URI.create("1245"));
       expect(strategy.credentialsMap.remove(orgTag)).andReturn(null);

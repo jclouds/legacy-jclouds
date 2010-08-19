@@ -59,10 +59,10 @@ public class CreateUniqueKeyPair implements Function<OrgAndName, KeyPair> {
 
    @Override
    public KeyPair apply(OrgAndName from) {
-      return createNewKeyPairInRegion(from.getOrg(), from.getName());
+      return createNewKeyPairInOrg(from.getOrg(), from.getName());
    }
 
-   private KeyPair createNewKeyPairInRegion(URI org, String keyPairName) {
+   private KeyPair createNewKeyPairInOrg(URI org, String keyPairName) {
       checkNotNull(org, "org");
       checkNotNull(keyPairName, "keyPairName");
       logger.debug(">> creating keyPair org(%s) name(%s)", org, keyPairName);
@@ -82,6 +82,6 @@ public class CreateUniqueKeyPair implements Function<OrgAndName, KeyPair> {
    }
 
    private String getNextName(String keyPairName) {
-      return "jclouds#" + keyPairName + "-" + randomSuffix.get();
+      return "jclouds#" + keyPairName + "#" + randomSuffix.get();
    }
 }

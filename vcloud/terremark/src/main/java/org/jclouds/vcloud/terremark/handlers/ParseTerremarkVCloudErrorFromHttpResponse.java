@@ -55,16 +55,15 @@ public class ParseTerremarkVCloudErrorFromHttpResponse implements HttpErrorHandl
       try {
          String content = parseErrorFromContentOrNull(command, response);
          switch (response.getStatusCode()) {
-         case 400:
-            exception = new IllegalArgumentException(response.getMessage(), exception);
-            break;
-         case 401:
-            exception = new AuthorizationException(command.getRequest(), content);
-            break;
-         case 403: // TODO temporary as terremark mistakenly uses this for vApp
-            // not found.
-         case 404:
-            if (!command.getRequest().getMethod().equals("DELETE")) {
+            case 400:
+               exception = new IllegalArgumentException(response.getMessage(), exception);
+               break;
+            case 401:
+               exception = new AuthorizationException(command.getRequest(), content);
+               break;
+            case 403: // TODO temporary as terremark mistakenly uses this for vApp
+               // not found.
+            case 404:
                String path = command.getRequest().getEndpoint().getPath();
                Matcher matcher = RESOURCE_PATTERN.matcher(path);
                String message;
@@ -74,17 +73,16 @@ public class ParseTerremarkVCloudErrorFromHttpResponse implements HttpErrorHandl
                   message = path;
                }
                exception = new ResourceNotFoundException(message, exception);
-            }
-            break;
-         case 500:
-            if ((response.getMessage().indexOf("because there is a pending task running") != -1)
-                  || (response.getMessage().indexOf("because it is already powered off") != -1)
-                  || (response.getMessage().indexOf("already exists") != -1)
-                  || (response.getMessage().indexOf("same name exists") != -1))
-               exception = new IllegalStateException(response.getMessage(), exception);
-            break;
-         default:
-            exception = new HttpResponseException(command, response, content);
+               break;
+            case 500:
+               if ((response.getMessage().indexOf("because there is a pending task running") != -1)
+                        || (response.getMessage().indexOf("because it is already powered off") != -1)
+                        || (response.getMessage().indexOf("already exists") != -1)
+                        || (response.getMessage().indexOf("same name exists") != -1))
+                  exception = new IllegalStateException(response.getMessage(), exception);
+               break;
+            default:
+               exception = new HttpResponseException(command, response, content);
          }
       } finally {
          releasePayload(response);

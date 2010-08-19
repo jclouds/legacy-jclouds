@@ -19,7 +19,6 @@
 
 package org.jclouds.vcloud.terremark;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.size;
@@ -34,7 +33,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -103,12 +101,13 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
    private RetryablePredicate<URI> successTester;
    private VApp clone;
    private VDC vdc;
+   protected String credential;
    public static final String PREFIX = System.getProperty("user.name") + "-terremark";
 
    @Test
    public void testGetAllInternetServices() throws Exception {
       for (InternetService service : tmClient.getAllInternetServicesInVDC(tmClient.findVDCInOrgNamed(null, null)
-            .getId())) {
+               .getId())) {
          assertNotNull(tmClient.getNodes(service.getId()));
       }
    }
@@ -144,7 +143,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
 
    @Test(enabled = true)
    public void testInstantiateAndPowerOn() throws InterruptedException, ExecutionException, TimeoutException,
-         IOException {
+            IOException {
       prepare();
       StringBuffer name = new StringBuffer();
       for (int i = 0; i < 15; i++)
@@ -168,7 +167,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
       // if this template supports setting the root password, let's add it to
       // our options
       CustomizationParameters customizationOptions = tmClient.getCustomizationOptions(item.getCustomizationOptions()
-            .getId());
+               .getId());
       if (customizationOptions.canCustomizePassword())
          instantiateOptions.withPassword("robotsarefun");
 
@@ -229,11 +228,11 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
       PublicIpAddress ip;
       if (tmClient instanceof TerremarkVCloudExpressClient) {
          is = TerremarkVCloudExpressClient.class.cast(tmClient).addInternetServiceToVDC(
-               tmClient.findVDCInOrgNamed(null, null).getId(), "SSH", Protocol.TCP, 22);
+                  tmClient.findVDCInOrgNamed(null, null).getId(), "SSH", Protocol.TCP, 22);
          ip = is.getPublicIpAddress();
       } else {
          ip = TerremarkECloudClient.class.cast(tmClient).activatePublicIpInVDC(
-               tmClient.findVDCInOrgNamed(null, null).getId());
+                  tmClient.findVDCInOrgNamed(null, null).getId());
          is = tmClient.addInternetServiceToExistingIp(ip.getId(), "SSH", Protocol.TCP, 22);
       }
       publicIp = ip.getAddress();
@@ -274,7 +273,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
    @Test(enabled = true, dependsOnMethods = { "testInstantiateAndPowerOn", "testAddInternetService" })
    public void testPublicIp() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       node = tmClient.addNode(is.getId(), Iterables.getLast(vApp.getNetworkToAddresses().values()), vApp.getName()
-            + "-SSH", 22);
+               + "-SSH", 22);
       loopAndCheckPass();
    }
 
@@ -337,7 +336,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
       vApp = tmClient.getVApp(vApp.getId());
 
       Task task = tmClient.configureVApp(vApp, changeNameTo("eduardo").changeMemoryTo(1536).changeProcessorCountTo(1)
-            .addDisk(25 * 1048576).addDisk(25 * 1048576));
+               .addDisk(25 * 1048576).addDisk(25 * 1048576));
 
       assert successTester.apply(task.getLocation());
 
@@ -355,7 +354,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
 
       // extract the disks on the vApp sorted by addressOnParent
       List<ResourceAllocation> disks = Lists.newArrayList(filter(vApp.getResourceAllocations(),
-            resourceType(ResourceType.DISK_DRIVE)));
+               resourceType(ResourceType.DISK_DRIVE)));
 
       // delete the second disk
       task = tmClient.configureVApp(vApp, deleteDiskWithAddressOnParent(disks.get(1).getAddressOnParent()));
@@ -367,18 +366,18 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
    }
 
    private void verifyConfigurationOfVApp(VApp vApp, String serverName, String expectedOs, int processorCount,
-         long memory, long hardDisk) {
+            long memory, long hardDisk) {
       assertEquals(vApp.getName(), serverName);
       assertEquals(vApp.getOperatingSystemDescription(), expectedOs);
       assertEquals(find(vApp.getResourceAllocations(), resourceType(ResourceType.PROCESSOR)).getVirtualQuantity(),
-            processorCount);
+               processorCount);
       assertEquals(
-            find(vApp.getResourceAllocations(), resourceType(ResourceType.SCSI_CONTROLLER)).getVirtualQuantity(), 1);
+               find(vApp.getResourceAllocations(), resourceType(ResourceType.SCSI_CONTROLLER)).getVirtualQuantity(), 1);
       assertEquals(find(vApp.getResourceAllocations(), resourceType(ResourceType.MEMORY)).getVirtualQuantity(), memory);
       assertEquals(find(vApp.getResourceAllocations(), resourceType(ResourceType.DISK_DRIVE)).getVirtualQuantity(),
-            hardDisk);
+               hardDisk);
       assertEquals(vApp.getSize().longValue(), find(vApp.getResourceAllocations(),
-            resourceType(ResourceType.DISK_DRIVE)).getVirtualQuantity());
+               resourceType(ResourceType.DISK_DRIVE)).getVirtualQuantity());
    }
 
    private void doCheckPass(String address) throws IOException {
@@ -431,15 +430,10 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
    @BeforeGroups(groups = { "live" })
    @Override
    public void setupClient() {
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      setupCredentials();
 
-      String endpoint = System.getProperty("jclouds.test.endpoint");
-      Properties props = new Properties();
-      if (endpoint != null && !"".equals(endpoint))
-         props.setProperty("terremark.endpoint", endpoint);
       Injector injector = new RestContextFactory().createContextBuilder(provider, identity, credential,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), props).buildInjector();
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule())).buildInjector();
 
       connection = tmClient = injector.getInstance(TerremarkVCloudClient.class);
 
@@ -452,5 +446,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
       // service timeout
       successTester = new RetryablePredicate<URI>(injector.getInstance(TaskSuccess.class), 650, 10, TimeUnit.SECONDS);
    }
+
+   protected abstract void setupCredentials();
 
 }

@@ -31,10 +31,16 @@
     <name>jclouds terremark Components Core</name>
     <description>jclouds Core components to access terremark</description>
     <properties>
-        <jclouds.terremark.endpoint></jclouds.terremark.endpoint>
-        <jclouds.test.identity>${jclouds.terremark.user}</jclouds.test.identity>
-        <jclouds.test.credential>${jclouds.terremark.password}</jclouds.test.credential>
-        <jclouds.test.endpoint>${jclouds.terremark.password}</jclouds.test.endpoint>
+        <!-- when instances are hung, open a ticket and add here -->
+        <jclouds.compute.blacklist.nodes>trmkrun-ccc,trmk-924</jclouds.compute.blacklist.nodes>
+        <trmk-vcloudexpress.endpoint>https://services.vcloudexpress.terremark.com/api</trmk-vcloudexpress.endpoint>
+        <trmk-vcloudexpress.apiversion>0.8a-ext1.6</trmk-vcloudexpress.apiversion>
+        <trmk-vcloudexpress.identity>FIXME</trmk-vcloudexpress.identity>
+        <trmk-vcloudexpress.credential>FIXME</trmk-vcloudexpress.credential>
+        <trmk-ecloud.endpoint>https://services.enterprisecloud.terremark.com/api</trmk-ecloud.endpoint>
+        <trmk-ecloud.apiversion>0.8b-ext2.3</trmk-ecloud.apiversion>
+        <trmk-ecloud.identity>FIXME</trmk-ecloud.identity>
+        <trmk-ecloud.credential>FIXME</trmk-ecloud.credential>
     </properties>
 
     <scm>
@@ -57,5 +63,69 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>live</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>integration</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemProperties>
+                                        <property>
+                                            <name>trmk-vcloudexpress.endpoint</name>
+                                            <value>${trmk-vcloudexpress.endpoint}</value>
+                                        </property>
+                                        <property>
+                                            <name>trmk-vcloudexpress.apiversion</name>
+                                            <value>${trmk-vcloudexpress.apiversion}</value>
+                                        </property>
+                                        <property>
+                                            <name>trmk-vcloudexpress.identity</name>
+                                            <value>${trmk-vcloudexpress.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>trmk-vcloudexpress.credential</name>
+                                            <value>${trmk-vcloudexpress.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>trmk-ecloud.endpoint</name>
+                                            <value>${trmk-ecloud.endpoint}</value>
+                                        </property>
+                                        <property>
+                                            <name>trmk-ecloud.apiversion</name>
+                                            <value>${trmk-ecloud.apiversion}</value>
+                                        </property>
+                                        <property>
+                                            <name>trmk-ecloud.identity</name>
+                                            <value>${trmk-ecloud.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>trmk-ecloud.credential</name>
+                                            <value>${trmk-ecloud.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.compute.blacklist.nodes</name>
+                                            <value>${jclouds.compute.blacklist.nodes}</value>
+                                        </property>
+                                    </systemProperties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 
 </project>

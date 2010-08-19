@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.compute.domain.Image;
@@ -57,15 +56,12 @@ public class VAppTemplatesInOrgsLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      String identity = checkNotNull(System.getProperty("trmk-vcloudexpress.identity"), "trmk-vcloudexpress.identity");
+      String credential = checkNotNull(System.getProperty("trmk-vcloudexpress.credential"),
+               "trmk-vcloudexpress.credential");
 
-      String endpoint = System.getProperty("jclouds.test.endpoint");
-      Properties props = new Properties();
-      if (endpoint != null && !"".equals(endpoint))
-         props.setProperty("terremark.endpoint", endpoint);
       Injector injector = new RestContextFactory().createContextBuilder("trmk-vcloudexpress", identity, credential,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), props).buildInjector();
+               ImmutableSet.<Module> of(new Log4JLoggingModule())).buildInjector();
 
       tmClient = injector.getInstance(TerremarkVCloudClient.class);
       allCatalogItemsInOrganization = injector.getInstance(AllCatalogItemsInOrganization.class);

@@ -87,9 +87,10 @@ public class VCloudGetNodeMetadata {
       String tag = parseTagFromName(from.getName());
       Location location = findLocationForResourceInVDC.apply(from.getVDC());
       return new NodeMetadataImpl(in, from.getName(), in, location, from.getId(), ImmutableMap.<String, String> of(),
-               tag, null, new CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(from.getOsType()), null, null,
-                        from.getOperatingSystemDescription()), vAppStatusToNodeState.get(from.getStatus()),
-               computeClient.getPublicAddresses(id), computeClient.getPrivateAddresses(id), getExtra.apply(from), null);
+               tag, null, from.getOsType() != null ? new CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(from
+                        .getOsType()), null, null, from.getOperatingSystemDescription()) : null, vAppStatusToNodeState
+                        .get(from.getStatus()), computeClient.getPublicAddresses(id), computeClient
+                        .getPrivateAddresses(id), getExtra.apply(from), null);
    }
 
 }

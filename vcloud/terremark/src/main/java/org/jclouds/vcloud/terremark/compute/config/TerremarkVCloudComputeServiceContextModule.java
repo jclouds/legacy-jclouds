@@ -82,7 +82,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       return new Supplier<String>() {
          @Override
          public String get() {
-            return random.nextInt(100) + "";
+            return random.nextInt(4096) + "";
          }
       };
 

@@ -75,7 +75,6 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.jclouds.util.Utils;
 import org.testng.annotations.AfterTest;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -121,7 +120,6 @@ public abstract class BaseComputeServiceLiveTest {
             .append("sudo zypper install java-1.6.0-openjdk-devl\n")//
             .toString();
 
-   @BeforeClass
    abstract public void setServiceDefaults();
 
    protected String provider;
@@ -139,6 +137,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    @BeforeGroups(groups = { "integration", "live" })
    public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+      setServiceDefaults();
       if (tag == null)
          tag = checkNotNull(provider, "provider");
       setupCredentials();
@@ -272,11 +271,7 @@ public abstract class BaseComputeServiceLiveTest {
       } catch (NoSuchElementException e) {
 
       }
-      template = buildTemplate(client.templateBuilder());
-
-      template.getOptions().installPrivateKey(newStringPayload(keyPair.get("private"))).authorizePublicKey(
-               newStringPayload(keyPair.get("public"))).runScript(
-               newStringPayload(buildScript(template.getImage().getOperatingSystem())));
+      refreshTemplate();
       try {
          nodes = newTreeSet(client.runNodesWithTag(tag, 2, template));
       } catch (RunNodesException e) {
@@ -296,6 +291,14 @@ public abstract class BaseComputeServiceLiveTest {
       checkImageIdMatchesTemplate(node2);
       checkOsMatchesTemplate(node1);
       checkOsMatchesTemplate(node2);
+   }
+
+   private void refreshTemplate() {
+      template = buildTemplate(client.templateBuilder());
+
+      template.getOptions().installPrivateKey(newStringPayload(keyPair.get("private"))).authorizePublicKey(
+               newStringPayload(keyPair.get("public"))).runScript(
+               newStringPayload(buildScript(template.getImage().getOperatingSystem())));
    }
 
    protected void checkImageIdMatchesTemplate(NodeMetadata node) {
@@ -319,13 +322,14 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCreateTwoNodesWithRunScript")
    public void testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired() throws Exception {
       initializeContextAndClient();
+      refreshTemplate();
       TreeSet<NodeMetadata> nodes = newTreeSet(client.runNodesWithTag(tag, 1, template));
       checkNodes(nodes, tag);
       NodeMetadata node = nodes.first();
       this.nodes.add(node);
       assertEquals(nodes.size(), 1);
       assertLocationSameOrChild(node.getLocation(), template.getLocation());
-      assertEquals(node.getOperatingSystem().getFamily(), template.getImage().getOperatingSystem().getFamily());
+      checkOsMatchesTemplate(node);
    }
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String tag, OperatingSystem os,
@@ -334,11 +338,6 @@ public abstract class BaseComputeServiceLiveTest {
          return client.runScriptOnNodesMatching(runningWithTag(tag), newStringPayload(buildScript(os)),
                   overrideCredentialsWith(creds));
       } catch (SshException e) {
-         if (getRootCause(e).getMessage().contains("Auth fail")) {
-            // System.err.printf("bad credentials: %s:%s for %s%n",
-            // creds.identity, creds.key, client
-            // .listNodesDetailsMatching(tag));
-         }
          throw e;
       }
    }

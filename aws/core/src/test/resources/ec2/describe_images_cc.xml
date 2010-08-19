@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<DescribeImagesResponse xmlns="http://ec2.amazonaws.com/doc/2010-06-15/">
+    <requestId>31e35e56-dd3e-43d3-9c3b-656cb202d6e7</requestId>
+    <imagesSet>
+        <item>
+            <imageId>ami-7ea24a17</imageId>
+            <imageLocation>amazon/EC2 CentOS 5.4 HVM AMI</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>206029621532</imageOwnerId>
+            <isPublic>true</isPublic>
+            <architecture>x86_64</architecture>
+            <imageType>machine</imageType>
+            <imageOwnerAlias>amazon</imageOwnerAlias>
+            <name>EC2 CentOS 5.4 HVM AMI</name>
+            <description>EC2 CentOS 5.4 HVM AMI</description>
+            <rootDeviceType>ebs</rootDeviceType>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <blockDeviceMapping>
+                <item>
+                    <deviceName>/dev/sda1</deviceName>
+                    <ebs>
+                        <snapshotId>snap-1099e578</snapshotId>
+                        <volumeSize>20</volumeSize>
+                        <deleteOnTermination>true</deleteOnTermination>
+                    </ebs>
+                </item>
+            </blockDeviceMapping>
+            <virtualizationType>hvm</virtualizationType>
+        </item>
+    </imagesSet>
+</DescribeImagesResponse>

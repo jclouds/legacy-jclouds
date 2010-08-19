@@ -33,7 +33,6 @@ import org.jclouds.rackspace.cloudservers.CloudServersAsyncClient;
 import org.jclouds.rackspace.cloudservers.CloudServersClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -45,7 +44,6 @@ import org.testng.annotations.Test;
 @Test(groups = "live", enabled = true, sequential = true, testName = "cloudservers.CloudServersComputeServiceLiveTest")
 public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
-   @BeforeClass
    @Override
    public void setServiceDefaults() {
       provider = "cloudservers";
