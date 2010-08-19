@@ -21,14 +21,14 @@ package org.jclouds.vcloud.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.vcloud.VCloudAsyncClient;
+import org.jclouds.vcloud.VCloudExpressAsyncClient;
 
 /**
  * 
  * VirtualResource such as disks or CPU
  * 
  * @author Adrian Cole
- * @see VCloudAsyncClient#getVApp
+ * @see VCloudExpressAsyncClient#getVApp
  * @see <a href="http://blogs.vmware.com/vapp/2009/11/index.html"/>
  * 
  */

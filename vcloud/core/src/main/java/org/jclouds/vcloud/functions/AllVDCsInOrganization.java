@@ -52,7 +52,8 @@ public class AllVDCsInOrganization implements Function<Organization, Iterable<? 
    private final ExecutorService executor;
 
    @Inject
-   AllVDCsInOrganization(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   AllVDCsInOrganization(VCloudAsyncClient aclient,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }
@@ -61,14 +62,14 @@ public class AllVDCsInOrganization implements Function<Organization, Iterable<? 
    public Iterable<? extends VDC> apply(final Organization org) {
 
       Iterable<VDC> catalogItems = transformParallel(org.getVDCs().values(),
-            new Function<NamedResource, Future<VDC>>() {
-               @SuppressWarnings("unchecked")
-               @Override
-               public Future<VDC> apply(NamedResource from) {
-                  return (Future<VDC>) aclient.getVDC(from.getId());
-               }
+               new Function<NamedResource, Future<VDC>>() {
+                  @SuppressWarnings("unchecked")
+                  @Override
+                  public Future<VDC> apply(NamedResource from) {
+                     return (Future<VDC>) aclient.getVDC(from.getId());
+                  }
 
-            }, executor, null, logger, "vdcs in org " + org.getName());
+               }, executor, null, logger, "vdcs in org " + org.getName());
       return catalogItems;
    }
 

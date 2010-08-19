@@ -23,14 +23,14 @@ import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 
 import java.util.Properties;
 
-import org.jclouds.vcloud.VCloudPropertiesBuilder;
+import org.jclouds.vcloud.VCloudExpressPropertiesBuilder;
 
 /**
  * Builds properties used in bluelock VCloud Clients
  * 
  * @author Adrian Cole
  */
-public class BlueLockVCloudExpressPropertiesBuilder extends VCloudPropertiesBuilder {
+public class BlueLockVCloudExpressPropertiesBuilder extends VCloudExpressPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();

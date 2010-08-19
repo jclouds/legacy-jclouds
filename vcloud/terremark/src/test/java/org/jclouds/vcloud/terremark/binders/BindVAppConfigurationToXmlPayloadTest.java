@@ -32,11 +32,11 @@ import java.util.Properties;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
-import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.internal.VAppImpl;
+import org.jclouds.vcloud.terremark.TerremarkVCloudExpressPropertiesBuilder;
 import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
 import org.testng.annotations.Test;
 
@@ -60,7 +60,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
       @Override
       protected void configure() {
          Properties props = new Properties();
-         Names.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(props).build(), "properties"));
+         Names.bindProperties(binder(), checkNotNull(new TerremarkVCloudExpressPropertiesBuilder(props).build(), "properties"));
       }
    });
 

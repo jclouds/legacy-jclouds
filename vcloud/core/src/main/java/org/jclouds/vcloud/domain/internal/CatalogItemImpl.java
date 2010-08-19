@@ -26,7 +26,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
 
@@ -47,7 +47,7 @@ public class CatalogItemImpl extends NamedResourceImpl implements CatalogItem {
 
    public CatalogItemImpl(String name, URI id, @Nullable String description, NamedResource entity,
          Map<String, String> properties) {
-      super(name, VCloudMediaType.CATALOGITEM_XML, id);
+      super(name, VCloudExpressMediaType.CATALOGITEM_XML, id);
       this.description = description;
       this.entity = checkNotNull(entity, "entity");
       this.properties.putAll(checkNotNull(properties, "properties"));
@@ -55,7 +55,7 @@ public class CatalogItemImpl extends NamedResourceImpl implements CatalogItem {
 
    @Override
    public String getType() {
-      return VCloudMediaType.CATALOGITEM_XML;
+      return VCloudExpressMediaType.CATALOGITEM_XML;
    }
 
    public NamedResource getEntity() {

@@ -23,7 +23,7 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.hostingdotcom.domain.HostingDotComVApp;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
@@ -36,7 +36,7 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
  * @author Adrian Cole
  */
 @Timeout(duration = 180, timeUnit = TimeUnit.SECONDS)
-public interface HostingDotComVCloudClient extends VCloudClient {
+public interface HostingDotComVCloudClient extends VCloudExpressClient {
 
    @Override
    @Timeout(duration = 600, timeUnit = TimeUnit.SECONDS)

@@ -63,7 +63,7 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
 
    @Inject
    public BaseVCloudComputeClient(VCloudClient client, Predicate<URI> successTester,
-         Map<VAppStatus, NodeState> vAppStatusToNodeState) {
+            Map<VAppStatus, NodeState> vAppStatusToNodeState) {
       this.client = client;
       this.taskTester = successTester;
       this.vAppStatusToNodeState = vAppStatusToNodeState;
@@ -71,7 +71,7 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
 
    @Override
    public Map<String, String> start(@Nullable URI VDC, URI templateId, String name,
-         InstantiateVAppTemplateOptions options, int... portsToOpen) {
+            InstantiateVAppTemplateOptions options, int... portsToOpen) {
       checkNotNull(options, "options");
       logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
 
@@ -175,7 +175,7 @@ public class BaseVCloudComputeClient implements VCloudComputeClient {
 
       public TaskException(String type, VApp vApp, Task task) {
          super(String.format("failed to %s vApp %s status %s;task %s status %s", type, vApp.getName(),
-               vApp.getStatus(), task.getLocation(), task.getStatus()), vApp);
+                  vApp.getStatus(), task.getLocation(), task.getStatus()), vApp);
          this.task = task;
       }
 

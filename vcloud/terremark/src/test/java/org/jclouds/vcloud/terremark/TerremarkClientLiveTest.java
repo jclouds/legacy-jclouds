@@ -47,8 +47,8 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import org.jclouds.vcloud.VCloudClientLiveTest;
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressClientLiveTest;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceAllocation;
@@ -59,7 +59,7 @@ import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.options.CloneVAppOptions;
-import org.jclouds.vcloud.predicates.TaskSuccess;
+import org.jclouds.vcloud.predicates.VCloudExpressTaskSuccess;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
@@ -78,7 +78,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
-public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
+public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTest {
 
    // Terremark service call 695,490
    @Override
@@ -124,7 +124,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
    public void testGetConfigCustomizationOptions() throws Exception {
       Catalog response = connection.findCatalogInOrgNamed(null, null);
       for (NamedResource resource : response.values()) {
-         if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
+         if (resource.getType().equals(VCloudExpressMediaType.CATALOGITEM_XML)) {
             TerremarkCatalogItem item = tmClient.findCatalogItemInOrgCatalogNamed(null, null, resource.getName());
             assert tmClient.getCustomizationOptions(item.getCustomizationOptions().getId()) != null;
          }
@@ -444,7 +444,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
       // then
       // default internet
       // service timeout
-      successTester = new RetryablePredicate<URI>(injector.getInstance(TaskSuccess.class), 650, 10, TimeUnit.SECONDS);
+      successTester = new RetryablePredicate<URI>(injector.getInstance(VCloudExpressTaskSuccess.class), 650, 10, TimeUnit.SECONDS);
    }
 
    protected abstract void setupCredentials();

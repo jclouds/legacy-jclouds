@@ -24,7 +24,7 @@ import java.util.Properties;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.vcloud.VCloudContextBuilder;
+import org.jclouds.vcloud.VCloudExpressContextBuilder;
 import org.jclouds.vcloud.bluelock.compute.config.BlueLockVCloudExpressComputeServiceContextModule;
 import org.jclouds.vcloud.bluelock.config.BlueLockVCloudExpressRestClientModule;
 
@@ -44,7 +44,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @see BlueLockVCloudComputeServiceContext
  */
-public class BlueLockVCloudExpressContextBuilder extends VCloudContextBuilder {
+public class BlueLockVCloudExpressContextBuilder extends VCloudExpressContextBuilder {
 
    public BlueLockVCloudExpressContextBuilder(Properties props) {
       super(props);

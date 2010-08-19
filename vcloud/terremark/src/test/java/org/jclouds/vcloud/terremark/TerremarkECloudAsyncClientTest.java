@@ -44,9 +44,9 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
-import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.VCloudAsyncClientTest.VCloudRestClientModuleExtension.TestOrganizationCatalogItemSupplier;
-import org.jclouds.vcloud.VCloudAsyncClientTest.VCloudRestClientModuleExtension.TestOrganizationCatalogSupplier;
+import org.jclouds.vcloud.VCloudExpressClient;
+import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExtension.TestOrganizationCatalogItemSupplier;
+import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExtension.TestOrganizationCatalogSupplier;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.endpoints.Org;
@@ -467,7 +467,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
       }
 
       @Override
-      protected Organization provideOrganization(VCloudClient discovery) {
+      protected Organization provideOrganization(VCloudExpressClient discovery) {
          return null;
       }
 
@@ -487,7 +487,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
       }
 
       @Override
-      protected URI provideDefaultNetwork(VCloudClient client) {
+      protected URI provideDefaultNetwork(VCloudExpressClient client) {
          return URI.create("https://vcloud.safesecureweb.com/network/1990");
       }
    }

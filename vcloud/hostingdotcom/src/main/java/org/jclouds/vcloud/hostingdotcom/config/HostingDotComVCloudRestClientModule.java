@@ -25,9 +25,9 @@ import javax.inject.Singleton;
 
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.config.BaseVCloudRestClientModule;
+import org.jclouds.vcloud.VCloudExpressAsyncClient;
+import org.jclouds.vcloud.VCloudExpressClient;
+import org.jclouds.vcloud.config.BaseVCloudExpressRestClientModule;
 import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudAsyncClient;
 import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudClient;
 
@@ -43,7 +43,7 @@ import com.google.inject.Provides;
 @ConfiguresRestClient
 public class HostingDotComVCloudRestClientModule
       extends
-      BaseVCloudRestClientModule<HostingDotComVCloudClient, HostingDotComVCloudAsyncClient> {
+      BaseVCloudExpressRestClientModule<HostingDotComVCloudClient, HostingDotComVCloudAsyncClient> {
 
    public HostingDotComVCloudRestClientModule() {
       super(HostingDotComVCloudClient.class,
@@ -52,19 +52,19 @@ public class HostingDotComVCloudRestClientModule
 
    @Provides
    @Singleton
-   protected VCloudAsyncClient provideVCloudAsyncClient(
+   protected VCloudExpressAsyncClient provideVCloudAsyncClient(
          HostingDotComVCloudAsyncClient in) {
       return in;
    }
 
    @Provides
    @Singleton
-   protected VCloudClient provideVCloudClient(HostingDotComVCloudClient in) {
+   protected VCloudExpressClient provideVCloudClient(HostingDotComVCloudClient in) {
       return in;
    }
 
    @Override
-   protected URI provideDefaultNetwork(VCloudClient client) {
+   protected URI provideDefaultNetwork(VCloudExpressClient client) {
       return URI.create("https://vcloud.safesecureweb.com/network/1990");
    }
 

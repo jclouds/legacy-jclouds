@@ -19,8 +19,8 @@
 
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
-import static org.jclouds.vcloud.VCloudMediaType.TASKSLIST_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.CATALOG_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.TASKSLIST_XML;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
@@ -29,7 +29,7 @@ import java.net.URI;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.testng.annotations.Test;
@@ -59,7 +59,7 @@ public class OrgHandlerTest {
             "Miami Environment 1 Catalog", CATALOG_XML, URI
                   .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog"))));
       assertEquals(result.getVDCs(), ImmutableMap.of("Miami Environment 1", new NamedResourceImpl(
-            "Miami Environment 1", VCloudMediaType.VDC_XML, URI
+            "Miami Environment 1", VCloudExpressMediaType.VDC_XML, URI
                   .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32"))));
       assertEquals(result.getTasksLists(), ImmutableMap.of("Miami Environment 1 Tasks List", new NamedResourceImpl(
             "Miami Environment 1 Tasks List", TASKSLIST_XML, URI
@@ -76,7 +76,7 @@ public class OrgHandlerTest {
       assertEquals(result.getCatalogs(), ImmutableMap.of("HMS Shared Catalog", new NamedResourceImpl(
             "HMS Shared Catalog", CATALOG_XML, URI.create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"))));
       assertEquals(result.getVDCs(), ImmutableMap.of("188849 Virtual DataCenter", new NamedResourceImpl(
-            "188849 Virtual DataCenter", VCloudMediaType.VDC_XML, URI
+            "188849 Virtual DataCenter", VCloudExpressMediaType.VDC_XML, URI
                   .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/188849"))));
       assertEquals(result.getTasksLists(), ImmutableMap.of("188849 Task List",
             new NamedResourceImpl("188849 Task List", TASKSLIST_XML, URI

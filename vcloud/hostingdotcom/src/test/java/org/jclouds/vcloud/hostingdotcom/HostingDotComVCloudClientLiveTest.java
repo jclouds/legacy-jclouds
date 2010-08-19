@@ -25,7 +25,7 @@ import java.util.Properties;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.vcloud.VCloudClientLiveTest;
+import org.jclouds.vcloud.VCloudExpressClientLiveTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -38,7 +38,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", sequential = true, testName = "vcloud.HostingDotComVCloudClientLiveTest")
-public class HostingDotComVCloudClientLiveTest extends VCloudClientLiveTest {
+public class HostingDotComVCloudClientLiveTest extends VCloudExpressClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    @Override

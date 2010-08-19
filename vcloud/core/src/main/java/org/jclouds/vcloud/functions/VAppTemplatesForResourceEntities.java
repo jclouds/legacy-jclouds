@@ -34,8 +34,8 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressAsyncClient;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
@@ -51,11 +51,11 @@ public class VAppTemplatesForResourceEntities implements
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
-   private final VCloudAsyncClient aclient;
+   private final VCloudExpressAsyncClient aclient;
    private final ExecutorService executor;
 
    @Inject
-   VAppTemplatesForResourceEntities(VCloudAsyncClient aclient,
+   VAppTemplatesForResourceEntities(VCloudExpressAsyncClient aclient,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
@@ -67,7 +67,7 @@ public class VAppTemplatesForResourceEntities implements
 
          @Override
          public boolean apply(NamedResource input) {
-            return input.getType().equals(VCloudMediaType.VAPPTEMPLATE_XML);
+            return input.getType().equals(VCloudExpressMediaType.VAPPTEMPLATE_XML);
          }
 
       }), new Function<NamedResource, Future<VAppTemplate>>() {

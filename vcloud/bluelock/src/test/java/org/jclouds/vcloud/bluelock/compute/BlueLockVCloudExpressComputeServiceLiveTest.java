@@ -26,7 +26,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
+import org.jclouds.vcloud.compute.VCloudExpressComputeServiceLiveTest;
 import org.testng.annotations.Test;
 
 /**
@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "bluelock.BlueLockVCloudExpressComputeServiceLiveTest")
-public class BlueLockVCloudExpressComputeServiceLiveTest extends VCloudComputeServiceLiveTest {
+public class BlueLockVCloudExpressComputeServiceLiveTest extends VCloudExpressComputeServiceLiveTest {
    @Override
    public void setServiceDefaults() {
       provider = "bluelock-vcloudexpress";

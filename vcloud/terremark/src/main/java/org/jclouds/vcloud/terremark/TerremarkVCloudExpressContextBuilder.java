@@ -24,7 +24,7 @@ import java.util.Properties;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.vcloud.VCloudContextBuilder;
+import org.jclouds.vcloud.VCloudExpressContextBuilder;
 import org.jclouds.vcloud.terremark.compute.config.TerremarkVCloudComputeServiceContextModule;
 import org.jclouds.vcloud.terremark.config.TerremarkVCloudExpressRestClientModule;
 
@@ -44,7 +44,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @see TerremarkVCloudComputeServiceContext
  */
-public class TerremarkVCloudExpressContextBuilder extends VCloudContextBuilder {
+public class TerremarkVCloudExpressContextBuilder extends VCloudExpressContextBuilder {
 
    public TerremarkVCloudExpressContextBuilder(Properties props) {
       super(props);

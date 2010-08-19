@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.VApp;
@@ -207,7 +207,7 @@ public class VAppImpl implements VApp {
 
    @Override
    public String getType() {
-      return VCloudMediaType.VAPP_XML;
+      return VCloudExpressMediaType.VAPP_XML;
    }
 
    @Override

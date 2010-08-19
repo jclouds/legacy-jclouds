@@ -19,11 +19,11 @@
 
 package org.jclouds.vcloud.terremark;
 
-import static org.jclouds.vcloud.VCloudMediaType.CATALOGITEM_XML;
-import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
-import static org.jclouds.vcloud.VCloudMediaType.ORG_XML;
-import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
-import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.CATALOGITEM_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.CATALOG_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.ORG_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.VAPP_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.VDC_XML;
 import static org.jclouds.vcloud.terremark.TerremarkVCloudMediaType.CATALOGITEMCUSTOMIZATIONPARAMETERS_XML;
 import static org.jclouds.vcloud.terremark.TerremarkVCloudMediaType.INTERNETSERVICESLIST_XML;
 import static org.jclouds.vcloud.terremark.TerremarkVCloudMediaType.INTERNETSERVICE_XML;
@@ -56,8 +56,8 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
-import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudExpressAsyncClient;
+import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
@@ -109,9 +109,9 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(SetVCloudTokenCookie.class)
-public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
+public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
    /**
-    * @see VCloudClient#getCatalogItemInOrg
+    * @see VCloudExpressClient#getCatalogItemInOrg
     */
    @Override
    @GET
@@ -124,7 +124,7 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
          @Nullable @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String itemName);
 
    /**
-    * @see VCloudClient#getCatalogItem
+    * @see VCloudExpressClient#getCatalogItem
     */
    @Override
    @GET
@@ -149,7 +149,7 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    ListenableFuture<? extends TerremarkOrganization> getOrganization(@EndpointParam URI orgId);
 
    /**
-    * @see VCloudClient#findOrganizationNamed
+    * @see VCloudExpressClient#findOrganizationNamed
     */
    @Override
    @GET
@@ -190,7 +190,7 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
    ListenableFuture<? extends TerremarkVDC> getVDC(@EndpointParam URI vdc);
 
    /**
-    * @see VCloudClient#findVDCInOrgNamed
+    * @see VCloudExpressClient#findVDCInOrgNamed
     */
    @GET
    @Override
@@ -202,7 +202,7 @@ public interface TerremarkVCloudAsyncClient extends VCloudAsyncClient {
          @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String vdcName);
 
    /**
-    * @see VCloudClient#instantiateVAppTemplateInVDC
+    * @see VCloudExpressClient#instantiateVAppTemplateInVDC
     */
    @Override
    @POST

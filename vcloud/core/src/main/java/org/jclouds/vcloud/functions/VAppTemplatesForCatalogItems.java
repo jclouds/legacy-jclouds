@@ -46,7 +46,7 @@ import com.google.common.base.Predicate;
  */
 @Singleton
 public class VAppTemplatesForCatalogItems implements
-      Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>> {
+         Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
@@ -55,7 +55,7 @@ public class VAppTemplatesForCatalogItems implements
 
    @Inject
    VAppTemplatesForCatalogItems(VCloudAsyncClient aclient,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }

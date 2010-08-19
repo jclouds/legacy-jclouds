@@ -26,7 +26,7 @@ import java.net.URI;
 
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 import org.jclouds.vcloud.domain.VAppStatus;
@@ -60,8 +60,8 @@ public class TaskHandlerTest extends BaseHandlerTest {
       Task expects = new TaskImpl(URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/task/3299"),
             TaskStatus.SUCCESS, dateService.iso8601DateParse("2009-08-24T21:29:32.983Z"), dateService
                   .iso8601DateParse("2009-08-24T21:29:44.65Z"), null, new NamedResourceImpl("VDC Name",
-                  VCloudMediaType.VDC_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/1")),
-            new NamedResourceImpl("Server1", VCloudMediaType.VAPP_XML, URI
+                  VCloudExpressMediaType.VDC_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/1")),
+            new NamedResourceImpl("Server1", VCloudExpressMediaType.VAPP_XML, URI
                   .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/4012")
 
             ), null
@@ -98,7 +98,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
                   .iso8601SecondsDateParse("2010-01-14T20:05:02Z"), dateService
                   .iso8601SecondsDateParse("2010-01-15T20:05:02Z"),
 
-            new NamedResourceImpl("188849-96", VCloudMediaType.VAPP_XML, URI
+            new NamedResourceImpl("188849-96", VCloudExpressMediaType.VAPP_XML, URI
                   .create("https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-96")), null, null);
       assertEquals(result, expects);
    }
@@ -111,8 +111,8 @@ public class TaskHandlerTest extends BaseHandlerTest {
       Task expects = new TaskImpl(URI.create("http://10.150.4.49/api/v0.8/task/23"), TaskStatus.ERROR, dateService
             .iso8601SecondsDateParse("2009-12-07T19:05:02Z"), dateService
             .iso8601SecondsDateParse("2009-12-10T14:40:32Z"), null, new NamedResourceImpl("APIOrg",
-            VCloudMediaType.ORG_XML, URI.create("http://10.150.4.49/api/v0.8/org/1")), new NamedResourceImpl(
-            "testapp1", VCloudMediaType.VAPP_XML, URI.create("http://10.150.4.49/api/v0.8/vapp/1")),
+            VCloudExpressMediaType.ORG_XML, URI.create("http://10.150.4.49/api/v0.8/org/1")), new NamedResourceImpl(
+            "testapp1", VCloudExpressMediaType.VAPP_XML, URI.create("http://10.150.4.49/api/v0.8/vapp/1")),
             new TaskImpl.ErrorImpl("Error processing job", "500",
                   " Error in runDailySummaries date used:2009-12-09 19:40:30.577326+00:00"));
       assertEquals(result, expects);

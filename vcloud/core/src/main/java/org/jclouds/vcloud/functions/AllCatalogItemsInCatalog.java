@@ -55,7 +55,8 @@ public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<? ex
    private final ExecutorService executor;
 
    @Inject
-   AllCatalogItemsInCatalog(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   AllCatalogItemsInCatalog(VCloudAsyncClient aclient,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }

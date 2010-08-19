@@ -52,7 +52,8 @@ public class AllCatalogsInOrganization implements Function<Organization, Iterabl
    private final ExecutorService executor;
 
    @Inject
-   AllCatalogsInOrganization(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   AllCatalogsInOrganization(VCloudAsyncClient aclient,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }
@@ -60,14 +61,14 @@ public class AllCatalogsInOrganization implements Function<Organization, Iterabl
    @Override
    public Iterable<? extends Catalog> apply(final Organization org) {
       Iterable<Catalog> catalogs = transformParallel(org.getCatalogs().values(),
-            new Function<NamedResource, Future<Catalog>>() {
-               @SuppressWarnings("unchecked")
-               @Override
-               public Future<Catalog> apply(NamedResource from) {
-                  return (Future<Catalog>) aclient.getCatalog(from.getId());
-               }
+               new Function<NamedResource, Future<Catalog>>() {
+                  @SuppressWarnings("unchecked")
+                  @Override
+                  public Future<Catalog> apply(NamedResource from) {
+                     return (Future<Catalog>) aclient.getCatalog(from.getId());
+                  }
 
-            }, executor, null, logger, "catalogs in " + org.getName());
+               }, executor, null, logger, "catalogs in " + org.getName());
       return catalogs;
    }
 }

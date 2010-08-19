@@ -23,7 +23,7 @@ import java.net.URI;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
@@ -40,7 +40,7 @@ public class VAppTemplateImpl extends NamedResourceImpl implements VAppTemplate 
    private final VAppStatus status;
 
    public VAppTemplateImpl(String name, URI id, @Nullable String description, @Nullable VAppStatus status) {
-      super(name, VCloudMediaType.VAPPTEMPLATE_XML, id);
+      super(name, VCloudExpressMediaType.VAPPTEMPLATE_XML, id);
       this.description = description;
       this.status = status;
    }

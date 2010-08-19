@@ -19,7 +19,7 @@
 
 package org.jclouds.vcloud.terremark.xml;
 
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
@@ -56,7 +56,7 @@ public class TerremarkVDCHandler extends VDCHandler {
             publicIps = Utils.newNamedResource(attributes);
          } else {
             String type = attributes.getValue(attributes.getIndex("type"));
-            if (type.equals(VCloudMediaType.CATALOG_XML)) {
+            if (type.equals(VCloudExpressMediaType.CATALOG_XML)) {
                catalog = Utils.newNamedResource(attributes);
             }
          }

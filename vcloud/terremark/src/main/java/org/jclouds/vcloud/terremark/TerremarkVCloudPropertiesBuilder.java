@@ -26,14 +26,14 @@ import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY
 
 import java.util.Properties;
 
-import org.jclouds.vcloud.VCloudPropertiesBuilder;
+import org.jclouds.vcloud.VCloudExpressPropertiesBuilder;
 
 /**
  * Builds properties used in Terremark VCloud Clients
  * 
  * @author Adrian Cole
  */
-public class TerremarkVCloudPropertiesBuilder extends VCloudPropertiesBuilder {
+public class TerremarkVCloudPropertiesBuilder extends VCloudExpressPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();

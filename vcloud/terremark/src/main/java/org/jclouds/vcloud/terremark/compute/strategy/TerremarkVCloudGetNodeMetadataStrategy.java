@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.installNewCredentials;
 
 import java.net.URI;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Resource;
@@ -30,21 +32,29 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
+import org.jclouds.vcloud.VCloudExpressClient;
+import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.compute.domain.VCloudLocation;
-import org.jclouds.vcloud.compute.functions.VCloudGetNodeMetadata;
-import org.jclouds.vcloud.compute.strategy.VCloudGetNodeMetadataStrategy;
+import org.jclouds.vcloud.compute.functions.FindLocationForResource;
+import org.jclouds.vcloud.compute.functions.GetExtra;
+import org.jclouds.vcloud.compute.strategy.VCloudExpressGetNodeMetadataStrategy;
+import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.terremark.compute.domain.KeyPairCredentials;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
+
+import com.google.common.base.Supplier;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudGetNodeMetadataStrategy {
+public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudExpressGetNodeMetadataStrategy {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -52,15 +62,17 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudGetNodeMetadat
    private final ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap;
 
    @Inject
-   protected TerremarkVCloudGetNodeMetadataStrategy(VCloudGetNodeMetadata getNodeMetadata,
-            ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
-      super(getNodeMetadata);
+   protected TerremarkVCloudGetNodeMetadataStrategy(VCloudExpressClient client,
+            VCloudExpressComputeClient computeClient, Map<VAppStatus, NodeState> vAppStatusToNodeState,
+            GetExtra getExtra, FindLocationForResource findLocationForResourceInVDC,
+            Supplier<Set<? extends Image>> images, ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
+      super(client, computeClient, vAppStatusToNodeState, getExtra, findLocationForResourceInVDC, images);
       this.credentialsMap = credentialsMap;
    }
 
    @Override
    public NodeMetadata execute(String id) {
-      NodeMetadata node = getNodeMetadata.execute(checkNotNull(id, "node.id"));
+      NodeMetadata node = super.execute(checkNotNull(id, "node.id"));
       if (node == null)
          return null;
       if (node.getTag() != null) {

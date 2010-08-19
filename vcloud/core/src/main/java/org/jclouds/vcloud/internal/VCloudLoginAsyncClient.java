@@ -28,7 +28,7 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.VCloudToken;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.endpoints.Org;
@@ -61,6 +61,6 @@ public interface VCloudLoginAsyncClient {
     */
    @POST
    @ResponseParser(ParseLoginResponseFromHeaders.class)
-   @Consumes(VCloudMediaType.ORGLIST_XML)
+   @Consumes(VCloudExpressMediaType.ORGLIST_XML)
    ListenableFuture<VCloudSession> login();
 }

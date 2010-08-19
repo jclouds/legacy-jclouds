@@ -19,8 +19,8 @@
 
 package org.jclouds.vcloud.hostingdotcom;
 
-import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
-import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.CATALOG_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.VAPP_XML;
 
 import java.net.URI;
 
@@ -40,7 +40,7 @@ import org.jclouds.rest.annotations.ParamValidators;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.vcloud.VCloudAsyncClient;
+import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
@@ -60,7 +60,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(SetVCloudTokenCookie.class)
-public interface HostingDotComVCloudAsyncClient extends VCloudAsyncClient {
+public interface HostingDotComVCloudAsyncClient extends VCloudExpressAsyncClient {
 
    @GET
    @Endpoint(org.jclouds.vcloud.endpoints.Catalog.class)

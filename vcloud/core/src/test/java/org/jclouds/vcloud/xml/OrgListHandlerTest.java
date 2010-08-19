@@ -26,7 +26,7 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.testng.annotations.Test;
@@ -46,6 +46,6 @@ public class OrgListHandlerTest extends BaseHandlerTest {
 
       Map<String, NamedResource> result = factory.create(injector.getInstance(OrgListHandler.class)).parse(is);
       assertEquals(result, ImmutableMap.of("adrian@jclouds.org", new NamedResourceImpl("adrian@jclouds.org",
-            VCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
+            VCloudExpressMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
    }
 }

@@ -23,8 +23,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudExpressAsyncClient;
+import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.TerremarkECloudAsyncClient;
@@ -48,13 +48,13 @@ public class TerremarkECloudRestClientModule extends
 
    @Provides
    @Singleton
-   protected VCloudAsyncClient provideVCloudAsyncClient(TerremarkECloudAsyncClient in) {
+   protected VCloudExpressAsyncClient provideVCloudAsyncClient(TerremarkECloudAsyncClient in) {
       return in;
    }
 
    @Provides
    @Singleton
-   protected VCloudClient provideVCloudClient(TerremarkECloudClient in) {
+   protected VCloudExpressClient provideVCloudClient(TerremarkECloudClient in) {
       return in;
    }
 

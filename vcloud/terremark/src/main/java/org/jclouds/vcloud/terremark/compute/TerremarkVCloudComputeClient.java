@@ -38,7 +38,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
-import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
+import org.jclouds.vcloud.compute.BaseVCloudExpressComputeClient;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 import org.jclouds.vcloud.domain.TasksList;
@@ -61,7 +61,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Singleton
-public class TerremarkVCloudComputeClient extends BaseVCloudComputeClient {
+public class TerremarkVCloudComputeClient extends BaseVCloudExpressComputeClient {
 
    private final TerremarkVCloudExpressClient client;
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider;

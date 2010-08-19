@@ -43,13 +43,13 @@ public class AllCatalogItemsInOrganization implements Function<Organization, Ite
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
 
-   private final AllCatalogsInOrganization allCatalogsInOrganization;
+   private final Function<Organization, Iterable<? extends Catalog>> allCatalogsInOrganization;
 
-   private final AllCatalogItemsInCatalog allCatalogItemsInCatalog;
+   private final Function<Catalog, Iterable<? extends CatalogItem>> allCatalogItemsInCatalog;
 
    @Inject
-   AllCatalogItemsInOrganization(AllCatalogsInOrganization allCatalogsInOrganization,
-            AllCatalogItemsInCatalog allCatalogItemsInCatalog) {
+   AllCatalogItemsInOrganization(Function<Organization, Iterable<? extends Catalog>> allCatalogsInOrganization,
+            Function<Catalog, Iterable<? extends CatalogItem>> allCatalogItemsInCatalog) {
       this.allCatalogsInOrganization = allCatalogsInOrganization;
       this.allCatalogItemsInCatalog = allCatalogItemsInCatalog;
    }

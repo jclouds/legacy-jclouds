@@ -19,15 +19,15 @@
 
 package org.jclouds.vcloud;
 
-import static org.jclouds.vcloud.VCloudMediaType.CATALOGITEM_XML;
-import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
-import static org.jclouds.vcloud.VCloudMediaType.NETWORK_XML;
-import static org.jclouds.vcloud.VCloudMediaType.ORG_XML;
-import static org.jclouds.vcloud.VCloudMediaType.TASKSLIST_XML;
-import static org.jclouds.vcloud.VCloudMediaType.TASK_XML;
-import static org.jclouds.vcloud.VCloudMediaType.VAPPTEMPLATE_XML;
-import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
-import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.CATALOGITEM_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.CATALOG_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.NETWORK_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.ORG_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.TASKSLIST_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.TASK_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.VAPPTEMPLATE_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.VAPP_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.VDC_XML;
 
 import java.net.URI;
 
@@ -95,7 +95,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(SetVCloudTokenCookie.class)
 public interface VCloudAsyncClient {
    /**
-    * @see VCloudClient#getDefaultOrganization
+    * @see VCloudExpressClient#getDefaultOrganization
     */
    @Deprecated
    @GET
@@ -105,7 +105,7 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends Organization> getDefaultOrganization();
 
    /**
-    * @see VCloudClient#getOrganization
+    * @see VCloudExpressClient#getOrganization
     */
    @GET
    @XMLResponseParser(OrgHandler.class)
@@ -114,7 +114,7 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends Organization> getOrganization(@EndpointParam URI orgId);
 
    /**
-    * @see VCloudClient#getOrganizationNamed
+    * @see VCloudExpressClient#getOrganizationNamed
     */
    @GET
    @XMLResponseParser(OrgHandler.class)
@@ -124,7 +124,7 @@ public interface VCloudAsyncClient {
          @Nullable @EndpointParam(parser = OrgNameToEndpoint.class) String orgName);
 
    /**
-    * @see VCloudClient#getDefaultCatalog
+    * @see VCloudExpressClient#getDefaultCatalog
     */
    @Deprecated
    @GET
@@ -134,7 +134,7 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends Catalog> getDefaultCatalog();
 
    /**
-    * @see VCloudClient#getCatalog
+    * @see VCloudExpressClient#getCatalog
     */
    @GET
    @XMLResponseParser(CatalogHandler.class)
@@ -143,7 +143,7 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends Catalog> getCatalog(@EndpointParam URI catalogId);
 
    /**
-    * @see VCloudClient#findCatalogInOrgNamed
+    * @see VCloudExpressClient#findCatalogInOrgNamed
     */
    @GET
    @XMLResponseParser(CatalogHandler.class)
@@ -154,7 +154,7 @@ public interface VCloudAsyncClient {
          @Nullable @EndpointParam(parser = OrgNameAndCatalogNameToEndpoint.class) String catalogName);
 
    /**
-    * @see VCloudClient#getVAppTemplate
+    * @see VCloudExpressClient#getVAppTemplate
     */
    @GET
    @Consumes(VAPPTEMPLATE_XML)
@@ -163,7 +163,7 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends VAppTemplate> getVAppTemplate(@EndpointParam URI vAppTemplate);
 
    /**
-    * @see VCloudClient#findVAppTemplateInOrgCatalogNameds
+    * @see VCloudExpressClient#findVAppTemplateInOrgCatalogNameds
     */
    @GET
    @Consumes(VAPPTEMPLATE_XML)
@@ -175,7 +175,7 @@ public interface VCloudAsyncClient {
          @EndpointParam(parser = OrgNameCatalogNameVAppTemplateNameToEndpoint.class) String itemName);
 
    /**
-    * @see VCloudClient#getCatalogItem
+    * @see VCloudExpressClient#getCatalogItem
     */
    @GET
    @Consumes(CATALOGITEM_XML)
@@ -184,7 +184,7 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends CatalogItem> getCatalogItem(@EndpointParam URI catalogItem);
 
    /**
-    * @see VCloudClient#getCatalogItemInOrg
+    * @see VCloudExpressClient#getCatalogItemInOrg
     */
    @GET
    @Consumes(CATALOGITEM_XML)
@@ -196,7 +196,7 @@ public interface VCloudAsyncClient {
          @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String itemName);
 
    /**
-    * @see VCloudClient#findNetworkInOrgVDCNamed
+    * @see VCloudExpressClient#findNetworkInOrgVDCNamed
     */
    @GET
    @Consumes(NETWORK_XML)
@@ -208,7 +208,7 @@ public interface VCloudAsyncClient {
          @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String networkName);
 
    /**
-    * @see VCloudClient#getNetwork
+    * @see VCloudExpressClient#getNetwork
     */
    @GET
    @Consumes(NETWORK_XML)
@@ -217,7 +217,7 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends Network> getNetwork(@EndpointParam URI network);
 
    /**
-    * @see VCloudClient#getDefaultVDC
+    * @see VCloudExpressClient#getDefaultVDC
     */
    @Deprecated
    @GET
@@ -227,7 +227,7 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends VDC> getDefaultVDC();
 
    /**
-    * @see VCloudClient#getVDC(URI)
+    * @see VCloudExpressClient#getVDC(URI)
     */
    @GET
    @XMLResponseParser(VDCHandler.class)
@@ -236,7 +236,7 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends VDC> getVDC(@EndpointParam URI vdc);
 
    /**
-    * @see VCloudClient#findVDCInOrgNamed(String, String)
+    * @see VCloudExpressClient#findVDCInOrgNamed(String, String)
     */
    @GET
    @XMLResponseParser(VDCHandler.class)
@@ -247,7 +247,7 @@ public interface VCloudAsyncClient {
          @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String vdcName);
 
    /**
-    * @see VCloudClient#getTasksList
+    * @see VCloudExpressClient#getTasksList
     */
    @GET
    @Consumes(TASKSLIST_XML)
@@ -256,7 +256,7 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends TasksList> getTasksList(@EndpointParam URI tasksListId);
 
    /**
-    * @see VCloudClient#getTasksListInOrg
+    * @see VCloudExpressClient#getTasksListInOrg
     */
    @GET
    @Consumes(TASKSLIST_XML)
@@ -267,7 +267,7 @@ public interface VCloudAsyncClient {
          @Nullable @EndpointParam(parser = OrgNameAndTasksListNameToEndpoint.class) String tasksListName);
 
    /**
-    * @see VCloudClient#getDefaultTasksList
+    * @see VCloudExpressClient#getDefaultTasksList
     */
    @Deprecated
    @GET
@@ -277,7 +277,7 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends TasksList> getDefaultTasksList();
 
    /**
-    * @see VCloudClient#deployVApp
+    * @see VCloudExpressClient#deployVApp
     */
    @POST
    @Consumes(TASK_XML)
@@ -286,14 +286,14 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends Task> deployVApp(@EndpointParam URI vAppId);
 
    /**
-    * @see VCloudClient#deleteVApp
+    * @see VCloudExpressClient#deleteVApp
     */
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteVApp(@EndpointParam URI vAppId);
 
    /**
-    * @see VCloudClient#undeployVApp
+    * @see VCloudExpressClient#undeployVApp
     */
    @POST
    @Consumes(TASK_XML)
@@ -302,7 +302,7 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends Task> undeployVApp(@EndpointParam URI vAppId);
 
    /**
-    * @see VCloudClient#powerOnVApp
+    * @see VCloudExpressClient#powerOnVApp
     */
    @POST
    @Consumes(TASK_XML)
@@ -311,7 +311,7 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends Task> powerOnVApp(@EndpointParam URI vAppId);
 
    /**
-    * @see VCloudClient#powerOffVApp
+    * @see VCloudExpressClient#powerOffVApp
     */
    @POST
    @Consumes(TASK_XML)
@@ -320,14 +320,14 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends Task> powerOffVApp(@EndpointParam URI vAppId);
 
    /**
-    * @see VCloudClient#shutdownVApp
+    * @see VCloudExpressClient#shutdownVApp
     */
    @POST
    @Path("/power/action/shutdown")
    ListenableFuture<Void> shutdownVApp(@EndpointParam URI vAppId);
 
    /**
-    * @see VCloudClient#resetVApp
+    * @see VCloudExpressClient#resetVApp
     */
    @POST
    @Consumes(TASK_XML)
@@ -336,7 +336,7 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends Task> resetVApp(@EndpointParam URI vAppId);
 
    /**
-    * @see VCloudClient#suspendVApp
+    * @see VCloudExpressClient#suspendVApp
     */
    @POST
    @Consumes(TASK_XML)
@@ -345,7 +345,7 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends Task> suspendVApp(@EndpointParam URI vAppId);
 
    /**
-    * @see VCloudClient#getTask
+    * @see VCloudExpressClient#getTask
     */
    @GET
    @Consumes(TASK_XML)
@@ -354,14 +354,14 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends Task> getTask(@EndpointParam URI taskId);
 
    /**
-    * @see VCloudClient#cancelTask
+    * @see VCloudExpressClient#cancelTask
     */
    @POST
    @Path("/action/cancel")
    ListenableFuture<Void> cancelTask(@EndpointParam URI taskId);
 
    /**
-    * @see VCloudClient#findVAppInOrgVDCNamed
+    * @see VCloudExpressClient#findVAppInOrgVDCNamed
     */
    @GET
    @Consumes(VAPP_XML)
@@ -373,7 +373,7 @@ public interface VCloudAsyncClient {
          @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String vAppName);
 
    /**
-    * @see VCloudClient#getVApp
+    * @see VCloudExpressClient#getVApp
     */
    @GET
    @Consumes(VAPP_XML)
@@ -382,7 +382,7 @@ public interface VCloudAsyncClient {
    ListenableFuture<? extends VApp> getVApp(@EndpointParam URI vApp);
 
    /**
-    * @see VCloudClient#instantiateVAppTemplateInVDC
+    * @see VCloudExpressClient#instantiateVAppTemplateInVDC
     */
    @POST
    @Path("action/instantiateVAppTemplate")
@@ -396,7 +396,7 @@ public interface VCloudAsyncClient {
          InstantiateVAppTemplateOptions... options);
 
    /**
-    * @see VCloudClient#cloneVAppInVDC
+    * @see VCloudExpressClient#cloneVAppInVDC
     */
    @POST
    @Path("/action/cloneVApp")

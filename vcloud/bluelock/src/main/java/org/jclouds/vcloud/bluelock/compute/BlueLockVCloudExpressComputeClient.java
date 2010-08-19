@@ -28,8 +28,8 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
-import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
+import org.jclouds.vcloud.VCloudExpressClient;
+import org.jclouds.vcloud.compute.BaseVCloudExpressComputeClient;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.VAppTemplate;
@@ -40,12 +40,12 @@ import com.google.common.base.Predicate;
  * @author Adrian Cole
  */
 @Singleton
-public class BlueLockVCloudExpressComputeClient extends BaseVCloudComputeClient {
+public class BlueLockVCloudExpressComputeClient extends BaseVCloudExpressComputeClient {
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider;
 
    @Inject
    protected BlueLockVCloudExpressComputeClient(PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
-         VCloudClient client, Predicate<URI> successTester, Map<VAppStatus, NodeState> vAppStatusToNodeState) {
+         VCloudExpressClient client, Predicate<URI> successTester, Map<VAppStatus, NodeState> vAppStatusToNodeState) {
       super(client, successTester, vAppStatusToNodeState);
       this.credentialsProvider = credentialsProvider;
    }

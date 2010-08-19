@@ -26,8 +26,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
+import org.jclouds.vcloud.VCloudExpressClient;
+import org.jclouds.vcloud.compute.BaseVCloudExpressComputeClient;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.VAppTemplate;
@@ -40,10 +40,10 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  */
 @Singleton
-public class HostingDotComVCloudComputeClient extends BaseVCloudComputeClient {
+public class HostingDotComVCloudComputeClient extends BaseVCloudExpressComputeClient {
 
    @Inject
-   protected HostingDotComVCloudComputeClient(VCloudClient client, Predicate<URI> successTester,
+   protected HostingDotComVCloudComputeClient(VCloudExpressClient client, Predicate<URI> successTester,
          Map<VAppStatus, NodeState> vAppStatusToNodeState) {
       super(client, successTester, vAppStatusToNodeState);
    }

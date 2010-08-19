@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.compute.functions;
+package org.jclouds.vcloud.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseTagFromName;
@@ -37,11 +37,13 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.domain.os.CIMOperatingSystem;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
-import org.jclouds.vcloud.compute.VCloudComputeClient;
+import org.jclouds.vcloud.VCloudExpressClient;
+import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
+import org.jclouds.vcloud.compute.functions.FindLocationForResource;
+import org.jclouds.vcloud.compute.functions.GetExtra;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 
@@ -49,26 +51,23 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 
 /**
- * Configures the {@link VCloudComputeServiceContext}; requires {@link BaseVCloudComputeClient}
- * bound.
- * 
  * @author Adrian Cole
  */
 @Singleton
-public class VCloudGetNodeMetadata {
+public class VCloudExpressGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
-   protected final VCloudClient client;
-   protected final VCloudComputeClient computeClient;
+   protected final VCloudExpressClient client;
+   protected final VCloudExpressComputeClient computeClient;
    protected final Supplier<Set<? extends Image>> images;
    protected final FindLocationForResource findLocationForResourceInVDC;
    protected final GetExtra getExtra;
    protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
 
    @Inject
-   VCloudGetNodeMetadata(VCloudClient client, VCloudComputeClient computeClient,
+   protected VCloudExpressGetNodeMetadataStrategy(VCloudExpressClient client, VCloudExpressComputeClient computeClient,
             Map<VAppStatus, NodeState> vAppStatusToNodeState, GetExtra getExtra,
             FindLocationForResource findLocationForResourceInVDC, Supplier<Set<? extends Image>> images) {
       this.client = checkNotNull(client, "client");

@@ -25,10 +25,10 @@ import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.vcloud.bluelock.compute.BlueLockVCloudExpressComputeClient;
 import org.jclouds.vcloud.bluelock.compute.config.suppliers.ParseSizeFromImageSupplier;
-import org.jclouds.vcloud.bluelock.compute.functions.BlueLockVCloudExpressImageForVAppTemplate;
+import org.jclouds.vcloud.bluelock.compute.functions.BlueLockVCloudImageForVAppTemplate;
 import org.jclouds.vcloud.bluelock.compute.strategy.DefaultLoginCredentialsFromBlueLockFAQ;
-import org.jclouds.vcloud.compute.VCloudComputeClient;
-import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
+import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
+import org.jclouds.vcloud.compute.config.VCloudExpressComputeServiceContextModule;
 import org.jclouds.vcloud.compute.functions.ImageForVAppTemplate;
 
 import com.google.common.base.Supplier;
@@ -40,13 +40,13 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-public class BlueLockVCloudExpressComputeServiceContextModule extends VCloudComputeServiceContextModule {
+public class BlueLockVCloudExpressComputeServiceContextModule extends VCloudExpressComputeServiceContextModule {
 
    @Override
    protected void configure() {
       super.configure();
-      bind(ImageForVAppTemplate.class).to(BlueLockVCloudExpressImageForVAppTemplate.class);
-      bind(VCloudComputeClient.class).to(BlueLockVCloudExpressComputeClient.class);
+      bind(ImageForVAppTemplate.class).to(BlueLockVCloudImageForVAppTemplate.class);
+      bind(VCloudExpressComputeClient.class).to(BlueLockVCloudExpressComputeClient.class);
       bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(DefaultLoginCredentialsFromBlueLockFAQ.class);
    }
 

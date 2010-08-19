@@ -42,13 +42,13 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
-import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.compute.VCloudComputeClient;
-import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
-import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
+import org.jclouds.vcloud.VCloudExpressAsyncClient;
+import org.jclouds.vcloud.VCloudExpressClient;
+import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
+import org.jclouds.vcloud.compute.config.VCloudExpressComputeServiceContextModule;
+import org.jclouds.vcloud.compute.strategy.VCloudExpressDestroyNodeStrategy;
+import org.jclouds.vcloud.compute.strategy.VCloudExpressListNodesStrategy;
+import org.jclouds.vcloud.compute.strategy.VCloudExpressRebootNodeStrategy;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeService;
 import org.jclouds.vcloud.terremark.compute.domain.KeyPairCredentials;
@@ -74,7 +74,7 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeServiceContextModule {
+public class TerremarkVCloudComputeServiceContextModule extends VCloudExpressComputeServiceContextModule {
 
    @Provides
    @Singleton
@@ -94,15 +94,15 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       // NOTE
       bind(AddNodeWithTagStrategy.class).to(TerremarkVCloudAddNodeWithTagStrategy.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
-      }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudAsyncClient>>() {
+      }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudExpressClient, VCloudExpressAsyncClient>>() {
       }).in(Scopes.SINGLETON);
       // NOTE
       bind(RunNodesAndAddToSetStrategy.class).to(TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy.class);
-      bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
+      bind(ListNodesStrategy.class).to(VCloudExpressListNodesStrategy.class);
       // NOTE
       bind(GetNodeMetadataStrategy.class).to(TerremarkVCloudGetNodeMetadataStrategy.class);
-      bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
-      bind(DestroyNodeStrategy.class).to(VCloudDestroyNodeStrategy.class);
+      bind(RebootNodeStrategy.class).to(VCloudExpressRebootNodeStrategy.class);
+      bind(DestroyNodeStrategy.class).to(VCloudExpressDestroyNodeStrategy.class);
       bindLoadBalancer();
       // MORE specifics...
       bind(new TypeLiteral<Function<NodeMetadata, OrgAndName>>() {
@@ -110,7 +110,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       });
       bind(TemplateOptions.class).to(TerremarkVCloudTemplateOptions.class);
       bind(ComputeService.class).to(TerremarkVCloudComputeService.class);
-      bind(VCloudComputeClient.class).to(TerremarkVCloudComputeClient.class);
+      bind(VCloudExpressComputeClient.class).to(TerremarkVCloudComputeClient.class);
       bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(
                ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
       bind(SecureRandom.class).toInstance(new SecureRandom());

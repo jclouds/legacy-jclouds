@@ -41,13 +41,14 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_API_VERSION, "0.8");
-      properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "0.8");
+      properties.setProperty(PROPERTY_API_VERSION, "1.0");
+      properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "1.0");
       properties.setProperty(PROPERTY_SESSION_INTERVAL, 8 * 60 + "");
       properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA,
                "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
       properties.setProperty("jclouds.dns_name_length_min", "1");
       properties.setProperty("jclouds.dns_name_length_max", "80");
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.BRIDGED);
       properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 180l * 1000l + "");
       return properties;
    }
@@ -62,29 +63,20 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
                   + properties.getProperty(PROPERTY_VCLOUD_VERSION_SCHEMA));
    }
 
-   protected void setFenceMode() {
-      if (properties.getProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) == null) {
-         if (properties.getProperty(PROPERTY_VCLOUD_VERSION_SCHEMA).startsWith("0.8"))
-            properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, "allowInOut");
-         else
-            properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.BRIDGED);
-      }
-   }
 
    public VCloudPropertiesBuilder withApiVersion(String version) {
-      properties.setProperty(PROPERTY_API_VERSION, "0.8");
+      properties.setProperty(PROPERTY_API_VERSION, "1.0");
       return this;
    }
 
    public VCloudPropertiesBuilder withSchemaVersion(String version) {
-      properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "0.8");
+      properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "1.0");
       return this;
    }
 
    @Override
    public Properties build() {
       setNs();
-      setFenceMode();
       return super.build();
    }
 }

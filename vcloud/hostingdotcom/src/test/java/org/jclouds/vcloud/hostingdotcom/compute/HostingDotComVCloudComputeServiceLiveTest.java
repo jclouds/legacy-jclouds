@@ -23,7 +23,7 @@ import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
+import org.jclouds.vcloud.compute.VCloudExpressComputeServiceLiveTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "compute.HostingDotComVCloudComputeServiceLiveTest")
-public class HostingDotComVCloudComputeServiceLiveTest extends VCloudComputeServiceLiveTest {
+public class HostingDotComVCloudComputeServiceLiveTest extends VCloudExpressComputeServiceLiveTest {
    @BeforeClass
    @Override
    public void setServiceDefaults() {

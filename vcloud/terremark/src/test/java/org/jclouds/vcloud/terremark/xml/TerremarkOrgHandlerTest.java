@@ -20,8 +20,8 @@
 package org.jclouds.vcloud.terremark.xml;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
-import static org.jclouds.vcloud.VCloudMediaType.TASKSLIST_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.CATALOG_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.TASKSLIST_XML;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
@@ -31,7 +31,7 @@ import java.util.Properties;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressMediaType;
 import org.jclouds.vcloud.terremark.TerremarkVCloudPropertiesBuilder;
@@ -80,7 +80,7 @@ public class TerremarkOrgHandlerTest extends BaseHandlerTest {
                   .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32/catalog"))));
 
       assertEquals(result.getVDCs(), ImmutableMap.of("Miami Environment 1", new NamedResourceImpl(
-            "Miami Environment 1", VCloudMediaType.VDC_XML, URI
+            "Miami Environment 1", VCloudExpressMediaType.VDC_XML, URI
                   .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"))));
       assertEquals(result.getTasksLists(), ImmutableMap.of("Miami Environment 1 Tasks List", new NamedResourceImpl(
             "Miami Environment 1 Tasks List", TASKSLIST_XML, URI

@@ -22,8 +22,8 @@ package org.jclouds.vcloud.hostingdotcom.compute.config;
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
 
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.vcloud.compute.VCloudComputeClient;
-import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
+import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
+import org.jclouds.vcloud.compute.config.VCloudExpressComputeServiceContextModule;
 import org.jclouds.vcloud.hostingdotcom.compute.HostingDotComVCloudComputeClient;
 
 import com.google.inject.Injector;
@@ -34,12 +34,12 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-public class HostingDotComVCloudComputeServiceContextModule extends VCloudComputeServiceContextModule {
+public class HostingDotComVCloudComputeServiceContextModule extends VCloudExpressComputeServiceContextModule {
 
    @Override
    protected void configure() {
       super.configure();
-      bind(VCloudComputeClient.class).to(HostingDotComVCloudComputeClient.class);
+      bind(VCloudExpressComputeClient.class).to(HostingDotComVCloudComputeClient.class);
    }
 
    @Override

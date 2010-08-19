@@ -31,10 +31,10 @@ import org.jclouds.vcloud.compute.functions.ImageForVAppTemplate;
  * @author Adrian Cole
  */
 @Singleton
-public class BlueLockVCloudExpressImageForVAppTemplate extends ImageForVAppTemplate {
+public class BlueLockVCloudImageForVAppTemplate extends ImageForVAppTemplate {
 
    @Inject
-   protected BlueLockVCloudExpressImageForVAppTemplate(FindLocationForResource findLocationForResource,
+   protected BlueLockVCloudImageForVAppTemplate(FindLocationForResource findLocationForResource,
             PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider) {
       super(findLocationForResource, credentialsProvider);
    }

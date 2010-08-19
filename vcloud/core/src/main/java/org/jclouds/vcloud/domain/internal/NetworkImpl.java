@@ -22,7 +22,7 @@ package org.jclouds.vcloud.domain.internal;
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.FirewallRule;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.NatRule;
@@ -53,7 +53,7 @@ public class NetworkImpl extends NamedResourceImpl implements Network {
 
    public NetworkImpl(String name, URI id, String description, Set<String> dnsServers, String gateway,
          String netmask, Set<String> fenceModes, Boolean dhcp, Set<NatRule> natRules, Set<FirewallRule> firewallRules) {
-      super(name, VCloudMediaType.NETWORK_XML, id);
+      super(name, VCloudExpressMediaType.NETWORK_XML, id);
       this.description = description;
       this.dnsServers.addAll(dnsServers);
       this.gateway = gateway;

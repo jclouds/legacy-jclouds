@@ -32,7 +32,7 @@ import java.util.List;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.VApp;
@@ -91,7 +91,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
       assertEquals(result.getOperatingSystemDescription(), "Red Hat Enterprise Linux 5 (64-bit)");
 
       assertEquals(result.getId(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/16238"));
-      assertEquals(result.getVDC(), new NamedResourceImpl(null, VCloudMediaType.VDC_XML, URI
+      assertEquals(result.getVDC(), new NamedResourceImpl(null, VCloudExpressMediaType.VDC_XML, URI
             .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
 
       assertEquals(result.getSystem(), new VirtualSystem(0, "Virtual Hardware Family", "centos-53", "vmx-07"));
@@ -129,7 +129,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
       assertEquals(vApp.getOperatingSystemDescription(), "Ubuntu Linux (32-bit)");
 
       assertEquals(vApp.getId(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/15639"));
-      assertEquals(vApp.getVDC(), new NamedResourceImpl(null, VCloudMediaType.VDC_XML, URI
+      assertEquals(vApp.getVDC(), new NamedResourceImpl(null, VCloudExpressMediaType.VDC_XML, URI
             .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
 
       assertEquals(vApp.getSystem(), new VirtualSystem(0, "Virtual Hardware Family", "eduardo", "vmx-07"));

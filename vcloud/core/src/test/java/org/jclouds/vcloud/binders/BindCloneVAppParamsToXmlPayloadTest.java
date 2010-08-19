@@ -54,8 +54,7 @@ public class BindCloneVAppParamsToXmlPayloadTest {
       @Override
       protected void configure() {
          Properties props = new Properties();
-         Names.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(props).build(),
-                  "properties"));
+         Names.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(props).build(), "properties"));
       }
    });
 
@@ -70,19 +69,17 @@ public class BindCloneVAppParamsToXmlPayloadTest {
       request.setPayload(expected);
       replay(request);
 
-      BindCloneVAppParamsToXmlPayload binder = injector
-               .getInstance(BindCloneVAppParamsToXmlPayload.class);
+      BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("newName", "new-linux-server");
-      map.put("vApp", "https://vcloud.safesecureweb.com/api/v0.8/vapp/201");
+      map.put("vApp", "https://vcenterprise.bluelock.com/api/v1.0/vapp/201");
       binder.bindToRequest(request, map);
       verify(request);
    }
 
    public void testDefault() throws IOException {
-      String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/cloneVApp-default.xml"));
+      String expected = Utils.toStringAndClose(getClass().getResourceAsStream("/cloneVApp-default.xml"));
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
@@ -90,12 +87,11 @@ public class BindCloneVAppParamsToXmlPayloadTest {
       request.setPayload(expected);
       replay(request);
 
-      BindCloneVAppParamsToXmlPayload binder = injector
-               .getInstance(BindCloneVAppParamsToXmlPayload.class);
+      BindCloneVAppParamsToXmlPayload binder = injector.getInstance(BindCloneVAppParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("newName", "my-vapp");
-      map.put("vApp", "https://vcloud.safesecureweb.com/api/v0.8/vapp/4181");
+      map.put("vApp", "https://vcenterprise.bluelock.com/api/v1.0/vapp/4181");
       binder.bindToRequest(request, map);
       verify(request);
    }

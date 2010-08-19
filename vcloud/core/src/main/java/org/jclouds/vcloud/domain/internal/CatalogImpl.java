@@ -25,7 +25,7 @@ import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.NamedResource;
 
@@ -105,7 +105,7 @@ public class CatalogImpl extends LinkedHashMap<String, NamedResource> implements
 
    @Override
    public String getType() {
-      return VCloudMediaType.CATALOG_XML;
+      return VCloudExpressMediaType.CATALOG_XML;
    }
 
    @Override

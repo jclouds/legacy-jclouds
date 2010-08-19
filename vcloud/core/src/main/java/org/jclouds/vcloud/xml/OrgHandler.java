@@ -19,9 +19,9 @@
 
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
-import static org.jclouds.vcloud.VCloudMediaType.TASKSLIST_XML;
-import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.CATALOG_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.TASKSLIST_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.VDC_XML;
 import static org.jclouds.vcloud.util.Utils.newNamedResource;
 import static org.jclouds.vcloud.util.Utils.putNamedResource;
 

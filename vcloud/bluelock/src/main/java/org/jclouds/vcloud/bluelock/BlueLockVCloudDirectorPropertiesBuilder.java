@@ -19,9 +19,7 @@
 
 package org.jclouds.vcloud.bluelock;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_VERSION_SCHEMA;
 
 import java.util.Properties;
 
@@ -36,8 +34,6 @@ public class BlueLockVCloudDirectorPropertiesBuilder extends VCloudPropertiesBui
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_API_VERSION, "1.0");
-      properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "1.0");
       properties.setProperty(PROPERTY_ENDPOINT, "https://vcenterprise.bluelock.com/api");
       return properties;
    }

@@ -24,7 +24,7 @@ import java.util.Properties;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.vcloud.VCloudContextBuilder;
+import org.jclouds.vcloud.VCloudExpressContextBuilder;
 import org.jclouds.vcloud.hostingdotcom.compute.config.HostingDotComVCloudComputeServiceContextModule;
 import org.jclouds.vcloud.hostingdotcom.config.HostingDotComVCloudRestClientModule;
 
@@ -44,7 +44,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @see HostingDotComVCloudComputeServiceContext
  */
-public class HostingDotComVCloudContextBuilder extends VCloudContextBuilder {
+public class HostingDotComVCloudContextBuilder extends VCloudExpressContextBuilder {
 
    public HostingDotComVCloudContextBuilder(Properties props) {
       super(props);

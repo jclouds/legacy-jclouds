@@ -19,18 +19,7 @@
 
 package org.jclouds.vcloud.compute.config;
 
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Singleton;
-
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.LoadBalancerService;
-import org.jclouds.compute.config.BaseComputeServiceContextModule;
-import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
-import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
@@ -39,10 +28,8 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
-import org.jclouds.domain.Location;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
-import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
 import org.jclouds.vcloud.compute.strategy.VCloudAddNodeWithTagStrategy;
@@ -50,19 +37,9 @@ import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudGetNodeMetadataStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
-import org.jclouds.vcloud.compute.suppliers.OrgAndVDCToLocationSupplier;
-import org.jclouds.vcloud.compute.suppliers.StaticSizeSupplier;
-import org.jclouds.vcloud.compute.suppliers.VCloudImageSupplier;
-import org.jclouds.vcloud.domain.VAppStatus;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
-import com.google.inject.util.Providers;
 
 /**
  * Configures the {@link VCloudComputeServiceContext}; requires {@link BaseVCloudComputeClient}
@@ -70,55 +47,22 @@ import com.google.inject.util.Providers;
  * 
  * @author Adrian Cole
  */
-public class VCloudComputeServiceContextModule extends BaseComputeServiceContextModule {
-
-   @VisibleForTesting
-   static final Map<VAppStatus, NodeState> vAppStatusToNodeState = ImmutableMap.<VAppStatus, NodeState> builder().put(
-            VAppStatus.OFF, NodeState.SUSPENDED).put(VAppStatus.ON, NodeState.RUNNING).put(VAppStatus.RESOLVED,
-            NodeState.PENDING).put(VAppStatus.SUSPENDED, NodeState.SUSPENDED).put(VAppStatus.UNRESOLVED,
-            NodeState.PENDING).build();
-
-   @Singleton
-   @Provides
-   Map<VAppStatus, NodeState> provideVAppStatusToNodeState() {
-      return vAppStatusToNodeState;
-   }
+public class VCloudComputeServiceContextModule extends CommonVCloudComputeServiceContextModule {
 
    @Override
    protected void configure() {
-      install(new ComputeServiceTimeoutsModule());
-      bind(AddNodeWithTagStrategy.class).to(VCloudAddNodeWithTagStrategy.class);
+      super.configure();
       bind(new TypeLiteral<ComputeServiceContext>() {
-      }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudAsyncClient>>() {
+      }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudClient>>() {
       }).in(Scopes.SINGLETON);
-      bind(new TypeLiteral<RestContext<VCloudClient, VCloudAsyncClient>>() {
-      }).to(new TypeLiteral<RestContextImpl<VCloudClient, VCloudAsyncClient>>() {
+      bind(new TypeLiteral<RestContext<VCloudClient, VCloudClient>>() {
+      }).to(new TypeLiteral<RestContextImpl<VCloudClient, VCloudClient>>() {
       }).in(Scopes.SINGLETON);
+      bind(AddNodeWithTagStrategy.class).to(VCloudAddNodeWithTagStrategy.class);
+      bind(DestroyNodeStrategy.class).to(VCloudDestroyNodeStrategy.class);
       bind(RunNodesAndAddToSetStrategy.class).to(EncodeTagIntoNameRunNodesAndAddToSetStrategy.class);
       bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
       bind(GetNodeMetadataStrategy.class).to(VCloudGetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
-      bind(DestroyNodeStrategy.class).to(VCloudDestroyNodeStrategy.class);
-      bindLoadBalancer();
    }
-
-   protected void bindLoadBalancer() {
-      bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
-   }
-
-   @Override
-   protected Supplier<Set<? extends Image>> getSourceImageSupplier(Injector injector) {
-      return injector.getInstance(VCloudImageSupplier.class);
-   }
-
-   @Override
-   protected Supplier<Set<? extends Location>> getSourceLocationSupplier(Injector injector) {
-      return injector.getInstance(OrgAndVDCToLocationSupplier.class);
-   }
-
-   @Override
-   protected Supplier<Set<? extends Size>> getSourceSizeSupplier(Injector injector) {
-      return injector.getInstance(StaticSizeSupplier.class);
-   }
-
 }

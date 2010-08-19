@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.Capacity;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Quota;
@@ -198,7 +198,7 @@ public class VDCImpl implements VDC {
 
    @Override
    public String getType() {
-      return VCloudMediaType.VDC_XML;
+      return VCloudExpressMediaType.VDC_XML;
    }
 
    @Override

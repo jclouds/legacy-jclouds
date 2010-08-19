@@ -53,6 +53,7 @@ public class VCloudClientLiveTest {
    protected VCloudClient connection;
    protected String identity;
    protected RestContext<VCloudClient, VCloudAsyncClient> context;
+   private String credential;
 
    @Test
    public void testOrganization() throws Exception {
@@ -156,16 +157,17 @@ public class VCloudClientLiveTest {
       }
    }
 
+   protected void setupCredentials() {
+      identity = checkNotNull(System.getProperty("vcloud.identity"), "vcloud.identity");
+      credential = checkNotNull(System.getProperty("vcloud.credential"), "vcloud.credential");
+   }
+
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"), "jclouds.test.endpoint");
-      identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
-
+      setupCredentials();
       Properties props = new Properties();
-      props.setProperty("vcloud.endpoint", endpoint);
       context = new RestContextFactory().createContext("vcloud", identity, credential, ImmutableSet
-            .<Module> of(new Log4JLoggingModule()), props);
+               .<Module> of(new Log4JLoggingModule()), props);
 
       connection = context.getApi();
    }

@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
@@ -50,7 +50,7 @@ import org.jclouds.vcloud.terremark.options.AddNodeOptions;
  * @author Adrian Cole
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
-public interface TerremarkVCloudClient extends VCloudClient {
+public interface TerremarkVCloudClient extends VCloudExpressClient {
 
    @Override
    TerremarkCatalogItem getCatalogItem(URI catalogItem);

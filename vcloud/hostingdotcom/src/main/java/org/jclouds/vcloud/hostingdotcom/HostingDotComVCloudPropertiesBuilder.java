@@ -24,14 +24,14 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_TIMEO
 
 import java.util.Properties;
 
-import org.jclouds.vcloud.VCloudPropertiesBuilder;
+import org.jclouds.vcloud.VCloudExpressPropertiesBuilder;
 
 /**
  * Builds properties used in hosting.com VCloud Clients
  * 
  * @author Adrian Cole
  */
-public class HostingDotComVCloudPropertiesBuilder extends VCloudPropertiesBuilder {
+public class HostingDotComVCloudPropertiesBuilder extends VCloudExpressPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();

@@ -19,7 +19,7 @@
 
 package org.jclouds.vcloud.terremark.xml;
 
-import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.CATALOG_XML;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
@@ -28,7 +28,7 @@ import java.net.URI;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
@@ -55,9 +55,9 @@ public class TerremarkVDCHandlerTest {
       assertEquals(result.getName(), "Miami Environment 1");
       assertEquals(result.getId(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32"));
       assertEquals(result.getResourceEntities(), ImmutableMap.<String, NamedResource> of("adriantest",
-            new NamedResourceImpl("adriantest", VCloudMediaType.VAPP_XML, URI
+            new NamedResourceImpl("adriantest", VCloudExpressMediaType.VAPP_XML, URI
                   .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/15124")), "centos-53",
-            new NamedResourceImpl("centos-53", VCloudMediaType.VAPP_XML, URI
+            new NamedResourceImpl("centos-53", VCloudExpressMediaType.VAPP_XML, URI
                   .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/15120"))));
 
       assertEquals(result.getAvailableNetworks(), ImmutableMap.of("10.114.34.128/26", new NamedResourceImpl(

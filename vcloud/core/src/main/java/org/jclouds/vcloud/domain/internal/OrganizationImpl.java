@@ -22,7 +22,7 @@ package org.jclouds.vcloud.domain.internal;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.endpoints.Catalog;
@@ -130,7 +130,7 @@ public class OrganizationImpl implements Organization {
 
    @Override
    public String getType() {
-      return VCloudMediaType.ORG_XML;
+      return VCloudExpressMediaType.ORG_XML;
    }
 
    @Override

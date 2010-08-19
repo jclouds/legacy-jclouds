@@ -39,7 +39,6 @@ import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
-import org.jclouds.vcloud.compute.functions.VCloudGetNodeMetadata;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.endpoints.Org;
 
@@ -55,13 +54,13 @@ import com.google.inject.internal.util.ImmutableSet;
 /**
  * @author Adrian Cole
  */
-//TODO REFACTOR!!! needs to be parallel
+// TODO REFACTOR!!! needs to be parallel
 @Singleton
 public class VCloudListNodesStrategy implements ListNodesStrategy {
    @Resource
    @Named(COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
-   protected final VCloudGetNodeMetadata getNodeMetadata;
+   protected final VCloudGetNodeMetadataStrategy getNodeMetadata;
    protected final VCloudClient client;
    protected final FindLocationForResource findLocationForResourceInVDC;
    Set<String> blackListVAppNames = ImmutableSet.<String> of();
@@ -76,7 +75,7 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
 
    @Inject
    protected VCloudListNodesStrategy(VCloudClient client, @Org Supplier<Map<String, NamedResource>> orgNameToEndpoint,
-         VCloudGetNodeMetadata getNodeMetadata, FindLocationForResource findLocationForResourceInVDC) {
+            VCloudGetNodeMetadataStrategy getNodeMetadata, FindLocationForResource findLocationForResourceInVDC) {
       this.client = client;
       this.orgNameToEndpoint = orgNameToEndpoint;
       this.getNodeMetadata = getNodeMetadata;
@@ -104,8 +103,8 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
 
    private ComputeMetadata convertVAppToComputeMetadata(NamedResource vdc, NamedResource resource) {
       Location location = findLocationForResourceInVDC.apply(vdc);
-      return new ComputeMetadataImpl(ComputeType.NODE, resource.getId().toASCIIString(), resource.getName(),
-            resource.getId().toASCIIString(), location, null, ImmutableMap.<String, String> of());
+      return new ComputeMetadataImpl(ComputeType.NODE, resource.getId().toASCIIString(), resource.getName(), resource
+               .getId().toASCIIString(), location, null, ImmutableMap.<String, String> of());
    }
 
    @Override

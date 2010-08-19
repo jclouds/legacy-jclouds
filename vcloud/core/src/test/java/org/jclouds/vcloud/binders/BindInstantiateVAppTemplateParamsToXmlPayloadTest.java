@@ -56,17 +56,13 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       @Override
       protected void configure() {
          Properties props = new Properties();
-         props
-                  .put(PROPERTY_VCLOUD_DEFAULT_NETWORK,
-                           "https://vcloud.safesecureweb.com/network/1990");
-         Names.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(props).build(),
-                  "properties"));
+         props.put(PROPERTY_VCLOUD_DEFAULT_NETWORK, "https://vcenterprise.bluelock.com/api/v1.0/network/1990");
+         Names.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(props).build(), "properties"));
       }
    });
 
    public void testDefault() throws IOException {
-      String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/newvapp-hosting.xml"));
+      String expected = Utils.toStringAndClose(getClass().getResourceAsStream("/newvapp.xml"));
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(new Object[] {}).atLeastOnce();
@@ -78,7 +74,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "my-vapp");
-      map.put("template", "https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3");
+      map.put("template", "https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3");
       binder.bindToRequest(request, map);
       verify(request);
 
@@ -88,8 +84,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
       options.processorCount(1).memory(512).disk(1024);
 
-      String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/newvapp-hostingcpumemdisk.xml"));
+      String expected = Utils.toStringAndClose(getClass().getResourceAsStream("/newvapp-cpumemdisk.xml"));
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(new Object[] { options }).atLeastOnce();
@@ -101,8 +96,8 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "my-vapp");
-      map.put("template", "https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3");
-      map.put("network", "https://vcloud.safesecureweb.com/network/1990");
+      map.put("template", "https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3");
+      map.put("network", "https://vcenterprise.bluelock.com/api/v1.0/network/1990");
 
       binder.bindToRequest(request, map);
       verify(request);
@@ -110,8 +105,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
    }
 
    public void testWithNetworkNameDhcpFenceMode() throws IOException {
-      String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/newvapp-hostingnetworknamedhcpfencemode.xml"));
+      String expected = Utils.toStringAndClose(getClass().getResourceAsStream("/newvapp-networknamedhcpfencemode.xml"));
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
@@ -124,8 +118,8 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "my-vapp");
-      map.put("template", "https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3");
-      map.put("network", "https://vcloud.safesecureweb.com/network/1990");
+      map.put("template", "https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3");
+      map.put("network", "https://vcenterprise.bluelock.com/api/v1.0/network/1990");
       map.put("networkName", "aloha");
       map.put("fenceMode", FenceMode.BRIDGED);
 

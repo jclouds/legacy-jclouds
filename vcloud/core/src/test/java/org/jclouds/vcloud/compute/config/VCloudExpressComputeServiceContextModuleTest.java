@@ -17,43 +17,22 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.predicates;
+package org.jclouds.vcloud.compute.config;
 
-import javax.annotation.Resource;
-import javax.inject.Singleton;
-
-import org.jclouds.logging.Logger;
-import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.domain.VApp;
-
-import com.google.common.base.Predicate;
-import com.google.inject.Inject;
+import org.jclouds.vcloud.domain.VAppStatus;
+import org.testng.annotations.Test;
 
 /**
- * 
- * Tests to see if a task succeeds.
- * 
  * @author Adrian Cole
  */
-@Singleton
-public class VAppNotFound implements Predicate<VApp> {
+@Test(groups = "unit", testName = "vcloud.VCloudExpressComputeServiceContextModuleTest")
+public class VCloudExpressComputeServiceContextModuleTest {
 
-   private final VCloudClient client;
+   public void testAllStatusCovered() {
 
-   @Resource
-   protected Logger logger = Logger.NULL;
-
-   @Inject
-   public VAppNotFound(VCloudClient client) {
-      this.client = client;
-   }
-
-   public boolean apply(VApp vApp) {
-      try {
-         return client.getVApp(vApp.getId()) == null;
-      } catch (ResourceNotFoundException e) {
-         return true;
+      for (VAppStatus state : VAppStatus.values()) {
+         assert VCloudExpressComputeServiceContextModule.vAppStatusToNodeState.containsKey(state) : state;
       }
+
    }
 }

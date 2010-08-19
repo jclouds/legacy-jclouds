@@ -24,15 +24,13 @@ import static org.jclouds.Constants.PROPERTY_IDENTITY;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import javax.inject.Named;
 
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.config.VCloudRestClientModule;
+import org.jclouds.vcloud.VCloudExpressClient;
+import org.jclouds.vcloud.config.VCloudExpressRestClientModule;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
 
@@ -40,18 +38,16 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 /**
- * Configures the VCloud authentication service connection, including logging
- * and http transport.
+ * Configures the VCloud authentication service connection, including logging and http transport.
  * 
  * @author Adrian Cole
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class BlueLockVCloudExpressRestClientModule extends VCloudRestClientModule {
+public class BlueLockVCloudExpressRestClientModule extends VCloudExpressRestClientModule {
 
    @Override
-   protected URI provideDefaultNetwork(VCloudClient client) throws InterruptedException, ExecutionException,
-         TimeoutException {
+   protected URI provideDefaultNetwork(VCloudExpressClient client) {
       org.jclouds.vcloud.domain.VDC vDC = client.findVDCInOrgNamed(null, null);
       Map<String, NamedResource> networks = vDC.getAvailableNetworks();
       checkState(networks.size() > 0, "No networks present in vDC: " + vDC.getName());

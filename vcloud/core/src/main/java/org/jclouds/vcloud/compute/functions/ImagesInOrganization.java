@@ -28,7 +28,6 @@ import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Organization;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.functions.AllCatalogItemsInOrganization;
-import org.jclouds.vcloud.functions.VAppTemplatesForCatalogItems;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -40,13 +39,13 @@ import com.google.common.collect.Iterables;
 public class ImagesInOrganization implements Function<Organization, Iterable<? extends Image>> {
 
    private final AllCatalogItemsInOrganization allCatalogItemsInOrganization;
-   private final VAppTemplatesForCatalogItems vAppTemplatesForCatalogItems;
+   private final Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>> vAppTemplatesForCatalogItems;
    private final Provider<ImageForVAppTemplate> imageForVAppTemplateProvider;
 
    @Inject
    ImagesInOrganization(AllCatalogItemsInOrganization allCatalogItemsInOrganization,
             Provider<ImageForVAppTemplate> imageForVAppTemplateProvider,
-            VAppTemplatesForCatalogItems vAppTemplatesForCatalogItems) {
+            Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>> vAppTemplatesForCatalogItems) {
       this.imageForVAppTemplateProvider = imageForVAppTemplateProvider;
       this.allCatalogItemsInOrganization = allCatalogItemsInOrganization;
       this.vAppTemplatesForCatalogItems = vAppTemplatesForCatalogItems;
