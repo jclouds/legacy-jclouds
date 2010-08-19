@@ -60,14 +60,15 @@ public class VCloudSessionRefreshLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws IOException {
-      identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      identity = checkNotNull(System.getProperty("bluelock-vclouddirector.identity"), "bluelock-vclouddirector.identity");
+      String credential = checkNotNull(System.getProperty("bluelock-vclouddirector.credential"),
+               "bluelock-vclouddirector.credential");
 
       Properties props = new Properties();
       props.setProperty(PROPERTY_SESSION_INTERVAL, 40 + "");
 
-      context = new ComputeServiceContextFactory().createContext("bluelock", identity, credential, ImmutableSet
-            .<Module> of(new Log4JLoggingModule()), props);
+      context = new ComputeServiceContextFactory().createContext("bluelock-vclouddirector", identity, credential,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), props);
 
       connection = VCloudClient.class.cast(context.getProviderSpecificContext().getApi());
    }

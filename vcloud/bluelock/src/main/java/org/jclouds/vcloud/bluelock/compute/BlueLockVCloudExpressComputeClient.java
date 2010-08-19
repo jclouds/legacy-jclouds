@@ -40,11 +40,11 @@ import com.google.common.base.Predicate;
  * @author Adrian Cole
  */
 @Singleton
-public class BlueLockVCloudComputeClient extends BaseVCloudComputeClient {
+public class BlueLockVCloudExpressComputeClient extends BaseVCloudComputeClient {
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider;
 
    @Inject
-   protected BlueLockVCloudComputeClient(PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
+   protected BlueLockVCloudExpressComputeClient(PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
          VCloudClient client, Predicate<URI> successTester, Map<VAppStatus, NodeState> vAppStatusToNodeState) {
       super(client, successTester, vAppStatusToNodeState);
       this.credentialsProvider = credentialsProvider;

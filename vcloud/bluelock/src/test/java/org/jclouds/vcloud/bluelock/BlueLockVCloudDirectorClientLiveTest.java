@@ -11,7 +11,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either director or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ====================================================================
@@ -37,15 +37,17 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "vcloud.BlueLockVCloudClientLiveTest")
-public class BlueLockVCloudClientLiveTest extends VCloudClientLiveTest {
+@Test(groups = "live", sequential = true, testName = "bluelock.BlueLockVCloudDirectorClientLiveTest")
+public class BlueLockVCloudDirectorClientLiveTest extends VCloudClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    @Override
    public void setupClient() {
-      identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
-      context = new RestContextFactory().createContext("bluelock", identity, credential, ImmutableSet
+      identity = checkNotNull(System.getProperty("bluelock-vclouddirector.identity"),
+               "bluelock-vclouddirector.identity");
+      String credential = checkNotNull(System.getProperty("bluelock-vclouddirector.credential"),
+               "bluelock-vclouddirector.credential");
+      context = new RestContextFactory().createContext("bluelock-vclouddirector", identity, credential, ImmutableSet
                .<Module> of(new Log4JLoggingModule()), new Properties());
       connection = context.getApi();
    }

@@ -47,7 +47,7 @@ import com.google.common.collect.Iterables;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class BlueLockVCloudRestClientModule extends VCloudRestClientModule {
+public class BlueLockVCloudExpressRestClientModule extends VCloudRestClientModule {
 
    @Override
    protected URI provideDefaultNetwork(VCloudClient client) throws InterruptedException, ExecutionException,

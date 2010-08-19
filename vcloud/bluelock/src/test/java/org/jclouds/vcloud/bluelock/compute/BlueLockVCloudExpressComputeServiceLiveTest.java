@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.bluelock.compute;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.domain.Image;
@@ -26,7 +27,6 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -34,12 +34,19 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "compute.BlueLockVCloudComputeServiceLiveTest")
-public class BlueLockVCloudComputeServiceLiveTest extends VCloudComputeServiceLiveTest {
-   @BeforeClass
+@Test(groups = "live", enabled = true, sequential = true, testName = "bluelock.BlueLockVCloudExpressComputeServiceLiveTest")
+public class BlueLockVCloudExpressComputeServiceLiveTest extends VCloudComputeServiceLiveTest {
    @Override
    public void setServiceDefaults() {
-      provider = "bluelock";
+      provider = "bluelock-vcloudexpress";
+      tag = "vcx";
+   }
+
+   @Override
+   protected void setupCredentials() {
+      identity = checkNotNull(System.getProperty("bluelock-vcloudexpress.identity"), "bluelock-vcloudexpress.identity");
+      credential = checkNotNull(System.getProperty("bluelock-vcloudexpress.credential"),
+               "bluelock-vcloudexpress.credential");
    }
 
    @Test

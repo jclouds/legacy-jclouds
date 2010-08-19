@@ -30,7 +30,7 @@ import org.jclouds.vcloud.VCloudPropertiesBuilder;
  * 
  * @author Adrian Cole
  */
-public class BlueLockVCloudPropertiesBuilder extends VCloudPropertiesBuilder {
+public class BlueLockVCloudExpressPropertiesBuilder extends VCloudPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
@@ -38,7 +38,7 @@ public class BlueLockVCloudPropertiesBuilder extends VCloudPropertiesBuilder {
       return properties;
    }
 
-   public BlueLockVCloudPropertiesBuilder(Properties properties) {
+   public BlueLockVCloudExpressPropertiesBuilder(Properties properties) {
       super(properties);
    }
 }
