@@ -19,7 +19,7 @@
 
 package org.jclouds.ibmdev.compute.config;
 
-import static org.jclouds.compute.domain.OsFamily.RHEL;
+import static org.jclouds.compute.domain.OsFamily.SUSE;
 
 import java.util.Map;
 import java.util.Set;
@@ -98,7 +98,7 @@ public class IBMDeveloperCloudComputeServiceContextModule extends BaseComputeSer
     */
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(RHEL);
+      return template.osFamily(SUSE);
    }
 
    @Provides

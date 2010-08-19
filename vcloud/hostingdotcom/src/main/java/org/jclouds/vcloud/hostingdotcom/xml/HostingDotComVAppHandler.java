@@ -43,8 +43,8 @@ public class HostingDotComVAppHandler extends VAppHandler {
    }
 
    public HostingDotComVApp getResult() {
-      return new HostingDotComVAppImpl(name, location, status, size, vDC, networkToAddresses,
-            operatingSystemDescription, system, allocations, username, password);
+      return new HostingDotComVAppImpl(name, location, status, size, vDC, networkToAddresses, osType,
+               operatingSystemDescription, system, allocations, username, password);
    }
 
    @Override

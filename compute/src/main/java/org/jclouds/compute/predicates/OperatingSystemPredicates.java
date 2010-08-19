@@ -23,6 +23,7 @@ import org.jclouds.compute.domain.OperatingSystem;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Container for operating system filters (predicates).
@@ -43,13 +44,16 @@ public class OperatingSystemPredicates {
          public boolean apply(OperatingSystem os) {
             if (os.getFamily() != null) {
                switch (os.getFamily()) {
-               case DEBIAN:
-               case UBUNTU:
-                  return true;
+                  case DEBIAN:
+                  case UBUNTU:
+                     return true;
                }
             }
-            String toMatch = os.getName() != null ? os.getName() : os.getDescription();
-            return (toMatch.toLowerCase().indexOf("ubuntu") != -1 || toMatch.toLowerCase().indexOf("debian") != -1);
+            for (String toMatch : ImmutableSet.of(os.getName(), os.getDescription()))
+               if (toMatch != null && toMatch.toLowerCase().indexOf("ubuntu") != -1
+                        || toMatch.toLowerCase().indexOf("debian") != -1)
+                  return true;
+            return false;
          }
 
          @Override
@@ -69,21 +73,51 @@ public class OperatingSystemPredicates {
          public boolean apply(OperatingSystem os) {
             if (os.getFamily() != null) {
                switch (os.getFamily()) {
-               case CENTOS:
-               case FEDORA:
-               case RHEL:
-                  return true;
+                  case CENTOS:
+                  case FEDORA:
+                  case RHEL:
+                     return true;
                }
             }
-            String toMatch = os.getName() != null ? os.getName() : os.getDescription();
-            return (toMatch.toLowerCase().indexOf("centos") != -1 || toMatch.toLowerCase().indexOf("rhel") != -1
-                  || toMatch.toLowerCase().replace(" ", "").indexOf("redhate") != -1 || toMatch.toLowerCase().indexOf(
-                  "fedora") != -1);
+
+            for (String toMatch : ImmutableSet.of(os.getName(), os.getDescription()))
+               if (toMatch.toLowerCase().indexOf("centos") != -1 || toMatch.toLowerCase().indexOf("rhel") != -1
+                        || toMatch.toLowerCase().replace(" ", "").indexOf("redhate") != -1
+                        || toMatch.toLowerCase().indexOf("fedora") != -1)
+                  return true;
+            return false;
          }
 
          @Override
          public String toString() {
             return "supportsYum()";
+         }
+      };
+   }
+
+   /**
+    * evaluates true if the OperatingSystem supports the zypper installer
+    * 
+    */
+   public static Predicate<OperatingSystem> supportsZypper() {
+      return new Predicate<OperatingSystem>() {
+         @Override
+         public boolean apply(OperatingSystem os) {
+            if (os.getFamily() != null) {
+               switch (os.getFamily()) {
+                  case SUSE:
+                     return true;
+               }
+            }
+            for (String toMatch : ImmutableSet.of(os.getName(), os.getDescription()))
+               if (toMatch != null && toMatch.toLowerCase().indexOf("suse") != -1)
+                  return true;
+            return false;
+         }
+
+         @Override
+         public String toString() {
+            return "supportsZypper()";
          }
       };
    }

@@ -35,6 +35,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
+import org.jclouds.compute.domain.os.CIMOperatingSystem;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
@@ -86,8 +87,9 @@ public class VCloudGetNodeMetadata {
       String tag = parseTagFromName(from.getName());
       Location location = findLocationForResourceInVDC.apply(from.getVDC());
       return new NodeMetadataImpl(in, from.getName(), in, location, from.getId(), ImmutableMap.<String, String> of(),
-               tag, null, vAppStatusToNodeState.get(from.getStatus()), computeClient.getPublicAddresses(id),
-               computeClient.getPrivateAddresses(id), getExtra.apply(from), null);
+               tag, null, new CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(from.getOsType()), null, null,
+                        from.getOperatingSystemDescription()), vAppStatusToNodeState.get(from.getStatus()),
+               computeClient.getPublicAddresses(id), computeClient.getPrivateAddresses(id), getExtra.apply(from), null);
    }
 
 }

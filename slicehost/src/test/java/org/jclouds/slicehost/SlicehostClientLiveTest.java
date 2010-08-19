@@ -38,7 +38,6 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.slicehost.domain.Backup;
 import org.jclouds.slicehost.domain.Flavor;
 import org.jclouds.slicehost.domain.Image;
 import org.jclouds.slicehost.domain.Slice;
@@ -73,8 +72,8 @@ public class SlicehostClientLiveTest {
       String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
 
       Injector injector = new RestContextFactory().createContextBuilder("slicehost", identity, null,
-            ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), new Properties())
-            .buildInjector();
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), new Properties())
+               .buildInjector();
 
       client = injector.getInstance(SlicehostClient.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
@@ -202,7 +201,6 @@ public class SlicehostClientLiveTest {
    private String slicePrefix = System.getProperty("user.name") + ".sh";
    private int sliceId;
    private String rootPassword;
-   private int backupId;
 
    @Test(enabled = true)
    public void testCreateSlice() throws Exception {
@@ -230,7 +228,7 @@ public class SlicehostClientLiveTest {
    private void blockUntilSliceActive(int sliceId) throws InterruptedException {
       Slice currentDetails = null;
       for (currentDetails = client.getSlice(sliceId); currentDetails.getStatus() != Slice.Status.ACTIVE; currentDetails = client
-            .getSlice(sliceId)) {
+               .getSlice(sliceId)) {
          System.out.printf("blocking on status active%n%s%n", currentDetails);
          Thread.sleep(5 * 1000);
       }
@@ -287,25 +285,6 @@ public class SlicehostClientLiveTest {
    }
 
    @Test(enabled = true, timeOut = 10 * 60 * 1000, dependsOnMethods = "testSliceDetails")
-   public void testCreateBackup() throws Exception {
-      Backup backup = client.createBackup("hoofie", sliceId);
-      // TODO validate our request, as the above returns <nil-classes
-      // type="array"/>
-      assertEquals("hoofie", backup.getName());
-      assertEquals(new Integer(sliceId), backup.getSliceId());
-      backupId = backup.getId();
-   }
-
-   @Test(enabled = true, timeOut = 10 * 60 * 1000, dependsOnMethods = "testCreateBackup")
-   public void testRebuildSlice() throws Exception {
-      client.rebuildSliceFromBackup(sliceId, backupId);
-      blockUntilSliceActive(sliceId);
-      // issue Web Hosting #119580 imageId comes back incorrect after rebuild
-      // assertEquals(new Integer(imageId),
-      // client.getSlice(sliceId).getImageId());
-   }
-
-   @Test(enabled = true, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebuildSlice")
    public void testRebootHard() throws Exception {
       client.hardRebootSlice(sliceId);
       blockUntilSliceActive(sliceId);
@@ -318,14 +297,6 @@ public class SlicehostClientLiveTest {
    }
 
    @Test(enabled = true, timeOut = 10 * 60 * 1000, dependsOnMethods = "testRebootSoft")
-   void testDeleteBackup() {
-      if (backupId > 0) {
-         client.destroyBackup(backupId);
-         assert client.getBackup(backupId) == null;
-      }
-   }
-
-   @Test(enabled = true, timeOut = 10 * 60 * 1000, dependsOnMethods = "testDeleteBackup")
    void destroySlice1() {
       if (sliceId > 0) {
          client.destroySlice(sliceId);

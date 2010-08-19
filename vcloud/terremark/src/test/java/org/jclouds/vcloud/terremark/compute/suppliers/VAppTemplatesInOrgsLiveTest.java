@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.terremark.providers;
+package org.jclouds.vcloud.terremark.compute.suppliers;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
@@ -33,7 +33,6 @@ import org.jclouds.rest.RestContextFactory;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.functions.AllCatalogItemsInOrganization;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
-import org.jclouds.vcloud.terremark.compute.config.providers.VAppTemplatesInOrgs;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -66,7 +65,7 @@ public class VAppTemplatesInOrgsLiveTest {
       if (endpoint != null && !"".equals(endpoint))
          props.setProperty("terremark.endpoint", endpoint);
       Injector injector = new RestContextFactory().createContextBuilder("trmk-vcloudexpress", identity, credential,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), props).buildInjector();
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), props).buildInjector();
 
       tmClient = injector.getInstance(TerremarkVCloudClient.class);
       allCatalogItemsInOrganization = injector.getInstance(AllCatalogItemsInOrganization.class);
@@ -80,7 +79,7 @@ public class VAppTemplatesInOrgsLiveTest {
       Set<? extends Image> images = parser.get();
 
       Iterable<? extends CatalogItem> templates = allCatalogItemsInOrganization.apply(tmClient
-            .findOrganizationNamed(null));
+               .findOrganizationNamed(null));
 
       assertEquals(images.size(), Iterables.size(templates));
       assert images.size() > 0;

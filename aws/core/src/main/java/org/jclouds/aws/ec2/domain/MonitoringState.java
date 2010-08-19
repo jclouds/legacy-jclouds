@@ -47,6 +47,13 @@ public enum MonitoringState {
    }
 
    public static MonitoringState fromValue(String state) {
+      /**
+       * Eucalyptus
+       */
+      if ("false".endsWith(state))
+         return DISABLED;
+      if ("true".endsWith(state))
+         return ENABLED;
       return valueOf(checkNotNull(state, "state").toUpperCase());
    }
 }

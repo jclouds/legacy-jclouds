@@ -33,9 +33,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.aws.ec2.domain.Image.Architecture;
 import org.jclouds.aws.ec2.domain.Image.ImageType;
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -95,16 +96,20 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
          logger.trace("skipping as not a machine image(%s)", from.getId());
          return null;
       }
-      OsFamily os = parseOsFamilyOrNull(from.getImageLocation());
-      String name = parseVersionOrReturnEmptyString(os, from.getImageLocation());
+      String name = null;
       String description = from.getDescription() != null ? from.getDescription() : from.getImageLocation();
-      String osDescription = from.getImageLocation();
-      String version = "";
+      String version = null;
 
+      OsFamily osFamily = parseOsFamilyOrNull(from.getImageLocation());
+      String osName = null;
+      String osArch = from.getVirtualizationType();
+      String osVersion = parseVersionOrReturnEmptyString(osFamily, from.getImageLocation());
+      String osDescription = from.getImageLocation();
+      boolean is64Bit = from.getArchitecture() == Architecture.X86_64;
       try {
          Matcher matcher = getMatcherAndFind(from.getImageLocation());
-         os = OsFamily.fromValue(matcher.group(1));
-         name = parseVersionOrReturnEmptyString(os, matcher.group(2));
+         osFamily = OsFamily.fromValue(matcher.group(1));
+         osVersion = parseVersionOrReturnEmptyString(osFamily, matcher.group(2));
          version = matcher.group(3).replace(".manifest.xml", "");
       } catch (IllegalArgumentException e) {
          logger.debug("<< didn't match os(%s)", from.getImageLocation());
@@ -129,10 +134,9 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
          location = new LocationImpl(LocationScope.REGION, from.getRegion(), from.getRegion(), defaultLocation.get()
                   .getParent());
       }
+      OperatingSystem os = new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
       return new ImageImpl(from.getId(), name, from.getRegion() + "/" + from.getId(), location, null, ImmutableMap
-               .<String, String> of("owner", from.getImageOwnerId()), description, version, os, osDescription, from
-               .getArchitecture() == org.jclouds.aws.ec2.domain.Image.Architecture.I386 ? Architecture.X86_32
-               : Architecture.X86_64, defaultCredentials);
+               .<String, String> of("owner", from.getImageOwnerId()), os, description, version, defaultCredentials);
 
    }
 

@@ -53,11 +53,11 @@ public class CloudServersAddNodeWithTagStrategy implements AddNodeWithTagStrateg
    public NodeMetadata execute(String tag, String name, Template template) {
       Server server = client.createServer(name, Integer.parseInt(template.getImage().getProviderId()), Integer
                .parseInt(template.getSize().getProviderId()));
-      return new NodeMetadataImpl(server.getId() + "", name, server.getId() + "", new LocationImpl(
-               LocationScope.HOST, server.getHostId(), server.getHostId(), template.getLocation()), null, server
-               .getMetadata(), tag, template.getImage(), NodeState.PENDING, server.getAddresses()
-               .getPublicAddresses(), server.getAddresses().getPrivateAddresses(), ImmutableMap
-               .<String, String> of(), new Credentials("root", server.getAdminPass()));
+      return new NodeMetadataImpl(server.getId() + "", name, server.getId() + "", new LocationImpl(LocationScope.HOST,
+               server.getHostId(), server.getHostId(), template.getLocation()), null, server.getMetadata(), tag,
+               template.getImage().getId(), template.getImage().getOperatingSystem(), NodeState.PENDING, server
+                        .getAddresses().getPublicAddresses(), server.getAddresses().getPrivateAddresses(), ImmutableMap
+                        .<String, String> of(), new Credentials("root", server.getAdminPass()));
    }
 
 }

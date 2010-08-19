@@ -43,6 +43,7 @@ import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.functions.RunningInstanceToStorageMappingUnix;
 import org.jclouds.aws.ec2.services.AMIClient;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -118,7 +119,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       NodeMetadata metadata = parser.apply(instance);
       assertEquals(metadata.getLocation(), locations.get().iterator().next());
-      assertEquals(metadata.getImage(), null);
+      assertEquals(metadata.getImageId(), "us-east-1/imageId");
       assertEquals(metadata.getTag(), "NOTAG-id");
       assertEquals(metadata.getCredentials(), null);
 
@@ -133,7 +134,7 @@ public class RunningInstanceToNodeMetadataTest {
 
    @SuppressWarnings("unchecked")
    @Test
-   public void testImageNotFoundAndLazyFailsWithNPE() throws UnknownHostException {
+   public void testImageNotFoundStillSetsImageId() throws UnknownHostException {
       EC2Client client = createMock(EC2Client.class);
       AMIClient amiClient = createMock(AMIClient.class);
       Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
@@ -181,7 +182,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       NodeMetadata metadata = parser.apply(instance);
       assertEquals(metadata.getLocation(), locations.get().iterator().next());
-      assertEquals(metadata.getImage(), null);
+      assertEquals(metadata.getImageId(), "us-east-1/imageId");
       assertEquals(metadata.getTag(), "NOTAG-id");
       assertEquals(metadata.getCredentials(), null);
 
@@ -229,6 +230,8 @@ public class RunningInstanceToNodeMetadataTest {
       org.jclouds.compute.domain.Image lateImage = createMock(org.jclouds.compute.domain.Image.class);
 
       expect(imageMap.get(new RegionAndName("us-east-1", "imageId"))).andReturn(lateImage).atLeastOnce();
+      expect(lateImage.getId()).andReturn("us-east-1/imageId").atLeastOnce();
+      expect(lateImage.getOperatingSystem()).andReturn(createMock(OperatingSystem.class)).atLeastOnce();
 
       expect(instance.getInstanceType()).andReturn(InstanceType.C1_XLARGE).atLeastOnce();
 
@@ -246,7 +249,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       NodeMetadata metadata = parser.apply(instance);
       assertEquals(metadata.getLocation(), locations.get().iterator().next());
-      assertEquals(metadata.getImage(), lateImage);
+      assertEquals(metadata.getImageId(), lateImage.getId());
       assertEquals(metadata.getTag(), "NOTAG-id");
       assertEquals(metadata.getCredentials(), null);
 
@@ -290,6 +293,8 @@ public class RunningInstanceToNodeMetadataTest {
 
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
+      expect(jcImage.getOperatingSystem()).andReturn(createMock(OperatingSystem.class)).atLeastOnce();
+
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
       expect(imageMap.get(new RegionAndName(Region.US_EAST_1, "imageId"))).andReturn(jcImage);
 
@@ -308,7 +313,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       NodeMetadata metadata = parser.apply(instance);
       assertEquals(metadata.getLocation(), locations.get().iterator().next());
-      assertEquals(metadata.getImage(), jcImage);
+      assertEquals(metadata.getImageId(), "us-east-1/imageId");
       assertEquals(metadata.getTag(), "NOTAG-id");
       assertEquals(metadata.getCredentials(), null);
 
@@ -350,6 +355,8 @@ public class RunningInstanceToNodeMetadataTest {
 
       expect(instance.getAvailabilityZone()).andReturn(AvailabilityZone.US_EAST_1A).atLeastOnce();
 
+      expect(jcImage.getOperatingSystem()).andReturn(createMock(OperatingSystem.class)).atLeastOnce();
+
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
       expect(imageMap.get(new RegionAndName(Region.US_EAST_1, "imageId"))).andReturn(jcImage);
 
@@ -368,7 +375,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       NodeMetadata metadata = parser.apply(instance);
       assertEquals(metadata.getLocation(), locations.get().iterator().next());
-      assertEquals(metadata.getImage(), jcImage);
+      assertEquals(metadata.getImageId(), "us-east-1/imageId");
       assertEquals(metadata.getTag(), "tag");
       assertEquals(metadata.getCredentials(), null);
 
@@ -412,6 +419,8 @@ public class RunningInstanceToNodeMetadataTest {
 
       expect(instance.getRegion()).andReturn(Region.US_EAST_1).atLeastOnce();
 
+      expect(jcImage.getOperatingSystem()).andReturn(createMock(OperatingSystem.class)).atLeastOnce();
+
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
       expect(imageMap.get(new RegionAndName(Region.US_EAST_1, "imageId"))).andReturn(jcImage);
 
@@ -441,7 +450,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       assertEquals(metadata.getTag(), "tag");
       assertEquals(metadata.getLocation(), location);
-      assertEquals(metadata.getImage(), jcImage);
+      assertEquals(metadata.getImageId(), "us-east-1/imageId");
 
       assertEquals(metadata.getCredentials(), new Credentials("user", "pass"));
 
@@ -486,6 +495,8 @@ public class RunningInstanceToNodeMetadataTest {
 
       expect(instance.getRegion()).andReturn(Region.US_EAST_1).atLeastOnce();
 
+      expect(jcImage.getOperatingSystem()).andReturn(createMock(OperatingSystem.class)).atLeastOnce();
+
       expect(instance.getImageId()).andReturn("imageId").atLeastOnce();
       expect(imageMap.get(new RegionAndName(Region.US_EAST_1, "imageId"))).andReturn(jcImage);
 
@@ -516,7 +527,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       assertEquals(metadata.getTag(), "NOTAG-id");
       assertEquals(metadata.getLocation(), location);
-      assertEquals(metadata.getImage(), jcImage);
+      assertEquals(metadata.getImageId(), "us-east-1/imageId");
 
       assertEquals(metadata.getCredentials(), new Credentials("user", "pass"));
 

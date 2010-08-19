@@ -24,17 +24,21 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.domain.Credentials;
+
+import com.google.inject.ImplementedBy;
 
 /**
  * @author Adrian Cole
  * @author Ivan Meredith
  */
+@ImplementedBy(NodeMetadataImpl.class)
 public interface NodeMetadata extends ComputeMetadata {
 
    /**
-    * Tag used for all resources that belong to the same logical group. run,
-    * destroy commands are scoped to tag.
+    * Tag used for all resources that belong to the same logical group. run, destroy commands are
+    * scoped to tag.
     * 
     * @return tag for this node, or null, if not a part of a group
     * 
@@ -42,10 +46,18 @@ public interface NodeMetadata extends ComputeMetadata {
    String getTag();
 
    /**
-    * The image this node was created from, if possible to correlate.
+    * 
+    * The id of the image this node was created from, if possible to correlate.
     */
    @Nullable
-   Image getImage();
+   String getImageId();
+
+   /**
+    * 
+    * The operating system this node is running, if possible to determine.
+    */
+   @Nullable
+   OperatingSystem getOperatingSystem();
 
    /**
     * Current State of the node
@@ -63,8 +75,8 @@ public interface NodeMetadata extends ComputeMetadata {
    Set<String> getPrivateAddresses();
 
    /**
-    * If possible, these are returned upon all detail requests. However, it is
-    * often the case that credentials are only available at "run" time.
+    * If possible, these are returned upon all detail requests. However, it is often the case that
+    * credentials are only available at "run" time.
     */
    Credentials getCredentials();
 

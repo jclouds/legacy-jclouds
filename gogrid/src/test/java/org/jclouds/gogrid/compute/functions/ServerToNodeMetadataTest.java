@@ -32,6 +32,7 @@ import java.util.Set;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -88,6 +89,7 @@ public class ServerToNodeMetadataTest {
       expect(image.getId()).andReturn(2000l).atLeastOnce();
       expect(jcImage.getProviderId()).andReturn("2000").atLeastOnce();
       expect(jcImage.getLocation()).andReturn(location).atLeastOnce();
+      expect(jcImage.getOperatingSystem()).andReturn(createMock(OperatingSystem.class)).atLeastOnce();
 
       replay(caller);
       replay(client);
@@ -103,7 +105,7 @@ public class ServerToNodeMetadataTest {
 
       NodeMetadata metadata = parser.apply(server);
       assertEquals(metadata.getLocation(), location);
-      assertEquals(metadata.getImage(), jcImage);
+      assertEquals(metadata.getImageId(), "2000");
       assertEquals(metadata.getTag(), "tag");
       assertEquals(metadata.getCredentials(), new Credentials("user", "pass"));
 

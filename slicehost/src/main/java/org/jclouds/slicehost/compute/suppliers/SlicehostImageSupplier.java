@@ -28,8 +28,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -67,22 +67,31 @@ public class SlicehostImageSupplier implements Supplier<Set<? extends Image>> {
       final Set<Image> images = Sets.newHashSet();
       logger.debug(">> providing images");
       for (final org.jclouds.slicehost.domain.Image from : sync.listImages()) {
-         OsFamily os = null;
-         Architecture arch = Architecture.X86_64;
-         String osDescription = "";
-         String version = "";
+         String version = null;
          Matcher matcher = SLICEHOST_PATTERN.matcher(from.getName());
-         osDescription = from.getName();
-         if (matcher.find()) {
+
+         OsFamily osFamily = null;
+         String osName = null;
+         String osArch = null;
+         String osVersion = null;
+         String osDescription = from.getName();
+         boolean is64Bit = true;
+
+         if (from.getName().indexOf("Red Hat EL") != -1) {
+            osFamily = OsFamily.RHEL;
+         } else if (from.getName().indexOf("Oracle EL") != -1) {
+            osFamily = OsFamily.OEL;
+         } else if (matcher.find()) {
             try {
-               os = OsFamily.fromValue(matcher.group(2).toLowerCase());
+               osFamily = OsFamily.fromValue(matcher.group(2).toLowerCase());
             } catch (IllegalArgumentException e) {
                logger.debug("<< didn't match os(%s)", matcher.group(2));
             }
          }
+         OperatingSystem os = new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
+
          images.add(new ImageImpl(from.getId() + "", from.getName(), from.getId() + "", location.get(), null,
-                  ImmutableMap.<String, String> of(), from.getName(), version, os, osDescription, arch,
-                  new Credentials("root", null)));
+                  ImmutableMap.<String, String> of(), os, from.getName(), version, new Credentials("root", null)));
       }
       logger.debug("<< images(%d)", images.size());
       return images;

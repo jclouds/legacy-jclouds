@@ -51,7 +51,7 @@ public class ${providerName}ComputeServiceLiveTest extends BaseComputeServiceLiv
        public void testTemplateBuilder() {
           Template defaultTemplate = client.templateBuilder().build();
           assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
-          assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
+          assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
           assertEquals(defaultTemplate.getLocation().getId(), "DFW1");
           assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
        }

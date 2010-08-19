@@ -69,7 +69,6 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -170,9 +169,8 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       String region = injector.getInstance(Key.get(String.class, Region.class));
-      return "Eucalyptus".equals(region) ? template.osFamily(CENTOS).smallest() : template.architecture(
-               Architecture.X86_32).osFamily(UBUNTU).imageNameMatches(".*10\\.?04.*").osDescriptionMatches(
-               "^ubuntu-images.*");
+      return "Eucalyptus".equals(region) ? template.osFamily(CENTOS).smallest() : template.os64Bit(false).osFamily(
+               UBUNTU).imageNameMatches(".*10\\.?04.*").osDescriptionMatches("^ubuntu-images.*");
    }
 
    @Provides

@@ -38,7 +38,6 @@ import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.slicehost.binders.BindCreateBackupToXmlPayload;
 import org.jclouds.slicehost.binders.BindCreateSliceToXmlPayload;
 import org.jclouds.slicehost.domain.Backup;
 import org.jclouds.slicehost.domain.Flavor;
@@ -59,9 +58,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * Provides asynchronous access to Slicehost via their REST API.
  * <p/>
- * All commands return a ListenableFuture of the result from Slicehost. Any
- * exceptions incurred during processing will be wrapped in an
- * {@link ExecutionException} as documented in {@link ListenableFuture#get()}.
+ * All commands return a ListenableFuture of the result from Slicehost. Any exceptions incurred
+ * during processing will be wrapped in an {@link ExecutionException} as documented in
+ * {@link ListenableFuture#get()}.
  * 
  * @see SlicehostClient
  * @see <a href="http://www.slicehost.com/docs/Slicehost_API.pdf" />
@@ -107,7 +106,7 @@ public interface SlicehostAsyncClient {
     * @see SlicehostClient#hardRebootSlice
     */
    @PUT
-   @Path("/slices/{id}/hardReboot.xml")
+   @Path("/slices/{id}/hard_reboot.xml")
    ListenableFuture<Void> hardRebootSlice(@PathParam("id") int id);
 
    /**
@@ -118,7 +117,7 @@ public interface SlicehostAsyncClient {
    @MapBinder(BindCreateSliceToXmlPayload.class)
    @XMLResponseParser(SliceHandler.class)
    ListenableFuture<Slice> createSlice(@MapPayloadParam("name") String name, @MapPayloadParam("image_id") int imageId,
-         @MapPayloadParam("flavor_id") int flavorId);
+            @MapPayloadParam("flavor_id") int flavorId);
 
    /**
     * @see SlicehostClient#rebuildSliceFromImage
@@ -171,13 +170,6 @@ public interface SlicehostAsyncClient {
    ListenableFuture<Image> getImage(@PathParam("id") int id);
 
    /**
-    * @see SlicehostClient#destroyBackup
-    */
-   @DELETE
-   @Path("/backups/{id}/destroy.xml")
-   ListenableFuture<Void> destroyBackup(@PathParam("id") int id);
-
-   /**
     * @see SlicehostClient#listBackups
     */
    @GET
@@ -194,14 +186,5 @@ public interface SlicehostAsyncClient {
    @Path("/backups/{id}.xml")
    @XMLResponseParser(BackupHandler.class)
    ListenableFuture<Backup> getBackup(@PathParam("id") int id);
-
-   /**
-    * @see BackuphostClient#createBackup
-    */
-   @POST
-   @Path("/slices.xml")
-   @MapBinder(BindCreateBackupToXmlPayload.class)
-   @XMLResponseParser(BackupHandler.class)
-   ListenableFuture<Backup> createBackup(@MapPayloadParam("name") String name, @MapPayloadParam("slice_id") int sliceId);
 
 }

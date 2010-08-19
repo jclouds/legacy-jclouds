@@ -117,7 +117,8 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       Image image = resolveImageForInstanceInLocation(instance, location);
 
       return new NodeMetadataImpl(id, name, instance.getRegion() + "/" + instance.getId(), location, uri, userMetadata,
-               tag, image, state, publicAddresses, privateAddresses, extra, credentials);
+               tag, instance.getRegion() + "/" + instance.getImageId(), image != null ? image.getOperatingSystem()
+                        : null, state, publicAddresses, privateAddresses, extra, credentials);
    }
 
    private Credentials getCredentialsForInstanceWithTag(final RunningInstance instance, String tag) {

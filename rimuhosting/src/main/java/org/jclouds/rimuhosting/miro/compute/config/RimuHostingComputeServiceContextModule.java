@@ -31,7 +31,6 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
@@ -108,8 +107,7 @@ public class RimuHostingComputeServiceContextModule extends BaseComputeServiceCo
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.sizeId("MIRO1B").osFamily(UBUNTU).architecture(Architecture.X86_32).imageNameMatches(
-               ".*10\\.?04.*");
+      return template.sizeId("MIRO1B").osFamily(UBUNTU).os64Bit(false).imageNameMatches(".*10\\.?04.*");
    }
 
    @VisibleForTesting

@@ -86,15 +86,16 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
       }
 
       return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", location.get(), null,
-               ImmutableMap.<String, String> of(), tag, image, sliceToNodeState.get(from.getStatus()), Iterables
-                        .filter(from.getAddresses(), new Predicate<String>() {
+               ImmutableMap.<String, String> of(), tag, from.getImageId() + "", image != null ? image
+                        .getOperatingSystem() : null, sliceToNodeState.get(from.getStatus()), Iterables.filter(from
+                        .getAddresses(), new Predicate<String>() {
 
-                           @Override
-                           public boolean apply(String input) {
-                              return !input.startsWith("10.");
-                           }
+                  @Override
+                  public boolean apply(String input) {
+                     return !input.startsWith("10.");
+                  }
 
-                        }), Iterables.filter(from.getAddresses(), new Predicate<String>() {
+               }), Iterables.filter(from.getAddresses(), new Predicate<String>() {
 
                   @Override
                   public boolean apply(String input) {

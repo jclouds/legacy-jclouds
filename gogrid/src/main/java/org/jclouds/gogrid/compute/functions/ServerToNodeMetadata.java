@@ -100,7 +100,9 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
          logger.warn("could not find a matching image for server %s", from);
       }
       return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", locations.get().get(
-               from.getDatacenter().getId() + ""), null, ImmutableMap.<String, String> of(), tag, image, state, ipSet,
-               ImmutableList.<String> of(), ImmutableMap.<String, String> of(), creds);
+               from.getDatacenter().getId() + ""), null, ImmutableMap.<String, String> of(), tag, from.getImage()
+               .getId()
+               + "", image != null ? image.getOperatingSystem() : null, state, ipSet, ImmutableList.<String> of(),
+               ImmutableMap.<String, String> of(), creds);
    }
 }

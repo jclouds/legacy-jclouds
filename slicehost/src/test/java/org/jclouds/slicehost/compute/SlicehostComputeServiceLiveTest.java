@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.rest.RestContext;
@@ -51,9 +50,9 @@ public class SlicehostComputeServiceLiveTest extends BaseComputeServiceLiveTest 
    @Test
    public void testTemplateBuilder() {
       Template defaultTemplate = client.templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
-      assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getLocation().getId(), "slicehost");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(defaultTemplate.getLocation().getId(), "DFW");
       assertEquals(defaultTemplate.getSize().getCores(), 0.25d);
    }
 
@@ -65,6 +64,6 @@ public class SlicehostComputeServiceLiveTest extends BaseComputeServiceLiveTest 
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<SlicehostClient, SlicehostAsyncClient> tmContext = new ComputeServiceContextFactory().createContext(
-            provider, identity, credential).getProviderSpecificContext();
+               provider, identity, credential).getProviderSpecificContext();
    }
 }

@@ -30,7 +30,6 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.aws.ec2.reference.EC2Constants;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -50,36 +49,36 @@ public class EC2TemplateBuilderLiveTest {
    private String user;
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException,
-            IOException {
+   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
       user = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
       password = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
    }
 
    @Test
    public void testTemplateBuilderCanUseImageId() {
+      // TODO
    }
 
    @Test
    public void testTemplateBuilder() throws IOException {
       ComputeServiceContext newContext = null;
       try {
-         newContext = new ComputeServiceContextFactory().createContext("ec2", user, password,
-                  ImmutableSet.of(new Log4JLoggingModule()));
+         newContext = new ComputeServiceContextFactory().createContext("ec2", user, password, ImmutableSet
+                  .of(new Log4JLoggingModule()));
 
          Template defaultTemplate = newContext.getComputeService().templateBuilder().build();
          assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
          assertEquals(defaultTemplate.getImage().getName(), "10.04");
-         assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_32);
-         assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
+         assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
+         assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
          assertEquals(defaultTemplate.getLocation().getId(), "us-east-1");
          assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
          newContext.getComputeService().templateBuilder().imageId(
                   Iterables.get(newContext.getComputeService().listImages(), 0).getProviderId()).build();
-         newContext.getComputeService().templateBuilder().osFamily(OsFamily.UBUNTU).smallest()
-                  .architecture(Architecture.X86_32).imageId("ami-7e28ca17").build();
-         newContext.getComputeService().templateBuilder().osFamily(OsFamily.UBUNTU).smallest()
-                  .architecture(Architecture.X86_32).imageId("ami-bb709dd2").build();
+         newContext.getComputeService().templateBuilder().osFamily(OsFamily.UBUNTU).smallest().os64Bit(false).imageId(
+                  "ami-7e28ca17").build();
+         newContext.getComputeService().templateBuilder().osFamily(OsFamily.UBUNTU).smallest().os64Bit(false).imageId(
+                  "ami-bb709dd2").build();
       } finally {
          if (newContext != null)
             newContext.close();
@@ -94,23 +93,22 @@ public class EC2TemplateBuilderLiveTest {
          // set owners to nothing
          overrides.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "");
 
-         newContext = new ComputeServiceContextFactory().createContext("ec2", user, password,
-                  ImmutableSet.of(new Log4JLoggingModule()), overrides);
+         newContext = new ComputeServiceContextFactory().createContext("ec2", user, password, ImmutableSet
+                  .of(new Log4JLoggingModule()), overrides);
 
          assertEquals(newContext.getComputeService().listImages().size(), 0);
 
-         Template template = newContext.getComputeService().templateBuilder().imageId(
-                  "ami-ccb35ea5").build();
+         Template template = newContext.getComputeService().templateBuilder().imageId("ami-ccb35ea5").build();
          System.out.println(template.getImage());
          assert (template.getImage().getProviderId().startsWith("ami-")) : template;
          assertEquals(template.getImage().getName(), "5.4");
-         assertEquals(template.getImage().getArchitecture(), Architecture.X86_64);
-         assertEquals(template.getImage().getOsFamily(), OsFamily.CENTOS);
+         assertEquals(template.getImage().getOperatingSystem().is64Bit(), true);
+         assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
          assertEquals(template.getImage().getVersion(), "4.4.10");
          assertEquals(template.getLocation().getId(), "us-east-1");
          assertEquals(template.getSize().getCores(), 4.0d); // because it is 64bit
-         
-         //ensure we cache the new image for next time
+
+         // ensure we cache the new image for next time
          assertEquals(newContext.getComputeService().listImages().size(), 1);
 
       } finally {

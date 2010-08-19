@@ -107,8 +107,9 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       }
       NodeState state = runningStateToNodeState.get(from.getState());
       return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", location, null, ImmutableMap
-               .<String, String> of(), tag, image, state, getPublicAddresses.apply(from), ImmutableList.<String> of(),
-               ImmutableMap.<String, String> of(), creds);
+               .<String, String> of(), tag, from.getImageId(), image != null ? image.getOperatingSystem() : null,
+               state, getPublicAddresses.apply(from), ImmutableList.<String> of(), ImmutableMap.<String, String> of(),
+               creds);
 
    }
 }

@@ -19,8 +19,6 @@
 
 package org.jclouds.compute.domain;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.domain.Credentials;
 
@@ -49,31 +47,6 @@ public interface Image extends ComputeMetadata {
     * Description of the image.
     */
    String getDescription();
-
-   /**
-    * please use {#link {@link #getOperatingSystem()}
-    * 
-    * @see OperatingSystem#getFamily()
-    */
-   @Deprecated
-   OsFamily getOsFamily();
-
-   /**
-    * please use {#link {@link #getOperatingSystem()}
-    * 
-    * @see OperatingSystem#getDescription()
-    */
-   @Deprecated
-   String getOsDescription();
-
-   /**
-    * please use {#link {@link #getOperatingSystem()}
-    * 
-    * @see OperatingSystem#getDescription()
-    */
-   @Nullable
-   @Deprecated
-   Architecture getArchitecture();
 
    /**
     * Default credentials for the current image

@@ -21,6 +21,7 @@ package org.jclouds.compute.predicates;
 
 import static org.jclouds.compute.predicates.OperatingSystemPredicates.supportsApt;
 import static org.jclouds.compute.predicates.OperatingSystemPredicates.supportsYum;
+import static org.jclouds.compute.predicates.OperatingSystemPredicates.supportsZypper;
 
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
@@ -37,91 +38,102 @@ import org.testng.annotations.Test;
 public class OperatingSystemPredicatesTest {
 
    public void testCIMCENTOSDoesntSupportApt() {
-      assert !supportsApt().apply(new CIMOperatingSystem(OSType.CENTOS, null, null, "description"));
-      assert !supportsApt().apply(new CIMOperatingSystem(OSType.CENTOS_64, null, null, "description"));
+      assert !supportsApt().apply(new CIMOperatingSystem(OSType.CENTOS, "", null, "description"));
+      assert !supportsApt().apply(new CIMOperatingSystem(OSType.CENTOS_64, "", null, "description"));
    }
 
    public void testCIMRHELDoesntSupportApt() {
-      assert !supportsApt().apply(new CIMOperatingSystem(OSType.RHEL, null, null, "description"));
-      assert !supportsApt().apply(new CIMOperatingSystem(OSType.RHEL_64, null, null, "description"));
+      assert !supportsApt().apply(new CIMOperatingSystem(OSType.RHEL, "", null, "description"));
+      assert !supportsApt().apply(new CIMOperatingSystem(OSType.RHEL_64, "", null, "description"));
    }
 
    public void testCIMDEBIANSupportsApt() {
-      assert supportsApt().apply(new CIMOperatingSystem(OSType.DEBIAN, null, null, "description"));
-      assert supportsApt().apply(new CIMOperatingSystem(OSType.DEBIAN_64, null, null, "description"));
+      assert supportsApt().apply(new CIMOperatingSystem(OSType.DEBIAN, "", null, "description"));
+      assert supportsApt().apply(new CIMOperatingSystem(OSType.DEBIAN_64, "", null, "description"));
    }
 
    public void testCIMUBUNTUSupportsApt() {
-      assert supportsApt().apply(new CIMOperatingSystem(OSType.UBUNTU, null, null, "description"));
-      assert supportsApt().apply(new CIMOperatingSystem(OSType.UBUNTU_64, null, null, "description"));
+      assert supportsApt().apply(new CIMOperatingSystem(OSType.UBUNTU, "", null, "description"));
+      assert supportsApt().apply(new CIMOperatingSystem(OSType.UBUNTU_64, "", null, "description"));
    }
 
    public void testUbuntuNameSupportsApt() {
-      assert supportsApt().apply(new OperatingSystem(null, "Ubuntu", null, null, "description", false));
+      assert supportsApt().apply(new OperatingSystem(null, "Ubuntu", "", null, "description", false));
    }
 
    public void testCIMCENTOSSupportsYum() {
-      assert supportsYum().apply(new CIMOperatingSystem(OSType.CENTOS, null, null, "description"));
-      assert supportsYum().apply(new CIMOperatingSystem(OSType.CENTOS_64, null, null, "description"));
+      assert supportsYum().apply(new CIMOperatingSystem(OSType.CENTOS, "", null, "description"));
+      assert supportsYum().apply(new CIMOperatingSystem(OSType.CENTOS_64, "", null, "description"));
    }
 
    public void testCIMRHELSupportsYum() {
-      assert supportsYum().apply(new CIMOperatingSystem(OSType.RHEL, null, null, "description"));
-      assert supportsYum().apply(new CIMOperatingSystem(OSType.RHEL_64, null, null, "description"));
+      assert supportsYum().apply(new CIMOperatingSystem(OSType.RHEL, "", null, "description"));
+      assert supportsYum().apply(new CIMOperatingSystem(OSType.RHEL_64, "", null, "description"));
    }
 
    public void testCIMDEBIANDoesntSupportYum() {
-      assert !supportsYum().apply(new CIMOperatingSystem(OSType.DEBIAN, null, null, "description"));
-      assert !supportsYum().apply(new CIMOperatingSystem(OSType.DEBIAN_64, null, null, "description"));
+      assert !supportsYum().apply(new CIMOperatingSystem(OSType.DEBIAN, "", null, "description"));
+      assert !supportsYum().apply(new CIMOperatingSystem(OSType.DEBIAN_64, "", null, "description"));
    }
 
    public void testCIMUBUNTUDoesntSupportYum() {
-      assert !supportsYum().apply(new CIMOperatingSystem(OSType.UBUNTU, null, null, "description"));
-      assert !supportsYum().apply(new CIMOperatingSystem(OSType.UBUNTU_64, null, null, "description"));
+      assert !supportsYum().apply(new CIMOperatingSystem(OSType.UBUNTU, "", null, "description"));
+      assert !supportsYum().apply(new CIMOperatingSystem(OSType.UBUNTU_64, "", null, "description"));
+   }
+
+   public void testSuseTypeSupportsZypper() {
+      assert supportsZypper().apply(new OperatingSystem(OsFamily.SUSE, null, "", null, "description", false));
+   }
+
+   public void testSuseDescriptionSupportsZypper() {
+      assert supportsZypper().apply(new OperatingSystem(null, "", null, null, "Suse", false));
+   }
+
+   public void testSuseNameSupportsZypper() {
+      assert supportsZypper().apply(new OperatingSystem(null, "Suse", "", null, "description", false));
    }
 
    public void testCentosTypeSupportsYum() {
-      assert supportsYum().apply(new OperatingSystem(OsFamily.CENTOS, null, null, null, "description", false));
+      assert supportsYum().apply(new OperatingSystem(OsFamily.CENTOS, null, "", null, "description", false));
    }
 
    public void testRhelTypeSupportsYum() {
-      assert supportsYum().apply(new OperatingSystem(OsFamily.RHEL, null, null, null, "description", false));
+      assert supportsYum().apply(new OperatingSystem(OsFamily.RHEL, null, "", null, "description", false));
    }
 
    public void testFedoraTypeSupportsYum() {
-      assert supportsYum().apply(new OperatingSystem(OsFamily.FEDORA, null, null, null, "description", false));
+      assert supportsYum().apply(new OperatingSystem(OsFamily.FEDORA, null, "", null, "description", false));
    }
 
    public void testCentosNameSupportsYum() {
-      assert supportsYum().apply(new OperatingSystem(null, "Centos", null, null, "description", false));
+      assert supportsYum().apply(new OperatingSystem(null, "Centos", "", null, "description", false));
    }
 
    public void testRhelNameSupportsYum() {
-      assert supportsYum().apply(new OperatingSystem(null, "RHEL", null, null, "description", false));
+      assert supportsYum().apply(new OperatingSystem(null, "RHEL", "", null, "description", false));
    }
 
    public void testFedoraNameSupportsYum() {
-      assert supportsYum().apply(new OperatingSystem(null, "Fedora", null, null, "description", false));
+      assert supportsYum().apply(new OperatingSystem(null, "Fedora", "", null, "description", false));
    }
 
    public void testRedHatEnterpriseLinuxNameSupportsYum() {
-      assert supportsYum().apply(
-            new OperatingSystem(null, "Red Hat Enterprise Linux", null, null, "description", false));
+      assert supportsYum().apply(new OperatingSystem(null, "Red Hat Enterprise Linux", "", null, "description", false));
    }
 
    public void testCentosDescriptionSupportsYum() {
-      assert supportsYum().apply(new OperatingSystem(null, null, null, null, "Centos", false));
+      assert supportsYum().apply(new OperatingSystem(null, "", null, null, "Centos", false));
    }
 
    public void testRhelDescriptionSupportsYum() {
-      assert supportsYum().apply(new OperatingSystem(null, null, null, null, "RHEL", false));
+      assert supportsYum().apply(new OperatingSystem(null, "", null, null, "RHEL", false));
    }
 
    public void testFedoraDescriptionSupportsYum() {
-      assert supportsYum().apply(new OperatingSystem(null, null, null, null, "Fedora", false));
+      assert supportsYum().apply(new OperatingSystem(null, "", null, null, "Fedora", false));
    }
 
    public void testRedHatEnterpriseLinuxDescriptionSupportsYum() {
-      assert supportsYum().apply(new OperatingSystem(null, null, null, null, "Red Hat Enterprise Linux", false));
+      assert supportsYum().apply(new OperatingSystem(null, "", null, null, "Red Hat Enterprise Linux", false));
    }
 }

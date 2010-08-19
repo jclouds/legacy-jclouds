@@ -34,9 +34,9 @@ import com.google.common.util.concurrent.ListenableFuture;
 /**
  * Provides access to Slicehost via their REST API.
  * <p/>
- * All commands return a ListenableFuture of the result from Slicehost. Any
- * exceptions incurred during processing will be wrapped in an
- * {@link ExecutionException} as documented in {@link ListenableFuture#get()}.
+ * All commands return a ListenableFuture of the result from Slicehost. Any exceptions incurred
+ * during processing will be wrapped in an {@link ExecutionException} as documented in
+ * {@link ListenableFuture#get()}.
  * 
  * @see SlicehostAsyncClient
  * @see <a href="http://www.slicehost.com/docs/Slicehost_API.pdf" />
@@ -68,12 +68,8 @@ public interface SlicehostClient {
 
    Image getImage(int id);
 
-   Void destroyBackup(int id);
-
    Set<Backup> listBackups();
 
    Backup getBackup(int id);
-
-   Backup createBackup(String name, int sliceId);
 
 }

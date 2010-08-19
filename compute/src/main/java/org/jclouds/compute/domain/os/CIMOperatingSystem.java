@@ -253,7 +253,6 @@ public class CIMOperatingSystem extends OperatingSystem {
       super(osType.getFamily(), osType.getValue(), version, arch, description, osType.is64Bit());
       this.osType = osType;
    }
-
    /**
     * CIM OSType of the image
     */

@@ -20,13 +20,12 @@
 package org.jclouds.vcloud.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseArchitectureOrNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseOsFamilyOrNull;
 
 import javax.inject.Inject;
 
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Location;
@@ -59,14 +58,19 @@ public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
 
    @Override
    public Image apply(VAppTemplate from) {
-      OsFamily myOs = parseOsFamilyOrNull(checkNotNull(from, "vapp template").getName());
-      Architecture arch = parseArchitectureOrNull(from.getName());
+      OsFamily osFamily = parseOsFamilyOrNull(checkNotNull(from, "vapp template").getName());
+      String osName = null;
+      String osArch = null;
+      String osVersion = null;
+      String osDescription = from.getName();
+      boolean is64Bit = from.getName().indexOf("64") != -1;
+      OperatingSystem os = new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
+
       Location location = findLocationForResource.apply(checkNotNull(parent, "parent"));
       String name = getName(from.getName());
       String desc = from.getDescription() != null ? from.getDescription() : from.getName();
       return new VCloudImage(from, from.getId().toASCIIString(), name, from.getId().toASCIIString(), location, from
-               .getId(), ImmutableMap.<String, String> of(), desc, "", myOs, name, arch, credentialsProvider
-               .execute(from));
+               .getId(), ImmutableMap.<String, String> of(), os, desc, "", credentialsProvider.execute(from));
    }
 
    protected String getName(String name) {

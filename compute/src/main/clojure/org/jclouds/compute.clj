@@ -61,7 +61,7 @@ See http://code.google.com/p/jclouds for details."
             ComputeService ComputeServiceContext ComputeServiceContextFactory]
            [org.jclouds.compute.domain
             Template TemplateBuilder ComputeMetadata NodeMetadata Size OsFamily
-            Image Architecture]
+            Image]
            [org.jclouds.compute.options TemplateOptions]
            [org.jclouds.compute.predicates
             NodePredicates]
@@ -356,11 +356,8 @@ See http://code.google.com/p/jclouds for details."
 
 (defn os-families []
   (. OsFamily values))
-(defn architectures []
-  (. Architecture values))
 
-(def enum-map {:os-family (os-families)
-               :architecture (architectures)})
+(def enum-map {:os-family (os-families)})
 
 (defn add-option-with-value-if [builder kword]
   (loop [enums (sequence enum-map)]

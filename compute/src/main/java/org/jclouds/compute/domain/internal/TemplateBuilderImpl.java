@@ -35,7 +35,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OperatingSystem;
@@ -54,7 +53,6 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 import com.google.common.primitives.Doubles;
@@ -77,8 +75,6 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    protected final Provider<TemplateOptions> optionsProvider;
    protected final Provider<TemplateBuilder> defaultTemplateProvider;
 
-   @VisibleForTesting
-   protected Architecture arch;
    @VisibleForTesting
    protected Location location;
    @VisibleForTesting
@@ -116,8 +112,9 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
    @Inject
    protected TemplateBuilderImpl(Supplier<Set<? extends Location>> locations, Supplier<Set<? extends Image>> images,
-         Supplier<Set<? extends Size>> sizes, Supplier<Location> defaultLocation2,
-         Provider<TemplateOptions> optionsProvider, @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider) {
+            Supplier<Set<? extends Size>> sizes, Supplier<Location> defaultLocation2,
+            Provider<TemplateOptions> optionsProvider,
+            @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider) {
       this.locations = locations;
       this.images = images;
       this.sizes = sizes;
@@ -127,13 +124,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    }
 
    /**
-    * If the current location id is null, then we don't care where to launch a
-    * node.
+    * If the current location id is null, then we don't care where to launch a node.
     * 
     * If the input location is null, then the data isn't location sensitive
     * 
-    * If the input location is a parent of the specified location, then we are
-    * ok.
+    * If the input location is a parent of the specified location, then we are ok.
     */
    private final Predicate<ComputeMetadata> locationPredicate = new Predicate<ComputeMetadata>() {
       @Override
@@ -141,7 +136,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          boolean returnVal = true;
          if (location != null && input.getLocation() != null)
             returnVal = location.equals(input.getLocation()) || location.getParent() != null
-                  && location.getParent().equals(input.getLocation());
+                     && location.getParent().equals(input.getLocation());
          return returnVal;
       }
    };
@@ -172,17 +167,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       }
 
    };
-   private final Predicate<Image> imageArchPredicate = new Predicate<Image>() {
 
-      @Override
-      public boolean apply(Image input) {
-         boolean returnVal = true;
-         if (arch != null)
-            returnVal = arch.equals(input.getArchitecture());
-         return returnVal;
-      }
-
-   };
    private final Predicate<OperatingSystem> osNamePredicate = new Predicate<OperatingSystem>() {
       @Override
       public boolean apply(OperatingSystem input) {
@@ -206,7 +191,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                returnVal = false;
             else
                returnVal = input.getDescription().contains(osDescription)
-                     || input.getDescription().matches(osDescription);
+                        || input.getDescription().matches(osDescription);
          }
          return returnVal;
       }
@@ -290,8 +275,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                returnVal = false;
             else
                returnVal = input.getDescription().equals(imageDescription)
-                     || input.getDescription().contains(imageDescription)
-                     || input.getDescription().matches(imageDescription);
+                        || input.getDescription().contains(imageDescription)
+                        || input.getDescription().matches(imageDescription);
          }
          return returnVal;
       }
@@ -325,12 +310,12 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       }
    };
    private final Predicate<Size> sizePredicate = and(sizeIdPredicate, locationPredicate, sizeCoresPredicate,
-         sizeRamPredicate);
+            sizeRamPredicate);
 
    static final Ordering<Size> DEFAULT_SIZE_ORDERING = new Ordering<Size>() {
       public int compare(Size left, Size right) {
          return ComparisonChain.start().compare(left.getCores(), right.getCores()).compare(left.getRam(),
-               right.getRam()).compare(left.getDisk(), right.getDisk()).result();
+                  right.getRam()).compare(left.getDisk(), right.getDisk()).result();
       }
    };
    static final Ordering<Size> BY_CORES_ORDERING = new Ordering<Size>() {
@@ -341,15 +326,15 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    static final Ordering<Image> DEFAULT_IMAGE_ORDERING = new Ordering<Image>() {
       public int compare(Image left, Image right) {
          return ComparisonChain.start().compare(left.getName(), right.getName(),
-               Ordering.<String> natural().nullsLast()).compare(left.getVersion(), right.getVersion(),
-               Ordering.<String> natural().nullsLast()).compare(left.getOperatingSystem().getName(),
-               right.getOperatingSystem().getName(),// 
-               Ordering.<String> natural().nullsLast()).compare(left.getOperatingSystem().getVersion(),
-               right.getOperatingSystem().getVersion(),// 
-               Ordering.<String> natural().nullsLast()).compare(left.getOperatingSystem().getDescription(),
-               right.getOperatingSystem().getDescription(),// 
-               Ordering.<String> natural().nullsLast()).compare(left.getOperatingSystem().getArch(),
-               right.getOperatingSystem().getArch()).result();
+                  Ordering.<String> natural().nullsLast()).compare(left.getVersion(), right.getVersion(),
+                  Ordering.<String> natural().nullsLast()).compare(left.getOperatingSystem().getName(),
+                  right.getOperatingSystem().getName(),// 
+                  Ordering.<String> natural().nullsLast()).compare(left.getOperatingSystem().getVersion(),
+                  right.getOperatingSystem().getVersion(),// 
+                  Ordering.<String> natural().nullsLast()).compare(left.getOperatingSystem().getDescription(),
+                  right.getOperatingSystem().getDescription(),// 
+                  Ordering.<String> natural().nullsLast()).compare(left.getOperatingSystem().getArch(),
+                  right.getOperatingSystem().getArch()).result();
       }
    };
 
@@ -399,8 +384,6 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       this.os64Bit = image.getOperatingSystem().is64Bit();
       if (image.getOperatingSystem().getArch() != null)
          this.osArch = image.getOperatingSystem().getArch();
-      if (image.getArchitecture() != null)
-         this.arch = image.getArchitecture();
       return this;
    }
 
@@ -460,15 +443,6 @@ public class TemplateBuilderImpl implements TemplateBuilder {
     * {@inheritDoc}
     */
    @Override
-   public TemplateBuilder architecture(Architecture architecture) {
-      this.arch = architecture;
-      return this;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public Template build() {
       if (nothingChangedExceptOptions()) {
          TemplateBuilder defaultTemplate = defaultTemplateProvider.get();
@@ -487,8 +461,6 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       Image image = resolveImage(size, supportedImages);
       logger.debug("<<   matched image(%s)", image);
 
-      // ensure we have an architecture matching
-      this.arch = image.getArchitecture();
       return new TemplateImpl(image, size, location, options);
    }
 
@@ -513,7 +485,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          size = sizeOrdering.max(filter(sizesThatAreCompatibleWithOurImages, sizePredicate));
       } catch (NoSuchElementException exception) {
          throw new NoSuchElementException("sizes don't support any images: " + toString() + "\n" + sizesl + "\n"
-               + images);
+                  + images);
       }
       logger.debug("<<   matched size(%s)", size);
       return size;
@@ -566,28 +538,43 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       if (imageId != null) {
          predicates.add(idPredicate);
       } else {
+         if (location != null)
+            predicates.add(new Predicate<Image>() {
+
+               @Override
+               public boolean apply(Image input) {
+                  return locationPredicate.apply(input);
+               }
+
+            });
+
+         final List<Predicate<OperatingSystem>> osPredicates = newArrayList();
+         if (osFamily != null)
+            osPredicates.add(osFamilyPredicate);
+         if (osName != null)
+            osPredicates.add(osNamePredicate);
+         if (osDescription != null)
+            osPredicates.add(osDescriptionPredicate);
+         if (osVersion != null)
+            osPredicates.add(osVersionPredicate);
+         if (os64Bit != null)
+            osPredicates.add(os64BitPredicate);
+         if (osArch != null)
+            osPredicates.add(osArchPredicate);
          predicates.add(new Predicate<Image>() {
 
             @Override
             public boolean apply(Image input) {
-               return locationPredicate.apply(input);
+               return Predicates.and(osPredicates).apply(input.getOperatingSystem());
             }
 
          });
-         predicates.add(new Predicate<Image>() {
-
-            @Override
-            public boolean apply(Image input) {
-               return Predicates.and(
-                     ImmutableSet.of(osFamilyPredicate, osNamePredicate, osDescriptionPredicate, osVersionPredicate,
-                           os64BitPredicate, osArchPredicate)).apply(input.getOperatingSystem());
-            }
-
-         });
-         predicates.add(imageArchPredicate);
-         predicates.add(imageVersionPredicate);
-         predicates.add(imageNamePredicate);
-         predicates.add(imageDescriptionPredicate);
+         if (imageVersion != null)
+            predicates.add(imageVersionPredicate);
+         if (imageName != null)
+            predicates.add(imageNamePredicate);
+         if (imageDescription != null)
+            predicates.add(imageDescriptionPredicate);
       }
 
       Predicate<Image> imagePredicate = and(predicates);
@@ -603,7 +590,6 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       this.imageName = null;
       this.imageDescription = null;
       this.imageVersion = null;
-      this.arch = null;
       this.osFamily = null;
       this.osName = null;
       this.osDescription = null;
@@ -732,10 +718,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
    @VisibleForTesting
    boolean nothingChangedExceptOptions() {
-      return osFamily == null && arch == null && location == null && imageId == null && sizeId == null
-            && osName == null && osDescription == null && imageVersion == null && osVersion == null && osArch == null
-            && os64Bit == null && imageName == null && imageDescription == null && minCores == 0 && minRam == 0
-            && !biggest && !fastest;
+      return osFamily == null && location == null && imageId == null && sizeId == null && osName == null
+               && osDescription == null && imageVersion == null && osVersion == null && osArch == null
+               && os64Bit == null && imageName == null && imageDescription == null && minCores == 0 && minRam == 0
+               && !biggest && !fastest;
    }
 
    /**
@@ -748,15 +734,15 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
    @Override
    public String toString() {
-      return "[arch=" + arch + ", biggest=" + biggest + ", fastest=" + fastest + ", imageName=" + imageName
-            + ", imageDescription=" + imageDescription + ", imageId=" + imageId + ", imageVersion=" + imageVersion
-            + ", location=" + location + ", minCores=" + minCores + ", minRam=" + minRam + ", osFamily=" + osFamily
-            + ", osName=" + osName + ", osDescription=" + osDescription + ", osVersion=" + osVersion + ", osArch=" + osArch + ", os64Bit="
-            + os64Bit + ", sizeId=" + sizeId + "]";
+      return "[biggest=" + biggest + ", fastest=" + fastest + ", imageName=" + imageName + ", imageDescription="
+               + imageDescription + ", imageId=" + imageId + ", imageVersion=" + imageVersion + ", location="
+               + location + ", minCores=" + minCores + ", minRam=" + minRam + ", osFamily=" + osFamily + ", osName="
+               + osName + ", osDescription=" + osDescription + ", osVersion=" + osVersion + ", osArch=" + osArch
+               + ", os64Bit=" + os64Bit + ", sizeId=" + sizeId + "]";
    }
 
    @Override
-   public TemplateBuilder os64bit(boolean is64Bit) {
+   public TemplateBuilder os64Bit(boolean is64Bit) {
       this.os64Bit = is64Bit;
       return this;
    }

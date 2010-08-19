@@ -21,7 +21,6 @@ package org.jclouds.vcloud.hostingdotcom.compute;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
@@ -44,8 +43,8 @@ public class HostingDotComVCloudComputeServiceLiveTest extends VCloudComputeServ
    @Test
    public void testTemplateBuilder() {
       Template defaultTemplate = client.templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_64);
-      assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.CENTOS);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
       assertEquals(defaultTemplate.getLocation().getId(), "188849");
       assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
    }

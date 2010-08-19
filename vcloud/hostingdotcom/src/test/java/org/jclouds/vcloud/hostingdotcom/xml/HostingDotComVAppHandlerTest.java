@@ -48,14 +48,14 @@ public class HostingDotComVAppHandlerTest extends BaseHandlerTest {
       InputStream is = getClass().getResourceAsStream("/hostingdotcom/instantiatevapp.xml");
 
       HostingDotComVApp result = (HostingDotComVApp) factory.create(
-            injector.getInstance(HostingDotComVAppHandler.class)).parse(is);
+               injector.getInstance(HostingDotComVAppHandler.class)).parse(is);
 
       HostingDotComVApp expects = new HostingDotComVAppImpl("188849-33", URI
-            .create("https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-33"), VAppStatus.RESOLVED, null,
-            new NamedResourceImpl(null, "application/vnd.vmware.vcloud.vdc+xml", URI
-                  .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/188849")), ImmutableListMultimap
-                  .<String, String> of(), null, null, ImmutableSortedSet.<ResourceAllocation> of(), "root",
-            "meatisyummy");
+               .create("https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-33"), VAppStatus.RESOLVED, null,
+               new NamedResourceImpl(null, "application/vnd.vmware.vcloud.vdc+xml", URI
+                        .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/188849")), ImmutableListMultimap
+                        .<String, String> of(), null, null, null, ImmutableSortedSet.<ResourceAllocation> of(), "root",
+               "meatisyummy");
 
       assertEquals(result, expects);
    }

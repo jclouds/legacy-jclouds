@@ -30,9 +30,10 @@ import javax.inject.Provider;
 
 import org.jclouds.aws.ec2.compute.domain.EC2Size;
 import org.jclouds.aws.ec2.domain.InstanceType;
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -75,8 +76,7 @@ public class EC2ComputeServiceTest {
     */
    @Test
    public void testTemplateChoiceForInstanceBySizeId() throws Exception {
-      Template template = newTemplateBuilder().architecture(Architecture.X86_64).sizeId("m2.xlarge").locationId(
-               "us-east-1").build();
+      Template template = newTemplateBuilder().os64Bit(true).sizeId("m2.xlarge").locationId("us-east-1").build();
 
       assert template != null : "The returned template was null, but it should have a value.";
       assert EC2Size.M2_XLARGE.equals(template.getSize()) : format(
@@ -102,8 +102,8 @@ public class EC2ComputeServiceTest {
     */
    @Test
    public void testTemplateChoiceForInstanceByAttributes() throws Exception {
-      Template template = newTemplateBuilder().architecture(Architecture.X86_64).minRam(17510).minCores(6.5).smallest()
-               .locationId("us-east-1").build();
+      Template template = newTemplateBuilder().os64Bit(true).minRam(17510).minCores(6.5).smallest().locationId(
+               "us-east-1").build();
 
       assert template != null : "The returned template was null, but it should have a value.";
       assert EC2Size.M2_XLARGE.equals(template.getSize()) : format(
@@ -121,8 +121,8 @@ public class EC2ComputeServiceTest {
     */
    @Test
    public void testNegativeTemplateChoiceForInstanceByAttributes() throws Exception {
-      Template template = newTemplateBuilder().architecture(Architecture.X86_64).minRam(17510).minCores(6.7).smallest()
-               .locationId("us-east-1").build();
+      Template template = newTemplateBuilder().os64Bit(true).minRam(17510).minCores(6.7).smallest().locationId(
+               "us-east-1").build();
 
       assert template != null : "The returned template was null, but it should have a value.";
       assert !EC2Size.M2_XLARGE.equals(template.getSize()) : format(
@@ -140,8 +140,8 @@ public class EC2ComputeServiceTest {
       expect(optionsProvider.get()).andReturn(defaultOptions);
 
       Image image = new ImageImpl("cc-image", "image", "us-east-1/cc-image", location, null, Maps
-               .<String, String> newHashMap(), "description", "1.0", null, "ubuntu", Architecture.X86_64,
-               new Credentials("root", null));
+               .<String, String> newHashMap(), new OperatingSystem(OsFamily.UBUNTU, null, "1.0", null, "ubuntu", true),
+               "description", "1.0", new Credentials("root", null));
       replay(optionsProvider);
       replay(templateBuilderProvider);
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet

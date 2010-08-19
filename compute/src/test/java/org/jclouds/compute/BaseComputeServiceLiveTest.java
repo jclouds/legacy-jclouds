@@ -55,11 +55,12 @@ import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.compute.predicates.OperatingSystemPredicates;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -92,6 +93,34 @@ import com.google.inject.Module;
  */
 @Test(groups = { "integration", "live" }, sequential = true, testName = "compute.ComputeServiceLiveTest")
 public abstract class BaseComputeServiceLiveTest {
+   public static final String APT_RUN_SCRIPT = new StringBuilder()//
+            .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
+            .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
+            .append(
+                     "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
+            .append("apt-get update\n")//
+            .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
+            .toString();
+
+   public static final String YUM_RUN_SCRIPT = new StringBuilder()
+            .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")
+            //
+            .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+            //
+            .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+            //
+            .append(
+                     "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
+            .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
+            .append("yum --nogpgcheck -y install java-1.6.0-openjdk\n")//
+            .append("echo \"export PATH=\\\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\\$PATH\\\"\" >> /root/.bashrc\n")//
+            .toString();
+
+   public static final String ZYPPER_RUN_SCRIPT = new StringBuilder()//
+            .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
+            .append("sudo zypper install java-1.6.0-openjdk-devl\n")//
+            .toString();
+
    @BeforeClass
    abstract public void setServiceDefaults();
 
@@ -209,16 +238,16 @@ public abstract class BaseComputeServiceLiveTest {
          assert good.identity != null : nodes;
          assert good.credential != null : nodes;
 
-         Image image = get(nodes, 0).getImage();
+         OperatingSystem os = get(nodes, 0).getOperatingSystem();
          try {
-            Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(tag, image.getOsFamily(),
-                     new Credentials(good.identity, "romeo"));
+            Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(tag, os, new Credentials(
+                     good.identity, "romeo"));
             assert false : "shouldn't pass with a bad password\n" + responses;
          } catch (RunScriptOnNodesException e) {
             assert getRootCause(e).getMessage().contains("Auth fail") : e;
          }
 
-         runScriptWithCreds(tag, image.getOsFamily(), good);
+         runScriptWithCreds(tag, os, good);
 
          checkNodes(nodes, tag);
 
@@ -247,7 +276,7 @@ public abstract class BaseComputeServiceLiveTest {
 
       template.getOptions().installPrivateKey(newStringPayload(keyPair.get("private"))).authorizePublicKey(
                newStringPayload(keyPair.get("public"))).runScript(
-               newStringPayload(buildScript(template.getImage().getOsFamily())));
+               newStringPayload(buildScript(template.getImage().getOperatingSystem())));
       try {
          nodes = newTreeSet(client.runNodesWithTag(tag, 2, template));
       } catch (RunNodesException e) {
@@ -263,11 +292,20 @@ public abstract class BaseComputeServiceLiveTest {
 
       assertLocationSameOrChild(node1.getLocation(), template.getLocation());
       assertLocationSameOrChild(node2.getLocation(), template.getLocation());
-      if (node1.getImage() != null)
-         assertEquals(node1.getImage(), template.getImage());
-      if (node2.getImage() != null)
-         assertEquals(node2.getImage(), template.getImage());
+      checkImageIdMatchesTemplate(node1);
+      checkImageIdMatchesTemplate(node2);
+      checkOsMatchesTemplate(node1);
+      checkOsMatchesTemplate(node2);
+   }
 
+   protected void checkImageIdMatchesTemplate(NodeMetadata node) {
+      if (node.getImageId() != null)
+         assertEquals(node.getImageId(), template.getImage().getId());
+   }
+
+   protected void checkOsMatchesTemplate(NodeMetadata node) {
+      if (node.getOperatingSystem() != null)
+         assertEquals(node.getOperatingSystem().getFamily(), template.getImage().getOperatingSystem().getFamily());
    }
 
    void assertLocationSameOrChild(Location test, Location expected) {
@@ -287,13 +325,13 @@ public abstract class BaseComputeServiceLiveTest {
       this.nodes.add(node);
       assertEquals(nodes.size(), 1);
       assertLocationSameOrChild(node.getLocation(), template.getLocation());
-      assertEquals(node.getImage(), template.getImage());
+      assertEquals(node.getOperatingSystem().getFamily(), template.getImage().getOperatingSystem().getFamily());
    }
 
-   protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String tag, OsFamily osFamily,
+   protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String tag, OperatingSystem os,
             Credentials creds) throws RunScriptOnNodesException {
       try {
-         return client.runScriptOnNodesMatching(runningWithTag(tag), newStringPayload(buildScript(osFamily)),
+         return client.runScriptOnNodesMatching(runningWithTag(tag), newStringPayload(buildScript(os)),
                   overrideCredentialsWith(creds));
       } catch (SshException e) {
          if (getRootCause(e).getMessage().contains("Auth fail")) {
@@ -325,35 +363,15 @@ public abstract class BaseComputeServiceLiveTest {
       return templateBuilder.build();
    }
 
-   public static String buildScript(OsFamily osFamily) {
-      switch (osFamily) {
-         case UBUNTU:
-            return new StringBuilder()//
-                     .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
-                     .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
-                     .append(
-                              "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
-                     .append("apt-get update\n")//
-                     .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
-                     .append("wget -qO/usr/bin/runurl run.alestic.com/runurl\n")//
-                     .append("chmod 755 /usr/bin/runurl\n")//
-                     .toString();
-         case CENTOS:
-         case RHEL:
-            return new StringBuilder()
-                     .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")
-                     .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-                     .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-                     .append(
-                              "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-                     .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-                     .append("yum --nogpgcheck -y install java-1.6.0-openjdk\n")
-                     .append(
-                              "echo \"export PATH=\\\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\\$PATH\\\"\" >> /root/.bashrc\n")
-                     .toString();
-         default:
-            throw new IllegalArgumentException(osFamily.toString());
-      }
+   public static String buildScript(OperatingSystem os) {
+      if (OperatingSystemPredicates.supportsApt().apply(os))
+         return APT_RUN_SCRIPT;
+      else if (OperatingSystemPredicates.supportsYum().apply(os))
+         return YUM_RUN_SCRIPT;
+      else if (OperatingSystemPredicates.supportsZypper().apply(os))
+         return ZYPPER_RUN_SCRIPT;
+      else
+         throw new IllegalArgumentException("don't know how to handle" + os.toString());
    }
 
    @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
@@ -366,7 +384,8 @@ public abstract class BaseComputeServiceLiveTest {
          assertEquals(metadata.getProviderId(), node.getProviderId());
          assertEquals(metadata.getTag(), node.getTag());
          assertLocationSameOrChild(metadata.getLocation(), template.getLocation());
-         assertEquals(metadata.getImage(), template.getImage());
+         checkImageIdMatchesTemplate(metadata);
+         checkOsMatchesTemplate(metadata);
          assertEquals(metadata.getState(), NodeState.RUNNING);
          assertEquals(metadata.getPrivateAddresses(), node.getPrivateAddresses());
          assertEquals(metadata.getPublicAddresses(), node.getPublicAddresses());

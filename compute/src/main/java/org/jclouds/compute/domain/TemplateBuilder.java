@@ -35,8 +35,7 @@ import com.google.inject.ImplementedBy;
 public interface TemplateBuilder {
 
    /**
-    * prime this builder with parameters known to work on the current compute
-    * provider.
+    * prime this builder with parameters known to work on the current compute provider.
     */
    TemplateBuilder any();
 
@@ -84,14 +83,6 @@ public interface TemplateBuilder {
    TemplateBuilder locationId(String locationId);
 
    /**
-    * Configure this template to require a specific architecture
-    * 
-    * Please switch to either architecture as a string, or {@link #is64bit()}
-    */
-   @Deprecated
-   TemplateBuilder architecture(Architecture architecture);
-
-   /**
     * Configure this template to require a specific imageId.
     * <p/>
     * Note that image Ids are often scoped to {@code location}
@@ -104,26 +95,23 @@ public interface TemplateBuilder {
    TemplateBuilder sizeId(String sizeId);
 
    /**
-    * Configure this template to have an operating system name that matches the
-    * regular expression
+    * Configure this template to have an operating system name that matches the regular expression
     */
    TemplateBuilder osNameMatches(String osNameRegex);
 
    /**
-    * Configure this template to have an operating system description that
-    * matches the regular expression
+    * Configure this template to have an operating system description that matches the regular
+    * expression
     */
    TemplateBuilder osDescriptionMatches(String osDescriptionRegex);
 
    /**
-    * Configure this template to have an os version that matches the regular
-    * expression
+    * Configure this template to have an os version that matches the regular expression
     */
    TemplateBuilder osVersionMatches(String osVersionRegex);
 
    /**
-    * Configure this template to require a specific architecture. ex.
-    * virtualizationType or
+    * Configure this template to require a specific architecture. ex. virtualizationType or
     * 
     */
    TemplateBuilder osArchMatches(String architecture);
@@ -131,23 +119,20 @@ public interface TemplateBuilder {
    /**
     * Configure this template to require a 64 bit operating system.
     */
-   TemplateBuilder os64bit(boolean is64bit);
+   TemplateBuilder os64Bit(boolean is64bit);
 
    /**
-    * Configure this template to have an image name that matches the regular
-    * expression
+    * Configure this template to have an image name that matches the regular expression
     */
    TemplateBuilder imageNameMatches(String imageNameRegex);
 
    /**
-    * Configure this template to have an image version that matches the regular
-    * expression
+    * Configure this template to have an image version that matches the regular expression
     */
    TemplateBuilder imageVersionMatches(String imageVersionRegex);
 
    /**
-    * Configure this template to have an image description that matches the
-    * regular expression
+    * Configure this template to have an image description that matches the regular expression
     */
    TemplateBuilder imageDescriptionMatches(String imageDescriptionRegex);
 

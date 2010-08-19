@@ -53,7 +53,7 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudGetNodeMetadat
 
    @Inject
    protected TerremarkVCloudGetNodeMetadataStrategy(VCloudGetNodeMetadata getNodeMetadata,
-         ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
+            ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
       super(getNodeMetadata);
       this.credentialsMap = credentialsMap;
    }
@@ -66,8 +66,6 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudGetNodeMetadat
       if (node.getTag() != null) {
          node = installCredentialsFromCache(node);
       }
-      if (node.getCredentials() == null)
-         node = installDefaultCredentialsFromImage(node);
       return node;
    }
 
@@ -86,9 +84,4 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudGetNodeMetadat
       return orgAndName;
    }
 
-   NodeMetadata installDefaultCredentialsFromImage(NodeMetadata node) {
-      if (node.getImage() != null && node.getImage().getDefaultCredentials() != null)
-         node = installNewCredentials(node, node.getImage().getDefaultCredentials());
-      return node;
-   }
 }

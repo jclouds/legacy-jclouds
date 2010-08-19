@@ -28,8 +28,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -64,25 +64,29 @@ public class RimuHostingImageSupplier implements Supplier<Set<? extends Image>> 
       final Set<Image> images = Sets.newHashSet();
       logger.debug(">> providing images");
       for (final org.jclouds.rimuhosting.miro.domain.Image from : sync.getImageList()) {
-         OsFamily os = null;
-         Architecture arch = from.getId().indexOf("64") == -1 ? Architecture.X86_32 : Architecture.X86_64;
-         String osDescription = "";
-         String version = "";
+         String version = null;
+
+         OsFamily osFamily = null;
+         String osName = null;
+         String osArch = null;
+         String osVersion = null;
+         String osDescription = from.getId();
+         boolean is64Bit = from.getId().indexOf("64") != -1;
 
          osDescription = from.getId();
 
          Matcher matcher = RIMU_PATTERN.matcher(from.getId());
          if (matcher.find()) {
             try {
-               os = OsFamily.fromValue(matcher.group(1).toLowerCase());
+               osFamily = OsFamily.fromValue(matcher.group(1).toLowerCase());
             } catch (IllegalArgumentException e) {
                logger.debug("<< didn't match os(%s)", matcher.group(2));
             }
          }
+         OperatingSystem os = new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
 
          images.add(new ImageImpl(from.getId(), from.getDescription(), from.getId(), null, null, ImmutableMap
-                  .<String, String> of(), from.getDescription(), version, os, osDescription, arch, new Credentials(
-                  "root", null)));
+                  .<String, String> of(), os, from.getDescription(), version, new Credentials("root", null)));
       }
       logger.debug("<< images(%d)", images.size());
       return images;

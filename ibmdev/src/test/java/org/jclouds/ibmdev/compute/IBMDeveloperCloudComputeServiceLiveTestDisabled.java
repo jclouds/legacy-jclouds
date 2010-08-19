@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.OsFamily;
@@ -50,8 +49,8 @@ public class IBMDeveloperCloudComputeServiceLiveTestDisabled extends BaseCompute
    @Test
    public void testTemplateBuilder() {
       Template defaultTemplate = client.templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_32);
-      assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.RHEL);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.SUSE);
       assertEquals(defaultTemplate.getLocation().getId(), "1");
       assertEquals(defaultTemplate.getSize().getCores(), 2.0d);
    }
@@ -73,7 +72,7 @@ public class IBMDeveloperCloudComputeServiceLiveTestDisabled extends BaseCompute
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> tmContext = new ComputeServiceContextFactory()
-            .createContext(provider, identity, credential).getProviderSpecificContext();
+               .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
 }

@@ -35,7 +35,6 @@ import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.slicehost.filters.SlicehostBasic;
-import org.jclouds.slicehost.xml.BackupHandler;
 import org.jclouds.slicehost.xml.FlavorHandler;
 import org.jclouds.slicehost.xml.FlavorsHandler;
 import org.jclouds.slicehost.xml.ImageHandler;
@@ -178,20 +177,6 @@ public class SlicehostAsyncClientTest extends RestClientTest<SlicehostAsyncClien
       checkFilters(request);
    }
 
-   public void testDestroyBackup() throws IOException, SecurityException, NoSuchMethodException {
-      Method method = SlicehostAsyncClient.class.getMethod("destroyBackup", int.class);
-      HttpRequest request = processor.createRequest(method, 2);
-
-      assertRequestLineEquals(request, "DELETE https://api.slicehost.com/backups/2/destroy.xml HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "");
-      assertPayloadEquals(request, null, null, false);
-
-      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(request);
-   }
 
    public void testRebuildSliceFromImage() throws IOException, SecurityException, NoSuchMethodException {
       Method method = SlicehostAsyncClient.class.getMethod("rebuildSliceFromImage", int.class, int.class);
@@ -242,7 +227,7 @@ public class SlicehostAsyncClientTest extends RestClientTest<SlicehostAsyncClien
       Method method = SlicehostAsyncClient.class.getMethod("hardRebootSlice", int.class);
       HttpRequest request = processor.createRequest(method, 2);
 
-      assertRequestLineEquals(request, "PUT https://api.slicehost.com/slices/2/hardReboot.xml HTTP/1.1");
+      assertRequestLineEquals(request, "PUT https://api.slicehost.com/slices/2/hard_reboot.xml HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, null, null, false);
 
@@ -251,25 +236,6 @@ public class SlicehostAsyncClientTest extends RestClientTest<SlicehostAsyncClien
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);
-   }
-
-   public void testCreateBackup() throws IOException, SecurityException, NoSuchMethodException {
-      Method method = SlicehostAsyncClient.class.getMethod("createBackup", String.class, int.class);
-      HttpRequest request = processor.createRequest(method, "ralphie", 2);
-
-      assertRequestLineEquals(request, "POST https://api.slicehost.com/slices.xml HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "");
-      assertPayloadEquals(
-            request,
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><backup><slice-id type=\"integer\">2</slice-id><name>ralphie</name></backup>",
-            "application/xml", false);
-
-      assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, BackupHandler.class);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(request);
-
    }
 
    @Override

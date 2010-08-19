@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.terremark.compute.config.providers;
+package org.jclouds.vcloud.terremark.compute.suppliers;
 
 import static com.google.common.collect.Sets.newLinkedHashSet;
 

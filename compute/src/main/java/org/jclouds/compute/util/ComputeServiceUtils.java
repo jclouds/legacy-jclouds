@@ -28,7 +28,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
@@ -88,10 +87,6 @@ public class ComputeServiceUtils {
          }
       }
       return myOs;
-   }
-
-   public static Architecture parseArchitectureOrNull(String in) {
-      return in.indexOf("64") == -1 ? Architecture.X86_32 : Architecture.X86_64;
    }
 
    public static String createExecutionErrorMessage(Map<?, Exception> executionExceptions) {
@@ -154,8 +149,9 @@ public class ComputeServiceUtils {
     */
    public static NodeMetadata installNewCredentials(NodeMetadata node, Credentials newCredentials) {
       return new NodeMetadataImpl(node.getProviderId(), node.getName(), node.getId(), node.getLocation(),
-               node.getUri(), node.getUserMetadata(), node.getTag(), node.getImage(), node.getState(), node
-                        .getPublicAddresses(), node.getPrivateAddresses(), node.getExtra(), newCredentials);
+               node.getUri(), node.getUserMetadata(), node.getTag(), node.getImageId(), node.getOperatingSystem(), node
+                        .getState(), node.getPublicAddresses(), node.getPrivateAddresses(), node.getExtra(),
+               newCredentials);
    }
 
    public static Iterable<String> getSupportedProviders() {

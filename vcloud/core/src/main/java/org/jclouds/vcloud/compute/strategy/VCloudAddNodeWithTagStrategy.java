@@ -29,8 +29,10 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
+import org.jclouds.compute.domain.os.CIMOperatingSystem;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.VCloudClient;
@@ -72,10 +74,16 @@ public class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
 
    protected NodeMetadata newCreateNodeResponse(String tag, Template template, Map<String, String> metaMap, VApp vApp) {
       return new NodeMetadataImpl(vApp.getId().toASCIIString(), vApp.getName(), vApp.getId().toASCIIString(), template
-               .getLocation(), vApp.getId(), ImmutableMap.<String, String> of(), tag, template.getImage(),
+               .getLocation(), vApp.getId(), ImmutableMap.<String, String> of(), tag, template.getImage().getId(),
+               getOperatingSystemForVAppOrDefaultTo(vApp, template.getImage().getOperatingSystem()),
                vAppStatusToNodeState.get(vApp.getStatus()), computeClient.getPublicAddresses(vApp.getId()),
                computeClient.getPrivateAddresses(vApp.getId()), ImmutableMap.<String, String> of(), new Credentials(
                         metaMap.get("username"), metaMap.get("password")));
+   }
+
+   private OperatingSystem getOperatingSystemForVAppOrDefaultTo(VApp vApp, OperatingSystem operatingSystem) {
+      return vApp.getOsType() != null ? new CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(vApp.getOsType()),
+               null, null, vApp.getOperatingSystemDescription()) : operatingSystem;
    }
 
 }

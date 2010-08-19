@@ -26,11 +26,9 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 
@@ -46,28 +44,16 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
 
    private final String version;
    private final String description;
-   @Nullable
-   private final Architecture architecture;
    private final Credentials defaultCredentials;
 
    public ImageImpl(String providerId, String name, String id, Location location, URI uri,
-         Map<String, String> userMetadata, OperatingSystem operatingSystem, String description, String version,
-         @Nullable Architecture architecture, Credentials defaultCredentials) {
+            Map<String, String> userMetadata, OperatingSystem operatingSystem, String description,
+            @Nullable String version, @Nullable Credentials defaultCredentials) {
       super(ComputeType.IMAGE, providerId, name, id, location, uri, userMetadata);
       this.operatingSystem = checkNotNull(operatingSystem, "operatingSystem");
-      this.version = checkNotNull(version, "version");
+      this.version = version;
       this.description = checkNotNull(description, "description");
-      this.architecture = architecture;
       this.defaultCredentials = defaultCredentials;
-   }
-
-   @Deprecated
-   public ImageImpl(String providerId, String name, String id, Location location, URI uri,
-         Map<String, String> userMetadata, String description, String version, @Nullable OsFamily osFamily,
-         String osDescription, @Nullable Architecture architecture, Credentials defaultCredentials) {
-      this(providerId, name, id, location, uri, userMetadata, new OperatingSystem(osFamily, null, null,
-            architecture != null ? architecture.toString() : null, osDescription, architecture != null ? architecture
-                  .equals(Architecture.X86_64) : false), description, version, architecture, defaultCredentials);
    }
 
    /**
@@ -98,33 +84,6 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
     * {@inheritDoc}
     */
    @Override
-   public OsFamily getOsFamily() {
-      return operatingSystem.getFamily();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   public String getOsDescription() {
-      return operatingSystem.getDescription();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Deprecated
-   @Override
-   @Nullable
-   public Architecture getArchitecture() {
-      return architecture;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public Credentials getDefaultCredentials() {
       return defaultCredentials;
    }
@@ -132,14 +91,13 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
    @Override
    public String toString() {
       return "[id=" + getId() + ", name=" + getName() + ", operatingSystem=" + operatingSystem + ", description="
-            + description + ", version=" + version + ", location=" + getLocation() + "]";
+               + description + ", version=" + version + ", location=" + getLocation() + "]";
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((architecture == null) ? 0 : architecture.hashCode());
       result = prime * result + ((defaultCredentials == null) ? 0 : defaultCredentials.hashCode());
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((operatingSystem == null) ? 0 : operatingSystem.hashCode());
@@ -156,11 +114,6 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
       if (getClass() != obj.getClass())
          return false;
       ImageImpl other = (ImageImpl) obj;
-      if (architecture == null) {
-         if (other.architecture != null)
-            return false;
-      } else if (!architecture.equals(other.architecture))
-         return false;
       if (defaultCredentials == null) {
          if (other.defaultCredentials != null)
             return false;

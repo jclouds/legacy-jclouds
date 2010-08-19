@@ -27,8 +27,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -70,26 +70,28 @@ public class GoGridImageSupplier implements Supplier<Set<? extends Image>> {
       logger.debug(">> providing images");
       Set<ServerImage> allImages = sync.getImageServices().getImageList();
       for (ServerImage from : allImages) {
-         OsFamily os = null;
-         Architecture arch = (from.getOs().getName().indexOf("64") == -1 && from.getDescription().indexOf("64") == -1) ? Architecture.X86_32
-                  : Architecture.X86_64;
-         String osDescription;
+         OsFamily osFamily = null;
+         String osName = from.getOs().getName();
+         String osArch = from.getArchitecture().getDescription();
+         String osVersion = null;// TODO
+         String osDescription = from.getOs().getDescription();
+         boolean is64Bit = (from.getOs().getName().indexOf("64") != -1 || from.getDescription().indexOf("64") != -1);
+
+         String description = from.getDescription();
          String version = "";
 
-         osDescription = from.getOs().getName();
-
-         String matchedOs = GoGridUtils.parseStringByPatternAndGetNthMatchGroup(from.getOs().getName(),
-                  GOGRID_OS_NAME_PATTERN, 1);
+         String matchedOs = GoGridUtils.parseStringByPatternAndGetNthMatchGroup(osName, GOGRID_OS_NAME_PATTERN, 1);
          try {
-            os = OsFamily.fromValue(matchedOs.toLowerCase());
+            osFamily = OsFamily.fromValue(matchedOs.toLowerCase());
          } catch (IllegalArgumentException e) {
             logger.debug("<< didn't match os(%s)", matchedOs);
          }
          Credentials defaultCredentials = authenticator.execute(from);
          // TODO determine DC images are in
+         OperatingSystem os = new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
+
          images.add(new ImageImpl(from.getId() + "", from.getFriendlyName(), from.getId() + "", null, null,
-                  ImmutableMap.<String, String> of(), from.getDescription(), version, os, osDescription, arch,
-                  defaultCredentials));
+                  ImmutableMap.<String, String> of(), os, description, version, defaultCredentials));
       }
       logger.debug("<< images(%d)", images.size());
       return images;

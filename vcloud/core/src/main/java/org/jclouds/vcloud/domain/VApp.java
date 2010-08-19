@@ -21,16 +21,17 @@ package org.jclouds.vcloud.domain;
 
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.vcloud.domain.internal.VAppImpl;
 
 import com.google.common.collect.ListMultimap;
 import com.google.inject.ImplementedBy;
 
 /**
- * A virtual application (vApp) is a software solution, packaged in OVF
- * containing one or more virtual machines. A vApp can be authored by Developers
- * at ISVs and VARs or by IT Administrators in Enterprises and Service
- * Providers.
+ * A virtual application (vApp) is a software solution, packaged in OVF containing one or more
+ * virtual machines. A vApp can be authored by Developers at ISVs and VARs or by IT Administrators
+ * in Enterprises and Service Providers.
  * 
  * @author Adrian Cole
  */
@@ -44,6 +45,19 @@ public interface VApp extends NamedResource {
 
    ListMultimap<String, String> getNetworkToAddresses();
 
+   /**
+    * 
+    * @return CIM OSType of the image or null, if this information isn't available yet
+    * @see <a href="http://dmtf.org/standards/cim/cim_schema_v2260">DMTF CIM model</a>
+    */
+   @Nullable
+   Integer getOsType();
+
+   /**
+    * 
+    * @return description or null, if this information isn't available yet
+    */
+   @Nullable
    String getOperatingSystemDescription();
 
    VirtualSystem getSystem();

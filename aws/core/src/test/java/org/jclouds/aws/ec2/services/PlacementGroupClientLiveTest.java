@@ -84,11 +84,11 @@ public class PlacementGroupClientLiveTest {
       String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
       keyPair = BaseComputeServiceLiveTest.setupKeyPair();
       context = new ComputeServiceContextFactory().createContext("ec2", identity, credential, ImmutableSet.<Module> of(
-            new Log4JLoggingModule(), new JschSshClientModule()));
+               new Log4JLoggingModule(), new JschSshClientModule()));
       client = EC2Client.class.cast(context.getProviderSpecificContext().getApi());
 
       availableTester = new RetryablePredicate<PlacementGroup>(new PlacementGroupAvailable(client), 60, 1,
-            TimeUnit.SECONDS);
+               TimeUnit.SECONDS);
 
       deletedTester = new RetryablePredicate<PlacementGroup>(new PlacementGroupDeleted(client), 60, 1, TimeUnit.SECONDS);
    }
@@ -97,12 +97,12 @@ public class PlacementGroupClientLiveTest {
    void testDescribe() {
       for (String region : Lists.newArrayList(Region.US_EAST_1)) {
          SortedSet<PlacementGroup> allResults = Sets.newTreeSet(client.getPlacementGroupServices()
-               .describePlacementGroupsInRegion(region));
+                  .describePlacementGroupsInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
             PlacementGroup group = allResults.last();
             SortedSet<PlacementGroup> result = Sets.newTreeSet(client.getPlacementGroupServices()
-                  .describePlacementGroupsInRegion(region, group.getName()));
+                     .describePlacementGroupsInRegion(region, group.getName()));
             assertNotNull(result);
             PlacementGroup compare = result.last();
             assertEquals(compare, group);
@@ -131,7 +131,7 @@ public class PlacementGroupClientLiveTest {
    private void verifyPlacementGroup(String groupName) {
       assert availableTester.apply(new PlacementGroup(Region.US_EAST_1, groupName, "cluster", State.PENDING)) : group;
       Set<PlacementGroup> oneResult = client.getPlacementGroupServices().describePlacementGroupsInRegion(null,
-            groupName);
+               groupName);
       assertNotNull(oneResult);
       assertEquals(oneResult.size(), 1);
       group = oneResult.iterator().next();
@@ -166,8 +166,8 @@ public class PlacementGroupClientLiveTest {
       assertEquals(template.getImage().getId(), "us-east-1/ami-7ea24a17");
 
       template.getOptions().installPrivateKey(newStringPayload(keyPair.get("private"))).authorizePublicKey(
-            newStringPayload(keyPair.get("public"))).runScript(
-            newStringPayload(BaseComputeServiceLiveTest.buildScript(template.getImage().getOsFamily())));
+               newStringPayload(keyPair.get("public"))).runScript(
+               newStringPayload(BaseComputeServiceLiveTest.buildScript(template.getImage().getOperatingSystem())));
 
       String tag = PREFIX + "cccluster";
       context.getComputeService().destroyNodesMatching(NodePredicates.withTag(tag));
@@ -177,7 +177,7 @@ public class PlacementGroupClientLiveTest {
          NodeMetadata node = Iterables.getOnlyElement(nodes);
 
          RunningInstance instance = Iterables.getOnlyElement(Iterables.getOnlyElement(client.getInstanceServices()
-               .describeInstancesInRegion(null, node.getProviderId())));
+                  .describeInstancesInRegion(null, node.getProviderId())));
          assertEquals(instance.getVirtualizationType(), node.getExtra().get("virtualizationType"));
          assertEquals(instance.getPlacementGroup(), node.getExtra().get("placementGroup"));
 

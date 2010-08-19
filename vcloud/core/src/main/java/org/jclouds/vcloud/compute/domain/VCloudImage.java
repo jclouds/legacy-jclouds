@@ -24,8 +24,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.compute.domain.Architecture;
-import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -42,10 +41,10 @@ public class VCloudImage extends ImageImpl {
    private final VAppTemplate template;
 
    public VCloudImage(VAppTemplate template, String providerId, String name, String id, Location location, URI uri,
-            Map<String, String> userMetadata, String description, String version, @Nullable OsFamily osFamily,
-            String osDescription, Architecture architecture, Credentials defaultCredentials) {
-      super(providerId, name, id, location, uri, userMetadata, description, version, osFamily, osDescription,
-               architecture, defaultCredentials);
+            Map<String, String> userMetadata, OperatingSystem operatingSystem, String description,
+            @Nullable String version, @Nullable Credentials defaultCredentials) {
+      super(providerId, name, id, location, uri, userMetadata, operatingSystem, description, version,
+               defaultCredentials);
       this.template = template;
    }
 

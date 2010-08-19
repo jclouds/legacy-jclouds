@@ -67,13 +67,14 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
    protected boolean inOs;
    protected String networkName;
    protected String name;
+   protected Integer osType;
    protected URI location;
    protected Long size;
    protected NamedResource vDC;
 
    public VApp getResult() {
-      return new VAppImpl(name, location, status, size, vDC, networkToAddresses, operatingSystemDescription, system,
-            allocations);
+      return new VAppImpl(name, location, status, size, vDC, networkToAddresses, osType, operatingSystemDescription,
+               system, allocations);
    }
 
    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
@@ -86,11 +87,14 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
             size = new Long(attributes.getValue(attributes.getIndex("size")));
       } else if (qName.equals("Link")) { // type should never be missing
          if (attributes.getIndex("type") != -1
-               && attributes.getValue(attributes.getIndex("type")).equals(VCloudMediaType.VDC_XML)) {
+                  && attributes.getValue(attributes.getIndex("type")).equals(VCloudMediaType.VDC_XML)) {
             vDC = Utils.newNamedResource(attributes);
          }
       } else if (qName.equals("OperatingSystemSection")) {
          inOs = true;
+         for (int i = 0; i < attributes.getLength(); i++)
+            if (attributes.getQName(i).indexOf("id") != -1)
+               osType = Integer.parseInt(attributes.getValue(i));
       } else if (qName.endsWith("NetworkConnection")) {
          networkName = attributes.getValue(attributes.getIndex("Network"));
       } else {

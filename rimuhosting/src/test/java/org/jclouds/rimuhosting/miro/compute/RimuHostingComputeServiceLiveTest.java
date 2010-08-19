@@ -22,7 +22,6 @@ package org.jclouds.rimuhosting.miro.compute;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
@@ -44,8 +43,8 @@ public class RimuHostingComputeServiceLiveTest extends BaseComputeServiceLiveTes
    @Test
    public void testTemplateBuilder() {
       Template defaultTemplate = client.templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getArchitecture(), Architecture.X86_32);
-      assertEquals(defaultTemplate.getImage().getOsFamily(), OsFamily.UBUNTU);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), "DCDALLAS");
       assertEquals(defaultTemplate.getSize().getProviderId(), "MIRO1B");
       assertEquals(defaultTemplate.getSize().getCores(), 1.0d);

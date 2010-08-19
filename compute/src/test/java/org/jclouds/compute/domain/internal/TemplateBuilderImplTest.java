@@ -30,7 +30,6 @@ import java.util.Set;
 
 import javax.inject.Provider;
 
-import org.jclouds.compute.domain.Architecture;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
@@ -63,12 +62,12 @@ public class TemplateBuilderImplTest {
       OperatingSystem os2 = createMock(OperatingSystem.class);
 
       Size size = new SizeImpl("sizeId", null, "sizeId", defaultLocation, null, ImmutableMap.<String, String> of(),
-            1.0, 0, 0, ImagePredicates.any());
+               1.0, 0, 0, ImagePredicates.any());
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-            .<Location> of(defaultLocation));
+               .<Location> of(defaultLocation));
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(
-            image, image2));
+               image, image2));
       Supplier<Set<? extends Size>> sizes = Suppliers.<Set<? extends Size>> ofInstance(ImmutableSet.<Size> of(size));
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -99,7 +98,7 @@ public class TemplateBuilderImplTest {
       replay(templateBuilderProvider);
 
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-            optionsProvider, templateBuilderProvider);
+               optionsProvider, templateBuilderProvider);
 
       assertEquals(template.resolveImage(size, images.get()), image2);
 
@@ -123,12 +122,12 @@ public class TemplateBuilderImplTest {
       OperatingSystem os2 = createMock(OperatingSystem.class);
 
       Size size = new SizeImpl("sizeId", null, "sizeId", defaultLocation, null, ImmutableMap.<String, String> of(),
-            1.0, 0, 0, ImagePredicates.any());
+               1.0, 0, 0, ImagePredicates.any());
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-            .<Location> of(defaultLocation));
+               .<Location> of(defaultLocation));
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(
-            image, image2));
+               image, image2));
       Supplier<Set<? extends Size>> sizes = Suppliers.<Set<? extends Size>> ofInstance(ImmutableSet.<Size> of(size));
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -137,12 +136,12 @@ public class TemplateBuilderImplTest {
       expect(optionsProvider.get()).andReturn(new TemplateOptions());
 
       expect(image.getLocation()).andReturn(defaultLocation).atLeastOnce();
-      expect(image.getArchitecture()).andReturn(Architecture.X86_32).atLeastOnce();
-
       expect(image2.getLocation()).andReturn(defaultLocation).atLeastOnce();
-      expect(image2.getArchitecture()).andReturn(Architecture.X86_64).atLeastOnce();
       expect(image.getOperatingSystem()).andReturn(os).atLeastOnce();
       expect(image2.getOperatingSystem()).andReturn(os2).atLeastOnce();
+
+      expect(os.getArch()).andReturn("X86_32").atLeastOnce();
+      expect(os2.getArch()).andReturn("X86_64").atLeastOnce();
 
       replay(image);
       replay(image2);
@@ -154,9 +153,9 @@ public class TemplateBuilderImplTest {
       replay(templateBuilderProvider);
 
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-            optionsProvider, templateBuilderProvider);
+               optionsProvider, templateBuilderProvider);
 
-      assertEquals(template.smallest().architecture(Architecture.X86_32).build().getImage(), image);
+      assertEquals(template.smallest().osArchMatches("X86_32").build().getImage(), image);
 
       verify(image);
       verify(image2);
@@ -176,12 +175,12 @@ public class TemplateBuilderImplTest {
       OperatingSystem os = createMock(OperatingSystem.class);
 
       Size size = new SizeImpl("sizeId", null, "sizeId", defaultLocation, null, ImmutableMap.<String, String> of(), 0,
-            0, 0, ImagePredicates.idEquals("imageId"));
+               0, 0, ImagePredicates.idEquals("imageId"));
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-            .<Location> of(defaultLocation));
+               .<Location> of(defaultLocation));
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet
-            .<Image> of(image));
+               .<Image> of(image));
       Supplier<Set<? extends Size>> sizes = Suppliers.<Set<? extends Size>> ofInstance(ImmutableSet.<Size> of(size));
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -193,7 +192,6 @@ public class TemplateBuilderImplTest {
       expect(image.getName()).andReturn(null).atLeastOnce();
       expect(image.getDescription()).andReturn(null).atLeastOnce();
       expect(image.getVersion()).andReturn(null).atLeastOnce();
-      expect(image.getArchitecture()).andReturn(null).atLeastOnce();
       expect(image.getOperatingSystem()).andReturn(os).atLeastOnce();
 
       expect(os.getName()).andReturn(null).atLeastOnce();
@@ -211,7 +209,7 @@ public class TemplateBuilderImplTest {
       replay(templateBuilderProvider);
 
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-            optionsProvider, templateBuilderProvider);
+               optionsProvider, templateBuilderProvider);
 
       template.imageId("imageId").build();
 
@@ -231,12 +229,12 @@ public class TemplateBuilderImplTest {
       OperatingSystem os = createMock(OperatingSystem.class);
 
       Size size = new SizeImpl("sizeId", null, "sizeId", defaultLocation, null, ImmutableMap.<String, String> of(), 0,
-            0, 0, ImagePredicates.idEquals("imageId"));
+               0, 0, ImagePredicates.idEquals("imageId"));
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-            .<Location> of(defaultLocation));
+               .<Location> of(defaultLocation));
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet
-            .<Image> of(image));
+               .<Image> of(image));
       Supplier<Set<? extends Size>> sizes = Suppliers.<Set<? extends Size>> ofInstance(ImmutableSet.<Size> of(size));
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -249,7 +247,6 @@ public class TemplateBuilderImplTest {
       expect(image.getName()).andReturn(null).atLeastOnce();
       expect(image.getDescription()).andReturn(null).atLeastOnce();
       expect(image.getVersion()).andReturn(null).atLeastOnce();
-      expect(image.getArchitecture()).andReturn(null).atLeastOnce();
 
       expect(os.getName()).andReturn(null).atLeastOnce();
       expect(os.getVersion()).andReturn(null).atLeastOnce();
@@ -266,7 +263,7 @@ public class TemplateBuilderImplTest {
       replay(templateBuilderProvider);
 
       TemplateBuilderImpl template = createTemplateBuilder(image, locations, images, sizes, defaultLocation,
-            optionsProvider, templateBuilderProvider);
+               optionsProvider, templateBuilderProvider);
       try {
          template.imageId("notImageId").build();
          assert false;
@@ -287,7 +284,7 @@ public class TemplateBuilderImplTest {
       TemplateOptions from = provideTemplateOptions();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-            .<Location> of());
+               .<Location> of());
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
       Supplier<Set<? extends Size>> sizes = Suppliers.<Set<? extends Size>> ofInstance(ImmutableSet.<Size> of());
       Location defaultLocation = createMock(Location.class);
@@ -306,7 +303,7 @@ public class TemplateBuilderImplTest {
       replay(templateBuilderProvider);
 
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-            optionsProvider, templateBuilderProvider);
+               optionsProvider, templateBuilderProvider);
 
       template.options(options).build();
 
@@ -321,7 +318,7 @@ public class TemplateBuilderImplTest {
    public void testNothingUsesDefaultTemplateBuilder() {
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-            .<Location> of());
+               .<Location> of());
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
       Supplier<Set<? extends Size>> sizes = Suppliers.<Set<? extends Size>> ofInstance(ImmutableSet.<Size> of());
 
@@ -339,7 +336,7 @@ public class TemplateBuilderImplTest {
       replay(templateBuilderProvider);
 
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-            optionsProvider, templateBuilderProvider);
+               optionsProvider, templateBuilderProvider);
 
       template.build();
 
@@ -350,10 +347,10 @@ public class TemplateBuilderImplTest {
    }
 
    protected TemplateBuilderImpl createTemplateBuilder(Image knownImage, Supplier<Set<? extends Location>> locations,
-         Supplier<Set<? extends Image>> images, Supplier<Set<? extends Size>> sizes, Location defaultLocation,
-         Provider<TemplateOptions> optionsProvider, Provider<TemplateBuilder> templateBuilderProvider) {
+            Supplier<Set<? extends Image>> images, Supplier<Set<? extends Size>> sizes, Location defaultLocation,
+            Provider<TemplateOptions> optionsProvider, Provider<TemplateBuilder> templateBuilderProvider) {
       TemplateBuilderImpl template = new TemplateBuilderImpl(locations, images, sizes, Suppliers
-            .ofInstance(defaultLocation), optionsProvider, templateBuilderProvider);
+               .ofInstance(defaultLocation), optionsProvider, templateBuilderProvider);
       return template;
    }
 
@@ -361,7 +358,7 @@ public class TemplateBuilderImplTest {
    @Test
    public void testSuppliedLocationWithNoOptions() {
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-            .<Location> of());
+               .<Location> of());
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
       Supplier<Set<? extends Size>> sizes = Suppliers.<Set<? extends Size>> ofInstance(ImmutableSet.<Size> of());
       Location defaultLocation = createMock(Location.class);
@@ -375,7 +372,7 @@ public class TemplateBuilderImplTest {
       replay(templateBuilderProvider);
 
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-            optionsProvider, templateBuilderProvider);
+               optionsProvider, templateBuilderProvider);
 
       try {
          template.imageId("foo").locationId("location").build();
@@ -396,7 +393,7 @@ public class TemplateBuilderImplTest {
       TemplateOptions from = provideTemplateOptions();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-            .<Location> of());
+               .<Location> of());
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
       Supplier<Set<? extends Size>> sizes = Suppliers.<Set<? extends Size>> ofInstance(ImmutableSet.<Size> of());
       Location defaultLocation = createMock(Location.class);
@@ -410,7 +407,7 @@ public class TemplateBuilderImplTest {
       replay(templateBuilderProvider);
 
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-            optionsProvider, templateBuilderProvider);
+               optionsProvider, templateBuilderProvider);
 
       try {
          template.imageId("foo").options(provideTemplateOptions()).locationId("location").build();
@@ -428,7 +425,7 @@ public class TemplateBuilderImplTest {
    @Test
    public void testDefaultLocationWithNoOptionsNoSuchElement() {
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-            .<Location> of());
+               .<Location> of());
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
       Supplier<Set<? extends Size>> sizes = Suppliers.<Set<? extends Size>> ofInstance(ImmutableSet.<Size> of());
       Location defaultLocation = createMock(Location.class);
@@ -444,7 +441,7 @@ public class TemplateBuilderImplTest {
       replay(templateBuilderProvider);
 
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-            optionsProvider, templateBuilderProvider);
+               optionsProvider, templateBuilderProvider);
 
       try {
          template.imageId("region/ami").build();
@@ -467,7 +464,7 @@ public class TemplateBuilderImplTest {
    @Test
    public void testDefaultLocationWithOptions() {
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-            .<Location> of());
+               .<Location> of());
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
       Supplier<Set<? extends Size>> sizes = Suppliers.<Set<? extends Size>> ofInstance(ImmutableSet.<Size> of());
       Location defaultLocation = createMock(Location.class);
@@ -484,7 +481,7 @@ public class TemplateBuilderImplTest {
       replay(templateBuilderProvider);
 
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-            optionsProvider, templateBuilderProvider);
+               optionsProvider, templateBuilderProvider);
 
       try {
          template.imageId("region/ami").options(provideTemplateOptions()).build();
@@ -502,7 +499,7 @@ public class TemplateBuilderImplTest {
    @Test
    public void testImageIdNullsEverythingElse() {
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-            .<Location> of());
+               .<Location> of());
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
       Supplier<Set<? extends Size>> sizes = Suppliers.<Set<? extends Size>> ofInstance(ImmutableSet.<Size> of());
       Location defaultLocation = createMock(Location.class);
@@ -514,16 +511,16 @@ public class TemplateBuilderImplTest {
       replay(templateBuilderProvider);
 
       TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-            optionsProvider, templateBuilderProvider);
+               optionsProvider, templateBuilderProvider);
 
-      template.architecture(Architecture.X86_32);
       template.imageDescriptionMatches("imageDescriptionMatches");
       template.imageNameMatches("imageNameMatches");
       template.imageVersionMatches("imageVersionMatches");
       template.osDescriptionMatches("osDescriptionMatches");
       template.osFamily(OsFamily.CENTOS);
+      template.osArchMatches("osArchMatches");
 
-      assertEquals(template.arch, Architecture.X86_32);
+      assertEquals(template.osArch, "osArchMatches");
       assertEquals(template.imageDescription, "imageDescriptionMatches");
       assertEquals(template.imageName, "imageNameMatches");
       assertEquals(template.imageVersion, "imageVersionMatches");
@@ -532,7 +529,7 @@ public class TemplateBuilderImplTest {
       assertEquals(template.imageId, null);
 
       template.imageId("myid");
-      assertEquals(template.arch, null);
+      assertEquals(template.osArch, null);
       assertEquals(template.imageDescription, null);
       assertEquals(template.imageName, null);
       assertEquals(template.imageVersion, null);

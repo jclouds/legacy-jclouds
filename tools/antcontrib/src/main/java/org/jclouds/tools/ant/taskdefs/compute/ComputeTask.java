@@ -92,8 +92,7 @@ public class ComputeTask extends Task {
 
       try {
          for (String action : Splitter.on(',').split(actions)) {
-            Action act = Action.valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE,
-                     action));
+            Action act = Action.valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, action));
             try {
                invokeActionOnService(act, context.getComputeService());
             } catch (RunNodesException e) {
@@ -105,8 +104,7 @@ public class ComputeTask extends Task {
       }
    }
 
-   private void invokeActionOnService(Action action, ComputeService computeService)
-            throws RunNodesException {
+   private void invokeActionOnService(Action action, ComputeService computeService) throws RunNodesException {
       switch (action) {
          case CREATE:
          case GET:
@@ -162,49 +160,45 @@ public class ComputeTask extends Task {
    private void listImages(ComputeService computeService) {
       log("list images");
       for (Image image : computeService.listImages()) {// TODO
-         log(String
-                  .format(
-                           "   image location=%s, id=%s, name=%s, version=%s, arch=%s, osfam=%s, osdesc=%s, desc=%s",
-                           image.getLocation(), image.getProviderId(), image.getName(), image
-                                    .getVersion(), image.getArchitecture(), image.getOsFamily(),
-                           image.getOsDescription(), image.getDescription()));
+         log(String.format("   image location=%s, id=%s, name=%s, version=%s, osArch=%s, osfam=%s, osdesc=%s, desc=%s",
+                  image.getLocation(), image.getProviderId(), image.getName(), image.getVersion(), image
+                           .getOperatingSystem().getArch(), image.getOperatingSystem().getFamily(), image
+                           .getOperatingSystem().getDescription(), image.getDescription()));
       }
    }
 
    private void listSizes(ComputeService computeService) {
       log("list sizes");
       for (Size size : computeService.listSizes()) {// TODO
-         log(String.format("   size id=%s, cores=%s, ram=%s, disk=%s", size.getProviderId(), size
-                  .getCores(), size.getRam(), size.getDisk()));
+         log(String.format("   size id=%s, cores=%s, ram=%s, disk=%s", size.getProviderId(), size.getCores(), size
+                  .getRam(), size.getDisk()));
       }
    }
 
    private void listLocations(ComputeService computeService) {
       log("list locations");
       for (Location location : computeService.listAssignableLocations()) {// TODO
-         log(String.format("   location id=%s, scope=%s, description=%s, parent=%s", location
-                  .getId(), location.getScope(), location.getDescription(), location.getParent()));
+         log(String.format("   location id=%s, scope=%s, description=%s, parent=%s", location.getId(), location
+                  .getScope(), location.getDescription(), location.getParent()));
       }
    }
 
    private void list(ComputeService computeService) {
       log("list");
       for (ComputeMetadata node : computeService.listNodes()) {
-         log(String.format("   location=%s, id=%s, tag=%s", node.getLocation(), node
-                  .getProviderId(), node.getName()));
+         log(String.format("   location=%s, id=%s, tag=%s", node.getLocation(), node.getProviderId(), node.getName()));
       }
    }
 
    private void create(ComputeService computeService) throws RunNodesException {
       String tag = nodeElement.getTag();
 
-      log(String.format("create tag: %s, count: %d, size: %s, os: %s", tag, nodeElement.getCount(),
-               nodeElement.getSize(), nodeElement.getOs()));
+      log(String.format("create tag: %s, count: %d, size: %s, os: %s", tag, nodeElement.getCount(), nodeElement
+               .getSize(), nodeElement.getOs()));
 
       Template template = createTemplateFromElement(nodeElement, computeService);
 
-      for (NodeMetadata createdNode : computeService.runNodesWithTag(tag, nodeElement.getCount(),
-               template)) {
+      for (NodeMetadata createdNode : computeService.runNodesWithTag(tag, nodeElement.getCount(), template)) {
          logDetails(computeService, createdNode);
          addNodeDetailsAsProjectProperties(createdNode);
       }
@@ -214,14 +208,11 @@ public class ComputeTask extends Task {
       if (nodeElement.getIdproperty() != null)
          getProject().setProperty(nodeElement.getIdproperty(), createdNode.getProviderId());
       if (nodeElement.getHostproperty() != null)
-         getProject().setProperty(nodeElement.getHostproperty(),
-                  ipOrEmptyString(createdNode.getPublicAddresses()));
+         getProject().setProperty(nodeElement.getHostproperty(), ipOrEmptyString(createdNode.getPublicAddresses()));
       if (nodeElement.getPasswordproperty() != null && !isKeyAuth(createdNode))
-         getProject().setProperty(nodeElement.getPasswordproperty(),
-                  createdNode.getCredentials().credential);
+         getProject().setProperty(nodeElement.getPasswordproperty(), createdNode.getCredentials().credential);
       if (nodeElement.getUsernameproperty() != null)
-         getProject().setProperty(nodeElement.getUsernameproperty(),
-                  createdNode.getCredentials().identity);
+         getProject().setProperty(nodeElement.getUsernameproperty(), createdNode.getCredentials().identity);
    }
 
    private void reboot(ComputeService computeService) {
@@ -250,24 +241,20 @@ public class ComputeTask extends Task {
          logDetails(computeService, computeService.getNodeMetadata(nodeElement.getId()));
       } else {
          log(String.format("get tag: %s", nodeElement.getTag()));
-         for (ComputeMetadata node : Iterables.filter(computeService
-                  .listNodesDetailsMatching(NodePredicates.all()), NodePredicates
-                  .withTag(nodeElement.getTag()))) {
+         for (ComputeMetadata node : Iterables.filter(computeService.listNodesDetailsMatching(NodePredicates.all()),
+                  NodePredicates.withTag(nodeElement.getTag()))) {
             logDetails(computeService, node);
          }
       }
    }
 
    private void logDetails(ComputeService computeService, ComputeMetadata node) {
-      NodeMetadata metadata = node instanceof NodeMetadata ? NodeMetadata.class.cast(node)
-               : computeService.getNodeMetadata(node.getId());
-      log(String
-               .format(
-                        "   node id=%s, name=%s, tag=%s, location=%s, state=%s, publicIp=%s, privateIp=%s, extra=%s",
-                        metadata.getProviderId(), metadata.getName(), metadata.getTag(), metadata
-                                 .getLocation(), metadata.getState(), ComputeTaskUtils
-                                 .ipOrEmptyString(metadata.getPublicAddresses()),
-                        ipOrEmptyString(metadata.getPrivateAddresses()), metadata.getExtra()));
+      NodeMetadata metadata = node instanceof NodeMetadata ? NodeMetadata.class.cast(node) : computeService
+               .getNodeMetadata(node.getId());
+      log(String.format("   node id=%s, name=%s, tag=%s, location=%s, state=%s, publicIp=%s, privateIp=%s, extra=%s",
+               metadata.getProviderId(), metadata.getName(), metadata.getTag(), metadata.getLocation(), metadata
+                        .getState(), ComputeTaskUtils.ipOrEmptyString(metadata.getPublicAddresses()),
+               ipOrEmptyString(metadata.getPrivateAddresses()), metadata.getExtra()));
    }
 
    /**

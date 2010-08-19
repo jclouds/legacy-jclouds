@@ -51,7 +51,6 @@ import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeService;
-import org.jclouds.vcloud.terremark.compute.config.providers.VAppTemplatesInOrgs;
 import org.jclouds.vcloud.terremark.compute.domain.KeyPairCredentials;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
 import org.jclouds.vcloud.terremark.compute.functions.NodeMetadataToOrgAndName;
@@ -60,6 +59,7 @@ import org.jclouds.vcloud.terremark.compute.strategy.ParseVAppTemplateDescriptio
 import org.jclouds.vcloud.terremark.compute.strategy.TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy;
 import org.jclouds.vcloud.terremark.compute.strategy.TerremarkVCloudAddNodeWithTagStrategy;
 import org.jclouds.vcloud.terremark.compute.strategy.TerremarkVCloudGetNodeMetadataStrategy;
+import org.jclouds.vcloud.terremark.compute.suppliers.VAppTemplatesInOrgs;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;

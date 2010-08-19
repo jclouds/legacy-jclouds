@@ -65,10 +65,10 @@ public class RimuHostingAddNodeWithTagStrategy implements AddNodeWithTagStrategy
                "imageId"), checkNotNull(template.getSize().getProviderId(), "sizeId"));
       Server server = client.getServer(serverResponse.getServer().getId());
       NodeMetadata node = new NodeMetadataImpl(server.getId().toString(), name, server.getId().toString(), template
-               .getLocation(), null, ImmutableMap.<String, String> of(), tag, template.getImage(),
-               runningStateToNodeState.get(server.getState()), getPublicAddresses.apply(server), ImmutableList
-                        .<String> of(), ImmutableMap.<String, String> of(), new Credentials("root", serverResponse
-                        .getNewInstanceRequest().getCreateOptions().getPassword()));
+               .getLocation(), null, ImmutableMap.<String, String> of(), tag, template.getImage().getId(), template
+               .getImage().getOperatingSystem(), runningStateToNodeState.get(server.getState()), getPublicAddresses
+               .apply(server), ImmutableList.<String> of(), ImmutableMap.<String, String> of(), new Credentials("root",
+               serverResponse.getNewInstanceRequest().getCreateOptions().getPassword()));
       return node;
    }
 

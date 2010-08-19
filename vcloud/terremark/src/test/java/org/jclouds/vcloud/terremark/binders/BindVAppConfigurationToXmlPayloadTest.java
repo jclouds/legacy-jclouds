@@ -66,15 +66,15 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
    public void testChangeName() throws IOException {
       VAppImpl vApp = new VAppImpl("MyAppServer6", URI
-            .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), VAppStatus.OFF, 4194304l, null,
-            ImmutableListMultimap.<String, String> of(), null, null, ImmutableSet.of(new ResourceAllocation(1, "n/a",
-                  null, ResourceType.PROCESSOR, null, null, null, null, null, null, 2, null), new ResourceAllocation(2,
-                  "n/a", null, ResourceType.MEMORY, null, null, null, null, null, null, 1024, null),
-                  new ResourceAllocation(9, "n/a", null, ResourceType.DISK_DRIVE, null, "1048576", null, 0, null, null,
-                        209152, null)));
+               .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), VAppStatus.OFF, 4194304l,
+               null, ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.of(
+                        new ResourceAllocation(1, "n/a", null, ResourceType.PROCESSOR, null, null, null, null, null,
+                                 null, 2, null), new ResourceAllocation(2, "n/a", null, ResourceType.MEMORY, null,
+                                 null, null, null, null, null, 1024, null), new ResourceAllocation(9, "n/a", null,
+                                 ResourceType.DISK_DRIVE, null, "1048576", null, 0, null, null, 209152, null)));
 
       String expected = Utils.toStringAndClose(getClass().getResourceAsStream("/terremark/configureVApp.xml")).replace(
-            "eduardo", "roberto");
+               "eduardo", "roberto");
 
       VAppConfiguration config = new VAppConfiguration().changeNameTo("roberto");
 
@@ -93,16 +93,17 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
    public void testRemoveDisk() throws IOException {
       VAppImpl vApp = new VAppImpl("MyAppServer6", URI
-            .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), VAppStatus.OFF, 4194304l, null,
-            ImmutableListMultimap.<String, String> of(), null, null, ImmutableSet.of(new ResourceAllocation(1, "n/a",
-                  null, ResourceType.PROCESSOR, null, null, null, null, null, null, 2, null), new ResourceAllocation(2,
-                  "n/a", null, ResourceType.MEMORY, null, null, null, null, null, null, 1024, null),
-                  new ResourceAllocation(9, "n/a", null, ResourceType.DISK_DRIVE, null, "1048576", null, 0, null, null,
-                        209152, null), new ResourceAllocation(9, "n/a", null, ResourceType.DISK_DRIVE, null, "1048576",
-                        null, 1, null, null, 209152, null)));
+               .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), VAppStatus.OFF, 4194304l,
+               null, ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.of(
+                        new ResourceAllocation(1, "n/a", null, ResourceType.PROCESSOR, null, null, null, null, null,
+                                 null, 2, null), new ResourceAllocation(2, "n/a", null, ResourceType.MEMORY, null,
+                                 null, null, null, null, null, 1024, null), new ResourceAllocation(9, "n/a", null,
+                                 ResourceType.DISK_DRIVE, null, "1048576", null, 0, null, null, 209152, null),
+                        new ResourceAllocation(9, "n/a", null, ResourceType.DISK_DRIVE, null, "1048576", null, 1, null,
+                                 null, 209152, null)));
 
       String expected = Utils.toStringAndClose(getClass().getResourceAsStream("/terremark/configureVApp.xml")).replace(
-            "eduardo", "MyAppServer6");
+               "eduardo", "MyAppServer6");
 
       VAppConfiguration config = new VAppConfiguration().deleteDiskWithAddressOnParent(1);
 
@@ -121,12 +122,12 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
    public void testChangeCPUCountTo4() throws IOException {
       VAppImpl vApp = new VAppImpl("eduardo", URI
-            .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), VAppStatus.OFF, 4194304l, null,
-            ImmutableListMultimap.<String, String> of(), null, null, ImmutableSet.of(new ResourceAllocation(1, "n/a",
-                  null, ResourceType.PROCESSOR, null, null, null, null, null, null, 4, null), new ResourceAllocation(2,
-                  "n/a", null, ResourceType.MEMORY, null, null, null, null, null, null, 1024, null),
-                  new ResourceAllocation(9, "n/a", null, ResourceType.DISK_DRIVE, null, "1048576", null, 0, null, null,
-                        209152, null)));
+               .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), VAppStatus.OFF, 4194304l,
+               null, ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.of(
+                        new ResourceAllocation(1, "n/a", null, ResourceType.PROCESSOR, null, null, null, null, null,
+                                 null, 4, null), new ResourceAllocation(2, "n/a", null, ResourceType.MEMORY, null,
+                                 null, null, null, null, null, 1024, null), new ResourceAllocation(9, "n/a", null,
+                                 ResourceType.DISK_DRIVE, null, "1048576", null, 0, null, null, 209152, null)));
       String expected = Utils.toStringAndClose(getClass().getResourceAsStream("/terremark/configureVApp4.xml"));
 
       VAppConfiguration config = new VAppConfiguration().changeProcessorCountTo(4);
@@ -146,15 +147,15 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
    public void testChangeMemoryTo1536() throws IOException {
       VAppImpl vApp = new VAppImpl("MyAppServer6", URI
-            .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), VAppStatus.OFF, 4194304l, null,
-            ImmutableListMultimap.<String, String> of(), null, null, ImmutableSet.of(new ResourceAllocation(1, "n/a",
-                  null, ResourceType.PROCESSOR, null, null, null, null, null, null, 2, null), new ResourceAllocation(2,
-                  "n/a", null, ResourceType.MEMORY, null, null, null, null, null, null, 1536, null),
-                  new ResourceAllocation(9, "n/a", null, ResourceType.DISK_DRIVE, null, "1048576", null, 0, null, null,
-                        209152, null)));
+               .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), VAppStatus.OFF, 4194304l,
+               null, ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.of(
+                        new ResourceAllocation(1, "n/a", null, ResourceType.PROCESSOR, null, null, null, null, null,
+                                 null, 2, null), new ResourceAllocation(2, "n/a", null, ResourceType.MEMORY, null,
+                                 null, null, null, null, null, 1536, null), new ResourceAllocation(9, "n/a", null,
+                                 ResourceType.DISK_DRIVE, null, "1048576", null, 0, null, null, 209152, null)));
 
       String expected = Utils.toStringAndClose(getClass().getResourceAsStream("/terremark/configureVApp.xml")).replace(
-            "eduardo", "MyAppServer6").replace("1024", "1536");
+               "eduardo", "MyAppServer6").replace("1024", "1536");
 
       VAppConfiguration config = new VAppConfiguration().changeMemoryTo(1536);
 

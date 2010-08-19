@@ -48,19 +48,21 @@ public class VAppImpl implements VApp {
    private final String operatingSystemDescription;
    private final VirtualSystem system;
    private final Set<ResourceAllocation> resourceAllocations;
+   private final Integer osType;
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
    public VAppImpl(String name, URI id, VAppStatus status, Long size, NamedResource vDC,
-         ListMultimap<String, String> networkToAddresses, String operatingSystemDescription, VirtualSystem system,
-         Set<ResourceAllocation> resourceAllocations) {
+            ListMultimap<String, String> networkToAddresses, Integer osType, String operatingSystemDescription,
+            VirtualSystem system, Set<ResourceAllocation> resourceAllocations) {
       this.name = checkNotNull(name, "name");
       this.id = checkNotNull(id, "id");
       this.status = checkNotNull(status, "status");
       this.size = size;// hostingdotcom
       this.vDC = vDC;
       this.networkToAddresses = checkNotNull(networkToAddresses, "networkToAddresses");
+      this.osType = osType;
       this.operatingSystemDescription = operatingSystemDescription;
       this.system = system;
       this.resourceAllocations = checkNotNull(resourceAllocations, "resourceAllocations");
@@ -74,6 +76,11 @@ public class VAppImpl implements VApp {
    @Override
    public ListMultimap<String, String> getNetworkToAddresses() {
       return networkToAddresses;
+   }
+
+   @Override
+   public Integer getOsType() {
+      return osType;
    }
 
    @Override
@@ -106,6 +113,7 @@ public class VAppImpl implements VApp {
       result = prime * result + ((operatingSystemDescription == null) ? 0 : operatingSystemDescription.hashCode());
       result = prime * result + ((resourceAllocations == null) ? 0 : resourceAllocations.hashCode());
       result = prime * result + ((size == null) ? 0 : size.hashCode());
+      result = prime * result + ((osType == null) ? 0 : osType.hashCode());
       result = prime * result + ((status == null) ? 0 : status.hashCode());
       result = prime * result + ((system == null) ? 0 : system.hashCode());
       result = prime * result + ((vDC == null) ? 0 : vDC.hashCode());
@@ -130,6 +138,11 @@ public class VAppImpl implements VApp {
          if (other.name != null)
             return false;
       } else if (!name.equals(other.name))
+         return false;
+      if (osType == null) {
+         if (other.osType != null)
+            return false;
+      } else if (!osType.equals(other.osType))
          return false;
       if (networkToAddresses == null) {
          if (other.networkToAddresses != null)
@@ -186,10 +199,10 @@ public class VAppImpl implements VApp {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", name=" + name + ", networkToAddresses=" + networkToAddresses
-            + ", operatingSystemDescription=" + operatingSystemDescription + ", resourceAllocationByType="
-            + resourceAllocations + ", size=" + size + ", status=" + status + ", system=" + system + ", vDC=" + vDC
-            + "]";
+      return "[id=" + id + ", name=" + name + ", networkToAddresses=" + networkToAddresses + ", osType=" + osType
+               + ", operatingSystemDescription=" + operatingSystemDescription + ", resourceAllocationByType="
+               + resourceAllocations + ", size=" + size + ", status=" + status + ", system=" + system + ", vDC=" + vDC
+               + "]";
    }
 
    @Override
@@ -201,4 +214,5 @@ public class VAppImpl implements VApp {
    public int compareTo(NamedResource o) {
       return (this == o) ? 0 : getId().compareTo(o.getId());
    }
+
 }
