@@ -19,12 +19,20 @@
 
 package org.jclouds.http.config;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
@@ -34,6 +42,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 import com.google.inject.Scopes;
 
 /**
@@ -52,11 +61,10 @@ public class JavaUrlHttpCommandExecutorServiceModule extends AbstractModule {
    }
 
    protected void bindClient() {
-      bind(HttpCommandExecutorService.class).to(JavaUrlHttpCommandExecutorService.class).in(
-               Scopes.SINGLETON);
+      bind(HttpCommandExecutorService.class).to(JavaUrlHttpCommandExecutorService.class).in(Scopes.SINGLETON);
       bind(HostnameVerifier.class).to(LogToMapHostnameVerifier.class);
-      bind(TransformingHttpCommandExecutorService.class).to(
-               TransformingHttpCommandExecutorServiceImpl.class).in(Scopes.SINGLETON);
+      bind(TransformingHttpCommandExecutorService.class).to(TransformingHttpCommandExecutorServiceImpl.class).in(
+               Scopes.SINGLETON);
    }
 
    /**
@@ -75,6 +83,37 @@ public class JavaUrlHttpCommandExecutorServiceModule extends AbstractModule {
          logger.warn("hostname was %s while session was %s", hostname, session.getPeerHost());
          sslMap.put(hostname, session.getPeerHost());
          return true;
+      }
+   }
+
+   @Provides
+   @Singleton
+   @Named("untrusted")
+   SSLContext provideUntrustedSSLContext(TrustAllCerts trustAllCerts) throws NoSuchAlgorithmException,
+            KeyManagementException {
+      SSLContext sc = SSLContext.getInstance("SSL");
+      sc.init(null, new TrustManager[] { trustAllCerts }, new SecureRandom());
+      return sc;
+   }
+
+   /**
+    * 
+    * Used to trust all certs
+    * 
+    * @author Adrian Cole
+    */
+   @Singleton
+   static class TrustAllCerts implements X509TrustManager {
+      public X509Certificate[] getAcceptedIssuers() {
+         return null;
+      }
+
+      public void checkClientTrusted(X509Certificate[] certs, String authType) {
+         return;
+      }
+
+      public void checkServerTrusted(X509Certificate[] certs, String authType) {
+         return;
       }
    }
 }

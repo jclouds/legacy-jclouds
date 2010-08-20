@@ -23,6 +23,7 @@ import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_CONNECTION_TIMEOUT;
 import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.Constants.PROPERTY_IO_WORKER_THREADS;
 import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT;
 import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST;
@@ -30,7 +31,6 @@ import static org.jclouds.Constants.PROPERTY_MAX_CONNECTION_REUSE;
 import static org.jclouds.Constants.PROPERTY_MAX_REDIRECTS;
 import static org.jclouds.Constants.PROPERTY_MAX_RETRIES;
 import static org.jclouds.Constants.PROPERTY_MAX_SESSION_FAILURES;
-import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.Constants.PROPERTY_PROVIDER;
 import static org.jclouds.Constants.PROPERTY_PROXY_HOST;
 import static org.jclouds.Constants.PROPERTY_PROXY_PASSWORD;
@@ -40,6 +40,7 @@ import static org.jclouds.Constants.PROPERTY_PROXY_USER;
 import static org.jclouds.Constants.PROPERTY_RELAX_HOSTNAME;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.Constants.PROPERTY_SO_TIMEOUT;
+import static org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
 
 import java.util.Properties;
@@ -60,6 +61,14 @@ public class PropertiesBuilder {
     */
    public PropertiesBuilder relaxSSLHostname(boolean relax) {
       properties.setProperty(PROPERTY_RELAX_HOSTNAME, relax + "");
+      return this;
+   }
+
+   /**
+    * @see org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS
+    */
+   public PropertiesBuilder trustAllCerts(boolean trust) {
+      properties.setProperty(PROPERTY_TRUST_ALL_CERTS, trust + "");
       return this;
    }
 
@@ -147,8 +156,7 @@ public class PropertiesBuilder {
     * @see org.jclouds.Constants.PROPERTY_MAX_SESSION_FAILURES
     */
    public PropertiesBuilder withMaxSessionFailures(int poolMaxSessionFailures) {
-      properties.setProperty(PROPERTY_MAX_SESSION_FAILURES, Integer
-               .toString(poolMaxSessionFailures));
+      properties.setProperty(PROPERTY_MAX_SESSION_FAILURES, Integer.toString(poolMaxSessionFailures));
       return this;
 
    }
@@ -173,8 +181,7 @@ public class PropertiesBuilder {
     * @see org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT
     */
    public PropertiesBuilder limitConnectionsTo(int connectionLimit) {
-      properties.setProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT, Integer
-               .toString(connectionLimit));
+      properties.setProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT, Integer.toString(connectionLimit));
       return this;
    }
 
