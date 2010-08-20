@@ -64,7 +64,7 @@ import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
-import org.jclouds.vcloud.functions.OrgNameAndVDCNameToEndpoint;
+import org.jclouds.vcloud.functions.OrganizationNameAndVDCNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameCatalogNameItemNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameToEndpoint;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
@@ -198,8 +198,8 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
    @Consumes(VDC_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends VDC> findVDCInOrgNamed(
-         @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String orgName,
-         @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String vdcName);
+         @Nullable @EndpointParam(parser = OrganizationNameAndVDCNameToEndpoint.class) String orgName,
+         @Nullable @EndpointParam(parser = OrganizationNameAndVDCNameToEndpoint.class) String vdcName);
 
    /**
     * @see VCloudExpressClient#instantiateVAppTemplateInVDC

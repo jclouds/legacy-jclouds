@@ -39,7 +39,7 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.compute.domain.VCloudLocation;
-import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.domain.Org;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -49,8 +49,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Singleton
-public class OrganizatonsForLocations implements
-      Function<Iterable<? extends Location>, Iterable<? extends Organization>> {
+public class OrgsForLocations implements Function<Iterable<? extends Location>, Iterable<? extends Org>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
@@ -58,7 +57,7 @@ public class OrganizatonsForLocations implements
    private final ExecutorService executor;
 
    @Inject
-   OrganizatonsForLocations(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   OrgsForLocations(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }
@@ -68,7 +67,7 @@ public class OrganizatonsForLocations implements
     * parent is region. then, we use a set to extract the unique set.
     */
    @Override
-   public Iterable<? extends Organization> apply(Iterable<? extends Location> from) {
+   public Iterable<? extends Org> apply(Iterable<? extends Location> from) {
 
       return transformParallel(Sets.newLinkedHashSet(transform(filter(from, new Predicate<Location>() {
 
@@ -84,12 +83,12 @@ public class OrganizatonsForLocations implements
             return VCloudLocation.class.cast(from.getParent()).getResource().getId();
          }
 
-      })), new Function<URI, Future<Organization>>() {
+      })), new Function<URI, Future<Org>>() {
 
          @SuppressWarnings("unchecked")
          @Override
-         public Future<Organization> apply(URI from) {
-            return (Future<Organization>) aclient.getOrganization(from);
+         public Future<Org> apply(URI from) {
+            return (Future<Org>) aclient.getOrg(from);
          }
 
       }, executor, null, logger, "organizations for uris");

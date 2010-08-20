@@ -29,8 +29,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.Org;
-import org.jclouds.vcloud.endpoints.Catalog;
+import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.endpoints.Org;
+import org.jclouds.vcloud.endpoints.VDC;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -41,34 +42,34 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class OrgNameAndCatalogNameToEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, ? extends Org>> orgMap;
+public class OrganizationNameAndVDCNameToEndpoint implements Function<Object, URI> {
+   private final Supplier<Map<String, ? extends Organization>> orgNameToVDCEndpoint;
    private final String defaultOrg;
    private final URI defaultUri;
 
    @Inject
-   public OrgNameAndCatalogNameToEndpoint(Supplier<Map<String, ? extends Org>> orgMap,
-         @org.jclouds.vcloud.endpoints.Org String defaultOrg, @Catalog URI defaultUri) {
-      this.orgMap = orgMap;
+   public OrganizationNameAndVDCNameToEndpoint(Supplier<Map<String, ? extends Organization>> orgNameToVDCEndpoint,
+         @Org String defaultOrg, @VDC URI defaultUri) {
+      this.orgNameToVDCEndpoint = orgNameToVDCEndpoint;
       this.defaultOrg = defaultOrg;
       this.defaultUri = defaultUri;
    }
 
    @SuppressWarnings("unchecked")
    public URI apply(Object from) {
-      Iterable<Object> orgCatalog = (Iterable<Object>) checkNotNull(from, "args");
-      Object org = Iterables.get(orgCatalog, 0);
-      Object catalog = Iterables.get(orgCatalog, 1);
-      if (org == null && catalog == null)
+      Iterable<Object> orgVdc = (Iterable<Object>) checkNotNull(from, "args");
+      Object org = Iterables.get(orgVdc, 0);
+      Object vdc = Iterables.get(orgVdc, 1);
+      if (org == null && vdc == null)
          return defaultUri;
       else if (org == null)
          org = defaultOrg;
 
       try {
-         Map<String, NamedResource> catalogs = checkNotNull(orgMap.get().get(org)).getCatalogs();
-         return catalog == null ? Iterables.getLast(catalogs.values()).getId() : catalogs.get(catalog).getId();
+         Map<String, NamedResource> vdcs = checkNotNull(orgNameToVDCEndpoint.get().get(org)).getVDCs();
+         return vdc == null ? Iterables.getLast(vdcs.values()).getId() : vdcs.get(vdc).getId();
       } catch (NullPointerException e) {
-         throw new NoSuchElementException(org + "/" + catalog + " not found in " + orgMap.get());
+         throw new NoSuchElementException(org + "/" + vdc + " not found in " + orgNameToVDCEndpoint.get());
       }
    }
 

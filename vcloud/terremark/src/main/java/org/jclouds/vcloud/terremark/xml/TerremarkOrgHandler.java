@@ -25,14 +25,14 @@ import static org.jclouds.vcloud.util.Utils.newNamedResource;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrganization;
 import org.jclouds.vcloud.terremark.domain.internal.TerremarkOrganizationImpl;
-import org.jclouds.vcloud.xml.OrgHandler;
+import org.jclouds.vcloud.xml.OrganizationHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 /**
  * @author Adrian Cole
  */
-public class TerremarkOrgHandler extends OrgHandler {
+public class TerremarkOrgHandler extends OrganizationHandler {
 
    private NamedResource keysList;
 

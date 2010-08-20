@@ -22,9 +22,11 @@ package org.jclouds.vcloud.domain.internal;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.vcloud.VCloudExpressMediaType;
+import javax.annotation.Nullable;
+
+import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.domain.Org;
 
 /**
  * Locations of resources in vCloud
@@ -32,20 +34,24 @@ import org.jclouds.vcloud.domain.Organization;
  * @author Adrian Cole
  * 
  */
-public class OrganizationImpl implements Organization {
+public class OrgImpl implements Org {
    private final String name;
    private final URI id;
+   private final String description;
    private final Map<String, NamedResource> catalogs;
    private final Map<String, NamedResource> vdcs;
-   private final Map<String, NamedResource> tasksLists;
+   private final Map<String, NamedResource> networks;
+   private final NamedResource tasksList;
 
-   public OrganizationImpl(String name, URI id, Map<String, NamedResource> catalogs, Map<String, NamedResource> vdcs,
-         Map<String, NamedResource> tasksLists) {
+   public OrgImpl(String name, URI id, String description, Map<String, NamedResource> catalogs,
+         Map<String, NamedResource> vdcs, Map<String, NamedResource> networks, @Nullable NamedResource tasksList) {
       this.name = name;
       this.id = id;
+      this.description = description;
       this.catalogs = catalogs;
       this.vdcs = vdcs;
-      this.tasksLists = tasksLists;
+      this.networks = networks;
+      this.tasksList = tasksList;
    }
 
    @Override
@@ -69,8 +75,8 @@ public class OrganizationImpl implements Organization {
    }
 
    @Override
-   public Map<String, NamedResource> getTasksLists() {
-      return tasksLists;
+   public NamedResource getTasksList() {
+      return tasksList;
    }
 
    @Override
@@ -78,9 +84,11 @@ public class OrganizationImpl implements Organization {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((catalogs == null) ? 0 : catalogs.hashCode());
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((tasksLists == null) ? 0 : tasksLists.hashCode());
+      result = prime * result + ((networks == null) ? 0 : networks.hashCode());
+      result = prime * result + ((tasksList == null) ? 0 : tasksList.hashCode());
       result = prime * result + ((vdcs == null) ? 0 : vdcs.hashCode());
       return result;
    }
@@ -93,11 +101,16 @@ public class OrganizationImpl implements Organization {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      OrganizationImpl other = (OrganizationImpl) obj;
+      OrgImpl other = (OrgImpl) obj;
       if (catalogs == null) {
          if (other.catalogs != null)
             return false;
       } else if (!catalogs.equals(other.catalogs))
+         return false;
+      if (description == null) {
+         if (other.description != null)
+            return false;
+      } else if (!description.equals(other.description))
          return false;
       if (id == null) {
          if (other.id != null)
@@ -109,10 +122,15 @@ public class OrganizationImpl implements Organization {
             return false;
       } else if (!name.equals(other.name))
          return false;
-      if (tasksLists == null) {
-         if (other.tasksLists != null)
+      if (networks == null) {
+         if (other.networks != null)
             return false;
-      } else if (!tasksLists.equals(other.tasksLists))
+      } else if (!networks.equals(other.networks))
+         return false;
+      if (tasksList == null) {
+         if (other.tasksList != null)
+            return false;
+      } else if (!tasksList.equals(other.tasksList))
          return false;
       if (vdcs == null) {
          if (other.vdcs != null)
@@ -124,7 +142,7 @@ public class OrganizationImpl implements Organization {
 
    @Override
    public String getType() {
-      return VCloudExpressMediaType.ORG_XML;
+      return VCloudMediaType.ORG_XML;
    }
 
    @Override
@@ -135,5 +153,15 @@ public class OrganizationImpl implements Organization {
    @Override
    public String toString() {
       return "[id=" + id + ", name=" + name + ", type=" + getType() + "]";
+   }
+
+   @Override
+   public Map<String, NamedResource> getNetworks() {
+      return networks;
+   }
+
+   @Override
+   public String getDescription() {
+      return description;
    }
 }

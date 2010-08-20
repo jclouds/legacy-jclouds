@@ -19,10 +19,9 @@
 
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
-import static org.jclouds.vcloud.VCloudMediaType.NETWORK_XML;
-import static org.jclouds.vcloud.VCloudMediaType.TASKSLIST_XML;
-import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.CATALOG_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.TASKSLIST_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.VDC_XML;
 import static org.jclouds.vcloud.util.Utils.newNamedResource;
 import static org.jclouds.vcloud.util.Utils.putNamedResource;
 
@@ -30,8 +29,8 @@ import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.Org;
-import org.jclouds.vcloud.domain.internal.OrgImpl;
+import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.domain.internal.OrganizationImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -40,19 +39,14 @@ import com.google.common.collect.Maps;
 /**
  * @author Adrian Cole
  */
-public class OrgHandler extends ParseSax.HandlerWithResult<Org> {
-   private StringBuilder currentText = new StringBuilder();
-
+public class OrganizationHandler extends ParseSax.HandlerWithResult<Organization> {
    protected NamedResource org;
    protected Map<String, NamedResource> vdcs = Maps.newLinkedHashMap();
-   protected NamedResource tasksList;
+   protected Map<String, NamedResource> tasksLists = Maps.newLinkedHashMap();
    protected Map<String, NamedResource> catalogs = Maps.newLinkedHashMap();
-   protected Map<String, NamedResource> networks = Maps.newLinkedHashMap();
 
-   private String description;
-
-   public Org getResult() {
-      return new OrgImpl(org.getName(), org.getId(), description, catalogs, vdcs, networks, tasksList);
+   public Organization getResult() {
+      return new OrganizationImpl(org.getName(), org.getId(), catalogs, vdcs, tasksLists);
    }
 
    @Override
@@ -67,27 +61,9 @@ public class OrgHandler extends ParseSax.HandlerWithResult<Org> {
             } else if (attributes.getValue(typeIndex).equals(CATALOG_XML)) {
                putNamedResource(catalogs, attributes);
             } else if (attributes.getValue(typeIndex).equals(TASKSLIST_XML)) {
-               tasksList = newNamedResource(attributes);
-            } else if (attributes.getValue(typeIndex).equals(NETWORK_XML)) {
-               putNamedResource(networks, attributes);
+               putNamedResource(tasksLists, attributes);
             }
          }
       }
-   }
-
-   public void endElement(String uri, String name, String qName) {
-      if (qName.equals("Description")) {
-         description = currentOrNull();
-      }
-      currentText = new StringBuilder();
-   }
-
-   public void characters(char ch[], int start, int length) {
-      currentText.append(ch, start, length);
-   }
-
-   protected String currentOrNull() {
-      String returnVal = currentText.toString().trim();
-      return returnVal.equals("") ? null : returnVal;
    }
 }

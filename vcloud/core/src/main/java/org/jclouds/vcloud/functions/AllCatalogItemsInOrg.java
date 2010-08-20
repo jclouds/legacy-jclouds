@@ -19,52 +19,50 @@
 
 package org.jclouds.vcloud.functions;
 
-import static org.jclouds.concurrent.FutureIterables.transformParallel;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.CatalogItem;
+import org.jclouds.vcloud.domain.Org;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class OrganizationsForNames implements Function<Iterable<String>, Iterable<? extends Organization>> {
+public class AllCatalogItemsInOrg implements Function<Org, Iterable<? extends CatalogItem>> {
+
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
-   private final VCloudAsyncClient aclient;
-   private final ExecutorService executor;
+
+   private final Function<Org, Iterable<? extends Catalog>> allCatalogsInOrg;
+
+   private final Function<Catalog, Iterable<? extends CatalogItem>> allCatalogItemsInCatalog;
 
    @Inject
-   OrganizationsForNames(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
-      this.aclient = aclient;
-      this.executor = executor;
+   AllCatalogItemsInOrg(Function<Org, Iterable<? extends Catalog>> allCatalogsInOrg,
+            Function<Catalog, Iterable<? extends CatalogItem>> allCatalogItemsInCatalog) {
+      this.allCatalogsInOrg = allCatalogsInOrg;
+      this.allCatalogItemsInCatalog = allCatalogItemsInCatalog;
    }
 
    @Override
-   public Iterable<? extends Organization> apply(Iterable<String> from) {
-      return transformParallel(from, new Function<String, Future<Organization>>() {
+   public Iterable<? extends CatalogItem> apply(Org from) {
+      return Iterables.concat(Iterables.transform(allCatalogsInOrg.apply(from),
+               new Function<Catalog, Iterable<? extends CatalogItem>>() {
+                  @Override
+                  public Iterable<? extends CatalogItem> apply(Catalog from) {
+                     return allCatalogItemsInCatalog.apply(from);
+                  }
 
-         @SuppressWarnings("unchecked")
-         @Override
-         public Future<Organization> apply(String from) {
-            return (Future<Organization>) aclient.findOrganizationNamed(from);
-         }
-
-      }, executor, null, logger, "organizations for names");
+               }));
    }
-
 }

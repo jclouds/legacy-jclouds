@@ -86,7 +86,7 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
    public Iterable<ComputeMetadata> list() {
       Set<ComputeMetadata> nodes = Sets.newHashSet();
       for (String org : orgNameToEndpoint.get().keySet()) {
-         for (NamedResource vdc : client.findOrganizationNamed(org).getVDCs().values()) {
+         for (NamedResource vdc : client.findOrgNamed(org).getVDCs().values()) {
             for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
                if (validVApp(resource)) {
                   nodes.add(convertVAppToComputeMetadata(vdc, resource));
@@ -111,7 +111,7 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
    public Iterable<NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
       Set<NodeMetadata> nodes = Sets.newHashSet();
       for (String org : orgNameToEndpoint.get().keySet()) {
-         for (NamedResource vdc : client.findOrganizationNamed(org).getVDCs().values()) {
+         for (NamedResource vdc : client.findOrgNamed(org).getVDCs().values()) {
             for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
                if (validVApp(resource) && filter.apply(convertVAppToComputeMetadata(vdc, resource))) {
                   addVAppToSetRetryingIfNotYetPresent(nodes, vdc, resource);

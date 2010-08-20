@@ -1,5 +1,24 @@
-<Org href="https://services.vcloudexpress.terremark.com/api/v0.8/org/48" name="adrian@jclouds.org" xmlns="http://www.vmware.com/vcloud/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-     <Link rel="down" href="https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32" type="application/vnd.vmware.vcloud.vdc+xml" name="Miami Environment 1"/>
-     <Link rel="down" href="https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog" type="application/vnd.vmware.vcloud.catalog+xml" name="Miami Environment 1 Catalog"/>
-     <Link rel="down" href="https://services.vcloudexpress.terremark.com/api/v0.8/tasksList/32" type="application/vnd.vmware.vcloud.tasksList+xml" name="Miami Environment 1 Tasks List"/>
+<Org name="ExampleOrg" type="application/vnd.vmware.vcloud.org+xml"
+	href="http://vcloud.example.com/api/v1.0/org/5" >
+	<Link type="application/vnd.vmware.vcloud.catalog+xml" rel="down"
+		href="http://vcloud.example.com/api/v1.0/catalog/32" name="Main Catalog" />
+	<Link type="application/vnd.vmware.vcloud.controlAccess+xml" rel="down"
+		href="http://vcloud.example.com/api/v1.0/catalog/32/controlAccess" />
+	<Link type="application/vnd.vmware.vcloud.controlAccess+xml" rel="controlAccess"
+		href="http://vcloud.example.com/api/v1.0/catalog/32/action/controlAccess" />
+	<Link type="application/vnd.vmware.vcloud.catalog+xml" rel="down"
+		href="http://vcloud.example.com/api/v1.0/catalog/37" name="Shared Catalog" />
+	<Link type="application/vnd.vmware.vcloud.controlAccess+xml" rel="down"
+		href="http://vcloud.example.com/api/v1.0/catalog/37/controlAccess" />
+	<Link type="application/vnd.vmware.vcloud.controlAccess+xml" rel="controlAccess"
+		href="http://vcloud.example.com/api/v1.0/catalog/37/action/controlAccess" />
+	<Link type="application/vnd.vmware.vcloud.vdc+xml" rel="down"
+		href="http://vcloud.example.com/api/v1.0/vdc/5" name="ExampleVdc01" />
+	<Link type="application/vnd.vmware.vcloud.tasksList+xml" rel="down"
+		href="http://vcloud.example.com/api/v1.0/tasksList/5" />
+	<Link type="application/vnd.vmware.vcloud.network+xml" rel="down"
+		href="http://vcloud.example.com/api/v1.0/network/14" name="TestNetwork" />
+	<Link type="application/vnd.vmware.vcloud.network+xml" rel="down"
+		href="http://vcloud.example.com/api/v1.0/network/54" name="ProductionNetwork" />
+	<Description>Example Corp's Primary Organization.</Description>
 </Org>

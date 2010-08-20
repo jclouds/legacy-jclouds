@@ -42,13 +42,13 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class OrgNameAndTasksListNameToEndpoint implements Function<Object, URI> {
+public class OrganizationNameAndTasksListNameToEndpoint implements Function<Object, URI> {
    private final Supplier<Map<String, ? extends Organization>> orgMap;
    private final String defaultOrg;
    private final URI defaultUri;
 
    @Inject
-   public OrgNameAndTasksListNameToEndpoint(Supplier<Map<String, ? extends Organization>> orgMap,
+   public OrganizationNameAndTasksListNameToEndpoint(Supplier<Map<String, ? extends Organization>> orgMap,
          @Org String defaultOrg, @TasksList URI defaultUri) {
       this.orgMap = orgMap;
       this.defaultOrg = defaultOrg;

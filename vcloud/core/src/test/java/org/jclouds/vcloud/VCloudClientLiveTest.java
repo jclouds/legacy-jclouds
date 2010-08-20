@@ -32,7 +32,7 @@ import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Network;
-import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VDC;
@@ -56,14 +56,14 @@ public class VCloudClientLiveTest {
    private String credential;
 
    @Test
-   public void testOrganization() throws Exception {
-      Organization response = connection.findOrganizationNamed(null);
+   public void testOrg() throws Exception {
+      Org response = connection.findOrgNamed(null);
       assertNotNull(response);
       assertNotNull(response.getName());
       assert response.getCatalogs().size() >= 1;
-      assert response.getTasksLists().size() >= 1;
+      assert response.getTasksList() != null;
       assert response.getVDCs().size() >= 1;
-      assertEquals(connection.findOrganizationNamed(response.getName()), response);
+      assertEquals(connection.findOrgNamed(response.getName()), response);
    }
 
    @Test
@@ -127,7 +127,7 @@ public class VCloudClientLiveTest {
 
    @Test
    public void testDefaultTasksList() throws Exception {
-      org.jclouds.vcloud.domain.TasksList response = connection.findTasksListInOrgNamed(null, null);
+      org.jclouds.vcloud.domain.TasksList response = connection.findTasksListInOrgNamed(null);
       assertNotNull(response);
       assertNotNull(response.getLocation());
       assertNotNull(response.getTasks());
@@ -136,7 +136,7 @@ public class VCloudClientLiveTest {
 
    @Test
    public void testGetTask() throws Exception {
-      org.jclouds.vcloud.domain.TasksList response = connection.findTasksListInOrgNamed(null, null);
+      org.jclouds.vcloud.domain.TasksList response = connection.findTasksListInOrgNamed(null);
       assertNotNull(response);
       assertNotNull(response.getLocation());
       assertNotNull(response.getTasks());
@@ -167,7 +167,7 @@ public class VCloudClientLiveTest {
       setupCredentials();
       Properties props = new Properties();
       context = new RestContextFactory().createContext("vcloud", identity, credential, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()), props);
+            .<Module> of(new Log4JLoggingModule()), props);
 
       connection = context.getApi();
    }

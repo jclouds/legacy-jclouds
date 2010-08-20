@@ -28,47 +28,36 @@ import java.util.NoSuchElementException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Org;
-import org.jclouds.vcloud.endpoints.Catalog;
+import org.jclouds.vcloud.endpoints.TasksList;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Iterables;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class OrgNameAndCatalogNameToEndpoint implements Function<Object, URI> {
+public class OrgNameToTasksListEndpoint implements Function<Object, URI> {
    private final Supplier<Map<String, ? extends Org>> orgMap;
-   private final String defaultOrg;
    private final URI defaultUri;
 
    @Inject
-   public OrgNameAndCatalogNameToEndpoint(Supplier<Map<String, ? extends Org>> orgMap,
-         @org.jclouds.vcloud.endpoints.Org String defaultOrg, @Catalog URI defaultUri) {
+   public OrgNameToTasksListEndpoint(Supplier<Map<String, ? extends Org>> orgMap, @TasksList URI defaultUri) {
       this.orgMap = orgMap;
-      this.defaultOrg = defaultOrg;
       this.defaultUri = defaultUri;
    }
 
-   @SuppressWarnings("unchecked")
    public URI apply(Object from) {
-      Iterable<Object> orgCatalog = (Iterable<Object>) checkNotNull(from, "args");
-      Object org = Iterables.get(orgCatalog, 0);
-      Object catalog = Iterables.get(orgCatalog, 1);
-      if (org == null && catalog == null)
+      Object org = checkNotNull(from, "args");
+      if (org == null)
          return defaultUri;
-      else if (org == null)
-         org = defaultOrg;
 
       try {
-         Map<String, NamedResource> catalogs = checkNotNull(orgMap.get().get(org)).getCatalogs();
-         return catalog == null ? Iterables.getLast(catalogs.values()).getId() : catalogs.get(catalog).getId();
+         return checkNotNull(orgMap.get().get(org)).getTasksList().getId();
       } catch (NullPointerException e) {
-         throw new NoSuchElementException(org + "/" + catalog + " not found in " + orgMap.get());
+         throw new NoSuchElementException(org + " not found in " + orgMap.get());
       }
    }
 

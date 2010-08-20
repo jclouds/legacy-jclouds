@@ -29,7 +29,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Network;
-import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VApp;
@@ -42,20 +42,15 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx"
+ * @see <a
+ *      href="http://communities.vmware.com/community/developer/forums/vcloudapi"
  *      />
  * @author Adrian Cole
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface VCloudClient {
 
-   /**
-    * Please use {@link #findOrganizationNamed(String)} passing null
-    */
-   @Deprecated
-   Organization getDefaultOrganization();
-
-   Organization getOrganization(URI orgId);
+   Org getOrg(URI orgId);
 
    /**
     * This call returns a list of all vCloud Data Centers (vdcs), catalogs, and
@@ -66,13 +61,7 @@ public interface VCloudClient {
     * @throws NoSuchElementException
     *            if you specified an org name that isn't present
     */
-   Organization findOrganizationNamed(@Nullable String name);
-
-   /**
-    * Please use #findCatalogInOrgNamed(null, null)
-    */
-   @Deprecated
-   Catalog getDefaultCatalog();
+   Org findOrgNamed(@Nullable String name);
 
    Catalog getCatalog(URI catalogId);
 
@@ -149,21 +138,9 @@ public interface VCloudClient {
     */
    VDC findVDCInOrgNamed(String orgName, String vdcName);
 
-   /**
-    * Please use #findVDCInOrgNamed
-    */
-   @Deprecated
-   VDC getDefaultVDC();
-
    TasksList getTasksList(URI tasksListId);
 
-   TasksList findTasksListInOrgNamed(String orgName, String tasksListName);
-
-   /**
-    * Please use #getTasksListInOrg(null, null)
-    */
-   @Deprecated
-   TasksList getDefaultTasksList();
+   TasksList findTasksListInOrgNamed(String orgName);
 
    Task deployVApp(URI vAppId);
 

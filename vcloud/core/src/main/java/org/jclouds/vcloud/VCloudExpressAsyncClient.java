@@ -63,9 +63,9 @@ import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
-import org.jclouds.vcloud.functions.OrgNameAndCatalogNameToEndpoint;
-import org.jclouds.vcloud.functions.OrgNameAndTasksListNameToEndpoint;
-import org.jclouds.vcloud.functions.OrgNameAndVDCNameToEndpoint;
+import org.jclouds.vcloud.functions.OrganizationNameAndCatalogNameToEndpoint;
+import org.jclouds.vcloud.functions.OrganizationNameAndTasksListNameToEndpoint;
+import org.jclouds.vcloud.functions.OrganizationNameAndVDCNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameCatalogNameItemNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameCatalogNameVAppTemplateNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameToEndpoint;
@@ -75,7 +75,7 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.CatalogItemHandler;
 import org.jclouds.vcloud.xml.NetworkHandler;
-import org.jclouds.vcloud.xml.OrgHandler;
+import org.jclouds.vcloud.xml.OrganizationHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
@@ -101,14 +101,14 @@ public interface VCloudExpressAsyncClient {
    @GET
    @Endpoint(Org.class)
    @Consumes(ORG_XML)
-   @XMLResponseParser(OrgHandler.class)
+   @XMLResponseParser(OrganizationHandler.class)
    ListenableFuture<? extends Organization> getDefaultOrganization();
 
    /**
     * @see VCloudExpressClient#getOrganization
     */
    @GET
-   @XMLResponseParser(OrgHandler.class)
+   @XMLResponseParser(OrganizationHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(ORG_XML)
    ListenableFuture<? extends Organization> getOrganization(@EndpointParam URI orgId);
@@ -117,7 +117,7 @@ public interface VCloudExpressAsyncClient {
     * @see VCloudExpressClient#getOrganizationNamed
     */
    @GET
-   @XMLResponseParser(OrgHandler.class)
+   @XMLResponseParser(OrganizationHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(ORG_XML)
    ListenableFuture<? extends Organization> findOrganizationNamed(
@@ -150,8 +150,8 @@ public interface VCloudExpressAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(CATALOG_XML)
    ListenableFuture<? extends Catalog> findCatalogInOrgNamed(
-         @Nullable @EndpointParam(parser = OrgNameAndCatalogNameToEndpoint.class) String orgName,
-         @Nullable @EndpointParam(parser = OrgNameAndCatalogNameToEndpoint.class) String catalogName);
+         @Nullable @EndpointParam(parser = OrganizationNameAndCatalogNameToEndpoint.class) String orgName,
+         @Nullable @EndpointParam(parser = OrganizationNameAndCatalogNameToEndpoint.class) String catalogName);
 
    /**
     * @see VCloudExpressClient#getVAppTemplate
@@ -243,8 +243,8 @@ public interface VCloudExpressAsyncClient {
    @Consumes(VDC_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends VDC> findVDCInOrgNamed(
-         @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String orgName,
-         @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String vdcName);
+         @Nullable @EndpointParam(parser = OrganizationNameAndVDCNameToEndpoint.class) String orgName,
+         @Nullable @EndpointParam(parser = OrganizationNameAndVDCNameToEndpoint.class) String vdcName);
 
    /**
     * @see VCloudExpressClient#getTasksList
@@ -263,8 +263,8 @@ public interface VCloudExpressAsyncClient {
    @XMLResponseParser(TasksListHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends TasksList> findTasksListInOrgNamed(
-         @Nullable @EndpointParam(parser = OrgNameAndTasksListNameToEndpoint.class) String orgName,
-         @Nullable @EndpointParam(parser = OrgNameAndTasksListNameToEndpoint.class) String tasksListName);
+         @Nullable @EndpointParam(parser = OrganizationNameAndTasksListNameToEndpoint.class) String orgName,
+         @Nullable @EndpointParam(parser = OrganizationNameAndTasksListNameToEndpoint.class) String tasksListName);
 
    /**
     * @see VCloudExpressClient#getDefaultTasksList

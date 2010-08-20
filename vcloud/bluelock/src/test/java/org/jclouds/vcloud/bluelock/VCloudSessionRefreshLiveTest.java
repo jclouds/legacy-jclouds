@@ -53,9 +53,9 @@ public class VCloudSessionRefreshLiveTest {
 
    @Test
    public void testSessionRefresh() throws Exception {
-      connection.findOrganizationNamed(null);
+      connection.findOrgNamed(null);
       Thread.sleep(timeOut * 1000);
-      connection.findOrganizationNamed(null);
+      connection.findOrgNamed(null);
    }
 
    @BeforeGroups(groups = { "live" })
