@@ -41,17 +41,18 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.hostingdotcom.config.HostingDotComVCloudRestClientModule;
-import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
-import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
+
+import domain.VCloudVersionsAsyncClient;
 
 /**
  * Tests behavior of {@code HostingDotComVCloudAsyncClient}

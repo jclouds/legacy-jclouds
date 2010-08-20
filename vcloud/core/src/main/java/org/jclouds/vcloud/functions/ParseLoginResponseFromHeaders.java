@@ -37,8 +37,8 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.vcloud.VCloudToken;
 import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.endpoints.Org;
-import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.jclouds.vcloud.xml.OrgListHandler;
 
 import com.google.common.base.Function;

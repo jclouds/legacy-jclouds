@@ -17,16 +17,19 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.internal;
+package domain;
 
-import java.net.URI;
-import java.util.SortedMap;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 
-import org.jclouds.rest.annotations.XMLResponseParser;
-import org.jclouds.vcloud.xml.SupportedVersionsHandler;
+import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.vcloud.VCloudExpressMediaType;
+import org.jclouds.vcloud.domain.VCloudSession;
+import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -37,13 +40,16 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
  * @author Adrian Cole
  */
-public interface VCloudVersionsAsyncClient {
+@Endpoint(org.jclouds.vcloud.endpoints.VCloudLogin.class)
+@RequestFilters(BasicAuthentication.class)
+public interface VCloudExpressLoginAsyncClient {
 
    /**
-    * Retrieve information for supported versions
+    * This request returns a token to use in subsequent requests. After ten minutes of inactivity,
+    * the token expires and you have to request a new token with this call.
     */
-   @GET
-   @XMLResponseParser(SupportedVersionsHandler.class)
-   @Path("/versions")
-   ListenableFuture<SortedMap<String, URI>> getSupportedVersions();
+   @POST
+   @ResponseParser(ParseLoginResponseFromHeaders.class)
+   @Consumes(VCloudExpressMediaType.ORGLIST_XML)
+   ListenableFuture<VCloudSession> login();
 }

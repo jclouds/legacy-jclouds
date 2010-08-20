@@ -51,6 +51,7 @@ import org.jclouds.util.Utils;
 import org.jclouds.vcloud.config.VCloudExpressRestClientModule;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.internal.CatalogImpl;
 import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
@@ -58,9 +59,6 @@ import org.jclouds.vcloud.domain.internal.OrganizationImpl;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
-import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
-import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
-import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.CatalogHandler;
@@ -79,6 +77,9 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
+
+import domain.VCloudExpressLoginAsyncClient;
+import domain.VCloudVersionsAsyncClient;
 
 /**
  * Tests behavior of {@code VCloudExpressAsyncClient}
@@ -746,7 +747,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
 
       @Override
       protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-               final VCloudLoginAsyncClient login) {
+               final VCloudExpressLoginAsyncClient login) {
          return Suppliers.<VCloudSession> ofInstance(new VCloudSession() {
 
             @Override

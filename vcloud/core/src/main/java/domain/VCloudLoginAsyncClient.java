@@ -17,9 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.internal;
-
-import java.util.Map;
+package domain;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -28,10 +26,8 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
-import org.jclouds.vcloud.VCloudExpressMediaType;
-import org.jclouds.vcloud.VCloudToken;
-import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.endpoints.Org;
+import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -47,20 +43,12 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(BasicAuthentication.class)
 public interface VCloudLoginAsyncClient {
 
-   public interface VCloudSession {
-      @VCloudToken
-      String getVCloudToken();
-
-      @Org
-      Map<String, NamedResource> getOrgs();
-   }
-
    /**
     * This request returns a token to use in subsequent requests. After ten minutes of inactivity,
     * the token expires and you have to request a new token with this call.
     */
    @POST
    @ResponseParser(ParseLoginResponseFromHeaders.class)
-   @Consumes(VCloudExpressMediaType.ORGLIST_XML)
+   @Consumes(VCloudMediaType.ORGLIST_XML)
    ListenableFuture<VCloudSession> login();
 }

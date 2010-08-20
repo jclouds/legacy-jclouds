@@ -49,10 +49,9 @@ import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExt
 import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExtension.TestOrganizationCatalogSupplier;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
-import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
-import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressAsyncClientTest.TerremarkVCloudRestClientModuleExtension.TestOrgNameToKeysListSupplier;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressAsyncClientTest.TerremarkVCloudRestClientModuleExtension.TestTerremarkOrganizationMapSupplier;
@@ -76,6 +75,8 @@ import org.testng.annotations.Test;
 import com.google.common.base.Supplier;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
+
+import domain.VCloudVersionsAsyncClient;
 
 /**
  * Tests behavior of {@code TerremarkECloudAsyncClient}

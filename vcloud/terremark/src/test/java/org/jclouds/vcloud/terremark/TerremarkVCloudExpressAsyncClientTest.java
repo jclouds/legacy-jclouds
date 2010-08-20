@@ -54,11 +54,10 @@ import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExt
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
-import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
-import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.config.TerremarkVCloudExpressRestClientModule;
 import org.jclouds.vcloud.terremark.domain.Protocol;
@@ -87,6 +86,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
+
+import domain.VCloudVersionsAsyncClient;
 
 /**
  * Tests behavior of {@code TerremarkVCloudExpressAsyncClient}

@@ -27,14 +27,10 @@ import javax.inject.Singleton;
 import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
-import org.jclouds.domain.Location;
 import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
-import org.jclouds.vcloud.compute.suppliers.OrgAndVDCToLocationSupplier;
 import org.jclouds.vcloud.compute.suppliers.StaticSizeSupplier;
-import org.jclouds.vcloud.compute.suppliers.VCloudImageSupplier;
 import org.jclouds.vcloud.domain.VAppStatus;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -50,7 +46,7 @@ import com.google.inject.util.Providers;
  * 
  * @author Adrian Cole
  */
-public class CommonVCloudComputeServiceContextModule extends BaseComputeServiceContextModule {
+public abstract class CommonVCloudComputeServiceContextModule extends BaseComputeServiceContextModule {
 
    @VisibleForTesting
    static final Map<VAppStatus, NodeState> vAppStatusToNodeState = ImmutableMap.<VAppStatus, NodeState> builder().put(
@@ -72,16 +68,6 @@ public class CommonVCloudComputeServiceContextModule extends BaseComputeServiceC
 
    protected void bindLoadBalancer() {
       bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
-   }
-
-   @Override
-   protected Supplier<Set<? extends Image>> getSourceImageSupplier(Injector injector) {
-      return injector.getInstance(VCloudImageSupplier.class);
-   }
-
-   @Override
-   protected Supplier<Set<? extends Location>> getSourceLocationSupplier(Injector injector) {
-      return injector.getInstance(OrgAndVDCToLocationSupplier.class);
    }
 
    @Override

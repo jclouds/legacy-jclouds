@@ -35,7 +35,7 @@ import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
+import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressAsyncClient;

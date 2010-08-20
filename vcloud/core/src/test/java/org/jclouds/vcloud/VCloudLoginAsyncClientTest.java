@@ -37,7 +37,6 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.VCloudLoginLiveTest.VCloudLoginClient;
 import org.jclouds.vcloud.endpoints.VCloudLogin;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
-import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
 import org.testng.annotations.Test;
 
 import com.google.inject.Binder;
@@ -45,16 +44,18 @@ import com.google.inject.Module;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
+import domain.VCloudExpressLoginAsyncClient;
+
 /**
  * Tests behavior of {@code VCloudLogin}
  * 
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "vcloud.VCloudLoginTest")
-public class VCloudLoginAsyncClientTest extends RestClientTest<VCloudLoginAsyncClient> {
+public class VCloudLoginAsyncClientTest extends RestClientTest<VCloudExpressLoginAsyncClient> {
 
    public void testLogin() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudLoginAsyncClient.class.getMethod("login");
+      Method method = VCloudExpressLoginAsyncClient.class.getMethod("login");
       HttpRequest request = processor.createRequest(method);
 
       assertEquals(request.getRequestLine(), "POST http://localhost:8080/login HTTP/1.1");
@@ -76,8 +77,8 @@ public class VCloudLoginAsyncClientTest extends RestClientTest<VCloudLoginAsyncC
    }
 
    @Override
-   protected TypeLiteral<RestAnnotationProcessor<VCloudLoginAsyncClient>> createTypeLiteral() {
-      return new TypeLiteral<RestAnnotationProcessor<VCloudLoginAsyncClient>>() {
+   protected TypeLiteral<RestAnnotationProcessor<VCloudExpressLoginAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<VCloudExpressLoginAsyncClient>>() {
       };
    }
 
@@ -100,8 +101,8 @@ public class VCloudLoginAsyncClientTest extends RestClientTest<VCloudLoginAsyncC
    }
 
    @Override
-   public ContextSpec<VCloudLoginClient, VCloudLoginAsyncClient> createContextSpec() {
+   public ContextSpec<VCloudLoginClient, VCloudExpressLoginAsyncClient> createContextSpec() {
       return contextSpec("test", "http://localhost:8080/login", "1", "identity", "credential", VCloudLoginClient.class,
-            VCloudLoginAsyncClient.class);
+            VCloudExpressLoginAsyncClient.class);
    }
 }

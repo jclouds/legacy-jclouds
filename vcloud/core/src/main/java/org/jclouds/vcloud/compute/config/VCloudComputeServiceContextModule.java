@@ -19,7 +19,10 @@
 
 package org.jclouds.vcloud.compute.config;
 
+import java.util.Set;
+
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
@@ -28,6 +31,7 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
+import org.jclouds.domain.Location;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.VCloudClient;
@@ -37,7 +41,11 @@ import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudGetNodeMetadataStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
+import org.jclouds.vcloud.compute.suppliers.OrgAndVDCToLocationSupplier;
+import org.jclouds.vcloud.compute.suppliers.VCloudImageSupplier;
 
+import com.google.common.base.Supplier;
+import com.google.inject.Injector;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
@@ -65,4 +73,15 @@ public class VCloudComputeServiceContextModule extends CommonVCloudComputeServic
       bind(GetNodeMetadataStrategy.class).to(VCloudGetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
    }
+
+   @Override
+   protected Supplier<Set<? extends Location>> getSourceLocationSupplier(Injector injector) {
+      return injector.getInstance(OrgAndVDCToLocationSupplier.class);
+   }
+
+   @Override
+   protected Supplier<Set<? extends Image>> getSourceImageSupplier(Injector injector) {
+      return injector.getInstance(VCloudImageSupplier.class);
+   }
+
 }

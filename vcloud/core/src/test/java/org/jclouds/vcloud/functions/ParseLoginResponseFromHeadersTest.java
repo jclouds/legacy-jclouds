@@ -29,8 +29,8 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.io.Payloads;
 import org.jclouds.vcloud.VCloudExpressMediaType;
+import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
-import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

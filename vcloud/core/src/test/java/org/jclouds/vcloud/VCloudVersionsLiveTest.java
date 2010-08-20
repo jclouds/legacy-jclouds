@@ -34,12 +34,13 @@ import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
-import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
+
+import domain.VCloudVersionsAsyncClient;
 
 /**
  * Tests behavior of {@code VCloudVersions}

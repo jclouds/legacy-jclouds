@@ -21,7 +21,6 @@ package org.jclouds.vcloud.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Throwables.propagate;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.getLast;
 import static com.google.common.collect.Iterables.transform;
@@ -58,13 +57,11 @@ import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.vcloud.VCloudToken;
 import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.endpoints.Catalog;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.endpoints.Org;
 import org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponse;
-import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
-import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
-import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -72,9 +69,10 @@ import com.google.common.base.Supplier;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 
+import domain.VCloudVersionsAsyncClient;
+
 /**
- * Configures the VCloud authentication service connection, including logging
- * and http transport.
+ * Configures the VCloud authentication service connection, including logging and http transport.
  * 
  * @author Adrian Cole
  */
@@ -98,7 +96,7 @@ public abstract class CommonVCloudRestClientModule<S, A> extends RestClientModul
    @Provides
    @Singleton
    protected abstract Predicate<URI> successTester(Injector injector,
-         @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long completed);
+            @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long completed);
 
    @VCloudToken
    @Provides
@@ -124,27 +122,27 @@ public abstract class CommonVCloudRestClientModule<S, A> extends RestClientModul
    @Org
    @Singleton
    protected Supplier<Map<String, NamedResource>> provideVDCtoORG(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final OrgNameToOrgSupplier supplier) {
+            final OrgNameToOrgSupplier supplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, NamedResource>>(authException,
-            seconds, new Supplier<Map<String, NamedResource>>() {
-               @Override
-               public Map<String, NamedResource> get() {
-                  return supplier.get();
-               }
-            });
+               seconds, new Supplier<Map<String, NamedResource>>() {
+                  @Override
+                  public Map<String, NamedResource> get() {
+                     return supplier.get();
+                  }
+               });
    }
 
    @Provides
    @Singleton
    protected Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>> provideURIToVDC(
-         @Named(PROPERTY_SESSION_INTERVAL) long seconds, final URItoVDC supplier) {
+            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final URItoVDC supplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>>(
-            authException, seconds, new Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>>() {
-               @Override
-               public Map<URI, ? extends org.jclouds.vcloud.domain.VDC> get() {
-                  return supplier.get();
-               }
-            });
+               authException, seconds, new Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>>() {
+                  @Override
+                  public Map<URI, ? extends org.jclouds.vcloud.domain.VDC> get() {
+                     return supplier.get();
+                  }
+               });
    }
 
    @Singleton
@@ -159,24 +157,24 @@ public abstract class CommonVCloudRestClientModule<S, A> extends RestClientModul
       @Override
       public Map<URI, ? extends org.jclouds.vcloud.domain.VDC> get() {
          return uniqueIndex(
-               concat(transform(
-                     orgVDCMap.get().values(),
-                     new Function<Map<String, ? extends org.jclouds.vcloud.domain.VDC>, Iterable<? extends org.jclouds.vcloud.domain.VDC>>() {
+                  concat(transform(
+                           orgVDCMap.get().values(),
+                           new Function<Map<String, ? extends org.jclouds.vcloud.domain.VDC>, Iterable<? extends org.jclouds.vcloud.domain.VDC>>() {
 
-                        @Override
-                        public Iterable<? extends org.jclouds.vcloud.domain.VDC> apply(
-                              Map<String, ? extends org.jclouds.vcloud.domain.VDC> from) {
-                           return from.values();
-                        }
+                              @Override
+                              public Iterable<? extends org.jclouds.vcloud.domain.VDC> apply(
+                                       Map<String, ? extends org.jclouds.vcloud.domain.VDC> from) {
+                                 return from.values();
+                              }
 
-                     })), new Function<org.jclouds.vcloud.domain.VDC, URI>() {
+                           })), new Function<org.jclouds.vcloud.domain.VDC, URI>() {
 
-                  @Override
-                  public URI apply(org.jclouds.vcloud.domain.VDC from) {
-                     return from.getId();
-                  }
+                     @Override
+                     public URI apply(org.jclouds.vcloud.domain.VDC from) {
+                        return from.getId();
+                     }
 
-               });
+                  });
       }
 
    }
@@ -192,27 +190,6 @@ public abstract class CommonVCloudRestClientModule<S, A> extends RestClientModul
 
    protected AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
 
-   @Provides
-   @Singleton
-   protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final VCloudLoginAsyncClient login) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<VCloudSession>(authException, seconds,
-            new Supplier<VCloudSession>() {
-
-               @Override
-               public VCloudSession get() {
-                  try {
-                     return login.login().get(10, TimeUnit.SECONDS);
-                  } catch (Exception e) {
-                     propagate(e);
-                     assert false : e;
-                     return null;
-                  }
-               }
-
-            });
-   }
-
    final static Function<NamedResource, String> name = new Function<NamedResource, String>() {
 
       @Override
@@ -226,7 +203,8 @@ public abstract class CommonVCloudRestClientModule<S, A> extends RestClientModul
    @Singleton
    @org.jclouds.vcloud.endpoints.VCloudLogin
    protected URI provideAuthenticationURI(VCloudVersionsAsyncClient versionService,
-         @Named(PROPERTY_API_VERSION) String version) throws InterruptedException, ExecutionException, TimeoutException {
+            @Named(PROPERTY_API_VERSION) String version) throws InterruptedException, ExecutionException,
+            TimeoutException {
       SortedMap<String, URI> versions = versionService.getSupportedVersions().get(180, TimeUnit.SECONDS);
       checkState(versions.size() > 0, "No versions present");
       checkState(versions.containsKey(version), "version " + version + " not present in: " + versions);
@@ -252,12 +230,6 @@ public abstract class CommonVCloudRestClientModule<S, A> extends RestClientModul
 
    @Provides
    @Singleton
-   protected VCloudLoginAsyncClient provideVCloudLogin(AsyncClientFactory factory) {
-      return factory.create(VCloudLoginAsyncClient.class);
-   }
-
-   @Provides
-   @Singleton
    protected VCloudVersionsAsyncClient provideVCloudVersions(AsyncClientFactory factory) {
       return factory.create(VCloudVersionsAsyncClient.class);
    }
@@ -266,7 +238,7 @@ public abstract class CommonVCloudRestClientModule<S, A> extends RestClientModul
    @Catalog
    @Singleton
    protected String provideCatalogName(
-         Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> catalogs) {
+            Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> catalogs) {
       return getLast(getLast(catalogs.get().values()).keySet());
    }
 

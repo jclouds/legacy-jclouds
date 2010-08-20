@@ -39,8 +39,8 @@ import org.jclouds.Constants;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.compute.functions.ImagesInOrg;
-import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.compute.functions.ImagesInOrganization;
+import org.jclouds.vcloud.domain.Organization;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -49,38 +49,38 @@ import com.google.common.base.Supplier;
  * @author Adrian Cole
  */
 @Singleton
-public class VCloudImageSupplier implements Supplier<Set<? extends Image>> {
+public class VCloudExpressImageSupplier implements Supplier<Set<? extends Image>> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
 
-   private final Supplier<Map<String, ? extends Org>> orgMap;
-   private final ImagesInOrg imagesInOrg;
+   private final Supplier<Map<String, ? extends Organization>> orgMap;
+   private final ImagesInOrganization imagesInOrganization;
    private final ExecutorService executor;
 
    @Inject
-   VCloudImageSupplier(Supplier<Map<String, ? extends Org>> orgMap, ImagesInOrg imagesInOrg,
+   VCloudExpressImageSupplier(Supplier<Map<String, ? extends Organization>> orgMap, ImagesInOrganization imagesInOrganization,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.orgMap = checkNotNull(orgMap, "orgMap");
-      this.imagesInOrg = checkNotNull(imagesInOrg, "imagesInOrg");
+      this.imagesInOrganization = checkNotNull(imagesInOrganization, "imagesInOrganization");
       this.executor = checkNotNull(executor, "executor");
    }
 
    @Override
    public Set<? extends Image> get() {
-      Iterable<? extends Org> orgs = checkNotNull(orgMap.get().values(), "orgs");
+      Iterable<? extends Organization> orgs = checkNotNull(orgMap.get().values(), "orgs");
       Iterable<Iterable<? extends Image>> images = transformParallel(orgs,
-               new Function<Org, Future<Iterable<? extends Image>>>() {
+               new Function<Organization, Future<Iterable<? extends Image>>>() {
 
                   @Override
-                  public Future<Iterable<? extends Image>> apply(final Org from) {
+                  public Future<Iterable<? extends Image>> apply(final Organization from) {
                      checkNotNull(from, "org");
                      return executor.submit(new Callable<Iterable<? extends Image>>() {
 
                         @Override
                         public Iterable<? extends Image> call() throws Exception {
-                           return imagesInOrg.apply(from);
+                           return imagesInOrganization.apply(from);
                         }
 
                      });

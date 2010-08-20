@@ -31,11 +31,12 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.VCloudVersionsLiveTest.VCloudVersionsClient;
-import org.jclouds.vcloud.internal.VCloudVersionsAsyncClient;
 import org.jclouds.vcloud.xml.SupportedVersionsHandler;
 import org.testng.annotations.Test;
 
 import com.google.inject.TypeLiteral;
+
+import domain.VCloudVersionsAsyncClient;
 
 /**
  * Tests behavior of {@code VCloudVersions}
