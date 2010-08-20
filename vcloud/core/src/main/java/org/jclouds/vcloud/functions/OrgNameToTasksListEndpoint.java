@@ -50,10 +50,9 @@ public class OrgNameToTasksListEndpoint implements Function<Object, URI> {
    }
 
    public URI apply(Object from) {
-      Object org = checkNotNull(from, "args");
+      Object org = from;
       if (org == null)
          return defaultUri;
-
       try {
          return checkNotNull(orgMap.get().get(org)).getTasksList().getId();
       } catch (NullPointerException e) {

@@ -25,9 +25,9 @@ import static org.testng.Assert.assertNotNull;
 
 import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
@@ -166,8 +166,8 @@ public class VCloudExpressClientLiveTest {
    public void setupClient() {
       setupCredentials();
       Properties props = new Properties();
-      context = new RestContextFactory().createContext("vcloudexpress", identity, credential, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()), props);
+      context = new ComputeServiceContextFactory().createContext("vcloudexpress", identity, credential, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()), props).getProviderSpecificContext();
 
       connection = context.getApi();
    }

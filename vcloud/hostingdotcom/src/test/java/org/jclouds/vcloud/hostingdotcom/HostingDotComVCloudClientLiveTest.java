@@ -23,8 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.vcloud.VCloudExpressClientLiveTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -46,8 +46,8 @@ public class HostingDotComVCloudClientLiveTest extends VCloudExpressClientLiveTe
       identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
       String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
-      context = new RestContextFactory().createContext("hostingdotcom", identity, credential, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()), new Properties());
+      context = new ComputeServiceContextFactory().createContext("hostingdotcom", identity, credential,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), new Properties()).getProviderSpecificContext();
       connection = context.getApi();
    }
 

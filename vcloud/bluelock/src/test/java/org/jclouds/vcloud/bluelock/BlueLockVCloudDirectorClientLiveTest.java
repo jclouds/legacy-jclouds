@@ -23,8 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.vcloud.VCloudClientLiveTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -47,8 +47,8 @@ public class BlueLockVCloudDirectorClientLiveTest extends VCloudClientLiveTest {
                "bluelock-vclouddirector.identity");
       String credential = checkNotNull(System.getProperty("bluelock-vclouddirector.credential"),
                "bluelock-vclouddirector.credential");
-      context = new RestContextFactory().createContext("bluelock-vclouddirector", identity, credential, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()), new Properties());
+      context = new ComputeServiceContextFactory().createContext("bluelock-vclouddirector", identity, credential, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()), new Properties()).getProviderSpecificContext();
       connection = context.getApi();
    }
 

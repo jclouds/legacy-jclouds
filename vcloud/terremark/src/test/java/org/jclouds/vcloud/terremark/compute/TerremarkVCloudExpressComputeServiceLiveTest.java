@@ -46,7 +46,7 @@ public class TerremarkVCloudExpressComputeServiceLiveTest extends VCloudExpressC
    @Override
    public void setServiceDefaults() {
       provider = "trmk-vcloudexpress";
-      tag = "trmkvcx";
+      tag = "vcx";
    }
 
    @Override

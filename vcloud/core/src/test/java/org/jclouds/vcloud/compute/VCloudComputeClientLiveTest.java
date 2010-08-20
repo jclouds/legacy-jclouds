@@ -21,6 +21,7 @@ package org.jclouds.vcloud.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
+import static org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
 import static org.testng.Assert.assertEquals;
@@ -28,11 +29,13 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.net.IPSocket;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.ResourceType;
@@ -81,7 +84,7 @@ public class VCloudComputeClientLiveTest {
 
    protected Map<OsFamily, Expectation> expectationMap;
 
-   protected Predicate<String> addressTester;
+   protected Predicate<IPSocket> addressTester;
    private String identity;
    private String credential;
 
@@ -114,7 +117,7 @@ public class VCloudComputeClientLiveTest {
    @Test(dependsOnMethods = "testPowerOn", enabled = true)
    public void testGetPublicAddresses() {
       publicAddress = Iterables.getLast(computeClient.getPublicAddresses(id));
-      assert !addressTester.apply(publicAddress);
+      assert !addressTester.apply(new IPSocket(publicAddress, 22));
    }
 
    private void verifyConfigurationOfVApp(VApp vApp, String serverName, String expectedOs, int processorCount,
@@ -148,12 +151,14 @@ public class VCloudComputeClientLiveTest {
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       setupCredentials();
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_TRUST_ALL_CERTS, "true");
       Injector injector = new RestContextFactory().createContextBuilder("vcloud", identity, credential,
-               ImmutableSet.<Module> of(new Log4JLoggingModule())).buildInjector();
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), properties).buildInjector();
 
       computeClient = injector.getInstance(VCloudComputeClient.class);
       client = injector.getInstance(VCloudClient.class);
-      addressTester = injector.getInstance(Key.get(new TypeLiteral<Predicate<String>>() {
+      addressTester = injector.getInstance(Key.get(new TypeLiteral<Predicate<IPSocket>>() {
       }));
       expectationMap = ImmutableMap.<OsFamily, Expectation> builder().put(OsFamily.CENTOS,
                new Expectation(4194304 / 2 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).build();
