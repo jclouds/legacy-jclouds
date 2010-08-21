@@ -68,5 +68,8 @@ public interface LoadBalancerService {
 
    @Beta
    void destroyLoadBalancer(String handle);
+   
+   @Beta
+   Set<String> listLoadBalancers();
 
 }

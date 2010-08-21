@@ -35,6 +35,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.DestroyLoadBalancerStrategy;
+import org.jclouds.compute.strategy.ListLoadBalancersStrategy;
 import org.jclouds.compute.strategy.LoadBalanceNodesStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
@@ -68,17 +69,21 @@ public class BaseLoadBalancerService implements LoadBalancerService {
    protected final ComputeServiceContext context;
    protected final LoadBalanceNodesStrategy loadBalancerStrategy;
    protected final DestroyLoadBalancerStrategy destroyLoadBalancerStrategy;
+   protected final ListLoadBalancersStrategy listLoadBalancersStrategy;
    protected final BackoffLimitedRetryHandler backoffLimitedRetryHandler;
 
    @Inject
    protected BaseLoadBalancerService(ComputeServiceContext context,
             LoadBalanceNodesStrategy loadBalancerStrategy,
             DestroyLoadBalancerStrategy destroyLoadBalancerStrategy,
+            ListLoadBalancersStrategy listLoadBalancersStrategy,
             BackoffLimitedRetryHandler backoffLimitedRetryHandler) {
       this.context = checkNotNull(context, "context");
       this.loadBalancerStrategy = checkNotNull(loadBalancerStrategy, "loadBalancerStrategy");
       this.destroyLoadBalancerStrategy = checkNotNull(destroyLoadBalancerStrategy,
                "destroyLoadBalancerStrategy");
+      this.listLoadBalancersStrategy = checkNotNull(listLoadBalancersStrategy,
+               "listLoadBalancersStrategy");
       this.backoffLimitedRetryHandler = checkNotNull(backoffLimitedRetryHandler,
                "backoffLimitedRetryHandler");
    }
@@ -129,6 +134,12 @@ public class BaseLoadBalancerService implements LoadBalancerService {
       logger.debug(">> destroying load balancer(%s)", loadBalancer);
       boolean successful = destroyLoadBalancerStrategy.execute(loadBalancer);
       logger.debug("<< destroyed load balancer(%s) success(%s)", loadBalancer, successful);
+   }
+   
+   public Set<String> listLoadBalancers()
+   {
+       Set<String> loadBalancerSet = listLoadBalancersStrategy.execute();
+       return loadBalancerSet;
    }
 
 }

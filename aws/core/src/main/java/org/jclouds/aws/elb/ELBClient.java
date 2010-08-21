@@ -94,6 +94,11 @@ public interface ELBClient {
    void deregisterInstancesWithLoadBalancerInRegion(@Nullable String region, String name,
             String... instanceIds);
 
-   Set<LoadBalancer> describeLoadBalancersInRegion(@Nullable String region, @Nullable String name);
+   /**
+    * Returns a set of elastic load balancers
+    * @param region
+    * @return
+    */
+   Set<LoadBalancer> describeLoadBalancersInRegion(@Nullable String region);
 
 }
