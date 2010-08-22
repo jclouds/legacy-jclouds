@@ -46,13 +46,13 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.Network;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.domain.network.OrgNetwork;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.OrgNameAndCatalogNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameAndVDCNameToEndpoint;
@@ -63,8 +63,8 @@ import org.jclouds.vcloud.functions.OrgNameToTasksListEndpoint;
 import org.jclouds.vcloud.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.CatalogItemHandler;
-import org.jclouds.vcloud.xml.NetworkHandler;
 import org.jclouds.vcloud.xml.OrgHandler;
+import org.jclouds.vcloud.xml.OrgNetworkHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
@@ -169,9 +169,9 @@ public interface CommonVCloudAsyncClient {
     */
    @GET
    @Consumes(NETWORK_XML)
-   @XMLResponseParser(NetworkHandler.class)
+   @XMLResponseParser(OrgNetworkHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends Network> findNetworkInOrgVDCNamed(
+   ListenableFuture<? extends OrgNetwork> findNetworkInOrgVDCNamed(
             @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String orgName,
             @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String catalogName,
             @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String networkName);
@@ -181,9 +181,9 @@ public interface CommonVCloudAsyncClient {
     */
    @GET
    @Consumes(NETWORK_XML)
-   @XMLResponseParser(NetworkHandler.class)
+   @XMLResponseParser(OrgNetworkHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends Network> getNetwork(@EndpointParam URI network);
+   ListenableFuture<? extends OrgNetwork> getNetwork(@EndpointParam URI network);
 
    /**
     * @see VCloudClient#getVDC(URI)

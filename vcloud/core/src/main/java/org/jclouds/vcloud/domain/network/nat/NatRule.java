@@ -17,26 +17,22 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.domain;
+package org.jclouds.vcloud.domain.network.nat;
+
+import javax.annotation.Nullable;
 
 /**
  * 
- * The FenceMode element contains one of the following strings that specify how
- * a network is connected to its parent network.
+ * Defines a rule associated with Nat
+ * 
+ * @since vcloud api 0.9
  * 
  * @author Adrian Cole
  */
-public interface FenceMode {
+public interface NatRule {
    /**
-    * The two networks are bridged.
+    * IP address to which this NAT rule maps the IP address specified in the InternalIp element.
     */
-   public static final String BRIDGED = "bridged";
-   /**
-    * The two networks are not connected.
-    */
-   public static final String ISOLATED = "isolated";
-   /**
-    * The two networks are connected as specified in their NatService elements.
-    */
-   public static final String NAT_ROUTED = "natRouted";
+   @Nullable
+   String getExternalIP();
 }

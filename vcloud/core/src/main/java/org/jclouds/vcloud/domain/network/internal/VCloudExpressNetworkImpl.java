@@ -17,16 +17,17 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.domain.internal;
+package org.jclouds.vcloud.domain.network.internal;
 
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.vcloud.VCloudExpressMediaType;
-import org.jclouds.vcloud.domain.FirewallRule;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.NatRule;
-import org.jclouds.vcloud.domain.Network;
+import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.network.FenceMode;
+import org.jclouds.vcloud.domain.network.VCloudExpressNetwork;
+import org.jclouds.vcloud.domain.network.firewall.FirewallRule;
+import org.jclouds.vcloud.domain.network.nat.rules.PortForwardingRule;
 
 import com.google.common.collect.Sets;
 import com.google.inject.internal.Nullable;
@@ -37,7 +38,7 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  * 
  */
-public class NetworkImpl extends NamedResourceImpl implements Network {
+public class VCloudExpressNetworkImpl extends NamedResourceImpl implements VCloudExpressNetwork {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
@@ -45,15 +46,16 @@ public class NetworkImpl extends NamedResourceImpl implements Network {
    private final Set<String> dnsServers = Sets.newHashSet();
    private final String gateway;
    private final String netmask;
-   private final Set<String> fenceModes = Sets.newHashSet();
+   private final Set<FenceMode> fenceModes = Sets.newHashSet();
    @Nullable
    private final Boolean dhcp;
-   private final Set<NatRule> natRules = Sets.newHashSet();
+   private final Set<PortForwardingRule> natRules = Sets.newHashSet();
    private final Set<FirewallRule> firewallRules = Sets.newHashSet();
 
-   public NetworkImpl(String name, URI id, String description, Set<String> dnsServers, String gateway,
-         String netmask, Set<String> fenceModes, Boolean dhcp, Set<NatRule> natRules, Set<FirewallRule> firewallRules) {
-      super(name, VCloudExpressMediaType.NETWORK_XML, id);
+   public VCloudExpressNetworkImpl(String name, String type, URI id, String description, Set<String> dnsServers,
+            String gateway, String netmask, Set<FenceMode> fenceModes, Boolean dhcp, Set<PortForwardingRule> natRules,
+            Set<FirewallRule> firewallRules) {
+      super(name, type, id);
       this.description = description;
       this.dnsServers.addAll(dnsServers);
       this.gateway = gateway;
@@ -95,7 +97,7 @@ public class NetworkImpl extends NamedResourceImpl implements Network {
    /**
     * {@inheritDoc}
     */
-   public Set<String> getFenceModes() {
+   public Set<FenceMode> getFenceModes() {
       return fenceModes;
    }
 
@@ -109,7 +111,7 @@ public class NetworkImpl extends NamedResourceImpl implements Network {
    /**
     * {@inheritDoc}
     */
-   public Set<NatRule> getNatRules() {
+   public Set<PortForwardingRule> getNatRules() {
       return natRules;
    }
 
@@ -148,7 +150,7 @@ public class NetworkImpl extends NamedResourceImpl implements Network {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      NetworkImpl other = (NetworkImpl) obj;
+      VCloudExpressNetworkImpl other = (VCloudExpressNetworkImpl) obj;
       if (description == null) {
          if (other.description != null)
             return false;
@@ -195,9 +197,9 @@ public class NetworkImpl extends NamedResourceImpl implements Network {
    @Override
    public String toString() {
       return "NetworkImpl [id=" + getId() + ", name=" + getName() + ", type=" + getType() + ", description="
-            + description + ", dhcp=" + dhcp + ", dnsServers=" + dnsServers + ", fenceModes=" + fenceModes
-            + ", firewallRules=" + firewallRules + ", gateway=" + gateway + ", natRules=" + natRules + ", netmask="
-            + netmask + "]";
+               + description + ", dhcp=" + dhcp + ", dnsServers=" + dnsServers + ", fenceModes=" + fenceModes
+               + ", firewallRules=" + firewallRules + ", gateway=" + gateway + ", natRules=" + natRules + ", netmask="
+               + netmask + "]";
    }
 
 }

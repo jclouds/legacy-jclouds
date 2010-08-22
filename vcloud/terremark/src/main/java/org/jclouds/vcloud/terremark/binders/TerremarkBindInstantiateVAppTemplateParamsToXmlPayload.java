@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.terremark.binders;
 
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
@@ -49,35 +50,28 @@ import com.jamesmurty.utils.XMLBuilder;
  */
 @Singleton
 public class TerremarkBindInstantiateVAppTemplateParamsToXmlPayload extends
-      BindInstantiateVAppTemplateParamsToXmlPayload {
+         BindInstantiateVAppTemplateParamsToXmlPayload {
 
    @Inject
-   public TerremarkBindInstantiateVAppTemplateParamsToXmlPayload(
-         BindToStringPayload stringBinder,
-         @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
-         @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema,
-         @Named(PROPERTY_VCLOUD_DEFAULT_NETWORK) String network,
-         @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode) {
-      super(stringBinder, ns, schema, network, fenceMode);
+   public TerremarkBindInstantiateVAppTemplateParamsToXmlPayload(BindToStringPayload stringBinder,
+            @Named(PROPERTY_API_VERSION) String apiVersion, @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
+            @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema, @Named(PROPERTY_VCLOUD_DEFAULT_NETWORK) String network,
+            @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode) {
+      super(stringBinder, apiVersion, ns, schema, network, fenceMode);
    }
 
    @Override
-   protected String generateXml(String name, String template,
-         Map<String, String> properties,
-         SortedMap<ResourceType, String> virtualHardwareQuantity,
-         String networkName, @Nullable String fenceMode, URI network)
-         throws ParserConfigurationException, FactoryConfigurationError,
-         TransformerException {
-      return super.generateXml(name, template, properties,
-            virtualHardwareQuantity, networkName, fenceMode, network);
+   protected String generateXml(String name, String template, Map<String, String> properties,
+            SortedMap<ResourceType, String> virtualHardwareQuantity, String networkName, @Nullable String fenceMode,
+            URI network) throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
+      return super.generateXml(name, template, properties, virtualHardwareQuantity, networkName, fenceMode, network);
    }
 
    @Override
-   protected void addPropertiesifPresent(XMLBuilder instantiationParamsBuilder,
-         Map<String, String> properties) {
+   protected void addPropertiesifPresent(XMLBuilder instantiationParamsBuilder, Map<String, String> properties) {
       if (properties.size() == 0) { // terremark requires the product section.
-         instantiationParamsBuilder.e("ProductSection").a("xmlns:q1", ns).a(
-               "xmlns:ovf", "http://schemas.dmtf.org/ovf/envelope/1");
+         instantiationParamsBuilder.e("ProductSection").a("xmlns:q1", ns).a("xmlns:ovf",
+                  "http://schemas.dmtf.org/ovf/envelope/1");
       } else {
          super.addPropertiesifPresent(instantiationParamsBuilder, properties);
       }

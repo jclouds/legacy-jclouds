@@ -25,13 +25,14 @@ import javax.annotation.Resource;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.domain.FirewallRule;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.NatRule;
-import org.jclouds.vcloud.domain.Network;
-import org.jclouds.vcloud.domain.FirewallRule.Policy;
-import org.jclouds.vcloud.domain.FirewallRule.Protocol;
-import org.jclouds.vcloud.domain.internal.NetworkImpl;
+import org.jclouds.vcloud.domain.network.FenceMode;
+import org.jclouds.vcloud.domain.network.VCloudExpressNetwork;
+import org.jclouds.vcloud.domain.network.firewall.FirewallPolicy;
+import org.jclouds.vcloud.domain.network.firewall.FirewallRule;
+import org.jclouds.vcloud.domain.network.internal.VCloudExpressNetworkImpl;
+import org.jclouds.vcloud.domain.network.nat.NatProtocol;
+import org.jclouds.vcloud.domain.network.nat.rules.PortForwardingRule;
 import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -41,7 +42,7 @@ import com.google.common.collect.Sets;
 /**
  * @author Adrian Cole
  */
-public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
+public class VCloudExpressNetworkHandler extends ParseSax.HandlerWithResult<VCloudExpressNetwork> {
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -55,9 +56,9 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
    private Set<String> dnsServers = Sets.newLinkedHashSet();
    private String gateway;
    private String netmask;
-   private Set<String> fenceModes = Sets.newLinkedHashSet();
+   private Set<FenceMode> fenceModes = Sets.newLinkedHashSet();
    private Boolean dhcp;
-   private Set<NatRule> natRules = Sets.newLinkedHashSet();
+   private Set<PortForwardingRule> natRules = Sets.newLinkedHashSet();
    private Set<FirewallRule> firewallRules = Sets.newLinkedHashSet();
 
    private String externalIP;
@@ -65,14 +66,13 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
    private String internalIP;
    private Integer internalPort;
 
-   private Policy policy;
-   private Protocol protocol;
+   private FirewallPolicy policy;
    private String sourceIP;
-   private String sourcePort;
+   private int sourcePort;
 
-   public Network getResult() {
-      return new NetworkImpl(network.getName(), network.getId(), description, dnsServers, gateway, netmask,
-            fenceModes, dhcp, natRules, firewallRules);
+   public VCloudExpressNetwork getResult() {
+      return new VCloudExpressNetworkImpl(network.getName(), network.getType(), network.getId(), description,
+               dnsServers, gateway, netmask, fenceModes, dhcp, natRules, firewallRules);
    }
 
    @Override
@@ -92,11 +92,15 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
       } else if (qName.equals("Netmask")) {
          netmask = currentOrNull();
       } else if (qName.equals("FenceMode")) {
-         fenceModes.add(currentOrNull());
+         try {
+            fenceModes.add(FenceMode.fromValue(currentOrNull()));
+         } catch (IllegalArgumentException e) {
+            fenceModes.add(FenceMode.BRIDGED);
+         }
       } else if (qName.equals("Dhcp")) {
          dhcp = new Boolean(currentOrNull());
       } else if (qName.equals("NatRule")) {
-         natRules.add(new NatRule(externalIP, externalPort, internalIP, internalPort));
+         natRules.add(new PortForwardingRule(externalIP, externalPort, internalIP, internalPort, NatProtocol.TCP_UDP));
          externalIP = null;
          externalPort = null;
          internalIP = null;
@@ -110,19 +114,16 @@ public class NetworkHandler extends ParseSax.HandlerWithResult<Network> {
       } else if (qName.equals("InternalPort")) {
          internalPort = Integer.parseInt(currentOrNull());
       } else if (qName.equals("FirewallRule")) {
-         firewallRules.add(new FirewallRule(policy, protocol, sourceIP, sourcePort));
+         firewallRules.add(new FirewallRule(true, null, policy, null, sourcePort, sourceIP));
          policy = null;
-         protocol = null;
          sourceIP = null;
-         sourcePort = null;
+         sourcePort = -1;
       } else if (qName.equals("Policy")) {
-         policy = Policy.fromValue(currentOrNull());
-      } else if (qName.equals("Policy")) {
-         protocol = Protocol.fromValue(currentOrNull());
+         policy = FirewallPolicy.fromValue(currentOrNull());
       } else if (qName.equals("SourceIp")) {
          sourceIP = currentOrNull();
       } else if (qName.equals("SourcePort")) {
-         sourcePort = currentOrNull();
+         sourcePort = Integer.parseInt(currentOrNull());
       }
 
       currentText = new StringBuilder();

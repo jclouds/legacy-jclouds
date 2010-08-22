@@ -28,21 +28,19 @@ import javax.annotation.Nullable;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.Network;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.domain.network.OrgNetwork;
 
 /**
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a
- *      href="http://communities.vmware.com/community/developer/forums/vcloudapi"
- *      />
+ * @see <a href="http://communities.vmware.com/community/developer/forums/vcloudapi" />
  * @author Adrian Cole
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
@@ -51,8 +49,8 @@ public interface CommonVCloudClient {
    Org getOrg(URI orgId);
 
    /**
-    * This call returns a list of all vCloud Data Centers (vdcs), catalogs, and
-    * task lists within the organization.
+    * This call returns a list of all vCloud Data Centers (vdcs), catalogs, and task lists within
+    * the organization.
     * 
     * @param name
     *           organization name, or null for the default
@@ -64,8 +62,8 @@ public interface CommonVCloudClient {
    Catalog getCatalog(URI catalogId);
 
    /**
-    * returns the catalog in the organization associated with the specified
-    * name. Note that both parameters can be null to choose default.
+    * returns the catalog in the organization associated with the specified name. Note that both
+    * parameters can be null to choose default.
     * 
     * @param orgName
     *           organization name, or null for the default
@@ -79,9 +77,8 @@ public interface CommonVCloudClient {
    CatalogItem getCatalogItem(URI catalogItem);
 
    /**
-    * returns the catalog item in the catalog associated with the specified
-    * name. Note that the org and catalog parameters can be null to choose
-    * default.
+    * returns the catalog item in the catalog associated with the specified name. Note that the org
+    * and catalog parameters can be null to choose default.
     * 
     * @param orgName
     *           organization name, or null for the default
@@ -91,17 +88,15 @@ public interface CommonVCloudClient {
     *           item you wish to lookup
     * 
     * @throws NoSuchElementException
-    *            if you specified an org, catalog, or catalog item name that
-    *            isn't present
+    *            if you specified an org, catalog, or catalog item name that isn't present
     */
    CatalogItem findCatalogItemInOrgCatalogNamed(@Nullable String orgName, @Nullable String catalogName, String itemName);
 
    VAppTemplate getVAppTemplate(URI vAppTemplate);
 
    /**
-    * returns the vapp template corresponding to a catalog item in the catalog
-    * associated with the specified name. Note that the org and catalog
-    * parameters can be null to choose default.
+    * returns the vapp template corresponding to a catalog item in the catalog associated with the
+    * specified name. Note that the org and catalog parameters can be null to choose default.
     * 
     * @param orgName
     *           organization name, or null for the default
@@ -111,21 +106,20 @@ public interface CommonVCloudClient {
     *           item you wish to lookup
     * 
     * @throws NoSuchElementException
-    *            if you specified an org, catalog, or catalog item name that
-    *            isn't present
+    *            if you specified an org, catalog, or catalog item name that isn't present
     */
    VAppTemplate findVAppTemplateInOrgCatalogNamed(@Nullable String orgName, @Nullable String catalogName,
-         String itemName);
+            String itemName);
 
-   Network findNetworkInOrgVDCNamed(@Nullable String orgName, @Nullable String catalogName, String networkName);
+   OrgNetwork findNetworkInOrgVDCNamed(@Nullable String orgName, @Nullable String catalogName, String networkName);
 
-   Network getNetwork(URI network);
+   OrgNetwork getNetwork(URI network);
 
    VDC getVDC(URI vdc);
 
    /**
-    * returns the VDC in the organization associated with the specified name.
-    * Note that both parameters can be null to choose default.
+    * returns the VDC in the organization associated with the specified name. Note that both
+    * parameters can be null to choose default.
     * 
     * @param orgName
     *           organization name, or null for the default
@@ -147,14 +141,12 @@ public interface CommonVCloudClient {
    Task undeployVApp(URI vAppId);
 
    /**
-    * This call powers on the vApp, as specified in the vApp's ovf:Startup
-    * element.
+    * This call powers on the vApp, as specified in the vApp's ovf:Startup element.
     */
    Task powerOnVApp(URI vAppId);
 
    /**
-    * This call powers off the vApp, as specified in the vApp's ovf:Startup
-    * element.
+    * This call powers off the vApp, as specified in the vApp's ovf:Startup element.
     */
    Task powerOffVApp(URI vAppId);
 

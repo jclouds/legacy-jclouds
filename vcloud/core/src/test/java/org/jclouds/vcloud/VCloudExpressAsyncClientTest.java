@@ -57,13 +57,14 @@ import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.domain.internal.OrgImpl;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
+import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.CatalogItemHandler;
-import org.jclouds.vcloud.xml.NetworkHandler;
 import org.jclouds.vcloud.xml.OrgHandler;
+import org.jclouds.vcloud.xml.OrgNetworkFromVCloudExpressNetworkHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
@@ -116,7 +117,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       HttpRequest request = processor.createRequest(method, URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"), URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3"), "my-vapp", processorCount(1)
-               .memory(512).disk(1024).fenceMode("allowInOut").inNetwork(
+               .memory(512).disk(1024).fenceMode(FenceMode.BRIDGED).inNetwork(
                         URI.create("https://vcloud.safesecureweb.com/network/1990")));
 
       assertRequestLineEquals(request,
@@ -254,7 +255,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, NetworkHandler.class);
+      assertSaxResponseParserClassEquals(method, OrgNetworkFromVCloudExpressNetworkHandler.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(request);

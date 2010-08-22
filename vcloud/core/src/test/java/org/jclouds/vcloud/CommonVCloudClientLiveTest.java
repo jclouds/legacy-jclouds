@@ -30,11 +30,11 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.Network;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.domain.network.OrgNetwork;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -80,7 +80,7 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
       VDC response = connection.findVDCInOrgNamed(null, null);
       for (NamedResource resource : response.getAvailableNetworks().values()) {
          if (resource.getType().equals(VCloudMediaType.NETWORK_XML)) {
-            Network item = connection.getNetwork(resource.getId());
+            OrgNetwork item = connection.getNetwork(resource.getId());
             assertNotNull(item);
          }
       }

@@ -17,11 +17,15 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.domain;
+package org.jclouds.vcloud.domain.network;
 
 import java.util.Set;
 
 import javax.annotation.Nullable;
+
+import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.network.firewall.FirewallRule;
+import org.jclouds.vcloud.domain.network.nat.rules.PortForwardingRule;
 
 /**
  * 
@@ -29,7 +33,7 @@ import javax.annotation.Nullable;
  * 
  * @author Adrian Cole
  */
-public interface Network extends NamedResource {
+public interface VCloudExpressNetwork extends NamedResource {
    /**
     * 
     * @return Description of the network
@@ -58,7 +62,7 @@ public interface Network extends NamedResource {
    /**
     * return the network’s fence modes.
     */
-   Set<String> getFenceModes();
+   Set<FenceMode> getFenceModes();
 
    /**
     * return True if the network provides DHCP services
@@ -70,7 +74,7 @@ public interface Network extends NamedResource {
     * 
     * @return Network Address Translation rules for the network
     */
-   Set<NatRule> getNatRules();
+   Set<PortForwardingRule> getNatRules();
 
    /**
     * @return Firewall rules for the network

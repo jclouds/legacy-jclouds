@@ -37,6 +37,7 @@ import org.jclouds.vcloud.domain.VDCStatus;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -60,6 +61,7 @@ public class VDCHandlerTest {
       assertEquals(result.getOrg(), new NamedResourceImpl(null, VCloudMediaType.ORG_XML, URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/org/9566014")));
       assertEquals(result.getDescription(), null);
+      assertEquals(result.getTasks(), ImmutableList.of());
       assertEquals(result.getAllocationModel(), AllocationModel.ALLOCATION_POOL);
       assertEquals(result.getStorageCapacity(), new Capacity("MB", 1024000, 1024000, 0, 0));
       assertEquals(result.getCpuCapacity(), new Capacity("MHz", 20000, 20000, 0, 0));

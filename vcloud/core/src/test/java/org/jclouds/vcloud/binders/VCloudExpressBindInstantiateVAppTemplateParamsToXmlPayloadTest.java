@@ -34,7 +34,7 @@ import java.util.Properties;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudExpressPropertiesBuilder;
-import org.jclouds.vcloud.domain.FenceMode;
+import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.testng.annotations.Test;
 
@@ -123,7 +123,7 @@ public class VCloudExpressBindInstantiateVAppTemplateParamsToXmlPayloadTest {
       map.put("template", "https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3");
       map.put("network", "https://vcloud.safesecureweb.com/network/1990");
       map.put("networkName", "aloha");
-      map.put("fenceMode", FenceMode.BRIDGED);
+      map.put("fenceMode", FenceMode.BRIDGED.toString());
 
       binder.bindToRequest(request, map);
       verify(request);
