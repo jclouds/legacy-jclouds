@@ -19,22 +19,42 @@
 
 package org.jclouds.vcloud.domain;
 
-import java.util.Map;
-
-import org.jclouds.vcloud.domain.internal.OrganizationImpl;
-
-import com.google.inject.ImplementedBy;
-
 /**
- * @author Adrian Cole
+ * The creation status of the vDC
+ * 
+ * @see VDC#getStatus
  */
-@ImplementedBy(OrganizationImpl.class)
-public interface Organization extends NamedResource {
+public enum VDCStatus {
 
-   Map<String, NamedResource> getCatalogs();
+   CREATION_FAILED, NOT_READY, READY, UNKNOWN, UNRECOGNIZED_STATUS;
 
-   Map<String, NamedResource> getVDCs();
+   public int value() {
+      switch (this) {
+         case CREATION_FAILED:
+            return -1;
+         case NOT_READY:
+            return 0;
+         case READY:
+            return 1;
+         case UNKNOWN:
+            return 2;
+         default:
+            return 3;
+      }
+   }
 
-   Map<String, NamedResource> getTasksLists();
-
+   public static VDCStatus fromValue(int status) {
+      switch (status) {
+         case -1:
+            return CREATION_FAILED;
+         case 0:
+            return NOT_READY;
+         case 1:
+            return READY;
+         case 2:
+            return UNKNOWN;
+         default:
+            return UNRECOGNIZED_STATUS;
+      }
+   }
 }

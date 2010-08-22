@@ -40,8 +40,8 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.compute.VCloudComputeClient;
+import org.jclouds.vcloud.CommonVCloudClient;
+import org.jclouds.vcloud.compute.CommonVCloudComputeClient;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
 import org.jclouds.vcloud.compute.functions.GetExtra;
 import org.jclouds.vcloud.domain.VApp;
@@ -58,15 +58,15 @@ public class VCloudGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
-   protected final VCloudClient client;
-   protected final VCloudComputeClient computeClient;
+   protected final CommonVCloudClient client;
+   protected final CommonVCloudComputeClient computeClient;
    protected final Supplier<Set<? extends Image>> images;
    protected final FindLocationForResource findLocationForResourceInVDC;
    protected final GetExtra getExtra;
    protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
 
    @Inject
-   VCloudGetNodeMetadataStrategy(VCloudClient client, VCloudComputeClient computeClient,
+   protected VCloudGetNodeMetadataStrategy(CommonVCloudClient client, CommonVCloudComputeClient computeClient,
             Map<VAppStatus, NodeState> vAppStatusToNodeState, GetExtra getExtra,
             FindLocationForResource findLocationForResourceInVDC, Supplier<Set<? extends Image>> images) {
       this.client = checkNotNull(client, "client");

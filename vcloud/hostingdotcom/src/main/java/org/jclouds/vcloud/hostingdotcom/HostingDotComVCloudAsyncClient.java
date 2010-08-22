@@ -19,8 +19,7 @@
 
 package org.jclouds.vcloud.hostingdotcom;
 
-import static org.jclouds.vcloud.VCloudExpressMediaType.CATALOG_XML;
-import static org.jclouds.vcloud.VCloudExpressMediaType.VAPP_XML;
+import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 
 import java.net.URI;
 
@@ -31,7 +30,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.jclouds.predicates.validators.DnsNameValidator;
-import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
@@ -42,12 +40,10 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
-import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.hostingdotcom.domain.HostingDotComVApp;
 import org.jclouds.vcloud.hostingdotcom.xml.HostingDotComVAppHandler;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
-import org.jclouds.vcloud.xml.CatalogHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -55,21 +51,11 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx"
- *      />
+ * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
  * @author Adrian Cole
  */
 @RequestFilters(SetVCloudTokenCookie.class)
 public interface HostingDotComVCloudAsyncClient extends VCloudExpressAsyncClient {
-
-   @GET
-   @Endpoint(org.jclouds.vcloud.endpoints.Catalog.class)
-   @Consumes(CATALOG_XML)
-   @Produces(CATALOG_XML)
-   // produces is incorrect, but required for hosting.com to operate
-   @XMLResponseParser(CatalogHandler.class)
-   @Override
-   ListenableFuture<? extends Catalog> getDefaultCatalog();
 
    @GET
    @Consumes(VAPP_XML)
@@ -87,8 +73,8 @@ public interface HostingDotComVCloudAsyncClient extends VCloudExpressAsyncClient
    @MapBinder(BindInstantiateVAppTemplateParamsToXmlPayload.class)
    @Override
    ListenableFuture<? extends HostingDotComVApp> instantiateVAppTemplateInVDC(@EndpointParam URI vdc,
-         @MapPayloadParam("template") URI template,
-         @MapPayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName,
-         InstantiateVAppTemplateOptions... options);
+            @MapPayloadParam("template") URI template,
+            @MapPayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName,
+            InstantiateVAppTemplateOptions... options);
 
 }

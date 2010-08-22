@@ -59,7 +59,7 @@ import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.options.CloneVAppOptions;
-import org.jclouds.vcloud.predicates.VCloudExpressTaskSuccess;
+import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
@@ -444,7 +444,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       // then
       // default internet
       // service timeout
-      successTester = new RetryablePredicate<URI>(injector.getInstance(VCloudExpressTaskSuccess.class), 650, 10, TimeUnit.SECONDS);
+      successTester = new RetryablePredicate<URI>(injector.getInstance(TaskSuccess.class), 650, 10, TimeUnit.SECONDS);
    }
 
    protected abstract void setupCredentials();

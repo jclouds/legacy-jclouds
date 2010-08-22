@@ -29,7 +29,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.domain.Task;
 
 import com.google.common.base.Predicate;
@@ -39,12 +39,13 @@ import com.google.common.base.Predicate;
  */
 @Singleton
 public class VCloudRebootNodeStrategy implements RebootNodeStrategy {
-   private final VCloudClient client;
+   private final CommonVCloudClient client;
    protected final Predicate<URI> taskTester;
    protected final GetNodeMetadataStrategy getNode;
 
    @Inject
-   protected VCloudRebootNodeStrategy(VCloudClient client, Predicate<URI> taskTester, GetNodeMetadataStrategy getNode) {
+   protected VCloudRebootNodeStrategy(CommonVCloudClient client, Predicate<URI> taskTester,
+            GetNodeMetadataStrategy getNode) {
       this.client = client;
       this.taskTester = taskTester;
       this.getNode = getNode;

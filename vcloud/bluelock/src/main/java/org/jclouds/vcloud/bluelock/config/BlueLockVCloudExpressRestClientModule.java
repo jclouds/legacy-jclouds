@@ -29,10 +29,10 @@ import javax.inject.Named;
 
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.vcloud.VCloudExpressClient;
+import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.config.VCloudExpressRestClientModule;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.domain.Org;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -47,7 +47,7 @@ import com.google.common.collect.Iterables;
 public class BlueLockVCloudExpressRestClientModule extends VCloudExpressRestClientModule {
 
    @Override
-   protected URI provideDefaultNetwork(VCloudExpressClient client) {
+   protected URI provideDefaultNetwork(CommonVCloudClient client) {
       org.jclouds.vcloud.domain.VDC vDC = client.findVDCInOrgNamed(null, null);
       Map<String, NamedResource> networks = vDC.getAvailableNetworks();
       checkState(networks.size() > 0, "No networks present in vDC: " + vDC.getName());
@@ -62,7 +62,7 @@ public class BlueLockVCloudExpressRestClientModule extends VCloudExpressRestClie
    }
 
    @Override
-   protected URI provideCatalog(Organization org, @Named(PROPERTY_IDENTITY) final String user) {
+   protected URI provideCatalog(Org org, @Named(PROPERTY_IDENTITY) final String user) {
       checkState(org.getCatalogs().size() > 0, "No catalogs present in org: " + org.getName());
       return Iterables.getOnlyElement(Iterables.filter(org.getCatalogs().values(), new Predicate<NamedResource>() {
 

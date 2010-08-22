@@ -29,7 +29,7 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.VCloudExpressClient;
-import org.jclouds.vcloud.compute.BaseVCloudExpressComputeClient;
+import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.VAppTemplate;
@@ -40,7 +40,7 @@ import com.google.common.base.Predicate;
  * @author Adrian Cole
  */
 @Singleton
-public class BlueLockVCloudExpressComputeClient extends BaseVCloudExpressComputeClient {
+public class BlueLockVCloudExpressComputeClient extends VCloudExpressComputeClientImpl {
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider;
 
    @Inject

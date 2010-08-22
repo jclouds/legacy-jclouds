@@ -32,8 +32,8 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.compute.functions.ImagesInOrganization;
-import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.compute.functions.ImagesInOrg;
+import org.jclouds.vcloud.domain.Org;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -50,16 +50,16 @@ public class VAppTemplatesInOrgs implements Supplier<Set<? extends Image>> {
    public Logger logger = Logger.NULL;
 
    private final Supplier<Set<? extends Location>> locations;
-   private final Function<Iterable<? extends Location>, Iterable<? extends Organization>> organizatonsForLocations;
-   private final ImagesInOrganization imagesInOrganization;
+   private final Function<Iterable<? extends Location>, Iterable<? extends Org>> organizatonsForLocations;
+   private final ImagesInOrg imagesInOrg;
 
    @Inject
    VAppTemplatesInOrgs(Supplier<Set<? extends Location>> locations,
-            Function<Iterable<? extends Location>, Iterable<? extends Organization>> organizatonsForLocations,
-            ImagesInOrganization imagesInOrganization) {
+            Function<Iterable<? extends Location>, Iterable<? extends Org>> organizatonsForLocations,
+            ImagesInOrg imagesInOrg) {
       this.locations = locations;
       this.organizatonsForLocations = organizatonsForLocations;
-      this.imagesInOrganization = imagesInOrganization;
+      this.imagesInOrg = imagesInOrg;
    }
 
    /**
@@ -70,6 +70,6 @@ public class VAppTemplatesInOrgs implements Supplier<Set<? extends Image>> {
    public Set<? extends Image> get() {
       logger.debug(">> providing vAppTemplates");
       return newLinkedHashSet(Iterables.concat(Iterables.transform(organizatonsForLocations.apply(locations.get()),
-               imagesInOrganization)));
+               imagesInOrg)));
    }
 }

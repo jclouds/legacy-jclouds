@@ -20,8 +20,8 @@
 package org.jclouds.vcloud.terremark.xml;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vcloud.VCloudExpressMediaType.CATALOG_XML;
-import static org.jclouds.vcloud.VCloudExpressMediaType.TASKSLIST_XML;
+import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
+import static org.jclouds.vcloud.VCloudMediaType.TASKSLIST_XML;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
@@ -35,7 +35,7 @@ import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressMediaType;
 import org.jclouds.vcloud.terremark.TerremarkVCloudPropertiesBuilder;
-import org.jclouds.vcloud.terremark.domain.TerremarkOrganization;
+import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -59,7 +59,7 @@ public class TerremarkOrgHandlerTest extends BaseHandlerTest {
             super.configure();
             Properties props = new Properties();
             Names.bindProperties(binder(), checkNotNull(new TerremarkVCloudPropertiesBuilder(props).build(),
-                  "properties"));
+                     "properties"));
          }
       });
       factory = injector.getInstance(ParseSax.Factory.class);
@@ -70,23 +70,19 @@ public class TerremarkOrgHandlerTest extends BaseHandlerTest {
 
       InputStream is = getClass().getResourceAsStream("/terremark/org.xml");
 
-      TerremarkOrganization result = (TerremarkOrganization) factory.create(
-            injector.getInstance(TerremarkOrgHandler.class)).parse(is);
+      TerremarkOrg result = (TerremarkOrg) factory.create(injector.getInstance(TerremarkOrgHandler.class)).parse(is);
       assertEquals(result.getName(), "adrian@jclouds.org");
-      assertEquals(result.getId(), URI
-            .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/org/48"));
+      assertEquals(result.getId(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/org/48"));
       assertEquals(result.getCatalogs(), ImmutableMap.of("Miami Environment 1 Catalog", new NamedResourceImpl(
-            "Miami Environment 1 Catalog", CATALOG_XML, URI
-                  .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32/catalog"))));
-
+               "Miami Environment 1 Catalog", CATALOG_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32/catalog"))));
       assertEquals(result.getVDCs(), ImmutableMap.of("Miami Environment 1", new NamedResourceImpl(
-            "Miami Environment 1", VCloudExpressMediaType.VDC_XML, URI
-                  .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"))));
-      assertEquals(result.getTasksLists(), ImmutableMap.of("Miami Environment 1 Tasks List", new NamedResourceImpl(
-            "Miami Environment 1 Tasks List", TASKSLIST_XML, URI
-                  .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32/tasksList"))));
+               "Miami Environment 1", VCloudExpressMediaType.VDC_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"))));
+      assertEquals(result.getTasksList(), new NamedResourceImpl("Miami Environment 1 Tasks List", TASKSLIST_XML, URI
+               .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32/tasksList")));
       assertEquals(result.getKeysList(), new NamedResourceImpl("Keys", TerremarkVCloudExpressMediaType.KEYSLIST_XML,
-            URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/extensions/org/48/keys")));
+               URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/extensions/org/48/keys")));
 
    }
 }

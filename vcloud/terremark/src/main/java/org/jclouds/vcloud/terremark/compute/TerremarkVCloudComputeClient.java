@@ -38,7 +38,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
-import org.jclouds.vcloud.compute.BaseVCloudExpressComputeClient;
+import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 import org.jclouds.vcloud.domain.TasksList;
@@ -61,7 +61,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Singleton
-public class TerremarkVCloudComputeClient extends BaseVCloudExpressComputeClient {
+public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl {
 
    private final TerremarkVCloudExpressClient client;
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider;
@@ -69,9 +69,9 @@ public class TerremarkVCloudComputeClient extends BaseVCloudExpressComputeClient
 
    @Inject
    protected TerremarkVCloudComputeClient(TerremarkVCloudExpressClient client,
-         PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
-         @Named("PASSWORD") Provider<String> passwordGenerator, Predicate<URI> successTester,
-         Map<VAppStatus, NodeState> vAppStatusToNodeState) {
+            PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
+            @Named("PASSWORD") Provider<String> passwordGenerator, Predicate<URI> successTester,
+            Map<VAppStatus, NodeState> vAppStatusToNodeState) {
       super(client, successTester, vAppStatusToNodeState);
       this.client = client;
       this.credentialsProvider = credentialsProvider;
@@ -89,7 +89,7 @@ public class TerremarkVCloudComputeClient extends BaseVCloudExpressComputeClient
 
    @Override
    public Map<String, String> start(@Nullable URI VDC, URI templateId, String name,
-         InstantiateVAppTemplateOptions options, int... portsToOpen) {
+            InstantiateVAppTemplateOptions options, int... portsToOpen) {
       if (options.getDiskSizeKilobytes() != null) {
          logger.warn("trmk does not support resizing the primary disk; unsetting disk size");
       }
@@ -120,47 +120,47 @@ public class TerremarkVCloudComputeClient extends BaseVCloudExpressComputeClient
          InternetService is = null;
          Protocol protocol;
          switch (port) {
-         case 22:
-            protocol = Protocol.TCP;
-            break;
-         case 80:
-         case 8080:
-            protocol = Protocol.HTTP;
-            break;
-         case 443:
-            protocol = Protocol.HTTPS;
-            break;
-         default:
-            protocol = Protocol.HTTP;
-            break;
+            case 22:
+               protocol = Protocol.TCP;
+               break;
+            case 80:
+            case 8080:
+               protocol = Protocol.HTTP;
+               break;
+            case 443:
+               protocol = Protocol.HTTPS;
+               break;
+            default:
+               protocol = Protocol.HTTP;
+               break;
          }
          if (ip == null) {
             if (client instanceof TerremarkVCloudExpressClient) {
                is = TerremarkVCloudExpressClient.class.cast(client).addInternetServiceToVDC(
-                     vApp.getVDC().getId(),
-                     vApp.getName() + "-" + port,
-                     protocol,
-                     port,
-                     withDescription(String.format("port %d access to serverId: %s name: %s", port, vApp.getName(),
-                           vApp.getName())));
+                        vApp.getVDC().getId(),
+                        vApp.getName() + "-" + port,
+                        protocol,
+                        port,
+                        withDescription(String.format("port %d access to serverId: %s name: %s", port, vApp.getName(),
+                                 vApp.getName())));
                ip = is.getPublicIpAddress();
             } else {
                logger.debug(">> creating InternetService in vDC %s:%s:%d", vApp.getVDC().getName(), protocol, port);
                ip = TerremarkECloudClient.class.cast(client).activatePublicIpInVDC(vApp.getVDC().getId());
-               is = client.addInternetServiceToExistingIp(ip.getId(), vApp.getName() + "-" + port, protocol,
-                     port, withDescription(String.format("port %d access to serverId: %s name: %s", port, vApp
-                           .getName(), vApp.getName())));
+               is = client.addInternetServiceToExistingIp(ip.getId(), vApp.getName() + "-" + port, protocol, port,
+                        withDescription(String.format("port %d access to serverId: %s name: %s", port, vApp.getName(),
+                                 vApp.getName())));
             }
          } else {
             logger.debug(">> adding InternetService %s:%s:%d", ip.getAddress(), protocol, port);
             is = client.addInternetServiceToExistingIp(ip.getId(), vApp.getName() + "-" + port, protocol, port,
-                  withDescription(String.format("port %d access to serverId: %s name: %s", port, vApp.getName(), vApp
-                        .getName())));
+                     withDescription(String.format("port %d access to serverId: %s name: %s", port, vApp.getName(),
+                              vApp.getName())));
          }
          logger.debug("<< created InternetService(%s) %s:%s:%d", is.getName(), is.getPublicIpAddress().getAddress(), is
-               .getProtocol(), is.getPort());
+                  .getProtocol(), is.getPort());
          logger.debug(">> adding Node %s:%d -> %s:%d", is.getPublicIpAddress().getAddress(), is.getPort(),
-               privateAddress, port);
+                  privateAddress, port);
          Node node = client.addNode(is.getId(), privateAddress, vApp.getName() + "-" + port, port);
          logger.debug("<< added Node(%s)", node.getName());
       }
@@ -174,13 +174,13 @@ public class TerremarkVCloudComputeClient extends BaseVCloudExpressComputeClient
             if (vApp.getNetworkToAddresses().containsValue(node.getIpAddress())) {
                ipAddresses.add(service.getPublicIpAddress());
                logger.debug(">> deleting Node(%s) %s:%d -> %s:%d", node.getName(), service.getPublicIpAddress()
-                     .getAddress(), service.getPort(), node.getIpAddress(), node.getPort());
+                        .getAddress(), service.getPort(), node.getIpAddress(), node.getPort());
                client.deleteNode(node.getId());
                logger.debug("<< deleted Node(%s)", node.getName());
                Set<Node> nodes = client.getNodes(service.getId());
                if (nodes.size() == 0) {
                   logger.debug(">> deleting InternetService(%s) %s:%d", service.getName(), service.getPublicIpAddress()
-                        .getAddress(), service.getPort());
+                           .getAddress(), service.getPort());
                   client.deleteInternetService(service.getId());
                   logger.debug("<< deleted InternetService(%s)", service.getName());
                   continue SERVICE;
@@ -204,10 +204,9 @@ public class TerremarkVCloudComputeClient extends BaseVCloudExpressComputeClient
    }
 
    /**
-    * deletes the internet service and nodes associated with the vapp. Deletes
-    * the IP address, if there are no others using it. Finally, it powers off
-    * and deletes the vapp. Note that we do not call undeploy, as terremark does
-    * not support the command.
+    * deletes the internet service and nodes associated with the vapp. Deletes the IP address, if
+    * there are no others using it. Finally, it powers off and deletes the vapp. Note that we do not
+    * call undeploy, as terremark does not support the command.
     */
    @Override
    public void stop(URI id) {
@@ -238,7 +237,7 @@ public class TerremarkVCloudComputeClient extends BaseVCloudExpressComputeClient
    }
 
    void blockOnLastTask(VApp vApp) {
-      TasksList list = client.findTasksListInOrgNamed(null, null);
+      TasksList list = client.findTasksListInOrgNamed(null);
       try {
          Task lastTask = getLast(filter(list.getTasks(), new Predicate<Task>() {
 

@@ -30,7 +30,7 @@ import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.functions.AllCatalogItemsInOrganization;
+import org.jclouds.vcloud.functions.AllCatalogItemsInOrg;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
@@ -52,7 +52,7 @@ public class VAppTemplatesInOrgsLiveTest {
    private TerremarkVCloudClient tmClient;
    private VAppTemplatesInOrgs parser;
    private Closer closer;
-   private AllCatalogItemsInOrganization allCatalogItemsInOrganization;
+   private AllCatalogItemsInOrg allCatalogItemsInOrg;
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
@@ -64,7 +64,7 @@ public class VAppTemplatesInOrgsLiveTest {
                ImmutableSet.<Module> of(new Log4JLoggingModule())).buildInjector();
 
       tmClient = injector.getInstance(TerremarkVCloudClient.class);
-      allCatalogItemsInOrganization = injector.getInstance(AllCatalogItemsInOrganization.class);
+      allCatalogItemsInOrg = injector.getInstance(AllCatalogItemsInOrg.class);
       parser = injector.getInstance(VAppTemplatesInOrgs.class);
       closer = injector.getInstance(Closer.class);
    }
@@ -74,8 +74,8 @@ public class VAppTemplatesInOrgsLiveTest {
 
       Set<? extends Image> images = parser.get();
 
-      Iterable<? extends CatalogItem> templates = allCatalogItemsInOrganization.apply(tmClient
-               .findOrganizationNamed(null));
+      Iterable<? extends CatalogItem> templates = allCatalogItemsInOrg.apply(tmClient
+               .findOrgNamed(null));
 
       assertEquals(images.size(), Iterables.size(templates));
       assert images.size() > 0;

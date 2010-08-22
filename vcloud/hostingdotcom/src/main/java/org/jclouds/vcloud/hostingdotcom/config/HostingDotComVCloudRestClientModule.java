@@ -25,6 +25,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.config.BaseVCloudExpressRestClientModule;
@@ -34,26 +35,22 @@ import org.jclouds.vcloud.hostingdotcom.HostingDotComVCloudClient;
 import com.google.inject.Provides;
 
 /**
- * Configures the VCloud authentication service connection, including logging
- * and http transport.
+ * Configures the VCloud authentication service connection, including logging and http transport.
  * 
  * @author Adrian Cole
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class HostingDotComVCloudRestClientModule
-      extends
-      BaseVCloudExpressRestClientModule<HostingDotComVCloudClient, HostingDotComVCloudAsyncClient> {
+public class HostingDotComVCloudRestClientModule extends
+         BaseVCloudExpressRestClientModule<HostingDotComVCloudClient, HostingDotComVCloudAsyncClient> {
 
    public HostingDotComVCloudRestClientModule() {
-      super(HostingDotComVCloudClient.class,
-            HostingDotComVCloudAsyncClient.class);
+      super(HostingDotComVCloudClient.class, HostingDotComVCloudAsyncClient.class);
    }
 
    @Provides
    @Singleton
-   protected VCloudExpressAsyncClient provideVCloudAsyncClient(
-         HostingDotComVCloudAsyncClient in) {
+   protected VCloudExpressAsyncClient provideVCloudAsyncClient(HostingDotComVCloudAsyncClient in) {
       return in;
    }
 
@@ -64,7 +61,7 @@ public class HostingDotComVCloudRestClientModule
    }
 
    @Override
-   protected URI provideDefaultNetwork(VCloudExpressClient client) {
+   protected URI provideDefaultNetwork(CommonVCloudClient client) {
       return URI.create("https://vcloud.safesecureweb.com/network/1990");
    }
 

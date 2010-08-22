@@ -19,10 +19,6 @@
 
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.vcloud.VCloudMediaType.CATALOG_XML;
-import static org.jclouds.vcloud.VCloudMediaType.NETWORK_XML;
-import static org.jclouds.vcloud.VCloudMediaType.TASKSLIST_XML;
-import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 import static org.jclouds.vcloud.util.Utils.newNamedResource;
 import static org.jclouds.vcloud.util.Utils.putNamedResource;
 
@@ -49,10 +45,10 @@ public class OrgHandler extends ParseSax.HandlerWithResult<Org> {
    protected Map<String, NamedResource> catalogs = Maps.newLinkedHashMap();
    protected Map<String, NamedResource> networks = Maps.newLinkedHashMap();
 
-   private String description;
+   protected String description;
 
    public Org getResult() {
-      return new OrgImpl(org.getName(), org.getId(), description, catalogs, vdcs, networks, tasksList);
+      return new OrgImpl(org.getName(),  org.getType(), org.getId(), description, catalogs, vdcs, networks, tasksList);
    }
 
    @Override
@@ -62,13 +58,13 @@ public class OrgHandler extends ParseSax.HandlerWithResult<Org> {
       } else if (qName.equals("Link")) {
          int typeIndex = attributes.getIndex("type");
          if (typeIndex != -1) {
-            if (attributes.getValue(typeIndex).equals(VDC_XML)) {
+            if (attributes.getValue(typeIndex).indexOf("vdc+xml") != -1) {
                putNamedResource(vdcs, attributes);
-            } else if (attributes.getValue(typeIndex).equals(CATALOG_XML)) {
+            } else if (attributes.getValue(typeIndex).indexOf("catalog+xml") != -1) {
                putNamedResource(catalogs, attributes);
-            } else if (attributes.getValue(typeIndex).equals(TASKSLIST_XML)) {
+            } else if (attributes.getValue(typeIndex).indexOf("tasksList+xml") != -1) {
                tasksList = newNamedResource(attributes);
-            } else if (attributes.getValue(typeIndex).equals(NETWORK_XML)) {
+            } else if (attributes.getValue(typeIndex).indexOf("network+xml") != -1) {
                putNamedResource(networks, attributes);
             }
          }

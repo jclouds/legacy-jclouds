@@ -17,30 +17,26 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.compute;
+package org.jclouds.vcloud.compute.internal;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudExpressClient;
+import org.jclouds.vcloud.CommonVCloudClient;
+import org.jclouds.vcloud.compute.CommonVCloudComputeClient;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.VAppTemplate;
-import org.jclouds.vcloud.domain.VDC;
-import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
@@ -52,52 +48,18 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class BaseVCloudExpressComputeClient implements VCloudExpressComputeClient {
+public class CommonVCloudComputeClientImpl implements CommonVCloudComputeClient {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   protected final VCloudExpressClient client;
+   protected final CommonVCloudClient client;
    protected final Predicate<URI> taskTester;
-   protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
 
    @Inject
-   public BaseVCloudExpressComputeClient(VCloudExpressClient client, Predicate<URI> successTester,
-         Map<VAppStatus, NodeState> vAppStatusToNodeState) {
+   public CommonVCloudComputeClientImpl(CommonVCloudClient client, Predicate<URI> successTester) {
       this.client = client;
       this.taskTester = successTester;
-      this.vAppStatusToNodeState = vAppStatusToNodeState;
-   }
-
-   @Override
-   public Map<String, String> start(@Nullable URI VDC, URI templateId, String name,
-         InstantiateVAppTemplateOptions options, int... portsToOpen) {
-      checkNotNull(options, "options");
-      logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
-
-      VDC vdc = client.getVDC(VDC);
-      VAppTemplate template = client.getVAppTemplate(templateId);
-
-      VApp vAppResponse = client.instantiateVAppTemplateInVDC(vdc.getId(), template.getId(), name, options);
-      logger.debug("<< instantiated VApp(%s)", vAppResponse.getName());
-
-      logger.debug(">> deploying vApp(%s)", vAppResponse.getName());
-
-      Task task = client.deployVApp(vAppResponse.getId());
-      if (options.shouldBlockOnDeploy()) {
-         if (!taskTester.apply(task.getLocation())) {
-            throw new TaskException("deploy", vAppResponse, task);
-         }
-         logger.debug("<< deployed vApp(%s)", vAppResponse.getName());
-
-         logger.debug(">> powering vApp(%s)", vAppResponse.getName());
-         task = client.powerOnVApp(vAppResponse.getId());
-         if (!taskTester.apply(task.getLocation())) {
-            throw new TaskException("powerOn", vAppResponse, task);
-         }
-         logger.debug("<< on vApp(%s)", vAppResponse.getName());
-      }
-      return parseAndValidateResponse(template, vAppResponse);
    }
 
    protected Map<String, String> parseAndValidateResponse(VAppTemplate template, VApp vAppResponse) {
@@ -175,7 +137,7 @@ public class BaseVCloudExpressComputeClient implements VCloudExpressComputeClien
 
       public TaskException(String type, VApp vApp, Task task) {
          super(String.format("failed to %s vApp %s status %s;task %s status %s", type, vApp.getName(),
-               vApp.getStatus(), task.getLocation(), task.getStatus()), vApp);
+                  vApp.getStatus(), task.getLocation(), task.getStatus()), vApp);
          this.task = task;
       }
 

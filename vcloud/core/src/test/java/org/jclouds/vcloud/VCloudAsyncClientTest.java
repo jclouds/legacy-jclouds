@@ -661,7 +661,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       }
 
       @Override
-      protected Org provideOrg(VCloudClient discovery) {
+      protected Org provideOrg(CommonVCloudClient discovery) {
          return null;
       }
 
@@ -676,7 +676,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       }
 
       @Override
-      protected URI provideDefaultNetwork(VCloudClient client) {
+      protected URI provideDefaultNetwork(CommonVCloudClient client) {
          return URI.create("https://vcenterprise.bluelock.com/api/v1.0/network/1990");
       }
 
@@ -721,9 +721,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
                                                       "vdc",
                                                       new VDCImpl(
                                                                "vdc",
-                                                               URI
+                                                               null, URI
                                                                         .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"),
-                                                               "description",
+                                                               null, null, "description",
                                                                null,
                                                                null,
                                                                null,
@@ -743,7 +743,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
                                                                                           "application/vnd.vmware.vcloud.vAppTemplate+xml",
                                                                                           URI
                                                                                                    .create("https://vcenterprise.bluelock.com/api/v1.0/vdcItem/2"))),
-                                                               null))));
+                                                               null, 0, 0, 0, false))));
 
       }
 
@@ -756,7 +756,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
          @Override
          public Map<String, Org> get() {
-            return ImmutableMap.<String, Org> of("org", new OrgImpl("org", URI
+            return ImmutableMap.<String, Org> of("org", new OrgImpl("org", null, URI
                      .create("https://vcenterprise.bluelock.com/api/v1.0/org/1"), "description", ImmutableMap
                      .<String, NamedResource> of("catalog", new NamedResourceImpl("catalog",
                               VCloudMediaType.CATALOG_XML, URI

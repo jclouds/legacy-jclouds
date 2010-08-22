@@ -29,18 +29,18 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.vcloud.compute.VCloudComputeClient;
+import org.jclouds.vcloud.compute.CommonVCloudComputeClient;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
 public class VCloudDestroyNodeStrategy implements DestroyNodeStrategy {
-   protected final VCloudComputeClient computeClient;
+   protected final CommonVCloudComputeClient computeClient;
    protected final GetNodeMetadataStrategy getNode;
 
    @Inject
-   protected VCloudDestroyNodeStrategy(VCloudComputeClient computeClient, GetNodeMetadataStrategy getNode) {
+   protected VCloudDestroyNodeStrategy(CommonVCloudComputeClient computeClient, GetNodeMetadataStrategy getNode) {
       this.computeClient = computeClient;
       this.getNode = getNode;
 

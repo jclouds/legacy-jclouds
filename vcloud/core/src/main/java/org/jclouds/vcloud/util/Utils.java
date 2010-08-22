@@ -37,15 +37,15 @@ public class Utils {
    public static NamedResource newNamedResource(Attributes attributes) {
       String uri = attributes.getValue(attributes.getIndex("href"));
       return new NamedResourceImpl(attributes.getValue(attributes.getIndex("name")), attributes.getValue(attributes
-            .getIndex("type")), URI.create(uri));
+               .getIndex("type")), URI.create(uri));
    }
 
    public static Task.Error newError(Attributes attributes) {
       return new ErrorImpl(attrOrNull(attributes, "message"), attrOrNull(attributes, "majorErrorCode"), attrOrNull(
-            attributes, "minorErrorCode"));
+               attributes, "minorErrorCode"));
    }
 
-   private static String attrOrNull(Attributes attributes, String attr) {
+   public static String attrOrNull(Attributes attributes, String attr) {
       return attributes.getIndex(attr) >= 0 ? attributes.getValue(attributes.getIndex(attr)) : null;
    }
 

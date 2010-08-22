@@ -22,9 +22,11 @@ package org.jclouds.vcloud.terremark.domain.internal;
 import java.net.URI;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.internal.OrganizationImpl;
-import org.jclouds.vcloud.terremark.domain.TerremarkOrganization;
+import org.jclouds.vcloud.domain.internal.OrgImpl;
+import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
 
 /**
  * Locations of resources in a Terremark vCloud
@@ -32,13 +34,14 @@ import org.jclouds.vcloud.terremark.domain.TerremarkOrganization;
  * @author Adrian Cole
  * 
  */
-public class TerremarkOrganizationImpl extends OrganizationImpl implements TerremarkOrganization {
+public class TerremarkOrgImpl extends OrgImpl implements TerremarkOrg {
 
    private final NamedResource keysList;
 
-   public TerremarkOrganizationImpl(String name, URI id, Map<String, NamedResource> catalogs,
-         Map<String, NamedResource> vdcs, Map<String, NamedResource> tasksLists, NamedResource keysList) {
-      super(name, id, catalogs, vdcs, tasksLists);
+   public TerremarkOrgImpl(String name, String type, URI id, String description, Map<String, NamedResource> catalogs,
+            Map<String, NamedResource> vdcs, Map<String, NamedResource> networks, @Nullable NamedResource tasksList,
+            NamedResource keysList) {
+      super(name, type, id, description, catalogs, vdcs, networks, tasksList);
       this.keysList = keysList;
    }
 

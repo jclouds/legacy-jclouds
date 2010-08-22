@@ -21,36 +21,53 @@ package org.jclouds.vcloud.domain;
 
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.vcloud.domain.internal.OrgImpl;
 
 import com.google.inject.ImplementedBy;
 
 /**
- * A vCloud organization is a high-level abstraction that provides a unit of
- * administration for objects and resources. As viewed by a user, an
- * organization (represented by an Org element) can contain Catalog, Network,
- * and vDC elements. If there are any queued, running, or recently completed
- * tasks owned by a member of the organization, it also contains a TasksList
- * element. As viewed by an administrator, an organization also contains users,
- * groups, and other information
+ * A vCloud organization is a high-level abstraction that provides a unit of administration for
+ * objects and resources. As viewed by a user, an organization (represented by an Org element) can
+ * contain Catalog, Network, and vDC elements. If there are any queued, running, or recently
+ * completed tasks owned by a member of the organization, it also contains a TasksList element. As
+ * viewed by an administrator, an organization also contains users, groups, and other information
  * 
  * @author Adrian Cole
  */
 @ImplementedBy(OrgImpl.class)
 public interface Org extends NamedResource {
-
+   /**
+    * optional description
+    * 
+    * @since vcloud api 0.8
+    */
+   @Nullable
    String getDescription();
 
+   /**
+    * @since vcloud api 0.8
+    */
    Map<String, NamedResource> getCatalogs();
 
+   /**
+    * @since vcloud api 0.8
+    */
    Map<String, NamedResource> getVDCs();
 
    /**
-    * If there are any queued, running, or recently completed tasks owned by a
-    * member of the organization, it also contains a TasksList.
+    * If there are any queued, running, or recently completed tasks owned by a member of the
+    * organization, it also contains a TasksList.
+    * 
+    * @since vcloud api 0.8
     */
+   @Nullable
    NamedResource getTasksList();
 
+   /**
+    * @since vcloud api 1.0
+    */
    Map<String, NamedResource> getNetworks();
 
 }

@@ -19,12 +19,15 @@
 
 package org.jclouds.vcloud.terremark.xml;
 
+import javax.inject.Inject;
+
 import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 import org.jclouds.vcloud.terremark.domain.internal.TerremarkVDCImpl;
 import org.jclouds.vcloud.util.Utils;
+import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.VDCHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -34,15 +37,20 @@ import org.xml.sax.SAXException;
  */
 public class TerremarkVDCHandler extends VDCHandler {
 
+   @Inject
+   public TerremarkVDCHandler(TaskHandler taskHandler) {
+      super(taskHandler);
+   }
+
    private NamedResource catalog;
    private NamedResource publicIps;
    private NamedResource internetServices;
 
    public TerremarkVDC getResult() {
       VDC vDC = super.getResult();
-      return new TerremarkVDCImpl(vDC.getName(), vDC.getId(), vDC.getDescription(), vDC.getStorageCapacity(), vDC
-            .getCpuCapacity(), vDC.getMemoryCapacity(), vDC.getInstantiatedVmsQuota(), vDC.getDeployedVmsQuota(), vDC
-            .getResourceEntities(), vDC.getAvailableNetworks(), catalog, publicIps, internetServices);
+      return new TerremarkVDCImpl(vDC.getName(), vDC.getType(), vDC.getId(), status, org, description, tasks,
+               allocationModel, storageCapacity, cpuCapacity, memoryCapacity, resourceEntities, availableNetworks,
+               nicQuota, networkQuota, vmQuota, isEnabled, catalog, publicIps, internetServices);
    }
 
    @Override
