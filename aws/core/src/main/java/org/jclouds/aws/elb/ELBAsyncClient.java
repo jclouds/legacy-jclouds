@@ -114,7 +114,6 @@ public interface ELBAsyncClient {
    @XMLResponseParser(DescribeLoadBalancersResponseHandler.class)
    @FormParams(keys = ACTION, values = "DescribeLoadBalancers")
    ListenableFuture<? extends Set<LoadBalancer>> describeLoadBalancersInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
-            @FormParam("LoadBalancerName") @Nullable String name);
+            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
 
 }

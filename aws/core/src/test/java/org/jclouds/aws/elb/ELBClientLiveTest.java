@@ -78,10 +78,9 @@ public class ELBClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateLoadBalancer")
    void testDescribeLoadBalancers() {
-      String name = "TestDescribeLoadBalancer";
       for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
                Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
-         Set<LoadBalancer> allResults = client.describeLoadBalancersInRegion(region, name);
+         Set<LoadBalancer> allResults = client.describeLoadBalancersInRegion(region);
          assertNotNull(allResults);
          assert (allResults.size() >= 1);
       }
