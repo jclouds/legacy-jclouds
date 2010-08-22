@@ -35,7 +35,6 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.DestroyLoadBalancerStrategy;
-import org.jclouds.compute.strategy.ListLoadBalancersStrategy;
 import org.jclouds.compute.strategy.LoadBalanceNodesStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
@@ -44,6 +43,7 @@ import org.jclouds.logging.Logger;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -69,23 +69,20 @@ public class BaseLoadBalancerService implements LoadBalancerService {
    protected final ComputeServiceContext context;
    protected final LoadBalanceNodesStrategy loadBalancerStrategy;
    protected final DestroyLoadBalancerStrategy destroyLoadBalancerStrategy;
-   protected final ListLoadBalancersStrategy listLoadBalancersStrategy;
+   // protected final ListLoadBalancersStrategy listLoadBalancersStrategy;
    protected final BackoffLimitedRetryHandler backoffLimitedRetryHandler;
 
    @Inject
-   protected BaseLoadBalancerService(ComputeServiceContext context,
-            LoadBalanceNodesStrategy loadBalancerStrategy,
+   protected BaseLoadBalancerService(ComputeServiceContext context, LoadBalanceNodesStrategy loadBalancerStrategy,
             DestroyLoadBalancerStrategy destroyLoadBalancerStrategy,
-            ListLoadBalancersStrategy listLoadBalancersStrategy,
+            // ListLoadBalancersStrategy listLoadBalancersStrategy,
             BackoffLimitedRetryHandler backoffLimitedRetryHandler) {
       this.context = checkNotNull(context, "context");
       this.loadBalancerStrategy = checkNotNull(loadBalancerStrategy, "loadBalancerStrategy");
-      this.destroyLoadBalancerStrategy = checkNotNull(destroyLoadBalancerStrategy,
-               "destroyLoadBalancerStrategy");
-      this.listLoadBalancersStrategy = checkNotNull(listLoadBalancersStrategy,
-               "listLoadBalancersStrategy");
-      this.backoffLimitedRetryHandler = checkNotNull(backoffLimitedRetryHandler,
-               "backoffLimitedRetryHandler");
+      this.destroyLoadBalancerStrategy = checkNotNull(destroyLoadBalancerStrategy, "destroyLoadBalancerStrategy");
+      // this.listLoadBalancersStrategy = checkNotNull(listLoadBalancersStrategy,
+      // "listLoadBalancersStrategy");
+      this.backoffLimitedRetryHandler = checkNotNull(backoffLimitedRetryHandler, "backoffLimitedRetryHandler");
    }
 
    /**
@@ -97,17 +94,16 @@ public class BaseLoadBalancerService implements LoadBalancerService {
    }
 
    @Override
-   public Set<String> loadBalanceNodesMatching(Predicate<NodeMetadata> filter,
-            String loadBalancerName, String protocol, int loadBalancerPort, int instancePort) {
+   public Set<String> loadBalanceNodesMatching(Predicate<NodeMetadata> filter, String loadBalancerName,
+            String protocol, int loadBalancerPort, int instancePort) {
       checkNotNull(loadBalancerName, "loadBalancerName");
       checkNotNull(protocol, "protocol");
       checkArgument(protocol.toUpperCase().equals("HTTP") || protocol.toUpperCase().equals("TCP"),
                "Acceptable values for protocol are HTTP or TCP");
 
       Map<Location, Set<String>> locationMap = Maps.newHashMap();
-      for (NodeMetadata node : Iterables.filter(context.getComputeService()
-               .listNodesDetailsMatching(NodePredicates.all()), Predicates.and(filter, Predicates
-               .not(NodePredicates.TERMINATED)))) {
+      for (NodeMetadata node : Iterables.filter(context.getComputeService().listNodesDetailsMatching(
+               NodePredicates.all()), Predicates.and(filter, Predicates.not(NodePredicates.TERMINATED)))) {
          Set<String> ids = locationMap.get(node.getLocation());
          if (ids == null)
             ids = Sets.newHashSet();
@@ -117,8 +113,8 @@ public class BaseLoadBalancerService implements LoadBalancerService {
       Set<String> dnsNames = Sets.newHashSet();
       for (Location location : locationMap.keySet()) {
          logger.debug(">> creating load balancer (%s)", loadBalancerName);
-         String dnsName = loadBalancerStrategy.execute(location, loadBalancerName, protocol,
-                  loadBalancerPort, instancePort, locationMap.get(location));
+         String dnsName = loadBalancerStrategy.execute(location, loadBalancerName, protocol, loadBalancerPort,
+                  instancePort, locationMap.get(location));
          dnsNames.add(dnsName);
          logger.debug("<< created load balancer (%s) DNS (%s)", loadBalancerName, dnsName);
       }
@@ -135,11 +131,12 @@ public class BaseLoadBalancerService implements LoadBalancerService {
       boolean successful = destroyLoadBalancerStrategy.execute(loadBalancer);
       logger.debug("<< destroyed load balancer(%s) success(%s)", loadBalancer, successful);
    }
-   
-   public Set<String> listLoadBalancers()
-   {
-       Set<String> loadBalancerSet = listLoadBalancersStrategy.execute();
-       return loadBalancerSet;
+
+   public Set<String> listLoadBalancers() {
+      return ImmutableSet.of();
+      // TODO
+      // Set<String> loadBalancerSet = listLoadBalancersStrategy.execute();
+      // return loadBalancerSet;
    }
 
 }
