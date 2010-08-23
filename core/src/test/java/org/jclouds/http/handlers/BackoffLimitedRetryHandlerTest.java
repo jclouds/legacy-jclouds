@@ -51,6 +51,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
@@ -119,7 +120,7 @@ public class BackoffLimitedRetryHandlerTest {
                   public boolean verify(String hostname, SSLSession session) {
                      return false;
                   }
-               }, new Provider<SSLContext>() {
+               }, new Supplier<SSLContext>() {
 
                   @Override
                   public SSLContext get() {

@@ -44,7 +44,6 @@ import java.util.concurrent.ExecutorService;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -64,6 +63,7 @@ import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 
+import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -79,7 +79,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
    public static final String USER_AGENT = "jclouds/1.0 java/" + System.getProperty("java.version");
    @Resource
    protected Logger logger = Logger.NULL;
-   private final Provider<SSLContext> untrustedSSLContextProvider;
+   private final Supplier<SSLContext> untrustedSSLContextProvider;
    private final HostnameVerifier verifier;
    private final Field methodField;
 
@@ -88,7 +88,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
             DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
             DelegatingErrorHandler errorHandler, HttpWire wire, HostnameVerifier verifier,
-            @Named("untrusted") Provider<SSLContext> untrustedSSLContextProvider) throws SecurityException,
+            @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider) throws SecurityException,
             NoSuchFieldException {
       super(utils, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       if (utils.getMaxConnections() > 0)

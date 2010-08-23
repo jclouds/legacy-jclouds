@@ -19,14 +19,12 @@
 
 package org.jclouds.http.config;
 
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.inject.Named;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -40,10 +38,13 @@ import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
 import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
 import org.jclouds.logging.Logger;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
 import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 /**
  * Configures {@link JavaUrlHttpCommandExecutorService}.
@@ -65,6 +66,9 @@ public class JavaUrlHttpCommandExecutorServiceModule extends AbstractModule {
       bind(HostnameVerifier.class).to(LogToMapHostnameVerifier.class);
       bind(TransformingHttpCommandExecutorService.class).to(TransformingHttpCommandExecutorServiceImpl.class).in(
                Scopes.SINGLETON);
+      bind(new TypeLiteral<Supplier<SSLContext>>() {
+      }).annotatedWith(Names.named("untrusted")).to(new TypeLiteral<UntrustedSSLContextSupplier>() {
+      });
    }
 
    /**
@@ -86,14 +90,28 @@ public class JavaUrlHttpCommandExecutorServiceModule extends AbstractModule {
       }
    }
 
-   @Provides
    @Singleton
-   @Named("untrusted")
-   SSLContext provideUntrustedSSLContext(TrustAllCerts trustAllCerts) throws NoSuchAlgorithmException,
-            KeyManagementException {
-      SSLContext sc = SSLContext.getInstance("SSL");
-      sc.init(null, new TrustManager[] { trustAllCerts }, new SecureRandom());
-      return sc;
+   public static class UntrustedSSLContextSupplier implements Supplier<SSLContext> {
+      private final TrustAllCerts trustAllCerts;
+
+      @Inject
+      UntrustedSSLContextSupplier(TrustAllCerts trustAllCerts) {
+         this.trustAllCerts = trustAllCerts;
+      }
+
+      @Override
+      public SSLContext get() {
+         try {
+            SSLContext sc;
+            sc = SSLContext.getInstance("SSL");
+            sc.init(null, new TrustManager[] { trustAllCerts }, new SecureRandom());
+            return sc;
+         } catch (Exception e) {
+            Throwables.propagate(e);
+            return null;
+         }
+
+      }
    }
 
    /**
