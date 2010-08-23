@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
@@ -44,8 +45,8 @@ import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
 
 import com.google.common.base.Function;
@@ -64,11 +65,14 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
 
    protected final String ns;
    protected final String schema;
-   private final BindToStringPayload stringBinder;
+   protected final BindToStringPayload stringBinder;
+   protected final String apiVersion;
 
    @Inject
-   public BindVAppConfigurationToXmlPayload(BindToStringPayload stringBinder,
-         @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns, @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema) {
+   public BindVAppConfigurationToXmlPayload(@Named(PROPERTY_API_VERSION) String apiVersion,
+            BindToStringPayload stringBinder, @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
+            @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema) {
+      this.apiVersion = apiVersion;
       this.ns = ns;
       this.schema = schema;
       this.stringBinder = stringBinder;
@@ -77,12 +81,12 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
    @SuppressWarnings("unchecked")
    public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
-            "this binder is only valid for GeneratedHttpRequests!");
+               "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
       VApp vApp = checkNotNull(findVAppInArgsOrNull(gRequest), "vApp");
-      checkArgument(vApp.getStatus() == VAppStatus.OFF, "vApp must be off!");
+      checkArgument(vApp.getStatus() == Status.OFF, "vApp must be off!");
       VAppConfiguration configuration = checkNotNull(findConfigInArgsOrNull(gRequest), "config");
 
       try {
@@ -98,13 +102,13 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
    }
 
    protected String generateXml(VApp vApp, VAppConfiguration configuration) throws ParserConfigurationException,
-         FactoryConfigurationError, TransformerException {
+            FactoryConfigurationError, TransformerException {
       String name = configuration.getName() != null ? configuration.getName() : vApp.getName();
 
       XMLBuilder rootBuilder = buildRoot(vApp, name);
 
       XMLBuilder sectionBuilder = rootBuilder.e("Section").a("xsi:type", "VirtualHardwareSection_Type").a("xmlns",
-            "http://schemas.dmtf.org/ovf/envelope/1").a("xmlns:q2", "http://www.vmware.com/vcloud/v1");
+               "http://schemas.dmtf.org/ovf/envelope/1").a("xmlns:q2", "http://www.vmware.com/vcloud/v1");
       sectionBuilder.e("Info").t("Virtual Hardware");
 
       addProcessorItem(sectionBuilder, vApp, configuration);
@@ -119,7 +123,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
    private void addProcessorItem(XMLBuilder sectionBuilder, VApp vApp, VAppConfiguration configuration) {
       ResourceAllocation cpu = find(vApp.getResourceAllocations(), resourceType(ResourceType.PROCESSOR));
       long quantity = configuration.getProcessorCount() != null ? configuration.getProcessorCount() : cpu
-            .getVirtualQuantity();
+               .getVirtualQuantity();
       addResourceWithQuantity(sectionBuilder, cpu, quantity);
    }
 
@@ -136,7 +140,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
       }
       for (Long quantity : configuration.getDisks()) {
          ResourceAllocation disk = new ResourceAllocation(9, "n/a", null, ResourceType.DISK_DRIVE, null, "1048576",
-               null, -1, null, null, quantity, null);
+                  null, -1, null, null, quantity, null);
          addDiskWithQuantity(sectionBuilder, disk);
       }
    }
@@ -162,10 +166,13 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
    }
 
    protected XMLBuilder buildRoot(VApp vApp, String name) throws ParserConfigurationException,
-         FactoryConfigurationError {
-      XMLBuilder rootBuilder = XMLBuilder.create("VApp").a("type", vApp.getType()).a("name", name).a("status",
-            vApp.getStatus().value()).a("size", vApp.getSize() + "").a("xmlns", ns).a("xmlns:xsi",
-            "http://www.w3.org/2001/XMLSchema-instance").a("xsi:schemaLocation", ns + " " + schema);
+            FactoryConfigurationError {
+      String status = vApp.getStatus().value();
+      if (apiVersion.indexOf("0.8") != -1 && "8".equals(status))
+         status = "2";
+      XMLBuilder rootBuilder = XMLBuilder.create("VApp").a("type", vApp.getType()).a("name", name).a("status", status)
+               .a("size", vApp.getSize() + "").a("xmlns", ns).a("xmlns:xsi",
+                        "http://www.w3.org/2001/XMLSchema-instance").a("xsi:schemaLocation", ns + " " + schema);
       return rootBuilder;
    }
 

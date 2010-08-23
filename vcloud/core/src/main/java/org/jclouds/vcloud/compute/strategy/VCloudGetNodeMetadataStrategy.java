@@ -45,7 +45,7 @@ import org.jclouds.vcloud.compute.CommonVCloudComputeClient;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
 import org.jclouds.vcloud.compute.functions.GetExtra;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
@@ -63,11 +63,11 @@ public class VCloudGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
    protected final Supplier<Set<? extends Image>> images;
    protected final FindLocationForResource findLocationForResourceInVDC;
    protected final GetExtra getExtra;
-   protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
+   protected final Map<Status, NodeState> vAppStatusToNodeState;
 
    @Inject
    protected VCloudGetNodeMetadataStrategy(CommonVCloudClient client, CommonVCloudComputeClient computeClient,
-            Map<VAppStatus, NodeState> vAppStatusToNodeState, GetExtra getExtra,
+            Map<Status, NodeState> vAppStatusToNodeState, GetExtra getExtra,
             FindLocationForResource findLocationForResourceInVDC, Supplier<Set<? extends Image>> images) {
       this.client = checkNotNull(client, "client");
       this.images = checkNotNull(images, "images");

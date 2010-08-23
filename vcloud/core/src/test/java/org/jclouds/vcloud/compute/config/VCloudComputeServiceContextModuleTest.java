@@ -19,7 +19,9 @@
 
 package org.jclouds.vcloud.compute.config;
 
-import org.jclouds.vcloud.domain.VAppStatus;
+import java.util.EnumSet;
+
+import org.jclouds.vcloud.domain.Status;
 import org.testng.annotations.Test;
 
 /**
@@ -28,10 +30,13 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "vcloud.VCloudComputeServiceContextModuleTest")
 public class VCloudComputeServiceContextModuleTest {
 
+   @SuppressWarnings("static-access")
    public void testAllStatusCovered() {
 
-      for (VAppStatus state : VAppStatus.values()) {
-         assert VCloudComputeServiceContextModule.vAppStatusToNodeState.containsKey(state) : state;
+      for (Status state : EnumSet.allOf(Status.class).complementOf(
+               EnumSet.of(Status.PENDING_DESCRIPTOR, Status.PENDING_CONTENTS, Status.COPYING, Status.QUARANTINED,
+                        Status.QUARANTINE_EXPIRED))) {
+         assert VCloudExpressComputeServiceContextModule.vAppStatusToNodeState.containsKey(state) : state;
       }
 
    }

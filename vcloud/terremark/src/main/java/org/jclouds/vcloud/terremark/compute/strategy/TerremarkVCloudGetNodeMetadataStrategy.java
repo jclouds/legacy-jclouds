@@ -44,7 +44,7 @@ import org.jclouds.vcloud.compute.domain.VCloudLocation;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
 import org.jclouds.vcloud.compute.functions.GetExtra;
 import org.jclouds.vcloud.compute.strategy.VCloudGetNodeMetadataStrategy;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.terremark.compute.domain.KeyPairCredentials;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
 
@@ -63,7 +63,7 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudGetNodeMetadat
 
    @Inject
    protected TerremarkVCloudGetNodeMetadataStrategy(CommonVCloudClient client, CommonVCloudComputeClient computeClient,
-            Map<VAppStatus, NodeState> vAppStatusToNodeState, GetExtra getExtra,
+            Map<Status, NodeState> vAppStatusToNodeState, GetExtra getExtra,
             FindLocationForResource findLocationForResourceInVDC, Supplier<Set<? extends Image>> images,
             ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
       super(client, computeClient, vAppStatusToNodeState, getExtra, findLocationForResourceInVDC, images);

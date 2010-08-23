@@ -43,7 +43,7 @@ import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.TerremarkECloudClient;
@@ -71,7 +71,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
    protected TerremarkVCloudComputeClient(TerremarkVCloudExpressClient client,
             PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
             @Named("PASSWORD") Provider<String> passwordGenerator, Predicate<URI> successTester,
-            Map<VAppStatus, NodeState> vAppStatusToNodeState) {
+            Map<Status, NodeState> vAppStatusToNodeState) {
       super(client, successTester, vAppStatusToNodeState);
       this.client = client;
       this.credentialsProvider = credentialsProvider;
@@ -213,7 +213,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
       VApp vApp = client.getVApp(id);
       Set<PublicIpAddress> ipAddresses = deleteInternetServicesAndNodesAssociatedWithVApp(vApp);
       deletePublicIpAddressesWithNoServicesAttached(ipAddresses);
-      if (vApp.getStatus() != VAppStatus.OFF) {
+      if (vApp.getStatus() != Status.OFF) {
          try {
             powerOffAndWait(vApp);
          } catch (IllegalStateException e) {

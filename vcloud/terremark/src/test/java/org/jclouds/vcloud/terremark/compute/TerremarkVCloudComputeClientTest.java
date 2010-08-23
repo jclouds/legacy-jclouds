@@ -35,7 +35,7 @@ import javax.inject.Provider;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressClient;
 import org.jclouds.vcloud.terremark.compute.strategy.ParseVAppTemplateDescriptionToGetDefaultLoginCredentials;
@@ -89,7 +89,7 @@ public class TerremarkVCloudComputeClientTest {
       expect(client.powerOnVApp(vappLocation)).andReturn(task);
 
       Predicate<VApp> notFoundTester = createMock(Predicate.class);
-      Map<VAppStatus, NodeState> vAppStatusToNodeState = createMock(Map.class);
+      Map<Status, NodeState> vAppStatusToNodeState = createMock(Map.class);
 
       TerremarkVCloudComputeClient computeClient = new TerremarkVCloudComputeClient(client,
             new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(), new Provider<String>() {

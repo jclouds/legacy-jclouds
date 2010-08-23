@@ -45,7 +45,7 @@ import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
 import org.jclouds.vcloud.compute.suppliers.OrgAndVDCToLocationSupplier;
 import org.jclouds.vcloud.compute.suppliers.StaticSizeSupplier;
 import org.jclouds.vcloud.compute.suppliers.VCloudImageSupplier;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Supplier;
@@ -63,14 +63,17 @@ import com.google.inject.util.Providers;
 public abstract class CommonVCloudComputeServiceContextModule extends BaseComputeServiceContextModule {
 
    @VisibleForTesting
-   static final Map<VAppStatus, NodeState> vAppStatusToNodeState = ImmutableMap.<VAppStatus, NodeState> builder().put(
-            VAppStatus.OFF, NodeState.SUSPENDED).put(VAppStatus.ON, NodeState.RUNNING).put(VAppStatus.RESOLVED,
-            NodeState.PENDING).put(VAppStatus.SUSPENDED, NodeState.SUSPENDED).put(VAppStatus.UNRESOLVED,
-            NodeState.PENDING).build();
+   static final Map<Status, NodeState> vAppStatusToNodeState = ImmutableMap.<Status, NodeState> builder().put(
+            Status.OFF, NodeState.SUSPENDED).put(Status.ON, NodeState.RUNNING).put(Status.RESOLVED, NodeState.PENDING)
+            .put(Status.ERROR, NodeState.ERROR).put(Status.UNRECOGNIZED, NodeState.UNKNOWN).put(Status.DEPLOYED,
+                     NodeState.PENDING).put(Status.INCONSISTENT, NodeState.PENDING).put(Status.UNKNOWN,
+                     NodeState.UNKNOWN).put(Status.MIXED, NodeState.PENDING).put(Status.WAITING_FOR_INPUT,
+                     NodeState.PENDING).put(Status.SUSPENDED, NodeState.SUSPENDED).put(Status.UNRESOLVED,
+                     NodeState.PENDING).build();
 
    @Singleton
    @Provides
-   Map<VAppStatus, NodeState> provideVAppStatusToNodeState() {
+   Map<Status, NodeState> provideVAppStatusToNodeState() {
       return vAppStatusToNodeState;
    }
 

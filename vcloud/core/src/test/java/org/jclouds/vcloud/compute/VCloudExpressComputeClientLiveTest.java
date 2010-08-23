@@ -37,7 +37,7 @@ import org.jclouds.rest.RestContextFactory;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.testng.annotations.AfterTest;
@@ -102,7 +102,7 @@ public class VCloudExpressComputeClientLiveTest {
 
       VApp vApp = client.getVApp(id);
       verifyConfigurationOfVApp(vApp, serverName, expectation.os, processorCount, memory, expectation.hardDisk);
-      assertEquals(vApp.getStatus(), VAppStatus.ON);
+      assertEquals(vApp.getStatus(), Status.ON);
    }
 
    private String getCompatibleServerName(OsFamily toTest) {

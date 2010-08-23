@@ -32,7 +32,7 @@ import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
@@ -46,11 +46,11 @@ import com.google.inject.Inject;
 @Singleton
 public class VCloudComputeClientImpl extends CommonVCloudComputeClientImpl implements VCloudComputeClient {
 
-   protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
+   protected final Map<Status, NodeState> vAppStatusToNodeState;
 
    @Inject
    public VCloudComputeClientImpl(VCloudClient client, Predicate<URI> successTester,
-            Map<VAppStatus, NodeState> vAppStatusToNodeState) {
+            Map<Status, NodeState> vAppStatusToNodeState) {
       super(client, successTester);
       this.vAppStatusToNodeState = vAppStatusToNodeState;
    }

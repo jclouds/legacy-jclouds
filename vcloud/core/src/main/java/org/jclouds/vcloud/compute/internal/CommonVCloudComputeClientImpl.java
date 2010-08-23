@@ -35,7 +35,7 @@ import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.compute.CommonVCloudComputeClient;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.base.Predicate;
@@ -104,7 +104,7 @@ public class CommonVCloudComputeClientImpl implements CommonVCloudComputeClient 
    }
 
    private VApp undeployVAppIfDeployed(VApp vApp) {
-      if (vApp.getStatus().compareTo(VAppStatus.RESOLVED) > 0) {
+      if (vApp.getStatus().compareTo(Status.RESOLVED) > 0) {
          logger.debug(">> undeploying vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
          Task task = client.undeployVApp(vApp.getId());
          if (!taskTester.apply(task.getLocation())) {
@@ -117,7 +117,7 @@ public class CommonVCloudComputeClientImpl implements CommonVCloudComputeClient 
    }
 
    private VApp powerOffVAppIfDeployed(VApp vApp) {
-      if (vApp.getStatus().compareTo(VAppStatus.OFF) > 0) {
+      if (vApp.getStatus().compareTo(Status.OFF) > 0) {
          logger.debug(">> powering off vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
          Task task = client.powerOffVApp(vApp.getId());
          if (!taskTester.apply(task.getLocation())) {

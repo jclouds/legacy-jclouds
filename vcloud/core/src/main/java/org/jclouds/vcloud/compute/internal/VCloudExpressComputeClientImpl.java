@@ -32,7 +32,7 @@ import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
@@ -46,11 +46,11 @@ import com.google.inject.Inject;
 @Singleton
 public class VCloudExpressComputeClientImpl extends CommonVCloudComputeClientImpl implements VCloudExpressComputeClient {
 
-   protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
+   protected final Map<Status, NodeState> vAppStatusToNodeState;
 
    @Inject
    public VCloudExpressComputeClientImpl(VCloudExpressClient client, Predicate<URI> successTester,
-            Map<VAppStatus, NodeState> vAppStatusToNodeState) {
+            Map<Status, NodeState> vAppStatusToNodeState) {
       super(client, successTester);
       this.vAppStatusToNodeState = vAppStatusToNodeState;
    }

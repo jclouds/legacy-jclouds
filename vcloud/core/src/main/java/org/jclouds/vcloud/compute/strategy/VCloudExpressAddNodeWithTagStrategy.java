@@ -38,7 +38,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.collect.ImmutableMap;
@@ -50,11 +50,11 @@ import com.google.common.collect.ImmutableMap;
 public class VCloudExpressAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
    protected final VCloudExpressClient client;
    protected final VCloudExpressComputeClient computeClient;
-   protected final Map<VAppStatus, NodeState> vAppStatusToNodeState;
+   protected final Map<Status, NodeState> vAppStatusToNodeState;
 
    @Inject
    protected VCloudExpressAddNodeWithTagStrategy(VCloudExpressClient client, VCloudExpressComputeClient computeClient,
-            Map<VAppStatus, NodeState> vAppStatusToNodeState) {
+            Map<Status, NodeState> vAppStatusToNodeState) {
       this.client = client;
       this.computeClient = computeClient;
       this.vAppStatusToNodeState = vAppStatusToNodeState;

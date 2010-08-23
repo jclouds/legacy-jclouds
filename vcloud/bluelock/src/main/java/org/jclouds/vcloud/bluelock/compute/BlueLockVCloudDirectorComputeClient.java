@@ -31,7 +31,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.internal.VCloudComputeClientImpl;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.base.Predicate;
@@ -45,7 +45,7 @@ public class BlueLockVCloudDirectorComputeClient extends VCloudComputeClientImpl
 
    @Inject
    protected BlueLockVCloudDirectorComputeClient(PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
-         VCloudClient client, Predicate<URI> successTester, Map<VAppStatus, NodeState> vAppStatusToNodeState) {
+         VCloudClient client, Predicate<URI> successTester, Map<Status, NodeState> vAppStatusToNodeState) {
       super(client, successTester, vAppStatusToNodeState);
       this.credentialsProvider = credentialsProvider;
    }
