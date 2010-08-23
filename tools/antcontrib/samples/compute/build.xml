@@ -30,14 +30,14 @@
   <get src="http://apache.imghat.com/maven/binaries/maven-ant-tasks-2.1.0.jar" dest="build/maven-ant-tasks-2.1.0.jar"/>
 
   <input
-    message="Which service would you like to use (ec2, cloudservers, vcloud, terremark, rimuhosting, hostingdotcom)?"
-    validargs="ec2,cloudservers,vcloud,terremark,rimuhosting,hostingdotcom"
+    message="Which service would you like to use (ec2, cloudservers, vcloud, terremark, rimuhosting)?"
+    validargs="ec2,cloudservers,vcloud,terremark,rimuhosting"
     addproperty="service"
   />
 
   <input
     message="Which driver does ${service} use?"
-    validargs="aws,rackspace,vcloud,bluelock,gogrid,terremark,rimuhosting,hostingdotcom"
+    validargs="aws,rackspace,vcloud,bluelock,gogrid,terremark,rimuhosting"
     addproperty="driver"
   />
 

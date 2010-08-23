@@ -21,7 +21,7 @@ package org.jclouds.vcloud.xml;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.internal.VAppTemplateImpl;
 import org.jclouds.vcloud.util.Utils;
@@ -36,7 +36,7 @@ public class VAppTemplateHandler extends ParseSax.HandlerWithResult<VAppTemplate
 
    private NamedResource catalog;
    private String description;
-   private VAppStatus status;
+   private Status status;
 
    public VAppTemplate getResult() {
       return new VAppTemplateImpl(catalog.getName(), catalog.getId(), description, status);
@@ -47,7 +47,7 @@ public class VAppTemplateHandler extends ParseSax.HandlerWithResult<VAppTemplate
       if (qName.equals("VAppTemplate")) {
          catalog = Utils.newNamedResource(attributes);
          if (attributes.getIndex("status") != -1)
-            status = VAppStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
+            status = Status.fromValue(attributes.getValue(attributes.getIndex("status")));
       }
    }
 

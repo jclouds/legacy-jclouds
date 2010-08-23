@@ -24,9 +24,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
+import org.jclouds.vcloud.domain.AllocationModel;
 import org.jclouds.vcloud.domain.Capacity;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.Quota;
+import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.VDCStatus;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 
@@ -45,12 +49,14 @@ public class TerremarkVDCImpl extends VDCImpl implements TerremarkVDC {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public TerremarkVDCImpl(String name, URI id, String description, Capacity storageCapacity,
-         Capacity cpuCapacity, Capacity memoryCapacity, Quota instantiatedVmsQuota, Quota deployedVmsQuota,
-         Map<String, NamedResource> availableNetworks, Map<String, NamedResource> resourceEntities,
-         NamedResource catalog, NamedResource publicIps, NamedResource internetServices) {
-      super(name, id, description, storageCapacity, cpuCapacity, memoryCapacity, instantiatedVmsQuota,
-            deployedVmsQuota, availableNetworks, resourceEntities);
+   public TerremarkVDCImpl(String name, String type, URI id, VDCStatus status, NamedResource org,
+            @Nullable String description, Iterable<Task> tasks, AllocationModel allocationModel,
+            @Nullable Capacity storageCapacity, @Nullable Capacity cpuCapacity, @Nullable Capacity memoryCapacity,
+            Map<String, NamedResource> resourceEntities, Map<String, NamedResource> availableNetworks, int nicQuota,
+            int networkQuota, int vmQuota, boolean isEnabled, NamedResource catalog, NamedResource publicIps,
+            NamedResource internetServices) {
+      super(name, type, id, status, org, description, tasks, allocationModel, storageCapacity, cpuCapacity,
+               memoryCapacity, resourceEntities, availableNetworks, nicQuota, networkQuota, vmQuota, isEnabled);
       this.catalog = checkNotNull(catalog, "catalog");
       this.publicIps = checkNotNull(publicIps, "publicIps");
       this.internetServices = checkNotNull(internetServices, "internetServices");

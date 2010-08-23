@@ -19,11 +19,14 @@
 
 package org.jclouds.vcloud.xml;
 
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+
 import java.net.URI;
 import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
@@ -31,7 +34,7 @@ import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VirtualSystem;
 import org.jclouds.vcloud.domain.internal.VAppImpl;
 import org.jclouds.vcloud.util.Utils;
@@ -46,21 +49,23 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
-
+   private final String apiVersion;
    private final VirtualSystemHandler systemHandler;
    private final ResourceAllocationHandler allocationHandler;
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public VAppHandler(VirtualSystemHandler systemHandler, ResourceAllocationHandler allocationHandler) {
+   public VAppHandler(@Named(PROPERTY_API_VERSION) String apiVersion, VirtualSystemHandler systemHandler,
+            ResourceAllocationHandler allocationHandler) {
+      this.apiVersion = apiVersion;
       this.systemHandler = systemHandler;
       this.allocationHandler = allocationHandler;
    }
 
    protected VirtualSystem system;
    protected Set<ResourceAllocation> allocations = Sets.newLinkedHashSet();
-   protected VAppStatus status;
+   protected Status status;
    protected final ListMultimap<String, String> networkToAddresses = ArrayListMultimap.create();
    protected StringBuilder currentText = new StringBuilder();
    protected String operatingSystemDescription;
@@ -82,7 +87,11 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
          NamedResource resource = Utils.newNamedResource(attributes);
          name = resource.getName();
          location = resource.getId();
-         status = VAppStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
+         String statusString = attributes.getValue(attributes.getIndex("status"));
+         if (apiVersion.indexOf("0.8") != -1 && "2".equals(statusString))
+            status = Status.OFF;
+         else
+            status = Status.fromValue(statusString);
          if (attributes.getIndex("size") != -1)
             size = new Long(attributes.getValue(attributes.getIndex("size")));
       } else if (qName.equals("Link")) { // type should never be missing

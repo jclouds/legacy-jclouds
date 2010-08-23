@@ -19,39 +19,26 @@
 
 package org.jclouds.vcloud.compute.config;
 
-import java.util.Set;
+import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
-import org.jclouds.compute.strategy.DestroyNodeStrategy;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.compute.strategy.RebootNodeStrategy;
-import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
-import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
-import org.jclouds.domain.Location;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.VCloudExpressClient;
-import org.jclouds.vcloud.compute.BaseVCloudExpressComputeClient;
+import org.jclouds.vcloud.compute.CommonVCloudComputeClient;
+import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
+import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressAddNodeWithTagStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressDestroyNodeStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressGetNodeMetadataStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressListNodesStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressRebootNodeStrategy;
-import org.jclouds.vcloud.compute.suppliers.OrganizationAndVDCToLocationSupplier;
-import org.jclouds.vcloud.compute.suppliers.VCloudExpressImageSupplier;
 
-import com.google.common.base.Supplier;
-import com.google.inject.Injector;
+import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
 /**
  * Configures the {@link VCloudComputeServiceContext}; requires
- * {@link BaseVCloudExpressComputeClient} bound.
+ * {@link VCloudExpressComputeClientImpl} bound.
  * 
  * @author Adrian Cole
  */
@@ -67,21 +54,11 @@ public class VCloudExpressComputeServiceContextModule extends CommonVCloudComput
       }).to(new TypeLiteral<RestContextImpl<VCloudExpressClient, VCloudExpressClient>>() {
       }).in(Scopes.SINGLETON);
       bind(AddNodeWithTagStrategy.class).to(VCloudExpressAddNodeWithTagStrategy.class);
-      bind(DestroyNodeStrategy.class).to(VCloudExpressDestroyNodeStrategy.class);
-      bind(RunNodesAndAddToSetStrategy.class).to(EncodeTagIntoNameRunNodesAndAddToSetStrategy.class);
-      bind(ListNodesStrategy.class).to(VCloudExpressListNodesStrategy.class);
-      bind(GetNodeMetadataStrategy.class).to(VCloudExpressGetNodeMetadataStrategy.class);
-      bind(RebootNodeStrategy.class).to(VCloudExpressRebootNodeStrategy.class);
    }
 
-   @Override
-   protected Supplier<Set<? extends Location>> getSourceLocationSupplier(Injector injector) {
-      return injector.getInstance(OrganizationAndVDCToLocationSupplier.class);
+   @Provides
+   @Singleton
+   CommonVCloudComputeClient provideCommonVCloudComputeClient(VCloudExpressComputeClient in) {
+      return in;
    }
-
-   @Override
-   protected Supplier<Set<? extends Image>> getSourceImageSupplier(Injector injector) {
-      return injector.getInstance(VCloudExpressImageSupplier.class);
-   }
-
 }

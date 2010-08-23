@@ -243,33 +243,6 @@
             <outputDirectory>providers/azure</outputDirectory>            
         </fileSet>
         
-        <!-- providers: hostingdotcom -->
-        <fileSet>
-            <directory>vcloud/hostingdotcom/target</directory>
-            <includes>
-                <include>jclouds-hostingdotcom-${project.version}.jar</include>
-            </includes>
-            <outputDirectory>providers/hostingdotcom/lib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>vcloud/hostingdotcom/target</directory>
-            <includes>
-                <include>jclouds-hostingdotcom-${project.version}-sources.jar</include>
-            </includes>
-            <outputDirectory>providers/hostingdotcom/src</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>vcloud/hostingdotcom/target/apidocs</directory>
-            <outputDirectory>providers/hostingdotcom/docs</outputDirectory>            
-        </fileSet>
-        <fileSet>
-            <directory>vcloud/hostingdotcom</directory>
-            <includes>
-                <include>README.txt</include>
-            </includes>
-            <outputDirectory>providers/hostingdotcom</outputDirectory>            
-        </fileSet>         
-        
         <!-- providers: mezeo -->
         <fileSet>
             <directory>mezeo/pcs2/target</directory>

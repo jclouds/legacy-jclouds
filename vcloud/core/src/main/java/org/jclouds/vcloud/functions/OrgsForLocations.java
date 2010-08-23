@@ -37,7 +37,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudAsyncClient;
+import org.jclouds.vcloud.CommonVCloudAsyncClient;
 import org.jclouds.vcloud.compute.domain.VCloudLocation;
 import org.jclouds.vcloud.domain.Org;
 
@@ -53,11 +53,11 @@ public class OrgsForLocations implements Function<Iterable<? extends Location>, 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
-   private final VCloudAsyncClient aclient;
+   private final CommonVCloudAsyncClient aclient;
    private final ExecutorService executor;
 
    @Inject
-   OrgsForLocations(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   OrgsForLocations(CommonVCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }

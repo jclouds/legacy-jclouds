@@ -55,11 +55,11 @@ import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.options.CloneVAppOptions;
-import org.jclouds.vcloud.predicates.VCloudExpressTaskSuccess;
+import org.jclouds.vcloud.predicates.TaskSuccess;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
@@ -176,7 +176,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       // instantiate, noting vApp returned has minimal details
       vApp = tmClient.instantiateVAppTemplateInVDC(vdc.getId(), vAppTemplate.getId(), serverName, instantiateOptions);
 
-      assertEquals(vApp.getStatus(), VAppStatus.RESOLVED);
+      assertEquals(vApp.getStatus(), Status.RESOLVED);
 
       // in terremark, this should be a no-op, as it should simply return the
       // above task, which is
@@ -189,7 +189,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
 
       vApp = tmClient.getVApp(vApp.getId());
 
-      assertEquals(vApp.getStatus(), VAppStatus.RESOLVED);
+      assertEquals(vApp.getStatus(), Status.RESOLVED);
 
       try {// per docs, this is not supported
          tmClient.cancelTask(deployTask.getLocation());
@@ -208,13 +208,13 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       int processorCount = 1;
       long memory = 512;
       verifyConfigurationOfVApp(vApp, serverName, expectedOs, processorCount, memory, hardDisk);
-      assertEquals(vApp.getStatus(), VAppStatus.OFF);
+      assertEquals(vApp.getStatus(), Status.OFF);
 
       assert successTester.apply(tmClient.powerOnVApp(vApp.getId()).getLocation());
       System.out.printf("%d: done powering on vApp%n", System.currentTimeMillis());
 
       vApp = tmClient.getVApp(vApp.getId());
-      assertEquals(vApp.getStatus(), VAppStatus.ON);
+      assertEquals(vApp.getStatus(), Status.ON);
    }
 
    protected void prepare() {
@@ -264,7 +264,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       task = tmClient.getTask(task.getLocation());
 
       clone = tmClient.getVApp(task.getResult().getId());
-      assertEquals(clone.getStatus(), VAppStatus.ON);
+      assertEquals(clone.getStatus(), Status.ON);
 
       assertEquals(clone.getName(), newName);
       assertEquals(clone.getNetworkToAddresses().values().size(), 1);
@@ -316,7 +316,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
 
       vApp = tmClient.getVApp(vApp.getId());
 
-      assertEquals(vApp.getStatus(), VAppStatus.ON);
+      assertEquals(vApp.getStatus(), Status.ON);
 
       // TODO we need to determine whether shutdown is supported before invoking
       // it.
@@ -327,7 +327,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       assert successTester.apply(tmClient.powerOffVApp(vApp.getId()).getLocation());
 
       vApp = tmClient.getVApp(vApp.getId());
-      assertEquals(vApp.getStatus(), VAppStatus.OFF);
+      assertEquals(vApp.getStatus(), Status.OFF);
    }
 
    @Test(enabled = true, dependsOnMethods = "testLifeCycle")
@@ -444,7 +444,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       // then
       // default internet
       // service timeout
-      successTester = new RetryablePredicate<URI>(injector.getInstance(VCloudExpressTaskSuccess.class), 650, 10, TimeUnit.SECONDS);
+      successTester = new RetryablePredicate<URI>(injector.getInstance(TaskSuccess.class), 650, 10, TimeUnit.SECONDS);
    }
 
    protected abstract void setupCredentials();

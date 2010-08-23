@@ -19,7 +19,6 @@
 
 package org.jclouds.vcloud.terremark.compute.config;
 
-
 import java.security.SecureRandom;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -46,9 +45,9 @@ import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.compute.config.VCloudExpressComputeServiceContextModule;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressDestroyNodeStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressListNodesStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressRebootNodeStrategy;
+import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
+import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
+import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeService;
 import org.jclouds.vcloud.terremark.compute.domain.KeyPairCredentials;
@@ -98,11 +97,11 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudExpressCom
       }).in(Scopes.SINGLETON);
       // NOTE
       bind(RunNodesAndAddToSetStrategy.class).to(TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy.class);
-      bind(ListNodesStrategy.class).to(VCloudExpressListNodesStrategy.class);
+      bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
       // NOTE
       bind(GetNodeMetadataStrategy.class).to(TerremarkVCloudGetNodeMetadataStrategy.class);
-      bind(RebootNodeStrategy.class).to(VCloudExpressRebootNodeStrategy.class);
-      bind(DestroyNodeStrategy.class).to(VCloudExpressDestroyNodeStrategy.class);
+      bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
+      bind(DestroyNodeStrategy.class).to(VCloudDestroyNodeStrategy.class);
       bindLoadBalancer();
       // MORE specifics...
       bind(new TypeLiteral<Function<NodeMetadata, OrgAndName>>() {

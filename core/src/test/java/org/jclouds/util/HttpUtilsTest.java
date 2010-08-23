@@ -136,10 +136,10 @@ public class HttpUtilsTest extends PerformanceTest {
       assertEquals(creds, URI.create("compute://identity:Base64==@azureblob/container-hyphen/prefix"));
    }
 
-   public void testHosting() {
-      URI creds = HttpUtils.createUri("compute://user@domain:pa$sword@hostingdotcom");
+   public void testDollar() {
+      URI creds = HttpUtils.createUri("compute://user@domain:pa$sword@host");
       assertEquals(creds.getUserInfo(), "user@domain:pa$sword");
-      assertEquals(creds, URI.create("compute://user%40domain:pa%24sword@hostingdotcom"));
+      assertEquals(creds, URI.create("compute://user%40domain:pa%24sword@host"));
    }
 
    public void testTerremark() {

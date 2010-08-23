@@ -19,38 +19,25 @@
 
 package org.jclouds.vcloud.compute.config;
 
-import java.util.Set;
+import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
-import org.jclouds.compute.strategy.DestroyNodeStrategy;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.compute.strategy.RebootNodeStrategy;
-import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
-import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
-import org.jclouds.domain.Location;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
+import org.jclouds.vcloud.compute.CommonVCloudComputeClient;
+import org.jclouds.vcloud.compute.VCloudComputeClient;
+import org.jclouds.vcloud.compute.internal.VCloudComputeClientImpl;
 import org.jclouds.vcloud.compute.strategy.VCloudAddNodeWithTagStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudGetNodeMetadataStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
-import org.jclouds.vcloud.compute.suppliers.OrgAndVDCToLocationSupplier;
-import org.jclouds.vcloud.compute.suppliers.VCloudImageSupplier;
 
-import com.google.common.base.Supplier;
-import com.google.inject.Injector;
+import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
 /**
- * Configures the {@link VCloudComputeServiceContext}; requires {@link BaseVCloudComputeClient}
+ * Configures the {@link VCloudComputeServiceContext}; requires {@link VCloudComputeClientImpl}
  * bound.
  * 
  * @author Adrian Cole
@@ -67,21 +54,11 @@ public class VCloudComputeServiceContextModule extends CommonVCloudComputeServic
       }).to(new TypeLiteral<RestContextImpl<VCloudClient, VCloudClient>>() {
       }).in(Scopes.SINGLETON);
       bind(AddNodeWithTagStrategy.class).to(VCloudAddNodeWithTagStrategy.class);
-      bind(DestroyNodeStrategy.class).to(VCloudDestroyNodeStrategy.class);
-      bind(RunNodesAndAddToSetStrategy.class).to(EncodeTagIntoNameRunNodesAndAddToSetStrategy.class);
-      bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
-      bind(GetNodeMetadataStrategy.class).to(VCloudGetNodeMetadataStrategy.class);
-      bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
    }
 
-   @Override
-   protected Supplier<Set<? extends Location>> getSourceLocationSupplier(Injector injector) {
-      return injector.getInstance(OrgAndVDCToLocationSupplier.class);
+   @Provides
+   @Singleton
+   CommonVCloudComputeClient provideCommonVCloudComputeClient(VCloudComputeClient in) {
+      return in;
    }
-
-   @Override
-   protected Supplier<Set<? extends Image>> getSourceImageSupplier(Injector injector) {
-      return injector.getInstance(VCloudImageSupplier.class);
-   }
-
 }

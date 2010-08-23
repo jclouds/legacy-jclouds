@@ -19,39 +19,60 @@
 
 package org.jclouds.vcloud.domain;
 
-
 /**
+ * reports storage resource consumption in a vDC.
+ * 
  * @author Adrian Cole
  */
 public class Capacity {
 
    private final String units;
-   private final int allocated;
+   private final long allocated;
+   private final long limit;
    private final int used;
+   private final long overhead;
 
-   public Capacity(String units, int allocated, int used) {
+   public Capacity(String units, long allocated, long limit, int used, long overhead) {
       this.units = units;
+      this.limit = limit;
       this.allocated = allocated;
       this.used = used;
+      this.overhead = overhead;
    }
 
    public String getUnits() {
       return units;
    }
 
-   public int getAllocated() {
+   public long getAllocated() {
       return allocated;
    }
 
+   public long getLimit() {
+      return limit;
+   }
+
+   /**
+    * percentage of the allocation in use.
+    */
    public int getUsed() {
       return used;
+   }
+
+   /**
+    * number of Units allocated to vShield Manager virtual machines provisioned from this vDC.
+    */
+   public long getOverhead() {
+      return overhead;
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + allocated;
+      result = prime * result + (int) (allocated ^ (allocated >>> 32));
+      result = prime * result + (int) (limit ^ (limit >>> 32));
+      result = prime * result + (int) (overhead ^ (overhead >>> 32));
       result = prime * result + ((units == null) ? 0 : units.hashCode());
       result = prime * result + used;
       return result;
@@ -68,6 +89,10 @@ public class Capacity {
       Capacity other = (Capacity) obj;
       if (allocated != other.allocated)
          return false;
+      if (limit != other.limit)
+         return false;
+      if (overhead != other.overhead)
+         return false;
       if (units == null) {
          if (other.units != null)
             return false;
@@ -76,5 +101,11 @@ public class Capacity {
       if (used != other.used)
          return false;
       return true;
+   }
+
+   @Override
+   public String toString() {
+      return "[allocated=" + allocated + ", limit=" + limit + ", overhead=" + overhead + ", units=" + units + ", used="
+               + used + "]";
    }
 }

@@ -34,7 +34,6 @@
     <modules>
         <module>core</module>
         <module>terremark</module>
-        <module>hostingdotcom</module>
         <module>bluelock</module>
     </modules>
     <dependencies>

@@ -20,27 +20,8 @@
 package org.jclouds.vcloud;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 
-import java.util.Properties;
-
-import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
-import org.jclouds.vcloud.domain.Catalog;
-import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.Network;
-import org.jclouds.vcloud.domain.Org;
-import org.jclouds.vcloud.domain.Task;
-import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VDC;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code VCloudClient}
@@ -48,127 +29,12 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", sequential = true, testName = "vcloud.VCloudClientLiveTest")
-public class VCloudClientLiveTest {
-
-   protected VCloudClient connection;
-   protected String identity;
-   protected RestContext<VCloudClient, VCloudAsyncClient> context;
-   private String credential;
-
-   @Test
-   public void testOrg() throws Exception {
-      Org response = connection.findOrgNamed(null);
-      assertNotNull(response);
-      assertNotNull(response.getName());
-      assert response.getCatalogs().size() >= 1;
-      assert response.getTasksList() != null;
-      assert response.getVDCs().size() >= 1;
-      assertEquals(connection.findOrgNamed(response.getName()), response);
-   }
-
-   @Test
-   public void testCatalog() throws Exception {
-      Catalog response = connection.findCatalogInOrgNamed(null, null);
-      assertNotNull(response);
-      assertNotNull(response.getName());
-      assertNotNull(response.getId());
-      assertEquals(connection.findCatalogInOrgNamed(null, response.getName()), response);
-   }
-
-   @Test
-   public void testGetNetwork() throws Exception {
-      VDC response = connection.findVDCInOrgNamed(null, null);
-      for (NamedResource resource : response.getAvailableNetworks().values()) {
-         if (resource.getType().equals(VCloudMediaType.NETWORK_XML)) {
-            Network item = connection.getNetwork(resource.getId());
-            assertNotNull(item);
-         }
-      }
-   }
-
-   @Test
-   public void testGetCatalogItem() throws Exception {
-      Catalog response = connection.findCatalogInOrgNamed(null, null);
-      for (NamedResource resource : response.values()) {
-         if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-            CatalogItem item = connection.findCatalogItemInOrgCatalogNamed(null, null, resource.getName());
-            assertNotNull(item);
-            assertNotNull(item.getEntity());
-            assertNotNull(item.getId());
-            assertNotNull(item.getProperties());
-            assertNotNull(item.getType());
-         }
-      }
-   }
-
-   @Test
-   public void testGetVAppTemplate() throws Exception {
-      Catalog response = connection.findCatalogInOrgNamed(null, null);
-      for (NamedResource resource : response.values()) {
-         if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-            CatalogItem item = connection.getCatalogItem(resource.getId());
-            if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-               assertNotNull(connection.findVAppTemplateInOrgCatalogNamed(null, null, item.getEntity().getName()));
-            }
-         }
-      }
-   }
-
-   @Test
-   public void testDefaultVDC() throws Exception {
-      VDC response = connection.findVDCInOrgNamed(null, null);
-      assertNotNull(response);
-      assertNotNull(response.getName());
-      assertNotNull(response.getId());
-      assertNotNull(response.getResourceEntities());
-      assertNotNull(response.getAvailableNetworks());
-      assertEquals(connection.getVDC(response.getId()), response);
-   }
-
-   @Test
-   public void testDefaultTasksList() throws Exception {
-      org.jclouds.vcloud.domain.TasksList response = connection.findTasksListInOrgNamed(null);
-      assertNotNull(response);
-      assertNotNull(response.getLocation());
-      assertNotNull(response.getTasks());
-      assertEquals(connection.getTasksList(response.getLocation()).getLocation(), response.getLocation());
-   }
-
-   @Test
-   public void testGetTask() throws Exception {
-      org.jclouds.vcloud.domain.TasksList response = connection.findTasksListInOrgNamed(null);
-      assertNotNull(response);
-      assertNotNull(response.getLocation());
-      assertNotNull(response.getTasks());
-      if (response.getTasks().size() > 0) {
-         Task task = response.getTasks().last();
-         assertEquals(connection.getTask(task.getLocation()).getLocation(), task.getLocation());
-      }
-   }
-
-   @Test
-   public void testGetVApp() throws Exception {
-      VDC response = connection.findVDCInOrgNamed(null, null);
-      for (NamedResource item : response.getResourceEntities().values()) {
-         if (item.getType().equals(VCloudMediaType.VAPP_XML)) {
-            VApp app = connection.getVApp(item.getId());
-            assertNotNull(app);
-         }
-      }
-   }
+public class VCloudClientLiveTest extends CommonVCloudClientLiveTest<VCloudClient, VCloudAsyncClient> {
 
    protected void setupCredentials() {
+      provider = "vcloud";
       identity = checkNotNull(System.getProperty("vcloud.identity"), "vcloud.identity");
       credential = checkNotNull(System.getProperty("vcloud.credential"), "vcloud.credential");
    }
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() {
-      setupCredentials();
-      Properties props = new Properties();
-      context = new ComputeServiceContextFactory().createContext("vcloud", identity, credential,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), props).getProviderSpecificContext();
-
-      connection = context.getApi();
-   }
 }

@@ -30,7 +30,7 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_S
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
-import org.jclouds.vcloud.domain.FenceMode;
+import org.jclouds.vcloud.domain.network.FenceMode;
 
 /**
  * Builds properties used in VCloud Clients
@@ -44,11 +44,10 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_API_VERSION, "1.0");
       properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "1.0");
       properties.setProperty(PROPERTY_SESSION_INTERVAL, 8 * 60 + "");
-      properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA,
-               "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
+      properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA, "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
       properties.setProperty("jclouds.dns_name_length_min", "1");
       properties.setProperty("jclouds.dns_name_length_max", "80");
-      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.BRIDGED);
+      properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.BRIDGED.toString());
       properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 180l * 1000l + "");
       return properties;
    }
@@ -62,7 +61,6 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
          properties.setProperty(PROPERTY_VCLOUD_XML_NAMESPACE, "http://www.vmware.com/vcloud/v"
                   + properties.getProperty(PROPERTY_VCLOUD_VERSION_SCHEMA));
    }
-
 
    public VCloudPropertiesBuilder withApiVersion(String version) {
       properties.setProperty(PROPERTY_API_VERSION, "1.0");

@@ -25,7 +25,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.vcloud.domain.FenceMode;
+import org.jclouds.vcloud.domain.network.FenceMode;
 
 import com.google.common.collect.Maps;
 
@@ -40,7 +40,7 @@ public class InstantiateVAppTemplateOptions {
    private String memorySizeMegabytes;
    private String diskSizeKilobytes;
    private String network;
-   private String fenceMode;
+   private FenceMode fenceMode;
    private String networkName;
    private boolean blockOnDeploy = true;
    private Map<String, String> properties = Maps.newTreeMap();
@@ -75,8 +75,8 @@ public class InstantiateVAppTemplateOptions {
       return this;
    }
 
-   public InstantiateVAppTemplateOptions fenceMode(String fenceMode) {
-      this.fenceMode = checkNotNull(fenceMode, "fenceMode").toString();
+   public InstantiateVAppTemplateOptions fenceMode(FenceMode fenceMode) {
+      this.fenceMode = checkNotNull(fenceMode, "fenceMode");
       return this;
    }
 
@@ -117,7 +117,7 @@ public class InstantiateVAppTemplateOptions {
       return networkName;
    }
 
-   public String getFenceMode() {
+   public FenceMode getFenceMode() {
       return fenceMode;
    }
 
@@ -170,7 +170,7 @@ public class InstantiateVAppTemplateOptions {
       /**
        * @see InstantiateVAppTemplateOptions#fenceMode(FenceMode)
        */
-      public static InstantiateVAppTemplateOptions fenceMode(String fenceMode) {
+      public static InstantiateVAppTemplateOptions fenceMode(FenceMode fenceMode) {
          InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
          return options.fenceMode(fenceMode);
       }

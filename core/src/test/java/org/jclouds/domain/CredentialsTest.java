@@ -45,7 +45,7 @@ public class CredentialsTest {
       assertEquals(creds.credential, "Base64==");
    }
 
-   public void testHosting() {
+   public void testDollar() {
       Credentials creds = Credentials.parse(URI
                .create("compute://user%40domain:pa%24sword@hostingdotcom"));
       assertEquals(creds.identity, "user@domain");

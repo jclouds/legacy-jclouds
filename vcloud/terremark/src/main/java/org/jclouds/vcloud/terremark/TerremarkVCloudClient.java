@@ -35,7 +35,7 @@ import org.jclouds.vcloud.terremark.domain.Node;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
 import org.jclouds.vcloud.terremark.domain.TerremarkCatalogItem;
-import org.jclouds.vcloud.terremark.domain.TerremarkOrganization;
+import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
@@ -45,8 +45,7 @@ import org.jclouds.vcloud.terremark.options.AddNodeOptions;
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx"
- *      />
+ * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
  * @author Adrian Cole
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
@@ -61,15 +60,11 @@ public interface TerremarkVCloudClient extends VCloudExpressClient {
    @Override
    TerremarkCatalogItem findCatalogItemInOrgCatalogNamed(String orgName, String catalogName, String itemName);
 
-   @Deprecated
    @Override
-   TerremarkOrganization getDefaultOrganization();
+   TerremarkOrg getOrg(URI orgId);
 
    @Override
-   TerremarkOrganization getOrganization(URI orgId);
-
-   @Override
-   TerremarkOrganization findOrganizationNamed(String orgName);
+   TerremarkOrg findOrgNamed(String orgName);
 
    CustomizationParameters getCustomizationOptions(URI customizationOptions);
 
@@ -81,13 +76,12 @@ public interface TerremarkVCloudClient extends VCloudExpressClient {
    void deletePublicIp(URI ipId);
 
    /**
-    * This call adds an internet service to a known, existing public IP. This
-    * call is identical to Add Internet Service except you specify the public IP
-    * in the request.
+    * This call adds an internet service to a known, existing public IP. This call is identical to
+    * Add Internet Service except you specify the public IP in the request.
     * 
     */
    InternetService addInternetServiceToExistingIp(URI existingIpId, String serviceName, Protocol protocol, int port,
-         AddInternetServiceOptions... options);
+            AddInternetServiceOptions... options);
 
    void deleteInternetService(URI internetServiceId);
 
@@ -105,10 +99,9 @@ public interface TerremarkVCloudClient extends VCloudExpressClient {
    /**
     * This call adds a node to an existing internet service.
     * <p/>
-    * Every vDC is assigned a network of 60 IP addresses that can be used as
-    * nodes. Each node can associated with multiple internet service. You can
-    * get a list of the available IP addresses by calling Get IP Addresses for a
-    * Network.
+    * Every vDC is assigned a network of 60 IP addresses that can be used as nodes. Each node can
+    * associated with multiple internet service. You can get a list of the available IP addresses by
+    * calling Get IP Addresses for a Network.
     * 
     * @param internetServiceId
     * @param ipAddress
@@ -128,9 +121,8 @@ public interface TerremarkVCloudClient extends VCloudExpressClient {
    Set<Node> getNodes(URI internetServiceId);
 
    /**
-    * This call configures the settings of an existing vApp by passing the new
-    * configuration. The existing vApp must be in a powered off state (status =
-    * 2).
+    * This call configures the settings of an existing vApp by passing the new configuration. The
+    * existing vApp must be in a powered off state (status = 2).
     * <p/>
     * You can change the following items for a vApp.
     * <ol>
@@ -139,9 +131,8 @@ public interface TerremarkVCloudClient extends VCloudExpressClient {
     * <li>Add a virtual disk</li>
     * <li>Delete a virtual disk</li>
     * </ol>
-    * You can make more than one change in a single request. For example, you
-    * can increase the number of virtual CPUs and the amount of virtual memory
-    * in the same request.
+    * You can make more than one change in a single request. For example, you can increase the
+    * number of virtual CPUs and the amount of virtual memory in the same request.
     * 
     * @param VApp
     *           vApp to change in power state off

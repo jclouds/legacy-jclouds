@@ -50,21 +50,22 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.config.VCloudExpressRestClientModule;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.internal.CatalogImpl;
 import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
-import org.jclouds.vcloud.domain.internal.OrganizationImpl;
+import org.jclouds.vcloud.domain.internal.OrgImpl;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
-import org.jclouds.vcloud.endpoints.Org;
+import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.CatalogItemHandler;
-import org.jclouds.vcloud.xml.NetworkHandler;
-import org.jclouds.vcloud.xml.OrganizationHandler;
+import org.jclouds.vcloud.xml.OrgHandler;
+import org.jclouds.vcloud.xml.OrgNetworkFromVCloudExpressNetworkHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
@@ -74,6 +75,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
@@ -117,7 +119,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       HttpRequest request = processor.createRequest(method, URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"), URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3"), "my-vapp", processorCount(1)
-               .memory(512).disk(1024).fenceMode("allowInOut").inNetwork(
+               .memory(512).disk(1024).fenceMode(FenceMode.BRIDGED).inNetwork(
                         URI.create("https://vcloud.safesecureweb.com/network/1990")));
 
       assertRequestLineEquals(request,
@@ -183,23 +185,8 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       checkFilters(request);
    }
 
-   public void testDefaultOrganization() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudExpressAsyncClient.class.getMethod("getDefaultOrganization");
-      HttpRequest request = processor.createRequest(method);
-
-      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/org HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.org+xml\n");
-      assertPayloadEquals(request, null, null, false);
-
-      assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, OrganizationHandler.class);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(request);
-   }
-
-   public void testOrganization() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudExpressAsyncClient.class.getMethod("getOrganization", URI.class);
+   public void testOrg() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudExpressAsyncClient.class.getMethod("getOrg", URI.class);
       HttpRequest request = processor.createRequest(method, URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/org/1"));
 
@@ -208,14 +195,14 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, OrganizationHandler.class);
+      assertSaxResponseParserClassEquals(method, OrgHandler.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(request);
    }
 
-   public void testFindOrganizationNamed() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudExpressAsyncClient.class.getMethod("findOrganizationNamed", String.class);
+   public void testFindOrgNamed() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudExpressAsyncClient.class.getMethod("findOrgNamed", String.class);
       HttpRequest request = processor.createRequest(method, "org");
 
       assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/org/1 HTTP/1.1");
@@ -223,23 +210,8 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, OrganizationHandler.class);
+      assertSaxResponseParserClassEquals(method, OrgHandler.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
-
-      checkFilters(request);
-   }
-
-   public void testDefaultCatalog() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudExpressAsyncClient.class.getMethod("getDefaultCatalog");
-      HttpRequest request = processor.createRequest(method);
-
-      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/catalog HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.catalog+xml\n");
-      assertPayloadEquals(request, null, null, false);
-
-      assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, CatalogHandler.class);
-      assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -285,7 +257,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, NetworkHandler.class);
+      assertSaxResponseParserClassEquals(method, OrgNetworkFromVCloudExpressNetworkHandler.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(request);
@@ -351,21 +323,6 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, VAppTemplateHandler.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
-
-      checkFilters(request);
-   }
-
-   public void testGetDefaultVDC() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudExpressAsyncClient.class.getMethod("getDefaultVDC");
-      HttpRequest request = processor.createRequest(method);
-
-      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/vdc/1 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vdc+xml\n");
-      assertPayloadEquals(request, null, null, false);
-
-      assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, VDCHandler.class);
-      assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);
    }
@@ -443,21 +400,6 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       checkFilters(request);
    }
 
-   public void testGetDefaultTasksList() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudExpressAsyncClient.class.getMethod("getDefaultTasksList");
-      HttpRequest request = processor.createRequest(method);
-
-      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/taskslist HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.tasksList+xml\n");
-      assertPayloadEquals(request, null, null, false);
-
-      assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, TasksListHandler.class);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(request);
-   }
-
    public void testGetTasksList() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudExpressAsyncClient.class.getMethod("getTasksList", URI.class);
       HttpRequest request = processor.createRequest(method, URI
@@ -475,8 +417,8 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
    }
 
    public void testFindTasksListInOrgNamed() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudExpressAsyncClient.class.getMethod("findTasksListInOrgNamed", String.class, String.class);
-      HttpRequest request = processor.createRequest(method, "org", "tasksList");
+      Method method = VCloudAsyncClient.class.getMethod("findTasksListInOrgNamed", String.class);
+      HttpRequest request = processor.createRequest(method, "org");
 
       assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/tasksList/1 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.tasksList+xml\n");
@@ -704,24 +646,24 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       }
 
       @Override
-      protected URI provideOrg(@Org Iterable<NamedResource> orgs) {
+      protected URI provideOrg(@org.jclouds.vcloud.endpoints.Org Iterable<NamedResource> orgs) {
          return URI.create("https://vcloud.safesecureweb.com/api/v0.8/org");
 
       }
 
       @Override
-      protected String provideOrgName(@Org Iterable<NamedResource> orgs) {
+      protected String provideOrgName(@org.jclouds.vcloud.endpoints.Org Iterable<NamedResource> orgs) {
          return "org";
       }
 
       @Override
-      protected URI provideCatalog(Organization org, @Named(PROPERTY_IDENTITY) String user) {
+      protected URI provideCatalog(Org org, @Named(PROPERTY_IDENTITY) String user) {
          return URI.create("https://vcloud.safesecureweb.com/api/v0.8/catalog");
 
       }
 
       @Override
-      protected Organization provideOrganization(VCloudExpressClient discovery) {
+      protected Org provideOrg(CommonVCloudClient discovery) {
          return null;
       }
 
@@ -731,17 +673,17 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       }
 
       @Override
-      protected URI provideDefaultTasksList(Organization org) {
+      protected URI provideDefaultTasksList(Org org) {
          return URI.create("https://vcloud.safesecureweb.com/api/v0.8/taskslist");
       }
 
       @Override
-      protected URI provideDefaultVDC(Organization org) {
+      protected URI provideDefaultVDC(Org org) {
          return URI.create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1");
       }
 
       @Override
-      protected URI provideDefaultNetwork(VCloudExpressClient client) {
+      protected URI provideDefaultNetwork(CommonVCloudClient client) {
          return URI.create("https://vcloud.safesecureweb.com/network/1990");
       }
 
@@ -768,55 +710,56 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       @Override
       protected void configure() {
          super.configure();
-         bind(OrganizationMapSupplier.class).to(TestOrganizationMapSupplier.class);
-         bind(OrganizationCatalogSupplier.class).to(TestOrganizationCatalogSupplier.class);
-         bind(OrganizationCatalogItemSupplier.class).to(TestOrganizationCatalogItemSupplier.class);
+         bind(OrgMapSupplier.class).to(TestOrgMapSupplier.class);
+         bind(OrgCatalogSupplier.class).to(TestOrgCatalogSupplier.class);
+         bind(OrgCatalogItemSupplier.class).to(TestOrgCatalogItemSupplier.class);
       }
 
-      protected Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> provideOrganizationVDCSupplierCache(
-               @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrganizationVDCSupplier supplier) {
+      protected Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> provideOrgVDCSupplierCache(
+               @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrgVDCSupplier supplier) {
 
          return Suppliers.<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> ofInstance(ImmutableMap
                   .<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>> of("org",
 
-                  ImmutableMap.<String, org.jclouds.vcloud.domain.VDC> of("vdc", new VDCImpl("vdc", URI
-                           .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"), "description", null, null, null,
-                           null, null, ImmutableMap.<String, NamedResource> of("vapp", new NamedResourceImpl("vapp",
-                                    "application/vnd.vmware.vcloud.vApp+xml", URI
+                  ImmutableMap.<String, org.jclouds.vcloud.domain.VDC> of("vdc", new VDCImpl("vdc", null, URI
+                           .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"), null, null, "description", null,
+                           null, null, null, null, ImmutableMap.<String, NamedResource> of("vapp",
+                                    new NamedResourceImpl("vapp", "application/vnd.vmware.vcloud.vApp+xml", URI
                                              .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/188849-1")),
                                     "network", new NamedResourceImpl("network",
                                              "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
                                                       .create("https://vcloud.safesecureweb.com/api/v0.8/vdcItem/2"))),
-                           null))));
+                           null, 0, 0, 0, false))));
 
       }
 
       @Singleton
-      public static class TestOrganizationMapSupplier extends OrganizationMapSupplier {
+      public static class TestOrgMapSupplier extends OrgMapSupplier {
          @Inject
-         protected TestOrganizationMapSupplier() {
+         protected TestOrgMapSupplier() {
             super(null, null);
          }
 
          @Override
-         public Map<String, Organization> get() {
-            return ImmutableMap.<String, Organization> of("org", new OrganizationImpl("org", URI
-                     .create("https://vcloud.safesecureweb.com/api/v0.8/org/1"), ImmutableMap
+         public Map<String, Org> get() {
+            return ImmutableMap.<String, Org> of("org", new OrgImpl("org", null, URI
+                     .create("https://vcloud.safesecureweb.com/api/v0.8/org/1"), "org", null, ImmutableMap
                      .<String, NamedResource> of("catalog", new NamedResourceImpl("catalog",
                               VCloudExpressMediaType.CATALOG_XML, URI
                                        .create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"))), ImmutableMap
                      .<String, NamedResource> of("vdc", new NamedResourceImpl("vdc", VCloudExpressMediaType.VDC_XML,
                               URI.create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"))), ImmutableMap
-                     .<String, NamedResource> of("tasksList", new NamedResourceImpl("tasksList",
-                              VCloudExpressMediaType.TASKSLIST_XML, URI
-                                       .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/1")))));
+                              .<String, NamedResource> of(),
+                     new NamedResourceImpl("tasksList", VCloudExpressMediaType.TASKSLIST_XML, URI
+                              .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/1")), ImmutableList
+                              .<Task> of()));
          }
       }
 
       @Singleton
-      public static class TestOrganizationCatalogSupplier extends OrganizationCatalogSupplier {
+      public static class TestOrgCatalogSupplier extends OrgCatalogSupplier {
          @Inject
-         protected TestOrganizationCatalogSupplier() {
+         protected TestOrgCatalogSupplier() {
             super(null, null);
          }
 
@@ -824,19 +767,20 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
          public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> get() {
             return ImmutableMap.<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> of("org",
 
-            ImmutableMap.<String, org.jclouds.vcloud.domain.Catalog> of("catalog", new CatalogImpl("catalog", URI
-                     .create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"), "description", ImmutableMap
-                     .<String, NamedResource> of("item", new NamedResourceImpl("item",
+            ImmutableMap.<String, org.jclouds.vcloud.domain.Catalog> of("catalog", new CatalogImpl("catalog", "type",
+                     URI.create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"), null, "description",
+                     ImmutableMap.<String, NamedResource> of("item", new NamedResourceImpl("item",
                               "application/vnd.vmware.vcloud.catalogItem+xml", URI
                                        .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/1")), "template",
                               new NamedResourceImpl("template", "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
-                                       .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2"))))));
+                                       .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2"))),
+                     ImmutableList.<Task> of(), true)));
          }
       }
 
       @Singleton
-      public static class TestOrganizationCatalogItemSupplier extends OrganizationCatalogItemSupplier {
-         protected TestOrganizationCatalogItemSupplier() {
+      public static class TestOrgCatalogItemSupplier extends OrgCatalogItemSupplier {
+         protected TestOrgCatalogItemSupplier() {
             super(null, null);
          }
 

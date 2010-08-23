@@ -32,7 +32,7 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudAsyncClient;
+import org.jclouds.vcloud.CommonVCloudAsyncClient;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Org;
@@ -48,11 +48,11 @@ public class AllCatalogsInOrg implements Function<Org, Iterable<? extends Catalo
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
 
-   private final VCloudAsyncClient aclient;
+   private final CommonVCloudAsyncClient aclient;
    private final ExecutorService executor;
 
    @Inject
-   AllCatalogsInOrg(VCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   AllCatalogsInOrg(CommonVCloudAsyncClient aclient, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }

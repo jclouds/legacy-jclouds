@@ -30,7 +30,7 @@ import static org.testng.Assert.assertEquals;
 import java.net.URI;
 
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.vcloud.domain.FenceMode;
+import org.jclouds.vcloud.domain.network.FenceMode;
 import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
@@ -121,13 +121,13 @@ public class InstantiateVAppTemplateOptionsTest {
    public void testFenceMode() {
       InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
       options.fenceMode(FenceMode.BRIDGED);
-      assertEquals(options.getFenceMode(), "bridged");
+      assertEquals(options.getFenceMode(), FenceMode.BRIDGED);
    }
 
    @Test
    public void testFenceModeStatic() {
       InstantiateVAppTemplateOptions options = fenceMode(FenceMode.BRIDGED);
-      assertEquals(options.getFenceMode(), "bridged");
+      assertEquals(options.getFenceMode(), FenceMode.BRIDGED);
    }
 
 }

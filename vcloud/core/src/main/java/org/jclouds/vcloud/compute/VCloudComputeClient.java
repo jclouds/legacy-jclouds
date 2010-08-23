@@ -21,10 +21,10 @@ package org.jclouds.vcloud.compute;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.vcloud.compute.internal.VCloudComputeClientImpl;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.inject.ImplementedBy;
@@ -33,11 +33,11 @@ import com.google.inject.ImplementedBy;
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(BaseVCloudComputeClient.class)
-public interface VCloudComputeClient {
+@ImplementedBy(VCloudComputeClientImpl.class)
+public interface VCloudComputeClient extends CommonVCloudComputeClient {
    /**
-    * Runs through all commands necessary to startup a vApp, opening at least
-    * one ip address to the public network. These are the steps:
+    * Runs through all commands necessary to startup a vApp, opening at least one ip address to the
+    * public network. These are the steps:
     * <p/>
     * instantiate -> deploy -> powerOn
     * <p/>
@@ -59,43 +59,11 @@ public interface VCloudComputeClient {
     *           opens the following ports on the public ip address
     * @return map contains at least the following properties
     *         <ol>
-    *         <li>id - vApp id</li> <li>username - console login user</li> <li>
-    *         password - console login password</li>
+    *         <li>id - vApp id</li> <li>username - console login user</li> <li> password - console
+    *         login password</li>
     *         </ol>
     */
    Map<String, String> start(@Nullable URI VDC, URI templateId, String name, InstantiateVAppTemplateOptions options,
-         int... portsToOpen);
-
-   /**
-    * returns a set of addresses that are only visible to the private network.
-    */
-   Set<String> getPrivateAddresses(URI vAppId);
-
-   /**
-    * returns a set of addresses that are publically visible
-    */
-   Set<String> getPublicAddresses(URI vAppId);
-
-   /**
-    * reboots the vApp, blocking until the following state transition is
-    * complete:
-    * <p/>
-    * current -> {@code VAppStatus#OFF} -> {@code VAppStatus#ON}
-    * 
-    * @param vAppId
-    *           vApp to reboot
-    */
-   void reboot(URI vAppId);
-
-   /**
-    * Destroys dependent resources, powers off and deletes the vApp, blocking
-    * until the following state transition is complete:
-    * <p/>
-    * current -> {@code VAppStatus#OFF} -> deleted
-    * 
-    * @param vAppId
-    *           vApp to stop
-    */
-   void stop(URI vAppId);
+            int... portsToOpen);
 
 }

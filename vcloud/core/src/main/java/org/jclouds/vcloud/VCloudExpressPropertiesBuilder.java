@@ -30,7 +30,7 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_S
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
-import org.jclouds.vcloud.domain.FenceMode;
+import org.jclouds.vcloud.domain.network.FenceMode;
 
 /**
  * Builds properties used in VCloud Clients
@@ -67,7 +67,7 @@ public class VCloudExpressPropertiesBuilder extends PropertiesBuilder {
          if (properties.getProperty(PROPERTY_VCLOUD_VERSION_SCHEMA).startsWith("0.8"))
             properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, "allowInOut");
          else
-            properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.BRIDGED);
+            properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.BRIDGED.toString());
       }
    }
 

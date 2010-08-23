@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 
@@ -41,13 +41,13 @@ import com.google.inject.Inject;
 @Singleton
 public class TaskSuccess implements Predicate<URI> {
 
-   private final VCloudClient client;
+   private final CommonVCloudClient client;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public TaskSuccess(VCloudClient client) {
+   public TaskSuccess(CommonVCloudClient client) {
       this.client = client;
    }
 

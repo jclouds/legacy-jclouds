@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.xml;
 
+import static org.jclouds.vcloud.VCloudMediaType.CATALOGITEM_XML;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
@@ -27,12 +28,15 @@ import java.net.URI;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
+import org.jclouds.vcloud.domain.Catalog;
+import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.internal.CatalogImpl;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -44,19 +48,91 @@ import com.google.inject.Injector;
 @Test(groups = "unit", testName = "vcloud.CatalogHandlerTest")
 public class CatalogHandlerTest {
 
-   public void testApplyInputStream() {
-      InputStream is = getClass().getResourceAsStream("/catalogItem-hosting.xml");
-      Injector injector = Guice.createInjector(new SaxParserModule());
-      Factory factory = injector.getInstance(ParseSax.Factory.class);
-      CatalogItem result = factory.create(injector.getInstance(CatalogItemHandler.class)).parse(is);
+   private Injector injector;
 
-      assertEquals(result, new CatalogItemImpl("Windows 2008 Datacenter 64 Bit", URI
-            .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2"), "Windows 2008 Datacenter 64 Bit",
-            new NamedResourceImpl("Windows 2008 Datacenter 64 Bit", "application/vnd.vmware.vcloud.vAppTemplate+xml",
-                  URI.create("https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/2")), ImmutableSortedMap.of("Foo",
-                  "Bar", "Hello", "World"
+   private Factory factory;
 
-            )));
+   public void testVCloud1_0() {
+      InputStream is = getClass().getResourceAsStream("/catalog-blank.xml");
+      injector = Guice.createInjector(new SaxParserModule());
+      factory = injector.getInstance(ParseSax.Factory.class);
+      Catalog result = (Catalog) factory.create(injector.getInstance(CatalogHandler.class)).parse(is);
+      assertEquals(result, new CatalogImpl("Jclouds-private", "application/vnd.vmware.vcloud.catalog+xml", URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/catalog/921222081"), new NamedResourceImpl(null,
+               "application/vnd.vmware.vcloud.org+xml", URI
+                        .create("https://vcenterprise.bluelock.com/api/v1.0/org/9566014")), null, ImmutableMap
+               .<String, NamedResource> of(), ImmutableList.<Task> of(), false));
+   }
 
+   public void testTerremark() {
+      InputStream is = getClass().getResourceAsStream("/express/catalog.xml");
+      injector = Guice.createInjector(new SaxParserModule());
+      factory = injector.getInstance(ParseSax.Factory.class);
+      Catalog result = (Catalog) factory.create(injector.getInstance(CatalogHandler.class)).parse(is);
+      assertEquals(result.getName(), "Miami Environment 1");
+      assert result.getDescription() == null;
+
+      assertEquals(result.getId(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog"));
+      assertEquals(result.get("CentOS 5.3 (32-bit)"), new NamedResourceImpl("CentOS 5.3 (32-bit)", CATALOGITEM_XML, URI
+               .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/5")));
+      assertEquals(result.get("CentOS 5.3 (64-bit)"), new NamedResourceImpl("CentOS 5.3 (64-bit)", CATALOGITEM_XML, URI
+               .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/6")));
+      assertEquals(result.get("RHEL 5.3 (32-bit)"), new NamedResourceImpl("RHEL 5.3 (32-bit)", CATALOGITEM_XML, URI
+               .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/7")));
+      assertEquals(result.get("RHEL 5.3 (64-bit)"), new NamedResourceImpl("RHEL 5.3 (64-bit)", CATALOGITEM_XML, URI
+               .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/8")));
+      assertEquals(result.get("Ubuntu JeOS 9.04 (32-bit)"), new NamedResourceImpl("Ubuntu JeOS 9.04 (32-bit)",
+               CATALOGITEM_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/11")));
+      assertEquals(result.get("Ubuntu JeOS 9.04 (64-bit)"), new NamedResourceImpl("Ubuntu JeOS 9.04 (64-bit)",
+               CATALOGITEM_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/12")));
+      assertEquals(result.get("Ubuntu Server 9.04 (32-bit)"), new NamedResourceImpl("Ubuntu Server 9.04 (32-bit)",
+               CATALOGITEM_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/9")));
+      assertEquals(result.get("Ubuntu Server 9.04 (64-bit)"), new NamedResourceImpl("Ubuntu Server 9.04 (64-bit)",
+               CATALOGITEM_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/10")));
+      assertEquals(result.get("Windows 2003 Enterprise R2 (32-bit)"), new NamedResourceImpl(
+               "Windows 2003 Enterprise R2 (32-bit)", CATALOGITEM_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/1")));
+      assertEquals(result.get("Windows 2003 Enterprise R2 (64-bit)"), new NamedResourceImpl(
+               "Windows 2003 Enterprise R2 (64-bit)", CATALOGITEM_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/2")));
+      assertEquals(result.get("Windows 2003 Standard R2 (32-bit)"), new NamedResourceImpl(
+               "Windows 2003 Standard R2 (32-bit)", CATALOGITEM_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/3")));
+      assertEquals(result.get("Windows 2003 Standard R2 (64-bit)"), new NamedResourceImpl(
+               "Windows 2003 Standard R2 (64-bit)", CATALOGITEM_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/4")));
+      assertEquals(result.get("Windows 2003 Standard R2 w.SQL 2008 Web (64-bit)"), new NamedResourceImpl(
+               "Windows 2003 Standard R2 w.SQL 2008 Web (64-bit)", CATALOGITEM_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/23")));
+      assertEquals(result.get("Windows Server 2008 Enterprise (32-bit)"), new NamedResourceImpl(
+               "Windows Server 2008 Enterprise (32-bit)", CATALOGITEM_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/13")));
+      assertEquals(result.get("Windows Server 2008 Enterprise (64-bit)"), new NamedResourceImpl(
+               "Windows Server 2008 Enterprise (64-bit)", CATALOGITEM_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/15")));
+      assertEquals(result.get("Windows Server 2008 Enterprise R2 (64-bit)"), new NamedResourceImpl(
+               "Windows Server 2008 Enterprise R2 (64-bit)", CATALOGITEM_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/16")));
+      assertEquals(result.get("Windows Server 2008 Standard (32-bit)"), new NamedResourceImpl(
+               "Windows Server 2008 Standard (32-bit)", CATALOGITEM_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/17")));
+      assertEquals(result.get("Windows Server 2008 Standard (64-bit)"), new NamedResourceImpl(
+               "Windows Server 2008 Standard (64-bit)", CATALOGITEM_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/18")));
+      assertEquals(result.get("Windows Server 2008 Standard R2 (64-bit)"), new NamedResourceImpl(
+               "Windows Server 2008 Standard R2 (64-bit)", CATALOGITEM_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/19")));
+      assertEquals(result.get("Windows Server 2008 Standard w.SQL 2008 Web (64-bit)"), new NamedResourceImpl(
+               "Windows Server 2008 Standard w.SQL 2008 Web (64-bit)", CATALOGITEM_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/14")));
+      assertEquals(result.get("Windows Web Server 2008 (32-bit)"), new NamedResourceImpl(
+               "Windows Web Server 2008 (32-bit)", CATALOGITEM_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/20")));
+      assertEquals(result.get("Windows Web Server 2008 (64-bit)"), new NamedResourceImpl(
+               "Windows Web Server 2008 (64-bit)", CATALOGITEM_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/21")));
+      assertEquals(result.get("Windows Web Server 2008 R2 (64-bit)"), new NamedResourceImpl(
+               "Windows Web Server 2008 R2 (64-bit)", CATALOGITEM_XML, URI
+                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/catalogItem/22")));
    }
 }

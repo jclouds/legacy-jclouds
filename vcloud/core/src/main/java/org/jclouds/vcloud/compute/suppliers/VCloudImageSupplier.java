@@ -39,7 +39,6 @@ import org.jclouds.Constants;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.compute.functions.ImagesInOrg;
 import org.jclouds.vcloud.domain.Org;
 
 import com.google.common.base.Function;
@@ -56,11 +55,12 @@ public class VCloudImageSupplier implements Supplier<Set<? extends Image>> {
    public Logger logger = Logger.NULL;
 
    private final Supplier<Map<String, ? extends Org>> orgMap;
-   private final ImagesInOrg imagesInOrg;
+   private final Function<Org, Iterable<? extends Image>> imagesInOrg;
    private final ExecutorService executor;
 
    @Inject
-   VCloudImageSupplier(Supplier<Map<String, ? extends Org>> orgMap, ImagesInOrg imagesInOrg,
+   VCloudImageSupplier(Supplier<Map<String, ? extends Org>> orgMap,
+            Function<Org, Iterable<? extends Image>> imagesInOrg,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.orgMap = checkNotNull(orgMap, "orgMap");
       this.imagesInOrg = checkNotNull(imagesInOrg, "imagesInOrg");

@@ -36,7 +36,7 @@ import org.jclouds.compute.domain.internal.ComputeMetadataImpl;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
 import org.jclouds.vcloud.domain.NamedResource;
@@ -61,7 +61,7 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
    @Named(COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
    protected final VCloudGetNodeMetadataStrategy getNodeMetadata;
-   protected final VCloudClient client;
+   protected final CommonVCloudClient client;
    protected final FindLocationForResource findLocationForResourceInVDC;
    Set<String> blackListVAppNames = ImmutableSet.<String> of();
 
@@ -74,8 +74,9 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
    private final Supplier<Map<String, NamedResource>> orgNameToEndpoint;
 
    @Inject
-   protected VCloudListNodesStrategy(VCloudClient client, @Org Supplier<Map<String, NamedResource>> orgNameToEndpoint,
-            VCloudGetNodeMetadataStrategy getNodeMetadata, FindLocationForResource findLocationForResourceInVDC) {
+   protected VCloudListNodesStrategy(CommonVCloudClient client,
+            @Org Supplier<Map<String, NamedResource>> orgNameToEndpoint, VCloudGetNodeMetadataStrategy getNodeMetadata,
+            FindLocationForResource findLocationForResourceInVDC) {
       this.client = client;
       this.orgNameToEndpoint = orgNameToEndpoint;
       this.getNodeMetadata = getNodeMetadata;
