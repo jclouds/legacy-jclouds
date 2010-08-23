@@ -64,7 +64,6 @@ import org.jclouds.compute.predicates.OperatingSystemPredicates;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
@@ -266,8 +265,6 @@ public abstract class BaseComputeServiceLiveTest {
    public void testCreateTwoNodesWithRunScript() throws Exception {
       try {
          client.destroyNodesMatching(withTag(tag));
-      } catch (HttpResponseException e) {
-         // TODO hosting.com throws 400 when we try to delete a vApp
       } catch (NoSuchElementException e) {
 
       }

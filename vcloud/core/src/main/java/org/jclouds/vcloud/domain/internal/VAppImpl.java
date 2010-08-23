@@ -59,7 +59,7 @@ public class VAppImpl implements VApp {
       this.name = checkNotNull(name, "name");
       this.id = checkNotNull(id, "id");
       this.status = checkNotNull(status, "status");
-      this.size = size;// hostingdotcom
+      this.size = size;
       this.vDC = vDC;
       this.networkToAddresses = checkNotNull(networkToAddresses, "networkToAddresses");
       this.osType = osType;

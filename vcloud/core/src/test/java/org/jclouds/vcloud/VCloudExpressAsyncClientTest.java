@@ -748,7 +748,8 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
                               VCloudExpressMediaType.CATALOG_XML, URI
                                        .create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"))), ImmutableMap
                      .<String, NamedResource> of("vdc", new NamedResourceImpl("vdc", VCloudExpressMediaType.VDC_XML,
-                              URI.create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"))), null,
+                              URI.create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"))), ImmutableMap
+                              .<String, NamedResource> of(),
                      new NamedResourceImpl("tasksList", VCloudExpressMediaType.TASKSLIST_XML, URI
                               .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/1")), ImmutableList
                               .<Task> of()));
