@@ -32,7 +32,7 @@ import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Status;
-import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 
 import com.google.common.base.Predicate;
 
@@ -51,7 +51,7 @@ public class BlueLockVCloudExpressComputeClient extends VCloudExpressComputeClie
    }
 
    @Override
-   protected Map<String, String> parseAndValidateResponse(VAppTemplate template, VApp vAppResponse) {
+   protected Map<String, String> parseAndValidateResponse(VCloudExpressVAppTemplate template, VApp vAppResponse) {
       Credentials credentials = credentialsProvider.execute(template);
       Map<String, String> toReturn = super.parseResponse(template, vAppResponse);
       toReturn.put("username", credentials.identity);

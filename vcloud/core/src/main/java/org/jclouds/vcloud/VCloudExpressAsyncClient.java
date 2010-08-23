@@ -21,6 +21,7 @@ package org.jclouds.vcloud;
 
 import static org.jclouds.vcloud.VCloudMediaType.NETWORK_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASK_XML;
+import static org.jclouds.vcloud.VCloudMediaType.VAPPTEMPLATE_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 
 import java.net.URI;
@@ -42,17 +43,20 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayload;
-import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
+import org.jclouds.vcloud.binders.BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.domain.network.OrgNetwork;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.functions.OrgNameCatalogNameVAppTemplateNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.OrgNetworkFromVCloudExpressNetworkHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
+import org.jclouds.vcloud.xml.VCloudExpressVAppTemplateHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -60,11 +64,34 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
+ * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx"
+ *      />
  * @author Adrian Cole
  */
 @RequestFilters(SetVCloudTokenCookie.class)
 public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
+
+   /**
+    * @see VCloudClient#getVAppTemplate
+    */
+   @GET
+   @Consumes(VAPPTEMPLATE_XML)
+   @XMLResponseParser(VCloudExpressVAppTemplateHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends VCloudExpressVAppTemplate> getVAppTemplate(@EndpointParam URI vAppTemplate);
+
+   /**
+    * @see VCloudClient#findVAppTemplateInOrgCatalogNamed
+    */
+   @GET
+   @Consumes(VAPPTEMPLATE_XML)
+   @XMLResponseParser(VCloudExpressVAppTemplateHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends VCloudExpressVAppTemplate> findVAppTemplateInOrgCatalogNamed(
+         @Nullable @EndpointParam(parser = OrgNameCatalogNameVAppTemplateNameToEndpoint.class) String orgName,
+         @Nullable @EndpointParam(parser = OrgNameCatalogNameVAppTemplateNameToEndpoint.class) String catalogName,
+         @EndpointParam(parser = OrgNameCatalogNameVAppTemplateNameToEndpoint.class) String itemName);
+
    /**
     * @see VCloudClient#findNetworkInOrgVDCNamed
     */
@@ -74,9 +101,9 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
    @XMLResponseParser(OrgNetworkFromVCloudExpressNetworkHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends OrgNetwork> findNetworkInOrgVDCNamed(
-            @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String orgName,
-            @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String catalogName,
-            @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String networkName);
+         @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String orgName,
+         @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String catalogName,
+         @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String networkName);
 
    /**
     * @see VCloudClient#getNetwork
@@ -96,11 +123,11 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
    @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
    @Consumes(VAPP_XML)
    @XMLResponseParser(VAppHandler.class)
-   @MapBinder(BindInstantiateVAppTemplateParamsToXmlPayload.class)
+   @MapBinder(BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload.class)
    ListenableFuture<? extends VApp> instantiateVAppTemplateInVDC(@EndpointParam URI vdc,
-            @MapPayloadParam("template") URI template,
-            @MapPayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName,
-            InstantiateVAppTemplateOptions... options);
+         @MapPayloadParam("template") URI template,
+         @MapPayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName,
+         InstantiateVAppTemplateOptions... options);
 
    /**
     * @see VCloudExpressClient#cloneVAppInVDC
@@ -112,7 +139,7 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
    @XMLResponseParser(TaskHandler.class)
    @MapBinder(BindCloneVAppParamsToXmlPayload.class)
    ListenableFuture<? extends Task> cloneVAppInVDC(@EndpointParam URI vdc, @MapPayloadParam("vApp") URI toClone,
-            @MapPayloadParam("newName") @ParamValidators(DnsNameValidator.class) String newName,
-            CloneVAppOptions... options);
+         @MapPayloadParam("newName") @ParamValidators(DnsNameValidator.class) String newName,
+         CloneVAppOptions... options);
 
 }

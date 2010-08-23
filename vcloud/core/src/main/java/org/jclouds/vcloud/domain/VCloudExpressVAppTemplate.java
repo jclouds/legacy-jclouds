@@ -17,26 +17,16 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.config;
-
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.vcloud.VCloudExpressAsyncClient;
-import org.jclouds.vcloud.VCloudExpressClient;
+package org.jclouds.vcloud.domain;
 
 /**
- * Configures the VCloud authentication service connection, including logging
- * and http transport.
  * 
  * @author Adrian Cole
  */
-@RequiresHttp
-@ConfiguresRestClient
-public class VCloudExpressRestClientModule extends
-      BaseVCloudExpressRestClientModule<VCloudExpressClient, VCloudExpressAsyncClient> {
+public interface VCloudExpressVAppTemplate extends NamedResource {
 
-   public VCloudExpressRestClientModule() {
-      super(VCloudExpressClient.class, VCloudExpressAsyncClient.class);
-   }
+   Status getStatus();
+
+   String getDescription();
 
 }

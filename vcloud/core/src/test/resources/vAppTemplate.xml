@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VAppTemplate xmlns="http://www.vmware.com/vcloud/v1"
+	xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"
+	ovfDescriptorUploaded="true" status="8" name="Ubuntu Template"
+	type="application/vnd.vmware.vcloud.vAppTemplate+xml"
+	href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://schemas.dmtf.org/ovf/envelope/1 http://schemas.dmtf.org/ovf/envelope/1/dsp8023_1.1.0.xsd http://www.vmware.com/vcloud/v1 http://vcenterprise.bluelock.com/api/v1.0/schema/master.xsd">
+	<Link rel="up" type="application/vnd.vmware.vcloud.vdc+xml"
+		href="https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439" />
+	<Link rel="catalogItem" type="application/vnd.vmware.vcloud.catalogItem+xml"
+		href="https://vcenterprise.bluelock.com/api/v1.0/catalogItem/2090447518" />
+	<Link rel="remove"
+		href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921" />
+	<Link rel="edit" type="application/vnd.vmware.vcloud.vAppTemplate+xml"
+		href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921" />
+	<Link rel="enable"
+		href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921/action/enableDownload" />
+	<Link rel="disable"
+		href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921/action/disableDownload" />
+	<Link rel="ovf" type="text/xml"
+		href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921/ovf" />
+	<Description />
+	<Children>
+		<Vm name="Ubuntu1004" type="application/vnd.vmware.vcloud.vAppTemplate+xml"
+			href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vm-172837194">
+			<Link rel="up" type="application/vnd.vmware.vcloud.vAppTemplate+xml"
+				href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921" />
+			<Description />
+			<NetworkConnectionSection
+				type="application/vnd.vmware.vcloud.networkConnectionSection+xml"
+				href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vm-172837194/networkConnectionSection/"
+				ovf:required="false">
+				<ovf:Info>Specifies the available VM network connections</ovf:Info>
+				<PrimaryNetworkConnectionIndex>0</PrimaryNetworkConnectionIndex>
+				<NetworkConnection network="vAppNet-vApp Internal">
+					<NetworkConnectionIndex>0</NetworkConnectionIndex>
+					<IpAddress>192.168.2.100</IpAddress>
+					<IsConnected>true</IsConnected>
+					<MACAddress>00:50:56:8c:00:13</MACAddress>
+					<IpAddressAllocationMode>POOL</IpAddressAllocationMode>
+				</NetworkConnection>
+			</NetworkConnectionSection>
+			<GuestCustomizationSection
+				type="application/vnd.vmware.vcloud.guestCustomizationSection+xml"
+				href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vm-172837194/guestCustomizationSection/"
+				ovf:required="false">
+				<ovf:Info>Specifies Guest OS Customization Settings</ovf:Info>
+				<Enabled>true</Enabled>
+				<ChangeSid>false</ChangeSid>
+				<VirtualMachineId>172837194</VirtualMachineId>
+				<JoinDomainEnabled>false</JoinDomainEnabled>
+				<UseOrgSettings>false</UseOrgSettings>
+				<AdminPasswordEnabled>true</AdminPasswordEnabled>
+				<AdminPasswordAuto>true</AdminPasswordAuto>
+				<AdminPassword>%3eD%gmF</AdminPassword>
+				<ResetPasswordRequired>false</ResetPasswordRequired>
+				<CustomizationScript>#!/bin/bash if [ "$1" = "postcustomization" ]; then echo "post customization" touch /root/.postcustomization sleep 30 #regenerate keys /bin/rm /etc/ssh/ssh_host_* /usr/sbin/dpkg-reconfigure openssh-server echo "completed" fi</CustomizationScript>
+				<ComputerName>Ubuntu1004</ComputerName>
+			</GuestCustomizationSection>
+			<VAppScopedLocalId>02_ubuntu_template</VAppScopedLocalId>
+		</Vm>
+	</Children>
+	<ovf:NetworkSection xmlns:vcloud="http://www.vmware.com/vcloud/v1"
+		vcloud:href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921/networkSection/"
+		vcloud:type="application/vnd.vmware.vcloud.networkSection+xml">
+		<ovf:Info>The list of logical networks</ovf:Info>
+		<ovf:Network ovf:name="vAppNet-vApp Internal">
+			<ovf:Description />
+		</ovf:Network>
+	</ovf:NetworkSection>
+	<NetworkConfigSection
+		type="application/vnd.vmware.vcloud.networkConfigSection+xml"
+		href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921/networkConfigSection/"
+		ovf:required="false">
+		<ovf:Info>The configuration parameters for logical networks</ovf:Info>
+		<NetworkConfig networkName="vAppNet-vApp Internal">
+			<Description />
+			<Configuration>
+				<IpScope>
+					<IsInherited>false</IsInherited>
+					<Gateway>192.168.2.1</Gateway>
+					<Netmask>255.255.255.0</Netmask>
+					<Dns1>8.8.8.8</Dns1>
+					<IpRanges>
+						<IpRange>
+							<StartAddress>192.168.2.100</StartAddress>
+							<EndAddress>192.168.2.199</EndAddress>
+						</IpRange>
+					</IpRanges>
+					<AllocatedIpAddresses>
+						<IpAddress>192.168.2.100</IpAddress>
+					</AllocatedIpAddresses>
+				</IpScope>
+				<FenceMode>isolated</FenceMode>
+				<Features>
+					<DhcpService>
+						<IsEnabled>false</IsEnabled>
+						<DefaultLeaseTime>7200</DefaultLeaseTime>
+						<MaxLeaseTime>7200</MaxLeaseTime>
+						<IpRange />
+					</DhcpService>
+					<FirewallService>
+						<IsEnabled>true</IsEnabled>
+					</FirewallService>
+					<NatService>
+						<IsEnabled>true</IsEnabled>
+						<NatType>ipTranslation</NatType>
+						<Policy>allowTraffic</Policy>
+						<NatRule>
+							<OneToOneVmRule>
+								<MappingMode>automatic</MappingMode>
+								<VAppScopedVmId>02_ubuntu_template</VAppScopedVmId>
+								<VmNicId>0</VmNicId>
+							</OneToOneVmRule>
+						</NatRule>
+					</NatService>
+				</Features>
+			</Configuration>
+			<IsDeployed>false</IsDeployed>
+		</NetworkConfig>
+	</NetworkConfigSection>
+	<LeaseSettingsSection
+		type="application/vnd.vmware.vcloud.leaseSettingsSection+xml"
+		href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921/leaseSettingsSection/"
+		ovf:required="false">
+		<ovf:Info>Lease settings section</ovf:Info>
+		<Link rel="edit"
+			type="application/vnd.vmware.vcloud.leaseSettingsSection+xml"
+			href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921/leaseSettingsSection/" />
+		<StorageLeaseInSeconds>0</StorageLeaseInSeconds>
+	</LeaseSettingsSection>
+	<CustomizationSection
+		type="application/vnd.vmware.vcloud.customizationSection+xml"
+		href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921/customizationSection/"
+		ovf:required="false">
+		<ovf:Info>VApp template customization section</ovf:Info>
+		<CustomizeOnInstantiate>true</CustomizeOnInstantiate>
+		<Link rel="edit"
+			type="application/vnd.vmware.vcloud.customizationSection+xml"
+			href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921/customizationSection/" />
+	</CustomizationSection>
+</VAppTemplate>

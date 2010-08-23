@@ -38,7 +38,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.jclouds.rest.binders.BindToStringPayload;
-import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
+import org.jclouds.vcloud.binders.BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.domain.ResourceType;
 
 import com.jamesmurty.utils.XMLBuilder;
@@ -50,7 +50,7 @@ import com.jamesmurty.utils.XMLBuilder;
  */
 @Singleton
 public class TerremarkBindInstantiateVAppTemplateParamsToXmlPayload extends
-         BindInstantiateVAppTemplateParamsToXmlPayload {
+         BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload {
 
    @Inject
    public TerremarkBindInstantiateVAppTemplateParamsToXmlPayload(BindToStringPayload stringBinder,

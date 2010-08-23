@@ -30,8 +30,8 @@ import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrat
 import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.internal.VCloudComputeClientImpl;
-import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Status;
+import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.base.Predicate;

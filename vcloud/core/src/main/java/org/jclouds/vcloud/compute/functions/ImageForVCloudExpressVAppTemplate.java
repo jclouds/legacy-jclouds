@@ -29,9 +29,9 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Location;
-import org.jclouds.vcloud.compute.domain.VCloudImage;
+import org.jclouds.vcloud.compute.domain.VCloudExpressImage;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
@@ -39,25 +39,25 @@ import com.google.common.collect.ImmutableMap;
 /**
  * @author Adrian Cole
  */
-public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
+public class ImageForVCloudExpressVAppTemplate implements Function<VCloudExpressVAppTemplate, Image> {
    private final FindLocationForResource findLocationForResource;
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider;
    private NamedResource parent;
 
    @Inject
-   protected ImageForVAppTemplate(FindLocationForResource findLocationForResource,
-         PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider) {
+   protected ImageForVCloudExpressVAppTemplate(FindLocationForResource findLocationForResource,
+            PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider) {
       this.findLocationForResource = checkNotNull(findLocationForResource, "findLocationForResource");
       this.credentialsProvider = checkNotNull(credentialsProvider, "credentialsProvider");
    }
 
-   public ImageForVAppTemplate withParent(NamedResource parent) {
+   public ImageForVCloudExpressVAppTemplate withParent(NamedResource parent) {
       this.parent = parent;
       return this;
    }
 
    @Override
-   public Image apply(VAppTemplate from) {
+   public Image apply(VCloudExpressVAppTemplate from) {
       OsFamily osFamily = parseOsFamilyOrNull(checkNotNull(from, "vapp template").getName());
       String osName = null;
       String osArch = null;
@@ -69,8 +69,8 @@ public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
       Location location = findLocationForResource.apply(checkNotNull(parent, "parent"));
       String name = getName(from.getName());
       String desc = from.getDescription() != null ? from.getDescription() : from.getName();
-      return new VCloudImage(from, from.getId().toASCIIString(), name, from.getId().toASCIIString(), location, from
-            .getId(), ImmutableMap.<String, String> of(), os, desc, "", credentialsProvider.execute(from));
+      return new VCloudExpressImage(from, from.getId().toASCIIString(), name, from.getId().toASCIIString(), location, from
+               .getId(), ImmutableMap.<String, String> of(), os, desc, "", credentialsProvider.execute(from));
    }
 
    protected String getName(String name) {

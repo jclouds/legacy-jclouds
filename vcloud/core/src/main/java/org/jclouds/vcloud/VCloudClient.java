@@ -20,11 +20,15 @@
 package org.jclouds.vcloud;
 
 import java.net.URI;
+import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
@@ -40,9 +44,28 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface VCloudClient extends CommonVCloudClient {
 
-
    VApp instantiateVAppTemplateInVDC(URI vDC, URI template, String appName, InstantiateVAppTemplateOptions... options);
 
    Task cloneVAppInVDC(URI vDC, URI toClone, String newName, CloneVAppOptions... options);
 
+   VAppTemplate getVAppTemplate(URI vAppTemplate);
+
+   /**
+    * returns the vapp template corresponding to a catalog item in the catalog
+    * associated with the specified name. Note that the org and catalog
+    * parameters can be null to choose default.
+    * 
+    * @param orgName
+    *           organization name, or null for the default
+    * @param catalogName
+    *           catalog name, or null for the default
+    * @param itemName
+    *           item you wish to lookup
+    * 
+    * @throws NoSuchElementException
+    *            if you specified an org, catalog, or catalog item name that
+    *            isn't present
+    */
+   VAppTemplate findVAppTemplateInOrgCatalogNamed(@Nullable String orgName, @Nullable String catalogName,
+         String itemName);
 }

@@ -59,7 +59,7 @@ import com.jamesmurty.utils.XMLBuilder;
  * 
  */
 @Singleton
-public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder {
+public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload implements MapBinder {
 
    protected final String ns;
    protected final String schema;
@@ -71,7 +71,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    private final String apiVersion;
 
    @Inject
-   public BindInstantiateVAppTemplateParamsToXmlPayload(BindToStringPayload stringBinder,
+   public BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload(BindToStringPayload stringBinder,
             @Named(PROPERTY_API_VERSION) String apiVersion, @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
             @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema, @Named(PROPERTY_VCLOUD_DEFAULT_NETWORK) String network,
             @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode) {

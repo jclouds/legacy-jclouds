@@ -29,7 +29,7 @@ import org.jclouds.vcloud.bluelock.compute.functions.BlueLockVCloudImageForVAppT
 import org.jclouds.vcloud.bluelock.compute.strategy.DefaultLoginCredentialsFromBlueLockFAQ;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.compute.config.VCloudExpressComputeServiceContextModule;
-import org.jclouds.vcloud.compute.functions.ImageForVAppTemplate;
+import org.jclouds.vcloud.compute.functions.ImageForVCloudExpressVAppTemplate;
 
 import com.google.common.base.Supplier;
 import com.google.inject.Injector;
@@ -45,7 +45,7 @@ public class BlueLockVCloudExpressComputeServiceContextModule extends VCloudExpr
    @Override
    protected void configure() {
       super.configure();
-      bind(ImageForVAppTemplate.class).to(BlueLockVCloudImageForVAppTemplate.class);
+      bind(ImageForVCloudExpressVAppTemplate.class).to(BlueLockVCloudImageForVAppTemplate.class);
       bind(VCloudExpressComputeClient.class).to(BlueLockVCloudExpressComputeClient.class);
       bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(DefaultLoginCredentialsFromBlueLockFAQ.class);
    }

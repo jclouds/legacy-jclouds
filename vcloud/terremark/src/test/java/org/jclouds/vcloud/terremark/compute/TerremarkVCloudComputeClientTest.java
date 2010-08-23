@@ -36,7 +36,7 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Status;
-import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressClient;
 import org.jclouds.vcloud.terremark.compute.strategy.ParseVAppTemplateDescriptionToGetDefaultLoginCredentials;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
@@ -56,7 +56,7 @@ public class TerremarkVCloudComputeClientTest {
    public void testStartWindows() throws IOException {
       InputStream is = getClass().getResourceAsStream("/terremark/windows_description.txt");
       String description = new String(ByteStreams.toByteArray(is));
-      VAppTemplate template = createMock(VAppTemplate.class);
+      VCloudExpressVAppTemplate template = createMock(VCloudExpressVAppTemplate.class);
       TerremarkVDC vdc = createMock(TerremarkVDC.class);
       URI templateURI = URI.create("template");
       URI vdcURI = URI.create("vdc");

@@ -29,7 +29,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
-import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 
 /**
  * @author Adrian Cole
@@ -44,8 +44,8 @@ public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials implements
    @Override
    public Credentials execute(Object resourceToAuthenticate) {
       checkNotNull(resourceToAuthenticate);
-      checkArgument(resourceToAuthenticate instanceof VAppTemplate, "Resource must be an VAppTemplate (for Terremark)");
-      VAppTemplate template = (VAppTemplate) resourceToAuthenticate;
+      checkArgument(resourceToAuthenticate instanceof VCloudExpressVAppTemplate, "Resource must be an VAppTemplate (for Terremark)");
+      VCloudExpressVAppTemplate template = (VCloudExpressVAppTemplate) resourceToAuthenticate;
       String search = template.getDescription() != null ? template.getDescription() : template.getName();
       if (search.indexOf("Windows") >= 0) {
          return new Credentials("Administrator", null);

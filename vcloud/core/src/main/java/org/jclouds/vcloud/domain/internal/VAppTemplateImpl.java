@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.vdc/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -19,39 +19,95 @@
 
 package org.jclouds.vcloud.domain.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.net.URI;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.vcloud.VCloudExpressMediaType;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Status;
+import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
 /**
+ * Locations of resources in vCloud
  * 
  * @author Adrian Cole
  * 
  */
 public class VAppTemplateImpl extends NamedResourceImpl implements VAppTemplate {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8464716396538298809L;
-   private final String description;
    private final Status status;
+   private final NamedResource vdc;
+   @Nullable
+   private final String description;
+   private final List<Task> tasks = Lists.newArrayList();
+   private final boolean ovfDescriptorUploaded;
+   private final String vAppScopedLocalId;
 
-   public VAppTemplateImpl(String name, URI id, @Nullable String description, @Nullable Status status) {
-      super(name, VCloudExpressMediaType.VAPPTEMPLATE_XML, id);
+   public VAppTemplateImpl(String name, String type, URI id, Status status, NamedResource vdc,
+         @Nullable String description, Iterable<Task> tasks, boolean ovfDescriptorUploaded,
+         @Nullable String vAppScopedLocalId) {
+      super(name, type, id);
+      this.status = checkNotNull(status, "status");
+      this.vdc = vdc;// TODO: once <1.0 is killed check not null
       this.description = description;
-      this.status = status;
+      Iterables.addAll(this.tasks, checkNotNull(tasks, "tasks"));
+      this.vAppScopedLocalId = vAppScopedLocalId;
+      this.ovfDescriptorUploaded = ovfDescriptorUploaded;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Status getStatus() {
+      return status;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public NamedResource getVDC() {
+      return vdc;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    @Override
    public String getDescription() {
       return description;
    }
 
-   public Status getStatus() {
-      return status;
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public List<Task> getTasks() {
+      return tasks;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getVAppScopedLocalId() {
+      return vAppScopedLocalId;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean isOvfDescriptorUploaded() {
+      return ovfDescriptorUploaded;
    }
 
    @Override
@@ -59,7 +115,11 @@ public class VAppTemplateImpl extends NamedResourceImpl implements VAppTemplate 
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + (ovfDescriptorUploaded ? 1231 : 1237);
       result = prime * result + ((status == null) ? 0 : status.hashCode());
+      result = prime * result + ((tasks == null) ? 0 : tasks.hashCode());
+      result = prime * result + ((vAppScopedLocalId == null) ? 0 : vAppScopedLocalId.hashCode());
+      result = prime * result + ((vdc == null) ? 0 : vdc.hashCode());
       return result;
    }
 
@@ -77,17 +137,35 @@ public class VAppTemplateImpl extends NamedResourceImpl implements VAppTemplate 
             return false;
       } else if (!description.equals(other.description))
          return false;
+      if (ovfDescriptorUploaded != other.ovfDescriptorUploaded)
+         return false;
       if (status == null) {
          if (other.status != null)
             return false;
       } else if (!status.equals(other.status))
+         return false;
+      if (tasks == null) {
+         if (other.tasks != null)
+            return false;
+      } else if (!tasks.equals(other.tasks))
+         return false;
+      if (vAppScopedLocalId == null) {
+         if (other.vAppScopedLocalId != null)
+            return false;
+      } else if (!vAppScopedLocalId.equals(other.vAppScopedLocalId))
+         return false;
+      if (vdc == null) {
+         if (other.vdc != null)
+            return false;
+      } else if (!vdc.equals(other.vdc))
          return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "VAppTemplateImpl [description=" + description + ", status=" + status + "]";
+      return "[id=" + getId() + ", name=" + getName() + ", vdc=" + vdc + ", description=" + description + ", status="
+            + status + "]";
    }
 
 }

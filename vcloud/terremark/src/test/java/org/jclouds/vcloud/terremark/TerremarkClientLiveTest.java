@@ -56,7 +56,7 @@ import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Status;
-import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.predicates.TaskSuccess;
@@ -171,7 +171,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       if (customizationOptions.canCustomizePassword())
          instantiateOptions.withPassword("robotsarefun");
 
-      VAppTemplate vAppTemplate = tmClient.getVAppTemplate(item.getEntity().getId());
+      VCloudExpressVAppTemplate vAppTemplate = tmClient.getVAppTemplate(item.getEntity().getId());
 
       // instantiate, noting vApp returned has minimal details
       vApp = tmClient.instantiateVAppTemplateInVDC(vdc.getId(), vAppTemplate.getId(), serverName, instantiateOptions);

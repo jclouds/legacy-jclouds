@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jclouds.domain.Credentials;
-import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.testng.annotations.Test;
 
 import com.google.common.io.ByteStreams;
@@ -44,7 +44,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
    public void testRhel() throws IOException {
       InputStream is = getClass().getResourceAsStream("/terremark/rhel_description.txt");
       String description = new String(ByteStreams.toByteArray(is));
-      VAppTemplate template = createMock(VAppTemplate.class);
+      VCloudExpressVAppTemplate template = createMock(VCloudExpressVAppTemplate.class);
       expect(template.getDescription()).andReturn(description).atLeastOnce();
       replay(template);
       ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials();
@@ -58,7 +58,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
    public void testLamp() throws IOException {
       InputStream is = getClass().getResourceAsStream("/terremark/lamp_description.txt");
       String description = new String(ByteStreams.toByteArray(is));
-      VAppTemplate template = createMock(VAppTemplate.class);
+      VCloudExpressVAppTemplate template = createMock(VCloudExpressVAppTemplate.class);
       expect(template.getDescription()).andReturn(description).atLeastOnce();
       replay(template);
       ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials();
@@ -72,7 +72,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
    public void testFt() throws IOException {
       InputStream is = getClass().getResourceAsStream("/terremark/ft_description.txt");
       String description = new String(ByteStreams.toByteArray(is));
-      VAppTemplate template = createMock(VAppTemplate.class);
+      VCloudExpressVAppTemplate template = createMock(VCloudExpressVAppTemplate.class);
       expect(template.getDescription()).andReturn(description).atLeastOnce();
       replay(template);
       ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials();
@@ -86,7 +86,7 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
    public void testWindows() throws IOException {
       InputStream is = getClass().getResourceAsStream("/terremark/windows_description.txt");
       String description = new String(ByteStreams.toByteArray(is));
-      VAppTemplate template = createMock(VAppTemplate.class);
+      VCloudExpressVAppTemplate template = createMock(VCloudExpressVAppTemplate.class);
       expect(template.getDescription()).andReturn(description).atLeastOnce();
       replay(template);
       ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials();

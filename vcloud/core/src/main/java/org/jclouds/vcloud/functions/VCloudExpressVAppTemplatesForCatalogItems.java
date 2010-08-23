@@ -36,7 +36,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -46,7 +46,7 @@ import com.google.common.base.Predicate;
  */
 @Singleton
 public class VCloudExpressVAppTemplatesForCatalogItems implements
-         Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>> {
+         Function<Iterable<? extends CatalogItem>, Iterable<? extends VCloudExpressVAppTemplate>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
@@ -61,7 +61,7 @@ public class VCloudExpressVAppTemplatesForCatalogItems implements
    }
 
    @Override
-   public Iterable<? extends VAppTemplate> apply(Iterable<? extends CatalogItem> from) {
+   public Iterable<? extends VCloudExpressVAppTemplate> apply(Iterable<? extends CatalogItem> from) {
       return transformParallel(filter(from, new Predicate<CatalogItem>() {
 
          @Override
@@ -69,12 +69,12 @@ public class VCloudExpressVAppTemplatesForCatalogItems implements
             return input.getEntity().getType().equals(VCloudExpressMediaType.VAPPTEMPLATE_XML);
          }
 
-      }), new Function<CatalogItem, Future<VAppTemplate>>() {
+      }), new Function<CatalogItem, Future<VCloudExpressVAppTemplate>>() {
 
          @SuppressWarnings("unchecked")
          @Override
-         public Future<VAppTemplate> apply(CatalogItem from) {
-            return (Future<VAppTemplate>) aclient.getVAppTemplate(from.getEntity().getId());
+         public Future<VCloudExpressVAppTemplate> apply(CatalogItem from) {
+            return (Future<VCloudExpressVAppTemplate>) aclient.getVAppTemplate(from.getEntity().getId());
          }
 
       }, executor, null, logger, "vappTemplates in");

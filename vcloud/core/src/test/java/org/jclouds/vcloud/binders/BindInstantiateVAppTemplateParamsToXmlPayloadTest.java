@@ -69,8 +69,8 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       request.setPayload(expected);
       replay(request);
 
-      BindInstantiateVAppTemplateParamsToXmlPayload binder = injector
-               .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
+      BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload binder = injector
+               .getInstance(BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "my-vapp");
@@ -91,8 +91,8 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       request.setPayload(expected);
       replay(request);
 
-      BindInstantiateVAppTemplateParamsToXmlPayload binder = injector
-               .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
+      BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload binder = injector
+               .getInstance(BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "my-vapp");
@@ -113,8 +113,8 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       request.setPayload(expected);
       replay(request);
 
-      BindInstantiateVAppTemplateParamsToXmlPayload binder = injector
-               .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
+      BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload binder = injector
+               .getInstance(BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "my-vapp");

@@ -33,10 +33,9 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.compute.CommonVCloudComputeClient;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.Status;
-import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
@@ -48,7 +47,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class CommonVCloudComputeClientImpl implements CommonVCloudComputeClient {
+public class CommonVCloudComputeClientImpl<T> implements CommonVCloudComputeClient {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -62,7 +61,7 @@ public class CommonVCloudComputeClientImpl implements CommonVCloudComputeClient 
       this.taskTester = successTester;
    }
 
-   protected Map<String, String> parseAndValidateResponse(VAppTemplate template, VApp vAppResponse) {
+   protected Map<String, String> parseAndValidateResponse(T template, VApp vAppResponse) {
       Map<String, String> response = parseResponse(template, vAppResponse);
       checkState(response.containsKey("id"), "bad configuration: [id] should be in response");
       checkState(response.containsKey("username"), "bad configuration: [username] should be in response");
@@ -70,7 +69,7 @@ public class CommonVCloudComputeClientImpl implements CommonVCloudComputeClient 
       return response;
    }
 
-   protected Map<String, String> parseResponse(VAppTemplate template, VApp vAppResponse) {
+   protected Map<String, String> parseResponse(T template, VApp vAppResponse) {
       Map<String, String> config = Maps.newLinkedHashMap();// Allows nulls
       config.put("id", vAppResponse.getId().toASCIIString());
       config.put("username", null);
@@ -137,7 +136,7 @@ public class CommonVCloudComputeClientImpl implements CommonVCloudComputeClient 
 
       public TaskException(String type, VApp vApp, Task task) {
          super(String.format("failed to %s vApp %s status %s;task %s status %s", type, vApp.getName(),
-                  vApp.getStatus(), task.getLocation(), task.getStatus()), vApp);
+               vApp.getStatus(), task.getLocation(), task.getStatus()), vApp);
          this.task = task;
       }
 

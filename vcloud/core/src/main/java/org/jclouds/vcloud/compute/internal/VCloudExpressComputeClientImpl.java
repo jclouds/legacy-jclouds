@@ -30,10 +30,10 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.Status;
-import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
@@ -44,28 +44,29 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class VCloudExpressComputeClientImpl extends CommonVCloudComputeClientImpl implements VCloudExpressComputeClient {
+public class VCloudExpressComputeClientImpl extends CommonVCloudComputeClientImpl<VCloudExpressVAppTemplate> implements
+      VCloudExpressComputeClient {
 
    protected final Map<Status, NodeState> vAppStatusToNodeState;
 
    @Inject
    public VCloudExpressComputeClientImpl(VCloudExpressClient client, Predicate<URI> successTester,
-            Map<Status, NodeState> vAppStatusToNodeState) {
+         Map<Status, NodeState> vAppStatusToNodeState) {
       super(client, successTester);
       this.vAppStatusToNodeState = vAppStatusToNodeState;
    }
 
    @Override
    public Map<String, String> start(@Nullable URI VDC, URI templateId, String name,
-            InstantiateVAppTemplateOptions options, int... portsToOpen) {
+         InstantiateVAppTemplateOptions options, int... portsToOpen) {
       checkNotNull(options, "options");
       logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
 
       VDC vdc = client.getVDC(VDC);
-      VAppTemplate template = client.getVAppTemplate(templateId);
+      VCloudExpressVAppTemplate template = VCloudExpressClient.class.cast(client).getVAppTemplate(templateId);
 
       VApp vAppResponse = VCloudExpressClient.class.cast(client).instantiateVAppTemplateInVDC(vdc.getId(),
-               template.getId(), name, options);
+            template.getId(), name, options);
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getName());
 
       logger.debug(">> deploying vApp(%s)", vAppResponse.getName());

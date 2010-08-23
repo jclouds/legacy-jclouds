@@ -44,7 +44,7 @@ import org.jclouds.vcloud.domain.TaskStatus;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Status;
-import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.TerremarkECloudClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressClient;
@@ -79,7 +79,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
    }
 
    @Override
-   protected Map<String, String> parseAndValidateResponse(VAppTemplate template, VApp vAppResponse) {
+   protected Map<String, String> parseAndValidateResponse(VCloudExpressVAppTemplate template, VApp vAppResponse) {
       Credentials credentials = credentialsProvider.execute(template);
       Map<String, String> toReturn = super.parseResponse(template, vAppResponse);
       toReturn.put("username", credentials.identity);
@@ -97,7 +97,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
       if (portsToOpen.length > 0 && !options.shouldBlockOnDeploy())
          throw new IllegalArgumentException("We cannot open ports on terremark unless we can deploy the vapp");
       String password = null;
-      VAppTemplate template = client.getVAppTemplate(templateId);
+      VCloudExpressVAppTemplate template = client.getVAppTemplate(templateId);
       if (template.getDescription().indexOf("Windows") != -1) {
          password = passwordGenerator.get();
          options.getProperties().put("password", password);

@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
@@ -33,11 +34,10 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.CommonVCloudAsyncClient;
-import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.VCloudExpressAsyncClient;
+import org.jclouds.vcloud.VCloudExpressMediaType;
+import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -46,37 +46,36 @@ import com.google.common.base.Predicate;
  * @author Adrian Cole
  */
 @Singleton
-public class VAppTemplatesForCatalogItems implements
-      Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>> {
+public class VCloudExpressVAppTemplatesForResourceEntities implements
+         Function<Iterable<? extends NamedResource>, Iterable<? extends VCloudExpressVAppTemplate>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
-   private final CommonVCloudAsyncClient aclient;
+   private final VCloudExpressAsyncClient aclient;
    private final ExecutorService executor;
 
    @Inject
-   VAppTemplatesForCatalogItems(CommonVCloudAsyncClient aclient,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+   VCloudExpressVAppTemplatesForResourceEntities(VCloudExpressAsyncClient aclient,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.aclient = aclient;
       this.executor = executor;
    }
 
    @Override
-   public Iterable<? extends VAppTemplate> apply(Iterable<? extends CatalogItem> from) {
-      return transformParallel(filter(from, new Predicate<CatalogItem>() {
+   public Iterable<? extends VCloudExpressVAppTemplate> apply(Iterable<? extends NamedResource> from) {
+      return transformParallel(filter(checkNotNull(from, "named resources"), new Predicate<NamedResource>() {
 
          @Override
-         public boolean apply(CatalogItem input) {
-            return input.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML);
+         public boolean apply(NamedResource input) {
+            return input.getType().equals(VCloudExpressMediaType.VAPPTEMPLATE_XML);
          }
 
-      }), new Function<CatalogItem, Future<VAppTemplate>>() {
+      }), new Function<NamedResource, Future<VCloudExpressVAppTemplate>>() {
 
          @SuppressWarnings("unchecked")
          @Override
-         public Future<VAppTemplate> apply(CatalogItem from) {
-            return (Future<VAppTemplate>) VCloudAsyncClient.class.cast(aclient).getVAppTemplate(
-                  from.getEntity().getId());
+         public Future<VCloudExpressVAppTemplate> apply(NamedResource from) {
+            return (Future<VCloudExpressVAppTemplate>) aclient.getVAppTemplate(from.getId());
          }
 
       }, executor, null, logger, "vappTemplates in");

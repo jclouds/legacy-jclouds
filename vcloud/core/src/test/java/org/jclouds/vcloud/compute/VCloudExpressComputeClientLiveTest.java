@@ -38,7 +38,7 @@ import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Status;
-import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
@@ -93,7 +93,7 @@ public class VCloudExpressComputeClientLiveTest {
       int processorCount = 1;
       int memory = 512;
 
-      VAppTemplate template = client.findVAppTemplateInOrgCatalogNamed(null, null, templateName);
+      VCloudExpressVAppTemplate template = client.findVAppTemplateInOrgCatalogNamed(null, null, templateName);
       InstantiateVAppTemplateOptions options = processorCount(1).memory(512).disk(10 * 1025 * 1024).productProperties(
                ImmutableMap.of("foo", "bar"));
 

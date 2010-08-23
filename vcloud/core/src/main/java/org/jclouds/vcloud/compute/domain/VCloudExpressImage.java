@@ -28,27 +28,27 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
-import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 
 /**
  * @author Adrian Cole
  */
-public class VCloudImage extends ImageImpl {
+public class VCloudExpressImage extends ImageImpl {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -8520373150950058296L;
 
-   private final VAppTemplate template;
+   private final VCloudExpressVAppTemplate template;
 
-   public VCloudImage(VAppTemplate template, String providerId, String name, String id, Location location, URI uri,
-         Map<String, String> userMetadata, OperatingSystem operatingSystem, String description,
-         @Nullable String version, @Nullable Credentials defaultCredentials) {
+   public VCloudExpressImage(VCloudExpressVAppTemplate template, String providerId, String name, String id, Location location, URI uri,
+            Map<String, String> userMetadata, OperatingSystem operatingSystem, String description,
+            @Nullable String version, @Nullable Credentials defaultCredentials) {
       super(providerId, name, id, location, uri, userMetadata, operatingSystem, description, version,
-            defaultCredentials);
+               defaultCredentials);
       this.template = template;
    }
 
-   public VAppTemplate getVAppTemplate() {
+   public VCloudExpressVAppTemplate getVAppTemplate() {
       return template;
    }
 

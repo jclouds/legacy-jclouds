@@ -39,8 +39,8 @@ import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.compute.domain.VCloudImage;
-import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.compute.domain.VCloudExpressImage;
+import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
@@ -77,7 +77,7 @@ public class ParseSizeFromImageSupplier implements Supplier<Set<? extends Size>>
          @Override
          public Size apply(Image from) {
             try {
-               VAppTemplate template = VCloudImage.class.cast(from).getVAppTemplate();
+               VCloudExpressVAppTemplate template = VCloudExpressImage.class.cast(from).getVAppTemplate();
                Matcher matcher = getMatcherAndFind(template.getName());
                double cores = Double.parseDouble(matcher.group(1));
                int ram = Integer.parseInt(matcher.group(2));

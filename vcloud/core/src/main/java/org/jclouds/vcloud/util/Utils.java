@@ -33,16 +33,20 @@ import org.xml.sax.Attributes;
  * @author Adrian Cole
  */
 public class Utils {
+   public static NamedResource newNamedResource(Attributes attributes, String defaultType) {
+      String uri = attributes.getValue(attributes.getIndex("href"));
+      String type = attributes.getValue(attributes.getIndex("type"));
+      return new NamedResourceImpl(attributes.getValue(attributes.getIndex("name")), type != null ? type : defaultType,
+            URI.create(uri));
+   }
 
    public static NamedResource newNamedResource(Attributes attributes) {
-      String uri = attributes.getValue(attributes.getIndex("href"));
-      return new NamedResourceImpl(attributes.getValue(attributes.getIndex("name")), attributes.getValue(attributes
-               .getIndex("type")), URI.create(uri));
+      return newNamedResource(attributes, null);
    }
 
    public static Task.Error newError(Attributes attributes) {
       return new ErrorImpl(attrOrNull(attributes, "message"), attrOrNull(attributes, "majorErrorCode"), attrOrNull(
-               attributes, "minorErrorCode"));
+            attributes, "minorErrorCode"));
    }
 
    public static String attrOrNull(Attributes attributes, String attr) {

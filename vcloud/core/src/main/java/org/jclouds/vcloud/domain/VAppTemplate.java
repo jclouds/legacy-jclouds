@@ -19,14 +19,68 @@
 
 package org.jclouds.vcloud.domain;
 
+import java.util.List;
+
+import javax.annotation.Nullable;
+
+import org.jclouds.vcloud.domain.internal.VDCImpl;
+
+import com.google.inject.ImplementedBy;
+
 /**
+ * A VAppTemplate is an abstract description of a vApp. It is created when you
+ * upload an OVF package to a vDC.
  * 
  * @author Adrian Cole
  */
+@ImplementedBy(VDCImpl.class)
 public interface VAppTemplate extends NamedResource {
+   /**
+    * Reference to the VDC containing this template.
+    * 
+    * @since vcloud api 1.0
+    * @return org, or null if this is a version before 1.0 where the vdc isn't
+    *         present
+    */
+   NamedResource getVDC();
 
+   /**
+    * @return creation status of the VAppTemplate.
+    * 
+    * @since vcloud api 1.0
+    */
    Status getStatus();
 
+   /**
+    * optional description
+    * 
+    * @since vcloud api 1.0
+    */
+   @Nullable
    String getDescription();
+
+   /**
+    * read-only container for Task elements. Each element in the container
+    * represents a queued, running, or failed task owned by this object.
+    * 
+    * @since vcloud api 1.0
+    */
+   List<Task> getTasks();
+
+   /**
+    * 
+    * @return true if the OVF descriptor for the template has been uploaded to
+    *         the containing vDC.
+    * @since vcloud api 1.0
+    */
+   boolean isOvfDescriptorUploaded();
+
+   /**
+    * read-only identifier created on import
+    * 
+    * @since vcloud api 1.0
+    */
+   @Nullable
+   String getVAppScopedLocalId();
 
 }

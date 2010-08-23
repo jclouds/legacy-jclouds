@@ -48,7 +48,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.Image;
 import org.jclouds.domain.Location;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
@@ -65,12 +64,10 @@ import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSu
 import org.jclouds.vcloud.CommonVCloudAsyncClient;
 import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.VCloudToken;
-import org.jclouds.vcloud.compute.functions.ImagesInOrg;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Org;
-import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.endpoints.Network;
@@ -80,7 +77,6 @@ import org.jclouds.vcloud.functions.AllCatalogsInOrg;
 import org.jclouds.vcloud.functions.AllVDCsInOrg;
 import org.jclouds.vcloud.functions.OrgsForLocations;
 import org.jclouds.vcloud.functions.OrgsForNames;
-import org.jclouds.vcloud.functions.VAppTemplatesForCatalogItems;
 import org.jclouds.vcloud.handlers.ParseVCloudErrorFromHttpResponse;
 import org.jclouds.vcloud.predicates.TaskSuccess;
 
@@ -123,14 +119,8 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
       bind(new TypeLiteral<Function<Iterable<? extends Location>, Iterable<? extends Org>>>() {
       }).to(new TypeLiteral<OrgsForLocations>() {
       });
-      bind(new TypeLiteral<Function<Org, Iterable<? extends Image>>>() {
-      }).to(new TypeLiteral<ImagesInOrg>() {
-      });
       bind(new TypeLiteral<Function<Catalog, Iterable<? extends CatalogItem>>>() {
       }).to(new TypeLiteral<AllCatalogItemsInCatalog>() {
-      });
-      bind(new TypeLiteral<Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>>>() {
-      }).to(new TypeLiteral<VAppTemplatesForCatalogItems>() {
       });
    }
    

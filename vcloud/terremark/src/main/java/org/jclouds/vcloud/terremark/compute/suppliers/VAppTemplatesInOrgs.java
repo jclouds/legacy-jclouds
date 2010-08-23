@@ -32,7 +32,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.compute.functions.ImagesInOrg;
+import org.jclouds.vcloud.compute.functions.ImagesInVCloudExpressOrg;
 import org.jclouds.vcloud.domain.Org;
 
 import com.google.common.base.Function;
@@ -51,12 +51,12 @@ public class VAppTemplatesInOrgs implements Supplier<Set<? extends Image>> {
 
    private final Supplier<Set<? extends Location>> locations;
    private final Function<Iterable<? extends Location>, Iterable<? extends Org>> organizatonsForLocations;
-   private final ImagesInOrg imagesInOrg;
+   private final ImagesInVCloudExpressOrg imagesInOrg;
 
    @Inject
    VAppTemplatesInOrgs(Supplier<Set<? extends Location>> locations,
             Function<Iterable<? extends Location>, Iterable<? extends Org>> organizatonsForLocations,
-            ImagesInOrg imagesInOrg) {
+            ImagesInVCloudExpressOrg imagesInOrg) {
       this.locations = locations;
       this.organizatonsForLocations = organizatonsForLocations;
       this.imagesInOrg = imagesInOrg;

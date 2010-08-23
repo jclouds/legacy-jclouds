@@ -24,14 +24,14 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
-import org.jclouds.vcloud.compute.functions.ImageForVAppTemplate;
+import org.jclouds.vcloud.compute.functions.ImageForVCloudExpressVAppTemplate;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class BlueLockVCloudImageForVAppTemplate extends ImageForVAppTemplate {
+public class BlueLockVCloudImageForVAppTemplate extends ImageForVCloudExpressVAppTemplate {
 
    @Inject
    protected BlueLockVCloudImageForVAppTemplate(FindLocationForResource findLocationForResource,

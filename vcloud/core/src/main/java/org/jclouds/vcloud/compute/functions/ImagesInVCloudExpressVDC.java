@@ -25,9 +25,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
-import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
-import org.jclouds.vcloud.functions.VAppTemplatesForResourceEntities;
+import org.jclouds.vcloud.functions.VCloudExpressVAppTemplatesForResourceEntities;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -36,22 +36,21 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class ImagesInVDC implements Function<VDC, Iterable<? extends Image>> {
-   private final VAppTemplatesForResourceEntities vAppTemplatesForResourceEntities;
-   private final ImageForVAppTemplate imageForVAppTemplateProvider;
+public class ImagesInVCloudExpressVDC implements Function<VDC, Iterable<? extends Image>> {
+   private final VCloudExpressVAppTemplatesForResourceEntities vAppTemplatesForResourceEntities;
+   private final ImageForVCloudExpressVAppTemplate imageForVAppTemplateProvider;
 
    @Inject
-   public ImagesInVDC(VAppTemplatesForResourceEntities vAppTemplatesForResourceEntities,
-         ImageForVAppTemplate imageForVAppTemplateProvider) {
-      this.vAppTemplatesForResourceEntities = checkNotNull(vAppTemplatesForResourceEntities,
-            "vAppTemplatesForResourceEntities");
+   public ImagesInVCloudExpressVDC(VCloudExpressVAppTemplatesForResourceEntities vAppTemplatesForResourceEntities,
+            ImageForVCloudExpressVAppTemplate imageForVAppTemplateProvider) {
+      this.vAppTemplatesForResourceEntities = checkNotNull(vAppTemplatesForResourceEntities, "vAppTemplatesForResourceEntities");
       this.imageForVAppTemplateProvider = checkNotNull(imageForVAppTemplateProvider, "imageForVAppTemplateProvider");
    }
 
    @Override
    public Iterable<? extends Image> apply(VDC from) {
-      Iterable<? extends VAppTemplate> vAppTemplates = vAppTemplatesForResourceEntities.apply(checkNotNull(from, "vdc")
-            .getResourceEntities().values());
+      Iterable<? extends VCloudExpressVAppTemplate> vAppTemplates = vAppTemplatesForResourceEntities.apply(checkNotNull(from, "vdc")
+               .getResourceEntities().values());
       return Iterables.transform(vAppTemplates, imageForVAppTemplateProvider.withParent(from));
    }
 

@@ -25,7 +25,6 @@ import static org.jclouds.vcloud.VCloudMediaType.NETWORK_XML;
 import static org.jclouds.vcloud.VCloudMediaType.ORG_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASKSLIST_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASK_XML;
-import static org.jclouds.vcloud.VCloudMediaType.VAPPTEMPLATE_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 
@@ -50,14 +49,12 @@ import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.network.OrgNetwork;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.OrgNameAndCatalogNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameAndVDCNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameCatalogNameItemNameToEndpoint;
-import org.jclouds.vcloud.functions.OrgNameCatalogNameVAppTemplateNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameToTasksListEndpoint;
 import org.jclouds.vcloud.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
@@ -68,7 +65,6 @@ import org.jclouds.vcloud.xml.OrgNetworkHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
-import org.jclouds.vcloud.xml.VAppTemplateHandler;
 import org.jclouds.vcloud.xml.VDCHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -121,27 +117,6 @@ public interface CommonVCloudAsyncClient {
    ListenableFuture<? extends Catalog> findCatalogInOrgNamed(
             @Nullable @EndpointParam(parser = OrgNameAndCatalogNameToEndpoint.class) String orgName,
             @Nullable @EndpointParam(parser = OrgNameAndCatalogNameToEndpoint.class) String catalogName);
-
-   /**
-    * @see VCloudClient#getVAppTemplate
-    */
-   @GET
-   @Consumes(VAPPTEMPLATE_XML)
-   @XMLResponseParser(VAppTemplateHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends VAppTemplate> getVAppTemplate(@EndpointParam URI vAppTemplate);
-
-   /**
-    * @see VCloudClient#findVAppTemplateInOrgCatalogNameds
-    */
-   @GET
-   @Consumes(VAPPTEMPLATE_XML)
-   @XMLResponseParser(VAppTemplateHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends VAppTemplate> findVAppTemplateInOrgCatalogNamed(
-            @Nullable @EndpointParam(parser = OrgNameCatalogNameVAppTemplateNameToEndpoint.class) String orgName,
-            @Nullable @EndpointParam(parser = OrgNameCatalogNameVAppTemplateNameToEndpoint.class) String catalogName,
-            @EndpointParam(parser = OrgNameCatalogNameVAppTemplateNameToEndpoint.class) String itemName);
 
    /**
     * @see VCloudClient#getCatalogItem

@@ -50,7 +50,7 @@ import com.google.inject.name.Names;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "vcloud.BindInstantiateVAppTemplateParamsToXmlPayloadTest")
-public class VCloudExpressBindInstantiateVAppTemplateParamsToXmlPayloadTest {
+public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayloadTest {
    Injector injector = Guice.createInjector(new AbstractModule() {
 
       @Override
@@ -69,8 +69,8 @@ public class VCloudExpressBindInstantiateVAppTemplateParamsToXmlPayloadTest {
       request.setPayload(expected);
       replay(request);
 
-      BindInstantiateVAppTemplateParamsToXmlPayload binder = injector
-               .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
+      BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload binder = injector
+               .getInstance(BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "my-vapp");
@@ -92,8 +92,8 @@ public class VCloudExpressBindInstantiateVAppTemplateParamsToXmlPayloadTest {
       request.setPayload(expected);
       replay(request);
 
-      BindInstantiateVAppTemplateParamsToXmlPayload binder = injector
-               .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
+      BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload binder = injector
+               .getInstance(BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "my-vapp");
@@ -115,8 +115,8 @@ public class VCloudExpressBindInstantiateVAppTemplateParamsToXmlPayloadTest {
       request.setPayload(expected);
       replay(request);
 
-      BindInstantiateVAppTemplateParamsToXmlPayload binder = injector
-               .getInstance(BindInstantiateVAppTemplateParamsToXmlPayload.class);
+      BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload binder = injector
+               .getInstance(BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "my-vapp");

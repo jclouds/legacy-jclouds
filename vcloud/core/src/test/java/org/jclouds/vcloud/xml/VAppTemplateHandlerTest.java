@@ -27,11 +27,13 @@ import java.net.URI;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
+import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
-import org.jclouds.vcloud.domain.internal.VAppTemplateImpl;
+import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -42,28 +44,21 @@ import com.google.inject.Injector;
  */
 @Test(groups = "unit", testName = "vcloud.VAppTemplateHandlerTest")
 public class VAppTemplateHandlerTest {
-
-   private Injector injector;
-
-   private Factory factory;
-
-   public void testTerremark() {
-      InputStream is = getClass().getResourceAsStream("/vAppTemplate-trmk.xml");
-      injector = Guice.createInjector(new SaxParserModule());
-      factory = injector.getInstance(ParseSax.Factory.class);
+   public void testVCloud1_0() {
+      InputStream is = getClass().getResourceAsStream("/vAppTemplate.xml");
+      Injector injector = Guice.createInjector(new SaxParserModule());
+      Factory factory = injector.getInstance(ParseSax.Factory.class);
       VAppTemplate result = factory.create(injector.getInstance(VAppTemplateHandler.class)).parse(is);
-      assertEquals(result, new VAppTemplateImpl("CentOS 5.3 (32-bit)", URI
-            .create("https://services.vcloudexpress.terremark.com/api/v0.8/vAppTemplate/5"),
-            "description of CentOS 5.3 (32-bit)", null));
+      assertEquals(result.getName(), "Ubuntu Template");
+      assertEquals(result.getId(), URI.create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921"));
+      assertEquals(result.getType(), "application/vnd.vmware.vcloud.vAppTemplate+xml");
+      assertEquals(result.getStatus(), Status.OFF);
+      assertEquals(result.getVDC(), new NamedResourceImpl(null, VCloudMediaType.VDC_XML, URI
+            .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439")));
+      assertEquals(result.getDescription(), null);
+      assertEquals(result.getTasks(), ImmutableList.of());
+      assertEquals(result.getVAppScopedLocalId(), "02_ubuntu_template");
+      assert result.isOvfDescriptorUploaded();
    }
 
-   public void testHosting() {
-      InputStream is = getClass().getResourceAsStream("/vAppTemplate-hosting.xml");
-      injector = Guice.createInjector(new SaxParserModule());
-      factory = injector.getInstance(ParseSax.Factory.class);
-      VAppTemplate result = (VAppTemplate) factory.create(injector.getInstance(VAppTemplateHandler.class)).parse(is);
-      assertEquals(result, new VAppTemplateImpl("cPanel (Linux) 64 Bit", URI
-            .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/4"), "cPanel (Linux) 64 Bit",
-            Status.RESOLVED));
-   }
 }

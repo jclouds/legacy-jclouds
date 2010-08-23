@@ -55,24 +55,25 @@ public class ParseVCloudErrorFromHttpResponse implements HttpErrorHandler {
       try {
          String content = parseErrorFromContentOrNull(command, response);
          switch (response.getStatusCode()) {
-            case 401:
-               exception = new AuthorizationException(command.getRequest(), content);
-               break;
-            case 404:
-               if (!command.getRequest().getMethod().equals("DELETE")) {
-                  String path = command.getRequest().getEndpoint().getPath();
-                  Matcher matcher = RESOURCE_PATTERN.matcher(path);
-                  String message;
-                  if (matcher.find()) {
-                     message = String.format("%s %s not found", matcher.group(1), matcher.group(2));
-                  } else {
-                     message = path;
-                  }
-                  exception = new ResourceNotFoundException(message);
+         case 401:
+         case 403:
+            exception = new AuthorizationException(command.getRequest(), content);
+            break;
+         case 404:
+            if (!command.getRequest().getMethod().equals("DELETE")) {
+               String path = command.getRequest().getEndpoint().getPath();
+               Matcher matcher = RESOURCE_PATTERN.matcher(path);
+               String message;
+               if (matcher.find()) {
+                  message = String.format("%s %s not found", matcher.group(1), matcher.group(2));
+               } else {
+                  message = path;
                }
-               break;
-            default:
-               exception = new HttpResponseException(command, response, content);
+               exception = new ResourceNotFoundException(message);
+            }
+            break;
+         default:
+            exception = new HttpResponseException(command, response, content);
          }
       } finally {
          releasePayload(response);

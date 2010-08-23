@@ -33,25 +33,39 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.VCloudExpressClient;
+import org.jclouds.vcloud.domain.CatalogItem;
+import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.domain.VCloudSession;
+import org.jclouds.vcloud.functions.VCloudExpressVAppTemplatesForCatalogItems;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 import domain.VCloudExpressLoginAsyncClient;
 
 /**
- * Configures the VCloud authentication service connection, including logging and http transport.
+ * Configures the VCloud authentication service connection, including logging
+ * and http transport.
  * 
  * @author Adrian Cole
  */
 @RequiresHttp
 @ConfiguresRestClient
 public abstract class BaseVCloudExpressRestClientModule<S extends VCloudExpressClient, A extends VCloudExpressAsyncClient>
-         extends CommonVCloudRestClientModule<S, A> {
+      extends CommonVCloudRestClientModule<S, A> {
 
    public BaseVCloudExpressRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
       super(syncClientType, asyncClientType);
+   }
+
+   @Override
+   protected void configure() {
+      bind(new TypeLiteral<Function<Iterable<? extends CatalogItem>, Iterable<? extends VCloudExpressVAppTemplate>>>() {
+      }).to(new TypeLiteral<VCloudExpressVAppTemplatesForCatalogItems>() {
+      });
+      super.configure();
    }
 
    @Provides
@@ -63,22 +77,22 @@ public abstract class BaseVCloudExpressRestClientModule<S extends VCloudExpressC
    @Provides
    @Singleton
    protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final VCloudExpressLoginAsyncClient login) {
+         final VCloudExpressLoginAsyncClient login) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<VCloudSession>(authException, seconds,
-               new Supplier<VCloudSession>() {
+            new Supplier<VCloudSession>() {
 
-                  @Override
-                  public VCloudSession get() {
-                     try {
-                        return login.login().get(10, TimeUnit.SECONDS);
-                     } catch (Exception e) {
-                        propagate(e);
-                        assert false : e;
-                        return null;
-                     }
+               @Override
+               public VCloudSession get() {
+                  try {
+                     return login.login().get(10, TimeUnit.SECONDS);
+                  } catch (Exception e) {
+                     propagate(e);
+                     assert false : e;
+                     return null;
                   }
+               }
 
-               });
+            });
    }
 
 }

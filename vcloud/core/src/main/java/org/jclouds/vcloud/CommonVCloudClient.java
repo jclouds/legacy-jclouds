@@ -32,7 +32,6 @@ import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.network.OrgNetwork;
 
@@ -91,25 +90,6 @@ public interface CommonVCloudClient {
     *            if you specified an org, catalog, or catalog item name that isn't present
     */
    CatalogItem findCatalogItemInOrgCatalogNamed(@Nullable String orgName, @Nullable String catalogName, String itemName);
-
-   VAppTemplate getVAppTemplate(URI vAppTemplate);
-
-   /**
-    * returns the vapp template corresponding to a catalog item in the catalog associated with the
-    * specified name. Note that the org and catalog parameters can be null to choose default.
-    * 
-    * @param orgName
-    *           organization name, or null for the default
-    * @param catalogName
-    *           catalog name, or null for the default
-    * @param itemName
-    *           item you wish to lookup
-    * 
-    * @throws NoSuchElementException
-    *            if you specified an org, catalog, or catalog item name that isn't present
-    */
-   VAppTemplate findVAppTemplateInOrgCatalogNamed(@Nullable String orgName, @Nullable String catalogName,
-            String itemName);
 
    OrgNetwork findNetworkInOrgVDCNamed(@Nullable String orgName, @Nullable String catalogName, String networkName);
 

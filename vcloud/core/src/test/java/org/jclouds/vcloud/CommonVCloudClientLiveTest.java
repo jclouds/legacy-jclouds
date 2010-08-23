@@ -111,32 +111,37 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
          Catalog response = connection.getCatalog(cat.getId());
          for (NamedResource resource : response.values()) {
             if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-               CatalogItem item = connection.findCatalogItemInOrgCatalogNamed(null, null, resource.getName());
-               assertNotNull(item);
-               assertNotNull(item.getEntity());
-               assertNotNull(item.getId());
-               assertNotNull(item.getProperties());
-               assertNotNull(item.getType());
+               CatalogItem item = connection.getCatalogItem(resource.getId());
+               verifyCatalogItem(item);
             }
          }
       }
    }
 
+   protected void verifyCatalogItem(CatalogItem item) {
+      assertNotNull(item);
+      assertNotNull(item);
+      assertNotNull(item.getEntity());
+      assertNotNull(item.getId());
+      assertNotNull(item.getProperties());
+      assertNotNull(item.getType());
+   }
+
    @Test
-   public void testGetVAppTemplate() throws Exception {
+   public void testFindCatalogItem() throws Exception {
       Org org = connection.findOrgNamed(null);
       for (NamedResource cat : org.getCatalogs().values()) {
          Catalog response = connection.getCatalog(cat.getId());
          for (NamedResource resource : response.values()) {
             if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-               CatalogItem item = connection.getCatalogItem(resource.getId());
-               if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
-                  assertNotNull(connection.findVAppTemplateInOrgCatalogNamed(null, null, item.getEntity().getName()));
-               }
+               CatalogItem item = connection.findCatalogItemInOrgCatalogNamed(org.getName(), response.getName(),
+                     resource.getName());
+               verifyCatalogItem(item);
             }
          }
       }
    }
+
 
    @Test
    public void testDefaultVDC() throws Exception {
@@ -196,7 +201,7 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
       props.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       props.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), props).getProviderSpecificContext();
+            ImmutableSet.<Module> of(new Log4JLoggingModule()), props).getProviderSpecificContext();
 
       connection = context.getApi();
    }
