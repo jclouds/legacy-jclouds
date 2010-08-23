@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.domain;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -47,6 +48,14 @@ public interface Org extends NamedResource {
    String getDescription();
 
    /**
+    * full name of the organization
+    * 
+    * @since vcloud api 1.0
+    */
+   @Nullable
+   String getFullName();
+
+   /**
     * @since vcloud api 0.8
     */
    Map<String, NamedResource> getCatalogs();
@@ -69,5 +78,13 @@ public interface Org extends NamedResource {
     * @since vcloud api 1.0
     */
    Map<String, NamedResource> getNetworks();
+
+   /**
+    * read‐only container for Task elements. Each element in the container represents a queued,
+    * running, or failed task owned by this object.
+    * 
+    * @since vcloud api 1.0
+    */
+   List<Task> getTasks();
 
 }

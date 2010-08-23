@@ -51,6 +51,7 @@ import org.jclouds.util.Utils;
 import org.jclouds.vcloud.config.VCloudExpressRestClientModule;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.internal.CatalogImpl;
 import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
@@ -74,6 +75,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
@@ -741,14 +743,15 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
          @Override
          public Map<String, Org> get() {
             return ImmutableMap.<String, Org> of("org", new OrgImpl("org", null, URI
-                     .create("https://vcloud.safesecureweb.com/api/v0.8/org/1"), null, ImmutableMap
+                     .create("https://vcloud.safesecureweb.com/api/v0.8/org/1"), "org", null, ImmutableMap
                      .<String, NamedResource> of("catalog", new NamedResourceImpl("catalog",
                               VCloudExpressMediaType.CATALOG_XML, URI
                                        .create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"))), ImmutableMap
                      .<String, NamedResource> of("vdc", new NamedResourceImpl("vdc", VCloudExpressMediaType.VDC_XML,
                               URI.create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"))), null,
                      new NamedResourceImpl("tasksList", VCloudExpressMediaType.TASKSLIST_XML, URI
-                              .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/1"))));
+                              .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/1")), ImmutableList
+                              .<Task> of()));
          }
       }
 
@@ -763,13 +766,14 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
          public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> get() {
             return ImmutableMap.<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> of("org",
 
-            ImmutableMap.<String, org.jclouds.vcloud.domain.Catalog> of("catalog", new CatalogImpl("catalog", URI
-                     .create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"), "description", ImmutableMap
-                     .<String, NamedResource> of("item", new NamedResourceImpl("item",
+            ImmutableMap.<String, org.jclouds.vcloud.domain.Catalog> of("catalog", new CatalogImpl("catalog", "type",
+                     URI.create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"), null, "description",
+                     ImmutableMap.<String, NamedResource> of("item", new NamedResourceImpl("item",
                               "application/vnd.vmware.vcloud.catalogItem+xml", URI
                                        .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/1")), "template",
                               new NamedResourceImpl("template", "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
-                                       .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2"))))));
+                                       .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2"))),
+                     ImmutableList.<Task> of(), true)));
          }
       }
 

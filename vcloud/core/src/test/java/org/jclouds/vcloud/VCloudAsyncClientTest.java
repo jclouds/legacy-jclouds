@@ -51,6 +51,7 @@ import org.jclouds.util.Utils;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.internal.CatalogImpl;
 import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
@@ -73,6 +74,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
@@ -721,9 +723,12 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
                                                       "vdc",
                                                       new VDCImpl(
                                                                "vdc",
-                                                               null, URI
+                                                               null,
+                                                               URI
                                                                         .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"),
-                                                               null, null, "description",
+                                                               null,
+                                                               null,
+                                                               "description",
                                                                null,
                                                                null,
                                                                null,
@@ -757,7 +762,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
          @Override
          public Map<String, Org> get() {
             return ImmutableMap.<String, Org> of("org", new OrgImpl("org", null, URI
-                     .create("https://vcenterprise.bluelock.com/api/v1.0/org/1"), "description", ImmutableMap
+                     .create("https://vcenterprise.bluelock.com/api/v1.0/org/1"), "org", "description", ImmutableMap
                      .<String, NamedResource> of("catalog", new NamedResourceImpl("catalog",
                               VCloudMediaType.CATALOG_XML, URI
                                        .create("https://vcenterprise.bluelock.com/api/v1.0/catalog/1"))), ImmutableMap
@@ -767,7 +772,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
                               VCloudMediaType.NETWORK_XML, URI
                                        .create("https://vcenterprise.bluelock.com/api/v1.0/network/1"))),
                      new NamedResourceImpl("tasksList", VCloudMediaType.TASKSLIST_XML, URI
-                              .create("https://vcenterprise.bluelock.com/api/v1.0/tasksList/1"))));
+                              .create("https://vcenterprise.bluelock.com/api/v1.0/tasksList/1")), ImmutableList
+                              .<Task> of()));
          }
       }
 
@@ -780,32 +786,17 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
          @Override
          public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> get() {
-            return ImmutableMap
-                     .<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> of(
-                              "org",
+            return ImmutableMap.<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> of("org",
 
-                              ImmutableMap
-                                       .<String, org.jclouds.vcloud.domain.Catalog> of(
-                                                "catalog",
-                                                new CatalogImpl(
-                                                         "catalog",
-                                                         URI
-                                                                  .create("https://vcenterprise.bluelock.com/api/v1.0/catalog/1"),
-                                                         "description",
-                                                         ImmutableMap
-                                                                  .<String, NamedResource> of(
-                                                                           "item",
-                                                                           new NamedResourceImpl(
-                                                                                    "item",
-                                                                                    "application/vnd.vmware.vcloud.catalogItem+xml",
-                                                                                    URI
-                                                                                             .create("https://vcenterprise.bluelock.com/api/v1.0/catalogItem/1")),
-                                                                           "template",
-                                                                           new NamedResourceImpl(
-                                                                                    "template",
-                                                                                    "application/vnd.vmware.vcloud.vAppTemplate+xml",
-                                                                                    URI
-                                                                                             .create("https://vcenterprise.bluelock.com/api/v1.0/catalogItem/2"))))));
+            ImmutableMap.<String, org.jclouds.vcloud.domain.Catalog> of("catalog", new CatalogImpl("catalog", "type",
+                     URI.create("https://vcenterprise.bluelock.com/api/v1.0/catalog/1"), null, "description",
+                     ImmutableMap.<String, NamedResource> of("item", new NamedResourceImpl("item",
+                              "application/vnd.vmware.vcloud.catalogItem+xml", URI
+                                       .create("https://vcenterprise.bluelock.com/api/v1.0/catalogItem/1")),
+                              "template", new NamedResourceImpl("template",
+                                       "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
+                                                .create("https://vcenterprise.bluelock.com/api/v1.0/catalogItem/2"))),
+                     ImmutableList.<Task> of(), true)));
          }
       }
 

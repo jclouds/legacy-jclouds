@@ -22,21 +22,34 @@ package org.jclouds.vcloud.xml;
 import static org.jclouds.vcloud.util.Utils.newNamedResource;
 import static org.jclouds.vcloud.util.Utils.putNamedResource;
 
+import java.util.List;
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.internal.OrgImpl;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
  * @author Adrian Cole
  */
 public class OrgHandler extends ParseSax.HandlerWithResult<Org> {
+
+   protected final TaskHandler taskHandler;
+
+   @Inject
+   public OrgHandler(TaskHandler taskHandler) {
+      this.taskHandler = taskHandler;
+   }
+
    private StringBuilder currentText = new StringBuilder();
 
    protected NamedResource org;
@@ -44,11 +57,14 @@ public class OrgHandler extends ParseSax.HandlerWithResult<Org> {
    protected NamedResource tasksList;
    protected Map<String, NamedResource> catalogs = Maps.newLinkedHashMap();
    protected Map<String, NamedResource> networks = Maps.newLinkedHashMap();
+   protected List<Task> tasks = Lists.newArrayList();
 
    protected String description;
+   protected String fullName;
 
    public Org getResult() {
-      return new OrgImpl(org.getName(),  org.getType(), org.getId(), description, catalogs, vdcs, networks, tasksList);
+      return new OrgImpl(org.getName(), org.getType(), org.getId(), fullName != null ? fullName : org.getName(),
+               description, catalogs, vdcs, networks, tasksList, tasks);
    }
 
    @Override
@@ -68,12 +84,20 @@ public class OrgHandler extends ParseSax.HandlerWithResult<Org> {
                putNamedResource(networks, attributes);
             }
          }
+      } else {
+         taskHandler.startElement(uri, localName, qName, attributes);
       }
+
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("Description")) {
+      taskHandler.endElement(uri, name, qName);
+      if (qName.equals("Task")) {
+         this.tasks.add(taskHandler.getResult());
+      } else if (qName.equals("Description")) {
          description = currentOrNull();
+      } else if (qName.equals("FullName")) {
+         fullName = currentOrNull();
       }
       currentText = new StringBuilder();
    }

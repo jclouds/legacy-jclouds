@@ -55,6 +55,7 @@ public class OrgHandlerTest {
 
       Org result = (Org) factory.create(injector.getInstance(OrgHandler.class)).parse(is);
       assertEquals(result.getName(), "ExampleOrg");
+      assertEquals(result.getFullName(), "ExampleOrg");
       assertEquals(result.getDescription(), "Example Corp's Primary Organization.");
       assertEquals(result.getId(), URI.create("http://vcloud.example.com/api/v1.0/org/5"));
       assertEquals(result.getCatalogs(), ImmutableMap.of("Main Catalog", new NamedResourceImpl("Main Catalog",
@@ -79,6 +80,7 @@ public class OrgHandlerTest {
 
       Org result = (Org) factory.create(injector.getInstance(OrgHandler.class)).parse(is);
       assertEquals(result.getName(), "adrian@jclouds.org");
+      assertEquals(result.getFullName(), "adrian@jclouds.org");
       assertEquals(result.getId(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"));
       assertEquals(result.getCatalogs(), ImmutableMap.of("Miami Environment 1 Catalog", new NamedResourceImpl(
                "Miami Environment 1 Catalog", CATALOG_XML, URI
@@ -96,6 +98,7 @@ public class OrgHandlerTest {
       Factory factory = injector.getInstance(ParseSax.Factory.class);
       Org result = (Org) factory.create(injector.getInstance(OrgHandler.class)).parse(is);
       assertEquals(result.getName(), "Customer 188849");
+      assertEquals(result.getFullName(), "Customer 188849");
       assertEquals(result.getId(), URI.create("https://vcloud.safesecureweb.com/api/v0.8/org/188849"));
       assertEquals(result.getCatalogs(), ImmutableMap.of("HMS Shared Catalog", new NamedResourceImpl(
                "HMS Shared Catalog", CATALOG_XML, URI.create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"))));

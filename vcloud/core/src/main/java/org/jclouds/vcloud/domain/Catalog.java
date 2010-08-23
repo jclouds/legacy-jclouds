@@ -19,7 +19,10 @@
 
 package org.jclouds.vcloud.domain;
 
+import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nullable;
 
 import org.jclouds.vcloud.domain.internal.CatalogImpl;
 
@@ -31,7 +34,35 @@ import com.google.inject.ImplementedBy;
 @org.jclouds.vcloud.endpoints.Catalog
 @ImplementedBy(CatalogImpl.class)
 public interface Catalog extends NamedResource, Map<String, NamedResource> {
+   /**
+    * Reference to the org containing this vDC.
+    * 
+    * @since vcloud api 1.0
+    * @return org, or null if this is a version before 1.0 where the org isn't present
+    */
+   NamedResource getOrg();
 
+   /**
+    * optional description
+    * 
+    * @since vcloud api 0.8
+    */
+   @Nullable
    String getDescription();
 
+   /**
+    * read‐only element, true if the catalog is published
+    * 
+    * @since vcloud api 1.0
+    */
+   @Nullable
+   boolean isPublished();
+
+   /**
+    * read‐only container for Task elements. Each element in the container represents a queued,
+    * running, or failed task owned by this object.
+    * 
+    * @since vcloud api 1.0
+    */
+   List<Task> getTasks();
 }

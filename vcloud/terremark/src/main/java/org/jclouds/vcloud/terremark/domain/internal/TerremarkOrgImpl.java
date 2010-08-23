@@ -25,8 +25,11 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.internal.OrgImpl;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
+
+import com.google.common.collect.ImmutableList;
 
 /**
  * Locations of resources in a Terremark vCloud
@@ -41,7 +44,7 @@ public class TerremarkOrgImpl extends OrgImpl implements TerremarkOrg {
    public TerremarkOrgImpl(String name, String type, URI id, String description, Map<String, NamedResource> catalogs,
             Map<String, NamedResource> vdcs, Map<String, NamedResource> networks, @Nullable NamedResource tasksList,
             NamedResource keysList) {
-      super(name, type, id, description, catalogs, vdcs, networks, tasksList);
+      super(name, type, id, name, description, catalogs, vdcs, networks, tasksList, ImmutableList.<Task> of());
       this.keysList = keysList;
    }
 
