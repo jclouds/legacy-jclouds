@@ -26,7 +26,7 @@ import java.net.URI;
 
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 import org.jclouds.vcloud.domain.TasksList;
@@ -64,15 +64,15 @@ public class TasksListHandlerTest extends BaseHandlerTest {
 
       URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/task/3300"), TaskStatus.SUCCESS, dateService
             .iso8601DateParse("2009-08-24T21:30:19.587Z"), dateService.iso8601DateParse("2009-08-24T21:30:32.63Z"),
-            null, new NamedResourceImpl("VDC Name", VCloudMediaType.VDC_XML, URI
+            null, new NamedResourceImpl("VDC Name", VCloudExpressMediaType.VDC_XML, URI
                   .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/1")), new NamedResourceImpl(
-                  "Server1", VCloudMediaType.VAPP_XML, URI
+                  "Server1", VCloudExpressMediaType.VAPP_XML, URI
                         .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/4012")), null);
       Task task2 = new TaskImpl(URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/task/3299"),
             TaskStatus.SUCCESS, dateService.iso8601DateParse("2009-08-24T21:29:32.983Z"), dateService
                   .iso8601DateParse("2009-08-24T21:29:44.65Z"), null, new NamedResourceImpl("VDC Name",
-                  VCloudMediaType.VDC_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/1")),
-            new NamedResourceImpl("Server1", VCloudMediaType.VAPP_XML, URI
+                  VCloudExpressMediaType.VDC_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/1")),
+            new NamedResourceImpl("Server1", VCloudExpressMediaType.VAPP_XML, URI
                   .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/4012")), null);
       assertEquals(result.getTasks(), ImmutableSortedSet.of(task1, task2));
    }

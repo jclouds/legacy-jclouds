@@ -30,7 +30,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rest.RestContext;
-import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
+import org.jclouds.vcloud.compute.VCloudExpressComputeServiceLiveTest;
 import org.jclouds.vcloud.terremark.TerremarkECloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkECloudClient;
 import org.testng.annotations.Test;
@@ -41,11 +41,12 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "terremark.TerremarkVCloudComputeServiceLiveTest")
-public class TerremarkECloudComputeServiceLiveTest extends VCloudComputeServiceLiveTest {
+public class TerremarkECloudComputeServiceLiveTest extends VCloudExpressComputeServiceLiveTest {
 
    @Override
    public void setServiceDefaults() {
       provider = "trmk-ecloud";
+      tag = "trmke";
    }
 
    @Override
@@ -57,9 +58,9 @@ public class TerremarkECloudComputeServiceLiveTest extends VCloudComputeServiceL
    @Test
    public void testTemplateBuilder() {
       Template defaultTemplate = client.templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getLocation().getDescription(), "Miami Environment 1");
+      assert defaultTemplate.getLocation().getDescription() != null;// different per org
       assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
    }
 
@@ -73,8 +74,8 @@ public class TerremarkECloudComputeServiceLiveTest extends VCloudComputeServiceL
    protected Template buildTemplate(TemplateBuilder templateBuilder) {
       Template template = super.buildTemplate(templateBuilder);
       Image image = template.getImage();
-      assert image.getDefaultCredentials().identity != null : image;
-      assert image.getDefaultCredentials().credential != null : image;
+      assert image.getDefaultCredentials() != null && image.getDefaultCredentials().identity != null : image;
+      assert image.getDefaultCredentials() != null && image.getDefaultCredentials().credential != null : image;
       return template;
    }
 
@@ -91,9 +92,10 @@ public class TerremarkECloudComputeServiceLiveTest extends VCloudComputeServiceL
          assert image.getProviderId() != null : image;
          // image.getLocationId() can be null, if it is a location-free image
          assertEquals(image.getType(), ComputeType.IMAGE);
-         assert image.getDefaultCredentials().identity != null : image;
-         if (image.getOperatingSystem().getFamily() != OsFamily.WINDOWS)
+         if (image.getOperatingSystem().getFamily() != OsFamily.WINDOWS) {
+            assert image.getDefaultCredentials() != null && image.getDefaultCredentials().identity != null : image;
             assert image.getDefaultCredentials().credential != null : image;
+         }
       }
    }
 

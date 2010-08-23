@@ -39,14 +39,14 @@
 -->
 
   <input
-    message="Which service would you like to use (ec2, cloudservers, vcloud, terremark, rimuhosting, hostingdotcom)?"
-    validargs="ec2,cloudservers,vcloud,terremark,rimuhosting,hostingdotcom"
+    message="Which service would you like to use (ec2, cloudservers, vcloud, terremark, rimuhosting)?"
+    validargs="ec2,cloudservers,vcloud,terremark,rimuhosting"
     addproperty="service"
   />
 
   <input
     message="Which driver does ${service} use?"
-    validargs="aws,rackspace,vcloud,terremark,rimuhosting,hostingdotcom"
+    validargs="aws,rackspace,vcloud,terremark,rimuhosting"
     addproperty="driver"
   />
 

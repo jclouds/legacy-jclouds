@@ -27,7 +27,7 @@ import java.net.URI;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.internal.VAppTemplateImpl;
 import org.testng.annotations.Test;
@@ -64,6 +64,6 @@ public class VAppTemplateHandlerTest {
       VAppTemplate result = (VAppTemplate) factory.create(injector.getInstance(VAppTemplateHandler.class)).parse(is);
       assertEquals(result, new VAppTemplateImpl("cPanel (Linux) 64 Bit", URI
             .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/4"), "cPanel (Linux) 64 Bit",
-            VAppStatus.RESOLVED));
+            Status.RESOLVED));
    }
 }

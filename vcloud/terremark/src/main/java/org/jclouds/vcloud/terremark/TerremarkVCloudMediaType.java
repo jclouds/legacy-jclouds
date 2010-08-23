@@ -21,14 +21,14 @@ package org.jclouds.vcloud.terremark;
 
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 
 /**
  * Resource Types used in Terremark VCloud
  * 
  * @see MediaType
  */
-public interface TerremarkVCloudMediaType extends VCloudMediaType {
+public interface TerremarkVCloudMediaType extends VCloudExpressMediaType {
 
    /**
     * "application/vnd.tmrk.vCloud.publicIp+xml"

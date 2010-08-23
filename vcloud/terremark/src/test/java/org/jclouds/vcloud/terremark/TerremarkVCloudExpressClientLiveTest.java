@@ -31,7 +31,7 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.vcloud.terremark.domain.KeyPair;
-import org.jclouds.vcloud.terremark.domain.TerremarkOrganization;
+import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
@@ -54,7 +54,7 @@ public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTes
    @Test
    public void testKeysList() throws Exception {
       TerremarkVCloudExpressClient vCloudExpressClient = TerremarkVCloudExpressClient.class.cast(tmClient);
-      TerremarkOrganization org = vCloudExpressClient.findOrganizationNamed(null);
+      TerremarkOrg org = vCloudExpressClient.findOrgNamed(null);
       Set<KeyPair> response = vCloudExpressClient.listKeyPairsInOrg(null);
       assertNotNull(response);
       System.err.println(response);
@@ -65,7 +65,7 @@ public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTes
    protected void prepare() {
       TerremarkVCloudExpressClient vCloudExpressClient = TerremarkVCloudExpressClient.class.cast(tmClient);
 
-      TerremarkOrganization org = vCloudExpressClient.findOrganizationNamed(null);
+      TerremarkOrg org = vCloudExpressClient.findOrgNamed(null);
       try {
          key = vCloudExpressClient.generateKeyPairInOrg(org.getId(), "livetest", false);
       } catch (IllegalStateException e) {

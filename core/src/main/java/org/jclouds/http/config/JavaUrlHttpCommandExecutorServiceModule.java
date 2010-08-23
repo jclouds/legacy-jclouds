@@ -19,12 +19,18 @@
 
 package org.jclouds.http.config;
 
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
@@ -32,9 +38,13 @@ import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
 import org.jclouds.http.internal.JavaUrlHttpCommandExecutorService;
 import org.jclouds.logging.Logger;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 /**
  * Configures {@link JavaUrlHttpCommandExecutorService}.
@@ -52,11 +62,13 @@ public class JavaUrlHttpCommandExecutorServiceModule extends AbstractModule {
    }
 
    protected void bindClient() {
-      bind(HttpCommandExecutorService.class).to(JavaUrlHttpCommandExecutorService.class).in(
-               Scopes.SINGLETON);
+      bind(HttpCommandExecutorService.class).to(JavaUrlHttpCommandExecutorService.class).in(Scopes.SINGLETON);
       bind(HostnameVerifier.class).to(LogToMapHostnameVerifier.class);
-      bind(TransformingHttpCommandExecutorService.class).to(
-               TransformingHttpCommandExecutorServiceImpl.class).in(Scopes.SINGLETON);
+      bind(TransformingHttpCommandExecutorService.class).to(TransformingHttpCommandExecutorServiceImpl.class).in(
+               Scopes.SINGLETON);
+      bind(new TypeLiteral<Supplier<SSLContext>>() {
+      }).annotatedWith(Names.named("untrusted")).to(new TypeLiteral<UntrustedSSLContextSupplier>() {
+      });
    }
 
    /**
@@ -75,6 +87,51 @@ public class JavaUrlHttpCommandExecutorServiceModule extends AbstractModule {
          logger.warn("hostname was %s while session was %s", hostname, session.getPeerHost());
          sslMap.put(hostname, session.getPeerHost());
          return true;
+      }
+   }
+
+   @Singleton
+   public static class UntrustedSSLContextSupplier implements Supplier<SSLContext> {
+      private final TrustAllCerts trustAllCerts;
+
+      @Inject
+      UntrustedSSLContextSupplier(TrustAllCerts trustAllCerts) {
+         this.trustAllCerts = trustAllCerts;
+      }
+
+      @Override
+      public SSLContext get() {
+         try {
+            SSLContext sc;
+            sc = SSLContext.getInstance("SSL");
+            sc.init(null, new TrustManager[] { trustAllCerts }, new SecureRandom());
+            return sc;
+         } catch (Exception e) {
+            Throwables.propagate(e);
+            return null;
+         }
+
+      }
+   }
+
+   /**
+    * 
+    * Used to trust all certs
+    * 
+    * @author Adrian Cole
+    */
+   @Singleton
+   static class TrustAllCerts implements X509TrustManager {
+      public X509Certificate[] getAcceptedIssuers() {
+         return null;
+      }
+
+      public void checkClientTrusted(X509Certificate[] certs, String authType) {
+         return;
+      }
+
+      public void checkServerTrusted(X509Certificate[] certs, String authType) {
+         return;
       }
    }
 }

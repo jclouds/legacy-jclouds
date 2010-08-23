@@ -26,9 +26,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.vcloud.domain.Organization;
-import org.jclouds.vcloud.endpoints.Org;
-import org.jclouds.vcloud.terremark.domain.TerremarkOrganization;
+import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -40,28 +39,27 @@ import com.google.common.collect.Maps;
  */
 @Singleton
 public class OrgURIToKeysListEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, ? extends Organization>> orgMap;
+   private final Supplier<Map<String, ? extends Org>> orgMap;
    private final URI defaultOrg;
 
    @Inject
-   public OrgURIToKeysListEndpoint(Supplier<Map<String, ? extends Organization>> orgMap, @Org URI defaultUri) {
+   public OrgURIToKeysListEndpoint(Supplier<Map<String, ? extends Org>> orgMap,
+            @org.jclouds.vcloud.endpoints.Org URI defaultUri) {
       this.orgMap = orgMap;
       this.defaultOrg = defaultUri;
    }
 
    public URI apply(Object from) {
-      Map<URI, ? extends Organization> uriToOrg = Maps.uniqueIndex(orgMap.get().values(),
-            new Function<Organization, URI>() {
+      Map<URI, ? extends Org> uriToOrg = Maps.uniqueIndex(orgMap.get().values(), new Function<Org, URI>() {
 
-               @Override
-               public URI apply(Organization from) {
-                  return from.getId();
-               }
+         @Override
+         public URI apply(Org from) {
+            return from.getId();
+         }
 
-            });
+      });
       try {
-         return TerremarkOrganization.class.cast(uriToOrg.get(from == null ? defaultOrg : from)).getKeysList()
-               .getId();
+         return TerremarkOrg.class.cast(uriToOrg.get(from == null ? defaultOrg : from)).getKeysList().getId();
       } catch (NullPointerException e) {
          throw new ResourceNotFoundException("org " + from + " not found in " + uriToOrg);
       }

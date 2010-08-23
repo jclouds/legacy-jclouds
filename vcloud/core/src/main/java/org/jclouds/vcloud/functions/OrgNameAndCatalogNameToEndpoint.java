@@ -29,9 +29,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.endpoints.Catalog;
-import org.jclouds.vcloud.endpoints.Org;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -43,13 +42,13 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class OrgNameAndCatalogNameToEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, ? extends Organization>> orgMap;
+   private final Supplier<Map<String, ? extends Org>> orgMap;
    private final String defaultOrg;
    private final URI defaultUri;
 
    @Inject
-   public OrgNameAndCatalogNameToEndpoint(Supplier<Map<String, ? extends Organization>> orgMap, @Org String defaultOrg,
-         @Catalog URI defaultUri) {
+   public OrgNameAndCatalogNameToEndpoint(Supplier<Map<String, ? extends Org>> orgMap,
+         @org.jclouds.vcloud.endpoints.Org String defaultOrg, @Catalog URI defaultUri) {
       this.orgMap = orgMap;
       this.defaultOrg = defaultOrg;
       this.defaultUri = defaultUri;

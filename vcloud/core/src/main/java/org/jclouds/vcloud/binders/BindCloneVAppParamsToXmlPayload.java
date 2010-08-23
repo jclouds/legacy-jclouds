@@ -38,7 +38,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 
 import com.google.inject.Inject;
@@ -95,7 +95,7 @@ public class BindCloneVAppParamsToXmlPayload implements MapBinder {
       XMLBuilder rootBuilder = buildRoot(newName, options.isDeploy(), options.isPowerOn());
       if (options.getDescription() != null)
          rootBuilder.e("Description").text(options.getDescription());
-      rootBuilder.e("VApp").a("href", vApp).a("type", VCloudMediaType.VAPP_XML);
+      rootBuilder.e("VApp").a("href", vApp).a("type", VCloudExpressMediaType.VAPP_XML);
       Properties outputProperties = new Properties();
       outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
       return rootBuilder.asString(outputProperties);

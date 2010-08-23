@@ -24,8 +24,8 @@ import java.util.Properties;
 
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.vcloud.VCloudContextBuilder;
-import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
+import org.jclouds.vcloud.VCloudExpressContextBuilder;
+import org.jclouds.vcloud.compute.config.VCloudExpressComputeServiceContextModule;
 import org.jclouds.vcloud.terremark.config.TerremarkECloudRestClientModule;
 
 import com.google.inject.Injector;
@@ -44,7 +44,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @see TerremarkVCloudComputeServiceContext
  */
-public class TerremarkECloudContextBuilder extends VCloudContextBuilder {
+public class TerremarkECloudContextBuilder extends VCloudExpressContextBuilder {
 
    public TerremarkECloudContextBuilder(Properties props) {
       super(props);
@@ -53,7 +53,7 @@ public class TerremarkECloudContextBuilder extends VCloudContextBuilder {
    @Override
    protected void addContextModule(List<Module> modules) {
       // TODO make ecloud version which retrieves passwords from the vapptemplate description
-      modules.add(new VCloudComputeServiceContextModule());
+      modules.add(new VCloudExpressComputeServiceContextModule());
    }
 
    @Override

@@ -31,6 +31,7 @@ import java.util.concurrent.Executors;
 
 import javax.inject.Provider;
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.ws.rs.core.UriBuilder;
 
@@ -50,6 +51,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
@@ -112,12 +114,20 @@ public class BackoffLimitedRetryHandlerTest {
       RedirectionRetryHandler retry = new RedirectionRetryHandler(uriBuilderProvider, backoff);
       JavaUrlHttpCommandExecutorService httpService = new JavaUrlHttpCommandExecutorService(utils, execService,
                new DelegatingRetryHandler(backoff, retry), new BackoffLimitedRetryHandler(),
-               new DelegatingErrorHandler(), new HttpWire(), new HostnameVerifier(){
+               new DelegatingErrorHandler(), new HttpWire(), new HostnameVerifier() {
 
                   @Override
                   public boolean verify(String hostname, SSLSession session) {
                      return false;
-                  }});
+                  }
+               }, new Supplier<SSLContext>() {
+
+                  @Override
+                  public SSLContext get() {
+                     return null;
+                  }
+
+               });
       executorService = new TransformingHttpCommandExecutorServiceImpl(httpService, execService);
    }
 

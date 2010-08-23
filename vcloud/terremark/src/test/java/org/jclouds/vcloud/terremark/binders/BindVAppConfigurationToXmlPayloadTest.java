@@ -32,11 +32,11 @@ import java.util.Properties;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
-import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.internal.VAppImpl;
+import org.jclouds.vcloud.terremark.TerremarkVCloudExpressPropertiesBuilder;
 import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
 import org.testng.annotations.Test;
 
@@ -60,13 +60,13 @@ public class BindVAppConfigurationToXmlPayloadTest {
       @Override
       protected void configure() {
          Properties props = new Properties();
-         Names.bindProperties(binder(), checkNotNull(new VCloudPropertiesBuilder(props).build(), "properties"));
+         Names.bindProperties(binder(), checkNotNull(new TerremarkVCloudExpressPropertiesBuilder(props).build(), "properties"));
       }
    });
 
    public void testChangeName() throws IOException {
       VAppImpl vApp = new VAppImpl("MyAppServer6", URI
-               .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), VAppStatus.OFF, 4194304l,
+               .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), Status.OFF, 4194304l,
                null, ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.of(
                         new ResourceAllocation(1, "n/a", null, ResourceType.PROCESSOR, null, null, null, null, null,
                                  null, 2, null), new ResourceAllocation(2, "n/a", null, ResourceType.MEMORY, null,
@@ -93,7 +93,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
    public void testRemoveDisk() throws IOException {
       VAppImpl vApp = new VAppImpl("MyAppServer6", URI
-               .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), VAppStatus.OFF, 4194304l,
+               .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), Status.OFF, 4194304l,
                null, ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.of(
                         new ResourceAllocation(1, "n/a", null, ResourceType.PROCESSOR, null, null, null, null, null,
                                  null, 2, null), new ResourceAllocation(2, "n/a", null, ResourceType.MEMORY, null,
@@ -122,7 +122,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
    public void testChangeCPUCountTo4() throws IOException {
       VAppImpl vApp = new VAppImpl("eduardo", URI
-               .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), VAppStatus.OFF, 4194304l,
+               .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), Status.OFF, 4194304l,
                null, ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.of(
                         new ResourceAllocation(1, "n/a", null, ResourceType.PROCESSOR, null, null, null, null, null,
                                  null, 4, null), new ResourceAllocation(2, "n/a", null, ResourceType.MEMORY, null,
@@ -147,7 +147,7 @@ public class BindVAppConfigurationToXmlPayloadTest {
 
    public void testChangeMemoryTo1536() throws IOException {
       VAppImpl vApp = new VAppImpl("MyAppServer6", URI
-               .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), VAppStatus.OFF, 4194304l,
+               .create("https://services.vcloudexpress/terremark.com/api/v0.8/vapp/4213"), Status.OFF, 4194304l,
                null, ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.of(
                         new ResourceAllocation(1, "n/a", null, ResourceType.PROCESSOR, null, null, null, null, null,
                                  null, 2, null), new ResourceAllocation(2, "n/a", null, ResourceType.MEMORY, null,

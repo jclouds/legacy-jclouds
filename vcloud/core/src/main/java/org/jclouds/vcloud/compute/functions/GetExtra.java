@@ -31,7 +31,7 @@ import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.compute.BaseVCloudComputeClient;
+import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.VApp;
@@ -40,7 +40,7 @@ import com.google.common.base.Function;
 
 /**
  * Configures the {@link VCloudComputeServiceContext}; requires
- * {@link BaseVCloudComputeClient} bound.
+ * {@link VCloudExpressComputeClientImpl} bound.
  * 
  * @author Adrian Cole
  */

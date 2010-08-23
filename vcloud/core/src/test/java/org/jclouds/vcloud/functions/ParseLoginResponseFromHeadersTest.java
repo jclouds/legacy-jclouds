@@ -28,9 +28,9 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.io.Payloads;
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
+import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
-import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -59,7 +59,7 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
       VCloudSession reply = parser.apply(response);
       assertEquals(reply.getVCloudToken(), "9er4d061-4bff-48fa-84b1-5da7166764d2");
       assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new NamedResourceImpl("adrian@jclouds.org",
-            VCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
+            VCloudExpressMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
 
    }
 
@@ -75,7 +75,7 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
       VCloudSession reply = parser.apply(response);
       assertEquals(reply.getVCloudToken(), "c9f232506df9b65d7b7d97b7499eddd7");
       assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new NamedResourceImpl("adrian@jclouds.org",
-            VCloudMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
+            VCloudExpressMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
 
    }
 

@@ -31,9 +31,18 @@
     <artifactId>jclouds-bluelock</artifactId>
     <name>jclouds bluelock Components Core</name>
     <description>jclouds core components to access bluelock</description>
+
     <properties>
-        <jclouds.test.identity>${jclouds.bluelock.user}</jclouds.test.identity>
-        <jclouds.test.credential>${jclouds.bluelock.password}</jclouds.test.credential>
+        <!-- when instances are hung, open a ticket and add their names here -->
+        <jclouds.compute.blacklist.nodes></jclouds.compute.blacklist.nodes>
+        <bluelock-vcloudexpress.endpoint>https://express.bluelock.com/api</bluelock-vcloudexpress.endpoint>
+        <bluelock-vcloudexpress.apiversion>0.8</bluelock-vcloudexpress.apiversion>
+        <bluelock-vcloudexpress.identity>FIXME</bluelock-vcloudexpress.identity>
+        <bluelock-vcloudexpress.credential>FIXME</bluelock-vcloudexpress.credential>
+        <bluelock-vclouddirector.endpoint>https://vcenterprise.bluelock.com/api</bluelock-vclouddirector.endpoint>
+        <bluelock-vclouddirector.apiversion>1.0</bluelock-vclouddirector.apiversion>
+        <bluelock-vclouddirector.identity>FIXME</bluelock-vclouddirector.identity>
+        <bluelock-vclouddirector.credential>FIXME</bluelock-vclouddirector.credential>
     </properties>
 
     <scm>
@@ -56,5 +65,66 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+    <profiles>
+        <profile>
+            <id>live</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>integration</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemProperties>
+                                        <property>
+                                            <name>bluelock-vcloudexpress.endpoint</name>
+                                            <value>${bluelock-vcloudexpress.endpoint}</value>
+                                        </property>
+                                        <property>
+                                            <name>bluelock-vcloudexpress.apiversion</name>
+                                            <value>${bluelock-vcloudexpress.apiversion}</value>
+                                        </property>
+                                        <property>
+                                            <name>bluelock-vcloudexpress.identity</name>
+                                            <value>${bluelock-vcloudexpress.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>bluelock-vcloudexpress.credential</name>
+                                            <value>${bluelock-vcloudexpress.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>bluelock-vclouddirector.endpoint</name>
+                                            <value>${bluelock-vclouddirector.endpoint}</value>
+                                        </property>
+                                        <property>
+                                            <name>bluelock-vclouddirector.apiversion</name>
+                                            <value>${bluelock-vclouddirector.apiversion}</value>
+                                        </property>
+                                        <property>
+                                            <name>bluelock-vclouddirector.identity</name>
+                                            <value>${bluelock-vclouddirector.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>bluelock-vclouddirector.credential</name>
+                                            <value>${bluelock-vclouddirector.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.compute.blacklist.nodes</name>
+                                            <value>${jclouds.compute.blacklist.nodes}</value>
+                                        </property>
+                                    </systemProperties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

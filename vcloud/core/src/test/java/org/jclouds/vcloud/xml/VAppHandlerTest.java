@@ -24,22 +24,30 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.UnknownHostException;
+import java.util.Properties;
 import java.util.SortedSet;
 
+import org.jclouds.Constants;
 import org.jclouds.http.functions.BaseHandlerTest;
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppStatus;
 import org.jclouds.vcloud.domain.VirtualSystem;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.jclouds.vcloud.domain.internal.VAppImpl;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.ListMultimap;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.name.Names;
 
 /**
  * Tests behavior of {@code VAppHandler}
@@ -48,33 +56,20 @@ import com.google.common.collect.ListMultimap;
  */
 @Test(groups = "unit", testName = "vcloud.VAppHandlerTest")
 public class VAppHandlerTest extends BaseHandlerTest {
-   @Test(enabled = false)
-   public void testHosting() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/vapp-hosting.xml");
+   @BeforeTest
+   @Override
+   protected void setUpInjector() {
+      injector = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
 
-      VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
+         @Override
+         protected void configure() {
+            Properties toBind = new Properties();
+            toBind.setProperty(Constants.PROPERTY_API_VERSION, "0.8");
+            Names.bindProperties(binder(), toBind);
+         }
 
-      ListMultimap<String, String> networkToAddresses = ImmutableListMultimap.<String, String> of("Network 1",
-               "204.12.11.167");
-
-      VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family", "SimpleVM", "vmx-07");
-
-      SortedSet<ResourceAllocation> resourceAllocations = ImmutableSortedSet.<ResourceAllocation> naturalOrder().add(
-               new ResourceAllocation(1, "1 virtual CPU(s)", "Number of Virtual CPUs", ResourceType.PROCESSOR, null,
-                        null, null, null, null, null, 1, "hertz * 10^6"),
-               new ResourceAllocation(2, "512MB of memory", "Memory Size", ResourceType.MEMORY, null, null, null, null,
-                        null, null, 512, "byte * 2^20")).add(
-
-               new ResourceAllocation(3, "SCSI Controller 0", "SCSI Controller", ResourceType.SCSI_CONTROLLER,
-                        "lsilogic", null, 0, null, null, null, 1, null)).add(
-
-               new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE, null, "20971520", null, 0, 3,
-                        null, 20971520, "byte * 2^20")).build();
-
-      VApp expects = new VAppImpl("188849-96", URI.create("https://vcloud.safesecureweb.com/api/v0.8/vapp/188849-96"),
-               VAppStatus.OFF, new Long(20971520), null, networkToAddresses, null, null, system, resourceAllocations);
-
-      assertEquals(result, expects);
+      });
+      factory = injector.getInstance(ParseSax.Factory.class);
    }
 
    public void testInstantiated() throws UnknownHostException {
@@ -82,7 +77,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
 
       VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
 
-      VApp expects = new VAppImpl("centos53", URI.create("http://10.150.4.49/api/v0.8/vApp/10"), VAppStatus.RESOLVED,
+      VApp expects = new VAppImpl("centos53", URI.create("http://10.150.4.49/api/v0.8/vApp/10"), Status.RESOLVED,
                123456789l, new NamedResourceImpl(null, "application/vnd.vmware.vcloud.vdc+xml", URI
                         .create("http://10.150.4.49/api/v0.8/vdc/4")), ImmutableListMultimap.<String, String> of(),
                null, null, null, ImmutableSet.<ResourceAllocation> of());
@@ -110,10 +105,10 @@ public class VAppHandlerTest extends BaseHandlerTest {
                new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE, null, "104857", null, 0, 3,
                         null, 104857, "byte * 2^20")).build();
 
-      VApp expects = new VAppImpl("centos53", URI.create("http://10.150.4.49/api/v0.8/vApp/10"), VAppStatus.ON,
-               new Long(104857), new NamedResourceImpl(null, "application/vnd.vmware.vcloud.vdc+xml", URI
-                        .create("http://10.150.4.49/api/v0.8/vdc/4")), networkToAddresses, null,
-               "Other Linux (32-bit)", system, resourceAllocations);
+      VApp expects = new VAppImpl("centos53", URI.create("http://10.150.4.49/api/v0.8/vApp/10"), Status.ON, new Long(
+               104857), new NamedResourceImpl(null, "application/vnd.vmware.vcloud.vdc+xml", URI
+               .create("http://10.150.4.49/api/v0.8/vdc/4")), networkToAddresses, null, "Other Linux (32-bit)", system,
+               resourceAllocations);
       assertEquals(result.getId(), expects.getId());
       assertEquals(result.getName(), expects.getName());
       assertEquals(result.getNetworkToAddresses(), expects.getNetworkToAddresses());
@@ -147,7 +142,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
                new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE, null, "10485760", null, 0, 3,
                         null, 10485760, "byte * 2^20")).build();
 
-      VApp expects = new VAppImpl("m1", URI.create("http://localhost:8000/api/v0.8/vApp/80"), VAppStatus.ON, new Long(
+      VApp expects = new VAppImpl("m1", URI.create("http://localhost:8000/api/v0.8/vApp/80"), Status.ON, new Long(
                10485760), new NamedResourceImpl(null, "application/vnd.vmware.vcloud.vdc+xml", URI
                .create("http://localhost:8000/api/v0.8/vdc/28")), networkToAddresses, null,
                "Microsoft Windows XP Professional (32-bit)", system, resourceAllocations);

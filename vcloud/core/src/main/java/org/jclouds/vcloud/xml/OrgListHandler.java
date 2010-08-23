@@ -19,7 +19,7 @@
 
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.vcloud.VCloudMediaType.ORG_XML;
+import static org.jclouds.vcloud.VCloudExpressMediaType.ORG_XML;
 import static org.jclouds.vcloud.util.Utils.putNamedResource;
 
 import java.util.Map;

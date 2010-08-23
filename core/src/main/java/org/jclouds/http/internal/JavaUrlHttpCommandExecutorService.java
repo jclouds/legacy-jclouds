@@ -47,6 +47,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
@@ -62,6 +63,7 @@ import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 
+import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -77,6 +79,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
    public static final String USER_AGENT = "jclouds/1.0 java/" + System.getProperty("java.version");
    @Resource
    protected Logger logger = Logger.NULL;
+   private final Supplier<SSLContext> untrustedSSLContextProvider;
    private final HostnameVerifier verifier;
    private final Field methodField;
 
@@ -84,11 +87,13 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
    public JavaUrlHttpCommandExecutorService(HttpUtils utils,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
             DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
-            DelegatingErrorHandler errorHandler, HttpWire wire, HostnameVerifier verifier) throws SecurityException,
+            DelegatingErrorHandler errorHandler, HttpWire wire, HostnameVerifier verifier,
+            @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider) throws SecurityException,
             NoSuchFieldException {
       super(utils, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       if (utils.getMaxConnections() > 0)
          System.setProperty("http.maxConnections", String.valueOf(checkNotNull(utils, "utils").getMaxConnections()));
+      this.untrustedSSLContextProvider = checkNotNull(untrustedSSLContextProvider, "untrustedSSLContextProvider");
       this.verifier = checkNotNull(verifier, "verifier");
       this.methodField = HttpURLConnection.class.getDeclaredField("method");
       methodField.setAccessible(true);
@@ -160,9 +165,12 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
       } else {
          connection = (HttpURLConnection) url.openConnection();
       }
-      if (utils.relaxHostname() && connection instanceof HttpsURLConnection) {
+      if (connection instanceof HttpsURLConnection) {
          HttpsURLConnection sslCon = (HttpsURLConnection) connection;
-         sslCon.setHostnameVerifier(verifier);
+         if (utils.relaxHostname())
+            sslCon.setHostnameVerifier(verifier);
+         if (utils.trustAllCerts())
+            sslCon.setSSLSocketFactory(untrustedSSLContextProvider.get().getSocketFactory());
       }
       connection.setDoOutput(true);
       connection.setAllowUserInteraction(false);

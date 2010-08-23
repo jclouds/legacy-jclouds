@@ -30,7 +30,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rest.RestContext;
-import org.jclouds.vcloud.compute.VCloudComputeServiceLiveTest;
+import org.jclouds.vcloud.compute.VCloudExpressComputeServiceLiveTest;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressClient;
 import org.testng.annotations.Test;
@@ -41,12 +41,12 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "terremark.TerremarkVCloudComputeServiceLiveTest")
-public class TerremarkVCloudExpressComputeServiceLiveTest extends VCloudComputeServiceLiveTest {
+public class TerremarkVCloudExpressComputeServiceLiveTest extends VCloudExpressComputeServiceLiveTest {
 
    @Override
    public void setServiceDefaults() {
       provider = "trmk-vcloudexpress";
-      tag = "trmk-vcx";
+      tag = "vcx";
    }
 
    @Override

@@ -32,10 +32,10 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.util.Utils;
-import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudExpressAsyncClient;
+import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
+import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressAsyncClient;
@@ -63,13 +63,13 @@ public class TerremarkVCloudExpressRestClientModule extends
 
    @Provides
    @Singleton
-   protected VCloudAsyncClient provideVCloudAsyncClient(TerremarkVCloudExpressAsyncClient in) {
+   protected VCloudExpressAsyncClient provideVCloudAsyncClient(TerremarkVCloudExpressAsyncClient in) {
       return in;
    }
 
    @Provides
    @Singleton
-   protected VCloudClient provideVCloudClient(TerremarkVCloudExpressClient in) {
+   protected VCloudExpressClient provideVCloudClient(TerremarkVCloudExpressClient in) {
       return in;
    }
 
@@ -102,7 +102,7 @@ public class TerremarkVCloudExpressRestClientModule extends
 
             @Override
             public NamedResource apply(NamedResource from) {
-               return client.findOrganizationNamed(from.getName()).getKeysList();
+               return client.findOrgNamed(from.getName()).getKeysList();
             }
 
          });

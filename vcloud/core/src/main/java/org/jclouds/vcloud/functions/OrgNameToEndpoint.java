@@ -38,20 +38,21 @@ import com.google.common.base.Supplier;
  */
 @Singleton
 public class OrgNameToEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, NamedResource>> orgNameToEndpoint;
+   private final Supplier<Map<String, NamedResource>> orgNameToEndpointSupplier;
    private final URI defaultUri;
 
    @Inject
-   public OrgNameToEndpoint(@Org Supplier<Map<String, NamedResource>> orgNameToEndpoint, @Org URI defaultUri) {
-      this.orgNameToEndpoint = orgNameToEndpoint;
+   public OrgNameToEndpoint(@Org Supplier<Map<String, NamedResource>> orgNameToEndpointSupplier, @Org URI defaultUri) {
+      this.orgNameToEndpointSupplier = orgNameToEndpointSupplier;
       this.defaultUri = defaultUri;
    }
 
    public URI apply(Object from) {
       try {
-         return from == null ? defaultUri : orgNameToEndpoint.get().get(from).getId();
+         Map<String, NamedResource> orgNameToEndpoint = orgNameToEndpointSupplier.get();
+         return from == null ? defaultUri : orgNameToEndpoint.get(from).getId();
       } catch (NullPointerException e) {
-         throw new NoSuchElementException("org " + from + " not found in " + orgNameToEndpoint.get().keySet());
+         throw new NoSuchElementException("org " + from + " not found in " + orgNameToEndpointSupplier.get().keySet());
       }
    }
 

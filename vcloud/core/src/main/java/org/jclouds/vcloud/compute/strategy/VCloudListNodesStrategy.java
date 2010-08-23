@@ -36,10 +36,9 @@ import org.jclouds.compute.domain.internal.ComputeMetadataImpl;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
-import org.jclouds.vcloud.compute.functions.VCloudGetNodeMetadata;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.endpoints.Org;
 
@@ -55,14 +54,14 @@ import com.google.inject.internal.util.ImmutableSet;
 /**
  * @author Adrian Cole
  */
-//TODO REFACTOR!!! needs to be parallel
+// TODO REFACTOR!!! needs to be parallel
 @Singleton
 public class VCloudListNodesStrategy implements ListNodesStrategy {
    @Resource
    @Named(COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
-   protected final VCloudGetNodeMetadata getNodeMetadata;
-   protected final VCloudClient client;
+   protected final VCloudGetNodeMetadataStrategy getNodeMetadata;
+   protected final CommonVCloudClient client;
    protected final FindLocationForResource findLocationForResourceInVDC;
    Set<String> blackListVAppNames = ImmutableSet.<String> of();
 
@@ -75,8 +74,9 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
    private final Supplier<Map<String, NamedResource>> orgNameToEndpoint;
 
    @Inject
-   protected VCloudListNodesStrategy(VCloudClient client, @Org Supplier<Map<String, NamedResource>> orgNameToEndpoint,
-         VCloudGetNodeMetadata getNodeMetadata, FindLocationForResource findLocationForResourceInVDC) {
+   protected VCloudListNodesStrategy(CommonVCloudClient client,
+            @Org Supplier<Map<String, NamedResource>> orgNameToEndpoint, VCloudGetNodeMetadataStrategy getNodeMetadata,
+            FindLocationForResource findLocationForResourceInVDC) {
       this.client = client;
       this.orgNameToEndpoint = orgNameToEndpoint;
       this.getNodeMetadata = getNodeMetadata;
@@ -87,7 +87,7 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
    public Iterable<ComputeMetadata> list() {
       Set<ComputeMetadata> nodes = Sets.newHashSet();
       for (String org : orgNameToEndpoint.get().keySet()) {
-         for (NamedResource vdc : client.findOrganizationNamed(org).getVDCs().values()) {
+         for (NamedResource vdc : client.findOrgNamed(org).getVDCs().values()) {
             for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
                if (validVApp(resource)) {
                   nodes.add(convertVAppToComputeMetadata(vdc, resource));
@@ -104,15 +104,15 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
 
    private ComputeMetadata convertVAppToComputeMetadata(NamedResource vdc, NamedResource resource) {
       Location location = findLocationForResourceInVDC.apply(vdc);
-      return new ComputeMetadataImpl(ComputeType.NODE, resource.getId().toASCIIString(), resource.getName(),
-            resource.getId().toASCIIString(), location, null, ImmutableMap.<String, String> of());
+      return new ComputeMetadataImpl(ComputeType.NODE, resource.getId().toASCIIString(), resource.getName(), resource
+               .getId().toASCIIString(), location, null, ImmutableMap.<String, String> of());
    }
 
    @Override
    public Iterable<NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
       Set<NodeMetadata> nodes = Sets.newHashSet();
       for (String org : orgNameToEndpoint.get().keySet()) {
-         for (NamedResource vdc : client.findOrganizationNamed(org).getVDCs().values()) {
+         for (NamedResource vdc : client.findOrgNamed(org).getVDCs().values()) {
             for (NamedResource resource : client.getVDC(vdc.getId()).getResourceEntities().values()) {
                if (validVApp(resource) && filter.apply(convertVAppToComputeMetadata(vdc, resource))) {
                   addVAppToSetRetryingIfNotYetPresent(nodes, vdc, resource);

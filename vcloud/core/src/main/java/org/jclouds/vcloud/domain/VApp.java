@@ -39,7 +39,7 @@ import com.google.inject.ImplementedBy;
 public interface VApp extends NamedResource {
    NamedResource getVDC();
 
-   VAppStatus getStatus();
+   Status getStatus();
 
    Long getSize();
 

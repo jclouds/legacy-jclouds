@@ -22,31 +22,29 @@ package org.jclouds.vcloud;
 import javax.ws.rs.core.MediaType;
 
 /**
- * Resource Types used in VCloud express
+ * Resource Types used in VCloud
  * 
  * @see MediaType
  */
 public interface VCloudMediaType {
    /**
-    * "application/vnd.vmware.vcloud.organizationList+xml"
+    * "application/vnd.vmware.vcloud.vcloud+xml"
     */
    public final static String VCLOUD_XML = "application/vnd.vmware.vcloud.vcloud+xml";
 
    /**
-    * "application/vnd.vmware.vcloud.organizationList+xml"
+    * "application/vnd.vmware.vcloud.vcloud+xml"
     */
-   public final static MediaType VCLOUD_XML_TYPE = new MediaType("application",
-            "vnd.vmware.vcloud.vcloud+xml");
+   public final static MediaType VCLOUD_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.vcloud+xml");
    /**
-    * "application/vnd.vmware.vcloud.organizationList+xml"
+    * "application/vnd.vmware.vcloud.orgList+xml"
     */
-   public final static String ORGLIST_XML = "application/vnd.vmware.vcloud.organizationList+xml";
+   public final static String ORGLIST_XML = "application/vnd.vmware.vcloud.orgList+xml";
 
    /**
-    * "application/vnd.vmware.vcloud.organizationList+xml"
+    * "application/vnd.vmware.vcloud.orgList+xml"
     */
-   public final static MediaType ORGLIST_XML_TYPE = new MediaType("application",
-            "vnd.vmware.vcloud.organizationList+xml");
+   public final static MediaType ORGLIST_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.orgList+xml");
    /**
     * "application/vnd.vmware.vcloud.org+xml"
     */
@@ -54,8 +52,7 @@ public interface VCloudMediaType {
    /**
     * "application/vnd.vmware.vcloud.org+xml"
     */
-   public final static MediaType ORG_XML_TYPE = new MediaType("application",
-            "vnd.vmware.vcloud.org+xml");
+   public final static MediaType ORG_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.org+xml");
 
    /**
     * "application/vnd.vmware.vcloud.vdc+xml"
@@ -64,8 +61,7 @@ public interface VCloudMediaType {
    /**
     * "application/vnd.vmware.vcloud.vdc+xml"
     */
-   public final static MediaType VDC_XML_TYPE = new MediaType("application",
-            "vnd.vmware.vcloud.vdc+xml");
+   public final static MediaType VDC_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.vdc+xml");
 
    /**
     * "application/vnd.vmware.vcloud.catalog+xml"
@@ -74,8 +70,7 @@ public interface VCloudMediaType {
    /**
     * "application/vnd.vmware.vcloud.catalog+xml"
     */
-   public final static MediaType CATALOG_XML_TYPE = new MediaType("application",
-            "vnd.vmware.vcloud.catalog+xml");
+   public final static MediaType CATALOG_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.catalog+xml");
 
    /**
     * "application/vnd.vmware.vcloud.tasksList+xml"
@@ -84,8 +79,7 @@ public interface VCloudMediaType {
    /**
     * "application/vnd.vmware.vcloud.tasksList+xml"
     */
-   public final static MediaType TASKSLIST_XML_TYPE = new MediaType("application",
-            "vnd.vmware.vcloud.tasksList+xml");
+   public final static MediaType TASKSLIST_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.tasksList+xml");
 
    /**
     * "application/vnd.vmware.vcloud.catalogItem+xml"
@@ -104,8 +98,7 @@ public interface VCloudMediaType {
    /**
     * "application/vnd.vmware.vcloud.task+xml"
     */
-   public final static MediaType TASK_XML_TYPE = new MediaType("application",
-            "vnd.vmware.vcloud.task+xml");
+   public final static MediaType TASK_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.task+xml");
 
    /**
     * "application/vnd.vmware.vcloud.vApp+xml"
@@ -114,8 +107,7 @@ public interface VCloudMediaType {
    /**
     * "application/vnd.vmware.vcloud.vApp+xml"
     */
-   public final static MediaType VAPP_XML_TYPE = new MediaType("application",
-            "vnd.vmware.vcloud.vApp+xml");
+   public final static MediaType VAPP_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.vApp+xml");
 
    /**
     * "application/vnd.vmware.vcloud.vAppTemplate+xml"
@@ -134,7 +126,6 @@ public interface VCloudMediaType {
    /**
     * "application/vnd.vmware.vcloud.network+xml"
     */
-   public final static MediaType NETWORK_XML_TYPE = new MediaType("application",
-            "vnd.vmware.vcloud.network+xml");
+   public final static MediaType NETWORK_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.network+xml");
 
 }

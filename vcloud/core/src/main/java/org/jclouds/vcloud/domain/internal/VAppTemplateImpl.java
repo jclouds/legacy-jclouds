@@ -23,8 +23,8 @@ import java.net.URI;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.VCloudExpressMediaType;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
 /**
@@ -37,10 +37,10 @@ public class VAppTemplateImpl extends NamedResourceImpl implements VAppTemplate 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
    private final String description;
-   private final VAppStatus status;
+   private final Status status;
 
-   public VAppTemplateImpl(String name, URI id, @Nullable String description, @Nullable VAppStatus status) {
-      super(name, VCloudMediaType.VAPPTEMPLATE_XML, id);
+   public VAppTemplateImpl(String name, URI id, @Nullable String description, @Nullable Status status) {
+      super(name, VCloudExpressMediaType.VAPPTEMPLATE_XML, id);
       this.description = description;
       this.status = status;
    }
@@ -50,7 +50,7 @@ public class VAppTemplateImpl extends NamedResourceImpl implements VAppTemplate 
       return description;
    }
 
-   public VAppStatus getStatus() {
+   public Status getStatus() {
       return status;
    }
 

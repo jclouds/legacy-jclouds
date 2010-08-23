@@ -48,8 +48,7 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  * @see VCloudComputeServiceContext
  */
-public class VCloudContextBuilder extends
-         ComputeServiceContextBuilder<VCloudClient, VCloudAsyncClient> {
+public class VCloudContextBuilder extends ComputeServiceContextBuilder<VCloudClient, VCloudAsyncClient> {
 
    public VCloudContextBuilder(Properties props) {
       super(VCloudClient.class, VCloudAsyncClient.class, props);
@@ -68,11 +67,8 @@ public class VCloudContextBuilder extends
    @Override
    public ComputeServiceContext buildComputeServiceContext() {
       // need the generic type information
-      return (ComputeServiceContext) this
-               .buildInjector()
-               .getInstance(
-                        Key
-                                 .get(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudAsyncClient>>() {
-                                 }));
+      return (ComputeServiceContext) this.buildInjector().getInstance(
+               Key.get(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudAsyncClient>>() {
+               }));
    }
 }

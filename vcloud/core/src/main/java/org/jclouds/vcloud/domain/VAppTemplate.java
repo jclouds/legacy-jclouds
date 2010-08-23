@@ -25,7 +25,7 @@ package org.jclouds.vcloud.domain;
  */
 public interface VAppTemplate extends NamedResource {
 
-   VAppStatus getStatus();
+   Status getStatus();
 
    String getDescription();
 

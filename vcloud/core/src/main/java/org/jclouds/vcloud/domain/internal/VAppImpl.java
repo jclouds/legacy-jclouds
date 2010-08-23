@@ -24,11 +24,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VirtualSystem;
 
 import com.google.common.collect.ListMultimap;
@@ -42,7 +42,7 @@ public class VAppImpl implements VApp {
    private final String name;
    private final URI id;
    private final NamedResource vDC;
-   private final VAppStatus status;
+   private final Status status;
    private final Long size;
    private final ListMultimap<String, String> networkToAddresses;
    private final String operatingSystemDescription;
@@ -53,13 +53,13 @@ public class VAppImpl implements VApp {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public VAppImpl(String name, URI id, VAppStatus status, Long size, NamedResource vDC,
+   public VAppImpl(String name, URI id, Status status, Long size, NamedResource vDC,
             ListMultimap<String, String> networkToAddresses, Integer osType, String operatingSystemDescription,
             VirtualSystem system, Set<ResourceAllocation> resourceAllocations) {
       this.name = checkNotNull(name, "name");
       this.id = checkNotNull(id, "id");
       this.status = checkNotNull(status, "status");
-      this.size = size;// hostingdotcom
+      this.size = size;
       this.vDC = vDC;
       this.networkToAddresses = checkNotNull(networkToAddresses, "networkToAddresses");
       this.osType = osType;
@@ -69,7 +69,7 @@ public class VAppImpl implements VApp {
    }
 
    @Override
-   public VAppStatus getStatus() {
+   public Status getStatus() {
       return status;
    }
 
@@ -207,7 +207,7 @@ public class VAppImpl implements VApp {
 
    @Override
    public String getType() {
-      return VCloudMediaType.VAPP_XML;
+      return VCloudExpressMediaType.VAPP_XML;
    }
 
    @Override

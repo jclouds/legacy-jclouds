@@ -84,10 +84,12 @@ public class EC2LoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveT
       for (NodeMetadata node : nodes) {
          instanceIds.add(node.getProviderId());
       }
-      Set<LoadBalancer> elbs = elbClient.describeLoadBalancersInRegion(Region.US_EAST_1, tag);
+      Set<LoadBalancer> elbs = elbClient.describeLoadBalancersInRegion(Region.US_EAST_1);
       assertNotNull(elbs);
-      LoadBalancer elb = elbs.iterator().next();
-      assertEquals(elb.getInstanceIds(), instanceIds);
+      for(LoadBalancer elb:elbs)
+      {
+          if(elb.getName().equals(tag))
+              assertEquals(elb.getInstanceIds(), instanceIds);
+      }
    }
-
 }

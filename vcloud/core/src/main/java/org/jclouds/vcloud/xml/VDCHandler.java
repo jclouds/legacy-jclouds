@@ -22,68 +22,106 @@ package org.jclouds.vcloud.xml;
 import static org.jclouds.vcloud.util.Utils.newNamedResource;
 import static org.jclouds.vcloud.util.Utils.putNamedResource;
 
+import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.vcloud.domain.AllocationModel;
 import org.jclouds.vcloud.domain.Capacity;
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.Quota;
+import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.domain.VDCStatus;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
+import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 /**
  * @author Adrian Cole
  */
 public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
-   private StringBuilder currentText = new StringBuilder();
 
-   private NamedResource vDC;
-   private Map<String, NamedResource> resourceEntities = Maps.newHashMap();
-   private Map<String, NamedResource> availableNetworks = Maps.newHashMap();
+   protected final TaskHandler taskHandler;
 
-   private String description;
+   @Inject
+   public VDCHandler(TaskHandler taskHandler) {
+      this.taskHandler = taskHandler;
+   }
 
-   private Quota instantiatedVmsQuota;
+   protected StringBuilder currentText = new StringBuilder();
 
-   private Capacity memoryCapacity;
+   protected NamedResource vDC;
+   protected VDCStatus status = VDCStatus.READY;
+   protected NamedResource org;
+   protected String description;
+   protected List<Task> tasks = Lists.newArrayList();
+   protected AllocationModel allocationModel = AllocationModel.UNRECOGNIZED_MODEL;
 
-   private Capacity cpuCapacity;
+   protected Capacity storageCapacity;
+   protected Capacity cpuCapacity;
+   protected Capacity memoryCapacity;
 
-   private Capacity storageCapacity;
+   protected String units;
+   protected long allocated = 0;
+   protected long limit = 0;
+   protected int used = 0;
+   protected long overhead = 0;
 
-   private Quota deployedVmsQuota;
+   protected Map<String, NamedResource> resourceEntities = Maps.newLinkedHashMap();
+   protected Map<String, NamedResource> availableNetworks = Maps.newLinkedHashMap();
 
-   private String units;
-
-   private int allocated;
-
-   private int used;
-
-   private int limit;
+   protected int nicQuota;
+   protected int networkQuota;
+   protected int vmQuota;
+   protected boolean isEnabled = true;
 
    public VDC getResult() {
-      return new VDCImpl(vDC.getName(), vDC.getId(), description, storageCapacity, cpuCapacity, memoryCapacity,
-            instantiatedVmsQuota, deployedVmsQuota, resourceEntities, availableNetworks);
+      return new VDCImpl(vDC.getName(), vDC.getType(), vDC.getId(), status, org, description, tasks, allocationModel,
+               storageCapacity, cpuCapacity, memoryCapacity, resourceEntities, availableNetworks, nicQuota,
+               networkQuota, vmQuota, isEnabled);
+   }
+
+   void resetCapacity() {
+      units = null;
+      allocated = 0;
+      limit = 0;
+      used = 0;
+      overhead = 0;
    }
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if (qName.equals("Vdc")) {
          vDC = newNamedResource(attributes);
+         String status = Utils.attrOrNull(attributes, "status");
+         if (status != null)
+            this.status = VDCStatus.fromValue(Integer.parseInt(status));
       } else if (qName.equals("Network")) {
          putNamedResource(availableNetworks, attributes);
       } else if (qName.equals("ResourceEntity")) {
          putNamedResource(resourceEntities, attributes);
+      } else if (qName.equals("Link") && "up".equals(Utils.attrOrNull(attributes, "rel"))) {
+         org = newNamedResource(attributes);
+      } else {
+         taskHandler.startElement(uri, localName, qName, attributes);
       }
+
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("Description")) {
+      taskHandler.endElement(uri, name, qName);
+      if (qName.equals("Task")) {
+         this.tasks.add(taskHandler.getResult());
+      } else if (qName.equals("Description")) {
          description = currentOrNull();
+      } else if (qName.equals("AllocationModel")) {
+         allocationModel = AllocationModel.fromValue(currentOrNull());
       } else if (qName.equals("Units")) {
          units = currentOrNull();
       } else if (qName.equals("Allocated")) {
@@ -92,16 +130,30 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
          used = Integer.parseInt(currentOrNull());
       } else if (qName.equals("Limit")) {
          limit = Integer.parseInt(currentOrNull());
+      } else if (qName.equals("Overhead")) {
+         overhead = Integer.parseInt(currentOrNull());
       } else if (qName.equals("StorageCapacity")) {
-         storageCapacity = new Capacity(units, allocated, used);
+         storageCapacity = new Capacity(units, allocated, limit, used, overhead);
+         resetCapacity();
       } else if (qName.equals("Cpu")) {
-         cpuCapacity = new Capacity(units, allocated, used);
+         cpuCapacity = new Capacity(units, allocated, limit, used, overhead);
+         resetCapacity();
       } else if (qName.equals("Memory")) {
-         memoryCapacity = new Capacity(units, allocated, used);
-      } else if (qName.equals("InstantiatedVmsQuota")) {
-         instantiatedVmsQuota = new Quota(limit, used);
+         memoryCapacity = new Capacity(units, allocated, limit, used, overhead);
+         resetCapacity();
       } else if (qName.equals("DeployedVmsQuota")) {
-         deployedVmsQuota = new Quota(limit, used);
+         vmQuota = (int) limit;
+         // vcloud express doesn't have the zero is unlimited rule
+         if (vmQuota == -1)
+            vmQuota = 0;
+      } else if (qName.equals("VmQuota")) {
+         vmQuota = Integer.parseInt(currentOrNull());
+      } else if (qName.equals("NicQuota")) {
+         nicQuota = Integer.parseInt(currentOrNull());
+      } else if (qName.equals("NetworkQuota")) {
+         networkQuota = Integer.parseInt(currentOrNull());
+      } else if (qName.equals("IsEnabled")) {
+         isEnabled = Boolean.parseBoolean(currentOrNull());
       }
       currentText = new StringBuilder();
    }

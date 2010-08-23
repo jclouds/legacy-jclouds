@@ -19,7 +19,6 @@
 
 package org.jclouds.vcloud.terremark.compute.config;
 
-
 import java.security.SecureRandom;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,10 +41,10 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
-import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.compute.VCloudComputeClient;
-import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
+import org.jclouds.vcloud.VCloudExpressAsyncClient;
+import org.jclouds.vcloud.VCloudExpressClient;
+import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
+import org.jclouds.vcloud.compute.config.VCloudExpressComputeServiceContextModule;
 import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
@@ -74,7 +73,7 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeServiceContextModule {
+public class TerremarkVCloudComputeServiceContextModule extends VCloudExpressComputeServiceContextModule {
 
    @Provides
    @Singleton
@@ -94,7 +93,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       // NOTE
       bind(AddNodeWithTagStrategy.class).to(TerremarkVCloudAddNodeWithTagStrategy.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
-      }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudAsyncClient>>() {
+      }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudExpressClient, VCloudExpressAsyncClient>>() {
       }).in(Scopes.SINGLETON);
       // NOTE
       bind(RunNodesAndAddToSetStrategy.class).to(TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy.class);
@@ -110,11 +109,10 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudComputeSer
       });
       bind(TemplateOptions.class).to(TerremarkVCloudTemplateOptions.class);
       bind(ComputeService.class).to(TerremarkVCloudComputeService.class);
-      bind(VCloudComputeClient.class).to(TerremarkVCloudComputeClient.class);
+      bind(VCloudExpressComputeClient.class).to(TerremarkVCloudComputeClient.class);
       bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(
                ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
       bind(SecureRandom.class).toInstance(new SecureRandom());
-
    }
 
    @Provides

@@ -117,6 +117,9 @@ public class HttpUtils {
    @Inject(optional = true)
    @Named(Constants.PROPERTY_PROXY_PASSWORD)
    private String proxyPassword;
+   @Inject(optional = true)
+   @Named(Constants.PROPERTY_TRUST_ALL_CERTS)
+   private boolean trustAllCerts;
 
    @Inject
    public HttpUtils(@Named(Constants.PROPERTY_CONNECTION_TIMEOUT) int connectionTimeout,
@@ -167,6 +170,10 @@ public class HttpUtils {
 
    public boolean relaxHostname() {
       return relaxHostname;
+   }
+
+   public boolean trustAllCerts() {
+      return trustAllCerts;
    }
 
    public boolean useSystemProxies() {

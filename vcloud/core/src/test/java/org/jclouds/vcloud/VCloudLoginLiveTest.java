@@ -34,9 +34,8 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.annotations.Provider;
+import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.endpoints.VCloudLogin;
-import org.jclouds.vcloud.internal.VCloudLoginAsyncClient;
-import org.jclouds.vcloud.internal.VCloudLoginAsyncClient.VCloudSession;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -44,6 +43,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 import com.google.inject.Provides;
+
+import domain.VCloudExpressLoginAsyncClient;
 
 /**
  * Tests behavior of {@code VCloudLogin}
@@ -53,11 +54,11 @@ import com.google.inject.Provides;
 @Test(groups = "live", testName = "vcloud.VCloudLoginLiveTest")
 public class VCloudLoginLiveTest {
 
-   private RestContext<VCloudLoginClient, VCloudLoginAsyncClient> context;
+   private RestContext<VCloudLoginClient, VCloudExpressLoginAsyncClient> context;
 
    @Test
    public void testLogin() throws Exception {
-      VCloudLoginAsyncClient authentication = context.getAsyncApi();
+      VCloudExpressLoginAsyncClient authentication = context.getAsyncApi();
       for (int i = 0; i < 5; i++) {
          VCloudSession response = authentication.login().get(45, TimeUnit.SECONDS);
          assertNotNull(response);
@@ -80,8 +81,8 @@ public class VCloudLoginLiveTest {
       String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
       String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
-      ContextSpec<VCloudLoginClient, VCloudLoginAsyncClient> contextSpec = contextSpec("test", endpoint, "1", identity,
-               credential, VCloudLoginClient.class, VCloudLoginAsyncClient.class);
+      ContextSpec<VCloudLoginClient, VCloudExpressLoginAsyncClient> contextSpec = contextSpec("test", endpoint, "1", identity,
+               credential, VCloudLoginClient.class, VCloudExpressLoginAsyncClient.class);
 
       context = createContextBuilder(
                contextSpec,

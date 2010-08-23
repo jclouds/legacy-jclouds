@@ -29,8 +29,8 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.domain.Organization;
+import org.jclouds.vcloud.VCloudExpressClient;
+import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.endpoints.VDC;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
 
@@ -51,10 +51,10 @@ public class NodeMetadataToOrgAndName implements Function<NodeMetadata, OrgAndNa
 
    final Supplier<Map<String, String>> vdcToOrg;
 
-   private final VCloudClient client;
+   private final VCloudExpressClient client;
 
    @Inject
-   NodeMetadataToOrgAndName(VCloudClient client, @VDC Supplier<Map<String, String>> vdcToOrg) {
+   NodeMetadataToOrgAndName(VCloudExpressClient client, @VDC Supplier<Map<String, String>> vdcToOrg) {
       this.vdcToOrg = vdcToOrg;
       this.client = client;
    }
@@ -62,7 +62,7 @@ public class NodeMetadataToOrgAndName implements Function<NodeMetadata, OrgAndNa
    @Override
    public OrgAndName apply(NodeMetadata from) {
       if (from.getTag() != null) {
-         Organization org = client.findOrganizationNamed(vdcToOrg.get().get(from.getLocation().getId()));
+         Org org = client.findOrgNamed(vdcToOrg.get().get(from.getLocation().getId()));
          if (org == null) {
             logger.warn("did not find an association for vdc %s in %s", from.getLocation().getId(), vdcToOrg);
          } else {

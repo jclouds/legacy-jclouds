@@ -47,15 +47,15 @@ import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import org.jclouds.vcloud.VCloudClientLiveTest;
-import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.VCloudExpressClientLiveTest;
+import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VAppStatus;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.options.CloneVAppOptions;
@@ -78,7 +78,7 @@ import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
-public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
+public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTest {
 
    // Terremark service call 695,490
    @Override
@@ -124,7 +124,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
    public void testGetConfigCustomizationOptions() throws Exception {
       Catalog response = connection.findCatalogInOrgNamed(null, null);
       for (NamedResource resource : response.values()) {
-         if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
+         if (resource.getType().equals(VCloudExpressMediaType.CATALOGITEM_XML)) {
             TerremarkCatalogItem item = tmClient.findCatalogItemInOrgCatalogNamed(null, null, resource.getName());
             assert tmClient.getCustomizationOptions(item.getCustomizationOptions().getId()) != null;
          }
@@ -176,7 +176,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
       // instantiate, noting vApp returned has minimal details
       vApp = tmClient.instantiateVAppTemplateInVDC(vdc.getId(), vAppTemplate.getId(), serverName, instantiateOptions);
 
-      assertEquals(vApp.getStatus(), VAppStatus.RESOLVED);
+      assertEquals(vApp.getStatus(), Status.RESOLVED);
 
       // in terremark, this should be a no-op, as it should simply return the
       // above task, which is
@@ -189,7 +189,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
 
       vApp = tmClient.getVApp(vApp.getId());
 
-      assertEquals(vApp.getStatus(), VAppStatus.RESOLVED);
+      assertEquals(vApp.getStatus(), Status.RESOLVED);
 
       try {// per docs, this is not supported
          tmClient.cancelTask(deployTask.getLocation());
@@ -208,13 +208,13 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
       int processorCount = 1;
       long memory = 512;
       verifyConfigurationOfVApp(vApp, serverName, expectedOs, processorCount, memory, hardDisk);
-      assertEquals(vApp.getStatus(), VAppStatus.OFF);
+      assertEquals(vApp.getStatus(), Status.OFF);
 
       assert successTester.apply(tmClient.powerOnVApp(vApp.getId()).getLocation());
       System.out.printf("%d: done powering on vApp%n", System.currentTimeMillis());
 
       vApp = tmClient.getVApp(vApp.getId());
-      assertEquals(vApp.getStatus(), VAppStatus.ON);
+      assertEquals(vApp.getStatus(), Status.ON);
    }
 
    protected void prepare() {
@@ -264,7 +264,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
       task = tmClient.getTask(task.getLocation());
 
       clone = tmClient.getVApp(task.getResult().getId());
-      assertEquals(clone.getStatus(), VAppStatus.ON);
+      assertEquals(clone.getStatus(), Status.ON);
 
       assertEquals(clone.getName(), newName);
       assertEquals(clone.getNetworkToAddresses().values().size(), 1);
@@ -316,7 +316,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
 
       vApp = tmClient.getVApp(vApp.getId());
 
-      assertEquals(vApp.getStatus(), VAppStatus.ON);
+      assertEquals(vApp.getStatus(), Status.ON);
 
       // TODO we need to determine whether shutdown is supported before invoking
       // it.
@@ -327,7 +327,7 @@ public abstract class TerremarkClientLiveTest extends VCloudClientLiveTest {
       assert successTester.apply(tmClient.powerOffVApp(vApp.getId()).getLocation());
 
       vApp = tmClient.getVApp(vApp.getId());
-      assertEquals(vApp.getStatus(), VAppStatus.OFF);
+      assertEquals(vApp.getStatus(), Status.OFF);
    }
 
    @Test(enabled = true, dependsOnMethods = "testLifeCycle")

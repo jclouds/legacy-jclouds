@@ -22,10 +22,13 @@ package org.jclouds.vcloud.terremark.xml;
 import static org.jclouds.vcloud.terremark.TerremarkVCloudExpressMediaType.KEYSLIST_XML;
 import static org.jclouds.vcloud.util.Utils.newNamedResource;
 
+import javax.inject.Inject;
+
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.terremark.domain.TerremarkOrganization;
-import org.jclouds.vcloud.terremark.domain.internal.TerremarkOrganizationImpl;
+import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
+import org.jclouds.vcloud.terremark.domain.internal.TerremarkOrgImpl;
 import org.jclouds.vcloud.xml.OrgHandler;
+import org.jclouds.vcloud.xml.TaskHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -33,11 +36,16 @@ import org.xml.sax.SAXException;
  * @author Adrian Cole
  */
 public class TerremarkOrgHandler extends OrgHandler {
+   @Inject
+   public TerremarkOrgHandler(TaskHandler taskHandler) {
+      super(taskHandler);
+   }
 
    private NamedResource keysList;
 
-   public TerremarkOrganization getResult() {
-      return new TerremarkOrganizationImpl(org.getName(), org.getId(), catalogs, vdcs, tasksLists, keysList);
+   public TerremarkOrg getResult() {
+      return new TerremarkOrgImpl(org.getName(), org.getType(), org.getId(), description, catalogs, vdcs, networks,
+               tasksList, keysList);
    }
 
    @Override
