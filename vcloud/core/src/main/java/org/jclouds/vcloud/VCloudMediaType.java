@@ -92,6 +92,16 @@ public interface VCloudMediaType {
             "vnd.vmware.vcloud.catalogItem+xml");
 
    /**
+    * "application/vnd.vmware.vcloud.virtualHardwareSection+xml"
+    */
+   public final static String VIRTUALHARDWARESECTION_XML = "application/vnd.vmware.vcloud.virtualHardwareSection+xml";
+   /**
+    * "application/vnd.vmware.vcloud.virtualHardwareSection+xml"
+    */
+   public final static MediaType VIRTUALHARDWARESECTION_XML_TYPE = new MediaType("application",
+            "vnd.vmware.vcloud.virtualHardwareSection+xml");
+
+   /**
     * "application/vnd.vmware.vcloud.task+xml"
     */
    public final static String TASK_XML = "application/vnd.vmware.vcloud.task+xml";

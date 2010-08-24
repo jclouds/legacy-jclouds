@@ -21,7 +21,7 @@ package org.jclouds.vcloud.xml;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.domain.VirtualSystem;
-import org.xml.sax.SAXException;
+import org.xml.sax.Attributes;
 
 /**
  * @author Adrian Cole
@@ -34,15 +34,22 @@ public class VirtualSystemHandler extends ParseSax.HandlerWithResult<VirtualSyst
    private String virtualSystemIdentifier;
    private String virtualSystemType;
 
-   private org.jclouds.vcloud.domain.VirtualSystem system;
-
-   public org.jclouds.vcloud.domain.VirtualSystem getResult() {
+   public VirtualSystem getResult() {
+      VirtualSystem system = new org.jclouds.vcloud.domain.VirtualSystem(instanceID, elementName,
+               virtualSystemIdentifier, virtualSystemType);
+      this.elementName = null;
+      this.instanceID = -1;
+      this.virtualSystemIdentifier = null;
+      this.virtualSystemType = null;
       return system;
    }
 
-   @Override
-   public void endElement(String uri, String localName, String qName) throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attributes) {
+      // no op
+   }
 
+   @Override
+   public void endElement(String uri, String localName, String qName) {
       if (qName.endsWith("ElementName")) {
          this.elementName = currentText.toString().trim();
       } else if (qName.endsWith("InstanceID")) {
@@ -51,15 +58,7 @@ public class VirtualSystemHandler extends ParseSax.HandlerWithResult<VirtualSyst
          this.virtualSystemIdentifier = currentText.toString().trim();
       } else if (qName.endsWith("VirtualSystemType")) {
          this.virtualSystemType = currentText.toString().trim();
-      } else if (qName.endsWith("System")) {
-         this.system = new org.jclouds.vcloud.domain.VirtualSystem(instanceID, elementName,
-                  virtualSystemIdentifier, virtualSystemType);
-         this.elementName = null;
-         this.instanceID = -1;
-         this.virtualSystemIdentifier = null;
-         this.virtualSystemType = null;
       }
-
       currentText = new StringBuilder();
    }
 

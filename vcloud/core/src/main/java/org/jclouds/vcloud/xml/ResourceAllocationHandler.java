@@ -23,49 +23,67 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
 
 /**
  * @author Adrian Cole
  */
 public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<ResourceAllocation> {
-   private StringBuilder currentText = new StringBuilder();
+   protected StringBuilder currentText = new StringBuilder();
 
-   Integer address;
-   Integer addressOnParent;
-   String hostResource;
-   String allocationUnits;
-   String automaticAllocation;
-   Boolean connected;
-   String description;
-   String elementName;
-   int instanceID;
-   Integer parent;
-   String resourceSubType;
-   ResourceType resourceType;
-   long virtualQuantity = 1;
-   String virtualQuantityUnits;
-
-   private org.jclouds.vcloud.domain.ResourceAllocation allocation;
+   protected String address;
+   protected Integer addressOnParent;
+   protected String hostResource;
+   protected String allocationUnits;
+   protected String automaticAllocation;
+   protected Boolean connected;
+   protected String description;
+   protected String elementName;
+   protected int instanceID;
+   protected Integer parent;
+   protected String resourceSubType;
+   protected ResourceType resourceType;
+   protected long virtualQuantity = 1;
+   protected String virtualQuantityUnits;
 
    public org.jclouds.vcloud.domain.ResourceAllocation getResult() {
+      if (allocationUnits != null)
+         virtualQuantityUnits = allocationUnits;
+      ResourceAllocation allocation = newResourceAllocation();
+      address = null;
+      addressOnParent = null;
+      allocationUnits = null;
+      automaticAllocation = null;
+      connected = null;
+      description = null;
+      elementName = null;
+      instanceID = -1;
+      parent = null;
+      resourceSubType = null;
+      resourceType = null;
+      virtualQuantity = 1;
+      virtualQuantityUnits = null;
+      hostResource = null;
       return allocation;
    }
 
+   protected ResourceAllocation newResourceAllocation() {
+      return new ResourceAllocation(instanceID, elementName, description, resourceType, resourceSubType, hostResource,
+               address, addressOnParent, parent, connected, virtualQuantity, virtualQuantityUnits);
+   }
+
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attributes) {
       if (qName.endsWith("Connection")) {
          connected = new Boolean(attributes.getValue(attributes.getIndex("connected")));
       }
    }
 
    @Override
-   public void endElement(String uri, String localName, String qName) throws SAXException {
+   public void endElement(String uri, String localName, String qName) {
       String current = currentOrNull();
       if (current != null) {
          if (qName.endsWith("Address")) {
-            address = Integer.parseInt(current);
+            address = current;
          } else if (qName.endsWith("AddressOnParent")) {
             addressOnParent = Integer.parseInt(current);
          } else if (qName.endsWith("AllocationUnits")) {
@@ -91,28 +109,7 @@ public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<Resour
             virtualQuantity = Long.parseLong(current);
             virtualQuantityUnits = "byte * 2^20";
          }
-      } else if (qName.endsWith("Item")) {
-         if (allocationUnits != null)
-            virtualQuantityUnits = allocationUnits;
-         this.allocation = new ResourceAllocation(instanceID, elementName, description,
-                  resourceType, resourceSubType, hostResource, address, addressOnParent, parent,
-                  connected, virtualQuantity, virtualQuantityUnits);
-         address = null;
-         addressOnParent = null;
-         allocationUnits = null;
-         automaticAllocation = null;
-         connected = null;
-         description = null;
-         elementName = null;
-         instanceID = -1;
-         parent = null;
-         resourceSubType = null;
-         resourceType = null;
-         virtualQuantity = 1;
-         virtualQuantityUnits = null;
-         hostResource = null;
       }
-
       currentText = new StringBuilder();
    }
 

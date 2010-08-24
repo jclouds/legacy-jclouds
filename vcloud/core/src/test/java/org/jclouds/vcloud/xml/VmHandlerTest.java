@@ -49,9 +49,12 @@ public class VmHandlerTest {
       Injector injector = Guice.createInjector(new SaxParserModule());
       Factory factory = injector.getInstance(ParseSax.Factory.class);
       Vm result = factory.create(injector.getInstance(VmHandler.class)).parse(is);
+      checkVm(result);
+   }
+
+   static void checkVm(Vm result) {
       assertEquals(result.getName(), "RHEL5");
-      assertEquals(result.getHref(), URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248"));
+      assertEquals(result.getHref(), URI.create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248"));
       assertEquals(result.getType(), "application/vnd.vmware.vcloud.vm+xml");
       assertEquals(result.getStatus(), Status.OFF);
       assertEquals(result.getParent(), new ReferenceTypeImpl(null, VCloudMediaType.VAPP_XML, URI
@@ -59,6 +62,7 @@ public class VmHandlerTest {
       assertEquals(result.getDescription(), null);
       assertEquals(result.getTasks(), ImmutableList.of());
       assertEquals(result.getVAppScopedLocalId(), "10_rhel_template");
+      VirtualHardwareHandlerTest.checkHardware(result.getHardware());
    }
 
 }

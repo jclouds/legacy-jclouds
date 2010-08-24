@@ -49,7 +49,7 @@ public class ResourceAllocationHandlerTest extends BaseHandlerTest {
 
       ResourceAllocation result = (ResourceAllocation) factory.create(
                injector.getInstance(ResourceAllocationHandler.class)).parse(is);
-      assertEquals(result.getAddress(), new Integer(0));
+      assertEquals(result.getAddress(), "0");
       assertEquals(result.getDescription(), "SCSI Controller");
       assertEquals(result.getName(), "SCSI Controller 0");
       assertEquals(result.getId(), 3);

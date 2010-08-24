@@ -25,7 +25,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Adrian Cole
  * 
  */
-public class ResourceAllocation implements Comparable<ResourceAllocation> {
+public class ResourceAllocation {
 
    private final int id;
    private final String name;
@@ -33,7 +33,7 @@ public class ResourceAllocation implements Comparable<ResourceAllocation> {
    private final ResourceType type;
    private final String subType;
    private final String hostResource;
-   private final Integer address;
+   private final String address;
    private final Integer addressOnParent;
    private final Integer parent;
    private final Boolean connected;
@@ -41,7 +41,7 @@ public class ResourceAllocation implements Comparable<ResourceAllocation> {
    private final String virtualQuantityUnits;
 
    public ResourceAllocation(int id, String name, String description, ResourceType type, String subType,
-            String hostResource, Integer address, Integer addressOnParent, Integer parent, Boolean connected,
+            String hostResource, String address, Integer addressOnParent, Integer parent, Boolean connected,
             long virtualQuantity, String virtualQuantityUnits) {
       this.id = id;
       this.name = checkNotNull(name, "name");
@@ -55,27 +55,6 @@ public class ResourceAllocation implements Comparable<ResourceAllocation> {
       this.connected = connected;
       this.virtualQuantity = virtualQuantity;
       this.virtualQuantityUnits = virtualQuantityUnits;
-   }
-
-   public int compareTo(ResourceAllocation that) {
-      final int BEFORE = -1;
-      final int EQUAL = 0;
-      final int AFTER = 1;
-
-      if (this == that)
-         return EQUAL;
-
-      if (this.id < that.id)
-         return BEFORE;
-      if (this.id > that.id)
-         return AFTER;
-      if (this.addressOnParent != null && that.addressOnParent != null) {
-         if (this.addressOnParent < that.addressOnParent)
-            return BEFORE;
-         if (this.addressOnParent > that.addressOnParent)
-            return AFTER;
-      }
-      return 1;
    }
 
    public int getId() {
@@ -98,7 +77,7 @@ public class ResourceAllocation implements Comparable<ResourceAllocation> {
       return subType;
    }
 
-   public Integer getAddress() {
+   public String getAddress() {
       return address;
    }
 
@@ -213,10 +192,10 @@ public class ResourceAllocation implements Comparable<ResourceAllocation> {
 
    @Override
    public String toString() {
-      return "ResourceAllocation [address=" + address + ", addressOnParent=" + addressOnParent + ", connected="
-               + connected + ", description=" + description + ", hostResource=" + hostResource + ", id=" + id
-               + ", name=" + name + ", parent=" + parent + ", subType=" + subType + ", type=" + type
-               + ", virtualQuantity=" + virtualQuantity + ", virtualQuantityUnits=" + virtualQuantityUnits + "]";
+      return "[address=" + address + ", addressOnParent=" + addressOnParent + ", connected=" + connected
+               + ", description=" + description + ", hostResource=" + hostResource + ", id=" + id + ", name=" + name
+               + ", parent=" + parent + ", subType=" + subType + ", type=" + type + ", virtualQuantity="
+               + virtualQuantity + ", virtualQuantityUnits=" + virtualQuantityUnits + "]";
    }
 
 }

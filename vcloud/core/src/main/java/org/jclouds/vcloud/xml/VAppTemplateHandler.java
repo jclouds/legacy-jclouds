@@ -77,9 +77,9 @@ public class VAppTemplateHandler extends ParseSax.HandlerWithResult<VAppTemplate
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = cleanseAttributes(attrs);
-      if (qName.equals("Children")) {
+      if (qName.endsWith("Children")) {
          inChildren = true;
-      } else if (!inChildren && qName.equals("Tasks")) {
+      } else if (qName.endsWith("Tasks")) {
          inTasks = true;
       }
       if (inChildren) {
@@ -97,21 +97,17 @@ public class VAppTemplateHandler extends ParseSax.HandlerWithResult<VAppTemplate
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("Children")) {
+      if (qName.endsWith("Children")) {
          inChildren = false;
-      } else if (!inChildren && qName.equals("Tasks")) {
+         this.children.add(vmHandler.getResult());
+      } else if (qName.endsWith("Tasks")) {
          inTasks = false;
+         this.tasks.add(taskHandler.getResult());
       }
       if (inChildren) {
          vmHandler.endElement(uri, name, qName);
-         if (qName.equals("Vm")) {
-            this.children.add(vmHandler.getResult());
-         }
       } else if (inTasks) {
          taskHandler.endElement(uri, name, qName);
-         if (qName.equals("Task")) {
-            this.tasks.add(taskHandler.getResult());
-         }
       } else if (qName.equals("Description")) {
          description = currentOrNull();
       } else if (qName.equals("VAppScopedLocalId")) {
@@ -123,8 +119,11 @@ public class VAppTemplateHandler extends ParseSax.HandlerWithResult<VAppTemplate
    }
 
    public void characters(char ch[], int start, int length) {
+      if (inTasks)
+         taskHandler.characters(ch, start, length);
+      if (inChildren)
+         vmHandler.characters(ch, start, length);
       currentText.append(ch, start, length);
-      vmHandler.characters(ch, start, length);
    }
 
    protected String currentOrNull() {

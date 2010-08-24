@@ -31,6 +31,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.VirtualHardware;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.internal.VmImpl;
 import org.xml.sax.Attributes;
@@ -44,10 +45,12 @@ import com.google.common.collect.Lists;
 public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
 
    protected final TaskHandler taskHandler;
+   protected final VirtualHardwareHandler virtualHardwareHandler;
 
    @Inject
-   public VmHandler(TaskHandler taskHandler) {
+   public VmHandler(TaskHandler taskHandler, VirtualHardwareHandler virtualHardwareHandler) {
       this.taskHandler = taskHandler;
+      this.virtualHardwareHandler = virtualHardwareHandler;
    }
 
    protected StringBuilder currentText = new StringBuilder();
@@ -57,21 +60,28 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
    protected ReferenceType vdc;
    protected String description;
    protected List<Task> tasks = Lists.newArrayList();
+   protected VirtualHardware hardware;
    protected String vAppScopedLocalId;
 
    private boolean inTasks;
+   private boolean inHardware;
 
    public Vm getResult() {
-      return new VmImpl(vm.getName(), vm.getType(), vm.getHref(), status, vdc, description, tasks, vAppScopedLocalId);
+      return new VmImpl(vm.getName(), vm.getType(), vm.getHref(), status, vdc, description, tasks, hardware,
+               vAppScopedLocalId);
    }
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = cleanseAttributes(attrs);
-      if (qName.equals("Tasks")) {
+      if (qName.endsWith("VirtualHardwareSection")) {
+         inHardware = true;
+      } else if (qName.endsWith("Tasks")) {
          inTasks = true;
       }
-      if (inTasks) {
+      if (inHardware) {
+         virtualHardwareHandler.startElement(uri, localName, qName, attrs);
+      } else if (inTasks) {
          taskHandler.startElement(uri, localName, qName, attrs);
       } else if (qName.equals("Vm")) {
          vm = newReferenceType(attributes);
@@ -84,14 +94,17 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
    }
 
    public void endElement(String uri, String name, String qName) {
-      if (qName.equals("Tasks")) {
+      if (qName.endsWith("VirtualHardwareSection")) {
+         inHardware = false;
+         this.hardware = virtualHardwareHandler.getResult();
+      } else if (qName.endsWith("Tasks")) {
          inTasks = false;
+         this.tasks.add(taskHandler.getResult());
       }
-      if (inTasks) {
+      if (inHardware) {
+         virtualHardwareHandler.endElement(uri, name, qName);
+      } else if (inTasks) {
          taskHandler.endElement(uri, name, qName);
-         if (qName.equals("Task")) {
-            this.tasks.add(taskHandler.getResult());
-         }
       } else if (qName.equals("Description")) {
          description = currentOrNull();
       } else if (qName.equals("VAppScopedLocalId")) {
@@ -101,6 +114,10 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
    }
 
    public void characters(char ch[], int start, int length) {
+      if (inTasks)
+         taskHandler.characters(ch, start, length);
+      if (inHardware)
+         virtualHardwareHandler.characters(ch, start, length);
       currentText.append(ch, start, length);
    }
 

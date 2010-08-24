@@ -117,4 +117,7 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
       }
    }
 
+   public void characters(char ch[], int start, int length) {
+   }
+
 }

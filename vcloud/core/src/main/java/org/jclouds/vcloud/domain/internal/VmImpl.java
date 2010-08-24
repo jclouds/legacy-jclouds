@@ -29,6 +29,7 @@ import javax.annotation.Nullable;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.VirtualHardware;
 import org.jclouds.vcloud.domain.Vm;
 
 import com.google.common.collect.Iterables;
@@ -48,15 +49,19 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
    @Nullable
    private final String description;
    private final List<Task> tasks = Lists.newArrayList();
+   @Nullable
+   private final VirtualHardware hardware;
    private final String vAppScopedLocalId;
 
    public VmImpl(String name, String type, URI id, @Nullable Status status, ReferenceType vApp,
-            @Nullable String description, Iterable<Task> tasks, @Nullable String vAppScopedLocalId) {
+            @Nullable String description, Iterable<Task> tasks, @Nullable VirtualHardware hardware,
+            @Nullable String vAppScopedLocalId) {
       super(name, type, id);
       this.status = status;
       this.vApp = vApp;// TODO: once <1.0 is killed check not null
       this.description = description;
       Iterables.addAll(this.tasks, checkNotNull(tasks, "tasks"));
+      this.hardware = hardware;
       this.vAppScopedLocalId = vAppScopedLocalId;
    }
 
@@ -97,6 +102,14 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
     * {@inheritDoc}
     */
    @Override
+   public VirtualHardware getHardware() {
+      return hardware;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public String getVAppScopedLocalId() {
       return vAppScopedLocalId;
    }
@@ -106,6 +119,7 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + ((hardware == null) ? 0 : hardware.hashCode());
       result = prime * result + ((status == null) ? 0 : status.hashCode());
       result = prime * result + ((tasks == null) ? 0 : tasks.hashCode());
       result = prime * result + ((vApp == null) ? 0 : vApp.hashCode());
@@ -127,6 +141,21 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
             return false;
       } else if (!description.equals(other.description))
          return false;
+      if (hardware == null) {
+         if (other.hardware != null)
+            return false;
+      } else if (!hardware.equals(other.hardware))
+         return false;
+      if (status == null) {
+         if (other.status != null)
+            return false;
+      } else if (!status.equals(other.status))
+         return false;
+      if (tasks == null) {
+         if (other.tasks != null)
+            return false;
+      } else if (!tasks.equals(other.tasks))
+         return false;
       if (vApp == null) {
          if (other.vApp != null)
             return false;
@@ -143,8 +172,8 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
    @Override
    public String toString() {
       return "[href=" + getHref() + ", name=" + getName() + ", type=" + getType() + ", description=" + description
-               + ", status=" + status + ", tasks=" + tasks + ", vApp=" + vApp + ", vAppScopedLocalId="
-               + vAppScopedLocalId + "]";
+               + ", status=" + status + ", tasks=" + tasks + ", vApp=" + vApp + ", hardware=" + hardware
+               + ", vAppScopedLocalId=" + vAppScopedLocalId + "]";
    }
 
 }

@@ -69,6 +69,14 @@ public interface Vm extends ReferenceType {
    List<Task> getTasks();
 
    /**
+    * @return virtual hardware that comprises this VM, or null, if part of a vApp template
+    * 
+    * @since vcloud api 1.0
+    */
+   @Nullable
+   VirtualHardware getHardware();
+
+   /**
     * read-only identifier created on import
     * 
     * @since vcloud api 1.0

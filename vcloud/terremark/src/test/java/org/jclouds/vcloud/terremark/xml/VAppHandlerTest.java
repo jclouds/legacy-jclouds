@@ -79,7 +79,8 @@ public class VAppHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/terremark/launched_vapp.xml");
 
-      VCloudExpressVApp result = (VCloudExpressVApp) factory.create(injector.getInstance(VCloudExpressVAppHandler.class)).parse(is);
+      VCloudExpressVApp result = (VCloudExpressVApp) factory.create(
+               injector.getInstance(VCloudExpressVAppHandler.class)).parse(is);
 
       assertEquals(result.getName(), "adriantest");
       assertEquals(result.getStatus(), Status.UNRESOLVED);
@@ -95,7 +96,8 @@ public class VAppHandlerTest extends BaseHandlerTest {
    public void testGetVApp() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/terremark/get_vapp.xml");
 
-      VCloudExpressVApp result = (VCloudExpressVApp) factory.create(injector.getInstance(VCloudExpressVAppHandler.class)).parse(is);
+      VCloudExpressVApp result = (VCloudExpressVApp) factory.create(
+               injector.getInstance(VCloudExpressVAppHandler.class)).parse(is);
 
       assertEquals(result.getName(), "centos-53");
       assertEquals(result.getStatus(), Status.OFF);
@@ -114,7 +116,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
                ResourceType.PROCESSOR, null, null, null, null, null, null, 1, "hertz * 10^6");
 
       ResourceAllocation controller = new ResourceAllocation(3, "SCSI Controller 0", "SCSI Controller",
-               ResourceType.SCSI_CONTROLLER, "lsilogic", null, 0, null, null, null, 1, null);
+               ResourceType.SCSI_CONTROLLER, "lsilogic", null, "0", null, null, null, 1, null);
       ResourceAllocation memory = new ResourceAllocation(2, "512MB of memory", "Memory Size", ResourceType.MEMORY,
                null, null, null, null, null, null, 512, "byte * 2^20");
       ResourceAllocation disk = new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE, null,
@@ -152,7 +154,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
                ResourceType.PROCESSOR, null, null, null, null, null, null, 2, "hertz * 10^6");
 
       ResourceAllocation controller = new ResourceAllocation(3, "SCSI Controller 0", "SCSI Controller",
-               ResourceType.SCSI_CONTROLLER, "lsilogic", null, 0, null, null, null, 1, null);
+               ResourceType.SCSI_CONTROLLER, "lsilogic", null, "0", null, null, null, 1, null);
       ResourceAllocation memory = new ResourceAllocation(2, "1024MB of memory", "Memory Size", ResourceType.MEMORY,
                null, null, null, null, null, null, 1024, "byte * 2^20");
       ResourceAllocation disk = new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE, null,

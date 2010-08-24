@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Properties;
-import java.util.SortedSet;
+import java.util.Set;
 
 import org.jclouds.Constants;
 import org.jclouds.http.functions.BaseHandlerTest;
@@ -43,7 +43,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.ListMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -93,17 +92,15 @@ public class VCloudExpressVAppHandlerTest extends BaseHandlerTest {
                "10.150.4.93");
       VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family", "centos53", "vmx-07");
 
-      SortedSet<ResourceAllocation> resourceAllocations = ImmutableSortedSet.<ResourceAllocation> naturalOrder().add(
-               new ResourceAllocation(1, "1 virtual CPU(s)", "Number of Virtual CPUs", ResourceType.PROCESSOR, null,
-                        null, null, null, null, null, 1, "hertz * 10^6"),
-               new ResourceAllocation(2, "16MB of memory", "Memory Size", ResourceType.MEMORY, null, null, null, null,
-                        null, null, 16, "byte * 2^20")).add(
-               new ResourceAllocation(3, "SCSI Controller 0", "SCSI Controller", ResourceType.SCSI_CONTROLLER,
-                        "lsilogic", null, 0, null, null, null, 1, null)).add(
-               new ResourceAllocation(8, "Network Adapter 1", "PCNet32 ethernet adapter on \"Internal\" network",
-                        ResourceType.ETHERNET_ADAPTER, "PCNet32", null, null, 7, null, true, 1, null)).add(
-               new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE, null, "104857", null, 0, 3,
-                        null, 104857, "byte * 2^20")).build();
+      Set<ResourceAllocation> resourceAllocations = ImmutableSet.<ResourceAllocation> of(new ResourceAllocation(1,
+               "1 virtual CPU(s)", "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null,
+               null, 1, "hertz * 10^6"), new ResourceAllocation(2, "16MB of memory", "Memory Size",
+               ResourceType.MEMORY, null, null, null, null, null, null, 16, "byte * 2^20"), new ResourceAllocation(3,
+               "SCSI Controller 0", "SCSI Controller", ResourceType.SCSI_CONTROLLER, "lsilogic", null, "0", null, null,
+               null, 1, null), new ResourceAllocation(8, "Network Adapter 1",
+               "PCNet32 ethernet adapter on \"Internal\" network", ResourceType.ETHERNET_ADAPTER, "PCNet32", null,
+               null, 7, null, true, 1, null), new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE,
+               null, "104857", null, 0, 3, null, 104857, "byte * 2^20"));
 
       VCloudExpressVApp expects = new VCloudExpressVAppImpl("centos53", URI
                .create("http://10.150.4.49/api/v0.8/vApp/10"), Status.ON, new Long(104857), new ReferenceTypeImpl(null,
@@ -130,17 +127,15 @@ public class VCloudExpressVAppHandlerTest extends BaseHandlerTest {
                "10.23.119.221");
       VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family", "m1", "vmx-07");
 
-      SortedSet<ResourceAllocation> resourceAllocations = ImmutableSortedSet.<ResourceAllocation> naturalOrder().add(
-               new ResourceAllocation(1, "1 virtual CPU(s)", "Number of Virtual CPUs", ResourceType.PROCESSOR, null,
-                        null, null, null, null, null, 1, "hertz * 10^6"),
-               new ResourceAllocation(2, "512MB of memory", "Memory Size", ResourceType.MEMORY, null, null, null, null,
-                        null, null, 512, "byte * 2^20")).add(
-               new ResourceAllocation(3, "SCSI Controller 0", "SCSI Controller", ResourceType.SCSI_CONTROLLER,
-                        "lsilogic", null, 0, null, null, null, 1, null)).add(
-               new ResourceAllocation(8, "Network Adapter 1", "PCNet32 ethernet adapter on \"Internal\" network",
-                        ResourceType.ETHERNET_ADAPTER, "PCNet32", null, null, 7, null, true, 1, null)).add(
-               new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE, null, "10485760", null, 0, 3,
-                        null, 10485760, "byte * 2^20")).build();
+      Set<ResourceAllocation> resourceAllocations = ImmutableSet.<ResourceAllocation> of(new ResourceAllocation(1,
+               "1 virtual CPU(s)", "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null,
+               null, 1, "hertz * 10^6"), new ResourceAllocation(2, "512MB of memory", "Memory Size",
+               ResourceType.MEMORY, null, null, null, null, null, null, 512, "byte * 2^20"), new ResourceAllocation(3,
+               "SCSI Controller 0", "SCSI Controller", ResourceType.SCSI_CONTROLLER, "lsilogic", null, "0", null, null,
+               null, 1, null), new ResourceAllocation(8, "Network Adapter 1",
+               "PCNet32 ethernet adapter on \"Internal\" network", ResourceType.ETHERNET_ADAPTER, "PCNet32", null,
+               null, 7, null, true, 1, null), new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE,
+               null, "10485760", null, 0, 3, null, 10485760, "byte * 2^20"));
 
       VCloudExpressVApp expects = new VCloudExpressVAppImpl("m1", URI.create("http://localhost:8000/api/v0.8/vApp/80"),
                Status.ON, new Long(10485760), new ReferenceTypeImpl(null, "application/vnd.vmware.vcloud.vdc+xml", URI
@@ -157,5 +152,4 @@ public class VCloudExpressVAppHandlerTest extends BaseHandlerTest {
       assertEquals(result.getType(), expects.getType());
       assertEquals(result.getVDC(), expects.getVDC());
    }
-
 }
