@@ -20,59 +20,48 @@
 package org.jclouds.vcloud.domain;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.vcloud.domain.internal.VAppTemplateImpl;
-
-import com.google.inject.ImplementedBy;
-
 /**
- * A VAppTemplate is an abstract description of a vApp. It is created when you upload an OVF package
- * to a vDC.
+ * A Vm represents a virtual machine, a member of a vApp’s Children container. <h2>note</h2>
+ * <p/>
+ * When the {@link #getStatus} is {@link Status#UNRESOLVED}, there will be a task present for the
+ * instantiation of the VApp.
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(VAppTemplateImpl.class)
-public interface VAppTemplate extends NamedResource {
+public interface Vm extends NamedResource {
    /**
-    * Reference to the VDC containing this template.
+    * Reference to the {@link VApp} or {@link VAppTemplate} containing this vm.
     * 
     * @since vcloud api 1.0
-    * @return org, or null if this is a version before 1.0 where the vdc isn't present
     */
-   NamedResource getVDC();
+   NamedResource getParent();
 
    /**
-    * @return creation status of the VAppTemplate.
+    * @return creation status of the Vm or null, if a part of a VAppTemplate
     * 
     * @since vcloud api 1.0
     */
+   @Nullable
    Status getStatus();
 
    /**
     * optional description
     * 
-    * @since vcloud api 1.0
+    * @since vcloud api 0.8
     */
    @Nullable
    String getDescription();
 
    /**
-    * read-only container for Task elements. Each element in the container represents a queued,
+    * read‐only container for Task elements. Each element in the container represents a queued,
     * running, or failed task owned by this object.
     * 
     * @since vcloud api 1.0
     */
    List<Task> getTasks();
-
-   /**
-    * 
-    * @return true if the OVF descriptor for the template has been uploaded to the containing vDC.
-    * @since vcloud api 1.0
-    */
-   boolean isOvfDescriptorUploaded();
 
    /**
     * read-only identifier created on import
@@ -81,11 +70,4 @@ public interface VAppTemplate extends NamedResource {
     */
    @Nullable
    String getVAppScopedLocalId();
-
-   /**
-    * container for Vm elements representing virtual machines
-    * 
-    * @since vcloud api 1.0
-    */
-   Set<? extends Vm> getChildren();
 }

@@ -101,6 +101,26 @@ public interface VCloudMediaType {
    public final static MediaType TASK_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.task+xml");
 
    /**
+    * "application/vnd.vmware.vcloud.undeployVAppParams+xml"
+    */
+   public final static String UNDEPLOYVAPPPARAMS_XML = "application/vnd.vmware.vcloud.undeployVAppParams+xml";
+   /**
+    * "application/vnd.vmware.vcloud.undeployVAppParams+xml"
+    */
+   public final static MediaType UNDEPLOYVAPPPARAMS_XML_TYPE = new MediaType("application",
+            "vnd.vmware.vcloud.undeployVAppParams+xml");
+
+   /**
+    * "application/vnd.vmware.vcloud.deployVAppParams+xml"
+    */
+   public final static String DEPLOYVAPPPARAMS_XML = "application/vnd.vmware.vcloud.deployVAppParams+xml";
+   /**
+    * "application/vnd.vmware.vcloud.deployVAppParams+xml"
+    */
+   public final static MediaType DEPLOYVAPPPARAMS_XML_TYPE = new MediaType("application",
+            "vnd.vmware.vcloud.deployVAppParams+xml");
+
+   /**
     * "application/vnd.vmware.vcloud.vApp+xml"
     */
    public final static String VAPP_XML = "application/vnd.vmware.vcloud.vApp+xml";
@@ -108,6 +128,15 @@ public interface VCloudMediaType {
     * "application/vnd.vmware.vcloud.vApp+xml"
     */
    public final static MediaType VAPP_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.vApp+xml");
+
+   /**
+    * "application/vnd.vmware.vcloud.vm+xml"
+    */
+   public final static String VM_XML = "application/vnd.vmware.vcloud.vm+xml";
+   /**
+    * "application/vnd.vmware.vcloud.vm+xml"
+    */
+   public final static MediaType VM_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.vm+xml");
 
    /**
     * "application/vnd.vmware.vcloud.vAppTemplate+xml"

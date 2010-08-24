@@ -69,4 +69,36 @@ public interface VCloudExpressClient extends CommonVCloudClient {
    VCloudExpressVApp findVAppInOrgVDCNamed(@Nullable String orgName, @Nullable String catalogName, String vAppName);
 
    VCloudExpressVApp getVApp(URI vApp);
+
+   Task deployVApp(URI vAppId);
+
+   /**
+    * 
+    */
+   Task undeployVApp(URI vAppId);
+
+   /**
+    * This call powers on the vApp, as specified in the vApp's ovf:Startup element.
+    */
+   Task powerOnVApp(URI vAppId);
+
+   /**
+    * This call powers off the vApp, as specified in the vApp's ovf:Startup element.
+    */
+   Task powerOffVApp(URI vAppId);
+
+   /**
+    * This call shuts down the vApp.
+    */
+   void shutdownVApp(URI vAppId);
+
+   /**
+    * This call resets the vApp.
+    */
+   Task resetVApp(URI vAppId);
+
+   /**
+    * This call suspends the vApp.
+    */
+   Task suspendVApp(URI vAppId);
 }

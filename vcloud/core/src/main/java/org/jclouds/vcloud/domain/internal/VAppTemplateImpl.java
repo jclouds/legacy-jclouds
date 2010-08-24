@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -30,9 +31,11 @@ import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.Vm;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * Locations of resources in vCloud
@@ -49,10 +52,11 @@ public class VAppTemplateImpl extends NamedResourceImpl implements VAppTemplate 
    private final List<Task> tasks = Lists.newArrayList();
    private final boolean ovfDescriptorUploaded;
    private final String vAppScopedLocalId;
+   private final Set<Vm> children = Sets.newLinkedHashSet();
 
    public VAppTemplateImpl(String name, String type, URI id, Status status, NamedResource vdc,
-         @Nullable String description, Iterable<Task> tasks, boolean ovfDescriptorUploaded,
-         @Nullable String vAppScopedLocalId) {
+            @Nullable String description, Iterable<Task> tasks, boolean ovfDescriptorUploaded,
+            @Nullable String vAppScopedLocalId, Iterable<? extends Vm> children) {
       super(name, type, id);
       this.status = checkNotNull(status, "status");
       this.vdc = vdc;// TODO: once <1.0 is killed check not null
@@ -60,6 +64,7 @@ public class VAppTemplateImpl extends NamedResourceImpl implements VAppTemplate 
       Iterables.addAll(this.tasks, checkNotNull(tasks, "tasks"));
       this.vAppScopedLocalId = vAppScopedLocalId;
       this.ovfDescriptorUploaded = ovfDescriptorUploaded;
+      Iterables.addAll(this.children, checkNotNull(children, "children"));
    }
 
    /**
@@ -108,6 +113,14 @@ public class VAppTemplateImpl extends NamedResourceImpl implements VAppTemplate 
    @Override
    public boolean isOvfDescriptorUploaded() {
       return ovfDescriptorUploaded;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Set<? extends Vm> getChildren() {
+      return children;
    }
 
    @Override
@@ -165,7 +178,7 @@ public class VAppTemplateImpl extends NamedResourceImpl implements VAppTemplate 
    @Override
    public String toString() {
       return "[id=" + getId() + ", name=" + getName() + ", vdc=" + vdc + ", description=" + description + ", status="
-            + status + "]";
+               + status + "]";
    }
 
 }

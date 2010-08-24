@@ -75,7 +75,7 @@ public class VCloudExpressComputeClientImpl extends
 
       logger.debug(">> deploying vApp(%s)", vAppResponse.getName());
 
-      Task task = client.deployVApp(vAppResponse.getId());
+      Task task = VCloudExpressClient.class.cast(client).deployVApp(vAppResponse.getId());
       if (options.shouldBlockOnDeploy()) {
          if (!taskTester.apply(task.getId())) {
             throw new RuntimeException(String.format("failed to %s %s: %s", "deploy", vAppResponse.getName(), task));
@@ -83,7 +83,7 @@ public class VCloudExpressComputeClientImpl extends
          logger.debug("<< deployed vApp(%s)", vAppResponse.getName());
 
          logger.debug(">> powering vApp(%s)", vAppResponse.getName());
-         task = client.powerOnVApp(vAppResponse.getId());
+         task = VCloudExpressClient.class.cast(client).powerOnVApp(vAppResponse.getId());
          if (!taskTester.apply(task.getId())) {
             throw new RuntimeException(String.format("failed to %s %s: %s", "powerOn", vAppResponse.getName(), task));
          }
@@ -111,5 +111,20 @@ public class VCloudExpressComputeClientImpl extends
    @Override
    protected VCloudExpressVApp refreshVApp(URI id) {
       return VCloudExpressClient.class.cast(client).getVApp(id);
+   }
+
+   @Override
+   protected Task powerOff(VCloudExpressVApp vApp) {
+      return VCloudExpressClient.class.cast(client).powerOffVApp(vApp.getId());
+   }
+
+   @Override
+   protected Task reset(VCloudExpressVApp vApp) {
+      return VCloudExpressClient.class.cast(client).resetVApp(vApp.getId());
+   }
+
+   @Override
+   protected Task undeploy(VCloudExpressVApp vApp) {
+      return VCloudExpressClient.class.cast(client).undeployVApp(vApp.getId());
    }
 }

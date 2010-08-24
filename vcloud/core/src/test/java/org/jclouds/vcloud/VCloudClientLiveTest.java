@@ -83,6 +83,25 @@ public class VCloudClientLiveTest extends CommonVCloudClientLiveTest<VCloudClien
       }
    }
 
+   
+   @Test
+   public void testGetVm() throws Exception {
+      Org org = connection.findOrgNamed(null);
+      for (NamedResource vdc : org.getVDCs().values()) {
+         VDC response = connection.getVDC(vdc.getId());
+         for (NamedResource item : response.getResourceEntities().values()) {
+            if (item.getType().equals(VCloudMediaType.VAPP_XML)) {
+               try {
+                  VApp app = connection.getVApp(item.getId());
+                  assertNotNull(app);
+               } catch (RuntimeException e) {
+
+               }
+            }
+         }
+      }
+   }
+
    @Test
    public void testFindVAppTemplate() throws Exception {
       Org org = connection.findOrgNamed(null);

@@ -77,7 +77,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface CommonVCloudAsyncClient {
 
    /**
-    * @see VCloudClient#getOrg
+    * @see CommonVCloudClient#getOrg
     */
    @GET
    @XMLResponseParser(OrgHandler.class)
@@ -86,7 +86,7 @@ public interface CommonVCloudAsyncClient {
    ListenableFuture<? extends Org> getOrg(@EndpointParam URI orgId);
 
    /**
-    * @see VCloudClient#getOrgNamed
+    * @see CommonVCloudClient#getOrgNamed
     */
    @GET
    @XMLResponseParser(OrgHandler.class)
@@ -96,7 +96,7 @@ public interface CommonVCloudAsyncClient {
             @Nullable @EndpointParam(parser = OrgNameToEndpoint.class) String orgName);
 
    /**
-    * @see VCloudClient#getCatalog
+    * @see CommonVCloudClient#getCatalog
     */
    @GET
    @XMLResponseParser(CatalogHandler.class)
@@ -105,7 +105,7 @@ public interface CommonVCloudAsyncClient {
    ListenableFuture<? extends Catalog> getCatalog(@EndpointParam URI catalogId);
 
    /**
-    * @see VCloudClient#findCatalogInOrgNamed
+    * @see CommonVCloudClient#findCatalogInOrgNamed
     */
    @GET
    @XMLResponseParser(CatalogHandler.class)
@@ -116,7 +116,7 @@ public interface CommonVCloudAsyncClient {
             @Nullable @EndpointParam(parser = OrgNameAndCatalogNameToEndpoint.class) String catalogName);
 
    /**
-    * @see VCloudClient#getCatalogItem
+    * @see CommonVCloudClient#getCatalogItem
     */
    @GET
    @Consumes(CATALOGITEM_XML)
@@ -125,7 +125,7 @@ public interface CommonVCloudAsyncClient {
    ListenableFuture<? extends CatalogItem> getCatalogItem(@EndpointParam URI catalogItem);
 
    /**
-    * @see VCloudClient#getCatalogItemInOrg
+    * @see CommonVCloudClient#getCatalogItemInOrg
     */
    @GET
    @Consumes(CATALOGITEM_XML)
@@ -137,7 +137,7 @@ public interface CommonVCloudAsyncClient {
             @EndpointParam(parser = OrgNameCatalogNameItemNameToEndpoint.class) String itemName);
 
    /**
-    * @see VCloudClient#findNetworkInOrgVDCNamed
+    * @see CommonVCloudClient#findNetworkInOrgVDCNamed
     */
    @GET
    @Consumes(NETWORK_XML)
@@ -149,7 +149,7 @@ public interface CommonVCloudAsyncClient {
             @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String networkName);
 
    /**
-    * @see VCloudClient#getNetwork
+    * @see CommonVCloudClient#getNetwork
     */
    @GET
    @Consumes(NETWORK_XML)
@@ -158,7 +158,7 @@ public interface CommonVCloudAsyncClient {
    ListenableFuture<? extends OrgNetwork> getNetwork(@EndpointParam URI network);
 
    /**
-    * @see VCloudClient#getVDC(URI)
+    * @see CommonVCloudClient#getVDC(URI)
     */
    @GET
    @XMLResponseParser(VDCHandler.class)
@@ -167,7 +167,7 @@ public interface CommonVCloudAsyncClient {
    ListenableFuture<? extends VDC> getVDC(@EndpointParam URI vdc);
 
    /**
-    * @see VCloudClient#findVDCInOrgNamed(String, String)
+    * @see CommonVCloudClient#findVDCInOrgNamed(String, String)
     */
    @GET
    @XMLResponseParser(VDCHandler.class)
@@ -178,7 +178,7 @@ public interface CommonVCloudAsyncClient {
             @Nullable @EndpointParam(parser = OrgNameAndVDCNameToEndpoint.class) String vdcName);
 
    /**
-    * @see VCloudClient#getTasksList
+    * @see CommonVCloudClient#getTasksList
     */
    @GET
    @Consumes(TASKSLIST_XML)
@@ -187,7 +187,7 @@ public interface CommonVCloudAsyncClient {
    ListenableFuture<? extends TasksList> getTasksList(@EndpointParam URI tasksListId);
 
    /**
-    * @see VCloudClient#findTasksListInOrgNamed
+    * @see CommonVCloudClient#findTasksListInOrgNamed
     */
    @GET
    @Consumes(TASKSLIST_XML)
@@ -197,75 +197,15 @@ public interface CommonVCloudAsyncClient {
             @Nullable @EndpointParam(parser = OrgNameToTasksListEndpoint.class) String orgName);
 
    /**
-    * @see VCloudClient#deployVApp
-    */
-   @POST
-   @Consumes(TASK_XML)
-   @Path("/action/deploy")
-   @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> deployVApp(@EndpointParam URI vAppId);
-
-   /**
-    * @see VCloudClient#deleteVApp
+    * @see CommonVCloudClient#deleteVApp
     */
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteVApp(@EndpointParam URI vAppId);
+   
 
    /**
-    * @see VCloudClient#undeployVApp
-    */
-   @POST
-   @Consumes(TASK_XML)
-   @Path("/action/undeploy")
-   @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> undeployVApp(@EndpointParam URI vAppId);
-
-   /**
-    * @see VCloudClient#powerOnVApp
-    */
-   @POST
-   @Consumes(TASK_XML)
-   @Path("/power/action/powerOn")
-   @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> powerOnVApp(@EndpointParam URI vAppId);
-
-   /**
-    * @see VCloudClient#powerOffVApp
-    */
-   @POST
-   @Consumes(TASK_XML)
-   @Path("/power/action/powerOff")
-   @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> powerOffVApp(@EndpointParam URI vAppId);
-
-   /**
-    * @see VCloudClient#shutdownVApp
-    */
-   @POST
-   @Path("/power/action/shutdown")
-   ListenableFuture<Void> shutdownVApp(@EndpointParam URI vAppId);
-
-   /**
-    * @see VCloudClient#resetVApp
-    */
-   @POST
-   @Consumes(TASK_XML)
-   @Path("/power/action/reset")
-   @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> resetVApp(@EndpointParam URI vAppId);
-
-   /**
-    * @see VCloudClient#suspendVApp
-    */
-   @POST
-   @Consumes(TASK_XML)
-   @Path("/power/action/suspend")
-   @XMLResponseParser(TaskHandler.class)
-   ListenableFuture<? extends Task> suspendVApp(@EndpointParam URI vAppId);
-
-   /**
-    * @see VCloudClient#getTask
+    * @see CommonVCloudClient#getTask
     */
    @GET
    @Consumes(TASK_XML)
@@ -274,7 +214,7 @@ public interface CommonVCloudAsyncClient {
    ListenableFuture<? extends Task> getTask(@EndpointParam URI taskId);
 
    /**
-    * @see VCloudClient#cancelTask
+    * @see CommonVCloudClient#cancelTask
     */
    @POST
    @Path("/action/cancel")

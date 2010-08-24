@@ -19,71 +19,101 @@
 
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.vcloud.util.Utils.newNamedResource;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.internal.VAppImpl;
 import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * @author Adrian Cole
  */
 public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
-   protected final String apiVersion;
+
    protected final TaskHandler taskHandler;
+   protected final VmHandler vmHandler;
 
    @Inject
-   public VAppHandler(@Named(PROPERTY_API_VERSION) String apiVersion, TaskHandler taskHandler) {
-      this.apiVersion = apiVersion;
+   public VAppHandler(TaskHandler taskHandler, VmHandler vmHandler) {
       this.taskHandler = taskHandler;
+      this.vmHandler = vmHandler;
    }
 
-   private StringBuilder currentText = new StringBuilder();
+   protected StringBuilder currentText = new StringBuilder();
 
-   protected NamedResource vApp;
-   protected List<Task> tasks = Lists.newArrayList();
-   protected String description;
-   protected NamedResource vdc;
+   protected NamedResource template;
    protected Status status;
+   protected NamedResource vdc;
+   protected String description;
+   protected List<Task> tasks = Lists.newArrayList();
+   protected boolean ovfDescriptorUploaded = true;
+
+   private boolean inChildren;
+   private boolean inTasks;
+   protected Set<Vm> children = Sets.newLinkedHashSet();
 
    public VApp getResult() {
-      return new VAppImpl(vApp.getName(), vApp.getType(), vApp.getId(), status, vdc, description, tasks);
+      return new VAppImpl(template.getName(), template.getType(), template.getId(), status, vdc, description, tasks,
+               ovfDescriptorUploaded, children);
    }
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-      if (qName.equals("VApp")) {
-         vApp = Utils.newNamedResource(attributes);
-         String statusString = attributes.getValue(attributes.getIndex("status"));
-         status = Status.fromValue(statusString);
-         // } else if (qName.equals("VAppItem")) {
-         // Utils.putNamedResource(contents, attributes);
-      } else if (qName.equals("Link") && "up".equals(Utils.attrOrNull(attributes, "rel"))) {
-         vdc = Utils.newNamedResource(attributes);
-      } else {
-         taskHandler.startElement(uri, localName, qName, attributes);
+      if (qName.equals("Children")) {
+         inChildren = true;
+      } else if (qName.equals("Tasks")) {
+         inTasks = true;
       }
+      if (inChildren) {
+         vmHandler.startElement(uri, localName, qName, attributes);
+      } else if (inTasks) {
+         taskHandler.startElement(uri, localName, qName, attributes);
+      } else if (qName.equals("VApp")) {
+         template = newNamedResource(attributes);
+         String status = Utils.attrOrNull(attributes, "status");
+         if (status != null)
+            this.status = Status.fromValue(Integer.parseInt(status));
+      } else if (qName.equals("Link") && "up".equals(Utils.attrOrNull(attributes, "rel")) && !inChildren) {
+         vdc = newNamedResource(attributes);
+      }
+
    }
 
    public void endElement(String uri, String name, String qName) {
-      taskHandler.endElement(uri, name, qName);
-      if (qName.equals("Task")) {
-         this.tasks.add(taskHandler.getResult());
+      if (qName.equals("Children")) {
+         inChildren = false;
+      } else if (qName.equals("Tasks")) {
+         inTasks = false;
+      }
+      if (inChildren) {
+         vmHandler.endElement(uri, name, qName);
+         if (qName.equals("Vm")) {
+            this.children.add(vmHandler.getResult());
+         }
+      } else if (inTasks) {
+         taskHandler.endElement(uri, name, qName);
+         if (qName.equals("Task")) {
+            this.tasks.add(taskHandler.getResult());
+         }
       } else if (qName.equals("Description")) {
          description = currentOrNull();
+      } else if (qName.equals("ovfDescriptorUploaded")) {
+         ovfDescriptorUploaded = Boolean.parseBoolean(currentOrNull());
       }
       currentText = new StringBuilder();
    }

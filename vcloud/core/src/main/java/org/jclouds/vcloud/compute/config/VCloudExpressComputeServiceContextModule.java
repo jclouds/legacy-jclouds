@@ -27,6 +27,7 @@ import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
+import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.VCloudExpressClient;
@@ -37,6 +38,7 @@ import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressAddNodeWithTagStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressGetNodeMetadataStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressListNodesStrategy;
+import org.jclouds.vcloud.compute.strategy.VCloudExpressRebootNodeStrategy;
 import org.jclouds.vcloud.domain.Org;
 
 import com.google.common.base.Function;
@@ -55,6 +57,7 @@ public class VCloudExpressComputeServiceContextModule extends CommonVCloudComput
    @Override
    protected void configure() {
       super.configure();
+      bind(RebootNodeStrategy.class).to(VCloudExpressRebootNodeStrategy.class);
       bind(GetNodeMetadataStrategy.class).to(VCloudExpressGetNodeMetadataStrategy.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudExpressClient, VCloudExpressClient>>() {

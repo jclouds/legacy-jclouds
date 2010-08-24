@@ -161,4 +161,65 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
    @XMLResponseParser(VCloudExpressVAppHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends VCloudExpressVApp> getVApp(@EndpointParam URI vApp);
+
+   /**
+    * @see CommonVCloudClient#deployVApp
+    */
+   @POST
+   @Consumes(TASK_XML)
+   @Path("/action/deploy")
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> deployVApp(@EndpointParam URI vAppId);
+
+   /**
+    * @see CommonVCloudClient#undeployVApp
+    */
+   @POST
+   @Consumes(TASK_XML)
+   @Path("/action/undeploy")
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> undeployVApp(@EndpointParam URI vAppId);
+
+   /**
+    * @see CommonVCloudClient#powerOnVApp
+    */
+   @POST
+   @Consumes(TASK_XML)
+   @Path("/power/action/powerOn")
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> powerOnVApp(@EndpointParam URI vAppId);
+
+   /**
+    * @see CommonVCloudClient#powerOffVApp
+    */
+   @POST
+   @Consumes(TASK_XML)
+   @Path("/power/action/powerOff")
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> powerOffVApp(@EndpointParam URI vAppId);
+
+   /**
+    * @see CommonVCloudClient#shutdownVApp
+    */
+   @POST
+   @Path("/power/action/shutdown")
+   ListenableFuture<Void> shutdownVApp(@EndpointParam URI vAppId);
+
+   /**
+    * @see CommonVCloudClient#resetVApp
+    */
+   @POST
+   @Consumes(TASK_XML)
+   @Path("/power/action/reset")
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> resetVApp(@EndpointParam URI vAppId);
+
+   /**
+    * @see CommonVCloudClient#suspendVApp
+    */
+   @POST
+   @Consumes(TASK_XML)
+   @Path("/power/action/suspend")
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> suspendVApp(@EndpointParam URI vAppId);
 }

@@ -29,7 +29,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
-import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.domain.Task;
 
 import com.google.common.base.Predicate;
@@ -38,13 +38,13 @@ import com.google.common.base.Predicate;
  * @author Adrian Cole
  */
 @Singleton
-public class VCloudRebootNodeStrategy implements RebootNodeStrategy {
-   private final VCloudClient client;
+public class VCloudExpressRebootNodeStrategy implements RebootNodeStrategy {
+   private final VCloudExpressClient client;
    protected final Predicate<URI> taskTester;
    protected final GetNodeMetadataStrategy getNode;
 
    @Inject
-   protected VCloudRebootNodeStrategy(VCloudClient client, Predicate<URI> taskTester,
+   protected VCloudExpressRebootNodeStrategy(VCloudExpressClient client, Predicate<URI> taskTester,
             GetNodeMetadataStrategy getNode) {
       this.client = client;
       this.taskTester = taskTester;
@@ -54,7 +54,7 @@ public class VCloudRebootNodeStrategy implements RebootNodeStrategy {
    @Override
    public NodeMetadata execute(String in) {
       URI id = URI.create(checkNotNull(in, "node.id"));
-      Task task = client.resetVAppOrVm(id);
+      Task task = client.resetVApp(id);
       taskTester.apply(task.getId());
       return getNode.execute(in);
    }

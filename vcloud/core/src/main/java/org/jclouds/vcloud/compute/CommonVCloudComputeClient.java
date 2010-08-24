@@ -46,7 +46,7 @@ public interface CommonVCloudComputeClient {
     * @param vAppId
     *           vApp to reboot
     */
-   void reboot(URI vAppId);
+   void reset(URI vAppId);
 
    /**
     * Destroys dependent resources, powers off and deletes the vApp, blocking until the following

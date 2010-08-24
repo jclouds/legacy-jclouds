@@ -19,7 +19,9 @@
 
 package org.jclouds.vcloud;
 
+import static org.jclouds.vcloud.VCloudMediaType.DEPLOYVAPPPARAMS_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASK_XML;
+import static org.jclouds.vcloud.VCloudMediaType.UNDEPLOYVAPPPARAMS_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPPTEMPLATE_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 
@@ -37,12 +39,15 @@ import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapPayloadParam;
+import org.jclouds.rest.annotations.MapPayloadParams;
 import org.jclouds.rest.annotations.ParamValidators;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayload;
+import org.jclouds.vcloud.binders.BindDeployVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload;
+import org.jclouds.vcloud.binders.BindUndeployVAppParamsToXmlPayload;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
@@ -136,4 +141,101 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
    @XMLResponseParser(VAppHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends VApp> getVApp(@EndpointParam URI vApp);
+
+   /**
+    * @see VCloudClient#deployVAppOrVm
+    */
+   @POST
+   @Consumes(TASK_XML)
+   @Produces(DEPLOYVAPPPARAMS_XML)
+   @Path("/action/deploy")
+   @MapBinder(BindDeployVAppParamsToXmlPayload.class)
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> deployVAppOrVm(@EndpointParam URI vAppOrVmId);
+
+   /**
+    * @see VCloudClient#deployAndPowerOnVAppOrVm
+    */
+   @POST
+   @Consumes(TASK_XML)
+   @Produces(DEPLOYVAPPPARAMS_XML)
+   @Path("/action/deploy")
+   @MapBinder(BindDeployVAppParamsToXmlPayload.class)
+   @MapPayloadParams(keys = "powerOn", values = "true")
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> deployAndPowerOnVAppOrVm(@EndpointParam URI vAppOrVmId);
+
+   /**
+    * @see VCloudClient#undeployVAppOrVm
+    */
+   @POST
+   @Consumes(TASK_XML)
+   @Produces(UNDEPLOYVAPPPARAMS_XML)
+   @Path("/action/undeploy")
+   @MapBinder(BindUndeployVAppParamsToXmlPayload.class)
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> undeployVAppOrVm(@EndpointParam URI vAppOrVmId);
+
+   /**
+    * @see VCloudClient#undeployAndSaveStateOfVAppOrVm
+    */
+   @POST
+   @Consumes(TASK_XML)
+   @Produces(UNDEPLOYVAPPPARAMS_XML)
+   @Path("/action/undeploy")
+   @MapBinder(BindUndeployVAppParamsToXmlPayload.class)
+   @MapPayloadParams(keys = "saveState", values = "true")
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> undeployAndSaveStateOfVAppOrVm(@EndpointParam URI vAppOrVmId);
+
+   /**
+    * @see VCloudClient#powerOnVAppOrVm
+    */
+   @POST
+   @Consumes(TASK_XML)
+   @Path("/power/action/powerOn")
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> powerOnVAppOrVm(@EndpointParam URI vAppOrVmId);
+
+   /**
+    * @see VCloudClient#powerOffVAppOrVm
+    */
+   @POST
+   @Consumes(TASK_XML)
+   @Path("/power/action/powerOff")
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> powerOffVAppOrVm(@EndpointParam URI vAppOrVmId);
+
+   /**
+    * @see VCloudClient#shutdownVAppOrVm
+    */
+   @POST
+   @Path("/power/action/shutdown")
+   ListenableFuture<Void> shutdownVAppOrVm(@EndpointParam URI vAppOrVmId);
+
+   /**
+    * @see VCloudClient#resetVAppOrVm
+    */
+   @POST
+   @Consumes(TASK_XML)
+   @Path("/power/action/reset")
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> resetVAppOrVm(@EndpointParam URI vAppOrVmId);
+
+   /**
+    * @see VCloudClient#rebootVAppOrVm
+    */
+   @POST
+   @Path("/power/action/reboot")
+   ListenableFuture<Void> rebootVAppOrVm(@EndpointParam URI vAppOrVmId);
+
+   /**
+    * @see VCloudClient#suspendVAppOrVm
+    */
+   @POST
+   @Consumes(TASK_XML)
+   @Path("/power/action/suspend")
+   @XMLResponseParser(TaskHandler.class)
+   ListenableFuture<? extends Task> suspendVAppOrVm(@EndpointParam URI vAppOrVmId);
+
 }

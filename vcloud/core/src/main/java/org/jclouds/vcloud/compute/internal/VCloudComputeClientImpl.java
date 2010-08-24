@@ -73,19 +73,13 @@ public class VCloudComputeClientImpl extends CommonVCloudComputeClientImpl<VAppT
 
       logger.debug(">> deploying vApp(%s)", vAppResponse.getName());
 
-      Task task = client.deployVApp(vAppResponse.getId());
+      Task task = VCloudClient.class.cast(client).deployAndPowerOnVAppOrVm(vAppResponse.getId());
       if (options.shouldBlockOnDeploy()) {
          if (!taskTester.apply(task.getId())) {
-            throw new RuntimeException(String.format("failed to %s %s: %s", "deploy", vAppResponse.getName(), task));
+            throw new RuntimeException(String.format("failed to %s %s: %s", "deploy and power on", vAppResponse
+                     .getName(), task));
          }
-         logger.debug("<< deployed vApp(%s)", vAppResponse.getName());
-
-         logger.debug(">> powering vApp(%s)", vAppResponse.getName());
-         task = client.powerOnVApp(vAppResponse.getId());
-         if (!taskTester.apply(task.getId())) {
-            throw new RuntimeException(String.format("failed to %s %s: %s", "powerOn", vAppResponse.getName(), task));
-         }
-         logger.debug("<< on vApp(%s)", vAppResponse.getName());
+         logger.debug("<< deployed and powered on vApp(%s)", vAppResponse.getName());
       }
       return parseAndValidateResponse(template, vAppResponse);
    }
@@ -111,5 +105,20 @@ public class VCloudComputeClientImpl extends CommonVCloudComputeClientImpl<VAppT
    @Override
    protected VApp refreshVApp(URI id) {
       return VCloudClient.class.cast(client).getVApp(id);
+   }
+
+   @Override
+   protected Task powerOff(VApp vApp) {
+      return VCloudClient.class.cast(client).powerOffVAppOrVm(vApp.getId());
+   }
+
+   @Override
+   protected Task reset(VApp vApp) {
+      return VCloudClient.class.cast(client).resetVAppOrVm(vApp.getId());
+   }
+
+   @Override
+   protected Task undeploy(VApp vApp) {
+      return VCloudClient.class.cast(client).undeployAndSaveStateOfVAppOrVm(vApp.getId());
    }
 }

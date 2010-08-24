@@ -113,40 +113,19 @@ public interface CommonVCloudClient {
 
    TasksList findTasksListInOrgNamed(String orgName);
 
-   Task deployVApp(URI vAppId);
-
-   void deleteVApp(URI vAppId);
-
-   Task undeployVApp(URI vAppId);
-
    /**
-    * This call powers on the vApp, as specified in the vApp's ovf:Startup element.
+    * Whenever the result of a request cannot be returned immediately, the server creates a Task
+    * object and includes it in the response, as a member of the Tasks container in the response
+    * body. Each Task has an href value, which is a URL that the client can use to retrieve the Task
+    * element alone, without the rest of the response in which it was contained. All information
+    * about the task is included in the Task element when it is returned in the response’s Tasks
+    * container, so a client does not need to make an additional request to the Task URL unless it
+    * wants to follow the progress of a task that was incomplete.
     */
-   Task powerOnVApp(URI vAppId);
-
-   /**
-    * This call powers off the vApp, as specified in the vApp's ovf:Startup element.
-    */
-   Task powerOffVApp(URI vAppId);
-
-   /**
-    * This call shuts down the vApp.
-    */
-   void shutdownVApp(URI vAppId);
-
-   /**
-    * This call resets the vApp.
-    */
-   Task resetVApp(URI vAppId);
-
-   /**
-    * This call suspends the vApp.
-    */
-   Task suspendVApp(URI vAppId);
-
    Task getTask(URI taskId);
 
    void cancelTask(URI taskId);
 
+   void deleteVApp(URI vAppId);
 
 }

@@ -29,7 +29,7 @@ import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Status;
-import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
 import org.testng.annotations.Test;
@@ -40,36 +40,34 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
- * Tests behavior of {@code VAppTemplateHandler}
+ * Tests behavior of {@code VAppHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VAppTemplateHandlerTest")
-public class VAppTemplateHandlerTest {
-   public void testUbuntuTemplate() {
-      InputStream is = getClass().getResourceAsStream("/vAppTemplate.xml");
+@Test(groups = "unit", testName = "vcloud.VAppHandlerTest")
+public class VAppHandlerTest {
+   public void testRhelOffStatic() {
+      InputStream is = getClass().getResourceAsStream("/vapp-rhel-off-static.xml");
       Injector injector = Guice.createInjector(new SaxParserModule());
       Factory factory = injector.getInstance(ParseSax.Factory.class);
-      VAppTemplate result = factory.create(injector.getInstance(VAppTemplateHandler.class)).parse(is);
-      assertEquals(result.getName(), "Ubuntu Template");
+      VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
+      assertEquals(result.getName(), "vApp_acole_2");
       assertEquals(result.getId(), URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921"));
-      assertEquals(result.getType(), "application/vnd.vmware.vcloud.vAppTemplate+xml");
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vapp-607806320"));
+      assertEquals(result.getType(), "application/vnd.vmware.vcloud.vApp+xml");
       assertEquals(result.getStatus(), Status.OFF);
       assertEquals(result.getVDC(), new NamedResourceImpl(null, VCloudMediaType.VDC_XML, URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439")));
       assertEquals(result.getDescription(), null);
       assertEquals(result.getTasks(), ImmutableList.of());
-      assertEquals(result.getVAppScopedLocalId(), null);
       assert result.isOvfDescriptorUploaded();
       Vm vm = Iterables.getOnlyElement(result.getChildren());
-      assertEquals(vm.getName(), "Ubuntu1004");
-      assertEquals(vm.getId(), URI.create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vm-172837194"));
-      // NOTE this is vAppTemplate not VM!
-      assertEquals(vm.getType(), "application/vnd.vmware.vcloud.vAppTemplate+xml");
-      assertEquals(vm.getStatus(), null);
-      assertEquals(vm.getParent(), new NamedResourceImpl(null, VCloudMediaType.VAPPTEMPLATE_XML, URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921")));
+      assertEquals(vm.getName(), "RHEL5");
+      assertEquals(vm.getId(), URI.create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248"));
+      assertEquals(vm.getType(), "application/vnd.vmware.vcloud.vm+xml");
+      assertEquals(vm.getStatus(), Status.OFF);
+      assertEquals(vm.getParent(), new NamedResourceImpl(null, VCloudMediaType.VAPP_XML, URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vapp-607806320")));
       assertEquals(vm.getDescription(), null);
       assertEquals(vm.getTasks(), ImmutableList.of());
       assertEquals(vm.getVAppScopedLocalId(), null);

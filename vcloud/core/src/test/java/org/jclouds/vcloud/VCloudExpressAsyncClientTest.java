@@ -447,7 +447,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       checkFilters(request);
    }
 
-   public void testGetVApp() throws SecurityException, NoSuchMethodException, IOException {
+   public void testGet() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudExpressAsyncClient.class.getMethod("getVApp", URI.class);
       HttpRequest request = processor.createRequest(method, URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/1"));
@@ -479,7 +479,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       checkFilters(request);
    }
 
-   public void testDeleteVApp() throws SecurityException, NoSuchMethodException, IOException {
+   public void testDelete() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudExpressAsyncClient.class.getMethod("deleteVApp", URI.class);
       HttpRequest request = processor.createRequest(method, URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/1"));
@@ -495,7 +495,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       checkFilters(request);
    }
 
-   public void testPowerOn() throws SecurityException, NoSuchMethodException, IOException {
+   public void testPowerOnVApp() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudExpressAsyncClient.class.getMethod("powerOnVApp", URI.class);
       HttpRequest request = processor.createRequest(method, URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/1"));
@@ -512,7 +512,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       checkFilters(request);
    }
 
-   public void testPowerOff() throws SecurityException, NoSuchMethodException, IOException {
+   public void testPowerOffVApp() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudExpressAsyncClient.class.getMethod("powerOffVApp", URI.class);
       HttpRequest request = processor.createRequest(method, URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/1"));
@@ -529,7 +529,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       checkFilters(request);
    }
 
-   public void testReset() throws SecurityException, NoSuchMethodException, IOException {
+   public void testResetVApp() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudExpressAsyncClient.class.getMethod("resetVApp", URI.class);
       HttpRequest request = processor.createRequest(method, URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/1"));
@@ -546,7 +546,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       checkFilters(request);
    }
 
-   public void testSuspend() throws SecurityException, NoSuchMethodException, IOException {
+   public void testSuspendVApp() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudExpressAsyncClient.class.getMethod("suspendVApp", URI.class);
       HttpRequest request = processor.createRequest(method, URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/1"));
@@ -563,7 +563,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       checkFilters(request);
    }
 
-   public void testShutdown() throws SecurityException, NoSuchMethodException, IOException {
+   public void testShutdownVApp() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudExpressAsyncClient.class.getMethod("shutdownVApp", URI.class);
       HttpRequest request = processor.createRequest(method, URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/1"));

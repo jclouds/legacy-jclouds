@@ -20,14 +20,16 @@
 package org.jclouds.vcloud.domain;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 
 /**
- * A VApp is the result of instantiation of a {@link VAppTemplate}.
- *   <h2>note</h2>
- *   <p/> When the {@link #getStatus} is {@link Status#UNRESOLVED}, there will be a task present for the instantiation of the VApp.
-
+ * A VApp is the result of instantiation of a {@link VAppTemplate}. <h2>note</h2>
+ * <p/>
+ * When the {@link #getStatus} is {@link Status#UNRESOLVED}, there will be a task present for the
+ * instantiation of the VApp.
+ * 
  * @author Adrian Cole
  */
 public interface VApp extends NamedResource {
@@ -55,11 +57,25 @@ public interface VApp extends NamedResource {
    String getDescription();
 
    /**
+    * 
+    * @return true if the OVF descriptor for the template has been uploaded to the containing vDC.
+    * @since vcloud api 1.0
+    */
+   boolean isOvfDescriptorUploaded();
+
+   /**
     * read‐only container for Task elements. Each element in the container represents a queued,
     * running, or failed task owned by this object.
     * 
     * @since vcloud api 1.0
     */
    List<Task> getTasks();
+
+   /**
+    * container for Vm elements representing virtual machines
+    * 
+    * @since vcloud api 1.0
+    */
+   Set<? extends Vm> getChildren();
 
 }
