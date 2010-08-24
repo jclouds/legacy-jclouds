@@ -53,9 +53,9 @@ import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
-import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.options.CloneVAppOptions;
@@ -185,19 +185,19 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
 
       // check to see the result of calling deploy twice
       deployTask = tmClient.deployVApp(vApp.getId());
-      assertEquals(deployTask.getLocation(), deployTask.getLocation());
+      assertEquals(deployTask.getId(), deployTask.getId());
 
       vApp = tmClient.getVApp(vApp.getId());
 
       assertEquals(vApp.getStatus(), Status.RESOLVED);
 
       try {// per docs, this is not supported
-         tmClient.cancelTask(deployTask.getLocation());
+         tmClient.cancelTask(deployTask.getId());
       } catch (HttpResponseException e) {
          assertEquals(e.getResponse().getStatusCode(), 501);
       }
 
-      assert successTester.apply(deployTask.getLocation());
+      assert successTester.apply(deployTask.getId());
       System.out.printf("%d: done deploying vApp%n", System.currentTimeMillis());
 
       vApp = tmClient.getVApp(vApp.getId());
@@ -210,7 +210,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       verifyConfigurationOfVApp(vApp, serverName, expectedOs, processorCount, memory, hardDisk);
       assertEquals(vApp.getStatus(), Status.OFF);
 
-      assert successTester.apply(tmClient.powerOnVApp(vApp.getId()).getLocation());
+      assert successTester.apply(tmClient.powerOnVApp(vApp.getId()).getId());
       System.out.printf("%d: done powering on vApp%n", System.currentTimeMillis());
 
       vApp = tmClient.getVApp(vApp.getId());
@@ -240,7 +240,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
 
    @Test(enabled = true, dependsOnMethods = "testInstantiateAndPowerOn")
    public void testCloneVApp() throws IOException {
-      assert successTester.apply(tmClient.powerOffVApp(vApp.getId()).getLocation());
+      assert successTester.apply(tmClient.powerOffVApp(vApp.getId()).getId());
       System.out.printf("%d: done powering off vApp%n", System.currentTimeMillis());
 
       StringBuffer name = new StringBuffer();
@@ -254,16 +254,16 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       Task task = tmClient.cloneVAppInVDC(vdc.getId(), vApp.getId(), newName, options);
 
       // wait for the task to complete
-      assert successTester.apply(task.getLocation());
+      assert successTester.apply(task.getId());
       System.out.printf("%d: done cloning vApp%n", System.currentTimeMillis());
 
-      assert successTester.apply(tmClient.powerOnVApp(vApp.getId()).getLocation());
+      assert successTester.apply(tmClient.powerOnVApp(vApp.getId()).getId());
       System.out.printf("%d: done powering on vApp%n", System.currentTimeMillis());
 
       // refresh task to get the new vApp location
-      task = tmClient.getTask(task.getLocation());
+      task = tmClient.getTask(task.getId());
 
-      clone = tmClient.getVApp(task.getResult().getId());
+      clone = tmClient.getVApp(task.getOwner().getId());
       assertEquals(clone.getStatus(), Status.ON);
 
       assertEquals(clone.getName(), newName);
@@ -312,7 +312,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
          assertEquals(e.getResponse().getStatusCode(), 501);
       }
 
-      assert successTester.apply(tmClient.resetVApp(vApp.getId()).getLocation());
+      assert successTester.apply(tmClient.resetVApp(vApp.getId()).getId());
 
       vApp = tmClient.getVApp(vApp.getId());
 
@@ -324,7 +324,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       // vApp = tmClient.getVApp(vApp.getId());
       // assertEquals(vApp.getStatus(), VAppStatus.ON);
 
-      assert successTester.apply(tmClient.powerOffVApp(vApp.getId()).getLocation());
+      assert successTester.apply(tmClient.powerOffVApp(vApp.getId()).getId());
 
       vApp = tmClient.getVApp(vApp.getId());
       assertEquals(vApp.getStatus(), Status.OFF);
@@ -338,7 +338,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       Task task = tmClient.configureVApp(vApp, changeNameTo("eduardo").changeMemoryTo(1536).changeProcessorCountTo(1)
                .addDisk(25 * 1048576).addDisk(25 * 1048576));
 
-      assert successTester.apply(task.getLocation());
+      assert successTester.apply(task.getId());
 
       vApp = tmClient.getVApp(vApp.getId());
       assertEquals(vApp.getName(), "eduardo");
@@ -346,11 +346,11 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       assertEquals(find(vApp.getResourceAllocations(), resourceType(ResourceType.MEMORY)).getVirtualQuantity(), 1536);
       assertEquals(size(filter(vApp.getResourceAllocations(), resourceType(ResourceType.DISK_DRIVE))), 3);
 
-      assert successTester.apply(tmClient.powerOnVApp(vApp.getId()).getLocation());
+      assert successTester.apply(tmClient.powerOnVApp(vApp.getId()).getId());
 
       loopAndCheckPass();
 
-      assert successTester.apply(tmClient.powerOffVApp(vApp.getId()).getLocation());
+      assert successTester.apply(tmClient.powerOffVApp(vApp.getId()).getId());
 
       // extract the disks on the vApp sorted by addressOnParent
       List<ResourceAllocation> disks = Lists.newArrayList(filter(vApp.getResourceAllocations(),
@@ -359,14 +359,14 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       // delete the second disk
       task = tmClient.configureVApp(vApp, deleteDiskWithAddressOnParent(disks.get(1).getAddressOnParent()));
 
-      assert successTester.apply(task.getLocation());
+      assert successTester.apply(task.getId());
 
-      assert successTester.apply(tmClient.powerOnVApp(vApp.getId()).getLocation());
+      assert successTester.apply(tmClient.powerOnVApp(vApp.getId()).getId());
       loopAndCheckPass();
    }
 
-   private void verifyConfigurationOfVApp(VCloudExpressVApp vApp, String serverName, String expectedOs, int processorCount,
-            long memory, long hardDisk) {
+   private void verifyConfigurationOfVApp(VCloudExpressVApp vApp, String serverName, String expectedOs,
+            int processorCount, long memory, long hardDisk) {
       assertEquals(vApp.getName(), serverName);
       assertEquals(vApp.getOperatingSystemDescription(), expectedOs);
       assertEquals(find(vApp.getResourceAllocations(), resourceType(ResourceType.PROCESSOR)).getVirtualQuantity(),
@@ -410,7 +410,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
          tmClient.deleteInternetService(is.getId());
       if (vApp != null) {
          try {
-            successTester.apply(tmClient.powerOffVApp(vApp.getId()).getLocation());
+            successTester.apply(tmClient.powerOffVApp(vApp.getId()).getId());
          } catch (Exception e) {
 
          }
@@ -418,7 +418,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       }
       if (clone != null) {
          try {
-            successTester.apply(tmClient.powerOffVApp(clone.getId()).getLocation());
+            successTester.apply(tmClient.powerOffVApp(clone.getId()).getId());
          } catch (Exception e) {
 
          }

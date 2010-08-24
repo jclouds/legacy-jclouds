@@ -22,7 +22,6 @@ package org.jclouds.vcloud.xml;
 import java.text.ParseException;
 import java.util.Date;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.date.DateService;
@@ -45,7 +44,6 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
 
    private NamedResource taskLink;
    private NamedResource owner;
-   private NamedResource result;
    private TaskStatus status;
    private Date startTime;
    private Date endTime;
@@ -53,7 +51,6 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    private Task task;
    private Error error;
 
-   @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
@@ -78,13 +75,12 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
             endTime = parseDate(attributes, "endTime");
          if (attributes.getIndex("expiryTime") != -1)
             expiryTime = parseDate(attributes, "expiryTime");
-      } else if (qName.equals("Owner")) {
+         // TODO technically the old Result object should only be owner for copy and delete tasks
+      } else if (qName.equals("Owner") || qName.equals("Result")) {
          owner = Utils.newNamedResource(attributes);
       } else if (qName.equals("Link") && attributes.getIndex("rel") != -1
                && attributes.getValue(attributes.getIndex("rel")).equals("self")) {
          taskLink = Utils.newNamedResource(attributes);
-      } else if (qName.equals("Result")) {
-         result = Utils.newNamedResource(attributes);
       } else if (qName.equals("Error")) {
          error = Utils.newError(attributes);
       }
@@ -96,13 +92,9 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
          return dateService.iso8601DateParse(toParse);
       } catch (RuntimeException e) {
          if (e.getCause() instanceof ParseException) {
-            try {
-               if (!toParse.endsWith("Z"))
-                  toParse += "Z";
-               return dateService.iso8601SecondsDateParse(toParse);
-            } catch (RuntimeException ex) {
-               logger.error(e, "error parsing date");
-            }
+            if (!toParse.endsWith("Z"))
+               toParse += "Z";
+            return dateService.iso8601SecondsDateParse(toParse);
          } else {
             logger.error(e, "error parsing date");
          }
@@ -113,13 +105,12 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    @Override
    public void endElement(String uri, String localName, String qName) {
       if (qName.equalsIgnoreCase("Task")) {
-         this.task = new TaskImpl(taskLink.getId(), status, startTime, endTime, expiryTime, owner, result, error);
+         this.task = new TaskImpl(taskLink.getId(), status, startTime, endTime, expiryTime, owner, error);
          taskLink = null;
          status = null;
          startTime = null;
          endTime = null;
          owner = null;
-         result = null;
          error = null;
       }
    }

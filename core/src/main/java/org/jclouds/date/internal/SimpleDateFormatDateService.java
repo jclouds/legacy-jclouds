@@ -128,6 +128,7 @@ public class SimpleDateFormatDateService implements DateService {
    }
 
    public final Date iso8601DateParse(String toParse) {
+      toParse = trimTZ(toParse);
       toParse = trimNanosToMillis(toParse);
       synchronized (iso8601SimpleDateFormat) {
          try {
@@ -141,7 +142,7 @@ public class SimpleDateFormatDateService implements DateService {
    public static final Pattern NANOS_TO_MILLIS_PATTERN = Pattern
             .compile(".*[0-9][0-9][0-9][0-9][0-9][0-9]");
 
-   public static final Pattern TZ_PATTERN = Pattern.compile(".*[+][0-9][0-9]:[0-9][0-9]");
+   public static final Pattern TZ_PATTERN = Pattern.compile(".*[+-][0-9][0-9]:[0-9][0-9]");
 
    private String trimNanosToMillis(String toParse) {
       if (NANOS_TO_MILLIS_PATTERN.matcher(toParse).matches())

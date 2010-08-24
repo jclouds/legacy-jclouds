@@ -59,21 +59,17 @@ public class TasksListHandlerTest extends BaseHandlerTest {
 
       TasksList result = factory.create(injector.getInstance(TasksListHandler.class)).parse(is);
       assertEquals(result.getLocation(), URI
-            .create("https://services.vcloudexpress.terremark.com/api/v0.8/tasksList/1"));
-      Task task1 = new TaskImpl(
-
-      URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/task/3300"), TaskStatus.SUCCESS, dateService
-            .iso8601DateParse("2009-08-24T21:30:19.587Z"), dateService.iso8601DateParse("2009-08-24T21:30:32.63Z"),
-            null, new NamedResourceImpl("VDC Name", VCloudExpressMediaType.VDC_XML, URI
-                  .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/1")), new NamedResourceImpl(
-                  "Server1", VCloudExpressMediaType.VAPP_XML, URI
-                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/4012")), null);
+               .create("https://services.vcloudexpress.terremark.com/api/v0.8/tasksList/1"));
+      Task task1 = new TaskImpl(URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/task/3300"),
+               TaskStatus.SUCCESS, dateService.iso8601DateParse("2009-08-24T21:30:19.587Z"), dateService
+                        .iso8601DateParse("2009-08-24T21:30:32.63Z"), null, new NamedResourceImpl("Server1",
+                        VCloudExpressMediaType.VAPP_XML, URI
+                                 .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/4012")), null);
       Task task2 = new TaskImpl(URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/task/3299"),
-            TaskStatus.SUCCESS, dateService.iso8601DateParse("2009-08-24T21:29:32.983Z"), dateService
-                  .iso8601DateParse("2009-08-24T21:29:44.65Z"), null, new NamedResourceImpl("VDC Name",
-                  VCloudExpressMediaType.VDC_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/1")),
-            new NamedResourceImpl("Server1", VCloudExpressMediaType.VAPP_XML, URI
-                  .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/4012")), null);
+               TaskStatus.SUCCESS, dateService.iso8601DateParse("2009-08-24T21:29:32.983Z"), dateService
+                        .iso8601DateParse("2009-08-24T21:29:44.65Z"), null, new NamedResourceImpl("Server1",
+                        VCloudExpressMediaType.VAPP_XML, URI
+                                 .create("https://services.vcloudexpress.terremark.com/api/v0.8/vapp/4012")), null);
       assertEquals(result.getTasks(), ImmutableSortedSet.of(task1, task2));
    }
 

@@ -80,7 +80,7 @@ public abstract class CommonVCloudComputeClientImpl<T, A extends NamedResource> 
       A vApp = refreshVApp(id);
       logger.debug(">> resetting vApp(%s)", vApp.getName());
       Task task = client.resetVApp(vApp.getId());
-      if (!taskTester.apply(task.getLocation())) {
+      if (!taskTester.apply(task.getId())) {
          throw new RuntimeException(String.format("failed to %s %s: %s", "resetVApp", vApp.getName(), task));
       }
       logger.debug("<< on vApp(%s)", vApp.getName());
@@ -106,7 +106,7 @@ public abstract class CommonVCloudComputeClientImpl<T, A extends NamedResource> 
       if (getStatus(vApp).compareTo(Status.RESOLVED) > 0) {
          logger.debug(">> undeploying vApp(%s), current status: %s", vApp.getName(), getStatus(vApp));
          Task task = client.undeployVApp(vApp.getId());
-         if (!taskTester.apply(task.getLocation())) {
+         if (!taskTester.apply(task.getId())) {
             // TODO timeout
             throw new RuntimeException(String.format("failed to %s %s: %s", "undeploy", vApp.getName(), task));
          }
@@ -120,7 +120,7 @@ public abstract class CommonVCloudComputeClientImpl<T, A extends NamedResource> 
       if (getStatus(vApp).compareTo(Status.OFF) > 0) {
          logger.debug(">> powering off vApp(%s), current status: %s", vApp.getName(), getStatus(vApp));
          Task task = client.powerOffVApp(vApp.getId());
-         if (!taskTester.apply(task.getLocation())) {
+         if (!taskTester.apply(task.getId())) {
             // TODO timeout
             throw new RuntimeException(String.format("failed to %s %s: %s", "powerOff", vApp.getName(), task));
          }

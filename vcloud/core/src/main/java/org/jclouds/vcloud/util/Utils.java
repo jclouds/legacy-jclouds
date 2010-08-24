@@ -37,7 +37,7 @@ public class Utils {
       String uri = attributes.getValue(attributes.getIndex("href"));
       String type = attributes.getValue(attributes.getIndex("type"));
       return new NamedResourceImpl(attributes.getValue(attributes.getIndex("name")), type != null ? type : defaultType,
-            URI.create(uri));
+               URI.create(uri));
    }
 
    public static NamedResource newNamedResource(Attributes attributes) {
@@ -45,8 +45,18 @@ public class Utils {
    }
 
    public static Task.Error newError(Attributes attributes) {
-      return new ErrorImpl(attrOrNull(attributes, "message"), attrOrNull(attributes, "majorErrorCode"), attrOrNull(
-            attributes, "minorErrorCode"));
+      String minorErrorCode = attrOrNull(attributes, "minorErrorCode");
+      String vendorSpecificErrorCode = attrOrNull(attributes, "vendorSpecificErrorCode");
+      int errorCode;
+      // remove this logic when vcloud 0.8 is gone
+      try {
+         errorCode = Integer.parseInt(attrOrNull(attributes, "majorErrorCode"));
+      } catch (NumberFormatException e) {
+         errorCode = 500;
+         vendorSpecificErrorCode = attrOrNull(attributes, "majorErrorCode");
+      }
+      return new ErrorImpl(attrOrNull(attributes, "message"), errorCode, minorErrorCode, vendorSpecificErrorCode,
+               attrOrNull(attributes, "stackTrace"));
    }
 
    public static String attrOrNull(Attributes attributes, String attr) {

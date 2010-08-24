@@ -25,11 +25,27 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Adrian Cole
  */
 public enum TaskStatus {
-   SUCCESS, FAILED, RUNNING, QUEUED, ERROR, CANCELLED,
    /**
-    * invalid status, temporarily in.
+    * The task has completed and returned a value indicating success.
     */
-   COMPLETED;
+   SUCCESS,
+   /**
+    * The task is running.
+    */
+   RUNNING,
+
+   /**
+    * The task has been queued for execution.
+    */
+   QUEUED,
+   /**
+    * The task has completed and returned a value indicating an error.
+    */
+   ERROR,
+   /**
+    * not an official status, temporarily in.
+    */
+   CANCELLED;
    public String value() {
       return name().toLowerCase();
    }
@@ -43,6 +59,10 @@ public enum TaskStatus {
       if ("CANCELED".equals(status.toUpperCase())) {
          // TODO: ecloud hack
          status = "CANCELLED";
+      } else if ("FAILED".equals(status.toUpperCase())) {
+         status = "ERROR";
+      } else if ("COMPLETED".equals(status.toUpperCase())) {
+         status = "SUCCESS";
       }
       return valueOf(checkNotNull(status, "status").toUpperCase());
    }

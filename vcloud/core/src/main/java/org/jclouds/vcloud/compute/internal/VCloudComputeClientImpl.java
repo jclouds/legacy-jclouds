@@ -75,14 +75,14 @@ public class VCloudComputeClientImpl extends CommonVCloudComputeClientImpl<VAppT
 
       Task task = client.deployVApp(vAppResponse.getId());
       if (options.shouldBlockOnDeploy()) {
-         if (!taskTester.apply(task.getLocation())) {
+         if (!taskTester.apply(task.getId())) {
             throw new RuntimeException(String.format("failed to %s %s: %s", "deploy", vAppResponse.getName(), task));
          }
          logger.debug("<< deployed vApp(%s)", vAppResponse.getName());
 
          logger.debug(">> powering vApp(%s)", vAppResponse.getName());
          task = client.powerOnVApp(vAppResponse.getId());
-         if (!taskTester.apply(task.getLocation())) {
+         if (!taskTester.apply(task.getId())) {
             throw new RuntimeException(String.format("failed to %s %s: %s", "powerOn", vAppResponse.getName(), task));
          }
          logger.debug("<< on vApp(%s)", vAppResponse.getName());

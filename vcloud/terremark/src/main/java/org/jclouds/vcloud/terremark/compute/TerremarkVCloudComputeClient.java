@@ -233,7 +233,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
    private void powerOffAndWait(VCloudExpressVApp vApp) {
       logger.debug(">> powering off vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
       Task task = client.powerOffVApp(vApp.getId());
-      if (!taskTester.apply(task.getLocation()))
+      if (!taskTester.apply(task.getId()))
          throw new RuntimeException(String.format("failed to %s %s: %s", "powerOff", vApp.getName(), task));
    }
 
@@ -248,7 +248,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
             }
 
          }));
-         if (!taskTester.apply(lastTask.getLocation()))
+         if (!taskTester.apply(lastTask.getId()))
             throw new RuntimeException(String.format("failed to %s %s: %s", "powerOff", vApp.getName(), lastTask));
       } catch (NoSuchElementException ex) {
 

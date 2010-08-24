@@ -24,6 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Date;
 
+import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
@@ -35,24 +36,31 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  * 
  */
-public class TaskImpl implements Task {
+public class TaskImpl extends NamedResourceImpl implements Task {
 
    public static class ErrorImpl implements Error {
       private final String message;
-      private final String majorErrorCode;
+      private final int majorErrorCode;
       private final String minorErrorCode;
+      @Nullable
+      private final String vendorSpecificErrorCode;
+      @Nullable
+      private final String stackTrace;
 
-      public ErrorImpl(String message, String majorErrorCode, String minorErrorCode) {
-         this.message = message;
-         this.majorErrorCode = majorErrorCode;
-         this.minorErrorCode = minorErrorCode;
+      public ErrorImpl(String message, int majorErrorCode, @Nullable String minorErrorCode,
+               @Nullable String vendorSpecificErrorCode, @Nullable String stackTrace) {
+         this.message = checkNotNull(message, "message");
+         this.majorErrorCode = checkNotNull(majorErrorCode, "majorErrorCode");
+         this.minorErrorCode = minorErrorCode; // check null after 0.8 is gone
+         this.vendorSpecificErrorCode = vendorSpecificErrorCode;
+         this.stackTrace = stackTrace;
       }
 
       public String getMessage() {
          return message;
       }
 
-      public String getMajorErrorCode() {
+      public int getMajorErrorCode() {
          return majorErrorCode;
       }
 
@@ -60,13 +68,23 @@ public class TaskImpl implements Task {
          return minorErrorCode;
       }
 
+      public String getVendorSpecificErrorCode() {
+         return vendorSpecificErrorCode;
+      }
+
+      public String getStackTrace() {
+         return stackTrace;
+      }
+
       @Override
       public int hashCode() {
          final int prime = 31;
          int result = 1;
-         result = prime * result + ((majorErrorCode == null) ? 0 : majorErrorCode.hashCode());
+         result = prime * result + majorErrorCode;
          result = prime * result + ((message == null) ? 0 : message.hashCode());
          result = prime * result + ((minorErrorCode == null) ? 0 : minorErrorCode.hashCode());
+         result = prime * result + ((stackTrace == null) ? 0 : stackTrace.hashCode());
+         result = prime * result + ((vendorSpecificErrorCode == null) ? 0 : vendorSpecificErrorCode.hashCode());
          return result;
       }
 
@@ -79,10 +97,7 @@ public class TaskImpl implements Task {
          if (getClass() != obj.getClass())
             return false;
          ErrorImpl other = (ErrorImpl) obj;
-         if (majorErrorCode == null) {
-            if (other.majorErrorCode != null)
-               return false;
-         } else if (!majorErrorCode.equals(other.majorErrorCode))
+         if (majorErrorCode != other.majorErrorCode)
             return false;
          if (message == null) {
             if (other.message != null)
@@ -94,17 +109,27 @@ public class TaskImpl implements Task {
                return false;
          } else if (!minorErrorCode.equals(other.minorErrorCode))
             return false;
+         if (stackTrace == null) {
+            if (other.stackTrace != null)
+               return false;
+         } else if (!stackTrace.equals(other.stackTrace))
+            return false;
+         if (vendorSpecificErrorCode == null) {
+            if (other.vendorSpecificErrorCode != null)
+               return false;
+         } else if (!vendorSpecificErrorCode.equals(other.vendorSpecificErrorCode))
+            return false;
          return true;
       }
 
       @Override
       public String toString() {
-         return "ErrorImpl [majorErrorCode=" + majorErrorCode + ", message=" + message + ", minorErrorCode="
-               + minorErrorCode + "]";
+         return "[majorErrorCode=" + majorErrorCode + ", message=" + message + ", minorErrorCode=" + minorErrorCode
+                  + ", stackTrace=" + stackTrace + ", vendorSpecificErrorCode=" + vendorSpecificErrorCode + "]";
       }
+
    }
 
-   private final URI id;
    private final TaskStatus status;
    private final Date startTime;
    @Nullable
@@ -113,19 +138,16 @@ public class TaskImpl implements Task {
    private final Date expiryTime;
    private final NamedResource owner;
    @Nullable
-   private final NamedResource result;
-   @Nullable
    private final Error error;
 
    public TaskImpl(URI id, TaskStatus status, Date startTime, @Nullable Date endTime, @Nullable Date expiryTime,
-         NamedResource owner, @Nullable NamedResource result, Error error) {
-      this.id = checkNotNull(id, "id");
+            NamedResource owner, Error error) {
+      super(null, VCloudMediaType.TASK_XML, id);
       this.status = checkNotNull(status, "status");
       this.startTime = startTime;
       this.endTime = endTime;
       this.expiryTime = expiryTime;
       this.owner = owner;
-      this.result = result;
       this.error = error;
    }
 
@@ -145,23 +167,8 @@ public class TaskImpl implements Task {
    }
 
    @Override
-   public NamedResource getResult() {
-      return result;
-   }
-
-   @Override
    public Date getEndTime() {
       return endTime;
-   }
-
-   @Override
-   public int compareTo(Task o) {
-      return (this == o) ? 0 : getLocation().compareTo(o.getLocation());
-   }
-
-   @Override
-   public URI getLocation() {
-      return id;
    }
 
    @Override
@@ -176,9 +183,7 @@ public class TaskImpl implements Task {
       result = prime * result + ((endTime == null) ? 0 : endTime.hashCode());
       result = prime * result + ((error == null) ? 0 : error.hashCode());
       result = prime * result + ((expiryTime == null) ? 0 : expiryTime.hashCode());
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((owner == null) ? 0 : owner.hashCode());
-      result = prime * result + ((this.result == null) ? 0 : this.result.hashCode());
       result = prime * result + ((startTime == null) ? 0 : startTime.hashCode());
       result = prime * result + ((status == null) ? 0 : status.hashCode());
       return result;
@@ -208,20 +213,10 @@ public class TaskImpl implements Task {
             return false;
       } else if (!expiryTime.equals(other.expiryTime))
          return false;
-      if (id == null) {
-         if (other.id != null)
-            return false;
-      } else if (!id.equals(other.id))
-         return false;
       if (owner == null) {
          if (other.owner != null)
             return false;
       } else if (!owner.equals(other.owner))
-         return false;
-      if (result == null) {
-         if (other.result != null)
-            return false;
-      } else if (!result.equals(other.result))
          return false;
       if (startTime == null) {
          if (other.startTime != null)
@@ -238,8 +233,8 @@ public class TaskImpl implements Task {
 
    @Override
    public String toString() {
-      return "TaskImpl [endTime=" + endTime + ", error=" + error + ", id=" + id + ", owner=" + owner
-            + ", result=" + result + ", startTime=" + startTime + ", status=" + status + "]";
+      return "TaskImpl [endTime=" + endTime + ", error=" + error + ", id=" + getName() + ", owner=" + owner
+               + ", startTime=" + startTime + ", status=" + status + "]";
    }
 
    public Date getExpiryTime() {

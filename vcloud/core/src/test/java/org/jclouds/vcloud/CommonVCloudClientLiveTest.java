@@ -172,7 +172,7 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
       assertNotNull(response.getTasks());
       if (response.getTasks().size() > 0) {
          Task task = response.getTasks().last();
-         assertEquals(connection.getTask(task.getLocation()).getLocation(), task.getLocation());
+         assertEquals(connection.getTask(task.getId()).getId(), task.getId());
       }
    }
 
