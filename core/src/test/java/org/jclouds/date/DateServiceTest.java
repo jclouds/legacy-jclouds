@@ -81,6 +81,9 @@ public class DateServiceTest extends PerformanceTest {
    public DateServiceTest() {
       // Constant time test values, each TestData item must contain matching times!
       testData = new TestData[] {
+               new TestData("2009-03-12T02:00:07.000Z", "2009-03-12T02:00:07-04:00",
+                        "2009-03-12T02:00:07Z", "Thu, 12 Mar 2009 02:00:07 GMT",
+                        "Thu Mar 12 02:00:07 +0000 2009", new Date(1236823207000l)),
                new TestData("2009-03-12T02:00:07.000Z", "2009-03-12T02:00:07+04:00",
                         "2009-03-12T02:00:07Z", "Thu, 12 Mar 2009 02:00:07 GMT",
                         "Thu Mar 12 02:00:07 +0000 2009", new Date(1236823207000l)),
