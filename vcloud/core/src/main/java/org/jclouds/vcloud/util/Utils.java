@@ -22,9 +22,9 @@ package org.jclouds.vcloud.util;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.internal.TaskImpl.ErrorImpl;
 import org.xml.sax.Attributes;
 
@@ -33,14 +33,14 @@ import org.xml.sax.Attributes;
  * @author Adrian Cole
  */
 public class Utils {
-   public static NamedResource newNamedResource(Attributes attributes, String defaultType) {
+   public static ReferenceType newNamedResource(Attributes attributes, String defaultType) {
       String uri = attributes.getValue(attributes.getIndex("href"));
       String type = attributes.getValue(attributes.getIndex("type"));
-      return new NamedResourceImpl(attributes.getValue(attributes.getIndex("name")), type != null ? type : defaultType,
+      return new ReferenceTypeImpl(attributes.getValue(attributes.getIndex("name")), type != null ? type : defaultType,
                URI.create(uri));
    }
 
-   public static NamedResource newNamedResource(Attributes attributes) {
+   public static ReferenceType newNamedResource(Attributes attributes) {
       return newNamedResource(attributes, null);
    }
 
@@ -63,7 +63,7 @@ public class Utils {
       return attributes.getIndex(attr) >= 0 ? attributes.getValue(attributes.getIndex(attr)) : null;
    }
 
-   public static void putNamedResource(Map<String, NamedResource> map, Attributes attributes) {
+   public static void putNamedResource(Map<String, ReferenceType> map, Attributes attributes) {
       map.put(attributes.getValue(attributes.getIndex("name")), newNamedResource(attributes));
    }
 }

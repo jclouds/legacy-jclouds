@@ -33,7 +33,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.compute.CommonVCloudComputeClient;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 
@@ -45,7 +45,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public abstract class CommonVCloudComputeClientImpl<T, A extends NamedResource> implements CommonVCloudComputeClient {
+public abstract class CommonVCloudComputeClientImpl<T, A extends ReferenceType> implements CommonVCloudComputeClient {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -69,7 +69,7 @@ public abstract class CommonVCloudComputeClientImpl<T, A extends NamedResource> 
 
    protected Map<String, String> parseResponse(T template, A vAppResponse) {
       Map<String, String> config = Maps.newLinkedHashMap();// Allows nulls
-      config.put("id", vAppResponse.getId().toASCIIString());
+      config.put("id", vAppResponse.getHref().toASCIIString());
       config.put("username", null);
       config.put("password", null);
       return config;
@@ -80,7 +80,7 @@ public abstract class CommonVCloudComputeClientImpl<T, A extends NamedResource> 
       A vApp = refreshVApp(id);
       logger.debug(">> resetting vApp(%s)", vApp.getName());
       Task task = reset(vApp);
-      if (!taskTester.apply(task.getId())) {
+      if (!taskTester.apply(task.getHref())) {
          throw new RuntimeException(String.format("failed to %s %s: %s", "resetVApp", vApp.getName(), task));
       }
       logger.debug("<< on vApp(%s)", vApp.getName());
@@ -101,18 +101,18 @@ public abstract class CommonVCloudComputeClientImpl<T, A extends NamedResource> 
 
    private void deleteVApp(A vApp) {
       logger.debug(">> deleting vApp(%s)", vApp.getName());
-      client.deleteVApp(vApp.getId());
+      client.deleteVApp(vApp.getHref());
    }
 
    private A undeployVAppIfDeployed(A vApp) {
       if (getStatus(vApp).compareTo(Status.RESOLVED) > 0) {
          logger.debug(">> undeploying vApp(%s), current status: %s", vApp.getName(), getStatus(vApp));
          Task task = undeploy(vApp);
-         if (!taskTester.apply(task.getId())) {
+         if (!taskTester.apply(task.getHref())) {
             // TODO timeout
             throw new RuntimeException(String.format("failed to %s %s: %s", "undeploy", vApp.getName(), task));
          }
-         vApp = refreshVApp(vApp.getId());
+         vApp = refreshVApp(vApp.getHref());
          logger.debug("<< %s vApp(%s)", getStatus(vApp), vApp.getName());
       }
       return vApp;
@@ -124,11 +124,11 @@ public abstract class CommonVCloudComputeClientImpl<T, A extends NamedResource> 
       if (getStatus(vApp).compareTo(Status.OFF) > 0) {
          logger.debug(">> powering off vApp(%s), current status: %s", vApp.getName(), getStatus(vApp));
          Task task = powerOff(vApp);
-         if (!taskTester.apply(task.getId())) {
+         if (!taskTester.apply(task.getHref())) {
             // TODO timeout
             throw new RuntimeException(String.format("failed to %s %s: %s", "powerOff", vApp.getName(), task));
          }
-         vApp = refreshVApp(vApp.getId());
+         vApp = refreshVApp(vApp.getHref());
          logger.debug("<< %s vApp(%s)", getStatus(vApp), vApp.getName());
       }
       return vApp;

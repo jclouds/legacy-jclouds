@@ -25,10 +25,10 @@ import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.vcloud.VCloudExpressMediaType;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.ResourceAllocation;
-import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.Status;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.VirtualSystem;
 
 import com.google.common.collect.ListMultimap;
@@ -40,8 +40,8 @@ import com.google.common.collect.ListMultimap;
  */
 public class VCloudExpressVAppImpl implements VCloudExpressVApp {
    private final String name;
-   private final URI id;
-   private final NamedResource vDC;
+   private final URI href;
+   private final ReferenceType vDC;
    private final Status status;
    private final Long size;
    private final ListMultimap<String, String> networkToAddresses;
@@ -53,11 +53,11 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public VCloudExpressVAppImpl(String name, URI id, Status status, Long size, NamedResource vDC,
+   public VCloudExpressVAppImpl(String name, URI href, Status status, Long size, ReferenceType vDC,
             ListMultimap<String, String> networkToAddresses, Integer osType, String operatingSystemDescription,
             VirtualSystem system, Set<ResourceAllocation> resourceAllocations) {
       this.name = checkNotNull(name, "name");
-      this.id = checkNotNull(id, "id");
+      this.href = checkNotNull(href, "href");
       this.status = checkNotNull(status, "status");
       this.size = size;
       this.vDC = vDC;
@@ -99,7 +99,7 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
    }
 
    @Override
-   public NamedResource getVDC() {
+   public ReferenceType getVDC() {
       return vDC;
    }
 
@@ -107,7 +107,7 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((href == null) ? 0 : href.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((networkToAddresses == null) ? 0 : networkToAddresses.hashCode());
       result = prime * result + ((operatingSystemDescription == null) ? 0 : operatingSystemDescription.hashCode());
@@ -129,10 +129,10 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
       if (getClass() != obj.getClass())
          return false;
       VCloudExpressVAppImpl other = (VCloudExpressVAppImpl) obj;
-      if (id == null) {
-         if (other.id != null)
+      if (href == null) {
+         if (other.href != null)
             return false;
-      } else if (!id.equals(other.id))
+      } else if (!href.equals(other.href))
          return false;
       if (name == null) {
          if (other.name != null)
@@ -188,8 +188,8 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
    }
 
    @Override
-   public URI getId() {
-      return id;
+   public URI getHref() {
+      return href;
    }
 
    @Override
@@ -199,7 +199,7 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", name=" + name + ", networkToAddresses=" + networkToAddresses + ", osType=" + osType
+      return "[href=" + href + ", name=" + name + ", networkToAddresses=" + networkToAddresses + ", osType=" + osType
                + ", operatingSystemDescription=" + operatingSystemDescription + ", resourceAllocationByType="
                + resourceAllocations + ", size=" + size + ", status=" + status + ", system=" + system + ", vDC=" + vDC
                + "]";
@@ -211,8 +211,8 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
    }
 
    @Override
-   public int compareTo(NamedResource o) {
-      return (this == o) ? 0 : getId().compareTo(o.getId());
+   public int compareTo(ReferenceType o) {
+      return (this == o) ? 0 : getHref().compareTo(o.getHref());
    }
 
 }

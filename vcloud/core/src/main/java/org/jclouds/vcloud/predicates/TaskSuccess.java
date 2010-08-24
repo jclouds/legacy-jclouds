@@ -57,7 +57,7 @@ public class TaskSuccess implements Predicate<URI> {
       Task task = client.getTask(taskId);
       logger.trace("%s: looking for status %s: currently: %s", task, TaskStatus.SUCCESS, task.getStatus());
       if (task.getStatus() == TaskStatus.ERROR)
-         throw new RuntimeException("error on task: " + task.getId() + " error: " + task.getError());
+         throw new RuntimeException("error on task: " + task.getHref() + " error: " + task.getError());
       return task.getStatus() == TaskStatus.SUCCESS;
    }
 

@@ -26,7 +26,7 @@ import java.util.NoSuchElementException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.endpoints.Org;
 
 import com.google.common.base.Function;
@@ -38,19 +38,19 @@ import com.google.common.base.Supplier;
  */
 @Singleton
 public class OrgNameToEndpoint implements Function<Object, URI> {
-   private final Supplier<Map<String, NamedResource>> orgNameToEndpointSupplier;
+   private final Supplier<Map<String, ReferenceType>> orgNameToEndpointSupplier;
    private final URI defaultUri;
 
    @Inject
-   public OrgNameToEndpoint(@Org Supplier<Map<String, NamedResource>> orgNameToEndpointSupplier, @Org URI defaultUri) {
+   public OrgNameToEndpoint(@Org Supplier<Map<String, ReferenceType>> orgNameToEndpointSupplier, @Org URI defaultUri) {
       this.orgNameToEndpointSupplier = orgNameToEndpointSupplier;
       this.defaultUri = defaultUri;
    }
 
    public URI apply(Object from) {
       try {
-         Map<String, NamedResource> orgNameToEndpoint = orgNameToEndpointSupplier.get();
-         return from == null ? defaultUri : orgNameToEndpoint.get(from).getId();
+         Map<String, ReferenceType> orgNameToEndpoint = orgNameToEndpointSupplier.get();
+         return from == null ? defaultUri : orgNameToEndpoint.get(from).getHref();
       } catch (NullPointerException e) {
          throw new NoSuchElementException("org " + from + " not found in " + orgNameToEndpointSupplier.get().keySet());
       }

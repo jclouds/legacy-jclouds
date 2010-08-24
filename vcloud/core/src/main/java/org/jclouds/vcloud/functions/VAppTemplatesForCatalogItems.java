@@ -76,7 +76,7 @@ public class VAppTemplatesForCatalogItems implements
          @Override
          public Future<VAppTemplate> apply(CatalogItem from) {
             return (Future<VAppTemplate>) VCloudAsyncClient.class.cast(aclient).getVAppTemplate(
-                  from.getEntity().getId());
+                  from.getEntity().getHref());
          }
 
       }, executor, null, logger, "vappTemplates in");

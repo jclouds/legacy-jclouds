@@ -38,7 +38,7 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @ImplementedBy(OrgImpl.class)
-public interface Org extends NamedResource {
+public interface Org extends ReferenceType {
    /**
     * optional description
     * 
@@ -58,12 +58,12 @@ public interface Org extends NamedResource {
    /**
     * @since vcloud api 0.8
     */
-   Map<String, NamedResource> getCatalogs();
+   Map<String, ReferenceType> getCatalogs();
 
    /**
     * @since vcloud api 0.8
     */
-   Map<String, NamedResource> getVDCs();
+   Map<String, ReferenceType> getVDCs();
 
    /**
     * If there are any queued, running, or recently completed tasks owned by a member of the
@@ -72,12 +72,12 @@ public interface Org extends NamedResource {
     * @since vcloud api 0.8
     */
    @Nullable
-   NamedResource getTasksList();
+   ReferenceType getTasksList();
 
    /**
     * @since vcloud api 1.0
     */
-   Map<String, NamedResource> getNetworks();
+   Map<String, ReferenceType> getNetworks();
 
    /**
     * read‐only container for Task elements. Each element in the container represents a queued,

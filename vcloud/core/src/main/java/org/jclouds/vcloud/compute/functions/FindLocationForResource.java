@@ -29,7 +29,7 @@ import javax.inject.Singleton;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.compute.domain.VCloudLocation;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 
 import com.google.common.base.Supplier;
 
@@ -55,12 +55,12 @@ public class FindLocationForResource {
     * @throws NoSuchElementException
     *            if not found
     */
-   public Location apply(NamedResource resource) {
+   public Location apply(ReferenceType resource) {
       for (Location input : locations.get()) {
          do {
             // The "name" isn't always present, ex inside a vApp we have a rel
             // link that only includes href and type.
-            if (VCloudLocation.class.cast(input).getResource().getId().equals(resource.getId()))
+            if (VCloudLocation.class.cast(input).getResource().getHref().equals(resource.getHref()))
                return input;
             input = input.getParent();
          } while (input.getParent() != null);

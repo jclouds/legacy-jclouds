@@ -58,7 +58,7 @@ public class InternetServiceLiveTest {
 
    @Test
    public void testGetAllInternetServices() throws Exception {
-      tmClient.getAllInternetServicesInVDC(tmClient.findVDCInOrgNamed(null, null).getId());
+      tmClient.getAllInternetServicesInVDC(tmClient.findVDCInOrgNamed(null, null).getHref());
    }
 
    private void delete(Set<InternetService> set) {
@@ -77,7 +77,7 @@ public class InternetServiceLiveTest {
 
    @Test
    public void testGetAllPublicIps() throws Exception {
-      for (PublicIpAddress ip : tmClient.getPublicIpsAssociatedWithVDC(tmClient.findVDCInOrgNamed(null, null).getId())) {
+      for (PublicIpAddress ip : tmClient.getPublicIpsAssociatedWithVDC(tmClient.findVDCInOrgNamed(null, null).getHref())) {
          tmClient.getInternetServicesOnPublicIp(ip.getId());
       }
    }

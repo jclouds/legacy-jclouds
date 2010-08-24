@@ -33,7 +33,7 @@ import org.jclouds.Constants;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.CommonVCloudAsyncClient;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.VDC;
 
@@ -61,11 +61,11 @@ public class AllVDCsInOrg implements Function<Org, Iterable<? extends VDC>> {
    public Iterable<? extends VDC> apply(final Org org) {
 
       Iterable<VDC> catalogItems = transformParallel(org.getVDCs().values(),
-            new Function<NamedResource, Future<VDC>>() {
+            new Function<ReferenceType, Future<VDC>>() {
                @SuppressWarnings("unchecked")
                @Override
-               public Future<VDC> apply(NamedResource from) {
-                  return (Future<VDC>) aclient.getVDC(from.getId());
+               public Future<VDC> apply(ReferenceType from) {
+                  return (Future<VDC>) aclient.getVDC(from.getHref());
                }
 
             }, executor, null, logger, "vdcs in org " + org.getName());

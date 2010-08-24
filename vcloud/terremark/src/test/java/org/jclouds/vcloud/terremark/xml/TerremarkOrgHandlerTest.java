@@ -32,7 +32,7 @@ import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.VCloudExpressMediaType;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressMediaType;
 import org.jclouds.vcloud.terremark.TerremarkVCloudPropertiesBuilder;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
@@ -72,16 +72,16 @@ public class TerremarkOrgHandlerTest extends BaseHandlerTest {
 
       TerremarkOrg result = (TerremarkOrg) factory.create(injector.getInstance(TerremarkOrgHandler.class)).parse(is);
       assertEquals(result.getName(), "adrian@jclouds.org");
-      assertEquals(result.getId(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/org/48"));
-      assertEquals(result.getCatalogs(), ImmutableMap.of("Miami Environment 1 Catalog", new NamedResourceImpl(
+      assertEquals(result.getHref(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/org/48"));
+      assertEquals(result.getCatalogs(), ImmutableMap.of("Miami Environment 1 Catalog", new ReferenceTypeImpl(
                "Miami Environment 1 Catalog", CATALOG_XML, URI
                         .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32/catalog"))));
-      assertEquals(result.getVDCs(), ImmutableMap.of("Miami Environment 1", new NamedResourceImpl(
+      assertEquals(result.getVDCs(), ImmutableMap.of("Miami Environment 1", new ReferenceTypeImpl(
                "Miami Environment 1", VCloudExpressMediaType.VDC_XML, URI
                         .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"))));
-      assertEquals(result.getTasksList(), new NamedResourceImpl("Miami Environment 1 Tasks List", TASKSLIST_XML, URI
+      assertEquals(result.getTasksList(), new ReferenceTypeImpl("Miami Environment 1 Tasks List", TASKSLIST_XML, URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32/tasksList")));
-      assertEquals(result.getKeysList(), new NamedResourceImpl("Keys", TerremarkVCloudExpressMediaType.KEYSLIST_XML,
+      assertEquals(result.getKeysList(), new ReferenceTypeImpl("Keys", TerremarkVCloudExpressMediaType.KEYSLIST_XML,
                URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/extensions/org/48/keys")));
 
    }

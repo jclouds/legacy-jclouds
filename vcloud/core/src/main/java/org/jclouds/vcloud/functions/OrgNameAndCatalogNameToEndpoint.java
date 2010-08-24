@@ -28,7 +28,7 @@ import java.util.NoSuchElementException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.endpoints.Catalog;
 
@@ -65,8 +65,8 @@ public class OrgNameAndCatalogNameToEndpoint implements Function<Object, URI> {
          org = defaultOrg;
 
       try {
-         Map<String, NamedResource> catalogs = checkNotNull(orgMap.get().get(org)).getCatalogs();
-         return catalog == null ? Iterables.getLast(catalogs.values()).getId() : catalogs.get(catalog).getId();
+         Map<String, ReferenceType> catalogs = checkNotNull(orgMap.get().get(org)).getCatalogs();
+         return catalog == null ? Iterables.getLast(catalogs.values()).getHref() : catalogs.get(catalog).getHref();
       } catch (NullPointerException e) {
          throw new NoSuchElementException(org + "/" + catalog + " not found in " + orgMap.get());
       }

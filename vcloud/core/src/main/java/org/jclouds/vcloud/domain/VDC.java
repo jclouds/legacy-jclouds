@@ -35,14 +35,14 @@ import com.google.inject.ImplementedBy;
  */
 @org.jclouds.vcloud.endpoints.VDC
 @ImplementedBy(VDCImpl.class)
-public interface VDC extends NamedResource {
+public interface VDC extends ReferenceType {
    /**
     * Reference to the org containing this vDC.
     * 
     * @since vcloud api 1.0
     * @return org, or null if this is a version before 1.0 where the org isn't present
     */
-   NamedResource getOrg();
+   ReferenceType getOrg();
 
    /**
     * The creation status of the vDC
@@ -107,14 +107,14 @@ public interface VDC extends NamedResource {
     * 
     * @since vcloud api 0.8
     */
-   Map<String, NamedResource> getResourceEntities();
+   Map<String, ReferenceType> getResourceEntities();
 
    /**
     * container for OrgNetwork elements that represent organization networks contained by the vDC
     * 
     * @since vcloud api 0.8
     */
-   Map<String, NamedResource> getAvailableNetworks();
+   Map<String, ReferenceType> getAvailableNetworks();
 
    /**
     * maximum number of virtual NICs allowed in this vDC. Defaults to 0, which specifies an

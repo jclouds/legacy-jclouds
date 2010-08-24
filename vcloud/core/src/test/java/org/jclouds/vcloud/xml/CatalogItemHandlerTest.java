@@ -29,7 +29,7 @@ import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSortedMap;
@@ -52,7 +52,7 @@ public class CatalogItemHandlerTest {
 
       assertEquals(result, new CatalogItemImpl("Windows 2008 Datacenter 64 Bit", URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/catalogItem/2"), "Windows 2008 Datacenter 64 Bit",
-               new NamedResourceImpl("Windows 2008 Datacenter 64 Bit",
+               new ReferenceTypeImpl("Windows 2008 Datacenter 64 Bit",
                         "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
                                  .create("https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/2")),
                ImmutableSortedMap.of("Foo", "Bar", "Hello", "World"

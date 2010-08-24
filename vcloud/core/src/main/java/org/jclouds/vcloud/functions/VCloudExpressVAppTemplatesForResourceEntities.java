@@ -36,7 +36,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.VCloudExpressMediaType;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 
 import com.google.common.base.Function;
@@ -47,7 +47,7 @@ import com.google.common.base.Predicate;
  */
 @Singleton
 public class VCloudExpressVAppTemplatesForResourceEntities implements
-         Function<Iterable<? extends NamedResource>, Iterable<? extends VCloudExpressVAppTemplate>> {
+         Function<Iterable<? extends ReferenceType>, Iterable<? extends VCloudExpressVAppTemplate>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
@@ -62,20 +62,20 @@ public class VCloudExpressVAppTemplatesForResourceEntities implements
    }
 
    @Override
-   public Iterable<? extends VCloudExpressVAppTemplate> apply(Iterable<? extends NamedResource> from) {
-      return transformParallel(filter(checkNotNull(from, "named resources"), new Predicate<NamedResource>() {
+   public Iterable<? extends VCloudExpressVAppTemplate> apply(Iterable<? extends ReferenceType> from) {
+      return transformParallel(filter(checkNotNull(from, "named resources"), new Predicate<ReferenceType>() {
 
          @Override
-         public boolean apply(NamedResource input) {
+         public boolean apply(ReferenceType input) {
             return input.getType().equals(VCloudExpressMediaType.VAPPTEMPLATE_XML);
          }
 
-      }), new Function<NamedResource, Future<VCloudExpressVAppTemplate>>() {
+      }), new Function<ReferenceType, Future<VCloudExpressVAppTemplate>>() {
 
          @SuppressWarnings("unchecked")
          @Override
-         public Future<VCloudExpressVAppTemplate> apply(NamedResource from) {
-            return (Future<VCloudExpressVAppTemplate>) aclient.getVAppTemplate(from.getId());
+         public Future<VCloudExpressVAppTemplate> apply(ReferenceType from) {
+            return (Future<VCloudExpressVAppTemplate>) aclient.getVAppTemplate(from.getHref());
          }
 
       }, executor, null, logger, "vappTemplates in");

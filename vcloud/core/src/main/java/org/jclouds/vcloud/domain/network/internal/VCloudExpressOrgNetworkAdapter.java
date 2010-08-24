@@ -39,7 +39,7 @@ import com.google.common.collect.Iterables;
 public class VCloudExpressOrgNetworkAdapter extends OrgNetworkImpl {
 
    public VCloudExpressOrgNetworkAdapter(VCloudExpressNetwork in) {
-      super(in.getName(), in.getType(), in.getId(), null, in.getDescription(), ImmutableSet.<Task> of(),
+      super(in.getName(), in.getType(), in.getHref(), null, in.getDescription(), ImmutableSet.<Task> of(),
                parseConfiguration(in), null, ImmutableSet.<String> of());
    }
 

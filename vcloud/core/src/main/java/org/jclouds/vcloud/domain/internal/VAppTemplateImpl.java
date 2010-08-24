@@ -27,7 +27,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VAppTemplate;
@@ -43,10 +43,10 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  * 
  */
-public class VAppTemplateImpl extends NamedResourceImpl implements VAppTemplate {
+public class VAppTemplateImpl extends ReferenceTypeImpl implements VAppTemplate {
 
    private final Status status;
-   private final NamedResource vdc;
+   private final ReferenceType vdc;
    @Nullable
    private final String description;
    private final List<Task> tasks = Lists.newArrayList();
@@ -54,7 +54,7 @@ public class VAppTemplateImpl extends NamedResourceImpl implements VAppTemplate 
    private final String vAppScopedLocalId;
    private final Set<Vm> children = Sets.newLinkedHashSet();
 
-   public VAppTemplateImpl(String name, String type, URI id, Status status, NamedResource vdc,
+   public VAppTemplateImpl(String name, String type, URI id, Status status, ReferenceType vdc,
             @Nullable String description, Iterable<Task> tasks, boolean ovfDescriptorUploaded,
             @Nullable String vAppScopedLocalId, Iterable<? extends Vm> children) {
       super(name, type, id);
@@ -79,7 +79,7 @@ public class VAppTemplateImpl extends NamedResourceImpl implements VAppTemplate 
     * {@inheritDoc}
     */
    @Override
-   public NamedResource getVDC() {
+   public ReferenceType getVDC() {
       return vdc;
    }
 
@@ -177,7 +177,7 @@ public class VAppTemplateImpl extends NamedResourceImpl implements VAppTemplate 
 
    @Override
    public String toString() {
-      return "[id=" + getId() + ", name=" + getName() + ", vdc=" + vdc + ", description=" + description + ", status="
+      return "[id=" + getHref() + ", name=" + getName() + ", vdc=" + vdc + ", description=" + description + ", status="
                + status + "]";
    }
 

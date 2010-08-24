@@ -24,7 +24,7 @@ import java.util.SortedSet;
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
 import org.jclouds.vcloud.domain.internal.TasksListImpl;
@@ -41,7 +41,7 @@ public class TasksListHandler extends ParseSax.HandlerWithResult<TasksList> {
 
    private SortedSet<Task> tasks = Sets.newTreeSet();
    private final TaskHandler taskHandler;
-   private NamedResource resource;
+   private ReferenceType resource;
 
    @Inject
    public TasksListHandler(TaskHandler taskHandler) {
@@ -49,7 +49,7 @@ public class TasksListHandler extends ParseSax.HandlerWithResult<TasksList> {
    }
 
    public TasksList getResult() {
-      return new TasksListImpl(resource.getId(), tasks);
+      return new TasksListImpl(resource.getHref(), tasks);
    }
 
    @Override

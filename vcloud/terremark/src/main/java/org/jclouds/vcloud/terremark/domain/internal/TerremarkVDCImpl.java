@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 
 import org.jclouds.vcloud.domain.AllocationModel;
 import org.jclouds.vcloud.domain.Capacity;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VDCStatus;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
@@ -42,19 +42,19 @@ import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
  */
 public class TerremarkVDCImpl extends VDCImpl implements TerremarkVDC {
 
-   private final NamedResource catalog;
-   private final NamedResource publicIps;
-   private final NamedResource internetServices;
+   private final ReferenceType catalog;
+   private final ReferenceType publicIps;
+   private final ReferenceType internetServices;
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
 
-   public TerremarkVDCImpl(String name, String type, URI id, VDCStatus status, NamedResource org,
+   public TerremarkVDCImpl(String name, String type, URI id, VDCStatus status, ReferenceType org,
             @Nullable String description, Iterable<Task> tasks, AllocationModel allocationModel,
             @Nullable Capacity storageCapacity, @Nullable Capacity cpuCapacity, @Nullable Capacity memoryCapacity,
-            Map<String, NamedResource> resourceEntities, Map<String, NamedResource> availableNetworks, int nicQuota,
-            int networkQuota, int vmQuota, boolean isEnabled, NamedResource catalog, NamedResource publicIps,
-            NamedResource internetServices) {
+            Map<String, ReferenceType> resourceEntities, Map<String, ReferenceType> availableNetworks, int nicQuota,
+            int networkQuota, int vmQuota, boolean isEnabled, ReferenceType catalog, ReferenceType publicIps,
+            ReferenceType internetServices) {
       super(name, type, id, status, org, description, tasks, allocationModel, storageCapacity, cpuCapacity,
                memoryCapacity, resourceEntities, availableNetworks, nicQuota, networkQuota, vmQuota, isEnabled);
       this.catalog = checkNotNull(catalog, "catalog");
@@ -62,15 +62,15 @@ public class TerremarkVDCImpl extends VDCImpl implements TerremarkVDC {
       this.internetServices = checkNotNull(internetServices, "internetServices");
    }
 
-   public NamedResource getCatalog() {
+   public ReferenceType getCatalog() {
       return catalog;
    }
 
-   public NamedResource getPublicIps() {
+   public ReferenceType getPublicIps() {
       return publicIps;
    }
 
-   public NamedResource getInternetServices() {
+   public ReferenceType getInternetServices() {
       return internetServices;
    }
 

@@ -28,7 +28,7 @@ import java.util.NoSuchElementException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.endpoints.VDC;
 
@@ -65,8 +65,8 @@ public class OrgNameAndVDCNameToEndpoint implements Function<Object, URI> {
          org = defaultOrg;
 
       try {
-         Map<String, NamedResource> vdcs = checkNotNull(orgNameToVDCEndpoint.get().get(org)).getVDCs();
-         return vdc == null ? Iterables.getLast(vdcs.values()).getId() : vdcs.get(vdc).getId();
+         Map<String, ReferenceType> vdcs = checkNotNull(orgNameToVDCEndpoint.get().get(org)).getVDCs();
+         return vdc == null ? Iterables.getLast(vdcs.values()).getHref() : vdcs.get(vdc).getHref();
       } catch (NullPointerException e) {
          throw new NoSuchElementException(org + "/" + vdc + " not found in " + orgNameToVDCEndpoint.get());
       }

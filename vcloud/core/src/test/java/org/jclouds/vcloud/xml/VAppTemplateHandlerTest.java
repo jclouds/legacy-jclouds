@@ -31,7 +31,7 @@ import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.Vm;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -52,11 +52,11 @@ public class VAppTemplateHandlerTest {
       Factory factory = injector.getInstance(ParseSax.Factory.class);
       VAppTemplate result = factory.create(injector.getInstance(VAppTemplateHandler.class)).parse(is);
       assertEquals(result.getName(), "Ubuntu Template");
-      assertEquals(result.getId(), URI
+      assertEquals(result.getHref(), URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921"));
       assertEquals(result.getType(), "application/vnd.vmware.vcloud.vAppTemplate+xml");
       assertEquals(result.getStatus(), Status.OFF);
-      assertEquals(result.getVDC(), new NamedResourceImpl(null, VCloudMediaType.VDC_XML, URI
+      assertEquals(result.getVDC(), new ReferenceTypeImpl(null, VCloudMediaType.VDC_XML, URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439")));
       assertEquals(result.getDescription(), null);
       assertEquals(result.getTasks(), ImmutableList.of());
@@ -64,11 +64,11 @@ public class VAppTemplateHandlerTest {
       assert result.isOvfDescriptorUploaded();
       Vm vm = Iterables.getOnlyElement(result.getChildren());
       assertEquals(vm.getName(), "Ubuntu1004");
-      assertEquals(vm.getId(), URI.create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vm-172837194"));
+      assertEquals(vm.getHref(), URI.create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vm-172837194"));
       // NOTE this is vAppTemplate not VM!
       assertEquals(vm.getType(), "application/vnd.vmware.vcloud.vAppTemplate+xml");
       assertEquals(vm.getStatus(), null);
-      assertEquals(vm.getParent(), new NamedResourceImpl(null, VCloudMediaType.VAPPTEMPLATE_XML, URI
+      assertEquals(vm.getParent(), new ReferenceTypeImpl(null, VCloudMediaType.VAPPTEMPLATE_XML, URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921")));
       assertEquals(vm.getDescription(), null);
       assertEquals(vm.getTasks(), ImmutableList.of());

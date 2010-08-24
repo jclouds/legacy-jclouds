@@ -66,7 +66,7 @@ import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.VCloudToken;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.VDC;
@@ -162,7 +162,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Singleton
    protected URI provideDefaultVDC(Org org) {
       checkState(org.getVDCs().size() > 0, "No vdcs present in org: " + org.getName());
-      return get(org.getVDCs().values(), 0).getId();
+      return get(org.getVDCs().values(), 0).getHref();
    }
 
    @Provides
@@ -170,7 +170,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Singleton
    protected URI provideCatalog(Org org, @Named(PROPERTY_IDENTITY) String user) {
       checkState(org.getCatalogs().size() > 0, "No catalogs present in org: " + org.getName());
-      return get(org.getCatalogs().values(), 0).getId();
+      return get(org.getCatalogs().values(), 0).getHref();
    }
 
    @Provides
@@ -246,26 +246,26 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Provides
    @org.jclouds.vcloud.endpoints.Org
    @Singleton
-   protected URI provideOrg(@org.jclouds.vcloud.endpoints.Org Iterable<NamedResource> orgs) {
-      return getLast(orgs).getId();
+   protected URI provideOrg(@org.jclouds.vcloud.endpoints.Org Iterable<ReferenceType> orgs) {
+      return getLast(orgs).getHref();
    }
 
    @Provides
    @org.jclouds.vcloud.endpoints.Org
    @Singleton
-   protected String provideOrgName(@org.jclouds.vcloud.endpoints.Org Iterable<NamedResource> orgs) {
+   protected String provideOrgName(@org.jclouds.vcloud.endpoints.Org Iterable<ReferenceType> orgs) {
       return getLast(orgs).getName();
    }
 
    @Provides
    @org.jclouds.vcloud.endpoints.Org
    @Singleton
-   protected Supplier<Map<String, NamedResource>> provideVDCtoORG(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+   protected Supplier<Map<String, ReferenceType>> provideVDCtoORG(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
             final OrgNameToOrgSupplier supplier) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, NamedResource>>(authException,
-               seconds, new Supplier<Map<String, NamedResource>>() {
+      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ReferenceType>>(authException,
+               seconds, new Supplier<Map<String, ReferenceType>>() {
                   @Override
-                  public Map<String, NamedResource> get() {
+                  public Map<String, ReferenceType> get() {
                      return supplier.get();
                   }
                });
@@ -310,7 +310,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
 
                      @Override
                      public URI apply(org.jclouds.vcloud.domain.VDC from) {
-                        return from.getId();
+                        return from.getHref();
                      }
 
                   });
@@ -321,7 +321,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Provides
    @org.jclouds.vcloud.endpoints.Org
    @Singleton
-   protected Iterable<NamedResource> provideOrgs(Supplier<VCloudSession> cache, @Named(PROPERTY_IDENTITY) String user) {
+   protected Iterable<ReferenceType> provideOrgs(Supplier<VCloudSession> cache, @Named(PROPERTY_IDENTITY) String user) {
       VCloudSession discovery = cache.get();
       checkState(discovery.getOrgs().size() > 0, "No orgs present for user: " + user);
       return discovery.getOrgs().values();
@@ -329,10 +329,10 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
 
    protected AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
 
-   final static Function<NamedResource, String> name = new Function<NamedResource, String>() {
+   final static Function<ReferenceType, String> name = new Function<ReferenceType, String>() {
 
       @Override
-      public String apply(NamedResource from) {
+      public String apply(ReferenceType from) {
          return from.getName();
       }
 
@@ -351,7 +351,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    }
 
    @Singleton
-   private static class OrgNameToOrgSupplier implements Supplier<Map<String, NamedResource>> {
+   private static class OrgNameToOrgSupplier implements Supplier<Map<String, ReferenceType>> {
       private final Supplier<VCloudSession> sessionSupplier;
 
       @SuppressWarnings("unused")
@@ -361,7 +361,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
       }
 
       @Override
-      public Map<String, NamedResource> get() {
+      public Map<String, ReferenceType> get() {
          return sessionSupplier.get().getOrgs();
       }
 
@@ -396,9 +396,9 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
          throw authException.get();
       try {
          org.jclouds.vcloud.domain.VDC vDC = client.findVDCInOrgNamed(null, null);
-         Map<String, NamedResource> networks = vDC.getAvailableNetworks();
+         Map<String, ReferenceType> networks = vDC.getAvailableNetworks();
          checkState(networks.size() > 0, "No networks present in vDC: " + vDC.getName());
-         return get(networks.values(), 0).getId();
+         return get(networks.values(), 0).getHref();
       } catch (AuthorizationException e) {
          authException.set(e);
          throw e;
@@ -541,7 +541,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @TasksList
    @Singleton
    protected URI provideDefaultTasksList(Org org) {
-      return org.getTasksList().getId();
+      return org.getTasksList().getHref();
    }
 
    @Override

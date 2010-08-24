@@ -66,7 +66,7 @@ public class NodeMetadataToOrgAndName implements Function<NodeMetadata, OrgAndNa
          if (org == null) {
             logger.warn("did not find an association for vdc %s in %s", from.getLocation().getId(), vdcToOrg);
          } else {
-            return new OrgAndName(org.getId(), from.getTag());
+            return new OrgAndName(org.getHref(), from.getTag());
          }
       }
       return null;

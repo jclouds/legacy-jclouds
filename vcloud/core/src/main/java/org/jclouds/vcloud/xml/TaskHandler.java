@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 import org.jclouds.vcloud.domain.Task.Error;
@@ -42,8 +42,8 @@ import org.xml.sax.SAXException;
 public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    protected final DateService dateService;
 
-   private NamedResource taskLink;
-   private NamedResource owner;
+   private ReferenceType taskLink;
+   private ReferenceType owner;
    private TaskStatus status;
    private Date startTime;
    private Date endTime;
@@ -105,7 +105,7 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    @Override
    public void endElement(String uri, String localName, String qName) {
       if (qName.equalsIgnoreCase("Task")) {
-         this.task = new TaskImpl(taskLink.getId(), status, startTime, endTime, expiryTime, owner, error);
+         this.task = new TaskImpl(taskLink.getHref(), status, startTime, endTime, expiryTime, owner, error);
          taskLink = null;
          status = null;
          startTime = null;

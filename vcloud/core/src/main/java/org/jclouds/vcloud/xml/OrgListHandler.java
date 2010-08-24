@@ -25,7 +25,7 @@ import static org.jclouds.vcloud.util.Utils.putNamedResource;
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -35,11 +35,11 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 public class OrgListHandler extends
-		ParseSax.HandlerWithResult<Map<String, NamedResource>> {
+		ParseSax.HandlerWithResult<Map<String, ReferenceType>> {
 
-	private Map<String, NamedResource> org = Maps.newHashMap();
+	private Map<String, ReferenceType> org = Maps.newHashMap();
 
-	public Map<String, NamedResource> getResult() {
+	public Map<String, ReferenceType> getResult() {
 		return org;
 	}
 

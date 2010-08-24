@@ -74,7 +74,7 @@ public class VCloudExpressVAppTemplatesForCatalogItems implements
          @SuppressWarnings("unchecked")
          @Override
          public Future<VCloudExpressVAppTemplate> apply(CatalogItem from) {
-            return (Future<VCloudExpressVAppTemplate>) aclient.getVAppTemplate(from.getEntity().getId());
+            return (Future<VCloudExpressVAppTemplate>) aclient.getVAppTemplate(from.getEntity().getHref());
          }
 
       }, executor, null, logger, "vappTemplates in");

@@ -33,14 +33,14 @@ import com.google.inject.ImplementedBy;
  */
 @org.jclouds.vcloud.endpoints.Catalog
 @ImplementedBy(CatalogImpl.class)
-public interface Catalog extends NamedResource, Map<String, NamedResource> {
+public interface Catalog extends ReferenceType, Map<String, ReferenceType> {
    /**
     * Reference to the org containing this vDC.
     * 
     * @since vcloud api 1.0
     * @return org, or null if this is a version before 1.0 where the org isn't present
     */
-   NamedResource getOrg();
+   ReferenceType getOrg();
 
    /**
     * optional description

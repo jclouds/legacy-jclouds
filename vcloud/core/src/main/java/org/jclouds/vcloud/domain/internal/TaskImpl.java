@@ -25,7 +25,7 @@ import java.net.URI;
 import java.util.Date;
 
 import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 
@@ -36,7 +36,7 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  * 
  */
-public class TaskImpl extends NamedResourceImpl implements Task {
+public class TaskImpl extends ReferenceTypeImpl implements Task {
 
    public static class ErrorImpl implements Error {
       private final String message;
@@ -136,12 +136,12 @@ public class TaskImpl extends NamedResourceImpl implements Task {
    private final Date endTime;
    @Nullable
    private final Date expiryTime;
-   private final NamedResource owner;
+   private final ReferenceType owner;
    @Nullable
    private final Error error;
 
    public TaskImpl(URI id, TaskStatus status, Date startTime, @Nullable Date endTime, @Nullable Date expiryTime,
-            NamedResource owner, Error error) {
+            ReferenceType owner, Error error) {
       super(null, VCloudMediaType.TASK_XML, id);
       this.status = checkNotNull(status, "status");
       this.startTime = startTime;
@@ -162,7 +162,7 @@ public class TaskImpl extends NamedResourceImpl implements Task {
    }
 
    @Override
-   public NamedResource getOwner() {
+   public ReferenceType getOwner() {
       return owner;
    }
 

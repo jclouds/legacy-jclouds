@@ -34,7 +34,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.CommonVCloudAsyncClient;
 import org.jclouds.vcloud.domain.Catalog;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
 
 import com.google.common.base.Function;
@@ -60,11 +60,11 @@ public class AllCatalogsInOrg implements Function<Org, Iterable<? extends Catalo
    @Override
    public Iterable<? extends Catalog> apply(final Org org) {
       Iterable<Catalog> catalogs = transformParallel(org.getCatalogs().values(),
-            new Function<NamedResource, Future<Catalog>>() {
+            new Function<ReferenceType, Future<Catalog>>() {
                @SuppressWarnings("unchecked")
                @Override
-               public Future<Catalog> apply(NamedResource from) {
-                  return (Future<Catalog>) aclient.getCatalog(from.getId());
+               public Future<Catalog> apply(ReferenceType from) {
+                  return (Future<Catalog>) aclient.getCatalog(from.getHref());
                }
 
             }, executor, null, logger, "catalogs in " + org.getName());

@@ -32,7 +32,7 @@ import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Org;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -57,18 +57,18 @@ public class OrgHandlerTest {
       assertEquals(result.getName(), "ExampleOrg");
       assertEquals(result.getFullName(), "ExampleOrg");
       assertEquals(result.getDescription(), "Example Corp's Primary Organization.");
-      assertEquals(result.getId(), URI.create("http://vcloud.example.com/api/v1.0/org/5"));
-      assertEquals(result.getCatalogs(), ImmutableMap.of("Main Catalog", new NamedResourceImpl("Main Catalog",
+      assertEquals(result.getHref(), URI.create("http://vcloud.example.com/api/v1.0/org/5"));
+      assertEquals(result.getCatalogs(), ImmutableMap.of("Main Catalog", new ReferenceTypeImpl("Main Catalog",
                CATALOG_XML, URI.create("http://vcloud.example.com/api/v1.0/catalog/32")), "Shared Catalog",
-               new NamedResourceImpl("Shared Catalog", CATALOG_XML, URI
+               new ReferenceTypeImpl("Shared Catalog", CATALOG_XML, URI
                         .create("http://vcloud.example.com/api/v1.0/catalog/37"))));
-      assertEquals(result.getVDCs(), ImmutableMap.of("ExampleVdc01", new NamedResourceImpl("ExampleVdc01",
+      assertEquals(result.getVDCs(), ImmutableMap.of("ExampleVdc01", new ReferenceTypeImpl("ExampleVdc01",
                VCloudMediaType.VDC_XML, URI.create("http://vcloud.example.com/api/v1.0/vdc/5"))));
-      assertEquals(result.getNetworks(), ImmutableMap.of("TestNetwork", new NamedResourceImpl("TestNetwork",
+      assertEquals(result.getNetworks(), ImmutableMap.of("TestNetwork", new ReferenceTypeImpl("TestNetwork",
                VCloudMediaType.NETWORK_XML, URI.create("http://vcloud.example.com/api/v1.0/network/14")),
-               "ProductionNetwork", new NamedResourceImpl("ProductionNetwork", VCloudMediaType.NETWORK_XML, URI
+               "ProductionNetwork", new ReferenceTypeImpl("ProductionNetwork", VCloudMediaType.NETWORK_XML, URI
                         .create("http://vcloud.example.com/api/v1.0/network/54"))));
-      assertEquals(result.getTasksList(), new NamedResourceImpl(null, TASKSLIST_XML, URI
+      assertEquals(result.getTasksList(), new ReferenceTypeImpl(null, TASKSLIST_XML, URI
                .create("http://vcloud.example.com/api/v1.0/tasksList/5")));
    }
 
@@ -81,14 +81,14 @@ public class OrgHandlerTest {
       Org result = (Org) factory.create(injector.getInstance(OrgHandler.class)).parse(is);
       assertEquals(result.getName(), "adrian@jclouds.org");
       assertEquals(result.getFullName(), "adrian@jclouds.org");
-      assertEquals(result.getId(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"));
-      assertEquals(result.getCatalogs(), ImmutableMap.of("Miami Environment 1 Catalog", new NamedResourceImpl(
+      assertEquals(result.getHref(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"));
+      assertEquals(result.getCatalogs(), ImmutableMap.of("Miami Environment 1 Catalog", new ReferenceTypeImpl(
                "Miami Environment 1 Catalog", CATALOG_XML, URI
                         .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32/catalog"))));
-      assertEquals(result.getVDCs(), ImmutableMap.of("Miami Environment 1", new NamedResourceImpl(
+      assertEquals(result.getVDCs(), ImmutableMap.of("Miami Environment 1", new ReferenceTypeImpl(
                "Miami Environment 1", VCloudExpressMediaType.VDC_XML, URI
                         .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32"))));
-      assertEquals(result.getTasksList(), new NamedResourceImpl("Miami Environment 1 Tasks List", TASKSLIST_XML, URI
+      assertEquals(result.getTasksList(), new ReferenceTypeImpl("Miami Environment 1 Tasks List", TASKSLIST_XML, URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/tasksList/32")));
    }
 
@@ -99,13 +99,13 @@ public class OrgHandlerTest {
       Org result = (Org) factory.create(injector.getInstance(OrgHandler.class)).parse(is);
       assertEquals(result.getName(), "Customer 188849");
       assertEquals(result.getFullName(), "Customer 188849");
-      assertEquals(result.getId(), URI.create("https://vcloud.safesecureweb.com/api/v0.8/org/188849"));
-      assertEquals(result.getCatalogs(), ImmutableMap.of("HMS Shared Catalog", new NamedResourceImpl(
+      assertEquals(result.getHref(), URI.create("https://vcloud.safesecureweb.com/api/v0.8/org/188849"));
+      assertEquals(result.getCatalogs(), ImmutableMap.of("HMS Shared Catalog", new ReferenceTypeImpl(
                "HMS Shared Catalog", CATALOG_XML, URI.create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"))));
-      assertEquals(result.getVDCs(), ImmutableMap.of("188849 Virtual DataCenter", new NamedResourceImpl(
+      assertEquals(result.getVDCs(), ImmutableMap.of("188849 Virtual DataCenter", new ReferenceTypeImpl(
                "188849 Virtual DataCenter", VCloudExpressMediaType.VDC_XML, URI
                         .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/188849"))));
-      assertEquals(result.getTasksList(), new NamedResourceImpl("188849 Task List", TASKSLIST_XML, URI
+      assertEquals(result.getTasksList(), new ReferenceTypeImpl("188849 Task List", TASKSLIST_XML, URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/188849")));
    }
 }

@@ -28,7 +28,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.internal.OrgImpl;
@@ -52,18 +52,18 @@ public class OrgHandler extends ParseSax.HandlerWithResult<Org> {
 
    private StringBuilder currentText = new StringBuilder();
 
-   protected NamedResource org;
-   protected Map<String, NamedResource> vdcs = Maps.newLinkedHashMap();
-   protected NamedResource tasksList;
-   protected Map<String, NamedResource> catalogs = Maps.newLinkedHashMap();
-   protected Map<String, NamedResource> networks = Maps.newLinkedHashMap();
+   protected ReferenceType org;
+   protected Map<String, ReferenceType> vdcs = Maps.newLinkedHashMap();
+   protected ReferenceType tasksList;
+   protected Map<String, ReferenceType> catalogs = Maps.newLinkedHashMap();
+   protected Map<String, ReferenceType> networks = Maps.newLinkedHashMap();
    protected List<Task> tasks = Lists.newArrayList();
 
    protected String description;
    protected String fullName;
 
    public Org getResult() {
-      return new OrgImpl(org.getName(), org.getType(), org.getId(), fullName != null ? fullName : org.getName(),
+      return new OrgImpl(org.getName(), org.getType(), org.getHref(), fullName != null ? fullName : org.getName(),
                description, catalogs, vdcs, networks, tasksList, tasks);
    }
 

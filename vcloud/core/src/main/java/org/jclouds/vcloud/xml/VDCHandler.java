@@ -30,7 +30,7 @@ import javax.inject.Inject;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.domain.AllocationModel;
 import org.jclouds.vcloud.domain.Capacity;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.VDCStatus;
@@ -56,9 +56,9 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
 
    protected StringBuilder currentText = new StringBuilder();
 
-   protected NamedResource vDC;
+   protected ReferenceType vDC;
    protected VDCStatus status = VDCStatus.READY;
-   protected NamedResource org;
+   protected ReferenceType org;
    protected String description;
    protected List<Task> tasks = Lists.newArrayList();
    protected AllocationModel allocationModel = AllocationModel.UNRECOGNIZED_MODEL;
@@ -73,8 +73,8 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
    protected int used = 0;
    protected long overhead = 0;
 
-   protected Map<String, NamedResource> resourceEntities = Maps.newLinkedHashMap();
-   protected Map<String, NamedResource> availableNetworks = Maps.newLinkedHashMap();
+   protected Map<String, ReferenceType> resourceEntities = Maps.newLinkedHashMap();
+   protected Map<String, ReferenceType> availableNetworks = Maps.newLinkedHashMap();
 
    protected int nicQuota;
    protected int networkQuota;
@@ -82,7 +82,7 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
    protected boolean isEnabled = true;
 
    public VDC getResult() {
-      return new VDCImpl(vDC.getName(), vDC.getType(), vDC.getId(), status, org, description, tasks, allocationModel,
+      return new VDCImpl(vDC.getName(), vDC.getType(), vDC.getHref(), status, org, description, tasks, allocationModel,
                storageCapacity, cpuCapacity, memoryCapacity, resourceEntities, availableNetworks, nicQuota,
                networkQuota, vmQuota, isEnabled);
    }

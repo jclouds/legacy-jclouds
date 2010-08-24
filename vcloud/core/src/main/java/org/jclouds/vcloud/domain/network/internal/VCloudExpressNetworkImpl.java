@@ -22,8 +22,8 @@ package org.jclouds.vcloud.domain.network.internal;
 import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.ReferenceType;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.domain.network.VCloudExpressNetwork;
 import org.jclouds.vcloud.domain.network.firewall.FirewallRule;
@@ -38,7 +38,7 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  * 
  */
-public class VCloudExpressNetworkImpl extends NamedResourceImpl implements VCloudExpressNetwork {
+public class VCloudExpressNetworkImpl extends ReferenceTypeImpl implements VCloudExpressNetwork {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
@@ -123,8 +123,8 @@ public class VCloudExpressNetworkImpl extends NamedResourceImpl implements VClou
    }
 
    @Override
-   public int compareTo(NamedResource o) {
-      return (this == o) ? 0 : getId().compareTo(o.getId());
+   public int compareTo(ReferenceType o) {
+      return (this == o) ? 0 : getHref().compareTo(o.getHref());
    }
 
    @Override
@@ -196,7 +196,7 @@ public class VCloudExpressNetworkImpl extends NamedResourceImpl implements VClou
 
    @Override
    public String toString() {
-      return "NetworkImpl [id=" + getId() + ", name=" + getName() + ", type=" + getType() + ", description="
+      return "NetworkImpl [id=" + getHref() + ", name=" + getName() + ", type=" + getType() + ", description="
                + description + ", dhcp=" + dhcp + ", dnsServers=" + dnsServers + ", fenceModes=" + fenceModes
                + ", firewallRules=" + firewallRules + ", gateway=" + gateway + ", natRules=" + natRules + ", netmask="
                + netmask + "]";

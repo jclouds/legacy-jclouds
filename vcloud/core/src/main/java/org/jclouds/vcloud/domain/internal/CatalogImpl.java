@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jclouds.vcloud.domain.Catalog;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 
 import com.google.common.collect.Iterables;
@@ -40,26 +40,26 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  * 
  */
-public class CatalogImpl extends LinkedHashMap<String, NamedResource> implements Catalog {
+public class CatalogImpl extends LinkedHashMap<String, ReferenceType> implements Catalog {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
    private final String name;
    private final String type;
-   private final URI id;
-   private final NamedResource org;
+   private final URI href;
+   private final ReferenceType org;
    @Nullable
    private final String description;
    private final List<Task> tasks = Lists.newArrayList();
    private final boolean published;
 
-   public CatalogImpl(String name, String type, URI id, NamedResource org, @Nullable String description,
-            Map<String, NamedResource> contents, Iterable<Task> tasks, boolean published) {
+   public CatalogImpl(String name, String type, URI href, ReferenceType org, @Nullable String description,
+            Map<String, ReferenceType> contents, Iterable<Task> tasks, boolean published) {
       this.name = checkNotNull(name, "name");
       this.type = checkNotNull(type, "type");
       this.org = org;// TODO: once <1.0 is killed check not null
       this.description = description;
-      this.id = checkNotNull(id, "id");
+      this.href = checkNotNull(href, "href");
       putAll(checkNotNull(contents, "contents"));
       Iterables.addAll(this.tasks, checkNotNull(tasks, "tasks"));
       this.published = published;
@@ -69,8 +69,8 @@ public class CatalogImpl extends LinkedHashMap<String, NamedResource> implements
     * {@inheritDoc}
     */
    @Override
-   public URI getId() {
-      return id;
+   public URI getHref() {
+      return href;
    }
 
    /**
@@ -85,7 +85,7 @@ public class CatalogImpl extends LinkedHashMap<String, NamedResource> implements
     * {@inheritDoc}
     */
    @Override
-   public NamedResource getOrg() {
+   public ReferenceType getOrg() {
       return org;
    }
 
@@ -125,7 +125,7 @@ public class CatalogImpl extends LinkedHashMap<String, NamedResource> implements
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((href == null) ? 0 : href.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((org == null) ? 0 : org.hashCode());
       result = prime * result + ((tasks == null) ? 0 : tasks.hashCode());
@@ -147,10 +147,10 @@ public class CatalogImpl extends LinkedHashMap<String, NamedResource> implements
             return false;
       } else if (!description.equals(other.description))
          return false;
-      if (id == null) {
-         if (other.id != null)
+      if (href == null) {
+         if (other.href != null)
             return false;
-      } else if (!id.equals(other.id))
+      } else if (!href.equals(other.href))
          return false;
       if (name == null) {
          if (other.name != null)
@@ -176,8 +176,8 @@ public class CatalogImpl extends LinkedHashMap<String, NamedResource> implements
    }
 
    @Override
-   public int compareTo(NamedResource o) {
-      return (this == o) ? 0 : getId().compareTo(o.getId());
+   public int compareTo(ReferenceType o) {
+      return (this == o) ? 0 : getHref().compareTo(o.getHref());
    }
 
 }

@@ -49,13 +49,13 @@ import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.internal.CatalogImpl;
 import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.internal.OrgImpl;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
@@ -702,13 +702,13 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       }
 
       @Override
-      protected URI provideOrg(@org.jclouds.vcloud.endpoints.Org Iterable<NamedResource> orgs) {
+      protected URI provideOrg(@org.jclouds.vcloud.endpoints.Org Iterable<ReferenceType> orgs) {
          return URI.create("https://vcenterprise.bluelock.com/api/v1.0/org");
 
       }
 
       @Override
-      protected String provideOrgName(@org.jclouds.vcloud.endpoints.Org Iterable<NamedResource> orgs) {
+      protected String provideOrgName(@org.jclouds.vcloud.endpoints.Org Iterable<ReferenceType> orgs) {
          return "org";
       }
 
@@ -744,8 +744,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
          return Suppliers.<VCloudSession> ofInstance(new VCloudSession() {
 
             @Override
-            public Map<String, NamedResource> getOrgs() {
-               return ImmutableMap.<String, NamedResource> of("org", new NamedResourceImpl("org",
+            public Map<String, ReferenceType> getOrgs() {
+               return ImmutableMap.<String, ReferenceType> of("org", new ReferenceTypeImpl("org",
                         VCloudMediaType.ORG_XML, URI.create("https://vcenterprise.bluelock.com/api/v1.0/org/1")));
             }
 
@@ -791,15 +791,15 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
                                                                null,
                                                                null,
                                                                ImmutableMap
-                                                                        .<String, NamedResource> of(
+                                                                        .<String, ReferenceType> of(
                                                                                  "vapp",
-                                                                                 new NamedResourceImpl(
+                                                                                 new ReferenceTypeImpl(
                                                                                           "vapp",
                                                                                           "application/vnd.vmware.vcloud.vApp+xml",
                                                                                           URI
                                                                                                    .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/188849-1")),
                                                                                  "network",
-                                                                                 new NamedResourceImpl(
+                                                                                 new ReferenceTypeImpl(
                                                                                           "network",
                                                                                           "application/vnd.vmware.vcloud.vAppTemplate+xml",
                                                                                           URI
@@ -819,15 +819,15 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
          public Map<String, Org> get() {
             return ImmutableMap.<String, Org> of("org", new OrgImpl("org", null, URI
                      .create("https://vcenterprise.bluelock.com/api/v1.0/org/1"), "org", "description", ImmutableMap
-                     .<String, NamedResource> of("catalog", new NamedResourceImpl("catalog",
+                     .<String, ReferenceType> of("catalog", new ReferenceTypeImpl("catalog",
                               VCloudMediaType.CATALOG_XML, URI
                                        .create("https://vcenterprise.bluelock.com/api/v1.0/catalog/1"))), ImmutableMap
-                     .<String, NamedResource> of("vdc", new NamedResourceImpl("vdc", VCloudMediaType.VDC_XML, URI
+                     .<String, ReferenceType> of("vdc", new ReferenceTypeImpl("vdc", VCloudMediaType.VDC_XML, URI
                               .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"))), ImmutableMap
-                     .<String, NamedResource> of("network", new NamedResourceImpl("network",
+                     .<String, ReferenceType> of("network", new ReferenceTypeImpl("network",
                               VCloudMediaType.NETWORK_XML, URI
                                        .create("https://vcenterprise.bluelock.com/api/v1.0/network/1"))),
-                     new NamedResourceImpl("tasksList", VCloudMediaType.TASKSLIST_XML, URI
+                     new ReferenceTypeImpl("tasksList", VCloudMediaType.TASKSLIST_XML, URI
                               .create("https://vcenterprise.bluelock.com/api/v1.0/tasksList/1")), ImmutableList
                               .<Task> of()));
          }
@@ -846,10 +846,10 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
             ImmutableMap.<String, org.jclouds.vcloud.domain.Catalog> of("catalog", new CatalogImpl("catalog", "type",
                      URI.create("https://vcenterprise.bluelock.com/api/v1.0/catalog/1"), null, "description",
-                     ImmutableMap.<String, NamedResource> of("item", new NamedResourceImpl("item",
+                     ImmutableMap.<String, ReferenceType> of("item", new ReferenceTypeImpl("item",
                               "application/vnd.vmware.vcloud.catalogItem+xml", URI
                                        .create("https://vcenterprise.bluelock.com/api/v1.0/catalogItem/1")),
-                              "template", new NamedResourceImpl("template",
+                              "template", new ReferenceTypeImpl("template",
                                        "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
                                                 .create("https://vcenterprise.bluelock.com/api/v1.0/catalogItem/2"))),
                      ImmutableList.<Task> of(), true)));
@@ -878,7 +878,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
                                                                            URI
                                                                                     .create("https://vcenterprise.bluelock.com/api/v1.0/catalogItem/2"),
                                                                            "description",
-                                                                           new NamedResourceImpl(
+                                                                           new ReferenceTypeImpl(
                                                                                     "template",
                                                                                     "application/vnd.vmware.vcloud.vAppTemplate+xml",
                                                                                     URI
@@ -889,7 +889,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       }
 
       @Override
-      protected Iterable<NamedResource> provideOrgs(Supplier<VCloudSession> cache, String user) {
+      protected Iterable<ReferenceType> provideOrgs(Supplier<VCloudSession> cache, String user) {
          return null;
       }
 

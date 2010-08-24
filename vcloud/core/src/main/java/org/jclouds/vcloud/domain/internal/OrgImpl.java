@@ -27,7 +27,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.Task;
 
@@ -41,19 +41,19 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  * 
  */
-public class OrgImpl extends NamedResourceImpl implements Org {
+public class OrgImpl extends ReferenceTypeImpl implements Org {
    private final String fullName;
    @Nullable
    private final String description;
-   private final Map<String, NamedResource> catalogs = Maps.newLinkedHashMap();
-   private final Map<String, NamedResource> vdcs = Maps.newLinkedHashMap();
-   private final Map<String, NamedResource> networks = Maps.newLinkedHashMap();
-   private final NamedResource tasksList;
+   private final Map<String, ReferenceType> catalogs = Maps.newLinkedHashMap();
+   private final Map<String, ReferenceType> vdcs = Maps.newLinkedHashMap();
+   private final Map<String, ReferenceType> networks = Maps.newLinkedHashMap();
+   private final ReferenceType tasksList;
    private final List<Task> tasks = Lists.newArrayList();
 
    public OrgImpl(String name, String type, URI id, String fullName, String description,
-            Map<String, NamedResource> catalogs, Map<String, NamedResource> vdcs, Map<String, NamedResource> networks,
-            @Nullable NamedResource tasksList, Iterable<Task> tasks) {
+            Map<String, ReferenceType> catalogs, Map<String, ReferenceType> vdcs, Map<String, ReferenceType> networks,
+            @Nullable ReferenceType tasksList, Iterable<Task> tasks) {
       super(name, type, id);
       this.fullName = checkNotNull(fullName, "fullName");
       this.description = description;
@@ -75,22 +75,22 @@ public class OrgImpl extends NamedResourceImpl implements Org {
    }
 
    @Override
-   public Map<String, NamedResource> getCatalogs() {
+   public Map<String, ReferenceType> getCatalogs() {
       return catalogs;
    }
 
    @Override
-   public Map<String, NamedResource> getVDCs() {
+   public Map<String, ReferenceType> getVDCs() {
       return vdcs;
    }
 
    @Override
-   public Map<String, NamedResource> getNetworks() {
+   public Map<String, ReferenceType> getNetworks() {
       return networks;
    }
 
    @Override
-   public NamedResource getTasksList() {
+   public ReferenceType getTasksList() {
       return tasksList;
    }
 
@@ -161,13 +161,13 @@ public class OrgImpl extends NamedResourceImpl implements Org {
    }
 
    @Override
-   public int compareTo(NamedResource o) {
-      return (this == o) ? 0 : getId().compareTo(o.getId());
+   public int compareTo(ReferenceType o) {
+      return (this == o) ? 0 : getHref().compareTo(o.getHref());
    }
 
    @Override
    public String toString() {
-      return "[id=" + getId() + ", name=" + getName() + ", type=" + getType() + "]";
+      return "[id=" + getHref() + ", name=" + getName() + ", type=" + getType() + "]";
    }
 
 }

@@ -29,7 +29,7 @@ import java.util.Properties;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.terremark.TerremarkVCloudPropertiesBuilder;
 import org.jclouds.vcloud.terremark.domain.TerremarkCatalogItem;
 import org.jclouds.vcloud.terremark.domain.internal.TerremarkCatalogItemImpl;
@@ -75,17 +75,17 @@ public class TerremarkCatalogItemHandlerTest extends BaseHandlerTest {
                   "CentOS 5.3 (32-bit)",
                   URI.create("https://services.vCloudexpress.terremark.com/api/v0.8a-13ext1.6/catalogItem/37-159"),
                   null,
-                  new NamedResourceImpl(
+                  new ReferenceTypeImpl(
                         "Compute Options",
                         "application/vnd.tmrk.vcloudExpress.vappComputeOptionParameters+xml",
                         URI
                               .create("https://services.vCloudexpress.terremark.com/api/v0.8a-ext1.6/extensions/template/37-159/options/compute")),
-                  new NamedResourceImpl(
+                  new ReferenceTypeImpl(
                         "Customization Options",
                         "application/vnd.tmrk.vcloudExpress.vappCustomizationParameters+xml",
                         URI
                               .create("https://services.vCloudexpress.terremark.com/api/v0.8a-ext1.6/extensions/template/37-159/options/customization")),
-                  new NamedResourceImpl("CentOS 5.3 (32-bit)", "application/vnd.vmware.vCloud.vAppTemplate+xml", URI
+                  new ReferenceTypeImpl("CentOS 5.3 (32-bit)", "application/vnd.vmware.vCloud.vAppTemplate+xml", URI
                         .create("https://services.vCloudexpress.terremark.com/api/v0.8a-ext1.6/vappTemplate/37")),
                   ImmutableMap.<String, String> of("LicensingCost", "0")));
    }

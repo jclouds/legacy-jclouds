@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 
 /**
  * 
@@ -34,15 +34,15 @@ public class VCloudLocation extends LocationImpl {
 
    private static final long serialVersionUID = -5052812549904524841L;
 
-   private final NamedResource resource;
+   private final ReferenceType resource;
 
-   public VCloudLocation(NamedResource resource, Location parent) {
+   public VCloudLocation(ReferenceType resource, Location parent) {
       super(checkNotNull(resource, "resource").getType().endsWith("org+xml") ? LocationScope.REGION
-            : LocationScope.ZONE, resource.getId().toASCIIString(), resource.getName(), parent);
+            : LocationScope.ZONE, resource.getHref().toASCIIString(), resource.getName(), parent);
       this.resource = resource;
    }
 
-   public NamedResource getResource() {
+   public ReferenceType getResource() {
       return resource;
    }
 

@@ -28,7 +28,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.network.DhcpService;
 import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.domain.network.IpRange;
@@ -54,9 +54,9 @@ public class OrgNetworkHandlerTest {
       Factory factory = injector.getInstance(ParseSax.Factory.class);
       OrgNetwork result = factory.create(injector.getInstance(OrgNetworkHandler.class)).parse(is);
       assertEquals(result.getName(), "isolation01");
-      assertEquals(result.getId(), URI.create("https://vcenterprise.bluelock.com/api/v1.0/network/990419644"));
+      assertEquals(result.getHref(), URI.create("https://vcenterprise.bluelock.com/api/v1.0/network/990419644"));
       assertEquals(result.getType(), "application/vnd.vmware.vcloud.network+xml");
-      assertEquals(result.getOrg(), new NamedResourceImpl(null, VCloudMediaType.ORG_XML, URI
+      assertEquals(result.getOrg(), new ReferenceTypeImpl(null, VCloudMediaType.ORG_XML, URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/org/9566014")));
       assertEquals(result.getDescription(), null);
       assertEquals(result.getTasks(), ImmutableList.of());
@@ -85,9 +85,9 @@ public class OrgNetworkHandlerTest {
       Factory factory = injector.getInstance(ParseSax.Factory.class);
       OrgNetwork result = factory.create(injector.getInstance(OrgNetworkHandler.class)).parse(is);
       assertEquals(result.getName(), "internet01");
-      assertEquals(result.getId(), URI.create("https://vcenterprise.bluelock.com/api/v1.0/network/758634723"));
+      assertEquals(result.getHref(), URI.create("https://vcenterprise.bluelock.com/api/v1.0/network/758634723"));
       assertEquals(result.getType(), "application/vnd.vmware.vcloud.network+xml");
-      assertEquals(result.getOrg(), new NamedResourceImpl(null, VCloudMediaType.ORG_XML, URI
+      assertEquals(result.getOrg(), new ReferenceTypeImpl(null, VCloudMediaType.ORG_XML, URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/org/9566014")));
       assertEquals(result.getDescription(), null);
       assertEquals(result.getTasks(), ImmutableList.of());

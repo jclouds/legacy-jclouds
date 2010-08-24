@@ -24,7 +24,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.internal.OrgImpl;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
@@ -39,17 +39,17 @@ import com.google.common.collect.ImmutableList;
  */
 public class TerremarkOrgImpl extends OrgImpl implements TerremarkOrg {
 
-   private final NamedResource keysList;
+   private final ReferenceType keysList;
 
-   public TerremarkOrgImpl(String name, String type, URI id, String description, Map<String, NamedResource> catalogs,
-            Map<String, NamedResource> vdcs, Map<String, NamedResource> networks, @Nullable NamedResource tasksList,
-            NamedResource keysList) {
+   public TerremarkOrgImpl(String name, String type, URI id, String description, Map<String, ReferenceType> catalogs,
+            Map<String, ReferenceType> vdcs, Map<String, ReferenceType> networks, @Nullable ReferenceType tasksList,
+            ReferenceType keysList) {
       super(name, type, id, name, description, catalogs, vdcs, networks, tasksList, ImmutableList.<Task> of());
       this.keysList = keysList;
    }
 
    @Override
-   public NamedResource getKeysList() {
+   public ReferenceType getKeysList() {
       return keysList;
    }
 

@@ -55,7 +55,7 @@ public class VCloudExpressOrgNetworkAdapterTest {
       VCloudExpressNetwork in = factory.create(injector.getInstance(VCloudExpressNetworkHandler.class)).parse(is);
       OrgNetwork result = new VCloudExpressOrgNetworkAdapter(in);
       assertEquals(result.getName(), "10.114.34.128/26");
-      assertEquals(result.getId(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/network/1708"));
+      assertEquals(result.getHref(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/network/1708"));
       assertEquals(result.getType(), "application/vnd.vmware.vcloud.network+xml");
       assertEquals(result.getOrg(), null);
       assertEquals(result.getDescription(), null);
@@ -85,7 +85,7 @@ public class VCloudExpressOrgNetworkAdapterTest {
       VCloudExpressNetwork in = factory.create(injector.getInstance(VCloudExpressNetworkHandler.class)).parse(is);
       OrgNetwork result = new VCloudExpressOrgNetworkAdapter(in);
       assertEquals(result.getName(), "Pod03_Private");
-      assertEquals(result.getId(), URI.create("https://express3.bluelock.com/api/v0.8/network/1"));
+      assertEquals(result.getHref(), URI.create("https://express3.bluelock.com/api/v0.8/network/1"));
       assertEquals(result.getType(), null);
       assertEquals(result.getOrg(), null);
       assertEquals(result.getDescription(), "Pod 03 Private Network");

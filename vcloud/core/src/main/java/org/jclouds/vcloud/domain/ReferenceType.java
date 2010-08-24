@@ -21,22 +21,35 @@ package org.jclouds.vcloud.domain;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 
 import com.google.inject.ImplementedBy;
 
 /**
- * Location of a Rest resource
+ * Many container elements are populated with references to contained objects. Each reference
+ * consists of a hyperlink, an optional media type, and a name.
  * 
  * @author Adrian Cole
  * 
  */
-@ImplementedBy(NamedResourceImpl.class)
-public interface NamedResource extends Comparable<NamedResource> {
-   URI getId();
+@ImplementedBy(ReferenceTypeImpl.class)
+public interface ReferenceType extends Comparable<ReferenceType> {
+   /**
+    * @return hyperlink to the referenced object
+    */
+   URI getHref();
 
+   /**
+    * @return name of the referenced object.
+    * 
+    */
    String getName();
 
+   /**
+    * @return object type, expressed as the media type of the XML representing of the object
+    * @see VCloudMediaType
+    */
    String getType();
 
 }

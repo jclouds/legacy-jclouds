@@ -91,7 +91,7 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudExpressGetNode
    }
 
    OrgAndName getOrgAndNameFromNode(NodeMetadata node) {
-      URI orgId = VCloudLocation.class.cast(node.getLocation().getParent()).getResource().getId();
+      URI orgId = VCloudLocation.class.cast(node.getLocation().getParent()).getResource().getHref();
       OrgAndName orgAndName = new OrgAndName(orgId, node.getTag());
       return orgAndName;
    }

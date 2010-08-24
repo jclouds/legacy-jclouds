@@ -24,7 +24,7 @@ import static org.jclouds.vcloud.util.Utils.newNamedResource;
 
 import javax.inject.Inject;
 
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
 import org.jclouds.vcloud.terremark.domain.internal.TerremarkOrgImpl;
 import org.jclouds.vcloud.xml.OrgHandler;
@@ -41,10 +41,10 @@ public class TerremarkOrgHandler extends OrgHandler {
       super(taskHandler);
    }
 
-   private NamedResource keysList;
+   private ReferenceType keysList;
 
    public TerremarkOrg getResult() {
-      return new TerremarkOrgImpl(org.getName(), org.getType(), org.getId(), description, catalogs, vdcs, networks,
+      return new TerremarkOrgImpl(org.getName(), org.getType(), org.getHref(), description, catalogs, vdcs, networks,
                tasksList, keysList);
    }
 

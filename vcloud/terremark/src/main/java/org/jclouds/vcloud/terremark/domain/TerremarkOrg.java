@@ -19,7 +19,7 @@
 
 package org.jclouds.vcloud.terremark.domain;
 
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.terremark.domain.internal.TerremarkOrgImpl;
 import org.jclouds.vcloud.terremark.endpoints.KeysList;
@@ -34,6 +34,6 @@ import com.google.inject.ImplementedBy;
 public interface TerremarkOrg extends Org {
 
    @KeysList
-   NamedResource getKeysList();
+   ReferenceType getKeysList();
 
 }

@@ -31,13 +31,13 @@ import javax.annotation.Nullable;
  * 
  * @author Adrian Cole
  */
-public interface Vm extends NamedResource {
+public interface Vm extends ReferenceType {
    /**
     * Reference to the {@link VApp} or {@link VAppTemplate} containing this vm.
     * 
     * @since vcloud api 1.0
     */
-   NamedResource getParent();
+   ReferenceType getParent();
 
    /**
     * @return creation status of the Vm or null, if a part of a VAppTemplate

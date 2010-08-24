@@ -37,7 +37,7 @@ import org.jclouds.vcloud.CommonVCloudAsyncClient;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -64,22 +64,22 @@ public class AllCatalogItemsInCatalog implements Function<Catalog, Iterable<? ex
    @Override
    public Iterable<? extends CatalogItem> apply(Catalog from) {
 
-      Iterable<CatalogItem> catalogItems = transformParallel(filter(from.values(), new Predicate<NamedResource>() {
+      Iterable<CatalogItem> catalogItems = transformParallel(filter(from.values(), new Predicate<ReferenceType>() {
 
          @Override
-         public boolean apply(NamedResource input) {
+         public boolean apply(ReferenceType input) {
             return input.getType().equals(VCloudMediaType.CATALOGITEM_XML);
          }
 
-      }), new Function<NamedResource, Future<CatalogItem>>() {
+      }), new Function<ReferenceType, Future<CatalogItem>>() {
 
          @SuppressWarnings("unchecked")
          @Override
-         public Future<CatalogItem> apply(NamedResource from) {
-            return (Future<CatalogItem>) aclient.getCatalogItem(from.getId());
+         public Future<CatalogItem> apply(ReferenceType from) {
+            return (Future<CatalogItem>) aclient.getCatalogItem(from.getHref());
          }
 
-      }, executor, null, logger, "catalogItems in " + from.getId());
+      }, executor, null, logger, "catalogItems in " + from.getHref());
       return catalogItems;
    }
 

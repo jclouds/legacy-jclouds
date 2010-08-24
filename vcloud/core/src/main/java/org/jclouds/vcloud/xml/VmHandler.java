@@ -26,7 +26,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.Vm;
@@ -51,15 +51,15 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
 
    protected StringBuilder currentText = new StringBuilder();
 
-   protected NamedResource vm;
+   protected ReferenceType vm;
    protected Status status;
-   protected NamedResource vdc;
+   protected ReferenceType vdc;
    protected String description;
    protected List<Task> tasks = Lists.newArrayList();
    protected String vAppScopedLocalId;
 
    public Vm getResult() {
-      return new VmImpl(vm.getName(), vm.getType(), vm.getId(), status, vdc, description, tasks, vAppScopedLocalId);
+      return new VmImpl(vm.getName(), vm.getType(), vm.getHref(), status, vdc, description, tasks, vAppScopedLocalId);
    }
 
    @Override

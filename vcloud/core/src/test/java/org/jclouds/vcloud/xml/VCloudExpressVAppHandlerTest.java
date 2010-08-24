@@ -36,7 +36,7 @@ import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.VirtualSystem;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.internal.VCloudExpressVAppImpl;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -78,7 +78,7 @@ public class VCloudExpressVAppHandlerTest extends BaseHandlerTest {
       VCloudExpressVApp result = factory.create(injector.getInstance(VCloudExpressVAppHandler.class)).parse(is);
 
       VCloudExpressVApp expects = new VCloudExpressVAppImpl("centos53", URI
-               .create("http://10.150.4.49/api/v0.8/vApp/10"), Status.RESOLVED, 123456789l, new NamedResourceImpl(null,
+               .create("http://10.150.4.49/api/v0.8/vApp/10"), Status.RESOLVED, 123456789l, new ReferenceTypeImpl(null,
                "application/vnd.vmware.vcloud.vdc+xml", URI.create("http://10.150.4.49/api/v0.8/vdc/4")),
                ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.<ResourceAllocation> of());
       assertEquals(result, expects);
@@ -106,10 +106,10 @@ public class VCloudExpressVAppHandlerTest extends BaseHandlerTest {
                         null, 104857, "byte * 2^20")).build();
 
       VCloudExpressVApp expects = new VCloudExpressVAppImpl("centos53", URI
-               .create("http://10.150.4.49/api/v0.8/vApp/10"), Status.ON, new Long(104857), new NamedResourceImpl(null,
+               .create("http://10.150.4.49/api/v0.8/vApp/10"), Status.ON, new Long(104857), new ReferenceTypeImpl(null,
                "application/vnd.vmware.vcloud.vdc+xml", URI.create("http://10.150.4.49/api/v0.8/vdc/4")),
                networkToAddresses, null, "Other Linux (32-bit)", system, resourceAllocations);
-      assertEquals(result.getId(), expects.getId());
+      assertEquals(result.getHref(), expects.getHref());
       assertEquals(result.getName(), expects.getName());
       assertEquals(result.getNetworkToAddresses(), expects.getNetworkToAddresses());
       assertEquals(result.getOperatingSystemDescription(), expects.getOperatingSystemDescription());
@@ -143,10 +143,10 @@ public class VCloudExpressVAppHandlerTest extends BaseHandlerTest {
                         null, 10485760, "byte * 2^20")).build();
 
       VCloudExpressVApp expects = new VCloudExpressVAppImpl("m1", URI.create("http://localhost:8000/api/v0.8/vApp/80"),
-               Status.ON, new Long(10485760), new NamedResourceImpl(null, "application/vnd.vmware.vcloud.vdc+xml", URI
+               Status.ON, new Long(10485760), new ReferenceTypeImpl(null, "application/vnd.vmware.vcloud.vdc+xml", URI
                         .create("http://localhost:8000/api/v0.8/vdc/28")), networkToAddresses, null,
                "Microsoft Windows XP Professional (32-bit)", system, resourceAllocations);
-      assertEquals(result.getId(), expects.getId());
+      assertEquals(result.getHref(), expects.getHref());
       assertEquals(result.getName(), expects.getName());
       assertEquals(result.getNetworkToAddresses(), expects.getNetworkToAddresses());
       assertEquals(result.getOperatingSystemDescription(), expects.getOperatingSystemDescription());

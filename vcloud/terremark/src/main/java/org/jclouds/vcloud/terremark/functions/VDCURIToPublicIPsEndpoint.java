@@ -50,7 +50,7 @@ public class VDCURIToPublicIPsEndpoint implements Function<Object, URI> {
 
    public URI apply(Object from) {
       try {
-         return TerremarkVDC.class.cast(orgVDCMap.get().get(from == null ? defaultVDC : from)).getPublicIps().getId();
+         return TerremarkVDC.class.cast(orgVDCMap.get().get(from == null ? defaultVDC : from)).getPublicIps().getHref();
       } catch (NullPointerException e) {
          throw new ResourceNotFoundException("vdc " + from + " not found in " + orgVDCMap.get());
       }

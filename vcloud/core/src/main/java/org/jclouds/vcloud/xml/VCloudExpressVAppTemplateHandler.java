@@ -20,7 +20,7 @@
 package org.jclouds.vcloud.xml;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.domain.internal.VCloudExpressVAppTemplateImpl;
@@ -34,12 +34,12 @@ import org.xml.sax.SAXException;
 public class VCloudExpressVAppTemplateHandler extends ParseSax.HandlerWithResult<VCloudExpressVAppTemplate> {
    private StringBuilder currentText = new StringBuilder();
 
-   private NamedResource catalog;
+   private ReferenceType catalog;
    private String description;
    private Status status;
 
    public VCloudExpressVAppTemplate getResult() {
-      return new VCloudExpressVAppTemplateImpl(catalog.getName(), catalog.getId(), description, status);
+      return new VCloudExpressVAppTemplateImpl(catalog.getName(), catalog.getHref(), description, status);
    }
 
    @Override

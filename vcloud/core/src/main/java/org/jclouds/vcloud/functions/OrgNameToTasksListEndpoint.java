@@ -54,7 +54,7 @@ public class OrgNameToTasksListEndpoint implements Function<Object, URI> {
       if (org == null)
          return defaultUri;
       try {
-         return checkNotNull(orgMap.get().get(org)).getTasksList().getId();
+         return checkNotNull(orgMap.get().get(org)).getTasksList().getHref();
       } catch (NullPointerException e) {
          throw new NoSuchElementException(org + " not found in " + orgMap.get());
       }

@@ -21,7 +21,7 @@ package org.jclouds.vcloud.domain.internal;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 
 /**
  * Location of a Rest resource
@@ -29,15 +29,15 @@ import org.jclouds.vcloud.domain.NamedResource;
  * @author Adrian Cole
  * 
  */
-public class NamedResourceImpl implements NamedResource {
+public class ReferenceTypeImpl implements ReferenceType {
    private final String name;
    private final String type;
-   private final URI id;
+   private final URI href;
 
-   public NamedResourceImpl(String name, String type, URI id) {
+   public ReferenceTypeImpl(String name, String type, URI href) {
       this.name = name;
       this.type = type;
-      this.id = id;
+      this.href = href;
    }
 
    @Override
@@ -51,20 +51,20 @@ public class NamedResourceImpl implements NamedResource {
    }
 
    @Override
-   public URI getId() {
-      return id;
+   public URI getHref() {
+      return href;
    }
 
    @Override
-   public int compareTo(NamedResource that) {
-      return (this == that) ? 0 : getId().compareTo(that.getId());
+   public int compareTo(ReferenceType that) {
+      return (this == that) ? 0 : getHref().compareTo(that.getHref());
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((href == null) ? 0 : href.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((type == null) ? 0 : type.hashCode());
       return result;
@@ -78,11 +78,11 @@ public class NamedResourceImpl implements NamedResource {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      NamedResourceImpl other = (NamedResourceImpl) obj;
-      if (id == null) {
-         if (other.id != null)
+      ReferenceTypeImpl other = (ReferenceTypeImpl) obj;
+      if (href == null) {
+         if (other.href != null)
             return false;
-      } else if (!id.equals(other.id))
+      } else if (!href.equals(other.href))
          return false;
       if (name == null) {
          if (other.name != null)
@@ -99,6 +99,6 @@ public class NamedResourceImpl implements NamedResource {
 
    @Override
    public String toString() {
-      return "[id=" + id + ", name=" + name + ", type=" + type + "]";
+      return "[href=" + href + ", name=" + name + ", type=" + type + "]";
    }
 }

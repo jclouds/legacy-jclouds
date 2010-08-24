@@ -29,11 +29,11 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @ImplementedBy(CatalogItemImpl.class)
-public interface CatalogItem extends NamedResource {
+public interface CatalogItem extends ReferenceType {
 
    String getDescription();
 
-   NamedResource getEntity();
+   ReferenceType getEntity();
 
    Map<String, String> getProperties();
 

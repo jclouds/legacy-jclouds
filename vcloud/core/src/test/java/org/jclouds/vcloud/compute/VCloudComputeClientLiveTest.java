@@ -97,7 +97,7 @@ public class VCloudComputeClientLiveTest {
       InstantiateVAppTemplateOptions options = processorCount(1).memory(512).disk(10 * 1025 * 1024).productProperties(
                ImmutableMap.of("foo", "bar"));
 
-      id = URI.create(computeClient.start(null, template.getId(), templateName, options).get("id"));
+      id = URI.create(computeClient.start(null, template.getHref(), templateName, options).get("id"));
       Expectation expectation = expectationMap.get(toTest);
 
       VApp vApp = client.getVApp(id);

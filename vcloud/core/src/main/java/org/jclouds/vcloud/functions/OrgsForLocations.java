@@ -80,7 +80,7 @@ public class OrgsForLocations implements Function<Iterable<? extends Location>, 
 
          @Override
          public URI apply(Location from) {
-            return VCloudLocation.class.cast(from.getParent()).getResource().getId();
+            return VCloudLocation.class.cast(from.getParent()).getResource().getHref();
          }
 
       })), new Function<URI, Future<Org>>() {

@@ -23,7 +23,7 @@ import java.util.SortedMap;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
 import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
@@ -37,15 +37,15 @@ import com.google.common.collect.Maps;
 public class CatalogItemHandler extends ParseSax.HandlerWithResult<CatalogItem> {
    private StringBuilder currentText = new StringBuilder();
 
-   protected NamedResource catalogItem;
-   protected NamedResource entity;
+   protected ReferenceType catalogItem;
+   protected ReferenceType entity;
 
    protected String description;
    protected String key;
    protected SortedMap<String, String> properties = Maps.newTreeMap();
 
    public CatalogItem getResult() {
-      return new CatalogItemImpl(catalogItem.getName(), catalogItem.getId(), description, entity, properties);
+      return new CatalogItemImpl(catalogItem.getName(), catalogItem.getHref(), description, entity, properties);
    }
 
    @Override

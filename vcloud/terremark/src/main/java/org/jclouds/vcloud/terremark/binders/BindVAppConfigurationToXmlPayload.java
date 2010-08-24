@@ -210,6 +210,6 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
 
    @Override
    public URI apply(Object from) {
-      return VCloudExpressVApp.class.cast(checkNotNull(from, "from")).getId();
+      return VCloudExpressVApp.class.cast(checkNotNull(from, "from")).getHref();
    }
 }

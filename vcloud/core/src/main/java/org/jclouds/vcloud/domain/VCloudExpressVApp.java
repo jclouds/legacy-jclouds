@@ -36,8 +36,8 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @ImplementedBy(VCloudExpressVAppImpl.class)
-public interface VCloudExpressVApp extends NamedResource {
-   NamedResource getVDC();
+public interface VCloudExpressVApp extends ReferenceType {
+   ReferenceType getVDC();
 
    Status getStatus();
 

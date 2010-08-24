@@ -31,7 +31,7 @@ import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Vm;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -52,21 +52,21 @@ public class VAppHandlerTest {
       Factory factory = injector.getInstance(ParseSax.Factory.class);
       VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
       assertEquals(result.getName(), "vApp_acole_2");
-      assertEquals(result.getId(), URI
+      assertEquals(result.getHref(), URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vapp-607806320"));
       assertEquals(result.getType(), "application/vnd.vmware.vcloud.vApp+xml");
       assertEquals(result.getStatus(), Status.OFF);
-      assertEquals(result.getVDC(), new NamedResourceImpl(null, VCloudMediaType.VDC_XML, URI
+      assertEquals(result.getVDC(), new ReferenceTypeImpl(null, VCloudMediaType.VDC_XML, URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439")));
       assertEquals(result.getDescription(), null);
       assertEquals(result.getTasks(), ImmutableList.of());
       assert result.isOvfDescriptorUploaded();
       Vm vm = Iterables.getOnlyElement(result.getChildren());
       assertEquals(vm.getName(), "RHEL5");
-      assertEquals(vm.getId(), URI.create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248"));
+      assertEquals(vm.getHref(), URI.create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248"));
       assertEquals(vm.getType(), "application/vnd.vmware.vcloud.vm+xml");
       assertEquals(vm.getStatus(), Status.OFF);
-      assertEquals(vm.getParent(), new NamedResourceImpl(null, VCloudMediaType.VAPP_XML, URI
+      assertEquals(vm.getParent(), new ReferenceTypeImpl(null, VCloudMediaType.VAPP_XML, URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vapp-607806320")));
       assertEquals(vm.getDescription(), null);
       assertEquals(vm.getTasks(), ImmutableList.of());

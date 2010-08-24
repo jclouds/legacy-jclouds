@@ -54,7 +54,7 @@ public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials implements
          if (matcher.find()) {
             return new Credentials(matcher.group(1), matcher.group(2));
          } else {
-            throw new RuntimeException("could not parse username/password for image: " + template.getId() + "\n"
+            throw new RuntimeException("could not parse username/password for image: " + template.getHref() + "\n"
                   + search);
          }
       }

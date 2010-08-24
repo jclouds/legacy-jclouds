@@ -64,7 +64,7 @@ public class TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy extends Encod
       assert template.getLocation().getParent().getScope() == LocationScope.REGION : "template location should have a parent of org, which should be mapped to region: "
             + template.getLocation();
       createNewKeyPairUnlessUserSpecifiedOtherwise.execute(VCloudLocation.class
-            .cast(template.getLocation().getParent()).getResource().getId(), tag, template.getImage()
+            .cast(template.getLocation().getParent()).getResource().getHref(), tag, template.getImage()
             .getDefaultCredentials().identity, template.getOptions().as(TerremarkVCloudTemplateOptions.class));
       return super.execute(tag, count, template, nodes, badNodes);
    }

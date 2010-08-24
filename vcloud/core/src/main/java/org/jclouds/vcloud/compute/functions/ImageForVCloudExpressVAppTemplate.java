@@ -30,7 +30,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.vcloud.compute.domain.VCloudExpressImage;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 
 import com.google.common.base.Function;
@@ -42,7 +42,7 @@ import com.google.common.collect.ImmutableMap;
 public class ImageForVCloudExpressVAppTemplate implements Function<VCloudExpressVAppTemplate, Image> {
    private final FindLocationForResource findLocationForResource;
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider;
-   private NamedResource parent;
+   private ReferenceType parent;
 
    @Inject
    protected ImageForVCloudExpressVAppTemplate(FindLocationForResource findLocationForResource,
@@ -51,7 +51,7 @@ public class ImageForVCloudExpressVAppTemplate implements Function<VCloudExpress
       this.credentialsProvider = checkNotNull(credentialsProvider, "credentialsProvider");
    }
 
-   public ImageForVCloudExpressVAppTemplate withParent(NamedResource parent) {
+   public ImageForVCloudExpressVAppTemplate withParent(ReferenceType parent) {
       this.parent = parent;
       return this;
    }
@@ -69,8 +69,8 @@ public class ImageForVCloudExpressVAppTemplate implements Function<VCloudExpress
       Location location = findLocationForResource.apply(checkNotNull(parent, "parent"));
       String name = getName(from.getName());
       String desc = from.getDescription() != null ? from.getDescription() : from.getName();
-      return new VCloudExpressImage(from, from.getId().toASCIIString(), name, from.getId().toASCIIString(), location, from
-               .getId(), ImmutableMap.<String, String> of(), os, desc, "", credentialsProvider.execute(from));
+      return new VCloudExpressImage(from, from.getHref().toASCIIString(), name, from.getHref().toASCIIString(), location, from
+               .getHref(), ImmutableMap.<String, String> of(), os, desc, "", credentialsProvider.execute(from));
    }
 
    protected String getName(String name) {

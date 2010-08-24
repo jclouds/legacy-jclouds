@@ -22,7 +22,7 @@ package org.jclouds.vcloud.terremark.domain.internal;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
 import org.jclouds.vcloud.terremark.domain.TerremarkCatalogItem;
 
@@ -33,23 +33,23 @@ import org.jclouds.vcloud.terremark.domain.TerremarkCatalogItem;
  */
 public class TerremarkCatalogItemImpl extends CatalogItemImpl implements TerremarkCatalogItem {
 
-   private final NamedResource computeOptions;
-   private final NamedResource customizationOptions;
+   private final ReferenceType computeOptions;
+   private final ReferenceType customizationOptions;
 
-   public TerremarkCatalogItemImpl(String name, URI id, String description, NamedResource computeOptions,
-         NamedResource customizationOptions, NamedResource entity, Map<String, String> properties) {
+   public TerremarkCatalogItemImpl(String name, URI id, String description, ReferenceType computeOptions,
+         ReferenceType customizationOptions, ReferenceType entity, Map<String, String> properties) {
       super(name, id, description, entity, properties);
       this.computeOptions = computeOptions;
       this.customizationOptions = customizationOptions;
    }
 
    @Override
-   public NamedResource getComputeOptions() {
+   public ReferenceType getComputeOptions() {
       return computeOptions;
    }
 
    @Override
-   public NamedResource getCustomizationOptions() {
+   public ReferenceType getCustomizationOptions() {
       return customizationOptions;
    }
 

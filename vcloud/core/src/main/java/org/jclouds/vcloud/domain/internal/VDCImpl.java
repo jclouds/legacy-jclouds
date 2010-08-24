@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
 
 import org.jclouds.vcloud.domain.AllocationModel;
 import org.jclouds.vcloud.domain.Capacity;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.VDCStatus;
@@ -44,10 +44,10 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  * 
  */
-public class VDCImpl extends NamedResourceImpl implements VDC {
+public class VDCImpl extends ReferenceTypeImpl implements VDC {
 
    private final VDCStatus status;
-   private final NamedResource org;
+   private final ReferenceType org;
    @Nullable
    private final String description;
    private final List<Task> tasks = Lists.newArrayList();
@@ -55,17 +55,17 @@ public class VDCImpl extends NamedResourceImpl implements VDC {
    private final Capacity storageCapacity;
    private final Capacity cpuCapacity;
    private final Capacity memoryCapacity;
-   private final Map<String, NamedResource> resourceEntities = Maps.newLinkedHashMap();
-   private final Map<String, NamedResource> availableNetworks = Maps.newLinkedHashMap();
+   private final Map<String, ReferenceType> resourceEntities = Maps.newLinkedHashMap();
+   private final Map<String, ReferenceType> availableNetworks = Maps.newLinkedHashMap();
    private final int nicQuota;
    private final int networkQuota;
    private final int vmQuota;
    private final boolean isEnabled;
 
-   public VDCImpl(String name, String type, URI id, VDCStatus status, NamedResource org, @Nullable String description,
+   public VDCImpl(String name, String type, URI id, VDCStatus status, ReferenceType org, @Nullable String description,
             Iterable<Task> tasks, AllocationModel allocationModel, @Nullable Capacity storageCapacity,
             @Nullable Capacity cpuCapacity, @Nullable Capacity memoryCapacity,
-            Map<String, NamedResource> resourceEntities, Map<String, NamedResource> availableNetworks, int nicQuota,
+            Map<String, ReferenceType> resourceEntities, Map<String, ReferenceType> availableNetworks, int nicQuota,
             int networkQuota, int vmQuota, boolean isEnabled) {
       super(name, type, id);
       this.status = checkNotNull(status, "status");
@@ -96,7 +96,7 @@ public class VDCImpl extends NamedResourceImpl implements VDC {
     * {@inheritDoc}
     */
    @Override
-   public NamedResource getOrg() {
+   public ReferenceType getOrg() {
       return org;
    }
 
@@ -152,7 +152,7 @@ public class VDCImpl extends NamedResourceImpl implements VDC {
     * {@inheritDoc}
     */
    @Override
-   public Map<String, NamedResource> getResourceEntities() {
+   public Map<String, ReferenceType> getResourceEntities() {
       return resourceEntities;
    }
 
@@ -160,7 +160,7 @@ public class VDCImpl extends NamedResourceImpl implements VDC {
     * {@inheritDoc}
     */
    @Override
-   public Map<String, NamedResource> getAvailableNetworks() {
+   public Map<String, ReferenceType> getAvailableNetworks() {
       return availableNetworks;
    }
 
@@ -289,7 +289,7 @@ public class VDCImpl extends NamedResourceImpl implements VDC {
 
    @Override
    public String toString() {
-      return "[id=" + getId() + ", name=" + getName() + ", org=" + org + ", description=" + description + ", status="
+      return "[id=" + getHref() + ", name=" + getName() + ", org=" + org + ", description=" + description + ", status="
                + status + ", isEnabled=" + isEnabled + "]";
    }
 

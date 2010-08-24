@@ -30,7 +30,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.vcloud.compute.domain.VCloudImage;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.base.Function;
@@ -42,7 +42,7 @@ import com.google.common.collect.ImmutableMap;
 public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
    private final FindLocationForResource findLocationForResource;
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider;
-   private NamedResource parent;
+   private ReferenceType parent;
 
    @Inject
    protected ImageForVAppTemplate(FindLocationForResource findLocationForResource,
@@ -51,7 +51,7 @@ public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
       this.credentialsProvider = checkNotNull(credentialsProvider, "credentialsProvider");
    }
 
-   public ImageForVAppTemplate withParent(NamedResource parent) {
+   public ImageForVAppTemplate withParent(ReferenceType parent) {
       this.parent = parent;
       return this;
    }
@@ -69,8 +69,8 @@ public class ImageForVAppTemplate implements Function<VAppTemplate, Image> {
       Location location = findLocationForResource.apply(checkNotNull(parent, "parent"));
       String name = getName(from.getName());
       String desc = from.getDescription() != null ? from.getDescription() : from.getName();
-      return new VCloudImage(from, from.getId().toASCIIString(), name, from.getId().toASCIIString(), location, from
-            .getId(), ImmutableMap.<String, String> of(), os, desc, "", credentialsProvider.execute(from));
+      return new VCloudImage(from, from.getHref().toASCIIString(), name, from.getHref().toASCIIString(), location, from
+            .getHref(), ImmutableMap.<String, String> of(), os, desc, "", credentialsProvider.execute(from));
    }
 
    protected String getName(String name) {

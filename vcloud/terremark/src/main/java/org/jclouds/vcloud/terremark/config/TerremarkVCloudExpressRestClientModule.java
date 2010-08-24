@@ -34,7 +34,7 @@ import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSu
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.VCloudExpressClient;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
@@ -86,7 +86,7 @@ public class TerremarkVCloudExpressRestClientModule extends
    }
 
    @Singleton
-   public static class OrgNameToKeysListSupplier implements Supplier<Map<String, NamedResource>> {
+   public static class OrgNameToKeysListSupplier implements Supplier<Map<String, ReferenceType>> {
       protected final Supplier<VCloudSession> sessionSupplier;
       private final TerremarkVCloudExpressClient client;
 
@@ -97,11 +97,11 @@ public class TerremarkVCloudExpressRestClientModule extends
       }
 
       @Override
-      public Map<String, NamedResource> get() {
-         return Maps.transformValues(sessionSupplier.get().getOrgs(), new Function<NamedResource, NamedResource>() {
+      public Map<String, ReferenceType> get() {
+         return Maps.transformValues(sessionSupplier.get().getOrgs(), new Function<ReferenceType, ReferenceType>() {
 
             @Override
-            public NamedResource apply(NamedResource from) {
+            public ReferenceType apply(ReferenceType from) {
                return client.findOrgNamed(from.getName()).getKeysList();
             }
 
@@ -113,12 +113,12 @@ public class TerremarkVCloudExpressRestClientModule extends
    @Provides
    @Singleton
    @KeysList
-   protected Supplier<Map<String, NamedResource>> provideOrgToKeysListCache(
+   protected Supplier<Map<String, ReferenceType>> provideOrgToKeysListCache(
             @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrgNameToKeysListSupplier supplier) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, NamedResource>>(authException,
-               seconds, new Supplier<Map<String, NamedResource>>() {
+      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ReferenceType>>(authException,
+               seconds, new Supplier<Map<String, ReferenceType>>() {
                   @Override
-                  public Map<String, NamedResource> get() {
+                  public Map<String, ReferenceType> get() {
                      return supplier.get();
                   }
 

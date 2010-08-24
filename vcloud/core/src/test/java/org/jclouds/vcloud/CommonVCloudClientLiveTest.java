@@ -30,7 +30,7 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VDC;
@@ -69,11 +69,11 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
    @Test
    public void testCatalog() throws Exception {
       Org org = connection.findOrgNamed(null);
-      for (NamedResource cat : org.getCatalogs().values()) {
-         Catalog response = connection.getCatalog(cat.getId());
+      for (ReferenceType cat : org.getCatalogs().values()) {
+         Catalog response = connection.getCatalog(cat.getHref());
          assertNotNull(response);
          assertNotNull(response.getName());
-         assertNotNull(response.getId());
+         assertNotNull(response.getHref());
          assertEquals(connection.findCatalogInOrgNamed(null, response.getName()), response);
       }
    }
@@ -81,9 +81,9 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
    @Test
    public void testGetOrgNetwork() throws Exception {
       Org org = connection.findOrgNamed(null);
-      for (NamedResource resource : org.getNetworks().values()) {
+      for (ReferenceType resource : org.getNetworks().values()) {
          if (resource.getType().equals(VCloudMediaType.NETWORK_XML)) {
-            OrgNetwork item = connection.getNetwork(resource.getId());
+            OrgNetwork item = connection.getNetwork(resource.getHref());
             assertNotNull(item);
          }
       }
@@ -92,11 +92,11 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
    @Test
    public void testGetVDCNetwork() throws Exception {
       Org org = connection.findOrgNamed(null);
-      for (NamedResource vdc : org.getVDCs().values()) {
-         VDC response = connection.getVDC(vdc.getId());
-         for (NamedResource resource : response.getAvailableNetworks().values()) {
+      for (ReferenceType vdc : org.getVDCs().values()) {
+         VDC response = connection.getVDC(vdc.getHref());
+         for (ReferenceType resource : response.getAvailableNetworks().values()) {
             if (resource.getType().equals(VCloudMediaType.NETWORK_XML)) {
-               OrgNetwork item = connection.getNetwork(resource.getId());
+               OrgNetwork item = connection.getNetwork(resource.getHref());
                assertNotNull(item);
             }
          }
@@ -106,11 +106,11 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
    @Test
    public void testGetCatalogItem() throws Exception {
       Org org = connection.findOrgNamed(null);
-      for (NamedResource cat : org.getCatalogs().values()) {
-         Catalog response = connection.getCatalog(cat.getId());
-         for (NamedResource resource : response.values()) {
+      for (ReferenceType cat : org.getCatalogs().values()) {
+         Catalog response = connection.getCatalog(cat.getHref());
+         for (ReferenceType resource : response.values()) {
             if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
-               CatalogItem item = connection.getCatalogItem(resource.getId());
+               CatalogItem item = connection.getCatalogItem(resource.getHref());
                verifyCatalogItem(item);
             }
          }
@@ -121,7 +121,7 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
       assertNotNull(item);
       assertNotNull(item);
       assertNotNull(item.getEntity());
-      assertNotNull(item.getId());
+      assertNotNull(item.getHref());
       assertNotNull(item.getProperties());
       assertNotNull(item.getType());
    }
@@ -129,9 +129,9 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
    @Test
    public void testFindCatalogItem() throws Exception {
       Org org = connection.findOrgNamed(null);
-      for (NamedResource cat : org.getCatalogs().values()) {
-         Catalog response = connection.getCatalog(cat.getId());
-         for (NamedResource resource : response.values()) {
+      for (ReferenceType cat : org.getCatalogs().values()) {
+         Catalog response = connection.getCatalog(cat.getHref());
+         for (ReferenceType resource : response.values()) {
             if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
                CatalogItem item = connection.findCatalogItemInOrgCatalogNamed(org.getName(), response.getName(),
                         resource.getName());
@@ -144,14 +144,14 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
    @Test
    public void testDefaultVDC() throws Exception {
       Org org = connection.findOrgNamed(null);
-      for (NamedResource vdc : org.getVDCs().values()) {
-         VDC response = connection.getVDC(vdc.getId());
+      for (ReferenceType vdc : org.getVDCs().values()) {
+         VDC response = connection.getVDC(vdc.getHref());
          assertNotNull(response);
          assertNotNull(response.getName());
-         assertNotNull(response.getId());
+         assertNotNull(response.getHref());
          assertNotNull(response.getResourceEntities());
          assertNotNull(response.getAvailableNetworks());
-         assertEquals(connection.getVDC(response.getId()), response);
+         assertEquals(connection.getVDC(response.getHref()), response);
       }
    }
 
@@ -172,7 +172,7 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
       assertNotNull(response.getTasks());
       if (response.getTasks().size() > 0) {
          Task task = response.getTasks().last();
-         assertEquals(connection.getTask(task.getId()).getId(), task.getId());
+         assertEquals(connection.getTask(task.getHref()).getHref(), task.getHref());
       }
    }
 

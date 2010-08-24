@@ -58,7 +58,7 @@ public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTes
       Set<KeyPair> response = vCloudExpressClient.listKeyPairsInOrg(null);
       assertNotNull(response);
       System.err.println(response);
-      assertEquals(response, vCloudExpressClient.listKeyPairsInOrg(org.getId()));
+      assertEquals(response, vCloudExpressClient.listKeyPairsInOrg(org.getHref()));
    }
 
    @Override
@@ -67,11 +67,11 @@ public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTes
 
       TerremarkOrg org = vCloudExpressClient.findOrgNamed(null);
       try {
-         key = vCloudExpressClient.generateKeyPairInOrg(org.getId(), "livetest", false);
+         key = vCloudExpressClient.generateKeyPairInOrg(org.getHref(), "livetest", false);
       } catch (IllegalStateException e) {
-         key = vCloudExpressClient.findKeyPairInOrg(org.getId(), "livetest");
+         key = vCloudExpressClient.findKeyPairInOrg(org.getHref(), "livetest");
          vCloudExpressClient.deleteKeyPair(key.getId());
-         key = vCloudExpressClient.generateKeyPairInOrg(org.getId(), "livetest", false);
+         key = vCloudExpressClient.generateKeyPairInOrg(org.getHref(), "livetest", false);
       }
       assertNotNull(key);
       System.err.println(key);
@@ -79,7 +79,7 @@ public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTes
       assertNotNull(key.getPrivateKey());
       assertNotNull(key.getFingerPrint());
       assertEquals(key.isDefault(), false);
-      assertEquals(key.getFingerPrint(), vCloudExpressClient.findKeyPairInOrg(org.getId(), key.getName())
+      assertEquals(key.getFingerPrint(), vCloudExpressClient.findKeyPairInOrg(org.getHref(), key.getName())
                .getFingerPrint());
    }
 

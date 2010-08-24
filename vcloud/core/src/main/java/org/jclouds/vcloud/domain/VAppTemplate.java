@@ -35,14 +35,14 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @ImplementedBy(VAppTemplateImpl.class)
-public interface VAppTemplate extends NamedResource {
+public interface VAppTemplate extends ReferenceType {
    /**
     * Reference to the VDC containing this template.
     * 
     * @since vcloud api 1.0
     * @return org, or null if this is a version before 1.0 where the vdc isn't present
     */
-   NamedResource getVDC();
+   ReferenceType getVDC();
 
    /**
     * @return creation status of the VAppTemplate.

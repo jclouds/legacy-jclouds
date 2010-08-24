@@ -29,7 +29,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.vcloud.compute.domain.VCloudLocation;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
 
 import com.google.common.base.Supplier;
@@ -41,12 +41,12 @@ import com.google.common.collect.Sets;
 @Singleton
 public class OrgAndVDCToLocationSupplier implements Supplier<Set<? extends Location>> {
    private final String providerName;
-   private final Supplier<Map<String, NamedResource>> orgNameToResource;
+   private final Supplier<Map<String, ReferenceType>> orgNameToResource;
    private final Supplier<Map<String, ? extends Org>> orgNameToVDCResource;
 
    @Inject
    OrgAndVDCToLocationSupplier(@org.jclouds.rest.annotations.Provider String providerName,
-            @org.jclouds.vcloud.endpoints.Org Supplier<Map<String, NamedResource>> orgNameToResource,
+            @org.jclouds.vcloud.endpoints.Org Supplier<Map<String, ReferenceType>> orgNameToResource,
             Supplier<Map<String, ? extends Org>> orgNameToVDCResource) {
       this.providerName = providerName;
       this.orgNameToResource = orgNameToResource;
@@ -58,9 +58,9 @@ public class OrgAndVDCToLocationSupplier implements Supplier<Set<? extends Locat
       Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
       Set<Location> locations = Sets.newLinkedHashSet();
 
-      for (NamedResource org : orgNameToResource.get().values()) {
+      for (ReferenceType org : orgNameToResource.get().values()) {
          Location orgL = new VCloudLocation(org, provider);
-         for (NamedResource vdc : orgNameToVDCResource.get().get(org.getName()).getVDCs().values()) {
+         for (ReferenceType vdc : orgNameToVDCResource.get().get(org.getName()).getVDCs().values()) {
             locations.add(new VCloudLocation(vdc, orgL));
          }
       }

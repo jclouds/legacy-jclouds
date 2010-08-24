@@ -28,5 +28,5 @@ import java.util.Map;
 public interface VCloudSession {
    String getVCloudToken();
 
-   Map<String, NamedResource> getOrgs();
+   Map<String, ReferenceType> getOrgs();
 }

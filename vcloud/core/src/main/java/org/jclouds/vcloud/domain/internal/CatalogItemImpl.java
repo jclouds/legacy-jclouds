@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 
 import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 
 import com.google.common.collect.Maps;
 
@@ -37,15 +37,15 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  * 
  */
-public class CatalogItemImpl extends NamedResourceImpl implements CatalogItem {
+public class CatalogItemImpl extends ReferenceTypeImpl implements CatalogItem {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
    private final String description;
-   private final NamedResource entity;
+   private final ReferenceType entity;
    private final Map<String, String> properties = Maps.newLinkedHashMap();
 
-   public CatalogItemImpl(String name, URI id, @Nullable String description, NamedResource entity,
+   public CatalogItemImpl(String name, URI id, @Nullable String description, ReferenceType entity,
          Map<String, String> properties) {
       super(name, VCloudExpressMediaType.CATALOGITEM_XML, id);
       this.description = description;
@@ -58,7 +58,7 @@ public class CatalogItemImpl extends NamedResourceImpl implements CatalogItem {
       return VCloudExpressMediaType.CATALOGITEM_XML;
    }
 
-   public NamedResource getEntity() {
+   public ReferenceType getEntity() {
       return entity;
    }
 
@@ -73,7 +73,7 @@ public class CatalogItemImpl extends NamedResourceImpl implements CatalogItem {
 
    @Override
    public String toString() {
-      return "CatalogItemImpl [id=" + getId() + ", name=" + getName() + ", type=" + getType() + ", description="
+      return "CatalogItemImpl [id=" + getHref() + ", name=" + getName() + ", type=" + getType() + ", description="
             + getDescription() + ", entity=" + entity + ", properties=" + properties + "]";
    }
 

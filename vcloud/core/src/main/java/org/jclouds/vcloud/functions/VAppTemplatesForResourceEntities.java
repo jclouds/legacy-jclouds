@@ -36,7 +36,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VAppTemplate;
 
 import com.google.common.base.Function;
@@ -47,7 +47,7 @@ import com.google.common.base.Predicate;
  */
 @Singleton
 public class VAppTemplatesForResourceEntities implements
-      Function<Iterable<? extends NamedResource>, Iterable<? extends VAppTemplate>> {
+      Function<Iterable<? extends ReferenceType>, Iterable<? extends VAppTemplate>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
@@ -62,20 +62,20 @@ public class VAppTemplatesForResourceEntities implements
    }
 
    @Override
-   public Iterable<? extends VAppTemplate> apply(Iterable<? extends NamedResource> from) {
-      return transformParallel(filter(checkNotNull(from, "named resources"), new Predicate<NamedResource>() {
+   public Iterable<? extends VAppTemplate> apply(Iterable<? extends ReferenceType> from) {
+      return transformParallel(filter(checkNotNull(from, "named resources"), new Predicate<ReferenceType>() {
 
          @Override
-         public boolean apply(NamedResource input) {
+         public boolean apply(ReferenceType input) {
             return input.getType().equals(VCloudMediaType.VAPPTEMPLATE_XML);
          }
 
-      }), new Function<NamedResource, Future<VAppTemplate>>() {
+      }), new Function<ReferenceType, Future<VAppTemplate>>() {
 
          @SuppressWarnings("unchecked")
          @Override
-         public Future<VAppTemplate> apply(NamedResource from) {
-            return (Future<VAppTemplate>) aclient.getVAppTemplate(from.getId());
+         public Future<VAppTemplate> apply(ReferenceType from) {
+            return (Future<VAppTemplate>) aclient.getVAppTemplate(from.getHref());
          }
 
       }, executor, null, logger, "vappTemplates in");

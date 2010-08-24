@@ -26,7 +26,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.Vm;
@@ -40,17 +40,17 @@ import com.google.common.collect.Lists;
  * @author Adrian Cole
  * 
  */
-public class VmImpl extends NamedResourceImpl implements Vm {
+public class VmImpl extends ReferenceTypeImpl implements Vm {
 
    @Nullable
    private final Status status;
-   private final NamedResource vApp;
+   private final ReferenceType vApp;
    @Nullable
    private final String description;
    private final List<Task> tasks = Lists.newArrayList();
    private final String vAppScopedLocalId;
 
-   public VmImpl(String name, String type, URI id, @Nullable Status status, NamedResource vApp,
+   public VmImpl(String name, String type, URI id, @Nullable Status status, ReferenceType vApp,
             @Nullable String description, Iterable<Task> tasks, @Nullable String vAppScopedLocalId) {
       super(name, type, id);
       this.status = status;
@@ -73,7 +73,7 @@ public class VmImpl extends NamedResourceImpl implements Vm {
     * {@inheritDoc}
     */
    @Override
-   public NamedResource getParent() {
+   public ReferenceType getParent() {
       return vApp;
    }
 
@@ -152,7 +152,7 @@ public class VmImpl extends NamedResourceImpl implements Vm {
 
    @Override
    public String toString() {
-      return "[id=" + getId() + ", name=" + getName() + ", vApp=" + vApp + ", description=" + description + ", status="
+      return "[id=" + getHref() + ", name=" + getName() + ", vApp=" + vApp + ", description=" + description + ", status="
                + status + "]";
    }
 

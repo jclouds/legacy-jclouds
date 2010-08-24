@@ -66,7 +66,7 @@ public class OrgNameVDCNameResourceEntityNameToEndpoint implements Function<Obje
          vDC = defaultVDC;
       try {
          Map<String, ? extends org.jclouds.vcloud.domain.VDC> vDCs = checkNotNull(orgVDCMap.get().get(org));
-         return vDCs.get(vDC).getResourceEntities().get(entityName).getId();
+         return vDCs.get(vDC).getResourceEntities().get(entityName).getHref();
       } catch (NullPointerException e) {
          throw new NoSuchElementException(org + "/" + vDC + "/" + entityName + " not found in " + orgVDCMap.get());
       }

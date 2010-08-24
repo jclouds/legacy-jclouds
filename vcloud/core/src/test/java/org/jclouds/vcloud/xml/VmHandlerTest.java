@@ -30,7 +30,7 @@ import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Vm;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -50,11 +50,11 @@ public class VmHandlerTest {
       Factory factory = injector.getInstance(ParseSax.Factory.class);
       Vm result = factory.create(injector.getInstance(VmHandler.class)).parse(is);
       assertEquals(result.getName(), "RHEL5");
-      assertEquals(result.getId(), URI
+      assertEquals(result.getHref(), URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248"));
       assertEquals(result.getType(), "application/vnd.vmware.vcloud.vm+xml");
       assertEquals(result.getStatus(), Status.OFF);
-      assertEquals(result.getParent(), new NamedResourceImpl(null, VCloudMediaType.VAPP_XML, URI
+      assertEquals(result.getParent(), new ReferenceTypeImpl(null, VCloudMediaType.VAPP_XML, URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vapp-607806320")));
       assertEquals(result.getDescription(), null);
       assertEquals(result.getTasks(), ImmutableList.of());

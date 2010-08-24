@@ -27,8 +27,8 @@ import java.util.Map;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.vcloud.VCloudExpressMediaType;
-import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.ReferenceType;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -44,8 +44,8 @@ public class OrgListHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/orglist.xml");
 
-      Map<String, NamedResource> result = factory.create(injector.getInstance(OrgListHandler.class)).parse(is);
-      assertEquals(result, ImmutableMap.of("adrian@jclouds.org", new NamedResourceImpl("adrian@jclouds.org",
+      Map<String, ReferenceType> result = factory.create(injector.getInstance(OrgListHandler.class)).parse(is);
+      assertEquals(result, ImmutableMap.of("adrian@jclouds.org", new ReferenceTypeImpl("adrian@jclouds.org",
             VCloudExpressMediaType.ORG_XML, URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
    }
 }

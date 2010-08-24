@@ -31,7 +31,7 @@ import javax.inject.Named;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudExpressMediaType;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.Status;
@@ -75,7 +75,7 @@ public class VCloudExpressVAppHandler extends ParseSax.HandlerWithResult<VCloudE
    protected Integer osType;
    protected URI location;
    protected Long size;
-   protected NamedResource vDC;
+   protected ReferenceType vDC;
 
    public VCloudExpressVApp getResult() {
       return new VCloudExpressVAppImpl(name, location, status, size, vDC, networkToAddresses, osType, operatingSystemDescription,
@@ -84,9 +84,9 @@ public class VCloudExpressVAppHandler extends ParseSax.HandlerWithResult<VCloudE
 
    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if (qName.equals("VApp")) {
-         NamedResource resource = Utils.newNamedResource(attributes);
+         ReferenceType resource = Utils.newNamedResource(attributes);
          name = resource.getName();
-         location = resource.getId();
+         location = resource.getHref();
          String statusString = attributes.getValue(attributes.getIndex("status"));
          if (apiVersion.indexOf("0.8") != -1 && "2".equals(statusString))
             status = Status.OFF;

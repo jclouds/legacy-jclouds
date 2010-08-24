@@ -20,7 +20,7 @@
 package org.jclouds.vcloud.terremark.domain;
 
 import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.terremark.domain.internal.TerremarkCatalogItemImpl;
 
 import com.google.inject.ImplementedBy;
@@ -31,8 +31,8 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(TerremarkCatalogItemImpl.class)
 public interface TerremarkCatalogItem extends CatalogItem {
 
-   NamedResource getComputeOptions();
+   ReferenceType getComputeOptions();
 
-   NamedResource getCustomizationOptions();
+   ReferenceType getCustomizationOptions();
 
 }

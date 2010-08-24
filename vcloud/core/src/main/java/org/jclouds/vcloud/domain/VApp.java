@@ -32,14 +32,14 @@ import javax.annotation.Nullable;
  * 
  * @author Adrian Cole
  */
-public interface VApp extends NamedResource {
+public interface VApp extends ReferenceType {
    /**
     * Reference to the vdc containing this vApp.
     * 
     * @since vcloud api 1.0
     * @return vdc, or null if this is a version before 1.0 where the org isn't present
     */
-   NamedResource getVDC();
+   ReferenceType getVDC();
 
    /**
     * The creation status of the vDC

@@ -24,7 +24,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
 
@@ -37,14 +37,14 @@ import com.google.inject.ImplementedBy;
  */
 @org.jclouds.vcloud.endpoints.Network
 @ImplementedBy(VDCImpl.class)
-public interface OrgNetwork extends NamedResource {
+public interface OrgNetwork extends ReferenceType {
    /**
     * The org this network belongs to.
     * 
     * @since vcloud api 0.9
     */
    @Nullable
-   NamedResource getOrg();
+   ReferenceType getOrg();
 
    /**
     * optional description
@@ -78,7 +78,7 @@ public interface OrgNetwork extends NamedResource {
     * @since vcloud api 0.9
     */
    @Nullable
-   NamedResource getNetworkPool();
+   ReferenceType getNetworkPool();
 
    /**
     * list of external IP addresses that this network can use for NAT.
@@ -105,7 +105,7 @@ public interface OrgNetwork extends NamedResource {
        * @since vcloud api 0.9
        */
       @Nullable
-      NamedResource getParentNetwork();
+      ReferenceType getParentNetwork();
 
       /**
        * defines how this network is connected to its ParentNetwork

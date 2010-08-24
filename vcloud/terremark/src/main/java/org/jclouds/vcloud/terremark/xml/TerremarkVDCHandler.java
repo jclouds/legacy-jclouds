@@ -22,7 +22,7 @@ package org.jclouds.vcloud.terremark.xml;
 import javax.inject.Inject;
 
 import org.jclouds.vcloud.VCloudExpressMediaType;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.terremark.domain.TerremarkVDC;
 import org.jclouds.vcloud.terremark.domain.internal.TerremarkVDCImpl;
@@ -42,13 +42,13 @@ public class TerremarkVDCHandler extends VDCHandler {
       super(taskHandler);
    }
 
-   private NamedResource catalog;
-   private NamedResource publicIps;
-   private NamedResource internetServices;
+   private ReferenceType catalog;
+   private ReferenceType publicIps;
+   private ReferenceType internetServices;
 
    public TerremarkVDC getResult() {
       VDC vDC = super.getResult();
-      return new TerremarkVDCImpl(vDC.getName(), vDC.getType(), vDC.getId(), status, org, description, tasks,
+      return new TerremarkVDCImpl(vDC.getName(), vDC.getType(), vDC.getHref(), status, org, description, tasks,
                allocationModel, storageCapacity, cpuCapacity, memoryCapacity, resourceEntities, availableNetworks,
                nicQuota, networkQuota, vmQuota, isEnabled, catalog, publicIps, internetServices);
    }

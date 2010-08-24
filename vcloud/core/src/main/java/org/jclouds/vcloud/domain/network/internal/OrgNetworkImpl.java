@@ -27,9 +27,9 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.network.Features;
 import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.domain.network.IpScope;
@@ -43,19 +43,19 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-public class OrgNetworkImpl extends NamedResourceImpl implements OrgNetwork {
+public class OrgNetworkImpl extends ReferenceTypeImpl implements OrgNetwork {
    @Nullable
-   private final NamedResource org;
+   private final ReferenceType org;
    @Nullable
    private final String description;
    private final List<Task> tasks = Lists.newArrayList();
    private final Configuration configuration;
    @Nullable
-   private final NamedResource networkPool;
+   private final ReferenceType networkPool;
    private final Set<String> allowedExternalIpAddresses = Sets.newLinkedHashSet();
 
-   public OrgNetworkImpl(String name, String type, URI id, @Nullable NamedResource org, @Nullable String description,
-            Iterable<Task> tasks, Configuration configuration, @Nullable NamedResource networkPool,
+   public OrgNetworkImpl(String name, String type, URI id, @Nullable ReferenceType org, @Nullable String description,
+            Iterable<Task> tasks, Configuration configuration, @Nullable ReferenceType networkPool,
             Iterable<String> allowedExternalIpAddresses) {
       super(name, type, id);
       this.org = org;
@@ -72,11 +72,11 @@ public class OrgNetworkImpl extends NamedResourceImpl implements OrgNetwork {
       @Nullable
       private final IpScope ipScope;
       @Nullable
-      private final NamedResource parentNetwork;
+      private final ReferenceType parentNetwork;
       private final FenceMode fenceMode;
       private final Features features;
 
-      public ConfigurationImpl(@Nullable IpScope ipScope, @Nullable NamedResource parentNetwork, FenceMode fenceMode,
+      public ConfigurationImpl(@Nullable IpScope ipScope, @Nullable ReferenceType parentNetwork, FenceMode fenceMode,
                @Nullable Features features) {
          this.ipScope = ipScope;
          this.parentNetwork = parentNetwork;
@@ -96,7 +96,7 @@ public class OrgNetworkImpl extends NamedResourceImpl implements OrgNetwork {
        * {@inheritDoc}
        */
       @Override
-      public NamedResource getParentNetwork() {
+      public ReferenceType getParentNetwork() {
          return parentNetwork;
       }
 
@@ -172,7 +172,7 @@ public class OrgNetworkImpl extends NamedResourceImpl implements OrgNetwork {
     * {@inheritDoc}
     */
    @Override
-   public NamedResource getOrg() {
+   public ReferenceType getOrg() {
       return org;
    }
 
@@ -204,7 +204,7 @@ public class OrgNetworkImpl extends NamedResourceImpl implements OrgNetwork {
     * {@inheritDoc}
     */
    @Override
-   public NamedResource getNetworkPool() {
+   public ReferenceType getNetworkPool() {
       return networkPool;
    }
 

@@ -54,12 +54,12 @@ public class OrgURIToKeysListEndpoint implements Function<Object, URI> {
 
          @Override
          public URI apply(Org from) {
-            return from.getId();
+            return from.getHref();
          }
 
       });
       try {
-         return TerremarkOrg.class.cast(uriToOrg.get(from == null ? defaultOrg : from)).getKeysList().getId();
+         return TerremarkOrg.class.cast(uriToOrg.get(from == null ? defaultOrg : from)).getKeysList().getHref();
       } catch (NullPointerException e) {
          throw new ResourceNotFoundException("org " + from + " not found in " + uriToOrg);
       }

@@ -29,7 +29,7 @@ import javax.inject.Inject;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Catalog;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.internal.CatalogImpl;
 import org.jclouds.vcloud.util.Utils;
@@ -53,16 +53,16 @@ public class CatalogHandler extends ParseSax.HandlerWithResult<Catalog> {
 
    private StringBuilder currentText = new StringBuilder();
 
-   private NamedResource catalog;
-   private SortedMap<String, NamedResource> contents = Maps.newTreeMap();
+   private ReferenceType catalog;
+   private SortedMap<String, ReferenceType> contents = Maps.newTreeMap();
    protected List<Task> tasks = Lists.newArrayList();
    private String description;
-   private NamedResource org;
+   private ReferenceType org;
 
    private boolean published = true;
 
    public Catalog getResult() {
-      return new CatalogImpl(catalog.getName(), catalog.getType(), catalog.getId(), org, description, contents, tasks,
+      return new CatalogImpl(catalog.getName(), catalog.getType(), catalog.getHref(), org, description, contents, tasks,
             published);
    }
 

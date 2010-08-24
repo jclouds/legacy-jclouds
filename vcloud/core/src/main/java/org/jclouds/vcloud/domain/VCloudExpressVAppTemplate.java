@@ -23,7 +23,7 @@ package org.jclouds.vcloud.domain;
  * 
  * @author Adrian Cole
  */
-public interface VCloudExpressVAppTemplate extends NamedResource {
+public interface VCloudExpressVAppTemplate extends ReferenceType {
 
    Status getStatus();
 

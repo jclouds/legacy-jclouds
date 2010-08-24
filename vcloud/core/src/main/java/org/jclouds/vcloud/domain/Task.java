@@ -33,7 +33,7 @@ import com.google.inject.ImplementedBy;
  * object’s XML representation. This element is read‐only.
  */
 @ImplementedBy(TaskImpl.class)
-public interface Task extends NamedResource {
+public interface Task extends ReferenceType {
    /**
     * The current status of the task.
     */
@@ -60,7 +60,7 @@ public interface Task extends NamedResource {
     * being created. For delete operations, the owner is the deleted object, so this element is not
     * included. For all other operations, the owner is the object to which the request was made.
     */
-   NamedResource getOwner();
+   ReferenceType getOwner();
 
    /**
     * error message or related information returned by the task

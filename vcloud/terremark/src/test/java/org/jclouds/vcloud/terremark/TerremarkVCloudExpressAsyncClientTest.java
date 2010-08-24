@@ -54,12 +54,12 @@ import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExt
 import org.jclouds.vcloud.domain.AllocationModel;
 import org.jclouds.vcloud.domain.Capacity;
 import org.jclouds.vcloud.domain.Catalog;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.VDCStatus;
-import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.config.TerremarkVCloudExpressRestClientModule;
@@ -617,12 +617,12 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
       }
 
       @Override
-      protected URI provideOrg(@org.jclouds.vcloud.endpoints.Org Iterable<NamedResource> orgs) {
+      protected URI provideOrg(@org.jclouds.vcloud.endpoints.Org Iterable<ReferenceType> orgs) {
          return URI.create("https://vcloud.safesecureweb.com/api/v0.8/org/1");
       }
 
       @Override
-      protected String provideOrgName(@org.jclouds.vcloud.endpoints.Org Iterable<NamedResource> orgs) {
+      protected String provideOrgName(@org.jclouds.vcloud.endpoints.Org Iterable<ReferenceType> orgs) {
          return "org";
       }
 
@@ -638,7 +638,7 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
       }
 
       @Override
-      protected Iterable<NamedResource> provideOrgs(Supplier<VCloudSession> cache, @Named(PROPERTY_IDENTITY) String user) {
+      protected Iterable<ReferenceType> provideOrgs(Supplier<VCloudSession> cache, @Named(PROPERTY_IDENTITY) String user) {
          return null;
       }
 
@@ -650,13 +650,13 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
          }
 
          @Override
-         public Map<String, NamedResource> get() {
-            return Maps.transformValues(sessionSupplier.get().getOrgs(), new Function<NamedResource, NamedResource>() {
+         public Map<String, ReferenceType> get() {
+            return Maps.transformValues(sessionSupplier.get().getOrgs(), new Function<ReferenceType, ReferenceType>() {
 
                @Override
-               public NamedResource apply(NamedResource from) {
-                  return new NamedResourceImpl(from.getName(), TerremarkVCloudExpressMediaType.KEYSLIST_XML, URI
-                           .create(from.getId().toASCIIString() + "/keysList"));
+               public ReferenceType apply(ReferenceType from) {
+                  return new ReferenceTypeImpl(from.getName(), TerremarkVCloudExpressMediaType.KEYSLIST_XML, URI
+                           .create(from.getHref().toASCIIString() + "/keysList"));
                }
 
             });
@@ -676,15 +676,15 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
          public Map<String, Org> get() {
             return ImmutableMap.<String, Org> of("org", new TerremarkOrgImpl("org", null, URI
                      .create("https://vcloud.safesecureweb.com/api/v0.8/org/1"), null, ImmutableMap
-                     .<String, NamedResource> of("catalog", new NamedResourceImpl("catalog",
+                     .<String, ReferenceType> of("catalog", new ReferenceTypeImpl("catalog",
                               TerremarkVCloudExpressMediaType.CATALOG_XML, URI
                                        .create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"))), ImmutableMap
-                     .<String, NamedResource> of("vdc", new NamedResourceImpl("vdc",
+                     .<String, ReferenceType> of("vdc", new ReferenceTypeImpl("vdc",
                               TerremarkVCloudExpressMediaType.VDC_XML, URI
                                        .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"))), ImmutableMap
-                     .<String, NamedResource> of(), new NamedResourceImpl("tasksList",
+                     .<String, ReferenceType> of(), new ReferenceTypeImpl("tasksList",
                      TerremarkVCloudExpressMediaType.TASKSLIST_XML, URI
-                              .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/1")), new NamedResourceImpl(
+                              .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/1")), new ReferenceTypeImpl(
                      "keysList", TerremarkVCloudExpressMediaType.KEYSLIST_XML, URI
                               .create("https://vcloud.safesecureweb.com/api/v0.8/keysList/1"))));
          }
@@ -705,16 +705,16 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
                      .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"), VDCStatus.READY, null, "description",
                      ImmutableSet.<Task> of(), AllocationModel.UNRECOGNIZED_MODEL, new Capacity("MB", 0, 0, 0, 0),
                      new Capacity("MB", 0, 0, 0, 0), new Capacity("MB", 0, 0, 0, 0),
-                     ImmutableMap.<String, NamedResource> of("vapp", new NamedResourceImpl("vapp",
+                     ImmutableMap.<String, ReferenceType> of("vapp", new ReferenceTypeImpl("vapp",
                               "application/vnd.vmware.vcloud.vApp+xml", URI
                                        .create("https://vcloud.safesecureweb.com/api/v0.8/vApp/188849-1")), "network",
-                              new NamedResourceImpl("network", "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
+                              new ReferenceTypeImpl("network", "application/vnd.vmware.vcloud.vAppTemplate+xml", URI
                                        .create("https://vcloud.safesecureweb.com/api/v0.8/vdcItem/2"))), ImmutableMap
-                              .<String, NamedResource> of(), 0, 0, 0, false, new NamedResourceImpl("catalog",
+                              .<String, ReferenceType> of(), 0, 0, 0, false, new ReferenceTypeImpl("catalog",
                               TerremarkVCloudExpressMediaType.CATALOG_XML, URI
                                        .create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1")),
-                     new NamedResourceImpl("publicIps", TerremarkVCloudExpressMediaType.PUBLICIPSLIST_XML, URI
-                              .create("https://vcloud.safesecureweb.com/api/v0.8/publicIps/1")), new NamedResourceImpl(
+                     new ReferenceTypeImpl("publicIps", TerremarkVCloudExpressMediaType.PUBLICIPSLIST_XML, URI
+                              .create("https://vcloud.safesecureweb.com/api/v0.8/publicIps/1")), new ReferenceTypeImpl(
                               "internetServices", TerremarkVCloudExpressMediaType.INTERNETSERVICESLIST_XML, URI
                                        .create("https://vcloud.safesecureweb.com/api/v0.8/internetServices/1")))));
          }

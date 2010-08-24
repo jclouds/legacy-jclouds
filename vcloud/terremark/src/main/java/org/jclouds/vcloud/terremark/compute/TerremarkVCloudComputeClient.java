@@ -138,7 +138,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
          if (ip == null) {
             if (client instanceof TerremarkVCloudExpressClient) {
                is = TerremarkVCloudExpressClient.class.cast(client).addInternetServiceToVDC(
-                        vApp.getVDC().getId(),
+                        vApp.getVDC().getHref(),
                         vApp.getName() + "-" + port,
                         protocol,
                         port,
@@ -147,7 +147,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
                ip = is.getPublicIpAddress();
             } else {
                logger.debug(">> creating InternetService in vDC %s:%s:%d", vApp.getVDC().getName(), protocol, port);
-               ip = TerremarkECloudClient.class.cast(client).activatePublicIpInVDC(vApp.getVDC().getId());
+               ip = TerremarkECloudClient.class.cast(client).activatePublicIpInVDC(vApp.getVDC().getHref());
                is = client.addInternetServiceToExistingIp(ip.getId(), vApp.getName() + "-" + port, protocol, port,
                         withDescription(String.format("port %d access to serverId: %s name: %s", port, vApp.getName(),
                                  vApp.getName())));
@@ -170,7 +170,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
 
    private Set<PublicIpAddress> deleteInternetServicesAndNodesAssociatedWithVApp(VCloudExpressVApp vApp) {
       Set<PublicIpAddress> ipAddresses = Sets.newHashSet();
-      SERVICE: for (InternetService service : client.getAllInternetServicesInVDC(vApp.getVDC().getId())) {
+      SERVICE: for (InternetService service : client.getAllInternetServicesInVDC(vApp.getVDC().getHref())) {
          for (Node node : client.getNodes(service.getId())) {
             if (vApp.getNetworkToAddresses().containsValue(node.getIpAddress())) {
                ipAddresses.add(service.getPublicIpAddress());
@@ -232,8 +232,8 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
 
    private void powerOffAndWait(VCloudExpressVApp vApp) {
       logger.debug(">> powering off vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
-      Task task = client.powerOffVApp(vApp.getId());
-      if (!taskTester.apply(task.getId()))
+      Task task = client.powerOffVApp(vApp.getHref());
+      if (!taskTester.apply(task.getHref()))
          throw new RuntimeException(String.format("failed to %s %s: %s", "powerOff", vApp.getName(), task));
    }
 
@@ -248,7 +248,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
             }
 
          }));
-         if (!taskTester.apply(lastTask.getId()))
+         if (!taskTester.apply(lastTask.getHref()))
             throw new RuntimeException(String.format("failed to %s %s: %s", "powerOff", vApp.getName(), lastTask));
       } catch (NoSuchElementException ex) {
 
@@ -275,7 +275,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
       VCloudExpressVApp vApp = client.getVApp(id);
       if (vApp != null) {
          Set<String> ipAddresses = Sets.newHashSet();
-         for (InternetService service : client.getAllInternetServicesInVDC(vApp.getVDC().getId())) {
+         for (InternetService service : client.getAllInternetServicesInVDC(vApp.getVDC().getHref())) {
             for (Node node : client.getNodes(service.getId())) {
                if (vApp.getNetworkToAddresses().containsValue(node.getIpAddress())) {
                   ipAddresses.add(service.getPublicIpAddress().getAddress());

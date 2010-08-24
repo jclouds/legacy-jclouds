@@ -73,11 +73,11 @@ public class VCloudExpressAddNodeWithTagStrategy implements AddNodeWithTagStrate
    }
 
    protected NodeMetadata newCreateNodeResponse(String tag, Template template, Map<String, String> metaMap, VCloudExpressVApp vApp) {
-      return new NodeMetadataImpl(vApp.getId().toASCIIString(), vApp.getName(), vApp.getId().toASCIIString(), template
-               .getLocation(), vApp.getId(), ImmutableMap.<String, String> of(), tag, template.getImage().getId(),
+      return new NodeMetadataImpl(vApp.getHref().toASCIIString(), vApp.getName(), vApp.getHref().toASCIIString(), template
+               .getLocation(), vApp.getHref(), ImmutableMap.<String, String> of(), tag, template.getImage().getId(),
                getOperatingSystemForVAppOrDefaultTo(vApp, template.getImage().getOperatingSystem()),
-               vAppStatusToNodeState.get(vApp.getStatus()), computeClient.getPublicAddresses(vApp.getId()),
-               computeClient.getPrivateAddresses(vApp.getId()), ImmutableMap.<String, String> of(), new Credentials(
+               vAppStatusToNodeState.get(vApp.getStatus()), computeClient.getPublicAddresses(vApp.getHref()),
+               computeClient.getPrivateAddresses(vApp.getHref()), ImmutableMap.<String, String> of(), new Credentials(
                         metaMap.get("username"), metaMap.get("password")));
    }
 

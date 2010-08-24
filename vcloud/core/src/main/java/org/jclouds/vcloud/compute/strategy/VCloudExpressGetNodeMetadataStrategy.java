@@ -84,7 +84,7 @@ public class VCloudExpressGetNodeMetadataStrategy implements GetNodeMetadataStra
          return null;
       String tag = parseTagFromName(from.getName());
       Location location = findLocationForResourceInVDC.apply(from.getVDC());
-      return new NodeMetadataImpl(in, from.getName(), in, location, from.getId(), ImmutableMap.<String, String> of(),
+      return new NodeMetadataImpl(in, from.getName(), in, location, from.getHref(), ImmutableMap.<String, String> of(),
                tag, null, from.getOsType() != null ? new CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(from
                         .getOsType()), null, null, from.getOperatingSystemDescription()) : null, vAppStatusToNodeState
                         .get(from.getStatus()), computeClient.getPublicAddresses(id), computeClient

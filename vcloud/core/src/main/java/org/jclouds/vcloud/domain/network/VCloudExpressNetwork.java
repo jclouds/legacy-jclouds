@@ -23,7 +23,7 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.network.firewall.FirewallRule;
 import org.jclouds.vcloud.domain.network.nat.rules.PortForwardingRule;
 
@@ -33,7 +33,7 @@ import org.jclouds.vcloud.domain.network.nat.rules.PortForwardingRule;
  * 
  * @author Adrian Cole
  */
-public interface VCloudExpressNetwork extends NamedResource {
+public interface VCloudExpressNetwork extends ReferenceType {
    /**
     * 
     * @return Description of the network

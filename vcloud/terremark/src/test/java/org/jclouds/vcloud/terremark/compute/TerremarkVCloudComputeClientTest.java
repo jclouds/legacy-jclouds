@@ -70,8 +70,8 @@ public class TerremarkVCloudComputeClientTest {
       // TODO make this call only once
       expect(client.getVAppTemplate(templateURI)).andReturn(template);
 
-      expect(vdc.getId()).andReturn(vdcURI);
-      expect(template.getId()).andReturn(templateURI);
+      expect(vdc.getHref()).andReturn(vdcURI);
+      expect(template.getHref()).andReturn(templateURI);
       expect(
                client.instantiateVAppTemplateInVDC(vdcURI, templateURI, "name",
                         new TerremarkInstantiateVAppTemplateOptions().productProperty("password", "password")))
@@ -80,10 +80,10 @@ public class TerremarkVCloudComputeClientTest {
       URI vappLocation = URI.create("vapp");
       URI taskLocation = URI.create("task");
 
-      expect(vApp.getId()).andReturn(vappLocation).atLeastOnce();
+      expect(vApp.getHref()).andReturn(vappLocation).atLeastOnce();
       expect(vApp.getName()).andReturn("name").atLeastOnce();
       expect(client.deployVApp(vappLocation)).andReturn(task);
-      expect(task.getId()).andReturn(taskLocation).atLeastOnce();
+      expect(task.getHref()).andReturn(taskLocation).atLeastOnce();
       Predicate<URI> successTester = createMock(Predicate.class);
       expect(successTester.apply(taskLocation)).andReturn(true).atLeastOnce();
       expect(client.powerOnVApp(vappLocation)).andReturn(task);

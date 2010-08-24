@@ -25,7 +25,7 @@ import javax.annotation.Resource;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.domain.network.VCloudExpressNetwork;
 import org.jclouds.vcloud.domain.network.firewall.FirewallPolicy;
@@ -49,7 +49,7 @@ public class VCloudExpressNetworkHandler extends ParseSax.HandlerWithResult<VClo
 
    private StringBuilder currentText = new StringBuilder();
 
-   private NamedResource network;
+   private ReferenceType network;
 
    private String description;
 
@@ -71,7 +71,7 @@ public class VCloudExpressNetworkHandler extends ParseSax.HandlerWithResult<VClo
    private int sourcePort;
 
    public VCloudExpressNetwork getResult() {
-      return new VCloudExpressNetworkImpl(network.getName(), network.getType(), network.getId(), description,
+      return new VCloudExpressNetworkImpl(network.getName(), network.getType(), network.getHref(), description,
                dnsServers, gateway, netmask, fenceModes, dhcp, natRules, firewallRules);
    }
 

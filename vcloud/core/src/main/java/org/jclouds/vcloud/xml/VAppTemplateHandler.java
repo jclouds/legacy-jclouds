@@ -27,7 +27,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VAppTemplate;
@@ -56,9 +56,9 @@ public class VAppTemplateHandler extends ParseSax.HandlerWithResult<VAppTemplate
 
    protected StringBuilder currentText = new StringBuilder();
 
-   protected NamedResource template;
+   protected ReferenceType template;
    protected Status status;
-   protected NamedResource vdc;
+   protected ReferenceType vdc;
    protected String description;
    protected List<Task> tasks = Lists.newArrayList();
    protected boolean ovfDescriptorUploaded = true;
@@ -69,7 +69,7 @@ public class VAppTemplateHandler extends ParseSax.HandlerWithResult<VAppTemplate
    protected Set<Vm> children = Sets.newLinkedHashSet();
 
    public VAppTemplate getResult() {
-      return new VAppTemplateImpl(template.getName(), template.getType(), template.getId(), status, vdc, description,
+      return new VAppTemplateImpl(template.getName(), template.getType(), template.getHref(), status, vdc, description,
                tasks, ovfDescriptorUploaded, vAppScopedLocalId, children);
    }
 

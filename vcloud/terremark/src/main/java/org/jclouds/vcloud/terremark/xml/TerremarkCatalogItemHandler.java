@@ -21,7 +21,7 @@ package org.jclouds.vcloud.terremark.xml;
 
 import static org.jclouds.vcloud.util.Utils.newNamedResource;
 
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.terremark.domain.TerremarkCatalogItem;
 import org.jclouds.vcloud.terremark.domain.internal.TerremarkCatalogItemImpl;
 import org.jclouds.vcloud.xml.CatalogItemHandler;
@@ -33,11 +33,11 @@ import org.xml.sax.SAXException;
  */
 public class TerremarkCatalogItemHandler extends CatalogItemHandler {
 
-   private NamedResource customizationOptions;
-   private NamedResource computeOptions;
+   private ReferenceType customizationOptions;
+   private ReferenceType computeOptions;
 
    public TerremarkCatalogItem getResult() {
-      return new TerremarkCatalogItemImpl(catalogItem.getName(), catalogItem.getId(), description,
+      return new TerremarkCatalogItemImpl(catalogItem.getName(), catalogItem.getHref(), description,
             computeOptions, customizationOptions, entity, properties);
    }
 

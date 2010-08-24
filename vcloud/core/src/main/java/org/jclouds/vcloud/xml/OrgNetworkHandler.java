@@ -28,7 +28,7 @@ import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.domain.MappingMode;
-import org.jclouds.vcloud.domain.NamedResource;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.network.DhcpService;
 import org.jclouds.vcloud.domain.network.Features;
@@ -71,8 +71,8 @@ public class OrgNetworkHandler extends ParseSax.HandlerWithResult<OrgNetwork> {
 
    protected StringBuilder currentText = new StringBuilder();
 
-   protected NamedResource network;
-   protected NamedResource org;
+   protected ReferenceType network;
+   protected ReferenceType org;
    protected String orgDescription;
    protected List<Task> tasks = Lists.newArrayList();
 
@@ -89,7 +89,7 @@ public class OrgNetworkHandler extends ParseSax.HandlerWithResult<OrgNetwork> {
    protected Set<String> allocatedIpAddresses = Sets.newLinkedHashSet();
 
    protected IpScope ipScope;
-   protected NamedResource parentNetwork;
+   protected ReferenceType parentNetwork;
    protected FenceMode fenceMode;
 
    protected boolean serviceEnabled;
@@ -133,11 +133,11 @@ public class OrgNetworkHandler extends ParseSax.HandlerWithResult<OrgNetwork> {
    protected Features features;
    protected OrgNetwork.Configuration configuration;
 
-   protected NamedResource networkPool;
+   protected ReferenceType networkPool;
    protected Set<String> allowedExternalIpAddresses = Sets.newLinkedHashSet();
 
    public OrgNetwork getResult() {
-      return new OrgNetworkImpl(network.getName(), network.getType(), network.getId(), org, orgDescription, tasks,
+      return new OrgNetworkImpl(network.getName(), network.getType(), network.getHref(), org, orgDescription, tasks,
                configuration, networkPool, allowedExternalIpAddresses);
    }
 

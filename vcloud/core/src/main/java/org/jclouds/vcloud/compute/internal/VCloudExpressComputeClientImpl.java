@@ -69,22 +69,22 @@ public class VCloudExpressComputeClientImpl extends
       VDC vdc = client.getVDC(VDC);
       VCloudExpressVAppTemplate template = VCloudExpressClient.class.cast(client).getVAppTemplate(templateId);
 
-      VCloudExpressVApp vAppResponse = VCloudExpressClient.class.cast(client).instantiateVAppTemplateInVDC(vdc.getId(),
-               template.getId(), name, options);
+      VCloudExpressVApp vAppResponse = VCloudExpressClient.class.cast(client).instantiateVAppTemplateInVDC(vdc.getHref(),
+               template.getHref(), name, options);
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getName());
 
       logger.debug(">> deploying vApp(%s)", vAppResponse.getName());
 
-      Task task = VCloudExpressClient.class.cast(client).deployVApp(vAppResponse.getId());
+      Task task = VCloudExpressClient.class.cast(client).deployVApp(vAppResponse.getHref());
       if (options.shouldBlockOnDeploy()) {
-         if (!taskTester.apply(task.getId())) {
+         if (!taskTester.apply(task.getHref())) {
             throw new RuntimeException(String.format("failed to %s %s: %s", "deploy", vAppResponse.getName(), task));
          }
          logger.debug("<< deployed vApp(%s)", vAppResponse.getName());
 
          logger.debug(">> powering vApp(%s)", vAppResponse.getName());
-         task = VCloudExpressClient.class.cast(client).powerOnVApp(vAppResponse.getId());
-         if (!taskTester.apply(task.getId())) {
+         task = VCloudExpressClient.class.cast(client).powerOnVApp(vAppResponse.getHref());
+         if (!taskTester.apply(task.getHref())) {
             throw new RuntimeException(String.format("failed to %s %s: %s", "powerOn", vAppResponse.getName(), task));
          }
          logger.debug("<< on vApp(%s)", vAppResponse.getName());
@@ -115,16 +115,16 @@ public class VCloudExpressComputeClientImpl extends
 
    @Override
    protected Task powerOff(VCloudExpressVApp vApp) {
-      return VCloudExpressClient.class.cast(client).powerOffVApp(vApp.getId());
+      return VCloudExpressClient.class.cast(client).powerOffVApp(vApp.getHref());
    }
 
    @Override
    protected Task reset(VCloudExpressVApp vApp) {
-      return VCloudExpressClient.class.cast(client).resetVApp(vApp.getId());
+      return VCloudExpressClient.class.cast(client).resetVApp(vApp.getHref());
    }
 
    @Override
    protected Task undeploy(VCloudExpressVApp vApp) {
-      return VCloudExpressClient.class.cast(client).undeployVApp(vApp.getId());
+      return VCloudExpressClient.class.cast(client).undeployVApp(vApp.getHref());
    }
 }
