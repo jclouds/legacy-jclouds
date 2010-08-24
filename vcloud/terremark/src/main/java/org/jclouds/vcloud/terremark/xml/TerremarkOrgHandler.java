@@ -20,7 +20,10 @@
 package org.jclouds.vcloud.terremark.xml;
 
 import static org.jclouds.vcloud.terremark.TerremarkVCloudExpressMediaType.KEYSLIST_XML;
-import static org.jclouds.vcloud.util.Utils.newNamedResource;
+import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
+import static org.jclouds.vcloud.util.Utils.newReferenceType;
+
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -49,13 +52,13 @@ public class TerremarkOrgHandler extends OrgHandler {
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-      super.startElement(uri, localName, qName, attributes);
+   public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+      Map<String, String> attributes = cleanseAttributes(attrs);
+      super.startElement(uri, localName, qName, attrs);
       if (qName.equals("Link")) {
-         int typeIndex = attributes.getIndex("type");
-         if (typeIndex != -1) {
-            if (attributes.getValue(typeIndex).equals(KEYSLIST_XML)) {
-               keysList = newNamedResource(attributes);
+         if (attributes.containsKey("type")) {
+            if (attributes.get("type").equals(KEYSLIST_XML)) {
+               keysList = newReferenceType(attributes);
             }
          }
       }

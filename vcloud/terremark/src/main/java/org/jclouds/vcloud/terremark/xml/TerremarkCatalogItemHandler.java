@@ -19,7 +19,10 @@
 
 package org.jclouds.vcloud.terremark.xml;
 
-import static org.jclouds.vcloud.util.Utils.newNamedResource;
+import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
+import static org.jclouds.vcloud.util.Utils.newReferenceType;
+
+import java.util.Map;
 
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.terremark.domain.TerremarkCatalogItem;
@@ -37,20 +40,20 @@ public class TerremarkCatalogItemHandler extends CatalogItemHandler {
    private ReferenceType computeOptions;
 
    public TerremarkCatalogItem getResult() {
-      return new TerremarkCatalogItemImpl(catalogItem.getName(), catalogItem.getHref(), description,
-            computeOptions, customizationOptions, entity, properties);
+      return new TerremarkCatalogItemImpl(catalogItem.getName(), catalogItem.getHref(), description, computeOptions,
+               customizationOptions, entity, properties);
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-      super.startElement(uri, localName, qName, attributes);
+   public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+      Map<String, String> attributes = cleanseAttributes(attrs);
+      super.startElement(uri, localName, qName, attrs);
       if (qName.equals("Link")) {
-         int nameIndex = attributes.getIndex("name");
-         if (nameIndex != -1) {
-            if (attributes.getValue(nameIndex).equals("Customization Options")) {
-               customizationOptions = newNamedResource(attributes);
-            } else if (attributes.getValue(nameIndex).equals("Compute Options")) {
-               computeOptions = newNamedResource(attributes);
+         if (attributes.containsKey("name")) {
+            if (attributes.get("name").equals("Customization Options")) {
+               customizationOptions = newReferenceType(attributes);
+            } else if (attributes.get("name").equals("Compute Options")) {
+               computeOptions = newReferenceType(attributes);
             }
          }
 

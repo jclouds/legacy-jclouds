@@ -19,6 +19,10 @@
 
 package org.jclouds.vcloud.terremark.xml;
 
+import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
+
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.jclouds.vcloud.VCloudExpressMediaType;
@@ -54,18 +58,19 @@ public class TerremarkVDCHandler extends VDCHandler {
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-      super.startElement(uri, localName, qName, attributes);
+   public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+      Map<String, String> attributes = cleanseAttributes(attrs);
+      super.startElement(uri, localName, qName, attrs);
       if (qName.equals("Link")) {
-         String name = attributes.getValue(attributes.getIndex("name"));
+         String name = attributes.get("name");
          if (name.equals("Internet Services")) {
-            internetServices = Utils.newNamedResource(attributes);
+            internetServices = Utils.newReferenceType(attributes);
          } else if (name.equals("Public IPs")) {
-            publicIps = Utils.newNamedResource(attributes);
+            publicIps = Utils.newReferenceType(attributes);
          } else {
-            String type = attributes.getValue(attributes.getIndex("type"));
+            String type = attributes.get("type");
             if (type.equals(VCloudExpressMediaType.CATALOG_XML)) {
-               catalog = Utils.newNamedResource(attributes);
+               catalog = Utils.newReferenceType(attributes);
             }
          }
       }

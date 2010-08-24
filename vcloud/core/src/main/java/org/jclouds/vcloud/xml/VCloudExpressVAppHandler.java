@@ -20,8 +20,11 @@
 package org.jclouds.vcloud.xml;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
+import static org.jclouds.vcloud.util.Utils.newReferenceType;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -33,11 +36,10 @@ import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.ResourceAllocation;
-import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.Status;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.VirtualSystem;
 import org.jclouds.vcloud.domain.internal.VCloudExpressVAppImpl;
-import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -78,37 +80,36 @@ public class VCloudExpressVAppHandler extends ParseSax.HandlerWithResult<VCloudE
    protected ReferenceType vDC;
 
    public VCloudExpressVApp getResult() {
-      return new VCloudExpressVAppImpl(name, location, status, size, vDC, networkToAddresses, osType, operatingSystemDescription,
-               system, allocations);
+      return new VCloudExpressVAppImpl(name, location, status, size, vDC, networkToAddresses, osType,
+               operatingSystemDescription, system, allocations);
    }
 
-   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+      Map<String, String> attributes = cleanseAttributes(attrs);
       if (qName.equals("VApp")) {
-         ReferenceType resource = Utils.newNamedResource(attributes);
+         ReferenceType resource = newReferenceType(attributes);
          name = resource.getName();
          location = resource.getHref();
-         String statusString = attributes.getValue(attributes.getIndex("status"));
+         String statusString = attributes.get("status");
          if (apiVersion.indexOf("0.8") != -1 && "2".equals(statusString))
             status = Status.OFF;
          else
             status = Status.fromValue(statusString);
-         if (attributes.getIndex("size") != -1)
-            size = new Long(attributes.getValue(attributes.getIndex("size")));
+         if (attributes.containsKey("size"))
+            size = new Long(attributes.get("size"));
       } else if (qName.equals("Link")) { // type should never be missing
-         if (attributes.getIndex("type") != -1
-                  && attributes.getValue(attributes.getIndex("type")).equals(VCloudExpressMediaType.VDC_XML)) {
-            vDC = Utils.newNamedResource(attributes);
+         if (attributes.containsKey("type") && attributes.get("type").equals(VCloudExpressMediaType.VDC_XML)) {
+            vDC = newReferenceType(attributes);
          }
       } else if (qName.equals("OperatingSystemSection")) {
          inOs = true;
-         for (int i = 0; i < attributes.getLength(); i++)
-            if (attributes.getQName(i).indexOf("id") != -1)
-               osType = Integer.parseInt(attributes.getValue(i));
+         if (attributes.containsKey("id"))
+            osType = Integer.parseInt(attributes.get("id"));
       } else if (qName.endsWith("NetworkConnection")) {
-         networkName = attributes.getValue(attributes.getIndex("Network"));
+         networkName = attributes.get("Network");
       } else {
-         systemHandler.startElement(uri, localName, qName, attributes);
-         allocationHandler.startElement(uri, localName, qName, attributes);
+         systemHandler.startElement(uri, localName, qName, attrs);
+         allocationHandler.startElement(uri, localName, qName, attrs);
       }
 
    }

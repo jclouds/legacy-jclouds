@@ -19,8 +19,9 @@
 
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.vcloud.util.Utils.newNamedResource;
-import static org.jclouds.vcloud.util.Utils.putNamedResource;
+import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
+import static org.jclouds.vcloud.util.Utils.newReferenceType;
+import static org.jclouds.vcloud.util.Utils.putReferenceType;
 
 import java.util.List;
 import java.util.Map;
@@ -28,8 +29,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.internal.OrgImpl;
 import org.xml.sax.Attributes;
@@ -68,24 +69,25 @@ public class OrgHandler extends ParseSax.HandlerWithResult<Org> {
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+      Map<String, String> attributes = cleanseAttributes(attrs);
       if (qName.equals("Org")) {
-         org = newNamedResource(attributes);
+         org = newReferenceType(attributes);
       } else if (qName.equals("Link")) {
-         int typeIndex = attributes.getIndex("type");
-         if (typeIndex != -1) {
-            if (attributes.getValue(typeIndex).indexOf("vdc+xml") != -1) {
-               putNamedResource(vdcs, attributes);
-            } else if (attributes.getValue(typeIndex).indexOf("catalog+xml") != -1) {
-               putNamedResource(catalogs, attributes);
-            } else if (attributes.getValue(typeIndex).indexOf("tasksList+xml") != -1) {
-               tasksList = newNamedResource(attributes);
-            } else if (attributes.getValue(typeIndex).indexOf("network+xml") != -1) {
-               putNamedResource(networks, attributes);
+         String type = attributes.get("type");
+         if (type != null) {
+            if (type.indexOf("vdc+xml") != -1) {
+               putReferenceType(vdcs, attributes);
+            } else if (type.indexOf("catalog+xml") != -1) {
+               putReferenceType(catalogs, attributes);
+            } else if (type.indexOf("tasksList+xml") != -1) {
+               tasksList = newReferenceType(attributes);
+            } else if (type.indexOf("network+xml") != -1) {
+               putReferenceType(networks, attributes);
             }
          }
       } else {
-         taskHandler.startElement(uri, localName, qName, attributes);
+         taskHandler.startElement(uri, localName, qName, attrs);
       }
 
    }

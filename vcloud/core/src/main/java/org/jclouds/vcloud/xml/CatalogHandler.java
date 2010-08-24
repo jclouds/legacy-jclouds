@@ -19,9 +19,12 @@
 
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.vcloud.util.Utils.newNamedResource;
+import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
+import static org.jclouds.vcloud.util.Utils.newReferenceType;
+import static org.jclouds.vcloud.util.Utils.putReferenceType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 
 import javax.inject.Inject;
@@ -32,7 +35,6 @@ import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.internal.CatalogImpl;
-import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -62,20 +64,21 @@ public class CatalogHandler extends ParseSax.HandlerWithResult<Catalog> {
    private boolean published = true;
 
    public Catalog getResult() {
-      return new CatalogImpl(catalog.getName(), catalog.getType(), catalog.getHref(), org, description, contents, tasks,
-            published);
+      return new CatalogImpl(catalog.getName(), catalog.getType(), catalog.getHref(), org, description, contents,
+               tasks, published);
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+      Map<String, String> attributes = cleanseAttributes(attrs);
       if (qName.equals("Catalog")) {
-         catalog = Utils.newNamedResource(attributes, VCloudMediaType.CATALOG_XML);
+         catalog = newReferenceType(attributes, VCloudMediaType.CATALOG_XML);
       } else if (qName.equals("CatalogItem")) {
-         Utils.putNamedResource(contents, attributes);
-      } else if (qName.equals("Link") && "up".equals(Utils.attrOrNull(attributes, "rel"))) {
-         org = newNamedResource(attributes);
+         putReferenceType(contents, attributes);
+      } else if (qName.equals("Link") && "up".equals(attributes.get("rel"))) {
+         org = newReferenceType(attributes);
       } else {
-         taskHandler.startElement(uri, localName, qName, attributes);
+         taskHandler.startElement(uri, localName, qName, attrs);
       }
    }
 

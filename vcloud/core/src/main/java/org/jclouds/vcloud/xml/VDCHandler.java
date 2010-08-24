@@ -19,8 +19,9 @@
 
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.vcloud.util.Utils.newNamedResource;
-import static org.jclouds.vcloud.util.Utils.putNamedResource;
+import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
+import static org.jclouds.vcloud.util.Utils.newReferenceType;
+import static org.jclouds.vcloud.util.Utils.putReferenceType;
 
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,6 @@ import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.VDCStatus;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
-import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -96,20 +96,21 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+      Map<String, String> attributes = cleanseAttributes(attrs);
       if (qName.equals("Vdc")) {
-         vDC = newNamedResource(attributes);
-         String status = Utils.attrOrNull(attributes, "status");
+         vDC = newReferenceType(attributes);
+         String status = attributes.get("status");
          if (status != null)
             this.status = VDCStatus.fromValue(Integer.parseInt(status));
       } else if (qName.equals("Network")) {
-         putNamedResource(availableNetworks, attributes);
+         putReferenceType(availableNetworks, attributes);
       } else if (qName.equals("ResourceEntity")) {
-         putNamedResource(resourceEntities, attributes);
-      } else if (qName.equals("Link") && "up".equals(Utils.attrOrNull(attributes, "rel"))) {
-         org = newNamedResource(attributes);
+         putReferenceType(resourceEntities, attributes);
+      } else if (qName.equals("Link") && "up".equals(attributes.get("rel"))) {
+         org = newReferenceType(attributes);
       } else {
-         taskHandler.startElement(uri, localName, qName, attributes);
+         taskHandler.startElement(uri, localName, qName, attrs);
       }
 
    }

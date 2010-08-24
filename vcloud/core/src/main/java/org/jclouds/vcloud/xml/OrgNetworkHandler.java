@@ -19,9 +19,11 @@
 
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.vcloud.util.Utils.newNamedResource;
+import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
+import static org.jclouds.vcloud.util.Utils.newReferenceType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -49,7 +51,6 @@ import org.jclouds.vcloud.domain.network.nat.NatType;
 import org.jclouds.vcloud.domain.network.nat.rules.OneToOneVmRule;
 import org.jclouds.vcloud.domain.network.nat.rules.PortForwardingRule;
 import org.jclouds.vcloud.domain.network.nat.rules.VmRule;
-import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -142,22 +143,23 @@ public class OrgNetworkHandler extends ParseSax.HandlerWithResult<OrgNetwork> {
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+      Map<String, String> attributes = cleanseAttributes(attrs);
       if (qName.equals("OrgNetwork")) {
-         network = newNamedResource(attributes);
+         network = newReferenceType(attributes);
       } else if (qName.equals("FirewallRule")) {
          this.inFirewallRule = true;
       } else if (qName.equals("ParentNetwork")) {
-         parentNetwork = newNamedResource(attributes);
-      } else if (qName.equals("Link") && "up".equals(Utils.attrOrNull(attributes, "rel"))) {
-         org = newNamedResource(attributes);
+         parentNetwork = newReferenceType(attributes);
+      } else if (qName.equals("Link") && "up".equals(attributes.get("rel"))) {
+         org = newReferenceType(attributes);
       } else {
-         taskHandler.startElement(uri, localName, qName, attributes);
+         taskHandler.startElement(uri, localName, qName, attrs);
       }
-      int typeIndex = attributes.getIndex("type");
-      if (typeIndex != -1) {
-         if (attributes.getValue(typeIndex).indexOf("networkPool+xml") != -1) {
-            networkPool = newNamedResource(attributes);
+      String type = attributes.get("type");
+      if (type != null) {
+         if (type.indexOf("networkPool+xml") != -1) {
+            networkPool = newReferenceType(attributes);
          }
       }
    }

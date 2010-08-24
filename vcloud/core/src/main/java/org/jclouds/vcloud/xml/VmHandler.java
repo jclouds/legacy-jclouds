@@ -19,9 +19,11 @@
 
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.vcloud.util.Utils.newNamedResource;
+import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
+import static org.jclouds.vcloud.util.Utils.newReferenceType;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -31,7 +33,6 @@ import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.internal.VmImpl;
-import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -65,19 +66,20 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+      Map<String, String> attributes = cleanseAttributes(attrs);
       if (qName.equals("Tasks")) {
          inTasks = true;
       }
       if (inTasks) {
-         taskHandler.startElement(uri, localName, qName, attributes);
+         taskHandler.startElement(uri, localName, qName, attrs);
       } else if (qName.equals("Vm")) {
-         vm = newNamedResource(attributes);
-         String status = Utils.attrOrNull(attributes, "status");
+         vm = newReferenceType(attributes);
+         String status = attributes.get("status");
          if (status != null)
             this.status = Status.fromValue(Integer.parseInt(status));
-      } else if (qName.equals("Link") && "up".equals(Utils.attrOrNull(attributes, "rel"))) {
-         vdc = newNamedResource(attributes);
+      } else if (qName.equals("Link") && "up".equals(attributes.get("rel"))) {
+         vdc = newReferenceType(attributes);
       }
    }
 

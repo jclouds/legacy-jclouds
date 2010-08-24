@@ -19,12 +19,16 @@
 
 package org.jclouds.vcloud.xml;
 
+import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
+import static org.jclouds.vcloud.util.Utils.newReferenceType;
+
+import java.util.Map;
+
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.domain.internal.VCloudExpressVAppTemplateImpl;
-import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -43,11 +47,12 @@ public class VCloudExpressVAppTemplateHandler extends ParseSax.HandlerWithResult
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+      Map<String, String> attributes = cleanseAttributes(attrs);
       if (qName.equals("VAppTemplate")) {
-         catalog = Utils.newNamedResource(attributes);
-         if (attributes.getIndex("status") != -1)
-            status = Status.fromValue(attributes.getValue(attributes.getIndex("status")));
+         catalog = newReferenceType(attributes);
+         if (attributes.containsKey("status"))
+            status = Status.fromValue(attributes.get("status"));
       }
    }
 

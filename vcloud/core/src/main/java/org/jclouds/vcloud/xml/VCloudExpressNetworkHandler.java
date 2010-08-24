@@ -19,6 +19,10 @@
 
 package org.jclouds.vcloud.xml;
 
+import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
+import static org.jclouds.vcloud.util.Utils.newReferenceType;
+
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -33,7 +37,6 @@ import org.jclouds.vcloud.domain.network.firewall.FirewallRule;
 import org.jclouds.vcloud.domain.network.internal.VCloudExpressNetworkImpl;
 import org.jclouds.vcloud.domain.network.nat.NatProtocol;
 import org.jclouds.vcloud.domain.network.nat.rules.PortForwardingRule;
-import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -76,9 +79,10 @@ public class VCloudExpressNetworkHandler extends ParseSax.HandlerWithResult<VClo
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+      Map<String, String> attributes = cleanseAttributes(attrs);
       if (qName.equals("Network")) {
-         network = Utils.newNamedResource(attributes);
+         network = newReferenceType(attributes);
       }
    }
 

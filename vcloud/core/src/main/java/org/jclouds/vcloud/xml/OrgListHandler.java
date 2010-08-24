@@ -19,8 +19,8 @@
 
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.vcloud.VCloudExpressMediaType.ORG_XML;
-import static org.jclouds.vcloud.util.Utils.putNamedResource;
+import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
+import static org.jclouds.vcloud.util.Utils.putReferenceType;
 
 import java.util.Map;
 
@@ -34,25 +34,24 @@ import com.google.common.collect.Maps;
 /**
  * @author Adrian Cole
  */
-public class OrgListHandler extends
-		ParseSax.HandlerWithResult<Map<String, ReferenceType>> {
+public class OrgListHandler extends ParseSax.HandlerWithResult<Map<String, ReferenceType>> {
 
-	private Map<String, ReferenceType> org = Maps.newHashMap();
+   private Map<String, ReferenceType> org = Maps.newHashMap();
 
-	public Map<String, ReferenceType> getResult() {
-		return org;
-	}
+   public Map<String, ReferenceType> getResult() {
+      return org;
+   }
 
-	@Override
-	public void startElement(String uri, String localName, String qName,
-			Attributes attributes) throws SAXException {
-		if (qName.equals("Org")) {
-			int typeIndex = attributes.getIndex("type");
-			if (typeIndex != -1) {
-				if (attributes.getValue(typeIndex).equals(ORG_XML)) {
-					putNamedResource(org, attributes);
-				}
-			}
-		}
-	}
+   @Override
+   public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+      Map<String, String> attributes = cleanseAttributes(attrs);
+      if (qName.equals("Org")) {
+         String type = attributes.get("type");
+         if (type != null) {
+            if (type.indexOf("org+xml") != -1) {
+               putReferenceType(org, attributes);
+            }
+         }
+      }
+   }
 }

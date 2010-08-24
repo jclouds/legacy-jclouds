@@ -28,42 +28,50 @@ import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.internal.TaskImpl.ErrorImpl;
 import org.xml.sax.Attributes;
 
+import com.google.common.collect.Maps;
+
 /**
  * 
  * @author Adrian Cole
  */
 public class Utils {
-   public static ReferenceType newNamedResource(Attributes attributes, String defaultType) {
-      String uri = attributes.getValue(attributes.getIndex("href"));
-      String type = attributes.getValue(attributes.getIndex("type"));
-      return new ReferenceTypeImpl(attributes.getValue(attributes.getIndex("name")), type != null ? type : defaultType,
-               URI.create(uri));
+   public static ReferenceType newReferenceType(Map<String, String> attributes, String defaultType) {
+      String uri = attributes.get("href");
+      String type = attributes.get("type");
+      return new ReferenceTypeImpl(attributes.get("name"), type != null ? type : defaultType, URI.create(uri));
    }
 
-   public static ReferenceType newNamedResource(Attributes attributes) {
-      return newNamedResource(attributes, null);
+   public static Map<String, String> cleanseAttributes(Attributes in) {
+      Map<String, String> attrs = Maps.newLinkedHashMap();
+      for (int i = 0; i < in.getLength(); i++) {
+         String name = in.getQName(i);
+         if (name.indexOf(':') != -1)
+            name = name.substring(name.indexOf(':') + 1);
+         attrs.put(name, in.getValue(i));
+      }
+      return attrs;
    }
 
-   public static Task.Error newError(Attributes attributes) {
-      String minorErrorCode = attrOrNull(attributes, "minorErrorCode");
-      String vendorSpecificErrorCode = attrOrNull(attributes, "vendorSpecificErrorCode");
+   public static ReferenceType newReferenceType(Map<String, String> attributes) {
+      return newReferenceType(attributes, null);
+   }
+
+   public static Task.Error newError(Map<String, String> attributes) {
+      String minorErrorCode = attributes.get("minorErrorCode");
+      String vendorSpecificErrorCode = attributes.get("vendorSpecificErrorCode");
       int errorCode;
       // remove this logic when vcloud 0.8 is gone
       try {
-         errorCode = Integer.parseInt(attrOrNull(attributes, "majorErrorCode"));
+         errorCode = Integer.parseInt(attributes.get("majorErrorCode"));
       } catch (NumberFormatException e) {
          errorCode = 500;
-         vendorSpecificErrorCode = attrOrNull(attributes, "majorErrorCode");
+         vendorSpecificErrorCode = attributes.get("majorErrorCode");
       }
-      return new ErrorImpl(attrOrNull(attributes, "message"), errorCode, minorErrorCode, vendorSpecificErrorCode,
-               attrOrNull(attributes, "stackTrace"));
+      return new ErrorImpl(attributes.get("message"), errorCode, minorErrorCode, vendorSpecificErrorCode, attributes
+               .get("stackTrace"));
    }
 
-   public static String attrOrNull(Attributes attributes, String attr) {
-      return attributes.getIndex(attr) >= 0 ? attributes.getValue(attributes.getIndex(attr)) : null;
-   }
-
-   public static void putNamedResource(Map<String, ReferenceType> map, Attributes attributes) {
-      map.put(attributes.getValue(attributes.getIndex("name")), newNamedResource(attributes));
+   public static void putReferenceType(Map<String, ReferenceType> map, Map<String, String> attributes) {
+      map.put(attributes.get("name"), newReferenceType(attributes));
    }
 }

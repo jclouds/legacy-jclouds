@@ -19,13 +19,16 @@
 
 package org.jclouds.vcloud.xml;
 
+import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
+import static org.jclouds.vcloud.util.Utils.newReferenceType;
+
+import java.util.Map;
 import java.util.SortedMap;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
-import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -49,13 +52,14 @@ public class CatalogItemHandler extends ParseSax.HandlerWithResult<CatalogItem> 
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+      Map<String, String> attributes = cleanseAttributes(attrs);
       if (qName.equals("CatalogItem")) {
-         catalogItem = Utils.newNamedResource(attributes);
+         catalogItem = newReferenceType(attributes);
       } else if (qName.equals("Entity")) {
-         entity = Utils.newNamedResource(attributes);
+         entity = newReferenceType(attributes);
       } else if (qName.equals("Property")) {
-         key = attributes.getValue(attributes.getIndex("key"));
+         key = attributes.get("key");
       }
    }
 

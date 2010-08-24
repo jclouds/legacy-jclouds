@@ -19,8 +19,11 @@
 
 package org.jclouds.vcloud.xml;
 
+import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
+
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -63,31 +66,30 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+   public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+      Map<String, String> attributes = cleanseAttributes(attrs);
       if (qName.equalsIgnoreCase("Task")) {
-         if (attributes.getIndex("href") != -1)// queued tasks may not have an
+         if (attributes.get("href") != null)// queued tasks may not have an
             // href yet
-            taskLink = Utils.newNamedResource(attributes);
-         status = TaskStatus.fromValue(attributes.getValue(attributes.getIndex("status")));
-         if (attributes.getIndex("startTime") != -1)
-            startTime = parseDate(attributes, "startTime");
-         if (attributes.getIndex("endTime") != -1)
-            endTime = parseDate(attributes, "endTime");
-         if (attributes.getIndex("expiryTime") != -1)
-            expiryTime = parseDate(attributes, "expiryTime");
+            taskLink = Utils.newReferenceType(attributes);
+         status = TaskStatus.fromValue(attributes.get("status"));
+         if (attributes.containsKey("startTime"))
+            startTime = parseDate(attributes.get("startTime"));
+         if (attributes.containsKey("endTime"))
+            endTime = parseDate(attributes.get("endTime"));
+         if (attributes.containsKey("expiryTime"))
+            expiryTime = parseDate(attributes.get("expiryTime"));
          // TODO technically the old Result object should only be owner for copy and delete tasks
       } else if (qName.equals("Owner") || qName.equals("Result")) {
-         owner = Utils.newNamedResource(attributes);
-      } else if (qName.equals("Link") && attributes.getIndex("rel") != -1
-               && attributes.getValue(attributes.getIndex("rel")).equals("self")) {
-         taskLink = Utils.newNamedResource(attributes);
+         owner = Utils.newReferenceType(attributes);
+      } else if (qName.equals("Link") && "self".equals(attributes.get("rel"))) {
+         taskLink = Utils.newReferenceType(attributes);
       } else if (qName.equals("Error")) {
          error = Utils.newError(attributes);
       }
    }
 
-   private Date parseDate(Attributes attributes, String attribute) {
-      String toParse = attributes.getValue(attributes.getIndex(attribute));
+   private Date parseDate(String toParse) {
       try {
          return dateService.iso8601DateParse(toParse);
       } catch (RuntimeException e) {
