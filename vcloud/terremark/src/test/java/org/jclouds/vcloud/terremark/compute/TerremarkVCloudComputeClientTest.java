@@ -34,7 +34,7 @@ import javax.inject.Provider;
 
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.vcloud.domain.Task;
-import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressClient;
@@ -63,7 +63,7 @@ public class TerremarkVCloudComputeClientTest {
 
       expect(template.getDescription()).andReturn(description).atLeastOnce();
       TerremarkVCloudExpressClient client = createMock(TerremarkVCloudExpressClient.class);
-      VApp vApp = createMock(VApp.class);
+      VCloudExpressVApp vApp = createMock(VCloudExpressVApp.class);
 
       expect(client.getVDC(vdcURI)).andReturn(vdc);
       expect(client.getVAppTemplate(templateURI)).andReturn(template);
@@ -88,7 +88,7 @@ public class TerremarkVCloudComputeClientTest {
       expect(successTester.apply(taskLocation)).andReturn(true).atLeastOnce();
       expect(client.powerOnVApp(vappLocation)).andReturn(task);
 
-      Predicate<VApp> notFoundTester = createMock(Predicate.class);
+      Predicate<VCloudExpressVApp> notFoundTester = createMock(Predicate.class);
       Map<Status, NodeState> vAppStatusToNodeState = createMock(Map.class);
 
       TerremarkVCloudComputeClient computeClient = new TerremarkVCloudComputeClient(client,

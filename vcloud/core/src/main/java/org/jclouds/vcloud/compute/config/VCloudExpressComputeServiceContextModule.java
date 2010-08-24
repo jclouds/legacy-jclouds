@@ -25,6 +25,8 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
+import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.VCloudExpressClient;
@@ -33,6 +35,8 @@ import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.compute.functions.ImagesInVCloudExpressOrg;
 import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressAddNodeWithTagStrategy;
+import org.jclouds.vcloud.compute.strategy.VCloudExpressGetNodeMetadataStrategy;
+import org.jclouds.vcloud.compute.strategy.VCloudExpressListNodesStrategy;
 import org.jclouds.vcloud.domain.Org;
 
 import com.google.common.base.Function;
@@ -51,6 +55,7 @@ public class VCloudExpressComputeServiceContextModule extends CommonVCloudComput
    @Override
    protected void configure() {
       super.configure();
+      bind(GetNodeMetadataStrategy.class).to(VCloudExpressGetNodeMetadataStrategy.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudExpressClient, VCloudExpressClient>>() {
       }).in(Scopes.SINGLETON);
@@ -61,6 +66,7 @@ public class VCloudExpressComputeServiceContextModule extends CommonVCloudComput
       }).to(new TypeLiteral<ImagesInVCloudExpressOrg>() {
       });
       bind(AddNodeWithTagStrategy.class).to(VCloudExpressAddNodeWithTagStrategy.class);
+      bind(ListNodesStrategy.class).to(VCloudExpressListNodesStrategy.class);
    }
 
    @Provides

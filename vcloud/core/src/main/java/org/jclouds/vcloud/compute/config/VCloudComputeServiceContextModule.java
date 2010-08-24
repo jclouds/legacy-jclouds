@@ -25,6 +25,8 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
+import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.VCloudClient;
@@ -33,6 +35,8 @@ import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.compute.functions.ImagesInOrg;
 import org.jclouds.vcloud.compute.internal.VCloudComputeClientImpl;
 import org.jclouds.vcloud.compute.strategy.VCloudAddNodeWithTagStrategy;
+import org.jclouds.vcloud.compute.strategy.VCloudGetNodeMetadataStrategy;
+import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 import org.jclouds.vcloud.domain.Org;
 
 import com.google.common.base.Function;
@@ -51,6 +55,7 @@ public class VCloudComputeServiceContextModule extends CommonVCloudComputeServic
    @Override
    protected void configure() {
       super.configure();
+      bind(GetNodeMetadataStrategy.class).to(VCloudGetNodeMetadataStrategy.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudClient>>() {
       }).in(Scopes.SINGLETON);
@@ -61,6 +66,7 @@ public class VCloudComputeServiceContextModule extends CommonVCloudComputeServic
       }).to(new TypeLiteral<ImagesInOrg>() {
       });
       bind(AddNodeWithTagStrategy.class).to(VCloudAddNodeWithTagStrategy.class);
+      bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
    }
 
    @Provides

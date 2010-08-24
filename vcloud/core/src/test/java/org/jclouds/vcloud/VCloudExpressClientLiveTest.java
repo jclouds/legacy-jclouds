@@ -26,6 +26,8 @@ import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
+import org.jclouds.vcloud.domain.VDC;
 import org.testng.annotations.Test;
 
 /**
@@ -52,6 +54,24 @@ public class VCloudExpressClientLiveTest extends
                CatalogItem item = connection.getCatalogItem(resource.getId());
                if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
                   assertNotNull(connection.getVAppTemplate(item.getEntity().getId()));
+               }
+            }
+         }
+      }
+   }
+
+   @Test
+   public void testGetVApp() throws Exception {
+      Org org = connection.findOrgNamed(null);
+      for (NamedResource vdc : org.getVDCs().values()) {
+         VDC response = connection.getVDC(vdc.getId());
+         for (NamedResource item : response.getResourceEntities().values()) {
+            if (item.getType().equals(VCloudMediaType.VAPP_XML)) {
+               try {
+                  VCloudExpressVApp app = connection.getVApp(item.getId());
+                  assertNotNull(app);
+               } catch (RuntimeException e) {
+
                }
             }
          }

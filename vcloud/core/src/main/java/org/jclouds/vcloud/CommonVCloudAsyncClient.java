@@ -25,7 +25,6 @@ import static org.jclouds.vcloud.VCloudMediaType.NETWORK_XML;
 import static org.jclouds.vcloud.VCloudMediaType.ORG_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASKSLIST_XML;
 import static org.jclouds.vcloud.VCloudMediaType.TASK_XML;
-import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VDC_XML;
 
 import java.net.URI;
@@ -48,7 +47,6 @@ import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
-import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.network.OrgNetwork;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
@@ -64,7 +62,6 @@ import org.jclouds.vcloud.xml.OrgHandler;
 import org.jclouds.vcloud.xml.OrgNetworkHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
-import org.jclouds.vcloud.xml.VAppHandler;
 import org.jclouds.vcloud.xml.VDCHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
@@ -283,25 +280,5 @@ public interface CommonVCloudAsyncClient {
    @Path("/action/cancel")
    ListenableFuture<Void> cancelTask(@EndpointParam URI taskId);
 
-   /**
-    * @see VCloudClient#findVAppInOrgVDCNamed
-    */
-   @GET
-   @Consumes(VAPP_XML)
-   @XMLResponseParser(VAppHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends VApp> findVAppInOrgVDCNamed(
-            @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String orgName,
-            @Nullable @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String catalogName,
-            @EndpointParam(parser = OrgNameVDCNameResourceEntityNameToEndpoint.class) String vAppName);
-
-   /**
-    * @see VCloudClient#getVApp
-    */
-   @GET
-   @Consumes(VAPP_XML)
-   @XMLResponseParser(VAppHandler.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<? extends VApp> getVApp(@EndpointParam URI vApp);
 
 }

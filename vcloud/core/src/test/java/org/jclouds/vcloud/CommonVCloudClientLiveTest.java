@@ -33,7 +33,6 @@ import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.Task;
-import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.network.OrgNetwork;
 import org.testng.annotations.BeforeGroups;
@@ -135,13 +134,12 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
          for (NamedResource resource : response.values()) {
             if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
                CatalogItem item = connection.findCatalogItemInOrgCatalogNamed(org.getName(), response.getName(),
-                     resource.getName());
+                        resource.getName());
                verifyCatalogItem(item);
             }
          }
       }
    }
-
 
    @Test
    public void testDefaultVDC() throws Exception {
@@ -178,20 +176,6 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
       }
    }
 
-   @Test
-   public void testGetVApp() throws Exception {
-      Org org = connection.findOrgNamed(null);
-      for (NamedResource vdc : org.getVDCs().values()) {
-         VDC response = connection.getVDC(vdc.getId());
-         for (NamedResource item : response.getResourceEntities().values()) {
-            if (item.getType().equals(VCloudMediaType.VAPP_XML)) {
-               VApp app = connection.getVApp(item.getId());
-               assertNotNull(app);
-            }
-         }
-      }
-   }
-
    protected abstract void setupCredentials();
 
    @BeforeGroups(groups = { "live" })
@@ -201,7 +185,7 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
       props.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       props.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), props).getProviderSpecificContext();
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), props).getProviderSpecificContext();
 
       connection = context.getApi();
    }

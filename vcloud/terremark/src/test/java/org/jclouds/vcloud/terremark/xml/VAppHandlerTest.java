@@ -38,10 +38,10 @@ import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Status;
-import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.VirtualSystem;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
-import org.jclouds.vcloud.xml.VAppHandler;
+import org.jclouds.vcloud.xml.VCloudExpressVAppHandler;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -79,7 +79,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/terremark/launched_vapp.xml");
 
-      VApp result = (VApp) factory.create(injector.getInstance(VAppHandler.class)).parse(is);
+      VCloudExpressVApp result = (VCloudExpressVApp) factory.create(injector.getInstance(VCloudExpressVAppHandler.class)).parse(is);
 
       assertEquals(result.getName(), "adriantest");
       assertEquals(result.getStatus(), Status.UNRESOLVED);
@@ -95,7 +95,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
    public void testGetVApp() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/terremark/get_vapp.xml");
 
-      VApp result = (VApp) factory.create(injector.getInstance(VAppHandler.class)).parse(is);
+      VCloudExpressVApp result = (VCloudExpressVApp) factory.create(injector.getInstance(VCloudExpressVAppHandler.class)).parse(is);
 
       assertEquals(result.getName(), "centos-53");
       assertEquals(result.getStatus(), Status.OFF);
@@ -133,7 +133,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
    public void testGetVApp2disks() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/terremark/get_vapp2disks.xml");
 
-      VApp vApp = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
+      VCloudExpressVApp vApp = factory.create(injector.getInstance(VCloudExpressVAppHandler.class)).parse(is);
 
       assertEquals(vApp.getName(), "eduardo");
       assertEquals(vApp.getStatus(), Status.OFF);

@@ -33,21 +33,19 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.compute.CommonVCloudComputeClient;
+import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
-import org.jclouds.vcloud.domain.VApp;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class CommonVCloudComputeClientImpl<T> implements CommonVCloudComputeClient {
+public abstract class CommonVCloudComputeClientImpl<T, A extends NamedResource> implements CommonVCloudComputeClient {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -61,7 +59,7 @@ public class CommonVCloudComputeClientImpl<T> implements CommonVCloudComputeClie
       this.taskTester = successTester;
    }
 
-   protected Map<String, String> parseAndValidateResponse(T template, VApp vAppResponse) {
+   protected Map<String, String> parseAndValidateResponse(T template, A vAppResponse) {
       Map<String, String> response = parseResponse(template, vAppResponse);
       checkState(response.containsKey("id"), "bad configuration: [id] should be in response");
       checkState(response.containsKey("username"), "bad configuration: [username] should be in response");
@@ -69,7 +67,7 @@ public class CommonVCloudComputeClientImpl<T> implements CommonVCloudComputeClie
       return response;
    }
 
-   protected Map<String, String> parseResponse(T template, VApp vAppResponse) {
+   protected Map<String, String> parseResponse(T template, A vAppResponse) {
       Map<String, String> config = Maps.newLinkedHashMap();// Allows nulls
       config.put("id", vAppResponse.getId().toASCIIString());
       config.put("username", null);
@@ -79,99 +77,65 @@ public class CommonVCloudComputeClientImpl<T> implements CommonVCloudComputeClie
 
    @Override
    public void reboot(URI id) {
-      VApp vApp = client.getVApp(id);
+      A vApp = refreshVApp(id);
       logger.debug(">> resetting vApp(%s)", vApp.getName());
       Task task = client.resetVApp(vApp.getId());
       if (!taskTester.apply(task.getLocation())) {
-         throw new TaskException("resetVApp", vApp, task);
+         throw new RuntimeException(String.format("failed to %s %s: %s", "resetVApp", vApp.getName(), task));
       }
       logger.debug("<< on vApp(%s)", vApp.getName());
    }
 
+   protected abstract A refreshVApp(URI id);
+
    @Override
    public void stop(URI id) {
-      VApp vApp = client.getVApp(id);
+      A vApp = refreshVApp(id);
       vApp = powerOffVAppIfDeployed(vApp);
       vApp = undeployVAppIfDeployed(vApp);
       deleteVApp(vApp);
       logger.debug("<< deleted vApp(%s)", vApp.getName());
    }
 
-   private void deleteVApp(VApp vApp) {
+   private void deleteVApp(A vApp) {
       logger.debug(">> deleting vApp(%s)", vApp.getName());
       client.deleteVApp(vApp.getId());
    }
 
-   private VApp undeployVAppIfDeployed(VApp vApp) {
-      if (vApp.getStatus().compareTo(Status.RESOLVED) > 0) {
-         logger.debug(">> undeploying vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
+   private A undeployVAppIfDeployed(A vApp) {
+      if (getStatus(vApp).compareTo(Status.RESOLVED) > 0) {
+         logger.debug(">> undeploying vApp(%s), current status: %s", vApp.getName(), getStatus(vApp));
          Task task = client.undeployVApp(vApp.getId());
          if (!taskTester.apply(task.getLocation())) {
-            throw new TaskException("undeploy", vApp, task);
+            // TODO timeout
+            throw new RuntimeException(String.format("failed to %s %s: %s", "undeploy", vApp.getName(), task));
          }
-         vApp = client.getVApp(vApp.getId());
-         logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
+         vApp = refreshVApp(vApp.getId());
+         logger.debug("<< %s vApp(%s)", getStatus(vApp), vApp.getName());
       }
       return vApp;
    }
 
-   private VApp powerOffVAppIfDeployed(VApp vApp) {
-      if (vApp.getStatus().compareTo(Status.OFF) > 0) {
-         logger.debug(">> powering off vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
+   private A powerOffVAppIfDeployed(A vApp) {
+      if (getStatus(vApp).compareTo(Status.OFF) > 0) {
+         logger.debug(">> powering off vApp(%s), current status: %s", vApp.getName(), getStatus(vApp));
          Task task = client.powerOffVApp(vApp.getId());
          if (!taskTester.apply(task.getLocation())) {
-            throw new TaskException("powerOff", vApp, task);
+            // TODO timeout
+            throw new RuntimeException(String.format("failed to %s %s: %s", "powerOff", vApp.getName(), task));
          }
-         vApp = client.getVApp(vApp.getId());
-         logger.debug("<< %s vApp(%s)", vApp.getStatus(), vApp.getName());
+         vApp = refreshVApp(vApp.getId());
+         logger.debug("<< %s vApp(%s)", getStatus(vApp), vApp.getName());
       }
       return vApp;
    }
 
-   public static class TaskException extends VAppException {
-
-      private final Task task;
-      /** The serialVersionUID */
-      private static final long serialVersionUID = 251801929573211256L;
-
-      public TaskException(String type, VApp vApp, Task task) {
-         super(String.format("failed to %s vApp %s status %s;task %s status %s", type, vApp.getName(),
-               vApp.getStatus(), task.getLocation(), task.getStatus()), vApp);
-         this.task = task;
-      }
-
-      public Task getTask() {
-         return task;
-      }
-
-   }
-
-   public static class VAppException extends RuntimeException {
-
-      private final VApp vApp;
-      /** The serialVersionUID */
-      private static final long serialVersionUID = 251801929573211256L;
-
-      public VAppException(String message, VApp vApp) {
-         super(message);
-         this.vApp = vApp;
-      }
-
-      public VApp getvApp() {
-         return vApp;
-      }
-
-   }
+   protected abstract Status getStatus(A vApp);
 
    @Override
-   public Set<String> getPrivateAddresses(URI id) {
-      return ImmutableSet.of();
-   }
+   public abstract Set<String> getPrivateAddresses(URI id);
 
    @Override
-   public Set<String> getPublicAddresses(URI id) {
-      VApp vApp = client.getVApp(id);
-      return Sets.newHashSet(vApp.getNetworkToAddresses().values());
-   }
+   public abstract Set<String> getPublicAddresses(URI id);
 
 }

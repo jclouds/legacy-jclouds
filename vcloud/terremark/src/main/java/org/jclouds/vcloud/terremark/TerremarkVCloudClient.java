@@ -28,7 +28,7 @@ import javax.annotation.Nullable;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.domain.Task;
-import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
@@ -134,12 +134,12 @@ public interface TerremarkVCloudClient extends VCloudExpressClient {
     * You can make more than one change in a single request. For example, you can increase the
     * number of virtual CPUs and the amount of virtual memory in the same request.
     * 
-    * @param VApp
+    * @param VCloudExpressVApp
     *           vApp to change in power state off
     * @param configuration
     *           (s) to change
     * @return task of configuration change
     */
-   Task configureVApp(VApp vApp, VAppConfiguration configuration);
+   Task configureVApp(VCloudExpressVApp vApp, VAppConfiguration configuration);
 
 }

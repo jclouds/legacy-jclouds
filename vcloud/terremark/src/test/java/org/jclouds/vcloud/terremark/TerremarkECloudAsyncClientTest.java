@@ -68,7 +68,7 @@ import org.jclouds.vcloud.terremark.xml.NodesHandler;
 import org.jclouds.vcloud.terremark.xml.PublicIpAddressesHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
 import org.jclouds.vcloud.xml.CatalogHandler;
-import org.jclouds.vcloud.xml.VAppHandler;
+import org.jclouds.vcloud.xml.VCloudExpressVAppHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -132,7 +132,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
                "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, VAppHandler.class);
+      assertSaxResponseParserClassEquals(method, VCloudExpressVAppHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);
@@ -155,7 +155,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
                "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, VAppHandler.class);
+      assertSaxResponseParserClassEquals(method, VCloudExpressVAppHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);

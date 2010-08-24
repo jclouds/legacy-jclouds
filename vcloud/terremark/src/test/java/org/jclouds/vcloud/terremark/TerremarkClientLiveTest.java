@@ -54,7 +54,7 @@ import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Task;
-import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.domain.VDC;
@@ -96,10 +96,10 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
    private String publicIp;
    private InternetService is;
    private Node node;
-   private VApp vApp;
+   private VCloudExpressVApp vApp;
    private RetryablePredicate<IPSocket> socketTester;
    private RetryablePredicate<URI> successTester;
-   private VApp clone;
+   private VCloudExpressVApp clone;
    private VDC vdc;
    protected String credential;
    public static final String PREFIX = System.getProperty("user.name") + "-terremark";
@@ -365,7 +365,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       loopAndCheckPass();
    }
 
-   private void verifyConfigurationOfVApp(VApp vApp, String serverName, String expectedOs, int processorCount,
+   private void verifyConfigurationOfVApp(VCloudExpressVApp vApp, String serverName, String expectedOs, int processorCount,
             long memory, long hardDisk) {
       assertEquals(vApp.getName(), serverName);
       assertEquals(vApp.getOperatingSystemDescription(), expectedOs);

@@ -68,7 +68,7 @@ import org.jclouds.vcloud.xml.OrgHandler;
 import org.jclouds.vcloud.xml.OrgNetworkFromVCloudExpressNetworkHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
-import org.jclouds.vcloud.xml.VAppHandler;
+import org.jclouds.vcloud.xml.VCloudExpressVAppHandler;
 import org.jclouds.vcloud.xml.VCloudExpressVAppTemplateHandler;
 import org.jclouds.vcloud.xml.VDCHandler;
 import org.testng.annotations.Test;
@@ -106,7 +106,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
                "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, VAppHandler.class);
+      assertSaxResponseParserClassEquals(method, VCloudExpressVAppHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);
@@ -130,7 +130,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
                "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, VAppHandler.class);
+      assertSaxResponseParserClassEquals(method, VCloudExpressVAppHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);
@@ -457,7 +457,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, VAppHandler.class);
+      assertSaxResponseParserClassEquals(method, VCloudExpressVAppHandler.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(request);

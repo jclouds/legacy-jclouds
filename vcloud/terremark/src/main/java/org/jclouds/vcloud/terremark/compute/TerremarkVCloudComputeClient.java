@@ -39,11 +39,11 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
+import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
 import org.jclouds.vcloud.domain.TasksList;
-import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.Status;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.TerremarkECloudClient;
@@ -79,7 +79,8 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
    }
 
    @Override
-   protected Map<String, String> parseAndValidateResponse(VCloudExpressVAppTemplate template, VApp vAppResponse) {
+   protected Map<String, String> parseAndValidateResponse(VCloudExpressVAppTemplate template,
+            VCloudExpressVApp vAppResponse) {
       Credentials credentials = credentialsProvider.execute(template);
       Map<String, String> toReturn = super.parseResponse(template, vAppResponse);
       toReturn.put("username", credentials.identity);
@@ -113,7 +114,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
    }
 
    public String createPublicAddressMappedToPorts(URI vAppId, int... ports) {
-      VApp vApp = client.getVApp(vAppId);
+      VCloudExpressVApp vApp = client.getVApp(vAppId);
       PublicIpAddress ip = null;
       String privateAddress = getLast(vApp.getNetworkToAddresses().values());
       for (int port : ports) {
@@ -167,7 +168,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
       return ip != null ? ip.getAddress() : null;
    }
 
-   private Set<PublicIpAddress> deleteInternetServicesAndNodesAssociatedWithVApp(VApp vApp) {
+   private Set<PublicIpAddress> deleteInternetServicesAndNodesAssociatedWithVApp(VCloudExpressVApp vApp) {
       Set<PublicIpAddress> ipAddresses = Sets.newHashSet();
       SERVICE: for (InternetService service : client.getAllInternetServicesInVDC(vApp.getVDC().getId())) {
          for (Node node : client.getNodes(service.getId())) {
@@ -210,7 +211,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
     */
    @Override
    public void stop(URI id) {
-      VApp vApp = client.getVApp(id);
+      VCloudExpressVApp vApp = client.getVApp(id);
       Set<PublicIpAddress> ipAddresses = deleteInternetServicesAndNodesAssociatedWithVApp(vApp);
       deletePublicIpAddressesWithNoServicesAttached(ipAddresses);
       if (vApp.getStatus() != Status.OFF) {
@@ -229,14 +230,14 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
       logger.debug("<< deleted vApp(%s))", vApp.getName());
    }
 
-   private void powerOffAndWait(VApp vApp) {
+   private void powerOffAndWait(VCloudExpressVApp vApp) {
       logger.debug(">> powering off vApp(%s), current status: %s", vApp.getName(), vApp.getStatus());
       Task task = client.powerOffVApp(vApp.getId());
       if (!taskTester.apply(task.getLocation()))
-         throw new TaskException("powerOff", vApp, task);
+         throw new RuntimeException(String.format("failed to %s %s: %s", "powerOff", vApp.getName(), task));
    }
 
-   void blockOnLastTask(VApp vApp) {
+   void blockOnLastTask(VCloudExpressVApp vApp) {
       TasksList list = client.findTasksListInOrgNamed(null);
       try {
          Task lastTask = getLast(filter(list.getTasks(), new Predicate<Task>() {
@@ -248,7 +249,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
 
          }));
          if (!taskTester.apply(lastTask.getLocation()))
-            throw new TaskException("powerOff", vApp, lastTask);
+            throw new RuntimeException(String.format("failed to %s %s: %s", "powerOff", vApp.getName(), lastTask));
       } catch (NoSuchElementException ex) {
 
       }
@@ -259,7 +260,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
     */
    @Override
    public Set<String> getPrivateAddresses(URI id) {
-      VApp vApp = client.getVApp(id);
+      VCloudExpressVApp vApp = client.getVApp(id);
       if (vApp != null)
          return Sets.newHashSet(vApp.getNetworkToAddresses().values());
       else
@@ -271,7 +272,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
     */
    @Override
    public Set<String> getPublicAddresses(URI id) {
-      VApp vApp = client.getVApp(id);
+      VCloudExpressVApp vApp = client.getVApp(id);
       if (vApp != null) {
          Set<String> ipAddresses = Sets.newHashSet();
          for (InternetService service : client.getAllInternetServicesInVDC(vApp.getVDC().getId())) {

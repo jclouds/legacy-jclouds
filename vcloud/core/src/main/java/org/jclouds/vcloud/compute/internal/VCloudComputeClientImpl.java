@@ -23,6 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.inject.Singleton;
@@ -38,26 +39,28 @@ import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Inject;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class VCloudComputeClientImpl extends CommonVCloudComputeClientImpl<VAppTemplate> implements VCloudComputeClient {
+public class VCloudComputeClientImpl extends CommonVCloudComputeClientImpl<VAppTemplate, VApp> implements
+         VCloudComputeClient {
 
    protected final Map<Status, NodeState> vAppStatusToNodeState;
 
    @Inject
    public VCloudComputeClientImpl(VCloudClient client, Predicate<URI> successTester,
-         Map<Status, NodeState> vAppStatusToNodeState) {
+            Map<Status, NodeState> vAppStatusToNodeState) {
       super(client, successTester);
       this.vAppStatusToNodeState = vAppStatusToNodeState;
    }
 
    @Override
    public Map<String, String> start(@Nullable URI VDC, URI templateId, String name,
-         InstantiateVAppTemplateOptions options, int... portsToOpen) {
+            InstantiateVAppTemplateOptions options, int... portsToOpen) {
       checkNotNull(options, "options");
       logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
 
@@ -65,7 +68,7 @@ public class VCloudComputeClientImpl extends CommonVCloudComputeClientImpl<VAppT
       VAppTemplate template = VCloudClient.class.cast(client).getVAppTemplate(templateId);
 
       VApp vAppResponse = VCloudClient.class.cast(client).instantiateVAppTemplateInVDC(vdc.getId(), template.getId(),
-            name, options);
+               name, options);
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getName());
 
       logger.debug(">> deploying vApp(%s)", vAppResponse.getName());
@@ -73,17 +76,40 @@ public class VCloudComputeClientImpl extends CommonVCloudComputeClientImpl<VAppT
       Task task = client.deployVApp(vAppResponse.getId());
       if (options.shouldBlockOnDeploy()) {
          if (!taskTester.apply(task.getLocation())) {
-            throw new TaskException("deploy", vAppResponse, task);
+            throw new RuntimeException(String.format("failed to %s %s: %s", "deploy", vAppResponse.getName(), task));
          }
          logger.debug("<< deployed vApp(%s)", vAppResponse.getName());
 
          logger.debug(">> powering vApp(%s)", vAppResponse.getName());
          task = client.powerOnVApp(vAppResponse.getId());
          if (!taskTester.apply(task.getLocation())) {
-            throw new TaskException("powerOn", vAppResponse, task);
+            throw new RuntimeException(String.format("failed to %s %s: %s", "powerOn", vAppResponse.getName(), task));
          }
          logger.debug("<< on vApp(%s)", vAppResponse.getName());
       }
       return parseAndValidateResponse(template, vAppResponse);
+   }
+
+   @Override
+   public Set<String> getPrivateAddresses(URI id) {
+      return ImmutableSet.of();
+   }
+
+   @Override
+   public Set<String> getPublicAddresses(URI id) {
+      return ImmutableSet.of();
+      // TODO
+      // VApp vApp = refreshVApp(id);
+      // return Sets.newHashSet(vApp.getNetworkToAddresses().values());
+   }
+
+   @Override
+   protected Status getStatus(VApp vApp) {
+      return vApp.getStatus();
+   }
+
+   @Override
+   protected VApp refreshVApp(URI id) {
+      return VCloudClient.class.cast(client).getVApp(id);
    }
 }

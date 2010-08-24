@@ -34,10 +34,10 @@ import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Status;
-import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.VirtualSystem;
 import org.jclouds.vcloud.domain.internal.NamedResourceImpl;
-import org.jclouds.vcloud.domain.internal.VAppImpl;
+import org.jclouds.vcloud.domain.internal.VCloudExpressVAppImpl;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -50,12 +50,12 @@ import com.google.inject.Guice;
 import com.google.inject.name.Names;
 
 /**
- * Tests behavior of {@code VAppHandler}
+ * Tests behavior of {@code VCloudExpressVAppHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VAppHandlerTest")
-public class VAppHandlerTest extends BaseHandlerTest {
+@Test(groups = "unit", testName = "vcloud.VCloudExpressVAppHandlerTest")
+public class VCloudExpressVAppHandlerTest extends BaseHandlerTest {
    @BeforeTest
    @Override
    protected void setUpInjector() {
@@ -75,19 +75,19 @@ public class VAppHandlerTest extends BaseHandlerTest {
    public void testInstantiated() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/instantiatedvapp.xml");
 
-      VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
+      VCloudExpressVApp result = factory.create(injector.getInstance(VCloudExpressVAppHandler.class)).parse(is);
 
-      VApp expects = new VAppImpl("centos53", URI.create("http://10.150.4.49/api/v0.8/vApp/10"), Status.RESOLVED,
-               123456789l, new NamedResourceImpl(null, "application/vnd.vmware.vcloud.vdc+xml", URI
-                        .create("http://10.150.4.49/api/v0.8/vdc/4")), ImmutableListMultimap.<String, String> of(),
-               null, null, null, ImmutableSet.<ResourceAllocation> of());
+      VCloudExpressVApp expects = new VCloudExpressVAppImpl("centos53", URI
+               .create("http://10.150.4.49/api/v0.8/vApp/10"), Status.RESOLVED, 123456789l, new NamedResourceImpl(null,
+               "application/vnd.vmware.vcloud.vdc+xml", URI.create("http://10.150.4.49/api/v0.8/vdc/4")),
+               ImmutableListMultimap.<String, String> of(), null, null, null, ImmutableSet.<ResourceAllocation> of());
       assertEquals(result, expects);
    }
 
    public void testDefault() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/vapp.xml");
 
-      VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
+      VCloudExpressVApp result = factory.create(injector.getInstance(VCloudExpressVAppHandler.class)).parse(is);
 
       ListMultimap<String, String> networkToAddresses = ImmutableListMultimap.<String, String> of("Public Network",
                "10.150.4.93");
@@ -105,10 +105,10 @@ public class VAppHandlerTest extends BaseHandlerTest {
                new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE, null, "104857", null, 0, 3,
                         null, 104857, "byte * 2^20")).build();
 
-      VApp expects = new VAppImpl("centos53", URI.create("http://10.150.4.49/api/v0.8/vApp/10"), Status.ON, new Long(
-               104857), new NamedResourceImpl(null, "application/vnd.vmware.vcloud.vdc+xml", URI
-               .create("http://10.150.4.49/api/v0.8/vdc/4")), networkToAddresses, null, "Other Linux (32-bit)", system,
-               resourceAllocations);
+      VCloudExpressVApp expects = new VCloudExpressVAppImpl("centos53", URI
+               .create("http://10.150.4.49/api/v0.8/vApp/10"), Status.ON, new Long(104857), new NamedResourceImpl(null,
+               "application/vnd.vmware.vcloud.vdc+xml", URI.create("http://10.150.4.49/api/v0.8/vdc/4")),
+               networkToAddresses, null, "Other Linux (32-bit)", system, resourceAllocations);
       assertEquals(result.getId(), expects.getId());
       assertEquals(result.getName(), expects.getName());
       assertEquals(result.getNetworkToAddresses(), expects.getNetworkToAddresses());
@@ -124,7 +124,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
    public void testLatest() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/vapp2.xml");
 
-      VApp result = factory.create(injector.getInstance(VAppHandler.class)).parse(is);
+      VCloudExpressVApp result = factory.create(injector.getInstance(VCloudExpressVAppHandler.class)).parse(is);
 
       ListMultimap<String, String> networkToAddresses = ImmutableListMultimap.<String, String> of("Public Network",
                "10.23.119.221");
@@ -142,9 +142,9 @@ public class VAppHandlerTest extends BaseHandlerTest {
                new ResourceAllocation(9, "Hard Disk 1", null, ResourceType.DISK_DRIVE, null, "10485760", null, 0, 3,
                         null, 10485760, "byte * 2^20")).build();
 
-      VApp expects = new VAppImpl("m1", URI.create("http://localhost:8000/api/v0.8/vApp/80"), Status.ON, new Long(
-               10485760), new NamedResourceImpl(null, "application/vnd.vmware.vcloud.vdc+xml", URI
-               .create("http://localhost:8000/api/v0.8/vdc/28")), networkToAddresses, null,
+      VCloudExpressVApp expects = new VCloudExpressVAppImpl("m1", URI.create("http://localhost:8000/api/v0.8/vApp/80"),
+               Status.ON, new Long(10485760), new NamedResourceImpl(null, "application/vnd.vmware.vcloud.vdc+xml", URI
+                        .create("http://localhost:8000/api/v0.8/vdc/28")), networkToAddresses, null,
                "Microsoft Windows XP Professional (32-bit)", system, resourceAllocations);
       assertEquals(result.getId(), expects.getId());
       assertEquals(result.getName(), expects.getName());

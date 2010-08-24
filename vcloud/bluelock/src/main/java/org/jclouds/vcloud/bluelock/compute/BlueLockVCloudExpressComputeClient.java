@@ -30,8 +30,8 @@ import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrat
 import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
-import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Status;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 
 import com.google.common.base.Predicate;
@@ -45,13 +45,14 @@ public class BlueLockVCloudExpressComputeClient extends VCloudExpressComputeClie
 
    @Inject
    protected BlueLockVCloudExpressComputeClient(PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
-         VCloudExpressClient client, Predicate<URI> successTester, Map<Status, NodeState> vAppStatusToNodeState) {
+            VCloudExpressClient client, Predicate<URI> successTester, Map<Status, NodeState> vAppStatusToNodeState) {
       super(client, successTester, vAppStatusToNodeState);
       this.credentialsProvider = credentialsProvider;
    }
 
    @Override
-   protected Map<String, String> parseAndValidateResponse(VCloudExpressVAppTemplate template, VApp vAppResponse) {
+   protected Map<String, String> parseAndValidateResponse(VCloudExpressVAppTemplate template,
+            VCloudExpressVApp vAppResponse) {
       Credentials credentials = credentialsProvider.execute(template);
       Map<String, String> toReturn = super.parseResponse(template, vAppResponse);
       toReturn.put("username", credentials.identity);

@@ -36,9 +36,7 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a
- *      href="http://communities.vmware.com/community/developer/forums/vcloudapi"
- *      />
+ * @see <a href="http://communities.vmware.com/community/developer/forums/vcloudapi" />
  * @author Adrian Cole
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
@@ -51,9 +49,8 @@ public interface VCloudClient extends CommonVCloudClient {
    VAppTemplate getVAppTemplate(URI vAppTemplate);
 
    /**
-    * returns the vapp template corresponding to a catalog item in the catalog
-    * associated with the specified name. Note that the org and catalog
-    * parameters can be null to choose default.
+    * returns the vapp template corresponding to a catalog item in the catalog associated with the
+    * specified name. Note that the org and catalog parameters can be null to choose default.
     * 
     * @param orgName
     *           organization name, or null for the default
@@ -63,9 +60,12 @@ public interface VCloudClient extends CommonVCloudClient {
     *           item you wish to lookup
     * 
     * @throws NoSuchElementException
-    *            if you specified an org, catalog, or catalog item name that
-    *            isn't present
+    *            if you specified an org, catalog, or catalog item name that isn't present
     */
    VAppTemplate findVAppTemplateInOrgCatalogNamed(@Nullable String orgName, @Nullable String catalogName,
-         String itemName);
+            String itemName);
+
+   VApp findVAppInOrgVDCNamed(@Nullable String orgName, @Nullable String catalogName, String vAppName);
+
+   VApp getVApp(URI vApp);
 }

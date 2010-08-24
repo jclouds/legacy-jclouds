@@ -52,7 +52,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
    }
 
    public void testApplyInputStream() {
-      InputStream is = getClass().getResourceAsStream("/task.xml");
+      InputStream is = getClass().getResourceAsStream("/express/task.xml");
 
       Task result = factory.create(injector.getInstance(TaskHandler.class)).parse(is);
 
@@ -72,7 +72,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
    }
 
    public void testSelf() {
-      InputStream is = getClass().getResourceAsStream("/task-self.xml");
+      InputStream is = getClass().getResourceAsStream("/express/task-self.xml");
 
       Task result = factory.create(injector.getInstance(TaskHandler.class)).parse(is);
 
@@ -83,7 +83,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
    }
 
    public void testApplyInputStream2() {
-      InputStream is = getClass().getResourceAsStream("/task-hosting.xml");
+      InputStream is = getClass().getResourceAsStream("/express/task-hosting.xml");
 
       Task result = factory.create(injector.getInstance(TaskHandler.class)).parse(is);
 
@@ -98,7 +98,7 @@ public class TaskHandlerTest extends BaseHandlerTest {
    }
 
    public void testError() {
-      InputStream is = getClass().getResourceAsStream("/task-error.xml");
+      InputStream is = getClass().getResourceAsStream("/express/task-error.xml");
 
       Task result = factory.create(injector.getInstance(TaskHandler.class)).parse(is);
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VApp xmlns="http://www.vmware.com/vcloud/v1" deployed="false"
+    status="0" name="vApp_acole_2" type="application/vnd.vmware.vcloud.vApp+xml"
+    href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vapp-607806320"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.vmware.com/vcloud/v1 http://vcenterprise.bluelock.com/api/v1.0/schema/master.xsd">
+    <Link rel="up" type="application/vnd.vmware.vcloud.vdc+xml"
+        href="https://vcenterprise.bluelock.com/api/v1.0/vdc/1014839439" />
+    <Description />
+    <Tasks>
+        <Task status="running" startTime="2010-08-23T02:09:52.443-04:00"
+            operation="Creating Virtual Application vApp_acole_2(607806320)"
+            expiryTime="2010-11-21T02:09:52.443-05:00" endTime="9999-12-31T23:59:59.999-05:00"
+            type="application/vnd.vmware.vcloud.task+xml"
+            href="https://vcenterprise.bluelock.com/api/v1.0/task/3cc08ir8oczbze3n1a3">
+            <Owner type="application/vnd.vmware.vcloud.vApp+xml"
+                name="vApp_acole_2"
+                href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vapp-607806320" />
+        </Task>
+    </Tasks>
+</VApp>

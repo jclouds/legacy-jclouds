@@ -27,6 +27,8 @@ import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.NamedResource;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VDC;
 import org.testng.annotations.Test;
 
 /**
@@ -64,6 +66,24 @@ public class VCloudClientLiveTest extends CommonVCloudClientLiveTest<VCloudClien
    }
 
    @Test
+   public void testGetVApp() throws Exception {
+      Org org = connection.findOrgNamed(null);
+      for (NamedResource vdc : org.getVDCs().values()) {
+         VDC response = connection.getVDC(vdc.getId());
+         for (NamedResource item : response.getResourceEntities().values()) {
+            if (item.getType().equals(VCloudMediaType.VAPP_XML)) {
+               try {
+                  VApp app = connection.getVApp(item.getId());
+                  assertNotNull(app);
+               } catch (RuntimeException e) {
+
+               }
+            }
+         }
+      }
+   }
+
+   @Test
    public void testFindVAppTemplate() throws Exception {
       Org org = connection.findOrgNamed(null);
       for (NamedResource cat : org.getCatalogs().values()) {
@@ -74,7 +94,7 @@ public class VCloudClientLiveTest extends CommonVCloudClientLiveTest<VCloudClien
                if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
                   try {
                      assertNotNull(connection.findVAppTemplateInOrgCatalogNamed(org.getName(), response.getName(), item
-                           .getEntity().getName()));
+                              .getEntity().getName()));
                   } catch (AuthorizationException e) {
 
                   }

@@ -45,7 +45,7 @@ public class BlueLockVCloudDirectorComputeClient extends VCloudComputeClientImpl
 
    @Inject
    protected BlueLockVCloudDirectorComputeClient(PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
-         VCloudClient client, Predicate<URI> successTester, Map<Status, NodeState> vAppStatusToNodeState) {
+            VCloudClient client, Predicate<URI> successTester, Map<Status, NodeState> vAppStatusToNodeState) {
       super(client, successTester, vAppStatusToNodeState);
       this.credentialsProvider = credentialsProvider;
    }

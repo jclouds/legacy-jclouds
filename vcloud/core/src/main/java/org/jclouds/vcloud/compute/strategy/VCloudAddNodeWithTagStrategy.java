@@ -37,8 +37,8 @@ import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
-import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Status;
+import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.collect.ImmutableMap;
@@ -82,8 +82,11 @@ public class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
    }
 
    private OperatingSystem getOperatingSystemForVAppOrDefaultTo(VApp vApp, OperatingSystem operatingSystem) {
-      return vApp.getOsType() != null ? new CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(vApp.getOsType()),
-               null, null, vApp.getOperatingSystemDescription()) : operatingSystem;
+      // TODO
+      return new CIMOperatingSystem(CIMOperatingSystem.OSType.UBUNTU_64, null, null, vApp.getDescription());
+      // return vApp.getOsType() != null ? new
+      // CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(vApp.getOsType()),
+      // null, null, vApp.getOperatingSystemDescription()) : operatingSystem;
    }
 
 }

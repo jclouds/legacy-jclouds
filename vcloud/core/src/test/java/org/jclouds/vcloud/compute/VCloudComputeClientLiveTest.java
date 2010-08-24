@@ -20,10 +20,8 @@
 package org.jclouds.vcloud.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.Constants.PROPERTY_TRUST_ALL_CERTS;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
-import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -38,7 +36,6 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
@@ -98,7 +95,7 @@ public class VCloudComputeClientLiveTest {
 
       VAppTemplate template = client.findVAppTemplateInOrgCatalogNamed(null, null, templateName);
       InstantiateVAppTemplateOptions options = processorCount(1).memory(512).disk(10 * 1025 * 1024).productProperties(
-            ImmutableMap.of("foo", "bar"));
+               ImmutableMap.of("foo", "bar"));
 
       id = URI.create(computeClient.start(null, template.getId(), templateName, options).get("id"));
       Expectation expectation = expectationMap.get(toTest);
@@ -110,7 +107,7 @@ public class VCloudComputeClientLiveTest {
 
    private String getCompatibleServerName(OsFamily toTest) {
       String serverName = CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, toTest.toString()).substring(0,
-            toTest.toString().length() <= 15 ? toTest.toString().length() : 14);
+               toTest.toString().length() <= 15 ? toTest.toString().length() : 14);
       return serverName;
    }
 
@@ -121,19 +118,24 @@ public class VCloudComputeClientLiveTest {
    }
 
    private void verifyConfigurationOfVApp(VApp vApp, String serverName, String expectedOs, int processorCount,
-         int memory, long hardDisk) {
-      // assertEquals(vApp.getName(), serverName);
+            int memory, long hardDisk) {
+      assertEquals(vApp.getName(), serverName);
       // assertEquals(vApp.getOperatingSystemDescription(), expectedOs);
-      assertEquals(Iterables
-            .getOnlyElement(filter(vApp.getResourceAllocations(), resourceType(ResourceType.PROCESSOR)))
-            .getVirtualQuantity(), processorCount);
-      assertEquals(Iterables.getOnlyElement(
-            filter(vApp.getResourceAllocations(), resourceType(ResourceType.SCSI_CONTROLLER))).getVirtualQuantity(), 1);
-      assertEquals(Iterables.getOnlyElement(filter(vApp.getResourceAllocations(), resourceType(ResourceType.MEMORY)))
-            .getVirtualQuantity(), memory);
-      assertEquals(Iterables.getOnlyElement(
-            filter(vApp.getResourceAllocations(), resourceType(ResourceType.DISK_DRIVE))).getVirtualQuantity(),
-            hardDisk);
+      // assertEquals(Iterables
+      // .getOnlyElement(filter(vApp.getResourceAllocations(),
+      // resourceType(ResourceType.PROCESSOR)))
+      // .getVirtualQuantity(), processorCount);
+      // assertEquals(Iterables.getOnlyElement(
+      // filter(vApp.getResourceAllocations(),
+      // resourceType(ResourceType.SCSI_CONTROLLER))).getVirtualQuantity(),
+      // 1);
+      // assertEquals(Iterables.getOnlyElement(filter(vApp.getResourceAllocations(),
+      // resourceType(ResourceType.MEMORY)))
+      // .getVirtualQuantity(), memory);
+      // assertEquals(Iterables.getOnlyElement(
+      // filter(vApp.getResourceAllocations(),
+      // resourceType(ResourceType.DISK_DRIVE))).getVirtualQuantity(),
+      // hardDisk);
    }
 
    @AfterTest
@@ -153,14 +155,14 @@ public class VCloudComputeClientLiveTest {
       Properties properties = new Properties();
       properties.setProperty(PROPERTY_TRUST_ALL_CERTS, "true");
       Injector injector = new RestContextFactory().createContextBuilder("vcloud", identity, credential,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), properties).buildInjector();
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), properties).buildInjector();
 
       computeClient = injector.getInstance(VCloudComputeClient.class);
       client = injector.getInstance(VCloudClient.class);
       addressTester = injector.getInstance(Key.get(new TypeLiteral<Predicate<IPSocket>>() {
       }));
       expectationMap = ImmutableMap.<OsFamily, Expectation> builder().put(OsFamily.CENTOS,
-            new Expectation(4194304 / 2 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).build();
+               new Expectation(4194304 / 2 * 10, "Red Hat Enterprise Linux 5 (64-bit)")).build();
       provider = "vcloudtest";
       templateName = "Ubuntu JeOS 9.10 (32-bit)";
    }

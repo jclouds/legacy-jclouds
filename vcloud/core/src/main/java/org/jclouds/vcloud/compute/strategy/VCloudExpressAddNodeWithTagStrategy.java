@@ -37,7 +37,7 @@ import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
-import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
@@ -68,11 +68,11 @@ public class VCloudExpressAddNodeWithTagStrategy implements AddNodeWithTagStrate
          options.blockOnDeploy(false);
       Map<String, String> metaMap = computeClient.start(URI.create(template.getLocation().getId()), URI.create(template
                .getImage().getId()), name, options, template.getOptions().getInboundPorts());
-      VApp vApp = client.getVApp(URI.create(metaMap.get("id")));
+      VCloudExpressVApp vApp = client.getVApp(URI.create(metaMap.get("id")));
       return newCreateNodeResponse(tag, template, metaMap, vApp);
    }
 
-   protected NodeMetadata newCreateNodeResponse(String tag, Template template, Map<String, String> metaMap, VApp vApp) {
+   protected NodeMetadata newCreateNodeResponse(String tag, Template template, Map<String, String> metaMap, VCloudExpressVApp vApp) {
       return new NodeMetadataImpl(vApp.getId().toASCIIString(), vApp.getName(), vApp.getId().toASCIIString(), template
                .getLocation(), vApp.getId(), ImmutableMap.<String, String> of(), tag, template.getImage().getId(),
                getOperatingSystemForVAppOrDefaultTo(vApp, template.getImage().getOperatingSystem()),
@@ -81,7 +81,7 @@ public class VCloudExpressAddNodeWithTagStrategy implements AddNodeWithTagStrate
                         metaMap.get("username"), metaMap.get("password")));
    }
 
-   private OperatingSystem getOperatingSystemForVAppOrDefaultTo(VApp vApp, OperatingSystem operatingSystem) {
+   private OperatingSystem getOperatingSystemForVAppOrDefaultTo(VCloudExpressVApp vApp, OperatingSystem operatingSystem) {
       return vApp.getOsType() != null ? new CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(vApp.getOsType()),
                null, null, vApp.getOperatingSystemDescription()) : operatingSystem;
    }

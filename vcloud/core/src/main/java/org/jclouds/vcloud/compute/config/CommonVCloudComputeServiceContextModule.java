@@ -31,16 +31,12 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.vcloud.compute.internal.VCloudComputeClientImpl;
 import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudGetNodeMetadataStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
 import org.jclouds.vcloud.compute.suppliers.OrgAndVDCToLocationSupplier;
 import org.jclouds.vcloud.compute.suppliers.StaticSizeSupplier;
@@ -82,8 +78,6 @@ public abstract class CommonVCloudComputeServiceContextModule extends BaseComput
       install(new ComputeServiceTimeoutsModule());
       bind(DestroyNodeStrategy.class).to(VCloudDestroyNodeStrategy.class);
       bind(RunNodesAndAddToSetStrategy.class).to(EncodeTagIntoNameRunNodesAndAddToSetStrategy.class);
-      bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
-      bind(GetNodeMetadataStrategy.class).to(VCloudGetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
       bindLoadBalancer();
    }

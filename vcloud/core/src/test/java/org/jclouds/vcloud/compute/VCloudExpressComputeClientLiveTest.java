@@ -36,7 +36,7 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.domain.ResourceType;
-import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
@@ -100,7 +100,7 @@ public class VCloudExpressComputeClientLiveTest {
       id = URI.create(computeClient.start(null, template.getId(), templateName, options).get("id"));
       Expectation expectation = expectationMap.get(toTest);
 
-      VApp vApp = client.getVApp(id);
+      VCloudExpressVApp vApp = client.getVApp(id);
       verifyConfigurationOfVApp(vApp, serverName, expectation.os, processorCount, memory, expectation.hardDisk);
       assertEquals(vApp.getStatus(), Status.ON);
    }
@@ -117,7 +117,7 @@ public class VCloudExpressComputeClientLiveTest {
       assert !addressTester.apply(publicAddress);
    }
 
-   private void verifyConfigurationOfVApp(VApp vApp, String serverName, String expectedOs, int processorCount,
+   private void verifyConfigurationOfVApp(VCloudExpressVApp vApp, String serverName, String expectedOs, int processorCount,
             int memory, long hardDisk) {
       // assertEquals(vApp.getName(), serverName);
       // assertEquals(vApp.getOperatingSystemDescription(), expectedOs);

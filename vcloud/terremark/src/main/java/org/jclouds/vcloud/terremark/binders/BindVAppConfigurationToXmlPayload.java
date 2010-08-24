@@ -46,7 +46,7 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Status;
-import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
 
 import com.google.common.base.Function;
@@ -85,7 +85,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
-      VApp vApp = checkNotNull(findVAppInArgsOrNull(gRequest), "vApp");
+      VCloudExpressVApp vApp = checkNotNull(findVAppInArgsOrNull(gRequest), "vApp");
       checkArgument(vApp.getStatus() == Status.OFF, "vApp must be off!");
       VAppConfiguration configuration = checkNotNull(findConfigInArgsOrNull(gRequest), "config");
 
@@ -101,7 +101,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
 
    }
 
-   protected String generateXml(VApp vApp, VAppConfiguration configuration) throws ParserConfigurationException,
+   protected String generateXml(VCloudExpressVApp vApp, VAppConfiguration configuration) throws ParserConfigurationException,
             FactoryConfigurationError, TransformerException {
       String name = configuration.getName() != null ? configuration.getName() : vApp.getName();
 
@@ -120,20 +120,20 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
       return rootBuilder.asString(outputProperties);
    }
 
-   private void addProcessorItem(XMLBuilder sectionBuilder, VApp vApp, VAppConfiguration configuration) {
+   private void addProcessorItem(XMLBuilder sectionBuilder, VCloudExpressVApp vApp, VAppConfiguration configuration) {
       ResourceAllocation cpu = find(vApp.getResourceAllocations(), resourceType(ResourceType.PROCESSOR));
       long quantity = configuration.getProcessorCount() != null ? configuration.getProcessorCount() : cpu
                .getVirtualQuantity();
       addResourceWithQuantity(sectionBuilder, cpu, quantity);
    }
 
-   private void addMemoryItem(XMLBuilder sectionBuilder, VApp vApp, VAppConfiguration configuration) {
+   private void addMemoryItem(XMLBuilder sectionBuilder, VCloudExpressVApp vApp, VAppConfiguration configuration) {
       ResourceAllocation memory = find(vApp.getResourceAllocations(), resourceType(ResourceType.MEMORY));
       long quantity = configuration.getMemory() != null ? configuration.getMemory() : memory.getVirtualQuantity();
       addResourceWithQuantity(sectionBuilder, memory, quantity);
    }
 
-   private void addDiskItems(XMLBuilder sectionBuilder, VApp vApp, VAppConfiguration configuration) {
+   private void addDiskItems(XMLBuilder sectionBuilder, VCloudExpressVApp vApp, VAppConfiguration configuration) {
       for (ResourceAllocation disk : filter(vApp.getResourceAllocations(), resourceType(ResourceType.DISK_DRIVE))) {
          if (!configuration.getDisksToDelete().contains(disk.getAddressOnParent()))
             addDiskWithQuantity(sectionBuilder, disk);
@@ -165,7 +165,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
       return itemBuilder;
    }
 
-   protected XMLBuilder buildRoot(VApp vApp, String name) throws ParserConfigurationException,
+   protected XMLBuilder buildRoot(VCloudExpressVApp vApp, String name) throws ParserConfigurationException,
             FactoryConfigurationError {
       String status = vApp.getStatus().value();
       if (apiVersion.indexOf("0.8") != -1 && "8".equals(status))
@@ -176,12 +176,12 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
       return rootBuilder;
    }
 
-   protected VApp findVAppInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+   protected VCloudExpressVApp findVAppInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
       for (Object arg : gRequest.getArgs()) {
-         if (arg instanceof VApp) {
-            return (VApp) arg;
-         } else if (arg instanceof VApp[]) {
-            VApp[] vapps = (VApp[]) arg;
+         if (arg instanceof VCloudExpressVApp) {
+            return (VCloudExpressVApp) arg;
+         } else if (arg instanceof VCloudExpressVApp[]) {
+            VCloudExpressVApp[] vapps = (VCloudExpressVApp[]) arg;
             return (vapps.length > 0) ? vapps[0] : null;
          }
       }
@@ -210,6 +210,6 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
 
    @Override
    public URI apply(Object from) {
-      return VApp.class.cast(checkNotNull(from, "from")).getId();
+      return VCloudExpressVApp.class.cast(checkNotNull(from, "from")).getId();
    }
 }

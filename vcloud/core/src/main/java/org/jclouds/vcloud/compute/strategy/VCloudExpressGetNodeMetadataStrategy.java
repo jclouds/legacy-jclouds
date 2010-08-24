@@ -34,19 +34,18 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.domain.os.CIMOperatingSystem;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.compute.VCloudComputeClient;
+import org.jclouds.vcloud.VCloudExpressClient;
+import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
-import org.jclouds.vcloud.compute.functions.GetExtraFromVApp;
+import org.jclouds.vcloud.compute.functions.GetExtraFromVCloudExpressVApp;
 import org.jclouds.vcloud.domain.Status;
-import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
@@ -55,20 +54,20 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  */
 @Singleton
-public class VCloudGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
+public class VCloudExpressGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
-   protected final VCloudClient client;
-   protected final VCloudComputeClient computeClient;
+   protected final VCloudExpressClient client;
+   protected final VCloudExpressComputeClient computeClient;
    protected final Supplier<Set<? extends Image>> images;
    protected final FindLocationForResource findLocationForResourceInVDC;
-   protected final GetExtraFromVApp getExtra;
+   protected final GetExtraFromVCloudExpressVApp getExtra;
    protected final Map<Status, NodeState> vAppStatusToNodeState;
 
    @Inject
-   protected VCloudGetNodeMetadataStrategy(VCloudClient client, VCloudComputeClient computeClient,
-            Map<Status, NodeState> vAppStatusToNodeState, GetExtraFromVApp getExtra,
+   protected VCloudExpressGetNodeMetadataStrategy(VCloudExpressClient client, VCloudExpressComputeClient computeClient,
+            Map<Status, NodeState> vAppStatusToNodeState, GetExtraFromVCloudExpressVApp getExtra,
             FindLocationForResource findLocationForResourceInVDC, Supplier<Set<? extends Image>> images) {
       this.client = checkNotNull(client, "client");
       this.images = checkNotNull(images, "images");
@@ -80,23 +79,16 @@ public class VCloudGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
 
    public NodeMetadata execute(String in) {
       URI id = URI.create(in);
-      VApp from = client.getVApp(id);
+      VCloudExpressVApp from = client.getVApp(id);
       if (from == null)
          return null;
       String tag = parseTagFromName(from.getName());
       Location location = findLocationForResourceInVDC.apply(from.getVDC());
       return new NodeMetadataImpl(in, from.getName(), in, location, from.getId(), ImmutableMap.<String, String> of(),
-               tag, null, getOperatingSystemForVAppOrDefaultTo(from, null),
-               vAppStatusToNodeState.get(from.getStatus()), computeClient.getPublicAddresses(id), computeClient
+               tag, null, from.getOsType() != null ? new CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(from
+                        .getOsType()), null, null, from.getOperatingSystemDescription()) : null, vAppStatusToNodeState
+                        .get(from.getStatus()), computeClient.getPublicAddresses(id), computeClient
                         .getPrivateAddresses(id), getExtra.apply(from), null);
-   }
-
-   private OperatingSystem getOperatingSystemForVAppOrDefaultTo(VApp vApp, OperatingSystem operatingSystem) {
-      // TODO
-      return new CIMOperatingSystem(CIMOperatingSystem.OSType.UBUNTU_64, null, null, vApp.getDescription());
-      // return vApp.getOsType() != null ? new
-      // CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(vApp.getOsType()),
-      // null, null, vApp.getOperatingSystemDescription()) : operatingSystem;
    }
 
 }

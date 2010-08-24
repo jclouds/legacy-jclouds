@@ -19,21 +19,15 @@
 
 package org.jclouds.vcloud.compute.functions;
 
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Maps.newHashMap;
-import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
-import org.jclouds.vcloud.domain.ResourceAllocation;
-import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.VApp;
 
 import com.google.common.base.Function;
@@ -45,7 +39,7 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class GetExtra implements Function<VApp, Map<String, String>> {
+public class GetExtraFromVApp implements Function<VApp, Map<String, String>> {
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -53,19 +47,24 @@ public class GetExtra implements Function<VApp, Map<String, String>> {
    public Map<String, String> apply(VApp vApp) {
       Map<String, String> extra = newHashMap();
       try {
-         extra.put("memory/mb", find(vApp.getResourceAllocations(), resourceType(ResourceType.MEMORY))
-               .getVirtualQuantity()
-               + "");
-         extra.put("processor/count", find(vApp.getResourceAllocations(), resourceType(ResourceType.PROCESSOR))
-               .getVirtualQuantity()
-               + "");
-         for (ResourceAllocation disk : filter(vApp.getResourceAllocations(), resourceType(ResourceType.DISK_DRIVE))) {
-            extra.put(String.format("disk_drive/%s/kb", disk.getAddressOnParent()), disk.getVirtualQuantity() + "");
-         }
-
-         for (Entry<String, String> net : vApp.getNetworkToAddresses().entries()) {
-            extra.put(String.format("network/%s/ip", net.getKey()), net.getValue());
-         }
+         // TODO
+         // extra.put("memory/mb", find(vApp.getResourceAllocations(),
+         // resourceType(ResourceType.MEMORY))
+         // .getVirtualQuantity()
+         // + "");
+         // extra.put("processor/count", find(vApp.getResourceAllocations(),
+         // resourceType(ResourceType.PROCESSOR))
+         // .getVirtualQuantity()
+         // + "");
+         // for (ResourceAllocation disk : filter(vApp.getResourceAllocations(),
+         // resourceType(ResourceType.DISK_DRIVE))) {
+         // extra.put(String.format("disk_drive/%s/kb", disk.getAddressOnParent()),
+         // disk.getVirtualQuantity() + "");
+         // }
+         //
+         // for (Entry<String, String> net : vApp.getNetworkToAddresses().entries()) {
+         // extra.put(String.format("network/%s/ip", net.getKey()), net.getValue());
+         // }
       } catch (Exception e) {
          logger.error(e, "error getting extra data for vApp: %s", vApp);
       }

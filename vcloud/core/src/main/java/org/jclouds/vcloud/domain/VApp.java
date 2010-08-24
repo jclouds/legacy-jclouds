@@ -19,49 +19,47 @@
 
 package org.jclouds.vcloud.domain;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.vcloud.domain.internal.VAppImpl;
-
-import com.google.common.collect.ListMultimap;
-import com.google.inject.ImplementedBy;
-
 /**
- * A virtual application (vApp) is a software solution, packaged in OVF containing one or more
- * virtual machines. A vApp can be authored by Developers at ISVs and VARs or by IT Administrators
- * in Enterprises and Service Providers.
- * 
+ * A VApp is the result of instantiation of a {@link VAppTemplate}.
+ *   <h2>note</h2>
+ *   <p/> When the {@link #getStatus} is {@link Status#UNRESOLVED}, there will be a task present for the instantiation of the VApp.
+
  * @author Adrian Cole
  */
-@ImplementedBy(VAppImpl.class)
 public interface VApp extends NamedResource {
+   /**
+    * Reference to the vdc containing this vApp.
+    * 
+    * @since vcloud api 1.0
+    * @return vdc, or null if this is a version before 1.0 where the org isn't present
+    */
    NamedResource getVDC();
 
+   /**
+    * The creation status of the vDC
+    * 
+    * @since vcloud api 1.0
+    */
    Status getStatus();
 
-   Long getSize();
-
-   ListMultimap<String, String> getNetworkToAddresses();
-
    /**
+    * optional description
     * 
-    * @return CIM OSType of the image or null, if this information isn't available yet
-    * @see <a href="http://dmtf.org/standards/cim/cim_schema_v2260">DMTF CIM model</a>
+    * @since vcloud api 0.8
     */
    @Nullable
-   Integer getOsType();
+   String getDescription();
 
    /**
+    * read‐only container for Task elements. Each element in the container represents a queued,
+    * running, or failed task owned by this object.
     * 
-    * @return description or null, if this information isn't available yet
+    * @since vcloud api 1.0
     */
-   @Nullable
-   String getOperatingSystemDescription();
-
-   VirtualSystem getSystem();
-
-   Set<ResourceAllocation> getResourceAllocations();
+   List<Task> getTasks();
 
 }

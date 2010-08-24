@@ -46,7 +46,7 @@ import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.compute.config.VCloudExpressComputeServiceContextModule;
 import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
+import org.jclouds.vcloud.compute.strategy.VCloudExpressListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeService;
@@ -97,7 +97,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudExpressCom
       }).in(Scopes.SINGLETON);
       // NOTE
       bind(RunNodesAndAddToSetStrategy.class).to(TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy.class);
-      bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
+      bind(ListNodesStrategy.class).to(VCloudExpressListNodesStrategy.class);
       // NOTE
       bind(GetNodeMetadataStrategy.class).to(TerremarkVCloudGetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);

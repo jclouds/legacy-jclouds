@@ -38,12 +38,12 @@ import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.CommonVCloudClient;
-import org.jclouds.vcloud.compute.CommonVCloudComputeClient;
+import org.jclouds.vcloud.VCloudExpressClient;
+import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.compute.domain.VCloudLocation;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
-import org.jclouds.vcloud.compute.functions.GetExtra;
-import org.jclouds.vcloud.compute.strategy.VCloudGetNodeMetadataStrategy;
+import org.jclouds.vcloud.compute.functions.GetExtraFromVCloudExpressVApp;
+import org.jclouds.vcloud.compute.strategy.VCloudExpressGetNodeMetadataStrategy;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.terremark.compute.domain.KeyPairCredentials;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
@@ -54,7 +54,7 @@ import com.google.common.base.Supplier;
  * @author Adrian Cole
  */
 @Singleton
-public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudGetNodeMetadataStrategy {
+public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudExpressGetNodeMetadataStrategy {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -62,10 +62,10 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudGetNodeMetadat
    private final ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap;
 
    @Inject
-   protected TerremarkVCloudGetNodeMetadataStrategy(CommonVCloudClient client, CommonVCloudComputeClient computeClient,
-            Map<Status, NodeState> vAppStatusToNodeState, GetExtra getExtra,
-            FindLocationForResource findLocationForResourceInVDC, Supplier<Set<? extends Image>> images,
-            ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
+   protected TerremarkVCloudGetNodeMetadataStrategy(VCloudExpressClient client,
+            VCloudExpressComputeClient computeClient, Map<Status, NodeState> vAppStatusToNodeState,
+            GetExtraFromVCloudExpressVApp getExtra, FindLocationForResource findLocationForResourceInVDC,
+            Supplier<Set<? extends Image>> images, ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
       super(client, computeClient, vAppStatusToNodeState, getExtra, findLocationForResourceInVDC, images);
       this.credentialsMap = credentialsMap;
    }

@@ -22,50 +22,38 @@ package org.jclouds.vcloud.domain.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.Set;
+import java.util.List;
 
-import org.jclouds.vcloud.VCloudExpressMediaType;
+import javax.annotation.Nullable;
+
 import org.jclouds.vcloud.domain.NamedResource;
-import org.jclouds.vcloud.domain.ResourceAllocation;
-import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.Status;
-import org.jclouds.vcloud.domain.VirtualSystem;
+import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.VApp;
 
-import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 /**
  * 
  * @author Adrian Cole
  * 
  */
-public class VAppImpl implements VApp {
-   private final String name;
-   private final URI id;
-   private final NamedResource vDC;
+public class VAppImpl extends NamedResourceImpl implements VApp {
    private final Status status;
-   private final Long size;
-   private final ListMultimap<String, String> networkToAddresses;
-   private final String operatingSystemDescription;
-   private final VirtualSystem system;
-   private final Set<ResourceAllocation> resourceAllocations;
-   private final Integer osType;
+   @Nullable
+   private final NamedResource vdc;
+   @Nullable
+   private final String description;
+   private final List<Task> tasks = Lists.newArrayList();
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8464716396538298809L;
-
-   public VAppImpl(String name, URI id, Status status, Long size, NamedResource vDC,
-            ListMultimap<String, String> networkToAddresses, Integer osType, String operatingSystemDescription,
-            VirtualSystem system, Set<ResourceAllocation> resourceAllocations) {
-      this.name = checkNotNull(name, "name");
-      this.id = checkNotNull(id, "id");
+   public VAppImpl(String name, String type, URI id, Status status, @Nullable NamedResource vdc,
+            @Nullable String description, Iterable<Task> tasks) {
+      super(name, type, id);
       this.status = checkNotNull(status, "status");
-      this.size = size;
-      this.vDC = vDC;
-      this.networkToAddresses = checkNotNull(networkToAddresses, "networkToAddresses");
-      this.osType = osType;
-      this.operatingSystemDescription = operatingSystemDescription;
-      this.system = system;
-      this.resourceAllocations = checkNotNull(resourceAllocations, "resourceAllocations");
+      this.vdc = vdc;
+      this.description = description;
+      Iterables.addAll(this.tasks, checkNotNull(tasks, "tasks"));
    }
 
    @Override
@@ -74,49 +62,28 @@ public class VAppImpl implements VApp {
    }
 
    @Override
-   public ListMultimap<String, String> getNetworkToAddresses() {
-      return networkToAddresses;
-   }
-
-   @Override
-   public Integer getOsType() {
-      return osType;
-   }
-
-   @Override
-   public String getOperatingSystemDescription() {
-      return operatingSystemDescription;
-   }
-
-   @Override
-   public VirtualSystem getSystem() {
-      return system;
-   }
-
-   @Override
-   public Set<ResourceAllocation> getResourceAllocations() {
-      return resourceAllocations;
-   }
-
-   @Override
    public NamedResource getVDC() {
-      return vDC;
+      return vdc;
+   }
+
+   @Override
+   public String getDescription() {
+      return description;
+   }
+
+   @Override
+   public List<Task> getTasks() {
+      return tasks;
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
-      int result = 1;
-      result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((networkToAddresses == null) ? 0 : networkToAddresses.hashCode());
-      result = prime * result + ((operatingSystemDescription == null) ? 0 : operatingSystemDescription.hashCode());
-      result = prime * result + ((resourceAllocations == null) ? 0 : resourceAllocations.hashCode());
-      result = prime * result + ((size == null) ? 0 : size.hashCode());
-      result = prime * result + ((osType == null) ? 0 : osType.hashCode());
+      int result = super.hashCode();
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((status == null) ? 0 : status.hashCode());
-      result = prime * result + ((system == null) ? 0 : system.hashCode());
-      result = prime * result + ((vDC == null) ? 0 : vDC.hashCode());
+      result = prime * result + ((tasks == null) ? 0 : tasks.hashCode());
+      result = prime * result + ((vdc == null) ? 0 : vdc.hashCode());
       return result;
    }
 
@@ -124,95 +91,43 @@ public class VAppImpl implements VApp {
    public boolean equals(Object obj) {
       if (this == obj)
          return true;
-      if (obj == null)
+      if (!super.equals(obj))
          return false;
       if (getClass() != obj.getClass())
          return false;
       VAppImpl other = (VAppImpl) obj;
-      if (id == null) {
-         if (other.id != null)
+      if (description == null) {
+         if (other.description != null)
             return false;
-      } else if (!id.equals(other.id))
-         return false;
-      if (name == null) {
-         if (other.name != null)
-            return false;
-      } else if (!name.equals(other.name))
-         return false;
-      if (osType == null) {
-         if (other.osType != null)
-            return false;
-      } else if (!osType.equals(other.osType))
-         return false;
-      if (networkToAddresses == null) {
-         if (other.networkToAddresses != null)
-            return false;
-      } else if (!networkToAddresses.equals(other.networkToAddresses))
-         return false;
-      if (operatingSystemDescription == null) {
-         if (other.operatingSystemDescription != null)
-            return false;
-      } else if (!operatingSystemDescription.equals(other.operatingSystemDescription))
-         return false;
-      if (resourceAllocations == null) {
-         if (other.resourceAllocations != null)
-            return false;
-      } else if (!resourceAllocations.equals(other.resourceAllocations))
-         return false;
-      if (size == null) {
-         if (other.size != null)
-            return false;
-      } else if (!size.equals(other.size))
+      } else if (!description.equals(other.description))
          return false;
       if (status == null) {
          if (other.status != null)
             return false;
       } else if (!status.equals(other.status))
          return false;
-      if (system == null) {
-         if (other.system != null)
+      if (tasks == null) {
+         if (other.tasks != null)
             return false;
-      } else if (!system.equals(other.system))
+      } else if (!tasks.equals(other.tasks))
          return false;
-      if (vDC == null) {
-         if (other.vDC != null)
+      if (vdc == null) {
+         if (other.vdc != null)
             return false;
-      } else if (!vDC.equals(other.vDC))
+      } else if (!vdc.equals(other.vdc))
          return false;
       return true;
    }
 
    @Override
-   public String getName() {
-      return name;
-   }
-
-   @Override
-   public URI getId() {
-      return id;
-   }
-
-   @Override
-   public Long getSize() {
-      return size;
+   public int compareTo(NamedResource o) {
+      return (this == o) ? 0 : getId().compareTo(o.getId());
    }
 
    @Override
    public String toString() {
-      return "[id=" + id + ", name=" + name + ", networkToAddresses=" + networkToAddresses + ", osType=" + osType
-               + ", operatingSystemDescription=" + operatingSystemDescription + ", resourceAllocationByType="
-               + resourceAllocations + ", size=" + size + ", status=" + status + ", system=" + system + ", vDC=" + vDC
-               + "]";
-   }
-
-   @Override
-   public String getType() {
-      return VCloudExpressMediaType.VAPP_XML;
-   }
-
-   @Override
-   public int compareTo(NamedResource o) {
-      return (this == o) ? 0 : getId().compareTo(o.getId());
+      return "[id=" + getId() + ", name=" + getName() + ", type=" + getType() + ", status=" + getStatus() + ", vdc="
+               + getVDC() + ", description=" + getDescription() + "]";
    }
 
 }

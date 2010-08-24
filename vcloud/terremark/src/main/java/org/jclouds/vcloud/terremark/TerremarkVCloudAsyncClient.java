@@ -59,7 +59,7 @@ import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.Task;
-import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.OrgNameAndVDCNameToEndpoint;
@@ -94,7 +94,7 @@ import org.jclouds.vcloud.terremark.xml.TerremarkCatalogItemHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkOrgHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
 import org.jclouds.vcloud.xml.CatalogHandler;
-import org.jclouds.vcloud.xml.VAppHandler;
+import org.jclouds.vcloud.xml.VCloudExpressVAppHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -188,9 +188,9 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
    @Path("action/instantiateVAppTemplate")
    @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
    @Consumes(VAPP_XML)
-   @XMLResponseParser(VAppHandler.class)
+   @XMLResponseParser(VCloudExpressVAppHandler.class)
    @MapBinder(TerremarkBindInstantiateVAppTemplateParamsToXmlPayload.class)
-   ListenableFuture<? extends VApp> instantiateVAppTemplateInVDC(@EndpointParam URI vdc,
+   ListenableFuture<? extends VCloudExpressVApp> instantiateVAppTemplateInVDC(@EndpointParam URI vdc,
             @MapPayloadParam("template") URI template,
             @MapPayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName,
             InstantiateVAppTemplateOptions... options);
@@ -330,7 +330,7 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
    @MapBinder(BindVAppConfigurationToXmlPayload.class)
    @ResponseParser(ParseTaskFromLocationHeader.class)
    ListenableFuture<? extends Task> configureVApp(
-            @EndpointParam(parser = BindVAppConfigurationToXmlPayload.class) VApp vApp, VAppConfiguration configuration);
+            @EndpointParam(parser = BindVAppConfigurationToXmlPayload.class) VCloudExpressVApp vApp, VAppConfiguration configuration);
 
    /**
     * @see TerremarkVCloudClient#getCustomizationOptions

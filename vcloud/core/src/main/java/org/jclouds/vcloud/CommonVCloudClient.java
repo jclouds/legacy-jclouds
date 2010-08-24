@@ -31,7 +31,6 @@ import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TasksList;
-import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.network.OrgNetwork;
 
@@ -149,8 +148,5 @@ public interface CommonVCloudClient {
 
    void cancelTask(URI taskId);
 
-   VApp findVAppInOrgVDCNamed(@Nullable String orgName, @Nullable String catalogName, String vAppName);
-
-   VApp getVApp(URI vApp);
 
 }
