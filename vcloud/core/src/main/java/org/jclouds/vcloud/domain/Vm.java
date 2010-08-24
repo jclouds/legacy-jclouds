@@ -23,6 +23,10 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.vcloud.domain.internal.VmImpl;
+
+import com.google.inject.ImplementedBy;
+
 /**
  * A Vm represents a virtual machine, a member of a vApp’s Children container. <h2>note</h2>
  * <p/>
@@ -31,6 +35,7 @@ import javax.annotation.Nullable;
  * 
  * @author Adrian Cole
  */
+@ImplementedBy(VmImpl.class)
 public interface Vm extends ReferenceType {
    /**
     * Reference to the {@link VApp} or {@link VAppTemplate} containing this vm.

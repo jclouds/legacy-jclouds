@@ -108,8 +108,8 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((status == null) ? 0 : status.hashCode());
       result = prime * result + ((tasks == null) ? 0 : tasks.hashCode());
-      result = prime * result + ((vAppScopedLocalId == null) ? 0 : vAppScopedLocalId.hashCode());
       result = prime * result + ((vApp == null) ? 0 : vApp.hashCode());
+      result = prime * result + ((vAppScopedLocalId == null) ? 0 : vAppScopedLocalId.hashCode());
       return result;
    }
 
@@ -127,33 +127,24 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
             return false;
       } else if (!description.equals(other.description))
          return false;
-      if (status == null) {
-         if (other.status != null)
+      if (vApp == null) {
+         if (other.vApp != null)
             return false;
-      } else if (!status.equals(other.status))
-         return false;
-      if (tasks == null) {
-         if (other.tasks != null)
-            return false;
-      } else if (!tasks.equals(other.tasks))
+      } else if (!vApp.equals(other.vApp))
          return false;
       if (vAppScopedLocalId == null) {
          if (other.vAppScopedLocalId != null)
             return false;
       } else if (!vAppScopedLocalId.equals(other.vAppScopedLocalId))
          return false;
-      if (vApp == null) {
-         if (other.vApp != null)
-            return false;
-      } else if (!vApp.equals(other.vApp))
-         return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "[id=" + getHref() + ", name=" + getName() + ", vApp=" + vApp + ", description=" + description + ", status="
-               + status + "]";
+      return "[href=" + getHref() + ", name=" + getName() + ", type=" + getType() + ", description=" + description
+               + ", status=" + status + ", tasks=" + tasks + ", vApp=" + vApp + ", vAppScopedLocalId="
+               + vAppScopedLocalId + "]";
    }
 
 }

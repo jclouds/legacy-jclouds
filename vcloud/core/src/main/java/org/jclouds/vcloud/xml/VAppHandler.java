@@ -76,7 +76,7 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
       if (qName.equals("Children")) {
          inChildren = true;
-      } else if (qName.equals("Tasks")) {
+      } else if (!inChildren && qName.equals("Tasks")) {
          inTasks = true;
       }
       if (inChildren) {
@@ -88,7 +88,7 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
          String status = Utils.attrOrNull(attributes, "status");
          if (status != null)
             this.status = Status.fromValue(Integer.parseInt(status));
-      } else if (qName.equals("Link") && "up".equals(Utils.attrOrNull(attributes, "rel")) && !inChildren) {
+      } else if (qName.equals("Link") && "up".equals(Utils.attrOrNull(attributes, "rel"))) {
          vdc = newNamedResource(attributes);
       }
 
@@ -97,7 +97,7 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
    public void endElement(String uri, String name, String qName) {
       if (qName.equals("Children")) {
          inChildren = false;
-      } else if (qName.equals("Tasks")) {
+      } else if (!inChildren && qName.equals("Tasks")) {
          inTasks = false;
       }
       if (inChildren) {
@@ -120,6 +120,7 @@ public class VAppHandler extends ParseSax.HandlerWithResult<VApp> {
 
    public void characters(char ch[], int start, int length) {
       currentText.append(ch, start, length);
+      vmHandler.characters(ch, start, length);
    }
 
    protected String currentOrNull() {

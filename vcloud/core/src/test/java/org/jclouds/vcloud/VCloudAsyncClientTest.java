@@ -49,14 +49,14 @@ import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
-import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.internal.CatalogImpl;
 import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
-import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.internal.OrgImpl;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.options.CloneVAppOptions;
@@ -70,6 +70,7 @@ import org.jclouds.vcloud.xml.TasksListHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
 import org.jclouds.vcloud.xml.VAppTemplateHandler;
 import org.jclouds.vcloud.xml.VDCHandler;
+import org.jclouds.vcloud.xml.VmHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -475,6 +476,22 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, VAppHandler.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
+   public void testGetVm() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("getVm", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vm/1"));
+
+      assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/vm/1 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vm+xml\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, VmHandler.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(request);

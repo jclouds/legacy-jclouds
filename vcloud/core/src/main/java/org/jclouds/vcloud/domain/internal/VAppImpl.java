@@ -140,16 +140,6 @@ public class VAppImpl extends ReferenceTypeImpl implements VApp {
          return false;
       if (ovfDescriptorUploaded != other.ovfDescriptorUploaded)
          return false;
-      if (status == null) {
-         if (other.status != null)
-            return false;
-      } else if (!status.equals(other.status))
-         return false;
-      if (tasks == null) {
-         if (other.tasks != null)
-            return false;
-      } else if (!tasks.equals(other.tasks))
-         return false;
       if (vdc == null) {
          if (other.vdc != null)
             return false;

@@ -29,6 +29,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
@@ -68,6 +69,8 @@ public interface VCloudClient extends CommonVCloudClient {
    VApp findVAppInOrgVDCNamed(@Nullable String orgName, @Nullable String catalogName, String vAppName);
 
    VApp getVApp(URI vApp);
+
+   Vm getVm(URI vm);
 
    /**
     * To deploy a vApp, the client makes a request to its action/deploy URL. Deploying a vApp

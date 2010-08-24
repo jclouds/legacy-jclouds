@@ -70,7 +70,7 @@ public class VAppHandlerTest {
                .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vapp-607806320")));
       assertEquals(vm.getDescription(), null);
       assertEquals(vm.getTasks(), ImmutableList.of());
-      assertEquals(vm.getVAppScopedLocalId(), null);
+      assertEquals(vm.getVAppScopedLocalId(), "10_rhel_template");
    }
 
 }

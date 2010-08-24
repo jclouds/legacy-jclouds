@@ -24,6 +24,7 @@ import static org.jclouds.vcloud.VCloudMediaType.TASK_XML;
 import static org.jclouds.vcloud.VCloudMediaType.UNDEPLOYVAPPPARAMS_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPPTEMPLATE_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
+import static org.jclouds.vcloud.VCloudMediaType.VM_XML;
 
 import java.net.URI;
 
@@ -51,6 +52,7 @@ import org.jclouds.vcloud.binders.BindUndeployVAppParamsToXmlPayload;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.OrgNameCatalogNameVAppTemplateNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
@@ -59,6 +61,7 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.VAppHandler;
 import org.jclouds.vcloud.xml.VAppTemplateHandler;
+import org.jclouds.vcloud.xml.VmHandler;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -141,6 +144,15 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
    @XMLResponseParser(VAppHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends VApp> getVApp(@EndpointParam URI vApp);
+
+   /**
+    * @see VCloudClient#getVm
+    */
+   @GET
+   @Consumes(VM_XML)
+   @XMLResponseParser(VmHandler.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<? extends Vm> getVm(@EndpointParam URI vm);
 
    /**
     * @see VCloudClient#deployVAppOrVm

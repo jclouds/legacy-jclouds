@@ -58,29 +58,38 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
    protected List<Task> tasks = Lists.newArrayList();
    protected String vAppScopedLocalId;
 
+   private boolean inTasks;
+
    public Vm getResult() {
       return new VmImpl(vm.getName(), vm.getType(), vm.getHref(), status, vdc, description, tasks, vAppScopedLocalId);
    }
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-      if (qName.equals("Vm")) {
+      if (qName.equals("Tasks")) {
+         inTasks = true;
+      }
+      if (inTasks) {
+         taskHandler.startElement(uri, localName, qName, attributes);
+      } else if (qName.equals("Vm")) {
          vm = newNamedResource(attributes);
          String status = Utils.attrOrNull(attributes, "status");
          if (status != null)
             this.status = Status.fromValue(Integer.parseInt(status));
       } else if (qName.equals("Link") && "up".equals(Utils.attrOrNull(attributes, "rel"))) {
          vdc = newNamedResource(attributes);
-      } else {
-         taskHandler.startElement(uri, localName, qName, attributes);
       }
-
    }
 
    public void endElement(String uri, String name, String qName) {
-      taskHandler.endElement(uri, name, qName);
-      if (qName.equals("Task")) {
-         this.tasks.add(taskHandler.getResult());
+      if (qName.equals("Tasks")) {
+         inTasks = false;
+      }
+      if (inTasks) {
+         taskHandler.endElement(uri, name, qName);
+         if (qName.equals("Task")) {
+            this.tasks.add(taskHandler.getResult());
+         }
       } else if (qName.equals("Description")) {
          description = currentOrNull();
       } else if (qName.equals("VAppScopedLocalId")) {

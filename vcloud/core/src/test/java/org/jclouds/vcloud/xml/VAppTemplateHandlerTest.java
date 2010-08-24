@@ -72,7 +72,7 @@ public class VAppTemplateHandlerTest {
                .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921")));
       assertEquals(vm.getDescription(), null);
       assertEquals(vm.getTasks(), ImmutableList.of());
-      assertEquals(vm.getVAppScopedLocalId(), null);
+      assertEquals(vm.getVAppScopedLocalId(), "02_ubuntu_template");
    }
 
 }

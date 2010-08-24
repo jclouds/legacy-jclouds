@@ -20,15 +20,17 @@
 package org.jclouds.vcloud;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.domain.Vm;
 import org.testng.annotations.Test;
 
 /**
@@ -83,7 +85,6 @@ public class VCloudClientLiveTest extends CommonVCloudClientLiveTest<VCloudClien
       }
    }
 
-   
    @Test
    public void testGetVm() throws Exception {
       Org org = connection.findOrgNamed(null);
@@ -94,6 +95,9 @@ public class VCloudClientLiveTest extends CommonVCloudClientLiveTest<VCloudClien
                try {
                   VApp app = connection.getVApp(item.getHref());
                   assertNotNull(app);
+                  for (Vm vm : app.getChildren()) {
+                     assertEquals(connection.getVm(vm.getHref()), vm);
+                  }
                } catch (RuntimeException e) {
 
                }
