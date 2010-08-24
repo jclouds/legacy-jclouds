@@ -119,6 +119,7 @@ import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.Headers;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapPayloadParam;
+import org.jclouds.rest.annotations.MapPayloadParams;
 import org.jclouds.rest.annotations.MatrixParams;
 import org.jclouds.rest.annotations.OverrideRequestFilters;
 import org.jclouds.rest.annotations.ParamParser;
@@ -534,25 +535,27 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertEquals(request.getMethod(), "POST");
    }
 
-   public class TestPost {
+   public interface TestPost {
       @POST
-      public void post(@Nullable @BinderParam(BindToStringPayload.class) String content) {
-      }
+      void post(@Nullable @BinderParam(BindToStringPayload.class) String content);
 
       @POST
-      public void postAsJson(@BinderParam(BindToJsonPayload.class) String content) {
-      }
+      public void postAsJson(@BinderParam(BindToJsonPayload.class) String content);
 
       @POST
       @Path("{foo}")
-      public void postWithPath(@PathParam("foo") @MapPayloadParam("fooble") String path, MapBinder content) {
-      }
+      public void postWithPath(@PathParam("foo") @MapPayloadParam("fooble") String path, MapBinder content);
 
       @POST
       @Path("{foo}")
       @MapBinder(BindToJsonPayload.class)
-      public void postWithMethodBinder(@PathParam("foo") @MapPayloadParam("fooble") String path) {
-      }
+      public void postWithMethodBinder(@PathParam("foo") @MapPayloadParam("fooble") String path);
+
+      @POST
+      @Path("{foo}")
+      @MapPayloadParams(keys = "rat", values = "atat")
+      @MapBinder(BindToJsonPayload.class)
+      public void postWithMethodBinderAndDefaults(@PathParam("foo") @MapPayloadParam("fooble") String path);
    }
 
    public void testCreatePostRequest() throws SecurityException, NoSuchMethodException, IOException {
@@ -604,6 +607,15 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertRequestLineEquals(request, "POST http://localhost:9999/data HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
       assertPayloadEquals(request, "{\"fooble\":\"data\"}", "application/json", false);
+   }
+
+   public void testCreatePostWithMethodBinderAndDefaults() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPost.class.getMethod("postWithMethodBinderAndDefaults", String.class);
+      HttpRequest request = factory(TestPost.class).createRequest(method, "data");
+
+      assertRequestLineEquals(request, "POST http://localhost:9999/data HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, "{\"fooble\":\"data\",\"rat\":\"atat\"}", "application/json", false);
    }
 
    static interface TestMultipartForm {
