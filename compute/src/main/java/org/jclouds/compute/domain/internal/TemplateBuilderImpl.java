@@ -139,6 +139,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                      && location.getParent().equals(input.getLocation());
          return returnVal;
       }
+
+      @Override
+      public String toString() {
+         return "location(" + location + ")";
+      }
    };
 
    private final Predicate<Image> idPredicate = new Predicate<Image>() {
@@ -153,6 +158,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             }
          }
          return returnVal;
+      }
+
+      @Override
+      public String toString() {
+         return "imageId(" + imageId + ")";
       }
    };
 
@@ -180,6 +190,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          }
          return returnVal;
       }
+
+      @Override
+      public String toString() {
+         return "osName(" + osName + ")";
+      }
    };
 
    private final Predicate<OperatingSystem> osDescriptionPredicate = new Predicate<OperatingSystem>() {
@@ -195,6 +210,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          }
          return returnVal;
       }
+
+      @Override
+      public String toString() {
+         return "osDescription(" + osDescription + ")";
+      }
    };
 
    private final Predicate<OperatingSystem> osVersionPredicate = new Predicate<OperatingSystem>() {
@@ -208,6 +228,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                returnVal = input.getVersion().contains(osVersion) || input.getVersion().matches(osVersion);
          }
          return returnVal;
+      }
+
+      @Override
+      public String toString() {
+         return "osVersion(" + osVersion + ")";
       }
    };
 
@@ -223,6 +248,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          }
          return returnVal;
       }
+
+      @Override
+      public String toString() {
+         return "os64Bit(" + os64Bit + ")";
+      }
    };
 
    private final Predicate<OperatingSystem> osArchPredicate = new Predicate<OperatingSystem>() {
@@ -236,6 +266,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                returnVal = input.getArch().contains(osArch) || input.getArch().matches(osArch);
          }
          return returnVal;
+      }
+
+      @Override
+      public String toString() {
+         return "osArch(" + osArch + ")";
       }
    };
 
@@ -251,6 +286,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          }
          return returnVal;
       }
+
+      @Override
+      public String toString() {
+         return "imageVersion(" + imageVersion + ")";
+      }
    };
 
    private final Predicate<Image> imageNamePredicate = new Predicate<Image>() {
@@ -264,6 +304,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                returnVal = input.getName().contains(imageName) || input.getName().matches(imageName);
          }
          return returnVal;
+      }
+
+      @Override
+      public String toString() {
+         return "imageName(" + imageName + ")";
       }
    };
    private final Predicate<Image> imageDescriptionPredicate = new Predicate<Image>() {
@@ -280,6 +325,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          }
          return returnVal;
       }
+
+      @Override
+      public String toString() {
+         return "imageDescription(" + imageDescription + ")";
+      }
    };
    private final Predicate<Size> sizeIdPredicate = new Predicate<Size>() {
       @Override
@@ -294,6 +344,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          }
          return returnVal;
       }
+
+      @Override
+      public String toString() {
+         return "sizeId(" + sizeId + ")";
+      }
    };
 
    private final Predicate<Size> sizeCoresPredicate = new Predicate<Size>() {
@@ -301,12 +356,22 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       public boolean apply(Size input) {
          return input.getCores() >= TemplateBuilderImpl.this.minCores;
       }
+
+      @Override
+      public String toString() {
+         return "minCores(" + minCores + ")";
+      }
    };
 
    private final Predicate<Size> sizeRamPredicate = new Predicate<Size>() {
       @Override
       public boolean apply(Size input) {
          return input.getRam() >= TemplateBuilderImpl.this.minRam;
+      }
+
+      @Override
+      public String toString() {
+         return "minRam(" + minRam + ")";
       }
    };
    private final Predicate<Size> sizePredicate = and(sizeIdPredicate, locationPredicate, sizeCoresPredicate,
@@ -426,6 +491,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             return input.getId().equals(locationId);
          }
 
+         @Override
+         public String toString() {
+            return "locationId(" + locationId + ")";
+         }
+
       });
       return this;
    }
@@ -456,7 +526,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          options = optionsProvider.get();
       logger.debug(">> searching params(%s)", this);
       Set<? extends Image> images = getImages();
+      Predicate<Image> imagePredicate = buildImagePredicate();
       Iterable<? extends Image> supportedImages = filter(images, buildImagePredicate());
+      if (Iterables.size(supportedImages) == 0)
+         throw new NoSuchElementException(String.format(
+                  "no image matched predicate %s images that didn't match below:\n%s", imagePredicate, images));
       Size size = resolveSize(sizeSorter(), supportedImages);
       Image image = resolveImage(size, supportedImages);
       logger.debug("<<   matched image(%s)", image);
@@ -476,6 +550,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                   @Override
                   public boolean apply(Image input) {
                      return size.supportsImage(input);
+                  }
+
+                  @Override
+                  public String toString() {
+                     return "size(" + size + ").supportsImage()";
                   }
 
                });
@@ -515,6 +594,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             return size.supportsImage(arg0);
          }
 
+         @Override
+         public String toString() {
+            return "size(" + size + ").supportsImage()";
+         }
       };
       try {
          Iterable<? extends Image> matchingImages = filter(supportedImages, imagePredicate);
@@ -546,6 +629,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                   return locationPredicate.apply(input);
                }
 
+               @Override
+               public String toString() {
+                  return locationPredicate.toString();
+               }
             });
 
          final List<Predicate<OperatingSystem>> osPredicates = newArrayList();
@@ -566,6 +653,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             @Override
             public boolean apply(Image input) {
                return Predicates.and(osPredicates).apply(input.getOperatingSystem());
+            }
+
+            @Override
+            public String toString() {
+               return Predicates.and(osPredicates).toString();
             }
 
          });
