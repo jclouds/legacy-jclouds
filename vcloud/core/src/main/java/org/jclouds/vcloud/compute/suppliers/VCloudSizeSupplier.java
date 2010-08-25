@@ -1,0 +1,92 @@
+/**
+ *
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *
+ * ====================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ====================================================================
+ */
+
+package org.jclouds.vcloud.compute.suppliers;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Sets.newLinkedHashSet;
+import static org.jclouds.concurrent.FutureIterables.transformParallel;
+
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.jclouds.Constants;
+import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.logging.Logger;
+import org.jclouds.vcloud.domain.Org;
+
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+
+/**
+ * @author Adrian Cole
+ */
+@Singleton
+public class VCloudSizeSupplier implements Supplier<Set<? extends Size>> {
+
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   public Logger logger = Logger.NULL;
+
+   private final Supplier<Map<String, ? extends Org>> orgMap;
+   private final Function<Org, Iterable<? extends Size>> sizesInOrg;
+   private final ExecutorService executor;
+
+   @Inject
+   VCloudSizeSupplier(Supplier<Map<String, ? extends Org>> orgMap,
+            Function<Org, Iterable<? extends Size>> sizesInOrg,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+      this.orgMap = checkNotNull(orgMap, "orgMap");
+      this.sizesInOrg = checkNotNull(sizesInOrg, "sizesInOrg");
+      this.executor = checkNotNull(executor, "executor");
+   }
+
+   @Override
+   public Set<? extends Size> get() {
+      Iterable<? extends Org> orgs = checkNotNull(orgMap.get().values(), "orgs");
+      Iterable<Iterable<? extends Size>> sizes = transformParallel(orgs,
+               new Function<Org, Future<Iterable<? extends Size>>>() {
+
+                  @Override
+                  public Future<Iterable<? extends Size>> apply(final Org from) {
+                     checkNotNull(from, "org");
+                     return executor.submit(new Callable<Iterable<? extends Size>>() {
+
+                        @Override
+                        public Iterable<? extends Size> call() throws Exception {
+                           return sizesInOrg.apply(from);
+                        }
+
+                     });
+                  }
+
+               }, executor, null, logger, "sizes in " + orgs);
+      return newLinkedHashSet(concat(sizes));
+   }
+}

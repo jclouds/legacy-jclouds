@@ -19,10 +19,13 @@
 
 package org.jclouds.vcloud.compute.config;
 
+import java.util.Set;
+
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
@@ -34,14 +37,18 @@ import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.CommonVCloudComputeClient;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.compute.functions.ImagesInOrg;
+import org.jclouds.vcloud.compute.functions.SizesInOrg;
 import org.jclouds.vcloud.compute.internal.VCloudComputeClientImpl;
 import org.jclouds.vcloud.compute.strategy.VCloudAddNodeWithTagStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudGetNodeMetadataStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
+import org.jclouds.vcloud.compute.suppliers.VCloudSizeSupplier;
 import org.jclouds.vcloud.domain.Org;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
@@ -68,6 +75,9 @@ public class VCloudComputeServiceContextModule extends CommonVCloudComputeServic
       bind(new TypeLiteral<Function<Org, Iterable<? extends Image>>>() {
       }).to(new TypeLiteral<ImagesInOrg>() {
       });
+      bind(new TypeLiteral<Function<Org, Iterable<? extends Size>>>() {
+      }).to(new TypeLiteral<SizesInOrg>() {
+      });
       bind(AddNodeWithTagStrategy.class).to(VCloudAddNodeWithTagStrategy.class);
       bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
    }
@@ -77,4 +87,10 @@ public class VCloudComputeServiceContextModule extends CommonVCloudComputeServic
    CommonVCloudComputeClient provideCommonVCloudComputeClient(VCloudComputeClient in) {
       return in;
    }
+
+   @Override
+   protected Supplier<Set<? extends Size>> getSourceSizeSupplier(Injector injector) {
+      return injector.getInstance(VCloudSizeSupplier.class);
+   }
+
 }

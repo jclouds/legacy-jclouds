@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "vcloud.VirtualSystemHandlerTest")
-public class VirtualSystemHandlerTest extends BaseHandlerTest {
+public class SystemHandlerTest extends BaseHandlerTest {
 
    @BeforeTest
    @Override
