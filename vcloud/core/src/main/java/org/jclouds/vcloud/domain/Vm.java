@@ -24,6 +24,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import org.jclouds.vcloud.domain.internal.VmImpl;
+import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystem;
 
 import com.google.inject.ImplementedBy;
 
@@ -74,7 +75,7 @@ public interface Vm extends ReferenceType {
     * @since vcloud api 1.0
     */
    @Nullable
-   VirtualHardware getHardware();
+   VCloudVirtualHardware getHardware();
    
    /**
     * @return operating system on this VM, or null, if part of a vApp template
@@ -82,7 +83,7 @@ public interface Vm extends ReferenceType {
     * @since vcloud api 1.0
     */
    @Nullable
-   OperatingSystem getOperatingSystem();
+   VCloudOperatingSystem getOperatingSystem();
 
    /**
     * read-only identifier created on import

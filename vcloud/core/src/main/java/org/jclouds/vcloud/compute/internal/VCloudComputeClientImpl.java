@@ -33,15 +33,15 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
-import org.jclouds.vcloud.domain.ResourceAllocation;
-import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
-import org.jclouds.vcloud.domain.VCloudNetworkAdapter;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.Vm;
+import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
+import org.jclouds.vcloud.domain.ovf.ResourceType;
+import org.jclouds.vcloud.domain.ovf.VCloudNetworkAdapter;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.base.Predicate;

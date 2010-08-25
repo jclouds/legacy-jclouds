@@ -31,12 +31,12 @@ import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
-import org.jclouds.vcloud.domain.ResourceAllocation;
-import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.VCloudHardDisk;
-import org.jclouds.vcloud.domain.VCloudNetworkAdapter;
 import org.jclouds.vcloud.domain.Vm;
+import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
+import org.jclouds.vcloud.domain.ovf.ResourceType;
+import org.jclouds.vcloud.domain.ovf.VCloudHardDisk;
+import org.jclouds.vcloud.domain.ovf.VCloudNetworkAdapter;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;

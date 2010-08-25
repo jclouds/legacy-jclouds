@@ -30,6 +30,7 @@ import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.Vm;
+import org.jclouds.vcloud.domain.ovf.OvfEnvelope;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
@@ -48,6 +49,8 @@ public interface VCloudClient extends CommonVCloudClient {
    Task cloneVAppInVDC(URI vDC, URI toClone, String newName, CloneVAppOptions... options);
 
    VAppTemplate getVAppTemplate(URI vAppTemplate);
+
+   OvfEnvelope getOvfEnvelopeForVAppTemplate(URI vAppTemplate);
 
    /**
     * returns the vapp template corresponding to a catalog item in the catalog associated with the

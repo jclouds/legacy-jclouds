@@ -39,7 +39,7 @@ import javax.xml.transform.TransformerException;
 
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.vcloud.binders.BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload;
-import org.jclouds.vcloud.domain.ResourceType;
+import org.jclouds.vcloud.domain.ovf.ResourceType;
 
 import com.jamesmurty.utils.XMLBuilder;
 

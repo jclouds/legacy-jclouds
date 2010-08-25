@@ -68,6 +68,26 @@ public class VCloudClientLiveTest extends CommonVCloudClientLiveTest<VCloudClien
    }
 
    @Test
+   public void testGetOvfEnvelopeForVAppTemplate() throws Exception {
+      Org org = connection.findOrgNamed(null);
+      for (ReferenceType cat : org.getCatalogs().values()) {
+         Catalog response = connection.getCatalog(cat.getHref());
+         for (ReferenceType resource : response.values()) {
+            if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
+               CatalogItem item = connection.getCatalogItem(resource.getHref());
+               if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
+                  try {
+                     assertNotNull(connection.getOvfEnvelopeForVAppTemplate(item.getEntity().getHref()));
+                  } catch (AuthorizationException e) {
+
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   @Test
    public void testGetVApp() throws Exception {
       Org org = connection.findOrgNamed(null);
       for (ReferenceType vdc : org.getVDCs().values()) {

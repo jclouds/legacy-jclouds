@@ -32,9 +32,9 @@ import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
-import org.jclouds.vcloud.domain.ResourceAllocation;
-import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
+import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
+import org.jclouds.vcloud.domain.ovf.ResourceType;
 
 import com.google.common.base.Function;
 

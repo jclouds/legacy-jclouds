@@ -17,31 +17,35 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.xml;
+package org.jclouds.vcloud.xml.ovf;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.domain.VirtualSystem;
+import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
+import org.jclouds.vcloud.domain.ovf.ResourceType;
+import org.jclouds.vcloud.xml.ovf.ResourceAllocationHandler;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code VirtualSystemHandler}
+ * Tests behavior of {@code ResourceAllocationHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VirtualSystemHandlerTest")
-public class VirtualSystemHandlerTest extends BaseHandlerTest {
+@Test(groups = "unit", testName = "vcloud.ResourceAllocationHandlerTest")
+public class ResourceAllocationHandlerTest extends BaseHandlerTest {
 
    public void testApplyInputStream() {
-      InputStream is = getClass().getResourceAsStream("/virtualsystem-hosting.xml");
+      InputStream is = getClass().getResourceAsStream("/resourceallocation-hosting.xml");
 
-      VirtualSystem result = factory.create(injector.getInstance(VirtualSystemHandler.class))
-               .parse(is);
+      ResourceAllocation result = factory.create(
+               injector.getInstance(ResourceAllocationHandler.class)).parse(is);
 
-      VirtualSystem expects = new VirtualSystem(0, "Virtual Hardware Family", "SimpleVM", "vmx-04");
+      ResourceAllocation expects = new ResourceAllocation(1, "1 virtual CPU(s)",
+               "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null,
+               null, 1, "hertz * 10^6");
       assertEquals(result, expects);
 
    }

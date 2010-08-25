@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.xml;
+package org.jclouds.vcloud.xml.ovf;
 
 import static org.testng.Assert.assertEquals;
 
@@ -26,37 +26,38 @@ import java.net.URI;
 import java.net.UnknownHostException;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.domain.OperatingSystem;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
+import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystem;
+import org.jclouds.vcloud.xml.ovf.VCloudOperatingSystemHandler;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code OperatingSystemHandler}
+ * Tests behavior of {@code VCloudOperatingSystemHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.OperatingSystemHandlerTest")
-public class OperatingSystemHandlerTest extends BaseHandlerTest {
+@Test(groups = "unit", testName = "vcloud.VCloudOperatingSystemHandlerTest")
+public class VCloudOperatingSystemHandlerTest extends BaseHandlerTest {
 
    public void testDefault() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/os.xml");
 
-      OperatingSystem result = factory.create(injector.getInstance(OperatingSystemHandler.class)).parse(is);
+      VCloudOperatingSystem result = factory.create(injector.getInstance(VCloudOperatingSystemHandler.class)).parse(is);
 
       checkOs(result);
 
    }
 
-   static void checkOs(OperatingSystem result) {
+   @Test(enabled = false)
+   public static void checkOs(VCloudOperatingSystem result) {
       assertEquals(result.getHref(), URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/operatingSystemSection"));
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/operatingSystemSection/"));
       assertEquals(result.getDescription(), "Red Hat Enterprise Linux 5 (64-bit)");
       assertEquals(result.getEdit(), new ReferenceTypeImpl(null,
                "application/vnd.vmware.vcloud.operatingSystemSection+xml",
                URI.create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/operatingSystemSection/")));
       assertEquals(result.getId(), new Integer(80));
       assertEquals(result.getVmwOsType(), "rhel5_64Guest");
-      assertEquals(result.getName(), null);
       assertEquals(result.getType(), "application/vnd.vmware.vcloud.operatingSystemSection+xml");
       assertEquals(result.getInfo(), "Specifies the operating system installed");
    }

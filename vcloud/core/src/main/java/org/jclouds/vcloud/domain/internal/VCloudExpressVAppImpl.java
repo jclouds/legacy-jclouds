@@ -26,10 +26,10 @@ import java.util.Set;
 
 import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.ReferenceType;
-import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
-import org.jclouds.vcloud.domain.VirtualSystem;
+import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
+import org.jclouds.vcloud.domain.ovf.System;
 
 import com.google.common.collect.ListMultimap;
 
@@ -46,7 +46,7 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
    private final Long size;
    private final ListMultimap<String, String> networkToAddresses;
    private final String operatingSystemDescription;
-   private final VirtualSystem system;
+   private final System system;
    private final Set<ResourceAllocation> resourceAllocations;
    private final Integer osType;
 
@@ -55,7 +55,7 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
 
    public VCloudExpressVAppImpl(String name, URI href, Status status, Long size, ReferenceType vDC,
             ListMultimap<String, String> networkToAddresses, Integer osType, String operatingSystemDescription,
-            VirtualSystem system, Set<ResourceAllocation> resourceAllocations) {
+            System system, Set<ResourceAllocation> resourceAllocations) {
       this.name = checkNotNull(name, "name");
       this.href = checkNotNull(href, "href");
       this.status = checkNotNull(status, "status");
@@ -89,7 +89,7 @@ public class VCloudExpressVAppImpl implements VCloudExpressVApp {
    }
 
    @Override
-   public VirtualSystem getSystem() {
+   public System getSystem() {
       return system;
    }
 

@@ -17,46 +17,47 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.domain;
+package org.jclouds.vcloud.domain.ovf;
 
 /**
  * @author Adrian Cole
  * 
  */
-public class VCloudHardDisk extends ResourceAllocation {
-   private final long capacity;
-   private final int busType;
-   private final String busSubType;
+public class VCloudNetworkAdapter extends ResourceAllocation {
+   private final String ipAddress;
+   private final boolean primaryNetworkConnection;
+   private final String ipAddressingMode;
 
-   public VCloudHardDisk(int id, String name, String description, ResourceType type, String subType,
+   public VCloudNetworkAdapter(int id, String name, String description, ResourceType type, String subType,
             String hostResource, String address, Integer addressOnParent, Integer parent, Boolean connected,
-            long virtualQuantity, String virtualQuantityUnits, long capacity, int busType, String busSubType) {
+            long virtualQuantity, String virtualQuantityUnits, String ipAddress, boolean primaryNetworkConnection,
+            String ipAddressingMode) {
       super(id, name, description, type, subType, hostResource, address, addressOnParent, parent, connected,
                virtualQuantity, virtualQuantityUnits);
-      this.capacity = capacity;
-      this.busType = busType;
-      this.busSubType = busSubType;
+      this.ipAddress = ipAddress;
+      this.primaryNetworkConnection = primaryNetworkConnection;
+      this.ipAddressingMode = ipAddressingMode;
    }
 
-   public long getCapacity() {
-      return capacity;
+   public String getIpAddress() {
+      return ipAddress;
    }
 
-   public int getBusType() {
-      return busType;
+   public boolean isPrimaryNetworkConnection() {
+      return primaryNetworkConnection;
    }
 
-   public String getBusSubType() {
-      return busSubType;
+   public String getIpAddressingMode() {
+      return ipAddressingMode;
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((busSubType == null) ? 0 : busSubType.hashCode());
-      result = prime * result + busType;
-      result = prime * result + (int) (capacity ^ (capacity >>> 32));
+      result = prime * result + ((ipAddress == null) ? 0 : ipAddress.hashCode());
+      result = prime * result + ((ipAddressingMode == null) ? 0 : ipAddressingMode.hashCode());
+      result = prime * result + (primaryNetworkConnection ? 1231 : 1237);
       return result;
    }
 
@@ -68,15 +69,18 @@ public class VCloudHardDisk extends ResourceAllocation {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      VCloudHardDisk other = (VCloudHardDisk) obj;
-      if (busSubType == null) {
-         if (other.busSubType != null)
+      VCloudNetworkAdapter other = (VCloudNetworkAdapter) obj;
+      if (ipAddress == null) {
+         if (other.ipAddress != null)
             return false;
-      } else if (!busSubType.equals(other.busSubType))
+      } else if (!ipAddress.equals(other.ipAddress))
          return false;
-      if (busType != other.busType)
+      if (ipAddressingMode == null) {
+         if (other.ipAddressingMode != null)
+            return false;
+      } else if (!ipAddressingMode.equals(other.ipAddressingMode))
          return false;
-      if (capacity != other.capacity)
+      if (primaryNetworkConnection != other.primaryNetworkConnection)
          return false;
       return true;
    }
@@ -84,8 +88,8 @@ public class VCloudHardDisk extends ResourceAllocation {
    @Override
    public String toString() {
       return "[id=" + getId() + ", name=" + getName() + ", description=" + getDescription() + ", type=" + getType()
-               + ", virtualQuantity=" + getVirtualQuantity() + ", virtualQuantityUnits=" + getVirtualQuantityUnits()
-               + ", capacity=" + capacity + ", busType=" + busType + ", busSubType=" + busSubType + "]";
+               + ", address=" + getAddress() + ", ipAddress=" + ipAddress + ", ipAddressingMode=" + ipAddressingMode
+               + ", primaryNetworkConnection=" + primaryNetworkConnection + "]";
    }
 
 }

@@ -31,6 +31,7 @@ import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
+import org.jclouds.vcloud.xml.ovf.VCloudOperatingSystemHandlerTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -62,8 +63,8 @@ public class VmHandlerTest {
       assertEquals(result.getDescription(), null);
       assertEquals(result.getTasks(), ImmutableList.of());
       assertEquals(result.getVAppScopedLocalId(), "10_rhel_template");
-      VirtualHardwareHandlerTest.checkHardware(result.getHardware());
-      OperatingSystemHandlerTest.checkOs(result.getOperatingSystem());
+      VCloudVirtualHardwareHandlerTest.checkHardware(result.getHardware());
+      VCloudOperatingSystemHandlerTest.checkOs(result.getOperatingSystem());
    }
 
 }

@@ -31,13 +31,13 @@ import org.jclouds.Constants;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.vcloud.domain.ResourceAllocation;
-import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
-import org.jclouds.vcloud.domain.VirtualSystem;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.internal.VCloudExpressVAppImpl;
+import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
+import org.jclouds.vcloud.domain.ovf.ResourceType;
+import org.jclouds.vcloud.domain.ovf.System;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -90,7 +90,7 @@ public class VCloudExpressVAppHandlerTest extends BaseHandlerTest {
 
       ListMultimap<String, String> networkToAddresses = ImmutableListMultimap.<String, String> of("Public Network",
                "10.150.4.93");
-      VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family", "centos53", "vmx-07");
+      System system = new System(0, "Virtual Hardware Family", "centos53", "vmx-07");
 
       Set<ResourceAllocation> resourceAllocations = ImmutableSet.<ResourceAllocation> of(new ResourceAllocation(1,
                "1 virtual CPU(s)", "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null,
@@ -125,7 +125,7 @@ public class VCloudExpressVAppHandlerTest extends BaseHandlerTest {
 
       ListMultimap<String, String> networkToAddresses = ImmutableListMultimap.<String, String> of("Public Network",
                "10.23.119.221");
-      VirtualSystem system = new VirtualSystem(0, "Virtual Hardware Family", "m1", "vmx-07");
+      System system = new System(0, "Virtual Hardware Family", "m1", "vmx-07");
 
       Set<ResourceAllocation> resourceAllocations = ImmutableSet.<ResourceAllocation> of(new ResourceAllocation(1,
                "1 virtual CPU(s)", "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null,

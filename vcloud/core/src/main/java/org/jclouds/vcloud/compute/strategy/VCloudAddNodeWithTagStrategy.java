@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.compute.strategy;
 
+import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.toComputeOs;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 
 import java.net.URI;
@@ -29,10 +30,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
-import org.jclouds.compute.domain.os.CIMOperatingSystem;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.VCloudClient;
@@ -73,20 +72,12 @@ public class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
    }
 
    protected NodeMetadata newCreateNodeResponse(String tag, Template template, Map<String, String> metaMap, VApp vApp) {
-      return new NodeMetadataImpl(vApp.getHref().toASCIIString(), vApp.getName(), vApp.getHref().toASCIIString(), template
-               .getLocation(), vApp.getHref(), ImmutableMap.<String, String> of(), tag, template.getImage().getId(),
-               getOperatingSystemForVAppOrDefaultTo(vApp, template.getImage().getOperatingSystem()),
-               vAppStatusToNodeState.get(vApp.getStatus()), computeClient.getPublicAddresses(vApp.getHref()),
-               computeClient.getPrivateAddresses(vApp.getHref()), ImmutableMap.<String, String> of(), new Credentials(
+      return new NodeMetadataImpl(vApp.getHref().toASCIIString(), vApp.getName(), vApp.getHref().toASCIIString(),
+               template.getLocation(), vApp.getHref(), ImmutableMap.<String, String> of(), tag, template.getImage()
+                        .getId(), toComputeOs(vApp, template.getImage().getOperatingSystem()), vAppStatusToNodeState
+                        .get(vApp.getStatus()), computeClient.getPublicAddresses(vApp.getHref()), computeClient
+                        .getPrivateAddresses(vApp.getHref()), ImmutableMap.<String, String> of(), new Credentials(
                         metaMap.get("username"), metaMap.get("password")));
-   }
-
-   private OperatingSystem getOperatingSystemForVAppOrDefaultTo(VApp vApp, OperatingSystem operatingSystem) {
-      // TODO
-      return new CIMOperatingSystem(CIMOperatingSystem.OSType.UBUNTU_64, null, null, vApp.getDescription());
-      // return vApp.getOsType() != null ? new
-      // CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(vApp.getOsType()),
-      // null, null, vApp.getOperatingSystemDescription()) : operatingSystem;
    }
 
 }

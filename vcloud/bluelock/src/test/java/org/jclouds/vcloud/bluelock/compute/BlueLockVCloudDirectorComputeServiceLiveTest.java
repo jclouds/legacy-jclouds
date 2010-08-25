@@ -54,10 +54,10 @@ public class BlueLockVCloudDirectorComputeServiceLiveTest extends VCloudComputeS
    @Test
    public void testTemplateBuilder() {
       Template defaultTemplate = client.templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assert OperatingSystemPredicates.supportsApt().apply(defaultTemplate.getImage().getOperatingSystem());
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getDescription(), "Ubuntu Template");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getDescription(), "Ubuntu Linux (64-bit)");
       assert defaultTemplate.getLocation().getId() != null : defaultTemplate.getLocation();
       assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
    }
