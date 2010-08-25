@@ -669,7 +669,9 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             predicates.add(imageDescriptionPredicate);
       }
 
-      Predicate<Image> imagePredicate = predicates.size() == 1 ? Iterables.get(predicates, 0) : and(predicates);
+      // looks verbose, but explicit <Image> type needed for this to compile properly
+      Predicate<Image> imagePredicate = predicates.size() == 1 ? Iterables.<Predicate<Image>> get(predicates, 0)
+               : Predicates.<Image> and(predicates);
       return imagePredicate;
    }
 

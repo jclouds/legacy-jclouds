@@ -21,6 +21,7 @@ package org.jclouds.vcloud.functions;
 
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
+import static org.jclouds.util.Utils.propagateOrNull;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -32,7 +33,10 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.concurrent.ExceptionParsingListenableFuture;
+import org.jclouds.concurrent.Futures;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.vcloud.CommonVCloudAsyncClient;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudMediaType;
@@ -47,18 +51,32 @@ import com.google.common.base.Predicate;
  */
 @Singleton
 public class VAppTemplatesForCatalogItems implements
-      Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>> {
+         Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
    private final CommonVCloudAsyncClient aclient;
    private final ExecutorService executor;
+   private final ReturnNullOnAuthorizationException returnNullOnAuthorizationException;
+
+   @Singleton
+   static class ReturnNullOnAuthorizationException implements Function<Exception, VAppTemplate> {
+
+      public VAppTemplate apply(Exception from) {
+         if (from instanceof AuthorizationException) {
+            return null;
+         }
+         return propagateOrNull(from);
+      }
+   }
 
    @Inject
    VAppTemplatesForCatalogItems(CommonVCloudAsyncClient aclient,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+            ReturnNullOnAuthorizationException returnNullOnAuthorizationException) {
       this.aclient = aclient;
       this.executor = executor;
+      this.returnNullOnAuthorizationException = returnNullOnAuthorizationException;
    }
 
    @Override
@@ -75,8 +93,9 @@ public class VAppTemplatesForCatalogItems implements
          @SuppressWarnings("unchecked")
          @Override
          public Future<VAppTemplate> apply(CatalogItem from) {
-            return (Future<VAppTemplate>) VCloudAsyncClient.class.cast(aclient).getVAppTemplate(
-                  from.getEntity().getHref());
+            return new ExceptionParsingListenableFuture<VAppTemplate>(Futures.makeListenable(
+                     (Future<VAppTemplate>) VCloudAsyncClient.class.cast(aclient).getVAppTemplate(
+                              from.getEntity().getHref()), executor), returnNullOnAuthorizationException);
          }
 
       }, executor, null, logger, "vappTemplates in");

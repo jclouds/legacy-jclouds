@@ -36,14 +36,13 @@ import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
  * 
  */
 @Singleton
-public class DefaultLoginCredentialsFromBlueLockFAQ implements
-         PopulateDefaultLoginCredentialsForImageStrategy {
+public class DefaultLoginCredentialsFromBlueLockFAQ implements PopulateDefaultLoginCredentialsForImageStrategy {
 
    @Override
    public Credentials execute(Object resourceToAuthenticate) {
       checkNotNull(resourceToAuthenticate);
       checkArgument(resourceToAuthenticate instanceof VCloudExpressVAppTemplate,
-               "Resource must be an VAppTemplate (for Terremark)");
+               "Resource must be an VCloudExpressVAppTemplate (for Bluelock vCloud Express)");
       VCloudExpressVAppTemplate template = (VCloudExpressVAppTemplate) resourceToAuthenticate;
       if (template.getDescription().indexOf("Windows") >= 0) {
          return new Credentials("expressuser", "ExpressPassword#1");

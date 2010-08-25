@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.vcloud.domain.OperatingSystem;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
@@ -52,16 +53,18 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
    @Nullable
    private final VirtualHardware hardware;
    private final String vAppScopedLocalId;
+   private final OperatingSystem os;
 
    public VmImpl(String name, String type, URI id, @Nullable Status status, ReferenceType vApp,
             @Nullable String description, Iterable<Task> tasks, @Nullable VirtualHardware hardware,
-            @Nullable String vAppScopedLocalId) {
+            @Nullable OperatingSystem os, @Nullable String vAppScopedLocalId) {
       super(name, type, id);
       this.status = status;
       this.vApp = vApp;// TODO: once <1.0 is killed check not null
       this.description = description;
       Iterables.addAll(this.tasks, checkNotNull(tasks, "tasks"));
       this.hardware = hardware;
+      this.os = os;
       this.vAppScopedLocalId = vAppScopedLocalId;
    }
 
@@ -110,6 +113,14 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
     * {@inheritDoc}
     */
    @Override
+   public OperatingSystem getOperatingSystem() {
+      return os;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public String getVAppScopedLocalId() {
       return vAppScopedLocalId;
    }
@@ -120,6 +131,7 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
       int result = super.hashCode();
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((hardware == null) ? 0 : hardware.hashCode());
+      result = prime * result + ((os == null) ? 0 : os.hashCode());
       result = prime * result + ((status == null) ? 0 : status.hashCode());
       result = prime * result + ((tasks == null) ? 0 : tasks.hashCode());
       result = prime * result + ((vApp == null) ? 0 : vApp.hashCode());
@@ -145,6 +157,11 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
          if (other.hardware != null)
             return false;
       } else if (!hardware.equals(other.hardware))
+         return false;
+      if (os == null) {
+         if (other.os != null)
+            return false;
+      } else if (!os.equals(other.os))
          return false;
       if (status == null) {
          if (other.status != null)
@@ -172,7 +189,7 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
    @Override
    public String toString() {
       return "[href=" + getHref() + ", name=" + getName() + ", type=" + getType() + ", description=" + description
-               + ", status=" + status + ", tasks=" + tasks + ", vApp=" + vApp + ", hardware=" + hardware
+               + ", status=" + status + ", tasks=" + tasks + ", vApp=" + vApp + ", hardware=" + hardware + ", os=" + os
                + ", vAppScopedLocalId=" + vAppScopedLocalId + "]";
    }
 

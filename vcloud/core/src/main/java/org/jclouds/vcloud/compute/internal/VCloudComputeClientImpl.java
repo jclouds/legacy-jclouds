@@ -20,6 +20,8 @@
 package org.jclouds.vcloud.compute.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
+import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
 
 import java.net.URI;
 import java.util.Map;
@@ -31,16 +33,22 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.VCloudComputeClient;
+import org.jclouds.vcloud.domain.ResourceAllocation;
+import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VCloudNetworkAdapter;
 import org.jclouds.vcloud.domain.VDC;
+import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
+import com.google.inject.internal.util.Sets;
 
 /**
  * @author Adrian Cole
@@ -67,8 +75,8 @@ public class VCloudComputeClientImpl extends CommonVCloudComputeClientImpl<VAppT
       VDC vdc = client.getVDC(VDC);
       VAppTemplate template = VCloudClient.class.cast(client).getVAppTemplate(templateId);
 
-      VApp vAppResponse = VCloudClient.class.cast(client).instantiateVAppTemplateInVDC(vdc.getHref(), template.getHref(),
-               name, options);
+      VApp vAppResponse = VCloudClient.class.cast(client).instantiateVAppTemplateInVDC(vdc.getHref(),
+               template.getHref(), name, options);
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getName());
 
       logger.debug(">> deploying vApp(%s)", vAppResponse.getName());
@@ -91,10 +99,18 @@ public class VCloudComputeClientImpl extends CommonVCloudComputeClientImpl<VAppT
 
    @Override
    public Set<String> getPublicAddresses(URI id) {
-      return ImmutableSet.of();
-      // TODO
-      // VApp vApp = refreshVApp(id);
-      // return Sets.newHashSet(vApp.getNetworkToAddresses().values());
+      Set<String> ips = Sets.newLinkedHashSet();
+      VApp vApp = refreshVApp(id);
+      // TODO make this work with composite vApps
+      Vm vm = Iterables.get(vApp.getChildren(), 0);
+      for (ResourceAllocation net : filter(vm.getHardware().getResourceAllocations(),
+               resourceType(ResourceType.ETHERNET_ADAPTER))) {
+         if (net instanceof VCloudNetworkAdapter) {
+            VCloudNetworkAdapter vNet = VCloudNetworkAdapter.class.cast(net);
+            ips.add(vNet.getIpAddress());
+         }
+      }
+      return ips;
    }
 
    @Override

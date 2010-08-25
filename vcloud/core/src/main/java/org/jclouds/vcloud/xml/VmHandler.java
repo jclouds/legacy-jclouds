@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.vcloud.domain.OperatingSystem;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
@@ -46,11 +47,14 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
 
    protected final TaskHandler taskHandler;
    protected final VirtualHardwareHandler virtualHardwareHandler;
+   protected final OperatingSystemHandler operatingSystemHandler;
 
    @Inject
-   public VmHandler(TaskHandler taskHandler, VirtualHardwareHandler virtualHardwareHandler) {
+   public VmHandler(TaskHandler taskHandler, VirtualHardwareHandler virtualHardwareHandler,
+            OperatingSystemHandler operatingSystemHandler) {
       this.taskHandler = taskHandler;
       this.virtualHardwareHandler = virtualHardwareHandler;
+      this.operatingSystemHandler = operatingSystemHandler;
    }
 
    protected StringBuilder currentText = new StringBuilder();
@@ -61,13 +65,15 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
    protected String description;
    protected List<Task> tasks = Lists.newArrayList();
    protected VirtualHardware hardware;
+   protected OperatingSystem os;
    protected String vAppScopedLocalId;
 
    private boolean inTasks;
    private boolean inHardware;
+   private boolean inOs;
 
    public Vm getResult() {
-      return new VmImpl(vm.getName(), vm.getType(), vm.getHref(), status, vdc, description, tasks, hardware,
+      return new VmImpl(vm.getName(), vm.getType(), vm.getHref(), status, vdc, description, tasks, hardware, os,
                vAppScopedLocalId);
    }
 
@@ -76,11 +82,15 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
       Map<String, String> attributes = cleanseAttributes(attrs);
       if (qName.endsWith("VirtualHardwareSection")) {
          inHardware = true;
+      } else if (qName.endsWith("OperatingSystemSection")) {
+         inOs = true;
       } else if (qName.endsWith("Tasks")) {
          inTasks = true;
       }
       if (inHardware) {
          virtualHardwareHandler.startElement(uri, localName, qName, attrs);
+      } else if (inOs) {
+         operatingSystemHandler.startElement(uri, localName, qName, attrs);
       } else if (inTasks) {
          taskHandler.startElement(uri, localName, qName, attrs);
       } else if (qName.equals("Vm")) {
@@ -97,12 +107,17 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
       if (qName.endsWith("VirtualHardwareSection")) {
          inHardware = false;
          this.hardware = virtualHardwareHandler.getResult();
+      } else if (qName.endsWith("OperatingSystemSection")) {
+         inOs = false;
+         os = operatingSystemHandler.getResult();
       } else if (qName.endsWith("Tasks")) {
          inTasks = false;
          this.tasks.add(taskHandler.getResult());
       }
       if (inHardware) {
          virtualHardwareHandler.endElement(uri, name, qName);
+      } else if (inOs) {
+         operatingSystemHandler.endElement(uri, name, qName);
       } else if (inTasks) {
          taskHandler.endElement(uri, name, qName);
       } else if (qName.equals("Description")) {
@@ -118,6 +133,8 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
          taskHandler.characters(ch, start, length);
       if (inHardware)
          virtualHardwareHandler.characters(ch, start, length);
+      if (inOs)
+         operatingSystemHandler.characters(ch, start, length);
       currentText.append(ch, start, length);
    }
 

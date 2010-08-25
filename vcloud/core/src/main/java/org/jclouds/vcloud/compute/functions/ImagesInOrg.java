@@ -30,6 +30,7 @@ import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.functions.AllCatalogItemsInOrg;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 
 /**
@@ -55,7 +56,7 @@ public class ImagesInOrg implements Function<Org, Iterable<? extends Image>> {
    public Iterable<? extends Image> apply(Org from) {
       Iterable<? extends CatalogItem> catalogs = allCatalogItemsInOrg.apply(from);
       Iterable<? extends VAppTemplate> vAppTemplates = vAppTemplatesForCatalogItems.apply(catalogs);
-      return Iterables.transform(vAppTemplates, imageForVAppTemplateProvider.get().withParent(from));
+      return Iterables.transform(Iterables.filter(vAppTemplates, Predicates.notNull()), imageForVAppTemplateProvider.get().withParent(from));
    }
 
 }

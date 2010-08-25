@@ -65,6 +65,10 @@ public class VirtualHardwareHandler extends ParseSax.HandlerWithResult<VirtualHa
 
    public void startElement(String uri, String localName, String qName, Attributes attrs) {
       Map<String, String> attributes = cleanseAttributes(attrs);
+      if (attributes.containsKey("href") && attributes.get("href").endsWith("/")) {
+         String href = attributes.get("href");
+         attributes.put("href", href.substring(0, href.lastIndexOf('/')));
+      }
       if (qName.endsWith("System")) {
          inSystem = true;
       } else if (!inSystem && qName.endsWith("Item")) {
@@ -75,10 +79,6 @@ public class VirtualHardwareHandler extends ParseSax.HandlerWithResult<VirtualHa
       } else if (inItem) {
          allocationHandler.startElement(uri, localName, qName, attrs);
       } else if (qName.endsWith("VirtualHardwareSection")) {
-         if (attributes.containsKey("href") && attributes.get("href").endsWith("/")) {
-            String href = attributes.get("href");
-            attributes.put("href", href.substring(0, href.lastIndexOf('/')));
-         }
          hardware = newReferenceType(attributes);
       }
 

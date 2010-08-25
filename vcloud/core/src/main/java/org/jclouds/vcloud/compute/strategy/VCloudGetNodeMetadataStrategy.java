@@ -47,9 +47,11 @@ import org.jclouds.vcloud.compute.functions.FindLocationForResource;
 import org.jclouds.vcloud.compute.functions.GetExtraFromVApp;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.Vm;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
@@ -92,11 +94,11 @@ public class VCloudGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
    }
 
    private OperatingSystem getOperatingSystemForVAppOrDefaultTo(VApp vApp, OperatingSystem operatingSystem) {
-      // TODO
-      return new CIMOperatingSystem(CIMOperatingSystem.OSType.UBUNTU_64, null, null, vApp.getDescription());
-      // return vApp.getOsType() != null ? new
-      // CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(vApp.getOsType()),
-      // null, null, vApp.getOperatingSystemDescription()) : operatingSystem;
+      // TODO we need to change the design so that it doesn't assume single-vms
+      Vm vm = Iterables.get(vApp.getChildren(), 0);
+      return vm.getOperatingSystem() != null && vm.getOperatingSystem().getId() != null ? new CIMOperatingSystem(
+               CIMOperatingSystem.OSType.fromValue(vm.getOperatingSystem().getId()), null, null, vm
+                        .getOperatingSystem().getDescription()) : operatingSystem;
    }
 
 }

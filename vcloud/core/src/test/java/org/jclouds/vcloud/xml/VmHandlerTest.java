@@ -63,6 +63,7 @@ public class VmHandlerTest {
       assertEquals(result.getTasks(), ImmutableList.of());
       assertEquals(result.getVAppScopedLocalId(), "10_rhel_template");
       VirtualHardwareHandlerTest.checkHardware(result.getHardware());
+      OperatingSystemHandlerTest.checkOs(result.getOperatingSystem());
    }
 
 }

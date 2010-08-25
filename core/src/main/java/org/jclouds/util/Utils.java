@@ -149,7 +149,7 @@ public class Utils {
       return ImmutableSet.<T> of(in);
    }
 
-   public static Object propagateOrNull(Exception from) {
+   public static <T> T propagateOrNull(Exception from) {
       propagate(from);
       assert false : "exception should have propogated";
       return null;
