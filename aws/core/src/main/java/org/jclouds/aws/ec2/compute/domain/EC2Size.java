@@ -19,7 +19,7 @@
 
 package org.jclouds.aws.ec2.compute.domain;
 
-import static org.jclouds.compute.predicates.ImagePredicates.any;
+import static com.google.common.base.Predicates.not;
 import static org.jclouds.compute.predicates.ImagePredicates.idIn;
 import static org.jclouds.compute.predicates.ImagePredicates.is64Bit;
 
@@ -42,13 +42,13 @@ public class EC2Size extends SizeImpl {
 
    EC2Size(String instanceType, Double cores, Integer ram, Integer disk, boolean is64Bit) {
       super(instanceType, instanceType, instanceType, null, null, ImmutableMap.<String, String> of(), cores, ram, disk,
-            is64Bit ? is64Bit() : any());
+               is64Bit ? is64Bit() : not(is64Bit()));
       this.instanceType = instanceType;
    }
 
    public EC2Size(Location location, String instanceType, Double cores, Integer ram, Integer disk, String[] ids) {
       super(instanceType, instanceType, instanceType, location, null, ImmutableMap.<String, String> of(), cores, ram,
-            disk, (ids.length == 0 ? is64Bit() : idIn(Arrays.asList(ids))));
+               disk, (ids.length == 0 ? is64Bit() : idIn(Arrays.asList(ids))));
       this.instanceType = instanceType;
    }
 

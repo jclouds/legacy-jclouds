@@ -68,17 +68,17 @@ public class EC2TemplateBuilderLiveTest {
 
          Template defaultTemplate = newContext.getComputeService().templateBuilder().build();
          assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
-         assertEquals(defaultTemplate.getImage().getName(), "10.04");
+         assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
          assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
          assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
          assertEquals(defaultTemplate.getLocation().getId(), "us-east-1");
          assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
          newContext.getComputeService().templateBuilder().imageId(
-                  Iterables.get(newContext.getComputeService().listImages(), 0).getProviderId()).build();
+                  Iterables.get(newContext.getComputeService().listImages(), 0).getId()).build();
          newContext.getComputeService().templateBuilder().osFamily(OsFamily.UBUNTU).smallest().os64Bit(false).imageId(
-                  "ami-7e28ca17").build();
+                  "us-east-1/ami-7e28ca17").build();
          newContext.getComputeService().templateBuilder().osFamily(OsFamily.UBUNTU).smallest().os64Bit(false).imageId(
-                  "ami-bb709dd2").build();
+                  "us-east-1/ami-bb709dd2").build();
       } finally {
          if (newContext != null)
             newContext.close();
@@ -98,15 +98,16 @@ public class EC2TemplateBuilderLiveTest {
 
          assertEquals(newContext.getComputeService().listImages().size(), 0);
 
-         Template template = newContext.getComputeService().templateBuilder().imageId("ami-ccb35ea5").build();
+         Template template = newContext.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5").build();
          System.out.println(template.getImage());
          assert (template.getImage().getProviderId().startsWith("ami-")) : template;
-         assertEquals(template.getImage().getName(), "5.4");
+         assertEquals(template.getImage().getOperatingSystem().getVersion(), "5.4");
          assertEquals(template.getImage().getOperatingSystem().is64Bit(), true);
          assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
          assertEquals(template.getImage().getVersion(), "4.4.10");
          assertEquals(template.getLocation().getId(), "us-east-1");
          assertEquals(template.getSize().getCores(), 4.0d); // because it is 64bit
+         assertEquals(template.getSize().getId(), "m1.large"); // because it is 64bit
 
          // ensure we cache the new image for next time
          assertEquals(newContext.getComputeService().listImages().size(), 1);

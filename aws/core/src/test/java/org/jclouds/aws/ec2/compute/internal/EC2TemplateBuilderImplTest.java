@@ -53,6 +53,7 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.MapMaker;
+import com.google.common.collect.Sets;
 
 /**
  * 
@@ -93,7 +94,7 @@ public class EC2TemplateBuilderImplTest extends TemplateBuilderImplTest {
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
                .<Location> of(location));
-      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
+      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(Sets.<Image> newLinkedHashSet());
       Supplier<Set<? extends Size>> sizes = Suppliers.<Set<? extends Size>> ofInstance(ImmutableSet
                .<Size> of(new SizeImpl("1", "1", "region/1", location, null, ImmutableMap.<String, String> of(), 1, 1,
                         1, ImagePredicates.any())));

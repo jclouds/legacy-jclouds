@@ -524,7 +524,7 @@ public abstract class BaseComputeServiceLiveTest {
       System.out.printf("smallest %s%n", smallest);
       System.out.printf("fastest %s%n", fastest);
       System.out.printf("biggest %s%n", biggest);
-
+      
       assertEquals(defaultSize, smallest);
 
       assert smallest.getCores() <= fastest.getCores() : String.format("%d ! <= %d", smallest, fastest);

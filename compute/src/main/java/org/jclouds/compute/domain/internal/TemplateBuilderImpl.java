@@ -669,7 +669,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
             predicates.add(imageDescriptionPredicate);
       }
 
-      Predicate<Image> imagePredicate = and(predicates);
+      Predicate<Image> imagePredicate = predicates.size() == 1 ? Iterables.get(predicates, 0) : and(predicates);
       return imagePredicate;
    }
 

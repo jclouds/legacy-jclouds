@@ -92,8 +92,8 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.MapMaker;
+import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provides;
@@ -244,7 +244,7 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
       return Suppliers.compose(new Function<Map<RegionAndName, ? extends Image>, Set<? extends Image>>() {
          @Override
          public Set<? extends Image> apply(Map<RegionAndName, ? extends Image> from) {
-            return ImmutableSet.copyOf(from.values());
+            return Sets.newLinkedHashSet(from.values());
          }
       }, map);
    }

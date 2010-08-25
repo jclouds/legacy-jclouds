@@ -39,7 +39,6 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * 
@@ -115,13 +114,15 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
       }
    }
 
+   @SuppressWarnings("unchecked")
    @Override
    protected Set<? extends Image> getImages() {
-      Set<? extends Image> images = this.images.get();
+      Set<Image> images = (Set<Image>) this.images.get();
       if (images.size() == 0) {
          Image toReturn = lazyImageProvider.get();
-         if (toReturn != null)
-            return ImmutableSet.of(lazyImageProvider.get());
+         if (toReturn != null) {
+            images.add(toReturn);
+         }
       }
       return images;
    }
