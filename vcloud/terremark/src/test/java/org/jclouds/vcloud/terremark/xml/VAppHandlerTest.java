@@ -35,12 +35,12 @@ import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.VCloudExpressMediaType;
-import org.jclouds.vcloud.domain.ResourceAllocation;
-import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
-import org.jclouds.vcloud.domain.VirtualSystem;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
+import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
+import org.jclouds.vcloud.domain.ovf.ResourceType;
+import org.jclouds.vcloud.domain.ovf.System;
 import org.jclouds.vcloud.xml.VCloudExpressVAppHandler;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -109,7 +109,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
       assertEquals(result.getVDC(), new ReferenceTypeImpl(null, VCloudExpressMediaType.VDC_XML, URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
 
-      assertEquals(result.getSystem(), new VirtualSystem(0, "Virtual Hardware Family", "centos-53", "vmx-07"));
+      assertEquals(result.getSystem(), new System(0, "Virtual Hardware Family", "centos-53", "vmx-07"));
       assertEquals(result.getNetworkToAddresses().get("Internal"), ImmutableList.<String> of("10.114.34.132"));
 
       ResourceAllocation cpu = new ResourceAllocation(1, "1 virtual CPU(s)", "Number of Virtual CPUs",
@@ -147,7 +147,7 @@ public class VAppHandlerTest extends BaseHandlerTest {
       assertEquals(vApp.getVDC(), new ReferenceTypeImpl(null, VCloudExpressMediaType.VDC_XML, URI
                .create("https://services.vcloudexpress.terremark.com/api/v0.8/vdc/32")));
 
-      assertEquals(vApp.getSystem(), new VirtualSystem(0, "Virtual Hardware Family", "eduardo", "vmx-07"));
+      assertEquals(vApp.getSystem(), new System(0, "Virtual Hardware Family", "eduardo", "vmx-07"));
       assertEquals(vApp.getNetworkToAddresses().get("Internal"), ImmutableList.of("10.114.34.131"));
 
       ResourceAllocation cpu = new ResourceAllocation(1, "2 virtual CPU(s)", "Number of Virtual CPUs",

@@ -35,11 +35,13 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudExpressMediaType;
 import org.jclouds.vcloud.domain.ReferenceType;
-import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
-import org.jclouds.vcloud.domain.VirtualSystem;
 import org.jclouds.vcloud.domain.internal.VCloudExpressVAppImpl;
+import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
+import org.jclouds.vcloud.domain.ovf.System;
+import org.jclouds.vcloud.xml.ovf.ResourceAllocationHandler;
+import org.jclouds.vcloud.xml.ovf.SystemHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -52,20 +54,20 @@ import com.google.common.collect.Sets;
  */
 public class VCloudExpressVAppHandler extends ParseSax.HandlerWithResult<VCloudExpressVApp> {
    private final String apiVersion;
-   private final VirtualSystemHandler systemHandler;
+   private final SystemHandler systemHandler;
    private final ResourceAllocationHandler allocationHandler;
    @Resource
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public VCloudExpressVAppHandler(@Named(PROPERTY_API_VERSION) String apiVersion, VirtualSystemHandler systemHandler,
+   public VCloudExpressVAppHandler(@Named(PROPERTY_API_VERSION) String apiVersion, SystemHandler systemHandler,
             ResourceAllocationHandler allocationHandler) {
       this.apiVersion = apiVersion;
       this.systemHandler = systemHandler;
       this.allocationHandler = allocationHandler;
    }
 
-   protected VirtualSystem system;
+   protected System system;
    protected Set<ResourceAllocation> allocations = Sets.newLinkedHashSet();
    protected Status status;
    protected final ListMultimap<String, String> networkToAddresses = ArrayListMultimap.create();

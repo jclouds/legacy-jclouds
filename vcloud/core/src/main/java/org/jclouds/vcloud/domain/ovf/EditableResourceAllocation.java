@@ -17,7 +17,9 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.domain;
+package org.jclouds.vcloud.domain.ovf;
+
+import org.jclouds.vcloud.domain.ReferenceType;
 
 /**
  * @author Adrian Cole

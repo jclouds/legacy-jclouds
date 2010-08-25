@@ -71,6 +71,7 @@ import org.jclouds.vcloud.xml.VAppHandler;
 import org.jclouds.vcloud.xml.VAppTemplateHandler;
 import org.jclouds.vcloud.xml.VDCHandler;
 import org.jclouds.vcloud.xml.VmHandler;
+import org.jclouds.vcloud.xml.ovf.OvfEnvelopeHandler;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -322,6 +323,22 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, VAppTemplateHandler.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
+   public void testGetOvfEnvelopeForVAppTemplate() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("getOvfEnvelopeForVAppTemplate", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/2"));
+
+      assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/2/ovf HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: text/xml\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, OvfEnvelopeHandler.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(request);

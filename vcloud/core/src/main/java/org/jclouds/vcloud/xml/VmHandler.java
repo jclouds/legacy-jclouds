@@ -28,13 +28,14 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.OperatingSystem;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
-import org.jclouds.vcloud.domain.VirtualHardware;
+import org.jclouds.vcloud.domain.VCloudVirtualHardware;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.internal.VmImpl;
+import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystem;
+import org.jclouds.vcloud.xml.ovf.VCloudOperatingSystemHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -46,12 +47,12 @@ import com.google.common.collect.Lists;
 public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
 
    protected final TaskHandler taskHandler;
-   protected final VirtualHardwareHandler virtualHardwareHandler;
-   protected final OperatingSystemHandler operatingSystemHandler;
+   protected final VCloudVirtualHardwareHandler virtualHardwareHandler;
+   protected final VCloudOperatingSystemHandler operatingSystemHandler;
 
    @Inject
-   public VmHandler(TaskHandler taskHandler, VirtualHardwareHandler virtualHardwareHandler,
-            OperatingSystemHandler operatingSystemHandler) {
+   public VmHandler(TaskHandler taskHandler, VCloudVirtualHardwareHandler virtualHardwareHandler,
+            VCloudOperatingSystemHandler operatingSystemHandler) {
       this.taskHandler = taskHandler;
       this.virtualHardwareHandler = virtualHardwareHandler;
       this.operatingSystemHandler = operatingSystemHandler;
@@ -64,8 +65,8 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
    protected ReferenceType vdc;
    protected String description;
    protected List<Task> tasks = Lists.newArrayList();
-   protected VirtualHardware hardware;
-   protected OperatingSystem os;
+   protected VCloudVirtualHardware hardware;
+   protected VCloudOperatingSystem os;
    protected String vAppScopedLocalId;
 
    private boolean inTasks;

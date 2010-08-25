@@ -19,19 +19,16 @@
 
 package org.jclouds.vcloud.xml;
 
-import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
-import static org.jclouds.vcloud.util.Utils.newReferenceType;
-
-import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.ReferenceType;
-import org.jclouds.vcloud.domain.ResourceAllocation;
 import org.jclouds.vcloud.domain.VirtualHardware;
-import org.jclouds.vcloud.domain.VirtualSystem;
+import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
+import org.jclouds.vcloud.domain.ovf.System;
+import org.jclouds.vcloud.xml.ovf.SystemHandler;
+import org.jclouds.vcloud.xml.ovf.VCloudResourceAllocationHandler;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;
@@ -42,33 +39,27 @@ import com.google.common.collect.Sets;
 public class VirtualHardwareHandler extends ParseSax.HandlerWithResult<VirtualHardware> {
    protected StringBuilder currentText = new StringBuilder();
 
-   private final VirtualSystemHandler systemHandler;
+   private final SystemHandler systemHandler;
    private final VCloudResourceAllocationHandler allocationHandler;
 
    @Inject
-   public VirtualHardwareHandler(VirtualSystemHandler systemHandler, VCloudResourceAllocationHandler allocationHandler) {
+   public VirtualHardwareHandler(SystemHandler systemHandler, VCloudResourceAllocationHandler allocationHandler) {
       this.systemHandler = systemHandler;
       this.allocationHandler = allocationHandler;
    }
 
-   private ReferenceType hardware;
    private String info;
-   protected VirtualSystem system;
+   protected System system;
    protected Set<ResourceAllocation> allocations = Sets.newLinkedHashSet();
 
    private boolean inItem;
    private boolean inSystem;
 
    public VirtualHardware getResult() {
-      return new VirtualHardware(hardware.getName(), hardware.getType(), hardware.getHref(), info, system, allocations);
+      return new VirtualHardware(info, system, allocations);
    }
 
    public void startElement(String uri, String localName, String qName, Attributes attrs) {
-      Map<String, String> attributes = cleanseAttributes(attrs);
-      if (attributes.containsKey("href") && attributes.get("href").endsWith("/")) {
-         String href = attributes.get("href");
-         attributes.put("href", href.substring(0, href.lastIndexOf('/')));
-      }
       if (qName.endsWith("System")) {
          inSystem = true;
       } else if (!inSystem && qName.endsWith("Item")) {
@@ -78,10 +69,7 @@ public class VirtualHardwareHandler extends ParseSax.HandlerWithResult<VirtualHa
          systemHandler.startElement(uri, localName, qName, attrs);
       } else if (inItem) {
          allocationHandler.startElement(uri, localName, qName, attrs);
-      } else if (qName.endsWith("VirtualHardwareSection")) {
-         hardware = newReferenceType(attributes);
       }
-
    }
 
    @Override

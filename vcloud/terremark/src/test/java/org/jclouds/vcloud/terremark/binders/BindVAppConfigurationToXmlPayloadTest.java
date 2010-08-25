@@ -32,10 +32,10 @@ import java.util.Properties;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
-import org.jclouds.vcloud.domain.ResourceAllocation;
-import org.jclouds.vcloud.domain.ResourceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.internal.VCloudExpressVAppImpl;
+import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
+import org.jclouds.vcloud.domain.ovf.ResourceType;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressPropertiesBuilder;
 import org.jclouds.vcloud.terremark.domain.VAppConfiguration;
 import org.testng.annotations.Test;

@@ -35,6 +35,7 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 public class Utils {
+
    public static ReferenceType newReferenceType(Map<String, String> attributes, String defaultType) {
       String uri = attributes.get("href");
       String type = attributes.get("type");

@@ -26,12 +26,12 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.vcloud.domain.OperatingSystem;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
-import org.jclouds.vcloud.domain.VirtualHardware;
+import org.jclouds.vcloud.domain.VCloudVirtualHardware;
 import org.jclouds.vcloud.domain.Vm;
+import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystem;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -51,13 +51,13 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
    private final String description;
    private final List<Task> tasks = Lists.newArrayList();
    @Nullable
-   private final VirtualHardware hardware;
+   private final VCloudVirtualHardware hardware;
    private final String vAppScopedLocalId;
-   private final OperatingSystem os;
+   private final VCloudOperatingSystem os;
 
    public VmImpl(String name, String type, URI id, @Nullable Status status, ReferenceType vApp,
-            @Nullable String description, Iterable<Task> tasks, @Nullable VirtualHardware hardware,
-            @Nullable OperatingSystem os, @Nullable String vAppScopedLocalId) {
+            @Nullable String description, Iterable<Task> tasks, @Nullable VCloudVirtualHardware hardware,
+            @Nullable VCloudOperatingSystem os, @Nullable String vAppScopedLocalId) {
       super(name, type, id);
       this.status = status;
       this.vApp = vApp;// TODO: once <1.0 is killed check not null
@@ -105,7 +105,7 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
     * {@inheritDoc}
     */
    @Override
-   public VirtualHardware getHardware() {
+   public VCloudVirtualHardware getHardware() {
       return hardware;
    }
 
@@ -113,7 +113,7 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
     * {@inheritDoc}
     */
    @Override
-   public OperatingSystem getOperatingSystem() {
+   public VCloudOperatingSystem getOperatingSystem() {
       return os;
    }
 

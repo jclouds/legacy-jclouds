@@ -17,11 +17,11 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.xml;
+package org.jclouds.vcloud.xml.ovf;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.ResourceAllocation;
-import org.jclouds.vcloud.domain.ResourceType;
+import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
+import org.jclouds.vcloud.domain.ovf.ResourceType;
 import org.xml.sax.Attributes;
 
 /**
@@ -45,7 +45,7 @@ public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<Resour
    protected long virtualQuantity = 1;
    protected String virtualQuantityUnits;
 
-   public org.jclouds.vcloud.domain.ResourceAllocation getResult() {
+   public org.jclouds.vcloud.domain.ovf.ResourceAllocation getResult() {
       if (allocationUnits != null)
          virtualQuantityUnits = allocationUnits;
       ResourceAllocation allocation = newResourceAllocation();

@@ -17,17 +17,17 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.domain;
+package org.jclouds.vcloud.domain.ovf;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class VirtualSystem {
+public class System {
    protected final int id;
    protected final String name;
    protected final String identifier;
    protected final String type;
 
-   public VirtualSystem(int id, String name, String identifier, String type) {
+   public System(int id, String name, String identifier, String type) {
       this.id = id;
       this.name = checkNotNull(name, "name");
       this.identifier = checkNotNull(identifier, "identifier");
@@ -69,7 +69,7 @@ public class VirtualSystem {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      VirtualSystem other = (VirtualSystem) obj;
+      System other = (System) obj;
       if (id != other.id)
          return false;
       if (identifier == null) {

@@ -17,15 +17,15 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.xml;
+package org.jclouds.vcloud.xml.ovf;
 
 import java.util.Map;
 
-import org.jclouds.vcloud.domain.EditableResourceAllocation;
 import org.jclouds.vcloud.domain.ReferenceType;
-import org.jclouds.vcloud.domain.ResourceAllocation;
-import org.jclouds.vcloud.domain.VCloudHardDisk;
-import org.jclouds.vcloud.domain.VCloudNetworkAdapter;
+import org.jclouds.vcloud.domain.ovf.EditableResourceAllocation;
+import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
+import org.jclouds.vcloud.domain.ovf.VCloudHardDisk;
+import org.jclouds.vcloud.domain.ovf.VCloudNetworkAdapter;
 import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 

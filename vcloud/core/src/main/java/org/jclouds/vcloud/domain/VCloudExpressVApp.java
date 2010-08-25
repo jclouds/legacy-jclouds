@@ -24,6 +24,8 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.jclouds.vcloud.domain.internal.VCloudExpressVAppImpl;
+import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
+import org.jclouds.vcloud.domain.ovf.System;
 
 import com.google.common.collect.ListMultimap;
 import com.google.inject.ImplementedBy;
@@ -60,7 +62,7 @@ public interface VCloudExpressVApp extends ReferenceType {
    @Nullable
    String getOperatingSystemDescription();
 
-   VirtualSystem getSystem();
+   System getSystem();
 
    Set<ResourceAllocation> getResourceAllocations();
 

@@ -17,16 +17,16 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.xml;
+package org.jclouds.vcloud.xml.ovf;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.VirtualSystem;
+import org.jclouds.vcloud.domain.ovf.System;
 import org.xml.sax.Attributes;
 
 /**
  * @author Adrian Cole
  */
-public class VirtualSystemHandler extends ParseSax.HandlerWithResult<VirtualSystem> {
+public class SystemHandler extends ParseSax.HandlerWithResult<System> {
    private StringBuilder currentText = new StringBuilder();
 
    private String elementName;
@@ -34,9 +34,9 @@ public class VirtualSystemHandler extends ParseSax.HandlerWithResult<VirtualSyst
    private String virtualSystemIdentifier;
    private String virtualSystemType;
 
-   public VirtualSystem getResult() {
-      VirtualSystem system = new org.jclouds.vcloud.domain.VirtualSystem(instanceID, elementName,
-               virtualSystemIdentifier, virtualSystemType);
+   public System getResult() {
+      System system = new org.jclouds.vcloud.domain.ovf.System(instanceID, elementName, virtualSystemIdentifier,
+               virtualSystemType);
       this.elementName = null;
       this.instanceID = -1;
       this.virtualSystemIdentifier = null;

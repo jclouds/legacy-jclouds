@@ -17,47 +17,47 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.domain;
+package org.jclouds.vcloud.domain.ovf;
+
 
 /**
  * @author Adrian Cole
  * 
  */
-public class VCloudNetworkAdapter extends ResourceAllocation {
-   private final String ipAddress;
-   private final boolean primaryNetworkConnection;
-   private final String ipAddressingMode;
+public class VCloudHardDisk extends ResourceAllocation {
+   private final long capacity;
+   private final int busType;
+   private final String busSubType;
 
-   public VCloudNetworkAdapter(int id, String name, String description, ResourceType type, String subType,
+   public VCloudHardDisk(int id, String name, String description, ResourceType type, String subType,
             String hostResource, String address, Integer addressOnParent, Integer parent, Boolean connected,
-            long virtualQuantity, String virtualQuantityUnits, String ipAddress, boolean primaryNetworkConnection,
-            String ipAddressingMode) {
+            long virtualQuantity, String virtualQuantityUnits, long capacity, int busType, String busSubType) {
       super(id, name, description, type, subType, hostResource, address, addressOnParent, parent, connected,
                virtualQuantity, virtualQuantityUnits);
-      this.ipAddress = ipAddress;
-      this.primaryNetworkConnection = primaryNetworkConnection;
-      this.ipAddressingMode = ipAddressingMode;
+      this.capacity = capacity;
+      this.busType = busType;
+      this.busSubType = busSubType;
    }
 
-   public String getIpAddress() {
-      return ipAddress;
+   public long getCapacity() {
+      return capacity;
    }
 
-   public boolean isPrimaryNetworkConnection() {
-      return primaryNetworkConnection;
+   public int getBusType() {
+      return busType;
    }
 
-   public String getIpAddressingMode() {
-      return ipAddressingMode;
+   public String getBusSubType() {
+      return busSubType;
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((ipAddress == null) ? 0 : ipAddress.hashCode());
-      result = prime * result + ((ipAddressingMode == null) ? 0 : ipAddressingMode.hashCode());
-      result = prime * result + (primaryNetworkConnection ? 1231 : 1237);
+      result = prime * result + ((busSubType == null) ? 0 : busSubType.hashCode());
+      result = prime * result + busType;
+      result = prime * result + (int) (capacity ^ (capacity >>> 32));
       return result;
    }
 
@@ -69,18 +69,15 @@ public class VCloudNetworkAdapter extends ResourceAllocation {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      VCloudNetworkAdapter other = (VCloudNetworkAdapter) obj;
-      if (ipAddress == null) {
-         if (other.ipAddress != null)
+      VCloudHardDisk other = (VCloudHardDisk) obj;
+      if (busSubType == null) {
+         if (other.busSubType != null)
             return false;
-      } else if (!ipAddress.equals(other.ipAddress))
+      } else if (!busSubType.equals(other.busSubType))
          return false;
-      if (ipAddressingMode == null) {
-         if (other.ipAddressingMode != null)
-            return false;
-      } else if (!ipAddressingMode.equals(other.ipAddressingMode))
+      if (busType != other.busType)
          return false;
-      if (primaryNetworkConnection != other.primaryNetworkConnection)
+      if (capacity != other.capacity)
          return false;
       return true;
    }
@@ -89,8 +86,7 @@ public class VCloudNetworkAdapter extends ResourceAllocation {
    public String toString() {
       return "[id=" + getId() + ", name=" + getName() + ", description=" + getDescription() + ", type=" + getType()
                + ", virtualQuantity=" + getVirtualQuantity() + ", virtualQuantityUnits=" + getVirtualQuantityUnits()
-               + ", ipAddress=" + ipAddress + ", ipAddressingMode=" + ipAddressingMode + ", primaryNetworkConnection="
-               + primaryNetworkConnection + "]";
+               + ", capacity=" + capacity + ", busType=" + busType + ", busSubType=" + busSubType + "]";
    }
 
 }

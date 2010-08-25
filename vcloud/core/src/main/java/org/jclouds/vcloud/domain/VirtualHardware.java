@@ -19,10 +19,10 @@
 
 package org.jclouds.vcloud.domain;
 
-import java.net.URI;
 import java.util.Set;
 
-import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
+import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
+import org.jclouds.vcloud.domain.ovf.System;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -30,14 +30,13 @@ import com.google.common.collect.Sets;
 /**
  * A description of the virtual hardware supported by a virtual machine.
  */
-public class VirtualHardware extends ReferenceTypeImpl {
-   private final String info;
-   private final VirtualSystem virtualSystem;
-   private final Set<ResourceAllocation> resourceAllocations = Sets.newLinkedHashSet();
+public class VirtualHardware {
 
-   public VirtualHardware(String name, String type, URI href, String info, VirtualSystem virtualSystem,
-            Iterable<? extends ResourceAllocation> resourceAllocations) {
-      super(name, type, href);
+   protected final String info;
+   protected final System virtualSystem;
+   protected final Set<ResourceAllocation> resourceAllocations = Sets.newLinkedHashSet();
+
+   public VirtualHardware(String info, System virtualSystem, Iterable<? extends ResourceAllocation> resourceAllocations) {
       this.info = info;
       this.virtualSystem = virtualSystem;
       Iterables.addAll(this.resourceAllocations, resourceAllocations);
@@ -47,7 +46,7 @@ public class VirtualHardware extends ReferenceTypeImpl {
       return info;
    }
 
-   public VirtualSystem getSystem() {
+   public System getSystem() {
       return virtualSystem;
    }
 
@@ -57,7 +56,44 @@ public class VirtualHardware extends ReferenceTypeImpl {
 
    @Override
    public String toString() {
-      return "[href=" + getHref() + ", name=" + getName() + ", type=" + getType() + ", info=" + getInfo()
-               + ", virtualSystem=" + getSystem() + "]";
+      return "[info=" + getInfo() + ", virtualSystem=" + getSystem() + "]";
    }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((info == null) ? 0 : info.hashCode());
+      result = prime * result + ((resourceAllocations == null) ? 0 : resourceAllocations.hashCode());
+      result = prime * result + ((virtualSystem == null) ? 0 : virtualSystem.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      VirtualHardware other = (VirtualHardware) obj;
+      if (info == null) {
+         if (other.info != null)
+            return false;
+      } else if (!info.equals(other.info))
+         return false;
+      if (resourceAllocations == null) {
+         if (other.resourceAllocations != null)
+            return false;
+      } else if (!resourceAllocations.equals(other.resourceAllocations))
+         return false;
+      if (virtualSystem == null) {
+         if (other.virtualSystem != null)
+            return false;
+      } else if (!virtualSystem.equals(other.virtualSystem))
+         return false;
+      return true;
+   }
+
 }

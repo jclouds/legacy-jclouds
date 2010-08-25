@@ -17,22 +17,22 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.xml;
+package org.jclouds.vcloud.xml.ovf;
 
 import static org.jclouds.vcloud.util.Utils.newReferenceType;
 
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.OperatingSystem;
 import org.jclouds.vcloud.domain.ReferenceType;
+import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystem;
 import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 
 /**
  * @author Adrian Cole
  */
-public class OperatingSystemHandler extends ParseSax.HandlerWithResult<OperatingSystem> {
+public class VCloudOperatingSystemHandler extends ParseSax.HandlerWithResult<VCloudOperatingSystem> {
    private StringBuilder currentText = new StringBuilder();
 
    protected ReferenceType os;
@@ -42,9 +42,9 @@ public class OperatingSystemHandler extends ParseSax.HandlerWithResult<Operating
    protected String description;
    protected ReferenceType edit;
 
-   public OperatingSystem getResult() {
-      OperatingSystem system = new OperatingSystem(os.getName(), os.getType(), os.getHref(), id, info, vmwOsType,
-               description, edit);
+   public VCloudOperatingSystem getResult() {
+      VCloudOperatingSystem system = new VCloudOperatingSystem(id, info, description, os.getType(), os.getHref(),
+               vmwOsType, edit);
       os = null;
       id = null;
       info = null;
@@ -60,10 +60,6 @@ public class OperatingSystemHandler extends ParseSax.HandlerWithResult<Operating
       if (qName.endsWith("Link")) {
          this.edit = Utils.newReferenceType(attributes);
       } else if (qName.endsWith("OperatingSystemSection")) {
-         if (attributes.containsKey("href") && attributes.get("href").endsWith("/")) {
-            String href = attributes.get("href");
-            attributes.put("href", href.substring(0, href.lastIndexOf('/')));
-         }
          os = newReferenceType(attributes);
          vmwOsType = attributes.get("osType");
          if (attributes.containsKey("id"))

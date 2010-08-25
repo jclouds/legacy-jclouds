@@ -21,6 +21,7 @@ package org.jclouds.vcloud.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseTagFromName;
+import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.toComputeOs;
 
 import java.net.URI;
 import java.util.Map;
@@ -34,9 +35,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
-import org.jclouds.compute.domain.os.CIMOperatingSystem;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.domain.Location;
@@ -47,11 +46,9 @@ import org.jclouds.vcloud.compute.functions.FindLocationForResource;
 import org.jclouds.vcloud.compute.functions.GetExtraFromVApp;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.Vm;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
@@ -88,17 +85,8 @@ public class VCloudGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
       String tag = parseTagFromName(from.getName());
       Location location = findLocationForResourceInVDC.apply(from.getVDC());
       return new NodeMetadataImpl(in, from.getName(), in, location, from.getHref(), ImmutableMap.<String, String> of(),
-               tag, null, getOperatingSystemForVAppOrDefaultTo(from, null),
-               vAppStatusToNodeState.get(from.getStatus()), computeClient.getPublicAddresses(id), computeClient
-                        .getPrivateAddresses(id), getExtra.apply(from), null);
-   }
-
-   private OperatingSystem getOperatingSystemForVAppOrDefaultTo(VApp vApp, OperatingSystem operatingSystem) {
-      // TODO we need to change the design so that it doesn't assume single-vms
-      Vm vm = Iterables.get(vApp.getChildren(), 0);
-      return vm.getOperatingSystem() != null && vm.getOperatingSystem().getId() != null ? new CIMOperatingSystem(
-               CIMOperatingSystem.OSType.fromValue(vm.getOperatingSystem().getId()), null, null, vm
-                        .getOperatingSystem().getDescription()) : operatingSystem;
+               tag, null, toComputeOs(from, null), vAppStatusToNodeState.get(from.getStatus()), computeClient
+                        .getPublicAddresses(id), computeClient.getPrivateAddresses(id), getExtra.apply(from), null);
    }
 
 }
