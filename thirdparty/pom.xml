@@ -33,4 +33,17 @@
     <modules>
         <module>resteasy-jaxrs-client</module>
     </modules>
+    
+    <distributionManagement>
+        <!-- third-party projects not in org.jclouds can't be deployed to Sonatype -->
+        <repository>
+            <id>jclouds-googlecode-deploy</id>
+            <url>dav:https://jclouds.googlecode.com/svn/repo</url>
+            <uniqueVersion>false</uniqueVersion>
+        </repository>
+        <snapshotRepository>
+      	    <id>jclouds-rimu-snapshots-nexus</id>
+            <url>http://jclouds.rimuhosting.com:8081/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>
