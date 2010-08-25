@@ -77,13 +77,6 @@
     </scm>
 
     <repositories>
-        <!--repository>
-            <id>repo2</id>
-            <url>http://repo2.maven.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository-->
         <repository>
             <id>jclouds-googlecode-deploy</id>
             <url>http://jclouds.googlecode.com/svn/repo</url>
@@ -136,15 +129,6 @@
     </repositories>
 
     <distributionManagement>
-        <!--repository>
-            <id>jclouds-googlecode-deploy</id>
-            <url>dav:https://jclouds.googlecode.com/svn/repo</url>
-            <uniqueVersion>false</uniqueVersion>
-        </repository>
-        <snapshotRepository>
-      	    <id>jclouds-rimu-snapshots-nexus</id>
-            <url>http://jclouds.rimuhosting.com:8081/nexus/content/repositories/snapshots</url>
-        </snapshotRepository-->
         <site>
             <id>website</id>
             <name>website</name>
@@ -152,13 +136,6 @@
         </site>
     </distributionManagement>
     <pluginRepositories>
-        <!--pluginRepository>
-            <id>central</id>
-            <url>http://repo1.maven.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository-->
         <pluginRepository>
             <id>jclouds-googlecode-deploy</id>
             <url>http://jclouds.googlecode.com/svn/repo</url>
