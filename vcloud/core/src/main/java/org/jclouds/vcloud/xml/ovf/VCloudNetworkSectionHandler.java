@@ -17,10 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.xml;
-
-import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
-import static org.jclouds.vcloud.util.Utils.newReferenceType;
+package org.jclouds.vcloud.xml.ovf;
 
 import java.util.Map;
 
@@ -28,47 +25,44 @@ import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.domain.ReferenceType;
-import org.jclouds.vcloud.domain.ovf.VCloudVirtualHardware;
-import org.jclouds.vcloud.domain.ovf.VirtualHardwareSection;
+import org.jclouds.vcloud.domain.ovf.NetworkSection;
+import org.jclouds.vcloud.domain.ovf.VCloudNetworkSection;
+import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 
 /**
  * @author Adrian Cole
  */
-public class VCloudVirtualHardwareHandler extends ParseSax.HandlerWithResult<VCloudVirtualHardware> {
-
-   private final VirtualHardwareSectionHandler hardwareHandler;
-
-   private ReferenceType hardware;
+public class VCloudNetworkSectionHandler extends ParseSax.HandlerWithResult<VCloudNetworkSection> {
+   private final NetworkSectionHandler networkSectionHandler;
 
    @Inject
-   public VCloudVirtualHardwareHandler(VirtualHardwareSectionHandler hardwareHandler) {
-      this.hardwareHandler = hardwareHandler;
+   VCloudNetworkSectionHandler(NetworkSectionHandler networkSectionHandler) {
+      this.networkSectionHandler = networkSectionHandler;
    }
 
-   public VCloudVirtualHardware getResult() {
-      VirtualHardwareSection hardware = hardwareHandler.getResult();
-      return new VCloudVirtualHardware(this.hardware.getType(), this.hardware.getHref(), hardware.getInfo(), hardware
-               .getSystem(), hardware.getResourceAllocations());
+   private ReferenceType net;
+
+   public VCloudNetworkSection getResult() {
+      NetworkSection system = networkSectionHandler.getResult();
+      return new VCloudNetworkSection(net.getType(), net.getHref(), system.getInfo(), system.getNetworks());
    }
 
    public void startElement(String uri, String localName, String qName, Attributes attrs) {
-      Map<String, String> attributes = cleanseAttributes(attrs);
-      if (qName.endsWith("VirtualHardwareSection")) {
-         hardware = newReferenceType(attributes);
+      Map<String, String> attributes = Utils.cleanseAttributes(attrs);
+      if (qName.endsWith("NetworkSection")) {
+         this.net = Utils.newReferenceType(attributes);
       }
-      hardwareHandler.startElement(uri, localName, qName, attrs);
+      networkSectionHandler.startElement(uri, localName, qName, attrs);
    }
 
    @Override
    public void endElement(String uri, String localName, String qName) {
-      hardwareHandler.endElement(uri, localName, qName);
-
+      networkSectionHandler.endElement(uri, localName, qName);
    }
 
-   @Override
    public void characters(char ch[], int start, int length) {
-      hardwareHandler.characters(ch, start, length);
+      networkSectionHandler.characters(ch, start, length);
    }
 
 }

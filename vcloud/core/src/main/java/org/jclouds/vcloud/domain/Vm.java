@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 
 import org.jclouds.vcloud.domain.internal.VmImpl;
 import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystem;
+import org.jclouds.vcloud.domain.ovf.VCloudVirtualHardware;
 
 import com.google.inject.ImplementedBy;
 

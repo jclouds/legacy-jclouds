@@ -29,9 +29,9 @@ import javax.annotation.Nullable;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
-import org.jclouds.vcloud.domain.VCloudVirtualHardware;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystem;
+import org.jclouds.vcloud.domain.ovf.VCloudVirtualHardware;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;

@@ -19,21 +19,23 @@
 
 package org.jclouds.vcloud.terremark.options;
 
-import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
+import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.addNetworkConfig;
+import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.disk;
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.inGroup;
-import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.inNetwork;
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.inRow;
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.memory;
-import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.disk;
-
+import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.withPassword;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
 import org.jclouds.http.functions.config.SaxParserModule;
+import org.jclouds.vcloud.domain.network.FenceMode;
+import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -87,16 +89,21 @@ public class TerremarkInstantiateVAppTemplateOptionsTest {
    }
 
    @Test
-   public void testInNetwork() {
+   public void testAddNetworkConfig() {
       TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
-      options.network(URI.create("http://localhost"));
-      assertEquals(options.getNetwork(), "http://localhost");
+      options.addNetworkConfig(new NetworkConfig("default", URI.create("http://localhost"), FenceMode.BRIDGED));
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getNetworkName(), "default");
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getParentNetwork(), URI.create("http://localhost"));
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getFenceMode(), FenceMode.BRIDGED);
    }
 
    @Test
-   public void testInNetworkStatic() {
-      TerremarkInstantiateVAppTemplateOptions options = inNetwork(URI.create("http://localhost"));
-      assertEquals(options.getNetwork(), "http://localhost");
+   public void testAddNetworkConfigStatic() {
+      TerremarkInstantiateVAppTemplateOptions options = addNetworkConfig(new NetworkConfig("default", URI
+               .create("http://localhost"), FenceMode.BRIDGED));
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getNetworkName(), "default");
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getParentNetwork(), URI.create("http://localhost"));
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getFenceMode(), FenceMode.BRIDGED);
    }
 
    @Test

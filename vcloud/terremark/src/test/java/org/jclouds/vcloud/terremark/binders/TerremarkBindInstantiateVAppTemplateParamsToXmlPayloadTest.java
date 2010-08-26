@@ -33,6 +33,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
+import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.terremark.TerremarkVCloudPropertiesBuilder;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
@@ -83,8 +84,8 @@ public class TerremarkBindInstantiateVAppTemplateParamsToXmlPayloadTest {
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(
                new Object[] { TerremarkInstantiateVAppTemplateOptions.Builder.processorCount(2).memory(512).inGroup(
-                        "group").withPassword("password").inRow("row").network(URI.create("http://network")) })
-               .atLeastOnce();
+                        "group").withPassword("password").inRow("row").addNetworkConfig(
+                        new NetworkConfig(URI.create("http://network"))) }).atLeastOnce();
       expect(request.getFirstHeaderOrNull("Content-Type")).andReturn("application/unknown").atLeastOnce();
       expect(request.getHeaders()).andReturn(headers).atLeastOnce();
       request.setPayload(expected);

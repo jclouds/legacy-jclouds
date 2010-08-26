@@ -22,22 +22,22 @@ package org.jclouds.vcloud.xml.ovf;
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.ovf.OperatingSystem;
+import org.jclouds.vcloud.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 
 /**
  * @author Adrian Cole
  */
-public class OperatingSystemHandler extends ParseSax.HandlerWithResult<OperatingSystem> {
+public class OperatingSystemSectionHandler extends ParseSax.HandlerWithResult<OperatingSystemSection> {
    private StringBuilder currentText = new StringBuilder();
 
    protected Integer id;
    protected String info;
    protected String description;
 
-   public OperatingSystem getResult() {
-      OperatingSystem system = new OperatingSystem(id, info, description);
+   public OperatingSystemSection getResult() {
+      OperatingSystemSection system = new OperatingSystemSection(id, info, description);
       id = null;
       info = null;
       description = null;

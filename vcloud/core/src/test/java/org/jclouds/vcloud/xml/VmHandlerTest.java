@@ -32,6 +32,7 @@ import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.xml.ovf.VCloudOperatingSystemHandlerTest;
+import org.jclouds.vcloud.xml.ovf.VCloudVirtualHardwareHandlerTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;

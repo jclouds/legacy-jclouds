@@ -19,9 +19,12 @@
 
 package org.jclouds.vcloud.xml.ovf;
 
+import java.util.Map;
+
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
 import org.jclouds.vcloud.domain.ovf.ResourceType;
+import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 
 /**
@@ -72,9 +75,10 @@ public class ResourceAllocationHandler extends ParseSax.HandlerWithResult<Resour
    }
 
    @Override
-   public void startElement(String uri, String localName, String qName, Attributes attributes) {
+   public void startElement(String uri, String localName, String qName, Attributes attrs) {
+      Map<String, String> attributes = Utils.cleanseAttributes(attrs);
       if (qName.endsWith("Connection")) {
-         connected = new Boolean(attributes.getValue(attributes.getIndex("connected")));
+         connected = new Boolean(attributes.get("connected"));
       }
    }
 

@@ -21,7 +21,7 @@ package org.jclouds.vcloud.domain.ovf;
 
 import javax.annotation.Nullable;
 
-public class OperatingSystem {
+public class OperatingSystemSection {
 
    @Nullable
    protected final Integer id;
@@ -31,7 +31,7 @@ public class OperatingSystem {
    @Nullable
    protected final String description;
 
-   public OperatingSystem(@Nullable Integer id, @Nullable String info, @Nullable String description) {
+   public OperatingSystemSection(@Nullable Integer id, @Nullable String info, @Nullable String description) {
       this.id = id;
       this.info = info;
       this.description = description;
@@ -79,7 +79,7 @@ public class OperatingSystem {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      OperatingSystem other = (OperatingSystem) obj;
+      OperatingSystemSection other = (OperatingSystemSection) obj;
       if (description == null) {
          if (other.description != null)
             return false;

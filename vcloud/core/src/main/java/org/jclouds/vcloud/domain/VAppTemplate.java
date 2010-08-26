@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.jclouds.vcloud.domain.internal.VAppTemplateImpl;
+import org.jclouds.vcloud.domain.ovf.VCloudNetworkSection;
 
 import com.google.inject.ImplementedBy;
 
@@ -88,4 +89,11 @@ public interface VAppTemplate extends ReferenceType {
     * @since vcloud api 1.0
     */
    Set<? extends Vm> getChildren();
+
+   /**
+    * description of the predefined vApp internal networks in this template
+    * 
+    * @since vcloud api 1.0
+    */
+   VCloudNetworkSection getNetworkSection();
 }

@@ -29,6 +29,7 @@ import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_S
 import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -42,10 +43,17 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.network.FenceMode;
+import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.jamesmurty.utils.XMLBuilder;
 
@@ -64,11 +72,14 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
    protected final BindToStringPayload stringBinder;
    protected final URI defaultNetwork;
    protected final FenceMode defaultFenceMode;
+   protected final DefaultNetworkNameInTemplate defaultNetworkNameInTemplate;
 
    @Inject
-   public BindInstantiateVAppTemplateParamsToXmlPayload(BindToStringPayload stringBinder,
-            @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns, @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema,
-            @Network URI network, @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode) {
+   public BindInstantiateVAppTemplateParamsToXmlPayload(DefaultNetworkNameInTemplate defaultNetworkNameInTemplate,
+            BindToStringPayload stringBinder, @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
+            @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema, @Network URI network,
+            @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode) {
+      this.defaultNetworkNameInTemplate = defaultNetworkNameInTemplate;
       this.ns = ns;
       this.schema = schema;
       this.stringBinder = stringBinder;
@@ -83,27 +94,32 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
       String name = checkNotNull(postParams.remove("name"), "name");
-      String template = checkNotNull(postParams.remove("template"), "template");
+      final URI template = URI.create(checkNotNull(postParams.remove("template"), "template"));
 
-      String network = defaultNetwork.toASCIIString();
-      FenceMode fenceMode = defaultFenceMode;
-      logger.warn("hack alert; we need to actually get the network name from the vAppTemplate's ovf:Network ovf:name");
-      String networkName = "vAppNet-vApp Internal";
       boolean deploy = true;
       boolean powerOn = true;
 
-      InstantiateVAppTemplateOptions options = findOptionsInArgsOrNull(gRequest);
-      if (options != null) {
-         network = ifNullDefaultTo(options.getNetwork(), network);
-         fenceMode = ifNullDefaultTo(options.getFenceMode(), defaultFenceMode);
+      Set<? extends NetworkConfig> networkConfig = null;
 
-         networkName = ifNullDefaultTo(options.getNetworkName(), networkName);
+      NetworknetworkConfigDecorator networknetworkConfigDecorator = new NetworknetworkConfigDecorator(template,
+               defaultNetwork, defaultFenceMode, defaultNetworkNameInTemplate);
+
+      InstantiateVAppTemplateOptions options = findOptionsInArgsOrNull(gRequest);
+
+      if (options != null) {
+         if (options.getNetworkConfig().size() > 0)
+            networkConfig = Sets.newLinkedHashSet(Iterables.transform(options.getNetworkConfig(),
+                     networknetworkConfigDecorator));
+
          deploy = ifNullDefaultTo(options.shouldDeploy(), deploy);
          powerOn = ifNullDefaultTo(options.shouldPowerOn(), powerOn);
       }
+
+      if (networkConfig == null)
+         networkConfig = ImmutableSet.of(networknetworkConfigDecorator.apply(null));
+
       try {
-         stringBinder.bindToRequest(request, generateXml(name, deploy, powerOn, template, networkName, fenceMode, URI
-                  .create(network)));
+         stringBinder.bindToRequest(request, generateXml(name, deploy, powerOn, template, networkConfig));
       } catch (ParserConfigurationException e) {
          throw new RuntimeException(e);
       } catch (FactoryConfigurationError e) {
@@ -114,15 +130,68 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
 
    }
 
-   protected String generateXml(String name, boolean deploy, boolean powerOn, String template, String networkName,
-            FenceMode fenceMode, URI network) throws ParserConfigurationException, FactoryConfigurationError,
-            TransformerException {
+   protected static final class NetworknetworkConfigDecorator implements Function<NetworkConfig, NetworkConfig> {
+      private final URI template;
+      private final URI defaultNetwork;
+      private final FenceMode defaultFenceMode;
+      private final DefaultNetworkNameInTemplate defaultNetworkNameInTemplate;
+
+      protected NetworknetworkConfigDecorator(URI template, URI defaultNetwork, FenceMode defaultFenceMode,
+               DefaultNetworkNameInTemplate defaultNetworkNameInTemplate) {
+         this.template = checkNotNull(template, "template");
+         this.defaultNetwork = checkNotNull(defaultNetwork, "defaultNetwork");
+         this.defaultFenceMode = checkNotNull(defaultFenceMode, "defaultFenceMode");
+         this.defaultNetworkNameInTemplate = checkNotNull(defaultNetworkNameInTemplate, "defaultNetworkNameInTemplate");
+      }
+
+      @Override
+      public NetworkConfig apply(NetworkConfig from) {
+         if (from == null)
+            return new NetworkConfig(defaultNetworkNameInTemplate.apply(template), defaultNetwork, defaultFenceMode);
+         URI network = ifNullDefaultTo(from.getParentNetwork(), defaultNetwork);
+         FenceMode fenceMode = ifNullDefaultTo(from.getFenceMode(), defaultFenceMode);
+         String networkName = from.getNetworkName() != null ? from.getNetworkName() : defaultNetworkNameInTemplate
+                  .apply(template);
+         return new NetworkConfig(networkName, network, fenceMode);
+      }
+   }
+
+   @Singleton
+   public static class DefaultNetworkNameInTemplate implements Function<URI, String> {
+      @Resource
+      protected Logger logger = Logger.NULL;
+
+      private final VCloudClient client;
+
+      @Inject
+      DefaultNetworkNameInTemplate(VCloudClient client) {
+         this.client = client;
+      }
+
+      @Override
+      public String apply(URI template) {
+         String networkName;
+         VAppTemplate vAppTemplate = client.getVAppTemplate(template);
+         checkArgument(vAppTemplate != null, "vAppTemplate %s not found!", template);
+         Set<org.jclouds.vcloud.domain.ovf.network.Network> networks = vAppTemplate.getNetworkSection().getNetworks();
+         checkArgument(networks.size() > 0, "no networks found in vAppTemplate %s", vAppTemplate);
+         if (networks.size() > 1)
+            logger.warn("multiple networks found for %s, choosing first from: %s", vAppTemplate.getName(), networks);
+         networkName = Iterables.get(networks, 0).getName();
+         return networkName;
+      }
+
+   }
+
+   protected String generateXml(String name, boolean deploy, boolean powerOn, URI template,
+            Iterable<? extends NetworkConfig> networkConfig) throws ParserConfigurationException,
+            FactoryConfigurationError, TransformerException {
       XMLBuilder rootBuilder = buildRoot(name).a("deploy", deploy + "").a("powerOn", powerOn + "");
 
       XMLBuilder instantiationParamsBuilder = rootBuilder.e("InstantiationParams");
-      addNetworkConfig(instantiationParamsBuilder, networkName, fenceMode, network);
+      addNetworkConfig(instantiationParamsBuilder, networkConfig);
 
-      rootBuilder.e("Source").a("href", template);
+      rootBuilder.e("Source").a("href", template.toASCIIString());
       rootBuilder.e("AllEULAsAccepted").t("true");
 
       Properties outputProperties = new Properties();
@@ -130,14 +199,17 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       return rootBuilder.asString(outputProperties);
    }
 
-   protected void addNetworkConfig(XMLBuilder instantiationParamsBuilder, String name, FenceMode fenceMode, URI network) {
+   protected void addNetworkConfig(XMLBuilder instantiationParamsBuilder,
+            Iterable<? extends NetworkConfig> networkConfig) {
       XMLBuilder networkConfigBuilder = instantiationParamsBuilder.e("NetworkConfigSection");
       networkConfigBuilder.e("ovf:Info").t("Configuration parameters for logical networks");
-      XMLBuilder configurationBuilder = networkConfigBuilder.e("NetworkConfig").a("networkName", name).e(
-               "Configuration");
-      configurationBuilder.e("ParentNetwork").a("href", network.toASCIIString());
-      if (fenceMode != null) {
-         configurationBuilder.e("FenceMode").t(fenceMode.toString());
+      for (NetworkConfig n : networkConfig) {
+         XMLBuilder configurationBuilder = networkConfigBuilder.e("NetworkConfig").a("networkName", n.getNetworkName())
+                  .e("Configuration");
+         configurationBuilder.e("ParentNetwork").a("href", n.getParentNetwork().toASCIIString());
+         if (n.getFenceMode() != null) {
+            configurationBuilder.e("FenceMode").t(n.getFenceMode().toString());
+         }
       }
    }
 
@@ -162,7 +234,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       throw new IllegalStateException("InstantiateVAppTemplateParams is needs parameters");
    }
 
-   protected <T> T ifNullDefaultTo(T value, T defaultValue) {
+   public static <T> T ifNullDefaultTo(T value, T defaultValue) {
       return value != null ? value : checkNotNull(defaultValue, "defaultValue");
    }
 }

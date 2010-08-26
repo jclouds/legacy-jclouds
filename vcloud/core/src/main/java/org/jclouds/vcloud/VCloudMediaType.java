@@ -102,6 +102,16 @@ public interface VCloudMediaType {
             "vnd.vmware.vcloud.virtualHardwareSection+xml");
 
    /**
+    * "application/vnd.vmware.vcloud.networkSection+xml"
+    */
+   public final static String NETWORKSECTION_XML = "application/vnd.vmware.vcloud.networkSection+xml";
+   /**
+    * "application/vnd.vmware.vcloud.networkSection+xml"
+    */
+   public final static MediaType NETWORKSECTION_XML_TYPE = new MediaType("application",
+            "vnd.vmware.vcloud.networkSection+xml");
+
+   /**
     * "application/vnd.vmware.vcloud.task+xml"
     */
    public final static String TASK_XML = "application/vnd.vmware.vcloud.task+xml";

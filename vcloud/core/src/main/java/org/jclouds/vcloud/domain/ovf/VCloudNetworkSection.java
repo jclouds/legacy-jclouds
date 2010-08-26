@@ -17,23 +17,21 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.domain;
+package org.jclouds.vcloud.domain.ovf;
 
 import java.net.URI;
 
-import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
-import org.jclouds.vcloud.domain.ovf.System;
+import org.jclouds.vcloud.domain.ovf.network.Network;
 
 /**
- * A description of the virtual hardware supported by a virtual machine.
+ * VCloud extension
  */
-public class VCloudVirtualHardware extends VirtualHardware {
+public class VCloudNetworkSection extends NetworkSection {
    protected final String type;
    protected final URI href;
 
-   public VCloudVirtualHardware(String type, URI href, String info, System virtualSystem,
-            Iterable<? extends ResourceAllocation> resourceAllocations) {
-      super(info, virtualSystem, resourceAllocations);
+   public VCloudNetworkSection(String type, URI href, String info, Iterable<Network> networks) {
+      super(info, networks);
       this.type = type;
       this.href = href;
    }
@@ -63,7 +61,7 @@ public class VCloudVirtualHardware extends VirtualHardware {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      VCloudVirtualHardware other = (VCloudVirtualHardware) obj;
+      VCloudNetworkSection other = (VCloudNetworkSection) obj;
       if (href == null) {
          if (other.href != null)
             return false;
@@ -79,7 +77,6 @@ public class VCloudVirtualHardware extends VirtualHardware {
 
    @Override
    public String toString() {
-      return "[href=" + getHref() + ", type=" + getType() + ", info=" + getInfo() + ", virtualSystem=" + getSystem()
-               + "]";
+      return "[href=" + getHref() + ", type=" + getType() + ", info=" + getInfo() + ", networks=" + getNetworks() + "]";
    }
 }

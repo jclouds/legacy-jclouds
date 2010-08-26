@@ -44,11 +44,13 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.domain.ovf.ResourceType;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.jamesmurty.utils.XMLBuilder;
@@ -99,11 +101,14 @@ public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload implemen
       String fenceMode = defaultFenceMode;
       String networkName = name;
       if (options != null) {
-         network = ifNullDefaultTo(options.getNetwork(), network);
-         fenceMode = ifNullDefaultTo(options.getFenceMode(), defaultFenceMode);
-         if (apiVersion.indexOf("0.8") != -1 && fenceMode.equals("bridged"))
-            fenceMode = "allowInOut";
-         networkName = ifNullDefaultTo(options.getNetworkName(), networkName);
+         if (options.getNetworkConfig().size() > 0) {
+            NetworkConfig config = Iterables.get(options.getNetworkConfig(), 0);
+            network = ifNullDefaultTo(config.getParentNetwork(), network);
+            fenceMode = ifNullDefaultTo(config.getFenceMode(), defaultFenceMode);
+            if (apiVersion.indexOf("0.8") != -1 && fenceMode.equals("bridged"))
+               fenceMode = "allowInOut";
+            networkName = ifNullDefaultTo(config.getNetworkName(), networkName);
+         }
          addQuantity(options, virtualHardwareQuantity);
       }
       try {

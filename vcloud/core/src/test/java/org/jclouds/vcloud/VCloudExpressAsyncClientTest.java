@@ -49,16 +49,17 @@ import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.config.VCloudExpressRestClientModule;
-import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.internal.CatalogImpl;
 import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
-import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.internal.OrgImpl;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
 import org.jclouds.vcloud.domain.network.FenceMode;
+import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
@@ -119,9 +120,12 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
                String.class, InstantiateVAppTemplateOptions[].class);
       HttpRequest request = processor.createRequest(method, URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"), URI
-               .create("https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3"), "my-vapp", processorCount(1)
-               .memory(512).disk(1024).fenceMode(FenceMode.BRIDGED).network(
-                        URI.create("https://vcloud.safesecureweb.com/network/1990")));
+               .create("https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3"), "my-vapp",
+               processorCount(1).memory(512).disk(1024)
+                        .addNetworkConfig(
+                                 new NetworkConfig(null, URI
+                                          .create("https://vcloud.safesecureweb.com/network/1990"),
+                                          FenceMode.BRIDGED)));
 
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
@@ -144,7 +148,9 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
                String.class, InstantiateVAppTemplateOptions[].class);
       processor.createRequest(method, URI.create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"), URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"), "CentOS 01", processorCount(1).memory(512)
-               .disk(1024).network(URI.create("https://vcloud.safesecureweb.com/network/1990")));
+               .disk(1024).addNetworkConfig(
+                        new NetworkConfig("aloha", URI
+                                 .create("https://vcenterprise.bluelock.com/api/v1.0/network/1990"), null)));
    }
 
    public void testCloneVAppInVDC() throws SecurityException, NoSuchMethodException, IOException {
@@ -750,10 +756,10 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
                                        .create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"))), ImmutableMap
                      .<String, ReferenceType> of("vdc", new ReferenceTypeImpl("vdc", VCloudExpressMediaType.VDC_XML,
                               URI.create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"))), ImmutableMap
-                              .<String, ReferenceType> of(),
-                     new ReferenceTypeImpl("tasksList", VCloudExpressMediaType.TASKSLIST_XML, URI
+                     .<String, ReferenceType> of(), new ReferenceTypeImpl("tasksList",
+                     VCloudExpressMediaType.TASKSLIST_XML, URI
                               .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/1")), ImmutableList
-                              .<Task> of()));
+                     .<Task> of()));
          }
       }
 

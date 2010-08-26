@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.terremark.xml;
+package org.jclouds.vcloud.terremark.xml.ovf;
 
 import static org.testng.Assert.assertEquals;
 
@@ -28,6 +28,8 @@ import org.jclouds.vcloud.domain.ovf.System;
 import org.jclouds.vcloud.xml.ovf.SystemHandler;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code VirtualSystemHandler}
@@ -50,6 +52,6 @@ public class SystemHandlerTest extends BaseHandlerTest {
       assertEquals(result.getName(), "Virtual Hardware Family");
       assertEquals(result.getId(), 0);
       assertEquals(result.getIdentifier(), "adriantest1");
-      assertEquals(result.getType(), "vmx-07");
+      assertEquals(result.getVirtualSystemTypes(), ImmutableSet.of("vmx-07"));
    }
 }

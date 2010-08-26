@@ -19,9 +19,13 @@
 
 package org.jclouds.vcloud.xml.ovf;
 
+import java.util.Set;
+
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.domain.ovf.System;
 import org.xml.sax.Attributes;
+
+import com.google.common.collect.Sets;
 
 /**
  * @author Adrian Cole
@@ -32,15 +36,15 @@ public class SystemHandler extends ParseSax.HandlerWithResult<System> {
    private String elementName;
    private int instanceID;
    private String virtualSystemIdentifier;
-   private String virtualSystemType;
+   private Set<String> virtualSystemTypes = Sets.newLinkedHashSet();
 
    public System getResult() {
       System system = new org.jclouds.vcloud.domain.ovf.System(instanceID, elementName, virtualSystemIdentifier,
-               virtualSystemType);
+               virtualSystemTypes);
       this.elementName = null;
       this.instanceID = -1;
       this.virtualSystemIdentifier = null;
-      this.virtualSystemType = null;
+      this.virtualSystemTypes = null;
       return system;
    }
 
@@ -57,7 +61,7 @@ public class SystemHandler extends ParseSax.HandlerWithResult<System> {
       } else if (qName.endsWith("VirtualSystemIdentifier")) {
          this.virtualSystemIdentifier = currentText.toString().trim();
       } else if (qName.endsWith("VirtualSystemType")) {
-         this.virtualSystemType = currentText.toString().trim();
+         this.virtualSystemTypes.add(currentText.toString().trim());
       }
       currentText = new StringBuilder();
    }

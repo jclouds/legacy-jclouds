@@ -19,9 +19,9 @@
 
 package org.jclouds.vcloud.terremark.options;
 
-import java.net.URI;
 import java.util.Map;
 
+import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.inject.internal.util.Maps;
@@ -92,11 +92,11 @@ public class TerremarkInstantiateVAppTemplateOptions extends InstantiateVAppTemp
       }
 
       /**
-       * @see TerremarkInstantiateVAppTemplateOptions#network(URI)
+       * @see TerremarkInstantiateVAppTemplateOptions#addNetworkConfig
        */
-      public static TerremarkInstantiateVAppTemplateOptions inNetwork(URI networkLocation) {
+      public static TerremarkInstantiateVAppTemplateOptions addNetworkConfig(NetworkConfig networkConfig) {
          TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
-         return options.network(networkLocation);
+         return options.addNetworkConfig(networkConfig);
       }
 
       /**
@@ -171,8 +171,8 @@ public class TerremarkInstantiateVAppTemplateOptions extends InstantiateVAppTemp
    }
 
    @Override
-   public TerremarkInstantiateVAppTemplateOptions network(URI networkLocation) {
-      return (TerremarkInstantiateVAppTemplateOptions) super.network(networkLocation);
+   public TerremarkInstantiateVAppTemplateOptions addNetworkConfig(NetworkConfig networkConfig) {
+      return (TerremarkInstantiateVAppTemplateOptions) super.addNetworkConfig(networkConfig);
    }
 
    @Override

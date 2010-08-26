@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.xml;
+package org.jclouds.vcloud.xml.ovf;
 
 import static org.testng.Assert.assertEquals;
 
@@ -26,7 +26,6 @@ import java.net.URI;
 import java.net.UnknownHostException;
 
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.vcloud.domain.VCloudVirtualHardware;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.ovf.EditableResourceAllocation;
 import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
@@ -34,8 +33,11 @@ import org.jclouds.vcloud.domain.ovf.ResourceType;
 import org.jclouds.vcloud.domain.ovf.System;
 import org.jclouds.vcloud.domain.ovf.VCloudHardDisk;
 import org.jclouds.vcloud.domain.ovf.VCloudNetworkAdapter;
+import org.jclouds.vcloud.domain.ovf.VCloudVirtualHardware;
+import org.jclouds.vcloud.xml.VCloudVirtualHardwareHandler;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
@@ -57,7 +59,7 @@ public class VCloudVirtualHardwareHandlerTest extends BaseHandlerTest {
 
    @Test(enabled = false)
    public static void checkHardware(VCloudVirtualHardware result) {
-      System system = new System(0, "Virtual Hardware Family", "RHEL5", "vmx-07");
+      System system = new System(0, "Virtual Hardware Family", "RHEL5", ImmutableSet.of("vmx-07"));
 
       assertEquals(result.getHref(), URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/virtualHardwareSection/"));

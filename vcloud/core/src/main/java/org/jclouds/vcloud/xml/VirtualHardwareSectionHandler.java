@@ -24,9 +24,9 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.VirtualHardware;
 import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
 import org.jclouds.vcloud.domain.ovf.System;
+import org.jclouds.vcloud.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.xml.ovf.SystemHandler;
 import org.jclouds.vcloud.xml.ovf.VCloudResourceAllocationHandler;
 import org.xml.sax.Attributes;
@@ -36,14 +36,14 @@ import com.google.common.collect.Sets;
 /**
  * @author Adrian Cole
  */
-public class VirtualHardwareHandler extends ParseSax.HandlerWithResult<VirtualHardware> {
+public class VirtualHardwareSectionHandler extends ParseSax.HandlerWithResult<VirtualHardwareSection> {
    protected StringBuilder currentText = new StringBuilder();
 
    private final SystemHandler systemHandler;
    private final VCloudResourceAllocationHandler allocationHandler;
 
    @Inject
-   public VirtualHardwareHandler(SystemHandler systemHandler, VCloudResourceAllocationHandler allocationHandler) {
+   public VirtualHardwareSectionHandler(SystemHandler systemHandler, VCloudResourceAllocationHandler allocationHandler) {
       this.systemHandler = systemHandler;
       this.allocationHandler = allocationHandler;
    }
@@ -55,8 +55,8 @@ public class VirtualHardwareHandler extends ParseSax.HandlerWithResult<VirtualHa
    private boolean inItem;
    private boolean inSystem;
 
-   public VirtualHardware getResult() {
-      return new VirtualHardware(info, system, allocations);
+   public VirtualHardwareSection getResult() {
+      return new VirtualHardwareSection(info, system, allocations);
    }
 
    public void startElement(String uri, String localName, String qName, Attributes attrs) {

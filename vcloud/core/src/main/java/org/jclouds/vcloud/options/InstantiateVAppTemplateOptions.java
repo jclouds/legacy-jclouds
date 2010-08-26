@@ -22,9 +22,13 @@ package org.jclouds.vcloud.options;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.net.URI;
+import java.util.Set;
 
-import org.jclouds.vcloud.domain.network.FenceMode;
+import org.jclouds.vcloud.domain.network.NetworkConfig;
+
+
+
+import com.google.common.collect.Sets;
 
 /**
  * 
@@ -32,13 +36,12 @@ import org.jclouds.vcloud.domain.network.FenceMode;
  * 
  */
 public class InstantiateVAppTemplateOptions {
+   private Set<NetworkConfig> networkConfig = Sets.newLinkedHashSet();
 
    private String cpuCount;
    private String memorySizeMegabytes;
    private String diskSizeKilobytes;
-   private String network;
-   private FenceMode fenceMode;
-   private String networkName;
+
    private boolean block = true;
    private boolean deploy = true;
    private boolean powerOn = true;
@@ -85,19 +88,6 @@ public class InstantiateVAppTemplateOptions {
       return this;
    }
 
-   /**
-    * The name of the vApp internal network that you want to connect to a VDC network
-    */
-   public InstantiateVAppTemplateOptions networkName(String networkName) {
-      this.networkName = checkNotNull(networkName, "networkName");
-      return this;
-   }
-
-   public InstantiateVAppTemplateOptions fenceMode(FenceMode fenceMode) {
-      this.fenceMode = checkNotNull(fenceMode, "fenceMode");
-      return this;
-   }
-
    public InstantiateVAppTemplateOptions memory(long megabytes) {
       checkArgument(megabytes >= 1, "megabytes must be positive");
       this.memorySizeMegabytes = megabytes + "";
@@ -110,9 +100,26 @@ public class InstantiateVAppTemplateOptions {
       return this;
    }
 
-   public InstantiateVAppTemplateOptions network(URI networkLocation) {
-      this.network = checkNotNull(networkLocation, "networkLocation").toASCIIString();
+   /**
+    * {@networkConfig VAppTemplate}s have internal networks that can be connected in order to access
+    * the internet or other external networks.
+    * 
+    * <h4>default behaviour if you don't use this option</h4> By default, we connect the first
+    * internal {@networkConfig
+    * org.jclouds.vcloud.domain.VAppTemplate#getNetworkSection network in the vapp template}to a
+    * default chosen from the org or specified via {@networkConfig
+    * org.jclouds.vcloud.reference.VCloudConstants#PROPERTY_VCLOUD_DEFAULT_NETWORK} using the
+    * {@networkConfig org.jclouds.vcloud.domain.FenceMode#BRIDGED} or an override
+    * set by the property {@networkConfig
+    * org.jclouds.vcloud.reference.VCloudConstants#PROPERTY_VCLOUD_DEFAULT_FENCEMODE}.
+    */
+   public InstantiateVAppTemplateOptions addNetworkConfig(NetworkConfig networkConfig) {
+      this.networkConfig.add(checkNotNull(networkConfig, "networkConfig"));
       return this;
+   }
+
+   public Set<NetworkConfig> getNetworkConfig() {
+      return networkConfig;
    }
 
    public String getCpuCount() {
@@ -125,18 +132,6 @@ public class InstantiateVAppTemplateOptions {
 
    public String getDiskSizeKilobytes() {
       return diskSizeKilobytes;
-   }
-
-   public String getNetwork() {
-      return network;
-   }
-
-   public String getNetworkName() {
-      return networkName;
-   }
-
-   public FenceMode getFenceMode() {
-      return fenceMode;
    }
 
    public static class Builder {
@@ -190,27 +185,11 @@ public class InstantiateVAppTemplateOptions {
       }
 
       /**
-       * @see InstantiateVAppTemplateOptions#network(URI)
+       * @see InstantiateVAppTemplateOptions#addNetworkConfig
        */
-      public static InstantiateVAppTemplateOptions inNetwork(URI networkLocation) {
+      public static InstantiateVAppTemplateOptions addNetworkConfig(NetworkConfig networkConfig) {
          InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-         return options.network(networkLocation);
-      }
-
-      /**
-       * @see InstantiateVAppTemplateOptions#fenceMode(FenceMode)
-       */
-      public static InstantiateVAppTemplateOptions fenceMode(FenceMode fenceMode) {
-         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-         return options.fenceMode(fenceMode);
-      }
-
-      /**
-       * @see InstantiateVAppTemplateOptions#networkName(String)
-       */
-      public static InstantiateVAppTemplateOptions networkName(String networkName) {
-         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-         return options.networkName(networkName);
+         return options.addNetworkConfig(networkConfig);
       }
 
    }
@@ -218,20 +197,20 @@ public class InstantiateVAppTemplateOptions {
    @Override
    public String toString() {
       return "InstantiateVAppTemplateOptions [cpuCount=" + cpuCount + ", memorySizeMegabytes=" + memorySizeMegabytes
-               + ", diskSizeKilobytes=" + diskSizeKilobytes + ", network=" + network + ", networkName=" + networkName
-               + ", fenceMode=" + fenceMode + "]";
+               + ", diskSizeKilobytes=" + diskSizeKilobytes + ", networkConfig=" + networkConfig + "]";
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
+      result = prime * result + (block ? 1231 : 1237);
       result = prime * result + ((cpuCount == null) ? 0 : cpuCount.hashCode());
+      result = prime * result + (deploy ? 1231 : 1237);
       result = prime * result + ((diskSizeKilobytes == null) ? 0 : diskSizeKilobytes.hashCode());
-      result = prime * result + ((fenceMode == null) ? 0 : fenceMode.hashCode());
+      result = prime * result + ((networkConfig == null) ? 0 : networkConfig.hashCode());
       result = prime * result + ((memorySizeMegabytes == null) ? 0 : memorySizeMegabytes.hashCode());
-      result = prime * result + ((network == null) ? 0 : network.hashCode());
-      result = prime * result + ((networkName == null) ? 0 : networkName.hashCode());
+      result = prime * result + (powerOn ? 1231 : 1237);
       return result;
    }
 
@@ -244,35 +223,31 @@ public class InstantiateVAppTemplateOptions {
       if (getClass() != obj.getClass())
          return false;
       InstantiateVAppTemplateOptions other = (InstantiateVAppTemplateOptions) obj;
+      if (block != other.block)
+         return false;
       if (cpuCount == null) {
          if (other.cpuCount != null)
             return false;
       } else if (!cpuCount.equals(other.cpuCount))
+         return false;
+      if (deploy != other.deploy)
          return false;
       if (diskSizeKilobytes == null) {
          if (other.diskSizeKilobytes != null)
             return false;
       } else if (!diskSizeKilobytes.equals(other.diskSizeKilobytes))
          return false;
-      if (fenceMode == null) {
-         if (other.fenceMode != null)
+      if (networkConfig == null) {
+         if (other.networkConfig != null)
             return false;
-      } else if (!fenceMode.equals(other.fenceMode))
+      } else if (!networkConfig.equals(other.networkConfig))
          return false;
       if (memorySizeMegabytes == null) {
          if (other.memorySizeMegabytes != null)
             return false;
       } else if (!memorySizeMegabytes.equals(other.memorySizeMegabytes))
          return false;
-      if (network == null) {
-         if (other.network != null)
-            return false;
-      } else if (!network.equals(other.network))
-         return false;
-      if (networkName == null) {
-         if (other.networkName != null)
-            return false;
-      } else if (!networkName.equals(other.networkName))
+      if (powerOn != other.powerOn)
          return false;
       return true;
    }

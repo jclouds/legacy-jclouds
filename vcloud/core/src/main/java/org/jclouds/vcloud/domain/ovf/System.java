@@ -21,17 +21,23 @@ package org.jclouds.vcloud.domain.ovf;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Set;
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
+
 public class System {
    protected final int id;
    protected final String name;
    protected final String identifier;
-   protected final String type;
+   protected final Set<String> virtualSystemTypes = Sets.newLinkedHashSet();
 
-   public System(int id, String name, String identifier, String type) {
+   public System(int id, String name, String identifier, Iterable<String> virtualSystemTypes) {
       this.id = id;
       this.name = checkNotNull(name, "name");
       this.identifier = checkNotNull(identifier, "identifier");
-      this.type = checkNotNull(type, "type");
+      Iterables.addAll(this.virtualSystemTypes, checkNotNull(virtualSystemTypes, "virtualSystemTypes"));
+
    }
 
    public String getName() {
@@ -46,8 +52,17 @@ public class System {
       return identifier;
    }
 
-   public String getType() {
-      return type;
+   /**
+    * specifies a virtual system virtualSystemTypes identifier, which is an implementation defined string that
+    * uniquely identifies the virtualSystemTypes of the virtual system.
+    * 
+    * <p/>
+    * For example, a virtual system virtualSystemTypes identifier could be vmx-4 for VMware’s fourth-generation
+    * virtual hardware or xen-3 for Xen’s third-generation virtual hardware.
+    * 
+    */
+   public Set<String> getVirtualSystemTypes() {
+      return virtualSystemTypes;
    }
 
    @Override
@@ -57,7 +72,7 @@ public class System {
       result = prime * result + id;
       result = prime * result + ((identifier == null) ? 0 : identifier.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((type == null) ? 0 : type.hashCode());
+      result = prime * result + ((virtualSystemTypes == null) ? 0 : virtualSystemTypes.hashCode());
       return result;
    }
 
@@ -82,17 +97,18 @@ public class System {
             return false;
       } else if (!name.equals(other.name))
          return false;
-      if (type == null) {
-         if (other.type != null)
+      if (virtualSystemTypes == null) {
+         if (other.virtualSystemTypes != null)
             return false;
-      } else if (!type.equals(other.type))
+      } else if (!virtualSystemTypes.equals(other.virtualSystemTypes))
          return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "VirtualSystem [id=" + id + ", identifier=" + identifier + ", name=" + name + ", type=" + type + "]";
+      return "VirtualSystem [id=" + id + ", identifier=" + identifier + ", name=" + name + ", virtualSystemTypes="
+               + virtualSystemTypes + "]";
    }
 
 }

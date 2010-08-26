@@ -22,7 +22,7 @@ package org.jclouds.vcloud;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
-import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.networkName;
+import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.addNetworkConfig;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.testng.Assert.assertEquals;
 
@@ -60,6 +60,7 @@ import org.jclouds.vcloud.domain.internal.OrgImpl;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
 import org.jclouds.vcloud.domain.network.FenceMode;
+import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
@@ -95,35 +96,15 @@ import domain.VCloudVersionsAsyncClient;
 @Test(groups = "unit", testName = "vcloud.VCloudAsyncClientTest")
 public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
-   public void testInstantiateVAppTemplateInVDCURI() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = VCloudAsyncClient.class.getMethod("instantiateVAppTemplateInVDC", URI.class, URI.class,
-               String.class, InstantiateVAppTemplateOptions[].class);
-      HttpRequest request = processor.createRequest(method, URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3"), "my-vapp");
-
-      assertRequestLineEquals(request,
-               "POST https://vcenterprise.bluelock.com/api/v1.0/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml")),
-               "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
-
-      assertResponseParserClassEquals(method, request, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, VAppHandler.class);
-      assertExceptionParserClassEquals(method, null);
-
-      checkFilters(request);
-   }
-
    public void testInstantiateVAppTemplateInVDCURIOptions() throws SecurityException, NoSuchMethodException,
             IOException {
       Method method = VCloudAsyncClient.class.getMethod("instantiateVAppTemplateInVDC", URI.class, URI.class,
                String.class, InstantiateVAppTemplateOptions[].class);
       HttpRequest request = processor.createRequest(method, URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3"), "my-vapp", networkName("aloha")
-               .fenceMode(FenceMode.NAT_ROUTED).network(
-                        URI.create("https://vcenterprise.bluelock.com/api/v1.0/network/1991")));
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3"), "my-vapp",
+               addNetworkConfig(new NetworkConfig("aloha", URI
+                        .create("https://vcenterprise.bluelock.com/api/v1.0/network/1991"), FenceMode.NAT_ROUTED)));
 
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
@@ -146,7 +127,9 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
                String.class, InstantiateVAppTemplateOptions[].class);
       processor.createRequest(method, URI.create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), "CentOS 01", processorCount(1).memory(512)
-               .disk(1024).network(URI.create("https://vcenterprise.bluelock.com/network/1990")));
+               .disk(1024).addNetworkConfig(
+                        new NetworkConfig(null, URI.create("https://vcenterprise.bluelock.com/api/v1.0/network/1991"),
+                                 null)));
    }
 
    public void testCloneVAppInVDC() throws SecurityException, NoSuchMethodException, IOException {

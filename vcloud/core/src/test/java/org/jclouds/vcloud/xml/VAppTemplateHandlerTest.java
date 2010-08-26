@@ -32,9 +32,12 @@ import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
+import org.jclouds.vcloud.domain.ovf.VCloudNetworkSection;
+import org.jclouds.vcloud.domain.ovf.network.Network;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -73,6 +76,16 @@ public class VAppTemplateHandlerTest {
       assertEquals(vm.getDescription(), null);
       assertEquals(vm.getTasks(), ImmutableList.of());
       assertEquals(vm.getVAppScopedLocalId(), "02_ubuntu_template");
+
+      VCloudNetworkSection network = result.getNetworkSection();
+      assertEquals(
+               network.getHref(),
+               URI
+                        .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-1201908921/networkSection/"));
+      assertEquals(network.getType(), VCloudMediaType.NETWORKSECTION_XML);
+      assertEquals(network.getInfo(), "The list of logical networks");
+      assertEquals(network.getNetworks(), ImmutableSet.of(new Network("vAppNet-vApp Internal", null)));
+
    }
 
 }

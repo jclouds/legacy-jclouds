@@ -27,6 +27,8 @@ import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.vcloud.domain.ovf.System;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  * Tests behavior of {@code SystemHandler}
  * 
@@ -40,7 +42,7 @@ public class SystemHandlerTest extends BaseHandlerTest {
 
       System result = factory.create(injector.getInstance(SystemHandler.class)).parse(is);
 
-      System expects = new System(0, "Virtual Hardware Family", "SimpleVM", "vmx-04");
+      System expects = new System(0, "Virtual Hardware Family", "SimpleVM", ImmutableSet.of("vmx-04"));
       assertEquals(result, expects);
 
    }

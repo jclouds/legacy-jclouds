@@ -22,26 +22,29 @@ package org.jclouds.vcloud.xml.ovf;
 import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.VirtualHardware;
-import org.jclouds.vcloud.domain.ovf.OperatingSystem;
+import org.jclouds.vcloud.domain.ovf.OperatingSystemSection;
+import org.jclouds.vcloud.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.domain.ovf.VirtualSystem;
-import org.jclouds.vcloud.xml.VirtualHardwareHandler;
+import org.jclouds.vcloud.xml.VirtualHardwareSectionHandler;
 import org.xml.sax.Attributes;
+
+import com.google.common.collect.Sets;
 
 /**
  * @author Adrian Cole
  */
 public class VirtualSystemHandler extends ParseSax.HandlerWithResult<VirtualSystem> {
    protected StringBuilder currentText = new StringBuilder();
-   private final OperatingSystemHandler osHandler;
-   private final VirtualHardwareHandler hardwareHandler;
+   private final OperatingSystemSectionHandler osHandler;
+   private final VirtualHardwareSectionHandler hardwareHandler;
 
    @Inject
-   public VirtualSystemHandler(OperatingSystemHandler osHandler, VirtualHardwareHandler hardwareHandler) {
+   public VirtualSystemHandler(OperatingSystemSectionHandler osHandler, VirtualHardwareSectionHandler hardwareHandler) {
       this.osHandler = osHandler;
       this.hardwareHandler = hardwareHandler;
    }
@@ -49,8 +52,8 @@ public class VirtualSystemHandler extends ParseSax.HandlerWithResult<VirtualSyst
    protected String id;
    protected String info;
    protected String name;
-   protected OperatingSystem operatingSystem;
-   protected VirtualHardware hardware;
+   protected OperatingSystemSection operatingSystem;
+   protected Set<VirtualHardwareSection> hardware = Sets.newLinkedHashSet();
 
    private boolean inHardware;
    private boolean inOs;
@@ -63,7 +66,7 @@ public class VirtualSystemHandler extends ParseSax.HandlerWithResult<VirtualSyst
       info = null;
       name = null;
       operatingSystem = null;
-      hardware = null;
+      hardware = Sets.newLinkedHashSet();
       return vs;
    }
 
@@ -97,7 +100,7 @@ public class VirtualSystemHandler extends ParseSax.HandlerWithResult<VirtualSyst
    public void endElement(String uri, String localName, String qName) {
       if (qName.endsWith("VirtualHardwareSection")) {
          inHardware = false;
-         hardware = hardwareHandler.getResult();
+         hardware.add(hardwareHandler.getResult());
       } else if (qName.endsWith("OperatingSystemSection")) {
          inOs = false;
          operatingSystem = osHandler.getResult();

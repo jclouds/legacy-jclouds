@@ -54,12 +54,13 @@ import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExt
 import org.jclouds.vcloud.domain.AllocationModel;
 import org.jclouds.vcloud.domain.Capacity;
 import org.jclouds.vcloud.domain.Catalog;
-import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.VDCStatus;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
+import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.config.TerremarkVCloudExpressRestClientModule;
@@ -195,7 +196,8 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
       HttpRequest request = processor.createRequest(method, URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"), URI.create("https://vcloud/vAppTemplate/3"),
                "name", TerremarkInstantiateVAppTemplateOptions.Builder.processorCount(2).memory(512).inGroup("group")
-                        .withPassword("password").inRow("row").network(URI.create("http://network")));
+                        .withPassword("password").inRow("row").addNetworkConfig(
+                                 new NetworkConfig(URI.create("http://network"))));
 
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");

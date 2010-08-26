@@ -21,7 +21,11 @@ package org.jclouds.vcloud.domain.ovf;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.vcloud.domain.VirtualHardware;
+import java.util.Set;
+
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 /**
  * @author Adrian Cole
@@ -30,15 +34,16 @@ public class VirtualSystem {
    private final String id;
    private final String info;
    private final String name;
-   private final OperatingSystem operatingSystem;
-   private final VirtualHardware hardware;
+   private final OperatingSystemSection operatingSystem;
+   private final Set<VirtualHardwareSection> hardware = Sets.newLinkedHashSet();
 
-   public VirtualSystem(String id, String info, String name, OperatingSystem operatingSystem, VirtualHardware hardware) {
+   public VirtualSystem(String id, String info, String name, OperatingSystemSection operatingSystem,
+            Iterable<? extends VirtualHardwareSection> hardware) {
       this.id = id;
       this.info = info;
       this.name = name;
       this.operatingSystem = checkNotNull(operatingSystem, "operatingSystem");
-      this.hardware = checkNotNull(hardware, "hardware");
+      Iterables.addAll(this.hardware, checkNotNull(hardware, "hardware"));
    }
 
    public String getId() {
@@ -53,11 +58,15 @@ public class VirtualSystem {
       return name;
    }
 
-   public OperatingSystem getOperatingSystem() {
+   public OperatingSystemSection getOperatingSystem() {
       return operatingSystem;
    }
 
-   public VirtualHardware getHardware() {
+   /**
+    * Each VirtualSystem element may contain one or more VirtualHardwareSection elements, each of
+    * which describes the virtual hardware required by the virtual system.
+    * */
+   public Set<? extends VirtualHardwareSection> getHardware() {
       return hardware;
    }
 

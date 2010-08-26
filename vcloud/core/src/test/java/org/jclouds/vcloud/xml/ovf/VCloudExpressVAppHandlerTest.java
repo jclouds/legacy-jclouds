@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.xml;
+package org.jclouds.vcloud.xml.ovf;
 
 import static org.testng.Assert.assertEquals;
 
@@ -38,6 +38,7 @@ import org.jclouds.vcloud.domain.internal.VCloudExpressVAppImpl;
 import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
 import org.jclouds.vcloud.domain.ovf.ResourceType;
 import org.jclouds.vcloud.domain.ovf.System;
+import org.jclouds.vcloud.xml.VCloudExpressVAppHandler;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -90,7 +91,7 @@ public class VCloudExpressVAppHandlerTest extends BaseHandlerTest {
 
       ListMultimap<String, String> networkToAddresses = ImmutableListMultimap.<String, String> of("Public Network",
                "10.150.4.93");
-      System system = new System(0, "Virtual Hardware Family", "centos53", "vmx-07");
+      System system = new System(0, "Virtual Hardware Family", "centos53", ImmutableSet.of("vmx-07"));
 
       Set<ResourceAllocation> resourceAllocations = ImmutableSet.<ResourceAllocation> of(new ResourceAllocation(1,
                "1 virtual CPU(s)", "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null,
@@ -125,7 +126,7 @@ public class VCloudExpressVAppHandlerTest extends BaseHandlerTest {
 
       ListMultimap<String, String> networkToAddresses = ImmutableListMultimap.<String, String> of("Public Network",
                "10.23.119.221");
-      System system = new System(0, "Virtual Hardware Family", "m1", "vmx-07");
+      System system = new System(0, "Virtual Hardware Family", "m1", ImmutableSet.of("vmx-07"));
 
       Set<ResourceAllocation> resourceAllocations = ImmutableSet.<ResourceAllocation> of(new ResourceAllocation(1,
                "1 virtual CPU(s)", "Number of Virtual CPUs", ResourceType.PROCESSOR, null, null, null, null, null,

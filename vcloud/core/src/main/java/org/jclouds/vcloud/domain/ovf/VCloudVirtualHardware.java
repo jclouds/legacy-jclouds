@@ -19,31 +19,21 @@
 
 package org.jclouds.vcloud.domain.ovf;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.net.URI;
 
-import javax.annotation.Nullable;
-
-import org.jclouds.vcloud.domain.ReferenceType;
 
 /**
- * A description of the operating system supported by a virtual machine.
+ * A description of the virtual hardware supported by a virtual machine.
  */
-public class VCloudOperatingSystem extends OperatingSystemSection {
+public class VCloudVirtualHardware extends VirtualHardwareSection {
    protected final String type;
    protected final URI href;
-   @Nullable
-   protected final String vmwOsType;
-   protected final ReferenceType edit;
 
-   public VCloudOperatingSystem(@Nullable Integer id, @Nullable String info, @Nullable String description, String type,
-            URI href, @Nullable String vmwOsType, ReferenceType edit) {
-      super(id, info, description);
+   public VCloudVirtualHardware(String type, URI href, String info, System virtualSystem,
+            Iterable<? extends ResourceAllocation> resourceAllocations) {
+      super(info, virtualSystem, resourceAllocations);
       this.type = type;
       this.href = href;
-      this.vmwOsType = vmwOsType;
-      this.edit = checkNotNull(edit, "edit");
    }
 
    public String getType() {
@@ -54,36 +44,12 @@ public class VCloudOperatingSystem extends OperatingSystemSection {
       return href;
    }
 
-   /**
-    * 
-    * @return VMware osType, if running on VMware
-    */
-   public String getVmwOsType() {
-      return vmwOsType;
-   }
-
-   /**
-    * 
-    * @return edit link
-    */
-   public ReferenceType getEdit() {
-      return edit;
-   }
-
-   @Override
-   public String toString() {
-      return "[href=" + getHref() + ", type=" + getType() + ", id=" + getId() + ", vmwOsType=" + getVmwOsType()
-               + ", description=" + getDescription() + "]";
-   }
-
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((edit == null) ? 0 : edit.hashCode());
       result = prime * result + ((href == null) ? 0 : href.hashCode());
       result = prime * result + ((type == null) ? 0 : type.hashCode());
-      result = prime * result + ((vmwOsType == null) ? 0 : vmwOsType.hashCode());
       return result;
    }
 
@@ -95,12 +61,7 @@ public class VCloudOperatingSystem extends OperatingSystemSection {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      VCloudOperatingSystem other = (VCloudOperatingSystem) obj;
-      if (edit == null) {
-         if (other.edit != null)
-            return false;
-      } else if (!edit.equals(other.edit))
-         return false;
+      VCloudVirtualHardware other = (VCloudVirtualHardware) obj;
       if (href == null) {
          if (other.href != null)
             return false;
@@ -111,11 +72,12 @@ public class VCloudOperatingSystem extends OperatingSystemSection {
             return false;
       } else if (!type.equals(other.type))
          return false;
-      if (vmwOsType == null) {
-         if (other.vmwOsType != null)
-            return false;
-      } else if (!vmwOsType.equals(other.vmwOsType))
-         return false;
       return true;
+   }
+
+   @Override
+   public String toString() {
+      return "[href=" + getHref() + ", type=" + getType() + ", info=" + getInfo() + ", virtualSystem=" + getSystem()
+               + "]";
    }
 }

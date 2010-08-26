@@ -32,6 +32,7 @@ import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.Vm;
+import org.jclouds.vcloud.domain.ovf.VCloudNetworkSection;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -53,10 +54,11 @@ public class VAppTemplateImpl extends ReferenceTypeImpl implements VAppTemplate 
    private final boolean ovfDescriptorUploaded;
    private final String vAppScopedLocalId;
    private final Set<Vm> children = Sets.newLinkedHashSet();
+   private final VCloudNetworkSection networkSection;
 
    public VAppTemplateImpl(String name, String type, URI id, Status status, ReferenceType vdc,
             @Nullable String description, Iterable<Task> tasks, boolean ovfDescriptorUploaded,
-            @Nullable String vAppScopedLocalId, Iterable<? extends Vm> children) {
+            @Nullable String vAppScopedLocalId, Iterable<? extends Vm> children, VCloudNetworkSection networkSection) {
       super(name, type, id);
       this.status = checkNotNull(status, "status");
       this.vdc = vdc;// TODO: once <1.0 is killed check not null
@@ -65,6 +67,7 @@ public class VAppTemplateImpl extends ReferenceTypeImpl implements VAppTemplate 
       this.vAppScopedLocalId = vAppScopedLocalId;
       this.ovfDescriptorUploaded = ovfDescriptorUploaded;
       Iterables.addAll(this.children, checkNotNull(children, "children"));
+      this.networkSection = checkNotNull(networkSection, "networkSection");
    }
 
    /**
@@ -123,11 +126,21 @@ public class VAppTemplateImpl extends ReferenceTypeImpl implements VAppTemplate 
       return children;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public VCloudNetworkSection getNetworkSection() {
+      return networkSection;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
+      result = prime * result + ((children == null) ? 0 : children.hashCode());
       result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + ((networkSection == null) ? 0 : networkSection.hashCode());
       result = prime * result + (ovfDescriptorUploaded ? 1231 : 1237);
       result = prime * result + ((status == null) ? 0 : status.hashCode());
       result = prime * result + ((tasks == null) ? 0 : tasks.hashCode());
@@ -145,12 +158,32 @@ public class VAppTemplateImpl extends ReferenceTypeImpl implements VAppTemplate 
       if (getClass() != obj.getClass())
          return false;
       VAppTemplateImpl other = (VAppTemplateImpl) obj;
+      if (children == null) {
+         if (other.children != null)
+            return false;
+      } else if (!children.equals(other.children))
+         return false;
       if (description == null) {
          if (other.description != null)
             return false;
       } else if (!description.equals(other.description))
          return false;
+      if (networkSection == null) {
+         if (other.networkSection != null)
+            return false;
+      } else if (!networkSection.equals(other.networkSection))
+         return false;
       if (ovfDescriptorUploaded != other.ovfDescriptorUploaded)
+         return false;
+      if (status == null) {
+         if (other.status != null)
+            return false;
+      } else if (!status.equals(other.status))
+         return false;
+      if (tasks == null) {
+         if (other.tasks != null)
+            return false;
+      } else if (!tasks.equals(other.tasks))
          return false;
       if (vAppScopedLocalId == null) {
          if (other.vAppScopedLocalId != null)

@@ -17,46 +17,41 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.domain;
+package org.jclouds.vcloud.domain.ovf;
 
 import java.util.Set;
 
-import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
-import org.jclouds.vcloud.domain.ovf.System;
+import org.jclouds.vcloud.domain.ovf.network.Network;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
- * A description of the virtual hardware supported by a virtual machine.
+ * The NetworkSection element shall list all logical networks used in the OVF package.
+ * 
+ * @author Adrian Cole
  */
-public class VirtualHardware {
+public class NetworkSection {
+   private final String info;
+   private final Set<Network> networks = Sets.newLinkedHashSet();
 
-   protected final String info;
-   protected final System virtualSystem;
-   protected final Set<ResourceAllocation> resourceAllocations = Sets.newLinkedHashSet();
-
-   public VirtualHardware(String info, System virtualSystem, Iterable<? extends ResourceAllocation> resourceAllocations) {
+   public NetworkSection(String info, Iterable<Network> networks) {
       this.info = info;
-      this.virtualSystem = virtualSystem;
-      Iterables.addAll(this.resourceAllocations, resourceAllocations);
+      Iterables.addAll(this.networks, networks);
    }
 
    public String getInfo() {
       return info;
    }
 
-   public System getSystem() {
-      return virtualSystem;
-   }
-
-   public Set<? extends ResourceAllocation> getResourceAllocations() {
-      return resourceAllocations;
-   }
-
-   @Override
-   public String toString() {
-      return "[info=" + getInfo() + ", virtualSystem=" + getSystem() + "]";
+   /**
+    * All networks referred to from Connection elements in all {@link VirtualHardwareSection} elements shall
+    * be defined in the NetworkSection.
+    * 
+    * @return
+    */
+   public Set<Network> getNetworks() {
+      return networks;
    }
 
    @Override
@@ -64,8 +59,7 @@ public class VirtualHardware {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((info == null) ? 0 : info.hashCode());
-      result = prime * result + ((resourceAllocations == null) ? 0 : resourceAllocations.hashCode());
-      result = prime * result + ((virtualSystem == null) ? 0 : virtualSystem.hashCode());
+      result = prime * result + ((networks == null) ? 0 : networks.hashCode());
       return result;
    }
 
@@ -77,23 +71,23 @@ public class VirtualHardware {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      VirtualHardware other = (VirtualHardware) obj;
+      NetworkSection other = (NetworkSection) obj;
       if (info == null) {
          if (other.info != null)
             return false;
       } else if (!info.equals(other.info))
          return false;
-      if (resourceAllocations == null) {
-         if (other.resourceAllocations != null)
+      if (networks == null) {
+         if (other.networks != null)
             return false;
-      } else if (!resourceAllocations.equals(other.resourceAllocations))
-         return false;
-      if (virtualSystem == null) {
-         if (other.virtualSystem != null)
-            return false;
-      } else if (!virtualSystem.equals(other.virtualSystem))
+      } else if (!networks.equals(other.networks))
          return false;
       return true;
+   }
+
+   @Override
+   public String toString() {
+      return "[info=" + info + ", networks=" + networks + "]";
    }
 
 }

@@ -26,17 +26,17 @@ import java.io.InputStream;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.vcloud.domain.VirtualHardware;
-import org.jclouds.vcloud.domain.ovf.OperatingSystem;
+import org.jclouds.vcloud.domain.ovf.OperatingSystemSection;
 import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
 import org.jclouds.vcloud.domain.ovf.ResourceType;
 import org.jclouds.vcloud.domain.ovf.System;
 import org.jclouds.vcloud.domain.ovf.VCloudHardDisk;
 import org.jclouds.vcloud.domain.ovf.VCloudNetworkAdapter;
+import org.jclouds.vcloud.domain.ovf.VirtualHardwareSection;
 import org.jclouds.vcloud.domain.ovf.VirtualSystem;
-import org.jclouds.vcloud.xml.ovf.VirtualSystemHandler;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -61,13 +61,14 @@ public class VirtualSystemHandlerTest {
       assertEquals(result.getId(), "Ubuntu1004");
       assertEquals(result.getName(), "Ubuntu1004");
       assertEquals(result.getInfo(), "A virtual machine:");
-      checkHardware(result.getHardware());
+      checkHardware(Iterables.get(result.getHardware(), 0));
       checkOs(result.getOperatingSystem());
    }
 
    @Test(enabled = false)
-   public static void checkHardware(VirtualHardware result) {
-      assertEquals(result.getSystem(), new System(0, "Virtual Hardware Family", "Ubuntu1004", "vmx-07"));
+   public static void checkHardware(VirtualHardwareSection result) {
+      assertEquals(result.getSystem(),
+               new System(0, "Virtual Hardware Family", "Ubuntu1004", ImmutableSet.of("vmx-07")));
       assertEquals(result.getInfo(), "Virtual hardware requirements");
 
       assertEquals(Iterables.get(result.getResourceAllocations(), 0), new VCloudNetworkAdapter(1, "Network adapter 0",
@@ -97,7 +98,7 @@ public class VirtualSystemHandlerTest {
    }
 
    @Test(enabled = false)
-   public static void checkOs(OperatingSystem result) {
+   public static void checkOs(OperatingSystemSection result) {
       assertEquals(result.getDescription(), "Ubuntu Linux (64-bit)");
       assertEquals(result.getId(), new Integer(94));
       assertEquals(result.getInfo(), "Specifies the operating system installed");

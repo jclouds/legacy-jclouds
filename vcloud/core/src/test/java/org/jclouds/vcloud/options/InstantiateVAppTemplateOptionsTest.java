@@ -19,11 +19,9 @@
 
 package org.jclouds.vcloud.options;
 
+import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.addNetworkConfig;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.disk;
-import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.fenceMode;
-import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.inNetwork;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.memory;
-import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.networkName;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.testng.Assert.assertEquals;
 
@@ -31,8 +29,10 @@ import java.net.URI;
 
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.domain.network.FenceMode;
+import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -47,17 +47,21 @@ public class InstantiateVAppTemplateOptionsTest {
    Injector injector = Guice.createInjector(new SaxParserModule());
 
    @Test
-   public void testInNetwork() {
+   public void testAddNetworkConfig() {
       InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-      options.network(URI.create("http://localhost"));
-      assertEquals(options.getNetwork(), "http://localhost");
+      options.addNetworkConfig(new NetworkConfig("default", URI.create("http://localhost"), FenceMode.BRIDGED));
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getNetworkName(), "default");
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getParentNetwork(), URI.create("http://localhost"));
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getFenceMode(), FenceMode.BRIDGED);
    }
 
    @Test
-   public void testInNetworkStatic() {
-      InstantiateVAppTemplateOptions options = inNetwork(URI
-            .create("http://localhost"));
-      assertEquals(options.getNetwork(), "http://localhost");
+   public void testAddNetworkConfigStatic() {
+      InstantiateVAppTemplateOptions options = addNetworkConfig(new NetworkConfig("default", URI
+               .create("http://localhost"), FenceMode.BRIDGED));
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getNetworkName(), "default");
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getParentNetwork(), URI.create("http://localhost"));
+      assertEquals(Iterables.get(options.getNetworkConfig(), 0).getFenceMode(), FenceMode.BRIDGED);
    }
 
    @Test
@@ -103,31 +107,4 @@ public class InstantiateVAppTemplateOptionsTest {
    public void testDiskStaticWrong() {
       disk(0);
    }
-
-   @Test
-   public void testNetworkName() {
-      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-      options.networkName("network");
-      assertEquals(options.getNetworkName(), "network");
-   }
-
-   @Test
-   public void testNetworkNameStatic() {
-      InstantiateVAppTemplateOptions options = networkName("network");
-      assertEquals(options.getNetworkName(), "network");
-   }
-
-   @Test
-   public void testFenceMode() {
-      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-      options.fenceMode(FenceMode.BRIDGED);
-      assertEquals(options.getFenceMode(), FenceMode.BRIDGED);
-   }
-
-   @Test
-   public void testFenceModeStatic() {
-      InstantiateVAppTemplateOptions options = fenceMode(FenceMode.BRIDGED);
-      assertEquals(options.getFenceMode(), FenceMode.BRIDGED);
-   }
-
 }
