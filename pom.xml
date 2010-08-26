@@ -129,6 +129,7 @@ pageTracker._trackPageview();
                     <!-- top-level only -->
                     <plugin>
                         <artifactId>maven-assembly-plugin</artifactId>
+                        <version>2.2-beta-5</version>
                         <inherited>false</inherited>
                         <executions>
                             <execution>
