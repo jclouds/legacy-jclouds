@@ -48,7 +48,7 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindDeployVAppParamsToXmlPayload;
-import org.jclouds.vcloud.binders.BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload;
+import org.jclouds.vcloud.binders.BindInstantiateVAppTemplateParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindUndeployVAppParamsToXmlPayload;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
@@ -117,8 +117,7 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
    @Produces("application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml")
    @Consumes(VAPP_XML)
    @XMLResponseParser(VAppHandler.class)
-   // TODO convert this.
-   @MapBinder(BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload.class)
+   @MapBinder(BindInstantiateVAppTemplateParamsToXmlPayload.class)
    ListenableFuture<? extends VApp> instantiateVAppTemplateInVDC(@EndpointParam URI vdc,
             @MapPayloadParam("template") URI template,
             @MapPayloadParam("name") @ParamValidators(DnsNameValidator.class) String appName,

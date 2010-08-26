@@ -66,8 +66,8 @@ import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.VCloudToken;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.endpoints.Network;
@@ -83,9 +83,13 @@ import org.jclouds.vcloud.predicates.TaskSuccess;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Iterables;
+import com.google.inject.ConfigurationException;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 
 import domain.VCloudVersionsAsyncClient;
 
@@ -123,16 +127,16 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
       }).to(new TypeLiteral<AllCatalogItemsInCatalog>() {
       });
    }
-   
+
    @Singleton
    @Provides
-   CommonVCloudAsyncClient provideCommonVCloudAsyncClient(A in){
+   CommonVCloudAsyncClient provideCommonVCloudAsyncClient(A in) {
       return in;
    }
 
    @Singleton
    @Provides
-   CommonVCloudClient provideCommonVCloudClient(S in){
+   CommonVCloudClient provideCommonVCloudClient(S in) {
       return in;
    }
 
@@ -382,23 +386,28 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    }
 
    @Provides
-   @Named(PROPERTY_VCLOUD_DEFAULT_NETWORK)
-   @Singleton
-   String provideDefaultNetworkString(@Network URI network) {
-      return network.toASCIIString();
-   }
-
-   @Provides
    @Network
    @Singleton
-   protected URI provideDefaultNetwork(CommonVCloudClient client) {
+   protected URI provideDefaultNetwork(@org.jclouds.vcloud.endpoints.VDC URI defaultVDC, CommonVCloudClient client,
+            Injector injector) {
       if (authException.get() != null)
          throw authException.get();
       try {
-         org.jclouds.vcloud.domain.VDC vDC = client.findVDCInOrgNamed(null, null);
+         org.jclouds.vcloud.domain.VDC vDC = client.getVDC(defaultVDC);
          Map<String, ReferenceType> networks = vDC.getAvailableNetworks();
          checkState(networks.size() > 0, "No networks present in vDC: " + vDC.getName());
-         return get(networks.values(), 0).getHref();
+         if (networks.size() == 1)
+            return Iterables.getLast(networks.values()).getHref();
+         try {
+            String networkName = injector.getInstance(Key.get(String.class, Names
+                     .named(PROPERTY_VCLOUD_DEFAULT_NETWORK)));
+            ReferenceType network = networks.get(networkName);
+            checkState(network != null, String.format("network named %s not in %s", networkName, networks.keySet()));
+            return network.getHref();
+         } catch (ConfigurationException e) {
+            throw new IllegalStateException(String.format("you must specify the property %s as one of %s",
+                     PROPERTY_VCLOUD_DEFAULT_NETWORK, networks.keySet()), e);
+         }
       } catch (AuthorizationException e) {
          authException.set(e);
          throw e;

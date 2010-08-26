@@ -77,6 +77,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
@@ -119,7 +120,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       HttpRequest request = processor.createRequest(method, URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"), URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3"), "my-vapp", processorCount(1)
-               .memory(512).disk(1024).fenceMode(FenceMode.BRIDGED).inNetwork(
+               .memory(512).disk(1024).fenceMode(FenceMode.BRIDGED).network(
                         URI.create("https://vcloud.safesecureweb.com/network/1990")));
 
       assertRequestLineEquals(request,
@@ -143,7 +144,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
                String.class, InstantiateVAppTemplateOptions[].class);
       processor.createRequest(method, URI.create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"), URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"), "CentOS 01", processorCount(1).memory(512)
-               .disk(1024).inNetwork(URI.create("https://vcloud.safesecureweb.com/network/1990")));
+               .disk(1024).network(URI.create("https://vcloud.safesecureweb.com/network/1990")));
    }
 
    public void testCloneVAppInVDC() throws SecurityException, NoSuchMethodException, IOException {
@@ -683,7 +684,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       }
 
       @Override
-      protected URI provideDefaultNetwork(CommonVCloudClient client) {
+      protected URI provideDefaultNetwork(URI vdc, CommonVCloudClient client, Injector injector) {
          return URI.create("https://vcloud.safesecureweb.com/network/1990");
       }
 

@@ -37,7 +37,6 @@ import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
-import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
 import org.jclouds.vcloud.domain.ovf.ResourceType;
@@ -72,24 +71,18 @@ public class VCloudComputeClientImpl extends CommonVCloudComputeClientImpl<VAppT
       checkNotNull(options, "options");
       logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
 
-      VDC vdc = client.getVDC(VDC);
-      VAppTemplate template = VCloudClient.class.cast(client).getVAppTemplate(templateId);
-
-      VApp vAppResponse = VCloudClient.class.cast(client).instantiateVAppTemplateInVDC(vdc.getHref(),
-               template.getHref(), name, options);
+      VApp vAppResponse = VCloudClient.class.cast(client).instantiateVAppTemplateInVDC(VDC, templateId, name, options);
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getName());
 
-      logger.debug(">> deploying vApp(%s)", vAppResponse.getName());
-
-      Task task = VCloudClient.class.cast(client).deployAndPowerOnVAppOrVm(vAppResponse.getHref());
-      if (options.shouldBlockOnDeploy()) {
+      Task task = vAppResponse.getTasks().get(0);
+      if (options.shouldBlock()) {
          if (!taskTester.apply(task.getHref())) {
             throw new RuntimeException(String.format("failed to %s %s: %s", "deploy and power on", vAppResponse
                      .getName(), task));
          }
-         logger.debug("<< deployed and powered on vApp(%s)", vAppResponse.getName());
+         logger.debug("<< ready vApp(%s)", vAppResponse.getName());
       }
-      return parseAndValidateResponse(template, vAppResponse);
+      return parseAndValidateResponse(null, vAppResponse);
    }
 
    @Override

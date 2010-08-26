@@ -49,7 +49,7 @@ public class InstantiateVAppTemplateOptionsTest {
    @Test
    public void testInNetwork() {
       InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-      options.inNetwork(URI.create("http://localhost"));
+      options.network(URI.create("http://localhost"));
       assertEquals(options.getNetwork(), "http://localhost");
    }
 

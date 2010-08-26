@@ -28,7 +28,7 @@ public interface VCloudConstants {
    public static final String PROPERTY_VCLOUD_VERSION_SCHEMA = "jclouds.vcloud.version.schema";
 
    /**
-    * automatically renew vcloud token before this interval expires.
+    * name of the default network, in the default VDC that your vApp will join.
     */
    public static final String PROPERTY_VCLOUD_DEFAULT_NETWORK = "jclouds.vcloud.defaults.network";
    public static final String PROPERTY_VCLOUD_DEFAULT_FENCEMODE = "jclouds.vcloud.defaults.fencemode";

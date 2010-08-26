@@ -65,13 +65,10 @@ public class TerremarkVCloudComputeClientTest {
       TerremarkVCloudExpressClient client = createMock(TerremarkVCloudExpressClient.class);
       VCloudExpressVApp vApp = createMock(VCloudExpressVApp.class);
 
-      expect(client.getVDC(vdcURI)).andReturn(vdc);
-      expect(client.getVAppTemplate(templateURI)).andReturn(template);
       // TODO make this call only once
       expect(client.getVAppTemplate(templateURI)).andReturn(template);
+      expect(client.getVAppTemplate(templateURI)).andReturn(template);
 
-      expect(vdc.getHref()).andReturn(vdcURI);
-      expect(template.getHref()).andReturn(templateURI);
       expect(
                client.instantiateVAppTemplateInVDC(vdcURI, templateURI, "name",
                         new TerremarkInstantiateVAppTemplateOptions().productProperty("password", "password")))

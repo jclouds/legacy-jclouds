@@ -42,7 +42,7 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_API_VERSION, "1.0");
-      properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "1.0");
+      properties.setProperty(PROPERTY_VCLOUD_VERSION_SCHEMA, "1");
       properties.setProperty(PROPERTY_SESSION_INTERVAL, 8 * 60 + "");
       properties.setProperty(PROPERTY_VCLOUD_XML_SCHEMA, "http://vcloud.safesecureweb.com/ns/vcloud.xsd");
       properties.setProperty("jclouds.dns_name_length_min", "1");

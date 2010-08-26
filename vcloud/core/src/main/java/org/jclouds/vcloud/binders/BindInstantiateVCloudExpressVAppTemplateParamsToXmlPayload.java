@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_FENCEMODE;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_NAMESPACE;
 import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_XML_SCHEMA;
 
@@ -46,6 +45,7 @@ import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.domain.ovf.ResourceType;
+import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.collect.ImmutableMap;
@@ -73,13 +73,13 @@ public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload implemen
    @Inject
    public BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload(BindToStringPayload stringBinder,
             @Named(PROPERTY_API_VERSION) String apiVersion, @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
-            @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema, @Named(PROPERTY_VCLOUD_DEFAULT_NETWORK) String network,
+            @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema, @Network URI network,
             @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode) {
       this.ns = ns;
       this.apiVersion = apiVersion;
       this.schema = schema;
       this.stringBinder = stringBinder;
-      this.defaultNetwork = URI.create(network);
+      this.defaultNetwork = network;
       this.defaultFenceMode = fenceMode;
    }
 
@@ -95,7 +95,6 @@ public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload implemen
       SortedMap<ResourceType, String> virtualHardwareQuantity = Maps.newTreeMap();
 
       InstantiateVAppTemplateOptions options = findOptionsInArgsOrNull(gRequest);
-      Map<String, String> properties = Maps.newTreeMap();
       String network = defaultNetwork.toASCIIString();
       String fenceMode = defaultFenceMode;
       String networkName = name;
@@ -106,11 +105,10 @@ public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload implemen
             fenceMode = "allowInOut";
          networkName = ifNullDefaultTo(options.getNetworkName(), networkName);
          addQuantity(options, virtualHardwareQuantity);
-         properties.putAll(options.getProperties());
       }
       try {
-         stringBinder.bindToRequest(request, generateXml(name, template, properties, virtualHardwareQuantity,
-                  networkName, fenceMode, URI.create(network)));
+         stringBinder.bindToRequest(request, generateXml(name, template, virtualHardwareQuantity, networkName,
+                  fenceMode, URI.create(network)));
       } catch (ParserConfigurationException e) {
          throw new RuntimeException(e);
       } catch (FactoryConfigurationError e) {
@@ -121,31 +119,19 @@ public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload implemen
 
    }
 
-   protected String generateXml(String name, String template, Map<String, String> properties,
-            SortedMap<ResourceType, String> virtualHardwareQuantity, String networkName, @Nullable String fenceMode,
-            URI network) throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
+   protected String generateXml(String name, String template, SortedMap<ResourceType, String> virtualHardwareQuantity,
+            String networkName, @Nullable String fenceMode, URI network) throws ParserConfigurationException,
+            FactoryConfigurationError, TransformerException {
       XMLBuilder rootBuilder = buildRoot(name);
 
       rootBuilder.e("VAppTemplate").a("href", template);
 
       XMLBuilder instantiationParamsBuilder = rootBuilder.e("InstantiationParams");
-      addPropertiesifPresent(instantiationParamsBuilder, properties);
       addVirtualQuantityIfPresent(instantiationParamsBuilder, virtualHardwareQuantity);
       addNetworkConfig(instantiationParamsBuilder, networkName, fenceMode, network);
       Properties outputProperties = new Properties();
       outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
       return rootBuilder.asString(outputProperties);
-   }
-
-   protected void addPropertiesifPresent(XMLBuilder instantiationParamsBuilder, Map<String, String> properties) {
-      if (properties.size() > 0) {
-         XMLBuilder productSectionBuilder = instantiationParamsBuilder.e("ProductSection").a("xmlns:q1", ns).a(
-                  "xmlns:ovf", "http://schemas.dmtf.org/ovf/envelope/1");
-         for (Entry<String, String> entry : properties.entrySet()) {
-            productSectionBuilder.e("Property").a("xmlns", "http://schemas.dmtf.org/ovf/envelope/1").a("ovf:key",
-                     entry.getKey()).a("ovf:value", entry.getValue());
-         }
-      }
    }
 
    protected void addNetworkConfig(XMLBuilder instantiationParamsBuilder, String name, @Nullable String fenceMode,

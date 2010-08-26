@@ -22,6 +22,7 @@ package org.jclouds.vcloud;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
+import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.networkName;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.testng.Assert.assertEquals;
 
@@ -58,6 +59,7 @@ import org.jclouds.vcloud.domain.internal.CatalogItemImpl;
 import org.jclouds.vcloud.domain.internal.OrgImpl;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.internal.VDCImpl;
+import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
@@ -78,6 +80,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
@@ -102,7 +105,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream("/newvapp.xml")),
+      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml")),
                "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -116,17 +119,18 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
             IOException {
       Method method = VCloudAsyncClient.class.getMethod("instantiateVAppTemplateInVDC", URI.class, URI.class,
                String.class, InstantiateVAppTemplateOptions[].class);
-      HttpRequest request = processor
-               .createRequest(method, URI.create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), URI
-                        .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3"), "my-vapp",
-                        processorCount(1).memory(512).disk(1024).inNetwork(
-                                 URI.create("https://vcenterprise.bluelock.com/api/v1.0/network/1990")));
+      HttpRequest request = processor.createRequest(method, URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3"), "my-vapp", networkName("aloha")
+               .fenceMode(FenceMode.NAT_ROUTED).network(
+                        URI.create("https://vcenterprise.bluelock.com/api/v1.0/network/1991")));
 
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream("/newvapp-cpumemdisk.xml")),
-               "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
+      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
+               "/instantiationparams-network.xml")), "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml",
+               false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, VAppHandler.class);
@@ -142,7 +146,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
                String.class, InstantiateVAppTemplateOptions[].class);
       processor.createRequest(method, URI.create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), "CentOS 01", processorCount(1).memory(512)
-               .disk(1024).inNetwork(URI.create("https://vcenterprise.bluelock.com/network/1990")));
+               .disk(1024).network(URI.create("https://vcenterprise.bluelock.com/network/1990")));
    }
 
    public void testCloneVAppInVDC() throws SecurityException, NoSuchMethodException, IOException {
@@ -455,7 +459,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request, "POST https://vcenterprise.bluelock.com/api/v1.0/vApp/1/action/deploy HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, "<DeployVAppParams xmlns=\"http://www.vmware.com/vcloud/v1.0\"/>",
+      assertPayloadEquals(request, "<DeployVAppParams xmlns=\"http://www.vmware.com/vcloud/v1\"/>",
                "application/vnd.vmware.vcloud.deployVAppParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -472,7 +476,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
       assertRequestLineEquals(request, "POST https://vcenterprise.bluelock.com/api/v1.0/vApp/1/action/deploy HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, "<DeployVAppParams xmlns=\"http://www.vmware.com/vcloud/v1.0\" powerOn=\"true\"/>",
+      assertPayloadEquals(request, "<DeployVAppParams xmlns=\"http://www.vmware.com/vcloud/v1\" powerOn=\"true\"/>",
                "application/vnd.vmware.vcloud.deployVAppParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -539,7 +543,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vApp/1/action/undeploy HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, "<UndeployVAppParams xmlns=\"http://www.vmware.com/vcloud/v1.0\"/>",
+      assertPayloadEquals(request, "<UndeployVAppParams xmlns=\"http://www.vmware.com/vcloud/v1\"/>",
                "application/vnd.vmware.vcloud.undeployVAppParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -559,7 +563,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
                "POST https://vcenterprise.bluelock.com/api/v1.0/vApp/1/action/undeploy HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(request,
-               "<UndeployVAppParams xmlns=\"http://www.vmware.com/vcloud/v1.0\" saveState=\"true\"/>",
+               "<UndeployVAppParams xmlns=\"http://www.vmware.com/vcloud/v1\" saveState=\"true\"/>",
                "application/vnd.vmware.vcloud.undeployVAppParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -768,7 +772,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       }
 
       @Override
-      protected URI provideDefaultNetwork(CommonVCloudClient client) {
+      protected URI provideDefaultNetwork(URI vdc, CommonVCloudClient client, Injector injector) {
          return URI.create("https://vcenterprise.bluelock.com/api/v1.0/network/1990");
       }
 

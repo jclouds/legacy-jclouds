@@ -94,8 +94,7 @@ public class VCloudComputeClientLiveTest {
       int memory = 512;
 
       VAppTemplate template = client.findVAppTemplateInOrgCatalogNamed(null, null, templateName);
-      InstantiateVAppTemplateOptions options = processorCount(1).memory(512).disk(10 * 1025 * 1024).productProperties(
-               ImmutableMap.of("foo", "bar"));
+      InstantiateVAppTemplateOptions options = processorCount(1).memory(512).disk(10 * 1025 * 1024);
 
       id = URI.create(computeClient.start(null, template.getHref(), templateName, options).get("id"));
       Expectation expectation = expectationMap.get(toTest);

@@ -35,7 +35,6 @@ import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
-import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.base.Predicate;
@@ -66,30 +65,30 @@ public class VCloudExpressComputeClientImpl extends
       checkNotNull(options, "options");
       logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
 
-      VDC vdc = client.getVDC(VDC);
-      VCloudExpressVAppTemplate template = VCloudExpressClient.class.cast(client).getVAppTemplate(templateId);
-
-      VCloudExpressVApp vAppResponse = VCloudExpressClient.class.cast(client).instantiateVAppTemplateInVDC(vdc.getHref(),
-               template.getHref(), name, options);
+      VCloudExpressVApp vAppResponse = VCloudExpressClient.class.cast(client).instantiateVAppTemplateInVDC(VDC,
+               templateId, name, options);
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getName());
+      if (options.shouldDeploy()) {
+         logger.debug(">> deploying vApp(%s)", vAppResponse.getName());
 
-      logger.debug(">> deploying vApp(%s)", vAppResponse.getName());
-
-      Task task = VCloudExpressClient.class.cast(client).deployVApp(vAppResponse.getHref());
-      if (options.shouldBlockOnDeploy()) {
-         if (!taskTester.apply(task.getHref())) {
-            throw new RuntimeException(String.format("failed to %s %s: %s", "deploy", vAppResponse.getName(), task));
+         Task task = VCloudExpressClient.class.cast(client).deployVApp(vAppResponse.getHref());
+         if (options.shouldBlock()) {
+            if (!taskTester.apply(task.getHref())) {
+               throw new RuntimeException(String.format("failed to %s %s: %s", "deploy", vAppResponse.getName(), task));
+            }
+            logger.debug("<< deployed vApp(%s)", vAppResponse.getName());
+            if (options.shouldPowerOn()) {
+               logger.debug(">> powering vApp(%s)", vAppResponse.getName());
+               task = VCloudExpressClient.class.cast(client).powerOnVApp(vAppResponse.getHref());
+               if (!taskTester.apply(task.getHref())) {
+                  throw new RuntimeException(String.format("failed to %s %s: %s", "powerOn", vAppResponse.getName(),
+                           task));
+               }
+               logger.debug("<< on vApp(%s)", vAppResponse.getName());
+            }
          }
-         logger.debug("<< deployed vApp(%s)", vAppResponse.getName());
-
-         logger.debug(">> powering vApp(%s)", vAppResponse.getName());
-         task = VCloudExpressClient.class.cast(client).powerOnVApp(vAppResponse.getHref());
-         if (!taskTester.apply(task.getHref())) {
-            throw new RuntimeException(String.format("failed to %s %s: %s", "powerOn", vAppResponse.getName(), task));
-         }
-         logger.debug("<< on vApp(%s)", vAppResponse.getName());
       }
-      return parseAndValidateResponse(template, vAppResponse);
+      return parseAndValidateResponse(VCloudExpressClient.class.cast(client).getVAppTemplate(templateId), vAppResponse);
    }
 
    @Override

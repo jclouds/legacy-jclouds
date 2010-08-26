@@ -52,6 +52,7 @@ import org.jclouds.vcloud.terremark.domain.InternetService;
 import org.jclouds.vcloud.terremark.domain.Node;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
+import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
@@ -95,13 +96,14 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
          logger.warn("trmk does not support resizing the primary disk; unsetting disk size");
       }
       // we only get IP addresses after "deploy"
-      if (portsToOpen.length > 0 && !options.shouldBlockOnDeploy())
+      if (portsToOpen.length > 0 && !options.shouldBlock())
          throw new IllegalArgumentException("We cannot open ports on terremark unless we can deploy the vapp");
       String password = null;
       VCloudExpressVAppTemplate template = client.getVAppTemplate(templateId);
-      if (template.getDescription().indexOf("Windows") != -1) {
+      if (template.getDescription().indexOf("Windows") != -1
+               && options instanceof TerremarkInstantiateVAppTemplateOptions) {
          password = passwordGenerator.get();
-         options.getProperties().put("password", password);
+         TerremarkInstantiateVAppTemplateOptions.class.cast(options).getProperties().put("password", password);
       }
       Map<String, String> response = super.start(VDC, templateId, name, options, portsToOpen);
       if (password != null) {

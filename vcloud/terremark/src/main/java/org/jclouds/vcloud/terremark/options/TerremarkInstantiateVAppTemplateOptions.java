@@ -24,16 +24,18 @@ import java.util.Map;
 
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
+import com.google.inject.internal.util.Maps;
+
 /**
  * 
  * @author Adrian Cole
  * 
  */
-public class TerremarkInstantiateVAppTemplateOptions extends
-      InstantiateVAppTemplateOptions {
+public class TerremarkInstantiateVAppTemplateOptions extends InstantiateVAppTemplateOptions {
 
-   public TerremarkInstantiateVAppTemplateOptions sshKeyFingerprint(
-         String sshKeyFingerprint) {
+   private final Map<String, String> properties = Maps.newLinkedHashMap();
+
+   public TerremarkInstantiateVAppTemplateOptions sshKeyFingerprint(String sshKeyFingerprint) {
       productProperty("sshKeyFingerprint", sshKeyFingerprint);
       return this;
    }
@@ -43,8 +45,7 @@ public class TerremarkInstantiateVAppTemplateOptions extends
       return this;
    }
 
-   public TerremarkInstantiateVAppTemplateOptions secondaryDNS(
-         String secondaryDNS) {
+   public TerremarkInstantiateVAppTemplateOptions secondaryDNS(String secondaryDNS) {
       productProperty("secondaryDNS", secondaryDNS);
       return this;
    }
@@ -69,8 +70,7 @@ public class TerremarkInstantiateVAppTemplateOptions extends
       /**
        * @see TerremarkInstantiateVAppTemplateOptions#processorCount(int)
        */
-      public static TerremarkInstantiateVAppTemplateOptions processorCount(
-            int cpuCount) {
+      public static TerremarkInstantiateVAppTemplateOptions processorCount(int cpuCount) {
          TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
          return options.processorCount(cpuCount);
       }
@@ -78,8 +78,7 @@ public class TerremarkInstantiateVAppTemplateOptions extends
       /**
        * @see TerremarkInstantiateVAppTemplateOptions#memory(long)
        */
-      public static TerremarkInstantiateVAppTemplateOptions memory(
-            long megabytes) {
+      public static TerremarkInstantiateVAppTemplateOptions memory(long megabytes) {
          TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
          return options.memory(megabytes);
       }
@@ -93,19 +92,17 @@ public class TerremarkInstantiateVAppTemplateOptions extends
       }
 
       /**
-       * @see TerremarkInstantiateVAppTemplateOptions#inNetwork(URI)
+       * @see TerremarkInstantiateVAppTemplateOptions#network(URI)
        */
-      public static TerremarkInstantiateVAppTemplateOptions inNetwork(
-            URI networkLocation) {
+      public static TerremarkInstantiateVAppTemplateOptions inNetwork(URI networkLocation) {
          TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
-         return options.inNetwork(networkLocation);
+         return options.network(networkLocation);
       }
 
       /**
        * @see TerremarkInstantiateVAppTemplateOptions#withPassword(String)
        */
-      public static TerremarkInstantiateVAppTemplateOptions withPassword(
-            String password) {
+      public static TerremarkInstantiateVAppTemplateOptions withPassword(String password) {
          TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
          return options.withPassword(password);
       }
@@ -129,8 +126,7 @@ public class TerremarkInstantiateVAppTemplateOptions extends
       /**
        * @see TerremarkInstantiateVAppTemplateOptions#sshKeyFingerprint(String)
        */
-      public static TerremarkInstantiateVAppTemplateOptions sshKeyFingerprint(
-            String sshKeyFingerprint) {
+      public static TerremarkInstantiateVAppTemplateOptions sshKeyFingerprint(String sshKeyFingerprint) {
          TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
          return options.sshKeyFingerprint(sshKeyFingerprint);
       }
@@ -138,8 +134,7 @@ public class TerremarkInstantiateVAppTemplateOptions extends
       /**
        * @see TerremarkInstantiateVAppTemplateOptions#primaryDNS(String)
        */
-      public static TerremarkInstantiateVAppTemplateOptions primaryDNS(
-            String primaryDNS) {
+      public static TerremarkInstantiateVAppTemplateOptions primaryDNS(String primaryDNS) {
          TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
          return options.primaryDNS(primaryDNS);
       }
@@ -147,47 +142,37 @@ public class TerremarkInstantiateVAppTemplateOptions extends
       /**
        * @see TerremarkInstantiateVAppTemplateOptions#secondaryDNS(String)
        */
-      public static TerremarkInstantiateVAppTemplateOptions secondaryDNS(
-            String secondaryDNS) {
+      public static TerremarkInstantiateVAppTemplateOptions secondaryDNS(String secondaryDNS) {
          TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
          return options.secondaryDNS(secondaryDNS);
       }
 
       /**
-       * @see TerremarkInstantiateVAppTemplateOptions#productProperty(String,
-       *      String)
+       * @see TerremarkInstantiateVAppTemplateOptions#productProperty(String, String)
        */
-      public static TerremarkInstantiateVAppTemplateOptions productProperty(
-            String key, String value) {
+      public static TerremarkInstantiateVAppTemplateOptions productProperty(String key, String value) {
          TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
-         return (TerremarkInstantiateVAppTemplateOptions) options
-               .productProperty(key, value);
+         return (TerremarkInstantiateVAppTemplateOptions) options.productProperty(key, value);
       }
 
       /**
-       * @see 
-       *      TerremarkInstantiateVAppTemplateOptions#productProperties(Map<String
-       *      , String>)
+       * @see TerremarkInstantiateVAppTemplateOptions#productProperties(Map<String , String>)
        */
-      public static TerremarkInstantiateVAppTemplateOptions productProperties(
-            Map<String, String> properties) {
+      public static TerremarkInstantiateVAppTemplateOptions productProperties(Map<String, String> properties) {
          TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
-         return (TerremarkInstantiateVAppTemplateOptions) options
-               .productProperties(properties);
+         return (TerremarkInstantiateVAppTemplateOptions) options.productProperties(properties);
       }
 
    }
 
    @Override
    public TerremarkInstantiateVAppTemplateOptions processorCount(int cpuCount) {
-      return (TerremarkInstantiateVAppTemplateOptions) super
-            .processorCount(cpuCount);
+      return (TerremarkInstantiateVAppTemplateOptions) super.processorCount(cpuCount);
    }
 
    @Override
-   public TerremarkInstantiateVAppTemplateOptions inNetwork(URI networkLocation) {
-      return (TerremarkInstantiateVAppTemplateOptions) super
-            .inNetwork(networkLocation);
+   public TerremarkInstantiateVAppTemplateOptions network(URI networkLocation) {
+      return (TerremarkInstantiateVAppTemplateOptions) super.network(networkLocation);
    }
 
    @Override
@@ -197,21 +182,20 @@ public class TerremarkInstantiateVAppTemplateOptions extends
 
    @Override
    public TerremarkInstantiateVAppTemplateOptions disk(long kilobytes) {
-      throw new IllegalArgumentException(
-            "changing the boot disk size is unsupported in terremark");
+      throw new IllegalArgumentException("changing the boot disk size is unsupported in terremark");
    }
 
-   @Override
-   public TerremarkInstantiateVAppTemplateOptions productProperties(
-         Map<String, String> properties) {
-      return (TerremarkInstantiateVAppTemplateOptions) super
-            .productProperties(properties);
+   public TerremarkInstantiateVAppTemplateOptions productProperties(Map<String, String> properties) {
+      this.properties.putAll(properties);
+      return this;
    }
 
-   @Override
-   public TerremarkInstantiateVAppTemplateOptions productProperty(String key,
-         String value) {
-      return (TerremarkInstantiateVAppTemplateOptions) super.productProperty(
-            key, value);
+   public TerremarkInstantiateVAppTemplateOptions productProperty(String key, String value) {
+      this.properties.put(key, value);
+      return this;
+   }
+
+   public Map<String, String> getProperties() {
+      return properties;
    }
 }

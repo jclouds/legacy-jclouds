@@ -35,8 +35,8 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.vcloud.VCloudExpressClient;
-import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.Status;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.domain.ovf.ResourceType;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
@@ -94,8 +94,7 @@ public class VCloudExpressComputeClientLiveTest {
       int memory = 512;
 
       VCloudExpressVAppTemplate template = client.findVAppTemplateInOrgCatalogNamed(null, null, templateName);
-      InstantiateVAppTemplateOptions options = processorCount(1).memory(512).disk(10 * 1025 * 1024).productProperties(
-               ImmutableMap.of("foo", "bar"));
+      InstantiateVAppTemplateOptions options = processorCount(1).memory(512).disk(10 * 1025 * 1024);
 
       id = URI.create(computeClient.start(null, template.getHref(), templateName, options).get("id"));
       Expectation expectation = expectationMap.get(toTest);
@@ -117,8 +116,8 @@ public class VCloudExpressComputeClientLiveTest {
       assert !addressTester.apply(publicAddress);
    }
 
-   private void verifyConfigurationOfVApp(VCloudExpressVApp vApp, String serverName, String expectedOs, int processorCount,
-            int memory, long hardDisk) {
+   private void verifyConfigurationOfVApp(VCloudExpressVApp vApp, String serverName, String expectedOs,
+            int processorCount, int memory, long hardDisk) {
       // assertEquals(vApp.getName(), serverName);
       // assertEquals(vApp.getOperatingSystemDescription(), expectedOs);
       assertEquals(Iterables

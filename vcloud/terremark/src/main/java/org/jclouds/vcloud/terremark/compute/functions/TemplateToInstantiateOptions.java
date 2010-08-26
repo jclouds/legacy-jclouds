@@ -40,7 +40,7 @@ public class TemplateToInstantiateOptions implements Function<Template, Terremar
       TerremarkInstantiateVAppTemplateOptions options = processorCount(
                Double.valueOf(from.getSize().getCores()).intValue()).memory(from.getSize().getRam());
       if (!from.getOptions().shouldBlockUntilRunning())
-         options.blockOnDeploy(false);
+         options.block(false);
       String sshKeyFingerprint = TerremarkVCloudTemplateOptions.class.cast(from.getOptions()).getSshKeyFingerprint();
       if (sshKeyFingerprint != null)
          options.sshKeyFingerprint(sshKeyFingerprint);

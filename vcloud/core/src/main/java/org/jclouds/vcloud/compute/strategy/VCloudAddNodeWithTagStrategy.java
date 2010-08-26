@@ -64,7 +64,7 @@ public class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
       InstantiateVAppTemplateOptions options = processorCount(Double.valueOf(template.getSize().getCores()).intValue())
                .memory(template.getSize().getRam()).disk(template.getSize().getDisk() * 1024 * 1024l);
       if (!template.getOptions().shouldBlockUntilRunning())
-         options.blockOnDeploy(false);
+         options.block(false);
       Map<String, String> metaMap = computeClient.start(URI.create(template.getLocation().getId()), URI.create(template
                .getImage().getId()), name, options, template.getOptions().getInboundPorts());
       VApp vApp = client.getVApp(URI.create(metaMap.get("id")));

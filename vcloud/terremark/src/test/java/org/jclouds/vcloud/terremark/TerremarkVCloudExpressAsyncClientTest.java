@@ -88,6 +88,7 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
+import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
@@ -193,8 +194,8 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
                URI.class, String.class, InstantiateVAppTemplateOptions[].class);
       HttpRequest request = processor.createRequest(method, URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"), URI.create("https://vcloud/vAppTemplate/3"),
-               "name", TerremarkInstantiateVAppTemplateOptions.Builder.processorCount(2).memory(512).inRow("row")
-                        .inGroup("group").withPassword("password").inNetwork(URI.create("http://network")));
+               "name", TerremarkInstantiateVAppTemplateOptions.Builder.processorCount(2).memory(512).inGroup("group")
+                        .withPassword("password").inRow("row").network(URI.create("http://network")));
 
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
@@ -736,7 +737,7 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
       }
 
       @Override
-      protected URI provideDefaultNetwork(CommonVCloudClient client) {
+      protected URI provideDefaultNetwork(URI vdc, CommonVCloudClient client, Injector injector) {
          return URI.create("https://vcloud.safesecureweb.com/network/1990");
       }
    }

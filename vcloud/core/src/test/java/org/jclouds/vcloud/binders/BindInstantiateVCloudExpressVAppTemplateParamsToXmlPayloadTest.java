@@ -24,17 +24,19 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
-import static org.jclouds.vcloud.reference.VCloudConstants.PROPERTY_VCLOUD_DEFAULT_NETWORK;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.inject.Singleton;
+
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudExpressPropertiesBuilder;
 import org.jclouds.vcloud.domain.network.FenceMode;
+import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.testng.annotations.Test;
 
@@ -42,6 +44,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Provides;
 import com.google.inject.name.Names;
 
 /**
@@ -56,8 +59,15 @@ public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayloadTest {
       @Override
       protected void configure() {
          Properties props = new Properties();
-         props.put(PROPERTY_VCLOUD_DEFAULT_NETWORK, "https://vcloud.safesecureweb.com/network/1990");
          Names.bindProperties(binder(), checkNotNull(new VCloudExpressPropertiesBuilder(props).build(), "properties"));
+      }
+
+      @SuppressWarnings("unused")
+      @Network
+      @Provides
+      @Singleton
+      URI provideNetwork() {
+         return URI.create("https://vcloud.safesecureweb.com/network/1990");
       }
    });
 

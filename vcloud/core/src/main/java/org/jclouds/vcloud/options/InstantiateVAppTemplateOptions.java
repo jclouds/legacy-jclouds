@@ -23,11 +23,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.Map;
 
 import org.jclouds.vcloud.domain.network.FenceMode;
-
-import com.google.common.collect.Maps;
 
 /**
  * 
@@ -42,25 +39,43 @@ public class InstantiateVAppTemplateOptions {
    private String network;
    private FenceMode fenceMode;
    private String networkName;
-   private boolean blockOnDeploy = true;
-   private Map<String, String> properties = Maps.newTreeMap();
+   private boolean block = true;
+   private boolean deploy = true;
+   private boolean powerOn = true;
 
-   public boolean shouldBlockOnDeploy() {
-      return blockOnDeploy;
+   public boolean shouldBlock() {
+      return block;
    }
 
-   public InstantiateVAppTemplateOptions blockOnDeploy(boolean blockOnDeploy) {
-      this.blockOnDeploy = blockOnDeploy;
+   public boolean shouldDeploy() {
+      return deploy;
+   }
+
+   public boolean shouldPowerOn() {
+      return powerOn;
+   }
+
+   /**
+    * deploy the vapp after it is instantiated?
+    */
+   public InstantiateVAppTemplateOptions deploy(boolean deploy) {
+      this.deploy = deploy;
       return this;
    }
 
-   public InstantiateVAppTemplateOptions productProperty(String key, String value) {
-      properties.put(checkNotNull(key, "key"), checkNotNull(value, "value"));
+   /**
+    * powerOn the vapp after it is instantiated?
+    */
+   public InstantiateVAppTemplateOptions powerOn(boolean powerOn) {
+      this.powerOn = powerOn;
       return this;
    }
 
-   public InstantiateVAppTemplateOptions productProperties(Map<String, String> properties) {
-      this.properties.putAll(checkNotNull(properties, "properties"));
+   /**
+    * block until instantiate or deployment operations complete?
+    */
+   public InstantiateVAppTemplateOptions block(boolean block) {
+      this.block = block;
       return this;
    }
 
@@ -70,6 +85,9 @@ public class InstantiateVAppTemplateOptions {
       return this;
    }
 
+   /**
+    * The name of the vApp internal network that you want to connect to a VDC network
+    */
    public InstantiateVAppTemplateOptions networkName(String networkName) {
       this.networkName = checkNotNull(networkName, "networkName");
       return this;
@@ -92,7 +110,7 @@ public class InstantiateVAppTemplateOptions {
       return this;
    }
 
-   public InstantiateVAppTemplateOptions inNetwork(URI networkLocation) {
+   public InstantiateVAppTemplateOptions network(URI networkLocation) {
       this.network = checkNotNull(networkLocation, "networkLocation").toASCIIString();
       return this;
    }
@@ -121,18 +139,30 @@ public class InstantiateVAppTemplateOptions {
       return fenceMode;
    }
 
-   public Map<String, String> getProperties() {
-      return properties;
-   }
-
    public static class Builder {
 
       /**
-       * @see InstantiateVAppTemplateOptions#blockOnDeploy
+       * @see InstantiateVAppTemplateOptions#block
        */
-      public static InstantiateVAppTemplateOptions blockOnDeploy(boolean blockOnDeploy) {
+      public static InstantiateVAppTemplateOptions block(boolean block) {
          InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-         return options.blockOnDeploy(blockOnDeploy);
+         return options.block(block);
+      }
+
+      /**
+       * @see InstantiateVAppTemplateOptions#deploy
+       */
+      public static InstantiateVAppTemplateOptions deploy(boolean deploy) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.deploy(deploy);
+      }
+
+      /**
+       * @see InstantiateVAppTemplateOptions#powerOn
+       */
+      public static InstantiateVAppTemplateOptions powerOn(boolean powerOn) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.powerOn(powerOn);
       }
 
       /**
@@ -160,11 +190,11 @@ public class InstantiateVAppTemplateOptions {
       }
 
       /**
-       * @see InstantiateVAppTemplateOptions#inNetwork(URI)
+       * @see InstantiateVAppTemplateOptions#network(URI)
        */
       public static InstantiateVAppTemplateOptions inNetwork(URI networkLocation) {
          InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-         return options.inNetwork(networkLocation);
+         return options.network(networkLocation);
       }
 
       /**
@@ -183,28 +213,13 @@ public class InstantiateVAppTemplateOptions {
          return options.networkName(networkName);
       }
 
-      /**
-       * @see InstantiateVAppTemplateOptions#productProperty(String,String)
-       */
-      public static InstantiateVAppTemplateOptions productProperty(String key, String value) {
-         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-         return options.productProperty(key, value);
-      }
-
-      /**
-       * @see InstantiateVAppTemplateOptions#setProperties(Map<String, String>)
-       */
-      public static InstantiateVAppTemplateOptions productProperties(Map<String, String> properties) {
-         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
-         return options.productProperties(properties);
-      }
    }
 
    @Override
    public String toString() {
       return "InstantiateVAppTemplateOptions [cpuCount=" + cpuCount + ", memorySizeMegabytes=" + memorySizeMegabytes
                + ", diskSizeKilobytes=" + diskSizeKilobytes + ", network=" + network + ", networkName=" + networkName
-               + ", fenceMode=" + fenceMode + ", properties=" + properties + "]";
+               + ", fenceMode=" + fenceMode + "]";
    }
 
    @Override
@@ -217,7 +232,6 @@ public class InstantiateVAppTemplateOptions {
       result = prime * result + ((memorySizeMegabytes == null) ? 0 : memorySizeMegabytes.hashCode());
       result = prime * result + ((network == null) ? 0 : network.hashCode());
       result = prime * result + ((networkName == null) ? 0 : networkName.hashCode());
-      result = prime * result + ((properties == null) ? 0 : properties.hashCode());
       return result;
    }
 
@@ -259,11 +273,6 @@ public class InstantiateVAppTemplateOptions {
          if (other.networkName != null)
             return false;
       } else if (!networkName.equals(other.networkName))
-         return false;
-      if (properties == null) {
-         if (other.properties != null)
-            return false;
-      } else if (!properties.equals(other.properties))
          return false;
       return true;
    }

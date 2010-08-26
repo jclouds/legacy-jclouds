@@ -89,7 +89,7 @@ public class TerremarkInstantiateVAppTemplateOptionsTest {
    @Test
    public void testInNetwork() {
       TerremarkInstantiateVAppTemplateOptions options = new TerremarkInstantiateVAppTemplateOptions();
-      options.inNetwork(URI.create("http://localhost"));
+      options.network(URI.create("http://localhost"));
       assertEquals(options.getNetwork(), "http://localhost");
    }
 
