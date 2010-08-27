@@ -44,7 +44,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface VCloudLoginAsyncClient {
 
    /**
-    * This request returns a token to use in subsequent requests. After ten minutes of inactivity,
+    * This request returns a token to use in subsequent requests. After 30 minutes of inactivity,
     * the token expires and you have to request a new token with this call.
     */
    @POST
