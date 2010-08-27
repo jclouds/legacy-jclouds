@@ -43,6 +43,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -50,6 +51,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.Constants;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
@@ -92,32 +94,32 @@ import com.google.inject.Module;
 @Test(groups = { "integration", "live" }, sequential = true, testName = "compute.ComputeServiceLiveTest")
 public abstract class BaseComputeServiceLiveTest {
    public static final String APT_RUN_SCRIPT = new StringBuilder()//
-            .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
-            .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
-            .append(
-                     "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
-            .append("apt-get update\n")//
-            .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
-            .toString();
+         .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
+         .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
+         .append(
+               "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
+         .append("apt-get update\n")//
+         .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
+         .toString();
 
    public static final String YUM_RUN_SCRIPT = new StringBuilder()
-            .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")
-            //
-            .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-            //
-            .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-            //
-            .append(
-                     "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
-            .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
-            .append("yum --nogpgcheck -y install java-1.6.0-openjdk\n")//
-            .append("echo \"export PATH=\\\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\\$PATH\\\"\" >> /root/.bashrc\n")//
-            .toString();
+         .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")
+         //
+         .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+         //
+         .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+         //
+         .append(
+               "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
+         .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
+         .append("yum --nogpgcheck -y install java-1.6.0-openjdk\n")//
+         .append("echo \"export PATH=\\\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\\$PATH\\\"\" >> /root/.bashrc\n")//
+         .toString();
 
    public static final String ZYPPER_RUN_SCRIPT = new StringBuilder()//
-            .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
-            .append("sudo zypper install java-1.6.0-openjdk-devl\n")//
-            .toString();
+         .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
+         .append("sudo zypper install java-1.6.0-openjdk-devl\n")//
+         .toString();
 
    abstract public void setServiceDefaults();
 
@@ -165,7 +167,7 @@ public abstract class BaseComputeServiceLiveTest {
       String secret = Files.toString(new File(secretKeyFile), Charsets.UTF_8);
       assert secret.startsWith("-----BEGIN RSA PRIVATE KEY-----") : "invalid key:\n" + secret;
       return ImmutableMap.<String, String> of("private", secret, "public", Files.toString(new File(secretKeyFile
-               + ".pub"), Charsets.UTF_8));
+            + ".pub"), Charsets.UTF_8));
    }
 
    protected void setupCredentials() {
@@ -180,8 +182,11 @@ public abstract class BaseComputeServiceLiveTest {
    private void initializeContextAndClient() throws IOException {
       if (context != null)
          context.close();
+      Properties props = new Properties();
+      props.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      props.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet.of(
-               new Log4JLoggingModule(), getSshModule()));
+            new Log4JLoggingModule(), getSshModule()), props);
       client = context.getComputeService();
    }
 
@@ -200,7 +205,7 @@ public abstract class BaseComputeServiceLiveTest {
       ComputeServiceContext context = null;
       try {
          context = new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA", ImmutableSet
-                  .<Module> of(new Log4JLoggingModule()));
+               .<Module> of(new Log4JLoggingModule()));
          context.getComputeService().listNodes();
       } finally {
          if (context != null)
@@ -239,7 +244,7 @@ public abstract class BaseComputeServiceLiveTest {
          OperatingSystem os = get(nodes, 0).getOperatingSystem();
          try {
             Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(tag, os, new Credentials(
-                     good.identity, "romeo"));
+                  good.identity, "romeo"));
             assert false : "shouldn't pass with a bad password\n" + responses;
          } catch (RunScriptOnNodesException e) {
             assert getRootCause(e).getMessage().contains("Auth fail") : e;
@@ -294,8 +299,8 @@ public abstract class BaseComputeServiceLiveTest {
       template = buildTemplate(client.templateBuilder());
 
       template.getOptions().installPrivateKey(newStringPayload(keyPair.get("private"))).authorizePublicKey(
-               newStringPayload(keyPair.get("public"))).runScript(
-               newStringPayload(buildScript(template.getImage().getOperatingSystem())));
+            newStringPayload(keyPair.get("public"))).runScript(
+            newStringPayload(buildScript(template.getImage().getOperatingSystem())));
    }
 
    protected void checkImageIdMatchesTemplate(NodeMetadata node) {
@@ -306,8 +311,8 @@ public abstract class BaseComputeServiceLiveTest {
    protected void checkOsMatchesTemplate(NodeMetadata node) {
       if (node.getOperatingSystem() != null)
          assert node.getOperatingSystem().getFamily().equals(template.getImage().getOperatingSystem().getFamily()) : String
-                  .format("expecting family %s but got %s", template.getImage().getOperatingSystem().getFamily(), node
-                           .getOperatingSystem());
+               .format("expecting family %s but got %s", template.getImage().getOperatingSystem().getFamily(), node
+                     .getOperatingSystem());
    }
 
    void assertLocationSameOrChild(Location test, Location expected) {
@@ -332,10 +337,10 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String tag, OperatingSystem os,
-            Credentials creds) throws RunScriptOnNodesException {
+         Credentials creds) throws RunScriptOnNodesException {
       try {
          return client.runScriptOnNodesMatching(runningWithTag(tag), newStringPayload(buildScript(os)),
-                  overrideCredentialsWith(creds));
+               overrideCredentialsWith(creds));
       } catch (SshException e) {
          throw e;
       }
@@ -393,7 +398,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected void assertNodeZero(Set<? extends NodeMetadata> metadataSet) {
       assert metadataSet.size() == 0 : String.format("nodes left in set: [%s] which didn't match set: [%s]",
-               metadataSet, nodes);
+            metadataSet, nodes);
    }
 
    @Test(enabled = true, dependsOnMethods = "testGet")
@@ -454,26 +459,26 @@ public abstract class BaseComputeServiceLiveTest {
          assert location != location.getParent() : location;
          assert location.getScope() != null : location;
          switch (location.getScope()) {
-            case PROVIDER:
-               assertProvider(location);
-               break;
-            case REGION:
-               assertProvider(location.getParent());
-               break;
-            case ZONE:
-               Location provider = location.getParent().getParent();
-               // zone can be a direct descendant of provider
-               if (provider == null)
-                  provider = location.getParent();
-               assertProvider(provider);
-               break;
-            case HOST:
-               Location provider2 = location.getParent().getParent().getParent();
-               // zone can be a direct descendant of provider
-               if (provider2 == null)
-                  provider2 = location.getParent().getParent();
-               assertProvider(provider2);
-               break;
+         case PROVIDER:
+            assertProvider(location);
+            break;
+         case REGION:
+            assertProvider(location.getParent());
+            break;
+         case ZONE:
+            Location provider = location.getParent().getParent();
+            // zone can be a direct descendant of provider
+            if (provider == null)
+               provider = location.getParent();
+            assertProvider(provider);
+            break;
+         case HOST:
+            Location provider2 = location.getParent().getParent().getParent();
+            // zone can be a direct descendant of provider
+            if (provider2 == null)
+               provider2 = location.getParent().getParent();
+            assertProvider(provider2);
+            break;
          }
       }
    }
