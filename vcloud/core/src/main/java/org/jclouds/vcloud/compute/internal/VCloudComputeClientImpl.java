@@ -46,6 +46,7 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.internal.util.Sets;
 
@@ -83,6 +84,26 @@ public class VCloudComputeClientImpl extends CommonVCloudComputeClientImpl<VAppT
          logger.debug("<< ready vApp(%s)", vAppResponse.getName());
       }
       return parseAndValidateResponse(null, vAppResponse);
+   }
+
+   @Override
+   protected void deleteVApp(VApp vApp) {
+      logger.debug(">> deleting vApp(%s)", vApp.getName());
+      Task task = VCloudClient.class.cast(client).deleteVApp(vApp.getHref());
+      if (!taskTester.apply(task.getHref())) {
+         throw new RuntimeException(String.format("failed to %s %s: %s", "delete", vApp.getName(), task));
+      }
+      logger.debug("<< ready vApp(%s)", vApp.getName());
+   }
+
+   @Override
+   protected Map<String, String> parseResponse(VAppTemplate template, VApp vAppResponse) {
+      vAppResponse = VCloudClient.class.cast(client).getVApp(vAppResponse.getHref());
+      Map<String, String> config = Maps.newLinkedHashMap();// Allows nulls
+      config.put("id", vAppResponse.getHref().toASCIIString());
+      config.put("username", "root");
+      config.put("password", Iterables.get(vAppResponse.getChildren(), 0).getGuestCustomization().getAdminPassword());
+      return config;
    }
 
    @Override

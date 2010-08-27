@@ -25,8 +25,8 @@ import java.util.Properties;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.vcloud.VCloudContextBuilder;
-import org.jclouds.vcloud.bluelock.compute.config.BlueLockVCloudDirectorComputeServiceContextModule;
 import org.jclouds.vcloud.bluelock.config.BlueLockVCloudDirectorRestClientModule;
+import org.jclouds.vcloud.compute.config.VCloudComputeServiceContextModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -52,7 +52,7 @@ public class BlueLockVCloudDirectorContextBuilder extends VCloudContextBuilder {
 
    @Override
    protected void addContextModule(List<Module> modules) {
-      modules.add(new BlueLockVCloudDirectorComputeServiceContextModule());
+      modules.add(new VCloudComputeServiceContextModule());
    }
 
    @Override

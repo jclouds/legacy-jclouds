@@ -77,7 +77,7 @@ public interface Vm extends ReferenceType {
     */
    @Nullable
    VCloudVirtualHardware getHardware();
-   
+
    /**
     * @return operating system on this VM, or null, if part of a vApp template
     * 
@@ -85,6 +85,14 @@ public interface Vm extends ReferenceType {
     */
    @Nullable
    VCloudOperatingSystem getOperatingSystem();
+
+   /**
+    * @return guest customization section for this VM, or null if it doesn't exist
+    * 
+    * @since vcloud api 1.0
+    */
+   @Nullable
+   GuestCustomization getGuestCustomization();
 
    /**
     * read-only identifier created on import

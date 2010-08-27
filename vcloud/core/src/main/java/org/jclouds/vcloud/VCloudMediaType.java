@@ -100,6 +100,15 @@ public interface VCloudMediaType {
     */
    public final static MediaType VIRTUALHARDWARESECTION_XML_TYPE = new MediaType("application",
             "vnd.vmware.vcloud.virtualHardwareSection+xml");
+   /**
+    * "application/vnd.vmware.vcloud.guestCustomizationSection+xml"
+    */
+   public final static String GUESTCUSTOMIZATIONSECTION_XML = "application/vnd.vmware.vcloud.guestCustomizationSection+xml";
+   /**
+    * "application/vnd.vmware.vcloud.guestCustomizationSection+xml"
+    */
+   public final static MediaType GUESTCUSTOMIZATIONSECTION_XML_TYPE = new MediaType("application",
+            "vnd.vmware.vcloud.guestCustomizationSection+xml");
 
    /**
     * "application/vnd.vmware.vcloud.networkSection+xml"

@@ -66,6 +66,7 @@ public class VmHandlerTest {
       assertEquals(result.getVAppScopedLocalId(), "10_rhel_template");
       VCloudVirtualHardwareHandlerTest.checkHardware(result.getHardware());
       VCloudOperatingSystemHandlerTest.checkOs(result.getOperatingSystem());
+      GuestCustomizationHandlerTest.checkGuestCustomization(result.getGuestCustomization());
    }
 
 }

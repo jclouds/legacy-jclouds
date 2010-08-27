@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.vcloud.domain.GuestCustomization;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
@@ -54,10 +55,13 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
    private final VCloudVirtualHardware hardware;
    private final String vAppScopedLocalId;
    private final VCloudOperatingSystem os;
+   @Nullable
+   private final GuestCustomization guestCustomization;
 
    public VmImpl(String name, String type, URI id, @Nullable Status status, ReferenceType vApp,
             @Nullable String description, Iterable<Task> tasks, @Nullable VCloudVirtualHardware hardware,
-            @Nullable VCloudOperatingSystem os, @Nullable String vAppScopedLocalId) {
+            @Nullable VCloudOperatingSystem os, @Nullable GuestCustomization guestCustomization,
+            @Nullable String vAppScopedLocalId) {
       super(name, type, id);
       this.status = status;
       this.vApp = vApp;// TODO: once <1.0 is killed check not null
@@ -65,6 +69,7 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
       Iterables.addAll(this.tasks, checkNotNull(tasks, "tasks"));
       this.hardware = hardware;
       this.os = os;
+      this.guestCustomization = guestCustomization;
       this.vAppScopedLocalId = vAppScopedLocalId;
    }
 
@@ -121,6 +126,14 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
     * {@inheritDoc}
     */
    @Override
+   public GuestCustomization getGuestCustomization() {
+      return guestCustomization;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public String getVAppScopedLocalId() {
       return vAppScopedLocalId;
    }
@@ -130,10 +143,9 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + ((guestCustomization == null) ? 0 : guestCustomization.hashCode());
       result = prime * result + ((hardware == null) ? 0 : hardware.hashCode());
       result = prime * result + ((os == null) ? 0 : os.hashCode());
-      result = prime * result + ((status == null) ? 0 : status.hashCode());
-      result = prime * result + ((tasks == null) ? 0 : tasks.hashCode());
       result = prime * result + ((vApp == null) ? 0 : vApp.hashCode());
       result = prime * result + ((vAppScopedLocalId == null) ? 0 : vAppScopedLocalId.hashCode());
       return result;
@@ -153,6 +165,11 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
             return false;
       } else if (!description.equals(other.description))
          return false;
+      if (guestCustomization == null) {
+         if (other.guestCustomization != null)
+            return false;
+      } else if (!guestCustomization.equals(other.guestCustomization))
+         return false;
       if (hardware == null) {
          if (other.hardware != null)
             return false;
@@ -162,16 +179,6 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
          if (other.os != null)
             return false;
       } else if (!os.equals(other.os))
-         return false;
-      if (status == null) {
-         if (other.status != null)
-            return false;
-      } else if (!status.equals(other.status))
-         return false;
-      if (tasks == null) {
-         if (other.tasks != null)
-            return false;
-      } else if (!tasks.equals(other.tasks))
          return false;
       if (vApp == null) {
          if (other.vApp != null)

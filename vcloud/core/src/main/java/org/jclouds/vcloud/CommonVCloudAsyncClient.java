@@ -31,7 +31,6 @@ import java.net.URI;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -41,7 +40,6 @@ import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Org;
@@ -195,14 +193,6 @@ public interface CommonVCloudAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends TasksList> findTasksListInOrgNamed(
             @Nullable @EndpointParam(parser = OrgNameToTasksListEndpoint.class) String orgName);
-
-   /**
-    * @see CommonVCloudClient#deleteVApp
-    */
-   @DELETE
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteVApp(@EndpointParam URI vAppId);
-   
 
    /**
     * @see CommonVCloudClient#getTask

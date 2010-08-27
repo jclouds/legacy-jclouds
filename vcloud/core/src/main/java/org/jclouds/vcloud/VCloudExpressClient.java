@@ -101,4 +101,7 @@ public interface VCloudExpressClient extends CommonVCloudClient {
     * This call suspends the vApp.
     */
    Task suspendVApp(URI vAppId);
+
+   void deleteVApp(URI vAppId);
+
 }

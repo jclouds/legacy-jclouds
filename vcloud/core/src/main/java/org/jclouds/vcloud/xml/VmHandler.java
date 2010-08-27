@@ -28,6 +28,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.vcloud.domain.GuestCustomization;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
@@ -49,13 +50,15 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
    protected final TaskHandler taskHandler;
    protected final VCloudVirtualHardwareHandler virtualHardwareHandler;
    protected final VCloudOperatingSystemHandler operatingSystemHandler;
+   protected final GuestCustomizationHandler guestCustomizationHandler;
 
    @Inject
    public VmHandler(TaskHandler taskHandler, VCloudVirtualHardwareHandler virtualHardwareHandler,
-            VCloudOperatingSystemHandler operatingSystemHandler) {
+            VCloudOperatingSystemHandler operatingSystemHandler, GuestCustomizationHandler guestCustomizationHandler) {
       this.taskHandler = taskHandler;
       this.virtualHardwareHandler = virtualHardwareHandler;
       this.operatingSystemHandler = operatingSystemHandler;
+      this.guestCustomizationHandler = guestCustomizationHandler;
    }
 
    protected StringBuilder currentText = new StringBuilder();
@@ -67,15 +70,17 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
    protected List<Task> tasks = Lists.newArrayList();
    protected VCloudVirtualHardware hardware;
    protected VCloudOperatingSystem os;
+   protected GuestCustomization guestCustomization;
    protected String vAppScopedLocalId;
 
    private boolean inTasks;
    private boolean inHardware;
    private boolean inOs;
+   private boolean inGuestCustomization;
 
    public Vm getResult() {
       return new VmImpl(vm.getName(), vm.getType(), vm.getHref(), status, vdc, description, tasks, hardware, os,
-               vAppScopedLocalId);
+               guestCustomization, vAppScopedLocalId);
    }
 
    @Override
@@ -85,6 +90,8 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
          inHardware = true;
       } else if (qName.endsWith("OperatingSystemSection")) {
          inOs = true;
+      } else if (qName.endsWith("GuestCustomizationSection")) {
+         inGuestCustomization = true;
       } else if (qName.endsWith("Tasks")) {
          inTasks = true;
       }
@@ -92,6 +99,8 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
          virtualHardwareHandler.startElement(uri, localName, qName, attrs);
       } else if (inOs) {
          operatingSystemHandler.startElement(uri, localName, qName, attrs);
+      } else if (inGuestCustomization) {
+         guestCustomizationHandler.startElement(uri, localName, qName, attrs);
       } else if (inTasks) {
          taskHandler.startElement(uri, localName, qName, attrs);
       } else if (qName.equals("Vm")) {
@@ -111,6 +120,9 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
       } else if (qName.endsWith("OperatingSystemSection")) {
          inOs = false;
          os = operatingSystemHandler.getResult();
+      } else if (qName.endsWith("GuestCustomizationSection")) {
+         inGuestCustomization = false;
+         guestCustomization = guestCustomizationHandler.getResult();
       } else if (qName.endsWith("Tasks")) {
          inTasks = false;
          this.tasks.add(taskHandler.getResult());
@@ -119,6 +131,8 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
          virtualHardwareHandler.endElement(uri, name, qName);
       } else if (inOs) {
          operatingSystemHandler.endElement(uri, name, qName);
+      } else if (inGuestCustomization) {
+         guestCustomizationHandler.endElement(uri, name, qName);
       } else if (inTasks) {
          taskHandler.endElement(uri, name, qName);
       } else if (qName.equals("Description")) {
@@ -136,6 +150,8 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
          virtualHardwareHandler.characters(ch, start, length);
       if (inOs)
          operatingSystemHandler.characters(ch, start, length);
+      if (inGuestCustomization)
+         guestCustomizationHandler.characters(ch, start, length);
       currentText.append(ch, start, length);
    }
 

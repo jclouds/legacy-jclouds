@@ -60,6 +60,12 @@ public class VCloudExpressComputeClientImpl extends
    }
 
    @Override
+   protected void deleteVApp(VCloudExpressVApp vApp) {
+      logger.debug(">> deleting vApp(%s)", vApp.getName());
+      VCloudExpressClient.class.cast(client).deleteVApp(vApp.getHref());
+   }
+
+   @Override
    public Map<String, String> start(@Nullable URI VDC, URI templateId, String name,
             InstantiateVAppTemplateOptions options, int... portsToOpen) {
       checkNotNull(options, "options");

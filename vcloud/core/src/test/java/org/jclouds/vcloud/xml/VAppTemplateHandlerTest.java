@@ -28,6 +28,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.VCloudMediaType;
+import org.jclouds.vcloud.domain.GuestCustomization;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.Vm;
@@ -76,6 +77,32 @@ public class VAppTemplateHandlerTest {
       assertEquals(vm.getDescription(), null);
       assertEquals(vm.getTasks(), ImmutableList.of());
       assertEquals(vm.getVAppScopedLocalId(), "02_ubuntu_template");
+
+      GuestCustomization guestC = vm.getGuestCustomization();
+
+      assertEquals(guestC.getType(), VCloudMediaType.GUESTCUSTOMIZATIONSECTION_XML);
+      assertEquals(
+               guestC.getHref(),
+               URI
+                        .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vm-172837194/guestCustomizationSection/"));
+      assertEquals(guestC.getInfo(), "Specifies Guest OS Customization Settings");
+      assertEquals(guestC.isEnabled(), new Boolean(true));
+      assertEquals(guestC.shouldChangeSid(), new Boolean(false));
+      assertEquals(guestC.getVirtualMachineId(), "172837194");
+      assertEquals(guestC.isJoinDomainEnabled(), new Boolean(false));
+      assertEquals(guestC.useOrgSettings(), new Boolean(false));
+      assertEquals(guestC.getDomainName(), null);
+      assertEquals(guestC.getDomainUserName(), null);
+      assertEquals(guestC.getDomainUserPassword(), null);
+      assertEquals(guestC.isAdminPasswordEnabled(), new Boolean(true));
+      assertEquals(guestC.isAdminPasswordAuto(), new Boolean(true));
+      assertEquals(guestC.getAdminPassword(), "%3eD%gmF");
+      assertEquals(guestC.isResetPasswordRequired(), new Boolean(false));
+      assertEquals(
+               guestC.getCustomizationScript(),
+               "#!/bin/bash if [ \"$1\" = \"postcustomization\" ]; then echo \"post customization\" touch /root/.postcustomization sleep 30 #regenerate keys /bin/rm /etc/ssh/ssh_host_* /usr/sbin/dpkg-reconfigure openssh-server echo \"completed\" fi");
+      assertEquals(guestC.getComputerName(), "Ubuntu1004");
+      assertEquals(guestC.getEdit(), null);
 
       VCloudNetworkSection network = result.getNetworkSection();
       assertEquals(

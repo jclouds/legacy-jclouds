@@ -126,6 +126,4 @@ public interface CommonVCloudClient {
 
    void cancelTask(URI taskId);
 
-   void deleteVApp(URI vAppId);
-
 }

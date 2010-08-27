@@ -98,12 +98,9 @@ public abstract class CommonVCloudComputeClientImpl<T, A extends ReferenceType> 
       deleteVApp(vApp);
       logger.debug("<< deleted vApp(%s)", vApp.getName());
    }
-
-   private void deleteVApp(A vApp) {
-      logger.debug(">> deleting vApp(%s)", vApp.getName());
-      client.deleteVApp(vApp.getHref());
-   }
-
+   
+   protected abstract void deleteVApp(A vApp);
+   
    private A undeployVAppIfDeployed(A vApp) {
       if (getStatus(vApp).compareTo(Status.RESOLVED) > 0) {
          logger.debug(">> undeploying vApp(%s), current status: %s", vApp.getName(), getStatus(vApp));

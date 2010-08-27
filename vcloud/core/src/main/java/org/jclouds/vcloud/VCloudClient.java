@@ -169,4 +169,7 @@ public interface VCloudClient extends CommonVCloudClient {
     * A suspend request to a virtual machine URL suspends the specified virtual machine.
     */
    Task suspendVAppOrVm(URI vAppOrVmId);
+   
+   Task deleteVApp(URI vAppId);
+
 }
