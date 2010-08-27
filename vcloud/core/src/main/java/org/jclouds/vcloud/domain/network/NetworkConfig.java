@@ -63,9 +63,10 @@ public class NetworkConfig {
    }
 
    /**
-    * A name for the network. If the {@link org.jclouds.vcloud.domain.VAppTemplate#getNetworkSection} includes a {@link NetworkSection.Network} network
-    * element, the name you specify for the vApp network must match the name specified in that
-    * element’s name attribute.
+    * A name for the network. If the
+    * {@link org.jclouds.vcloud.domain.VAppTemplate#getNetworkSection} includes a
+    * {@link NetworkSection.Network} network element, the name you specify for the vApp network must
+    * match the name specified in that element’s name attribute.
     * 
     * @return
     */
@@ -88,6 +89,7 @@ public class NetworkConfig {
    public FenceMode getFenceMode() {
       return fenceMode;
    }
+
 
    @Override
    public int hashCode() {

@@ -90,7 +90,15 @@ public interface VCloudMediaType {
     */
    public final static MediaType CATALOGITEM_XML_TYPE = new MediaType("application",
             "vnd.vmware.vcloud.catalogItem+xml");
-
+   /**
+    * "application/vnd.vmware.vcloud.networkConnectionSection+xml"
+    */
+   public final static String NETWORKCONNECTIONSECTION_XML = "application/vnd.vmware.vcloud.networkConnectionSection+xml";
+   /**
+    * "application/vnd.vmware.vcloud.networkConnectionSection+xml"
+    */
+   public final static MediaType NETWORKCONNECTIONSECTION_XML_TYPE = new MediaType("application",
+            "vnd.vmware.vcloud.networkConnectionSection+xml");
    /**
     * "application/vnd.vmware.vcloud.virtualHardwareSection+xml"
     */

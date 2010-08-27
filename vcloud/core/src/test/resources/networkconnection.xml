@@ -1,0 +1,7 @@
+<NetworkConnection network="internet01">
+    <NetworkConnectionIndex>0</NetworkConnectionIndex>
+    <IpAddress>174.47.101.164</IpAddress>
+    <IsConnected>true</IsConnected>
+    <MACAddress>00:50:56:01:01:f2</MACAddress>
+    <IpAddressAllocationMode>POOL</IpAddressAllocationMode>
+</NetworkConnection>

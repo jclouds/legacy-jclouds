@@ -30,14 +30,14 @@ import org.jclouds.vcloud.domain.ReferenceType;
 /**
  * A description of the operating system supported by a virtual machine.
  */
-public class VCloudOperatingSystem extends OperatingSystemSection {
+public class VCloudOperatingSystemSection extends OperatingSystemSection {
    protected final String type;
    protected final URI href;
    @Nullable
    protected final String vmwOsType;
    protected final ReferenceType edit;
 
-   public VCloudOperatingSystem(@Nullable Integer id, @Nullable String info, @Nullable String description, String type,
+   public VCloudOperatingSystemSection(@Nullable Integer id, @Nullable String info, @Nullable String description, String type,
             URI href, @Nullable String vmwOsType, ReferenceType edit) {
       super(id, info, description);
       this.type = type;
@@ -95,7 +95,7 @@ public class VCloudOperatingSystem extends OperatingSystemSection {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      VCloudOperatingSystem other = (VCloudOperatingSystem) obj;
+      VCloudOperatingSystemSection other = (VCloudOperatingSystemSection) obj;
       if (edit == null) {
          if (other.edit != null)
             return false;

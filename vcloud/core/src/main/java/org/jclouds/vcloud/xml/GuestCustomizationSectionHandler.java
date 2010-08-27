@@ -25,14 +25,14 @@ import static org.jclouds.vcloud.util.Utils.newReferenceType;
 import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.GuestCustomization;
+import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.xml.sax.Attributes;
 
 /**
  * @author Adrian Cole
  */
-public class GuestCustomizationHandler extends ParseSax.HandlerWithResult<GuestCustomization> {
+public class GuestCustomizationSectionHandler extends ParseSax.HandlerWithResult<GuestCustomizationSection> {
    protected StringBuilder currentText = new StringBuilder();
    private ReferenceType guest;
    private ReferenceType edit;
@@ -54,8 +54,8 @@ public class GuestCustomizationHandler extends ParseSax.HandlerWithResult<GuestC
    protected String customizationScript;
    protected String computerName;
 
-   public GuestCustomization getResult() {
-      GuestCustomization system = new GuestCustomization(guest.getType(), guest.getHref(), info, enabled,
+   public GuestCustomizationSection getResult() {
+      GuestCustomizationSection system = new GuestCustomizationSection(guest.getType(), guest.getHref(), info, enabled,
                changeSid, virtualMachineId, joinDomainEnabled, useOrgSettings, domainName, domainUserName,
                domainUserPassword, adminPasswordEnabled, adminPasswordAuto, adminPassword, resetPasswordRequired,
                customizationScript, computerName, edit);

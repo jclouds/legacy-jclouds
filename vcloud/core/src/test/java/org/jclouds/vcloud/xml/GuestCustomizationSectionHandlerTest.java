@@ -27,7 +27,7 @@ import java.net.UnknownHostException;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.domain.GuestCustomization;
+import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.testng.annotations.Test;
 
@@ -37,19 +37,19 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "vcloud.GuestCustomizationSectionHandlerTest")
-public class GuestCustomizationHandlerTest extends BaseHandlerTest {
+public class GuestCustomizationSectionHandlerTest extends BaseHandlerTest {
 
    public void testDefault() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/guestCustomization.xml");
 
-      GuestCustomization result = factory.create(injector.getInstance(GuestCustomizationHandler.class)).parse(is);
+      GuestCustomizationSection result = factory.create(injector.getInstance(GuestCustomizationSectionHandler.class)).parse(is);
 
       checkGuestCustomization(result);
 
    }
 
    @Test(enabled = false)
-   public static void checkGuestCustomization(GuestCustomization result) {
+   public static void checkGuestCustomization(GuestCustomizationSection result) {
       assertEquals(result.getType(), VCloudMediaType.GUESTCUSTOMIZATIONSECTION_XML);
       assertEquals(result.getHref(), URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/guestCustomizationSection/"));

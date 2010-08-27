@@ -19,44 +19,47 @@
 
 package org.jclouds.vcloud.compute.strategy;
 
-import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.toComputeOs;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 
 import java.net.URI;
-import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.internal.NodeMetadataImpl;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
-import org.jclouds.domain.Credentials;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
+import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.compute.VCloudComputeClient;
-import org.jclouds.vcloud.domain.Status;
+import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.base.Predicate;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
 public class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
+
    protected final VCloudClient client;
-   protected final VCloudComputeClient computeClient;
-   protected final Map<Status, NodeState> vAppStatusToNodeState;
+   protected final GetNodeMetadataStrategy getNode;
+   protected final Predicate<URI> successTester;
 
    @Inject
-   protected VCloudAddNodeWithTagStrategy(VCloudClient client, VCloudComputeClient computeClient,
-            Map<Status, NodeState> vAppStatusToNodeState) {
+   protected VCloudAddNodeWithTagStrategy(Predicate<URI> successTester, VCloudClient client,
+            GetNodeMetadataStrategy getNode) {
       this.client = client;
-      this.computeClient = computeClient;
-      this.vAppStatusToNodeState = vAppStatusToNodeState;
+      this.successTester = successTester;
+      this.getNode = getNode;
    }
 
    @Override
@@ -65,19 +68,23 @@ public class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
                .memory(template.getSize().getRam()).disk(template.getSize().getDisk() * 1024 * 1024l);
       if (!template.getOptions().shouldBlockUntilRunning())
          options.block(false);
-      Map<String, String> metaMap = computeClient.start(URI.create(template.getLocation().getId()), URI.create(template
-               .getImage().getId()), name, options, template.getOptions().getInboundPorts());
-      VApp vApp = client.getVApp(URI.create(metaMap.get("id")));
-      return newCreateNodeResponse(tag, template, metaMap, vApp);
-   }
 
-   protected NodeMetadata newCreateNodeResponse(String tag, Template template, Map<String, String> metaMap, VApp vApp) {
-      return new NodeMetadataImpl(vApp.getHref().toASCIIString(), vApp.getName(), vApp.getHref().toASCIIString(),
-               template.getLocation(), vApp.getHref(), ImmutableMap.<String, String> of(), tag, template.getImage()
-                        .getId(), toComputeOs(vApp, template.getImage().getOperatingSystem()), vAppStatusToNodeState
-                        .get(vApp.getStatus()), computeClient.getPublicAddresses(vApp.getHref()), computeClient
-                        .getPrivateAddresses(vApp.getHref()), ImmutableMap.<String, String> of(), new Credentials(
-                        metaMap.get("username"), metaMap.get("password")));
-   }
+      URI VDC = URI.create(template.getLocation().getId());
+      URI templateId = URI.create(template.getImage().getId());
 
+      logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
+
+      VApp vAppResponse = client.instantiateVAppTemplateInVDC(VDC, templateId, name, options);
+      logger.debug("<< instantiated VApp(%s)", vAppResponse.getName());
+
+      Task task = vAppResponse.getTasks().get(0);
+      if (options.shouldBlock()) {
+         if (!successTester.apply(task.getHref())) {
+            throw new RuntimeException(String.format("failed to %s %s: %s", "deploy and power on", vAppResponse
+                     .getName(), task));
+         }
+         logger.debug("<< ready vApp(%s)", vAppResponse.getName());
+      }
+      return getNode.execute(vAppResponse.getHref().toASCIIString());
+   }
 }

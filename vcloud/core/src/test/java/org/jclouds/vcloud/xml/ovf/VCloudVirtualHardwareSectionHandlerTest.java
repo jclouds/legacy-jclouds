@@ -33,7 +33,7 @@ import org.jclouds.vcloud.domain.ovf.ResourceType;
 import org.jclouds.vcloud.domain.ovf.System;
 import org.jclouds.vcloud.domain.ovf.VCloudHardDisk;
 import org.jclouds.vcloud.domain.ovf.VCloudNetworkAdapter;
-import org.jclouds.vcloud.domain.ovf.VCloudVirtualHardware;
+import org.jclouds.vcloud.domain.ovf.VCloudVirtualHardwareSection;
 import org.jclouds.vcloud.xml.VCloudVirtualHardwareHandler;
 import org.testng.annotations.Test;
 
@@ -46,19 +46,19 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "vcloud.VCloudVirtualHardwareHandlerTest")
-public class VCloudVirtualHardwareHandlerTest extends BaseHandlerTest {
+public class VCloudVirtualHardwareSectionHandlerTest extends BaseHandlerTest {
 
    public void testDefault() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/virtualhardwaresection.xml");
 
-      VCloudVirtualHardware result = factory.create(injector.getInstance(VCloudVirtualHardwareHandler.class)).parse(is);
+      VCloudVirtualHardwareSection result = factory.create(injector.getInstance(VCloudVirtualHardwareHandler.class)).parse(is);
 
       checkHardware(result);
 
    }
 
    @Test(enabled = false)
-   public static void checkHardware(VCloudVirtualHardware result) {
+   public static void checkHardware(VCloudVirtualHardwareSection result) {
       System system = new System(0, "Virtual Hardware Family", "RHEL5", ImmutableSet.of("vmx-07"));
 
       assertEquals(result.getHref(), URI

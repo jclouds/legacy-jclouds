@@ -19,13 +19,25 @@
 
 package org.jclouds.vcloud.compute.util;
 
+import static com.google.common.collect.Iterables.filter;
+import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
+
+import java.util.Set;
+
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.os.CIMOperatingSystem;
+import org.jclouds.domain.Credentials;
+import org.jclouds.vcloud.domain.NetworkConnection;
 import org.jclouds.vcloud.domain.VApp;
+import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.ovf.OvfEnvelope;
+import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
+import org.jclouds.vcloud.domain.ovf.ResourceType;
+import org.jclouds.vcloud.domain.ovf.VCloudNetworkAdapter;
 
 import com.google.common.collect.Iterables;
+import com.google.inject.internal.util.Sets;
 
 /**
  * 
@@ -39,7 +51,7 @@ public class VCloudComputeUtils {
 
    public static CIMOperatingSystem toComputeOs(VApp vApp) {
       // TODO we need to change the design so that it doesn't assume single-vms
-      return toComputeOs(Iterables.get(vApp.getChildren(), 0));
+      return vApp.getChildren().size() > 0 ? toComputeOs(Iterables.get(vApp.getChildren(), 0)) : null;
    }
 
    public static CIMOperatingSystem toComputeOs(OvfEnvelope ovf) {
@@ -47,11 +59,60 @@ public class VCloudComputeUtils {
    }
 
    public static CIMOperatingSystem toComputeOs(Vm vm) {
-      return toComputeOs(vm.getOperatingSystem());
+      return toComputeOs(vm.getOperatingSystemSection());
    }
 
    public static CIMOperatingSystem toComputeOs(org.jclouds.vcloud.domain.ovf.OperatingSystemSection os) {
       return new CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(os.getId()), null, null, os.getDescription());
    }
 
+   public static Credentials getCredentialsFrom(VApp vApp) {
+      return vApp.getChildren().size() > 0 ? getCredentialsFrom(Iterables.get(vApp.getChildren(), 0)) : null;
+   }
+
+   public static Credentials getCredentialsFrom(VAppTemplate vApp) {
+      return vApp.getChildren().size() > 0 ? getCredentialsFrom(Iterables.get(vApp.getChildren(), 0)) : null;
+   }
+
+   public static Credentials getCredentialsFrom(Vm vm) {
+      String user = "root";
+      if (vm.getOperatingSystemSection() != null && vm.getOperatingSystemSection().getDescription() != null
+               && vm.getOperatingSystemSection().getDescription().indexOf("Windows") >= 0)
+         user = "Administrator";
+      String password = null;
+      if (vm.getGuestCustomizationSection() != null)
+         password = vm.getGuestCustomizationSection().getAdminPassword();
+      return new Credentials(user, password);
+   }
+
+   public static Set<String> getPublicIpsFromVApp(VApp vApp) {
+      Set<String> ips = Sets.newLinkedHashSet();
+      // TODO make this work with composite vApps
+      if (vApp.getChildren().size() == 0)
+         return ips;
+      Vm vm = Iterables.get(vApp.getChildren(), 0);
+      // TODO: figure out how to differentiate public from private ip addresses
+      // assumption is that we'll do this from the network object, which may have
+      // enough data to tell whether or not it is a public network without string
+      // parsing.  At worst, we could have properties set per cloud provider to
+      // declare the networks which are public, then check against these in 
+      // networkconnection.getNetwork
+      if (vm.getNetworkConnectionSection() != null) {
+         for (NetworkConnection connection : vm.getNetworkConnectionSection().getConnections())
+            ips.add(connection.getIpAddress());
+      } else {
+         for (ResourceAllocation net : filter(vm.getVirtualHardwareSection().getResourceAllocations(),
+                  resourceType(ResourceType.ETHERNET_ADAPTER))) {
+            if (net instanceof VCloudNetworkAdapter) {
+               VCloudNetworkAdapter vNet = VCloudNetworkAdapter.class.cast(net);
+               ips.add(vNet.getIpAddress());
+            }
+         }
+      }
+      return ips;
+   }
+
+   public static Set<String> getPrivateIpsFromVApp(VApp vApp) {
+      return Sets.newLinkedHashSet();
+   }
 }

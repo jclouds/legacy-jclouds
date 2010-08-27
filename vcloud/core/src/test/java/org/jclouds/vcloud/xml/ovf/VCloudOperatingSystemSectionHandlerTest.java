@@ -27,7 +27,7 @@ import java.net.UnknownHostException;
 
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
-import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystem;
+import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystemSection;
 import org.jclouds.vcloud.xml.ovf.VCloudOperatingSystemHandler;
 import org.testng.annotations.Test;
 
@@ -37,19 +37,19 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "vcloud.VCloudOperatingSystemHandlerTest")
-public class VCloudOperatingSystemHandlerTest extends BaseHandlerTest {
+public class VCloudOperatingSystemSectionHandlerTest extends BaseHandlerTest {
 
    public void testDefault() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/os.xml");
 
-      VCloudOperatingSystem result = factory.create(injector.getInstance(VCloudOperatingSystemHandler.class)).parse(is);
+      VCloudOperatingSystemSection result = factory.create(injector.getInstance(VCloudOperatingSystemHandler.class)).parse(is);
 
       checkOs(result);
 
    }
 
    @Test(enabled = false)
-   public static void checkOs(VCloudOperatingSystem result) {
+   public static void checkOs(VCloudOperatingSystemSection result) {
       assertEquals(result.getHref(), URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/operatingSystemSection/"));
       assertEquals(result.getDescription(), "Red Hat Enterprise Linux 5 (64-bit)");

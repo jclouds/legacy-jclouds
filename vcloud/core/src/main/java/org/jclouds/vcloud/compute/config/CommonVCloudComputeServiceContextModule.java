@@ -30,12 +30,9 @@ import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Size;
-import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
 import org.jclouds.domain.Location;
-import org.jclouds.vcloud.compute.internal.VCloudComputeClientImpl;
-import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
 import org.jclouds.vcloud.compute.suppliers.OrgAndVDCToLocationSupplier;
 import org.jclouds.vcloud.compute.suppliers.StaticSizeSupplier;
 import org.jclouds.vcloud.compute.suppliers.VCloudImageSupplier;
@@ -74,7 +71,6 @@ public abstract class CommonVCloudComputeServiceContextModule extends BaseComput
    @Override
    protected void configure() {
       install(new ComputeServiceTimeoutsModule());
-      bind(DestroyNodeStrategy.class).to(VCloudDestroyNodeStrategy.class);
       bind(RunNodesAndAddToSetStrategy.class).to(EncodeTagIntoNameRunNodesAndAddToSetStrategy.class);
       bindLoadBalancer();
    }

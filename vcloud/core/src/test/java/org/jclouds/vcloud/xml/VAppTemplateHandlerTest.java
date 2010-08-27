@@ -28,7 +28,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.domain.GuestCustomization;
+import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.Vm;
@@ -78,7 +78,7 @@ public class VAppTemplateHandlerTest {
       assertEquals(vm.getTasks(), ImmutableList.of());
       assertEquals(vm.getVAppScopedLocalId(), "02_ubuntu_template");
 
-      GuestCustomization guestC = vm.getGuestCustomization();
+      GuestCustomizationSection guestC = vm.getGuestCustomizationSection();
 
       assertEquals(guestC.getType(), VCloudMediaType.GUESTCUSTOMIZATIONSECTION_XML);
       assertEquals(

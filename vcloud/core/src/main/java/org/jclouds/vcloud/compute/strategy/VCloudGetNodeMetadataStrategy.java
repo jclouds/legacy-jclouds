@@ -21,6 +21,9 @@ package org.jclouds.vcloud.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseTagFromName;
+import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getCredentialsFrom;
+import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getPrivateIpsFromVApp;
+import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.getPublicIpsFromVApp;
 import static org.jclouds.vcloud.compute.util.VCloudComputeUtils.toComputeOs;
 
 import java.net.URI;
@@ -41,7 +44,6 @@ import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.compute.VCloudComputeClient;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
 import org.jclouds.vcloud.compute.functions.GetExtraFromVApp;
 import org.jclouds.vcloud.domain.Status;
@@ -59,21 +61,19 @@ public class VCloudGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
    protected final VCloudClient client;
-   protected final VCloudComputeClient computeClient;
    protected final Supplier<Set<? extends Image>> images;
    protected final FindLocationForResource findLocationForResourceInVDC;
    protected final GetExtraFromVApp getExtra;
    protected final Map<Status, NodeState> vAppStatusToNodeState;
 
    @Inject
-   protected VCloudGetNodeMetadataStrategy(VCloudClient client, VCloudComputeClient computeClient,
-            Map<Status, NodeState> vAppStatusToNodeState, GetExtraFromVApp getExtra,
-            FindLocationForResource findLocationForResourceInVDC, Supplier<Set<? extends Image>> images) {
+   protected VCloudGetNodeMetadataStrategy(VCloudClient client, Map<Status, NodeState> vAppStatusToNodeState,
+            GetExtraFromVApp getExtra, FindLocationForResource findLocationForResourceInVDC,
+            Supplier<Set<? extends Image>> images) {
       this.client = checkNotNull(client, "client");
       this.images = checkNotNull(images, "images");
       this.getExtra = checkNotNull(getExtra, "getExtra");
       this.findLocationForResourceInVDC = checkNotNull(findLocationForResourceInVDC, "findLocationForResourceInVDC");
-      this.computeClient = checkNotNull(computeClient, "computeClient");
       this.vAppStatusToNodeState = checkNotNull(vAppStatusToNodeState, "vAppStatusToNodeState");
    }
 
@@ -85,8 +85,7 @@ public class VCloudGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
       String tag = parseTagFromName(from.getName());
       Location location = findLocationForResourceInVDC.apply(from.getVDC());
       return new NodeMetadataImpl(in, from.getName(), in, location, from.getHref(), ImmutableMap.<String, String> of(),
-               tag, null, toComputeOs(from, null), vAppStatusToNodeState.get(from.getStatus()), computeClient
-                        .getPublicAddresses(id), computeClient.getPrivateAddresses(id), getExtra.apply(from), null);
+               tag, null, toComputeOs(from, null), vAppStatusToNodeState.get(from.getStatus()),
+               getPublicIpsFromVApp(from), getPrivateIpsFromVApp(from), getExtra.apply(from), getCredentialsFrom(from));
    }
-
 }

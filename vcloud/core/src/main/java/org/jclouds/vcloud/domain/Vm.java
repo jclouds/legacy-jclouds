@@ -24,8 +24,8 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import org.jclouds.vcloud.domain.internal.VmImpl;
-import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystem;
-import org.jclouds.vcloud.domain.ovf.VCloudVirtualHardware;
+import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystemSection;
+import org.jclouds.vcloud.domain.ovf.VCloudVirtualHardwareSection;
 
 import com.google.inject.ImplementedBy;
 
@@ -76,7 +76,7 @@ public interface Vm extends ReferenceType {
     * @since vcloud api 1.0
     */
    @Nullable
-   VCloudVirtualHardware getHardware();
+   VCloudVirtualHardwareSection getVirtualHardwareSection();
 
    /**
     * @return operating system on this VM, or null, if part of a vApp template
@@ -84,7 +84,15 @@ public interface Vm extends ReferenceType {
     * @since vcloud api 1.0
     */
    @Nullable
-   VCloudOperatingSystem getOperatingSystem();
+   VCloudOperatingSystemSection getOperatingSystemSection();
+
+   /**
+    * @return network connections for this VM, or null if it doesn't exist
+    * 
+    * @since vcloud api 1.0
+    */
+   @Nullable
+   NetworkConnectionSection getNetworkConnectionSection();
 
    /**
     * @return guest customization section for this VM, or null if it doesn't exist
@@ -92,7 +100,7 @@ public interface Vm extends ReferenceType {
     * @since vcloud api 1.0
     */
    @Nullable
-   GuestCustomization getGuestCustomization();
+   GuestCustomizationSection getGuestCustomizationSection();
 
    /**
     * read-only identifier created on import

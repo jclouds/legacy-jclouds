@@ -25,11 +25,11 @@ import java.net.URI;
 /**
  * A description of the virtual hardware supported by a virtual machine.
  */
-public class VCloudVirtualHardware extends VirtualHardwareSection {
+public class VCloudVirtualHardwareSection extends VirtualHardwareSection {
    protected final String type;
    protected final URI href;
 
-   public VCloudVirtualHardware(String type, URI href, String info, System virtualSystem,
+   public VCloudVirtualHardwareSection(String type, URI href, String info, System virtualSystem,
             Iterable<? extends ResourceAllocation> resourceAllocations) {
       super(info, virtualSystem, resourceAllocations);
       this.type = type;
@@ -61,7 +61,7 @@ public class VCloudVirtualHardware extends VirtualHardwareSection {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      VCloudVirtualHardware other = (VCloudVirtualHardware) obj;
+      VCloudVirtualHardwareSection other = (VCloudVirtualHardwareSection) obj;
       if (href == null) {
          if (other.href != null)
             return false;

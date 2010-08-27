@@ -26,13 +26,14 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.vcloud.domain.GuestCustomization;
+import org.jclouds.vcloud.domain.GuestCustomizationSection;
+import org.jclouds.vcloud.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.Vm;
-import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystem;
-import org.jclouds.vcloud.domain.ovf.VCloudVirtualHardware;
+import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystemSection;
+import org.jclouds.vcloud.domain.ovf.VCloudVirtualHardwareSection;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -52,16 +53,18 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
    private final String description;
    private final List<Task> tasks = Lists.newArrayList();
    @Nullable
-   private final VCloudVirtualHardware hardware;
+   private final VCloudVirtualHardwareSection hardware;
    private final String vAppScopedLocalId;
-   private final VCloudOperatingSystem os;
+   private final VCloudOperatingSystemSection os;
    @Nullable
-   private final GuestCustomization guestCustomization;
+   private final GuestCustomizationSection guestCustomization;
+   @Nullable
+   private final NetworkConnectionSection networkConnectionSection;
 
    public VmImpl(String name, String type, URI id, @Nullable Status status, ReferenceType vApp,
-            @Nullable String description, Iterable<Task> tasks, @Nullable VCloudVirtualHardware hardware,
-            @Nullable VCloudOperatingSystem os, @Nullable GuestCustomization guestCustomization,
-            @Nullable String vAppScopedLocalId) {
+            @Nullable String description, Iterable<Task> tasks, @Nullable VCloudVirtualHardwareSection hardware,
+            @Nullable VCloudOperatingSystemSection os, @Nullable NetworkConnectionSection networkConnectionSection,
+            @Nullable GuestCustomizationSection guestCustomization, @Nullable String vAppScopedLocalId) {
       super(name, type, id);
       this.status = status;
       this.vApp = vApp;// TODO: once <1.0 is killed check not null
@@ -69,6 +72,7 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
       Iterables.addAll(this.tasks, checkNotNull(tasks, "tasks"));
       this.hardware = hardware;
       this.os = os;
+      this.networkConnectionSection = networkConnectionSection;
       this.guestCustomization = guestCustomization;
       this.vAppScopedLocalId = vAppScopedLocalId;
    }
@@ -110,7 +114,7 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
     * {@inheritDoc}
     */
    @Override
-   public VCloudVirtualHardware getHardware() {
+   public VCloudVirtualHardwareSection getVirtualHardwareSection() {
       return hardware;
    }
 
@@ -118,7 +122,7 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
     * {@inheritDoc}
     */
    @Override
-   public VCloudOperatingSystem getOperatingSystem() {
+   public VCloudOperatingSystemSection getOperatingSystemSection() {
       return os;
    }
 
@@ -126,7 +130,15 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
     * {@inheritDoc}
     */
    @Override
-   public GuestCustomization getGuestCustomization() {
+   public NetworkConnectionSection getNetworkConnectionSection() {
+      return networkConnectionSection;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public GuestCustomizationSection getGuestCustomizationSection() {
       return guestCustomization;
    }
 
@@ -145,6 +157,7 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((guestCustomization == null) ? 0 : guestCustomization.hashCode());
       result = prime * result + ((hardware == null) ? 0 : hardware.hashCode());
+      result = prime * result + ((networkConnectionSection == null) ? 0 : networkConnectionSection.hashCode());
       result = prime * result + ((os == null) ? 0 : os.hashCode());
       result = prime * result + ((vApp == null) ? 0 : vApp.hashCode());
       result = prime * result + ((vAppScopedLocalId == null) ? 0 : vAppScopedLocalId.hashCode());
@@ -175,6 +188,11 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
             return false;
       } else if (!hardware.equals(other.hardware))
          return false;
+      if (networkConnectionSection == null) {
+         if (other.networkConnectionSection != null)
+            return false;
+      } else if (!networkConnectionSection.equals(other.networkConnectionSection))
+         return false;
       if (os == null) {
          if (other.os != null)
             return false;
@@ -197,7 +215,7 @@ public class VmImpl extends ReferenceTypeImpl implements Vm {
    public String toString() {
       return "[href=" + getHref() + ", name=" + getName() + ", type=" + getType() + ", description=" + description
                + ", status=" + status + ", tasks=" + tasks + ", vApp=" + vApp + ", hardware=" + hardware + ", os=" + os
-               + ", vAppScopedLocalId=" + vAppScopedLocalId + "]";
+               + ", network=" + networkConnectionSection + ", vAppScopedLocalId=" + vAppScopedLocalId + "]";
    }
 
 }

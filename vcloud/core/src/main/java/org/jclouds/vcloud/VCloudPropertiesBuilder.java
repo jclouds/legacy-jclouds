@@ -48,7 +48,9 @@ public class VCloudPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty("jclouds.dns_name_length_min", "1");
       properties.setProperty("jclouds.dns_name_length_max", "80");
       properties.setProperty(PROPERTY_VCLOUD_DEFAULT_FENCEMODE, FenceMode.BRIDGED.toString());
-      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 180l * 1000l + "");
+      // TODO integrate this with the {@link ComputeTimeouts} instead of having a single timeout for
+      // everything.
+      properties.setProperty(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED, 600l * 1000l + "");
       return properties;
    }
 

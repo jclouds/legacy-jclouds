@@ -25,7 +25,7 @@ import java.net.URI;
  * The GuestCustomization of a Vm contains customization parameters for the guest
  * operating system of the virtual machine.
  */
-public class GuestCustomization {
+public class GuestCustomizationSection {
    protected final String type;
    protected final URI href;
    protected final String info;
@@ -45,7 +45,7 @@ public class GuestCustomization {
    protected final String computerName;
    protected final ReferenceType edit;
 
-   public GuestCustomization(String type, URI href, String info, Boolean enabled, Boolean changeSid,
+   public GuestCustomizationSection(String type, URI href, String info, Boolean enabled, Boolean changeSid,
             String virtualMachineId, Boolean joinDomainEnabled, Boolean useOrgSettings, String domainName,
             String domainUserName, String domainUserPassword, Boolean adminPasswordEnabled, Boolean adminPasswordAuto,
             String adminPassword, Boolean resetPasswordRequired, String customizationScript, String computerName,
@@ -254,7 +254,7 @@ public class GuestCustomization {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      GuestCustomization other = (GuestCustomization) obj;
+      GuestCustomizationSection other = (GuestCustomizationSection) obj;
       if (adminPassword == null) {
          if (other.adminPassword != null)
             return false;

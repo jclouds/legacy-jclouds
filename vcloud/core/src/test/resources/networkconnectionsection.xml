@@ -1,0 +1,18 @@
+<NetworkConnectionSection
+    type="application/vnd.vmware.vcloud.networkConnectionSection+xml"
+    href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/networkConnectionSection/"
+    ovf:required="false">
+    <ovf:Info>Specifies the available VM network connections</ovf:Info>
+    <PrimaryNetworkConnectionIndex>0</PrimaryNetworkConnectionIndex>
+    <NetworkConnection network="internet01">
+        <NetworkConnectionIndex>0</NetworkConnectionIndex>
+        <IpAddress>174.47.101.164</IpAddress>
+        <IsConnected>true</IsConnected>
+        <MACAddress>00:50:56:01:01:f2</MACAddress>
+        <IpAddressAllocationMode>POOL</IpAddressAllocationMode>
+    </NetworkConnection>
+    <Link rel="edit"
+        type="application/vnd.vmware.vcloud.networkConnectionSection+xml"
+        href="https://vcenterprise.bluelock.com/api/v1.0/vApp/vm-2087535248/networkConnectionSection/" />
+</NetworkConnectionSection>
+  

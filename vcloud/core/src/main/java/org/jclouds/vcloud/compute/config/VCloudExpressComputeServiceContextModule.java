@@ -25,6 +25,7 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
@@ -36,6 +37,7 @@ import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.compute.functions.ImagesInVCloudExpressOrg;
 import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressAddNodeWithTagStrategy;
+import org.jclouds.vcloud.compute.strategy.VCloudExpressDestroyNodeStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressGetNodeMetadataStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressRebootNodeStrategy;
@@ -70,6 +72,7 @@ public class VCloudExpressComputeServiceContextModule extends CommonVCloudComput
       });
       bind(AddNodeWithTagStrategy.class).to(VCloudExpressAddNodeWithTagStrategy.class);
       bind(ListNodesStrategy.class).to(VCloudExpressListNodesStrategy.class);
+      bind(DestroyNodeStrategy.class).to(VCloudExpressDestroyNodeStrategy.class);
    }
 
    @Provides

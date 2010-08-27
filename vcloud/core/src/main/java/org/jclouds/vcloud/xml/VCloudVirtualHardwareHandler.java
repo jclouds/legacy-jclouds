@@ -28,14 +28,14 @@ import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.domain.ReferenceType;
-import org.jclouds.vcloud.domain.ovf.VCloudVirtualHardware;
+import org.jclouds.vcloud.domain.ovf.VCloudVirtualHardwareSection;
 import org.jclouds.vcloud.domain.ovf.VirtualHardwareSection;
 import org.xml.sax.Attributes;
 
 /**
  * @author Adrian Cole
  */
-public class VCloudVirtualHardwareHandler extends ParseSax.HandlerWithResult<VCloudVirtualHardware> {
+public class VCloudVirtualHardwareHandler extends ParseSax.HandlerWithResult<VCloudVirtualHardwareSection> {
 
    private final VirtualHardwareSectionHandler hardwareHandler;
 
@@ -46,9 +46,9 @@ public class VCloudVirtualHardwareHandler extends ParseSax.HandlerWithResult<VCl
       this.hardwareHandler = hardwareHandler;
    }
 
-   public VCloudVirtualHardware getResult() {
+   public VCloudVirtualHardwareSection getResult() {
       VirtualHardwareSection hardware = hardwareHandler.getResult();
-      return new VCloudVirtualHardware(this.hardware.getType(), this.hardware.getHref(), hardware.getInfo(), hardware
+      return new VCloudVirtualHardwareSection(this.hardware.getType(), this.hardware.getHref(), hardware.getInfo(), hardware
                .getSystem(), hardware.getResourceAllocations());
    }
 

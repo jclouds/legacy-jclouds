@@ -58,13 +58,13 @@ public class GetExtraFromVApp implements Function<VApp, Map<String, String>> {
       try {
          // TODO make this work with composite vApps
          Vm vm = Iterables.get(vApp.getChildren(), 0);
-         extra.put("memory/mb", find(vm.getHardware().getResourceAllocations(), resourceType(ResourceType.MEMORY))
+         extra.put("memory/mb", find(vm.getVirtualHardwareSection().getResourceAllocations(), resourceType(ResourceType.MEMORY))
                   .getVirtualQuantity()
                   + "");
-         extra.put("processor/count", find(vm.getHardware().getResourceAllocations(),
+         extra.put("processor/count", find(vm.getVirtualHardwareSection().getResourceAllocations(),
                   resourceType(ResourceType.PROCESSOR)).getVirtualQuantity()
                   + "");
-         for (ResourceAllocation disk : filter(vm.getHardware().getResourceAllocations(),
+         for (ResourceAllocation disk : filter(vm.getVirtualHardwareSection().getResourceAllocations(),
                   resourceType(ResourceType.DISK_DRIVE))) {
             if (disk instanceof VCloudHardDisk) {
                VCloudHardDisk vDisk = VCloudHardDisk.class.cast(disk);
@@ -73,7 +73,7 @@ public class GetExtraFromVApp implements Function<VApp, Map<String, String>> {
                extra.put(String.format("disk_drive/%s/kb", disk.getAddressOnParent()), disk.getVirtualQuantity() + "");
             }
          }
-         for (ResourceAllocation net : filter(vm.getHardware().getResourceAllocations(),
+         for (ResourceAllocation net : filter(vm.getVirtualHardwareSection().getResourceAllocations(),
                   resourceType(ResourceType.ETHERNET_ADAPTER))) {
             if (net instanceof VCloudNetworkAdapter) {
                VCloudNetworkAdapter vNet = VCloudNetworkAdapter.class.cast(net);

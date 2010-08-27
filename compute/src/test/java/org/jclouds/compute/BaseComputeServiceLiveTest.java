@@ -305,7 +305,9 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected void checkOsMatchesTemplate(NodeMetadata node) {
       if (node.getOperatingSystem() != null)
-         assertEquals(node.getOperatingSystem().getFamily(), template.getImage().getOperatingSystem().getFamily());
+         assert node.getOperatingSystem().getFamily().equals(template.getImage().getOperatingSystem().getFamily()) : String
+                  .format("expecting family %s but got %s", template.getImage().getOperatingSystem().getFamily(), node
+                           .getOperatingSystem());
    }
 
    void assertLocationSameOrChild(Location test, Location expected) {
@@ -524,7 +526,7 @@ public abstract class BaseComputeServiceLiveTest {
       System.out.printf("smallest %s%n", smallest);
       System.out.printf("fastest %s%n", fastest);
       System.out.printf("biggest %s%n", biggest);
-      
+
       assertEquals(defaultSize, smallest);
 
       assert smallest.getCores() <= fastest.getCores() : String.format("%d ! <= %d", smallest, fastest);

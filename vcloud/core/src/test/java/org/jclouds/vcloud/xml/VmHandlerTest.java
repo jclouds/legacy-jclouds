@@ -31,8 +31,8 @@ import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
-import org.jclouds.vcloud.xml.ovf.VCloudOperatingSystemHandlerTest;
-import org.jclouds.vcloud.xml.ovf.VCloudVirtualHardwareHandlerTest;
+import org.jclouds.vcloud.xml.ovf.VCloudOperatingSystemSectionHandlerTest;
+import org.jclouds.vcloud.xml.ovf.VCloudVirtualHardwareSectionHandlerTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -64,9 +64,10 @@ public class VmHandlerTest {
       assertEquals(result.getDescription(), null);
       assertEquals(result.getTasks(), ImmutableList.of());
       assertEquals(result.getVAppScopedLocalId(), "10_rhel_template");
-      VCloudVirtualHardwareHandlerTest.checkHardware(result.getHardware());
-      VCloudOperatingSystemHandlerTest.checkOs(result.getOperatingSystem());
-      GuestCustomizationHandlerTest.checkGuestCustomization(result.getGuestCustomization());
+      VCloudVirtualHardwareSectionHandlerTest.checkHardware(result.getVirtualHardwareSection());
+      VCloudOperatingSystemSectionHandlerTest.checkOs(result.getOperatingSystemSection());
+      NetworkConnectionSectionHandlerTest.checkNetworkConnectionSection(result.getNetworkConnectionSection());
+      GuestCustomizationSectionHandlerTest.checkGuestCustomization(result.getGuestCustomizationSection());
    }
 
 }

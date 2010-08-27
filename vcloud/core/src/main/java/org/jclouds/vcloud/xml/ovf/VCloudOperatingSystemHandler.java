@@ -25,14 +25,14 @@ import java.util.Map;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.vcloud.domain.ReferenceType;
-import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystem;
+import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystemSection;
 import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
 
 /**
  * @author Adrian Cole
  */
-public class VCloudOperatingSystemHandler extends ParseSax.HandlerWithResult<VCloudOperatingSystem> {
+public class VCloudOperatingSystemHandler extends ParseSax.HandlerWithResult<VCloudOperatingSystemSection> {
    private StringBuilder currentText = new StringBuilder();
 
    protected ReferenceType os;
@@ -42,8 +42,8 @@ public class VCloudOperatingSystemHandler extends ParseSax.HandlerWithResult<VCl
    protected String description;
    protected ReferenceType edit;
 
-   public VCloudOperatingSystem getResult() {
-      VCloudOperatingSystem system = new VCloudOperatingSystem(id, info, description, os.getType(), os.getHref(),
+   public VCloudOperatingSystemSection getResult() {
+      VCloudOperatingSystemSection system = new VCloudOperatingSystemSection(id, info, description, os.getType(), os.getHref(),
                vmwOsType, edit);
       os = null;
       id = null;

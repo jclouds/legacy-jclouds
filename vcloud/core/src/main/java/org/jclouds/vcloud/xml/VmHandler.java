@@ -28,14 +28,15 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.vcloud.domain.GuestCustomization;
+import org.jclouds.vcloud.domain.GuestCustomizationSection;
+import org.jclouds.vcloud.domain.NetworkConnectionSection;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.internal.VmImpl;
-import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystem;
-import org.jclouds.vcloud.domain.ovf.VCloudVirtualHardware;
+import org.jclouds.vcloud.domain.ovf.VCloudOperatingSystemSection;
+import org.jclouds.vcloud.domain.ovf.VCloudVirtualHardwareSection;
 import org.jclouds.vcloud.xml.ovf.VCloudOperatingSystemHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -50,14 +51,18 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
    protected final TaskHandler taskHandler;
    protected final VCloudVirtualHardwareHandler virtualHardwareHandler;
    protected final VCloudOperatingSystemHandler operatingSystemHandler;
-   protected final GuestCustomizationHandler guestCustomizationHandler;
+   protected final GuestCustomizationSectionHandler guestCustomizationHandler;
+   protected final NetworkConnectionSectionHandler networkConnectionSectionHandler;
 
    @Inject
    public VmHandler(TaskHandler taskHandler, VCloudVirtualHardwareHandler virtualHardwareHandler,
-            VCloudOperatingSystemHandler operatingSystemHandler, GuestCustomizationHandler guestCustomizationHandler) {
+            VCloudOperatingSystemHandler operatingSystemHandler,
+            NetworkConnectionSectionHandler networkConnectionSectionHandler,
+            GuestCustomizationSectionHandler guestCustomizationHandler) {
       this.taskHandler = taskHandler;
       this.virtualHardwareHandler = virtualHardwareHandler;
       this.operatingSystemHandler = operatingSystemHandler;
+      this.networkConnectionSectionHandler = networkConnectionSectionHandler;
       this.guestCustomizationHandler = guestCustomizationHandler;
    }
 
@@ -68,19 +73,21 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
    protected ReferenceType vdc;
    protected String description;
    protected List<Task> tasks = Lists.newArrayList();
-   protected VCloudVirtualHardware hardware;
-   protected VCloudOperatingSystem os;
-   protected GuestCustomization guestCustomization;
+   protected VCloudVirtualHardwareSection hardware;
+   protected VCloudOperatingSystemSection os;
+   protected NetworkConnectionSection networkConnectionSection;
+   protected GuestCustomizationSection guestCustomization;
    protected String vAppScopedLocalId;
 
    private boolean inTasks;
    private boolean inHardware;
    private boolean inOs;
+   private boolean inNetworkConnectionSection;
    private boolean inGuestCustomization;
 
    public Vm getResult() {
       return new VmImpl(vm.getName(), vm.getType(), vm.getHref(), status, vdc, description, tasks, hardware, os,
-               guestCustomization, vAppScopedLocalId);
+               networkConnectionSection, guestCustomization, vAppScopedLocalId);
    }
 
    @Override
@@ -92,6 +99,8 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
          inOs = true;
       } else if (qName.endsWith("GuestCustomizationSection")) {
          inGuestCustomization = true;
+      } else if (qName.endsWith("NetworkConnectionSection")) {
+         inNetworkConnectionSection = true;
       } else if (qName.endsWith("Tasks")) {
          inTasks = true;
       }
@@ -99,6 +108,8 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
          virtualHardwareHandler.startElement(uri, localName, qName, attrs);
       } else if (inOs) {
          operatingSystemHandler.startElement(uri, localName, qName, attrs);
+      } else if (inNetworkConnectionSection) {
+         networkConnectionSectionHandler.startElement(uri, localName, qName, attrs);
       } else if (inGuestCustomization) {
          guestCustomizationHandler.startElement(uri, localName, qName, attrs);
       } else if (inTasks) {
@@ -120,6 +131,9 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
       } else if (qName.endsWith("OperatingSystemSection")) {
          inOs = false;
          os = operatingSystemHandler.getResult();
+      } else if (qName.endsWith("NetworkConnectionSection")) {
+         inNetworkConnectionSection = false;
+         networkConnectionSection = networkConnectionSectionHandler.getResult();
       } else if (qName.endsWith("GuestCustomizationSection")) {
          inGuestCustomization = false;
          guestCustomization = guestCustomizationHandler.getResult();
@@ -133,6 +147,8 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
          operatingSystemHandler.endElement(uri, name, qName);
       } else if (inGuestCustomization) {
          guestCustomizationHandler.endElement(uri, name, qName);
+      } else if (inNetworkConnectionSection) {
+         networkConnectionSectionHandler.endElement(uri, name, qName);
       } else if (inTasks) {
          taskHandler.endElement(uri, name, qName);
       } else if (qName.equals("Description")) {
@@ -144,15 +160,18 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
    }
 
    public void characters(char ch[], int start, int length) {
-      if (inTasks)
-         taskHandler.characters(ch, start, length);
       if (inHardware)
          virtualHardwareHandler.characters(ch, start, length);
-      if (inOs)
+      else if (inOs)
          operatingSystemHandler.characters(ch, start, length);
-      if (inGuestCustomization)
+      else if (inGuestCustomization)
          guestCustomizationHandler.characters(ch, start, length);
-      currentText.append(ch, start, length);
+      else if (inNetworkConnectionSection)
+         networkConnectionSectionHandler.characters(ch, start, length);
+      else if (inTasks)
+         taskHandler.characters(ch, start, length);
+      else
+         currentText.append(ch, start, length);
    }
 
    protected String currentOrNull() {
