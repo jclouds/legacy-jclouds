@@ -46,7 +46,7 @@
 
   <artifact:localRepository id="local.repository" path="${user.home}/.m2/repository" />
   <artifact:remoteRepository id="jclouds.repository" url="http://jclouds.googlecode.com/svn/repo" />
-  <artifact:remoteRepository id="jclouds-snapshot.repository" url="http://jclouds.rimuhosting.com/maven2/snapshots" />
+  <artifact:remoteRepository id="jclouds-snapshot.repository" url="https://oss.sonatype.org/content/repositories/snapshots" />
 
   <artifact:dependencies pathId="jclouds.classpath">
     <dependency groupId="org.jclouds" artifactId="jclouds-antcontrib" version="${jclouds.version}" />

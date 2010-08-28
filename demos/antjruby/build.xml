@@ -31,7 +31,7 @@
            classpathref="maven-ant-tasks.classpath" />
 
   <artifact:localRepository id="local.repository" path="${user.home}/.m2/repository" />
-  <artifact:remoteRepository id="jclouds-snapshot.repository" url="http://jclouds.rimuhosting.com/maven2/snapshots" />
+  <artifact:remoteRepository id="jclouds-snapshot.repository" url="https://oss.sonatype.org/content/repositories/snapshots" />
   <artifact:remoteRepository id="shrinkwrap.repository" url="http://repository.jboss.org/maven2" />
   
   <!-- Setup maven so that we can get latest version of jclouds, shrinkwrap, and jruby -->
