@@ -48,6 +48,17 @@ public class VCloudClientLiveTest extends CommonVCloudClientLiveTest<VCloudClien
    }
 
    @Test
+   public void testListOrgs() throws Exception {
+      for (ReferenceType response : connection.listOrgs().values()) {
+         assertNotNull(response);
+         assertNotNull(response.getName());
+         assertNotNull(response.getHref());
+         assertEquals(connection.getOrg(response.getHref()).getName(), response.getName());
+         assertEquals(connection.findOrgNamed(response.getName()).getName(), response.getName());
+      }
+   }
+
+   @Test
    public void testGetVAppTemplate() throws Exception {
       Org org = connection.findOrgNamed(null);
       for (ReferenceType cat : org.getCatalogs().values()) {
@@ -137,7 +148,7 @@ public class VCloudClientLiveTest extends CommonVCloudClientLiveTest<VCloudClien
                if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
                   try {
                      assertNotNull(connection.findVAppTemplateInOrgCatalogNamed(org.getName(), response.getName(), item
-                              .getEntity().getName()));
+                           .getEntity().getName()));
                   } catch (AuthorizationException e) {
 
                   }
