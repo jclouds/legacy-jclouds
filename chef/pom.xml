@@ -34,5 +34,6 @@
     <modules>
         <module>core</module>
         <module>servlet</module>
+        <module>compute</module>
     </modules>
 </project>
