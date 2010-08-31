@@ -27,6 +27,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.reference.EC2Constants;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -55,8 +56,28 @@ public class EC2TemplateBuilderLiveTest {
    }
 
    @Test
-   public void testTemplateBuilderCanUseImageId() {
-      // TODO
+   public void testTemplateBuilderCanUseImageIdAndSizeId() {
+      ComputeServiceContext newContext = null;
+      try {
+         newContext = new ComputeServiceContextFactory().createContext("ec2", user, password, ImmutableSet
+                  .of(new Log4JLoggingModule()));
+         
+         Template template = newContext.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5").sizeId(InstanceType.M2_2XLARGE).build();
+         
+         System.out.println(template.getImage());
+         assert (template.getImage().getProviderId().startsWith("ami-")) : template;
+         assertEquals(template.getImage().getOperatingSystem().getVersion(), "5.4");
+         assertEquals(template.getImage().getOperatingSystem().is64Bit(), true);
+         assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
+         assertEquals(template.getImage().getVersion(), "4.4.10");
+         assertEquals(template.getLocation().getId(), "us-east-1");
+         assertEquals(template.getSize().getCores(), 13.0d); // because it is m2 2xl
+         assertEquals(template.getSize().getId(), InstanceType.M2_2XLARGE); 
+
+      } finally {
+         if (newContext != null)
+            newContext.close();
+      }
    }
 
    @Test

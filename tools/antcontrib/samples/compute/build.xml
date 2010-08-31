@@ -27,21 +27,21 @@
 
   <mkdir dir="build" />
 
-  <get src="http://apache.imghat.com/maven/binaries/maven-ant-tasks-2.1.0.jar" dest="build/maven-ant-tasks-2.1.0.jar"/>
+  <get src="http://opensource.become.com/apache//maven/binaries/maven-ant-tasks-2.1.1.jar" dest="build/maven-ant-tasks.jar"/>
 
   <input
-    message="Which service would you like to use (ec2, cloudservers, vcloud, terremark, rimuhosting)?"
-    validargs="ec2,cloudservers,vcloud,terremark,rimuhosting"
-    addproperty="service"
+    message="Which provider would you like to use (ec2, cloudservers, vcloud, terremark, rimuhosting)?"
+    validargs="ec2,cloudservers,vcloud,trmk-ecloud,trmk-vcloudexpress,ibmdev,eucalyptus,bluelock-vcloudexpress,bluelock-vclouddirector,gogrid,rimuhosting"
+    addproperty="provider"
   />
 
   <input
-    message="Which driver does ${service} use?"
+    message="Which driver does ${provider} use?"
     validargs="aws,rackspace,vcloud,bluelock,gogrid,terremark,rimuhosting"
     addproperty="driver"
   />
 
-  <path id="maven-ant-tasks.classpath" path="build/maven-ant-tasks-2.1.0.jar" />
+  <path id="maven-ant-tasks.classpath" path="build/maven-ant-tasks.jar" />
   <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" classpathref="maven-ant-tasks.classpath" />
 
   <artifact:localRepository id="local.repository" path="${user.home}/.m2/repository" />
@@ -59,16 +59,16 @@
   <typedef name="compute" classname="org.jclouds.tools.ant.taskdefs.compute.ComputeTask" classpathref="jclouds.classpath" />
 
   <input
-    message="What is your account on ${service}?"
-    addproperty="account"
+    message="What is your identity on ${provider}?"
+    addproperty="identity"
   />
 
   <input
-    message="What is the key for ${account}?"
-    addproperty="key"
+    message="What is the credential for ${identity}?"
+    addproperty="credential"
   />
 
-  <property name="jclouds.compute.url" value="compute://${account}:${key}@${service}" />
+  <property name="jclouds.compute.url" value="compute://${identity}:${credential}@${provider}" />
 
   <target name="list" description="list the identity of all nodes">
     <compute actions="list" provider="${jclouds.compute.url}" />

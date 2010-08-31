@@ -42,7 +42,7 @@
             <uniqueVersion>false</uniqueVersion>
         </repository>
         <snapshotRepository>
-      	    <id>jclouds-rimu-snapshots-nexus</id>
+      	    <id>jclouds-snapshots</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
