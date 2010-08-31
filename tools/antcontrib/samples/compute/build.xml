@@ -37,7 +37,7 @@
 
   <input
     message="Which driver does ${provider} use?"
-    validargs="aws,rackspace,vcloud,bluelock,gogrid,terremark,rimuhosting"
+    validargs="aws,rackspace,vcloud,bluelock,gogrid,terremark,ibmdev,rimuhosting"
     addproperty="driver"
   />
 

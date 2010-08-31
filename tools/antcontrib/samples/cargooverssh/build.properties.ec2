@@ -1,5 +1,5 @@
-service=ec2
+provider=ec2
 driver=aws
-account=accesskeyid
-key=secretaccesskey
-nodetag=we_create_and_delete_based_on_key_and_security_group_name_not_instance_id
+identity=accesscredentialid
+credential=secretaccesscredential
+tag=we_create_and_delete_based_on_credential_and_security_group_name_not_instance_id

@@ -1,0 +1,5 @@
+provider=ibmdev
+driver=ibmdev
+identity=user@youregistered.com
+credential=password
+tag=name_of_your_server
