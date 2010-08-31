@@ -68,7 +68,7 @@ public class GetExtraFromVApp implements Function<VApp, Map<String, String>> {
                   resourceType(ResourceType.DISK_DRIVE))) {
             if (disk instanceof VCloudHardDisk) {
                VCloudHardDisk vDisk = VCloudHardDisk.class.cast(disk);
-               extra.put(String.format("disk_drive/%s/kb", disk.getAddressOnParent()), vDisk.getCapacity() + "");
+               extra.put(String.format("disk_drive/%s/mb", disk.getAddressOnParent()), vDisk.getCapacity() + "");
             } else {
                extra.put(String.format("disk_drive/%s/kb", disk.getAddressOnParent()), disk.getVirtualQuantity() + "");
             }
