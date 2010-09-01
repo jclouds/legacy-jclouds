@@ -19,8 +19,8 @@
 
 package org.jclouds.filesystem;
 
+import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.filesystem.utils.TestUtils;
-import org.jclouds.filesystem.config.FilesystemConstants;
 import com.google.inject.CreationException;
 import org.jclouds.blobstore.options.GetOptions;
 import java.util.Iterator;

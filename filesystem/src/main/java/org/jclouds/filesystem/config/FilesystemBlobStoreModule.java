@@ -21,6 +21,7 @@ package org.jclouds.filesystem.config;
 
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.filesystem.FilesystemAsyncBlobStore;
+import org.jclouds.filesystem.FilesystemBlobStore;
 import org.jclouds.rest.config.RestClientModule;
 
 /**

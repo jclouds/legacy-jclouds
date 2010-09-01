@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.filesystem.utils;
+package org.jclouds.filesystem.strategy.internal;
 
 import java.util.List;
 import java.util.Set;
@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
+import org.jclouds.filesystem.strategy.internal.FilesystemStorageStrategyImpl;
+import org.jclouds.filesystem.utils.TestUtils;
 import org.jclouds.io.payloads.FilePayload;
 import org.testng.annotations.*;
 

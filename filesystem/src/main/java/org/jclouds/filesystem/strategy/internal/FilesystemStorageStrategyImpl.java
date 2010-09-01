@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.filesystem.utils;
+package org.jclouds.filesystem.strategy.internal;
 
 import java.io.OutputStream;
 import java.util.Set;
@@ -37,7 +37,9 @@ import java.io.File;
 import javax.annotation.Resource;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import org.jclouds.filesystem.config.FilesystemConstants;
+
+import org.jclouds.filesystem.reference.FilesystemConstants;
+import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
 import org.jclouds.logging.Logger;
 
 import static com.google.common.base.Preconditions.checkNotNull;

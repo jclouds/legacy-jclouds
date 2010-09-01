@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.filesystem.config;
+package org.jclouds.filesystem;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,5 +28,5 @@ import org.jclouds.concurrent.Timeout;
  *
  * @author Alfredo "Rainbowbreeze" Morresi
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS) interface FilesystemBlobStore  extends BlobStore {
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS) public interface FilesystemBlobStore  extends BlobStore {
 }

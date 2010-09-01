@@ -17,13 +17,14 @@
  * ====================================================================
  */
 
-package org.jclouds.filesystem.utils;
+package org.jclouds.filesystem.util.internal;
 
 import com.google.inject.Inject;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.BlobUtils;
+import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

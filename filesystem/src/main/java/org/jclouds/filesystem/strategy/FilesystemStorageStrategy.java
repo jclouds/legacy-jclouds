@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.filesystem.utils;
+package org.jclouds.filesystem.strategy;
 
 import java.io.File;
 import java.io.IOException;

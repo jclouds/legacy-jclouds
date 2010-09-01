@@ -39,9 +39,10 @@ import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.filesystem.utils.FileSystemBlobUtilsImpl;
-import org.jclouds.filesystem.utils.FilesystemStorageStrategy;
-import org.jclouds.filesystem.utils.FilesystemStorageStrategyImpl;
+import org.jclouds.filesystem.FilesystemBlobStore;
+import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
+import org.jclouds.filesystem.strategy.internal.FilesystemStorageStrategyImpl;
+import org.jclouds.filesystem.util.internal.FileSystemBlobUtilsImpl;
 
 /**
  *

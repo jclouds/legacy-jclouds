@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.filesystem.config;
+package org.jclouds.filesystem.reference;
 
 /**
  * Common constants used in filesystem provider
