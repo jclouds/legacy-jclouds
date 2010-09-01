@@ -20,15 +20,19 @@
 package org.jclouds.chef.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Sets.newHashSet;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
+import java.util.Set;
 
 import org.jclouds.chef.ChefContext;
 import org.jclouds.chef.ChefContextFactory;
+import org.jclouds.chef.ChefService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.crypto.Pems;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
@@ -48,9 +52,13 @@ public class ChefComputeServiceLiveTest {
 
    private ComputeServiceContext computeContext;
    private ChefContext chefContext;
+   private String tag;
+   private String clientName;
 
    @BeforeGroups(groups = { "live" })
    public void setupCompute() {
+      tag = System.getProperty("jclouds.compute.tag") != null ? System.getProperty("jclouds.compute.tag")
+               : "jcloudschef";
       String computeProvider = checkNotNull(System.getProperty("jclouds.compute.provider"), "jclouds.compute.provider");
       String computeEndpoint = System.getProperty("jclouds.compute.endpoint");
       Properties props = new Properties();
@@ -77,9 +85,39 @@ public class ChefComputeServiceLiveTest {
    }
 
    @Test
-   public void test() {
+   public void test() throws IOException {
+      clientName = findNextClientName(chefContext, tag + "-%d");
+      String clientKey = Pems.pem(chefContext.getApi().createClient(clientName).getPrivateKey());
+
+      // herefile /etc/chef/client.rb
+      // log_level :info
+      // log_location STDOUT
+      // chef_server_url "@chef_server_url@"
+
+      // herefile /etc/chef/client.pem
+      // clientKey
+      // herefile /etc/chef/first-boot.json
+      // { "run_list": [ "recipe[apache]" ] }
+
+      // then run /usr/bin/chef-client -j /etc/chef/first-boot.json
+
+      System.out.println("created new client: " + clientName);
+
       computeContext.getComputeService().listNodes();
       chefContext.getChefService().listNodesDetails();
+   }
+
+   private String findNextClientName(ChefContext context, String pattern) {
+      Set<String> nodes = context.getApi().listClients();
+      String nodeName;
+      Set<String> names = newHashSet(nodes);
+      int index = 0;
+      while (true) {
+         nodeName = String.format(pattern, index++);
+         if (!names.contains(nodeName))
+            break;
+      }
+      return nodeName;
    }
 
    @AfterGroups(groups = { "live" })
@@ -90,7 +128,10 @@ public class ChefComputeServiceLiveTest {
 
    @AfterGroups(groups = { "live" })
    public void teardownChef() {
-      if (chefContext != null)
+      if (chefContext != null) {
+         if (clientName != null && chefContext.getApi().clientExists(clientName))
+            chefContext.getApi().deleteClient(clientName);
          chefContext.close();
+      }
    }
 }
