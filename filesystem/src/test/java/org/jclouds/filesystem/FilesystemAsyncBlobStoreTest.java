@@ -762,6 +762,16 @@ public class FilesystemAsyncBlobStoreTest {
 
 
 
+    public void testContainerInvalidNames() throws IOException {
+        try {
+            blobStore.createContainerInLocation(null, "file/system");
+            fail("Wrong container name not recognized");
+        } catch (IllegalArgumentException e) {
+
+        }
+    }
+
+
 
     //---------------------------------------------------------- Private Methods
 

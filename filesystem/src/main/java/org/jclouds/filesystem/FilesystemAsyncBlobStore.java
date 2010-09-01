@@ -94,14 +94,18 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.internal.Nullable;
 import javax.annotation.Resource;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
+import org.jclouds.filesystem.predicates.validators.FilesystemContainerNameValidator;
 import org.jclouds.filesystem.utils.FilesystemStorageStrategy;
 import org.jclouds.io.Payload;
 import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.annotations.ParamValidators;
 
 /**
  *
@@ -111,7 +115,6 @@ import org.jclouds.logging.Logger;
  * @author Alfredo "Rainbowbreeze" Morresi
  */
 public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
-   private static final String BACK_SLASH = "\\";
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -330,8 +333,11 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    /**
     * {@inheritDoc}
     */
+   @Path("{container}")
    @Override
-   public ListenableFuture<Boolean> createContainerInLocation(final Location location, final String name) {
+   public ListenableFuture<Boolean> createContainerInLocation(
+           final Location location,
+           @PathParam("container") @ParamValidators( { FilesystemContainerNameValidator.class }) String name) {
        boolean result = storageStrategy.createContainer(name);
        return immediateFuture(result);
    }

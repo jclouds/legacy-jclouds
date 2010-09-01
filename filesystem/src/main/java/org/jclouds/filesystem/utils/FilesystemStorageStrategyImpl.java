@@ -18,6 +18,9 @@
  */
 package org.jclouds.filesystem.utils;
 
+import org.jclouds.filesystem.predicates.validators.FilesystemBlobKeyValidator;
+import org.jclouds.rest.annotations.ParamValidators;
+import org.jclouds.filesystem.predicates.validators.FilesystemContainerNameValidator;
 import java.io.OutputStream;
 import java.util.Set;
 import java.util.HashSet;
@@ -77,7 +80,7 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
     }
 
     @Override
-    public boolean createContainer(String container) {
+    public boolean createContainer(@ParamValidators( { FilesystemContainerNameValidator.class }) String container) {
         logger.debug("Creating container %s", container);
         return createDirectoryWithResult(container, null);
     }
@@ -118,7 +121,7 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
 
 
     @Override
-    public Blob newBlob(String name) {
+    public Blob newBlob(@ParamValidators( { FilesystemBlobKeyValidator.class }) String name) {
         Blob blob = blobFactory.create(null);
         blob.getMetadata().setName(name);
         return blob;

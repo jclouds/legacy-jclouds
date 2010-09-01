@@ -31,7 +31,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import org.apache.commons.io.FileUtils;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.io.payloads.FilePayload;
 import org.testng.annotations.*;
@@ -504,6 +503,26 @@ public class FilesystemStorageStrategyImplTest {
         }
     }
 
+
+
+
+    public void testBlobKeyInvalidNames() throws IOException {
+        try {
+            storageStrategy.newBlob("/test.jpg");
+            fail("Wrong blob key not recognized");
+        } catch (IllegalArgumentException e) {
+
+        }
+    }
+
+    public void testContainerInvalidNames() throws IOException {
+        try {
+            storageStrategy.createContainer("file/system");
+            fail("Wrong container name not recognized");
+        } catch (IllegalArgumentException e) {
+
+        }
+    }
 
     //---------------------------------------------------------- Private methods
 
