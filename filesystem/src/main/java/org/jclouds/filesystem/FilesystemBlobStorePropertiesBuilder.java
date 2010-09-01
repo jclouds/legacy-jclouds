@@ -46,9 +46,6 @@ public class FilesystemBlobStorePropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_IDENTITY, System.getProperty("user.name"));
       properties.setProperty(PROPERTY_USER_THREADS, "0");
       properties.setProperty(PROPERTY_IO_WORKER_THREADS, "0");
-
-      System.out.println("Properties:"+properties );
-
       return properties;
    }
 

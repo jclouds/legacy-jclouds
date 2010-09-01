@@ -112,7 +112,6 @@ import org.jclouds.logging.Logger;
  * @author Alfredo "Rainbowbreeze" Morresi
  */
 public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
-   private static final String BACK_SLASH = "\\";
 
    @Resource
    protected Logger logger = Logger.NULL;

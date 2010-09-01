@@ -32,7 +32,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import org.apache.commons.io.FileUtils;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.io.payloads.FilePayload;
 import org.testng.annotations.*;
@@ -387,7 +386,7 @@ public class FilesystemStorageStrategyImplTest {
     public void testWritePayloadOnFile_SourceFileDoesntExist() {
         File sourceFile = new File("asdfkjsadkfjasdlfasdflk.asdfasdfas");
         try {
-            FilePayload filePayload = new FilePayload(sourceFile);
+            new FilePayload(sourceFile);
             fail("Exception not throwed");
         } catch (Exception ex) {
         }

@@ -64,8 +64,6 @@ public class FilesystemAsyncBlobStoreTest {
                                             = "src/main/resources/logging.properties";
 
     private static final String PROVIDER = "filesystem";
-    private static final String KEY1     = "";
-    private static final String KEY2     = "";
 
 
     static  {
@@ -80,14 +78,6 @@ public class FilesystemAsyncBlobStoreTest {
 
     @BeforeMethod
     protected void setUp() throws Exception {
-/*        Enumeration<String> loggerNames = LogManager.getLogManager().getLoggerNames();
-        while(loggerNames.hasMoreElements()) {
-            String loggerName = loggerNames.nextElement();
-            System.out.println("Logger "+loggerName);
-            System.out.println("Livello "+LogManager.getLogManager().getLogger(loggerName).getLevel());
-
-        }*/
-
         //create context for filesystem container
         Properties prop = new Properties();
         prop.setProperty(FilesystemConstants.PROPERTY_BASEDIR, TestUtils.TARGET_BASE_DIR);
@@ -126,7 +116,7 @@ public class FilesystemAsyncBlobStoreTest {
         //no base directory declared in properties
         try {
             Properties props = new Properties();
-            BlobStoreContext testContext = (BlobStoreContext) new BlobStoreContextFactory().createContext(
+            new BlobStoreContextFactory().createContext(
                     PROVIDER, props);
             fail("No error if base directory is not specified");
         } catch (CreationException e) {
@@ -136,7 +126,7 @@ public class FilesystemAsyncBlobStoreTest {
         try {
             Properties props = new Properties();
             props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, null);
-            BlobStoreContext testContext = (BlobStoreContext) new BlobStoreContextFactory().createContext(
+            new BlobStoreContextFactory().createContext(
                     PROVIDER, props);
             fail("No error if base directory is null in the option");
         } catch (NullPointerException e) {
@@ -147,11 +137,11 @@ public class FilesystemAsyncBlobStoreTest {
      * Test of list method of the root context
      */
     public void testList_Root() throws IOException {
-        PageSet<StorageMetadata> containersRetrieved;
+        PageSet<? extends StorageMetadata> containersRetrieved;
         Set<String> containersCreated = new HashSet<String>();
 
         // Testing list with no containers
-        containersRetrieved = (PageSet<StorageMetadata>) blobStore.list();
+        containersRetrieved = blobStore.list();
         assertTrue(containersRetrieved.isEmpty(), "List operation returns a not empty set of container");
         
         // Testing list with some containers
@@ -162,7 +152,7 @@ public class FilesystemAsyncBlobStoreTest {
             containersCreated.add(containerName);
         }
 
-        containersRetrieved = (PageSet<StorageMetadata>) blobStore.list();
+        containersRetrieved = blobStore.list();
         assertEquals(containersCreated.size(), containersRetrieved.size(), "Different numbers of container");
 
         for(StorageMetadata data:containersRetrieved) {
@@ -177,7 +167,7 @@ public class FilesystemAsyncBlobStoreTest {
             //delete all creaded containers
             blobStore.deleteContainer(containerName);
         }
-        containersRetrieved = (PageSet<StorageMetadata>) blobStore.list();
+        containersRetrieved = blobStore.list();
         assertTrue(containersRetrieved.isEmpty(), "List operation returns a not empty set of container");
     }
 
@@ -788,7 +778,7 @@ public class FilesystemAsyncBlobStoreTest {
     private void checkForContainerContent(final String containerName, Set<String> expectedBlobKeys) {
         ListContainerOptions options = ListContainerOptions.Builder.recursive();
 
-        PageSet<StorageMetadata> blobsRetrieved = (PageSet<StorageMetadata>) blobStore.list(containerName, options);
+        PageSet<? extends StorageMetadata> blobsRetrieved = blobStore.list(containerName, options);
 
         //nothing expected
         if (null == expectedBlobKeys) {

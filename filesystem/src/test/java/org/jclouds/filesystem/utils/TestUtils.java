@@ -78,8 +78,6 @@ public class TestUtils {
      * @throws IOException
      */
     public static Set<String> createBlobsInContainer(String containerName, String[] blobNames) throws IOException {
-        boolean result;
-
         Set<String> blobNamesCreatedInContainer = new HashSet<String>();
         for (String blobName : blobNames) {
             createBlobAsFile(containerName, blobName, getImageForBlobPayload());
