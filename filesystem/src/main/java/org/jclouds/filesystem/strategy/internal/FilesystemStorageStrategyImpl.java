@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,7 +16,8 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.filesystem.utils;
+
+package org.jclouds.filesystem.strategy.internal;
 
 import org.jclouds.filesystem.predicates.validators.FilesystemBlobKeyValidator;
 import org.jclouds.rest.annotations.ParamValidators;
@@ -39,7 +40,9 @@ import java.io.File;
 import javax.annotation.Resource;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import org.jclouds.filesystem.config.FilesystemConstants;
+
+import org.jclouds.filesystem.reference.FilesystemConstants;
+import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
 import org.jclouds.logging.Logger;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -236,7 +239,10 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
         File containerFile = openFolder(container);
         final int containerPathLenght = containerFile.getAbsolutePath().length() + 1;
         Set<String> blobNames = new HashSet<String>() {
-            @Override
+        	
+			private static final long serialVersionUID = 3152191346558570795L;
+
+			@Override
              public boolean add(String e) {
                  return super.add(e.substring(containerPathLenght));
              }

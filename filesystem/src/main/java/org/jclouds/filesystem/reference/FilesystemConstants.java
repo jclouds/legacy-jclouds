@@ -17,32 +17,16 @@
  * ====================================================================
  */
 
-package org.jclouds.filesystem.config;
-
-import org.jclouds.blobstore.AsyncBlobStore;
-import org.jclouds.filesystem.FilesystemAsyncBlobStore;
-import org.jclouds.filesystem.FilesystemBlobStore;
-import org.jclouds.rest.config.RestClientModule;
+package org.jclouds.filesystem.reference;
 
 /**
+ * Common constants used in filesystem provider
  *
  * @author Alfredo "Rainbowbreeze" Morresi
  */
-public class FilesystemBlobStoreModule extends RestClientModule<FilesystemBlobStore, AsyncBlobStore> {
+public class FilesystemConstants {
 
-   public FilesystemBlobStoreModule() {
-      super(FilesystemBlobStore.class, AsyncBlobStore.class);
-   }
+    /** Specify the base directory where provider starts its file operations - must exists */
+    public static final String PROPERTY_BASEDIR = "FileSystemAsyncBlobStore-basedir";
 
-    @Override
-    protected void configure() {
-        super.configure();
-    }
-
-
-
-   @Override
-   protected void bindAsyncClient() {
-      bind(AsyncBlobStore.class).to(FilesystemAsyncBlobStore.class).asEagerSingleton();
-   }
 }

@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,13 +16,15 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.filesystem.utils;
+
+package org.jclouds.filesystem.util.internal;
 
 import com.google.inject.Inject;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.BlobUtils;
+import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

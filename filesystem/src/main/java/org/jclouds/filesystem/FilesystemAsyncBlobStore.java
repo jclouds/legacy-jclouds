@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.filesystem;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -78,6 +79,7 @@ import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
 import org.jclouds.domain.Location;
+import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -101,7 +103,6 @@ import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.filesystem.predicates.validators.FilesystemContainerNameValidator;
-import org.jclouds.filesystem.utils.FilesystemStorageStrategy;
 import org.jclouds.io.Payload;
 import org.jclouds.io.payloads.FilePayload;
 import org.jclouds.logging.Logger;

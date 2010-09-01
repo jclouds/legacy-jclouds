@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,16 +16,17 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.filesystem.config;
+
+package org.jclouds.filesystem;
+
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.blobstore.BlobStore;
+import org.jclouds.concurrent.Timeout;
 
 /**
- * Common constants used in filesystem provider
  *
  * @author Alfredo "Rainbowbreeze" Morresi
  */
-public class FilesystemConstants {
-
-    /** Specify the base directory where provider starts its file operations - must exists */
-    public static final String PROPERTY_BASEDIR = "FileSystemAsyncBlobStore-basedir";
-
+@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS) public interface FilesystemBlobStore  extends BlobStore {
 }

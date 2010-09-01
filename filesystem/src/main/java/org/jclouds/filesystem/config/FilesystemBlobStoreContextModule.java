@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
  * limitations under the License.
  * ====================================================================
  */
+
 package org.jclouds.filesystem.config;
 
 import com.google.common.base.Supplier;
@@ -27,23 +28,21 @@ import com.google.inject.Scopes;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
-import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.filesystem.utils.FileSystemBlobUtilsImpl;
-import org.jclouds.filesystem.utils.FilesystemStorageStrategy;
-import org.jclouds.filesystem.utils.FilesystemStorageStrategyImpl;
+import org.jclouds.filesystem.FilesystemBlobStore;
+import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
+import org.jclouds.filesystem.strategy.internal.FilesystemStorageStrategyImpl;
+import org.jclouds.filesystem.util.internal.FileSystemBlobUtilsImpl;
 
 /**
  *
@@ -63,28 +62,11 @@ public class FilesystemBlobStoreContextModule extends AbstractModule {
       bind(BlobUtils.class).to(FileSystemBlobUtilsImpl.class);
    }
 
- /*  @Provides
-   @Singleton
-   Set<Location> provideLocations(Location defaultLocation) {
-      return ImmutableSet.of(defaultLocation);
-   }
-  *
-  */
-
    @Provides
    @Singleton
    BlobStore provide(FilesystemBlobStore in) {
       return in;
    }
-
-   /*@Provides
-   @Singleton
-   Location provideDefaultLocation() {
-      return new LocationImpl(LocationScope.PROVIDER, "filesystem", "filesystem", null);
-   }
-    * 
-    */
-
 
    @Provides
    @Singleton

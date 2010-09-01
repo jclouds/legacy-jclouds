@@ -30,7 +30,8 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
-import org.jclouds.filesystem.config.FilesystemConstants;
+
+import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.filesystem.utils.TestUtils;
 
 /**
