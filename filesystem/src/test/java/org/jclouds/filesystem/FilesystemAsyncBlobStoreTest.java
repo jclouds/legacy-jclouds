@@ -55,9 +55,8 @@ import static org.testng.Assert.*;
 @Test(groups = "unit", testName = "filesystem.FilesystemAsyncBlobStoreTest", sequential = true)
 public class FilesystemAsyncBlobStoreTest {
 
-    private static final String CONTAINER_NAME          = "funambol-test";
-    private static final String TARGET_BASE_DIR         = "./target/basedir/";
-    private static final String TARGET_CONTAINER_NAME   = TARGET_BASE_DIR + CONTAINER_NAME;
+    private static final String CONTAINER_NAME          = "fun-blobstore-test";
+    private static final String TARGET_CONTAINER_NAME   = TestUtils.TARGET_BASE_DIR + CONTAINER_NAME;
     private static final String LOGGING_CONFIG_KEY
                                             = "java.util.logging.config.file";
     private static final String LOGGING_CONFIG_VALUE
@@ -88,15 +87,15 @@ public class FilesystemAsyncBlobStoreTest {
 
         }*/
 
-        //create context per filesystem container
+        //create context for filesystem container
         Properties prop = new Properties();
-        prop.setProperty(FilesystemConstants.PROPERTY_BASEDIR, TARGET_BASE_DIR);
+        prop.setProperty(FilesystemConstants.PROPERTY_BASEDIR, TestUtils.TARGET_BASE_DIR);
         context = (BlobStoreContext) new BlobStoreContextFactory().createContext(
                 PROVIDER, prop);
         //create a container in the default location
         blobStore = context.getBlobStore();
 
-        resourcesToBeDeleted.add(new File(TARGET_BASE_DIR));
+        resourcesToBeDeleted.add(new File(TestUtils.TARGET_BASE_DIR));
     }
 
 
@@ -529,7 +528,7 @@ public class FilesystemAsyncBlobStoreTest {
      */
     public void testCreateContainerInLocation() throws IOException {
         final String CONTAINER_NAME2 = "funambol-test-2";
-        final String TARGET_CONTAINER_NAME2 = TARGET_BASE_DIR + CONTAINER_NAME2;
+        final String TARGET_CONTAINER_NAME2 = TestUtils.TARGET_BASE_DIR + CONTAINER_NAME2;
 
         boolean result;
 
@@ -547,7 +546,7 @@ public class FilesystemAsyncBlobStoreTest {
         assertTrue(result, "Container not created");
         result = blobStore.containerExists(CONTAINER_NAME2);
         assertTrue(result, "Container doesn't exist");
-        TestUtils.directoryExists(TARGET_BASE_DIR + CONTAINER_NAME2, true);
+        TestUtils.directoryExists(TestUtils.TARGET_BASE_DIR + CONTAINER_NAME2, true);
 
         //clean the environment
         FileUtils.forceDelete(new File(TARGET_CONTAINER_NAME2));
@@ -718,7 +717,7 @@ public class FilesystemAsyncBlobStoreTest {
     public void testDeleteContainer() throws IOException{
         boolean result;
         String CONTAINER_NAME2 = "container-to-delete";
-        String TARGET_CONTAINER_NAME2 = TARGET_BASE_DIR + CONTAINER_NAME2;
+        String TARGET_CONTAINER_NAME2 = TestUtils.TARGET_BASE_DIR + CONTAINER_NAME2;
         blobStore.createContainerInLocation(null, CONTAINER_NAME);
         blobStore.createContainerInLocation(null, CONTAINER_NAME2);
 
