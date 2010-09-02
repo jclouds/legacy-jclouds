@@ -4,7 +4,8 @@ if [ ! -f /usr/bin/chef-client ]; then
   mkdir -p /tmp/bootchef
   (
     cd /tmp/bootchef
-    curl http://rubyforge.org/frs/download.php/69365/rubygems-1.3.6.tgz| tar -xzf -
+    wget http://rubyforge.org/frs/download.php/69365/rubygems-1.3.6.tgz
+    tar xvf rubygems-1.3.6.tgz
     cd rubygems-1.3.6
     ruby setup.rb
     cp /usr/bin/gem1.8 /usr/bin/gem
