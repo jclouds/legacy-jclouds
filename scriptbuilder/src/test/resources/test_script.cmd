@@ -28,6 +28,8 @@ goto CASE_%1
    echo stop %RUNTIME%
    GOTO END_SWITCH
 :CASE_status
+   del %TEMP%\%USERNAME%\scripttest\temp.txt 2>NUL
+   echo hello world>>%TEMP%\%USERNAME%\scripttest\temp.txt
    echo the following should be []: [%RUNTIME%]
    GOTO END_SWITCH
 :END_SWITCH

@@ -41,13 +41,17 @@ public class Statements {
       return new Call(function, args);
    }
 
-   public static Statement createRunScript(String instanceName, Iterable<String> exports,
-            String pwd, String... execLines) {// TODO: convert so
+   public static Statement createFile(String path, Iterable<String> lines) {
+      return new CreateFile(path, lines);
+   }
+
+   public static Statement createRunScript(String instanceName, Iterable<String> exports, String pwd,
+            Iterable<Statement> statements) {// TODO: convert so
       // that
       // createRunScript
       // can take from a
       // variable
-      return new CreateRunScript(instanceName, exports, pwd, execLines);
+      return new CreateRunScript(instanceName, exports, pwd, statements);
    }
 
    /**
@@ -87,20 +91,20 @@ public class Statements {
    public static Statement kill() {
       return KILL;
    }
-   
+
    /**
-    * statement can have multiple newlines, note you should use {@code {lf} } to be portable
+    * statement can have multiple newlines, note you should use {@code lf} to be portable
     * 
     * @see ShellToken
     */
-   public static Statement interpret(String portableStatement) {
-      return new InterpretableStatement(portableStatement);
+   public static Statement interpret(String ... portableStatements) {
+      return new InterpretableStatement(portableStatements);
    }
 
    /**
     * interprets and adds a newline to the statement
     */
    public static Statement exec(String portableStatement) {
-      return interpret(portableStatement+"{lf}");
+      return interpret(portableStatement + "{lf}");
    }
 }

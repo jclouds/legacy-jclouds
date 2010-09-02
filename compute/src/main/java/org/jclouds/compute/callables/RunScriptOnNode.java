@@ -35,12 +35,15 @@ import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 /**
@@ -57,12 +60,12 @@ public class RunScriptOnNode implements SshCallable<ExecResponse> {
    private Logger logger = Logger.NULL;
 
    public RunScriptOnNode(@Named("SCRIPT_COMPLETE") Predicate<CommandUsingClient> runScriptNotRunning,
-         NodeMetadata node, String scriptName, Payload script) {
+            NodeMetadata node, String scriptName, Payload script) {
       this(runScriptNotRunning, node, scriptName, script, true);
    }
 
    public RunScriptOnNode(@Named("SCRIPT_COMPLETE") Predicate<CommandUsingClient> runScriptNotRunning,
-         NodeMetadata node, String scriptName, Payload script, boolean runAsRoot) {
+            NodeMetadata node, String scriptName, Payload script, boolean runAsRoot) {
       this.runScriptNotRunning = runScriptNotRunning;
       this.node = checkNotNull(node, "node");
       this.scriptName = checkNotNull(scriptName, "scriptName");
@@ -73,7 +76,7 @@ public class RunScriptOnNode implements SshCallable<ExecResponse> {
    public static Payload createRunScript(String scriptName, Payload script) {
       String path = "/tmp/" + scriptName;
       InitBuilder initBuilder = new InitBuilder(scriptName, path, path, Collections.<String, String> emptyMap(),
-            splitOnNewlines(script));
+               ImmutableList.<Statement> of(Statements.interpret(splitOnNewlines(script))));
       return Payloads.newByteArrayPayload(initBuilder.build(OsFamily.UNIX).getBytes());
    }
 
@@ -100,9 +103,9 @@ public class RunScriptOnNode implements SshCallable<ExecResponse> {
       logger.debug("<< complete(%d)", returnVal.getExitCode());
       if (logger.isDebugEnabled() || returnVal.getExitCode() != 0) {
          logger.debug("<< stdout from %s as %s@%s\n%s", scriptName, node.getCredentials().identity, Iterables.get(node
-               .getPublicAddresses(), 0), ssh.exec("./" + scriptName + " tail").getOutput());
+                  .getPublicAddresses(), 0), ssh.exec("./" + scriptName + " tail").getOutput());
          logger.debug("<< stderr from %s as %s@%s\n%s", scriptName, node.getCredentials().identity, Iterables.get(node
-               .getPublicAddresses(), 0), ssh.exec("./" + scriptName + " tailerr").getOutput());
+                  .getPublicAddresses(), 0), ssh.exec("./" + scriptName + " tailerr").getOutput());
       }
       return returnVal;
    }
@@ -116,23 +119,23 @@ public class RunScriptOnNode implements SshCallable<ExecResponse> {
    private ExecResponse runScriptAsRoot() {
       if (node.getCredentials().identity.equals("root")) {
          logger.debug(">> running %s as %s@%s", scriptName, node.getCredentials().identity, Iterables.get(node
-               .getPublicAddresses(), 0));
+                  .getPublicAddresses(), 0));
          return ssh.exec("./" + scriptName + " start");
       } else if (ComputeServiceUtils.isKeyAuth(node)) {
          logger.debug(">> running sudo %s as %s@%s", scriptName, node.getCredentials().identity, Iterables.get(node
-               .getPublicAddresses(), 0));
+                  .getPublicAddresses(), 0));
          return ssh.exec("sudo ./" + scriptName + " start");
       } else {
          logger.debug(">> running sudo -S %s as %s@%s", scriptName, node.getCredentials().identity, Iterables.get(node
-               .getPublicAddresses(), 0));
+                  .getPublicAddresses(), 0));
          return ssh.exec(String.format("echo '%s'|sudo -S ./%s", node.getCredentials().credential, scriptName
-               + " start"));
+                  + " start"));
       }
    }
 
    private ExecResponse runScriptAsDefaultUser() {
       logger.debug(">> running script %s as %s@%s", scriptName, node.getCredentials().identity, Iterables.get(node
-            .getPublicAddresses(), 0));
+               .getPublicAddresses(), 0));
       return ssh.exec(String.format("./%s", scriptName + " start"));
    }
 

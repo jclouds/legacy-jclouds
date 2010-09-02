@@ -46,6 +46,8 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.RestContext;
 import org.jclouds.scriptbuilder.InitBuilder;
+import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
@@ -55,6 +57,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.inject.AbstractModule;
@@ -242,8 +245,8 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
 
    public static String initScript(String scriptName, String script) {
       return new InitBuilder(scriptName, "/tmp/" + scriptName, "/tmp/" + scriptName,
-               ImmutableMap.<String, String> of(), Iterables.toArray(Splitter.on("\n").split(
-                        new String(checkNotNull(script, "script"))), String.class))
+               ImmutableMap.<String, String> of(), ImmutableList.<Statement> of(Statements.interpret(Iterables.toArray(
+                        Splitter.on("\n").split(new String(checkNotNull(script, "script"))), String.class))))
                .build(org.jclouds.scriptbuilder.domain.OsFamily.UNIX);
    }
 

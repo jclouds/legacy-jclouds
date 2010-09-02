@@ -30,6 +30,8 @@ import static org.jclouds.scriptbuilder.domain.Statements.switchArg;
 
 import java.util.Map;
 
+import org.jclouds.scriptbuilder.domain.Statement;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
@@ -41,10 +43,10 @@ import com.google.common.collect.Iterables;
 public class InitBuilder extends ScriptBuilder {
 
    @SuppressWarnings("unchecked")
-   public InitBuilder(String instanceName, String instanceHome, String logDir,
-            Map<String, String> variables, String... execLines) {
-      Map<String, String> defaultVariables = ImmutableMap.of("instanceName", instanceName,
-               "instanceHome", instanceHome, "logDir", logDir);
+   public InitBuilder(String instanceName, String instanceHome, String logDir, Map<String, String> variables,
+            Iterable<Statement> statements) {
+      Map<String, String> defaultVariables = ImmutableMap.of("instanceName", instanceName, "instanceHome",
+               instanceHome, "logDir", logDir);
       addEnvironmentVariableScope("default", defaultVariables)
                .addEnvironmentVariableScope(instanceName, variables)
                .addStatement(
@@ -53,31 +55,26 @@ public class InitBuilder extends ScriptBuilder {
                                  new ImmutableMap.Builder()
                                           .put(
                                                    "init",
-                                                   newStatementList(call("default"),
-                                                            call(instanceName), createRunScript(
+                                                   newStatementList(call("default"), call(instanceName),
+                                                            createRunScript(
                                                                      instanceName,// TODO: convert
-                                                                                  // so
+                                                                     // so
                                                                      // that
                                                                      // createRunScript
                                                                      // can take from a
                                                                      // variable
-                                                                     Iterables.concat(variables
-                                                                              .keySet(),
-                                                                              defaultVariables
-                                                                                       .keySet()),
-                                                                     "{varl}INSTANCE_HOME{varr}",
-                                                                     execLines)))
+                                                                     Iterables.concat(variables.keySet(),
+                                                                              defaultVariables.keySet()),
+                                                                     "{varl}INSTANCE_HOME{varr}", statements)))
                                           .put(
                                                    "status",
-                                                   newStatementList(
-                                                            call("default"),
+                                                   newStatementList(call("default"),
                                                             findPid("{varl}INSTANCE_NAME{varr}"),
                                                             interpret("echo [{varl}FOUND_PID{varr}]{lf}")))
                                           .put(
                                                    "stop",
                                                    newStatementList(call("default"),
-                                                            findPid("{varl}INSTANCE_NAME{varr}"),
-                                                            kill()))
+                                                            findPid("{varl}INSTANCE_NAME{varr}"), kill()))
                                           .put(
                                                    "start",
                                                    newStatementList(
@@ -88,13 +85,11 @@ public class InitBuilder extends ScriptBuilder {
                                                                      "{varl}LOG_DIR{varr}")))
                                           .put(
                                                    "tail",
-                                                   newStatementList(
-                                                            call("default"),
+                                                   newStatementList(call("default"),
                                                             interpret("tail {varl}LOG_DIR{varr}{fs}stdout.log{lf}")))
                                           .put(
                                                    "tailerr",
-                                                   newStatementList(
-                                                            call("default"),
+                                                   newStatementList(call("default"),
                                                             interpret("tail {varl}LOG_DIR{varr}{fs}stderr.log{lf}")))
                                           .put(
                                                    "run",
