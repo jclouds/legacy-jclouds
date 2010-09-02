@@ -58,7 +58,13 @@
     <artifactId>oauth</artifactId>
     <version>20100527</version>
                 </dependency>
-
+        <!-- only required for Pems.java and only writing a private key file -->
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15</artifactId>
+            <version>1.44</version>
+            <optional>true</optional>
+        </dependency>
         <dependency>
             <groupId>aopalliance</groupId>
             <artifactId>aopalliance</artifactId>
