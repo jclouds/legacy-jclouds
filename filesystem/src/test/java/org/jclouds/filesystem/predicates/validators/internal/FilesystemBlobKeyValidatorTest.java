@@ -16,51 +16,48 @@
  * limitations under the License.
  * ====================================================================
  */
-package org.jclouds.filesystem.predicates.validators;
+package org.jclouds.filesystem.predicates.validators.internal;
 
 import java.io.File;
+import org.jclouds.filesystem.predicates.validators.FilesystemBlobKeyValidator;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
 
 
 /**
- * Test class for {@link FilesystemContainerNameValidator } class
+ * Test class for {@link FilesystemBlobKeyValidator } class
  *
  * @author Alfredo "Rainbowbreeze" Morresi
  */
-@Test(groups = "unit", testName = "filesystem.FilesystemContainerNameValidatorTest")
-public class FilesystemContainerNameValidatorTest {
+@Test(groups = "unit", testName = "filesystem.FilesystemBlobKeyValidatorTest")
+public class FilesystemBlobKeyValidatorTest {
 
     @Test
     public void testNamesValidity() {
-        FilesystemBlobKeyValidator validator = new FilesystemBlobKeyValidator();
+        FilesystemBlobKeyValidator validator = new FilesystemBlobKeyValidatorImpl();
 
         validator.validate("all.img");
+        validator.validate("all" + File.separator + "is" + File.separator + "" + "ok");
     }
 
     @Test
     public void testInvalidNames() {
-        FilesystemBlobKeyValidator validator = new FilesystemBlobKeyValidator();
+        FilesystemBlobKeyValidator validator = new FilesystemBlobKeyValidatorImpl();
 
         try {
             validator.validate("");
-            fail("Container name value incorrect, but was not recognized");
-        } catch(IllegalArgumentException e) {}
-
-        try {
-            validator.validate(null);
-            fail("Container name value incorrect, but was not recognized");
+            fail("Blob key value incorrect, but was not recognized");
         } catch(IllegalArgumentException e) {}
 
         try {
             validator.validate(File.separator + "is" + File.separator + "" + "ok");
-            fail("Container name value incorrect, but was not recognized");
+            fail("Blob key value incorrect, but was not recognized");
         } catch(IllegalArgumentException e) {}
 
         try {
             validator.validate("all" + File.separator + "is" + File.separator);
-            fail("Container name value incorrect, but was not recognized");
+            fail("Blob key value incorrect, but was not recognized");
         } catch(IllegalArgumentException e) {}
     }
 

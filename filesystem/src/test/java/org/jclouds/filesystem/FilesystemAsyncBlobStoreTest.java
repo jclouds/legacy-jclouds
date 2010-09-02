@@ -42,6 +42,7 @@ import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
+import org.jclouds.blobstore.domain.internal.BlobImpl;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.testng.annotations.*;
         
@@ -752,14 +753,27 @@ public class FilesystemAsyncBlobStoreTest {
     }
 
 
-//
-//    public void testContainerInvalidNames() throws IOException {
+    public void testInvalidContainerName() {
+        try {
+            blobStore.createContainerInLocation(null, "file/system");
+            fail("Wrong container name not recognized");
+        } catch (IllegalArgumentException e) {}
+        try {
+            blobStore.containerExists("file/system");
+            fail("Wrong container name not recognized");
+        } catch (IllegalArgumentException e) {}
+    }
+
+//    public void testInvalidBlobKey() {
 //        try {
-//            blobStore.createContainerInLocation(null, "file/system");
-//            fail("Wrong container name not recognized");
-//        } catch (IllegalArgumentException e) {
+//            blobStore.newBlob(File.separator + "testwrongblobkey");
+//            fail("Wrong blob key not recognized");
+//        } catch (IllegalArgumentException e) {}
 //
-//        }
+//        try {
+//            blobStore.newBlob("testwrongblobkey" + File.separator);
+//            fail("Wrong blob key not recognized");
+//        } catch (IllegalArgumentException e) {}
 //    }
 
 

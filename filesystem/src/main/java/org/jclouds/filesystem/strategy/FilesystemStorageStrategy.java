@@ -23,7 +23,9 @@ import java.io.File;
 import java.io.IOException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.filesystem.predicates.validators.FilesystemContainerNameValidator;
 import org.jclouds.io.Payload;
+import org.jclouds.rest.annotations.ParamValidators;
 
 /**
  * Strategy for filesystem operations related to container and blob
@@ -117,11 +119,11 @@ public interface FilesystemStorageStrategy {
 
     /**
      *
-     * @param containerName
+     * @param container
      * @param key
      * @return
      */
-    boolean blobExists(String containerName, String key);
+    boolean blobExists(String container, String key);
 
     /**
      * Returns all the blobs key inside a container
@@ -160,6 +162,6 @@ public interface FilesystemStorageStrategy {
      * @param payload
      * @throws IOException
      */
-    void writePayloadOnFile(String containerName, String key, Payload payload) throws IOException;
+    void writePayloadOnFile(String container, String blobKey, Payload payload) throws IOException;
 
 }

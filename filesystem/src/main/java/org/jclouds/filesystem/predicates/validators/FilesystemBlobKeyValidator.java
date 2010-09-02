@@ -19,8 +19,6 @@
 
 package org.jclouds.filesystem.predicates.validators;
 
-import com.google.inject.Singleton;
-import java.io.File;
 import org.jclouds.predicates.Validator;
 
 /**
@@ -31,24 +29,5 @@ import org.jclouds.predicates.Validator;
  *
  * @author Alfredo "Rainbowbreeze" Morresi
  */
-@Singleton
-public class FilesystemBlobKeyValidator extends Validator<String> {
-
-    @Override
-    public void validate(String name) throws IllegalArgumentException {
-        //blob key cannot be null or empty
-        if (name == null || name.length() < 1)
-            throw new IllegalArgumentException("Blob key can't be null or empty");
-
-        //blobkey cannot start with / (or \ in Windows) character
-        if (name.startsWith(File.separator))
-            throw new IllegalArgumentException(String.format(
-                    "Blob key '%s' cannot start with character %s", name, File.separator));
-
-        //blobkey cannot end with / (or \ in Windows) character
-        if (name.endsWith(File.separator))
-            throw new IllegalArgumentException(String.format(
-                    "Blob key '%s' cannot end with character %s", name, File.separator));
-    }
-
+public abstract class FilesystemBlobKeyValidator extends Validator<String> {
 }

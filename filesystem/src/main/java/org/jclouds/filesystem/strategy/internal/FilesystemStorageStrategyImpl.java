@@ -19,8 +19,8 @@
 
 package org.jclouds.filesystem.strategy.internal;
 
-import org.jclouds.filesystem.predicates.validators.FilesystemBlobKeyValidator;
 import org.jclouds.rest.annotations.ParamValidators;
+import org.jclouds.filesystem.predicates.validators.FilesystemBlobKeyValidator;
 import org.jclouds.filesystem.predicates.validators.FilesystemContainerNameValidator;
 import java.io.OutputStream;
 import java.util.Set;
@@ -62,35 +62,46 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
 
     protected final Blob.Factory blobFactory;
     protected final String baseDirectory;
+    protected final FilesystemContainerNameValidator filesystemContainerNameValidator;
+    protected final FilesystemBlobKeyValidator filesystemBlobKeyValidator;
 
 
     @Inject
     protected FilesystemStorageStrategyImpl(
             Blob.Factory blobFactory,
-            @Named(FilesystemConstants.PROPERTY_BASEDIR) String baseDir) {
+            @Named(FilesystemConstants.PROPERTY_BASEDIR) String baseDir,
+            FilesystemContainerNameValidator filesystemContainerNameValidator,
+            FilesystemBlobKeyValidator filesystemBlobKeyValidator) {
         this.blobFactory = checkNotNull(blobFactory, "filesystem storage strategy blobfactory");
         this.baseDirectory = checkNotNull(baseDir, "filesystem storage strategy base directory");
+        this.filesystemContainerNameValidator = checkNotNull(filesystemContainerNameValidator, "filesystem container name validator");
+        this.filesystemBlobKeyValidator = checkNotNull(filesystemBlobKeyValidator, "filesystem blob key validator");
     }
 
     @Override
     public boolean containerExists(String container) {
+        filesystemContainerNameValidator.validate(container);
         return directoryExists(container, null);
     }
 
     @Override
-    public boolean blobExists(String containerName, String key) {
-        return buildPathAndChecksIfFileExists(containerName, key);
+    public boolean blobExists(String container, String key) {
+        filesystemContainerNameValidator.validate(container);
+        filesystemBlobKeyValidator.validate(key);
+        return buildPathAndChecksIfFileExists(container, key);
     }
 
     @Override
-    public boolean createContainer(@ParamValidators( { FilesystemContainerNameValidator.class }) String container) {
+    public boolean createContainer(String container) {
         logger.debug("Creating container %s", container);
+        filesystemContainerNameValidator.validate(container);
         return createDirectoryWithResult(container, null);
     }
 
 
     @Override
     public void deleteContainer(String container) {
+        filesystemContainerNameValidator.validate(container);
         deleteDirectory(container, null);
     }
 
@@ -101,11 +112,13 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
      */
     @Override
     public void clearContainer(final String container) {
+        filesystemContainerNameValidator.validate(container);
         clearContainer(container, ListContainerOptions.Builder.recursive());
     }
 
     @Override
     public void clearContainer(String container, ListContainerOptions options) {
+        filesystemContainerNameValidator.validate(container);
         //TODO
         //now all is deleted, check it based on options
         try {
@@ -125,21 +138,24 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
 
     @Override
     public Blob newBlob(@ParamValidators( { FilesystemBlobKeyValidator.class }) String name) {
+        filesystemBlobKeyValidator.validate(name);
         Blob blob = blobFactory.create(null);
         blob.getMetadata().setName(name);
         return blob;
     }
 
     @Override
-    public void removeBlob(final String container, final String key) {
-       String fileName = buildPathStartingFromBaseDir(container, key);
-       logger.debug("Deleting blob %s", fileName);
-       File fileToBeDeleted = new File(fileName);
-       fileToBeDeleted.delete();
+    public void removeBlob(final String container, final String blobKey) {
+        filesystemContainerNameValidator.validate(container);
+        filesystemBlobKeyValidator.validate(blobKey);
+        String fileName = buildPathStartingFromBaseDir(container, blobKey);
+        logger.debug("Deleting blob %s", fileName);
+        File fileToBeDeleted = new File(fileName);
+        fileToBeDeleted.delete();
 
        //now examins if the key of the blob is a complex key (with a directory structure)
        //and eventually remove empty directory
-       removeDirectoriesTreeOfBlobKey(container, key);
+       removeDirectoriesTreeOfBlobKey(container, blobKey);
     }
 
 
@@ -168,6 +184,8 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
      */
     @Override
     public File getFileForBlobKey(String container, String blobKey) {
+        filesystemContainerNameValidator.validate(container);
+        filesystemBlobKeyValidator.validate(blobKey);
         String fileName = buildPathStartingFromBaseDir(container, blobKey);
         File blobFile = new File(fileName);
         return blobFile;
@@ -176,18 +194,20 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
 
     /**
      * Write a {@link Blob} {@link Payload} into a file
-     * @param containerName
+     * @param container
      * @param blobKey
      * @param payload
      * @throws IOException
      */
     @Override
-    public void writePayloadOnFile(String containerName, String blobKey, Payload payload) throws IOException {
+    public void writePayloadOnFile(String container, String blobKey, Payload payload) throws IOException {
+        filesystemContainerNameValidator.validate(container);
+        filesystemBlobKeyValidator.validate(blobKey);
         File outputFile = null;
         OutputStream output = null;
         InputStream input = null;
         try {
-            outputFile = getFileForBlobKey(containerName, blobKey);
+            outputFile = getFileForBlobKey(container, blobKey);
             File parentDirectory = outputFile.getParentFile();
             if (!parentDirectory.exists()) {
                 if (!parentDirectory.mkdirs()) {
@@ -230,6 +250,7 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
      */
     @Override
     public Iterable<String> getBlobKeysInsideContainer(String container) throws IOException {
+        filesystemContainerNameValidator.validate(container);
         //check if container exists
         //TODO maybe an error is more appropriate
         if (!containerExists(container)) {

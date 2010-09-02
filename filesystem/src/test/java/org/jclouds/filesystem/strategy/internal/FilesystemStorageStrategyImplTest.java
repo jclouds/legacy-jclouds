@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.filesystem.predicates.validators.internal.FilesystemContainerNameValidatorImpl;
+import org.jclouds.filesystem.predicates.validators.internal.FilesystemBlobKeyValidatorImpl;
 import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
 import org.jclouds.filesystem.utils.TestUtils;
 import org.jclouds.io.payloads.FilePayload;
@@ -69,7 +71,9 @@ public class FilesystemStorageStrategyImplTest {
                         return new BlobImpl(metadata != null ? metadata : new MutableBlobMetadataImpl());
                     }
                 },
-                TestUtils.TARGET_BASE_DIR);
+                TestUtils.TARGET_BASE_DIR,
+                new FilesystemContainerNameValidatorImpl(),
+                new FilesystemBlobKeyValidatorImpl());
         TestUtils.cleanDirectoryContent(TestUtils.TARGET_BASE_DIR);
     }
 
@@ -507,25 +511,19 @@ public class FilesystemStorageStrategyImplTest {
     }
 
 
-//
-//
-//    public void testBlobKeyInvalidNames() throws IOException {
-//        try {
-//            storageStrategy.newBlob("/test.jpg");
-//            fail("Wrong blob key not recognized");
-//        } catch (IllegalArgumentException e) {
-//
-//        }
-//    }
-//
-//    public void testContainerInvalidNames() throws IOException {
-//        try {
-//            storageStrategy.createContainer("file/system");
-//            fail("Wrong container name not recognized");
-//        } catch (IllegalArgumentException e) {
-//
-//        }
-//    }
+    public void testInvalidBlobKey() {
+        try {
+            storageStrategy.newBlob("/test.jpg");
+            fail("Wrong blob key not recognized");
+        } catch (IllegalArgumentException e) {}
+    }
+
+    public void testInvalidContainerName() {
+        try {
+            storageStrategy.createContainer("file/system");
+            fail("Wrong container name not recognized");
+        } catch (IllegalArgumentException e) {}
+    }
 
     //---------------------------------------------------------- Private methods
 

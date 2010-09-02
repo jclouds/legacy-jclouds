@@ -17,17 +17,34 @@
  * ====================================================================
  */
 
-package org.jclouds.filesystem.predicates.validators;
+package org.jclouds.filesystem.predicates.validators.internal;
 
+import com.google.inject.Singleton;
+import java.io.File;
+import org.jclouds.filesystem.predicates.validators.FilesystemContainerNameValidator;
 import org.jclouds.predicates.Validator;
 
 /**
- * Validates container name for filesystem provider
+ * Validates container name for filesystem provider implementation
  *
  * @see org.jclouds.rest.InputParamValidator
  * @see org.jclouds.predicates.Validator
  *
  * @author Alfredo "Rainbowbreeze" Morresi
  */
-public abstract class FilesystemContainerNameValidator extends Validator<String> {
+@Singleton
+public class FilesystemContainerNameValidatorImpl extends FilesystemContainerNameValidator {
+
+    @Override
+    public void validate(String name) throws IllegalArgumentException {
+        //container name cannot be null or empty
+        if (name == null || name.length() < 1)
+            throw new IllegalArgumentException("Container name can't be null or empty");
+
+        //container name cannot contains / (or \ in Windows) character
+        if (name.contains(File.separator))
+            throw new IllegalArgumentException(String.format(
+                    "Container name '%s' cannot contain character %s", name, File.separator));
+    }
+
 }
