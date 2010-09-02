@@ -22,6 +22,7 @@ package org.jclouds.chef;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jclouds.chef.domain.Client;
 import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.internal.BaseChefService;
 
@@ -61,7 +62,15 @@ public interface ChefService {
 
    Iterable<? extends Node> listNodesDetailsMatching(Predicate<String> nodeNameSelector);
 
-   Iterable<? extends Node> getNodesNamed(Iterable<String> names);
+   Iterable<? extends Node> listNodesNamed(Iterable<String> names);
+   
+   void deleteAllClientsInList(Iterable<String> names);
+
+   Iterable<? extends Client> listClientsDetails();
+
+   Iterable<? extends Client> listClientsDetailsMatching(Predicate<String> clientNameSelector);
+
+   Iterable<? extends Client> listClientsNamed(Iterable<String> names);
 
    void updateAutomaticAttributesOnNode(String nodeName);
 }

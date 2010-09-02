@@ -19,10 +19,9 @@
 
 package org.jclouds.chef.strategy.internal;
 
-import static com.google.common.collect.Maps.newHashMap;
-import static org.jclouds.concurrent.FutureIterables.awaitCompletion;
+import static com.google.common.collect.Iterables.filter;
+import static org.jclouds.concurrent.FutureIterables.transformParallel;
 
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -33,10 +32,13 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.chef.ChefAsyncClient;
 import org.jclouds.chef.ChefClient;
+import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.reference.ChefConstants;
-import org.jclouds.chef.strategy.DeleteAllNodesInList;
+import org.jclouds.chef.strategy.ListNodes;
 import org.jclouds.logging.Logger;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.inject.Inject;
 
 /**
@@ -45,7 +47,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class DeleteAllNodesInListImpl implements DeleteAllNodesInList {
+public class ListNodesImpl implements ListNodes {
 
    protected final ChefClient chefClient;
    protected final ChefAsyncClient chefAsyncClient;
@@ -59,23 +61,34 @@ public class DeleteAllNodesInListImpl implements DeleteAllNodesInList {
    protected Long maxTime;
 
    @Inject
-   DeleteAllNodesInListImpl(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
-         ChefClient getAllNode, ChefAsyncClient ablobstore) {
+   ListNodesImpl(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor, ChefClient getAllNode,
+            ChefAsyncClient ablobstore) {
       this.userExecutor = userExecutor;
       this.chefAsyncClient = ablobstore;
       this.chefClient = getAllNode;
    }
 
    @Override
-   public void execute(Iterable<String> names) {
-      Map<String, Exception> exceptions = newHashMap();
-      Map<String, Future<?>> responses = newHashMap();
-      for (String name : names) {
-         responses.put(name, chefAsyncClient.deleteNode(name));
-      }
-      exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, String.format(
-            "deleting nodes: %s", names));
-      if (exceptions.size() > 0)
-         throw new RuntimeException(String.format("errors deleting nodes: %s: %s", names, exceptions));
+   public Iterable<? extends Node> execute() {
+      return execute(chefClient.listNodes());
    }
+
+   @Override
+   public Iterable<? extends Node> execute(Predicate<String> nodeNameSelector) {
+      return execute(filter(chefClient.listNodes(), nodeNameSelector));
+   }
+
+   @Override
+   public Iterable<? extends Node> execute(Iterable<String> toGet) {
+      return transformParallel(toGet, new Function<String, Future<Node>>() {
+
+         @Override
+         public Future<Node> apply(String from) {
+            return chefAsyncClient.getNode(from);
+         }
+
+      }, userExecutor, maxTime, logger, "getting nodes");
+
+   }
+
 }

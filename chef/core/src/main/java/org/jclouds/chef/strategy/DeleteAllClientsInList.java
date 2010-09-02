@@ -19,10 +19,8 @@
 
 package org.jclouds.chef.strategy;
 
-import org.jclouds.chef.domain.Node;
-import org.jclouds.chef.strategy.internal.GetNodesImpl;
+import org.jclouds.chef.strategy.internal.DeleteAllClientsInListImpl;
 
-import com.google.common.base.Predicate;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -30,12 +28,9 @@ import com.google.inject.ImplementedBy;
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(GetNodesImpl.class)
-public interface GetNodes {
+@ImplementedBy(DeleteAllClientsInListImpl.class)
+public interface DeleteAllClientsInList {
 
-   Iterable<? extends Node> execute();
+   public void execute(Iterable<String> names);
 
-   Iterable<? extends Node> execute(Predicate<String> nodeNameSelector);
-
-   Iterable<? extends Node> execute(Iterable<String> toGet);
 }

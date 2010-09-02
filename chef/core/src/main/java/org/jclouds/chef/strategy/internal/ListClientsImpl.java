@@ -32,9 +32,9 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.chef.ChefAsyncClient;
 import org.jclouds.chef.ChefClient;
-import org.jclouds.chef.domain.Node;
+import org.jclouds.chef.domain.Client;
 import org.jclouds.chef.reference.ChefConstants;
-import org.jclouds.chef.strategy.GetNodes;
+import org.jclouds.chef.strategy.ListClients;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
@@ -47,7 +47,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class GetNodesImpl implements GetNodes {
+public class ListClientsImpl implements ListClients {
 
    protected final ChefClient chefClient;
    protected final ChefAsyncClient chefAsyncClient;
@@ -61,33 +61,33 @@ public class GetNodesImpl implements GetNodes {
    protected Long maxTime;
 
    @Inject
-   GetNodesImpl(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor, ChefClient getAllNode,
+   ListClientsImpl(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor, ChefClient getAllClient,
             ChefAsyncClient ablobstore) {
       this.userExecutor = userExecutor;
       this.chefAsyncClient = ablobstore;
-      this.chefClient = getAllNode;
+      this.chefClient = getAllClient;
    }
 
    @Override
-   public Iterable<? extends Node> execute() {
-      return execute(chefClient.listNodes());
+   public Iterable<? extends Client> execute() {
+      return execute(chefClient.listClients());
    }
 
    @Override
-   public Iterable<? extends Node> execute(Predicate<String> nodeNameSelector) {
-      return execute(filter(chefClient.listNodes(), nodeNameSelector));
+   public Iterable<? extends Client> execute(Predicate<String> clientNameSelector) {
+      return execute(filter(chefClient.listClients(), clientNameSelector));
    }
 
    @Override
-   public Iterable<? extends Node> execute(Iterable<String> toGet) {
-      return transformParallel(toGet, new Function<String, Future<Node>>() {
+   public Iterable<? extends Client> execute(Iterable<String> toGet) {
+      return transformParallel(toGet, new Function<String, Future<Client>>() {
 
          @Override
-         public Future<Node> apply(String from) {
-            return chefAsyncClient.getNode(from);
+         public Future<Client> apply(String from) {
+            return chefAsyncClient.getClient(from);
          }
 
-      }, userExecutor, maxTime, logger, "getting nodes");
+      }, userExecutor, maxTime, logger, "getting clients");
 
    }
 

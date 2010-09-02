@@ -34,7 +34,7 @@ import org.jclouds.Constants;
 import org.jclouds.chef.ChefAsyncClient;
 import org.jclouds.chef.ChefClient;
 import org.jclouds.chef.reference.ChefConstants;
-import org.jclouds.chef.strategy.DeleteAllNodesInList;
+import org.jclouds.chef.strategy.DeleteAllClientsInList;
 import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
@@ -45,7 +45,7 @@ import com.google.inject.Inject;
  * @author Adrian Cole
  */
 @Singleton
-public class DeleteAllNodesInListImpl implements DeleteAllNodesInList {
+public class DeleteAllClientsInListImpl implements DeleteAllClientsInList {
 
    protected final ChefClient chefClient;
    protected final ChefAsyncClient chefAsyncClient;
@@ -59,11 +59,11 @@ public class DeleteAllNodesInListImpl implements DeleteAllNodesInList {
    protected Long maxTime;
 
    @Inject
-   DeleteAllNodesInListImpl(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
-         ChefClient getAllNode, ChefAsyncClient ablobstore) {
+   DeleteAllClientsInListImpl(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
+         ChefClient getAllClient, ChefAsyncClient ablobstore) {
       this.userExecutor = userExecutor;
       this.chefAsyncClient = ablobstore;
-      this.chefClient = getAllNode;
+      this.chefClient = getAllClient;
    }
 
    @Override
@@ -71,11 +71,11 @@ public class DeleteAllNodesInListImpl implements DeleteAllNodesInList {
       Map<String, Exception> exceptions = newHashMap();
       Map<String, Future<?>> responses = newHashMap();
       for (String name : names) {
-         responses.put(name, chefAsyncClient.deleteNode(name));
+         responses.put(name, chefAsyncClient.deleteClient(name));
       }
       exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, String.format(
-            "deleting nodes: %s", names));
+            "deleting clients: %s", names));
       if (exceptions.size() > 0)
-         throw new RuntimeException(String.format("errors deleting nodes: %s: %s", names, exceptions));
+         throw new RuntimeException(String.format("errors deleting clients: %s: %s", names, exceptions));
    }
 }

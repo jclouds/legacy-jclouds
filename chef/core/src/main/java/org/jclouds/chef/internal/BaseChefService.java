@@ -33,12 +33,15 @@ import javax.inject.Singleton;
 
 import org.jclouds.chef.ChefContext;
 import org.jclouds.chef.ChefService;
+import org.jclouds.chef.domain.Client;
 import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.reference.ChefConstants;
 import org.jclouds.chef.strategy.CleanupStaleNodesAndClients;
 import org.jclouds.chef.strategy.CreateNodeAndPopulateAutomaticAttributes;
+import org.jclouds.chef.strategy.DeleteAllClientsInList;
 import org.jclouds.chef.strategy.DeleteAllNodesInList;
-import org.jclouds.chef.strategy.GetNodes;
+import org.jclouds.chef.strategy.ListClients;
+import org.jclouds.chef.strategy.ListNodes;
 import org.jclouds.chef.strategy.UpdateAutomaticAttributesOnNode;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.RSADecryptingPayload;
@@ -64,23 +67,28 @@ public class BaseChefService implements ChefService {
    private final CleanupStaleNodesAndClients cleanupStaleNodesAndClients;
    private final CreateNodeAndPopulateAutomaticAttributes createNodeAndPopulateAutomaticAttributes;
    private final DeleteAllNodesInList deleteAllNodesInList;
-   private final GetNodes getNodes;
+   private final ListNodes listNodes;
+   private final DeleteAllClientsInList deleteAllClientsInList;
+   private final ListClients listClients;
    private final UpdateAutomaticAttributesOnNode updateAutomaticAttributesOnNode;
    private final Provider<PrivateKey> privateKey;
 
    @Inject
    protected BaseChefService(ChefContext chefContext, CleanupStaleNodesAndClients cleanupStaleNodesAndClients,
-         CreateNodeAndPopulateAutomaticAttributes createNodeAndPopulateAutomaticAttributes,
-         DeleteAllNodesInList deleteAllNodesInList, GetNodes getNodes,
-         UpdateAutomaticAttributesOnNode updateAutomaticAttributesOnNode, Provider<PrivateKey> privateKey) {
+            CreateNodeAndPopulateAutomaticAttributes createNodeAndPopulateAutomaticAttributes,
+            DeleteAllNodesInList deleteAllNodesInList, ListNodes listNodes,
+            DeleteAllClientsInList deleteAllClientsInList, ListClients listClients,
+            UpdateAutomaticAttributesOnNode updateAutomaticAttributesOnNode, Provider<PrivateKey> privateKey) {
       this.chefContext = checkNotNull(chefContext, "chefContext");
       this.cleanupStaleNodesAndClients = checkNotNull(cleanupStaleNodesAndClients, "cleanupStaleNodesAndClients");
       this.createNodeAndPopulateAutomaticAttributes = checkNotNull(createNodeAndPopulateAutomaticAttributes,
-            "createNodeAndPopulateAutomaticAttributes");
+               "createNodeAndPopulateAutomaticAttributes");
       this.deleteAllNodesInList = checkNotNull(deleteAllNodesInList, "deleteAllNodesInList");
-      this.getNodes = checkNotNull(getNodes, "getNodes");
+      this.listNodes = checkNotNull(listNodes, "listNodes");
+      this.deleteAllClientsInList = checkNotNull(deleteAllClientsInList, "deleteAllClientsInList");
+      this.listClients = checkNotNull(listClients, "listClients");
       this.updateAutomaticAttributesOnNode = checkNotNull(updateAutomaticAttributesOnNode,
-            "updateAutomaticAttributesOnNode");
+               "updateAutomaticAttributesOnNode");
       this.privateKey = checkNotNull(privateKey, "privateKey");
    }
 
@@ -101,17 +109,37 @@ public class BaseChefService implements ChefService {
 
    @Override
    public Iterable<? extends Node> listNodesDetails() {
-      return getNodes.execute();
+      return listNodes.execute();
    }
 
    @Override
    public Iterable<? extends Node> listNodesDetailsMatching(Predicate<String> nodeNameSelector) {
-      return getNodes.execute(nodeNameSelector);
+      return listNodes.execute(nodeNameSelector);
    }
 
    @Override
-   public Iterable<? extends Node> getNodesNamed(Iterable<String> names) {
-      return getNodes.execute(names);
+   public Iterable<? extends Node> listNodesNamed(Iterable<String> names) {
+      return listNodes.execute(names);
+   }
+
+   @Override
+   public void deleteAllClientsInList(Iterable<String> names) {
+      deleteAllClientsInList.execute(names);
+   }
+
+   @Override
+   public Iterable<? extends Client> listClientsDetails() {
+      return listClients.execute();
+   }
+
+   @Override
+   public Iterable<? extends Client> listClientsDetailsMatching(Predicate<String> clientNameSelector) {
+      return listClients.execute(clientNameSelector);
+   }
+
+   @Override
+   public Iterable<? extends Client> listClientsNamed(Iterable<String> names) {
+      return listClients.execute(names);
    }
 
    @Override
@@ -127,13 +155,13 @@ public class BaseChefService implements ChefService {
    @Override
    public byte[] decrypt(InputSupplier<? extends InputStream> supplier) throws IOException {
       return ByteStreams.toByteArray(new RSADecryptingPayload(Payloads.newPayload(supplier.getInput()), privateKey
-            .get()));
+               .get()));
    }
 
    @Override
    public byte[] encrypt(InputSupplier<? extends InputStream> supplier) throws IOException {
       return ByteStreams.toByteArray(new RSAEncryptingPayload(Payloads.newPayload(supplier.getInput()), privateKey
-            .get()));
+               .get()));
    }
 
 }
