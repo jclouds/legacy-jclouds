@@ -65,7 +65,7 @@ public class BaseChefRestClientModule<S, A> extends RestClientModule<S, A> {
    }
 
    protected BaseChefRestClientModule(Class<S> syncClientType, Class<A> asyncClientType,
-         Map<Class<?>, Class<?>> delegates) {
+            Map<Class<?>, Class<?>> delegates) {
       super(syncClientType, asyncClientType, delegates);
    }
 
@@ -91,10 +91,10 @@ public class BaseChefRestClientModule<S, A> extends RestClientModule<S, A> {
    @Provides
    @Singleton
    public PrivateKey provideKey(Crypto crypto, @Named(PROPERTY_CREDENTIAL) String pem) throws InvalidKeySpecException,
-         IOException {
+            IOException {
       return crypto.rsaKeyFactory().generatePrivate(Pems.privateKeySpec(InputSuppliers.of(pem)));
    }
-   
+
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ChefErrorHandler.class);

@@ -267,7 +267,7 @@ public class Pems {
     * @throws IOException
     * @throws CertificateEncodingException
     */
-   public static String pem(X509Certificate cert) throws IOException, CertificateEncodingException {
+   public static String pem(X509Certificate cert) throws CertificateEncodingException {
       String marker = CERTIFICATE_X509_MARKER;
       return pem(cert.getEncoded(), marker);
    }
@@ -281,7 +281,7 @@ public class Pems {
     * @throws IOException
     * @throws CertificateEncodingException
     */
-   public static String pem(PublicKey key) throws IOException {
+   public static String pem(PublicKey key) {
       String marker = key instanceof RSAPublicKey ? PUBLIC_PKCS1_MARKER : PUBLIC_X509_MARKER;
       return pem(key.getEncoded(), marker);
    }
@@ -295,7 +295,7 @@ public class Pems {
     * @throws IOException
     * @throws CertificateEncodingException
     */
-   public static String pem(PrivateKey key) throws IOException {
+   public static String pem(PrivateKey key) {
       String marker = key instanceof RSAPrivateCrtKey ? PRIVATE_PKCS1_MARKER : PRIVATE_PKCS8_MARKER;
       return pem(key instanceof RSAPrivateCrtKey ? getEncoded(RSAPrivateCrtKey.class.cast(key)) : key.getEncoded(),
                marker);
@@ -320,7 +320,7 @@ public class Pems {
       return bOut.toByteArray();
    }
 
-   private static String pem(byte[] key, String marker) throws IOException {
+   private static String pem(byte[] key, String marker) {
       return new StringBuilder(marker + "\n").append(
                Joiner.on('\n').join(Splitter.fixedLength(64).split(CryptoStreams.base64(key)))).append(
                "\n" + marker.replace("BEGIN", "END") + "\n").toString().trim();

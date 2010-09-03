@@ -39,7 +39,7 @@ import com.google.inject.Injector;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "chef.BindHexEncodedMD5sToJsonPayloadTest")
+@Test(groups = "unit", testName = "chef.BootstrapChefClientTest")
 public class BindHexEncodedMD5sToJsonPayloadTest {
 
    Injector injector = Guice.createInjector(new ChefParserModule(), new GsonModule());

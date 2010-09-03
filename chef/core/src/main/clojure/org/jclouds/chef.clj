@@ -131,6 +131,24 @@ unit testing"
   ([#^ChefService chef]
     (seq (.listNodesDetails chef))))
 
+(defn update-run-list
+  "Updates the run-list associated with a tag"
+  ([run-list tag] (update-run-list run-list tag *chef*))
+  ([run-list tag #^ChefService chef]
+    (.updateRunListForTag chef run-list tag)))
+
+(defn run-list
+  "Retrieves the run-list associated with a tag"
+  ([tag] (run-list tag *chef*))
+  ([tag #^ChefService chef]
+    (seq (.getRunListForTag chef tag))))
+
+(defn create-bootstrap
+  "creates a client and bootstrap script associated with a tag"
+  ([tag] (create-bootstrap tag *chef*))
+  ([tag #^ChefService chef]
+    (.createClientAndBootstrapScriptForTag chef tag)))
+
 (defn databags
   "Retrieve the names of the existing data bags in your chef server."
   ([] (databags *chef*))

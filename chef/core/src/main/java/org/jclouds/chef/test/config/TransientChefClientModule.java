@@ -18,16 +18,25 @@
  */
 package org.jclouds.chef.test.config;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.TransientAsyncBlobStore;
 import org.jclouds.chef.ChefAsyncClient;
 import org.jclouds.chef.ChefClient;
 import org.jclouds.chef.config.BaseChefRestClientModule;
+import org.jclouds.chef.domain.Client;
+import org.jclouds.chef.functions.ClientForTag;
+import org.jclouds.chef.functions.RunListForTag;
+import org.jclouds.chef.statements.InstallChefGems;
 import org.jclouds.chef.test.TransientChefAsyncClient;
 import org.jclouds.chef.test.TransientChefClient;
 import org.jclouds.rest.RestContextFactory;
+import org.jclouds.scriptbuilder.domain.Statement;
 
+import com.google.common.collect.MapMaker;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
 
@@ -44,8 +53,9 @@ public class TransientChefClientModule extends BaseChefRestClientModule<Transien
    @Override
    protected void configure() {
       bind(TransientAsyncBlobStore.class).annotatedWith(Names.named("databags")).toInstance(
-            new RestContextFactory().createContextBuilder("transient", "foo", "bar").buildInjector().getInstance(
-                  TransientAsyncBlobStore.class));
+               new RestContextFactory().createContextBuilder("transient", "foo", "bar").buildInjector().getInstance(
+                        TransientAsyncBlobStore.class));
+      bind(Statement.class).annotatedWith(Names.named("installChefGems")).to(InstallChefGems.class);
       super.configure();
    }
 
@@ -58,6 +68,18 @@ public class TransientChefClientModule extends BaseChefRestClientModule<Transien
    @Singleton
    ChefClient provideClient(TransientChefClient in) {
       return in;
+   }
+
+   @Provides
+   @Singleton
+   Map<String, List<String>> runListForTag(RunListForTag runListForTag) {
+      return new MapMaker().makeComputingMap(runListForTag);
+   }
+
+   @Provides
+   @Singleton
+   Map<String, Client> tagToClient(ClientForTag tagToClient) {
+      return new MapMaker().makeComputingMap(tagToClient);
    }
 
 }
