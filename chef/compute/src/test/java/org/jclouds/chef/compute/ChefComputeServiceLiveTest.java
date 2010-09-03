@@ -20,6 +20,12 @@
 package org.jclouds.chef.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.getLast;
+import static org.jclouds.chef.predicates.CookbookVersionPredicates.containsRecipe;
+import static org.jclouds.chef.predicates.CookbookVersionPredicates.containsRecipes;
+import static org.jclouds.compute.options.TemplateOptions.Builder.runScript;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
@@ -27,16 +33,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.chef.ChefContext;
 import org.jclouds.chef.ChefContextFactory;
+import org.jclouds.chef.domain.CookbookVersion;
+import org.jclouds.chef.util.RunListBuilder;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.io.Payload;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -48,7 +55,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.io.Files;
 import com.google.inject.Module;
 
@@ -101,24 +107,38 @@ public class ChefComputeServiceLiveTest {
 
    @Test
    public void testCanUpdateRunList() throws IOException {
-      chefContext.getChefService().updateRunListForTag(Collections.singleton("recipe[apache2]"), tag);
-      assertEquals(chefContext.getChefService().getRunListForTag(tag), Collections.singleton("recipe[apache2]"));
+      String recipe = "apache2";
+
+      Iterable<? extends CookbookVersion> cookbookVersions = chefContext.getChefService().listCookbookVersions();
+
+      if (any(cookbookVersions, containsRecipe(recipe))) {
+         List<String> runList = new RunListBuilder().addRecipe(recipe).build();
+         chefContext.getChefService().updateRunListForTag(runList, tag);
+         assertEquals(chefContext.getChefService().getRunListForTag(tag), runList);
+      } else {
+         assert false : String.format("recipe %s not in %s", recipe, cookbookVersions);
+      }
+
+      // TODO move this to a unit test
+      assert any(cookbookVersions, containsRecipe("apache2::mod_proxy"));
+      assert any(cookbookVersions, containsRecipes("apache2", "apache2::mod_proxy", "apache2::mod_proxy_http"));
+      assert !any(cookbookVersions, containsRecipe("apache2::bar"));
+      assert !any(cookbookVersions, containsRecipe("foo::bar"));
    }
 
    @Test(dependsOnMethods = "testCanUpdateRunList")
    public void testRunNodesWithBootstrap() throws IOException {
 
       Payload bootstrap = chefContext.getChefService().createClientAndBootstrapScriptForTag(tag);
-      TemplateOptions options = computeContext.getComputeService().templateOptions().runScript(bootstrap);
 
       try {
-         nodes = computeContext.getComputeService().runNodesWithTag(tag, 1, options);
+         nodes = computeContext.getComputeService().runNodesWithTag(tag, 1, runScript(bootstrap));
       } catch (RunNodesException e) {
-         nodes = Iterables.concat(e.getSuccessfulNodes(), e.getNodeErrors().keySet());
+         nodes = concat(e.getSuccessfulNodes(), e.getNodeErrors().keySet());
       }
 
       for (NodeMetadata node : nodes) {
-         URI uri = URI.create("http://" + Iterables.getLast(node.getPublicAddresses()));
+         URI uri = URI.create("http://" + getLast(node.getPublicAddresses()));
          InputStream content = computeContext.utils().http().get(uri);
          String string = Utils.toStringAndClose(content);
          assert string.indexOf("It works!") >= 0 : string;

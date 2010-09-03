@@ -36,6 +36,7 @@ import javax.inject.Singleton;
 import org.jclouds.chef.ChefContext;
 import org.jclouds.chef.ChefService;
 import org.jclouds.chef.domain.Client;
+import org.jclouds.chef.domain.CookbookVersion;
 import org.jclouds.chef.domain.DatabagItem;
 import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.functions.RunListForTag;
@@ -46,6 +47,7 @@ import org.jclouds.chef.strategy.CreateNodeAndPopulateAutomaticAttributes;
 import org.jclouds.chef.strategy.DeleteAllClientsInList;
 import org.jclouds.chef.strategy.DeleteAllNodesInList;
 import org.jclouds.chef.strategy.ListClients;
+import org.jclouds.chef.strategy.ListCookbookVersions;
 import org.jclouds.chef.strategy.ListNodes;
 import org.jclouds.chef.strategy.UpdateAutomaticAttributesOnNode;
 import org.jclouds.io.Payload;
@@ -83,14 +85,16 @@ public class BaseChefService implements ChefService {
    private final TagToBootScript tagToBootScript;
    private final String databag;
    private final RunListForTag runListForTag;
+   private final ListCookbookVersions listCookbookVersions;
 
    @Inject
    protected BaseChefService(ChefContext chefContext, CleanupStaleNodesAndClients cleanupStaleNodesAndClients,
             CreateNodeAndPopulateAutomaticAttributes createNodeAndPopulateAutomaticAttributes,
             DeleteAllNodesInList deleteAllNodesInList, ListNodes listNodes,
             DeleteAllClientsInList deleteAllClientsInList, ListClients listClients,
-            UpdateAutomaticAttributesOnNode updateAutomaticAttributesOnNode, Provider<PrivateKey> privateKey,
-            @Named(CHEF_BOOTSTRAP_DATABAG) String databag, TagToBootScript tagToBootScript, RunListForTag runListForTag) {
+            ListCookbookVersions listCookbookVersions, UpdateAutomaticAttributesOnNode updateAutomaticAttributesOnNode,
+            Provider<PrivateKey> privateKey, @Named(CHEF_BOOTSTRAP_DATABAG) String databag,
+            TagToBootScript tagToBootScript, RunListForTag runListForTag) {
       this.chefContext = checkNotNull(chefContext, "chefContext");
       this.cleanupStaleNodesAndClients = checkNotNull(cleanupStaleNodesAndClients, "cleanupStaleNodesAndClients");
       this.createNodeAndPopulateAutomaticAttributes = checkNotNull(createNodeAndPopulateAutomaticAttributes,
@@ -99,6 +103,7 @@ public class BaseChefService implements ChefService {
       this.listNodes = checkNotNull(listNodes, "listNodes");
       this.deleteAllClientsInList = checkNotNull(deleteAllClientsInList, "deleteAllClientsInList");
       this.listClients = checkNotNull(listClients, "listClients");
+      this.listCookbookVersions = checkNotNull(listCookbookVersions, "listCookbookVersions");
       this.updateAutomaticAttributesOnNode = checkNotNull(updateAutomaticAttributesOnNode,
                "updateAutomaticAttributesOnNode");
       this.privateKey = checkNotNull(privateKey, "privateKey");
@@ -123,12 +128,12 @@ public class BaseChefService implements ChefService {
    }
 
    @Override
-   public Iterable<? extends Node> listNodesDetails() {
+   public Iterable<? extends Node> listNodes() {
       return listNodes.execute();
    }
 
    @Override
-   public Iterable<? extends Node> listNodesDetailsMatching(Predicate<String> nodeNameSelector) {
+   public Iterable<? extends Node> listNodesMatching(Predicate<String> nodeNameSelector) {
       return listNodes.execute(nodeNameSelector);
    }
 
@@ -157,6 +162,22 @@ public class BaseChefService implements ChefService {
       return listClients.execute(names);
    }
 
+   @Override
+   public Iterable<? extends CookbookVersion> listCookbookVersions() {
+      return listCookbookVersions.execute();
+   }
+
+   @Override
+   public Iterable<? extends CookbookVersion> listCookbookVersionsMatching(Predicate<String> cookbookNameSelector) {
+      return listCookbookVersions.execute(cookbookNameSelector);
+   }
+
+   @Override
+   public Iterable<? extends CookbookVersion> listCookbookVersionsNamed(Iterable<String> names) {
+      return listCookbookVersions.execute(names);
+   }
+
+   
    @Override
    public void updateAutomaticAttributesOnNode(String nodeName) {
       updateAutomaticAttributesOnNode.execute(nodeName);

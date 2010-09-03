@@ -103,7 +103,7 @@ public class ParseCookbookVersionFromJsonTest {
                new CookbookVersion(
                         "apache-chef-demo-0.0.0",
                         ImmutableSet.<Resource> of(),
-                        ImmutableSet.<Resource> of(),
+                        ImmutableSet.<Attribute> of(),
                         ImmutableSet.<Resource> of(),
                         new Metadata("Apache v2.0", "Your Name", ImmutableMap.<String, String> of(), ImmutableMap
                                  .<String, Set<String>> of(), "youremail@example.com", ImmutableMap

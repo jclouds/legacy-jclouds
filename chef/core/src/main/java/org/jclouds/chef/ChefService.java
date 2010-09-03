@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.jclouds.chef.domain.Client;
+import org.jclouds.chef.domain.CookbookVersion;
 import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.internal.BaseChefService;
 import org.jclouds.io.Payload;
@@ -97,9 +98,9 @@ public interface ChefService {
 
    void deleteAllNodesInList(Iterable<String> names);
 
-   Iterable<? extends Node> listNodesDetails();
+   Iterable<? extends Node> listNodes();
 
-   Iterable<? extends Node> listNodesDetailsMatching(Predicate<String> nodeNameSelector);
+   Iterable<? extends Node> listNodesMatching(Predicate<String> nodeNameSelector);
 
    Iterable<? extends Node> listNodesNamed(Iterable<String> names);
 
@@ -110,6 +111,12 @@ public interface ChefService {
    Iterable<? extends Client> listClientsDetailsMatching(Predicate<String> clientNameSelector);
 
    Iterable<? extends Client> listClientsNamed(Iterable<String> names);
+
+   Iterable<? extends CookbookVersion> listCookbookVersions();
+
+   Iterable<? extends CookbookVersion> listCookbookVersionsMatching(Predicate<String> cookbookNameSelector);
+
+   Iterable<? extends CookbookVersion> listCookbookVersionsNamed(Iterable<String> cookbookNames);
 
    void updateAutomaticAttributesOnNode(String nodeName);
 }
