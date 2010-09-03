@@ -28,7 +28,6 @@ import static org.jclouds.chef.predicates.CookbookVersionPredicates.containsReci
 import static org.jclouds.compute.options.TemplateOptions.Builder.runScript;
 import static org.testng.Assert.assertEquals;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,9 +52,7 @@ import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.Files;
 import com.google.inject.Module;
 
 /**
@@ -73,32 +70,34 @@ public class ChefComputeServiceLiveTest {
    private Iterable<? extends NodeMetadata> nodes;
 
    @BeforeGroups(groups = { "live" })
-   public void setupCompute() throws FileNotFoundException, IOException {
+   public void setupAll() throws FileNotFoundException, IOException {
       tag = System.getProperty("jclouds.compute.tag") != null ? System.getProperty("jclouds.compute.tag")
                : "jcloudschef";
       String computeProvider = checkNotNull(System.getProperty("jclouds.compute.provider"), "jclouds.compute.provider");
       String computeEndpoint = System.getProperty("jclouds.compute.endpoint");
-      Properties props = new Properties();
-      if (computeEndpoint != null && !computeEndpoint.trim().equals(""))
-         props.setProperty(computeProvider + ".endpoint", computeEndpoint);
       String computeIdentity = checkNotNull(System.getProperty("jclouds.compute.identity"), "jclouds.compute.identity");
       String computeCredential = checkNotNull(System.getProperty("jclouds.compute.credential"),
                "jclouds.compute.credential");
-      computeContext = new ComputeServiceContextFactory().createContext(computeProvider, computeIdentity,
-               computeCredential, ImmutableSet.of(new Log4JLoggingModule(), getSshModule()), props);
-   }
-
-   @BeforeGroups(groups = { "live" })
-   public void setupChef() throws IOException {
       chefEndpoint = checkNotNull(System.getProperty("jclouds.chef.endpoint"), "jclouds.chef.endpoint");
       String chefIdentity = checkNotNull(System.getProperty("jclouds.chef.identity"), "jclouds.chef.identity");
       String chefCredentialFile = System.getProperty("jclouds.chef.credential.pem");
       if (chefCredentialFile == null || chefCredentialFile.equals(""))
          chefCredentialFile = System.getProperty("user.home") + "/.chef/" + chefIdentity + ".pem";
+
       Properties props = new Properties();
+      props.setProperty(computeProvider + ".identity", computeIdentity);
+      props.setProperty(computeProvider + ".credential", computeCredential);
       props.setProperty("chef.endpoint", chefEndpoint);
-      chefContext = new ChefContextFactory().createContext(chefIdentity, Files.toString(new File(chefCredentialFile),
-               Charsets.UTF_8), ImmutableSet.<Module> of(new Log4JLoggingModule()), props);
+      props.setProperty("chef.identity", chefIdentity);
+      props.setProperty("chef.credential.file", chefCredentialFile);
+
+      if (computeEndpoint != null && !computeEndpoint.trim().equals(""))
+         props.setProperty(computeProvider + ".endpoint", computeEndpoint);
+
+      computeContext = new ComputeServiceContextFactory().createContext(computeProvider, ImmutableSet.of(
+               new Log4JLoggingModule(), getSshModule()), props);
+
+      chefContext = new ChefContextFactory().createContext(ImmutableSet.<Module> of(new Log4JLoggingModule()), props);
    }
 
    protected Module getSshModule() {
