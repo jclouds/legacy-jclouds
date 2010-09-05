@@ -76,5 +76,4 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          System.out.println(allData.getExtra());
       }
    }
-
 }

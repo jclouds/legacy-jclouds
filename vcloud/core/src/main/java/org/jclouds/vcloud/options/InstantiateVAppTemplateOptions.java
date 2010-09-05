@@ -26,8 +26,6 @@ import java.util.Set;
 
 import org.jclouds.vcloud.domain.network.NetworkConfig;
 
-
-
 import com.google.common.collect.Sets;
 
 /**
@@ -38,6 +36,7 @@ import com.google.common.collect.Sets;
 public class InstantiateVAppTemplateOptions {
    private Set<NetworkConfig> networkConfig = Sets.newLinkedHashSet();
 
+   private Boolean customizeOnInstantiate;
    private String cpuCount;
    private String memorySizeMegabytes;
    private String diskSizeKilobytes;
@@ -79,6 +78,15 @@ public class InstantiateVAppTemplateOptions {
     */
    public InstantiateVAppTemplateOptions block(boolean block) {
       this.block = block;
+      return this;
+   }
+
+   /**
+    * If true, then customization is executed for all children that include a
+    * GuestCustomizationSection.
+    */
+   public InstantiateVAppTemplateOptions customizeOnInstantiate(boolean customizeOnInstantiate) {
+      this.customizeOnInstantiate = customizeOnInstantiate;
       return this;
    }
 
@@ -126,6 +134,10 @@ public class InstantiateVAppTemplateOptions {
       return cpuCount;
    }
 
+   public Boolean shouldCustomizeOnInstantiate() {
+      return customizeOnInstantiate;
+   }
+
    public String getMemorySizeMegabytes() {
       return memorySizeMegabytes;
    }
@@ -169,6 +181,14 @@ public class InstantiateVAppTemplateOptions {
       }
 
       /**
+       * @see InstantiateVAppTemplateOptions#customizeOnInstantiate
+       */
+      public static InstantiateVAppTemplateOptions customizeOnInstantiate(Boolean customizeOnInstantiate) {
+         InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+         return options.customizeOnInstantiate(customizeOnInstantiate);
+      }
+
+      /**
        * @see InstantiateVAppTemplateOptions#memory(int)
        */
       public static InstantiateVAppTemplateOptions memory(int megabytes) {
@@ -197,7 +217,9 @@ public class InstantiateVAppTemplateOptions {
    @Override
    public String toString() {
       return "InstantiateVAppTemplateOptions [cpuCount=" + cpuCount + ", memorySizeMegabytes=" + memorySizeMegabytes
-               + ", diskSizeKilobytes=" + diskSizeKilobytes + ", networkConfig=" + networkConfig + "]";
+               + ", diskSizeKilobytes=" + diskSizeKilobytes + ", networkConfig=" + networkConfig
+               + ", customizeOnInstantiate=" + customizeOnInstantiate + ", deploy=" + (deploy) + ", powerOn="
+               + (powerOn) + "]";
    }
 
    @Override
@@ -206,10 +228,11 @@ public class InstantiateVAppTemplateOptions {
       int result = 1;
       result = prime * result + (block ? 1231 : 1237);
       result = prime * result + ((cpuCount == null) ? 0 : cpuCount.hashCode());
+      result = prime * result + ((customizeOnInstantiate == null) ? 0 : customizeOnInstantiate.hashCode());
       result = prime * result + (deploy ? 1231 : 1237);
       result = prime * result + ((diskSizeKilobytes == null) ? 0 : diskSizeKilobytes.hashCode());
-      result = prime * result + ((networkConfig == null) ? 0 : networkConfig.hashCode());
       result = prime * result + ((memorySizeMegabytes == null) ? 0 : memorySizeMegabytes.hashCode());
+      result = prime * result + ((networkConfig == null) ? 0 : networkConfig.hashCode());
       result = prime * result + (powerOn ? 1231 : 1237);
       return result;
    }
@@ -230,6 +253,11 @@ public class InstantiateVAppTemplateOptions {
             return false;
       } else if (!cpuCount.equals(other.cpuCount))
          return false;
+      if (customizeOnInstantiate == null) {
+         if (other.customizeOnInstantiate != null)
+            return false;
+      } else if (!customizeOnInstantiate.equals(other.customizeOnInstantiate))
+         return false;
       if (deploy != other.deploy)
          return false;
       if (diskSizeKilobytes == null) {
@@ -237,15 +265,15 @@ public class InstantiateVAppTemplateOptions {
             return false;
       } else if (!diskSizeKilobytes.equals(other.diskSizeKilobytes))
          return false;
-      if (networkConfig == null) {
-         if (other.networkConfig != null)
-            return false;
-      } else if (!networkConfig.equals(other.networkConfig))
-         return false;
       if (memorySizeMegabytes == null) {
          if (other.memorySizeMegabytes != null)
             return false;
       } else if (!memorySizeMegabytes.equals(other.memorySizeMegabytes))
+         return false;
+      if (networkConfig == null) {
+         if (other.networkConfig != null)
+            return false;
+      } else if (!networkConfig.equals(other.networkConfig))
          return false;
       if (powerOn != other.powerOn)
          return false;

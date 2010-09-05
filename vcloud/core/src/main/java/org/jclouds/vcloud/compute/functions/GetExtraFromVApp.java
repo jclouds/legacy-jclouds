@@ -19,70 +19,38 @@
 
 package org.jclouds.vcloud.compute.functions;
 
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.find;
-import static com.google.common.collect.Maps.newHashMap;
-import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
-
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
 import org.jclouds.vcloud.domain.VApp;
-import org.jclouds.vcloud.domain.Vm;
-import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
-import org.jclouds.vcloud.domain.ovf.ResourceType;
-import org.jclouds.vcloud.domain.ovf.VCloudHardDisk;
-import org.jclouds.vcloud.domain.ovf.VCloudNetworkAdapter;
 
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
- * Configures the {@link VCloudComputeServiceContext}; requires
- * {@link VCloudExpressComputeClientImpl} bound.
  * 
  * @author Adrian Cole
  */
 @Singleton
 public class GetExtraFromVApp implements Function<VApp, Map<String, String>> {
+   private final GetExtraFromVm getExtraFromVm;
+
+   @Inject
+   GetExtraFromVApp(GetExtraFromVm getExtraFromVm) {
+      this.getExtraFromVm = getExtraFromVm;
+   }
 
    @Resource
    protected Logger logger = Logger.NULL;
 
    public Map<String, String> apply(VApp vApp) {
-      Map<String, String> extra = newHashMap();
-      try {
-         // TODO make this work with composite vApps
-         Vm vm = Iterables.get(vApp.getChildren(), 0);
-         extra.put("memory/mb", find(vm.getVirtualHardwareSection().getResourceAllocations(), resourceType(ResourceType.MEMORY))
-                  .getVirtualQuantity()
-                  + "");
-         extra.put("processor/count", find(vm.getVirtualHardwareSection().getResourceAllocations(),
-                  resourceType(ResourceType.PROCESSOR)).getVirtualQuantity()
-                  + "");
-         for (ResourceAllocation disk : filter(vm.getVirtualHardwareSection().getResourceAllocations(),
-                  resourceType(ResourceType.DISK_DRIVE))) {
-            if (disk instanceof VCloudHardDisk) {
-               VCloudHardDisk vDisk = VCloudHardDisk.class.cast(disk);
-               extra.put(String.format("disk_drive/%s/mb", disk.getAddressOnParent()), vDisk.getCapacity() + "");
-            } else {
-               extra.put(String.format("disk_drive/%s/kb", disk.getAddressOnParent()), disk.getVirtualQuantity() + "");
-            }
-         }
-         for (ResourceAllocation net : filter(vm.getVirtualHardwareSection().getResourceAllocations(),
-                  resourceType(ResourceType.ETHERNET_ADAPTER))) {
-            if (net instanceof VCloudNetworkAdapter) {
-               VCloudNetworkAdapter vNet = VCloudNetworkAdapter.class.cast(net);
-               extra.put(String.format("network/%s/ip", net.getAddressOnParent()), vNet.getIpAddress());
-            }
-         }
-      } catch (Exception e) {
-         logger.error(e, "error getting extra data for vApp: %s", vApp);
-      }
-      return extra;
+      // TODO make this work with composite vApps
+      return vApp.getChildren().size() == 0 ? ImmutableMap.<String, String> of() : getExtraFromVm.apply(Iterables.get(
+               vApp.getChildren(), 0));
    }
 }

@@ -24,7 +24,9 @@ import java.util.Set;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
@@ -36,6 +38,8 @@ import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.functions.ImagesInOrg;
 import org.jclouds.vcloud.compute.functions.SizesInOrg;
+import org.jclouds.vcloud.compute.internal.VCloudTemplateBuilderImpl;
+import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
 import org.jclouds.vcloud.compute.strategy.GetLoginCredentialsFromGuestConfiguration;
 import org.jclouds.vcloud.compute.strategy.VCloudAddNodeWithTagStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
@@ -62,6 +66,8 @@ public class VCloudComputeServiceContextModule extends CommonVCloudComputeServic
    @Override
    protected void configure() {
       super.configure();
+      bind(TemplateOptions.class).to(VCloudTemplateOptions.class);
+      bind(TemplateBuilder.class).to(VCloudTemplateBuilderImpl.class);
       bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
       bind(GetNodeMetadataStrategy.class).to(VCloudGetNodeMetadataStrategy.class);
       bind(new TypeLiteral<ComputeServiceContext>() {

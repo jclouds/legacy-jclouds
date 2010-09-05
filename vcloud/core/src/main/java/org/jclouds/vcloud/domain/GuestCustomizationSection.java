@@ -21,29 +21,38 @@ package org.jclouds.vcloud.domain;
 
 import java.net.URI;
 
+import org.jclouds.vcloud.VCloudMediaType;
+
 /**
- * The GuestCustomization of a Vm contains customization parameters for the guest
- * operating system of the virtual machine.
+ * The GuestCustomization of a Vm contains customization parameters for the guest operating system
+ * of the virtual machine.
  */
 public class GuestCustomizationSection {
    protected final String type;
    protected final URI href;
-   protected final String info;
-   protected final Boolean enabled;
-   protected final Boolean changeSid;
-   protected final String virtualMachineId;
-   protected final Boolean joinDomainEnabled;
-   protected final Boolean useOrgSettings;
-   protected final String domainName;
-   protected final String domainUserName;
-   protected final String domainUserPassword;
-   protected final Boolean adminPasswordEnabled;
-   protected final Boolean adminPasswordAuto;
-   protected final String adminPassword;
-   protected final Boolean resetPasswordRequired;
-   protected final String customizationScript;
-   protected final String computerName;
+   protected String info;
+   protected Boolean enabled;
+   protected Boolean changeSid;
+   protected String virtualMachineId;
+   protected Boolean joinDomainEnabled;
+   protected Boolean useOrgSettings;
+   protected String domainName;
+   protected String domainUserName;
+   protected String domainUserPassword;
+   protected Boolean adminPasswordEnabled;
+   protected Boolean adminPasswordAuto;
+   protected String adminPassword;
+   protected Boolean resetPasswordRequired;
+   protected String customizationScript;
+   protected String computerName;
    protected final ReferenceType edit;
+
+   public GuestCustomizationSection(URI href) {
+      this.href = href;
+      this.type = VCloudMediaType.GUESTCUSTOMIZATIONSECTION_XML;
+      this.info = "Specifies Guest OS Customization Settings";
+      this.edit = null;
+   }
 
    public GuestCustomizationSection(String type, URI href, String info, Boolean enabled, Boolean changeSid,
             String virtualMachineId, Boolean joinDomainEnabled, Boolean useOrgSettings, String domainName,
@@ -223,7 +232,7 @@ public class GuestCustomizationSection {
 
    @Override
    public int hashCode() {
-      final int prime = 31;
+      int prime = 31;
       int result = 1;
       result = prime * result + ((adminPassword == null) ? 0 : adminPassword.hashCode());
       result = prime * result + ((adminPasswordAuto == null) ? 0 : adminPasswordAuto.hashCode());
@@ -346,5 +355,89 @@ public class GuestCustomizationSection {
       } else if (!virtualMachineId.equals(other.virtualMachineId))
          return false;
       return true;
+   }
+
+   public void setEnabled(Boolean enabled) {
+      this.enabled = enabled;
+   }
+
+   public Boolean getChangeSid() {
+      return changeSid;
+   }
+
+   public void setChangeSid(Boolean changeSid) {
+      this.changeSid = changeSid;
+   }
+
+   public Boolean getJoinDomainEnabled() {
+      return joinDomainEnabled;
+   }
+
+   public void setJoinDomainEnabled(Boolean joinDomainEnabled) {
+      this.joinDomainEnabled = joinDomainEnabled;
+   }
+
+   public Boolean shouldUseOrgSettings() {
+      return useOrgSettings;
+   }
+
+   public void setUseOrgSettings(Boolean useOrgSettings) {
+      this.useOrgSettings = useOrgSettings;
+   }
+
+   public Boolean getAdminPasswordEnabled() {
+      return adminPasswordEnabled;
+   }
+
+   public void setAdminPasswordEnabled(Boolean adminPasswordEnabled) {
+      this.adminPasswordEnabled = adminPasswordEnabled;
+   }
+
+   public Boolean getAdminPasswordAuto() {
+      return adminPasswordAuto;
+   }
+
+   public void setAdminPasswordAuto(Boolean adminPasswordAuto) {
+      this.adminPasswordAuto = adminPasswordAuto;
+   }
+
+   public Boolean getResetPasswordRequired() {
+      return resetPasswordRequired;
+   }
+
+   public void setResetPasswordRequired(Boolean resetPasswordRequired) {
+      this.resetPasswordRequired = resetPasswordRequired;
+   }
+
+   public void setInfo(String info) {
+      this.info = info;
+   }
+
+   public void setVirtualMachineId(String virtualMachineId) {
+      this.virtualMachineId = virtualMachineId;
+   }
+
+   public void setDomainName(String domainName) {
+      this.domainName = domainName;
+   }
+
+   public void setDomainUserName(String domainUserName) {
+      this.domainUserName = domainUserName;
+   }
+
+   public void setDomainUserPassword(String domainUserPassword) {
+      this.domainUserPassword = domainUserPassword;
+   }
+
+   public void setAdminPassword(String adminPassword) {
+      this.adminPassword = adminPassword;
+   }
+
+   public void setCustomizationScript(String customizationScript) {
+      this.customizationScript = customizationScript;
+   }
+
+   public void setComputerName(String computerName) {
+      this.computerName = computerName;
    }
 }
