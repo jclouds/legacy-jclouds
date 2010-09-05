@@ -21,10 +21,10 @@ package org.jclouds.vcloud;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.getOnlyElement;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Properties;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.Constants;
@@ -36,28 +36,29 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.predicates.SocketOpen;
-import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshClient.Factory;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.ssh.jsch.predicates.InetSocketAddressConnect;
 import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * 
+ * This tests that we can use guest customization as an alternative to bootstrapping with ssh. There
+ * are a few advantages to this, including the fact that it can work inside google appengine where
+ * network sockets (ssh:22) are prohibited.
  * 
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "vcloud.VCloudGuestCustomizationLiveTest")
 public class VCloudGuestCustomizationLiveTest {
+
+   public static final String PARSE_VMTOOLSD = "vmtoolsd --cmd=\"info-get guestinfo.ovfenv\" |grep vCloud_CustomizationInfo|sed 's/.*value=\"\\(.*\\)\".*/\\1/g'|base64 -d";
 
    protected String identity;
    protected String provider;
@@ -79,20 +80,10 @@ public class VCloudGuestCustomizationLiveTest {
       Properties props = new Properties();
       props.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       props.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()), props);
-
-      client = context.getComputeService();
-
-      Injector injector = createSshClientInjector();
-      sshFactory = injector.getInstance(SshClient.Factory.class);
-      SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
-      injector.injectMembers(socketOpen); // add logger
-   }
-
-   protected Injector createSshClientInjector() {
-      return Guice.createInjector(getSshModule());
+      client = new ComputeServiceContextFactory().createContext(provider, identity, credential,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), props).getComputeService();
+      socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 60, 1, TimeUnit.SECONDS);
+      sshFactory = Guice.createInjector(getSshModule()).getInstance(Factory.class);
    }
 
    protected JschSshClientModule getSshModule() {
@@ -103,31 +94,26 @@ public class VCloudGuestCustomizationLiveTest {
    public void testExtendedOptionsWithCustomizationScript() throws Exception {
 
       String tag = "customize";
+      String script = "cat > /root/foo.txt<<EOF\nI love candy\nEOF\n";
 
       TemplateOptions options = client.templateOptions();
+      options.as(VCloudTemplateOptions.class).customizationScript(script);
 
-      options.as(VCloudTemplateOptions.class).customizationScript("cat > /root/foo.txt<<EOF\nI love candy\nEOF\n");
-
-      String nodeId = null;
+      NodeMetadata node = null;
       try {
 
-         Set<? extends NodeMetadata> nodes = client.runNodesWithTag(tag, 1, options);
+         node = getOnlyElement(client.runNodesWithTag(tag, 1, options));
 
-         NodeMetadata node = Iterables.get(nodes, 0);
-         nodeId = node.getId();
          IPSocket socket = new IPSocket(get(node.getPublicAddresses(), 0), 22);
-         socketTester.apply(socket);
+
+         assert socketTester.apply(socket);
 
          SshClient ssh = sshFactory.create(socket, node.getCredentials().identity, node.getCredentials().credential);
          try {
             ssh.connect();
 
-            System.out
-                     .println(ssh
-                              .exec("vmtoolsd --cmd=\"info-get guestinfo.ovfenv\" |grep vCloud_CustomizationInfo|sed 's/.*value=\"\\(.*\\)\".*/\\1/g'|base64 -d"));
-
-            ExecResponse hello = ssh.exec("cat /root/foo.txt");
-            assertEquals(hello.getOutput().trim(), "I love candy");
+            assertEquals(ssh.exec(PARSE_VMTOOLSD).getOutput(), script);
+            assertEquals(ssh.exec("cat /root/foo.txt").getOutput().trim(), "I love candy");
 
          } finally {
             if (ssh != null)
@@ -135,8 +121,8 @@ public class VCloudGuestCustomizationLiveTest {
          }
 
       } finally {
-         if (nodeId != null)
-            client.destroyNode(nodeId);
+         if (node != null)
+            client.destroyNode(node.getId());
       }
    }
 
