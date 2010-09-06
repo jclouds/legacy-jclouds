@@ -77,7 +77,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                         "adriancole.ec21", dateService.iso8601DateParse("2009-11-09T03:00:34.000Z"),
                         MonitoringState.DISABLED, AvailabilityZone.US_EAST_1C, null, "paravirtual", null,
                         "ip-10-243-42-70.ec2.internal", "10.243.42.70", ImmutableSet.<String> of(), "ari-a51cf9cc",
-                        null, null, null, RootDeviceType.INSTANCE_STORE, null, ImmutableMap
+                        null, null, null, null, RootDeviceType.INSTANCE_STORE, null, ImmutableMap
                                  .<String, EbsBlockDevice> of())), "993194456877", null, "r-a3c508cb"));
 
       Set<Reservation<? extends RunningInstance>> result = getReservations(is);
@@ -96,14 +96,14 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                         InstanceType.M1_LARGE, (String) null, "aki-ba3adfd3", "example-key-name", dateService
                                  .iso8601DateParse("2007-08-07T11:54:42.000Z"), MonitoringState.DISABLED,
                         AvailabilityZone.US_EAST_1B, null, "paravirtual", null, "10-251-50-132.ec2.internal", null,
-                        ImmutableSet.of("774F4FF8"), "ari-badbad00", null, null, null, RootDeviceType.INSTANCE_STORE,
+                        ImmutableSet.of("774F4FF8"), "ari-badbad00", null, null, null,  null, RootDeviceType.INSTANCE_STORE,
                         null, ImmutableMap.<String, EbsBlockDevice> of()), new RunningInstance(defaultRegion,
                         ImmutableSet.of("default"), "23", "ec2-72-44-33-6.compute-1.amazonaws.com", "ami-6ea54007",
                         "i-28a64435", InstanceState.RUNNING, InstanceType.M1_LARGE, (String) null, "aki-ba3adfd3",
                         "example-key-name", dateService.iso8601DateParse("2007-08-07T11:54:42.000Z"),
                         MonitoringState.DISABLED, AvailabilityZone.US_EAST_1B, null, "paravirtual", null,
                         "10-251-50-134.ec2.internal", null, ImmutableSet.of("774F4FF8"), "ari-badbad00", null, null,
-                        null, RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of())),
+                        null,  null, RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of())),
                "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM", null, "r-44a5402d"));
 
       Set<Reservation<? extends RunningInstance>> result = getReservations(is);
@@ -123,7 +123,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                         "i-3FFA0762", InstanceState.SHUTTING_DOWN, InstanceType.M1_LARGE, null, "eki-6CBD12F2",
                         "jclouds#euc-17", dateService.iso8601DateParse("2010-06-16T03:06:19.000Z"),
                         MonitoringState.DISABLED, "open", null, "paravirtual", null, "10.7.0.179", null, ImmutableSet
-                                 .<String> of(), "eri-A97113E4", null, null, null, RootDeviceType.INSTANCE_STORE, null,
+                                 .<String> of(), "eri-A97113E4", null, null, null,  null, RootDeviceType.INSTANCE_STORE, null,
                         ImmutableMap.<String, EbsBlockDevice> of())), "jclouds", null, "r-4D2A08AD"));
 
       Set<Reservation<? extends RunningInstance>> result = getReservations(is);
@@ -143,7 +143,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                         "adriancole.ec2ebs1", dateService.iso8601DateParse("2009-12-30T04:06:23.000Z"),
                         MonitoringState.DISABLED, AvailabilityZone.US_EAST_1B, "placement", "hvm", null,
                         "domU-12-31-39-09-CE-53.compute-1.internal", "10.210.209.157", ImmutableSet.<String> of(),
-                        "ari-a51cf9cc", null, null, null, RootDeviceType.EBS, "/dev/sda1", ImmutableMap
+                        "ari-a51cf9cc", null, null, null,  null, RootDeviceType.EBS, "/dev/sda1", ImmutableMap
                                  .<String, EbsBlockDevice> of("/dev/sda1", new EbsBlockDevice("vol-dc6ca8b5",
                                           Attachment.Status.ATTACHED, dateService
                                                    .iso8601DateParse("2009-12-30T04:06:29.000Z"), true)))),
