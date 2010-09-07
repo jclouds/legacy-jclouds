@@ -44,8 +44,6 @@
         <module>aws</module>
         <module>azure</module>
         <module>atmos</module>
-        <module>mezeo</module>        
-        <module>nirvanix</module>
         <module>rackspace</module>
         <module>rimuhosting</module>        
         <module>twitter</module>
@@ -53,7 +51,6 @@
         <module>gogrid</module>
         <module>chef</module>
         <module>opscodeplatform</module>
-        <module>boxdotnet</module>
         <module>slicehost</module>
         <module>allcompute</module>
         <module>allblobstore</module>

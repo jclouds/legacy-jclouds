@@ -41,16 +41,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-pcs2</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-sdn</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-twitter</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -62,11 +52,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-opscodeplatform</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-boxdotnet</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

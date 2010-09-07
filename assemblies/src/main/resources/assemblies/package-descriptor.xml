@@ -243,59 +243,32 @@
             <outputDirectory>providers/azure</outputDirectory>            
         </fileSet>
         
-        <!-- providers: mezeo -->
+        <!-- providers: slicehost -->
         <fileSet>
-            <directory>mezeo/pcs2/target</directory>
+            <directory>slicehost/target</directory>
             <includes>
-                <include>jclouds-pcs2-${project.version}.jar</include>
+                <include>jclouds-slicehost-${project.version}.jar</include>
             </includes>
-            <outputDirectory>providers/mezeo/lib</outputDirectory>
+            <outputDirectory>providers/slicehost/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>mezeo/pcs2/target</directory>
+            <directory>slicehost/target</directory>
             <includes>
-                <include>jclouds-pcs2-${project.version}-sources.jar</include>
+                <include>jclouds-slicehost-${project.version}-sources.jar</include>
             </includes>
-            <outputDirectory>providers/mezeo/src</outputDirectory>
+            <outputDirectory>providers/slicehost/src</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>mezeo/pcs2/target/apidocs</directory>
-            <outputDirectory>providers/mezeo/docs</outputDirectory>            
+            <directory>slicehost/target/apidocs</directory>
+            <outputDirectory>providers/slicehost/docs</outputDirectory>            
         </fileSet>
         <fileSet>
-            <directory>mezeo/pcs2</directory>
-            <includes>
-                <include>README.txt</include>
-            </includes>
-            <outputDirectory>providers/mezeo</outputDirectory>            
-        </fileSet>
-        
-        <!-- providers: nirvanix-->
-        <fileSet>
-            <directory>nirvanix/sdn/target</directory>
-            <includes>
-                <include>jclouds-sdn-${project.version}.jar</include>
-            </includes>
-            <outputDirectory>providers/nirvanix/lib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>nirvanix/sdn/target</directory>
-            <includes>
-                <include>jclouds-sdn-${project.version}-sources.jar</include>
-            </includes>
-            <outputDirectory>providers/nirvanix/src</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>nirvanix/sdn/target/apidocs</directory>
-            <outputDirectory>providers/nirvanix/docs</outputDirectory>            
-        </fileSet>
-        <fileSet>
-            <directory>nirvanix/sdn</directory>
+            <directory>slicehost</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
-            <outputDirectory>providers/nirvanix</outputDirectory>            
-        </fileSet>
+            <outputDirectory>providers/slicehost</outputDirectory>            
+        </fileSet> 
         
         <!-- providers: rackspace -->
         <fileSet>
@@ -322,6 +295,33 @@
                 <include>README.txt</include>
             </includes>
             <outputDirectory>providers/rackspace</outputDirectory>            
+        </fileSet> 
+        
+        <!-- providers: gogrid -->
+        <fileSet>
+            <directory>gogrid/target</directory>
+            <includes>
+                <include>jclouds-gogrid-${project.version}.jar</include>
+            </includes>
+            <outputDirectory>providers/gogrid/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>gogrid/target</directory>
+            <includes>
+                <include>jclouds-gogrid-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/gogrid/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>gogrid/target/apidocs</directory>
+            <outputDirectory>providers/gogrid/docs</outputDirectory>            
+        </fileSet>
+        <fileSet>
+            <directory>gogrid</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/gogrid</outputDirectory>            
         </fileSet> 
         
         <!-- providers: rimuhosting -->
@@ -351,7 +351,62 @@
             <outputDirectory>providers/rimuhosting</outputDirectory>            
         </fileSet> 
         
+        <!-- providers: bluelock -->
+        <fileSet>
+            <directory>vcloud/core/target</directory>
+            <includes>
+                <include>jclouds-vcloud-${project.version}.jar</include>
+            </includes>
+            <outputDirectory>providers/bluelock/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>vcloud/core/target</directory>
+            <includes>
+                <include>jclouds-vcloud-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/bluelock/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>vcloud/bluelock/target</directory>
+            <includes>
+                <include>jclouds-bluelock-${project.version}.jar</include>
+            </includes>
+            <outputDirectory>providers/bluelock/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>vcloud/bluelock/target</directory>
+            <includes>
+                <include>jclouds-bluelock-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/bluelock/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>vcloud/bluelock/target/apidocs</directory>
+            <outputDirectory>providers/bluelock/docs</outputDirectory>            
+        </fileSet>
+        <fileSet>
+            <directory>vcloud/bluelock</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/bluelock</outputDirectory>            
+        </fileSet>     
+        
         <!-- providers: terremark -->
+        <fileSet>
+            <directory>vcloud/core/target</directory>
+            <includes>
+                <include>jclouds-vcloud-${project.version}.jar</include>
+            </includes>
+            <outputDirectory>providers/terremark/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>vcloud/core/target</directory>
+            <includes>
+                <include>jclouds-vcloud-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/terremark/src</outputDirectory>
+        </fileSet>
         <fileSet>
             <directory>vcloud/terremark/target</directory>
             <includes>
@@ -378,6 +433,74 @@
             <outputDirectory>providers/terremark</outputDirectory>            
         </fileSet>     
         
+        <!-- providers: chef -->
+        <fileSet>
+            <directory>chef/target</directory>
+            <includes>
+                <include>jclouds-chef-${project.version}.jar</include>
+            </includes>
+            <outputDirectory>providers/chef/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>chef/target</directory>
+            <includes>
+                <include>jclouds-chef-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/chef/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>chef/target/apidocs</directory>
+            <outputDirectory>providers/chef/docs</outputDirectory>            
+        </fileSet>
+        <fileSet>
+            <directory>chef</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/chef</outputDirectory>            
+        </fileSet> 
+
+        <!-- providers: opscodeplatform -->
+        <fileSet>
+            <directory>chef/target</directory>
+            <includes>
+                <include>jclouds-chef-${project.version}.jar</include>
+            </includes>
+            <outputDirectory>providers/opscodeplatform/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>chef/target</directory>
+            <includes>
+                <include>jclouds-chef-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/opscodeplatform/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>opscodeplatform/target</directory>
+            <includes>
+                <include>jclouds-opscodeplatform-${project.version}.jar</include>
+            </includes>
+            <outputDirectory>providers/opscodeplatform/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>opscodeplatform/target</directory>
+            <includes>
+                <include>jclouds-opscodeplatform-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/opscodeplatform/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>opscodeplatform/target/apidocs</directory>
+            <outputDirectory>providers/opscodeplatform/docs</outputDirectory>            
+        </fileSet>
+        <fileSet>
+            <directory>opscodeplatform</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/opscodeplatform</outputDirectory>            
+        </fileSet> 
+
         <!-- providers: twitter -->
         <fileSet>
             <directory>twitter/target</directory>
