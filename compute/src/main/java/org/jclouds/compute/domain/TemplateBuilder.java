@@ -55,17 +55,17 @@ public interface TemplateBuilder {
    TemplateBuilder fromTemplate(Template image);
 
    /**
-    * configure this template to the smallest size.
+    * configure this template to the smallest size, based on cores, ram, then disk
     */
    TemplateBuilder smallest();
 
    /**
-    * configure this template to the fastest size.
+    * configure this template to the fastest size, based on cpu
     */
    TemplateBuilder fastest();
 
    /**
-    * configure this template to the largest size.
+    * configure this template to the largest size, based on cores, ram, then disk
     */
    TemplateBuilder biggest();
 

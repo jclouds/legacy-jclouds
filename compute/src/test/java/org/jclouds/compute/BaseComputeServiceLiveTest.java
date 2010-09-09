@@ -514,7 +514,7 @@ public abstract class BaseComputeServiceLiveTest {
       for (Size size : client.listSizes()) {
          assert size.getProviderId() != null;
          assert size.getCores() > 0;
-         assert size.getDisk() > 0;
+         assert size.getDisk() >= 0;
          assert size.getRam() > 0;
          assertEquals(size.getType(), ComputeType.SIZE);
       }

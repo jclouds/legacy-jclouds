@@ -91,5 +91,29 @@
             <rootDeviceType>instance-store</rootDeviceType>
             <blockDeviceMapping />
         </item>
+        <item>
+            <imageId>ami-10f3a255</imageId>
+            <imageLocation>099720109477/ebs/ubuntu-images/ubuntu-lucid-10.04-i386-server-20100827</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>099720109477</imageOwnerId>
+            <isPublic>true</isPublic>
+            <architecture>i386</architecture>
+            <imageType>machine</imageType>
+            <kernelId>aki-a8f0a1ed</kernelId>
+            <name>ebs/ubuntu-images/ubuntu-lucid-10.04-i386-server-20100827</name>
+            <rootDeviceType>ebs</rootDeviceType>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <blockDeviceMapping>
+                <item>
+                    <deviceName>/dev/sda1</deviceName>
+                    <ebs>
+                        <snapshotId>snap-76eff01e</snapshotId>
+                        <volumeSize>15</volumeSize>
+                        <deleteOnTermination>true</deleteOnTermination>
+                    </ebs>
+                </item>
+            </blockDeviceMapping>
+            <virtualizationType>paravirtual</virtualizationType>
+        </item>
     </imagesSet>
 </DescribeImagesResponse>

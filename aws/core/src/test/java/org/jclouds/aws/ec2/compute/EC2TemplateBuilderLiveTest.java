@@ -70,6 +70,7 @@ public class EC2TemplateBuilderLiveTest {
          assertEquals(template.getImage().getOperatingSystem().is64Bit(), true);
          assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
          assertEquals(template.getImage().getVersion(), "4.4.10");
+         assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
          assertEquals(template.getLocation().getId(), "us-east-1");
          assertEquals(template.getSize().getCores(), 13.0d); // because it is m2 2xl
          assertEquals(template.getSize().getId(), InstanceType.M2_2XLARGE); 
@@ -90,8 +91,9 @@ public class EC2TemplateBuilderLiveTest {
          Template defaultTemplate = newContext.getComputeService().templateBuilder().build();
          assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
          assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
-         assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
+         assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
          assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+         assertEquals(defaultTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
          assertEquals(defaultTemplate.getLocation().getId(), "us-east-1");
          assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
          newContext.getComputeService().templateBuilder().imageId(
@@ -105,7 +107,28 @@ public class EC2TemplateBuilderLiveTest {
             newContext.close();
       }
    }
+   
+   @Test
+   public void testTemplateBuilderMicro() throws IOException {
+      ComputeServiceContext newContext = null;
+      try {
+         newContext = new ComputeServiceContextFactory().createContext("ec2", user, password, ImmutableSet
+                  .of(new Log4JLoggingModule()));
 
+         Template microTemplate = newContext.getComputeService().templateBuilder().sizeId(InstanceType.T1_MICRO).build();
+         assert (microTemplate.getImage().getProviderId().startsWith("ami-")) : microTemplate;
+         assertEquals(microTemplate.getImage().getOperatingSystem().getVersion(), "9.10");
+         assertEquals(microTemplate.getImage().getOperatingSystem().is64Bit(), false);
+         assertEquals(microTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+         assertEquals(microTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
+         assertEquals(microTemplate.getLocation().getId(), "us-east-1");
+         assertEquals(microTemplate.getSize().getCores(), 1.0d);
+      } finally {
+         if (newContext != null)
+            newContext.close();
+      }
+   }
+   
    @Test
    public void testTemplateBuilderWithNoOwnersParsesImageOnDemand() throws IOException {
       ComputeServiceContext newContext = null;
@@ -126,6 +149,7 @@ public class EC2TemplateBuilderLiveTest {
          assertEquals(template.getImage().getOperatingSystem().is64Bit(), true);
          assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
          assertEquals(template.getImage().getVersion(), "4.4.10");
+         assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
          assertEquals(template.getLocation().getId(), "us-east-1");
          assertEquals(template.getSize().getCores(), 4.0d); // because it is 64bit
          assertEquals(template.getSize().getId(), "m1.large"); // because it is 64bit

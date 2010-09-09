@@ -75,8 +75,8 @@ public class EC2SizeSupplier implements Supplier<Set<? extends Size>> {
          });
          sizes.add(new EC2Size(location, InstanceType.CC1_4XLARGE, 33.5, 23 * 1024, 1690, ccAmis));
       }
-      sizes.addAll(ImmutableSet.<Size> of(EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE, EC2Size.M1_SMALL,
-               EC2Size.M1_XLARGE, EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE, EC2Size.M2_4XLARGE));
+      sizes.addAll(ImmutableSet.<Size> of(EC2Size.T1_MICRO, EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE,
+               EC2Size.M1_SMALL, EC2Size.M1_XLARGE, EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE, EC2Size.M2_4XLARGE));
       return sizes;
    }
 }

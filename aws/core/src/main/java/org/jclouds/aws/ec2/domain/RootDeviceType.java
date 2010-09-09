@@ -37,6 +37,10 @@ public enum RootDeviceType {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
    }
 
+   public String toString() {
+      return value();
+   }
+
    public static RootDeviceType fromValue(String v) {
       return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, v));
    }

@@ -136,7 +136,8 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
       }
       OperatingSystem os = new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
       return new ImageImpl(from.getId(), name, from.getRegion() + "/" + from.getId(), location, null, ImmutableMap
-               .<String, String> of("owner", from.getImageOwnerId()), os, description, version, defaultCredentials);
+               .<String, String> of("owner", from.getImageOwnerId(), "rootDeviceType", from.getRootDeviceType()
+                        .toString()), os, description, version, defaultCredentials);
 
    }
 

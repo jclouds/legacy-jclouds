@@ -19,6 +19,7 @@
 
 package org.jclouds.aws.ec2.compute.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.not;
 import static org.jclouds.compute.predicates.ImagePredicates.idIn;
 import static org.jclouds.compute.predicates.ImagePredicates.is64Bit;
@@ -26,9 +27,12 @@ import static org.jclouds.compute.predicates.ImagePredicates.is64Bit;
 import java.util.Arrays;
 
 import org.jclouds.aws.ec2.domain.InstanceType;
+import org.jclouds.aws.ec2.domain.RootDeviceType;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.internal.SizeImpl;
 import org.jclouds.domain.Location;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -39,6 +43,34 @@ public class EC2Size extends SizeImpl {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8605688733788974797L;
    private final String instanceType;
+
+   /**
+    * evaluates true if the Image has the following rootDeviceType
+    * 
+    * @param type
+    *           rootDeviceType of the image
+    * @return predicate
+    */
+   public static Predicate<Image> hasRootDeviceType(final RootDeviceType type) {
+      checkNotNull(type, "type must be defined");
+      return new Predicate<Image>() {
+         @Override
+         public boolean apply(Image image) {
+            return type.toString().equals(image.getUserMetadata().get("rootDeviceType"));
+         }
+
+         @Override
+         public String toString() {
+            return "hasRootDeviceType(" + type + ")";
+         }
+      };
+   }
+
+   EC2Size(String instanceType, Double cores, Integer ram, Integer disk, RootDeviceType rootDeviceType) {
+      super(instanceType, instanceType, instanceType, null, null, ImmutableMap.<String, String> of(), cores, ram, disk,
+               hasRootDeviceType(rootDeviceType));
+      this.instanceType = instanceType;
+   }
 
    EC2Size(String instanceType, Double cores, Integer ram, Integer disk, boolean is64Bit) {
       super(instanceType, instanceType, instanceType, null, null, ImmutableMap.<String, String> of(), cores, ram, disk,
@@ -59,10 +91,15 @@ public class EC2Size extends SizeImpl {
       return instanceType;
    }
 
+
    /**
     * @see InstanceType#M1_SMALL
     */
    public static final EC2Size M1_SMALL = new EC2Size(InstanceType.M1_SMALL, 1.0, 1740, 160, false);
+   /**
+    * @see InstanceType#T1_MICRO
+    */
+   public static final EC2Size T1_MICRO = new EC2Size(InstanceType.T1_MICRO, 1.0, 630, 0, RootDeviceType.EBS);
    /**
     * @see InstanceType#M1_LARGE
     */

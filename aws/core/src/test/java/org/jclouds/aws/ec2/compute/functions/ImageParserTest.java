@@ -54,7 +54,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       InputStream is = getClass().getResourceAsStream("/ec2/alestic_canonical.xml");
 
       Set<Image> result = parseImages(is);
-      assertEquals(result.size(), 7);
+      assertEquals(result.size(), 8);
 
       ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), Suppliers
                .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
@@ -73,7 +73,8 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(ubuntuHardy.getOperatingSystem().getDescription(),
                "ubuntu-images-us/ubuntu-hardy-8.04-i386-server-20091130.manifest.xml");
       assertEquals(ubuntuHardy.getOperatingSystem().is64Bit(), false);
-      assertEquals(ubuntuHardy.getUserMetadata(), ImmutableMap.<String, String> of("owner", "099720109477"));
+      assertEquals(ubuntuHardy.getUserMetadata(), ImmutableMap.<String, String> of("owner", "099720109477",
+               "rootDeviceType", "instance-store"));
       assertEquals(ubuntuHardy.getVersion(), "20091130");
 
       org.jclouds.compute.domain.Image alesticKarmic = parser.apply(Iterables.get(result, 1));
@@ -90,7 +91,8 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(alesticKarmic.getOperatingSystem().getDescription(),
                "alestic/ubuntu-9.10-karmic-base-20090623.manifest.xml");
       assertEquals(alesticKarmic.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(alesticKarmic.getUserMetadata(), ImmutableMap.<String, String> of("owner", "063491364108"));
+      assertEquals(alesticKarmic.getUserMetadata(), ImmutableMap.<String, String> of("owner", "063491364108",
+               "rootDeviceType", "instance-store"));
       assertEquals(alesticKarmic.getVersion(), "20090623");
 
       org.jclouds.compute.domain.Image ubuntuKarmic = parser.apply(Iterables.get(result, 2));
@@ -108,7 +110,8 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(ubuntuKarmic.getOperatingSystem().getDescription(),
                "ubuntu-images-us/ubuntu-karmic-9.10-i386-server-20100121.manifest.xml");
       assertEquals(ubuntuKarmic.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(ubuntuKarmic.getUserMetadata(), ImmutableMap.<String, String> of("owner", "099720109477"));
+      assertEquals(ubuntuKarmic.getUserMetadata(), ImmutableMap.<String, String> of("owner", "099720109477",
+               "rootDeviceType", "instance-store"));
       assertEquals(ubuntuKarmic.getVersion(), "20100121");
 
       // should skip testing image
@@ -128,7 +131,8 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(alesticHardy.getOperatingSystem().getDescription(),
                "alestic/ubuntu-8.04-hardy-base-20080905.manifest.xml");
       assertEquals(alesticHardy.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(alesticHardy.getUserMetadata(), ImmutableMap.<String, String> of("owner", "063491364108"));
+      assertEquals(alesticHardy.getUserMetadata(), ImmutableMap.<String, String> of("owner", "063491364108",
+               "rootDeviceType", "instance-store"));
       assertEquals(alesticHardy.getVersion(), "20080905");
 
       org.jclouds.compute.domain.Image ubuntuLucid = parser.apply(Iterables.get(result, 5));
@@ -146,11 +150,31 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(ubuntuLucid.getOperatingSystem().getDescription(),
                "ubuntu-images-us-west-1/ubuntu-lucid-10.04-i386-server-20100427.1.manifest.xml");
       assertEquals(ubuntuLucid.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(ubuntuLucid.getUserMetadata(), ImmutableMap.<String, String> of("owner", "099720109477"));
+      assertEquals(ubuntuLucid.getUserMetadata(), ImmutableMap.<String, String> of("owner", "099720109477",
+               "rootDeviceType", "instance-store"));
       assertEquals(ubuntuLucid.getVersion(), "20100427.1");
 
       // should skip kernel
       assert parser.apply(Iterables.get(result, 6)) == null;
+
+      org.jclouds.compute.domain.Image ubuntuEbs = parser.apply(Iterables.get(result, 7));
+
+      assertEquals(ubuntuEbs.getOperatingSystem().is64Bit(), false);
+      assertEquals(ubuntuEbs.getDescription(), "099720109477/ebs/ubuntu-images/ubuntu-lucid-10.04-i386-server-20100827");
+      assertEquals(ubuntuEbs.getId(), "us-east-1/ami-10f3a255");
+      assertEquals(ubuntuEbs.getProviderId(), "ami-10f3a255");
+      assertEquals(ubuntuEbs.getLocation(), defaultLocation);
+      assertEquals(ubuntuEbs.getName(), null);
+      assertEquals(ubuntuEbs.getOperatingSystem().getName(), null);
+      assertEquals(ubuntuEbs.getOperatingSystem().getVersion(), "10.04");
+      assertEquals(ubuntuEbs.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(ubuntuEbs.getOperatingSystem().getDescription(),
+               "099720109477/ebs/ubuntu-images/ubuntu-lucid-10.04-i386-server-20100827");
+      assertEquals(ubuntuEbs.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(ubuntuEbs.getUserMetadata(), ImmutableMap.<String, String> of("owner", "099720109477",
+               "rootDeviceType", "ebs"));
+      assertEquals(ubuntuEbs.getVersion(), "20100827");
+
    }
 
    private Location defaultLocation = new LocationImpl(LocationScope.REGION, "us-east-1", "us-east-1", null);
@@ -178,7 +202,8 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(image.getOperatingSystem().getDescription(),
                "vostok-builds/vostok-0.95-5622/vostok-0.95-5622.manifest.xml");
       assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UNKNOWN);
-      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "133804938231"));
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "133804938231", "rootDeviceType",
+               "instance-store"));
       assertEquals(image.getVersion(), "5622");
 
    }
@@ -205,7 +230,8 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(image.getOperatingSystem().getArch(), "hvm");
       assertEquals(image.getOperatingSystem().getDescription(), "amazon/EC2 CentOS 5.4 HVM AMI");
       assertEquals(image.getOperatingSystem().getFamily(), OsFamily.CENTOS);
-      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "206029621532"));
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "206029621532", "rootDeviceType",
+               "ebs"));
       assertEquals(image.getVersion(), null);
 
    }
@@ -233,7 +259,8 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(image.getOperatingSystem().getDescription(),
                "rightscale-us-east/CentOS_5.4_x64_v4.4.10.manifest.xml");
       assertEquals(image.getOperatingSystem().getFamily(), OsFamily.CENTOS);
-      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "411009282317"));
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "411009282317", "rootDeviceType",
+               "instance-store"));
       assertEquals(image.getVersion(), "4.4.10");
 
       image = parser.apply(Iterables.get(result, 1));
@@ -249,7 +276,8 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(image.getOperatingSystem().getDescription(),
                "411009282317/RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha");
       assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "411009282317"));
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "411009282317", "rootDeviceType",
+               "ebs"));
       assertEquals(image.getVersion(), "4.5.3_EBS_Alpha");
 
    }
@@ -276,7 +304,8 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
       assertEquals(image.getOperatingSystem().getDescription(), "centos-5.3-x86_64/centos.5-3.x86-64.img.manifest.xml");
       assertEquals(image.getOperatingSystem().getFamily(), OsFamily.CENTOS);
-      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "admin"));
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "admin", "rootDeviceType",
+               "instance-store"));
       assertEquals(image.getVersion(), null);
 
       // should skip test images

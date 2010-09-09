@@ -169,8 +169,8 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       String region = injector.getInstance(Key.get(String.class, Region.class));
-      return "Eucalyptus".equals(region) ? template.osFamily(CENTOS).smallest() : template.os64Bit(false).osFamily(
-               UBUNTU).osVersionMatches(".*10\\.?04.*").osDescriptionMatches("^ubuntu-images.*");
+      return "Eucalyptus".equals(region) ? template.osFamily(CENTOS).smallest() : template.osFamily(
+               UBUNTU).osVersionMatches("10.04").os64Bit(true).osDescriptionMatches(".*ubuntu-images.*");
    }
 
    @Provides
