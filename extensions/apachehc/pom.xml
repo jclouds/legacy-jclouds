@@ -46,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>org.mortbay.jetty</groupId>
-            <artifactId>jetty</artifactId>
+            <artifactId>jetty-ssl</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

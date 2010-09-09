@@ -230,8 +230,8 @@
         <dependencies>
             <dependency>
                 <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty</artifactId>
-                <version>7.0.0pre3</version>
+                <artifactId>jetty-ssl</artifactId>
+                <version>7.0.0.pre5</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
