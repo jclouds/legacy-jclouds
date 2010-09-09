@@ -18,7 +18,7 @@
 ====
 
 #
-# The jclouds provider for Hosting.com's vCloud Express (http://www.bluelock/vcloudexpress/) platform.
+# The jclouds provider for BlueLock's vCloud Director platform.
 #
 # TODO: Implementation status.
 # TODO: Supported features.
