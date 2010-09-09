@@ -36,7 +36,6 @@ public class ProvidersInPropertiesTest {
    @Test
    public void testSupportedProviders() {
       Iterable<String> providers = Utils.getSupportedProviders();
-      assert Iterables.contains(providers, "bluelock-vcloudexpress") : providers;
       assert Iterables.contains(providers, "bluelock-vclouddirector") : providers;
 
    }
@@ -44,7 +43,6 @@ public class ProvidersInPropertiesTest {
    @Test
    public void testSupportedComputeServiceProviders() {
       Iterable<String> providers = ComputeServiceUtils.getSupportedProviders();
-      assert Iterables.contains(providers, "bluelock-vcloudexpress") : providers;
       assert Iterables.contains(providers, "bluelock-vclouddirector") : providers;
    }
 

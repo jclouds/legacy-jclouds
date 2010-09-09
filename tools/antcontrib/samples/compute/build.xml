@@ -31,7 +31,7 @@
 
   <input
     message="Which provider would you like to use (ec2, cloudservers, vcloud, terremark, rimuhosting)?"
-    validargs="ec2,cloudservers,vcloud,trmk-ecloud,trmk-vcloudexpress,ibmdev,eucalyptus,bluelock-vcloudexpress,bluelock-vclouddirector,gogrid,rimuhosting"
+    validargs="ec2,cloudservers,vcloud,trmk-ecloud,trmk-vcloudexpress,eucalyptus,bluelock-vclouddirector,gogrid,rimuhosting"
     addproperty="provider"
   />
 

@@ -35,10 +35,6 @@
     <properties>
         <!-- when instances are hung, open a ticket and add their names here -->
         <jclouds.compute.blacklist.nodes></jclouds.compute.blacklist.nodes>
-        <bluelock-vcloudexpress.endpoint>https://express.bluelock.com/api</bluelock-vcloudexpress.endpoint>
-        <bluelock-vcloudexpress.apiversion>0.8</bluelock-vcloudexpress.apiversion>
-        <bluelock-vcloudexpress.identity>FIXME</bluelock-vcloudexpress.identity>
-        <bluelock-vcloudexpress.credential>FIXME</bluelock-vcloudexpress.credential>
         <bluelock-vclouddirector.endpoint>https://vcenterprise.bluelock.com/api</bluelock-vclouddirector.endpoint>
         <bluelock-vclouddirector.apiversion>1.0</bluelock-vclouddirector.apiversion>
         <bluelock-vclouddirector.identity>FIXME</bluelock-vclouddirector.identity>
@@ -82,22 +78,6 @@
                                 </goals>
                                 <configuration>
                                     <systemProperties>
-                                        <property>
-                                            <name>bluelock-vcloudexpress.endpoint</name>
-                                            <value>${bluelock-vcloudexpress.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>bluelock-vcloudexpress.apiversion</name>
-                                            <value>${bluelock-vcloudexpress.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>bluelock-vcloudexpress.identity</name>
-                                            <value>${bluelock-vcloudexpress.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>bluelock-vcloudexpress.credential</name>
-                                            <value>${bluelock-vcloudexpress.credential}</value>
-                                        </property>
                                         <property>
                                             <name>bluelock-vclouddirector.endpoint</name>
                                             <value>${bluelock-vclouddirector.endpoint}</value>
