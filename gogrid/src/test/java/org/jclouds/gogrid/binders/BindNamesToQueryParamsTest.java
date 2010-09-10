@@ -26,9 +26,10 @@ import java.net.URI;
 import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
 
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
+
+import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * Tests that name bindings are proper for request

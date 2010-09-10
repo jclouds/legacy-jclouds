@@ -116,7 +116,7 @@ public interface S3AsyncClient {
     * @see S3Client#getObject
     */
    @GET
-   @Path("{key}")
+   @Path("/{key}")
    @ExceptionParser(ReturnNullOnKeyNotFound.class)
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
    ListenableFuture<S3Object> getObject(
@@ -127,7 +127,7 @@ public interface S3AsyncClient {
     * @see S3Client#headObject
     */
    @HEAD
-   @Path("{key}")
+   @Path("/{key}")
    @ExceptionParser(ReturnNullOnKeyNotFound.class)
    @ResponseParser(ParseObjectMetadataFromHeaders.class)
    ListenableFuture<ObjectMetadata> headObject(
@@ -138,7 +138,7 @@ public interface S3AsyncClient {
     * @see S3Client#objectExists
     */
    @HEAD
-   @Path("{key}")
+   @Path("/{key}")
    @ExceptionParser(ReturnFalseOnKeyNotFound.class)
    ListenableFuture<Boolean> objectExists(
             @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators( { BucketNameValidator.class }) String bucketName,
@@ -148,7 +148,7 @@ public interface S3AsyncClient {
     * @see S3Client#deleteObject
     */
    @DELETE
-   @Path("{key}")
+   @Path("/{key}")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteObject(
             @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators( { BucketNameValidator.class }) String bucketName,
@@ -158,7 +158,7 @@ public interface S3AsyncClient {
     * @see S3Client#putObject
     */
    @PUT
-   @Path("{key}")
+   @Path("/{key}")
    @ResponseParser(ParseETagHeader.class)
    ListenableFuture<String> putObject(
             @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators( { BucketNameValidator.class }) String bucketName,
@@ -249,7 +249,7 @@ public interface S3AsyncClient {
     * @see S3Client#copyObject
     */
    @PUT
-   @Path("{destinationObject}")
+   @Path("/{destinationObject}")
    @Headers(keys = "x-amz-copy-source", values = "/{sourceBucket}/{sourceObject}")
    @XMLResponseParser(CopyObjectHandler.class)
    ListenableFuture<ObjectMetadata> copyObject(
@@ -284,7 +284,7 @@ public interface S3AsyncClient {
     */
    @GET
    @QueryParams(keys = "acl")
-   @Path("{key}")
+   @Path("/{key}")
    @XMLResponseParser(AccessControlListHandler.class)
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    ListenableFuture<AccessControlList> getObjectACL(
@@ -296,7 +296,7 @@ public interface S3AsyncClient {
     */
    @PUT
    @QueryParams(keys = "acl")
-   @Path("{key}")
+   @Path("/{key}")
    ListenableFuture<Boolean> putObjectACL(
             @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators( { BucketNameValidator.class }) String bucketName,
             @PathParam("key") String key,

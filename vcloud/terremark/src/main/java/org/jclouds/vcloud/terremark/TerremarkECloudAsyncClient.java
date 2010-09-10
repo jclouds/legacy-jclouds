@@ -58,9 +58,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to eCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href=
- *      "http://support.theenterprisecloud.com/kb/default.asp?id=645&Lang=1&SID="
- *      />
+ * @see <a href= "http://support.theenterprisecloud.com/kb/default.asp?id=645&Lang=1&SID=" />
  * @author Adrian Cole
  */
 @RequestFilters(SetVCloudTokenCookie.class)
@@ -70,22 +68,24 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     * @see TerremarkVCloudExpressClient#getAllInternetServices
     */
    @GET
+   @Path("")
    @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServicesHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @Override
    ListenableFuture<? extends Set<InternetService>> getAllInternetServicesInVDC(
-         @EndpointParam(parser = VDCURIToInternetServicesEndpoint.class) URI vDCId);
+            @EndpointParam(parser = VDCURIToInternetServicesEndpoint.class) URI vDCId);
 
    /**
     * @see TerremarkVCloudExpressClient#activatePublicIpInVDC
     */
    @POST
+   @Path("")
    @Consumes(PUBLICIP_XML)
    @XMLResponseParser(PublicIpAddressesHandler.class)
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<PublicIpAddress> activatePublicIpInVDC(
-         @EndpointParam(parser = VDCURIToPublicIPsEndpoint.class) URI vDCId);
+            @EndpointParam(parser = VDCURIToPublicIPsEndpoint.class) URI vDCId);
 
    /**
     * @see TerremarkVCloudExpressClient#addInternetServiceToExistingIp
@@ -98,8 +98,8 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
    @MapBinder(AddInternetServiceOptions.class)
    @Override
    ListenableFuture<? extends InternetService> addInternetServiceToExistingIp(@EndpointParam URI existingIpId,
-         @MapPayloadParam("name") String serviceName, @MapPayloadParam("protocol") Protocol protocol,
-         @MapPayloadParam("port") int port, AddInternetServiceOptions... options);
+            @MapPayloadParam("name") String serviceName, @MapPayloadParam("protocol") Protocol protocol,
+            @MapPayloadParam("port") int port, AddInternetServiceOptions... options);
 
    /**
     * @see TerremarkVCloudExpressClient#getInternetServicesOnPublicIP
@@ -116,6 +116,7 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     * @see TerremarkVCloudExpressClient#getInternetService
     */
    @GET
+   @Path("")
    @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServiceHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)

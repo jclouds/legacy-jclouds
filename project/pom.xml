@@ -92,13 +92,6 @@
             </snapshots>
         </repository>
         <repository>
-            <id>jboss</id>
-            <url>http://repository.jboss.org/nexus/content/groups/public-jboss</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>googlecode.java-xmlbuilder</id>
             <url>http://java-xmlbuilder.googlecode.com/svn/repo</url>
             <snapshots>

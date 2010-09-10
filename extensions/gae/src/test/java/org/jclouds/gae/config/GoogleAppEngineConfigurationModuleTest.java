@@ -24,7 +24,6 @@ import java.util.concurrent.ExecutorService;
 
 import javax.ws.rs.core.UriBuilder;
 
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.Constants;
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.gae.GaeHttpCommandExecutorService;
@@ -37,6 +36,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
+import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * Tests the ability to configure a {@link GoogleAppEngineConfigurationModule}

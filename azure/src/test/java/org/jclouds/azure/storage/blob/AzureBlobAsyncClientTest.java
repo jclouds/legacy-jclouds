@@ -140,7 +140,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
 
       HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(request, "PUT https://identity.blob.core.windows.net/%24root?restype=container HTTP/1.1");
+      assertRequestLineEquals(request, "PUT https://identity.blob.core.windows.net/$root?restype=container HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -154,7 +154,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
       HttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request,
-            "DELETE https://identity.blob.core.windows.net/%24root?restype=container HTTP/1.1");
+            "DELETE https://identity.blob.core.windows.net/$root?restype=container HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -168,7 +168,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
       HttpRequest request = processor.createRequest(method, withPublicAcl().withMetadata(
             ImmutableMultimap.of("foo", "bar")));
 
-      assertRequestLineEquals(request, "PUT https://identity.blob.core.windows.net/%24root?restype=container HTTP/1.1");
+      assertRequestLineEquals(request, "PUT https://identity.blob.core.windows.net/$root?restype=container HTTP/1.1");
       assertNonPayloadHeadersEqual(request,
             "x-ms-meta-foo: bar\nx-ms-prop-publicaccess: true\nx-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
@@ -197,7 +197,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
       HttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request,
-            "GET https://identity.blob.core.windows.net/%24root?restype=container&comp=list HTTP/1.1");
+            "GET https://identity.blob.core.windows.net/$root?restype=container&comp=list HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
 

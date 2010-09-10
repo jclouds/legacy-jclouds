@@ -33,7 +33,6 @@ import java.util.Set;
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
 
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.PerformanceTest;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.sqs.domain.Queue;
@@ -55,6 +54,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
+import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * Tests behavior of {@code ListQueuesResponseHandlerr}

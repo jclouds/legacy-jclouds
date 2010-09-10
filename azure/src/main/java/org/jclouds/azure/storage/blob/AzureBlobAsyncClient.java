@@ -83,6 +83,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 @SkipEncoding('/')
 @RequestFilters(SharedKeyLiteAuthentication.class)
 @Headers(keys = AzureStorageHeaders.VERSION, values = "2009-09-19")
+@Path("/")
 public interface AzureBlobAsyncClient {
 
    public org.jclouds.azure.storage.blob.domain.AzureBlob newBlob();
@@ -92,7 +93,7 @@ public interface AzureBlobAsyncClient {
     */
    @GET
    @XMLResponseParser(AccountNameEnumerationResultsHandler.class)
-   @Path("/")
+   @Path("")
    @QueryParams(keys = "comp", values = "list")
    ListenableFuture<? extends BoundedSet<ContainerProperties>> listContainers(
             ListOptions... listOptions);

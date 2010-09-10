@@ -35,7 +35,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.ws.rs.core.UriBuilder;
 
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.http.BaseJettyTest;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
@@ -54,6 +53,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Supplier;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
+import com.sun.jersey.api.uri.UriBuilderImpl;
 
 @Test(groups = "unit", testName = "core.BackoffLimitedRetryHandler")
 public class BackoffLimitedRetryHandlerTest {

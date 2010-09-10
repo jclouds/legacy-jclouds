@@ -70,6 +70,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(SignRequest.class)
 @SkipEncoding('/')
+@Path("/rest/namespace")
 public interface AtmosStorageAsyncClient {
    /**
     * Creates a default implementation of AtmosObject
@@ -80,17 +81,16 @@ public interface AtmosStorageAsyncClient {
     * @see AtmosStorageClient#listDirectories
     */
    @GET
-   @Path("/rest/namespace")
+   @Path("")
    @ResponseParser(ParseDirectoryListFromContentAndHeaders.class)
    @Consumes(MediaType.TEXT_XML)
-   ListenableFuture<BoundedSet<? extends DirectoryEntry>> listDirectories(
-            ListOptions... options);
+   ListenableFuture<BoundedSet<? extends DirectoryEntry>> listDirectories(ListOptions... options);
 
    /**
     * @see AtmosStorageClient#listDirectory
     */
    @GET
-   @Path("/rest/namespace/{directoryName}/")
+   @Path("/{directoryName}/")
    @ResponseParser(ParseDirectoryListFromContentAndHeaders.class)
    @ExceptionParser(ThrowContainerNotFoundOn404.class)
    @Consumes(MediaType.TEXT_XML)
@@ -101,7 +101,7 @@ public interface AtmosStorageAsyncClient {
     * @see AtmosStorageClient#createDirectory
     */
    @POST
-   @Path("/rest/namespace/{directoryName}/")
+   @Path("/{directoryName}/")
    @ExceptionParser(ReturnEndpointIfAlreadyExists.class)
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<URI> createDirectory(@PathParam("directoryName") String directoryName);
@@ -110,7 +110,7 @@ public interface AtmosStorageAsyncClient {
     * @see AtmosStorageClient#createFile
     */
    @POST
-   @Path("/rest/namespace/{parent}/{name}")
+   @Path("/{parent}/{name}")
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<URI> createFile(
             @PathParam("parent") String parent,
@@ -120,7 +120,7 @@ public interface AtmosStorageAsyncClient {
     * @see AtmosStorageClient#updateFile
     */
    @PUT
-   @Path("/rest/namespace/{parent}/{name}")
+   @Path("/{parent}/{name}")
    @ExceptionParser(ThrowKeyNotFoundOn404.class)
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<Void> updateFile(
@@ -133,7 +133,7 @@ public interface AtmosStorageAsyncClient {
    @GET
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Path("/rest/namespace/{path}")
+   @Path("/{path}")
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<AtmosObject> readFile(@PathParam("path") String path, GetOptions... options);
 
@@ -143,7 +143,7 @@ public interface AtmosStorageAsyncClient {
    @HEAD
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Path("/rest/namespace/{path}")
+   @Path("/{path}")
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<AtmosObject> headFile(@PathParam("path") String path);
 
@@ -154,7 +154,7 @@ public interface AtmosStorageAsyncClient {
    @ResponseParser(ParseSystemMetadataFromHeaders.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    // currently throws 403 errors @QueryParams(keys = "metadata/system")
-   @Path("/rest/namespace/{path}")
+   @Path("/{path}")
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<SystemMetadata> getSystemMetadata(@PathParam("path") String path);
 
@@ -164,7 +164,7 @@ public interface AtmosStorageAsyncClient {
    @HEAD
    @ResponseParser(ParseSystemMetadataFromHeaders.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Path("/rest/namespace/{path}")
+   @Path("/{path}")
    @QueryParams(keys = "metadata/user")
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<UserMetadata> getUserMetadata(@PathParam("path") String path);
@@ -174,7 +174,7 @@ public interface AtmosStorageAsyncClient {
     */
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   @Path("/rest/namespace/{path}")
+   @Path("/{path}")
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<Void> deletePath(@PathParam("path") String path);
 
@@ -183,7 +183,7 @@ public interface AtmosStorageAsyncClient {
     */
    @HEAD
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
-   @Path("/rest/namespace/{path}")
+   @Path("/{path}")
    @Consumes(MediaType.WILDCARD)
    ListenableFuture<Boolean> pathExists(@PathParam("path") String path);
 

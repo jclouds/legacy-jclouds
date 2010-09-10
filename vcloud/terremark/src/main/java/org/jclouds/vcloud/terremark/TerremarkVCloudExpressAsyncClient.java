@@ -31,6 +31,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.EndpointParam;
@@ -61,8 +62,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to VCloud resources via their REST API.
  * <p/>
  * 
- * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx"
- *      />
+ * @see <a href="https://community.vcloudexpress.terremark.com/en-us/discussion_forums/f/60.aspx" />
  * @author Adrian Cole
  */
 @RequestFilters(SetVCloudTokenCookie.class)
@@ -71,39 +71,43 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
     * @see TerremarkVCloudExpressClient#addInternetServiceToVDC
     */
    @POST
+   @Path("")
    @Produces(INTERNETSERVICE_XML)
    @Consumes(INTERNETSERVICE_XML)
    @XMLResponseParser(InternetServiceHandler.class)
    @MapBinder(AddInternetServiceOptions.class)
    ListenableFuture<? extends InternetService> addInternetServiceToVDC(
-         @EndpointParam(parser = VDCURIToInternetServicesEndpoint.class) URI vDCId,
-         @MapPayloadParam("name") String serviceName, @MapPayloadParam("protocol") Protocol protocol,
-         @MapPayloadParam("port") int port, AddInternetServiceOptions... options);
+            @EndpointParam(parser = VDCURIToInternetServicesEndpoint.class) URI vDCId,
+            @MapPayloadParam("name") String serviceName, @MapPayloadParam("protocol") Protocol protocol,
+            @MapPayloadParam("port") int port, AddInternetServiceOptions... options);
 
    /**
     * @see TerremarkVCloudExpressClient#findKeyPairInOrgNamed
     */
    @GET
+   @Path("")
    @XMLResponseParser(KeyPairByNameHandler.class)
    @Consumes(KEYSLIST_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<? extends KeyPair> findKeyPairInOrg(
-         @Nullable @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org, String keyName);
+            @Nullable @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org, String keyName);
 
    /**
     * @see TerremarkVCloudExpressClient#listKeyPairsInOrgNamed
     */
    @GET
+   @Path("")
    @Consumes(KEYSLIST_XML)
    @XMLResponseParser(KeyPairsHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<KeyPair>> listKeyPairsInOrg(
-         @Nullable @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org);
+            @Nullable @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org);
 
    /**
     * @see TerremarkVCloudExpressClient#listKeyPairs
     */
    @GET
+   @Path("")
    @Consumes(KEYSLIST_XML)
    @XMLResponseParser(KeyPairsHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -113,18 +117,20 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
     * @see TerremarkVCloudExpressClient#generateKeyPairInOrg
     */
    @POST
+   @Path("")
    @Produces(KEYSLIST_XML)
    @Consumes(KEYSLIST_XML)
    @XMLResponseParser(KeyPairHandler.class)
    @MapBinder(BindCreateKeyToXmlPayload.class)
    ListenableFuture<? extends KeyPair> generateKeyPairInOrg(
-         @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org, @MapPayloadParam("name") String name,
-         @MapPayloadParam("isDefault") boolean makeDefault);
+            @EndpointParam(parser = OrgURIToKeysListEndpoint.class) URI org, @MapPayloadParam("name") String name,
+            @MapPayloadParam("isDefault") boolean makeDefault);
 
    /**
     * @see TerremarkVCloudExpressClient#getKeyPair
     */
    @GET
+   @Path("")
    @XMLResponseParser(KeyPairHandler.class)
    @Consumes(APPLICATION_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -149,6 +155,7 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
     * @see TerremarkVCloudExpressClient#deleteKeyPair
     */
    @DELETE
+   @Path("")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteKeyPair(@EndpointParam URI keyId);
 

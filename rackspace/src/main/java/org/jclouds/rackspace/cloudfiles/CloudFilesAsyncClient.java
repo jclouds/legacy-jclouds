@@ -117,7 +117,7 @@ public interface CloudFilesAsyncClient {
     * @see CloudFilesClient#setObjectInfo
     */
    @POST
-   @Path("{container}/{name}")
+   @Path("/{container}/{name}")
    ListenableFuture<Boolean> setObjectInfo(
          @PathParam("container") String container,
          @PathParam("name") String name,
@@ -143,7 +143,7 @@ public interface CloudFilesAsyncClient {
    @HEAD
    @ResponseParser(ParseContainerCDNMetadataFromHeaders.class)
    @ExceptionParser(ThrowContainerNotFoundOn404.class)
-   @Path("{container}")
+   @Path("/{container}")
    @Endpoint(CloudFilesCDN.class)
    ListenableFuture<ContainerCDNMetadata> getCDNMetadata(
          @PathParam("container") String container);
@@ -152,7 +152,7 @@ public interface CloudFilesAsyncClient {
     * @see CloudFilesClient#enableCDN(String, long);
     */
    @PUT
-   @Path("{container}")
+   @Path("/{container}")
    @Headers(keys = CloudFilesHeaders.CDN_ENABLED, values = "True")
    @ResponseParser(ParseCdnUriFromHeaders.class)
    @Endpoint(CloudFilesCDN.class)
@@ -163,7 +163,7 @@ public interface CloudFilesAsyncClient {
     * @see CloudFilesClient#enableCDN(String)
     */
    @PUT
-   @Path("{container}")
+   @Path("/{container}")
    @Headers(keys = CloudFilesHeaders.CDN_ENABLED, values = "True")
    @ResponseParser(ParseCdnUriFromHeaders.class)
    @Endpoint(CloudFilesCDN.class)
@@ -173,7 +173,7 @@ public interface CloudFilesAsyncClient {
     * @see CloudFilesClient#updateCDN
     */
    @POST
-   @Path("{container}")
+   @Path("/{container}")
    @ResponseParser(ParseCdnUriFromHeaders.class)
    @Endpoint(CloudFilesCDN.class)
    ListenableFuture<URI> updateCDN(@PathParam("container") String container,
@@ -183,7 +183,7 @@ public interface CloudFilesAsyncClient {
     * @see CloudFilesClient#disableCDN
     */
    @POST
-   @Path("{container}")
+   @Path("/{container}")
    @Headers(keys = CloudFilesHeaders.CDN_ENABLED, values = "False")
    @Endpoint(CloudFilesCDN.class)
    ListenableFuture<Boolean> disableCDN(@PathParam("container") String container);
@@ -192,7 +192,7 @@ public interface CloudFilesAsyncClient {
     * @see CloudFilesClient#createContainer
     */
    @PUT
-   @Path("{container}")
+   @Path("/{container}")
    ListenableFuture<Boolean> createContainer(
          @PathParam("container") String container);
 
@@ -201,7 +201,7 @@ public interface CloudFilesAsyncClient {
     */
    @DELETE
    @ExceptionParser(ReturnTrueOn404FalseOn409.class)
-   @Path("{container}")
+   @Path("/{container}")
    ListenableFuture<Boolean> deleteContainerIfEmpty(
          @PathParam("container") String container);
 
@@ -211,7 +211,7 @@ public interface CloudFilesAsyncClient {
    @GET
    @QueryParams(keys = "format", values = "json")
    @ResponseParser(ParseObjectInfoListFromJsonResponse.class)
-   @Path("{container}")
+   @Path("/{container}")
    ListenableFuture<PageSet<ObjectInfo>> listObjects(
          @PathParam("container") String container,
          ListContainerOptions... options);
@@ -220,7 +220,7 @@ public interface CloudFilesAsyncClient {
     * @see CloudFilesClient#containerExists
     */
    @HEAD
-   @Path("{container}")
+   @Path("/{container}")
    @ExceptionParser(ReturnFalseOnContainerNotFound.class)
    ListenableFuture<Boolean> containerExists(
          @PathParam("container") String container);
@@ -229,7 +229,7 @@ public interface CloudFilesAsyncClient {
     * @see CloudFilesClient#putObject
     */
    @PUT
-   @Path("{container}/{name}")
+   @Path("/{container}/{name}")
    @ResponseParser(ParseETagHeader.class)
    ListenableFuture<String> putObject(
          @PathParam("container") String container,
@@ -241,7 +241,7 @@ public interface CloudFilesAsyncClient {
    @GET
    @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
    @ExceptionParser(ReturnNullOnKeyNotFound.class)
-   @Path("{container}/{name}")
+   @Path("/{container}/{name}")
    ListenableFuture<CFObject> getObject(
          @PathParam("container") String container,
          @PathParam("name") String name, GetOptions... options);
@@ -252,7 +252,7 @@ public interface CloudFilesAsyncClient {
    @HEAD
    @ResponseParser(ParseObjectInfoFromHeaders.class)
    @ExceptionParser(ReturnNullOnKeyNotFound.class)
-   @Path("{container}/{name}")
+   @Path("/{container}/{name}")
    ListenableFuture<MutableObjectInfoWithMetadata> getObjectInfo(
          @PathParam("container") String container,
          @PathParam("name") String name);
@@ -262,7 +262,7 @@ public interface CloudFilesAsyncClient {
     */
    @HEAD
    @ExceptionParser(ReturnFalseOnKeyNotFound.class)
-   @Path("{container}/{name}")
+   @Path("/{container}/{name}")
    ListenableFuture<Boolean> objectExists(
          @PathParam("container") String container,
          @PathParam("name") String name);
@@ -272,7 +272,7 @@ public interface CloudFilesAsyncClient {
     */
    @DELETE
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   @Path("{container}/{name}")
+   @Path("/{container}/{name}")
    ListenableFuture<Void> removeObject(
          @PathParam("container") String container,
          @PathParam("name") String name);

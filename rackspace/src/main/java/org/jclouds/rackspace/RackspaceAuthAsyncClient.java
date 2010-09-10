@@ -35,12 +35,10 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides access to Rackspace resources via their REST API.
  * <p/>
  * 
- * @see <a
- *      href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf"
- *      />
+ * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
  * @author Adrian Cole
  */
-@Path("v" + RackspaceAuthAsyncClient.VERSION)
+@Path("/v" + RackspaceAuthAsyncClient.VERSION)
 public interface RackspaceAuthAsyncClient {
    public static final String VERSION = "1.0";
 
@@ -59,7 +57,8 @@ public interface RackspaceAuthAsyncClient {
    }
 
    @GET
+   @Path("")
    @ResponseParser(ParseAuthenticationResponseFromHeaders.class)
    ListenableFuture<AuthenticationResponse> authenticate(@HeaderParam(RackspaceHeaders.AUTH_USER) String user,
-         @HeaderParam(RackspaceHeaders.AUTH_KEY) String key);
+            @HeaderParam(RackspaceHeaders.AUTH_KEY) String key);
 }
