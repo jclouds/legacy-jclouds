@@ -23,15 +23,20 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.inject.Singleton;
+
+import com.google.common.collect.Lists;
 
 /**
  * This will close objects in the reverse order that they were added.
  * 
  * @author Adrian Cole
  */
+@Singleton
 public class Closer implements Closeable {
-   List<Closeable> methodsToClose = new CopyOnWriteArrayList<Closeable>();
+   // guice is single threaded. no need to lock this
+   List<Closeable> methodsToClose = Lists.<Closeable> newArrayList();
 
    public void addToClose(Closeable toClose) {
       methodsToClose.add(toClose);
