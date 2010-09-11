@@ -19,6 +19,7 @@
 
 package org.jclouds.rackspace.cloudservers.compute;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -55,7 +56,7 @@ public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTe
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), "DFW1");
-      assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
+      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
    @Override

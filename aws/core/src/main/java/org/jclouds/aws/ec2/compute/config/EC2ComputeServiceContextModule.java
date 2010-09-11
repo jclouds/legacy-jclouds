@@ -55,7 +55,7 @@ import org.jclouds.aws.ec2.compute.strategy.EC2LoadBalanceNodesStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2RebootNodeStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2RunNodesAndAddToSetStrategy;
 import org.jclouds.aws.ec2.compute.suppliers.EC2LocationSupplier;
-import org.jclouds.aws.ec2.compute.suppliers.EC2SizeSupplier;
+import org.jclouds.aws.ec2.compute.suppliers.EC2HardwareSupplier;
 import org.jclouds.aws.ec2.compute.suppliers.RegionAndNameToImageSupplier;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
@@ -70,7 +70,7 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.options.TemplateOptions;
@@ -255,8 +255,8 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    }
 
    @Override
-   protected Supplier<Set<? extends Size>> getSourceSizeSupplier(Injector injector) {
-      return injector.getInstance(EC2SizeSupplier.class);
+   protected Supplier<Set<? extends Hardware>> getSourceSizeSupplier(Injector injector) {
+      return injector.getInstance(EC2HardwareSupplier.class);
    }
 
    @Override

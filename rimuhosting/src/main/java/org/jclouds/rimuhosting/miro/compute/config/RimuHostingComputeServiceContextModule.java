@@ -34,7 +34,7 @@ import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
@@ -55,7 +55,7 @@ import org.jclouds.rimuhosting.miro.compute.strategy.RimuHostingListNodesStrateg
 import org.jclouds.rimuhosting.miro.compute.strategy.RimuHostingRebootNodeStrategy;
 import org.jclouds.rimuhosting.miro.compute.suppliers.RimuHostingImageSupplier;
 import org.jclouds.rimuhosting.miro.compute.suppliers.RimuHostingLocationSupplier;
-import org.jclouds.rimuhosting.miro.compute.suppliers.RimuHostingSizeSupplier;
+import org.jclouds.rimuhosting.miro.compute.suppliers.RimuHostingHardwareSupplier;
 import org.jclouds.rimuhosting.miro.domain.Server;
 import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
 
@@ -107,7 +107,7 @@ public class RimuHostingComputeServiceContextModule extends BaseComputeServiceCo
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.sizeId("MIRO1B").osFamily(UBUNTU).os64Bit(false).imageNameMatches(".*10\\.?04.*");
+      return template.hardwareId("MIRO1B").osFamily(UBUNTU).os64Bit(false).imageNameMatches(".*10\\.?04.*");
    }
 
    @VisibleForTesting
@@ -166,7 +166,7 @@ public class RimuHostingComputeServiceContextModule extends BaseComputeServiceCo
    }
 
    @Override
-   protected Supplier<Set<? extends Size>> getSourceSizeSupplier(Injector injector) {
-      return injector.getInstance(RimuHostingSizeSupplier.class);
+   protected Supplier<Set<? extends Hardware>> getSourceSizeSupplier(Injector injector) {
+      return injector.getInstance(RimuHostingHardwareSupplier.class);
    }
 }

@@ -19,6 +19,7 @@
 
 package org.jclouds.slicehost.compute;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
@@ -53,7 +54,7 @@ public class SlicehostComputeServiceLiveTest extends BaseComputeServiceLiveTest 
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), "DFW");
-      assertEquals(defaultTemplate.getSize().getCores(), 0.25d);
+      assertEquals(getCores(defaultTemplate.getHardware()), 0.25d);
    }
 
    @Override

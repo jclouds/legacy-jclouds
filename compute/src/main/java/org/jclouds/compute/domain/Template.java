@@ -37,7 +37,7 @@ public interface Template extends Cloneable {
    /**
     * Size that suits the requirements.
     */
-   Size getSize();
+   Hardware getHardware();
 
    /**
     * Location of the nodes.

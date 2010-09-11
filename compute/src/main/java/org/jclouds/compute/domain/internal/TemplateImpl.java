@@ -22,7 +22,7 @@ package org.jclouds.compute.domain.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
@@ -34,11 +34,11 @@ import org.jclouds.domain.Location;
 public class TemplateImpl implements Template {
 
    private final Image image;
-   private final Size size;
+   private final Hardware size;
    private final Location location;
    private final TemplateOptions options;
 
-   public TemplateImpl(Image image, Size size, Location location, TemplateOptions options) {
+   public TemplateImpl(Image image, Hardware size, Location location, TemplateOptions options) {
       this.image = checkNotNull(image, "image");
       this.size = checkNotNull(size, "size");
       this.location = checkNotNull(location, "location");
@@ -57,7 +57,7 @@ public class TemplateImpl implements Template {
     * {@inheritDoc}
     */
    @Override
-   public Size getSize() {
+   public Hardware getHardware() {
       return size;
    }
 

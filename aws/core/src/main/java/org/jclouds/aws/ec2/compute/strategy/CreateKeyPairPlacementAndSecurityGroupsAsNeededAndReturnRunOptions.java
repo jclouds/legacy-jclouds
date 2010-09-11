@@ -30,7 +30,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.compute.domain.EC2Size;
+import org.jclouds.aws.ec2.compute.domain.EC2Hardware;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.aws.ec2.compute.functions.CreatePlacementGroupIfNeeded;
@@ -79,9 +79,9 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
    }
 
    public RunInstancesOptions execute(String region, String tag, Template template) {
-      checkArgument(template.getSize() instanceof EC2Size, "unexpected image type. should be EC2Size, was: "
-               + template.getSize().getClass());
-      EC2Size ec2Size = EC2Size.class.cast(template.getSize());
+      checkArgument(template.getHardware() instanceof EC2Hardware, "unexpected image type. should be EC2Size, was: "
+               + template.getHardware().getClass());
+      EC2Hardware ec2Size = EC2Hardware.class.cast(template.getHardware());
 
       RunInstancesOptions instanceOptions = asType(ec2Size.getInstanceType()).withAdditionalInfo(tag);
 

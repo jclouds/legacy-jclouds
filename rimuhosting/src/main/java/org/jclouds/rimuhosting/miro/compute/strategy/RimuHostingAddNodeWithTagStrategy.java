@@ -62,7 +62,7 @@ public class RimuHostingAddNodeWithTagStrategy implements AddNodeWithTagStrategy
    @Override
    public NodeMetadata execute(String tag, String name, Template template) {
       NewServerResponse serverResponse = client.createServer(name, checkNotNull(template.getImage().getProviderId(),
-               "imageId"), checkNotNull(template.getSize().getProviderId(), "sizeId"));
+               "imageId"), checkNotNull(template.getHardware().getProviderId(), "hardwareId"));
       Server server = client.getServer(serverResponse.getServer().getId());
       NodeMetadata node = new NodeMetadataImpl(server.getId().toString(), name, server.getId().toString(), template
                .getLocation(), null, ImmutableMap.<String, String> of(), tag, template.getImage().getId(), template

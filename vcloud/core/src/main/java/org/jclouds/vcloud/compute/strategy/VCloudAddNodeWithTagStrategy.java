@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.compute.strategy;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 
 import java.net.URI;
@@ -60,7 +61,7 @@ public class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
 
    @Inject
    protected VCloudAddNodeWithTagStrategy(Predicate<URI> successTester, VCloudClient client,
-            GetNodeMetadataStrategy getNode) {
+         GetNodeMetadataStrategy getNode) {
       this.client = client;
       this.successTester = successTester;
       this.getNode = getNode;
@@ -68,8 +69,8 @@ public class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
 
    @Override
    public NodeMetadata execute(String tag, String name, Template template) {
-      InstantiateVAppTemplateOptions options = processorCount(Double.valueOf(template.getSize().getCores()).intValue())
-               .memory(template.getSize().getRam()).disk(template.getSize().getDisk() * 1024 * 1024l);
+      InstantiateVAppTemplateOptions options = processorCount((int) getCores(template.getHardware())).memory(
+            template.getHardware().getRam()).disk(template.getHardware().getDisk() * 1024 * 1024l);
 
       String customizationScript = null;
       if (template.getOptions() instanceof VCloudTemplateOptions) {
@@ -98,21 +99,22 @@ public class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
          return blockOnDeployAndPowerOnIfConfigured(options, vAppResponse, task);
       } else {
          if (!successTester.apply(task.getHref())) {
-            throw new RuntimeException(String
-                     .format("failed to %s %s: %s", "instantiate", vAppResponse.getName(), task));
+            throw new RuntimeException(
+                  String.format("failed to %s %s: %s", "instantiate", vAppResponse.getName(), task));
          }
          Vm vm = Iterables.get(client.getVApp(vAppResponse.getHref()).getChildren(), 0);
          GuestCustomizationSection guestConfiguration = vm.getGuestCustomizationSection();
          // guestConfiguration
-         // .setCustomizationScript(guestConfiguration.getCustomizationScript() != null ?
+         // .setCustomizationScript(guestConfiguration.getCustomizationScript()
+         // != null ?
          // guestConfiguration
          // .getCustomizationScript()
          // + "\n" + customizationScript : customizationScript);
          guestConfiguration.setCustomizationScript(customizationScript);
          task = client.updateGuestCustomizationOfVm(vm.getHref(), guestConfiguration);
          if (!successTester.apply(task.getHref())) {
-            throw new RuntimeException(String.format("failed to %s %s: %s", "updateGuestCustomizationOfVm", vm
-                     .getName(), task));
+            throw new RuntimeException(String.format("failed to %s %s: %s", "updateGuestCustomizationOfVm",
+                  vm.getName(), task));
          }
          task = client.deployAndPowerOnVAppOrVm(vAppResponse.getHref());
          return blockOnDeployAndPowerOnIfConfigured(options, vAppResponse, task);
@@ -121,11 +123,11 @@ public class VCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
    }
 
    private NodeMetadata blockOnDeployAndPowerOnIfConfigured(InstantiateVAppTemplateOptions options, VApp vAppResponse,
-            Task task) {
+         Task task) {
       if (options.shouldBlock()) {
          if (!successTester.apply(task.getHref())) {
-            throw new RuntimeException(String.format("failed to %s %s: %s", "deploy and power on", vAppResponse
-                     .getName(), task));
+            throw new RuntimeException(String.format("failed to %s %s: %s", "deploy and power on",
+                  vAppResponse.getName(), task));
          }
          logger.debug("<< ready vApp(%s)", vAppResponse.getName());
       }

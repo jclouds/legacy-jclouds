@@ -101,21 +101,21 @@ public class ComputeTaskUtils {
       } else {
          templateBuilder.osFamily(OsFamily.valueOf(nodeElement.getOs()));
       }
-      addSizeFromElementToTemplate(nodeElement, templateBuilder);
+      addHardwareFromElementToTemplate(nodeElement, templateBuilder);
       templateBuilder.options(getNodeOptionsFromElement(nodeElement));
 
       return templateBuilder.build();
    }
 
-   static void addSizeFromElementToTemplate(NodeElement nodeElement, TemplateBuilder template) {
-      if (nodeElement.getSize().equalsIgnoreCase("smallest")) {
+   static void addHardwareFromElementToTemplate(NodeElement nodeElement, TemplateBuilder template) {
+      if (nodeElement.getHardware().equalsIgnoreCase("smallest")) {
          template.smallest();
-      } else if (nodeElement.getSize().equalsIgnoreCase("fastest")) {
+      } else if (nodeElement.getHardware().equalsIgnoreCase("fastest")) {
          template.fastest();
-      } else if (nodeElement.getSize().equalsIgnoreCase("biggest")) {
+      } else if (nodeElement.getHardware().equalsIgnoreCase("biggest")) {
          template.biggest();
       } else {
-         throw new BuildException("size: " + nodeElement.getSize()
+         throw new BuildException("size: " + nodeElement.getHardware()
                + " not supported.  valid sizes are smallest, fastest, biggest");
       }
    }

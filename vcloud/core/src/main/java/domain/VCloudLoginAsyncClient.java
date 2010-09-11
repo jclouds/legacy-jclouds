@@ -21,6 +21,7 @@ package domain;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.Endpoint;
@@ -48,6 +49,7 @@ public interface VCloudLoginAsyncClient {
     * the token expires and you have to request a new token with this call.
     */
    @POST
+   @Path("")
    @ResponseParser(ParseLoginResponseFromHeaders.class)
    @Consumes(VCloudMediaType.ORGLIST_XML)
    ListenableFuture<VCloudSession> login();

@@ -26,8 +26,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.Size;
-import org.jclouds.compute.domain.internal.SizeImpl;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.internal.HardwareImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
@@ -36,6 +37,7 @@ import org.jclouds.slicehost.SlicehostClient;
 import org.jclouds.slicehost.domain.Flavor;
 
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
@@ -44,7 +46,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Singleton
-public class SlicehostSizeSupplier implements Supplier<Set<? extends Size>> {
+public class SlicehostHardwareSupplier implements Supplier<Set<? extends Hardware>> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -53,19 +55,19 @@ public class SlicehostSizeSupplier implements Supplier<Set<? extends Size>> {
    private final Supplier<Location> location;
 
    @Inject
-   SlicehostSizeSupplier(SlicehostClient sync, Supplier<Location> location) {
+   SlicehostHardwareSupplier(SlicehostClient sync, Supplier<Location> location) {
       this.sync = sync;
       this.location = location;
    }
 
    @Override
-   public Set<? extends Size> get() {
-      final Set<Size> sizes = Sets.newHashSet();
+   public Set<? extends Hardware> get() {
+      final Set<Hardware> sizes = Sets.newHashSet();
       logger.debug(">> providing sizes");
       for (final Flavor from : sync.listFlavors()) {
-         sizes.add(new SizeImpl(from.getId() + "", from.getName(), from.getId() + "", location.get(), null,
-                  ImmutableMap.<String, String> of(), from.getRam() / 1024.0, from.getRam(),
-                  (from.getRam() * 4) / 1024, ImagePredicates.any()));
+         sizes.add(new HardwareImpl(from.getId() + "", from.getName(), from.getId() + "", location.get(), null,
+               ImmutableMap.<String, String> of(), ImmutableList.of(new Processor(from.getRam() / 1024.0, 1.0)), from
+                     .getRam(), (from.getRam() * 4) / 1024, ImagePredicates.any()));
       }
       logger.debug("<< sizes(%d)", sizes.size());
       return sizes;

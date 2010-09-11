@@ -26,8 +26,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.Size;
-import org.jclouds.compute.domain.internal.SizeImpl;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.internal.HardwareImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
@@ -37,6 +38,7 @@ import org.jclouds.rimuhosting.miro.domain.PricingPlan;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -46,7 +48,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Singleton
-public class RimuHostingSizeSupplier implements Supplier<Set<? extends Size>> {
+public class RimuHostingHardwareSupplier implements Supplier<Set<? extends Hardware>> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -55,14 +57,14 @@ public class RimuHostingSizeSupplier implements Supplier<Set<? extends Size>> {
    private Supplier<Set<? extends Location>> locations;
 
    @Inject
-   RimuHostingSizeSupplier(RimuHostingClient sync, Supplier<Set<? extends Location>> locations) {
+   RimuHostingHardwareSupplier(RimuHostingClient sync, Supplier<Set<? extends Location>> locations) {
       this.sync = sync;
       this.locations = locations;
    }
 
    @Override
-   public Set<? extends Size> get() {
-      final Set<Size> sizes = Sets.newHashSet();
+   public Set<? extends Hardware> get() {
+      final Set<Hardware> sizes = Sets.newHashSet();
       logger.debug(">> providing sizes");
       for (final PricingPlan from : sync.getPricingPlanList()) {
          try {
@@ -75,8 +77,9 @@ public class RimuHostingSizeSupplier implements Supplier<Set<? extends Size>> {
                }
 
             });
-            sizes.add(new SizeImpl(from.getId(), from.getId(), from.getId(), location, null, ImmutableMap
-                     .<String, String> of(), 1, from.getRam(), from.getDiskSize(), ImagePredicates.any()));
+            sizes.add(new HardwareImpl(from.getId(), from.getId(), from.getId(), location, null, ImmutableMap
+                  .<String, String> of(), ImmutableList.of(new Processor(1, 1.0)), from.getRam(), from.getDiskSize(),
+                  ImagePredicates.any()));
          } catch (NullPointerException e) {
             logger.warn("datacenter not present in " + from.getId());
          }

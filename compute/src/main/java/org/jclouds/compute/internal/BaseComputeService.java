@@ -47,7 +47,7 @@ import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.RunScriptOptions;
@@ -88,7 +88,7 @@ public class BaseComputeService implements ComputeService {
 
    protected final ComputeServiceContext context;
    protected final Supplier<Set<? extends Image>> images;
-   protected final Supplier<Set<? extends Size>> sizes;
+   protected final Supplier<Set<? extends Hardware>> hardwareProfiles;
    protected final Supplier<Set<? extends Location>> locations;
    protected final ListNodesStrategy listNodesStrategy;
    protected final GetNodeMetadataStrategy getNodeMetadataStrategy;
@@ -104,7 +104,7 @@ public class BaseComputeService implements ComputeService {
 
    @Inject
    protected BaseComputeService(ComputeServiceContext context, Supplier<Set<? extends Image>> images,
-            Supplier<Set<? extends Size>> sizes, Supplier<Set<? extends Location>> locations,
+            Supplier<Set<? extends Hardware>> hardwareProfiles, Supplier<Set<? extends Location>> locations,
             ListNodesStrategy listNodesStrategy, GetNodeMetadataStrategy getNodeMetadataStrategy,
             RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy, RebootNodeStrategy rebootNodeStrategy,
             DestroyNodeStrategy destroyNodeStrategy, Provider<TemplateBuilder> templateBuilderProvider,
@@ -114,7 +114,7 @@ public class BaseComputeService implements ComputeService {
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.context = checkNotNull(context, "context");
       this.images = checkNotNull(images, "images");
-      this.sizes = checkNotNull(sizes, "sizes");
+      this.hardwareProfiles = checkNotNull(hardwareProfiles, "hardwareProfiles");
       this.locations = checkNotNull(locations, "locations");
       this.listNodesStrategy = checkNotNull(listNodesStrategy, "listNodesStrategy");
       this.getNodeMetadataStrategy = checkNotNull(getNodeMetadataStrategy, "getNodeMetadataStrategy");
@@ -145,8 +145,8 @@ public class BaseComputeService implements ComputeService {
             throws RunNodesException {
       checkArgument(tag.indexOf('-') == -1, "tag cannot contain hyphens");
       checkNotNull(template.getLocation(), "location");
-      logger.debug(">> running %d node%s tag(%s) location(%s) image(%s) size(%s) options(%s)", count, count > 1 ? "s"
-               : "", tag, template.getLocation().getId(), template.getImage().getId(), template.getSize().getId(),
+      logger.debug(">> running %d node%s tag(%s) location(%s) image(%s) hardwareProfile(%s) options(%s)", count, count > 1 ? "s"
+               : "", tag, template.getLocation().getId(), template.getImage().getId(), template.getHardware().getId(),
                template.getOptions());
       Set<NodeMetadata> nodes = Sets.newHashSet();
       Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
@@ -246,8 +246,8 @@ public class BaseComputeService implements ComputeService {
     * {@inheritDoc}
     */
    @Override
-   public Set<? extends Size> listSizes() {
-      return sizes.get();
+   public Set<? extends Hardware> listHardwareProfiles() {
+      return hardwareProfiles.get();
    }
 
    /**

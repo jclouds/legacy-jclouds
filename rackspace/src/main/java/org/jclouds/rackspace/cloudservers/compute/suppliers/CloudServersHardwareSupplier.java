@@ -27,8 +27,9 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.ComputeMetadata;
-import org.jclouds.compute.domain.Size;
-import org.jclouds.compute.domain.internal.SizeImpl;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.internal.HardwareImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
@@ -39,6 +40,7 @@ import org.jclouds.rackspace.cloudservers.options.ListOptions;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
@@ -47,7 +49,7 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 @Singleton
-public class CloudServersSizeSupplier implements Supplier<Set<? extends Size>> {
+public class CloudServersHardwareSupplier implements Supplier<Set<? extends Hardware>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -55,20 +57,20 @@ public class CloudServersSizeSupplier implements Supplier<Set<? extends Size>> {
    private final Supplier<Location> location;
 
    @Inject
-   CloudServersSizeSupplier(CloudServersClient sync, Supplier<Location> location,
-            Function<ComputeMetadata, String> indexer) {
+   CloudServersHardwareSupplier(CloudServersClient sync, Supplier<Location> location,
+         Function<ComputeMetadata, String> indexer) {
       this.sync = sync;
       this.location = location;
    }
 
    @Override
-   public Set<? extends Size> get() {
-      final Set<Size> sizes = Sets.newHashSet();
+   public Set<? extends Hardware> get() {
+      final Set<Hardware> sizes = Sets.newHashSet();
       logger.debug(">> providing sizes");
       for (final Flavor from : sync.listFlavors(ListOptions.Builder.withDetails())) {
-         sizes.add(new SizeImpl(from.getId() + "", from.getName(), from.getId() + "", location.get(), null,
-                  ImmutableMap.<String, String> of(), from.getDisk() / 10, from.getRam(), from.getDisk(),
-                  ImagePredicates.any()));
+         sizes.add(new HardwareImpl(from.getId() + "", from.getName(), from.getId() + "", location.get(), null,
+               ImmutableMap.<String, String> of(), ImmutableList.of(new Processor(from.getDisk() / 10.0, 1.0)), from
+                     .getRam(), from.getDisk(), ImagePredicates.any()));
       }
       logger.debug("<< sizes(%d)", sizes.size());
       return sizes;

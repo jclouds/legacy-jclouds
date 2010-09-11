@@ -29,17 +29,19 @@ import java.util.Arrays;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.internal.SizeImpl;
+import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.internal.HardwareImpl;
 import org.jclouds.domain.Location;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class EC2Size extends SizeImpl {
+public class EC2Hardware extends HardwareImpl {
    /** The serialVersionUID */
    private static final long serialVersionUID = 8605688733788974797L;
    private final String instanceType;
@@ -66,21 +68,23 @@ public class EC2Size extends SizeImpl {
       };
    }
 
-   EC2Size(String instanceType, Double cores, Integer ram, Integer disk, RootDeviceType rootDeviceType) {
-      super(instanceType, instanceType, instanceType, null, null, ImmutableMap.<String, String> of(), cores, ram, disk,
-               hasRootDeviceType(rootDeviceType));
+   EC2Hardware(String instanceType, Iterable<? extends Processor> processors, Integer ram, Integer disk,
+         RootDeviceType rootDeviceType) {
+      super(instanceType, instanceType, instanceType, null, null, ImmutableMap.<String, String> of(), processors, ram,
+            disk, hasRootDeviceType(rootDeviceType));
       this.instanceType = instanceType;
    }
 
-   EC2Size(String instanceType, Double cores, Integer ram, Integer disk, boolean is64Bit) {
-      super(instanceType, instanceType, instanceType, null, null, ImmutableMap.<String, String> of(), cores, ram, disk,
-               is64Bit ? is64Bit() : not(is64Bit()));
+   EC2Hardware(String instanceType, Iterable<? extends Processor> processors, Integer ram, Integer disk, boolean is64Bit) {
+      super(instanceType, instanceType, instanceType, null, null, ImmutableMap.<String, String> of(), processors, ram,
+            disk, is64Bit ? is64Bit() : not(is64Bit()));
       this.instanceType = instanceType;
    }
 
-   public EC2Size(Location location, String instanceType, Double cores, Integer ram, Integer disk, String[] ids) {
-      super(instanceType, instanceType, instanceType, location, null, ImmutableMap.<String, String> of(), cores, ram,
-               disk, (ids.length == 0 ? is64Bit() : idIn(Arrays.asList(ids))));
+   public EC2Hardware(Location location, String instanceType, Iterable<? extends Processor> processors, Integer ram,
+         Integer disk, String[] ids) {
+      super(instanceType, instanceType, instanceType, location, null, ImmutableMap.<String, String> of(), processors,
+            ram, disk, (ids.length == 0 ? is64Bit() : idIn(Arrays.asList(ids))));
       this.instanceType = instanceType;
    }
 
@@ -91,44 +95,52 @@ public class EC2Size extends SizeImpl {
       return instanceType;
    }
 
-
    /**
     * @see InstanceType#M1_SMALL
     */
-   public static final EC2Size M1_SMALL = new EC2Size(InstanceType.M1_SMALL, 1.0, 1740, 160, false);
+   public static final EC2Hardware M1_SMALL = new EC2Hardware(InstanceType.M1_SMALL, ImmutableList.of(new Processor(
+         1.0, 1.0)), 1740, 160, false);
    /**
     * @see InstanceType#T1_MICRO
     */
-   public static final EC2Size T1_MICRO = new EC2Size(InstanceType.T1_MICRO, 1.0, 630, 0, RootDeviceType.EBS);
+   public static final EC2Hardware T1_MICRO = new EC2Hardware(InstanceType.T1_MICRO, ImmutableList.of(new Processor(
+         1.0, 1.0)), 630, 0, RootDeviceType.EBS);
    /**
     * @see InstanceType#M1_LARGE
     */
-   public static final EC2Size M1_LARGE = new EC2Size(InstanceType.M1_LARGE, 4.0, 7680, 850, true);
+   public static final EC2Hardware M1_LARGE = new EC2Hardware(InstanceType.M1_LARGE, ImmutableList.of(new Processor(
+         2.0, 2.0)), 7680, 850, true);
    /**
     * @see InstanceType#M1_XLARGE
     */
-   public static final EC2Size M1_XLARGE = new EC2Size(InstanceType.M1_XLARGE, 8.0, 15360, 1690, true);
+   public static final EC2Hardware M1_XLARGE = new EC2Hardware(InstanceType.M1_XLARGE, ImmutableList.of(new Processor(
+         4.0, 2.0)), 15360, 1690, true);
    /**
     * @see InstanceType#M2_XLARGE
     */
-   public static final EC2Size M2_XLARGE = new EC2Size(InstanceType.M2_XLARGE, 6.5, 17510, 420, true);
+   public static final EC2Hardware M2_XLARGE = new EC2Hardware(InstanceType.M2_XLARGE,ImmutableList.of(new Processor(
+         2.0, 3.25)), 17510, 420, true);
    /**
     * @see InstanceType#M2_2XLARGE
     */
-   public static final EC2Size M2_2XLARGE = new EC2Size(InstanceType.M2_2XLARGE, 13.0, 35020, 850, true);
+   public static final EC2Hardware M2_2XLARGE = new EC2Hardware(InstanceType.M2_2XLARGE, ImmutableList.of(new Processor(
+         4.0, 3.25)), 35020, 850, true);
    /**
     * @see InstanceType#M2_4XLARGE
     */
-   public static final EC2Size M2_4XLARGE = new EC2Size(InstanceType.M2_4XLARGE, 26.0, 70041, 1690, true);
+   public static final EC2Hardware M2_4XLARGE = new EC2Hardware(InstanceType.M2_4XLARGE,ImmutableList.of(new Processor(
+         8.0, 3.25)), 70041, 1690, true);
    /**
     * @see InstanceType#C1_MEDIUM
     */
-   public static final EC2Size C1_MEDIUM = new EC2Size(InstanceType.C1_MEDIUM, 5.0, 1740, 350, false);
+   public static final EC2Hardware C1_MEDIUM = new EC2Hardware(InstanceType.C1_MEDIUM, ImmutableList.of(new Processor(
+         2.0, 2.5)), 1740, 350, false);
 
    /**
     * @see InstanceType#C1_XLARGE
     */
-   public static final EC2Size C1_XLARGE = new EC2Size(InstanceType.C1_XLARGE, 20.0, 7168, 1690, true);
+   public static final EC2Hardware C1_XLARGE = new EC2Hardware(InstanceType.C1_XLARGE,  ImmutableList.of(new Processor(
+         8.0, 2.5)), 7168, 1690, true);
 
    @Override
    public int hashCode() {
@@ -146,7 +158,7 @@ public class EC2Size extends SizeImpl {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      EC2Size other = (EC2Size) obj;
+      EC2Hardware other = (EC2Hardware) obj;
       if (instanceType == null) {
          if (other.instanceType != null)
             return false;

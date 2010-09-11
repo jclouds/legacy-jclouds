@@ -32,7 +32,7 @@ import javax.inject.Provider;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.TemplateOptions;
@@ -50,7 +50,7 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
 
    @Inject
    protected EC2TemplateBuilderImpl(Supplier<Set<? extends Location>> locations, Supplier<Set<? extends Image>> images,
-            Supplier<Set<? extends Size>> sizes, Supplier<Location> defaultLocation,
+            Supplier<Set<? extends Hardware>> sizes, Supplier<Location> defaultLocation,
             Provider<TemplateOptions> optionsProvider,
             @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider,
             ConcurrentMap<RegionAndName, Image> imageMap) {
@@ -103,7 +103,7 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
     *            if the image is not found
     */
    @Override
-   protected Image resolveImage(Size size, Iterable<? extends Image> supportedImages) {
+   protected Image resolveImage(Hardware size, Iterable<? extends Image> supportedImages) {
       try {
          return super.resolveImage(size, supportedImages);
       } catch (NoSuchElementException e) {

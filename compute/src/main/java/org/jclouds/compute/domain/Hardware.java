@@ -19,7 +19,9 @@
 
 package org.jclouds.compute.domain;
 
-import org.jclouds.compute.domain.internal.SizeImpl;
+import java.util.List;
+
+import org.jclouds.compute.domain.internal.HardwareImpl;
 
 import com.google.inject.ImplementedBy;
 
@@ -28,13 +30,13 @@ import com.google.inject.ImplementedBy;
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(SizeImpl.class)
-public interface Size extends ComputeMetadata {
+@ImplementedBy(HardwareImpl.class)
+public interface Hardware extends ComputeMetadata {
 
    /**
-    * Amount of virtual or physical cores provided
+    * Amount of virtual or physical processors provided
     */
-   double getCores();
+   List<? extends Processor> getProcessors();
 
    /**
     * Amount of RAM provided in MB (256M, 1740)

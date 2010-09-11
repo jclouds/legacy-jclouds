@@ -40,9 +40,9 @@ public interface TemplateBuilder {
    TemplateBuilder any();
 
    /**
-    * Configure this template to require the minimum size of the parameter.
+    * Configure this template to require the minimum hardware of the parameter.
     */
-   TemplateBuilder fromSize(Size size);
+   TemplateBuilder fromHardware(Hardware hardware);
 
    /**
     * Configure this template to fuzzy-match on the image parameter
@@ -55,17 +55,17 @@ public interface TemplateBuilder {
    TemplateBuilder fromTemplate(Template image);
 
    /**
-    * configure this template to the smallest size, based on cores, ram, then disk
+    * configure this template to the smallest hardware, based on cores, ram, then disk
     */
    TemplateBuilder smallest();
 
    /**
-    * configure this template to the fastest size, based on cpu
+    * configure this template to the fastest hardware, based on cpu
     */
    TemplateBuilder fastest();
 
    /**
-    * configure this template to the largest size, based on cores, ram, then disk
+    * configure this template to the largest hardware, based on cores, ram, then disk
     */
    TemplateBuilder biggest();
 
@@ -90,9 +90,9 @@ public interface TemplateBuilder {
    TemplateBuilder imageId(String imageId);
 
    /**
-    * Configure this template to require a specific sizeId.
+    * Configure this template to require a specific hardwareId.
     */
-   TemplateBuilder sizeId(String sizeId);
+   TemplateBuilder hardwareId(String hardwareId);
 
    /**
     * Configure this template to have an operating system name that matches the regular expression

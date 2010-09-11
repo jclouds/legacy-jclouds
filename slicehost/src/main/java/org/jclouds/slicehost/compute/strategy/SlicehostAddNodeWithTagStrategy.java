@@ -53,7 +53,7 @@ public class SlicehostAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
    @Override
    public NodeMetadata execute(String tag, String name, Template template) {
       Slice slice = client.createSlice(name, Integer.parseInt(template.getImage().getProviderId()), Integer
-               .parseInt(template.getSize().getProviderId()));
+               .parseInt(template.getHardware().getProviderId()));
       return new NodeMetadataImpl(slice.getId() + "", name, slice.getId() + "", template.getLocation(), null,
                ImmutableMap.<String, String> of(), tag, template.getImage().getId(), template.getImage()
                         .getOperatingSystem(), NodeState.PENDING, Iterables.filter(slice.getAddresses(),

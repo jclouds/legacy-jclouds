@@ -20,6 +20,7 @@
 package org.jclouds.vcloud.terremark.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.ComputeServiceContextFactory;
@@ -61,7 +62,7 @@ public class TerremarkECloudComputeServiceLiveTest extends VCloudExpressComputeS
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assert defaultTemplate.getLocation().getDescription() != null;// different per org
-      assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
+      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
    public void testAssignability() throws Exception {

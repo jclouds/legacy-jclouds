@@ -45,7 +45,7 @@ import org.jclouds.aws.ec2.domain.PlacementGroup.State;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.options.TemplateOptions;
@@ -75,7 +75,7 @@ public class EC2ComputeService extends BaseComputeService {
 
    @Inject
    protected EC2ComputeService(ComputeServiceContext context, Supplier<Set<? extends Image>> images,
-            Supplier<Set<? extends Size>> sizes, Supplier<Set<? extends Location>> locations,
+            Supplier<Set<? extends Hardware>> sizes, Supplier<Set<? extends Location>> locations,
             ListNodesStrategy listNodesStrategy, GetNodeMetadataStrategy getNodeMetadataStrategy,
             RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy, RebootNodeStrategy rebootNodeStrategy,
             DestroyNodeStrategy destroyNodeStrategy, Provider<TemplateBuilder> templateBuilderProvider,

@@ -388,7 +388,7 @@ public class RunningInstanceToNodeMetadataTest {
       verify(instance);
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Test
    public void testApplyWithKeyPairCreatesTagOfParsedSecurityGroupAndCredentialsBasedOnIt() throws UnknownHostException {
       EC2Client client = createMock(EC2Client.class);
@@ -464,7 +464,7 @@ public class RunningInstanceToNodeMetadataTest {
 
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Test
    public void testApplyWithTwoSecurityGroups() throws UnknownHostException {
       EC2Client client = createMock(EC2Client.class);

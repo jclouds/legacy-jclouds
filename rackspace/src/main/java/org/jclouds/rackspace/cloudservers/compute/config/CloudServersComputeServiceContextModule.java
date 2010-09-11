@@ -33,7 +33,7 @@ import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
@@ -51,7 +51,7 @@ import org.jclouds.rackspace.cloudservers.compute.strategy.CloudServersGetNodeMe
 import org.jclouds.rackspace.cloudservers.compute.strategy.CloudServersListNodesStrategy;
 import org.jclouds.rackspace.cloudservers.compute.strategy.CloudServersRebootNodeStrategy;
 import org.jclouds.rackspace.cloudservers.compute.suppliers.CloudServersImageSupplier;
-import org.jclouds.rackspace.cloudservers.compute.suppliers.CloudServersSizeSupplier;
+import org.jclouds.rackspace.cloudservers.compute.suppliers.CloudServersHardwareSupplier;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 import org.jclouds.rackspace.config.RackspaceLocationsModule;
@@ -139,7 +139,7 @@ public class CloudServersComputeServiceContextModule extends BaseComputeServiceC
    }
 
    @Override
-   protected Supplier<Set<? extends Size>> getSourceSizeSupplier(Injector injector) {
-      return injector.getInstance(CloudServersSizeSupplier.class);
+   protected Supplier<Set<? extends Hardware>> getSourceSizeSupplier(Injector injector) {
+      return injector.getInstance(CloudServersHardwareSupplier.class);
    }
 }

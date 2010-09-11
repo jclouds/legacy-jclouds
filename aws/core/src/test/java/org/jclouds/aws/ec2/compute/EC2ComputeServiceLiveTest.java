@@ -19,6 +19,7 @@
 
 package org.jclouds.aws.ec2.compute;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Date;
@@ -92,7 +93,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
+      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")

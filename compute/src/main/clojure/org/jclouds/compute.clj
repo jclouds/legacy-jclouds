@@ -41,7 +41,7 @@ Here's an example of getting some compute configuration from rackspace:
     (pprint (locations))
     (pprint (images))
     (pprint (nodes))
-    (pprint (sizes)))
+    (pprint (hardware-profiles)))
 
 Here's an example of creating and running a small linux node with the tag webserver:
   
@@ -60,7 +60,7 @@ See http://code.google.com/p/jclouds for details."
            [org.jclouds.compute
             ComputeService ComputeServiceContext ComputeServiceContextFactory]
            [org.jclouds.compute.domain
-            Template TemplateBuilder ComputeMetadata NodeMetadata Size OsFamily
+            Template TemplateBuilder ComputeMetadata NodeMetadata Hardware OsFamily
             Image]
            [org.jclouds.compute.options TemplateOptions]
            [org.jclouds.compute.predicates
@@ -147,11 +147,11 @@ See http://code.google.com/p/jclouds for details."
   ([#^ComputeService compute]
      (seq (.listImages compute))))
 
-(defn sizes
-  "Retrieve the available node sizes for the compute context."
-  ([] (sizes *compute*))
+(defn hardware-profiles
+  "Retrieve the available node hardware profiles for the compute context."
+  ([] (hardware-profiles *compute*))
   ([#^ComputeService compute]
-     (seq (.listSizes compute))))
+     (seq (.listHardwareProfiles compute))))
 
 (defn default-template
   ([] (default-template *compute*))
@@ -310,9 +310,9 @@ See http://code.google.com/p/jclouds for details."
   [#^ComputeMetadata node]
   (.getId node))
 
-(define-accessors Template image size location options)
+(define-accessors Template image hardware location options)
 (define-accessors Image version os-family os-description architecture)
-(define-accessors Size cores ram disk)
+(define-accessors Hardware processors ram disk)
 (define-accessors NodeMetadata "node" credentials extra state tag)
 
 (defn builder-options [builder]
@@ -340,7 +340,7 @@ See http://code.google.com/p/jclouds for details."
      (apply array-map
             (concat
              (make-option-map option-fn-1arg
-                              [:os-family :location-id :architecture :image-id :size-id
+                              [:os-family :location-id :architecture :image-id :hardware-id
                                :os-name-matches :os-version-matches :os-description-matches 
                                :os-64-bit :image-version-matches :image-name-matches
                                :image-description-matches :min-cores :min-ram])

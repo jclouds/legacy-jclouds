@@ -45,7 +45,7 @@ import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -141,11 +141,11 @@ public class PlacementGroupClientLiveTest {
    }
 
    public void testStartCCInstance() throws Exception {
-      Set<? extends Size> sizes = context.getComputeService().listSizes();
-      assert Iterables.any(sizes, new Predicate<Size>() {
+      Set<? extends Hardware> sizes = context.getComputeService().listHardwareProfiles();
+      assert Iterables.any(sizes, new Predicate<Hardware>() {
 
          @Override
-         public boolean apply(Size arg0) {
+         public boolean apply(Hardware arg0) {
             return arg0.getProviderId().equals(InstanceType.CC1_4XLARGE);
          }
 
@@ -162,7 +162,7 @@ public class PlacementGroupClientLiveTest {
 
       Template template = context.getComputeService().templateBuilder().fastest().build();
       assert template != null : "The returned template was null, but it should have a value.";
-      assertEquals(template.getSize().getProviderId(), InstanceType.CC1_4XLARGE);
+      assertEquals(template.getHardware().getProviderId(), InstanceType.CC1_4XLARGE);
       assertEquals(template.getImage().getId(), "us-east-1/ami-7ea24a17");
 
       template.getOptions().installPrivateKey(newStringPayload(keyPair.get("private"))).authorizePublicKey(

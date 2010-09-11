@@ -20,14 +20,19 @@
 package org.jclouds.vcloud.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.compute.domain.Size;
-import org.jclouds.compute.domain.internal.SizeImpl;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.internal.HardwareImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
@@ -43,11 +48,12 @@ import org.jclouds.vcloud.domain.ovf.VirtualHardwareSection;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 /**
  * @author Adrian Cole
  */
-public class SizeForVAppTemplate implements Function<VAppTemplate, Size> {
+public class HardwareForVAppTemplate implements Function<VAppTemplate, Hardware> {
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -57,34 +63,34 @@ public class SizeForVAppTemplate implements Function<VAppTemplate, Size> {
    private ReferenceType parent;
 
    @Inject
-   protected SizeForVAppTemplate(VCloudClient client, FindLocationForResource findLocationForResource) {
+   protected HardwareForVAppTemplate(VCloudClient client, FindLocationForResource findLocationForResource) {
       this.client = checkNotNull(client, "client");
       this.findLocationForResource = checkNotNull(findLocationForResource, "findLocationForResource");
    }
 
-   public SizeForVAppTemplate withParent(ReferenceType parent) {
+   public HardwareForVAppTemplate withParent(ReferenceType parent) {
       this.parent = parent;
       return this;
    }
 
    @Override
-   public Size apply(VAppTemplate from) {
+   public Hardware apply(VAppTemplate from) {
       checkNotNull(from, "VAppTemplate");
 
       if (!from.isOvfDescriptorUploaded()) {
-         logger.warn("cannot parse size as ovf descriptor for %s is not uploaded", from);
+         logger.warn("cannot parse hardware as ovf descriptor for %s is not uploaded", from);
          return null;
       }
 
       OvfEnvelope ovf = client.getOvfEnvelopeForVAppTemplate(from.getHref());
       if (ovf == null) {
-         logger.warn("cannot parse size as no ovf envelope found for %s", from);
+         logger.warn("cannot parse hardware as no ovf envelope found for %s", from);
          return null;
       }
 
       Location location = findLocationForResource.apply(checkNotNull(parent, "parent"));
       if (ovf.getVirtualSystem().getHardware().size() == 0) {
-         logger.warn("cannot parse size for %s as no hardware sections exist in ovf %s", ovf);
+         logger.warn("cannot parse hardware for %s as no hardware sections exist in ovf %s", ovf);
          return null;
       }
       if (ovf.getVirtualSystem().getHardware().size() > 1) {
@@ -97,12 +103,18 @@ public class SizeForVAppTemplate implements Function<VAppTemplate, Size> {
       int disk = (int) (((diskR instanceof VCloudHardDisk) ? VCloudHardDisk.class.cast(diskR).getCapacity() : diskR
                .getVirtualQuantity()) / 1024l);
 
-      double cores = (int) find(hardware.getResourceAllocations(), resourceType(ResourceType.PROCESSOR))
-               .getVirtualQuantity();
+      List<Processor> processors = Lists.newArrayList(transform(filter(hardware.getResourceAllocations(), resourceType(ResourceType.PROCESSOR)), new Function<ResourceAllocation, Processor>(){
 
-      return new SizeImpl(from.getHref().toASCIIString(), from.getName()
-               + String.format(": vpu(%.1f), ram(%d), disk(%d)", cores, ram, disk), from.getHref().toASCIIString(),
-               location, null, ImmutableMap.<String, String> of(), cores, ram, disk, ImagePredicates.idEquals(from
+         @Override
+         public Processor apply(ResourceAllocation arg0) {
+            return new Processor(arg0.getVirtualQuantity(), 1);
+         }
+         
+      }));
+
+      return new HardwareImpl(from.getHref().toASCIIString(), from.getName()
+               + String.format(": vpus(%s), ram(%d), disk(%d)", processors, ram, disk), from.getHref().toASCIIString(),
+               location, null, ImmutableMap.<String, String> of(), processors, ram, disk, ImagePredicates.idEquals(from
                         .getHref().toASCIIString()));
 
    }

@@ -23,7 +23,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.vcloud.domain.CatalogItem;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.VAppTemplate;
@@ -37,15 +37,15 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class SizesInOrg implements Function<Org, Iterable<? extends Size>> {
+public class HardwareInOrg implements Function<Org, Iterable<? extends Hardware>> {
 
    private final AllCatalogItemsInOrg allCatalogItemsInOrg;
    private final Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>> vAppTemplatesForCatalogItems;
-   private final Provider<SizeForVAppTemplate> sizeForVAppTemplateProvider;
+   private final Provider<HardwareForVAppTemplate> sizeForVAppTemplateProvider;
 
    @Inject
-   SizesInOrg(AllCatalogItemsInOrg allCatalogItemsInOrg,
-            Provider<SizeForVAppTemplate> sizeForVAppTemplateProvider,
+   HardwareInOrg(AllCatalogItemsInOrg allCatalogItemsInOrg,
+            Provider<HardwareForVAppTemplate> sizeForVAppTemplateProvider,
             Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>> vAppTemplatesForCatalogItems) {
       this.sizeForVAppTemplateProvider = sizeForVAppTemplateProvider;
       this.allCatalogItemsInOrg = allCatalogItemsInOrg;
@@ -53,7 +53,7 @@ public class SizesInOrg implements Function<Org, Iterable<? extends Size>> {
    }
 
    @Override
-   public Iterable<? extends Size> apply(Org from) {
+   public Iterable<? extends Hardware> apply(Org from) {
       Iterable<? extends CatalogItem> catalogs = allCatalogItemsInOrg.apply(from);
       Iterable<? extends VAppTemplate> vAppTemplates = vAppTemplatesForCatalogItems.apply(catalogs);
       return Iterables.transform(Iterables.filter(vAppTemplates, Predicates.notNull()), sizeForVAppTemplateProvider.get().withParent(from));

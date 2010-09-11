@@ -19,6 +19,7 @@
 
 package org.jclouds.tools.ant.taskdefs.compute;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.compute.util.ComputeServiceUtils.isKeyAuth;
 import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.buildComputeMap;
 import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.createTemplateFromElement;
@@ -37,9 +38,9 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Location;
@@ -139,7 +140,7 @@ public class ComputeTask extends Task {
             listImages(computeService);
             break;
          case LIST_SIZES:
-            listSizes(computeService);
+            listHardwares(computeService);
             break;
          case LIST_LOCATIONS:
             listLocations(computeService);
@@ -167,11 +168,11 @@ public class ComputeTask extends Task {
       }
    }
 
-   private void listSizes(ComputeService computeService) {
-      log("list sizes");
-      for (Size size : computeService.listSizes()) {// TODO
-         log(String.format("   size id=%s, cores=%s, ram=%s, disk=%s", size.getProviderId(), size.getCores(), size
-                  .getRam(), size.getDisk()));
+   private void listHardwares(ComputeService computeService) {
+      log("list hardwares");
+      for (Hardware hardware : computeService.listHardwareProfiles()) {// TODO
+         log(String.format("   hardware id=%s, cores=%s, ram=%s, disk=%s", hardware.getProviderId(), getCores(hardware), hardware
+                  .getRam(), hardware.getDisk()));
       }
    }
 
@@ -193,8 +194,8 @@ public class ComputeTask extends Task {
    private void create(ComputeService computeService) throws RunNodesException {
       String tag = nodeElement.getTag();
 
-      log(String.format("create tag: %s, count: %d, size: %s, os: %s", tag, nodeElement.getCount(), nodeElement
-               .getSize(), nodeElement.getOs()));
+      log(String.format("create tag: %s, count: %d, hardware: %s, os: %s", tag, nodeElement.getCount(), nodeElement
+               .getHardware(), nodeElement.getOs()));
 
       Template template = createTemplateFromElement(nodeElement, computeService);
 

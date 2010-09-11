@@ -34,6 +34,7 @@ import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
 import static org.jclouds.compute.predicates.NodePredicates.all;
 import static org.jclouds.compute.predicates.NodePredicates.runningWithTag;
 import static org.jclouds.compute.predicates.NodePredicates.withTag;
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.io.Payloads.newStringPayload;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -58,7 +59,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
@@ -166,8 +167,8 @@ public abstract class BaseComputeServiceLiveTest {
       checkSecretKeyFile(secretKeyFile);
       String secret = Files.toString(new File(secretKeyFile), Charsets.UTF_8);
       assert secret.startsWith("-----BEGIN RSA PRIVATE KEY-----") : "invalid key:\n" + secret;
-      return ImmutableMap.<String, String> of("private", secret, "public", Files.toString(new File(secretKeyFile
-            + ".pub"), Charsets.UTF_8));
+      return ImmutableMap.<String, String> of("private", secret, "public",
+            Files.toString(new File(secretKeyFile + ".pub"), Charsets.UTF_8));
    }
 
    protected void setupCredentials() {
@@ -185,8 +186,8 @@ public abstract class BaseComputeServiceLiveTest {
       Properties props = new Properties();
       props.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       props.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet.of(
-            new Log4JLoggingModule(), getSshModule()), props);
+      context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
+            ImmutableSet.of(new Log4JLoggingModule(), getSshModule()), props);
       client = context.getComputeService();
    }
 
@@ -204,8 +205,8 @@ public abstract class BaseComputeServiceLiveTest {
    public void testCorrectAuthException() throws Exception {
       ComputeServiceContext context = null;
       try {
-         context = new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA", ImmutableSet
-               .<Module> of(new Log4JLoggingModule()));
+         context = new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA",
+               ImmutableSet.<Module> of(new Log4JLoggingModule()));
          context.getComputeService().listNodes();
       } finally {
          if (context != null)
@@ -298,9 +299,9 @@ public abstract class BaseComputeServiceLiveTest {
    private void refreshTemplate() {
       template = buildTemplate(client.templateBuilder());
 
-      template.getOptions().installPrivateKey(newStringPayload(keyPair.get("private"))).authorizePublicKey(
-            newStringPayload(keyPair.get("public"))).runScript(
-            newStringPayload(buildScript(template.getImage().getOperatingSystem())));
+      template.getOptions().installPrivateKey(newStringPayload(keyPair.get("private")))
+            .authorizePublicKey(newStringPayload(keyPair.get("public")))
+            .runScript(newStringPayload(buildScript(template.getImage().getOperatingSystem())));
    }
 
    protected void checkImageIdMatchesTemplate(NodeMetadata node) {
@@ -311,8 +312,8 @@ public abstract class BaseComputeServiceLiveTest {
    protected void checkOsMatchesTemplate(NodeMetadata node) {
       if (node.getOperatingSystem() != null)
          assert node.getOperatingSystem().getFamily().equals(template.getImage().getOperatingSystem().getFamily()) : String
-               .format("expecting family %s but got %s", template.getImage().getOperatingSystem().getFamily(), node
-                     .getOperatingSystem());
+               .format("expecting family %s but got %s", template.getImage().getOperatingSystem().getFamily(),
+                     node.getOperatingSystem());
    }
 
    void assertLocationSameOrChild(Location test, Location expected) {
@@ -352,7 +353,8 @@ public abstract class BaseComputeServiceLiveTest {
          assertNotNull(node.getTag());
          assertEquals(node.getTag(), tag);
          assertEquals(node.getState(), NodeState.RUNNING);
-         assert node.getPublicAddresses().size() >= 1 || node.getPrivateAddresses().size() >= 1 : "no ips in" + node;
+         assert node.getPublicAddresses().size() >= 1 || node.getPrivateAddresses().size() >= 1 : "no ips in"
+               + node;
          assertNotNull(node.getCredentials());
          if (node.getCredentials().identity != null) {
             assertNotNull(node.getCredentials().identity);
@@ -437,7 +439,8 @@ public abstract class BaseComputeServiceLiveTest {
          // assert nodeMetadata.getName() != null : nodeMetadata;
          if (nodeMetadata.getState() == NodeState.RUNNING) {
             assert nodeMetadata.getPublicAddresses() != null : nodeMetadata;
-            assert nodeMetadata.getPublicAddresses().size() > 0 || nodeMetadata.getPrivateAddresses().size() > 0 : nodeMetadata;
+            assert nodeMetadata.getPublicAddresses().size() > 0
+                  || nodeMetadata.getPrivateAddresses().size() > 0 : nodeMetadata;
             assertNotNull(nodeMetadata.getPrivateAddresses());
          }
       }
@@ -511,22 +514,22 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    public void testListSizes() throws Exception {
-      for (Size size : client.listSizes()) {
-         assert size.getProviderId() != null;
-         assert size.getCores() > 0;
-         assert size.getDisk() >= 0;
-         assert size.getRam() > 0;
-         assertEquals(size.getType(), ComputeType.SIZE);
+      for (Hardware hardware : client.listHardwareProfiles()) {
+         assert hardware.getProviderId() != null;
+         assert getCores(hardware) > 0;
+         assert hardware.getDisk() >= 0;
+         assert hardware.getRam() > 0;
+         assertEquals(hardware.getType(), ComputeType.SIZE);
       }
    }
 
    @Test(enabled = true)
    public void testCompareSizes() throws Exception {
-      Size defaultSize = client.templateBuilder().build().getSize();
+      Hardware defaultSize = client.templateBuilder().build().getHardware();
 
-      Size smallest = client.templateBuilder().smallest().build().getSize();
-      Size fastest = client.templateBuilder().fastest().build().getSize();
-      Size biggest = client.templateBuilder().biggest().build().getSize();
+      Hardware smallest = client.templateBuilder().smallest().build().getHardware();
+      Hardware fastest = client.templateBuilder().fastest().build().getHardware();
+      Hardware biggest = client.templateBuilder().biggest().build().getHardware();
 
       System.out.printf("smallest %s%n", smallest);
       System.out.printf("fastest %s%n", fastest);
@@ -534,14 +537,14 @@ public abstract class BaseComputeServiceLiveTest {
 
       assertEquals(defaultSize, smallest);
 
-      assert smallest.getCores() <= fastest.getCores() : String.format("%d ! <= %d", smallest, fastest);
-      assert biggest.getCores() <= fastest.getCores() : String.format("%d ! <= %d", biggest, fastest);
+      assert getCores(smallest) <= getCores(fastest) : String.format("%d ! <= %d", smallest, fastest);
+      assert getCores(biggest) <= getCores(fastest) : String.format("%d ! <= %d", biggest, fastest);
 
       assert biggest.getRam() >= fastest.getRam() : String.format("%d ! >= %d", biggest, fastest);
       assert biggest.getRam() >= smallest.getRam() : String.format("%d ! >= %d", biggest, smallest);
 
-      assert fastest.getCores() >= biggest.getCores() : String.format("%d ! >= %d", fastest, biggest);
-      assert fastest.getCores() >= smallest.getCores() : String.format("%d ! >= %d", fastest, smallest);
+      assert getCores(fastest) >= getCores(biggest) : String.format("%d ! >= %d", fastest, biggest);
+      assert getCores(fastest) >= getCores(smallest) : String.format("%d ! >= %d", fastest, smallest);
    }
 
    private void sshPing(NodeMetadata node) throws IOException {

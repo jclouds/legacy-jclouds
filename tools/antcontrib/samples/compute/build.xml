@@ -82,8 +82,8 @@
     <compute actions="list-images" provider="${jclouds.compute.url}" />
   </target>
 
-  <target name="list-sizes" description="list the sizes supported">
-    <compute actions="list-sizes" provider="${jclouds.compute.url}" />
+  <target name="list-hardwares" description="list the hardwares supported">
+    <compute actions="list-hardwares" provider="${jclouds.compute.url}" />
   </target>
 
   <target name="list-locations" description="list the locations supported">
@@ -91,7 +91,7 @@
   </target>
 
   <target name="dump" description="list all information we can obtain about the cloud">
-    <compute actions="list-locations,list-sizes,list-images,list-details" provider="${jclouds.compute.url}" />
+    <compute actions="list-locations,list-hardwares,list-images,list-details" provider="${jclouds.compute.url}" />
   </target>
 
   <target name="reboot" depends="reboot-id,reboot-tag" />
@@ -185,7 +185,7 @@
     />
 
     <compute actions="create" provider="${jclouds.compute.url}">
-      <nodes privatekeyfile="${privatekeyfile}" publickeyfile="${publickeyfile}" tag="${tag}" count="${count}" os="${os}" size="SMALLEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
+      <nodes privatekeyfile="${privatekeyfile}" publickeyfile="${publickeyfile}" tag="${tag}" count="${count}" os="${os}" hardware="SMALLEST" hostproperty="host" usernameproperty="username" passwordproperty="password" />
     </compute>
   </target>
 

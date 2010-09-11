@@ -20,6 +20,7 @@
 package org.jclouds.gogrid.compute.config;
 
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_DEFAULT_DC;
 
 import java.util.Map;
@@ -34,7 +35,7 @@ import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
@@ -53,7 +54,7 @@ import org.jclouds.gogrid.compute.strategy.GoGridListNodesStrategy;
 import org.jclouds.gogrid.compute.strategy.GoGridRebootNodeStrategy;
 import org.jclouds.gogrid.compute.suppliers.GoGridImageSupplier;
 import org.jclouds.gogrid.compute.suppliers.GoGridLocationSupplier;
-import org.jclouds.gogrid.compute.suppliers.GoGridSizeSupplier;
+import org.jclouds.gogrid.compute.suppliers.GoGridHardwareSupplier;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.domain.ServerState;
 import org.jclouds.rest.RestContext;
@@ -132,17 +133,17 @@ public class GoGridComputeServiceContextModule extends BaseComputeServiceContext
     */
    @Singleton
    @Provides
-   Function<Size, String> provideSizeToRam() {
-      return new Function<Size, String>() {
+   Function<Hardware, String> provideSizeToRam() {
+      return new Function<Hardware, String>() {
          @Override
-         public String apply(Size size) {
-            if (size.getRam() >= 8 * 1024 || size.getCores() >= 6 || size.getDisk() >= 450)
+         public String apply(Hardware hardware) {
+            if (hardware.getRam() >= 8 * 1024 || getCores(hardware) >= 6 || hardware.getDisk() >= 450)
                return "8GB";
-            if (size.getRam() >= 4 * 1024 || size.getCores() >= 3 || size.getDisk() >= 230)
+            if (hardware.getRam() >= 4 * 1024 || getCores(hardware) >= 3 || hardware.getDisk() >= 230)
                return "4GB";
-            if (size.getRam() >= 2 * 1024 || size.getDisk() >= 110)
+            if (hardware.getRam() >= 2 * 1024 || hardware.getDisk() >= 110)
                return "2GB";
-            if (size.getRam() >= 1024 || size.getDisk() >= 55)
+            if (hardware.getRam() >= 1024 || hardware.getDisk() >= 55)
                return "1GB";
             return "512MB"; /* smallest */
          }
@@ -181,7 +182,7 @@ public class GoGridComputeServiceContextModule extends BaseComputeServiceContext
    }
 
    @Override
-   protected Supplier<Set<? extends Size>> getSourceSizeSupplier(Injector injector) {
-      return injector.getInstance(GoGridSizeSupplier.class);
+   protected Supplier<Set<? extends Hardware>> getSourceSizeSupplier(Injector injector) {
+      return injector.getInstance(GoGridHardwareSupplier.class);
    }
 }

@@ -36,7 +36,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.Org;
@@ -48,19 +48,19 @@ import com.google.common.base.Supplier;
  * @author Adrian Cole
  */
 @Singleton
-public class VCloudSizeSupplier implements Supplier<Set<? extends Size>> {
+public class VCloudHardwareSupplier implements Supplier<Set<? extends Hardware>> {
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    public Logger logger = Logger.NULL;
 
    private final Supplier<Map<String, ? extends Org>> orgMap;
-   private final Function<Org, Iterable<? extends Size>> sizesInOrg;
+   private final Function<Org, Iterable<? extends Hardware>> sizesInOrg;
    private final ExecutorService executor;
 
    @Inject
-   VCloudSizeSupplier(Supplier<Map<String, ? extends Org>> orgMap,
-            Function<Org, Iterable<? extends Size>> sizesInOrg,
+   VCloudHardwareSupplier(Supplier<Map<String, ? extends Org>> orgMap,
+            Function<Org, Iterable<? extends Hardware>> sizesInOrg,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.orgMap = checkNotNull(orgMap, "orgMap");
       this.sizesInOrg = checkNotNull(sizesInOrg, "sizesInOrg");
@@ -68,18 +68,18 @@ public class VCloudSizeSupplier implements Supplier<Set<? extends Size>> {
    }
 
    @Override
-   public Set<? extends Size> get() {
+   public Set<? extends Hardware> get() {
       Iterable<? extends Org> orgs = checkNotNull(orgMap.get().values(), "orgs");
-      Iterable<Iterable<? extends Size>> sizes = transformParallel(orgs,
-               new Function<Org, Future<Iterable<? extends Size>>>() {
+      Iterable<Iterable<? extends Hardware>> sizes = transformParallel(orgs,
+               new Function<Org, Future<Iterable<? extends Hardware>>>() {
 
                   @Override
-                  public Future<Iterable<? extends Size>> apply(final Org from) {
+                  public Future<Iterable<? extends Hardware>> apply(final Org from) {
                      checkNotNull(from, "org");
-                     return executor.submit(new Callable<Iterable<? extends Size>>() {
+                     return executor.submit(new Callable<Iterable<? extends Hardware>>() {
 
                         @Override
-                        public Iterable<? extends Size> call() throws Exception {
+                        public Iterable<? extends Hardware> call() throws Exception {
                            return sizesInOrg.apply(from);
                         }
 

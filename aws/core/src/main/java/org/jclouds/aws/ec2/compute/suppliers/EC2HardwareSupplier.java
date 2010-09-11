@@ -30,9 +30,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.compute.domain.EC2Size;
+import org.jclouds.aws.ec2.compute.domain.EC2Hardware;
 import org.jclouds.aws.ec2.domain.InstanceType;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -40,6 +41,7 @@ import org.jclouds.logging.Logger;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -47,7 +49,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Singleton
-public class EC2SizeSupplier implements Supplier<Set<? extends Size>> {
+public class EC2HardwareSupplier implements Supplier<Set<? extends Hardware>> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -55,14 +57,14 @@ public class EC2SizeSupplier implements Supplier<Set<? extends Size>> {
    private final String[] ccAmis;
 
    @Inject
-   EC2SizeSupplier(Supplier<Set<? extends Location>> locations, @Named(PROPERTY_EC2_CC_AMIs) String[] ccAmis) {
+   EC2HardwareSupplier(Supplier<Set<? extends Location>> locations, @Named(PROPERTY_EC2_CC_AMIs) String[] ccAmis) {
       this.locations = locations;
       this.ccAmis = ccAmis;
    }
 
    @Override
-   public Set<? extends Size> get() {
-      Set<Size> sizes = newHashSet();
+   public Set<? extends Hardware> get() {
+      Set<Hardware> sizes = newHashSet();
       for (String ccAmi : ccAmis) {
          final String region = ccAmi.split("/")[0];
          Location location = find(locations.get(), new Predicate<Location>() {
@@ -73,10 +75,12 @@ public class EC2SizeSupplier implements Supplier<Set<? extends Size>> {
             }
 
          });
-         sizes.add(new EC2Size(location, InstanceType.CC1_4XLARGE, 33.5, 23 * 1024, 1690, ccAmis));
+         sizes.add(new EC2Hardware(location, InstanceType.CC1_4XLARGE, ImmutableList.of(new Processor(4.0, 4.0),
+               new Processor(4.0, 4.0)), 23 * 1024, 1690, ccAmis));
       }
-      sizes.addAll(ImmutableSet.<Size> of(EC2Size.T1_MICRO, EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE,
-               EC2Size.M1_SMALL, EC2Size.M1_XLARGE, EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE, EC2Size.M2_4XLARGE));
+      sizes.addAll(ImmutableSet.<Hardware> of(EC2Hardware.T1_MICRO, EC2Hardware.C1_MEDIUM, EC2Hardware.C1_XLARGE,
+            EC2Hardware.M1_LARGE, EC2Hardware.M1_SMALL, EC2Hardware.M1_XLARGE, EC2Hardware.M2_XLARGE,
+            EC2Hardware.M2_2XLARGE, EC2Hardware.M2_4XLARGE));
       return sizes;
    }
 }
