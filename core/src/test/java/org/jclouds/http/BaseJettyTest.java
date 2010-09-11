@@ -44,15 +44,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.jclouds.Constants;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Request;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.AbstractHandler;
+import org.mortbay.jetty.ssl.SslSocketConnector;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Optional;
@@ -101,7 +104,7 @@ public abstract class BaseJettyTest {
                response.setContentType("text/xml");
                response.setStatus(HttpServletResponse.SC_OK);
             } else if (target.indexOf("redirect") > 0) {
-               response.sendRedirect("http://localhost:" + (testPort + 1) + "/");
+               response.sendRedirect("https://localhost:" + (testPort + 1) + "/");
             } else if (target.indexOf("101constitutions") > 0) {
                response.setContentType("text/plain");
                response.setHeader("Content-MD5", md5);
@@ -164,6 +167,18 @@ public abstract class BaseJettyTest {
       server.setHandler(server1Handler);
       server.start();
 
+      setupAndStartSSLServer(testPort);
+
+      Properties properties = new Properties();
+      addConnectionProperties(properties);
+      context = newBuilder(testPort, properties, createConnectionModule()).buildContext();
+      client = context.getApi();
+      assert client != null;
+
+      assert client.newStringBuffer() != null;
+   }
+
+   protected void setupAndStartSSLServer(final int testPort) throws Exception {
       Handler server2Handler = new AbstractHandler() {
          public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch)
                   throws IOException, ServletException {
@@ -206,17 +221,17 @@ public abstract class BaseJettyTest {
          }
       };
 
-      server2 = new Server(testPort + 1);
+      server2 = new Server();
       server2.setHandler(server2Handler);
+      SslSocketConnector ssl = new SslSocketConnector();
+      ssl.setPort(testPort + 1);
+      ssl.setMaxIdleTime(30000);
+      ssl.setKeystore("src/test/resources/test.jks");
+      ssl.setKeyPassword("jclouds");
+      ssl.setTruststore("src/test/resources/test.jks");
+      ssl.setTrustPassword("jclouds");
+      server2.setConnectors(new Connector[] { ssl });
       server2.start();
-
-      Properties properties = new Properties();
-      addConnectionProperties(properties);
-      context = newBuilder(testPort, properties, createConnectionModule()).buildContext();
-      client = context.getApi();
-      assert client != null;
-
-      assert client.newStringBuffer() != null;
    }
 
    @SuppressWarnings("unchecked")
@@ -234,18 +249,19 @@ public abstract class BaseJettyTest {
 
    public static RestContextBuilder<IntegrationTestClient, IntegrationTestAsyncClient> newBuilder(int testPort,
             Properties properties, Module... connectionModules) {
-
+      properties.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      properties.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
                "http://localhost:" + testPort, "1", "identity", null, IntegrationTestClient.class,
                IntegrationTestAsyncClient.class, ImmutableSet.<Module> copyOf(connectionModules));
-
       return createContextBuilder(contextSpec, properties);
    }
 
    @AfterTest
    public void tearDownJetty() throws Exception {
       context.close();
-      server2.stop();
+      if (server2 != null)
+         server2.stop();
       server.stop();
    }
 

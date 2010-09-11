@@ -87,7 +87,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
    public JavaUrlHttpCommandExecutorService(HttpUtils utils,
             @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
             DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
-            DelegatingErrorHandler errorHandler, HttpWire wire, HostnameVerifier verifier,
+            DelegatingErrorHandler errorHandler, HttpWire wire, @Named("untrusted") HostnameVerifier verifier,
             @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider) throws SecurityException,
             NoSuchFieldException {
       super(utils, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
