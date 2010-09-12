@@ -55,8 +55,8 @@ public class SlicehostAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
       Slice slice = client.createSlice(name, Integer.parseInt(template.getImage().getProviderId()), Integer
                .parseInt(template.getHardware().getProviderId()));
       return new NodeMetadataImpl(slice.getId() + "", name, slice.getId() + "", template.getLocation(), null,
-               ImmutableMap.<String, String> of(), tag, template.getImage().getId(), template.getImage()
-                        .getOperatingSystem(), NodeState.PENDING, Iterables.filter(slice.getAddresses(),
+               ImmutableMap.<String, String> of(), tag, template.getHardware(), template.getImage().getId(), template
+                        .getImage().getOperatingSystem(), NodeState.PENDING, Iterables.filter(slice.getAddresses(),
                         new Predicate<String>() {
 
                            @Override
@@ -71,7 +71,7 @@ public class SlicehostAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
                      return input.startsWith("10.");
                   }
 
-               }), ImmutableMap.<String, String> of(), new Credentials("root", slice.getRootPassword()));
+               }), new Credentials("root", slice.getRootPassword()));
    }
 
 }

@@ -32,6 +32,7 @@ import javax.inject.Inject;
 
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.HardwareImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.domain.Location;
@@ -42,7 +43,6 @@ import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.ovf.OvfEnvelope;
 import org.jclouds.vcloud.domain.ovf.ResourceAllocation;
 import org.jclouds.vcloud.domain.ovf.ResourceType;
-import org.jclouds.vcloud.domain.ovf.VCloudHardDisk;
 import org.jclouds.vcloud.domain.ovf.VirtualHardwareSection;
 
 import com.google.common.base.Function;
@@ -60,12 +60,16 @@ public class HardwareForVAppTemplate implements Function<VAppTemplate, Hardware>
 
    private final VCloudClient client;
    private final FindLocationForResource findLocationForResource;
+   private final ResourceAllocationsToVolumes resourceAllocationsToVolumes;
+
    private ReferenceType parent;
 
    @Inject
-   protected HardwareForVAppTemplate(VCloudClient client, FindLocationForResource findLocationForResource) {
+   protected HardwareForVAppTemplate(VCloudClient client, FindLocationForResource findLocationForResource,
+            ResourceAllocationsToVolumes resourceAllocationsToVolumes) {
       this.client = checkNotNull(client, "client");
       this.findLocationForResource = checkNotNull(findLocationForResource, "findLocationForResource");
+      this.resourceAllocationsToVolumes = checkNotNull(resourceAllocationsToVolumes, "resourceAllocationsToVolumes");
    }
 
    public HardwareForVAppTemplate withParent(ReferenceType parent) {
@@ -99,23 +103,21 @@ public class HardwareForVAppTemplate implements Function<VAppTemplate, Hardware>
       VirtualHardwareSection hardware = Iterables.get(ovf.getVirtualSystem().getHardware(), 0);
 
       int ram = (int) find(hardware.getResourceAllocations(), resourceType(ResourceType.MEMORY)).getVirtualQuantity();
-      ResourceAllocation diskR = find(hardware.getResourceAllocations(), resourceType(ResourceType.DISK_DRIVE));
-      int disk = (int) (((diskR instanceof VCloudHardDisk) ? VCloudHardDisk.class.cast(diskR).getCapacity() : diskR
-               .getVirtualQuantity()) / 1024l);
 
-      List<Processor> processors = Lists.newArrayList(transform(filter(hardware.getResourceAllocations(), resourceType(ResourceType.PROCESSOR)), new Function<ResourceAllocation, Processor>(){
+      List<Processor> processors = Lists.newArrayList(transform(filter(hardware.getResourceAllocations(),
+               resourceType(ResourceType.PROCESSOR)), new Function<ResourceAllocation, Processor>() {
 
          @Override
          public Processor apply(ResourceAllocation arg0) {
             return new Processor(arg0.getVirtualQuantity(), 1);
          }
-         
-      }));
 
+      }));
+      Iterable<? extends Volume> volumes = resourceAllocationsToVolumes.apply(hardware.getResourceAllocations());
       return new HardwareImpl(from.getHref().toASCIIString(), from.getName()
-               + String.format(": vpus(%s), ram(%d), disk(%d)", processors, ram, disk), from.getHref().toASCIIString(),
-               location, null, ImmutableMap.<String, String> of(), processors, ram, disk, ImagePredicates.idEquals(from
-                        .getHref().toASCIIString()));
+               + String.format(": vpus(%s), ram(%d), volumes(%s)", processors, ram, volumes), from.getHref()
+               .toASCIIString(), location, null, ImmutableMap.<String, String> of(), processors, ram, volumes,
+               ImagePredicates.idEquals(from.getHref().toASCIIString()));
 
    }
 

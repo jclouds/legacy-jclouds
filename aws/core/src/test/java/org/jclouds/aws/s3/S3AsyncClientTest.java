@@ -83,7 +83,7 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
 
    public void testAllRegions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = S3AsyncClient.class.getMethod("putBucketInRegion", String.class, String.class, Array.newInstance(
-            PutBucketOptions.class, 0).getClass());
+               PutBucketOptions.class, 0).getClass());
       for (String region : Region.ALL_S3) {
          processor.createRequest(method, region, "bucket-name");
       }
@@ -101,8 +101,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
 
       assertRequestLineEquals(request, "GET https://bucket.s3.amazonaws.com/?location HTTP/1.1");
       assertNonPayloadHeadersEqual(
-            request,
-            "Authorization: AWS identity:2fFTeYJTDwiJmaAkKj732RjNbOg=\nDate: 2009-11-08T15:54:08.897Z\nHost: bucket.s3.amazonaws.com\n");
+               request,
+               "Authorization: AWS identity:2fFTeYJTDwiJmaAkKj732RjNbOg=\nDate: 2009-11-08T15:54:08.897Z\nHost: bucket.s3.amazonaws.com\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -134,9 +134,9 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/?requestPayment HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
       assertPayloadEquals(
-            request,
-            "<RequestPaymentConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Payer>BucketOwner</Payer></RequestPaymentConfiguration>",
-            "text/xml", false);
+               request,
+               "<RequestPaymentConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Payer>BucketOwner</Payer></RequestPaymentConfiguration>",
+               "text/xml", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -152,9 +152,9 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/?requestPayment HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
       assertPayloadEquals(
-            request,
-            "<RequestPaymentConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Payer>Requester</Payer></RequestPaymentConfiguration>",
-            "text/xml", false);
+               request,
+               "<RequestPaymentConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Payer>Requester</Payer></RequestPaymentConfiguration>",
+               "text/xml", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -165,7 +165,7 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
 
    public void testListBucket() throws SecurityException, NoSuchMethodException, IOException {
       Method method = S3AsyncClient.class.getMethod("listBucket", String.class, Array.newInstance(
-            ListBucketOptions.class, 0).getClass());
+               ListBucketOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, "bucket");
 
       assertRequestLineEquals(request, "GET https://bucket.s3.amazonaws.com/ HTTP/1.1");
@@ -196,23 +196,23 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testCopyObjectInvalidName() throws ArrayIndexOutOfBoundsException, SecurityException,
-         IllegalArgumentException, NoSuchMethodException, IOException {
+            IllegalArgumentException, NoSuchMethodException, IOException {
       Method method = S3AsyncClient.class.getMethod("copyObject", String.class, String.class, String.class,
-            String.class, Array.newInstance(CopyObjectOptions.class, 0).getClass());
+               String.class, Array.newInstance(CopyObjectOptions.class, 0).getClass());
       processor.createRequest(method, "sourceBucket", "sourceObject", "destinationBucket", "destinationObject");
 
    }
 
    public void testCopyObject() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
-         NoSuchMethodException, IOException {
+            NoSuchMethodException, IOException {
       Method method = S3AsyncClient.class.getMethod("copyObject", String.class, String.class, String.class,
-            String.class, Array.newInstance(CopyObjectOptions.class, 0).getClass());
+               String.class, Array.newInstance(CopyObjectOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, "sourceBucket", "sourceObject", "destinationbucket",
-            "destinationObject");
+               "destinationObject");
 
       assertRequestLineEquals(request, "PUT https://destinationbucket.s3.amazonaws.com/destinationObject HTTP/1.1");
       assertNonPayloadHeadersEqual(request,
-            "Host: destinationbucket.s3.amazonaws.com\nx-amz-copy-source: /sourceBucket/sourceObject\n");
+               "Host: destinationbucket.s3.amazonaws.com\nx-amz-copy-source: /sourceBucket/sourceObject\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -269,9 +269,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
    }
 
    public void testGetObject() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
-         NoSuchMethodException, IOException {
-      Method method = S3AsyncClient.class.getMethod("getObject", String.class, String.class, Array.newInstance(
-            GetOptions.class, 0).getClass());
+            NoSuchMethodException, IOException {
+      Method method = S3AsyncClient.class.getMethod("getObject", String.class, String.class, GetOptions[].class);
       HttpRequest request = processor.createRequest(method, "bucket", "object");
 
       assertRequestLineEquals(request, "GET https://bucket.s3.amazonaws.com/object HTTP/1.1");
@@ -356,14 +355,14 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
    public void testPutBucketACL() throws SecurityException, NoSuchMethodException, IOException {
       Method method = S3AsyncClient.class.getMethod("putBucketACL", String.class, AccessControlList.class);
       HttpRequest request = processor.createRequest(method, "bucket", AccessControlList.fromCannedAccessPolicy(
-            CannedAccessPolicy.PRIVATE, "1234"));
+               CannedAccessPolicy.PRIVATE, "1234"));
 
       assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/?acl HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
       assertPayloadEquals(
-            request,
-            "<AccessControlPolicy xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Owner><ID>1234</ID></Owner><AccessControlList><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1234</ID></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>",
-            "text/xml", false);
+               request,
+               "<AccessControlPolicy xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Owner><ID>1234</ID></Owner><AccessControlList><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1234</ID></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>",
+               "text/xml", false);
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -373,9 +372,9 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
    }
 
    public void testPutBucketDefault() throws ArrayIndexOutOfBoundsException, SecurityException,
-         IllegalArgumentException, NoSuchMethodException, IOException {
+            IllegalArgumentException, NoSuchMethodException, IOException {
       Method method = S3AsyncClient.class.getMethod("putBucketInRegion", String.class, String.class, Array.newInstance(
-            PutBucketOptions.class, 0).getClass());
+               PutBucketOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, (String) null, "bucket");
 
       assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/ HTTP/1.1");
@@ -390,16 +389,16 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
    }
 
    public void testPutBucketEu() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
-         NoSuchMethodException, IOException {
+            NoSuchMethodException, IOException {
       Method method = S3AsyncClient.class.getMethod("putBucketInRegion", String.class, String.class, Array.newInstance(
-            PutBucketOptions.class, 0).getClass());
+               PutBucketOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, "EU", "bucket");
 
       assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
       assertPayloadEquals(request,
-            "<CreateBucketConfiguration><LocationConstraint>EU</LocationConstraint></CreateBucketConfiguration>",
-            "text/xml", false);
+               "<CreateBucketConfiguration><LocationConstraint>EU</LocationConstraint></CreateBucketConfiguration>",
+               "text/xml", false);
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -409,12 +408,12 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
    }
 
    public void testPutObject() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
-         NoSuchMethodException, IOException {
+            NoSuchMethodException, IOException {
 
       Method method = S3AsyncClient.class
-            .getMethod("putObject", String.class, S3Object.class, PutObjectOptions[].class);
+               .getMethod("putObject", String.class, S3Object.class, PutObjectOptions[].class);
       HttpRequest request = processor.createRequest(method, "bucket", blobToS3Object
-            .apply(BindBlobToMultipartFormTest.TEST_BLOB));
+               .apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
       assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/hello HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
@@ -429,16 +428,16 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
 
    public void testPutObjectACL() throws SecurityException, NoSuchMethodException, IOException {
       Method method = S3AsyncClient.class
-            .getMethod("putObjectACL", String.class, String.class, AccessControlList.class);
+               .getMethod("putObjectACL", String.class, String.class, AccessControlList.class);
       HttpRequest request = processor.createRequest(method, "bucket", "key", AccessControlList.fromCannedAccessPolicy(
-            CannedAccessPolicy.PRIVATE, "1234"));
+               CannedAccessPolicy.PRIVATE, "1234"));
 
       assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/key?acl HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
       assertPayloadEquals(
-            request,
-            "<AccessControlPolicy xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Owner><ID>1234</ID></Owner><AccessControlList><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1234</ID></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>",
-            "text/xml", false);
+               request,
+               "<AccessControlPolicy xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Owner><ID>1234</ID></Owner><AccessControlList><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1234</ID></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>",
+               "text/xml", false);
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -469,7 +468,7 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/?logging HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
       assertPayloadEquals(request, "<BucketLoggingStatus xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"/>",
-            "text/xml", false);
+               "text/xml", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -481,13 +480,13 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
    public void testEnableBucketLoggingOwner() throws SecurityException, NoSuchMethodException, IOException {
       Method method = S3AsyncClient.class.getMethod("enableBucketLogging", String.class, BucketLogging.class);
       HttpRequest request = processor
-            .createRequest(method, "bucket", new BucketLogging("mylogs", "access_log-", ImmutableSet
-                  .<Grant> of(new Grant(new EmailAddressGrantee("adrian@jclouds.org"), Permission.FULL_CONTROL))));
+               .createRequest(method, "bucket", new BucketLogging("mylogs", "access_log-", ImmutableSet
+                        .<Grant> of(new Grant(new EmailAddressGrantee("adrian@jclouds.org"), Permission.FULL_CONTROL))));
 
       assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/?logging HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
       assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream("/s3/bucket_logging.xml")),
-            "text/xml", false);
+               "text/xml", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);

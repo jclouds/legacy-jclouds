@@ -34,6 +34,7 @@ import org.jclouds.aws.ec2.compute.domain.EC2Hardware;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -76,11 +77,13 @@ public class EC2HardwareSupplier implements Supplier<Set<? extends Hardware>> {
 
          });
          sizes.add(new EC2Hardware(location, InstanceType.CC1_4XLARGE, ImmutableList.of(new Processor(4.0, 4.0),
-               new Processor(4.0, 4.0)), 23 * 1024, 1690, ccAmis));
+                  new Processor(4.0, 4.0)), 23 * 1024, ImmutableList.of(
+                  new VolumeImpl(10.0f, "/dev/sda1", true, false), new VolumeImpl(840.0f, "/dev/sdb", false, false),
+                  new VolumeImpl(840.0f, "/dev/sdc", false, false)), ccAmis));
       }
       sizes.addAll(ImmutableSet.<Hardware> of(EC2Hardware.T1_MICRO, EC2Hardware.C1_MEDIUM, EC2Hardware.C1_XLARGE,
-            EC2Hardware.M1_LARGE, EC2Hardware.M1_SMALL, EC2Hardware.M1_XLARGE, EC2Hardware.M2_XLARGE,
-            EC2Hardware.M2_2XLARGE, EC2Hardware.M2_4XLARGE));
+               EC2Hardware.M1_LARGE, EC2Hardware.M1_SMALL, EC2Hardware.M1_XLARGE, EC2Hardware.M2_XLARGE,
+               EC2Hardware.M2_2XLARGE, EC2Hardware.M2_4XLARGE));
       return sizes;
    }
 }

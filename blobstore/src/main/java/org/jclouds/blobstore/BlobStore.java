@@ -30,6 +30,7 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.domain.Location;
+import org.jclouds.http.HttpRequest;
 
 /**
  * Synchronous access to a BlobStore such as Amazon S3
@@ -49,6 +50,19 @@ public interface BlobStore {
     * creates a new blob with the specified name.
     */
    Blob newBlob(String name);
+
+   /**
+    * gets a signed request, including headers as necessary, to access a blob from an external
+    * client.
+    * 
+    * @param container
+    *           container where the blob resides
+    * @param directory
+    *           full path to the blob
+    * @throws UnsupportedOperationException
+    *            if not supported by the provider
+    */
+   HttpRequest signRequestForBlob(String container, String name);
 
    /**
     * The get locations command returns all the valid locations for containers. A location has a

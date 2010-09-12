@@ -21,6 +21,7 @@ package org.jclouds.gogrid.compute.config;
 
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.jclouds.compute.util.ComputeServiceUtils.getSpace;
 import static org.jclouds.gogrid.reference.GoGridConstants.PROPERTY_GOGRID_DEFAULT_DC;
 
 import java.util.Map;
@@ -32,10 +33,10 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
@@ -52,9 +53,9 @@ import org.jclouds.gogrid.compute.strategy.GoGridDestroyNodeStrategy;
 import org.jclouds.gogrid.compute.strategy.GoGridGetNodeMetadataStrategy;
 import org.jclouds.gogrid.compute.strategy.GoGridListNodesStrategy;
 import org.jclouds.gogrid.compute.strategy.GoGridRebootNodeStrategy;
+import org.jclouds.gogrid.compute.suppliers.GoGridHardwareSupplier;
 import org.jclouds.gogrid.compute.suppliers.GoGridImageSupplier;
 import org.jclouds.gogrid.compute.suppliers.GoGridLocationSupplier;
-import org.jclouds.gogrid.compute.suppliers.GoGridHardwareSupplier;
 import org.jclouds.gogrid.domain.Server;
 import org.jclouds.gogrid.domain.ServerState;
 import org.jclouds.rest.RestContext;
@@ -137,13 +138,13 @@ public class GoGridComputeServiceContextModule extends BaseComputeServiceContext
       return new Function<Hardware, String>() {
          @Override
          public String apply(Hardware hardware) {
-            if (hardware.getRam() >= 8 * 1024 || getCores(hardware) >= 6 || hardware.getDisk() >= 450)
+            if (hardware.getRam() >= 8 * 1024 || getCores(hardware) >= 6 || getSpace(hardware) >= 450)
                return "8GB";
-            if (hardware.getRam() >= 4 * 1024 || getCores(hardware) >= 3 || hardware.getDisk() >= 230)
+            if (hardware.getRam() >= 4 * 1024 || getCores(hardware) >= 3 || getSpace(hardware) >= 230)
                return "4GB";
-            if (hardware.getRam() >= 2 * 1024 || hardware.getDisk() >= 110)
+            if (hardware.getRam() >= 2 * 1024 || getSpace(hardware) >= 110)
                return "2GB";
-            if (hardware.getRam() >= 1024 || hardware.getDisk() >= 55)
+            if (hardware.getRam() >= 1024 || getSpace(hardware) >= 55)
                return "1GB";
             return "512MB"; /* smallest */
          }

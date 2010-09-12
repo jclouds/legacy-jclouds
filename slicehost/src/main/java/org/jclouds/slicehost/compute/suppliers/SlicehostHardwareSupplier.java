@@ -29,6 +29,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.internal.HardwareImpl;
+import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
@@ -66,8 +67,9 @@ public class SlicehostHardwareSupplier implements Supplier<Set<? extends Hardwar
       logger.debug(">> providing sizes");
       for (final Flavor from : sync.listFlavors()) {
          sizes.add(new HardwareImpl(from.getId() + "", from.getName(), from.getId() + "", location.get(), null,
-               ImmutableMap.<String, String> of(), ImmutableList.of(new Processor(from.getRam() / 1024.0, 1.0)), from
-                     .getRam(), (from.getRam() * 4) / 1024, ImagePredicates.any()));
+                  ImmutableMap.<String, String> of(), ImmutableList.of(new Processor(from.getRam() / 1024.0, 1.0)),
+                  from.getRam(), ImmutableList.of(new VolumeImpl((from.getRam() * 4) / 1024.0f, true, true)),
+                  ImagePredicates.any()));
       }
       logger.debug("<< sizes(%d)", sizes.size());
       return sizes;

@@ -72,7 +72,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
 
    public void testListDirectories() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AtmosStorageAsyncClient.class.getMethod("listDirectories", Array
-            .newInstance(ListOptions.class, 0).getClass());
+               .newInstance(ListOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request, "GET https://accesspoint.atmosonline.com/rest/namespace HTTP/1.1");
@@ -88,7 +88,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
 
    public void testListDirectory() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AtmosStorageAsyncClient.class.getMethod("listDirectory", String.class, Array.newInstance(
-            ListOptions.class, 0).getClass());
+               ListOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, "directory");
 
       assertRequestLineEquals(request, "GET https://accesspoint.atmosonline.com/rest/namespace/directory/ HTTP/1.1");
@@ -104,7 +104,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
 
    public void testListDirectoriesOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AtmosStorageAsyncClient.class.getMethod("listDirectories", Array
-            .newInstance(ListOptions.class, 0).getClass());
+               .newInstance(ListOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, new ListOptions().limit(1).token("asda"));
 
       assertRequestLineEquals(request, "GET https://accesspoint.atmosonline.com/rest/namespace HTTP/1.1");
@@ -120,7 +120,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
 
    public void testListDirectoryOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AtmosStorageAsyncClient.class.getMethod("listDirectory", String.class, Array.newInstance(
-            ListOptions.class, 0).getClass());
+               ListOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, "directory", new ListOptions().limit(1).token("asda"));
 
       assertRequestLineEquals(request, "GET https://accesspoint.atmosonline.com/rest/namespace/directory/ HTTP/1.1");
@@ -152,7 +152,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
    public void testCreateFile() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AtmosStorageAsyncClient.class.getMethod("createFile", String.class, AtmosObject.class);
       HttpRequest request = processor.createRequest(method, "dir", blobToObject
-            .apply(BindBlobToMultipartFormTest.TEST_BLOB));
+               .apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
       assertRequestLineEquals(request, "POST https://accesspoint.atmosonline.com/rest/namespace/dir/hello HTTP/1.1");
       assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
@@ -168,7 +168,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
    public void testUpdateFile() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AtmosStorageAsyncClient.class.getMethod("updateFile", String.class, AtmosObject.class);
       HttpRequest request = processor.createRequest(method, "dir", blobToObject
-            .apply(BindBlobToMultipartFormTest.TEST_BLOB));
+               .apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
       assertRequestLineEquals(request, "PUT https://accesspoint.atmosonline.com/rest/namespace/dir/hello HTTP/1.1");
       assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
@@ -182,8 +182,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
    }
 
    public void testReadFile() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosStorageAsyncClient.class.getMethod("readFile", String.class, Array.newInstance(
-            GetOptions.class, 0).getClass());
+      Method method = AtmosStorageAsyncClient.class.getMethod("readFile", String.class, GetOptions[].class);
       HttpRequest request = processor.createRequest(method, "dir/file");
 
       assertRequestLineEquals(request, "GET https://accesspoint.atmosonline.com/rest/namespace/dir/file HTTP/1.1");

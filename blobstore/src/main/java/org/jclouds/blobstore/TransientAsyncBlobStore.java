@@ -77,6 +77,7 @@ import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
+import org.jclouds.blobstore.strategy.SignRequestForBlobStrategy;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
@@ -124,8 +125,8 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
             HttpGetOptionsListToGetOptions httpGetOptionsConverter,
             IfDirectoryReturnNameStrategy ifDirectoryReturnName, Blob.Factory blobFactory, BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
-            Supplier<Set<? extends Location>> locations) {
-      super(context, blobUtils, service, defaultLocation, locations);
+            Supplier<Set<? extends Location>> locations, SignRequestForBlobStrategy signRequestForBlob) {
+      super(context, blobUtils, service, defaultLocation, locations, signRequestForBlob);
       this.blobFactory = blobFactory;
       this.dateService = dateService;
       this.crypto = crypto;

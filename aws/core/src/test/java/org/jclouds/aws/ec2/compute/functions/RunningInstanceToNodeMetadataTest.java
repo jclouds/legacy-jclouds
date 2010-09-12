@@ -33,6 +33,7 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2Client;
+import org.jclouds.aws.ec2.compute.domain.EC2Hardware;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.Image;
@@ -40,8 +41,8 @@ import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.RunningInstance;
-import org.jclouds.aws.ec2.functions.RunningInstanceToStorageMappingUnix;
 import org.jclouds.aws.ec2.services.AMIClient;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
@@ -83,6 +84,8 @@ public class RunningInstanceToNodeMetadataTest {
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
                .<Location> of(location));
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+               .<Hardware> of(EC2Hardware.M2_4XLARGE));
       PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
       RunningInstance instance = createMock(RunningInstance.class);
 
@@ -90,9 +93,6 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getGroupIds()).andReturn(ImmutableSet.<String> of()).atLeastOnce();
       expect(instance.getKeyName()).andReturn(null).atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
-      expect(instance.getVirtualizationType()).andReturn("paravirtual");
-      expect(instance.getPlacementGroup()).andReturn(null);
-      expect(instance.getSubnetId()).andReturn(null);
 
       expect(instance.getIpAddress()).andReturn("127.0.0.1");
       expect(instance.getPrivateIpAddress()).andReturn("127.0.0.1");
@@ -115,7 +115,7 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-               credentialProvider, imageMap, locations, new RunningInstanceToStorageMappingUnix());
+               credentialProvider, imageMap, locations, hardwares);
 
       NodeMetadata metadata = parser.apply(instance);
       assertEquals(metadata.getLocation(), locations.get().iterator().next());
@@ -145,6 +145,8 @@ public class RunningInstanceToNodeMetadataTest {
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
                .<Location> of(location));
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+               .<Hardware> of(EC2Hardware.M2_4XLARGE));
       PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
       RunningInstance instance = createMock(RunningInstance.class);
 
@@ -152,9 +154,6 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getGroupIds()).andReturn(ImmutableSet.<String> of()).atLeastOnce();
       expect(instance.getKeyName()).andReturn(null).atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
-      expect(instance.getVirtualizationType()).andReturn("paravirtual");
-      expect(instance.getPlacementGroup()).andReturn(null);
-      expect(instance.getSubnetId()).andReturn(null);
 
       expect(instance.getIpAddress()).andReturn("127.0.0.1");
       expect(instance.getPrivateIpAddress()).andReturn("127.0.0.1");
@@ -178,7 +177,7 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-               credentialProvider, imageMap, locations, new RunningInstanceToStorageMappingUnix());
+               credentialProvider, imageMap, locations, hardwares);
 
       NodeMetadata metadata = parser.apply(instance);
       assertEquals(metadata.getLocation(), locations.get().iterator().next());
@@ -208,6 +207,8 @@ public class RunningInstanceToNodeMetadataTest {
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
                .<Location> of(location));
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+               .<Hardware> of(EC2Hardware.M2_4XLARGE));
       PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
       RunningInstance instance = createMock(RunningInstance.class);
 
@@ -215,9 +216,6 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getGroupIds()).andReturn(ImmutableSet.<String> of()).atLeastOnce();
       expect(instance.getKeyName()).andReturn(null).atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
-      expect(instance.getVirtualizationType()).andReturn("paravirtual");
-      expect(instance.getPlacementGroup()).andReturn(null);
-      expect(instance.getSubnetId()).andReturn(null);
 
       expect(instance.getIpAddress()).andReturn("127.0.0.1");
       expect(instance.getPrivateIpAddress()).andReturn("127.0.0.1");
@@ -245,7 +243,7 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-               credentialProvider, imageMap, locations, new RunningInstanceToStorageMappingUnix());
+               credentialProvider, imageMap, locations, hardwares);
 
       NodeMetadata metadata = parser.apply(instance);
       assertEquals(metadata.getLocation(), locations.get().iterator().next());
@@ -276,6 +274,8 @@ public class RunningInstanceToNodeMetadataTest {
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
                .<Location> of(location));
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+               .<Hardware> of(EC2Hardware.M2_4XLARGE));
       PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
       RunningInstance instance = createMock(RunningInstance.class);
 
@@ -284,9 +284,6 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getGroupIds()).andReturn(ImmutableSet.<String> of()).atLeastOnce();
       expect(instance.getKeyName()).andReturn(null).atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
-      expect(instance.getVirtualizationType()).andReturn("paravirtual");
-      expect(instance.getPlacementGroup()).andReturn(null);
-      expect(instance.getSubnetId()).andReturn(null);
 
       expect(instance.getIpAddress()).andReturn("127.0.0.1");
       expect(instance.getPrivateIpAddress()).andReturn("127.0.0.1");
@@ -309,7 +306,7 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-               credentialProvider, imageMap, locations, new RunningInstanceToStorageMappingUnix());
+               credentialProvider, imageMap, locations, hardwares);
 
       NodeMetadata metadata = parser.apply(instance);
       assertEquals(metadata.getLocation(), locations.get().iterator().next());
@@ -338,6 +335,8 @@ public class RunningInstanceToNodeMetadataTest {
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
                .<Location> of(location));
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+               .<Hardware> of(EC2Hardware.M2_4XLARGE));
       PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
       RunningInstance instance = createMock(RunningInstance.class);
 
@@ -346,9 +345,6 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getGroupIds()).andReturn(ImmutableSet.of("jclouds#tag#us-east-1")).atLeastOnce();
       expect(instance.getKeyName()).andReturn(null).atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
-      expect(instance.getVirtualizationType()).andReturn("paravirtual");
-      expect(instance.getPlacementGroup()).andReturn(null);
-      expect(instance.getSubnetId()).andReturn(null);
 
       expect(instance.getIpAddress()).andReturn("127.0.0.1");
       expect(instance.getPrivateIpAddress()).andReturn("127.0.0.1");
@@ -371,7 +367,7 @@ public class RunningInstanceToNodeMetadataTest {
       replay(instance);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-               credentialProvider, imageMap, locations, new RunningInstanceToStorageMappingUnix());
+               credentialProvider, imageMap, locations, hardwares);
 
       NodeMetadata metadata = parser.apply(instance);
       assertEquals(metadata.getLocation(), locations.get().iterator().next());
@@ -388,7 +384,7 @@ public class RunningInstanceToNodeMetadataTest {
       verify(instance);
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings( { "unchecked", "rawtypes" })
    @Test
    public void testApplyWithKeyPairCreatesTagOfParsedSecurityGroupAndCredentialsBasedOnIt() throws UnknownHostException {
       EC2Client client = createMock(EC2Client.class);
@@ -396,7 +392,8 @@ public class RunningInstanceToNodeMetadataTest {
       expect(client.getAMIServices()).andReturn(amiClient).atLeastOnce();
       Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
       ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
-
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+               .<Hardware> of(EC2Hardware.M2_4XLARGE));
       PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
       RunningInstance instance = createMock(RunningInstance.class);
       Image image = createMock(Image.class);
@@ -405,9 +402,6 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getGroupIds()).andReturn(ImmutableSet.of("jclouds#tag#us-east-1")).atLeastOnce();
       expect(instance.getKeyName()).andReturn("jclouds#tag#us-east-1#50").atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
-      expect(instance.getVirtualizationType()).andReturn("paravirtual");
-      expect(instance.getPlacementGroup()).andReturn(null);
-      expect(instance.getSubnetId()).andReturn(null);
 
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
@@ -445,7 +439,7 @@ public class RunningInstanceToNodeMetadataTest {
       replay(jcImage);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-               credentialProvider, imageMap, locations, new RunningInstanceToStorageMappingUnix());
+               credentialProvider, imageMap, locations, hardwares);
       NodeMetadata metadata = parser.apply(instance);
 
       assertEquals(metadata.getTag(), "tag");
@@ -464,7 +458,7 @@ public class RunningInstanceToNodeMetadataTest {
 
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings( { "unchecked", "rawtypes" })
    @Test
    public void testApplyWithTwoSecurityGroups() throws UnknownHostException {
       EC2Client client = createMock(EC2Client.class);
@@ -472,7 +466,8 @@ public class RunningInstanceToNodeMetadataTest {
       expect(client.getAMIServices()).andReturn(amiClient).atLeastOnce();
       Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
       ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
-
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+               .<Hardware> of(EC2Hardware.M2_4XLARGE));
       PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
       RunningInstance instance = createMock(RunningInstance.class);
       Image image = createMock(Image.class);
@@ -481,9 +476,6 @@ public class RunningInstanceToNodeMetadataTest {
       expect(instance.getGroupIds()).andReturn(ImmutableSet.of("jclouds1", "jclouds2")).atLeastOnce();
       expect(instance.getKeyName()).andReturn("jclouds#tag#us-east-1#50").atLeastOnce();
       expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
-      expect(instance.getVirtualizationType()).andReturn("paravirtual");
-      expect(instance.getPlacementGroup()).andReturn(null);
-      expect(instance.getSubnetId()).andReturn(null);
 
       Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
@@ -521,7 +513,7 @@ public class RunningInstanceToNodeMetadataTest {
       replay(jcImage);
 
       RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
-               credentialProvider, imageMap, locations, new RunningInstanceToStorageMappingUnix());
+               credentialProvider, imageMap, locations, hardwares);
 
       NodeMetadata metadata = parser.apply(instance);
 

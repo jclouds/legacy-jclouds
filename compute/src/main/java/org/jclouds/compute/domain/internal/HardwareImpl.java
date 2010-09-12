@@ -19,6 +19,10 @@
 
 package org.jclouds.compute.domain.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.getCoresAndSpeed;
+import static org.jclouds.compute.util.ComputeServiceUtils.getSpace;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +33,7 @@ import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.Volume;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.ResourceMetadata;
 
@@ -45,17 +50,17 @@ public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
    private static final long serialVersionUID = 8994255275911717567L;
    private final List<Processor> processors = Lists.newArrayList();
    private final int ram;
-   private final int disk;
+   private final List<Volume> volumes = Lists.newArrayList();
 
    private Predicate<Image> supportsImage;
 
    public HardwareImpl(String providerId, String name, String id, @Nullable Location location, URI uri,
-         Map<String, String> userMetadata, Iterable<? extends Processor> processors, int ram, int disk,
-         Predicate<Image> supportsImage) {
-      super(ComputeType.SIZE, providerId, name, id, location, uri, userMetadata);
-      Iterables.addAll(this.processors, processors);
+            Map<String, String> userMetadata, Iterable<? extends Processor> processors, int ram,
+            Iterable<? extends Volume> volumes, Predicate<Image> supportsImage) {
+      super(ComputeType.HARDWARE, providerId, name, id, location, uri, userMetadata);
+      Iterables.addAll(this.processors, checkNotNull(processors, "processors"));
       this.ram = ram;
-      this.disk = disk;
+      Iterables.addAll(this.volumes, checkNotNull(volumes, "volumes"));
       this.supportsImage = supportsImage;
    }
 
@@ -79,8 +84,8 @@ public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
     * {@inheritDoc}
     */
    @Override
-   public int getDisk() {
-      return disk;
+   public List<? extends Volume> getVolumes() {
+      return volumes;
    }
 
    /**
@@ -90,19 +95,11 @@ public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
    public int compareTo(ResourceMetadata<ComputeType> that) {
       if (that instanceof Hardware) {
          Hardware thatHardware = Hardware.class.cast(that);
-         return ComparisonChain.start()
-               .compare(sumProcessors(this.getProcessors()), sumProcessors(thatHardware.getProcessors()))
-               .compare(this.getRam(), thatHardware.getRam()).compare(this.getDisk(), thatHardware.getDisk()).result();
+         return ComparisonChain.start().compare(getCoresAndSpeed(this), getCoresAndSpeed(thatHardware)).compare(
+                  this.getRam(), thatHardware.getRam()).compare(getSpace(this), getSpace(thatHardware)).result();
       } else {
          return super.compareTo(that);
       }
-   }
-
-   static double sumProcessors(List<? extends Processor> in) {
-      double returnVal = 0;
-      for (Processor processor : in)
-         returnVal = processor.getCores() * processor.getSpeed();
-      return returnVal;
    }
 
    /**
@@ -111,25 +108,25 @@ public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
    @Override
    public String toString() {
       return "[id=" + getId() + ", providerId=" + getProviderId() + ", name=" + getName() + ", processors="
-            + processors + ", ram=" + ram + ", disk=" + disk + ", supportsImage=" + supportsImage + "]";
+               + processors + ", ram=" + ram + ", volumes=" + volumes + ", supportsImage=" + supportsImage + "]";
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public boolean supportsImage(Image image) {
-      return supportsImage.apply(image);
+   public Predicate<Image> supportsImage() {
+      return supportsImage;
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + disk;
       result = prime * result + ((processors == null) ? 0 : processors.hashCode());
       result = prime * result + ram;
       result = prime * result + ((supportsImage == null) ? 0 : supportsImage.hashCode());
+      result = prime * result + ((volumes == null) ? 0 : volumes.hashCode());
       return result;
    }
 
@@ -142,8 +139,6 @@ public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
       if (getClass() != obj.getClass())
          return false;
       HardwareImpl other = (HardwareImpl) obj;
-      if (disk != other.disk)
-         return false;
       if (processors == null) {
          if (other.processors != null)
             return false;
@@ -155,6 +150,11 @@ public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
          if (other.supportsImage != null)
             return false;
       } else if (!supportsImage.equals(other.supportsImage))
+         return false;
+      if (volumes == null) {
+         if (other.volumes != null)
+            return false;
+      } else if (!volumes.equals(other.volumes))
          return false;
       return true;
    }

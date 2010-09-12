@@ -55,11 +55,11 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.Constants;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
@@ -85,7 +85,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
 import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
@@ -95,37 +94,36 @@ import com.google.inject.Module;
 @Test(groups = { "integration", "live" }, sequential = true, testName = "compute.ComputeServiceLiveTest")
 public abstract class BaseComputeServiceLiveTest {
    public static final String APT_RUN_SCRIPT = new StringBuilder()//
-         .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
-         .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
-         .append(
-               "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
-         .append("apt-get update\n")//
-         .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
-         .toString();
+            .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
+            .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
+            .append(
+                     "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
+            .append("apt-get update\n")//
+            .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
+            .toString();
 
    public static final String YUM_RUN_SCRIPT = new StringBuilder()
-         .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")
-         //
-         .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-         //
-         .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-         //
-         .append(
-               "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
-         .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
-         .append("yum --nogpgcheck -y install java-1.6.0-openjdk\n")//
-         .append("echo \"export PATH=\\\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\\$PATH\\\"\" >> /root/.bashrc\n")//
-         .toString();
+            .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")
+            //
+            .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+            //
+            .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
+            //
+            .append(
+                     "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
+            .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
+            .append("yum --nogpgcheck -y install java-1.6.0-openjdk\n")//
+            .append("echo \"export PATH=\\\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\\$PATH\\\"\" >> /root/.bashrc\n")//
+            .toString();
 
    public static final String ZYPPER_RUN_SCRIPT = new StringBuilder()//
-         .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
-         .append("sudo zypper install java-1.6.0-openjdk-devl\n")//
-         .toString();
+            .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
+            .append("sudo zypper install java-1.6.0-openjdk-devl\n")//
+            .toString();
 
    abstract public void setServiceDefaults();
 
    protected String provider;
-   protected SshClient.Factory sshFactory;
    protected String tag;
 
    protected RetryablePredicate<IPSocket> socketTester;
@@ -145,12 +143,12 @@ public abstract class BaseComputeServiceLiveTest {
       setupCredentials();
       setupKeyPairForTest();
       initializeContextAndClient();
+      buildSocketTester();
+   }
 
-      Injector injector = createSshClientInjector();
-      sshFactory = injector.getInstance(SshClient.Factory.class);
-      SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
+   protected void buildSocketTester() {
+      SocketOpen socketOpen = Guice.createInjector(getSshModule()).getInstance(SocketOpen.class);
       socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
-      injector.injectMembers(socketOpen); // add logger
    }
 
    protected void setupKeyPairForTest() throws FileNotFoundException, IOException {
@@ -167,17 +165,13 @@ public abstract class BaseComputeServiceLiveTest {
       checkSecretKeyFile(secretKeyFile);
       String secret = Files.toString(new File(secretKeyFile), Charsets.UTF_8);
       assert secret.startsWith("-----BEGIN RSA PRIVATE KEY-----") : "invalid key:\n" + secret;
-      return ImmutableMap.<String, String> of("private", secret, "public",
-            Files.toString(new File(secretKeyFile + ".pub"), Charsets.UTF_8));
+      return ImmutableMap.<String, String> of("private", secret, "public", Files.toString(new File(secretKeyFile
+               + ".pub"), Charsets.UTF_8));
    }
 
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
       credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
-   }
-
-   protected Injector createSshClientInjector() {
-      return Guice.createInjector(getSshModule());
    }
 
    private void initializeContextAndClient() throws IOException {
@@ -186,8 +180,8 @@ public abstract class BaseComputeServiceLiveTest {
       Properties props = new Properties();
       props.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       props.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
-            ImmutableSet.of(new Log4JLoggingModule(), getSshModule()), props);
+      context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet.of(
+               new Log4JLoggingModule(), getSshModule()), props);
       client = context.getComputeService();
    }
 
@@ -205,8 +199,8 @@ public abstract class BaseComputeServiceLiveTest {
    public void testCorrectAuthException() throws Exception {
       ComputeServiceContext context = null;
       try {
-         context = new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA",
-               ImmutableSet.<Module> of(new Log4JLoggingModule()));
+         context = new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA", ImmutableSet
+                  .<Module> of(new Log4JLoggingModule()));
          context.getComputeService().listNodes();
       } finally {
          if (context != null)
@@ -245,7 +239,7 @@ public abstract class BaseComputeServiceLiveTest {
          OperatingSystem os = get(nodes, 0).getOperatingSystem();
          try {
             Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(tag, os, new Credentials(
-                  good.identity, "romeo"));
+                     good.identity, "romeo"));
             assert false : "shouldn't pass with a bad password\n" + responses;
          } catch (RunScriptOnNodesException e) {
             assert getRootCause(e).getMessage().contains("Auth fail") : e;
@@ -299,9 +293,9 @@ public abstract class BaseComputeServiceLiveTest {
    private void refreshTemplate() {
       template = buildTemplate(client.templateBuilder());
 
-      template.getOptions().installPrivateKey(newStringPayload(keyPair.get("private")))
-            .authorizePublicKey(newStringPayload(keyPair.get("public")))
-            .runScript(newStringPayload(buildScript(template.getImage().getOperatingSystem())));
+      template.getOptions().installPrivateKey(newStringPayload(keyPair.get("private"))).authorizePublicKey(
+               newStringPayload(keyPair.get("public"))).runScript(
+               newStringPayload(buildScript(template.getImage().getOperatingSystem())));
    }
 
    protected void checkImageIdMatchesTemplate(NodeMetadata node) {
@@ -312,8 +306,8 @@ public abstract class BaseComputeServiceLiveTest {
    protected void checkOsMatchesTemplate(NodeMetadata node) {
       if (node.getOperatingSystem() != null)
          assert node.getOperatingSystem().getFamily().equals(template.getImage().getOperatingSystem().getFamily()) : String
-               .format("expecting family %s but got %s", template.getImage().getOperatingSystem().getFamily(),
-                     node.getOperatingSystem());
+                  .format("expecting family %s but got %s", template.getImage().getOperatingSystem().getFamily(), node
+                           .getOperatingSystem());
    }
 
    void assertLocationSameOrChild(Location test, Location expected) {
@@ -338,10 +332,10 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String tag, OperatingSystem os,
-         Credentials creds) throws RunScriptOnNodesException {
+            Credentials creds) throws RunScriptOnNodesException {
       try {
          return client.runScriptOnNodesMatching(runningWithTag(tag), newStringPayload(buildScript(os)),
-               overrideCredentialsWith(creds));
+                  overrideCredentialsWith(creds));
       } catch (SshException e) {
          throw e;
       }
@@ -353,8 +347,7 @@ public abstract class BaseComputeServiceLiveTest {
          assertNotNull(node.getTag());
          assertEquals(node.getTag(), tag);
          assertEquals(node.getState(), NodeState.RUNNING);
-         assert node.getPublicAddresses().size() >= 1 || node.getPrivateAddresses().size() >= 1 : "no ips in"
-               + node;
+         assert node.getPublicAddresses().size() >= 1 || node.getPrivateAddresses().size() >= 1 : "no ips in" + node;
          assertNotNull(node.getCredentials());
          if (node.getCredentials().identity != null) {
             assertNotNull(node.getCredentials().identity);
@@ -400,7 +393,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected void assertNodeZero(Set<? extends NodeMetadata> metadataSet) {
       assert metadataSet.size() == 0 : String.format("nodes left in set: [%s] which didn't match set: [%s]",
-            metadataSet, nodes);
+               metadataSet, nodes);
    }
 
    @Test(enabled = true, dependsOnMethods = "testGet")
@@ -439,8 +432,7 @@ public abstract class BaseComputeServiceLiveTest {
          // assert nodeMetadata.getName() != null : nodeMetadata;
          if (nodeMetadata.getState() == NodeState.RUNNING) {
             assert nodeMetadata.getPublicAddresses() != null : nodeMetadata;
-            assert nodeMetadata.getPublicAddresses().size() > 0
-                  || nodeMetadata.getPrivateAddresses().size() > 0 : nodeMetadata;
+            assert nodeMetadata.getPublicAddresses().size() > 0 || nodeMetadata.getPrivateAddresses().size() > 0 : nodeMetadata;
             assertNotNull(nodeMetadata.getPrivateAddresses());
          }
       }
@@ -462,26 +454,26 @@ public abstract class BaseComputeServiceLiveTest {
          assert location != location.getParent() : location;
          assert location.getScope() != null : location;
          switch (location.getScope()) {
-         case PROVIDER:
-            assertProvider(location);
-            break;
-         case REGION:
-            assertProvider(location.getParent());
-            break;
-         case ZONE:
-            Location provider = location.getParent().getParent();
-            // zone can be a direct descendant of provider
-            if (provider == null)
-               provider = location.getParent();
-            assertProvider(provider);
-            break;
-         case HOST:
-            Location provider2 = location.getParent().getParent().getParent();
-            // zone can be a direct descendant of provider
-            if (provider2 == null)
-               provider2 = location.getParent().getParent();
-            assertProvider(provider2);
-            break;
+            case PROVIDER:
+               assertProvider(location);
+               break;
+            case REGION:
+               assertProvider(location.getParent());
+               break;
+            case ZONE:
+               Location provider = location.getParent().getParent();
+               // zone can be a direct descendant of provider
+               if (provider == null)
+                  provider = location.getParent();
+               assertProvider(provider);
+               break;
+            case HOST:
+               Location provider2 = location.getParent().getParent().getParent();
+               // zone can be a direct descendant of provider
+               if (provider2 == null)
+                  provider2 = location.getParent().getParent();
+               assertProvider(provider2);
+               break;
          }
       }
    }
@@ -517,9 +509,9 @@ public abstract class BaseComputeServiceLiveTest {
       for (Hardware hardware : client.listHardwareProfiles()) {
          assert hardware.getProviderId() != null;
          assert getCores(hardware) > 0;
-         assert hardware.getDisk() >= 0;
+         assert hardware.getVolumes().size() >= 0;
          assert hardware.getRam() > 0;
-         assertEquals(hardware.getType(), ComputeType.SIZE);
+         assertEquals(hardware.getType(), ComputeType.HARDWARE);
       }
    }
 
@@ -567,7 +559,13 @@ public abstract class BaseComputeServiceLiveTest {
       socketTester.apply(socket); // TODO add transitionTo option that accepts
       // a socket conection
       // state.
-      SshClient ssh = sshFactory.create(socket, node.getCredentials().identity, keyPair.get("private").getBytes());
+      SshClient ssh = (node.getCredentials().credential != null && !node.getCredentials().credential
+               .startsWith("-----BEGIN RSA PRIVATE KEY-----")) ? context.utils().sshFactory().create(socket,
+               node.getCredentials().identity, node.getCredentials().credential) : context.utils().sshFactory().create(
+               socket,
+               node.getCredentials().identity,
+               node.getCredentials().credential != null ? node.getCredentials().credential.getBytes() : keyPair.get(
+                        "private").getBytes());
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");

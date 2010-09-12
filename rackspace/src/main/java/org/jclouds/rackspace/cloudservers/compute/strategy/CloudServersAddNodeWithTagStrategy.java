@@ -35,8 +35,6 @@ import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.rackspace.cloudservers.CloudServersClient;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 
-import com.google.common.collect.ImmutableMap;
-
 /**
  * @author Adrian Cole
  */
@@ -55,9 +53,9 @@ public class CloudServersAddNodeWithTagStrategy implements AddNodeWithTagStrateg
                .parseInt(template.getHardware().getProviderId()));
       return new NodeMetadataImpl(server.getId() + "", name, server.getId() + "", new LocationImpl(LocationScope.HOST,
                server.getHostId(), server.getHostId(), template.getLocation()), null, server.getMetadata(), tag,
-               template.getImage().getId(), template.getImage().getOperatingSystem(), NodeState.PENDING, server
-                        .getAddresses().getPublicAddresses(), server.getAddresses().getPrivateAddresses(), ImmutableMap
-                        .<String, String> of(), new Credentials("root", server.getAdminPass()));
+               template.getHardware(), template.getImage().getId(), template.getImage().getOperatingSystem(),
+               NodeState.PENDING, server.getAddresses().getPublicAddresses(), server.getAddresses()
+                        .getPrivateAddresses(), new Credentials("root", server.getAdminPass()));
    }
 
 }

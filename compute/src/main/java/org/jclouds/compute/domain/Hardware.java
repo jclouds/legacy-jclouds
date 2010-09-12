@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.jclouds.compute.domain.internal.HardwareImpl;
 
+import com.google.common.base.Predicate;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -44,12 +45,13 @@ public interface Hardware extends ComputeMetadata {
    int getRam();
 
    /**
-    * Amount of boot disk provided in GB (200)
+    * volumes associated with this.
     */
-   int getDisk();
+   List<? extends Volume> getVolumes();
 
    /**
     * Determines whether this size can run an image.
     */
-   boolean supportsImage(Image image);
+   Predicate<Image> supportsImage();
+   
 }

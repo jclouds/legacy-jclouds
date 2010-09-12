@@ -35,7 +35,6 @@ import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
-import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.domain.PlacementGroup.State;
 import org.jclouds.aws.ec2.predicates.PlacementGroupAvailable;
 import org.jclouds.aws.ec2.predicates.PlacementGroupDeleted;
@@ -43,9 +42,9 @@ import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -176,10 +175,8 @@ public class PlacementGroupClientLiveTest {
          Set<? extends NodeMetadata> nodes = context.getComputeService().runNodesWithTag(tag, 1, template);
          NodeMetadata node = Iterables.getOnlyElement(nodes);
 
-         RunningInstance instance = Iterables.getOnlyElement(Iterables.getOnlyElement(client.getInstanceServices()
-                  .describeInstancesInRegion(null, node.getProviderId())));
-         assertEquals(instance.getVirtualizationType(), node.getExtra().get("virtualizationType"));
-         assertEquals(instance.getPlacementGroup(), node.getExtra().get("placementGroup"));
+         Iterables.getOnlyElement(Iterables.getOnlyElement(client.getInstanceServices().describeInstancesInRegion(null,
+                  node.getProviderId())));
 
       } catch (RunNodesException e) {
          System.err.println(e.getNodeErrors().keySet());

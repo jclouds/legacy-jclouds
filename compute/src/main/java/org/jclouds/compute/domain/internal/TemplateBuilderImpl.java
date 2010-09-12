@@ -25,6 +25,7 @@ import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCoresAndSpeed;
+import static org.jclouds.compute.util.ComputeServiceUtils.getSpace;
 import static org.jclouds.util.Utils.multiMax;
 
 import java.util.Arrays;
@@ -384,7 +385,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    static final Ordering<Hardware> DEFAULT_SIZE_ORDERING = new Ordering<Hardware>() {
       public int compare(Hardware left, Hardware right) {
          return ComparisonChain.start().compare(getCores(left), getCores(right)).compare(left.getRam(), right.getRam())
-               .compare(left.getDisk(), right.getDisk()).result();
+               .compare(getSpace(left), getSpace(right)).result();
       }
    };
    static final Ordering<Hardware> BY_CORES_ORDERING = new Ordering<Hardware>() {
@@ -554,7 +555,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
                         @Override
                         public boolean apply(Image input) {
-                           return hardware.supportsImage(input);
+                           return hardware.supportsImage().apply(input);
                         }
 
                         @Override
@@ -596,7 +597,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
          @Override
          public boolean apply(Image arg0) {
-            return hardware.supportsImage(arg0);
+            return hardware.supportsImage().apply(arg0);
          }
 
          @Override

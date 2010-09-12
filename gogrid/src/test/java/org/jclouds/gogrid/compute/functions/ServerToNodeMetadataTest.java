@@ -29,6 +29,7 @@ import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
@@ -38,6 +39,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.gogrid.GoGridClient;
+import org.jclouds.gogrid.compute.suppliers.GoGridHardwareSupplier;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.Option;
 import org.jclouds.gogrid.domain.Server;
@@ -65,6 +67,7 @@ public class ServerToNodeMetadataTest {
       Map<ServerState, NodeState> serverStateToNodeState = createMock(Map.class);
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
       Option dc = new Option(1l, "US-West-1", "US West 1 Datacenter");
+      Option ram = new Option(1l, "512MB", "Server with 512MB RAM");
 
       Set<? extends org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
       Server server = createMock(Server.class);
@@ -85,6 +88,7 @@ public class ServerToNodeMetadataTest {
 
       ServerImage image = createMock(ServerImage.class);
       expect(server.getImage()).andReturn(image).atLeastOnce();
+      expect(server.getRam()).andReturn(ram).atLeastOnce();
       expect(server.getDatacenter()).andReturn(dc).atLeastOnce();
       expect(image.getId()).andReturn(2000l).atLeastOnce();
       expect(jcImage.getProviderId()).andReturn("2000").atLeastOnce();
@@ -101,6 +105,7 @@ public class ServerToNodeMetadataTest {
 
       ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, caller, Suppliers
                .<Set<? extends Image>> ofInstance(images), Suppliers
+               .<Set< ? extends Hardware>> ofInstance(GoGridHardwareSupplier.H_ALL), Suppliers
                .<Map<String, ? extends Location>> ofInstance(locations));
 
       NodeMetadata metadata = parser.apply(server);

@@ -282,7 +282,6 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          RunningInstance instance = getInstance(instanceClient, startedId);
 
          assertEquals(instance.getSubnetId(), subnetId);
-         assertEquals(instance.getSubnetId(), Iterables.getOnlyElement(nodes).getExtra().get("subnetId"));
 
       } finally {
          if (nodeId != null)

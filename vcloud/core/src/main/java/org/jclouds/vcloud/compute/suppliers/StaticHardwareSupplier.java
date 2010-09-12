@@ -26,6 +26,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.internal.HardwareImpl;
+import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
 
 import com.google.common.base.Supplier;
@@ -46,7 +47,8 @@ public class StaticHardwareSupplier implements Supplier<Set<? extends Hardware>>
          for (int ram : new int[] { 512, 1024, 2048, 4096, 8192, 16384 }) {
             String id = String.format("cpu=%d,ram=%s,disk=%d", cpus, ram, 10);
             sizes.add(new HardwareImpl(id, null, id, null, null, ImmutableMap.<String, String> of(), ImmutableList
-                  .of(new Processor(cpus, 1.0)), ram, 10, ImagePredicates.any()));
+                     .of(new Processor(cpus, 1.0)), ram, ImmutableList.of(new VolumeImpl(10f, true, true)),
+                     ImagePredicates.any()));
          }
       return sizes;
    }

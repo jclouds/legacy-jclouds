@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
@@ -60,9 +61,10 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    private final Map<ServerState, NodeState> serverStateToNodeState;
    private final GoGridClient client;
    private final Supplier<Set<? extends Image>> images;
+   private final Supplier<Set<? extends Hardware>> hardwares;
    private final Supplier<Map<String, ? extends Location>> locations;
 
-   private static class FindImageForServer implements Predicate<Image> {
+   static class FindImageForServer implements Predicate<Image> {
       private final Server instance;
 
       @Inject
@@ -78,12 +80,28 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       }
    }
 
+   static class FindHardwareForServer implements Predicate<Hardware> {
+      private final Server instance;
+
+      @Inject
+      private FindHardwareForServer(Server instance) {
+         this.instance = instance;
+      }
+
+      @Override
+      public boolean apply(Hardware input) {
+         return input.getRam() == Integer.parseInt(instance.getRam().getName().replaceAll("[^0-9]", ""));
+      }
+   }
+
    @Inject
    ServerToNodeMetadata(Map<ServerState, NodeState> serverStateToNodeState, GoGridClient client,
-            Supplier<Set<? extends Image>> images, Supplier<Map<String, ? extends Location>> locations) {
+            Supplier<Set<? extends Image>> images, Supplier<Set<? extends Hardware>> hardwares,
+            Supplier<Map<String, ? extends Location>> locations) {
       this.serverStateToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
       this.client = checkNotNull(client, "client");
       this.images = checkNotNull(images, "images");
+      this.hardwares = checkNotNull(hardwares, "hardwares");
       this.locations = checkNotNull(locations, "locations");
    }
 
@@ -99,10 +117,18 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       } catch (NoSuchElementException e) {
          logger.warn("could not find a matching image for server %s", from);
       }
+
+      Hardware hardware = null;
+      try {
+         hardware = Iterables.find(hardwares.get(), new FindHardwareForServer(from));
+      } catch (NoSuchElementException e) {
+         logger.warn("could not find a matching hardware for server %s", from);
+      }
+
       return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", locations.get().get(
-               from.getDatacenter().getId() + ""), null, ImmutableMap.<String, String> of(), tag, from.getImage()
-               .getId()
+               from.getDatacenter().getId() + ""), null, ImmutableMap.<String, String> of(), tag, hardware, from
+               .getImage().getId()
                + "", image != null ? image.getOperatingSystem() : null, state, ipSet, ImmutableList.<String> of(),
-               ImmutableMap.<String, String> of(), creds);
+               creds);
    }
 }

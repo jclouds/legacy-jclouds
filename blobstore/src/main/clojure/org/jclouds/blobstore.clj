@@ -238,6 +238,14 @@ Options can also be specified for extension modules
   ([container-name path #^BlobStore blobstore]
      (.getBlob blobstore container-name path)))
 
+(defn sign-blob-request
+  "Get a signed http request for a blob, so that you can retrieve it 
+in another application.  ex. curl"
+  ([container-name path]
+     (sign-blob-request container-name path *blobstore*))
+  ([container-name path #^BlobStore blobstore]
+     (.signRequestForBlob blobstore container-name path)))
+
 (defn get-blob-stream
   "Get an inputstream from the blob at a given path"
   ([container-name path]

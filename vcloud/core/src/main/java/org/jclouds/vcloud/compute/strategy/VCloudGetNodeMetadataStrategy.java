@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
@@ -45,7 +46,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
-import org.jclouds.vcloud.compute.functions.GetExtraFromVApp;
+import org.jclouds.vcloud.compute.functions.HardwareForVApp;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VApp;
 
@@ -63,16 +64,16 @@ public class VCloudGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
    protected final VCloudClient client;
    protected final Supplier<Set<? extends Image>> images;
    protected final FindLocationForResource findLocationForResourceInVDC;
-   protected final GetExtraFromVApp getExtra;
+   protected final HardwareForVApp hardwareForVApp;
    protected final Map<Status, NodeState> vAppStatusToNodeState;
 
    @Inject
    protected VCloudGetNodeMetadataStrategy(VCloudClient client, Map<Status, NodeState> vAppStatusToNodeState,
-            GetExtraFromVApp getExtra, FindLocationForResource findLocationForResourceInVDC,
+            HardwareForVApp hardwareForVApp, FindLocationForResource findLocationForResourceInVDC,
             Supplier<Set<? extends Image>> images) {
       this.client = checkNotNull(client, "client");
       this.images = checkNotNull(images, "images");
-      this.getExtra = checkNotNull(getExtra, "getExtra");
+      this.hardwareForVApp = checkNotNull(hardwareForVApp, "hardwareForVApp");
       this.findLocationForResourceInVDC = checkNotNull(findLocationForResourceInVDC, "findLocationForResourceInVDC");
       this.vAppStatusToNodeState = checkNotNull(vAppStatusToNodeState, "vAppStatusToNodeState");
    }
@@ -84,8 +85,9 @@ public class VCloudGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
          return null;
       String tag = parseTagFromName(from.getName());
       Location location = findLocationForResourceInVDC.apply(from.getVDC());
+      Hardware hardware = hardwareForVApp.apply(from);
       return new NodeMetadataImpl(in, from.getName(), in, location, from.getHref(), ImmutableMap.<String, String> of(),
-               tag, null, toComputeOs(from, null), vAppStatusToNodeState.get(from.getStatus()),
-               getPublicIpsFromVApp(from), getPrivateIpsFromVApp(from), getExtra.apply(from), getCredentialsFrom(from));
+               tag, hardware, null, toComputeOs(from, null), vAppStatusToNodeState.get(from.getStatus()),
+               getPublicIpsFromVApp(from), getPrivateIpsFromVApp(from), getCredentialsFrom(from));
    }
 }

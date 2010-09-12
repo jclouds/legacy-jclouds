@@ -55,7 +55,7 @@ public class VCloudExpressAddNodeWithTagStrategy implements AddNodeWithTagStrate
 
    @Inject
    protected VCloudExpressAddNodeWithTagStrategy(VCloudExpressClient client, VCloudExpressComputeClient computeClient,
-         Map<Status, NodeState> vAppStatusToNodeState) {
+            Map<Status, NodeState> vAppStatusToNodeState) {
       this.client = client;
       this.computeClient = computeClient;
       this.vAppStatusToNodeState = vAppStatusToNodeState;
@@ -64,28 +64,29 @@ public class VCloudExpressAddNodeWithTagStrategy implements AddNodeWithTagStrate
    @Override
    public NodeMetadata execute(String tag, String name, Template template) {
       InstantiateVAppTemplateOptions options = processorCount((int) getCores(template.getHardware())).memory(
-            template.getHardware().getRam()).disk(template.getHardware().getDisk() * 1024 * 1024l);
+               template.getHardware().getRam()).disk(
+               (long) ((template.getHardware().getVolumes().get(0).getSize()) * 1024 * 1024l));
       if (!template.getOptions().shouldBlockUntilRunning())
          options.block(false);
-      Map<String, String> metaMap = computeClient.start(URI.create(template.getLocation().getId()),
-            URI.create(template.getImage().getId()), name, options, template.getOptions().getInboundPorts());
+      Map<String, String> metaMap = computeClient.start(URI.create(template.getLocation().getId()), URI.create(template
+               .getImage().getId()), name, options, template.getOptions().getInboundPorts());
       VCloudExpressVApp vApp = client.getVApp(URI.create(metaMap.get("id")));
       return newCreateNodeResponse(tag, template, metaMap, vApp);
    }
 
    protected NodeMetadata newCreateNodeResponse(String tag, Template template, Map<String, String> metaMap,
-         VCloudExpressVApp vApp) {
+            VCloudExpressVApp vApp) {
       return new NodeMetadataImpl(vApp.getHref().toASCIIString(), vApp.getName(), vApp.getHref().toASCIIString(),
-            template.getLocation(), vApp.getHref(), ImmutableMap.<String, String> of(), tag, template.getImage()
-                  .getId(), getOperatingSystemForVAppOrDefaultTo(vApp, template.getImage().getOperatingSystem()),
-            vAppStatusToNodeState.get(vApp.getStatus()), computeClient.getPublicAddresses(vApp.getHref()),
-            computeClient.getPrivateAddresses(vApp.getHref()), ImmutableMap.<String, String> of(), new Credentials(
-                  metaMap.get("username"), metaMap.get("password")));
+               template.getLocation(), vApp.getHref(), ImmutableMap.<String, String> of(), tag, template.getHardware(),
+               template.getImage().getId(), getOperatingSystemForVAppOrDefaultTo(vApp, template.getImage()
+                        .getOperatingSystem()), vAppStatusToNodeState.get(vApp.getStatus()), computeClient
+                        .getPublicAddresses(vApp.getHref()), computeClient.getPrivateAddresses(vApp.getHref()),
+               new Credentials(metaMap.get("username"), metaMap.get("password")));
    }
 
    private OperatingSystem getOperatingSystemForVAppOrDefaultTo(VCloudExpressVApp vApp, OperatingSystem operatingSystem) {
       return vApp.getOsType() != null ? new CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(vApp.getOsType()),
-            null, null, vApp.getOperatingSystemDescription()) : operatingSystem;
+               null, null, vApp.getOperatingSystemDescription()) : operatingSystem;
    }
 
 }

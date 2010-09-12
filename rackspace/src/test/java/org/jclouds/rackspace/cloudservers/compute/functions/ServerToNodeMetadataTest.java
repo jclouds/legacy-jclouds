@@ -29,6 +29,7 @@ import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.Set;
 
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
@@ -58,6 +59,11 @@ public class ServerToNodeMetadataTest {
       org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
 
       Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
+
+      org.jclouds.compute.domain.Hardware jcHardware = createMock(org.jclouds.compute.domain.Hardware.class);
+
+      Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of(jcHardware);
+
       Server server = createMock(Server.class);
 
       expect(server.getId()).andReturn(10000).atLeastOnce();
@@ -81,17 +87,23 @@ public class ServerToNodeMetadataTest {
       expect(addresses.getPrivateAddresses()).andReturn(privateAddresses);
 
       expect(server.getImageId()).andReturn(2000).atLeastOnce();
+      
       expect(jcImage.getProviderId()).andReturn("2000").atLeastOnce();
+      expect(jcHardware.getProviderId()).andReturn("1000").atLeastOnce();
+      expect(server.getFlavorId()).andReturn(1000).atLeastOnce();
+
       expect(jcImage.getLocation()).andReturn(provider).atLeastOnce();
       expect(jcImage.getOperatingSystem()).andReturn(createMock(OperatingSystem.class)).atLeastOnce();
 
       replay(addresses);
       replay(jcImage);
+      replay(jcHardware);
       replay(serverStateToNodeState);
       replay(server);
 
       ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, Suppliers
-               .<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider));
+               .<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider), Suppliers
+               .<Set<? extends Hardware>> ofInstance(hardwares));
 
       NodeMetadata metadata = parser.apply(server);
       assertEquals(metadata.getLocation(), location);
@@ -107,6 +119,8 @@ public class ServerToNodeMetadataTest {
       verify(serverStateToNodeState);
       verify(server);
       verify(jcImage);
+      verify(jcHardware);
+
    }
 
 }

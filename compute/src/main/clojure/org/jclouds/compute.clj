@@ -312,8 +312,8 @@ See http://code.google.com/p/jclouds for details."
 
 (define-accessors Template image hardware location options)
 (define-accessors Image version os-family os-description architecture)
-(define-accessors Hardware processors ram disk)
-(define-accessors NodeMetadata "node" credentials extra state tag)
+(define-accessors Hardware processors ram volumes)
+(define-accessors NodeMetadata "node" credentials hardware state tag)
 
 (defn builder-options [builder]
   (or (get-field org.jclouds.compute.domain.internal.TemplateBuilderImpl :options builder)

@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.jclouds.compute.domain.ComputeType;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
@@ -35,7 +36,6 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
@@ -49,24 +49,25 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    private final NodeState state;
    private final Set<String> publicAddresses = Sets.newLinkedHashSet();
    private final Set<String> privateAddresses = Sets.newLinkedHashSet();
-   private final Map<String, String> extra = Maps.newLinkedHashMap();
    private final Credentials credentials;
    private final String tag;
    private final String imageId;
+   @Nullable
+   private final Hardware hardware;
    private final OperatingSystem os;
 
    public NodeMetadataImpl(String providerId, String name, String id, Location location, URI uri,
-            Map<String, String> userMetadata, @Nullable String tag, @Nullable String imageId,
-            @Nullable OperatingSystem os, NodeState state, Iterable<String> publicAddresses,
-            Iterable<String> privateAddresses, Map<String, String> extra, @Nullable Credentials credentials) {
+            Map<String, String> userMetadata, @Nullable String tag, @Nullable Hardware hardware,
+            @Nullable String imageId, @Nullable OperatingSystem os, NodeState state, Iterable<String> publicAddresses,
+            Iterable<String> privateAddresses, @Nullable Credentials credentials) {
       super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata);
       this.tag = tag;
+      this.hardware = hardware;
       this.imageId = imageId;
       this.os = os;
       this.state = checkNotNull(state, "state");
       Iterables.addAll(this.publicAddresses, checkNotNull(publicAddresses, "publicAddresses"));
       Iterables.addAll(this.privateAddresses, checkNotNull(privateAddresses, "privateAddresses"));
-      this.extra.putAll(checkNotNull(extra, "extra"));
       this.credentials = credentials;
    }
 
@@ -76,6 +77,14 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    @Override
    public String getTag() {
       return tag;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Hardware getHardware() {
+      return hardware;
    }
 
    /**
@@ -114,8 +123,16 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
     * {@inheritDoc}
     */
    @Override
-   public Map<String, String> getExtra() {
-      return extra;
+   public String getImageId() {
+      return imageId;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public OperatingSystem getOperatingSystem() {
+      return os;
    }
 
    @Override
@@ -123,8 +140,8 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       return "[id=" + getId() + ", providerId=" + getProviderId() + ", tag=" + getTag() + ", name=" + getName()
                + ", location=" + getLocation() + ", uri=" + getUri() + ", imageId=" + getImageId() + ", os="
                + getOperatingSystem() + ", userMetadata=" + getUserMetadata() + ", state=" + getState()
-               + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses + ", extra="
-               + getExtra() + "]";
+               + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses + ", hardware="
+               + getHardware() + "]";
    }
 
    @Override
@@ -135,6 +152,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       result = prime * result + ((publicAddresses == null) ? 0 : publicAddresses.hashCode());
       result = prime * result + ((tag == null) ? 0 : tag.hashCode());
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
+      result = prime * result + ((hardware == null) ? 0 : hardware.hashCode());
       result = prime * result + ((os == null) ? 0 : os.hashCode());
       return result;
    }
@@ -168,22 +186,17 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
             return false;
       } else if (!imageId.equals(other.imageId))
          return false;
+      if (hardware == null) {
+         if (other.hardware != null)
+            return false;
+      } else if (!hardware.equals(other.hardware))
+         return false;
       if (os == null) {
          if (other.os != null)
             return false;
       } else if (!os.equals(other.os))
          return false;
       return true;
-   }
-
-   @Override
-   public String getImageId() {
-      return imageId;
-   }
-
-   @Override
-   public OperatingSystem getOperatingSystem() {
-      return os;
    }
 
 }

@@ -30,23 +30,21 @@ import org.jclouds.rest.ConfiguresRestClient;
 import com.google.common.base.Supplier;
 
 @RequiresHttp
-@ConfiguresRestClient class TestRackspaceAuthenticationRestClientModule extends
-         RackspaceAuthenticationRestModule {
+@ConfiguresRestClient
+public class TestRackspaceAuthenticationRestClientModule extends RackspaceAuthenticationRestModule {
    @Override
    protected void configure() {
       super.configure();
    }
 
    @Override
-   protected AuthenticationResponse provideAuthenticationResponse(
-            Supplier<AuthenticationResponse> supplier) {
-      return new AuthenticationResponseImpl("authToken", "http://CDNManagementUrl",
-               "http://serverManagementUrl", "http://storageUrl");
+   protected AuthenticationResponse provideAuthenticationResponse(Supplier<AuthenticationResponse> supplier) {
+      return new AuthenticationResponseImpl("authToken", "http://CDNManagementUrl", "http://serverManagementUrl",
+               "http://storageUrl");
    }
 
    @Override
-   public Supplier<String> provideAuthenticationTokenCache(
-            Supplier<AuthenticationResponse> supplier) {
+   public Supplier<String> provideAuthenticationTokenCache(Supplier<AuthenticationResponse> supplier) {
       return new Supplier<String>() {
          public String get() {
             return "testtoken";

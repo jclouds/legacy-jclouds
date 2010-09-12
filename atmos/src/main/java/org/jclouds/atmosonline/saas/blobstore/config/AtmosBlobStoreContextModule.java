@@ -28,6 +28,7 @@ import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.blobstore.AtmosAsyncBlobStore;
 import org.jclouds.atmosonline.saas.blobstore.AtmosBlobStore;
 import org.jclouds.atmosonline.saas.blobstore.strategy.FindMD5InUserMetadata;
+import org.jclouds.atmosonline.saas.blobstore.strategy.SignReadFile;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -35,6 +36,7 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
+import org.jclouds.blobstore.strategy.SignRequestForBlobStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
@@ -65,6 +67,7 @@ public class AtmosBlobStoreContextModule extends AbstractModule {
                new TypeLiteral<BlobStoreContextImpl<AtmosStorageClient, AtmosStorageAsyncClient>>() {
                }).in(Scopes.SINGLETON);
       bind(ContainsValueInListStrategy.class).to(FindMD5InUserMetadata.class);
+      bind(SignRequestForBlobStrategy.class).to(SignReadFile.class);
    }
 
    @Provides

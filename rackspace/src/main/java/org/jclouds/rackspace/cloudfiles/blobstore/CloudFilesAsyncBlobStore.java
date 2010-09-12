@@ -40,6 +40,7 @@ import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.blobstore.strategy.SignRequestForBlobStrategy;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.concurrent.Futures;
@@ -88,8 +89,8 @@ public class CloudFilesAsyncBlobStore extends BaseAsyncBlobStore {
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob, BlobToObject blob2Object,
             ObjectToBlobMetadata object2BlobMd, BlobToHttpGetOptions blob2ObjectGetOptions,
-            Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
-      super(context, blobUtils, service, defaultLocation, locations);
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider, SignRequestForBlobStrategy signRequestForBlob) {
+      super(context, blobUtils, service, defaultLocation, locations, signRequestForBlob);
       this.sync = sync;
       this.async = async;
       this.container2ResourceMd = container2ResourceMd;

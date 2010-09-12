@@ -52,6 +52,7 @@ import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
+import org.jclouds.blobstore.strategy.SignRequestForBlobStrategy;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.domain.Location;
@@ -84,8 +85,8 @@ public class AzureAsyncBlobStore extends BaseAsyncBlobStore {
             ListOptionsToListBlobsOptions blobStore2AzureContainerListOptions,
             ListBlobsResponseToResourceList azure2BlobStoreResourceList, AzureBlobToBlob azureBlob2Blob,
             BlobToAzureBlob blob2AzureBlob, BlobPropertiesToBlobMetadata blob2BlobMd,
-            BlobToHttpGetOptions blob2ObjectGetOptions) {
-      super(context, blobUtils, service, defaultLocation, locations);
+            BlobToHttpGetOptions blob2ObjectGetOptions, SignRequestForBlobStrategy signRequestForBlob) {
+      super(context, blobUtils, service, defaultLocation, locations, signRequestForBlob);
       this.async = checkNotNull(async, "async");
       this.container2ResourceMd = checkNotNull(container2ResourceMd, "container2ResourceMd");
       this.blobStore2AzureContainerListOptions = checkNotNull(blobStore2AzureContainerListOptions,

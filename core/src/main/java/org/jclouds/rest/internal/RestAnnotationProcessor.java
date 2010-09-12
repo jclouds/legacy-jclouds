@@ -1010,7 +1010,16 @@ public class RestAnnotationProcessor<T> {
       return parts;
    }
 
-   Payload findPayloadInArgs(Object[] args) {
+   public static HttpRequest findHttpRequestInArgs(Object[] args) {
+      if (args == null)
+         return null;
+      for (int i = 0; i < args.length; i++)
+         if (args[i] instanceof HttpRequest)
+            return HttpRequest.class.cast(args[i]);
+      return null;
+   }
+
+   public static Payload findPayloadInArgs(Object[] args) {
       if (args == null)
          return null;
       for (int i = 0; i < args.length; i++)

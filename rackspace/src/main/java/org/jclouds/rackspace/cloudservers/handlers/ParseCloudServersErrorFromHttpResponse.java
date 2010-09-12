@@ -69,6 +69,8 @@ public class ParseCloudServersErrorFromHttpResponse implements HttpErrorHandler 
                   exception = new ResourceNotFoundException(message);
                }
                break;
+            case 409:
+               exception = new IllegalStateException(content);
             default:
                exception = new HttpResponseException(command, response, content);
          }

@@ -171,8 +171,8 @@ public class ComputeTask extends Task {
    private void listHardwares(ComputeService computeService) {
       log("list hardwares");
       for (Hardware hardware : computeService.listHardwareProfiles()) {// TODO
-         log(String.format("   hardware id=%s, cores=%s, ram=%s, disk=%s", hardware.getProviderId(), getCores(hardware), hardware
-                  .getRam(), hardware.getDisk()));
+         log(String.format("   hardware id=%s, cores=%s, ram=%s, volumes=%s", hardware.getProviderId(), getCores(hardware), hardware
+                  .getRam(), hardware.getVolumes()));
       }
    }
 
@@ -252,10 +252,10 @@ public class ComputeTask extends Task {
    private void logDetails(ComputeService computeService, ComputeMetadata node) {
       NodeMetadata metadata = node instanceof NodeMetadata ? NodeMetadata.class.cast(node) : computeService
                .getNodeMetadata(node.getId());
-      log(String.format("   node id=%s, name=%s, tag=%s, location=%s, state=%s, publicIp=%s, privateIp=%s, extra=%s",
+      log(String.format("   node id=%s, name=%s, tag=%s, location=%s, state=%s, publicIp=%s, privateIp=%s, hardware=%s",
                metadata.getProviderId(), metadata.getName(), metadata.getTag(), metadata.getLocation(), metadata
                         .getState(), ComputeTaskUtils.ipOrEmptyString(metadata.getPublicAddresses()),
-               ipOrEmptyString(metadata.getPrivateAddresses()), metadata.getExtra()));
+               ipOrEmptyString(metadata.getPrivateAddresses()), metadata.getHardware()));
    }
 
    /**

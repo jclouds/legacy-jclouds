@@ -29,6 +29,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.internal.HardwareImpl;
+import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
@@ -78,8 +79,8 @@ public class RimuHostingHardwareSupplier implements Supplier<Set<? extends Hardw
 
             });
             sizes.add(new HardwareImpl(from.getId(), from.getId(), from.getId(), location, null, ImmutableMap
-                  .<String, String> of(), ImmutableList.of(new Processor(1, 1.0)), from.getRam(), from.getDiskSize(),
-                  ImagePredicates.any()));
+                     .<String, String> of(), ImmutableList.of(new Processor(1, 1.0)), from.getRam(), ImmutableList
+                     .of(new VolumeImpl((float) from.getDiskSize(), true, true)), ImagePredicates.any()));
          } catch (NullPointerException e) {
             logger.warn("datacenter not present in " + from.getId());
          }

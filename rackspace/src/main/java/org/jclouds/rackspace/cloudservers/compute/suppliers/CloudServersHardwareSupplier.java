@@ -30,6 +30,7 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.internal.HardwareImpl;
+import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
@@ -58,7 +59,7 @@ public class CloudServersHardwareSupplier implements Supplier<Set<? extends Hard
 
    @Inject
    CloudServersHardwareSupplier(CloudServersClient sync, Supplier<Location> location,
-         Function<ComputeMetadata, String> indexer) {
+            Function<ComputeMetadata, String> indexer) {
       this.sync = sync;
       this.location = location;
    }
@@ -69,8 +70,9 @@ public class CloudServersHardwareSupplier implements Supplier<Set<? extends Hard
       logger.debug(">> providing sizes");
       for (final Flavor from : sync.listFlavors(ListOptions.Builder.withDetails())) {
          sizes.add(new HardwareImpl(from.getId() + "", from.getName(), from.getId() + "", location.get(), null,
-               ImmutableMap.<String, String> of(), ImmutableList.of(new Processor(from.getDisk() / 10.0, 1.0)), from
-                     .getRam(), from.getDisk(), ImagePredicates.any()));
+                  ImmutableMap.<String, String> of(), ImmutableList.of(new Processor(from.getDisk() / 10.0, 1.0)), from
+                           .getRam(), ImmutableList.of(new VolumeImpl((float) from.getDisk(), true, true)),
+                  ImagePredicates.any()));
       }
       logger.debug("<< sizes(%d)", sizes.size());
       return sizes;

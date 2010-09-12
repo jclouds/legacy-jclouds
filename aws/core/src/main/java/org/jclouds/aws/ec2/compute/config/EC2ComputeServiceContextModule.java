@@ -54,13 +54,12 @@ import org.jclouds.aws.ec2.compute.strategy.EC2ListNodesStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2LoadBalanceNodesStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2RebootNodeStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2RunNodesAndAddToSetStrategy;
-import org.jclouds.aws.ec2.compute.suppliers.EC2LocationSupplier;
 import org.jclouds.aws.ec2.compute.suppliers.EC2HardwareSupplier;
+import org.jclouds.aws.ec2.compute.suppliers.EC2LocationSupplier;
 import org.jclouds.aws.ec2.compute.suppliers.RegionAndNameToImageSupplier;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.RunningInstance;
-import org.jclouds.aws.ec2.functions.RunningInstanceToStorageMappingUnix;
 import org.jclouds.aws.ec2.predicates.InstancePresent;
 import org.jclouds.aws.ec2.predicates.PlacementGroupAvailable;
 import org.jclouds.aws.ec2.predicates.PlacementGroupDeleted;
@@ -69,8 +68,8 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.options.TemplateOptions;
@@ -99,7 +98,6 @@ import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
 
 /**
  * Configures the {@link ComputeServiceContext}; requires {@link EC2ComputeService} bound.
@@ -148,8 +146,6 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
       bind(GetNodeMetadataStrategy.class).to(EC2GetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(EC2RebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(EC2DestroyNodeStrategy.class);
-      bind(new TypeLiteral<Function<RunningInstance, Map<String, String>>>() {
-      }).annotatedWith(Names.named("volumeMapping")).to(RunningInstanceToStorageMappingUnix.class).in(Scopes.SINGLETON);
    }
 
    @Provides
@@ -169,8 +165,8 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       String region = injector.getInstance(Key.get(String.class, Region.class));
-      return "Eucalyptus".equals(region) ? template.osFamily(CENTOS).smallest() : template.osFamily(
-               UBUNTU).osVersionMatches("10.04").os64Bit(true).osDescriptionMatches(".*ubuntu-images.*");
+      return "Eucalyptus".equals(region) ? template.osFamily(CENTOS).smallest() : template.osFamily(UBUNTU)
+               .osVersionMatches("10.04").os64Bit(true).osDescriptionMatches(".*ubuntu-images.*");
    }
 
    @Provides

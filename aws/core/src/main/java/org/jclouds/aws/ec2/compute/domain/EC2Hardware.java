@@ -30,7 +30,9 @@ import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.HardwareImpl;
+import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.domain.Location;
 
 import com.google.common.base.Predicate;
@@ -40,6 +42,9 @@ import com.google.common.collect.ImmutableMap;
 /**
  * 
  * @author Adrian Cole
+ * @see <a
+ *      href="http://docs.amazonwebservices.com/AWSEC2/latest/UserGuide/index.html?instance-types.html"
+ *      />
  */
 public class EC2Hardware extends HardwareImpl {
    /** The serialVersionUID */
@@ -68,23 +73,24 @@ public class EC2Hardware extends HardwareImpl {
       };
    }
 
-   EC2Hardware(String instanceType, Iterable<? extends Processor> processors, Integer ram, Integer disk,
-         RootDeviceType rootDeviceType) {
+   EC2Hardware(String instanceType, Iterable<? extends Processor> processors, Integer ram,
+            Iterable<? extends Volume> volumes, RootDeviceType rootDeviceType) {
       super(instanceType, instanceType, instanceType, null, null, ImmutableMap.<String, String> of(), processors, ram,
-            disk, hasRootDeviceType(rootDeviceType));
+               volumes, hasRootDeviceType(rootDeviceType));
       this.instanceType = instanceType;
    }
 
-   EC2Hardware(String instanceType, Iterable<? extends Processor> processors, Integer ram, Integer disk, boolean is64Bit) {
+   EC2Hardware(String instanceType, Iterable<? extends Processor> processors, Integer ram,
+            Iterable<? extends Volume> volumes, boolean is64Bit) {
       super(instanceType, instanceType, instanceType, null, null, ImmutableMap.<String, String> of(), processors, ram,
-            disk, is64Bit ? is64Bit() : not(is64Bit()));
+               volumes, is64Bit ? is64Bit() : not(is64Bit()));
       this.instanceType = instanceType;
    }
 
    public EC2Hardware(Location location, String instanceType, Iterable<? extends Processor> processors, Integer ram,
-         Integer disk, String[] ids) {
+            Iterable<? extends Volume> volumes, String[] ids) {
       super(instanceType, instanceType, instanceType, location, null, ImmutableMap.<String, String> of(), processors,
-            ram, disk, (ids.length == 0 ? is64Bit() : idIn(Arrays.asList(ids))));
+               ram, volumes, (ids.length == 0 ? is64Bit() : idIn(Arrays.asList(ids))));
       this.instanceType = instanceType;
    }
 
@@ -99,48 +105,59 @@ public class EC2Hardware extends HardwareImpl {
     * @see InstanceType#M1_SMALL
     */
    public static final EC2Hardware M1_SMALL = new EC2Hardware(InstanceType.M1_SMALL, ImmutableList.of(new Processor(
-         1.0, 1.0)), 1740, 160, false);
+            1.0, 1.0)), 1740, ImmutableList.of(new VolumeImpl(10.0f, "/dev/sda1", true, false), new VolumeImpl(150.0f,
+            "/dev/sda2", false, false)), false);
+
    /**
     * @see InstanceType#T1_MICRO
     */
    public static final EC2Hardware T1_MICRO = new EC2Hardware(InstanceType.T1_MICRO, ImmutableList.of(new Processor(
-         1.0, 1.0)), 630, 0, RootDeviceType.EBS);
+            1.0, 1.0)), 630, ImmutableList.<Volume> of(), RootDeviceType.EBS);
    /**
     * @see InstanceType#M1_LARGE
     */
    public static final EC2Hardware M1_LARGE = new EC2Hardware(InstanceType.M1_LARGE, ImmutableList.of(new Processor(
-         2.0, 2.0)), 7680, 850, true);
+            2.0, 2.0)), 7680, ImmutableList.of(new VolumeImpl(10.0f, "/dev/sda1", true, false), new VolumeImpl(420.0f,
+            "/dev/sdb", false, false), new VolumeImpl(420.0f, "/dev/sdc", false, false)), true);
+
    /**
     * @see InstanceType#M1_XLARGE
     */
    public static final EC2Hardware M1_XLARGE = new EC2Hardware(InstanceType.M1_XLARGE, ImmutableList.of(new Processor(
-         4.0, 2.0)), 15360, 1690, true);
+            4.0, 2.0)), 15360, ImmutableList.of(new VolumeImpl(10.0f, "/dev/sda1", true, false), new VolumeImpl(420.0f,
+            "/dev/sdb", false, false), new VolumeImpl(420.0f, "/dev/sdc", false, false), new VolumeImpl(420.0f,
+            "/dev/sdd", false, false), new VolumeImpl(420.0f, "/dev/sde", false, false)), true);
    /**
     * @see InstanceType#M2_XLARGE
     */
-   public static final EC2Hardware M2_XLARGE = new EC2Hardware(InstanceType.M2_XLARGE,ImmutableList.of(new Processor(
-         2.0, 3.25)), 17510, 420, true);
+   public static final EC2Hardware M2_XLARGE = new EC2Hardware(InstanceType.M2_XLARGE, ImmutableList.of(new Processor(
+            2.0, 3.25)), 17510, ImmutableList.of(new VolumeImpl(420.0f, "/dev/sda1", true, false)), true);
    /**
     * @see InstanceType#M2_2XLARGE
     */
-   public static final EC2Hardware M2_2XLARGE = new EC2Hardware(InstanceType.M2_2XLARGE, ImmutableList.of(new Processor(
-         4.0, 3.25)), 35020, 850, true);
+   public static final EC2Hardware M2_2XLARGE = new EC2Hardware(InstanceType.M2_2XLARGE, ImmutableList
+            .of(new Processor(4.0, 3.25)), 35020, ImmutableList.of(new VolumeImpl(10.0f, "/dev/sda1", true, false),
+            new VolumeImpl(840.0f, "/dev/sdb", false, false)), true);
    /**
     * @see InstanceType#M2_4XLARGE
     */
-   public static final EC2Hardware M2_4XLARGE = new EC2Hardware(InstanceType.M2_4XLARGE,ImmutableList.of(new Processor(
-         8.0, 3.25)), 70041, 1690, true);
+   public static final EC2Hardware M2_4XLARGE = new EC2Hardware(InstanceType.M2_4XLARGE, ImmutableList
+            .of(new Processor(8.0, 3.25)), 70041, ImmutableList.of(new VolumeImpl(10.0f, "/dev/sda1", true, false),
+            new VolumeImpl(840.0f, "/dev/sdb", false, false), new VolumeImpl(840.0f, "/dev/sdc", false, false)), true);
    /**
     * @see InstanceType#C1_MEDIUM
     */
    public static final EC2Hardware C1_MEDIUM = new EC2Hardware(InstanceType.C1_MEDIUM, ImmutableList.of(new Processor(
-         2.0, 2.5)), 1740, 350, false);
+            2.0, 2.5)), 1740, ImmutableList.of(new VolumeImpl(10.0f, "/dev/sda1", true, false), new VolumeImpl(340.0f,
+            "/dev/sda2", false, false)), false);
 
    /**
     * @see InstanceType#C1_XLARGE
     */
-   public static final EC2Hardware C1_XLARGE = new EC2Hardware(InstanceType.C1_XLARGE,  ImmutableList.of(new Processor(
-         8.0, 2.5)), 7168, 1690, true);
+   public static final EC2Hardware C1_XLARGE = new EC2Hardware(InstanceType.C1_XLARGE, ImmutableList.of(new Processor(
+            8.0, 2.5)), 7168, ImmutableList.of(new VolumeImpl(10.0f, "/dev/sda1", true, false), new VolumeImpl(420.0f,
+            "/dev/sdb", false, false), new VolumeImpl(420.0f, "/dev/sdc", false, false), new VolumeImpl(420.0f,
+            "/dev/sdd", false, false), new VolumeImpl(420.0f, "/dev/sde", false, false)), true);
 
    @Override
    public int hashCode() {

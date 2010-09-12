@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
@@ -43,7 +44,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
-import org.jclouds.vcloud.compute.functions.GetExtraFromVCloudExpressVApp;
+import org.jclouds.vcloud.compute.functions.HardwareForVCloudExpressVApp;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
 
@@ -62,16 +63,16 @@ public class VCloudExpressGetNodeMetadataStrategy implements GetNodeMetadataStra
    protected final VCloudExpressComputeClient computeClient;
    protected final Supplier<Set<? extends Image>> images;
    protected final FindLocationForResource findLocationForResourceInVDC;
-   protected final GetExtraFromVCloudExpressVApp getExtra;
+   protected final HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp;
    protected final Map<Status, NodeState> vAppStatusToNodeState;
 
    @Inject
    protected VCloudExpressGetNodeMetadataStrategy(VCloudExpressClient client, VCloudExpressComputeClient computeClient,
-            Map<Status, NodeState> vAppStatusToNodeState, GetExtraFromVCloudExpressVApp getExtra,
+            Map<Status, NodeState> vAppStatusToNodeState, HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp,
             FindLocationForResource findLocationForResourceInVDC, Supplier<Set<? extends Image>> images) {
       this.client = checkNotNull(client, "client");
       this.images = checkNotNull(images, "images");
-      this.getExtra = checkNotNull(getExtra, "getExtra");
+      this.hardwareForVCloudExpressVApp = checkNotNull(hardwareForVCloudExpressVApp, "hardwareForVCloudExpressVApp");
       this.findLocationForResourceInVDC = checkNotNull(findLocationForResourceInVDC, "findLocationForResourceInVDC");
       this.computeClient = checkNotNull(computeClient, "computeClient");
       this.vAppStatusToNodeState = checkNotNull(vAppStatusToNodeState, "vAppStatusToNodeState");
@@ -84,11 +85,12 @@ public class VCloudExpressGetNodeMetadataStrategy implements GetNodeMetadataStra
          return null;
       String tag = parseTagFromName(from.getName());
       Location location = findLocationForResourceInVDC.apply(from.getVDC());
+      Hardware hardware = hardwareForVCloudExpressVApp.apply(from);
       return new NodeMetadataImpl(in, from.getName(), in, location, from.getHref(), ImmutableMap.<String, String> of(),
-               tag, null, from.getOsType() != null ? new CIMOperatingSystem(CIMOperatingSystem.OSType.fromValue(from
-                        .getOsType()), null, null, from.getOperatingSystemDescription()) : null, vAppStatusToNodeState
-                        .get(from.getStatus()), computeClient.getPublicAddresses(id), computeClient
-                        .getPrivateAddresses(id), getExtra.apply(from), null);
+               tag, hardware, null, from.getOsType() != null ? new CIMOperatingSystem(CIMOperatingSystem.OSType
+                        .fromValue(from.getOsType()), null, null, from.getOperatingSystemDescription()) : null,
+               vAppStatusToNodeState.get(from.getStatus()), computeClient.getPublicAddresses(id), computeClient
+                        .getPrivateAddresses(id), null);
    }
 
 }
