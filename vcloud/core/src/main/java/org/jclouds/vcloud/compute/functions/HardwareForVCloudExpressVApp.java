@@ -80,9 +80,8 @@ public class HardwareForVCloudExpressVApp implements Function<VCloudExpressVApp,
 
       }));
       Iterable<? extends Volume> volumes = resourceAllocationsToVolumes.apply(from.getResourceAllocations());
-      return new HardwareImpl(from.getHref().toASCIIString(), from.getName()
-               + String.format(": vpus(%s), ram(%d), volumes(%s)", processors, ram, volumes), from.getHref()
-               .toASCIIString(), location, null, ImmutableMap.<String, String> of(), processors, ram, volumes,
-               ImagePredicates.idEquals(from.getHref().toASCIIString()));
+      return new HardwareImpl(from.getHref().toASCIIString(), from.getName(), from.getHref().toASCIIString(), location,
+               null, ImmutableMap.<String, String> of(), processors, ram, volumes, ImagePredicates.idEquals(from
+                        .getHref().toASCIIString()));
    }
 }

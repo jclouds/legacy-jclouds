@@ -49,10 +49,10 @@ public class ResourceAllocationsToVolumes implements
                      if (from instanceof VCloudHardDisk) {
                         VCloudHardDisk vDisk = VCloudHardDisk.class.cast(from);
                         return new VolumeImpl(from.getAddressOnParent() + "", Volume.Type.LOCAL,
-                                 vDisk.getCapacity() * 1024f, null, from.getAddressOnParent() == 0, true);
+                                 vDisk.getCapacity() / 1024f, null, from.getAddressOnParent() == 0, true);
                      } else {
                         return new VolumeImpl(from.getAddressOnParent() + "", Volume.Type.LOCAL, from
-                                 .getVirtualQuantity() * 1024 * 1024f, null, from.getAddressOnParent() == 0, true);
+                                 .getVirtualQuantity() / 1024 / 1024f, null, from.getAddressOnParent() == 0, true);
                      }
                   }
 

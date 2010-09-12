@@ -66,7 +66,7 @@ public class EC2TemplateBuilderLiveTest {
          Template template = newContext.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5")
                .hardwareId(InstanceType.M2_2XLARGE).build();
 
-         System.out.println(template.getImage());
+         System.out.println(template.getHardware());
          assert (template.getImage().getProviderId().startsWith("ami-")) : template;
          assertEquals(template.getImage().getOperatingSystem().getVersion(), "5.4");
          assertEquals(template.getImage().getOperatingSystem().is64Bit(), true);
@@ -118,6 +118,8 @@ public class EC2TemplateBuilderLiveTest {
 
          Template microTemplate = newContext.getComputeService().templateBuilder().hardwareId(InstanceType.T1_MICRO)
                .build();
+         System.out.println(microTemplate.getHardware());
+
          assert (microTemplate.getImage().getProviderId().startsWith("ami-")) : microTemplate;
          assertEquals(microTemplate.getImage().getOperatingSystem().getVersion(), "9.10");
          assertEquals(microTemplate.getImage().getOperatingSystem().is64Bit(), false);
@@ -145,7 +147,7 @@ public class EC2TemplateBuilderLiveTest {
          assertEquals(newContext.getComputeService().listImages().size(), 0);
 
          Template template = newContext.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5").build();
-         System.out.println(template.getImage());
+         System.out.println(template.getHardware());
          assert (template.getImage().getProviderId().startsWith("ami-")) : template;
          assertEquals(template.getImage().getOperatingSystem().getVersion(), "5.4");
          assertEquals(template.getImage().getOperatingSystem().is64Bit(), true);

@@ -61,13 +61,13 @@ public class BlueLockVCloudDirectorComputeServiceLiveTest extends VCloudComputeS
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getDescription(), "Ubuntu Linux (64-bit)");
       assert defaultTemplate.getLocation().getId() != null : defaultTemplate.getLocation();
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
+      System.out.println(defaultTemplate.getHardware());
    }
 
    @Override
    protected Template buildTemplate(TemplateBuilder templateBuilder) {
       Template template = super.buildTemplate(templateBuilder);
       Image image = template.getImage();
-      assert image.getDefaultCredentials().identity != null : image;
       assert image.getDefaultCredentials().credential != null : image;
       return template;
    }
