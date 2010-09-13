@@ -56,6 +56,8 @@ webserver:
 See http://code.google.com/p/jclouds for details."
   (:use org.jclouds.core
         (clojure.contrib logging core))
+  (:require
+   [clojure.contrib.condition :as condition])
   (:import java.io.File
            java.util.Properties
            [org.jclouds.domain Location]
@@ -189,7 +191,9 @@ See http://code.google.com/p/jclouds for details."
   (with-compute-service [compute]
     (run-nodes \"webserver\" 2
       (build-template
-        service :centos :smallest :image-name-matches \".*w/ None.*\")))"
+        service
+        {:os-family :centos :smallest true
+         :image-name-matches \".*w/ None.*\"})))"
   ([tag count]
      (run-nodes tag count (default-template *compute*) *compute*))
   ([tag count compute-or-template]
@@ -373,53 +377,45 @@ See http://code.google.com/p/jclouds for details."
 
 (def enum-map {:os-family (os-families)})
 
-(defn add-option-with-value-if [builder kword]
-  (loop [enums (sequence enum-map)]
-    (if (not (empty? enums))
-      (let [enum (first enums)
-            value (filter #(= (name kword) (str %)) (second enum))]
-        (if (not (empty? value))
-          (((first enum) option-1arg-map) builder (first value))
-          (recur (rest enums)))))))
+(defn translate-enum-value [kword value]
+  (or (-> (filter #(= (name value) (str %)) (kword enum-map)) first)
+      value))
 
-(defn add-option-if [builder kword]
-  (let [f (option-0arg-map kword)]
-    (if f (f builder))))
-
-(defn add-keyword-option [builder option]
-  (if (not (or (add-option-with-value-if builder option)
-               (add-option-if builder option)))
-    (println "Unknown option " option)))
+(defn add-nullary-option [builder option value]
+  (if-let [f (option-0arg-map option)]
+    (if value
+      (f builder)
+      builder)))
 
 (defn add-value-option [builder option value]
-  (let [f (option-1arg-map option)]
-    (if f
-      (f builder value)
-      (println "Unknown option" option))))
+  (if-let [f (option-1arg-map option)]
+    (f builder (translate-enum-value option value))))
 
 ;; TODO look at clojure-datalog
 (defn build-template
   "Creates a template that can be used to run nodes.
 
-There are many options to use for the default template"
-  [#^ComputeService compute option & options]
+The :os-family key expects a keyword version of OsFamily,
+  eg. :os-family :ubuntu.
+
+The :smallest, :fastest, :biggest, :any, and :destroy-on-error keys expect a
+boolean value.
+
+Options correspond to TemplateBuilder methods."
+  [#^ComputeService compute
+   {:keys [os-family location-id architecture image-id hardware-id
+           os-name-matches os-version-matches os-description-matches
+           os-64-bit image-version-matches image-name-matches
+           image-description-matches min-cores min-ram
+           run-script install-private-key authorize-public-key
+           inbound-ports smallest fastest biggest any destroy-on-error]
+    :as options}]
   (let [builder (.. compute (templateBuilder))]
-    (loop [option option
-           remaining options]
-      (if (empty? remaining)
-        (add-keyword-option builder option)
-        (let [next-is-keyword (keyword? (first remaining))
-              arg (if (not next-is-keyword)
-                    (first remaining))
-              next (if next-is-keyword
-                     (first remaining)
-                     (fnext remaining))
-              remaining (if (keyword? (first remaining))
-                          (rest remaining)
-                          (drop 2 remaining))]
-          (if arg
-            (add-value-option builder option arg)
-            (add-keyword-option builder option))
-          (if next
-            (recur next remaining)))))
+    (doseq [[option value] options]
+      (or
+       (add-value-option builder option value)
+       (add-nullary-option builder option value)
+       (condition/raise
+        :type :invalid-template-builder-option
+        :message (format "Invalid template builder option : %s" option))))
     (.build builder)))
