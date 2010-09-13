@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -46,6 +47,14 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface VCloudClient extends CommonVCloudClient {
+   
+   /**
+    * Get a Screen Thumbnail for a Virtual Machine
+    * 
+    * @param vm to snapshot
+    */
+   InputStream getThumbnailOfVm(URI vm);
+   
    /**
     * The response to a login request includes a list of the organizations to which the
     * authenticated user has access.

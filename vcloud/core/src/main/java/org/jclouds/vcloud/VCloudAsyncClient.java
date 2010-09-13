@@ -27,6 +27,7 @@ import static org.jclouds.vcloud.VCloudMediaType.VAPPTEMPLATE_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VAPP_XML;
 import static org.jclouds.vcloud.VCloudMediaType.VM_XML;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 
@@ -89,6 +90,17 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @RequestFilters(SetVCloudTokenCookie.class)
 public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
+
+   /**
+    * 
+    * @see VCloudClient#getThumbnailOfVm
+    */
+   @GET
+   @Path("/screen")
+   @Consumes("image/png")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<InputStream> getThumbnailOfVm(@EndpointParam URI vm);
+
    /**
     * 
     * @see VCloudClient#listOrgs
