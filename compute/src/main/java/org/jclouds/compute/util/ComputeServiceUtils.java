@@ -19,6 +19,12 @@
 
 package org.jclouds.compute.util;
 
+import static com.google.common.base.Throwables.getStackTraceAsString;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.find;
+import static org.jclouds.scriptbuilder.domain.Statements.pipeHttpResponseToBash;
+
+import java.net.URI;
 import java.util.Formatter;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -38,15 +44,13 @@ import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.logging.Logger;
+import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.util.Utils;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -60,17 +64,25 @@ public class ComputeServiceUtils {
     * 
     * @return a shell script that will invoke the http request
     */
-   public static String buildCurlsh(HttpRequest request) {
-      String headers = Joiner.on(' ').join(
-               Iterables.transform(request.getHeaders().entries(), new Function<Entry<String, String>, String>() {
+   public static Statement execHttpResponse(HttpRequest request) {
+      return pipeHttpResponseToBash(request.getMethod(), request.getEndpoint(), request.getHeaders());
+   }
 
-                  @Override
-                  public String apply(Entry<String, String> from) {
-                     return String.format("-H \"%s: %s\"", from.getKey(), from.getValue());
-                  }
+   public static Statement execHttpResponse(URI location) {
+      return execHttpResponse(new HttpRequest("GET", location));
+   }
 
-               }));
-      return String.format("curl -s --retry 20 %s %s |bash\n", headers, request.getEndpoint().toASCIIString());
+   /**
+    * build a shell script that invokes the contents of the http request in bash.
+    * 
+    * @return a shell script that will invoke the http request
+    */
+   public static Statement extractTargzIntoDirectory(HttpRequest targz, String directory) {
+      return Statements.extractTargzIntoDirectory(targz.getMethod(), targz.getEndpoint(), targz.getHeaders(), directory);
+   }
+
+   public static Statement extractTargzIntoDirectory(URI targz, String directory) {
+      return extractTargzIntoDirectory(new HttpRequest("GET", targz), directory);
    }
 
    public static String parseTagFromName(String from) {
@@ -113,11 +125,11 @@ public class ComputeServiceUtils {
       if (NAME_VERSION_MAP.containsKey(family)) {
          CONTAINS_SUBSTRING contains = new CONTAINS_SUBSTRING(in.replace('-', '.'));
          try {
-            String key = Iterables.find(NAME_VERSION_MAP.get(family).keySet(), contains);
+            String key = find(NAME_VERSION_MAP.get(family).keySet(), contains);
             return NAME_VERSION_MAP.get(family).get(key);
          } catch (NoSuchElementException e) {
             try {
-               return Iterables.find(NAME_VERSION_MAP.get(family).values(), contains);
+               return find(NAME_VERSION_MAP.get(family).values(), contains);
             } catch (NoSuchElementException e1) {
             }
          }
@@ -140,7 +152,7 @@ public class ComputeServiceUtils {
       int index = 1;
       for (Entry<?, Exception> errorMessage : executionExceptions.entrySet()) {
          fmt.format("%s) %s on %s:%n%s%n%n", index++, errorMessage.getValue().getClass().getSimpleName(), errorMessage
-                  .getKey(), Throwables.getStackTraceAsString(errorMessage.getValue()));
+                  .getKey(), getStackTraceAsString(errorMessage.getValue()));
       }
       return fmt.format("%s error[s]", executionExceptions.size()).toString();
    }
@@ -150,14 +162,14 @@ public class ComputeServiceUtils {
       int index = 1;
       for (Entry<? extends NodeMetadata, ? extends Throwable> errorMessage : failedNodes.entrySet()) {
          fmt.format("%s) %s on node %s:%n%s%n%n", index++, errorMessage.getValue().getClass().getSimpleName(),
-                  errorMessage.getKey().getId(), Throwables.getStackTraceAsString(errorMessage.getValue()));
+                  errorMessage.getKey().getId(), getStackTraceAsString(errorMessage.getValue()));
       }
       return fmt.format("%s error[s]", failedNodes.size()).toString();
    }
 
    public static Iterable<? extends ComputeMetadata> filterByName(Iterable<? extends ComputeMetadata> nodes,
             final String name) {
-      return Iterables.filter(nodes, new Predicate<ComputeMetadata>() {
+      return filter(nodes, new Predicate<ComputeMetadata>() {
          @Override
          public boolean apply(ComputeMetadata input) {
             return input.getName().equalsIgnoreCase(name);

@@ -26,14 +26,19 @@ import static org.jclouds.io.Payloads.newStringPayload;
 
 import java.util.Arrays;
 
+import javax.annotation.Nullable;
+
+import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.predicates.OperatingSystemPredicates;
 import org.jclouds.io.Payload;
+import org.jclouds.scriptbuilder.domain.OsFamily;
+import org.jclouds.scriptbuilder.domain.Statement;
 
 /**
- * Contains options supported in the {@code ComputeService#runNodesWithTag}
- * operation. <h2>
- * Usage</h2> The recommended way to instantiate a TemplateOptions object is to
- * statically import TemplateOptions.* and invoke a static creation method
- * followed by an instance mutator (if needed):
+ * Contains options supported in the {@code ComputeService#runNodesWithTag} operation. <h2>
+ * Usage</h2> The recommended way to instantiate a TemplateOptions object is to statically import
+ * TemplateOptions.* and invoke a static creation method followed by an instance mutator (if
+ * needed):
  * <p/>
  * <code>
  * import static org.jclouds.compute.options.TemplateOptions.Builder.*;
@@ -207,8 +212,8 @@ public class TemplateOptions {
    }
 
    /**
-    * This script will be executed as the root user upon system startup. This
-    * script gets a prologue, so no #!/bin/bash required, path set up, etc
+    * This script will be executed as the root user upon system startup. This script gets a
+    * prologue, so no #!/bin/bash required, path set up, etc
     * <p/>
     * please use alternative that uses the {@link org.jclouds.io.Payload} object
     * 
@@ -220,17 +225,24 @@ public class TemplateOptions {
    }
 
    /**
-    * This script will be executed as the root user upon system startup. This
-    * script gets a prologue, so no #!/bin/bash required, path set up, etc
+    * This script will be executed as the root user upon system startup. This script gets a
+    * prologue, so no #!/bin/bash required, path set up, etc
     * 
     * @see org.jclouds.io.Payloads
     */
    public TemplateOptions runScript(Payload script) {
-      checkArgument(
-            checkNotNull(checkNotNull(script, "script").getContentLength(), "script.contentLength") <= 16 * 1024,
-            "script cannot be larger than 16kb");
+      checkNotNull(script, "script");
       this.script = script;
       return this;
+   }
+
+   public TemplateOptions runScript(Statement script, @Nullable OperatingSystem os) {
+      return runScript(newStringPayload(checkNotNull(script, "script").render(
+               os == null || OperatingSystemPredicates.isUnix().apply(os) ? OsFamily.UNIX : OsFamily.WINDOWS)));
+   }
+
+   public TemplateOptions runScript(Statement script) {
+      return runScript(script, null);
    }
 
    /**
@@ -243,7 +255,7 @@ public class TemplateOptions {
    @Deprecated
    public TemplateOptions installPrivateKey(String privateKey) {
       checkArgument(checkNotNull(privateKey, "privateKey").startsWith("-----BEGIN RSA PRIVATE KEY-----"),
-            "key should start with -----BEGIN RSA PRIVATE KEY-----");
+               "key should start with -----BEGIN RSA PRIVATE KEY-----");
       Payload payload = newStringPayload(privateKey);
       payload.setContentType("text/plain");
       return installPrivateKey(payload);
@@ -265,8 +277,8 @@ public class TemplateOptions {
    }
 
    /**
-    * if true, return when node(s) are NODE_RUNNING, if false, return as soon as
-    * the server is provisioned.
+    * if true, return when node(s) are NODE_RUNNING, if false, return as soon as the server is
+    * provisioned.
     * <p/>
     * default is true
     */
@@ -344,8 +356,7 @@ public class TemplateOptions {
       }
 
       /**
-       * please use alternative that uses the {@link org.jclouds.io.Payload}
-       * object
+       * please use alternative that uses the {@link org.jclouds.io.Payload} object
        * 
        * @see org.jclouds.io.Payloads
        * @see #runScript(Payload)
@@ -366,8 +377,16 @@ public class TemplateOptions {
       }
 
       /**
-       * please use alternative that uses the {@link org.jclouds.io.Payload}
-       * object
+       * @see TemplateOptions#runScript
+       * @see org.jclouds.io.Payloads
+       */
+      public static TemplateOptions runScript(Statement script) {
+         TemplateOptions options = new TemplateOptions();
+         return options.runScript(script);
+      }
+
+      /**
+       * please use alternative that uses the {@link org.jclouds.io.Payload} object
        * 
        * @see org.jclouds.io.Payloads
        * @see #installPrivateKey(Payload)
@@ -388,8 +407,7 @@ public class TemplateOptions {
       }
 
       /**
-       * please use alternative that uses the {@link org.jclouds.io.Payload}
-       * object
+       * please use alternative that uses the {@link org.jclouds.io.Payload} object
        * 
        * @see org.jclouds.io.Payloads
        * @see #authorizePublicKey(Payload)
@@ -419,9 +437,9 @@ public class TemplateOptions {
    @Override
    public String toString() {
       return "TemplateOptions [inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null)
-            + ", publicKey=" + (publicKey != null) + ", runScript=" + (script != null) + ", blockUntilRunning="
-            + blockUntilRunning + ", port:seconds=" + port + ":" + seconds + ", metadata/details: " + includeMetadata
-            + "]";
+               + ", publicKey=" + (publicKey != null) + ", runScript=" + (script != null) + ", blockUntilRunning="
+               + blockUntilRunning + ", port:seconds=" + port + ":" + seconds + ", metadata/details: "
+               + includeMetadata + "]";
    }
 
    @Override

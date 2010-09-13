@@ -21,18 +21,23 @@ package org.jclouds.aws;
 
 import static org.jclouds.compute.BaseComputeServiceLiveTest.buildScript;
 import static org.jclouds.compute.options.TemplateOptions.Builder.runScript;
-import static org.jclouds.compute.util.ComputeServiceUtils.buildCurlsh;
-import static org.jclouds.io.Payloads.newStringPayload;
+import static org.jclouds.compute.util.ComputeServiceUtils.execHttpResponse;
+import static org.jclouds.compute.util.ComputeServiceUtils.extractTargzIntoDirectory;
+import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
+
+import java.net.URI;
 
 import org.jclouds.aws.ec2.compute.BlobStoreAndComputeServiceLiveTest;
+import org.jclouds.blobstore.BlobStore;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.scriptbuilder.domain.Statement;
 import org.testng.annotations.Test;
 
 /**
+ * This test helps us understand how we can use the power of blobstores to our favor.
  * 
  * @author Adrian Cole
  */
@@ -57,9 +62,9 @@ public class ComputeAndBlobStoreTogetherHappilyLiveTest extends BlobStoreAndComp
     * next convert this into something that can be invoked via the commandline. Looking around, it
     * seems like alestic runurl is pretty close. However, it is limited as it only works on requests
     * that can be fully specified without headers (ex. Amazon S3). Instead, we use a variant
-    * (curlsh).
+    * (execHttpResponse).
     * <p/>
-    * curlsh simply assembles an http request, headers and all, and passes it to bash
+    * execHttpResponse simply assembles an http request, headers and all, and passes it to bash
     * <p/>
     * With this script ready, any node or nodes will take instructions from the blobstore when it
     * boots up. we verify this with an assertion.
@@ -79,15 +84,27 @@ public class ComputeAndBlobStoreTogetherHappilyLiveTest extends BlobStoreAndComp
       // configured for amz. Note we are getting temporary access to a private blob.
       HttpRequest signedRequestOfInstallScript = blobContext.getBlobStore().signRequestForBlob(tag, "openjdk/install");
 
-      // instruct the bootstrap to pull the script from the blobstore and invoke it directly with bash.
-      TemplateOptions runOpenJDKInstallDirectlyFromBlobStore = runScript(newStringPayload(buildCurlsh(signedRequestOfInstallScript)));
+      // so one of our commands is to execute the contents of the blob above
+      Statement installOpenJDK = execHttpResponse(signedRequestOfInstallScript);
+
+      // if we want to, we can mix and match batched and ad-hoc commands, such as extracting maven
+      String mavenVersion = "3.0-beta-3";
+      Statement extractMavenIntoUsrLocal = extractTargzIntoDirectory(URI
+               .create("http://mirrors.ibiblio.org/pub/mirrors/apache//maven/binaries/apache-maven-" + mavenVersion
+                        + "-bin.tar.gz"), "/usr/local");
+
+      // have both of these commands occur on boot
+      Statement bootstrapInstructions = newStatementList(installOpenJDK, extractMavenIntoUsrLocal);
 
       // now that we have the correct instructions, kick-off the provisioner
-      Iterable<? extends NodeMetadata> nodes = computeContext.getComputeService().runNodesWithTag(tag, 1,
-               runOpenJDKInstallDirectlyFromBlobStore);
+      Iterable<? extends NodeMetadata> nodes = computeContext.getComputeService().runNodesWithTag(tag, 2,
+               runScript(bootstrapInstructions));
 
-      // ensure the bootstrap operated by checking for a known signature of success.
-      assertSshOutputOfCommandContains(nodes, "openjdk -version", "OpenJDK");
+      // ensure the bootstrap operated by checking for the components we installed at boot time.
+      // Note this test will ensure both nodes are in sync.
+      assertSshOutputOfCommandContains(nodes, "java -version", "OpenJDK");
+      assertSshOutputOfCommandContains(nodes, "/usr/local/apache-maven-" + mavenVersion + "/bin/mvn -version",
+               "Apache Maven " + mavenVersion + "");
 
    }
 }

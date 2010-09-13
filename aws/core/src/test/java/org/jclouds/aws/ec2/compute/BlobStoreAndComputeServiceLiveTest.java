@@ -64,25 +64,26 @@ public class BlobStoreAndComputeServiceLiveTest {
       setupCredentials();
       computeContext = new ComputeServiceContextFactory().createContext(computeServiceProvider, identity, credential,
                ImmutableSet.of(new Log4JLoggingModule(), new JschSshClientModule()));
-      blobContext = new BlobStoreContextFactory().createContext(blobStoreProvider, identity, credential,
-               ImmutableSet.of(new Log4JLoggingModule()));
+      blobContext = new BlobStoreContextFactory().createContext(blobStoreProvider, identity, credential, ImmutableSet
+               .of(new Log4JLoggingModule()));
       blobContext.getAsyncBlobStore().createContainerInLocation(null, tag);
       computeContext.getComputeService().destroyNodesMatching(NodePredicates.withTag(tag));
    }
 
    protected void assertSshOutputOfCommandContains(Iterable<? extends NodeMetadata> nodes, String cmd, String expects) {
-      IPSocket socket = new IPSocket(get(get(nodes, 0).getPublicAddresses(), 0), 22);
+      for (NodeMetadata node : nodes) {
+         IPSocket socket = new IPSocket(get(node.getPublicAddresses(), 0), 22);
 
-      SshClient ssh = computeContext.utils().sshFactory().create(socket, get(nodes, 0).getCredentials().identity,
-               get(nodes, 0).getCredentials().credential.getBytes());
-      try {
-         ssh.connect();
-         ;
-         ExecResponse exec = ssh.exec(cmd);
-         assert exec.getOutput().indexOf(expects) != -1 || exec.getError().indexOf(expects) != -1 : exec;
-      } finally {
-         if (ssh != null)
-            ssh.disconnect();
+         SshClient ssh = computeContext.utils().sshFactory().create(socket, node.getCredentials().identity,
+                  node.getCredentials().credential.getBytes());
+         try {
+            ssh.connect();
+            ExecResponse exec = ssh.exec(cmd);
+            assert exec.getOutput().indexOf(expects) != -1 || exec.getError().indexOf(expects) != -1 : exec;
+         } finally {
+            if (ssh != null)
+               ssh.disconnect();
+         }
       }
    }
 

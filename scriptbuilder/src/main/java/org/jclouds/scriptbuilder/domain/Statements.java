@@ -19,7 +19,10 @@
 
 package org.jclouds.scriptbuilder.domain;
 
+import java.net.URI;
 import java.util.Map;
+
+import com.google.common.collect.Multimap;
 
 /**
  * Statements used in shell scripts.
@@ -97,7 +100,7 @@ public class Statements {
     * 
     * @see ShellToken
     */
-   public static Statement interpret(String ... portableStatements) {
+   public static Statement interpret(String... portableStatements) {
       return new InterpretableStatement(portableStatements);
    }
 
@@ -106,5 +109,34 @@ public class Statements {
     */
    public static Statement exec(String portableStatement) {
       return interpret(portableStatement + "{lf}");
+   }
+
+   /**
+    * untar, ungzip the data received from the request parameters.
+    * 
+    * @param method
+    *           http method: ex GET
+    * @param endpoint
+    *           uri corresponding to the request
+    * @param headers
+    *           request headers to send
+    */
+   public static Statement extractTargzIntoDirectory(String method, URI endpoint, Multimap<String, String> headers,
+            String directory) {
+      return new PipeHttpResponseToTarxpzfIntoDirectory( method, endpoint, headers,directory);
+   }
+
+   /**
+    * exec the data received from the request parameters.
+    * 
+    * @param method
+    *           http method: ex GET
+    * @param endpoint
+    *           uri corresponding to the request
+    * @param headers
+    *           request headers to send
+    */
+   public static Statement pipeHttpResponseToBash(String method, URI endpoint, Multimap<String, String> headers) {
+      return new PipeHttpResponseToBash(method, endpoint, headers);
    }
 }
