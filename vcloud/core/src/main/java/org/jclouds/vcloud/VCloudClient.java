@@ -35,6 +35,7 @@ import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.ovf.OvfEnvelope;
+import org.jclouds.vcloud.options.CaptureVAppOptions;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
@@ -66,6 +67,20 @@ public interface VCloudClient extends CommonVCloudClient {
    VApp instantiateVAppTemplateInVDC(URI vDC, URI template, String appName, InstantiateVAppTemplateOptions... options);
 
    Task cloneVAppInVDC(URI vDC, URI toClone, String newName, CloneVAppOptions... options);
+
+   
+   /**
+    * The captureVApp request creates a vApp template from an instantiated vApp. 
+    * <h4>Note</h4>
+    * Before it can be captured, a vApp must be undeployed 
+    * 
+    * @param vDC
+    * @param toClone
+    * @param templateName
+    * @param options
+    * @return template in progress
+    */
+   VAppTemplate captureVAppInVDC(URI vDC, URI toClone, String templateName, CaptureVAppOptions... options);
 
    VAppTemplate getVAppTemplate(URI vAppTemplate);
 

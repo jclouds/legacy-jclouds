@@ -54,6 +54,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+import org.jclouds.vcloud.binders.BindCaptureVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindCloneVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindDeployVAppParamsToXmlPayload;
 import org.jclouds.vcloud.binders.BindGuestCustomizationSectionToXmlPayload;
@@ -70,6 +71,7 @@ import org.jclouds.vcloud.endpoints.OrgList;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.OrgNameCatalogNameVAppTemplateNameToEndpoint;
 import org.jclouds.vcloud.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
+import org.jclouds.vcloud.options.CaptureVAppOptions;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.OrgListHandler;
@@ -171,6 +173,20 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
    ListenableFuture<? extends Task> cloneVAppInVDC(@EndpointParam URI vdc, @MapPayloadParam("vApp") URI toClone,
             @MapPayloadParam("newName") @ParamValidators(DnsNameValidator.class) String newName,
             CloneVAppOptions... options);
+
+   /**
+    * @see VCloudClient#captureVAppInVDC
+    */
+   @POST
+   @Path("/action/captureVApp")
+   @Produces("application/vnd.vmware.vcloud.captureVAppParams+xml")
+   @Consumes(VAPPTEMPLATE_XML)
+   @XMLResponseParser(VAppTemplateHandler.class)
+   @MapBinder(BindCaptureVAppParamsToXmlPayload.class)
+   ListenableFuture<? extends VAppTemplate> captureVAppInVDC(@EndpointParam URI vdc,
+            @MapPayloadParam("vApp") URI toCapture,
+            @MapPayloadParam("templateName") @ParamValidators(DnsNameValidator.class) String templateName,
+            CaptureVAppOptions... options);
 
    /**
     * @see VCloudClient#findVAppInOrgVDCNamed

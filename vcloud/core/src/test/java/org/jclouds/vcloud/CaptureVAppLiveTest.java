@@ -1,0 +1,118 @@
+/**
+ *
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *
+ * ====================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ====================================================================
+ */
+
+package org.jclouds.vcloud;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.getOnlyElement;
+
+import java.net.URI;
+import java.util.Properties;
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.Constants;
+import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.predicates.TaskSuccess;
+import org.testng.annotations.BeforeGroups;
+import org.testng.annotations.Test;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
+
+/**
+ * 
+ * @author Adrian Cole
+ */
+@Test(groups = "live", enabled = true, sequential = true, testName = "vcloud.CaptureVAppLiveTest")
+public class CaptureVAppLiveTest {
+
+   protected String identity;
+   protected String provider;
+   protected String credential;
+   protected ComputeService client;
+   protected String tag = System.getProperty("user.name") + "cap";
+
+   protected void setupCredentials() {
+      provider = "vcloud";
+      identity = checkNotNull(System.getProperty("vcloud.identity"), "vcloud.identity");
+      credential = checkNotNull(System.getProperty("vcloud.credential"), "vcloud.credential");
+   }
+
+   @BeforeGroups(groups = { "live" })
+   public void setupClient() {
+      setupCredentials();
+      Properties props = new Properties();
+      props.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      props.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      client = new ComputeServiceContextFactory().createContext(provider, identity, credential,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), props).getComputeService();
+   }
+
+   @Test
+   public void testCaptureVApp() throws Exception {
+
+      NodeMetadata node = null;
+      VAppTemplate vappTemplate = null;
+      try {
+
+         node = getOnlyElement(client.runNodesWithTag(tag, 1));
+
+         VCloudClient vcloudApi = VCloudClient.class.cast(client.getContext().getProviderSpecificContext().getApi());
+
+         Predicate<URI> taskTester = new RetryablePredicate<URI>(new TaskSuccess(vcloudApi), 600, 5, TimeUnit.SECONDS);
+
+         // I have to powerOff first
+         Task task = vcloudApi.powerOffVAppOrVm(URI.create(node.getId()));
+
+         // wait up to ten minutes per above
+         assert taskTester.apply(task.getHref()) : node;
+
+         // having a problem where the api is returning an error telling us to stop!
+
+         // // I have to undeploy first
+         // task = vcloudApi.undeployVAppOrVm(URI.create(node.getId()));
+         //
+         // // wait up to ten minutes per above
+         // assert taskTester.apply(task.getHref()) : node;
+
+         // vdc is equiv to the node's location
+         // vapp uri is the same as the node's id
+         vappTemplate = vcloudApi.captureVAppInVDC(URI.create(node.getLocation().getId()), URI.create(node.getId()),
+                  tag);
+
+         task = vappTemplate.getTasks().get(0);
+
+         // wait up to ten minutes per above
+         assert taskTester.apply(task.getHref()) : vappTemplate;
+
+         // TODO implement delete vAppTemplate
+      } finally {
+         if (node != null)
+            client.destroyNode(node.getId());
+      }
+   }
+
+}
