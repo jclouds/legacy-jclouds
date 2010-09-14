@@ -17,18 +17,16 @@
  * ====================================================================
  */
 
-package org.jclouds.blobstore.strategy;
+package org.jclouds.atmosonline.saas.blobstore.integration;
 
-import org.jclouds.blobstore.strategy.internal.SignRequestForBlobUnsupported;
-import org.jclouds.http.HttpRequest;
-
-import com.google.inject.ImplementedBy;
+import org.jclouds.blobstore.integration.internal.BaseBlobSignerLiveTest;
+import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@ImplementedBy(SignRequestForBlobUnsupported.class)
-public interface SignRequestForBlobStrategy {
-   HttpRequest apply(String container, String name);
+@Test(groups = { "live" }, testName = "emcsaas.AtmosBlobSignerLiveTest")
+public class AtmosBlobSignerLiveTest extends BaseBlobSignerLiveTest {
+
 }

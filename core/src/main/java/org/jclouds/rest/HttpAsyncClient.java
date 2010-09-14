@@ -92,8 +92,9 @@ public interface HttpAsyncClient {
    /**
     * @see HttpClient#get
     */
+   @Path("")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<InputStream> get(HttpRequest location);
+   ListenableFuture<InputStream> invoke(HttpRequest location);
 
    @GET
    @Path("")

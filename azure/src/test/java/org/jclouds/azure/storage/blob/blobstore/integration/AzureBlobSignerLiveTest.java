@@ -17,21 +17,16 @@
  * ====================================================================
  */
 
-package org.jclouds.blobstore.strategy.internal;
+package org.jclouds.azure.storage.blob.blobstore.integration;
 
-import javax.inject.Singleton;
-
-import org.jclouds.blobstore.strategy.SignRequestForBlobStrategy;
-import org.jclouds.http.HttpRequest;
+import org.jclouds.blobstore.integration.internal.BaseBlobSignerLiveTest;
+import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Singleton
-public class SignRequestForBlobUnsupported implements SignRequestForBlobStrategy {
-   @Override
-   public HttpRequest apply(String container, String name) {
-      throw new UnsupportedOperationException();
-   }
+@Test(groups = { "live" }, testName = "azureblob.AzureBlobSignerLiveTest")
+public class AzureBlobSignerLiveTest extends BaseBlobSignerLiveTest {
+
 }

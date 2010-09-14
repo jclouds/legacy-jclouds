@@ -37,14 +37,27 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.functions.ExceptionToValueOrPropagate;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+
+import com.google.common.collect.ImmutableMultimap;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class BlobStoreUtils {
+   public static <T> HttpRequest cleanRequest(GeneratedHttpRequest<T> returnVal) {
+      for (HttpRequestFilter filter : returnVal.getFilters())
+         filter.filter(returnVal);
+      HttpRequest toReturn = new HttpRequest(returnVal.getMethod(), returnVal.getEndpoint(), ImmutableMultimap
+               .copyOf(returnVal.getHeaders()));
+      if (returnVal.getPayload() != null)
+         toReturn.setPayload(returnVal.getPayload());
+      return toReturn;
+   }
 
    @SuppressWarnings("unchecked")
    public static final ExceptionToValueOrPropagate keyNotFoundToNullOrPropagate = new ExceptionToValueOrPropagate(
@@ -131,8 +144,7 @@ public class BlobStoreUtils {
       }
    }
 
-   public static void createParentIfNeededAsync(AsyncBlobStore asyncBlobStore, String container,
-            Blob blob) {
+   public static void createParentIfNeededAsync(AsyncBlobStore asyncBlobStore, String container, Blob blob) {
       String name = blob.getMetadata().getName();
       if (name.indexOf('/') > 0) {
          asyncBlobStore.createDirectory(container, parseDirectoryFromPath(name));

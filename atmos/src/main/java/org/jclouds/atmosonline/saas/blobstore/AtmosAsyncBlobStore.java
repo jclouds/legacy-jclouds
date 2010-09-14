@@ -51,7 +51,6 @@ import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
-import org.jclouds.blobstore.strategy.SignRequestForBlobStrategy;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.concurrent.Futures;
@@ -86,9 +85,8 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
             ObjectToBlob object2Blob, ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,
             BlobStoreListOptionsToListOptions container2ContainerListOptions,
             DirectoryEntryListToResourceMetadataList container2ResourceList, Crypto crypto,
-            BlobToHttpGetOptions blob2ObjectGetOptions, Provider<FetchBlobMetadata> fetchBlobMetadataProvider,
-            SignRequestForBlobStrategy signRequestForBlob) {
-      super(context, blobUtils, service, defaultLocation, locations, signRequestForBlob);
+            BlobToHttpGetOptions blob2ObjectGetOptions, Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
+      super(context, blobUtils, service, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
       this.async = checkNotNull(async, "async");

@@ -27,16 +27,16 @@ import org.jclouds.aws.Region;
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.aws.s3.S3Client;
 import org.jclouds.aws.s3.blobstore.S3AsyncBlobStore;
+import org.jclouds.aws.s3.blobstore.S3BlobRequestSigner;
 import org.jclouds.aws.s3.blobstore.S3BlobStore;
-import org.jclouds.aws.s3.blobstore.strategy.SignGetObject;
 import org.jclouds.aws.suppliers.DefaultLocationSupplier;
 import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
-import org.jclouds.blobstore.strategy.SignRequestForBlobStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
@@ -68,7 +68,7 @@ public class S3BlobStoreContextModule extends AbstractModule {
       bind(BlobStore.class).to(S3BlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStoreContext.class).to(new TypeLiteral<BlobStoreContextImpl<S3Client, S3AsyncClient>>() {
       }).in(Scopes.SINGLETON);
-      bind(SignRequestForBlobStrategy.class).to(SignGetObject.class);
+      bind(BlobRequestSigner.class).to(S3BlobRequestSigner.class);
    }
 
    @Provides

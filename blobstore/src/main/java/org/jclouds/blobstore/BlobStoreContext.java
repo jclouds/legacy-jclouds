@@ -36,6 +36,12 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(BlobStoreContextImpl.class)
 public interface BlobStoreContext {
+   /**
+    * 
+    * Generates signed requests for blobs. useful in other tools such as backup utilities.
+    * 
+    */
+   BlobRequestSigner getSigner();
 
    /**
     * Creates a <code>Map<String,InputStream></code> view of the specified container. Use this for

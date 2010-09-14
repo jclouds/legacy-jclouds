@@ -82,7 +82,7 @@ public class ComputeAndBlobStoreTogetherHappilyLiveTest extends BlobStoreAndComp
 
       // instead of hard-coding to amazon s3, we can use any blobstore, conceding this test is
       // configured for amz. Note we are getting temporary access to a private blob.
-      HttpRequest signedRequestOfInstallScript = blobContext.getBlobStore().signRequestForBlob(tag, "openjdk/install");
+      HttpRequest signedRequestOfInstallScript = blobContext.getSigner().signGetBlob(tag, "openjdk/install");
 
       // so one of our commands is to execute the contents of the blob above
       Statement installOpenJDK = execHttpResponse(signedRequestOfInstallScript);

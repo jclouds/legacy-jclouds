@@ -17,25 +17,16 @@
  * ====================================================================
  */
 
-package org.jclouds.http.functions;
+package org.jclouds.rackspace.cloudfiles.blobstore.integration;
 
-import java.io.InputStream;
-
-import javax.inject.Singleton;
-
-import org.jclouds.http.HttpResponse;
-
-import com.google.common.base.Function;
+import org.jclouds.blobstore.integration.internal.BaseBlobSignerLiveTest;
+import org.testng.annotations.Test;
 
 /**
- * Simply returns the InputStream of the response
  * 
  * @author Adrian Cole
  */
-@Singleton
-public class ReturnInputStream implements Function<HttpResponse, InputStream> {
+@Test(groups = { "live" }, testName = "cloudfiles.CloudFilesBlobSignerLiveTest")
+public class CloudFilesBlobSignerLiveTest extends BaseBlobSignerLiveTest {
 
-   public InputStream apply(HttpResponse from) {
-      return from.getPayload() != null ? from.getPayload().getInput() : null;
-   }
 }

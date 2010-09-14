@@ -47,7 +47,6 @@ import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.SignRequestForBlobStrategy;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.domain.Location;
@@ -79,8 +78,8 @@ public class S3BlobStore extends BaseBlobStore {
             Supplier<Set<? extends Location>> locations, S3Client sync, BucketToResourceMetadata bucket2ResourceMd,
             ContainerToBucketListOptions container2BucketListOptions, BucketToResourceList bucket2ResourceList,
             ObjectToBlob object2Blob, BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object,
-            ObjectToBlobMetadata object2BlobMd, Provider<FetchBlobMetadata> fetchBlobMetadataProvider, SignRequestForBlobStrategy signRequestForBlob) {
-      super(context, blobUtils, defaultLocation, locations, signRequestForBlob);
+            ObjectToBlobMetadata object2BlobMd, Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
+      super(context, blobUtils, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");
       this.bucket2ResourceMd = checkNotNull(bucket2ResourceMd, "bucket2ResourceMd");

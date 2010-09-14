@@ -17,25 +17,34 @@
  * ====================================================================
  */
 
-package org.jclouds.http.functions;
-
-import java.io.InputStream;
+package org.jclouds.blobstore.internal;
 
 import javax.inject.Singleton;
 
-import org.jclouds.http.HttpResponse;
-
-import com.google.common.base.Function;
+import org.jclouds.blobstore.BlobRequestSigner;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.http.HttpRequest;
 
 /**
- * Simply returns the InputStream of the response
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class ReturnInputStream implements Function<HttpResponse, InputStream> {
+public class RequestSigningUnsupported implements BlobRequestSigner {
 
-   public InputStream apply(HttpResponse from) {
-      return from.getPayload() != null ? from.getPayload().getInput() : null;
+   @Override
+   public HttpRequest signGetBlob(String container, String name) {
+      throw new UnsupportedOperationException();
    }
+
+   @Override
+   public HttpRequest signPutBlob(String container, Blob blob) {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public HttpRequest signRemoveBlob(String container, String name) {
+      throw new UnsupportedOperationException();
+   }
+
 }

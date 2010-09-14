@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.atmosonline.saas.blobstore.integration;
+package org.jclouds.atmosonline.saas.blobstore;
 
 import static org.testng.Assert.assertEquals;
 
@@ -25,29 +25,36 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
-import org.jclouds.atmosonline.saas.blobstore.strategy.SignReadFile;
 import org.jclouds.atmosonline.saas.config.AtmosStorageRestClientModule;
 import org.jclouds.atmosonline.saas.filters.SignRequest;
+import org.jclouds.blobstore.BlobRequestSigner;
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.io.payloads.PhantomPayload;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
-@Test(groups = "unit", testName = "emcsaas.SignReadFileTest")
-public class SignReadFileTest extends RestClientTest<AtmosStorageAsyncClient> {
+@Test(groups = "unit", testName = "emcsaas.AtmosBlobRequestSignerTest")
+public class AtmosBlobRequestSignerTest extends RestClientTest<AtmosStorageAsyncClient> {
 
-   public void testSignReadFile() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
+   private BlobRequestSigner signer;
+   private Factory blobFactory;
+
+   public void testSignGetBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
             NoSuchMethodException, IOException {
-      HttpRequest request = new SignReadFile(processor).apply("container", "name");
+      HttpRequest request = signer.signGetBlob("container", "name");
 
       assertRequestLineEquals(request, "GET https://accesspoint.atmosonline.com/rest/namespace/container/name HTTP/1.1");
       assertNonPayloadHeadersEqual(
@@ -56,6 +63,47 @@ public class SignReadFileTest extends RestClientTest<AtmosStorageAsyncClient> {
       assertPayloadEquals(request, null, null, false);
 
       assertEquals(request.getFilters().size(), 0);
+   }
+
+   public void testSignRemoveBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
+            NoSuchMethodException, IOException {
+      HttpRequest request = signer.signRemoveBlob("container", "name");
+
+      assertRequestLineEquals(request,
+               "DELETE https://accesspoint.atmosonline.com/rest/namespace/container/name HTTP/1.1");
+      assertNonPayloadHeadersEqual(
+               request,
+               "Accept: */*\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-emc-signature: Q3zmO6KNAViNXquiCZSMx/0nuuc=\nx-emc-uid: identity\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertEquals(request.getFilters().size(), 0);
+   }
+
+   public void testSignPutBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
+            NoSuchMethodException, IOException {
+      Blob blob = blobFactory.create(null);
+      blob.getMetadata().setName("name");
+      blob.setPayload(new PhantomPayload(2l, new byte[] { 0, 2, 4, 8 }));
+      blob.getPayload().setContentType("text/plain");
+
+      HttpRequest request = signer.signPutBlob("container", blob);
+
+      assertRequestLineEquals(request,
+               "POST https://accesspoint.atmosonline.com/rest/namespace/container/name HTTP/1.1");
+      assertNonPayloadHeadersEqual(
+               request,
+               "Accept: */*\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-emc-signature: aLpB1oQaCA27AXT6Nzam7s0f0pI=\nx-emc-uid: identity\n");
+
+      assertContentHeadersEqual(request, "text/plain", (long) 2l, new byte[] { 0, 2, 4, 8 });
+
+      assertEquals(request.getFilters().size(), 0);
+   }
+
+   @BeforeClass
+   protected void setupFactory() throws IOException {
+      super.setupFactory();
+      this.blobFactory = injector.getInstance(Blob.Factory.class);
+      this.signer = injector.getInstance(BlobRequestSigner.class);
    }
 
    @Override

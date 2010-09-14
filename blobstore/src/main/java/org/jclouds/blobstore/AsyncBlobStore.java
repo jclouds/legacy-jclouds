@@ -20,7 +20,6 @@
 package org.jclouds.blobstore;
 
 import java.util.Set;
-import com.google.common.util.concurrent.ListenableFuture;
 
 import javax.annotation.Nullable;
 
@@ -31,7 +30,8 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.domain.Location;
-import org.jclouds.http.HttpRequest;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides hooks needed to run a blob store asynchronously
@@ -48,11 +48,6 @@ public interface AsyncBlobStore {
     * @see BlobStore#newBlob
     */
    Blob newBlob(String name);
-
-   /**
-    * @see BlobStore#signRequestForBlob
-    */
-   HttpRequest signRequestForBlob(String container, String name);
 
    /**
     * @see BlobStore#listAssignableLocations

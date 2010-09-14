@@ -26,17 +26,17 @@ import javax.inject.Singleton;
 import org.jclouds.azure.storage.blob.AzureBlobAsyncClient;
 import org.jclouds.azure.storage.blob.AzureBlobClient;
 import org.jclouds.azure.storage.blob.blobstore.AzureAsyncBlobStore;
+import org.jclouds.azure.storage.blob.blobstore.AzureBlobRequestSigner;
 import org.jclouds.azure.storage.blob.blobstore.AzureBlobStore;
 import org.jclouds.azure.storage.blob.blobstore.strategy.FindMD5InBlobProperties;
-import org.jclouds.azure.storage.blob.blobstore.strategy.SignGetBlob;
 import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
-import org.jclouds.blobstore.strategy.SignRequestForBlobStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
@@ -66,7 +66,7 @@ public class AzureBlobStoreContextModule extends AbstractModule {
       bind(BlobStoreContext.class).to(new TypeLiteral<BlobStoreContextImpl<AzureBlobClient, AzureBlobAsyncClient>>() {
       }).in(Scopes.SINGLETON);
       bind(ContainsValueInListStrategy.class).to(FindMD5InBlobProperties.class);
-      bind(SignRequestForBlobStrategy.class).to(SignGetBlob.class);
+      bind(BlobRequestSigner.class).to(AzureBlobRequestSigner.class);
    }
 
    @Provides

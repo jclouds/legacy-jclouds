@@ -28,8 +28,6 @@ import java.net.URLConnection;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.crypto.CryptoStreams;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.util.Utils;
 import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -71,28 +69,6 @@ public class BaseBlobLiveTest extends BaseBlobStoreIntegrationTest {
       try {
          context.getBlobStore().putBlob(container, blob);
          assertEquals(context.getBlobStore().blobMetadata(container, name).getContentMD5(), md5);
-      } finally {
-         returnContainer(container);
-      }
-   }
-
-   @Test
-   public void testSignUrl() throws Exception {
-      String name = "hello";
-      String text = "fooooooooooooooooooooooo";
-
-      Blob blob = context.getBlobStore().newBlob(name);
-      blob.setPayload(text);
-      blob.getPayload().setContentType("text/plain");
-      String container = getContainerName();
-      try {
-         context.getBlobStore().putBlob(container, blob);
-         HttpRequest request = context.getBlobStore().signRequestForBlob(container, name);
-         assertEquals(request.getFilters().size(), 0);
-         assertEquals(Utils.toStringAndClose(context.utils().http().get(request)), text);
-         request = context.getAsyncBlobStore().signRequestForBlob(container, name);
-         assertEquals(request.getFilters().size(), 0);
-         assertEquals(Utils.toStringAndClose(context.utils().http().get(request)), text);
       } finally {
          returnContainer(container);
       }

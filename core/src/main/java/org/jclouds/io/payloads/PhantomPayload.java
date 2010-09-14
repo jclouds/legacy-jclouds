@@ -17,25 +17,34 @@
  * ====================================================================
  */
 
-package org.jclouds.http.functions;
+package org.jclouds.io.payloads;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
-import javax.inject.Singleton;
-
-import org.jclouds.http.HttpResponse;
-
-import com.google.common.base.Function;
+import javax.annotation.Nullable;
 
 /**
- * Simply returns the InputStream of the response
- * 
  * @author Adrian Cole
  */
-@Singleton
-public class ReturnInputStream implements Function<HttpResponse, InputStream> {
+public class PhantomPayload extends BasePayload<Object> {
 
-   public InputStream apply(HttpResponse from) {
-      return from.getPayload() != null ? from.getPayload().getInput() : null;
+   public PhantomPayload(@Nullable Long contentLength, @Nullable byte[] contentMD5) {
+      super(Object.class, null, contentLength, contentMD5);
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public InputStream getInput() {
+      throw new UnsupportedOperationException();
+   }
+
+   @Override
+   public void writeTo(OutputStream outstream) throws IOException {
+      throw new UnsupportedOperationException();
+   }
+
 }

@@ -63,10 +63,7 @@ public interface HttpClient {
     */
    InputStream get(URI location);
    
-   /**
-    * @return null if the resource didn't exist.
-    */
-   InputStream get(HttpRequest location);
+   InputStream invoke(HttpRequest location);
    
    InputStream get(URI location, HttpRequestOptions options);
 

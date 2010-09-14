@@ -33,11 +33,9 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.blobstore.strategy.SignRequestForBlobStrategy;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.blobstore.util.internal.BlobUtilsImpl;
 import org.jclouds.domain.Location;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Supplier;
@@ -52,16 +50,14 @@ public abstract class BaseBlobStore implements BlobStore {
    protected final BlobUtils blobUtils;
    protected final Supplier<Location> defaultLocation;
    protected final Supplier<Set<? extends Location>> locations;
-   protected final SignRequestForBlobStrategy signRequestForBlob;
 
    @Inject
    protected BaseBlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
-            Supplier<Set<? extends Location>> locations, SignRequestForBlobStrategy signRequestForBlob) {
+            Supplier<Set<? extends Location>> locations) {
       this.context = checkNotNull(context, "context");
       this.blobUtils = checkNotNull(blobUtils, "blobUtils");
       this.defaultLocation = checkNotNull(defaultLocation, "defaultLocation");
       this.locations = checkNotNull(locations, "locations");
-      this.signRequestForBlob = checkNotNull(signRequestForBlob, "signRequestForBlob");
    }
 
    @Override
@@ -224,8 +220,4 @@ public abstract class BaseBlobStore implements BlobStore {
 
    protected abstract boolean deleteAndVerifyContainerGone(String container);
 
-   @Override
-   public HttpRequest signRequestForBlob(String container, String name) {
-      return signRequestForBlob.apply(container, name);
-   }
 }

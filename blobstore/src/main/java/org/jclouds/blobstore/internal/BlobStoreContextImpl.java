@@ -26,6 +26,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobMap;
+import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.InputStreamMap;
@@ -46,22 +47,23 @@ public class BlobStoreContextImpl<S, A> implements BlobStoreContext {
    private final RestContext<S, A> providerSpecificContext;
    private final ConsistencyModel consistencyModel;
    private final Utils utils;
+   private final BlobRequestSigner blobRequestSigner;
 
    @SuppressWarnings("unchecked")
    @Inject
-   public BlobStoreContextImpl(BlobMap.Factory blobMapFactory, Utils utils,
-            ConsistencyModel consistencyModel, InputStreamMap.Factory inputStreamMapFactory,
-            AsyncBlobStore ablobStore, BlobStore blobStore, RestContext providerSpecificContext) {
+   public BlobStoreContextImpl(BlobMap.Factory blobMapFactory, Utils utils, ConsistencyModel consistencyModel,
+            InputStreamMap.Factory inputStreamMapFactory, AsyncBlobStore ablobStore, BlobStore blobStore,
+            RestContext providerSpecificContext, BlobRequestSigner blobRequestSigner) {
       // unravel guice and avoid passing in a million type args by not injecting generic types for
       // rest context
-      this.providerSpecificContext = checkNotNull(providerSpecificContext,
-               "providerSpecificContext");
+      this.providerSpecificContext = checkNotNull(providerSpecificContext, "providerSpecificContext");
       this.consistencyModel = checkNotNull(consistencyModel, "consistencyModel");
       this.blobMapFactory = checkNotNull(blobMapFactory, "blobMapFactory");
       this.inputStreamMapFactory = checkNotNull(inputStreamMapFactory, "inputStreamMapFactory");
       this.ablobStore = checkNotNull(ablobStore, "ablobStore");
       this.blobStore = checkNotNull(blobStore, "blobStore");
-      this.utils = utils;
+      this.utils = checkNotNull(utils, "utils");
+      this.blobRequestSigner = checkNotNull(blobRequestSigner, "blobRequestSigner");
    }
 
    @Override
@@ -133,5 +135,10 @@ public class BlobStoreContextImpl<S, A> implements BlobStoreContext {
    @Override
    public boolean equals(Object obj) {
       return providerSpecificContext.equals(obj);
+   }
+
+   @Override
+   public BlobRequestSigner getSigner() {
+      return blobRequestSigner;
    }
 }
