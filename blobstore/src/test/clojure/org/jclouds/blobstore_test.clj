@@ -109,7 +109,7 @@
                         (download-blob container-name name data-file)))
            (finally (.delete data-file))))))
 
-;; this will fail until transient provider handles signing
+;; this will fail until somebody fixes it!
 #_
 (deftest sing-put-blob-request-test
   (let [request (sign-put-blob-request "container" "path" "text/plain" 10)]
@@ -117,7 +117,7 @@
     (is (= "10" (get "Content-Length" (.getHeaders request))))
     (is (= "text/plain" (get "Content-Type" (.getHeaders request))))))
 
-;; this will fail until transient provider handles signing
+;; this will fail until somebody fixes it!
 #_
 (deftest sing-blob-request-test
   (let [request (sign-blob-request "container" "path" {:method :delete})]

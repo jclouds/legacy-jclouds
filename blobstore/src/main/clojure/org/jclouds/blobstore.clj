@@ -265,7 +265,7 @@ in another application.  ex. curl"
        (doto (.newBlob blobstore path)
              (.setPayload (doto
                             ;; until we pass content md5
-                            (PhantomPayload. size nil)
+                            (PhantomPayload. (long size) nil)
                             (.setContentType content-type)))))))
 
 (defn sign-blob-request
@@ -284,7 +284,7 @@ in another application.  ex. curl"
              (.. blobstore getContext getSigner) container-name
              (doto (.newBlob blobstore path)
                (.setPayload
-                (doto (PhantomPayload. content-length content-md5)
+                (doto (PhantomPayload. (long content-length) content-md5)
                   (.setContentType content-type))))))))
 
 (defn get-blob-stream
