@@ -109,6 +109,25 @@
                         (download-blob container-name name data-file)))
            (finally (.delete data-file))))))
 
+;; this will fail until transient provider handles signing
+(deftest sing-put-blob-request-test
+  (let [request (sign-put-blob-request "container" "path" "text/plain" 10)]
+    (is (= "PUT" (.getMethod request)))
+    (is (= "10" (get "Content-Length" (.getHeaders request))))
+    (is (= "text/plain" (get "Content-Type" (.getHeaders request))))))
+
+;; this will fail until transient provider handles signing
+(deftest sing-blob-request-test
+  (let [request (sign-blob-request "container" "path" {:method :delete})]
+    (is (= "DELETE" (.getMethod request))))
+  (let [request (sign-blob-request "container" "path" {:method :get})]
+    (is (= "GET" (.getMethod request))))
+  (let [request (sign-blob-request
+                 "container" "path" {:method :put :content-length 10})]
+    (is (= "PUT" (.getMethod request)))
+    (is (= "10" (get "Content-Length" (.getHeaders request))))
+    (is (= "text/plain" (get "Content-Type" (.getHeaders request))))))
+
 ;; TODO: more tests involving blob-specific functions
 
 (deftest corruption-hunt

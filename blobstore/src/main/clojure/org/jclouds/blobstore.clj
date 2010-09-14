@@ -44,11 +44,11 @@ See http://code.google.com/p/jclouds for details."
             AsyncBlobStore BlobStore BlobStoreContext BlobStoreContextFactory
             domain.BlobMetadata domain.StorageMetadata domain.Blob
             options.ListContainerOptions]
-           [org.jclouds.io Payloads]
-           [org.jclouds.io.payloads PhantomPayload]
-           [java.util Arrays]
+           org.jclouds.io.Payloads
+           org.jclouds.io.payloads.PhantomPayload
+           java.util.Arrays
            [java.security DigestOutputStream MessageDigest]
-           [com.google.common.collect ImmutableSet]))
+           com.google.common.collect.ImmutableSet))
 
 (try
   (require '[clojure.contrib.io :as io])
@@ -240,12 +240,12 @@ Options can also be specified for extension modules
      (.getBlob blobstore container-name path)))
 
 (defn sign-get-blob-request
-  "Get a signed http request for a blob, so that you can retrieve it 
+  "Get a signed http request for a blob, so that you can retrieve it
 in another application.  ex. curl"
   ([container-name path]
      (sign-get-blob-request container-name path *blobstore*))
   ([container-name path #^BlobStore blobstore]
-     (.signGetBlob (.getContext blobstore) container-name path)))
+     (.signGetBlob (.. blobstore getContext getSigner) container-name path)))
 
 (defn sign-remove-blob-request
   "Get a signed http request for deleting a blob in another application.
@@ -253,7 +253,7 @@ in another application.  ex. curl"
   ([container-name path]
      (sign-remove-blob-request container-name path *blobstore*))
   ([container-name path #^BlobStore blobstore]
-     (.signRemoveBlob (.getContext blobstore) container-name path)))
+     (.signRemoveBlob (.. blobstore getContext getSigner) container-name path)))
 
 (defn sign-put-blob-request
   "Get a signed http request for uploading a blob in another application.
@@ -261,12 +261,31 @@ in another application.  ex. curl"
   ([container-name path content-type size]
      (sign-put-blob-request container-name path content-type  size *blobstore*))
   ([container-name path content-type size #^BlobStore blobstore]
-     (.signPutBlob (.getContext blobstore) container-name 
+     (.signPutBlob (.. blobstore getContext getSigner) container-name
        (doto (.newBlob blobstore path)
              (.setPayload (doto
                             ;; until we pass content md5
                             (PhantomPayload. size nil)
                             (.setContentType content-type)))))))
+
+(defn sign-blob-request
+  "Get a signed http request for manipulating a blob in another application.
+   ex. curl"
+  ([container-name path
+    {:keys [method content-type content-length content-md5] :as request}]
+     (sign-blob-request container-name path request *blobstore*))
+  ([container-name path
+    {:keys [method content-type content-length content-md5]} blobstore]
+     {:pre [(or content-length (#{:delete :get} method))]}
+     (case method
+       :delete (sign-remove-blob-request container-name path blobstore)
+       :get (sign-get-blob-request container-name path blobstore)
+       :put (.signPutBlob
+             (.. blobstore getContext getSigner) container-name
+             (doto (.newBlob blobstore path)
+               (.setPayload
+                (doto (PhantomPayload. content-length content-md5)
+                  (.setContentType content-type))))))))
 
 (defn get-blob-stream
   "Get an inputstream from the blob at a given path"
