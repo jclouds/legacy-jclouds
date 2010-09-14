@@ -34,7 +34,7 @@ our compute api supports: ec2, gogrid, rackspace, rimuhosting, vcloud, trmk-eclo
            to all of these providers
 
 our blobstore api supports: s3, rackspace, azure, atmos online, att synaptic,
-                          walrus, googlestorage, transient (in-memory)
+                          walrus, googlestorage, transient (in-memory), filesystem (on-disk)
  
   * note * the pom dependency org.jclouds/jclouds-allblobstore gives you access to
            to all of these providers

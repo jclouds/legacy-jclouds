@@ -21,7 +21,7 @@
   "A clojure binding for the jclouds BlobStore.
 
 Current supported services are:
-   [s3, azureblob, atmos, cloudfiles, walrus, googlestorage]
+   [transient, filesystem, s3, azureblob, atmos, cloudfiles, walrus, googlestorage]
 
 Here's a quick example of how to viewresources in rackspace
 

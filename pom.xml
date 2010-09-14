@@ -37,6 +37,7 @@
         <module>core</module>
         <module>compute</module>
         <module>blobstore</module>
+        <module>filesystem</module>
         <module>extensions</module>
         <module>tools</module>
         <module>scriptbuilder</module>
