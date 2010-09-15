@@ -70,6 +70,30 @@ public class ParseAWSErrorFromXmlContentTest {
    }
 
    @Test
+   public void test400WithInvalidGroupDuplicateIllegalStateException() {
+      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
+               "<Error><Code>InvalidGroup.Duplicate</Code></Error>", IllegalStateException.class);
+   }
+   
+   @Test
+   public void test400WithTextPlainIllegalArgumentException() {
+      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "Bad Request", "text/plain",
+               "Failure: 400 Bad Request\nFailed to bind the following fields\nMonitoring.Enabled = true\n\n\n",
+               IllegalArgumentException.class);
+   }
+
+   @Test
+   public void test400WithGroupAlreadyExistsEucalyptusIllegalStateException() {
+      assertCodeMakes(
+               "GET",
+               URI.create("https://amazonaws.com/foo"),
+               400,
+               "",
+               "<?xml version=\"1.0\"?><Response><Errors><Error><Code>Groups</Code><Message>\nError adding network group: group named jclouds#eucrun#Eucalyptus already exists\nError adding network group: group named jclouds#eucrun#Eucalyptus already exists</Message></Error></Errors><RequestID>e0133975-3bc5-456d-9753-1d61b27e07e9</RequestID></Response>",
+               IllegalStateException.class);
+   }
+
+   @Test
    public void test400WithAuthFailureSetsAuthorizationException() {
       assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
                "<Error><Code>AuthFailure</Code></Error>", AuthorizationException.class);
@@ -77,6 +101,11 @@ public class ParseAWSErrorFromXmlContentTest {
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String content,
             Class<? extends Exception> expected) {
+      assertCodeMakes(method, uri, statusCode, message, "text/xml", content, expected);
+   }
+
+   private void assertCodeMakes(String method, URI uri, int statusCode, String message, String contentType,
+            String content, Class<? extends Exception> expected) {
 
       ParseAWSErrorFromXmlContent function = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
 
@@ -92,8 +121,7 @@ public class ParseAWSErrorFromXmlContentTest {
       HttpRequest request = new HttpRequest(method, uri);
       HttpResponse response = new HttpResponse(statusCode, message, Payloads.newInputStreamPayload(Utils
                .toInputStream(content)));
-      response.getPayload().setContentType("text/xml");
-      //TODO also check application/unknown
+      response.getPayload().setContentType(contentType);
 
       expect(command.getRequest()).andReturn(request).atLeastOnce();
       command.setException(classEq(expected));

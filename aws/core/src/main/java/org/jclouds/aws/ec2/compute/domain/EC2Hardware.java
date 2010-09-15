@@ -21,6 +21,7 @@ package org.jclouds.aws.ec2.compute.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.not;
+import static org.jclouds.compute.predicates.ImagePredicates.any;
 import static org.jclouds.compute.predicates.ImagePredicates.idIn;
 import static org.jclouds.compute.predicates.ImagePredicates.is64Bit;
 
@@ -75,23 +76,24 @@ public class EC2Hardware extends HardwareImpl {
 
    EC2Hardware(String instanceType, Iterable<? extends Processor> processors, Integer ram,
             Iterable<? extends Volume> volumes, RootDeviceType rootDeviceType) {
-      super(instanceType, instanceType, instanceType, null, null, ImmutableMap.<String, String> of(), processors, ram,
-               volumes, hasRootDeviceType(rootDeviceType));
+      this(null, instanceType, processors, ram, volumes, hasRootDeviceType(rootDeviceType));
+   }
+
+   EC2Hardware(Location location, String instanceType, Iterable<? extends Processor> processors, Integer ram,
+            Iterable<? extends Volume> volumes, Predicate<Image> supportsImage) {
+      super(instanceType, instanceType, instanceType, location, null, ImmutableMap.<String, String> of(), processors,
+               ram, volumes, supportsImage);
       this.instanceType = instanceType;
    }
 
    EC2Hardware(String instanceType, Iterable<? extends Processor> processors, Integer ram,
             Iterable<? extends Volume> volumes, boolean is64Bit) {
-      super(instanceType, instanceType, instanceType, null, null, ImmutableMap.<String, String> of(), processors, ram,
-               volumes, is64Bit ? is64Bit() : not(is64Bit()));
-      this.instanceType = instanceType;
+      this(null, instanceType, processors, ram, volumes, is64Bit ? is64Bit() : not(is64Bit()));
    }
 
    public EC2Hardware(Location location, String instanceType, Iterable<? extends Processor> processors, Integer ram,
             Iterable<? extends Volume> volumes, String[] ids) {
-      super(instanceType, instanceType, instanceType, location, null, ImmutableMap.<String, String> of(), processors,
-               ram, volumes, (ids.length == 0 ? is64Bit() : idIn(Arrays.asList(ids))));
-      this.instanceType = instanceType;
+      this(location, instanceType, processors, ram, volumes, (ids.length == 0 ? is64Bit() : idIn(Arrays.asList(ids))));
    }
 
    /**
@@ -107,6 +109,14 @@ public class EC2Hardware extends HardwareImpl {
    public static final EC2Hardware M1_SMALL = new EC2Hardware(InstanceType.M1_SMALL, ImmutableList.of(new Processor(
             1.0, 1.0)), 1740, ImmutableList.of(new VolumeImpl(10.0f, "/dev/sda1", true, false), new VolumeImpl(150.0f,
             "/dev/sda2", false, false)), false);
+   /**
+    * In Eucalyptus, m1.small can run 64bit images.
+    * 
+    * @see InstanceType#M1_SMALL
+    */
+   public static final EC2Hardware M1_SMALL_EUCALYPTUS = new EC2Hardware(null, InstanceType.M1_SMALL, ImmutableList
+            .of(new Processor(1.0, 1.0)), 1740, ImmutableList.of(new VolumeImpl(10.0f, "/dev/sda1", true, false),
+            new VolumeImpl(150.0f, "/dev/sda2", false, false)), any());
 
    /**
     * @see InstanceType#T1_MICRO

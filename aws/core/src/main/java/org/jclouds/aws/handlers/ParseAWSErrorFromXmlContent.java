@@ -21,6 +21,8 @@ package org.jclouds.aws.handlers;
 
 import static org.jclouds.http.HttpUtils.releasePayload;
 
+import java.io.IOException;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -38,6 +40,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
+import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -65,33 +68,49 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
       HttpRequest request = command.getRequest();
       Exception exception = new HttpResponseException(command, response);
       try {
-         AWSError error = utils.parseAWSErrorFromContent(request, response);
-         exception = error != null ? new AWSResponseException(command, response, error) : exception;
-         String notFoundMessage = error != null ? error.getMessage() : String.format("%s -> %s", request
-                  .getRequestLine(), response.getStatusLine());
+         AWSError error = null;
+         String message = null;
+         if (response.getPayload().getContentType() != null
+                  && response.getPayload().getContentType().indexOf("xml") != -1) {
+            error = utils.parseAWSErrorFromContent(request, response);
+            if (error != null) {
+               message = error.getMessage();
+               exception = new AWSResponseException(command, response, error);
+            }
+         } else {
+            try {
+               message = Utils.toStringAndClose(response.getPayload().getInput());
+            } catch (IOException e) {
+            }
+         }
+         message = message != null ? message : String.format("%s -> %s", request.getRequestLine(), response
+                  .getStatusLine());
          switch (response.getStatusCode()) {
             case 400:
-               if (error != null && error.getCode().endsWith(".NotFound") || error.getCode().endsWith(".Unknown"))
-                  exception = new ResourceNotFoundException(notFoundMessage, exception);
-               else if (error != null && error.getCode().equals("IncorrectState"))
-                  exception = new IllegalStateException(error.getMessage(), exception);
-               else if (error != null && error.getCode().equals("AuthFailure"))
-                  exception = new AuthorizationException(command.getRequest(), error != null ? error.getMessage()
-                           : response.getStatusLine());
+               if (error != null && error.getCode() != null
+                        && (error.getCode().endsWith(".NotFound") || error.getCode().endsWith(".Unknown")))
+                  exception = new ResourceNotFoundException(message, exception);
+               else if ((error != null && error.getCode() != null && (error.getCode().equals("IncorrectState") || error
+                        .getCode().equals("InvalidGroup.Duplicate")))
+                        || (message != null && message.indexOf("already exists") != -1))
+                  exception = new IllegalStateException(message, exception);
+               else if (error != null && error.getCode() != null && error.getCode().equals("AuthFailure"))
+                  exception = new AuthorizationException(command.getRequest(), message);
+               else if (message != null && message.indexOf("Failed to bind the following fields") != -1)// Eucalyptus
+                  exception = new IllegalArgumentException(message, exception);
                break;
             case 401:
             case 403:
-               exception = new AuthorizationException(command.getRequest(), error != null ? error.getMessage()
-                        : response.getStatusLine());
+               exception = new AuthorizationException(command.getRequest(), message);
                break;
             case 404:
                if (!command.getRequest().getMethod().equals("DELETE")) {
                   String container = request.getEndpoint().getHost();
                   String key = request.getEndpoint().getPath();
                   if (key == null || key.equals("/"))
-                     exception = new ContainerNotFoundException(container, notFoundMessage);
+                     exception = new ContainerNotFoundException(container, message);
                   else
-                     exception = new KeyNotFoundException(container, key, notFoundMessage);
+                     exception = new KeyNotFoundException(container, key, message);
                }
                break;
          }

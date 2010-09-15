@@ -303,12 +303,24 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    private void cleanupExtendedStuff(SecurityGroupClient securityGroupClient, KeyPairClient keyPairClient, String tag)
             throws InterruptedException {
       try {
-         securityGroupClient.deleteSecurityGroupInRegion(null, tag);
+         for (SecurityGroup group : securityGroupClient.describeSecurityGroupsInRegion(null))
+            if (group.getName().startsWith("jclouds#" + tag) || group.getName().equals(tag)) {
+               System.err.printf("deleting group %s%n", group.getName());
+               securityGroupClient.deleteSecurityGroupInRegion(null, group.getName());
+            } else {
+               System.err.printf("group %s didn't match %s%n", group.getName(), tag);
+            }
       } catch (Exception e) {
 
       }
       try {
-         keyPairClient.deleteKeyPairInRegion(null, tag);
+         for (KeyPair pair : keyPairClient.describeKeyPairsInRegion(null))
+            if (pair.getKeyName().startsWith("jclouds#" + tag) || pair.getKeyName().equals(tag)) {
+               System.err.printf("deleting key %s%n", pair.getKeyName());
+               keyPairClient.deleteKeyPairInRegion(null, pair.getKeyName());
+            } else {
+               System.err.printf("key %s didn't match %s%n", pair.getKeyName(), tag);
+            }
       } catch (Exception e) {
 
       }

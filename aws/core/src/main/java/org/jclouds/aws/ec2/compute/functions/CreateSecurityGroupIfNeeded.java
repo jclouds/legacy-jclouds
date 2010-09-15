@@ -26,7 +26,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.aws.ec2.domain.IpProtocol;
@@ -72,13 +71,8 @@ public class CreateSecurityGroupIfNeeded implements Function<RegionNameAndIngres
          if (ports.length > 0) {
             authorizeGroupToItself(region, name);
          }
-      } catch (AWSResponseException e) {
-         if (e.getError().getCode().equals("InvalidGroup.Duplicate")
-                  || e.getError().getMessage().endsWith("already exists")) {
-            logger.debug("<< reused securityGroup(%s)", name);
-         } else {
-            throw e;
-         }
+      } catch (IllegalStateException e) {
+         logger.debug("<< reused securityGroup(%s)", name);
       }
    }
 
