@@ -71,7 +71,7 @@ public class ParseAWSErrorFromXmlContentTest {
 
    @Test
    public void test400WithInvalidGroupDuplicateIllegalStateException() {
-      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
+      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400,"Bad Request", "application/unknown",
                "<Error><Code>InvalidGroup.Duplicate</Code></Error>", IllegalStateException.class);
    }
    

@@ -71,7 +71,8 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
          AWSError error = null;
          String message = null;
          if (response.getPayload().getContentType() != null
-                  && response.getPayload().getContentType().indexOf("xml") != -1) {
+                  && (response.getPayload().getContentType().indexOf("xml") != -1 || response.getPayload()
+                           .getContentType().indexOf("unknown") != -1)) {
             error = utils.parseAWSErrorFromContent(request, response);
             if (error != null) {
                message = error.getMessage();
