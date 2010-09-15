@@ -251,8 +251,13 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
    @VisibleForTesting
    String getLoginAccountFor(RunningInstance from) {
-      org.jclouds.aws.ec2.domain.Image image = Iterables.getOnlyElement(client.getAMIServices().describeImagesInRegion(
-               from.getRegion(), DescribeImagesOptions.Builder.imageIds(from.getImageId())));
+      org.jclouds.aws.ec2.domain.Image image = null;
+      try {
+         image = Iterables.getOnlyElement(client.getAMIServices().describeImagesInRegion(from.getRegion(),
+                  DescribeImagesOptions.Builder.imageIds(from.getImageId())));
+      } catch (NoSuchElementException e) {
+         logger.debug("couldn't find image %s/%s", from.getRegion(), from.getImageId());
+      }
       return checkNotNull(credentialProvider.execute(image), "login from image: " + from.getImageId()).identity;
    }
 

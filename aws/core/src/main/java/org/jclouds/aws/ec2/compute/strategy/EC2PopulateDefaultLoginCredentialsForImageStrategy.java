@@ -42,9 +42,8 @@ public class EC2PopulateDefaultLoginCredentialsForImageStrategy implements
       Image image = (Image) resourceToAuthenticate;
 
       Credentials credentials;
-
       // canonical/alestic images use the ubuntu user to login
-      if (image.getImageOwnerId().matches("063491364108|099720109477"))
+      if (image != null && image.getImageOwnerId().matches("063491364108|099720109477"))
          credentials = new Credentials("ubuntu", null);
       else
          credentials = new Credentials("root", null);

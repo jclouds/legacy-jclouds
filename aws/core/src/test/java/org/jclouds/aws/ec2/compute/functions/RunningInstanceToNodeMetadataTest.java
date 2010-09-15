@@ -259,6 +259,91 @@ public class RunningInstanceToNodeMetadataTest {
 
    }
 
+
+   @SuppressWarnings( { "unchecked", "rawtypes" })
+   @Test
+   public void testApplyForEucalyptusWhereImageNotFound() throws UnknownHostException {
+      EC2Client client = createMock(EC2Client.class);
+      AMIClient amiClient = createMock(AMIClient.class);
+      expect(client.getAMIServices()).andReturn(amiClient).atLeastOnce();
+      Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
+      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+               .<Hardware> of(EC2Hardware.M1_SMALL));
+      PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
+      RunningInstance instance = createMock(RunningInstance.class);
+
+      expect(instance.getId()).andReturn("i-3d640055").atLeastOnce();
+      expect(instance.getGroupIds()).andReturn(ImmutableSet.<String> of()).atLeastOnce();
+      expect(instance.getKeyName()).andReturn("nebulatanimislam").atLeastOnce();
+      expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
+
+      Location region = new LocationImpl(LocationScope.REGION, "us-east-1", "description", null);
+      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+               .<Location> of(region));
+      org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
+
+      expect(instance.getIpAddress()).andReturn(null);
+      expect(instance.getPrivateIpAddress()).andReturn("10.202.117.241");
+
+      expect(instance.getRegion()).andReturn(Region.US_EAST_1).atLeastOnce();
+
+      expect(jcImage.getOperatingSystem()).andReturn(createMock(OperatingSystem.class)).atLeastOnce();
+
+      expect(instance.getImageId()).andReturn("ami-1515f07c").atLeastOnce();
+      expect(imageMap.get(new RegionAndName(Region.US_EAST_1, "ami-1515f07c"))).andReturn(jcImage);
+
+      expect(amiClient.describeImagesInRegion(Region.US_EAST_1, imageIds("ami-1515f07c"))).andReturn(
+               (Set) ImmutableSet.<Image> of());
+      
+      expect(credentialProvider.execute(null)).andReturn(new Credentials("root", null));
+
+
+      expect(credentialsMap.get(new RegionAndName(Region.US_EAST_1, "nebulatanimislam"))).andReturn(null);
+
+      expect(instance.getAvailabilityZone()).andReturn(null).atLeastOnce();
+
+      expect(instance.getInstanceType()).andReturn(InstanceType.M1_SMALL).atLeastOnce();
+      expect(instance.getEbsBlockDevices()).andReturn(Maps.<String, EbsBlockDevice> newHashMap());
+      expect(instance.getRootDeviceType()).andReturn(RootDeviceType.INSTANCE_STORE);
+
+      replay(imageMap);
+      replay(client);
+      replay(amiClient);
+      replay(credentialsMap);
+      replay(credentialProvider);
+      replay(instance);
+      replay(jcImage);
+
+      RunningInstanceToNodeMetadata parser = new RunningInstanceToNodeMetadata(client, credentialsMap,
+               credentialProvider, imageMap, locations, hardwares);
+
+      NodeMetadata metadata = parser.apply(instance);
+
+      assertEquals(metadata.getTag(), "NOTAG-i-3d640055");
+      assertEquals(metadata.getLocation(), region);
+      assertEquals(metadata.getImageId(), "us-east-1/ami-1515f07c");
+      assertEquals(metadata.getHardware().getId(), "m1.small");
+      assertEquals(metadata.getHardware().getName(), "m1.small");
+      assertEquals(metadata.getHardware().getProviderId(), "m1.small");
+      assertEquals(metadata.getHardware().getProcessors(), ImmutableList.<Processor> of(new Processor(1.0, 1.0)));
+      assertEquals(metadata.getHardware().getRam(), 1740);
+      assertEquals(metadata.getHardware().getVolumes(), ImmutableList.<Volume> of(new VolumeImpl(null,
+               Volume.Type.LOCAL, 10.0f, "/dev/sda1", true, false),//
+               new VolumeImpl(null, Volume.Type.LOCAL, 150.0f, "/dev/sda2", false, false)));
+
+      assertEquals(metadata.getCredentials(), new Credentials("root", null));
+
+      verify(imageMap);
+      verify(jcImage);
+      verify(client);
+      verify(amiClient);
+      verify(credentialsMap);
+      verify(credentialProvider);
+      verify(instance);
+
+   }
+
    @SuppressWarnings("unchecked")
    @Test
    public void testImageNotFoundAndLazyReturnsNull() throws UnknownHostException {
