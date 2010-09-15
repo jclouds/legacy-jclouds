@@ -186,7 +186,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
       this.keyName = keyName;
       this.launchTime = checkNotNull(launchTime, "launchTime");
       this.monitoringState = monitoringState;
-      this.availabilityZone = checkNotNull(availabilityZone, "availabilityZone");
+      this.availabilityZone = availabilityZone; // nullable on Eucalyptus.
       this.placementGroup = placementGroup;
       this.virtualizationType = virtualizationType;
       this.platform = platform;

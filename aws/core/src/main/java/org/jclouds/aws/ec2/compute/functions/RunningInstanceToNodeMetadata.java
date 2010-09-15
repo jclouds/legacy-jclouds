@@ -121,7 +121,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
          hardware = ComputeServiceUtils.replacesVolumes(hardware, addEBS(instance, hardware.getVolumes()));
       }
 
-      Location location = getLocationForAvailabilityZone(instance);
+      Location location = getLocationForAvailabilityZoneOrRegion(instance);
 
       Image image = resolveImageForInstanceInLocation(instance, location);
 
@@ -206,8 +206,14 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       }
    }
 
-   private Location getLocationForAvailabilityZone(final RunningInstance instance) {
-      final String locationId = instance.getAvailabilityZone();
+   private Location getLocationForAvailabilityZoneOrRegion(final RunningInstance instance) {
+      Location location = findLocationWithId(instance.getAvailabilityZone());
+      if (location == null)
+         location = findLocationWithId(instance.getRegion());
+      return location;
+   }
+
+   private Location findLocationWithId(final String locationId) {
       try {
          Location location = Iterables.find(locations.get(), new Predicate<Location>() {
 
