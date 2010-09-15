@@ -20,7 +20,6 @@
 package org.jclouds.aws.ec2.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Singleton;
 
@@ -37,7 +36,6 @@ public class EC2PopulateDefaultLoginCredentialsForImageStrategy implements
 
    @Override
    public Credentials execute(Object resourceToAuthenticate) {
-      checkNotNull(resourceToAuthenticate);
       checkArgument(resourceToAuthenticate instanceof Image, "Resource must be an image (for EC2)");
       Image image = (Image) resourceToAuthenticate;
 
