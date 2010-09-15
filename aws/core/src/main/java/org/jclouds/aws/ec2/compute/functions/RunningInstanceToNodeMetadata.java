@@ -138,7 +138,8 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
                   @Override
                   public Volume apply(Entry<String, EbsBlockDevice> from) {
                      return new VolumeImpl(from.getValue().getVolumeId(), Volume.Type.SAN, null, from.getKey(),
-                              instance.getRootDeviceName().equals(from.getKey()), true);
+                              instance.getRootDeviceName() != null
+                                       && instance.getRootDeviceName().equals(from.getKey()), true);
                   }
                });
 
@@ -207,16 +208,21 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
    private Location getLocationForAvailabilityZone(final RunningInstance instance) {
       final String locationId = instance.getAvailabilityZone();
+      try {
+         Location location = Iterables.find(locations.get(), new Predicate<Location>() {
 
-      Location location = Iterables.find(locations.get(), new Predicate<Location>() {
+            @Override
+            public boolean apply(Location input) {
+               return input.getId().equals(locationId);
+            }
 
-         @Override
-         public boolean apply(Location input) {
-            return input.getId().equals(locationId);
-         }
+         });
+         return location;
 
-      });
-      return location;
+      } catch (NoSuchElementException e) {
+         logger.debug("couldn't match instance location %s in: %s", locationId, locations.get());
+         return null;
+      }
    }
 
    @VisibleForTesting
