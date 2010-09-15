@@ -103,6 +103,7 @@ public class OperatingSystemPredicates {
             if (os.getFamily() != null) {
                switch (os.getFamily()) {
                   case CENTOS:
+                  case AMZN_LINUX:
                   case FEDORA:
                   case RHEL:
                      return true;

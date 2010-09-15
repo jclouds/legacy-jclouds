@@ -36,19 +36,18 @@ public class EC2PopulateDefaultLoginCredentialsForImageStrategy implements
 
    @Override
    public Credentials execute(Object resourceToAuthenticate) {
-      if (resourceToAuthenticate == null)
-         return new Credentials("root", null);
-
-      checkArgument(resourceToAuthenticate instanceof Image, "Resource must be an image (for EC2)");
-      Image image = (Image) resourceToAuthenticate;
-
-      Credentials credentials;
-      // canonical/alestic images use the ubuntu user to login
-      if (image != null && image.getImageOwnerId().matches("063491364108|099720109477"))
-         credentials = new Credentials("ubuntu", null);
-      else
-         credentials = new Credentials("root", null);
-
+      Credentials credentials = new Credentials("root", null);
+      if (resourceToAuthenticate != null) {
+         checkArgument(resourceToAuthenticate instanceof Image, "Resource must be an image (for EC2)");
+         Image image = (Image) resourceToAuthenticate;
+         // canonical/alestic images use the ubuntu user to login
+         if (image.getImageOwnerId().matches("063491364108|099720109477")) {
+            credentials = new Credentials("ubuntu", null);
+            // http://aws.typepad.com/aws/2010/09/introducing-amazon-linux-ami.html
+         } else if (image.getImageOwnerId().equals("137112412989")) {
+            credentials = new Credentials("ec2-user", null);
+         }
+      }
       return credentials;
    }
 }

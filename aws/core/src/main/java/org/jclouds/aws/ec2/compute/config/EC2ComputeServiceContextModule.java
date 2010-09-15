@@ -24,8 +24,8 @@ import static com.google.common.collect.Maps.newLinkedHashMap;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_CC_AMIs;
+import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import java.security.SecureRandom;
 import java.util.Map;
@@ -165,8 +165,8 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       String region = injector.getInstance(Key.get(String.class, Region.class));
-      return "Eucalyptus".equals(region) ? template.osFamily(CENTOS).smallest() : template.osFamily(UBUNTU)
-               .osVersionMatches("10.04").os64Bit(true).osDescriptionMatches(".*ubuntu-images.*");
+      return "Eucalyptus".equals(region) ? template.osFamily(CENTOS).smallest() : template.osFamily(AMZN_LINUX)
+               .os64Bit(true);
    }
 
    @Provides

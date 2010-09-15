@@ -92,7 +92,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    protected void assertDefaultWorks() {
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 

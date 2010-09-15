@@ -61,6 +61,11 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
+   // 137112412989/amzn-ami-0.9.7-beta.i386-ebs
+   // 137112412989/amzn-ami-0.9.7-beta.x86_64-ebs
+   // amzn-ami-us-east-1/amzn-ami-0.9.7-beta.x86_64.manifest.xml
+   // amzn-ami-us-east-1/amzn-ami-0.9.7-beta.i386.manifest.xml
+   public static final Pattern AMZN_PATTERN = Pattern.compile(".*/amzn-ami-(.*)\\.(i386|x86_64)(-ebs|\\.manifest.xml)?");
 
    public static final Pattern CANONICAL_PATTERN = Pattern.compile(".*/([^-]*)-([^-]*)-.*-(.*)(\\.manifest.xml)?");
 
@@ -108,9 +113,14 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
       boolean is64Bit = from.getArchitecture() == Architecture.X86_64;
       try {
          Matcher matcher = getMatcherAndFind(from.getImageLocation());
-         osFamily = OsFamily.fromValue(matcher.group(1));
-         osVersion = parseVersionOrReturnEmptyString(osFamily, matcher.group(2));
-         version = matcher.group(3).replace(".manifest.xml", "");
+         if (matcher.pattern() == AMZN_PATTERN) {
+            osFamily = OsFamily.AMZN_LINUX;
+            version = osVersion = matcher.group(1);
+         } else {
+            osFamily = OsFamily.fromValue(matcher.group(1));
+            osVersion = parseVersionOrReturnEmptyString(osFamily, matcher.group(2));
+            version = matcher.group(3).replace(".manifest.xml", "");
+         }
       } catch (IllegalArgumentException e) {
          logger.debug("<< didn't match os(%s)", from.getImageLocation());
       } catch (NoSuchElementException e) {
@@ -147,7 +157,7 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
     *            if no configured matcher matches the manifest.
     */
    private Matcher getMatcherAndFind(String manifest) {
-      for (Pattern pattern : new Pattern[] { CANONICAL_PATTERN, RIGHTIMAGE_PATTERN, RIGHTSCALE_PATTERN }) {
+      for (Pattern pattern : new Pattern[] { AMZN_PATTERN, CANONICAL_PATTERN, RIGHTIMAGE_PATTERN, RIGHTSCALE_PATTERN }) {
          Matcher matcher = pattern.matcher(manifest);
          if (matcher.find())
             return matcher;

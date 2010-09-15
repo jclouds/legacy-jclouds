@@ -39,7 +39,6 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -83,7 +82,7 @@ public class EC2TemplateBuilderLiveTest {
    }
 
    @Test
-   public void testTemplateBuilder() throws IOException {
+   public void testDefaultTemplateBuilder() throws IOException {
       ComputeServiceContext newContext = null;
       try {
          newContext = new ComputeServiceContextFactory().createContext("ec2", user, password,
@@ -91,18 +90,13 @@ public class EC2TemplateBuilderLiveTest {
 
          Template defaultTemplate = newContext.getComputeService().templateBuilder().build();
          assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
-         assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
+         assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "0.9.7-beta");
          assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-         assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+         assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
          assertEquals(defaultTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
          assertEquals(defaultTemplate.getLocation().getId(), "us-east-1");
          assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
-         newContext.getComputeService().templateBuilder()
-               .imageId(Iterables.get(newContext.getComputeService().listImages(), 0).getId()).build();
-         newContext.getComputeService().templateBuilder().osFamily(OsFamily.UBUNTU).smallest().os64Bit(false)
-               .imageId("us-east-1/ami-7e28ca17").build();
-         newContext.getComputeService().templateBuilder().osFamily(OsFamily.UBUNTU).smallest().os64Bit(false)
-               .imageId("us-east-1/ami-bb709dd2").build();
+
       } finally {
          if (newContext != null)
             newContext.close();

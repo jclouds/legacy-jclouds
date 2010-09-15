@@ -314,6 +314,87 @@ public class ImageParserTest extends BaseEC2HandlerTest {
 
    }
 
+   public void testParseAmznmage() {
+      InputStream is = getClass().getResourceAsStream("/ec2/amzn_images.xml");
+
+      Set<Image> result = parseImages(is);
+      assertEquals(result.size(), 4);
+      ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), Suppliers
+               .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
+               .ofInstance(defaultLocation));
+
+      org.jclouds.compute.domain.Image image = parser.apply(Iterables.get(result, 0));
+
+      assertEquals(image.getOperatingSystem().is64Bit(), false);
+      assertEquals(image.getDescription(), "Amazon");
+      assertEquals(image.getId(), "us-east-1/ami-82e4b5c7");
+      assertEquals(image.getProviderId(), "ami-82e4b5c7");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), null);
+      assertEquals(image.getOperatingSystem().getName(), null);
+      assertEquals(image.getOperatingSystem().getVersion(), "0.9.7-beta");
+      assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(image.getOperatingSystem().getDescription(), "137112412989/amzn-ami-0.9.7-beta.i386-ebs");
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "137112412989", "rootDeviceType",
+               "ebs"));
+      assertEquals(image.getVersion(), "0.9.7-beta");
+
+      image = parser.apply(Iterables.get(result, 1));
+
+      assertEquals(image.getOperatingSystem().is64Bit(), true);
+      assertEquals(image.getDescription(), "Amazon");
+      assertEquals(image.getId(), "us-east-1/ami-8ce4b5c9");
+      assertEquals(image.getProviderId(), "ami-8ce4b5c9");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), null);
+      assertEquals(image.getOperatingSystem().getName(), null);
+      assertEquals(image.getOperatingSystem().getVersion(), "0.9.7-beta");
+      assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(image.getOperatingSystem().getDescription(), "137112412989/amzn-ami-0.9.7-beta.x86_64-ebs");
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "137112412989", "rootDeviceType",
+               "ebs"));
+      assertEquals(image.getVersion(), "0.9.7-beta");
+      
+      image = parser.apply(Iterables.get(result, 2));
+
+      assertEquals(image.getOperatingSystem().is64Bit(), false);
+      assertEquals(image.getDescription(), "Amazon Linux AMI i386 S3");
+      assertEquals(image.getId(), "us-east-1/ami-f0e4b5b5");
+      assertEquals(image.getProviderId(), "ami-f0e4b5b5");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), null);
+      assertEquals(image.getOperatingSystem().getName(), null);
+      assertEquals(image.getOperatingSystem().getVersion(), "0.9.7-beta");
+      assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(image.getOperatingSystem().getDescription(), "amzn-ami-us-west-1/amzn-ami-0.9.7-beta.i386.manifest.xml");
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "137112412989", "rootDeviceType",
+               "instance-store"));
+      assertEquals(image.getVersion(), "0.9.7-beta");
+      
+      image = parser.apply(Iterables.get(result, 3));
+
+      assertEquals(image.getOperatingSystem().is64Bit(), true);
+      assertEquals(image.getDescription(), "Amazon Linux AMI x86_64 S3");
+      assertEquals(image.getId(), "us-east-1/ami-f2e4b5b7");
+      assertEquals(image.getProviderId(), "ami-f2e4b5b7");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), null);
+      
+      assertEquals(image.getOperatingSystem().getName(), null);
+      assertEquals(image.getOperatingSystem().getVersion(), "0.9.7-beta");
+      assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(image.getOperatingSystem().getDescription(), "amzn-ami-us-west-1/amzn-ami-0.9.7-beta.x86_64.manifest.xml");
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "137112412989", "rootDeviceType",
+               "instance-store"));
+      assertEquals(image.getVersion(), "0.9.7-beta");
+
+
+   }
+
    private Set<Image> parseImages(InputStream is) {
       DescribeImagesResponseHandler handler = injector.getInstance(DescribeImagesResponseHandler.class);
       addDefaultRegionToHandler(handler);

@@ -97,6 +97,10 @@ public class OperatingSystemPredicatesTest {
       assert supportsYum().apply(new OperatingSystem(OsFamily.CENTOS, null, "", null, "description", false));
    }
 
+   public void testAmzTypeSupportsYum() {
+      assert supportsYum().apply(new OperatingSystem(OsFamily.AMZN_LINUX, null, "", null, "description", false));
+   }
+
    public void testRhelTypeSupportsYum() {
       assert supportsYum().apply(new OperatingSystem(OsFamily.RHEL, null, "", null, "description", false));
    }
