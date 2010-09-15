@@ -36,6 +36,9 @@ public class EC2PopulateDefaultLoginCredentialsForImageStrategy implements
 
    @Override
    public Credentials execute(Object resourceToAuthenticate) {
+      if (resourceToAuthenticate == null)
+         return new Credentials("root", null);
+
       checkArgument(resourceToAuthenticate instanceof Image, "Resource must be an image (for EC2)");
       Image image = (Image) resourceToAuthenticate;
 
