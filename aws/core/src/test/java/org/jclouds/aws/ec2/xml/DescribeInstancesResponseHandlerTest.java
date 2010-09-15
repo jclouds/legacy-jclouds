@@ -138,7 +138,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
       contents.add(new Reservation<RunningInstance>(defaultRegion, ImmutableSet.of("default"), ImmutableSet
                .of(new RunningInstance(defaultRegion, ImmutableSet.<String> of(), "0", null, "ami-h30p5im0",
-                        "i-9slweygo", InstanceState.RUNNING, InstanceType.M1_SMALL, null, null, "nebulatanimislam",
+                        "i-9slweygo", InstanceState.TERMINATED, InstanceType.M1_SMALL, null, null, "nebulatanimislam",
                         dateService.iso8601SecondsDateParse("2010-09-09T18:09:42Z"), null, null, null, "paravirtual",
                         null, null, "10.128.207.5", ImmutableSet.<String> of("None"), null, null, null, null, null,
                         RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of())), "tislam1",

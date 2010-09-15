@@ -145,7 +145,14 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
       } else if (qName.equals("instanceId")) {
          instanceId = currentOrNull();
       } else if (qName.equals("name")) {
-         instanceState = InstanceState.fromValue(currentOrNull());
+         String state = currentOrNull();
+         if (state != null) {
+            // Eucalyptus
+            if ("shutdown".equalsIgnoreCase(state))
+               instanceState = InstanceState.TERMINATED;
+            else
+               instanceState = InstanceState.fromValue(state);
+         }
       } else if (qName.equals("instanceType")) {
          instanceType = currentOrNull();
       } else if (qName.equals("ipAddress")) {

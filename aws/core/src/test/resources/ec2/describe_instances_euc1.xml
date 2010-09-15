@@ -14,7 +14,7 @@
                     <imageId>ami-h30p5im0</imageId>
                     <instanceState>
                         <code>1</code>
-                        <name>running</name>
+                        <name>shutdown</name>
                     </instanceState>
                     <keyName>nebulatanimislam</keyName>
                     <publicDnsName>10.128.207.5</publicDnsName>
