@@ -58,7 +58,7 @@ public class ImageForVCloudExpressVAppTemplate implements Function<VCloudExpress
 
    @Override
    public Image apply(VCloudExpressVAppTemplate from) {
-      OsFamily osFamily = parseOsFamilyOrNull(checkNotNull(from, "vapp template").getName());
+      OsFamily osFamily = parseOsFamilyOrNull("vcloudexpress", checkNotNull(from, "vapp template").getName());
       String osName = null;
       String osArch = null;
       String osVersion = null;
@@ -69,8 +69,9 @@ public class ImageForVCloudExpressVAppTemplate implements Function<VCloudExpress
       Location location = findLocationForResource.apply(checkNotNull(parent, "parent"));
       String name = getName(from.getName());
       String desc = from.getDescription() != null ? from.getDescription() : from.getName();
-      return new VCloudExpressImage(from, from.getHref().toASCIIString(), name, from.getHref().toASCIIString(), location, from
-               .getHref(), ImmutableMap.<String, String> of(), os, desc, "", credentialsProvider.execute(from));
+      return new VCloudExpressImage(from, from.getHref().toASCIIString(), name, from.getHref().toASCIIString(),
+               location, from.getHref(), ImmutableMap.<String, String> of(), os, desc, "", credentialsProvider
+                        .execute(from));
    }
 
    protected String getName(String name) {
