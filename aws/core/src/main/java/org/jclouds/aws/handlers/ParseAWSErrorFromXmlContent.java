@@ -70,18 +70,20 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
       try {
          AWSError error = null;
          String message = null;
-         if (response.getPayload().getContentType() != null
-                  && (response.getPayload().getContentType().indexOf("xml") != -1 || response.getPayload()
-                           .getContentType().indexOf("unknown") != -1)) {
-            error = utils.parseAWSErrorFromContent(request, response);
-            if (error != null) {
-               message = error.getMessage();
-               exception = new AWSResponseException(command, response, error);
-            }
-         } else {
-            try {
-               message = Utils.toStringAndClose(response.getPayload().getInput());
-            } catch (IOException e) {
+         if (response.getPayload() != null) {
+            if (response.getPayload().getContentType() != null
+                     && (response.getPayload().getContentType().indexOf("xml") != -1 || response.getPayload()
+                              .getContentType().indexOf("unknown") != -1)) {
+               error = utils.parseAWSErrorFromContent(request, response);
+               if (error != null) {
+                  message = error.getMessage();
+                  exception = new AWSResponseException(command, response, error);
+               }
+            } else {
+               try {
+                  message = Utils.toStringAndClose(response.getPayload().getInput());
+               } catch (IOException e) {
+               }
             }
          }
          message = message != null ? message : String.format("%s -> %s", request.getRequestLine(), response

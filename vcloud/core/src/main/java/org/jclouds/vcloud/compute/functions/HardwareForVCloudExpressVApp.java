@@ -26,6 +26,7 @@ import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.vcloud.predicates.VCloudPredicates.resourceType;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -67,21 +68,25 @@ public class HardwareForVCloudExpressVApp implements Function<VCloudExpressVApp,
    public Hardware apply(VCloudExpressVApp from) {
       checkNotNull(from, "VApp");
       Location location = findLocationForResource.apply(checkNotNull(from, "from").getVDC());
+      try {
+         int ram = (int) find(from.getResourceAllocations(), resourceType(ResourceType.MEMORY)).getVirtualQuantity();
 
-      int ram = (int) find(from.getResourceAllocations(), resourceType(ResourceType.MEMORY)).getVirtualQuantity();
+         List<Processor> processors = Lists.newArrayList(transform(filter(from.getResourceAllocations(),
+                  resourceType(ResourceType.PROCESSOR)), new Function<ResourceAllocation, Processor>() {
 
-      List<Processor> processors = Lists.newArrayList(transform(filter(from.getResourceAllocations(),
-               resourceType(ResourceType.PROCESSOR)), new Function<ResourceAllocation, Processor>() {
+            @Override
+            public Processor apply(ResourceAllocation arg0) {
+               return new Processor(arg0.getVirtualQuantity(), 1);
+            }
 
-         @Override
-         public Processor apply(ResourceAllocation arg0) {
-            return new Processor(arg0.getVirtualQuantity(), 1);
-         }
-
-      }));
-      Iterable<? extends Volume> volumes = resourceAllocationsToVolumes.apply(from.getResourceAllocations());
-      return new HardwareImpl(from.getHref().toASCIIString(), from.getName(), from.getHref().toASCIIString(), location,
-               null, ImmutableMap.<String, String> of(), processors, ram, volumes, ImagePredicates.idEquals(from
-                        .getHref().toASCIIString()));
+         }));
+         Iterable<? extends Volume> volumes = resourceAllocationsToVolumes.apply(from.getResourceAllocations());
+         return new HardwareImpl(from.getHref().toASCIIString(), from.getName(), from.getHref().toASCIIString(),
+                  location, null, ImmutableMap.<String, String> of(), processors, ram, volumes, ImagePredicates
+                           .idEquals(from.getHref().toASCIIString()));
+      } catch (NoSuchElementException e) {
+         logger.debug("incomplete data to form vApp %s", from.getHref());
+         return null;
+      }
    }
 }
