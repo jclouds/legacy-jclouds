@@ -43,7 +43,7 @@ public class ProvidersInPropertiesTest {
       assert !Iterables.contains(providers, "walrus") : providers;
       assert !Iterables.contains(providers, "googlestorage") : providers;
       assert Iterables.contains(providers, "ec2") : providers;
-      assert Iterables.contains(providers, "nebula") : providers;
+      assert Iterables.contains(providers, "nova") : providers;
       assert Iterables.contains(providers, "eucalyptus") : providers;
    }
 
@@ -56,7 +56,7 @@ public class ProvidersInPropertiesTest {
       assert Iterables.contains(providers, "walrus") : providers;
       assert Iterables.contains(providers, "googlestorage") : providers;
       assert Iterables.contains(providers, "ec2") : providers;
-      assert Iterables.contains(providers, "nebula") : providers;
+      assert Iterables.contains(providers, "nova") : providers;
       assert Iterables.contains(providers, "eucalyptus") : providers;
    }
 
@@ -69,7 +69,7 @@ public class ProvidersInPropertiesTest {
       assert Iterables.contains(providers, "walrus") : providers;
       assert Iterables.contains(providers, "googlestorage") : providers;
       assert !Iterables.contains(providers, "ec2") : providers;
-      assert !Iterables.contains(providers, "nebula") : providers;
+      assert !Iterables.contains(providers, "nova") : providers;
       assert !Iterables.contains(providers, "eucalyptus") : providers;
    }
 
