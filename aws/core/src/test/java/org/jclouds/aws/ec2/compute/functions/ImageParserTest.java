@@ -58,7 +58,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
 
       ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), Suppliers
                .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
-               .ofInstance(defaultLocation));
+               .ofInstance(defaultLocation), "ec2");
       org.jclouds.compute.domain.Image ubuntuHardy = parser.apply(Iterables.get(result, 0));
 
       assertEquals(ubuntuHardy.getDescription(), "ubuntu-images-us/ubuntu-hardy-8.04-i386-server-20091130.manifest.xml");
@@ -114,8 +114,24 @@ public class ImageParserTest extends BaseEC2HandlerTest {
                "rootDeviceType", "instance-store"));
       assertEquals(ubuntuKarmic.getVersion(), "20100121");
 
-      // should skip testing image
-      assert parser.apply(Iterables.get(result, 3)) == null;
+      org.jclouds.compute.domain.Image testing = parser.apply(Iterables.get(result, 3));
+
+      assertEquals(testing.getOperatingSystem().is64Bit(), true);
+      assertEquals(testing.getDescription(),
+               "ubuntu-images-testing-us/ubuntu-lucid-daily-amd64-desktop-20100317.manifest.xml");
+      assertEquals(testing.getId(), "us-east-1/ami-190fe070");
+      assertEquals(testing.getProviderId(), "ami-190fe070");
+      assertEquals(testing.getLocation(), defaultLocation);
+      assertEquals(testing.getName(), null);
+      assertEquals(testing.getOperatingSystem().getName(), null);
+      assertEquals(testing.getOperatingSystem().getVersion(), "10.04");
+      assertEquals(testing.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(testing.getOperatingSystem().getDescription(),
+               "ubuntu-images-testing-us/ubuntu-lucid-daily-amd64-desktop-20100317.manifest.xml");
+      assertEquals(testing.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(testing.getUserMetadata(), ImmutableMap.<String, String> of("owner", "099720109477",
+               "rootDeviceType", "instance-store"));
+      assertEquals(testing.getVersion(), "20100317");
 
       org.jclouds.compute.domain.Image alesticHardy = parser.apply(Iterables.get(result, 4));
 
@@ -186,7 +202,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
 
       ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), Suppliers
                .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
-               .ofInstance(defaultLocation));
+               .ofInstance(defaultLocation), "ec2");
 
       org.jclouds.compute.domain.Image image = parser.apply(Iterables.get(result, 0));
 
@@ -215,7 +231,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
 
       ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), Suppliers
                .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
-               .ofInstance(defaultLocation));
+               .ofInstance(defaultLocation), "ec2");
 
       org.jclouds.compute.domain.Image image = parser.apply(Iterables.get(result, 0));
 
@@ -243,7 +259,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
 
       ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), Suppliers
                .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
-               .ofInstance(defaultLocation));
+               .ofInstance(defaultLocation), "ec2");
 
       org.jclouds.compute.domain.Image image = parser.apply(Iterables.get(result, 0));
 
@@ -289,7 +305,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(result.size(), 4);
       ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), Suppliers
                .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
-               .ofInstance(defaultLocation));
+               .ofInstance(defaultLocation), "ec2");
 
       org.jclouds.compute.domain.Image image = parser.apply(Iterables.get(result, 0));
 
@@ -308,10 +324,6 @@ public class ImageParserTest extends BaseEC2HandlerTest {
                "instance-store"));
       assertEquals(image.getVersion(), null);
 
-      // should skip test images
-      image = parser.apply(Iterables.get(result, 3));
-      assertEquals(image, null);
-
    }
 
    public void testParseAmznmage() {
@@ -321,7 +333,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(result.size(), 4);
       ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), Suppliers
                .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
-               .ofInstance(defaultLocation));
+               .ofInstance(defaultLocation), "ec2");
 
       org.jclouds.compute.domain.Image image = parser.apply(Iterables.get(result, 0));
 
@@ -356,7 +368,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "137112412989", "rootDeviceType",
                "ebs"));
       assertEquals(image.getVersion(), "0.9.7-beta");
-      
+
       image = parser.apply(Iterables.get(result, 2));
 
       assertEquals(image.getOperatingSystem().is64Bit(), false);
@@ -368,12 +380,13 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(image.getOperatingSystem().getName(), null);
       assertEquals(image.getOperatingSystem().getVersion(), "0.9.7-beta");
       assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
-      assertEquals(image.getOperatingSystem().getDescription(), "amzn-ami-us-west-1/amzn-ami-0.9.7-beta.i386.manifest.xml");
+      assertEquals(image.getOperatingSystem().getDescription(),
+               "amzn-ami-us-west-1/amzn-ami-0.9.7-beta.i386.manifest.xml");
       assertEquals(image.getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
       assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "137112412989", "rootDeviceType",
                "instance-store"));
       assertEquals(image.getVersion(), "0.9.7-beta");
-      
+
       image = parser.apply(Iterables.get(result, 3));
 
       assertEquals(image.getOperatingSystem().is64Bit(), true);
@@ -382,16 +395,258 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(image.getProviderId(), "ami-f2e4b5b7");
       assertEquals(image.getLocation(), defaultLocation);
       assertEquals(image.getName(), null);
-      
+
       assertEquals(image.getOperatingSystem().getName(), null);
       assertEquals(image.getOperatingSystem().getVersion(), "0.9.7-beta");
       assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
-      assertEquals(image.getOperatingSystem().getDescription(), "amzn-ami-us-west-1/amzn-ami-0.9.7-beta.x86_64.manifest.xml");
+      assertEquals(image.getOperatingSystem().getDescription(),
+               "amzn-ami-us-west-1/amzn-ami-0.9.7-beta.x86_64.manifest.xml");
       assertEquals(image.getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
       assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "137112412989", "rootDeviceType",
                "instance-store"));
       assertEquals(image.getVersion(), "0.9.7-beta");
 
+   }
+
+   public void testParseNovaImage() {
+      InputStream is = getClass().getResourceAsStream("/ec2/nova_images.xml");
+
+      Set<Image> result = parseImages(is);
+      assertEquals(result.size(), 19);
+      ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), Suppliers
+               .<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)), Suppliers
+               .ofInstance(defaultLocation), "nebula");
+
+      org.jclouds.compute.domain.Image image = parser.apply(Iterables.get(result, 0));
+
+      assertEquals(image.getOperatingSystem().is64Bit(), true);
+      assertEquals(image.getDescription(), "nasacms/image.manifest.xml");
+      assertEquals(image.getId(), "us-east-1/ami-h30p5im0");
+      assertEquals(image.getProviderId(), "ami-h30p5im0");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), null);
+      assertEquals(image.getOperatingSystem().getName(), null);
+      assertEquals(image.getOperatingSystem().getVersion(), "");
+      assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(image.getOperatingSystem().getDescription(), "nasacms/image.manifest.xml");
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "foo", "rootDeviceType",
+               "instance-store"));
+      assertEquals(image.getVersion(), null);
+
+      assertEquals(parser.apply(Iterables.get(result, 1)), null);
+
+      image = parser.apply(Iterables.get(result, 2));
+
+      assertEquals(image.getOperatingSystem().is64Bit(), true);
+      assertEquals(image.getDescription(), "nebula/tiny");
+      assertEquals(image.getId(), "us-east-1/ami-tiny");
+      assertEquals(image.getProviderId(), "ami-tiny");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), null);
+      assertEquals(image.getOperatingSystem().getName(), null);
+      assertEquals(image.getOperatingSystem().getVersion(), "");
+      assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(image.getOperatingSystem().getDescription(), "nebula/tiny");
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "vishvananda", "rootDeviceType",
+               "instance-store"));
+      assertEquals(image.getVersion(), null);
+
+      image = parser.apply(Iterables.get(result, 3));
+
+      assertEquals(image.getOperatingSystem().is64Bit(), true);
+      assertEquals(image.getDescription(), "demos/mediawiki");
+      assertEquals(image.getId(), "us-east-1/ami-630A130F");
+      assertEquals(image.getProviderId(), "ami-630A130F");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), null);
+      assertEquals(image.getOperatingSystem().getName(), null);
+      assertEquals(image.getOperatingSystem().getVersion(), "");
+      assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(image.getOperatingSystem().getDescription(), "demos/mediawiki");
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "admin", "rootDeviceType",
+               "instance-store"));
+      assertEquals(image.getVersion(), null);
+
+      assertEquals(parser.apply(Iterables.get(result, 4)), null);
+      assertEquals(parser.apply(Iterables.get(result, 5)), null);
+      assertEquals(parser.apply(Iterables.get(result, 6)), null);
+
+      image = parser.apply(Iterables.get(result, 7));
+
+      assertEquals(image.getOperatingSystem().is64Bit(), true);
+      assertEquals(image.getDescription(), "pinglet/instances");
+      assertEquals(image.getId(), "us-east-1/ami-pinginst");
+      assertEquals(image.getProviderId(), "ami-pinginst");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), null);
+      assertEquals(image.getOperatingSystem().getName(), null);
+      assertEquals(image.getOperatingSystem().getVersion(), "");
+      assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(image.getOperatingSystem().getDescription(), "pinglet/instances");
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "admin", "rootDeviceType",
+               "instance-store"));
+      assertEquals(image.getVersion(), null);
+
+      image = parser.apply(Iterables.get(result, 8));
+
+      assertEquals(image.getOperatingSystem().is64Bit(), true);
+      assertEquals(image.getDescription(), "bucket/testbuntu.manifest.xml");
+      assertEquals(image.getId(), "us-east-1/ami-alqbihe2");
+      assertEquals(image.getProviderId(), "ami-alqbihe2");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), null);
+      assertEquals(image.getOperatingSystem().getName(), null);
+      assertEquals(image.getOperatingSystem().getVersion(), "");
+      assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(image.getOperatingSystem().getDescription(), "bucket/testbuntu.manifest.xml");
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "rkumar2", "rootDeviceType",
+               "instance-store"));
+      assertEquals(image.getVersion(), null);
+
+      image = parser.apply(Iterables.get(result, 9));
+
+      assertEquals(image.getOperatingSystem().is64Bit(), true);
+      assertEquals(image.getDescription(), "gfortran-bucket/gfortran.manifest.xml");
+      assertEquals(image.getId(), "us-east-1/ami-i0aemtfp");
+      assertEquals(image.getProviderId(), "ami-i0aemtfp");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), null);
+      assertEquals(image.getOperatingSystem().getName(), null);
+      assertEquals(image.getOperatingSystem().getVersion(), "");
+      assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(image.getOperatingSystem().getDescription(), "gfortran-bucket/gfortran.manifest.xml");
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "ykliu", "rootDeviceType",
+               "instance-store"));
+      assertEquals(image.getVersion(), null);
+
+      assertEquals(parser.apply(Iterables.get(result, 10)), null);
+
+      image = parser.apply(Iterables.get(result, 11));
+
+      assertEquals(image.getOperatingSystem().is64Bit(), true);
+      assertEquals(image.getDescription(), "grinder/grinder-analyzer.manifest.xml");
+      assertEquals(image.getId(), "us-east-1/ami-2ig7w1bh");
+      assertEquals(image.getProviderId(), "ami-2ig7w1bh");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), null);
+      assertEquals(image.getOperatingSystem().getName(), null);
+      assertEquals(image.getOperatingSystem().getVersion(), "");
+      assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(image.getOperatingSystem().getDescription(), "grinder/grinder-analyzer.manifest.xml");
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "foo", "rootDeviceType",
+               "instance-store"));
+      assertEquals(image.getVersion(), null);
+
+      assertEquals(parser.apply(Iterables.get(result, 12)), null);
+
+      image = parser.apply(Iterables.get(result, 13));
+
+      assertEquals(image.getOperatingSystem().is64Bit(), true);
+      assertEquals(image.getDescription(), "nebula/lucid");
+      assertEquals(image.getId(), "us-east-1/ami-lucid");
+      assertEquals(image.getProviderId(), "ami-lucid");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), null);
+      assertEquals(image.getOperatingSystem().getName(), null);
+      assertEquals(image.getOperatingSystem().getVersion(), "10.04");
+      assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(image.getOperatingSystem().getDescription(), "nebula/lucid");
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "vishvananda", "rootDeviceType",
+               "instance-store"));
+      assertEquals(image.getVersion(), null);
+
+      image = parser.apply(Iterables.get(result, 14));
+
+      assertEquals(image.getOperatingSystem().is64Bit(), true);
+      assertEquals(image.getDescription(), "nebula/karmic-large");
+      assertEquals(image.getId(), "us-east-1/ami-karmiclg");
+      assertEquals(image.getProviderId(), "ami-karmiclg");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), null);
+      assertEquals(image.getOperatingSystem().getName(), null);
+      assertEquals(image.getOperatingSystem().getVersion(), "9.10");
+      assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(image.getOperatingSystem().getDescription(), "nebula/karmic-large");
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "admin", "rootDeviceType",
+               "instance-store"));
+      assertEquals(image.getVersion(), null);
+
+      image = parser.apply(Iterables.get(result, 15));
+
+      assertEquals(image.getOperatingSystem().is64Bit(), true);
+      assertEquals(image.getDescription(), "jo/qa-grinder.manifest.xml");
+      assertEquals(image.getId(), "us-east-1/ami-8jen8kdn");
+      assertEquals(image.getProviderId(), "ami-8jen8kdn");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), null);
+      assertEquals(image.getOperatingSystem().getName(), null);
+      assertEquals(image.getOperatingSystem().getVersion(), "");
+      assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(image.getOperatingSystem().getDescription(), "jo/qa-grinder.manifest.xml");
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "jyothi", "rootDeviceType",
+               "instance-store"));
+      assertEquals(image.getVersion(), null);
+
+      image = parser.apply(Iterables.get(result, 16));
+
+      assertEquals(image.getOperatingSystem().is64Bit(), true);
+      assertEquals(image.getDescription(), "nebula/lucid-large");
+      assertEquals(image.getId(), "us-east-1/ami-lucidlg");
+      assertEquals(image.getProviderId(), "ami-lucidlg");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), null);
+      assertEquals(image.getOperatingSystem().getName(), null);
+      assertEquals(image.getOperatingSystem().getVersion(), "10.04");
+      assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(image.getOperatingSystem().getDescription(), "nebula/lucid-large");
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "vishvananda", "rootDeviceType",
+               "instance-store"));
+      assertEquals(image.getVersion(), null);
+
+      image = parser.apply(Iterables.get(result, 17));
+
+      assertEquals(image.getOperatingSystem().is64Bit(), true);
+      assertEquals(image.getDescription(), "demos/wordpress");
+      assertEquals(image.getId(), "us-east-1/ami-6CD61336");
+      assertEquals(image.getProviderId(), "ami-6CD61336");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), null);
+      assertEquals(image.getOperatingSystem().getName(), null);
+      assertEquals(image.getOperatingSystem().getVersion(), "");
+      assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(image.getOperatingSystem().getDescription(), "demos/wordpress");
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "admin", "rootDeviceType",
+               "instance-store"));
+      assertEquals(image.getVersion(), null);
+
+      image = parser.apply(Iterables.get(result, 18));
+
+      assertEquals(image.getOperatingSystem().is64Bit(), true);
+      assertEquals(image.getDescription(), "nebula/ubuntu-karmic");
+      assertEquals(image.getId(), "us-east-1/ami-25CB1213");
+      assertEquals(image.getProviderId(), "ami-25CB1213");
+      assertEquals(image.getLocation(), defaultLocation);
+      assertEquals(image.getName(), null);
+      assertEquals(image.getOperatingSystem().getName(), null);
+      assertEquals(image.getOperatingSystem().getVersion(), "9.10");
+      assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
+      assertEquals(image.getOperatingSystem().getDescription(), "nebula/ubuntu-karmic");
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "admin", "rootDeviceType",
+               "instance-store"));
+      assertEquals(image.getVersion(), null);
 
    }
 

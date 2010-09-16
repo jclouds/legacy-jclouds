@@ -37,6 +37,7 @@ import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.HardwareImpl;
@@ -78,7 +79,8 @@ public class ComputeServiceUtils {
     * @return a shell script that will invoke the http request
     */
    public static Statement extractTargzIntoDirectory(HttpRequest targz, String directory) {
-      return Statements.extractTargzIntoDirectory(targz.getMethod(), targz.getEndpoint(), targz.getHeaders(), directory);
+      return Statements
+               .extractTargzIntoDirectory(targz.getMethod(), targz.getEndpoint(), targz.getHeaders(), directory);
    }
 
    public static Statement extractTargzIntoDirectory(URI targz, String directory) {
@@ -119,7 +121,7 @@ public class ComputeServiceUtils {
                               .build(), org.jclouds.compute.domain.OsFamily.UBUNTU, ImmutableMap
                               .<String, String> builder().put("hardy", "8.04").put("intrepid", "8.10").put("jaunty",
                                        "9.04").put("karmic", "9.10").put("lucid", "10.04").put("maverick", "10.10")
-                              .build());
+                              .put("natty", "11.04").build());
 
    public static String parseVersionOrReturnEmptyString(org.jclouds.compute.domain.OsFamily family, final String in) {
       if (NAME_VERSION_MAP.containsKey(family)) {
@@ -137,12 +139,15 @@ public class ComputeServiceUtils {
       return "";
    }
 
-   public static org.jclouds.compute.domain.OsFamily parseOsFamilyOrNull(String in) {
+   public static org.jclouds.compute.domain.OsFamily parseOsFamilyOrNull(String provider, String in) {
       org.jclouds.compute.domain.OsFamily myOs = null;
       for (org.jclouds.compute.domain.OsFamily os : org.jclouds.compute.domain.OsFamily.values()) {
          if (in.toLowerCase().replaceAll("\\s", "").indexOf(os.toString()) != -1) {
             myOs = os;
          }
+      }
+      if (myOs == null && provider.indexOf("nebula") != -1) {
+         myOs = OsFamily.UBUNTU;
       }
       return myOs;
    }

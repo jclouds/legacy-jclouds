@@ -26,6 +26,7 @@ import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_CC_AMIs;
 import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
+import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import java.security.SecureRandom;
 import java.util.Map;
@@ -36,7 +37,6 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.EC2ComputeService;
@@ -83,6 +83,7 @@ import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.annotations.Provider;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
@@ -164,9 +165,13 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      String region = injector.getInstance(Key.get(String.class, Region.class));
-      return "Eucalyptus".equals(region) ? template.osFamily(CENTOS).smallest() : template.osFamily(AMZN_LINUX)
-               .os64Bit(true);
+      String provider = injector.getInstance(Key.get(String.class, Provider.class));
+      if ("eucalyptus".equals(provider))
+         return template.osFamily(CENTOS);
+      else if ("nova".equals(provider))
+         return template.osFamily(UBUNTU);
+      else
+         return template.osFamily(AMZN_LINUX).os64Bit(true);
    }
 
    @Provides

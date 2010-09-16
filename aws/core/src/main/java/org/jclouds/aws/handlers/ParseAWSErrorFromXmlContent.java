@@ -97,7 +97,7 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                   exception = new IllegalStateException(message, exception);
                else if (error != null && error.getCode() != null && error.getCode().equals("AuthFailure"))
                   exception = new AuthorizationException(command.getRequest(), message);
-               else if (message != null && message.indexOf("Failed to bind the following fields") != -1)// Eucalyptus
+               else if (message != null && message.indexOf("Failed to bind the following fields") != -1)// Nova
                   exception = new IllegalArgumentException(message, exception);
                break;
             case 401:

@@ -132,8 +132,8 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
       assertEquals(result, contents);
    }
 
-   public void testApplyInputStreamEucNoAvailabilityZone() {
-      InputStream is = getClass().getResourceAsStream("/ec2/describe_instances_euc1.xml");
+   public void testApplyInputStreamNovaNoAvailabilityZone() {
+      InputStream is = getClass().getResourceAsStream("/ec2/describe_instances_nova.xml");
       Set<Reservation<? extends RunningInstance>> contents = Sets.newLinkedHashSet();
 
       contents.add(new Reservation<RunningInstance>(defaultRegion, ImmutableSet.of("default"), ImmutableSet

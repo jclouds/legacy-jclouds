@@ -64,7 +64,7 @@ public class EC2HardwareSupplier implements Supplier<Set<? extends Hardware>> {
             @Named(PROPERTY_EC2_CC_AMIs) String[] ccAmis) {
       this.locations = locations;
       this.ccAmis = ccAmis;
-      this.providerName=providerName;
+      this.providerName = providerName;
    }
 
    @Override
@@ -86,9 +86,8 @@ public class EC2HardwareSupplier implements Supplier<Set<? extends Hardware>> {
                   new VolumeImpl(840.0f, "/dev/sdc", false, false)), ccAmis));
       }
       sizes.addAll(ImmutableSet.<Hardware> of(EC2Hardware.T1_MICRO, EC2Hardware.C1_MEDIUM, EC2Hardware.C1_XLARGE,
-               EC2Hardware.M1_LARGE, "eucalyptus".equals(providerName) ? EC2Hardware.M1_SMALL_EUCALYPTUS
-                        : EC2Hardware.M1_SMALL, EC2Hardware.M1_XLARGE, EC2Hardware.M2_XLARGE, EC2Hardware.M2_2XLARGE,
-               EC2Hardware.M2_4XLARGE));
+               EC2Hardware.M1_LARGE, "nova".equals(providerName) ? EC2Hardware.M1_SMALL_NOVA : EC2Hardware.M1_SMALL,
+               EC2Hardware.M1_XLARGE, EC2Hardware.M2_XLARGE, EC2Hardware.M2_2XLARGE, EC2Hardware.M2_4XLARGE));
       return sizes;
    }
 }

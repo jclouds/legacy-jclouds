@@ -110,11 +110,11 @@ public class EC2Hardware extends HardwareImpl {
             1.0, 1.0)), 1740, ImmutableList.of(new VolumeImpl(10.0f, "/dev/sda1", true, false), new VolumeImpl(150.0f,
             "/dev/sda2", false, false)), false);
    /**
-    * In Eucalyptus, m1.small can run 64bit images.
+    * In Nova, m1.small can run 64bit images.
     * 
     * @see InstanceType#M1_SMALL
     */
-   public static final EC2Hardware M1_SMALL_EUCALYPTUS = new EC2Hardware(null, InstanceType.M1_SMALL, ImmutableList
+   public static final EC2Hardware M1_SMALL_NOVA = new EC2Hardware(null, InstanceType.M1_SMALL, ImmutableList
             .of(new Processor(1.0, 1.0)), 1740, ImmutableList.of(new VolumeImpl(10.0f, "/dev/sda1", true, false),
             new VolumeImpl(150.0f, "/dev/sda2", false, false)), any());
 

@@ -186,11 +186,11 @@ public class RunningInstance implements Comparable<RunningInstance> {
       this.keyName = keyName;
       this.launchTime = checkNotNull(launchTime, "launchTime");
       this.monitoringState = monitoringState;
-      this.availabilityZone = availabilityZone; // nullable on Eucalyptus.
+      this.availabilityZone = availabilityZone; // nullable on Nova.
       this.placementGroup = placementGroup;
       this.virtualizationType = virtualizationType;
       this.platform = platform;
-      this.privateDnsName = privateDnsName; // nullable on runinstances.
+      this.privateDnsName = privateDnsName; // nullable on Nova.
       this.privateIpAddress = privateIpAddress;
       Iterables.addAll(this.productCodes, checkNotNull(productCodes, "productCodes"));
       this.ramdiskId = ramdiskId;

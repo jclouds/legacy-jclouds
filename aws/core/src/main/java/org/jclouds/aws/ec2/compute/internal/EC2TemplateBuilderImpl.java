@@ -31,14 +31,15 @@ import javax.inject.Provider;
 
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 
 import com.google.common.base.Supplier;
+import com.google.common.collect.ComputationException;
 
 /**
  * 
@@ -90,6 +91,8 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
             try {
                return imageMap.get(key);
             } catch (NullPointerException nex) {
+               throw new NoSuchElementException(String.format("image %s/%s not found", key.getRegion(), key.getName()));
+            } catch (ComputationException nex) {
                throw new NoSuchElementException(String.format("image %s/%s not found", key.getRegion(), key.getName()));
             }
          }

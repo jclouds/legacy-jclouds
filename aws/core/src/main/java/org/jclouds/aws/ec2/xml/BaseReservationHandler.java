@@ -147,7 +147,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
       } else if (qName.equals("name")) {
          String state = currentOrNull();
          if (state != null) {
-            // Eucalyptus
+            // Nova
             if ("shutdown".equalsIgnoreCase(state))
                instanceState = InstanceState.TERMINATED;
             else

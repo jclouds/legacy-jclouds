@@ -46,6 +46,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.annotations.Provider;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -61,11 +62,17 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
+
+   // nebula/ubuntu-karmic
+   // nebula/karmic-large
+   public static final Pattern NEBULA_PATTERN = Pattern.compile("nebula/(ubuntu-)?(.*)(-.*)?");
+
    // 137112412989/amzn-ami-0.9.7-beta.i386-ebs
    // 137112412989/amzn-ami-0.9.7-beta.x86_64-ebs
    // amzn-ami-us-east-1/amzn-ami-0.9.7-beta.x86_64.manifest.xml
    // amzn-ami-us-east-1/amzn-ami-0.9.7-beta.i386.manifest.xml
-   public static final Pattern AMZN_PATTERN = Pattern.compile(".*/amzn-ami-(.*)\\.(i386|x86_64)(-ebs|\\.manifest.xml)?");
+   public static final Pattern AMZN_PATTERN = Pattern
+            .compile(".*/amzn-ami-(.*)\\.(i386|x86_64)(-ebs|\\.manifest.xml)?");
 
    public static final Pattern CANONICAL_PATTERN = Pattern.compile(".*/([^-]*)-([^-]*)-.*-(.*)(\\.manifest.xml)?");
 
@@ -81,22 +88,19 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
    private final Supplier<Set<? extends Location>> locations;
 
    private final Supplier<Location> defaultLocation;
+   private final String provider;
 
    @Inject
    ImageParser(PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
-            Supplier<Set<? extends Location>> locations, Supplier<Location> defaultLocation) {
+            Supplier<Set<? extends Location>> locations, Supplier<Location> defaultLocation, @Provider String provider) {
       this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");
       this.locations = checkNotNull(locations, "locations");
       this.defaultLocation = checkNotNull(defaultLocation, "defaultLocation");
-
+      this.provider = checkNotNull(provider, "provider");
    }
 
    @Override
    public Image apply(final org.jclouds.aws.ec2.domain.Image from) {
-      if (from.getImageLocation().indexOf("test") != -1) {
-         logger.trace("skipping test image(%s)", from.getId());
-         return null;
-      }
       if (from.getImageType() != ImageType.MACHINE) {
          logger.trace("skipping as not a machine image(%s)", from.getId());
          return null;
@@ -105,7 +109,7 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
       String description = from.getDescription() != null ? from.getDescription() : from.getImageLocation();
       String version = null;
 
-      OsFamily osFamily = parseOsFamilyOrNull(from.getImageLocation());
+      OsFamily osFamily = parseOsFamilyOrNull(provider, from.getImageLocation());
       String osName = null;
       String osArch = from.getVirtualizationType();
       String osVersion = parseVersionOrReturnEmptyString(osFamily, from.getImageLocation());
@@ -116,6 +120,8 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
          if (matcher.pattern() == AMZN_PATTERN) {
             osFamily = OsFamily.AMZN_LINUX;
             version = osVersion = matcher.group(1);
+         } else if (matcher.pattern() == NEBULA_PATTERN) {
+            osVersion = parseVersionOrReturnEmptyString(osFamily, matcher.group(2));
          } else {
             osFamily = OsFamily.fromValue(matcher.group(1));
             osVersion = parseVersionOrReturnEmptyString(osFamily, matcher.group(2));
@@ -157,7 +163,8 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
     *            if no configured matcher matches the manifest.
     */
    private Matcher getMatcherAndFind(String manifest) {
-      for (Pattern pattern : new Pattern[] { AMZN_PATTERN, CANONICAL_PATTERN, RIGHTIMAGE_PATTERN, RIGHTSCALE_PATTERN }) {
+      for (Pattern pattern : new Pattern[] { AMZN_PATTERN, NEBULA_PATTERN, CANONICAL_PATTERN, RIGHTIMAGE_PATTERN,
+               RIGHTSCALE_PATTERN }) {
          Matcher matcher = pattern.matcher(manifest);
          if (matcher.find())
             return matcher;

@@ -51,7 +51,7 @@ public class DescribeRegionsResponseHandler extends ParseSax.HandlerWithResult<M
          String pending = currentText.toString().trim();
          if (pending.indexOf("Walrus") == -1)
             region = pending;
-         // Eucalyptus uses regionUrl
+         // Nova uses regionUrl
       } else if (qName.equals("regionEndpoint") || qName.equals("regionUrl")) {
          String pending = currentText.toString().trim();
          if (pending.indexOf("Walrus") == -1)

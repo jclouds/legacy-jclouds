@@ -58,6 +58,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ComputationException;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
@@ -238,6 +239,8 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       try {
          image = imageMap.get(key);
       } catch (NullPointerException nex) {
+         logger.debug("could not find a matching image for instance %s in location %s", instance, location);
+      } catch (ComputationException nex) {
          logger.debug("could not find a matching image for instance %s in location %s", instance, location);
       }
       return image;
