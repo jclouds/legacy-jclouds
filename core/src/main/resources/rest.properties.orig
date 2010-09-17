@@ -1,0 +1,124 @@
+#
+#
+# Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
+#
+# ====================================================================
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ====================================================================
+#
+azurequeue.contextbuilder=org.jclouds.azure.storage.AzureStorageContextBuilder
+azurequeue.sync=org.jclouds.azure.storage.queue.AzureQueueClient
+azurequeue.async=org.jclouds.azure.storage.queue.AzureQueueAsyncClient
+azurequeue.propertiesbuilder=org.jclouds.azure.storage.AzureStoragePropertiesBuilder
+azurequeue.endpoint=https://{identity}.queue.core.windows.net
+
+azureblob.contextbuilder=org.jclouds.azure.storage.blob.AzureBlobContextBuilder
+azureblob.propertiesbuilder=org.jclouds.azure.storage.AzureStoragePropertiesBuilder
+azureblob.endpoint=https://{identity}.blob.core.windows.net
+
+pcs.contextbuilder=org.jclouds.mezeo.pcs2.PCSContextBuilder
+pcs.apiVersion=unknown
+
+sdn.contextbuilder=org.jclouds.nirvanix.sdn.SDNContextBuilder
+sdn.propertiesbuilder=org.jclouds.nirvanix.sdn.SDNPropertiesBuilder
+
+sqs.contextbuilder=org.jclouds.aws.sqs.SQSContextBuilder
+sqs.propertiesbuilder=org.jclouds.aws.sqs.SQSPropertiesBuilder
+
+elb.contextbuilder=org.jclouds.aws.elb.ELBContextBuilder
+elb.propertiesbuilder=org.jclouds.aws.elb.ELBPropertiesBuilder
+
+cloudwatch.contextbuilder=org.jclouds.aws.cloudwatch.CloudWatchContextBuilder
+cloudwatch.propertiesbuilder=org.jclouds.aws.cloudwatch.CloudWatchPropertiesBuilder
+
+s3.contextbuilder=org.jclouds.aws.s3.S3ContextBuilder
+s3.propertiesbuilder=org.jclouds.aws.s3.S3PropertiesBuilder
+
+ec2.contextbuilder=org.jclouds.aws.ec2.EC2ContextBuilder
+ec2.propertiesbuilder=org.jclouds.aws.ec2.EC2PropertiesBuilder
+
+rimuhosting.contextbuilder=org.jclouds.rimuhosting.miro.RimuHostingContextBuilder
+rimuhosting.propertiesbuilder=org.jclouds.rimuhosting.miro.RimuHostingPropertiesBuilder
+
+slicehost.contextbuilder=org.jclouds.slicehost.SlicehostContextBuilder
+slicehost.propertiesbuilder=org.jclouds.slicehost.SlicehostPropertiesBuilder
+
+trmk-vcloudexpress.contextbuilder=org.jclouds.vcloud.terremark.TerremarkVCloudExpressContextBuilder
+trmk-vcloudexpress.propertiesbuilder=org.jclouds.vcloud.terremark.TerremarkVCloudExpressPropertiesBuilder
+
+trmk-ecloud.contextbuilder=org.jclouds.vcloud.terremark.TerremarkECloudContextBuilder
+trmk-ecloud.propertiesbuilder=org.jclouds.vcloud.terremark.TerremarkECloudPropertiesBuilder
+
+chef.contextbuilder=org.jclouds.chef.ChefContextBuilder
+chef.propertiesbuilder=org.jclouds.chef.ChefPropertiesBuilder
+
+transientchef.contextbuilder=org.jclouds.chef.test.TransientChefContextBuilder
+transientchef.propertiesbuilder=org.jclouds.chef.ChefPropertiesBuilder
+
+opscodeplatform.contextbuilder=org.jclouds.opscodeplatform.OpscodePlatformContextBuilder
+opscodeplatform.propertiesbuilder=org.jclouds.opscodeplatform.OpscodePlatformPropertiesBuilder
+
+vcloud.contextbuilder=org.jclouds.vcloud.VCloudContextBuilder
+vcloud.propertiesbuilder=org.jclouds.vcloud.VCloudPropertiesBuilder
+
+vcloudexpress.contextbuilder=org.jclouds.vcloud.VCloudExpressContextBuilder
+vcloudexpress.propertiesbuilder=org.jclouds.vcloud.VCloudExpressPropertiesBuilder
+
+eucalyptus.contextbuilder=org.jclouds.aws.ec2.EC2ContextBuilder
+eucalyptus.propertiesbuilder=org.jclouds.aws.ec2.EucalyptusPropertiesBuilder
+
+nova.contextbuilder=org.jclouds.aws.ec2.EC2ContextBuilder
+nova.propertiesbuilder=org.jclouds.aws.ec2.NovaPropertiesBuilder
+
+cloudservers.contextbuilder=org.jclouds.rackspace.cloudservers.CloudServersContextBuilder
+cloudservers.propertiesbuilder=org.jclouds.rackspace.RackspacePropertiesBuilder
+
+bluelock-vclouddirector.contextbuilder=org.jclouds.vcloud.bluelock.BlueLockVCloudDirectorContextBuilder
+bluelock-vclouddirector.propertiesbuilder=org.jclouds.vcloud.bluelock.BlueLockVCloudDirectorPropertiesBuilder
+
+gogrid.propertiesbuilder=org.jclouds.gogrid.GoGridPropertiesBuilder
+gogrid.contextbuilder=org.jclouds.gogrid.GoGridContextBuilder
+
+ibmdev.propertiesbuilder=org.jclouds.ibmdev.IBMDeveloperCloudPropertiesBuilder
+ibmdev.contextbuilder=org.jclouds.ibmdev.IBMDeveloperCloudContextBuilder
+
+stub.propertiesbuilder=org.jclouds.compute.stub.StubComputeServicePropertiesBuilder
+stub.contextbuilder=org.jclouds.compute.stub.StubComputeServiceContextBuilder
+# example of where to change your endpoint
+# bluelock.endpoint=https://express3.bluelock.com/api
+
+atmosonline.contextbuilder=org.jclouds.atmosonline.saas.AtmosStorageContextBuilder
+atmosonline.endpoint=https://accesspoint.atmosonline.com
+atmosonline.apiversion=1.3.0
+
+synaptic.contextbuilder=org.jclouds.atmosonline.saas.AtmosStorageContextBuilder
+synaptic.endpoint=https://storage.synaptic.att.com
+synaptic.apiversion=1.3.0
+
+# TODO peer1 and hostedsolutions use atmos
+
+cloudfiles.contextbuilder=org.jclouds.rackspace.cloudfiles.CloudFilesContextBuilder
+cloudfiles.propertiesbuilder=org.jclouds.rackspace.cloudfiles.CloudFilesPropertiesBuilder
+
+walrus.contextbuilder=org.jclouds.aws.s3.S3ContextBuilder
+walrus.propertiesbuilder=org.jclouds.aws.s3.WalrusPropertiesBuilder
+
+googlestorage.contextbuilder=org.jclouds.aws.s3.S3ContextBuilder
+googlestorage.propertiesbuilder=org.jclouds.aws.s3.GoogleStoragePropertiesBuilder
+
+transient.contextbuilder=org.jclouds.blobstore.TransientBlobStoreContextBuilder
+transient.propertiesbuilder=org.jclouds.blobstore.TransientBlobStorePropertiesBuilder
+
+filesystem.contextbuilder=org.jclouds.filesystem.FilesystemBlobStoreContextBuilder
+filesystem.propertiesbuilder=org.jclouds.filesystem.FilesystemBlobStorePropertiesBuilder
+
