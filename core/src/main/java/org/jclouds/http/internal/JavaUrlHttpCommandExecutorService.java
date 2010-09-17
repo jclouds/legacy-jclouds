@@ -204,6 +204,8 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
                connection.setRequestProperty("Content-MD5", CryptoStreams.base64(request.getPayload().getContentMD5()));
             if (request.getPayload().getContentType() != null)
                connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, request.getPayload().getContentType());
+            if (request.getPayload().getContentDisposition() != null)
+               connection.setRequestProperty("Content-Disposition", request.getPayload().getContentDisposition());
             if (chunked) {
                connection.setChunkedStreamingMode(8196);
             } else {

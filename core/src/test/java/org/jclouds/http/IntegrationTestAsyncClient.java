@@ -135,6 +135,11 @@ public interface IntegrationTestAsyncClient {
 
    @POST
    @Path("/objects/{id}")
+   String postWithContentDisposition(@PathParam("id") String id, @HeaderParam("Content-Disposition") String contentDisposition,
+           @BinderParam(BindToStringPayload.class) String toPut);
+
+   @POST
+   @Path("/objects/{id}")
    @MapBinder(BindToJsonPayload.class)
    ListenableFuture<String> postJson(@PathParam("id") String id, @MapPayloadParam("key") String toPut);
 

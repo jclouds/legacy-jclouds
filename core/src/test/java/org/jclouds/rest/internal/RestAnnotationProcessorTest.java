@@ -1494,6 +1494,16 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertPayloadEquals(request, "whoops", "application/unknown", false);
    }
 
+   public void testPutPayloadContentDisposition() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestTransformers.class.getMethod("put", Payload.class);
+      Payload payload = newStringPayload("whoops");
+      payload.setContentDisposition("attachment; filename=photo.jpg");
+      HttpRequest request = factory(TestQuery.class).createRequest(method, payload);
+      assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Content-Disposition: attachment; filename=photo.jpg");
+      assertPayloadEquals(request, "whoops", "application/unknown", false);
+   }
+
    public void testPutPayloadWithGeneratedMD5AndNoContentType() throws SecurityException, NoSuchMethodException,
             IOException {
       Payload payload = newStringPayload("whoops");

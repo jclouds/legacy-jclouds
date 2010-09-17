@@ -227,6 +227,11 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
       assertEquals(client.postJson("", "foo").trim(), "{\"key\":\"foo\"}POST");
    }
 
+   public void testPostContentDisposition() throws MalformedURLException, ExecutionException, InterruptedException,
+           TimeoutException {
+      assertEquals(client.postWithContentDisposition("", "attachment; filename=photo.jpg", "foo").trim(), "content-disposition:photo.jpg");
+   }
+
    @Test(invocationCount = 5, timeOut = 5000)
    public void testPut() throws MalformedURLException, ExecutionException, InterruptedException, TimeoutException {
       assertEquals(client.upload("", "foo").trim(), "fooPUT");

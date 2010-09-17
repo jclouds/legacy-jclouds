@@ -53,6 +53,8 @@ public interface IntegrationTestClient {
 
    String postWithMd5(String id, String base64MD5, File file);
 
+   String postWithContentDisposition(String id, String contentDisposition, String toPut);
+
    String postJson(String id, String toPut);
 
    String action(String id, String action, Map<String, String> options);

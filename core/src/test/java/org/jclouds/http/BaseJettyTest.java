@@ -132,6 +132,15 @@ public abstract class BaseJettyTest {
                         response.setStatus(HttpServletResponse.SC_OK);
                         response.getWriter().println("created");
                      }
+                  //TODO: insert here additional header detection
+                  } else if (request.getHeader("Content-Disposition") != null) {
+                     //get the filename
+                     String content = request.getHeader("Content-Disposition");
+                     int pos = content.lastIndexOf("=");
+                     String fileName = pos > 0 ? content.substring(pos + 1) : "";
+                     response.setContentType("text/xml");
+                     response.setStatus(HttpServletResponse.SC_OK);
+                     response.getWriter().println("content-disposition:" + fileName);
                   } else {
                      response.setStatus(HttpServletResponse.SC_OK);
                      response.getWriter().println(toStringAndClose(request.getInputStream()) + "POST");

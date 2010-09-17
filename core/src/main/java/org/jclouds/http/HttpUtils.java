@@ -510,6 +510,9 @@ public class HttpUtils {
          } else if (CONTENT_TYPE.equalsIgnoreCase(header.getKey())) {
             if (payload != null)
                payload.setContentType(header.getValue());
+         } else if ("Content-Disposition".equalsIgnoreCase(header.getKey())) {
+            if (payload != null)
+               payload.setContentDisposition(header.getValue());
          } else {
             message.getHeaders().put(header.getKey(), header.getValue());
          }

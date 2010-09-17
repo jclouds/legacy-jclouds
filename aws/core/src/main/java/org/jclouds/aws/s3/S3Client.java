@@ -70,7 +70,8 @@ public interface S3Client {
     * <p />
     * This command allows you to specify {@link GetObjectOptions} to control delivery of content.
     * 
-    * <h2>Note</h2 If you specify any of the below options, you will receive partial content:
+    * <h2>Note</h2>
+    * If you specify any of the below options, you will receive partial content:
     * <ul>
     * <li>{@link GetObjectOptions#range}</li>
     * <li>{@link GetObjectOptions#startAt}</li>
