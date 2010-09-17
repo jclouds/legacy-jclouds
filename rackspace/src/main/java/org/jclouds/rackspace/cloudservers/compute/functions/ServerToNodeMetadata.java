@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
@@ -44,7 +45,6 @@ import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
@@ -55,6 +55,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    private final Supplier<Location> location;
    private final Map<ServerStatus, NodeState> serverToNodeState;
    private final Supplier<Set<? extends Image>> images;
+   private final Supplier<Set<? extends Hardware>> hardwares;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -75,12 +76,26 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       }
    }
 
+   private static class FindHardwareForServer implements Predicate<Hardware> {
+      private final Server instance;
+
+      private FindHardwareForServer(Server instance) {
+         this.instance = instance;
+      }
+
+      @Override
+      public boolean apply(Hardware input) {
+         return input.getProviderId().equals(instance.getFlavorId() + "");
+      }
+   }
+
    @Inject
    ServerToNodeMetadata(Map<ServerStatus, NodeState> serverStateToNodeState, Supplier<Set<? extends Image>> images,
-            Supplier<Location> location) {
+            Supplier<Location> location, Supplier<Set<? extends Hardware>> hardwares) {
       this.serverToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
       this.images = checkNotNull(images, "images");
       this.location = checkNotNull(location, "location");
+      this.hardwares = checkNotNull(hardwares, "hardwares");
    }
 
    @Override
@@ -93,10 +108,16 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       } catch (NoSuchElementException e) {
          logger.warn("could not find a matching image for server %s in location %s", from, location);
       }
+      Hardware hardware = null;
+      try {
+         hardware = Iterables.find(hardwares.get(), new FindHardwareForServer(from));
+      } catch (NoSuchElementException e) {
+         logger.warn("could not find a matching hardware for server %s", from);
+      }
       return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", host, null, from.getMetadata(),
-               tag, from.getImageId() + "", image != null ? image.getOperatingSystem() : null, serverToNodeState
-                        .get(from.getStatus()), from.getAddresses().getPublicAddresses(), from.getAddresses()
-                        .getPrivateAddresses(), ImmutableMap.<String, String> of(), null);
+               tag, hardware, from.getImageId() + "", image != null ? image.getOperatingSystem() : null,
+               serverToNodeState.get(from.getStatus()), from.getAddresses().getPublicAddresses(), from.getAddresses()
+                        .getPrivateAddresses(), null);
    }
 
 }

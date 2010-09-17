@@ -87,26 +87,27 @@ public interface ChefAsyncClient {
     * @see ChefClient#getUploadSandboxForChecksums
     */
    @POST
-   @Path("sandboxes")
+   @Path("/sandboxes")
    ListenableFuture<UploadSandbox> getUploadSandboxForChecksums(
-         @BinderParam(BindChecksumsToJsonPayload.class) Set<List<Byte>> md5s);
+            @BinderParam(BindChecksumsToJsonPayload.class) Set<List<Byte>> md5s);
 
    @PUT
+   @Path("")
    ListenableFuture<Void> uploadContent(@BinderParam(BindChecksumsToJsonPayload.class) Set<List<Byte>> md5s);
 
    /**
     * @see ChefClient#commitSandbox
     */
    @PUT
-   @Path("sandboxes/{id}")
+   @Path("/sandboxes/{id}")
    ListenableFuture<Sandbox> commitSandbox(@PathParam("id") String id,
-         @BinderParam(BindIsCompletedToJsonPayload.class) boolean isCompleted);
+            @BinderParam(BindIsCompletedToJsonPayload.class) boolean isCompleted);
 
    /**
     * @see ChefCookbooks#listCookbooks
     */
    @GET
-   @Path("cookbooks")
+   @Path("/cookbooks")
    @ResponseParser(ParseKeySetFromJson.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<String>> listCookbooks();
@@ -115,24 +116,24 @@ public interface ChefAsyncClient {
     * @see ChefClient#updateCookbook
     */
    @PUT
-   @Path("cookbooks/{cookbookname}/{version}")
+   @Path("/cookbooks/{cookbookname}/{version}")
    ListenableFuture<CookbookVersion> updateCookbook(@PathParam("cookbookname") String cookbookName,
-         @PathParam("version") String version, @BinderParam(BindToJsonPayload.class) CookbookVersion cookbook);
+            @PathParam("version") String version, @BinderParam(BindToJsonPayload.class) CookbookVersion cookbook);
 
    /**
     * @see ChefCookbook#deleteCookbook(String)
     */
    @DELETE
-   @Path("cookbooks/{cookbookname}/{version}")
+   @Path("/cookbooks/{cookbookname}/{version}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<CookbookVersion> deleteCookbook(@PathParam("cookbookname") String cookbookName,
-         @PathParam("version") String version);
+            @PathParam("version") String version);
 
    /**
     * @see ChefCookbook#getVersionsOfCookbook
     */
    @GET
-   @Path("cookbooks/{cookbookname}")
+   @Path("/cookbooks/{cookbookname}")
    @Unwrap
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<String>> getVersionsOfCookbook(@PathParam("cookbookname") String cookbookName);
@@ -141,31 +142,31 @@ public interface ChefAsyncClient {
     * @see ChefCookbook#getCookbook
     */
    @GET
-   @Path("cookbooks/{cookbookname}/{version}")
+   @Path("/cookbooks/{cookbookname}/{version}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<CookbookVersion> getCookbook(@PathParam("cookbookname") String cookbookName,
-         @PathParam("version") String version);
+            @PathParam("version") String version);
 
    /**
     * @see ChefClient#createClient
     */
    @POST
-   @Path("clients")
+   @Path("/clients")
    ListenableFuture<Client> createClient(@BinderParam(BindClientnameToJsonPayload.class) String clientname);
 
    /**
     * @see ChefClient#generateKeyForClient
     */
    @PUT
-   @Path("clients/{clientname}")
+   @Path("/clients/{clientname}")
    ListenableFuture<Client> generateKeyForClient(
-         @PathParam("clientname") @BinderParam(BindGenerateKeyForClientToJsonPayload.class) String clientname);
+            @PathParam("clientname") @BinderParam(BindGenerateKeyForClientToJsonPayload.class) String clientname);
 
    /**
     * @see ChefClient#clientExists
     */
    @HEAD
-   @Path("clients/{clientname}")
+   @Path("/clients/{clientname}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> clientExists(@PathParam("clientname") String clientname);
 
@@ -173,7 +174,7 @@ public interface ChefAsyncClient {
     * @see ChefClient#getClient
     */
    @GET
-   @Path("clients/{clientname}")
+   @Path("/clients/{clientname}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Client> getClient(@PathParam("clientname") String clientname);
 
@@ -181,7 +182,7 @@ public interface ChefAsyncClient {
     * @see ChefClient#deleteClient
     */
    @DELETE
-   @Path("clients/{clientname}")
+   @Path("/clients/{clientname}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Client> deleteClient(@PathParam("clientname") String clientname);
 
@@ -189,7 +190,7 @@ public interface ChefAsyncClient {
     * @see ChefClient#listClients
     */
    @GET
-   @Path("clients")
+   @Path("/clients")
    @ResponseParser(ParseKeySetFromJson.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<String>> listClients();
@@ -198,22 +199,22 @@ public interface ChefAsyncClient {
     * @see ChefClient#createNode
     */
    @POST
-   @Path("nodes")
+   @Path("/nodes")
    ListenableFuture<Void> createNode(@BinderParam(BindToJsonPayload.class) Node node);
 
    /**
     * @see ChefClient#updateNode
     */
    @PUT
-   @Path("nodes/{nodename}")
+   @Path("/nodes/{nodename}")
    ListenableFuture<Node> updateNode(
-         @PathParam("nodename") @ParamParser(NodeName.class) @BinderParam(BindToJsonPayload.class) Node node);
+            @PathParam("nodename") @ParamParser(NodeName.class) @BinderParam(BindToJsonPayload.class) Node node);
 
    /**
     * @see ChefNode#nodeExists
     */
    @HEAD
-   @Path("nodes/{nodename}")
+   @Path("/nodes/{nodename}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> nodeExists(@PathParam("nodename") String nodename);
 
@@ -221,7 +222,7 @@ public interface ChefAsyncClient {
     * @see ChefNode#getNode
     */
    @GET
-   @Path("nodes/{nodename}")
+   @Path("/nodes/{nodename}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Node> getNode(@PathParam("nodename") String nodename);
 
@@ -229,7 +230,7 @@ public interface ChefAsyncClient {
     * @see ChefNode#deleteNode
     */
    @DELETE
-   @Path("nodes/{nodename}")
+   @Path("/nodes/{nodename}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Node> deleteNode(@PathParam("nodename") String nodename);
 
@@ -237,7 +238,7 @@ public interface ChefAsyncClient {
     * @see ChefNode#listNodes
     */
    @GET
-   @Path("nodes")
+   @Path("/nodes")
    @ResponseParser(ParseKeySetFromJson.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<String>> listNodes();
@@ -246,22 +247,22 @@ public interface ChefAsyncClient {
     * @see ChefClient#createRole
     */
    @POST
-   @Path("roles")
+   @Path("/roles")
    ListenableFuture<Void> createRole(@BinderParam(BindToJsonPayload.class) Role role);
 
    /**
     * @see ChefClient#updateRole
     */
    @PUT
-   @Path("roles/{rolename}")
+   @Path("/roles/{rolename}")
    ListenableFuture<Role> updateRole(
-         @PathParam("rolename") @ParamParser(RoleName.class) @BinderParam(BindToJsonPayload.class) Role role);
+            @PathParam("rolename") @ParamParser(RoleName.class) @BinderParam(BindToJsonPayload.class) Role role);
 
    /**
     * @see ChefRole#roleExists
     */
    @HEAD
-   @Path("roles/{rolename}")
+   @Path("/roles/{rolename}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> roleExists(@PathParam("rolename") String rolename);
 
@@ -269,7 +270,7 @@ public interface ChefAsyncClient {
     * @see ChefRole#getRole
     */
    @GET
-   @Path("roles/{rolename}")
+   @Path("/roles/{rolename}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Role> getRole(@PathParam("rolename") String rolename);
 
@@ -277,7 +278,7 @@ public interface ChefAsyncClient {
     * @see ChefRole#deleteRole
     */
    @DELETE
-   @Path("roles/{rolename}")
+   @Path("/roles/{rolename}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<Role> deleteRole(@PathParam("rolename") String rolename);
 
@@ -285,7 +286,7 @@ public interface ChefAsyncClient {
     * @see ChefRole#listRoles
     */
    @GET
-   @Path("roles")
+   @Path("/roles")
    @ResponseParser(ParseKeySetFromJson.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<String>> listRoles();
@@ -294,7 +295,7 @@ public interface ChefAsyncClient {
     * @see ChefClient#listDatabags
     */
    @GET
-   @Path("data")
+   @Path("/data")
    @ResponseParser(ParseKeySetFromJson.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<String>> listDatabags();
@@ -303,14 +304,14 @@ public interface ChefAsyncClient {
     * @see ChefClient#createDatabag
     */
    @POST
-   @Path("data")
+   @Path("/data")
    ListenableFuture<Void> createDatabag(@BinderParam(BindNameToJsonPayload.class) String databagName);
 
    /**
     * @see ChefClient#databagExists
     */
    @HEAD
-   @Path("data/{name}")
+   @Path("/data/{name}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> databagExists(@PathParam("name") String databagName);
 
@@ -318,7 +319,7 @@ public interface ChefAsyncClient {
     * @see ChefClient#deleteDatabag
     */
    @DELETE
-   @Path("data/{name}")
+   @Path("/data/{name}")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteDatabag(@PathParam("name") String databagName);
 
@@ -326,7 +327,7 @@ public interface ChefAsyncClient {
     * @see ChefClient#listDatabagItems
     */
    @GET
-   @Path("data/{name}")
+   @Path("/data/{name}")
    @ResponseParser(ParseKeySetFromJson.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<String>> listDatabagItems(@PathParam("name") String databagName);
@@ -335,51 +336,51 @@ public interface ChefAsyncClient {
     * @see ChefClient#createDatabagItem
     */
    @POST
-   @Path("data/{databagName}")
+   @Path("/data/{databagName}")
    ListenableFuture<DatabagItem> createDatabagItem(@PathParam("databagName") String databagName,
-         @BinderParam(BindToJsonPayload.class) DatabagItem databagItem);
+            @BinderParam(BindToJsonPayload.class) DatabagItem databagItem);
 
    /**
     * @see ChefClient#updateDatabagItem
     */
    @PUT
-   @Path("data/{databagName}/{databagItemId}")
+   @Path("/data/{databagName}/{databagItemId}")
    ListenableFuture<DatabagItem> updateDatabagItem(
-         @PathParam("databagName") String databagName,
-         @PathParam("databagItemId") @ParamParser(DatabagItemId.class) @BinderParam(BindToJsonPayload.class) DatabagItem item);
+            @PathParam("databagName") String databagName,
+            @PathParam("databagItemId") @ParamParser(DatabagItemId.class) @BinderParam(BindToJsonPayload.class) DatabagItem item);
 
    /**
     * @see ChefClient#databagItemExists
     */
    @HEAD
-   @Path("data/{databagName}/{databagItemId}")
+   @Path("/data/{databagName}/{databagItemId}")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> databagItemExists(@PathParam("databagName") String databagName,
-         @PathParam("databagItemId") String databagItemId);
+            @PathParam("databagItemId") String databagItemId);
 
    /**
     * @see ChefClient#getDatabagItem
     */
    @GET
-   @Path("data/{databagName}/{databagItemId}")
+   @Path("/data/{databagName}/{databagItemId}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<DatabagItem> getDatabagItem(@PathParam("databagName") String databagName,
-         @PathParam("databagItemId") String databagItemId);
+            @PathParam("databagItemId") String databagItemId);
 
    /**
     * @see ChefClient#deleteDatabagItem
     */
    @DELETE
-   @Path("data/{databagName}/{databagItemId}")
+   @Path("/data/{databagName}/{databagItemId}")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<DatabagItem> deleteDatabagItem(@PathParam("databagName") String databagName,
-         @PathParam("databagItemId") String databagItemId);
+            @PathParam("databagItemId") String databagItemId);
 
    /**
     * @see ChefClient#listSearchIndexes
     */
    @GET
-   @Path("search")
+   @Path("/search")
    @ResponseParser(ParseKeySetFromJson.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<String>> listSearchIndexes();
@@ -388,7 +389,7 @@ public interface ChefAsyncClient {
     * @see ChefClient#searchRoles
     */
    @GET
-   @Path("search/role")
+   @Path("/search/role")
    @ResponseParser(ParseSearchRolesFromJson.class)
    ListenableFuture<? extends SearchResult<? extends Role>> searchRoles();
 
@@ -396,7 +397,7 @@ public interface ChefAsyncClient {
     * @see ChefClient#searchClients
     */
    @GET
-   @Path("search/client")
+   @Path("/search/client")
    @ResponseParser(ParseSearchClientsFromJson.class)
    ListenableFuture<? extends SearchResult<? extends Client>> searchClients();
 
@@ -404,7 +405,7 @@ public interface ChefAsyncClient {
     * @see ChefClient#searchNodes
     */
    @GET
-   @Path("search/node")
+   @Path("/search/node")
    @ResponseParser(ParseSearchNodesFromJson.class)
    ListenableFuture<? extends SearchResult<? extends Node>> searchNodes();
 
@@ -412,8 +413,8 @@ public interface ChefAsyncClient {
     * @see ChefClient#searchDatabag
     */
    @GET
-   @Path("search/{databagName}")
+   @Path("/search/{databagName}")
    @ResponseParser(ParseSearchDatabagFromJson.class)
    ListenableFuture<? extends SearchResult<? extends DatabagItem>> searchDatabag(
-         @PathParam("databagName") String databagName);
+            @PathParam("databagName") String databagName);
 }

@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.attr.ConsistencyModel;
@@ -33,6 +34,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesAsyncBlobStore;
+import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobRequestSigner;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStore;
 import org.jclouds.rackspace.config.RackspaceLocationsModule;
 
@@ -61,6 +63,7 @@ public class CloudFilesBlobStoreContextModule extends AbstractModule {
       bind(BlobStore.class).to(CloudFilesBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStoreContext.class).to(new TypeLiteral<BlobStoreContextImpl<CloudFilesClient, CloudFilesAsyncClient>>() {
       }).in(Scopes.SINGLETON);
+      bind(BlobRequestSigner.class).to(CloudFilesBlobRequestSigner.class);
    }
 
    @Provides

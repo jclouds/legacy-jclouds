@@ -78,7 +78,12 @@ END_OF_SCRIPT
    # add desired commands from the user
    cat >> $INSTANCE_HOME/mkebsboot.sh <<'END_OF_SCRIPT'
 cd $INSTANCE_HOME
-find /
+cat > /tmp/$USER/scripttest/temp.txt <<'END_OF_FILE'
+hello world
+END_OF_FILE
+
+find / || exit 1
+
 END_OF_SCRIPT
    
    # add runscript footer

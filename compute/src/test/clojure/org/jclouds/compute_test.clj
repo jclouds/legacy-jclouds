@@ -19,7 +19,10 @@
 
 (ns org.jclouds.compute-test
   (:use [org.jclouds.compute] :reload-all)
-  (:use clojure.test))
+  (:use clojure.test)
+  (:import
+   org.jclouds.compute.domain.OsFamily
+   clojure.contrib.condition.Condition))
 
 (defmacro with-private-vars [[ns fns] & tests]
   "Refers private fns from ns and runs tests in context.  From users mailing
@@ -49,3 +52,20 @@ list, Alan Dipert and MeikelBrandmeyer."
   (is (compute-service? (compute-service "stub" "user" "password")))
   (is (compute-service? (as-compute-service *compute*)))
   (is (compute-service? (as-compute-service (compute-context *compute*)))))
+
+(deftest build-template-test
+  (let [service (compute-service "stub" "user" "password")]
+    (testing "nullary"
+      (is (>= (-> (build-template service {:fastest true})
+                  bean :hardware bean :processors first bean :cores)
+              8.0)))
+    (testing "one arg"
+      (is (> (-> (build-template service {:min-ram 512})
+                 bean :hardware bean :ram)
+             512)))
+    (testing "enumerated"
+      (is (= OsFamily/CENTOS
+             (-> (build-template service {:os-family :centos})
+                 bean :image bean :operatingSystem bean :family))))
+    (testing "invalid"
+      (is (thrown? Condition (build-template service {:xx :yy}))))))

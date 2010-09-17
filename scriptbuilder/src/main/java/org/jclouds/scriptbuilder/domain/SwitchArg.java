@@ -43,15 +43,14 @@ public class SwitchArg implements Statement {
 
    private static final String INDENT = "   ";
 
-   public static final Map<OsFamily, String> OS_TO_SWITCH_PATTERN = ImmutableMap.of(OsFamily.UNIX,
-            "case ${arg} in\n", OsFamily.WINDOWS, "goto CASE_%{arg}\r\n");
+   public static final Map<OsFamily, String> OS_TO_SWITCH_PATTERN = ImmutableMap.of(OsFamily.UNIX, "case ${arg} in\n",
+            OsFamily.WINDOWS, "goto CASE_%{arg}\r\n");
 
-   public static final Map<OsFamily, String> OS_TO_END_SWITCH_PATTERN = ImmutableMap.of(
-            OsFamily.UNIX, "esac\n", OsFamily.WINDOWS, ":END_SWITCH\r\n");
+   public static final Map<OsFamily, String> OS_TO_END_SWITCH_PATTERN = ImmutableMap.of(OsFamily.UNIX, "esac\n",
+            OsFamily.WINDOWS, ":END_SWITCH\r\n");
 
    public static final Map<OsFamily, String> OS_TO_CASE_PATTERN = ImmutableMap.of(OsFamily.UNIX,
-            "{value})\n{action};;\n", OsFamily.WINDOWS,
-            ":CASE_{value}\r\n{action}GOTO END_SWITCH\r\n");
+            "{value})\n{action};;\n", OsFamily.WINDOWS, ":CASE_{value}\r\n{action}GOTO END_SWITCH\r\n");
 
    private final int arg;
 
@@ -84,26 +83,31 @@ public class SwitchArg implements Statement {
    public String render(OsFamily family) {
       StringBuilder switchClause = new StringBuilder();
       addArgValidation(switchClause, family);
-      switchClause.append(Utils.replaceTokens(OS_TO_SWITCH_PATTERN.get(family), ImmutableMap.of(
-               "arg", arg + "")));
+      switchClause.append(Utils.replaceTokens(OS_TO_SWITCH_PATTERN.get(family), ImmutableMap.of("arg", arg + "")));
 
       for (Entry<String, Statement> entry : valueToActions.entrySet()) {
 
          StringBuilder actionBuilder = new StringBuilder();
+         boolean shouldIndent = true;
          boolean inRunScript = false;
-         for (String line : Splitter.on(ShellToken.LF.to(family)).split(
-                  entry.getValue().render(family))) {
-            if (!inRunScript)
+         boolean inCreateFile = false;
+         for (String line : Splitter.on(ShellToken.LF.to(family)).split(entry.getValue().render(family))) {
+            if (shouldIndent)
                actionBuilder.append(INDENT);
             actionBuilder.append(line).append(ShellToken.LF.to(family));
             if (line.indexOf(CreateRunScript.MARKER) != -1) {
                inRunScript = inRunScript ? false : true;
+
             }
+            if (line.indexOf(CreateFile.MARKER) != -1) {
+               inCreateFile = inCreateFile ? false : true;
+            }
+            shouldIndent = !inCreateFile && !inRunScript;
+
          }
-         actionBuilder.delete(actionBuilder.lastIndexOf(ShellToken.LF.to(family)), actionBuilder
-                  .length());
-         switchClause.append(Utils.replaceTokens(OS_TO_CASE_PATTERN.get(family), ImmutableMap.of(
-                  "value", entry.getKey(), "action", actionBuilder.toString())));
+         actionBuilder.delete(actionBuilder.lastIndexOf(ShellToken.LF.to(family)), actionBuilder.length());
+         switchClause.append(Utils.replaceTokens(OS_TO_CASE_PATTERN.get(family), ImmutableMap.of("value", entry
+                  .getKey(), "action", actionBuilder.toString())));
       }
 
       switchClause.append(OS_TO_END_SWITCH_PATTERN.get(family));
@@ -114,11 +118,9 @@ public class SwitchArg implements Statement {
    void addArgValidation(StringBuilder switchClause, OsFamily family) {
       if (family.equals(OsFamily.WINDOWS)) {
          for (String value : valueToActions.keySet()) {
-            switchClause.append("if not \"%").append(arg).append(
-                     String.format("\" == \"%s\" ", value));
+            switchClause.append("if not \"%").append(arg).append(String.format("\" == \"%s\" ", value));
          }
-         switchClause.append("(\r\n   set EXCEPTION=bad argument: %").append(arg)
-                  .append(" not in ");
+         switchClause.append("(\r\n   set EXCEPTION=bad argument: %").append(arg).append(" not in ");
          switchClause.append(Joiner.on(" ").join(valueToActions.keySet()));
          switchClause.append("\r\n   goto abort\r\n)\r\n");
       }

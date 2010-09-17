@@ -121,7 +121,8 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
          imageOwnerId = currentText.toString().trim();
       } else if (qName.equals("imageState")) {
          imageState = ImageState.fromValue(currentText.toString().trim());
-      } else if (qName.equals("imageType")) {
+         // eucalyptus
+      } else if (qName.equals("imageType") || qName.equals("type")) {
          imageType = ImageType.fromValue(currentText.toString().trim());
       } else if (qName.equals("isPublic")) {
          isPublic = Boolean.parseBoolean(currentText.toString().trim());
@@ -162,8 +163,8 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
                if (region == null)
                   region = defaultRegion;
                contents.add(new Image(region, architecture, this.name, description, imageId, imageLocation,
-                     imageOwnerId, imageState, imageType, isPublic, productCodes, kernelId, platform, ramdiskId,
-                     rootDeviceType, rootDeviceName, ebsBlockDevices, virtualizationType));
+                        imageOwnerId, imageState, imageType, isPublic, productCodes, kernelId, platform, ramdiskId,
+                        rootDeviceType, rootDeviceName, ebsBlockDevices, virtualizationType));
             } catch (NullPointerException e) {
                logger.warn(e, "malformed image: %s", imageId);
             }

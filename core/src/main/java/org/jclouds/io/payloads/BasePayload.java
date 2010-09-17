@@ -40,6 +40,9 @@ public abstract class BasePayload<V> implements Payload {
    protected String contentType;
    protected Long contentLength;
    protected byte[] contentMD5;
+   protected String contentDisposition;
+   protected String contentLanguage;
+   protected String contentEncoding;
    protected transient volatile boolean written;
 
    protected BasePayload(V content, @Nullable String contentType,
@@ -116,6 +119,54 @@ public abstract class BasePayload<V> implements Payload {
    @Override
    public void setContentType(@Nullable String contentType) {
       this.contentType = contentType;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setContentDisposition(@Nullable String contentDisposition) {
+      this.contentDisposition = contentDisposition;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContentDisposition() {
+      return this.contentDisposition;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setContentLanguage(@Nullable String contentLanguage) {
+      this.contentLanguage = contentLanguage;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContentLanguage() {
+      return this.contentLanguage;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setContentEncoding(@Nullable String contentEncoding) {
+      this.contentEncoding = contentEncoding;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContentEncoding() {
+      return this.contentEncoding;
    }
 
    /**

@@ -30,7 +30,11 @@ import com.google.common.base.CaseFormat;
  * @author Adrian Cole
  */
 public enum OsFamily {
-   UNKNOWN, AIX, ARCH, CENTOS, DARWIN, DEBIAN, ESX, FEDORA, FREEBSD, GENTOO, HPUX, LINUX, MANDRIVA, NETBSD,
+   UNKNOWN, AIX, ARCH, CENTOS, DARWIN, DEBIAN, ESX, FEDORA, FREEBSD, GENTOO, HPUX, LINUX,
+   /**
+    * @see <a href="http://aws.amazon.com/amazon-linux-ami/">amazon linux ami</a>
+    */
+   AMZN_LINUX, MANDRIVA, NETBSD,
    /**
     * 
     * Oracle Enterprise Linux

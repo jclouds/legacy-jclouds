@@ -71,6 +71,7 @@ import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.endpoints.Network;
+import org.jclouds.vcloud.endpoints.OrgList;
 import org.jclouds.vcloud.endpoints.TasksList;
 import org.jclouds.vcloud.functions.AllCatalogItemsInCatalog;
 import org.jclouds.vcloud.functions.AllCatalogsInOrg;
@@ -94,14 +95,15 @@ import com.google.inject.name.Names;
 import domain.VCloudVersionsAsyncClient;
 
 /**
- * Configures the VCloud authentication service connection, including logging and http transport.
+ * Configures the VCloud authentication service connection, including logging
+ * and http transport.
  * 
  * @author Adrian Cole
  */
 @RequiresHttp
 @ConfiguresRestClient
 public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extends CommonVCloudAsyncClient> extends
-         RestClientModule<S, A> {
+      RestClientModule<S, A> {
 
    public CommonVCloudRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
       super(syncClientType, asyncClientType);
@@ -144,20 +146,20 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Singleton
    @org.jclouds.vcloud.endpoints.VDC
    protected Supplier<Map<String, String>> provideVDCtoORG(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final Supplier<Map<String, ? extends Org>> orgToVDCSupplier) {
+         final Supplier<Map<String, ? extends Org>> orgToVDCSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, String>>(authException, seconds,
-               new Supplier<Map<String, String>>() {
-                  @Override
-                  public Map<String, String> get() {
-                     Map<String, String> returnVal = newLinkedHashMap();
-                     for (Entry<String, ? extends Org> orgr : orgToVDCSupplier.get().entrySet()) {
-                        for (String vdc : orgr.getValue().getVDCs().keySet()) {
-                           returnVal.put(vdc, orgr.getKey());
-                        }
+            new Supplier<Map<String, String>>() {
+               @Override
+               public Map<String, String> get() {
+                  Map<String, String> returnVal = newLinkedHashMap();
+                  for (Entry<String, ? extends Org> orgr : orgToVDCSupplier.get().entrySet()) {
+                     for (String vdc : orgr.getValue().getVDCs().keySet()) {
+                        returnVal.put(vdc, orgr.getKey());
                      }
-                     return returnVal;
                   }
-               });
+                  return returnVal;
+               }
+            });
 
    }
 
@@ -180,15 +182,24 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Provides
    @Singleton
    protected Supplier<Map<String, ? extends Org>> provideOrgMapCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final OrgMapSupplier supplier) {
+         final OrgMapSupplier supplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ? extends Org>>(authException,
-               seconds, new Supplier<Map<String, ? extends Org>>() {
-                  @Override
-                  public Map<String, ? extends Org> get() {
-                     return supplier.get();
-                  }
+            seconds, new Supplier<Map<String, ? extends Org>>() {
+               @Override
+               public Map<String, ? extends Org> get() {
+                  return supplier.get();
+               }
 
-               });
+            });
+   }
+
+   @Provides
+   @Singleton
+   @OrgList
+   URI provideOrgListURI(Supplier<VCloudSession> sessionSupplier) {
+      VCloudSession session = sessionSupplier.get();
+      return URI.create(Iterables.getLast(session.getOrgs().values()).getHref().toASCIIString().replaceAll("org/.*",
+            "org"));
    }
 
    @Singleton
@@ -198,7 +209,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
 
       @Inject
       protected OrgMapSupplier(Supplier<VCloudSession> sessionSupplier,
-               Function<Iterable<String>, Iterable<? extends Org>> organizationsForNames) {
+            Function<Iterable<String>, Iterable<? extends Org>> organizationsForNames) {
          this.sessionSupplier = sessionSupplier;
          this.organizationsForNames = organizationsForNames;
       }
@@ -211,13 +222,13 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
 
    @Singleton
    public static class OrgCatalogSupplier implements
-            Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> {
+         Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> {
       protected final Supplier<Map<String, ? extends Org>> orgSupplier;
       private final Function<Org, Iterable<? extends org.jclouds.vcloud.domain.Catalog>> allCatalogsInOrg;
 
       @Inject
       protected OrgCatalogSupplier(Supplier<Map<String, ? extends Org>> orgSupplier,
-               Function<Org, Iterable<? extends org.jclouds.vcloud.domain.Catalog>> allCatalogsInOrg) {
+            Function<Org, Iterable<? extends org.jclouds.vcloud.domain.Catalog>> allCatalogsInOrg) {
          this.orgSupplier = orgSupplier;
          this.allCatalogsInOrg = allCatalogsInOrg;
       }
@@ -225,16 +236,16 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
       @Override
       public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> get() {
          return transformValues(
-                  transformValues(orgSupplier.get(), allCatalogsInOrg),
-                  new Function<Iterable<? extends org.jclouds.vcloud.domain.Catalog>, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>() {
+               transformValues(orgSupplier.get(), allCatalogsInOrg),
+               new Function<Iterable<? extends org.jclouds.vcloud.domain.Catalog>, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>() {
 
-                     @Override
-                     public Map<String, ? extends org.jclouds.vcloud.domain.Catalog> apply(
-                              Iterable<? extends org.jclouds.vcloud.domain.Catalog> from) {
-                        return uniqueIndex(from, name);
-                     }
+                  @Override
+                  public Map<String, ? extends org.jclouds.vcloud.domain.Catalog> apply(
+                        Iterable<? extends org.jclouds.vcloud.domain.Catalog> from) {
+                     return uniqueIndex(from, name);
+                  }
 
-                  });
+               });
       }
    }
 
@@ -265,27 +276,27 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @org.jclouds.vcloud.endpoints.Org
    @Singleton
    protected Supplier<Map<String, ReferenceType>> provideVDCtoORG(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final OrgNameToOrgSupplier supplier) {
+         final OrgNameToOrgSupplier supplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ReferenceType>>(authException,
-               seconds, new Supplier<Map<String, ReferenceType>>() {
-                  @Override
-                  public Map<String, ReferenceType> get() {
-                     return supplier.get();
-                  }
-               });
+            seconds, new Supplier<Map<String, ReferenceType>>() {
+               @Override
+               public Map<String, ReferenceType> get() {
+                  return supplier.get();
+               }
+            });
    }
 
    @Provides
    @Singleton
    protected Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>> provideURIToVDC(
-            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final URItoVDC supplier) {
+         @Named(PROPERTY_SESSION_INTERVAL) long seconds, final URItoVDC supplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>>(
-               authException, seconds, new Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>>() {
-                  @Override
-                  public Map<URI, ? extends org.jclouds.vcloud.domain.VDC> get() {
-                     return supplier.get();
-                  }
-               });
+            authException, seconds, new Supplier<Map<URI, ? extends org.jclouds.vcloud.domain.VDC>>() {
+               @Override
+               public Map<URI, ? extends org.jclouds.vcloud.domain.VDC> get() {
+                  return supplier.get();
+               }
+            });
    }
 
    @Singleton
@@ -300,24 +311,24 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
       @Override
       public Map<URI, ? extends org.jclouds.vcloud.domain.VDC> get() {
          return uniqueIndex(
-                  concat(transform(
-                           orgVDCMap.get().values(),
-                           new Function<Map<String, ? extends org.jclouds.vcloud.domain.VDC>, Iterable<? extends org.jclouds.vcloud.domain.VDC>>() {
+               concat(transform(
+                     orgVDCMap.get().values(),
+                     new Function<Map<String, ? extends org.jclouds.vcloud.domain.VDC>, Iterable<? extends org.jclouds.vcloud.domain.VDC>>() {
 
-                              @Override
-                              public Iterable<? extends org.jclouds.vcloud.domain.VDC> apply(
-                                       Map<String, ? extends org.jclouds.vcloud.domain.VDC> from) {
-                                 return from.values();
-                              }
+                        @Override
+                        public Iterable<? extends org.jclouds.vcloud.domain.VDC> apply(
+                              Map<String, ? extends org.jclouds.vcloud.domain.VDC> from) {
+                           return from.values();
+                        }
 
-                           })), new Function<org.jclouds.vcloud.domain.VDC, URI>() {
+                     })), new Function<org.jclouds.vcloud.domain.VDC, URI>() {
 
-                     @Override
-                     public URI apply(org.jclouds.vcloud.domain.VDC from) {
-                        return from.getHref();
-                     }
+                  @Override
+                  public URI apply(org.jclouds.vcloud.domain.VDC from) {
+                     return from.getHref();
+                  }
 
-                  });
+               });
       }
 
    }
@@ -346,8 +357,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Singleton
    @org.jclouds.vcloud.endpoints.VCloudLogin
    protected URI provideAuthenticationURI(VCloudVersionsAsyncClient versionService,
-            @Named(PROPERTY_API_VERSION) String version) throws InterruptedException, ExecutionException,
-            TimeoutException {
+         @Named(PROPERTY_API_VERSION) String version) throws InterruptedException, ExecutionException, TimeoutException {
       SortedMap<String, URI> versions = versionService.getSupportedVersions().get(180, TimeUnit.SECONDS);
       checkState(versions.size() > 0, "No versions present");
       checkState(versions.containsKey(version), "version " + version + " not present in: " + versions);
@@ -381,7 +391,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @org.jclouds.vcloud.endpoints.Catalog
    @Singleton
    protected String provideCatalogName(
-            Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> catalogs) {
+         Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> catalogs) {
       return getLast(getLast(catalogs.get().values()).keySet());
    }
 
@@ -389,7 +399,7 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Network
    @Singleton
    protected URI provideDefaultNetwork(@org.jclouds.vcloud.endpoints.VDC URI defaultVDC, CommonVCloudClient client,
-            Injector injector) {
+         Injector injector) {
       if (authException.get() != null)
          throw authException.get();
       try {
@@ -400,13 +410,13 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
             return Iterables.getLast(networks.values()).getHref();
          try {
             String networkName = injector.getInstance(Key.get(String.class, Names
-                     .named(PROPERTY_VCLOUD_DEFAULT_NETWORK)));
+                  .named(PROPERTY_VCLOUD_DEFAULT_NETWORK)));
             ReferenceType network = networks.get(networkName);
             checkState(network != null, String.format("network named %s not in %s", networkName, networks.keySet()));
             return network.getHref();
          } catch (ConfigurationException e) {
             throw new IllegalStateException(String.format("you must specify the property %s as one of %s",
-                     PROPERTY_VCLOUD_DEFAULT_NETWORK, networks.keySet()), e);
+                  PROPERTY_VCLOUD_DEFAULT_NETWORK, networks.keySet()), e);
          }
       } catch (AuthorizationException e) {
          authException.set(e);
@@ -430,49 +440,48 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Provides
    @Singleton
    protected Predicate<URI> successTester(Injector injector,
-            @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long completed) {
+         @Named(PROPERTY_VCLOUD_TIMEOUT_TASK_COMPLETED) long completed) {
       return new RetryablePredicate<URI>(injector.getInstance(TaskSuccess.class), completed);
    }
 
    @Provides
    @Singleton
    protected Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> provideOrgCatalogItemMapSupplierCache(
-            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrgCatalogSupplier supplier) {
+         @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrgCatalogSupplier supplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>>(
-               authException, seconds,
-               new Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>>() {
-                  @Override
-                  public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> get() {
-                     return supplier.get();
-                  }
+            authException, seconds,
+            new Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>>() {
+               @Override
+               public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>> get() {
+                  return supplier.get();
+               }
 
-               });
+            });
    }
 
    @Provides
    @Singleton
    protected Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> provideOrgVDCSupplierCache(
-            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrgVDCSupplier supplier) {
+         @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrgVDCSupplier supplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>>(
-               authException, seconds,
-               new Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>>() {
-                  @Override
-                  public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>> get() {
-                     return supplier.get();
-                  }
+            authException, seconds, new Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>>() {
+               @Override
+               public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>> get() {
+                  return supplier.get();
+               }
 
-               });
+            });
    }
 
    @Singleton
    public static class OrgVDCSupplier implements
-            Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> {
+         Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>> {
       protected final Supplier<Map<String, ? extends Org>> orgSupplier;
       private final Function<Org, Iterable<? extends org.jclouds.vcloud.domain.VDC>> allVDCsInOrg;
 
       @Inject
       protected OrgVDCSupplier(Supplier<Map<String, ? extends Org>> orgSupplier,
-               Function<Org, Iterable<? extends org.jclouds.vcloud.domain.VDC>> allVDCsInOrg) {
+            Function<Org, Iterable<? extends org.jclouds.vcloud.domain.VDC>> allVDCsInOrg) {
          this.orgSupplier = orgSupplier;
          this.allVDCsInOrg = allVDCsInOrg;
       }
@@ -480,29 +489,29 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
       @Override
       public Map<String, Map<String, ? extends org.jclouds.vcloud.domain.VDC>> get() {
          return transformValues(
-                  transformValues(orgSupplier.get(), allVDCsInOrg),
-                  new Function<Iterable<? extends org.jclouds.vcloud.domain.VDC>, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>() {
+               transformValues(orgSupplier.get(), allVDCsInOrg),
+               new Function<Iterable<? extends org.jclouds.vcloud.domain.VDC>, Map<String, ? extends org.jclouds.vcloud.domain.VDC>>() {
 
-                     @Override
-                     public Map<String, ? extends org.jclouds.vcloud.domain.VDC> apply(
-                              Iterable<? extends org.jclouds.vcloud.domain.VDC> from) {
-                        return uniqueIndex(from, name);
-                     }
+                  @Override
+                  public Map<String, ? extends org.jclouds.vcloud.domain.VDC> apply(
+                        Iterable<? extends org.jclouds.vcloud.domain.VDC> from) {
+                     return uniqueIndex(from, name);
+                  }
 
-                  });
+               });
       }
    }
 
    @Singleton
    public static class OrgCatalogItemSupplier implements
-            Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>> {
+         Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>> {
       protected final Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> catalogSupplier;
       private final Function<org.jclouds.vcloud.domain.Catalog, Iterable<? extends CatalogItem>> allCatalogItemsInCatalog;
 
       @Inject
       protected OrgCatalogItemSupplier(
-               Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> catalogSupplier,
-               Function<org.jclouds.vcloud.domain.Catalog, Iterable<? extends CatalogItem>> allCatalogItemsInCatalog) {
+            Supplier<Map<String, Map<String, ? extends org.jclouds.vcloud.domain.Catalog>>> catalogSupplier,
+            Function<org.jclouds.vcloud.domain.Catalog, Iterable<? extends CatalogItem>> allCatalogItemsInCatalog) {
          this.catalogSupplier = catalogSupplier;
          this.allCatalogItemsInCatalog = allCatalogItemsInCatalog;
       }
@@ -510,40 +519,39 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
       @Override
       public Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>> get() {
          return transformValues(
-                  catalogSupplier.get(),
-                  new Function<Map<String, ? extends org.jclouds.vcloud.domain.Catalog>, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>() {
+               catalogSupplier.get(),
+               new Function<Map<String, ? extends org.jclouds.vcloud.domain.Catalog>, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>() {
 
-                     @Override
-                     public Map<String, Map<String, ? extends CatalogItem>> apply(
-                              Map<String, ? extends org.jclouds.vcloud.domain.Catalog> from) {
-                        return transformValues(
-                                 from,
-                                 new Function<org.jclouds.vcloud.domain.Catalog, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>() {
+                  @Override
+                  public Map<String, Map<String, ? extends CatalogItem>> apply(
+                        Map<String, ? extends org.jclouds.vcloud.domain.Catalog> from) {
+                     return transformValues(
+                           from,
+                           new Function<org.jclouds.vcloud.domain.Catalog, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>() {
 
-                                    @Override
-                                    public Map<String, ? extends CatalogItem> apply(
-                                             org.jclouds.vcloud.domain.Catalog from) {
-                                       return uniqueIndex(allCatalogItemsInCatalog.apply(from), name);
-                                    }
-                                 });
+                              @Override
+                              public Map<String, ? extends CatalogItem> apply(org.jclouds.vcloud.domain.Catalog from) {
+                                 return uniqueIndex(allCatalogItemsInCatalog.apply(from), name);
+                              }
+                           });
 
-                     }
-                  });
+                  }
+               });
       }
    }
 
    @Provides
    @Singleton
    protected Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>> provideOrgCatalogItemSupplierCache(
-            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrgCatalogItemSupplier supplier) {
+         @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrgCatalogItemSupplier supplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>>(
-               authException, seconds,
-               new Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>>() {
-                  @Override
-                  public Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>> get() {
-                     return supplier.get();
-                  }
-               });
+            authException, seconds,
+            new Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>>() {
+               @Override
+               public Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>> get() {
+                  return supplier.get();
+               }
+            });
    }
 
    @Provides

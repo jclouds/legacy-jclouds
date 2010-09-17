@@ -33,23 +33,30 @@ public class ErrorHandlerTest extends BaseHandlerTest {
    public static final String errorFromAmazonIfYouDontRemoveTransferEncodingHeader = "<Error><Code>NotImplemented</Code><Message>A header you provided implies functionality that is not implemented</Message><Header>Transfer-Encoding</Header><RequestId>7C59925D75D15561</RequestId><HostId>fbskVU51OZJg2yZS/wNIxoE2PmCf0ZqFd0iH6Vrzw0uKG3KmokswBytL/Bfp/GWb</HostId></Error>";
 
    ParseSax<AWSError> createParser() {
-      ParseSax<AWSError> parser = (ParseSax<AWSError>) factory.create(injector
-               .getInstance(ErrorHandler.class));
+      ParseSax<AWSError> parser = (ParseSax<AWSError>) factory.create(injector.getInstance(ErrorHandler.class));
       return parser;
    }
 
    @Test
    public void testErrorFromAmazonIfYouDontRemoveTransferEncodingHeader() throws HttpException {
       ParseSax<AWSError> parser = createParser();
-      AWSError error = parser.parse(Utils
-               .toInputStream(errorFromAmazonIfYouDontRemoveTransferEncodingHeader));
+      AWSError error = parser.parse(Utils.toInputStream(errorFromAmazonIfYouDontRemoveTransferEncodingHeader));
       assertEquals(error.getCode(), "NotImplemented");
-      assertEquals(error.getMessage(),
-               "A header you provided implies functionality that is not implemented");
+      assertEquals(error.getMessage(), "A header you provided implies functionality that is not implemented");
       assertEquals(error.getDetails().get("Header"), "Transfer-Encoding");
-      assertEquals(error.getRequestId(), "7C59925D75D15561");
-      assertEquals(error.getDetails().get("HostId"),
-               "fbskVU51OZJg2yZS/wNIxoE2PmCf0ZqFd0iH6Vrzw0uKG3KmokswBytL/Bfp/GWb");
+      assertEquals(error.getDetails().get("HostId"), "fbskVU51OZJg2yZS/wNIxoE2PmCf0ZqFd0iH6Vrzw0uKG3KmokswBytL/Bfp/GWb");
+   }
+
+   @Test
+   public void testErrorFromEucalyptusWhenGroupAlreadyExists() throws HttpException {
+      ParseSax<AWSError> parser = createParser();
+      AWSError error = parser
+               .parse(Utils
+                        .toInputStream("<?xml version=\"1.0\"?><Response><Errors><Error><Code>Groups</Code><Message>\nError adding network group: group named jclouds#eucrun#Eucalyptus already exists\nError adding network group: group named jclouds#eucrun#Eucalyptus already exists</Message></Error></Errors><RequestID>e0133975-3bc5-456d-9753-1d61b27e07e9</RequestID></Response>"));
+      assertEquals(error.getCode(), "Groups");
+      assertEquals(
+               error.getMessage(),
+               "Error adding network group: group named jclouds#eucrun#Eucalyptus already exists\nError adding network group: group named jclouds#eucrun#Eucalyptus already exists");
    }
 
    public static final String badRequestWhenSourceIsDestBucketOnCopy400 = "<Error><Code>InvalidRequest</Code><Message>The Source and Destination may not be the same when the MetadataDirective is Copy.</Message><RequestId>54C77CAF4D42474B</RequestId><HostId>SJecknEUUUx88/65VAKbCdKSOCkpuVTeu7ZG9in9x9NTNglGnoxdbALCfS4k/DUZ</HostId></Error>";

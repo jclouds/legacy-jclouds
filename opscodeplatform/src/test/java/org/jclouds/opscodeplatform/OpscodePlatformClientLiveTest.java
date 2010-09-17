@@ -63,30 +63,35 @@ public class OpscodePlatformClientLiveTest extends BaseChefClientLiveTest {
    private OpscodePlatformContext adminConnection;
 
    private String validator;
+   private String adminKey;
+   private String validatorKey;
 
    @Override
    @BeforeClass(groups = { "live" })
    public void setupClient() throws IOException {
       validator = checkNotNull(System.getProperty("jclouds.test.validator"), "jclouds.test.validator");
       orgname = validator.substring(0, validator.lastIndexOf('-'));
-      String validatorKey = System.getProperty("jclouds.test.validator.key");
-      if (validatorKey == null || validatorKey.equals(""))
-         validatorKey = System.getProperty("user.home") + "/.chef/" + orgname + "-validator.pem";
+      String validatorKeyFile = System.getProperty("jclouds.test.validator.key");
+      if (validatorKeyFile == null || validatorKeyFile.equals(""))
+         validatorKeyFile = System.getProperty("user.home") + "/.chef/" + orgname + "-validator.pem";
       user = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
       String keyfile = System.getProperty("jclouds.test.credential");
       if (keyfile == null || keyfile.equals(""))
          keyfile = System.getProperty("user.home") + "/.chef/" + user + ".pem";
 
-      validatorConnection = createConnection(validator, Files.toString(new File(validatorKey), Charsets.UTF_8));
-      adminConnection = createConnection(user, Files.toString(new File(keyfile), Charsets.UTF_8));
+      validatorKey = Files.toString(new File(validatorKeyFile), Charsets.UTF_8);
+      adminKey = Files.toString(new File(keyfile), Charsets.UTF_8);
+
+      validatorConnection = createConnection(validator, validatorKey);
+      adminConnection = createConnection(user, adminKey);
       json = Guice.createInjector(new GsonModule(), new ChefParserModule()).getInstance(Json.class);
    }
 
    private OpscodePlatformContext createConnection(String identity, String key) throws IOException {
       Properties props = new Properties();
       return (OpscodePlatformContext) new RestContextFactory()
-            .<OpscodePlatformClient, OpscodePlatformAsyncClient> createContext("opscodeplatform", identity, key,
-                  ImmutableSet.<Module> of(new Log4JLoggingModule()), props);
+               .<OpscodePlatformClient, OpscodePlatformAsyncClient> createContext("opscodeplatform", identity, key,
+                        ImmutableSet.<Module> of(new Log4JLoggingModule()), props);
    }
 
    @Override
@@ -96,17 +101,24 @@ public class OpscodePlatformClientLiveTest extends BaseChefClientLiveTest {
 
    @Override
    protected ChefClient getAdminConnection() {
-      return adminConnection.getApi().getChefClientForOrganization(orgname);
+      return createChefClient(user, adminKey);
+   }
+
+   private ChefClient createChefClient(String user, String adminKey) {
+      Properties props = new Properties();
+      props.setProperty("chef.endpoint", "https://api.opscode.com/organizations/" + orgname);
+      return (ChefClient) new RestContextFactory().createContext("chef", user, adminKey,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), props).getApi();
    }
 
    @Override
    protected ChefClient getValidatorConnection() {
-      return validatorConnection.getApi().getChefClientForOrganization(orgname);
+      return createChefClient(validator, validatorKey);
    }
 
    @Override
    protected ChefClient getClientConnection() {
-      return clientConnection.getApi().getChefClientForOrganization(orgname);
+      return createChefClient(PREFIX, clientKey);
    }
 
    @Override
@@ -142,8 +154,7 @@ public class OpscodePlatformClientLiveTest extends BaseChefClientLiveTest {
    }
 
    /**
-    * this test only works when you have a super user not yet supported in the
-    * official api
+    * this test only works when you have a super user not yet supported in the official api
     */
    @Test(enabled = false, expectedExceptions = AuthorizationException.class)
    public void testCreateOrganization() throws Exception {

@@ -24,12 +24,16 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.jclouds.concurrent.Futures;
 import org.jclouds.concurrent.MoreExecutors;
@@ -64,6 +68,14 @@ import com.google.inject.Module;
 @Test(threadPoolSize = 10, groups = "integration", sequential = true)
 public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpCommandExecutorServiceIntegrationTest {
    Logger logger = Logger.CONSOLE;
+
+   protected void setupAndStartSSLServer(final int testPort) throws Exception {
+   }
+
+   protected boolean redirectEveryTwentyRequests(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+      return false;
+   }
 
    @Test(enabled = false)
    public void testPerformanceVsNothing() {
@@ -231,8 +243,9 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
       super.testGetStringSynch(path);
    }
 
+   // local env does not support snakeoil certs
    @Override
-   @Test(enabled = true, invocationCount = 5, timeOut = 3000)
+   @Test(enabled = true, expectedExceptions = UndeclaredThrowableException.class)
    public void testGetStringRedirect() throws MalformedURLException, ExecutionException, InterruptedException,
             TimeoutException {
       setupApiProxy();
@@ -278,7 +291,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    }
 
    @Override
-   @Test(enabled = true, invocationCount = 5, timeOut = 3000)
+   @Test(enabled = true, expectedExceptions = UndeclaredThrowableException.class)
    public void testPutRedirect() throws MalformedURLException, ExecutionException, InterruptedException,
             TimeoutException {
       setupApiProxy();

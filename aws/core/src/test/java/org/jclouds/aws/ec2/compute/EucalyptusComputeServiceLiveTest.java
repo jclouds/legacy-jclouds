@@ -19,6 +19,7 @@
 
 package org.jclouds.aws.ec2.compute;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.domain.OsFamily;
@@ -45,8 +46,7 @@ public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest 
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
-      // 64 bit implied 4 ecus
-      assertEquals(defaultTemplate.getSize().getCores(), 4.0d);
+      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
 }

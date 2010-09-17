@@ -22,6 +22,8 @@ package org.jclouds.chef.domain;
 import java.util.List;
 import java.util.Set;
 
+import org.jclouds.domain.JsonBall;
+
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gson.annotations.SerializedName;
@@ -37,14 +39,14 @@ public class Attribute {
    private boolean calculated;
    private List<String> choice = Lists.newArrayList();
    @SerializedName("default")
-   private String defaultValue;
+   private JsonBall defaultValue;
    private String type;
    private List<String> recipes = Lists.newArrayList();
    @SerializedName("display_name")
    private String displayName;
    private String description;
 
-   public Attribute(String required, boolean calculated, Set<String> choice, String defaultValue, String type,
+   public Attribute(String required, boolean calculated, Set<String> choice, JsonBall defaultValue, String type,
          List<String> recipes, String displayName, String description) {
       this.required = required;
       this.calculated = calculated;
@@ -71,7 +73,7 @@ public class Attribute {
       return choice;
    }
 
-   public String getDefaultValue() {
+   public JsonBall getDefaultValue() {
       return defaultValue;
    }
 

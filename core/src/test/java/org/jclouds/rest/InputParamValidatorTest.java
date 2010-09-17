@@ -26,6 +26,7 @@ import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.concurrent.Timeout;
@@ -52,12 +53,13 @@ public class InputParamValidatorTest {
    @SkipEncoding('/')
    class InputParamValidatorForm {
       @POST
+      @Path("")
       @ParamValidators( { AllLowerCaseValidator.class })
-      public void allParamsValidated(@PathParam("param1") String param1,
-               @PathParam("param2") String param2) {
+      public void allParamsValidated(@PathParam("param1") String param1, @PathParam("param2") String param2) {
       }
 
       @POST
+      @Path("")
       public void oneParamValidated(@PathParam("param1") String param1,
                @ParamValidators( { AllLowerCaseValidator.class }) @PathParam("param2") String param2) {
       }
@@ -72,10 +74,10 @@ public class InputParamValidatorTest {
     */
    @Test
    public void testInputParamsValidation() throws Exception {
-      Method allParamsValidatedMethod = InputParamValidatorForm.class.getMethod(
-               "allParamsValidated", String.class, String.class);
-      Method oneParamValidatedMethod = InputParamValidatorForm.class.getMethod("oneParamValidated",
-               String.class, String.class);
+      Method allParamsValidatedMethod = InputParamValidatorForm.class.getMethod("allParamsValidated", String.class,
+               String.class);
+      Method oneParamValidatedMethod = InputParamValidatorForm.class.getMethod("oneParamValidated", String.class,
+               String.class);
       RestAnnotationProcessor<InputParamValidatorForm> restAnnotationProcessor = factory(InputParamValidatorForm.class);
       restAnnotationProcessor.createRequest(allParamsValidatedMethod, "blah", "blah");
       restAnnotationProcessor.createRequest(oneParamValidatedMethod, "blah", "blah");
@@ -134,8 +136,8 @@ public class InputParamValidatorTest {
 
    @SuppressWarnings("unchecked")
    private <T> RestAnnotationProcessor<T> factory(Class<T> clazz) {
-      return ((RestAnnotationProcessor<T>) injector.getInstance(Key.get(TypeLiteral.get(Types
-               .newParameterizedType(RestAnnotationProcessor.class, clazz)))));
+      return ((RestAnnotationProcessor<T>) injector.getInstance(Key.get(TypeLiteral.get(Types.newParameterizedType(
+               RestAnnotationProcessor.class, clazz)))));
    }
 
    Injector injector;
@@ -143,8 +145,8 @@ public class InputParamValidatorTest {
    @BeforeClass
    void setupFactory() {
 
-      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(
-               "test", "http://localhost:9999", "1", "userFoo", null, IntegrationTestClient.class,
+      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
+               "http://localhost:9999", "1", "userFoo", null, IntegrationTestClient.class,
                IntegrationTestAsyncClient.class);
 
       injector = createContextBuilder(contextSpec).buildInjector();

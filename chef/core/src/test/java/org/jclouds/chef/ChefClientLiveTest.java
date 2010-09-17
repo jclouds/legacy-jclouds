@@ -20,12 +20,14 @@
 package org.jclouds.chef;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
 import org.jclouds.chef.config.ChefParserModule;
+import org.jclouds.chef.domain.CookbookVersion;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -76,7 +78,7 @@ public class ChefClientLiveTest extends BaseChefClientLiveTest {
       Properties props = new Properties();
       props.setProperty("chef.endpoint", endpoint);
       return new ChefContextFactory().createContext(identity, key, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-            props);
+               props);
    }
 
    @Override
@@ -104,6 +106,12 @@ public class ChefClientLiveTest extends BaseChefClientLiveTest {
       if (clientConnection != null)
          clientConnection.close();
       clientConnection = createConnection(PREFIX, clientKey);
+   }
+
+   @Test
+   public void testListCookbookVersionsWithChefService() throws Exception {
+      Iterable<? extends CookbookVersion> cookbooks = adminConnection.getChefService().listCookbookVersions();
+      assertNotNull(cookbooks);
    }
 
    @Override

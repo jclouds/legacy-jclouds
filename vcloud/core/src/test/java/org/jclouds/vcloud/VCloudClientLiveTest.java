@@ -48,6 +48,17 @@ public class VCloudClientLiveTest extends CommonVCloudClientLiveTest<VCloudClien
    }
 
    @Test
+   public void testListOrgs() throws Exception {
+      for (ReferenceType response : connection.listOrgs().values()) {
+         assertNotNull(response);
+         assertNotNull(response.getName());
+         assertNotNull(response.getHref());
+         assertEquals(connection.getOrg(response.getHref()).getName(), response.getName());
+         assertEquals(connection.findOrgNamed(response.getName()).getName(), response.getName());
+      }
+   }
+
+   @Test
    public void testGetVAppTemplate() throws Exception {
       Org org = connection.findOrgNamed(null);
       for (ReferenceType cat : org.getCatalogs().values()) {
@@ -97,6 +108,27 @@ public class VCloudClientLiveTest extends CommonVCloudClientLiveTest<VCloudClien
                try {
                   VApp app = connection.getVApp(item.getHref());
                   assertNotNull(app);
+               } catch (RuntimeException e) {
+
+               }
+            }
+         }
+      }
+   }
+
+   @Test
+   public void testGetThumbnailOfVm() throws Exception {
+      Org org = connection.findOrgNamed(null);
+      for (ReferenceType vdc : org.getVDCs().values()) {
+         VDC response = connection.getVDC(vdc.getHref());
+         for (ReferenceType item : response.getResourceEntities().values()) {
+            if (item.getType().equals(VCloudMediaType.VAPP_XML)) {
+               try {
+                  VApp app = connection.getVApp(item.getHref());
+                  assertNotNull(app);
+                  for (Vm vm : app.getChildren()) {
+                     assert connection.getThumbnailOfVm(vm.getHref()) != null;
+                  }
                } catch (RuntimeException e) {
 
                }

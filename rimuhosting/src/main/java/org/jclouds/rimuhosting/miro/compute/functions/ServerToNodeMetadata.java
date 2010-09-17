@@ -61,8 +61,6 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
    private final Function<Server, Iterable<String>> getPublicAddresses;
    private final Map<RunningState, NodeState> runningStateToNodeState;
    private final Supplier<Set<? extends Image>> images;
-   @SuppressWarnings("unused")
-   private final Supplier<Set<? extends Location>> locations;
 
    private static class FindImageForServer implements Predicate<Image> {
       private final Location location;
@@ -83,12 +81,10 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Inject
    ServerToNodeMetadata(Function<Server, Iterable<String>> getPublicAddresses,
-            Map<RunningState, NodeState> runningStateToNodeState, Supplier<Set<? extends Image>> images,
-            Supplier<Set<? extends Location>> locations) {
+            Map<RunningState, NodeState> runningStateToNodeState, Supplier<Set<? extends Image>> images) {
       this.getPublicAddresses = checkNotNull(getPublicAddresses, "serverStateToNodeState");
       this.runningStateToNodeState = checkNotNull(runningStateToNodeState, "serverStateToNodeState");
       this.images = checkNotNull(images, "images");
-      this.locations = checkNotNull(locations, "locations");
    }
 
    @Override
@@ -105,11 +101,11 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       } catch (NoSuchElementException e) {
          logger.warn("could not find a matching image for server %s in location %s", from, location);
       }
+
       NodeState state = runningStateToNodeState.get(from.getState());
       return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", location, null, ImmutableMap
-               .<String, String> of(), tag, from.getImageId(), image != null ? image.getOperatingSystem() : null,
-               state, getPublicAddresses.apply(from), ImmutableList.<String> of(), ImmutableMap.<String, String> of(),
-               creds);
+               .<String, String> of(), tag, null, from.getImageId(), image != null ? image.getOperatingSystem() : null,
+               state, getPublicAddresses.apply(from), ImmutableList.<String> of(), creds);
 
    }
 }

@@ -67,3 +67,6 @@
   (is (create-databag-item "databag" {:id "databag-item2" :value "databag-value2"}))
   (is (= {:id "databag-item2" :value "databag-value2"} (databag-item "databag" "databag-item2"))))
 
+(deftest run-list-test
+  (update-run-list #{"recipe[foo]"} "tag")
+  (is (= ["recipe[foo]"] (run-list "tag"))))

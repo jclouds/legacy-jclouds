@@ -19,10 +19,15 @@
 
 package org.jclouds.compute.util;
 
-import org.jclouds.util.Utils;
+import static org.testng.Assert.assertEquals;
+
+import java.net.URI;
+
+import org.jclouds.http.HttpRequest;
+import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableMultimap;
 
 /**
  * Test the compute utils.
@@ -34,14 +39,26 @@ import com.google.common.collect.Iterables;
 public class ComputeServiceUtilsTest {
 
    @Test
-   public void testSupportedComputeServiceProviders() {
-      Iterable<String> providers = ComputeServiceUtils.getSupportedProviders();
-      assert Iterables.contains(providers, "stub") : providers;
+   public void testExecHttpResponse() {
+      HttpRequest request = new HttpRequest("GET", URI.create("https://adriancolehappy.s3.amazonaws.com/java/install"),
+               ImmutableMultimap.of("Host", "adriancolehappy.s3.amazonaws.com", "Date",
+                        "Sun, 12 Sep 2010 08:25:19 GMT", "Authorization", "AWS 0ASHDJAS82:JASHFDA="));
+
+      assertEquals(
+               ComputeServiceUtils.execHttpResponse(request).render(OsFamily.UNIX),
+               "curl -X GET -s --retry 20 -H \"Host: adriancolehappy.s3.amazonaws.com\" -H \"Date: Sun, 12 Sep 2010 08:25:19 GMT\" -H \"Authorization: AWS 0ASHDJAS82:JASHFDA=\" https://adriancolehappy.s3.amazonaws.com/java/install |(bash)\n");
+
    }
 
    @Test
-   public void testSupportedProviders() {
-      Iterable<String> providers = Utils.getSupportedProviders();
-      assert Iterables.contains(providers, "stub") : providers;
+   public void testTarxzpHttpResponse() {
+      HttpRequest request = new HttpRequest("GET", URI.create("https://adriancolehappy.s3.amazonaws.com/java/install"),
+               ImmutableMultimap.of("Host", "adriancolehappy.s3.amazonaws.com", "Date",
+                        "Sun, 12 Sep 2010 08:25:19 GMT", "Authorization", "AWS 0ASHDJAS82:JASHFDA="));
+
+      assertEquals(
+               ComputeServiceUtils.extractTargzIntoDirectory(request, "/stage/").render(OsFamily.UNIX),
+               "curl -X GET -s --retry 20 -H \"Host: adriancolehappy.s3.amazonaws.com\" -H \"Date: Sun, 12 Sep 2010 08:25:19 GMT\" -H \"Authorization: AWS 0ASHDJAS82:JASHFDA=\" https://adriancolehappy.s3.amazonaws.com/java/install |(mkdir -p /stage/ &&cd /stage/ &&tar -xpzf -)\n");
+
    }
 }

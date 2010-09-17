@@ -31,6 +31,8 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.security.interfaces.RSAPrivateCrtKey;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.RSAPrivateKeySpec;
@@ -43,12 +45,16 @@ import net.oauth.signature.pem.PEMReader;
 import net.oauth.signature.pem.PKCS1EncodedKeySpec;
 import net.oauth.signature.pem.PKCS1EncodedPublicKeySpec;
 
+import org.bouncycastle.asn1.ASN1OutputStream;
+import org.bouncycastle.asn1.pkcs.RSAPrivateKeyStructure;
 import org.jclouds.crypto.Pems.PemProcessor.ResultParser;
 import org.jclouds.io.InputSuppliers;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.io.ByteStreams;
 import com.google.common.io.InputSupplier;
 
 /**
@@ -89,7 +95,7 @@ public class Pems {
                return parsers.get(reader.getBeginMarker()).parseResult(bytes);
             } else {
                throw new IOException(String.format("Invalid PEM file: no parsers for marker %s in %s", reader
-                     .getBeginMarker(), parsers.keySet()));
+                        .getBeginMarker(), parsers.keySet()));
             }
          } catch (IOException e) {
             throw new RuntimeException(e);
@@ -98,8 +104,7 @@ public class Pems {
    }
 
    /**
-    * Returns the object of generic type {@code T} that is pem encoded in the
-    * supplier.
+    * Returns the object of generic type {@code T} that is pem encoded in the supplier.
     * 
     * @param supplier
     *           the input stream factory
@@ -107,13 +112,12 @@ public class Pems {
     *           header that begins the PEM block
     * @param processor
     *           how to parser the object from a byte array
-    * @return the object of generic type {@code T} which was PEM encoded in the
-    *         stream
+    * @return the object of generic type {@code T} which was PEM encoded in the stream
     * @throws IOException
     *            if an I/O error occurs
     */
    public static <T> T fromPem(InputSupplier<? extends InputStream> supplier, PemProcessor<T> processor)
-         throws IOException {
+            throws IOException {
       try {
          return com.google.common.io.ByteStreams.readBytes(supplier, processor);
       } catch (RuntimeException e) {
@@ -136,24 +140,24 @@ public class Pems {
     */
    public static KeySpec privateKeySpec(InputSupplier<? extends InputStream> supplier) throws IOException {
       return fromPem(supplier, new PemProcessor<KeySpec>(ImmutableMap.<String, ResultParser<KeySpec>> of(
-            PRIVATE_PKCS1_MARKER, new ResultParser<KeySpec>() {
+               PRIVATE_PKCS1_MARKER, new ResultParser<KeySpec>() {
 
-               public KeySpec parseResult(byte[] bytes) throws IOException {
-                  return (new PKCS1EncodedKeySpec(bytes)).getKeySpec();
-               }
+                  public KeySpec parseResult(byte[] bytes) throws IOException {
+                     return (new PKCS1EncodedKeySpec(bytes)).getKeySpec();
+                  }
 
-            }, PRIVATE_PKCS8_MARKER, new ResultParser<KeySpec>() {
+               }, PRIVATE_PKCS8_MARKER, new ResultParser<KeySpec>() {
 
-               public KeySpec parseResult(byte[] bytes) throws IOException {
-                  return new PKCS8EncodedKeySpec(bytes);
-               }
+                  public KeySpec parseResult(byte[] bytes) throws IOException {
+                     return new PKCS8EncodedKeySpec(bytes);
+                  }
 
-            })));
+               })));
    }
 
    /**
-    * Executes {@link Pems#privateKeySpec(InputSupplier)} on the string which
-    * contains an encoded private key in PEM format.
+    * Executes {@link Pems#privateKeySpec(InputSupplier)} on the string which contains an encoded
+    * private key in PEM format.
     * 
     * @param pem
     *           private key in pem encoded format.
@@ -175,24 +179,24 @@ public class Pems {
     */
    public static KeySpec publicKeySpec(InputSupplier<? extends InputStream> supplier) throws IOException {
       return fromPem(supplier, new PemProcessor<KeySpec>(ImmutableMap.<String, ResultParser<KeySpec>> of(
-            PUBLIC_PKCS1_MARKER, new ResultParser<KeySpec>() {
+               PUBLIC_PKCS1_MARKER, new ResultParser<KeySpec>() {
 
-               public KeySpec parseResult(byte[] bytes) throws IOException {
-                  return (new PKCS1EncodedPublicKeySpec(bytes)).getKeySpec();
-               }
+                  public KeySpec parseResult(byte[] bytes) throws IOException {
+                     return (new PKCS1EncodedPublicKeySpec(bytes)).getKeySpec();
+                  }
 
-            }, PUBLIC_X509_MARKER, new ResultParser<KeySpec>() {
+               }, PUBLIC_X509_MARKER, new ResultParser<KeySpec>() {
 
-               public X509EncodedKeySpec parseResult(byte[] bytes) throws IOException {
-                  return new X509EncodedKeySpec(bytes);
-               }
+                  public X509EncodedKeySpec parseResult(byte[] bytes) throws IOException {
+                     return new X509EncodedKeySpec(bytes);
+                  }
 
-            })));
+               })));
    }
 
    /**
-    * Executes {@link Pems#publicKeySpec(InputSupplier)} on the string which
-    * contains an encoded public key in PEM format.
+    * Executes {@link Pems#publicKeySpec(InputSupplier)} on the string which contains an encoded
+    * public key in PEM format.
     * 
     * @param pem
     *           public key in pem encoded format.
@@ -203,8 +207,7 @@ public class Pems {
    }
 
    /**
-    * Returns the {@link X509EncodedKeySpec} that is pem encoded in the
-    * supplier.
+    * Returns the {@link X509EncodedKeySpec} that is pem encoded in the supplier.
     * 
     * @param supplier
     *           the input stream factory
@@ -217,24 +220,24 @@ public class Pems {
     * @throws CertificateException
     */
    public static X509Certificate x509Certificate(InputSupplier<? extends InputStream> supplier,
-         @Nullable CertificateFactory certFactory) throws IOException, CertificateException {
+            @Nullable CertificateFactory certFactory) throws IOException, CertificateException {
       final CertificateFactory finalCertFactory = certFactory != null ? certFactory : CertificateFactory
-            .getInstance("X.509");
+               .getInstance("X.509");
       try {
          return fromPem(supplier, new PemProcessor<X509Certificate>(ImmutableMap
-               .<String, ResultParser<X509Certificate>> of(CERTIFICATE_X509_MARKER,
-                     new ResultParser<X509Certificate>() {
+                  .<String, ResultParser<X509Certificate>> of(CERTIFICATE_X509_MARKER,
+                           new ResultParser<X509Certificate>() {
 
-                        public X509Certificate parseResult(byte[] bytes) throws IOException {
-                           try {
-                              return (X509Certificate) finalCertFactory.generateCertificate(new ByteArrayInputStream(
-                                    bytes));
-                           } catch (CertificateException e) {
-                              throw new RuntimeException(e);
-                           }
-                        }
+                              public X509Certificate parseResult(byte[] bytes) throws IOException {
+                                 try {
+                                    return (X509Certificate) finalCertFactory
+                                             .generateCertificate(new ByteArrayInputStream(bytes));
+                                 } catch (CertificateException e) {
+                                    throw new RuntimeException(e);
+                                 }
+                              }
 
-                     })));
+                           })));
       } catch (RuntimeException e) {
          if (e.getCause() != null && e.getCause() instanceof CertificateException) {
             throw (CertificateException) e.getCause();
@@ -244,8 +247,8 @@ public class Pems {
    }
 
    /**
-    * Executes {@link Pems#x509Certificate(InputSupplier, CertificateFactory)}
-    * on the string which contains an X.509 certificate in PEM format.
+    * Executes {@link Pems#x509Certificate(InputSupplier, CertificateFactory)} on the string which
+    * contains an X.509 certificate in PEM format.
     * 
     * @param pem
     *           certificate in pem encoded format.
@@ -264,10 +267,9 @@ public class Pems {
     * @throws IOException
     * @throws CertificateEncodingException
     */
-   public static String pem(X509Certificate cert) throws IOException, CertificateEncodingException {
-      return new StringBuilder("-----BEGIN CERTIFICATE-----\n").append(
-            CryptoStreams.base64Encode(ByteStreams.newInputStreamSupplier(cert.getEncoded()))).append(
-            "\n-----END CERTIFICATE-----\n").toString();
+   public static String pem(X509Certificate cert) throws CertificateEncodingException {
+      String marker = CERTIFICATE_X509_MARKER;
+      return pem(cert.getEncoded(), marker);
    }
 
    /**
@@ -279,10 +281,9 @@ public class Pems {
     * @throws IOException
     * @throws CertificateEncodingException
     */
-   public static String pem(PublicKey key) throws IOException {
-      return new StringBuilder("-----BEGIN PUBLIC KEY-----\n").append(
-            CryptoStreams.base64Encode(ByteStreams.newInputStreamSupplier(key.getEncoded()))).append(
-            "\n-----END PUBLIC KEY-----\n").toString();
+   public static String pem(PublicKey key) {
+      String marker = key instanceof RSAPublicKey ? PUBLIC_PKCS1_MARKER : PUBLIC_X509_MARKER;
+      return pem(key.getEncoded(), marker);
    }
 
    /**
@@ -294,10 +295,35 @@ public class Pems {
     * @throws IOException
     * @throws CertificateEncodingException
     */
-   public static String pem(PrivateKey key) throws IOException {
-      return new StringBuilder("-----BEGIN PRIVATE KEY-----\n").append(
-            CryptoStreams.base64Encode(ByteStreams.newInputStreamSupplier(key.getEncoded()))).append(
-            "\n-----END PRIVATE KEY-----\n").toString();
+   public static String pem(PrivateKey key) {
+      String marker = key instanceof RSAPrivateCrtKey ? PRIVATE_PKCS1_MARKER : PRIVATE_PKCS8_MARKER;
+      return pem(key instanceof RSAPrivateCrtKey ? getEncoded(RSAPrivateCrtKey.class.cast(key)) : key.getEncoded(),
+               marker);
+   }
+
+   // TODO find a way to do this without using bouncycastle
+   static byte[] getEncoded(RSAPrivateCrtKey key) {
+      RSAPrivateKeyStructure keyStruct = new RSAPrivateKeyStructure(key.getModulus(), key.getPublicExponent(), key
+               .getPrivateExponent(), key.getPrimeP(), key.getPrimeQ(), key.getPrimeExponentP(), key
+               .getPrimeExponentQ(), key.getCrtCoefficient());
+
+      ByteArrayOutputStream bOut = new ByteArrayOutputStream();
+      ASN1OutputStream aOut = new ASN1OutputStream(bOut);
+
+      try {
+         aOut.writeObject(keyStruct);
+         aOut.close();
+      } catch (IOException e) {
+         Throwables.propagate(e);
+      }
+
+      return bOut.toByteArray();
+   }
+
+   private static String pem(byte[] key, String marker) {
+      return new StringBuilder(marker + "\n").append(
+               Joiner.on('\n').join(Splitter.fixedLength(64).split(CryptoStreams.base64(key)))).append(
+               "\n" + marker.replace("BEGIN", "END") + "\n").toString().trim();
    }
 
 }

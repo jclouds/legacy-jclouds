@@ -19,18 +19,23 @@
 
 package org.jclouds.vcloud;
 
+import java.io.InputStream;
 import java.net.URI;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.vcloud.domain.GuestCustomizationSection;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VApp;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.ovf.OvfEnvelope;
+import org.jclouds.vcloud.options.CaptureVAppOptions;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
@@ -43,14 +48,54 @@ import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface VCloudClient extends CommonVCloudClient {
+   
+   /**
+    * Get a Screen Thumbnail for a Virtual Machine
+    * 
+    * @param vm to snapshot
+    */
+   InputStream getThumbnailOfVm(URI vm);
+   
+   /**
+    * The response to a login request includes a list of the organizations to which the
+    * authenticated user has access.
+    * 
+    * @return organizations indexed by name
+    */
+   Map<String, ReferenceType> listOrgs();
 
    VApp instantiateVAppTemplateInVDC(URI vDC, URI template, String appName, InstantiateVAppTemplateOptions... options);
 
    Task cloneVAppInVDC(URI vDC, URI toClone, String newName, CloneVAppOptions... options);
 
+   
+   /**
+    * The captureVApp request creates a vApp template from an instantiated vApp. 
+    * <h4>Note</h4>
+    * Before it can be captured, a vApp must be undeployed 
+    * 
+    * @param vDC
+    * @param toClone
+    * @param templateName
+    * @param options
+    * @return template in progress
+    */
+   VAppTemplate captureVAppInVDC(URI vDC, URI toClone, String templateName, CaptureVAppOptions... options);
+
    VAppTemplate getVAppTemplate(URI vAppTemplate);
 
    OvfEnvelope getOvfEnvelopeForVAppTemplate(URI vAppTemplate);
+
+   /**
+    * Modify the Guest Customization Section of a Virtual Machine
+    * 
+    * @param vm
+    *           uri to modify
+    * @param updated
+    *           guestCustomizationSection
+    * @return task in progress
+    */
+   Task updateGuestCustomizationOfVm(URI vm, GuestCustomizationSection guestCustomizationSection);
 
    /**
     * returns the vapp template corresponding to a catalog item in the catalog associated with the
@@ -169,7 +214,7 @@ public interface VCloudClient extends CommonVCloudClient {
     * A suspend request to a virtual machine URL suspends the specified virtual machine.
     */
    Task suspendVAppOrVm(URI vAppOrVmId);
-   
+
    Task deleteVApp(URI vAppId);
 
 }

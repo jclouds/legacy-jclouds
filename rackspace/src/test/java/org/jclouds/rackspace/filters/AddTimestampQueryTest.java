@@ -27,11 +27,11 @@ import java.util.Date;
 import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
 
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
+import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * 

@@ -33,9 +33,8 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@SuppressWarnings("unchecked")
-public class StubComputeServiceContextBuilder extends
-         ComputeServiceContextBuilder<ConcurrentMap, ConcurrentMap> {
+@SuppressWarnings("rawtypes")
+public class StubComputeServiceContextBuilder extends ComputeServiceContextBuilder<ConcurrentMap, ConcurrentMap> {
 
    public StubComputeServiceContextBuilder(Properties props) {
       super(ConcurrentMap.class, ConcurrentMap.class, props);

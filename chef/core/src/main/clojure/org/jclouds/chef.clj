@@ -129,7 +129,55 @@ unit testing"
   "Retrieve the existing nodes in your chef server including all details."
   ([] (nodes *chef*))
   ([#^ChefService chef]
-    (seq (.listNodesDetails chef))))
+    (seq (.listNodes chef))))
+
+(defn clients
+  "Retrieve the names of the existing clients in your chef server."
+  ([] (clients *chef*))
+  ([#^ChefService chef]
+    (seq (.listClients (as-chef-api chef)))))
+
+(defn clients-with-details
+  "Retrieve the existing clients in your chef server including all details."
+  ([] (clients *chef*))
+  ([#^ChefService chef]
+    (seq (.listClients chef))))
+
+(defn cookbooks
+  "Retrieve the names of the existing cookbooks in your chef server."
+  ([] (cookbooks *chef*))
+  ([#^ChefService chef]
+    (seq (.listCookbooks (as-chef-api chef)))))
+
+(defn cookbook-versions
+  "Retrieve the versions of an existing cookbook in your chef server."
+  ([name] (cookbook-versions *chef*))
+  ([#^ChefService name chef]
+    (seq (.getVersionsOfCookbook (as-chef-api chef) name))))
+
+(defn cookbook-versions-with-details
+  "Retrieve the existing cookbook versions in your chef server including all details."
+  ([] (cookbook-versions *chef*))
+  ([#^ChefService chef]
+    (seq (.listCookbookVersions chef))))
+
+(defn update-run-list
+  "Updates the run-list associated with a tag"
+  ([run-list tag] (update-run-list run-list tag *chef*))
+  ([run-list tag #^ChefService chef]
+    (.updateRunListForTag chef run-list tag)))
+
+(defn run-list
+  "Retrieves the run-list associated with a tag"
+  ([tag] (run-list tag *chef*))
+  ([tag #^ChefService chef]
+    (seq (.getRunListForTag chef tag))))
+
+(defn create-bootstrap
+  "creates a client and bootstrap script associated with a tag"
+  ([tag] (create-bootstrap tag *chef*))
+  ([tag #^ChefService chef]
+    (.createClientAndBootstrapScriptForTag chef tag)))
 
 (defn databags
   "Retrieve the names of the existing data bags in your chef server."

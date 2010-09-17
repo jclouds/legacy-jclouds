@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<DescribeInstancesResponse xmlns="http://ec2.amazonaws.com/doc/2009-11-30/">
+    <requestId>G7PDD1DNVLO7DZS6AFZH</requestId>
+    <reservationSet>
+        <item>
+            <instancesSet>
+                <item>
+                    <privateDnsName>10.128.207.5</privateDnsName>
+                    <amiLaunchIndex>0</amiLaunchIndex>
+                    <instanceType>m1.small</instanceType>
+                    <dnsName />
+                    <launchTime>2010-09-09T18:09:42Z</launchTime>
+                    <instanceId>i-9slweygo</instanceId>
+                    <imageId>ami-h30p5im0</imageId>
+                    <instanceState>
+                        <code>1</code>
+                        <name>shutdown</name>
+                    </instanceState>
+                    <keyName>nebulatanimislam</keyName>
+                    <publicDnsName>10.128.207.5</publicDnsName>
+                    <productCodesSet>
+                        <item>
+                            <productCode>None</productCode>
+                        </item>
+                    </productCodesSet>
+                </item>
+            </instancesSet>
+            <reservationId>r-opqeylmj</reservationId>
+            <groupSet>
+                <item>
+                    <groupId>default</groupId>
+                </item>
+            </groupSet>
+            <ownerId>tislam1</ownerId>
+        </item>
+    </reservationSet>
+</DescribeInstancesResponse>

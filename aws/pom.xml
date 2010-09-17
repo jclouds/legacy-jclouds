@@ -33,7 +33,6 @@
     <name>jclouds AWS project</name>
     <modules>
         <module>core</module>
-        <module>extensions</module>
         <module>demos</module>
     </modules>
     <properties>

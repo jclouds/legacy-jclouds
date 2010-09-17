@@ -26,14 +26,16 @@ import static com.google.common.base.Throwables.getRootCause;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.collect.Sets.filter;
-import static com.google.common.collect.Sets.newLinkedHashSet;
 import static com.google.common.collect.Sets.newTreeSet;
 import static org.jclouds.compute.options.RunScriptOptions.Builder.overrideCredentialsWith;
 import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
 import static org.jclouds.compute.predicates.NodePredicates.all;
 import static org.jclouds.compute.predicates.NodePredicates.runningWithTag;
 import static org.jclouds.compute.predicates.NodePredicates.withTag;
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.io.Payloads.newStringPayload;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -41,8 +43,10 @@ import static org.testng.Assert.assertNotNull;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -50,13 +54,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.Constants;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.Size;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
@@ -78,11 +83,11 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Files;
 import com.google.inject.Guice;
-import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
@@ -122,7 +127,6 @@ public abstract class BaseComputeServiceLiveTest {
    abstract public void setServiceDefaults();
 
    protected String provider;
-   protected SshClient.Factory sshFactory;
    protected String tag;
 
    protected RetryablePredicate<IPSocket> socketTester;
@@ -142,12 +146,12 @@ public abstract class BaseComputeServiceLiveTest {
       setupCredentials();
       setupKeyPairForTest();
       initializeContextAndClient();
+      buildSocketTester();
+   }
 
-      Injector injector = createSshClientInjector();
-      sshFactory = injector.getInstance(SshClient.Factory.class);
-      SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
+   protected void buildSocketTester() {
+      SocketOpen socketOpen = Guice.createInjector(getSshModule()).getInstance(SocketOpen.class);
       socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
-      injector.injectMembers(socketOpen); // add logger
    }
 
    protected void setupKeyPairForTest() throws FileNotFoundException, IOException {
@@ -173,15 +177,14 @@ public abstract class BaseComputeServiceLiveTest {
       credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
    }
 
-   protected Injector createSshClientInjector() {
-      return Guice.createInjector(getSshModule());
-   }
-
    private void initializeContextAndClient() throws IOException {
       if (context != null)
          context.close();
+      Properties props = new Properties();
+      props.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      props.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet.of(
-               new Log4JLoggingModule(), getSshModule()));
+               new Log4JLoggingModule(), getSshModule()), props);
       client = context.getComputeService();
    }
 
@@ -197,19 +200,37 @@ public abstract class BaseComputeServiceLiveTest {
    // wait up to 5 seconds for an auth exception
    @Test(enabled = true, expectedExceptions = AuthorizationException.class)
    public void testCorrectAuthException() throws Exception {
-      ComputeServiceContext context = null;
-      try {
-         context = new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA", ImmutableSet
-                  .<Module> of(new Log4JLoggingModule()));
-         context.getComputeService().listNodes();
-      } finally {
-         if (context != null)
-            context.close();
+      synchronized (ComputeServiceContext.class) {
+         ComputeServiceContext context = null;
+         // system properties override crendentials passed
+         // if in the form provider.identity, provider.credential
+         // we want this to fail, so we save off old state and reset those
+         // properties to garbage.
+         String oldIdentity = System.getProperty(provider + ".identity");
+         String oldCredential = System.getProperty(provider + ".credential");
+         try {
+            System.setProperty(provider + ".identity", "MOMMA");
+            System.setProperty(provider + ".credential", "MIA");
+            context = new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA", ImmutableSet
+                     .<Module> of(new Log4JLoggingModule()));
+            context.getComputeService().listNodes();
+         } catch (AuthorizationException e) {
+            throw e;
+         } catch (RuntimeException e) {
+            e.printStackTrace();
+            throw e;
+         } finally {
+            if (oldIdentity != null)
+               System.setProperty(provider + ".identity", oldIdentity);
+            if (oldCredential != null)
+               System.setProperty(provider + ".credential", oldCredential);
+            if (context != null)
+               context.close();
+         }
       }
-
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCorrectAuthException")
+   @Test(enabled = true)
    public void testImagesCache() throws Exception {
       client.listImages();
       long time = System.currentTimeMillis();
@@ -374,10 +395,18 @@ public abstract class BaseComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
    public void testGet() throws Exception {
-      Set<? extends NodeMetadata> nodes = client.listNodesDetailsMatching(all());
-      Set<? extends NodeMetadata> metadataSet = newLinkedHashSet(filter(nodes, and(withTag(tag), not(TERMINATED))));
+      Map<String, ? extends NodeMetadata> metadataMap = newLinkedHashMap(uniqueIndex(filter(client
+               .listNodesDetailsMatching(all()), and(withTag(tag), not(TERMINATED))),
+               new Function<NodeMetadata, String>() {
+
+                  @Override
+                  public String apply(NodeMetadata from) {
+                     return from.getId();
+                  }
+
+               }));
       for (NodeMetadata node : nodes) {
-         metadataSet.remove(node);
+         metadataMap.remove(node.getId());
          NodeMetadata metadata = client.getNodeMetadata(node.getId());
          assertEquals(metadata.getProviderId(), node.getProviderId());
          assertEquals(metadata.getTag(), node.getTag());
@@ -388,10 +417,10 @@ public abstract class BaseComputeServiceLiveTest {
          assertEquals(metadata.getPrivateAddresses(), node.getPrivateAddresses());
          assertEquals(metadata.getPublicAddresses(), node.getPublicAddresses());
       }
-      assertNodeZero(metadataSet);
+      assertNodeZero(metadataMap.values());
    }
 
-   protected void assertNodeZero(Set<? extends NodeMetadata> metadataSet) {
+   protected void assertNodeZero(Collection<? extends NodeMetadata> metadataSet) {
       assert metadataSet.size() == 0 : String.format("nodes left in set: [%s] which didn't match set: [%s]",
                metadataSet, nodes);
    }
@@ -506,22 +535,22 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    public void testListSizes() throws Exception {
-      for (Size size : client.listSizes()) {
-         assert size.getProviderId() != null;
-         assert size.getCores() > 0;
-         assert size.getDisk() > 0;
-         assert size.getRam() > 0;
-         assertEquals(size.getType(), ComputeType.SIZE);
+      for (Hardware hardware : client.listHardwareProfiles()) {
+         assert hardware.getProviderId() != null;
+         assert getCores(hardware) > 0;
+         assert hardware.getVolumes().size() >= 0;
+         assert hardware.getRam() > 0;
+         assertEquals(hardware.getType(), ComputeType.HARDWARE);
       }
    }
 
    @Test(enabled = true)
    public void testCompareSizes() throws Exception {
-      Size defaultSize = client.templateBuilder().build().getSize();
+      Hardware defaultSize = client.templateBuilder().build().getHardware();
 
-      Size smallest = client.templateBuilder().smallest().build().getSize();
-      Size fastest = client.templateBuilder().fastest().build().getSize();
-      Size biggest = client.templateBuilder().biggest().build().getSize();
+      Hardware smallest = client.templateBuilder().smallest().build().getHardware();
+      Hardware fastest = client.templateBuilder().fastest().build().getHardware();
+      Hardware biggest = client.templateBuilder().biggest().build().getHardware();
 
       System.out.printf("smallest %s%n", smallest);
       System.out.printf("fastest %s%n", fastest);
@@ -529,14 +558,14 @@ public abstract class BaseComputeServiceLiveTest {
 
       assertEquals(defaultSize, smallest);
 
-      assert smallest.getCores() <= fastest.getCores() : String.format("%d ! <= %d", smallest, fastest);
-      assert biggest.getCores() <= fastest.getCores() : String.format("%d ! <= %d", biggest, fastest);
+      assert getCores(smallest) <= getCores(fastest) : String.format("%d ! <= %d", smallest, fastest);
+      assert getCores(biggest) <= getCores(fastest) : String.format("%d ! <= %d", biggest, fastest);
 
       assert biggest.getRam() >= fastest.getRam() : String.format("%d ! >= %d", biggest, fastest);
       assert biggest.getRam() >= smallest.getRam() : String.format("%d ! >= %d", biggest, smallest);
 
-      assert fastest.getCores() >= biggest.getCores() : String.format("%d ! >= %d", fastest, biggest);
-      assert fastest.getCores() >= smallest.getCores() : String.format("%d ! >= %d", fastest, smallest);
+      assert getCores(fastest) >= getCores(biggest) : String.format("%d ! >= %d", fastest, biggest);
+      assert getCores(fastest) >= getCores(smallest) : String.format("%d ! >= %d", fastest, smallest);
    }
 
    private void sshPing(NodeMetadata node) throws IOException {
@@ -559,7 +588,13 @@ public abstract class BaseComputeServiceLiveTest {
       socketTester.apply(socket); // TODO add transitionTo option that accepts
       // a socket conection
       // state.
-      SshClient ssh = sshFactory.create(socket, node.getCredentials().identity, keyPair.get("private").getBytes());
+      SshClient ssh = (node.getCredentials().credential != null && !node.getCredentials().credential
+               .startsWith("-----BEGIN RSA PRIVATE KEY-----")) ? context.utils().sshFactory().create(socket,
+               node.getCredentials().identity, node.getCredentials().credential) : context.utils().sshFactory().create(
+               socket,
+               node.getCredentials().identity,
+               node.getCredentials().credential != null ? node.getCredentials().credential.getBytes() : keyPair.get(
+                        "private").getBytes());
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");

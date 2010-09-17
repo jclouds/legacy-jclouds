@@ -20,6 +20,7 @@
 package org.jclouds.vcloud.bluelock.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.domain.Image;
@@ -59,14 +60,14 @@ public class BlueLockVCloudDirectorComputeServiceLiveTest extends VCloudComputeS
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getDescription(), "Ubuntu Linux (64-bit)");
       assert defaultTemplate.getLocation().getId() != null : defaultTemplate.getLocation();
-      assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
+      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
+      System.out.println(defaultTemplate.getHardware());
    }
 
    @Override
    protected Template buildTemplate(TemplateBuilder templateBuilder) {
       Template template = super.buildTemplate(templateBuilder);
       Image image = template.getImage();
-      assert image.getDefaultCredentials().identity != null : image;
       assert image.getDefaultCredentials().credential != null : image;
       return template;
    }

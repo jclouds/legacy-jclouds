@@ -152,6 +152,8 @@ public class RunningInstance implements Comparable<RunningInstance> {
    @Nullable
    private final String subnetId;
    @Nullable
+   private final String spotInstanceRequestId;
+   @Nullable
    private final String vpcId;
    private final RootDeviceType rootDeviceType;
    @Nullable
@@ -168,8 +170,9 @@ public class RunningInstance implements Comparable<RunningInstance> {
             Date launchTime, MonitoringState monitoringState, String availabilityZone, @Nullable String placementGroup,
             String virtualizationType, @Nullable String platform, @Nullable String privateDnsName,
             @Nullable String privateIpAddress, Set<String> productCodes, @Nullable String ramdiskId,
-            @Nullable String reason, @Nullable String subnetId, @Nullable String vpcId, RootDeviceType rootDeviceType,
-            @Nullable String rootDeviceName, Map<String, EbsBlockDevice> ebsBlockDevices) {
+            @Nullable String reason, @Nullable String subnetId, @Nullable String spotInstanceRequestId,
+            @Nullable String vpcId, RootDeviceType rootDeviceType, @Nullable String rootDeviceName,
+            Map<String, EbsBlockDevice> ebsBlockDevices) {
       Iterables.addAll(this.groupIds, checkNotNull(groupIds, "groupIds"));
       this.region = checkNotNull(region, "region");
       this.amiLaunchIndex = amiLaunchIndex; // nullable on runinstances.
@@ -183,16 +186,17 @@ public class RunningInstance implements Comparable<RunningInstance> {
       this.keyName = keyName;
       this.launchTime = checkNotNull(launchTime, "launchTime");
       this.monitoringState = monitoringState;
-      this.availabilityZone = checkNotNull(availabilityZone, "availabilityZone");
+      this.availabilityZone = availabilityZone; // nullable on Nova.
       this.placementGroup = placementGroup;
       this.virtualizationType = virtualizationType;
       this.platform = platform;
-      this.privateDnsName = privateDnsName; // nullable on runinstances.
+      this.privateDnsName = privateDnsName; // nullable on Nova.
       this.privateIpAddress = privateIpAddress;
       Iterables.addAll(this.productCodes, checkNotNull(productCodes, "productCodes"));
       this.ramdiskId = ramdiskId;
       this.reason = reason;
       this.subnetId = subnetId;
+      this.spotInstanceRequestId = spotInstanceRequestId;
       this.vpcId = vpcId;
       this.rootDeviceType = checkNotNull(rootDeviceType, "rootDeviceType");
       this.rootDeviceName = rootDeviceName;
@@ -353,6 +357,13 @@ public class RunningInstance implements Comparable<RunningInstance> {
    }
 
    /**
+    * The ID of the Spot Instance request
+    */
+   public String getSpotInstanceRequestId() {
+      return spotInstanceRequestId;
+   }
+
+   /**
     * Specifies the subnet ID in which the instance is running (Amazon Virtual Private Cloud).
     */
    public String getSubnetId() {
@@ -394,20 +405,18 @@ public class RunningInstance implements Comparable<RunningInstance> {
       int result = 1;
       result = prime * result + ((amiLaunchIndex == null) ? 0 : amiLaunchIndex.hashCode());
       result = prime * result + ((availabilityZone == null) ? 0 : availabilityZone.hashCode());
-      result = prime * result + ((placementGroup == null) ? 0 : placementGroup.hashCode());
-      result = prime * result + ((virtualizationType == null) ? 0 : virtualizationType.hashCode());
       result = prime * result + ((dnsName == null) ? 0 : dnsName.hashCode());
       result = prime * result + ((ebsBlockDevices == null) ? 0 : ebsBlockDevices.hashCode());
       result = prime * result + ((groupIds == null) ? 0 : groupIds.hashCode());
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((instanceId == null) ? 0 : instanceId.hashCode());
-      result = prime * result + ((instanceState == null) ? 0 : instanceState.hashCode());
       result = prime * result + ((instanceType == null) ? 0 : instanceType.hashCode());
       result = prime * result + ((ipAddress == null) ? 0 : ipAddress.hashCode());
       result = prime * result + ((kernelId == null) ? 0 : kernelId.hashCode());
       result = prime * result + ((keyName == null) ? 0 : keyName.hashCode());
       result = prime * result + ((launchTime == null) ? 0 : launchTime.hashCode());
       result = prime * result + ((monitoringState == null) ? 0 : monitoringState.hashCode());
+      result = prime * result + ((placementGroup == null) ? 0 : placementGroup.hashCode());
       result = prime * result + ((platform == null) ? 0 : platform.hashCode());
       result = prime * result + ((privateDnsName == null) ? 0 : privateDnsName.hashCode());
       result = prime * result + ((privateIpAddress == null) ? 0 : privateIpAddress.hashCode());
@@ -415,7 +424,11 @@ public class RunningInstance implements Comparable<RunningInstance> {
       result = prime * result + ((ramdiskId == null) ? 0 : ramdiskId.hashCode());
       result = prime * result + ((reason == null) ? 0 : reason.hashCode());
       result = prime * result + ((region == null) ? 0 : region.hashCode());
+      result = prime * result + ((rootDeviceName == null) ? 0 : rootDeviceName.hashCode());
+      result = prime * result + ((rootDeviceType == null) ? 0 : rootDeviceType.hashCode());
+      result = prime * result + ((spotInstanceRequestId == null) ? 0 : spotInstanceRequestId.hashCode());
       result = prime * result + ((subnetId == null) ? 0 : subnetId.hashCode());
+      result = prime * result + ((virtualizationType == null) ? 0 : virtualizationType.hashCode());
       result = prime * result + ((vpcId == null) ? 0 : vpcId.hashCode());
       return result;
    }
@@ -438,16 +451,6 @@ public class RunningInstance implements Comparable<RunningInstance> {
          if (other.availabilityZone != null)
             return false;
       } else if (!availabilityZone.equals(other.availabilityZone))
-         return false;
-      if (placementGroup == null) {
-         if (other.placementGroup != null)
-            return false;
-      } else if (!placementGroup.equals(other.placementGroup))
-         return false;
-      if (virtualizationType == null) {
-         if (other.virtualizationType != null)
-            return false;
-      } else if (!virtualizationType.equals(other.virtualizationType))
          return false;
       if (dnsName == null) {
          if (other.dnsName != null)
@@ -473,11 +476,6 @@ public class RunningInstance implements Comparable<RunningInstance> {
          if (other.instanceId != null)
             return false;
       } else if (!instanceId.equals(other.instanceId))
-         return false;
-      if (instanceState == null) {
-         if (other.instanceState != null)
-            return false;
-      } else if (!instanceState.equals(other.instanceState))
          return false;
       if (instanceType == null) {
          if (other.instanceType != null)
@@ -508,6 +506,11 @@ public class RunningInstance implements Comparable<RunningInstance> {
          if (other.monitoringState != null)
             return false;
       } else if (!monitoringState.equals(other.monitoringState))
+         return false;
+      if (placementGroup == null) {
+         if (other.placementGroup != null)
+            return false;
+      } else if (!placementGroup.equals(other.placementGroup))
          return false;
       if (platform == null) {
          if (other.platform != null)
@@ -544,10 +547,30 @@ public class RunningInstance implements Comparable<RunningInstance> {
             return false;
       } else if (!region.equals(other.region))
          return false;
+      if (rootDeviceName == null) {
+         if (other.rootDeviceName != null)
+            return false;
+      } else if (!rootDeviceName.equals(other.rootDeviceName))
+         return false;
+      if (rootDeviceType == null) {
+         if (other.rootDeviceType != null)
+            return false;
+      } else if (!rootDeviceType.equals(other.rootDeviceType))
+         return false;
+      if (spotInstanceRequestId == null) {
+         if (other.spotInstanceRequestId != null)
+            return false;
+      } else if (!spotInstanceRequestId.equals(other.spotInstanceRequestId))
+         return false;
       if (subnetId == null) {
          if (other.subnetId != null)
             return false;
       } else if (!subnetId.equals(other.subnetId))
+         return false;
+      if (virtualizationType == null) {
+         if (other.virtualizationType != null)
+            return false;
+      } else if (!virtualizationType.equals(other.virtualizationType))
          return false;
       if (vpcId == null) {
          if (other.vpcId != null)
@@ -567,8 +590,8 @@ public class RunningInstance implements Comparable<RunningInstance> {
                + launchTime + ", monitoringState=" + monitoringState + ", platform=" + platform + ", privateDnsName="
                + privateDnsName + ", privateIpAddress=" + privateIpAddress + ", productCodes=" + productCodes
                + ", ramdiskId=" + ramdiskId + ", reason=" + reason + ", region=" + region + ", rootDeviceName="
-               + rootDeviceName + ", rootDeviceType=" + rootDeviceType + ", subnetId=" + subnetId + ", vpcId=" + vpcId
-               + "]";
+               + rootDeviceName + ", rootDeviceType=" + rootDeviceType + ", spotInstanceRequestId="
+               + spotInstanceRequestId + ", subnetId=" + subnetId + ", vpcId=" + vpcId + "]";
    }
 
 }

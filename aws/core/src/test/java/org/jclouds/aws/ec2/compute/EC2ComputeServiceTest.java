@@ -28,17 +28,19 @@ import java.util.Set;
 
 import javax.inject.Provider;
 
-import org.jclouds.aws.ec2.compute.domain.EC2Size;
+import org.jclouds.aws.ec2.compute.domain.EC2Hardware;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.TemplateBuilderImpl;
+import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -49,6 +51,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
@@ -65,33 +68,35 @@ import com.google.common.collect.Maps;
 public class EC2ComputeServiceTest {
    private static final Location location = new LocationImpl(LocationScope.REGION, "us-east-1", "us east", null);
 
-   public static final EC2Size CC1_4XLARGE = new EC2Size(location, InstanceType.CC1_4XLARGE, 33.5, 23 * 1024, 1690,
-            new String[] { "us-east-1/cc-image" });
+   public static final EC2Hardware CC1_4XLARGE = new EC2Hardware(location, InstanceType.CC1_4XLARGE, ImmutableList.of(
+            new Processor(4.0, 4.0), new Processor(4.0, 4.0)), 23 * 1024, ImmutableList.of(new VolumeImpl(10.0f,
+            "/dev/sda1", true, false), new VolumeImpl(840.0f, "/dev/sdb", false, false), new VolumeImpl(840.0f,
+            "/dev/sdc", false, false)), new String[] { "us-east-1/cc-image" });
 
    /**
     * Verifies that {@link TemplateBuilderImpl} would choose the correct size of the instance, based
-    * on {@link org.jclouds.compute.domain.Size} from {@link EC2Size}.
+    * on {@link org.jclouds.compute.domain.Hardware} from {@link EC2Hardware}.
     * 
     * Expected size: m2.xlarge
     */
    @Test
-   public void testTemplateChoiceForInstanceBySizeId() throws Exception {
-      Template template = newTemplateBuilder().os64Bit(true).sizeId("m2.xlarge").locationId("us-east-1").build();
+   public void testTemplateChoiceForInstanceByhardwareId() throws Exception {
+      Template template = newTemplateBuilder().os64Bit(true).hardwareId("m2.xlarge").locationId("us-east-1").build();
 
       assert template != null : "The returned template was null, but it should have a value.";
-      assert EC2Size.M2_XLARGE.equals(template.getSize()) : format(
+      assert EC2Hardware.M2_XLARGE.equals(template.getHardware()) : format(
                "Incorrect image determined by the template. Expected: %s. Found: %s.", "m2.xlarge", String
-                        .valueOf(template.getSize()));
+                        .valueOf(template.getHardware()));
    }
 
    @Test
-   public void testTemplateChoiceForInstanceByCCSizeId() throws Exception {
+   public void testTemplateChoiceForInstanceByCChardwareId() throws Exception {
       Template template = newTemplateBuilder().fastest().build();
 
       assert template != null : "The returned template was null, but it should have a value.";
-      assert CC1_4XLARGE.equals(template.getSize()) : format(
+      assert CC1_4XLARGE.equals(template.getHardware()) : format(
                "Incorrect image determined by the template. Expected: %s. Found: %s.", CC1_4XLARGE.getId(), String
-                        .valueOf(template.getSize()));
+                        .valueOf(template.getHardware()));
    }
 
    /**
@@ -106,9 +111,9 @@ public class EC2ComputeServiceTest {
                "us-east-1").build();
 
       assert template != null : "The returned template was null, but it should have a value.";
-      assert EC2Size.M2_XLARGE.equals(template.getSize()) : format(
-               "Incorrect image determined by the template. Expected: %s. Found: %s.", "m2.xlarge", String
-                        .valueOf(template.getSize()));
+      assert CC1_4XLARGE.equals(template.getHardware()) : format(
+               "Incorrect image determined by the template. Expected: %s. Found: %s.", CC1_4XLARGE, String
+                        .valueOf(template.getHardware()));
    }
 
    /**
@@ -125,9 +130,9 @@ public class EC2ComputeServiceTest {
                "us-east-1").build();
 
       assert template != null : "The returned template was null, but it should have a value.";
-      assert !EC2Size.M2_XLARGE.equals(template.getSize()) : format(
+      assert !EC2Hardware.M2_XLARGE.equals(template.getHardware()) : format(
                "Incorrect image determined by the template. Expected: not %s. Found: %s.", "m2.xlarge", String
-                        .valueOf(template.getSize()));
+                        .valueOf(template.getHardware()));
    }
 
    @SuppressWarnings("unchecked")
@@ -148,9 +153,10 @@ public class EC2ComputeServiceTest {
                .<Location> of(location));
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet
                .<Image> of(image));
-      Supplier<Set<? extends Size>> sizes = Suppliers.<Set<? extends Size>> ofInstance(ImmutableSet.<Size> of(
-               EC2Size.C1_MEDIUM, EC2Size.C1_XLARGE, EC2Size.M1_LARGE, EC2Size.M1_SMALL, EC2Size.M1_XLARGE,
-               EC2Size.M2_XLARGE, EC2Size.M2_2XLARGE, EC2Size.M2_4XLARGE, CC1_4XLARGE));
+      Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+               .<Hardware> of(EC2Hardware.T1_MICRO, EC2Hardware.C1_MEDIUM, EC2Hardware.C1_XLARGE, EC2Hardware.M1_LARGE,
+                        EC2Hardware.M1_SMALL, EC2Hardware.M1_XLARGE, EC2Hardware.M2_XLARGE, EC2Hardware.M2_2XLARGE,
+                        EC2Hardware.M2_4XLARGE, CC1_4XLARGE));
 
       return new TemplateBuilderImpl(locations, images, sizes, Suppliers.ofInstance(location), optionsProvider,
                templateBuilderProvider) {

@@ -78,7 +78,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
 import org.easymock.IArgumentMatcher;
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
@@ -106,7 +105,6 @@ import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.BaseRestClientTest;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.InvocationContext;
@@ -155,6 +153,7 @@ import com.google.inject.ConfigurationException;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
+import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * Tests behavior of {@code RestAnnotationProcessorTest}
@@ -180,20 +179,16 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    }
 
-   @Path("client")
+   @Path("/client")
    public static interface AsyncCallee {
       @GET
-      @Path("{path}")
+      @Path("/{path}")
       ListenableFuture<Void> onePath(@PathParam("path") String path);
    }
 
    @Endpoint(Localhost2.class)
    @Timeout(duration = 10, timeUnit = TimeUnit.NANOSECONDS)
    public static interface Caller {
-
-      @Delegate
-      @Path("{path}")
-      public Callee getCallee(@PathParam("path") String path);
 
       @Delegate
       public Callee getCallee();
@@ -206,10 +201,6 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    public static interface AsyncCaller {
-
-      @Delegate
-      @Path("{path}")
-      public AsyncCallee getCallee(@PathParam("path") String path);
 
       @Delegate
       public AsyncCallee getCallee();
@@ -231,13 +222,10 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       }
 
       AsyncCaller caller = child.getInstance(AsyncCaller.class);
-      expect(mock.submit(requestLineEquals("GET http://localhost:9999/goo/client/foo HTTP/1.1"), eq(function)))
-               .andReturn(createNiceMock(ListenableFuture.class)).atLeastOnce();
       expect(mock.submit(requestLineEquals("GET http://localhost:9999/client/foo HTTP/1.1"), eq(function))).andReturn(
                createNiceMock(ListenableFuture.class)).atLeastOnce();
       replay(mock);
 
-      caller.getCallee("goo").onePath("foo");
       caller.getCallee().onePath("foo");
 
       verify(mock);
@@ -278,14 +266,10 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       }
 
       Caller caller = child.getInstance(Caller.class);
-      expect(mock.submit(requestLineEquals("GET http://localhost:1111/goo/client/foo HTTP/1.1"), eq(function)))
-               .andReturn(Futures.<Void> immediateFuture(null)).atLeastOnce();
-
       expect(mock.submit(requestLineEquals("GET http://localhost:1111/client/foo HTTP/1.1"), eq(function))).andReturn(
                Futures.<Void> immediateFuture(null)).atLeastOnce();
       replay(mock);
 
-      caller.getCallee("goo").onePath("foo");
       caller.getCallee().onePath("foo");
 
       verify(mock);
@@ -299,47 +283,6 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
                         new CallerCalleeModule()));
 
       return createContextBuilder(contextSpec).buildInjector();
-
-   }
-
-   @Path("caller")
-   public static interface CallerWithPathOnClass {
-
-      @Delegate
-      @Path("{path}")
-      public AsyncCallee getCallee(@PathParam("path") String path);
-
-      @Delegate
-      public AsyncCallee getCallee();
-   }
-
-   @SuppressWarnings("unchecked")
-   public void testDelegateWithPathOnClass() throws SecurityException, NoSuchMethodException, InterruptedException,
-            ExecutionException {
-      Injector child = injectorForClient();
-
-      TransformingHttpCommandExecutorService mock = child.getInstance(TransformingHttpCommandExecutorService.class);
-
-      ReleasePayloadAndReturn function = child.getInstance(ReleasePayloadAndReturn.class);
-
-      AsyncClientFactory factory = child.getInstance(AsyncClientFactory.class);
-      try {
-         child.getInstance(AsyncCallee.class);
-         assert false : "Callee shouldn't be bound yet";
-      } catch (ConfigurationException e) {
-
-      }
-
-      CallerWithPathOnClass caller = factory.create(CallerWithPathOnClass.class);
-      expect(mock.submit(requestLineEquals("GET http://localhost:9999/caller/goo/client/foo HTTP/1.1"), eq(function)))
-               .andReturn(createNiceMock(ListenableFuture.class)).atLeastOnce();
-
-      expect(mock.submit(requestLineEquals("GET http://localhost:9999/caller/client/foo HTTP/1.1"), eq(function)))
-               .andReturn(createNiceMock(ListenableFuture.class)).atLeastOnce();
-      replay(mock);
-      caller.getCallee("goo").onePath("foo");
-      caller.getCallee().onePath("foo");
-      verify(mock);
 
    }
 
@@ -367,16 +310,19 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    @QueryParams(keys = "x-ms-version", values = "2009-07-17")
    public class TestQuery {
       @FOO
+      @Path("/")
       @QueryParams(keys = "x-ms-rubbish", values = "bin")
       public void foo() {
       }
 
       @FOO
+      @Path("/")
       @QueryParams(keys = { "foo", "fooble" }, values = { "bar", "baz" })
       public void foo2() {
       }
 
       @FOO
+      @Path("/")
       @QueryParams(keys = { "foo", "fooble" }, values = { "bar", "baz" })
       public void foo3(@QueryParam("robbie") String robbie) {
       }
@@ -396,7 +342,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Method method = TestQuery.class.getMethod("foo");
       HttpRequest request = factory(TestQuery.class).createRequest(method, new Object[] {});
       assertEquals(request.getEndpoint().getHost(), "localhost");
-      assertEquals(request.getEndpoint().getPath(), "");
+      assertEquals(request.getEndpoint().getPath(), "/");
       assertEquals(request.getEndpoint().getQuery(), "x-ms-version=2009-07-17&x-ms-rubbish=bin");
       assertEquals(request.getMethod(), "FOO");
    }
@@ -405,7 +351,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Method method = TestQuery.class.getMethod("foo2");
       HttpRequest request = factory(TestQuery.class).createRequest(method, new Object[] {});
       assertEquals(request.getEndpoint().getHost(), "localhost");
-      assertEquals(request.getEndpoint().getPath(), "");
+      assertEquals(request.getEndpoint().getPath(), "/");
       assertEquals(request.getEndpoint().getQuery(), "x-ms-version=2009-07-17&foo=bar&fooble=baz");
       assertEquals(request.getMethod(), "FOO");
    }
@@ -414,16 +360,18 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       Method method = TestQuery.class.getMethod("foo3", String.class);
       HttpRequest request = factory(TestQuery.class).createRequest(method, new Object[] { "wonder" });
       assertEquals(request.getEndpoint().getHost(), "localhost");
-      assertEquals(request.getEndpoint().getPath(), "");
+      assertEquals(request.getEndpoint().getPath(), "/");
       assertEquals(request.getEndpoint().getQuery(), "x-ms-version=2009-07-17&foo=bar&fooble=baz&robbie=wonder");
       assertEquals(request.getMethod(), "FOO");
    }
 
    public interface TestPayloadParamVarargs {
       @POST
+      @Path("")
       public void varargs(HttpRequestOptions... options);
 
       @POST
+      @Path("")
       public void post(HttpRequestOptions options);
 
    }
@@ -474,6 +422,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public class TestCustomMethod {
       @FOO
+      @Path("")
       public void foo() {
       }
    }
@@ -492,6 +441,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public class TestOverridden implements Parent {
       @POST
+      @Path("")
       public void foo() {
       }
    }
@@ -508,10 +458,12 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       @POST
       @Endpoint(Localhost2.class)
+      @Path("")
       public void foo() {
       }
 
       @POST
+      @Path("")
       public void foo(@EndpointParam URI endpoint) {
       }
    }
@@ -537,22 +489,24 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public interface TestPost {
       @POST
+      @Path("")
       void post(@Nullable @BinderParam(BindToStringPayload.class) String content);
 
       @POST
+      @Path("")
       public void postAsJson(@BinderParam(BindToJsonPayload.class) String content);
 
       @POST
-      @Path("{foo}")
+      @Path("/{foo}")
       public void postWithPath(@PathParam("foo") @MapPayloadParam("fooble") String path, MapBinder content);
 
       @POST
-      @Path("{foo}")
+      @Path("/{foo}")
       @MapBinder(BindToJsonPayload.class)
       public void postWithMethodBinder(@PathParam("foo") @MapPayloadParam("fooble") String path);
 
       @POST
-      @Path("{foo}")
+      @Path("/{foo}")
       @MapPayloadParams(keys = "rat", values = "atat")
       @MapBinder(BindToJsonPayload.class)
       public void postWithMethodBinderAndDefaults(@PathParam("foo") @MapPayloadParam("fooble") String path);
@@ -620,19 +574,24 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    static interface TestMultipartForm {
       @POST
+      @Path("")
       void withStringPart(@PartParam(name = "fooble") String path);
 
       @POST
+      @Path("")
       void withParamStringPart(@FormParam("name") String name, @PartParam(name = "file") String path);
 
       @POST
+      @Path("")
       void withParamFilePart(@FormParam("name") String name, @PartParam(name = "file") File path);
 
       @POST
+      @Path("")
       void withParamFileBinaryPart(@FormParam("name") String name,
                @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM) File path);
 
       @POST
+      @Path("")
       void withParamByteArrayBinaryPart(
                @FormParam("name") String name,
                @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM, filename = "{name}.tar.gz") byte[] content);
@@ -736,49 +695,56 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public interface TestPut {
       @PUT
-      @Path("{foo}")
+      @Path("/{foo}")
       @MapBinder(BindToJsonPayload.class)
       void putWithMethodBinder(@PathParam("foo") @MapPayloadParam("fooble") String path);
 
       @PUT
-      @Path("{foo}")
+      @Path("/{foo}")
       @Produces(MediaType.TEXT_PLAIN)
       void putWithMethodBinderProduces(@PathParam("foo") @BinderParam(BindToStringPayload.class) String path);
 
       @PUT
-      @Path("{foo}")
+      @Path("/{foo}")
       @MapBinder(BindToJsonPayload.class)
       @Consumes(MediaType.APPLICATION_JSON)
       Wrapper putWithMethodBinderConsumes(@PathParam("foo") @MapPayloadParam("fooble") String path);
 
       @GET
+      @Path("/")
       @Consumes(MediaType.APPLICATION_JSON)
       Map<String, String> testGeneric();
 
       @GET
+      @Path("/")
       @Consumes(MediaType.APPLICATION_JSON)
       ListenableFuture<Map<String, String>> testGeneric2();
 
       @GET
+      @Path("/")
       @Consumes(MediaType.APPLICATION_JSON)
       ListenableFuture<? extends Map<String, String>> testGeneric3();
 
       @GET
+      @Path("/")
       @Unwrap
       @Consumes(MediaType.APPLICATION_JSON)
       String testUnwrap();
 
       @GET
+      @Path("/")
       @Unwrap
       @Consumes(MediaType.APPLICATION_JSON)
       ListenableFuture<String> testUnwrap2();
 
       @GET
+      @Path("/")
       @Unwrap
       @Consumes(MediaType.APPLICATION_JSON)
       ListenableFuture<Set<String>> testUnwrap3();
 
       @GET
+      @Path("/")
       @Unwrap
       @Consumes(MediaType.APPLICATION_JSON)
       ListenableFuture<? extends Set<String>> testUnwrap4();
@@ -790,7 +756,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       }
 
       @ROWDY
-      @Path("objects/{id}")
+      @Path("/objects/{id}")
       ListenableFuture<Boolean> rowdy(@PathParam("id") String path);
    }
 
@@ -965,11 +931,13 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    @RequestFilters(TestRequestFilter1.class)
    static class TestRequestFilter {
       @GET
+      @Path("")
       @RequestFilters(TestRequestFilter2.class)
       public void get() {
       }
 
       @GET
+      @Path("")
       @OverrideRequestFilters
       @RequestFilters(TestRequestFilter2.class)
       public void getOverride() {
@@ -995,7 +963,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    @SkipEncoding('/')
    public class TestEncoding {
       @GET
-      @Path("{path1}/{path2}")
+      @Path("/{path1}/{path2}")
       public void twoPaths(@PathParam("path1") String path, @PathParam("path2") String path2) {
       }
    }
@@ -1026,7 +994,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       void setUsername();
 
       @GET
-      @Path("{path1}/{path2}")
+      @Path("/{path1}/{path2}")
       public void twoPaths(@PathParam("path1") String path, @PathParam("path2") String path2);
    }
 
@@ -1042,22 +1010,22 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public class TestPath {
       @GET
-      @Path("{path}")
+      @Path("/{path}")
       public void onePath(@PathParam("path") String path) {
       }
 
       @GET
-      @Path("{path1}/{path2}")
+      @Path("/{path1}/{path2}")
       public void twoPaths(@PathParam("path1") String path, @PathParam("path2") String path2) {
       }
 
       @GET
-      @Path("{path2}/{path1}")
+      @Path("/{path2}/{path1}")
       public void twoPathsOutOfOrder(@PathParam("path1") String path, @PathParam("path2") String path2) {
       }
 
       @GET
-      @Path("{path}")
+      @Path("/{path}")
       public void onePathParamExtractor(@PathParam("path") @ParamParser(FirstCharacter.class) String path) {
       }
 
@@ -1077,7 +1045,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       }
 
       @GET
-      @Path("{path}")
+      @Path("/{path}")
       @PathParam("path")
       @ParamParser(FirstCharacterFirstElement.class)
       public void onePathParamExtractorMethod(String path) {
@@ -1143,21 +1111,25 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public class TestHeader {
       @GET
+      @Path("/")
       @Headers(keys = "x-amz-copy-source", values = "/{bucket}")
       public void oneHeader(@PathParam("bucket") String path) {
       }
 
       @GET
+      @Path("/")
       @Headers(keys = { "slash", "hyphen" }, values = { "/{bucket}", "-{bucket}" })
       public void twoHeader(@PathParam("bucket") String path) {
       }
 
       @GET
+      @Path("/")
       @Headers(keys = "x-amz-copy-source", values = "/{bucket}/{key}")
       public void twoHeaders(@PathParam("bucket") String path, @PathParam("key") String path2) {
       }
 
       @GET
+      @Path("/")
       @Headers(keys = "x-amz-copy-source", values = "/{bucket}/{key}")
       public void twoHeadersOutOfOrder(@PathParam("key") String path, @PathParam("bucket") String path2) {
       }
@@ -1176,6 +1148,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    @Headers(keys = "x-amz-copy-source", values = "/{bucket}")
    public class TestClassHeader {
       @GET
+      @Path("/")
       public void oneHeader(@PathParam("bucket") String path) {
       }
    }
@@ -1233,7 +1206,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    private interface TestMapMatrixParams {
       @POST
-      @Path("objects/{id}/action/{action}")
+      @Path("/objects/{id}/action/{action}")
       ListenableFuture<String> action(@PathParam("id") String id, @PathParam("action") String action,
                @BinderParam(BindMapToMatrixParams.class) Map<String, String> options);
    }
@@ -1250,25 +1223,30 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public class TestQueryReplace {
 
       @GET
+      @Path("/")
       public void queryInOptions(@PathParam("bucket") String path, TestReplaceQueryOptions options) {
       }
 
       @GET
+      @Path("/")
       @QueryParams(keys = "x-amz-copy-source", values = "/{bucket}")
       public void oneQuery(@PathParam("bucket") String path) {
       }
 
       @GET
+      @Path("/")
       @QueryParams(keys = { "slash", "hyphen" }, values = { "/{bucket}", "-{bucket}" })
       public void twoQuery(@PathParam("bucket") String path) {
       }
 
       @GET
+      @Path("/")
       @QueryParams(keys = "x-amz-copy-source", values = "/{bucket}/{key}")
       public void twoQuerys(@PathParam("bucket") String path, @PathParam("key") String path2) {
       }
 
       @GET
+      @Path("/")
       @QueryParams(keys = "x-amz-copy-source", values = "/{bucket}/{key}")
       public void twoQuerysOutOfOrder(@PathParam("key") String path, @PathParam("bucket") String path2) {
       }
@@ -1285,6 +1263,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    @QueryParams(keys = "x-amz-copy-source", values = "/{bucket}")
    public class TestClassQuery {
       @GET
+      @Path("/")
       public void oneQuery(@PathParam("bucket") String path) {
       }
    }
@@ -1341,25 +1320,30 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public class TestMatrixReplace {
 
       @GET
+      @Path("/")
       public void matrixInOptions(@PathParam("bucket") String path, TestReplaceMatrixOptions options) {
       }
 
       @GET
+      @Path("/")
       @MatrixParams(keys = "x-amz-copy-source", values = "/{bucket}")
       public void oneMatrix(@PathParam("bucket") String path) {
       }
 
       @GET
+      @Path("/")
       @MatrixParams(keys = { "slash", "hyphen" }, values = { "/{bucket}", "-{bucket}" })
       public void twoMatrix(@PathParam("bucket") String path) {
       }
 
       @GET
+      @Path("/")
       @MatrixParams(keys = "x-amz-copy-source", values = "/{bucket}/{key}")
       public void twoMatrixs(@PathParam("bucket") String path, @PathParam("key") String path2) {
       }
 
       @GET
+      @Path("/")
       @MatrixParams(keys = "x-amz-copy-source", values = "/{bucket}/{key}")
       public void twoMatrixsOutOfOrder(@PathParam("key") String path, @PathParam("bucket") String path2) {
       }
@@ -1377,6 +1361,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    @Path("/")
    public class TestClassMatrix {
       @GET
+      @Path("/")
       public void oneMatrix(@PathParam("bucket") String path) {
       }
    }
@@ -1417,36 +1402,46 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public interface TestTransformers {
       @GET
+      @Path("")
       int noTransformer();
 
       @GET
+      @Path("")
       @ResponseParser(ReturnStringIf2xx.class)
       void oneTransformer();
 
       @GET
+      @Path("")
       @ResponseParser(ReturnStringIf200Context.class)
       void oneTransformerWithContext();
 
       @GET
+      @Path("")
       InputStream inputStream();
 
       @GET
+      @Path("")
       ListenableFuture<InputStream> futureInputStream();
 
       @GET
+      @Path("")
       URI uri();
 
       @GET
+      @Path("")
       ListenableFuture<URI> futureUri();
 
       @PUT
+      @Path("")
       ListenableFuture<Void> put(Payload payload);
 
       @PUT
+      @Path("")
       @Headers(keys = "Transfer-Encoding", values = "chunked")
       ListenableFuture<Void> putXfer(Payload payload);
 
       @PUT
+      @Path("")
       ListenableFuture<Void> put(PayloadEnclosing payload);
    }
 
@@ -1925,14 +1920,16 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public interface TestPayload {
       @PUT
+      @Path("")
       public void put(@BinderParam(BindToStringPayload.class) String content);
 
       @PUT
-      @Path("{foo}")
+      @Path("/{foo}")
       public ListenableFuture<Void> putWithPath(@PathParam("foo") String path,
                @BinderParam(BindToStringPayload.class) String content);
 
       @PUT
+      @Path("")
       public void twoEntities(@BinderParam(BindToStringPayload.class) String payload1,
                @BinderParam(BindToStringPayload.class) String payload2);
    }
@@ -1969,25 +1966,30 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public class TestFormReplace {
 
       @POST
+      @Path("/")
       public void formInOptions(@PathParam("bucket") String path, TestReplaceFormOptions options) {
       }
 
       @POST
+      @Path("/")
       @FormParams(keys = "x-amz-copy-source", values = "/{bucket}")
       public void oneForm(@PathParam("bucket") String path) {
       }
 
       @POST
+      @Path("/")
       @FormParams(keys = { "slash", "hyphen" }, values = { "/{bucket}", "-{bucket}" })
       public void twoForm(@PathParam("bucket") String path) {
       }
 
       @POST
+      @Path("/")
       @FormParams(keys = "x-amz-copy-source", values = "/{bucket}/{key}")
       public void twoForms(@PathParam("bucket") String path, @PathParam("key") String path2) {
       }
 
       @POST
+      @Path("/")
       @FormParams(keys = "x-amz-copy-source", values = "/{bucket}/{key}")
       public void twoFormsOutOfOrder(@PathParam("key") String path, @PathParam("bucket") String path2) {
       }
@@ -2004,6 +2006,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    @SkipEncoding('/')
    public class TestClassForm {
       @POST
+      @Path("/")
       public void oneForm(@PathParam("bucket") String path) {
       }
    }

@@ -21,8 +21,8 @@
   "A clojure binding to the jclouds ComputeService.
 
 Current supported services are:
-   [ec2, rimuhosting, cloudservers, trmk-ecloud, trmk-vcloudexpress, vcloud, bluelock, 
-    ibmdev, eucalyptus, slicehost]
+   [ec2, rimuhosting, cloudservers, trmk-ecloud, trmk-vcloudexpress, vcloud,
+    bluelock, eucalyptus, slicehost]
 
 Here's an example of getting some compute configuration from rackspace:
 
@@ -30,38 +30,42 @@ Here's an example of getting some compute configuration from rackspace:
   (use 'clojure.contrib.pprint)
 
   (def provider \"cloudservers\")
-  (def user \"username\")
-  (def password \"password\")
-  
-  ; create a compute service
-  (def compute 
-    (compute-service provider user password))
+  (def provider-identity \"username\")
+  (def provider-credential \"password\")
+
+  ;; create a compute service
+  (def compute
+    (compute-service provider provider-identity provider-credential))
 
   (with-compute-service [compute]
     (pprint (locations))
     (pprint (images))
     (pprint (nodes))
-    (pprint (sizes)))
+    (pprint (hardware-profiles)))
 
-Here's an example of creating and running a small linux node with the tag webserver:
-  
-  ; create a compute service using ssh and log4j extensions
-  (def compute 
-    (compute-service provider user password :ssh :log4j))
+Here's an example of creating and running a small linux node with the tag
+webserver:
+
+  ;; create a compute service using ssh and log4j extensions
+  (def compute
+    (compute-service
+      provider provider-identity provider-credential :ssh :log4j))
 
   (run-node \"webserver\" compute)
 
 See http://code.google.com/p/jclouds for details."
   (:use org.jclouds.core
         (clojure.contrib logging core))
+  (:require
+   [clojure.contrib.condition :as condition])
   (:import java.io.File
            java.util.Properties
            [org.jclouds.domain Location]
            [org.jclouds.compute
             ComputeService ComputeServiceContext ComputeServiceContextFactory]
            [org.jclouds.compute.domain
-            Template TemplateBuilder ComputeMetadata NodeMetadata Size OsFamily
-            Image]
+            Template TemplateBuilder ComputeMetadata NodeMetadata Hardware
+            OsFamily Image]
            [org.jclouds.compute.options TemplateOptions]
            [org.jclouds.compute.predicates
             NodePredicates]
@@ -76,13 +80,14 @@ See http://code.google.com/p/jclouds for details."
 
 (defn compute-service
   "Create a logged in context."
-  ([#^String service #^String principal #^String credential  & options]
+  ([#^String provider #^String provider-identity #^String provider-credential
+    & options]
      (let [module-keys (set (keys module-lookup))
            ext-modules (filter #(module-keys %) options)
            opts (apply hash-map (filter #(not (module-keys %)) options))]
        (.. (ComputeServiceContextFactory.)
            (createContext
-            service principal credential 
+            provider provider-identity provider-credential
             (apply modules (concat ext-modules (opts :extensions)))
             (reduce #(do (.put %1 (name (first %2)) (second %2)) %1)
                     (Properties.) (dissoc opts :extensions)))
@@ -140,18 +145,18 @@ See http://code.google.com/p/jclouds for details."
   ([tag] (nodes-with-tag tag *compute*))
   ([#^String tag #^ComputeService compute]
     (filter #(= (.getTag %) tag) (nodes-with-details compute))))
-    
+
 (defn images
   "Retrieve the available images for the compute context."
   ([] (images *compute*))
   ([#^ComputeService compute]
      (seq (.listImages compute))))
 
-(defn sizes
-  "Retrieve the available node sizes for the compute context."
-  ([] (sizes *compute*))
+(defn hardware-profiles
+  "Retrieve the available node hardware profiles for the compute context."
+  ([] (hardware-profiles *compute*))
   ([#^ComputeService compute]
-     (seq (.listSizes compute))))
+     (seq (.listHardwareProfiles compute))))
 
 (defn default-template
   ([] (default-template *compute*))
@@ -166,24 +171,29 @@ See http://code.google.com/p/jclouds for details."
   "Create the specified number of nodes using the default or specified
    template.
 
-  ; simplest way to add 2 small linux nodes to the group webserver is to run
+  ;; Simplest way to add 2 small linux nodes to the group webserver is to run
   (run-nodes \"webserver\" 2 compute)
 
-  ; which is the same as wrapping the run-nodes command with an implicit compute service
-  ; note that this will actually add another 2 nodes to the set called \"webserver\"
+  ;; which is the same as wrapping the run-nodes command with an implicit
+  ;; compute service.
+  ;; Note that this will actually add another 2 nodes to the set called
+  ;; \"webserver\"
+
   (with-compute-service [compute]
     (run-nodes \"webserver\" 2 ))
 
-  ; which is the same as specifying the default template
+  ;; which is the same as specifying the default template
   (with-compute-service [compute]
     (run-nodes \"webserver\" 2 (default-template)))
 
-  ; which, on gogrid, is the same as constructing the smallest centos template that has no layered software
+  ;; which, on gogrid, is the same as constructing the smallest centos template
+  ;; that has no layered software
   (with-compute-service [compute]
-    (run-nodes \"webserver\" 2 
-      (build-template service :centos :smallest :image-name-matches \".*w/ None.*\")))
-
-"
+    (run-nodes \"webserver\" 2
+      (build-template
+        service
+        {:os-family :centos :smallest true
+         :image-name-matches \".*w/ None.*\"})))"
   ([tag count]
      (run-nodes tag count (default-template *compute*) *compute*))
   ([tag count compute-or-template]
@@ -198,20 +208,22 @@ See http://code.google.com/p/jclouds for details."
 (defn run-node
   "Create a node using the default or specified template.
 
-  ; simplest way to add a small linux node to the group webserver is to run
+  ;; simplest way to add a small linux node to the group webserver is to run
   (run-node \"webserver\" compute)
 
-  ; which is the same as wrapping the run-node command with an implicit compute service
-  ; note that this will actually add another node to the set called \"webserver\"
+  ;; which is the same as wrapping the run-node command with an implicit compute
+  ;; service.
+  ;; Note that this will actually add another node to the set called
+  ;;  \"webserver\"
   (with-compute-service [compute]
-    (run-node \"webserver\" ))
-
-"
+    (run-node \"webserver\" ))"
   ([tag]
      (first (run-nodes tag 1 (default-template *compute*) *compute*)))
   ([tag compute-or-template]
      (if (compute-service? compute-or-template)
-       (first (run-nodes tag 1 (default-template compute-or-template) compute-or-template))
+       (first
+        (run-nodes
+         tag 1 (default-template compute-or-template) compute-or-template))
        (first (run-nodes tag 1 compute-or-template *compute*))))
   ([tag template compute]
      (first (run-nodes tag 1 template compute))))
@@ -310,14 +322,16 @@ See http://code.google.com/p/jclouds for details."
   [#^ComputeMetadata node]
   (.getId node))
 
-(define-accessors Template image size location options)
+(define-accessors Template image hardware location options)
 (define-accessors Image version os-family os-description architecture)
-(define-accessors Size cores ram disk)
-(define-accessors NodeMetadata "node" credentials extra state tag)
+(define-accessors Hardware processors ram volumes)
+(define-accessors NodeMetadata "node" credentials hardware state tag)
 
 (defn builder-options [builder]
-  (or (get-field org.jclouds.compute.domain.internal.TemplateBuilderImpl :options builder)
-      (TemplateOptions.)))
+  (or
+   (get-field
+    org.jclouds.compute.domain.internal.TemplateBuilderImpl :options builder)
+   (TemplateOptions.)))
 
 (defmacro option-option-fn-0arg [key]
   `(fn [builder#]
@@ -333,19 +347,23 @@ See http://code.google.com/p/jclouds for details."
 (defmacro option-option-fn-1arg [key]
   `(fn [builder# value#]
      (let [options# (builder-options builder#)]
-       (~(symbol (str "." (camelize-mixed (name key)))) options# (seq-to-array value#))
+       (~(symbol (str "." (camelize-mixed (name key))))
+        options# (seq-to-array value#))
        (.options builder# options#))))
 
 (def option-1arg-map
-     (apply array-map
-            (concat
-             (make-option-map option-fn-1arg
-                              [:os-family :location-id :architecture :image-id :size-id
-                               :os-name-matches :os-version-matches :os-description-matches 
-                               :os-64-bit :image-version-matches :image-name-matches
-                               :image-description-matches :min-cores :min-ram])
-             (make-option-map option-option-fn-1arg
-                              [:run-script :install-private-key :authorize-public-key :inbound-ports]))))
+  (apply array-map
+         (concat
+          (make-option-map
+           option-fn-1arg
+           [:os-family :location-id :architecture :image-id :hardware-id
+            :os-name-matches :os-version-matches :os-description-matches
+            :os-64-bit :image-version-matches :image-name-matches
+            :image-description-matches :min-cores :min-ram])
+          (make-option-map
+           option-option-fn-1arg
+           [:run-script :install-private-key :authorize-public-key
+            :inbound-ports]))))
 (def option-0arg-map
      (apply hash-map
             (concat
@@ -359,54 +377,45 @@ See http://code.google.com/p/jclouds for details."
 
 (def enum-map {:os-family (os-families)})
 
-(defn add-option-with-value-if [builder kword]
-  (loop [enums (sequence enum-map)]
-    (if (not (empty? enums))
-      (let [enum (first enums)
-            value (filter #(= (name kword) (str %)) (second enum))]
-        (if (not (empty? value))
-          (((first enum) option-1arg-map) builder (first value))
-          (recur (rest enums)))))))
+(defn translate-enum-value [kword value]
+  (or (-> (filter #(= (name value) (str %)) (kword enum-map)) first)
+      value))
 
-(defn add-option-if [builder kword]
-  (let [f (option-0arg-map kword)]
-    (if f (f builder))))
-
-(defn add-keyword-option [builder option]
-  (if (not (or (add-option-with-value-if builder option)
-               (add-option-if builder option)))
-    (println "Unknown option " option)))
+(defn add-nullary-option [builder option value]
+  (if-let [f (option-0arg-map option)]
+    (if value
+      (f builder)
+      builder)))
 
 (defn add-value-option [builder option value]
-  (let [f (option-1arg-map option)]
-    (if f
-      (f builder value)
-      (println "Unknown option" option))))
+  (if-let [f (option-1arg-map option)]
+    (f builder (translate-enum-value option value))))
 
 ;; TODO look at clojure-datalog
-(defn build-template 
+(defn build-template
   "Creates a template that can be used to run nodes.
 
-There are many options to use for the default template
-   "
-  [#^ComputeService compute option & options]
+The :os-family key expects a keyword version of OsFamily,
+  eg. :os-family :ubuntu.
+
+The :smallest, :fastest, :biggest, :any, and :destroy-on-error keys expect a
+boolean value.
+
+Options correspond to TemplateBuilder methods."
+  [#^ComputeService compute
+   {:keys [os-family location-id architecture image-id hardware-id
+           os-name-matches os-version-matches os-description-matches
+           os-64-bit image-version-matches image-name-matches
+           image-description-matches min-cores min-ram
+           run-script install-private-key authorize-public-key
+           inbound-ports smallest fastest biggest any destroy-on-error]
+    :as options}]
   (let [builder (.. compute (templateBuilder))]
-    (loop [option option
-           remaining options]
-      (if (empty? remaining)
-        (add-keyword-option builder option)
-        (let [next-is-keyword (keyword? (first remaining))
-              arg (if (not next-is-keyword)
-                    (first remaining))
-              next (if next-is-keyword
-                     (first remaining)
-                     (fnext remaining))
-              remaining (if (keyword? (first remaining))
-                          (rest remaining)
-                          (drop 2 remaining))]
-          (if arg
-            (add-value-option builder option arg)
-            (add-keyword-option builder option))
-          (if next
-            (recur next remaining)))))
+    (doseq [[option value] options]
+      (or
+       (add-value-option builder option value)
+       (add-nullary-option builder option value)
+       (condition/raise
+        :type :invalid-template-builder-option
+        :message (format "Invalid template builder option : %s" option))))
     (.build builder)))

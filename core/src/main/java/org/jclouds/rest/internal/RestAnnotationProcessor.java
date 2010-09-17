@@ -67,6 +67,7 @@ import javax.inject.Provider;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.MatrixParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -76,7 +77,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
-import org.jboss.resteasy.util.IsHttpMethod;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
@@ -408,9 +408,6 @@ public class RestAnnotationProcessor<T> {
 
       Multimap<String, String> tokenValues = LinkedHashMultimap.create();
 
-      if (caller != null) {
-         builder.path(getPath(caller.getMethod().getDeclaringClass(), caller.getMethod(), caller.getArgs()));
-      }
       tokenValues.putAll(addPathAndGetTokens(declaring, method, args, builder));
 
       Multimap<String, String> formParams = addFormParams(tokenValues.entries(), method, args);
@@ -482,15 +479,6 @@ public class RestAnnotationProcessor<T> {
    }
 
    public static final String BOUNDARY = "--JCLOUDS--";
-
-   private String getPath(Class<?> clazz, Method method, Object[] args) {
-      UriBuilder builder = uriBuilderProvider.get();
-      if (clazz.isAnnotationPresent(Path.class))
-         builder.path(clazz);
-      builder.path(method);
-      return builder.buildFromEncodedMap(convertUnsafe(encodeValues(getPathParamKeyValues(method, args), skips)))
-               .getPath();
-   }
 
    private Multimap<String, String> addPathAndGetTokens(Class<?> clazz, Method method, Object[] args, UriBuilder builder) {
       if (clazz.isAnnotationPresent(Path.class))
@@ -787,7 +775,7 @@ public class RestAnnotationProcessor<T> {
    private Multimap<String, String> constants = LinkedHashMultimap.create();
 
    public boolean isHttpMethod(Method method) {
-      return method.isAnnotationPresent(Path.class) || IsHttpMethod.getHttpMethods(method) != null;
+      return method.isAnnotationPresent(Path.class) || getHttpMethods(method) != null;
    }
 
    public boolean isConstantDeclaration(Method method) {
@@ -800,8 +788,20 @@ public class RestAnnotationProcessor<T> {
       constants.put(key, value);
    }
 
+   public static Set<String> getHttpMethods(Method method) {
+      HashSet<String> methods = new HashSet<String>();
+      for (Annotation annotation : method.getAnnotations()) {
+         HttpMethod http = annotation.annotationType().getAnnotation(HttpMethod.class);
+         if (http != null)
+            methods.add(http.value());
+      }
+      if (methods.size() == 0)
+         return null;
+      return methods;
+   }
+
    public String getHttpMethodOrConstantOrThrowException(Method method) {
-      Set<String> requests = IsHttpMethod.getHttpMethods(method);
+      Set<String> requests = getHttpMethods(method);
       if (requests == null || requests.size() != 1) {
          throw new IllegalStateException(
                   "You must use at least one, but no more than one http method or pathparam annotation on: "
@@ -1010,7 +1010,16 @@ public class RestAnnotationProcessor<T> {
       return parts;
    }
 
-   Payload findPayloadInArgs(Object[] args) {
+   public static HttpRequest findHttpRequestInArgs(Object[] args) {
+      if (args == null)
+         return null;
+      for (int i = 0; i < args.length; i++)
+         if (args[i] instanceof HttpRequest)
+            return HttpRequest.class.cast(args[i]);
+      return null;
+   }
+
+   public static Payload findPayloadInArgs(Object[] args) {
       if (args == null)
          return null;
       for (int i = 0; i < args.length; i++)

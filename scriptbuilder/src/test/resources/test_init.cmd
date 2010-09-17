@@ -80,7 +80,17 @@ goto CASE_%1
    echo set INSTANCE_HOME=%INSTANCE_HOME%>>%INSTANCE_HOME%\mkebsboot.cmd
    echo set LOG_DIR=%LOG_DIR%>>%INSTANCE_HOME%\mkebsboot.cmd
    echo cd /d %%INSTANCE_HOME%%>>%INSTANCE_HOME%\mkebsboot.cmd
-   echo find />>%INSTANCE_HOME%\mkebsboot.cmd
+   md %INSTANCE_HOME%
+   del %INSTANCE_HOME%\mkebsboot.cmd 2>NUL
+   echo @echo off>>%INSTANCE_HOME%\mkebsboot.cmd
+   echo title mkebsboot>>%INSTANCE_HOME%\mkebsboot.cmd
+   echo set PATH=c:\windows\;C:\windows\system32;c:\windows\system32\wbem>>%INSTANCE_HOME%\mkebsboot.cmd
+   echo set INSTANCE_NAME=mkebsboot>>%INSTANCE_HOME%\mkebsboot.cmd
+   echo set TMP_DIR=%TMP_DIR%>>%INSTANCE_HOME%\mkebsboot.cmd
+   echo set INSTANCE_NAME=%INSTANCE_NAME%>>%INSTANCE_HOME%\mkebsboot.cmd
+   echo set INSTANCE_HOME=%INSTANCE_HOME%>>%INSTANCE_HOME%\mkebsboot.cmd
+   echo set LOG_DIR=%LOG_DIR%>>%INSTANCE_HOME%\mkebsboot.cmd
+   echo cd /d %%INSTANCE_HOME%%>>%INSTANCE_HOME%\mkebsboot.cmd
    echo exit /b 0 >>%INSTANCE_HOME%\mkebsboot.cmd
    GOTO END_SWITCH
 :CASE_status

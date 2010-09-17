@@ -26,9 +26,11 @@ import javax.inject.Singleton;
 import org.jclouds.atmosonline.saas.AtmosStorageAsyncClient;
 import org.jclouds.atmosonline.saas.AtmosStorageClient;
 import org.jclouds.atmosonline.saas.blobstore.AtmosAsyncBlobStore;
+import org.jclouds.atmosonline.saas.blobstore.AtmosBlobRequestSigner;
 import org.jclouds.atmosonline.saas.blobstore.AtmosBlobStore;
 import org.jclouds.atmosonline.saas.blobstore.strategy.FindMD5InUserMetadata;
 import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.attr.ConsistencyModel;
@@ -65,6 +67,7 @@ public class AtmosBlobStoreContextModule extends AbstractModule {
                new TypeLiteral<BlobStoreContextImpl<AtmosStorageClient, AtmosStorageAsyncClient>>() {
                }).in(Scopes.SINGLETON);
       bind(ContainsValueInListStrategy.class).to(FindMD5InUserMetadata.class);
+      bind(BlobRequestSigner.class).to(AtmosBlobRequestSigner.class);
    }
 
    @Provides

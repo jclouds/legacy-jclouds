@@ -19,11 +19,13 @@
 
 package org.jclouds.compute.predicates;
 
+import java.util.Set;
+
 import org.jclouds.compute.domain.OperatingSystem;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 /**
  * Container for operating system filters (predicates).
@@ -34,6 +36,33 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 public class OperatingSystemPredicates {
+   /**
+    * evaluates true if the OperatingSystem is unix like
+    * 
+    */
+   public static Predicate<OperatingSystem> isUnix() {
+      return new Predicate<OperatingSystem>() {
+         @Override
+         public boolean apply(OperatingSystem os) {
+            if (os.getFamily() != null) {
+               switch (os.getFamily()) {
+                  case WINDOWS:
+                     return false;
+               }
+            }
+            for (String toMatch : searchStrings(os))
+               if (toMatch != null && toMatch.toLowerCase().indexOf("windows") != -1)
+                  return false;
+            return true;
+         }
+
+         @Override
+         public String toString() {
+            return "isUnix()";
+         }
+      };
+   }
+
    /**
     * evaluates true if the OperatingSystem supports the apt installer
     * 
@@ -49,7 +78,7 @@ public class OperatingSystemPredicates {
                      return true;
                }
             }
-            for (String toMatch : ImmutableSet.of(os.getName(), os.getDescription()))
+            for (String toMatch : searchStrings(os))
                if (toMatch != null && toMatch.toLowerCase().indexOf("ubuntu") != -1
                         || toMatch.toLowerCase().indexOf("debian") != -1)
                   return true;
@@ -74,13 +103,14 @@ public class OperatingSystemPredicates {
             if (os.getFamily() != null) {
                switch (os.getFamily()) {
                   case CENTOS:
+                  case AMZN_LINUX:
                   case FEDORA:
                   case RHEL:
                      return true;
                }
             }
 
-            for (String toMatch : ImmutableSet.of(os.getName(), os.getDescription()))
+            for (String toMatch : searchStrings(os))
                if (toMatch.toLowerCase().indexOf("centos") != -1 || toMatch.toLowerCase().indexOf("rhel") != -1
                         || toMatch.toLowerCase().replace(" ", "").indexOf("redhate") != -1
                         || toMatch.toLowerCase().indexOf("fedora") != -1)
@@ -109,7 +139,7 @@ public class OperatingSystemPredicates {
                      return true;
                }
             }
-            for (String toMatch : ImmutableSet.of(os.getName(), os.getDescription()))
+            for (String toMatch : searchStrings(os))
                if (toMatch != null && toMatch.toLowerCase().indexOf("suse") != -1)
                   return true;
             return false;
@@ -144,6 +174,15 @@ public class OperatingSystemPredicates {
             return "is64Bit()";
          }
       };
+   }
+
+   static Iterable<String> searchStrings(OperatingSystem os) {
+      Set<String> search = Sets.newLinkedHashSet();
+      if (os.getName() != null)
+         search.add(os.getName());
+      if (os.getDescription() != null)
+         search.add(os.getDescription());
+      return search;
    }
 
 }

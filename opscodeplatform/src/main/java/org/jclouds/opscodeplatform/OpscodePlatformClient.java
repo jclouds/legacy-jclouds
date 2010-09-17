@@ -44,13 +44,6 @@ import org.jclouds.rest.annotations.Delegate;
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface OpscodePlatformClient {
    /**
-    * @return a chef client appropriate for the organization specified.
-    */
-   @Delegate
-   @Path("/organizations/{orgname}")
-   ChefClient getChefClientForOrganization(@PathParam("orgname") String orgname);
-
-   /**
     * @return list of user names.
     * 
     * @throws AuthorizationException
@@ -76,14 +69,13 @@ public interface OpscodePlatformClient {
    /**
     * creates a new user
     * 
-    * @return the private key of the user. You can then use this user name and
-    *         private key to access the Opscode API.
+    * @return the private key of the user. You can then use this user name and private key to access
+    *         the Opscode API.
     * @throws AuthorizationException
     *            <p/>
     *            "401 Unauthorized" if the caller is not a recognized user.
     *            <p/>
-    *            "403 Forbidden" if the caller is not authorized to create a
-    *            user.
+    *            "403 Forbidden" if the caller is not authorized to create a user.
     */
    User createUser(User user);
 
@@ -126,8 +118,7 @@ public interface OpscodePlatformClient {
     *            <p/>
     *            "401 Unauthorized" if you are not a recognized user.
     *            <p/>
-    *            "403 Forbidden" if you do not have rights to list
-    *            organizations.
+    *            "403 Forbidden" if you do not have rights to list organizations.
     */
    Set<String> listOrganizations();
 
@@ -139,60 +130,52 @@ public interface OpscodePlatformClient {
     *            <p/>
     *            "401 Unauthorized" if you are not a recognized user.
     *            <p/>
-    *            "403 Forbidden" if you do not have rights to view the
-    *            organization.
+    *            "403 Forbidden" if you do not have rights to view the organization.
     */
    boolean organizationExists(String name);
 
    /**
     * creates a new organization
     * 
-    * @return the private key of the organization. You can then use this
-    *         organization name and private key to access the Opscode API.
+    * @return the private key of the organization. You can then use this organization name and
+    *         private key to access the Opscode API.
     * @throws AuthorizationException
     *            <p/>
-    *            "401 Unauthorized" if the caller is not a recognized
-    *            organization.
+    *            "401 Unauthorized" if the caller is not a recognized organization.
     *            <p/>
-    *            "403 Forbidden" if the caller is not authorized to create a
-    *            organization.
+    *            "403 Forbidden" if the caller is not authorized to create a organization.
     */
    Organization createOrganization(Organization organization);
 
    /**
-    * updates an existing organization. Note: you must have update rights on the
-    * organization.
+    * updates an existing organization. Note: you must have update rights on the organization.
     * 
     * @throws AuthorizationException
     *            <p/>
     *            "401 Unauthorized" if you are not a recognized organization.
     *            <p/>
-    *            "403 Forbidden" if you do not have Update rights on the
-    *            organization.
+    *            "403 Forbidden" if you do not have Update rights on the organization.
     * @throws ResourceNotFoundException
     *            if the organization does not exist.
     */
    Organization updateOrganization(Organization organization);
 
    /**
-    * retrieves an existing organization. Note: you must have update rights on
-    * the organization.
+    * retrieves an existing organization. Note: you must have update rights on the organization.
     * 
     * @return null, if the organization is not found
     */
    Organization getOrganization(String organizationname);
 
    /**
-    * deletes an existing organization. Note: you must have delete rights on the
-    * organization.
+    * deletes an existing organization. Note: you must have delete rights on the organization.
     * 
     * @return last state of the org you deleted or null, if not found
     * @throws AuthorizationException
     *            <p/>
     *            "401 Unauthorized" if you are not a recognized organization.
     *            <p/>
-    *            "403 Forbidden" if you do not have Delete rights on the
-    *            organization.
+    *            "403 Forbidden" if you do not have Delete rights on the organization.
     */
    Organization deleteOrganization(String organizationname);
 }

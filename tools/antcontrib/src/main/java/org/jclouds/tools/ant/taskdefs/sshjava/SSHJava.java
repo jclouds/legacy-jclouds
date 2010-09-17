@@ -53,6 +53,7 @@ import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.ShellToken;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.StatementList;
+import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.tools.ant.util.SSHExecute;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -130,8 +131,7 @@ public class SSHJava extends Java {
       if (remotedir == null)
          remotedir = new File(remotebase, id);
 
-      String command = createInitScript(osFamily, id, remotedir.getAbsolutePath(), env,
-               getCommandLine());
+      String command = createInitScript(osFamily, id, remotedir.getAbsolutePath(), env, getCommandLine());
 
       try {
          BufferedWriter out = new BufferedWriter(new FileWriter(new File(localDirectory, "init."
@@ -159,8 +159,8 @@ public class SSHJava extends Java {
          File source = new File(entry.getKey());
          if (source.isDirectory()) {
             set.setDir(new File(entry.getKey()));
-            mkdirAndCopyTo(remotebase.getAbsolutePath() + ShellToken.FS.to(osFamily)
-                     + entry.getValue(), ImmutableList.of(set));
+            mkdirAndCopyTo(remotebase.getAbsolutePath() + ShellToken.FS.to(osFamily) + entry.getValue(), ImmutableList
+                     .of(set));
          } else {
             String destination = remotebase.getAbsolutePath() + ShellToken.FS.to(osFamily)
                      + new File(entry.getValue()).getParent();
@@ -179,19 +179,16 @@ public class SSHJava extends Java {
       }
 
       if (getCommandLine().getBootclasspath() != null) {
-         copyPathTo(getCommandLine().getBootclasspath(), remotedir.getAbsolutePath()
-                  + "/bootclasspath");
+         copyPathTo(getCommandLine().getBootclasspath(), remotedir.getAbsolutePath() + "/bootclasspath");
       }
 
       if (osFamily == OsFamily.UNIX) {
-         sshexec(exec("chmod 755 " + remotedir.getAbsolutePath() + "{fs}init.{sh}")
-                  .render(osFamily));
+         sshexec(exec("chmod 755 " + remotedir.getAbsolutePath() + "{fs}init.{sh}").render(osFamily));
       }
 
-      Statement statement = new StatementList(exec("{cd} " + remotedir.getAbsolutePath()),
-               exec(remotedir.getAbsolutePath() + "{fs}init.{sh} init"), exec(remotedir
-                        .getAbsolutePath()
-                        + "{fs}init.{sh} run"));
+      Statement statement = new StatementList(exec("{cd} " + remotedir.getAbsolutePath()), exec(remotedir
+               .getAbsolutePath()
+               + "{fs}init.{sh} init"), exec(remotedir.getAbsolutePath() + "{fs}init.{sh} run"));
       try {
          return sshexecRedirectStreams(statement);
       } catch (IOException e) {
@@ -270,13 +267,11 @@ public class SSHJava extends Java {
    }
 
    private String getScpDir(String path) {
-      return String.format("%s:%s@%s:%s", userInfo.getName(),
-               userInfo.getKeyfile() == null ? userInfo.getPassword() : userInfo.getPassphrase(),
-               scp.getHost(), path);
+      return String.format("%s:%s@%s:%s", userInfo.getName(), userInfo.getKeyfile() == null ? userInfo.getPassword()
+               : userInfo.getPassphrase(), scp.getHost(), path);
    }
 
-   void resetPathToUnderPrefixIfExistsAndIsFileIfNotExistsAddAsIs(Path path, String prefix,
-            StringBuilder destination) {
+   void resetPathToUnderPrefixIfExistsAndIsFileIfNotExistsAddAsIs(Path path, String prefix, StringBuilder destination) {
       if (path == null)
          return;
       String[] paths = path.list();
@@ -324,8 +319,7 @@ public class SSHJava extends Java {
       for (Entry<String, String> entry : shiftMap.entrySet()) {
          if (in.startsWith(entry.getKey())) {
             log("match shift map: " + entry.getKey(), Project.MSG_DEBUG);
-            in = remotebase + ShellToken.FS.to(osFamily) + entry.getValue()
-                     + in.substring(entry.getKey().length());
+            in = remotebase + ShellToken.FS.to(osFamily) + entry.getValue() + in.substring(entry.getKey().length());
          }
       }
       for (Entry<String, String> entry : replace.entrySet()) {
@@ -381,7 +375,7 @@ public class SSHJava extends Java {
       }
 
       InitBuilder testInitBuilder = new InitBuilder(id, basedir, basedir, envVariables,
-               commandBuilder.toString());
+               ImmutableList.<Statement> of(Statements.interpret( commandBuilder.toString())));
       return testInitBuilder.build(osFamily);
    }
 
@@ -560,11 +554,10 @@ public class SSHJava extends Java {
 
    @Override
    public String toString() {
-      return "SSHJava [append=" + append + ", env=" + env + ", errorFile=" + errorFile
-               + ", errorProperty=" + errorProperty + ", localDirectory=" + localDirectory
-               + ", osFamily=" + osFamily + ", outputFile=" + outputFile + ", outputProperty="
-               + outputProperty + ", remoteDirectory=" + remotebase + ", userInfo=" + userInfo
-               + "]";
+      return "SSHJava [append=" + append + ", env=" + env + ", errorFile=" + errorFile + ", errorProperty="
+               + errorProperty + ", localDirectory=" + localDirectory + ", osFamily=" + osFamily + ", outputFile="
+               + outputFile + ", outputProperty=" + outputProperty + ", remoteDirectory=" + remotebase + ", userInfo="
+               + userInfo + "]";
    }
 
    @Override

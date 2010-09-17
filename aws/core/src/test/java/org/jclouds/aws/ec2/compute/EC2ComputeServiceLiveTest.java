@@ -19,6 +19,7 @@
 
 package org.jclouds.aws.ec2.compute;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Date;
@@ -90,9 +91,9 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    protected void assertDefaultWorks() {
       Template defaultTemplate = client.templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getSize().getCores(), 1.0d);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
+      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
@@ -281,7 +282,6 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          RunningInstance instance = getInstance(instanceClient, startedId);
 
          assertEquals(instance.getSubnetId(), subnetId);
-         assertEquals(instance.getSubnetId(), Iterables.getOnlyElement(nodes).getExtra().get("subnetId"));
 
       } finally {
          if (nodeId != null)
@@ -303,12 +303,24 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    private void cleanupExtendedStuff(SecurityGroupClient securityGroupClient, KeyPairClient keyPairClient, String tag)
             throws InterruptedException {
       try {
-         securityGroupClient.deleteSecurityGroupInRegion(null, tag);
+         for (SecurityGroup group : securityGroupClient.describeSecurityGroupsInRegion(null))
+            if (group.getName().startsWith("jclouds#" + tag) || group.getName().equals(tag)) {
+               System.err.printf("deleting group %s%n", group.getName());
+               securityGroupClient.deleteSecurityGroupInRegion(null, group.getName());
+            } else {
+               System.err.printf("group %s didn't match %s%n", group.getName(), tag);
+            }
       } catch (Exception e) {
 
       }
       try {
-         keyPairClient.deleteKeyPairInRegion(null, tag);
+         for (KeyPair pair : keyPairClient.describeKeyPairsInRegion(null))
+            if (pair.getKeyName().startsWith("jclouds#" + tag) || pair.getKeyName().equals(tag)) {
+               System.err.printf("deleting key %s%n", pair.getKeyName());
+               keyPairClient.deleteKeyPairInRegion(null, pair.getKeyName());
+            } else {
+               System.err.printf("key %s didn't match %s%n", pair.getKeyName(), tag);
+            }
       } catch (Exception e) {
 
       }

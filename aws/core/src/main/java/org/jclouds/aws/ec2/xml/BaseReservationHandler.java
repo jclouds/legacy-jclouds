@@ -86,6 +86,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
    private Set<String> productCodes = Sets.newHashSet();
    private String ramdiskId;
    private String reason;
+   private String spotInstanceRequestId;
    private String subnetId;
    private String vpcId;
    protected boolean inInstances;
@@ -144,7 +145,14 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
       } else if (qName.equals("instanceId")) {
          instanceId = currentOrNull();
       } else if (qName.equals("name")) {
-         instanceState = InstanceState.fromValue(currentOrNull());
+         String state = currentOrNull();
+         if (state != null) {
+            // Nova
+            if ("shutdown".equalsIgnoreCase(state))
+               instanceState = InstanceState.TERMINATED;
+            else
+               instanceState = InstanceState.fromValue(state);
+         }
       } else if (qName.equals("instanceType")) {
          instanceType = currentOrNull();
       } else if (qName.equals("ipAddress")) {
@@ -183,6 +191,8 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
          reason = currentOrNull();
       } else if (qName.equals("subnetId")) {
          subnetId = currentOrNull();
+      } else if (qName.equals("spotInstanceRequestId")) {
+         spotInstanceRequestId = currentOrNull();
       } else if (qName.equals("vpcId")) {
          vpcId = currentOrNull();
       } else if (qName.equals("productCode")) {
@@ -244,7 +254,8 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
          instances.add(new RunningInstance(region, groupIds, amiLaunchIndex, dnsName, imageId, instanceId,
                   instanceState, instanceType, ipAddress, kernelId, keyName, launchTime, monitoringState,
                   availabilityZone, placementGroup, virtualizationType, platform, privateDnsName, privateIpAddress,
-                  productCodes, ramdiskId, reason, subnetId, vpcId, rootDeviceType, rootDeviceName, ebsBlockDevices));
+                  productCodes, ramdiskId, reason, subnetId, spotInstanceRequestId, vpcId, rootDeviceType,
+                  rootDeviceName, ebsBlockDevices));
          this.amiLaunchIndex = null;
          this.dnsName = null;
          this.imageId = null;
@@ -266,6 +277,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
          this.ramdiskId = null;
          this.reason = null;
          this.subnetId = null;
+         this.spotInstanceRequestId = null;
          this.vpcId = null;
          this.rootDeviceType = RootDeviceType.INSTANCE_STORE;
          this.rootDeviceName = null;

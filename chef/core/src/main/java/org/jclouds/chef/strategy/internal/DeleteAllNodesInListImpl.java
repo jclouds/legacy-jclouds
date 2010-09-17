@@ -74,7 +74,7 @@ public class DeleteAllNodesInListImpl implements DeleteAllNodesInList {
          responses.put(name, chefAsyncClient.deleteNode(name));
       }
       exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, String.format(
-            "getting deleting nodes: %s", names));
+            "deleting nodes: %s", names));
       if (exceptions.size() > 0)
          throw new RuntimeException(String.format("errors deleting nodes: %s: %s", names, exceptions));
    }

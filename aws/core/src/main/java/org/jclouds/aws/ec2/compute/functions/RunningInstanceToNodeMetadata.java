@@ -26,24 +26,30 @@ import java.net.URI;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.KeyPair;
+import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.RunningInstance;
+import org.jclouds.aws.ec2.domain.RunningInstance.EbsBlockDevice;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
+import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
+import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
@@ -52,9 +58,9 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ComputationException;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 
 /**
  * @author Adrian Cole
@@ -76,19 +82,19 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    private final Map<RegionAndName, KeyPair> credentialsMap;
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
    private final Supplier<Set<? extends Location>> locations;
-   private final Function<RunningInstance, Map<String, String>> instanceToStorageMapping;
+   private final Supplier<Set<? extends Hardware>> hardware;
    private final ConcurrentMap<RegionAndName, Image> imageMap;
 
    @Inject
    RunningInstanceToNodeMetadata(EC2Client client, Map<RegionAndName, KeyPair> credentialsMap,
             PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
             ConcurrentMap<RegionAndName, Image> imageMap, Supplier<Set<? extends Location>> locations,
-            @Named("volumeMapping") Function<RunningInstance, Map<String, String>> instanceToStorageMapping) {
+            Supplier<Set<? extends Hardware>> hardware) {
       this.client = checkNotNull(client, "client");
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
       this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");
       this.locations = checkNotNull(locations, "locations");
-      this.instanceToStorageMapping = checkNotNull(instanceToStorageMapping, "instanceToStorageMapping");
+      this.hardware = checkNotNull(hardware, "hardware");
       this.imageMap = checkNotNull(imageMap, "imageMap");
    }
 
@@ -110,15 +116,47 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       Set<String> publicAddresses = nullSafeSet(instance.getIpAddress());
       Set<String> privateAddresses = nullSafeSet(instance.getPrivateIpAddress());
 
-      Map<String, String> extra = getExtra(instance);
+      Hardware hardware = getHardwareForInstance(instance);
 
-      Location location = getLocationForAvailabilityZone(instance);
+      if (hardware != null) {
+         hardware = ComputeServiceUtils.replacesVolumes(hardware, addEBS(instance, hardware.getVolumes()));
+      }
+
+      Location location = getLocationForAvailabilityZoneOrRegion(instance);
 
       Image image = resolveImageForInstanceInLocation(instance, location);
 
       return new NodeMetadataImpl(id, name, instance.getRegion() + "/" + instance.getId(), location, uri, userMetadata,
-               tag, instance.getRegion() + "/" + instance.getImageId(), image != null ? image.getOperatingSystem()
-                        : null, state, publicAddresses, privateAddresses, extra, credentials);
+               tag, hardware, instance.getRegion() + "/" + instance.getImageId(), image != null ? image
+                        .getOperatingSystem() : null, state, publicAddresses, privateAddresses, credentials);
+   }
+
+   @VisibleForTesting
+   static Iterable<? extends Volume> addEBS(final RunningInstance instance, Iterable<? extends Volume> volumes) {
+      Iterable<Volume> ebsVolumes = Iterables.transform(instance.getEbsBlockDevices().entrySet(),
+               new Function<Entry<String, EbsBlockDevice>, Volume>() {
+
+                  @Override
+                  public Volume apply(Entry<String, EbsBlockDevice> from) {
+                     return new VolumeImpl(from.getValue().getVolumeId(), Volume.Type.SAN, null, from.getKey(),
+                              instance.getRootDeviceName() != null
+                                       && instance.getRootDeviceName().equals(from.getKey()), true);
+                  }
+               });
+
+      if (instance.getRootDeviceType() == RootDeviceType.EBS) {
+         volumes = Iterables.filter(volumes, new Predicate<Volume>() {
+
+            @Override
+            public boolean apply(Volume input) {
+               return !input.isBootDevice();
+            }
+
+         });
+
+      }
+      return Iterables.concat(volumes, ebsVolumes);
+
    }
 
    private Credentials getCredentialsForInstanceWithTag(final RunningInstance instance, String tag) {
@@ -152,18 +190,46 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       return tag;
    }
 
-   private Location getLocationForAvailabilityZone(final RunningInstance instance) {
-      final String locationId = instance.getAvailabilityZone();
+   @VisibleForTesting
+   Hardware getHardwareForInstance(final RunningInstance instance) {
+      try {
+         return Iterables.find(hardware.get(), new Predicate<Hardware>() {
 
-      Location location = Iterables.find(locations.get(), new Predicate<Location>() {
+            @Override
+            public boolean apply(Hardware input) {
+               return input.getId().equals(instance.getInstanceType());
+            }
 
-         @Override
-         public boolean apply(Location input) {
-            return input.getId().equals(locationId);
-         }
+         });
+      } catch (NoSuchElementException e) {
+         logger.debug("couldn't match instance type %s in: %s", instance.getInstanceType(), hardware.get());
+         return null;
+      }
+   }
 
-      });
+   private Location getLocationForAvailabilityZoneOrRegion(final RunningInstance instance) {
+      Location location = findLocationWithId(instance.getAvailabilityZone());
+      if (location == null)
+         location = findLocationWithId(instance.getRegion());
       return location;
+   }
+
+   private Location findLocationWithId(final String locationId) {
+      try {
+         Location location = Iterables.find(locations.get(), new Predicate<Location>() {
+
+            @Override
+            public boolean apply(Location input) {
+               return input.getId().equals(locationId);
+            }
+
+         });
+         return location;
+
+      } catch (NoSuchElementException e) {
+         logger.debug("couldn't match instance location %s in: %s", locationId, locations.get());
+         return null;
+      }
    }
 
    @VisibleForTesting
@@ -174,32 +240,10 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
          image = imageMap.get(key);
       } catch (NullPointerException nex) {
          logger.debug("could not find a matching image for instance %s in location %s", instance, location);
+      } catch (ComputationException nex) {
+         logger.debug("could not find a matching image for instance %s in location %s", instance, location);
       }
       return image;
-   }
-
-   /**
-    * Set extras for the node.
-    * 
-    * Extras are derived from either additional API calls or hard-coded values.
-    * 
-    * @param instance
-    *           instance for which the extras are retrieved
-    * @return map with extras
-    */
-   @VisibleForTesting
-   Map<String, String> getExtra(RunningInstance instance) {
-      Map<String, String> extra = Maps.newHashMap();
-      extra.put("virtualizationType", instance.getVirtualizationType());
-      if (instance.getPlacementGroup() != null)
-         extra.put("placementGroup", instance.getPlacementGroup());
-      if (instance.getSubnetId() != null)
-         extra.put("subnetId", instance.getSubnetId());
-      // put storage info
-      /* TODO: only valid for UNIX */
-      extra.putAll(instanceToStorageMapping.apply(instance));
-
-      return extra;
    }
 
    @VisibleForTesting
@@ -210,8 +254,13 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
    @VisibleForTesting
    String getLoginAccountFor(RunningInstance from) {
-      org.jclouds.aws.ec2.domain.Image image = Iterables.getOnlyElement(client.getAMIServices().describeImagesInRegion(
-               from.getRegion(), DescribeImagesOptions.Builder.imageIds(from.getImageId())));
+      org.jclouds.aws.ec2.domain.Image image = null;
+      try {
+         image = Iterables.getOnlyElement(client.getAMIServices().describeImagesInRegion(from.getRegion(),
+                  DescribeImagesOptions.Builder.imageIds(from.getImageId())));
+      } catch (NoSuchElementException e) {
+         logger.debug("couldn't find image %s/%s", from.getRegion(), from.getImageId());
+      }
       return checkNotNull(credentialProvider.execute(image), "login from image: " + from.getImageId()).identity;
    }
 

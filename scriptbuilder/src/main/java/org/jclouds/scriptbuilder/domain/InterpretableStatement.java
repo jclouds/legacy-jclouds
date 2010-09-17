@@ -21,8 +21,11 @@ package org.jclouds.scriptbuilder.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Arrays;
+
 import org.jclouds.scriptbuilder.util.Utils;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -32,14 +35,15 @@ import com.google.common.collect.ImmutableList;
  */
 public class InterpretableStatement implements Statement {
 
-   private String statement;
+   private String[] statements;
 
-   public InterpretableStatement(String statement) {
-      this.statement = checkNotNull(statement, "statement");
+   public InterpretableStatement(String... statements) {
+      this.statements = checkNotNull(statements, "statements");
    }
 
    public String render(OsFamily family) {
-      return Utils.replaceTokens(statement, ShellToken.tokenValueMap(family));
+      return Utils
+               .replaceTokens(Joiner.on(ShellToken.LF.to(family)).join(statements), ShellToken.tokenValueMap(family));
    }
 
    @Override
@@ -51,7 +55,7 @@ public class InterpretableStatement implements Statement {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((statement == null) ? 0 : statement.hashCode());
+      result = prime * result + Arrays.hashCode(statements);
       return result;
    }
 
@@ -64,10 +68,7 @@ public class InterpretableStatement implements Statement {
       if (getClass() != obj.getClass())
          return false;
       InterpretableStatement other = (InterpretableStatement) obj;
-      if (statement == null) {
-         if (other.statement != null)
-            return false;
-      } else if (!statement.equals(other.statement))
+      if (!Arrays.equals(statements, other.statements))
          return false;
       return true;
    }

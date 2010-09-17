@@ -25,7 +25,7 @@ import java.util.Set;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
@@ -63,16 +63,16 @@ public interface ComputeService {
    TemplateOptions templateOptions();
 
    /**
-    * The list sizes command shows you the options including virtual cpu count,
+    * The list hardware profiles command shows you the options including virtual cpu count,
     * memory, and disks. cpu count is not a portable quantity across clouds, as
     * they are measured differently. However, it is a good indicator of relative
     * speed within a cloud. memory is measured in megabytes and disks in
     * gigabytes.
     * 
-    * @return a map of sizes by ID, conceding that in some clouds the "id" is
+    * @return a map of hardware profiles by ID, conceding that in some clouds the "id" is
     *         not used.
     */
-   Set<? extends Size> listSizes();
+   Set<? extends Hardware> listHardwareProfiles();
 
    /**
     * Images define the operating system and metadata related to a node. In some

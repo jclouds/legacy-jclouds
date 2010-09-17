@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.terremark.compute.functions;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
 
 import javax.inject.Singleton;
@@ -38,7 +39,7 @@ public class TemplateToInstantiateOptions implements Function<Template, Terremar
    @Override
    public TerremarkInstantiateVAppTemplateOptions apply(Template from) {
       TerremarkInstantiateVAppTemplateOptions options = processorCount(
-               Double.valueOf(from.getSize().getCores()).intValue()).memory(from.getSize().getRam());
+            Double.valueOf(getCores(from.getHardware())).intValue()).memory(from.getHardware().getRam());
       if (!from.getOptions().shouldBlockUntilRunning())
          options.block(false);
       String sshKeyFingerprint = TerremarkVCloudTemplateOptions.class.cast(from.getOptions()).getSshKeyFingerprint();

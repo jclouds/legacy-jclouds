@@ -27,7 +27,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
 
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.io.Payload;
@@ -49,30 +51,33 @@ public interface HttpAsyncClient {
     * @see HttpClient#post
     */
    @PUT
+   @Path("")
    @ResponseParser(ParseETagHeader.class)
    ListenableFuture<String> put(@EndpointParam URI location, Payload payload);
 
    @PUT
+   @Path("")
    @ResponseParser(ParseETagHeader.class)
-   ListenableFuture<String> put(@EndpointParam URI location, Payload payload,
-            HttpRequestOptions options);
+   ListenableFuture<String> put(@EndpointParam URI location, Payload payload, HttpRequestOptions options);
 
    /**
     * @see HttpClient#post
     */
    @POST
+   @Path("")
    @ResponseParser(ParseETagHeader.class)
    ListenableFuture<String> post(@EndpointParam URI location, Payload payload);
 
    @POST
+   @Path("")
    @ResponseParser(ParseETagHeader.class)
-   ListenableFuture<String> post(@EndpointParam URI location, Payload payload,
-            HttpRequestOptions options);
+   ListenableFuture<String> post(@EndpointParam URI location, Payload payload, HttpRequestOptions options);
 
    /**
     * @see HttpClient#exists
     */
    @HEAD
+   @Path("")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> exists(@EndpointParam URI location);
 
@@ -80,10 +85,19 @@ public interface HttpAsyncClient {
     * @see HttpClient#get
     */
    @GET
+   @Path("")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<InputStream> get(@EndpointParam URI location);
 
+   /**
+    * @see HttpClient#get
+    */
+   @Path("")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<InputStream> invoke(HttpRequest location);
+
    @GET
+   @Path("")
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    ListenableFuture<InputStream> get(@EndpointParam URI location, HttpRequestOptions options);
 
@@ -91,6 +105,7 @@ public interface HttpAsyncClient {
     * @see HttpClient#delete
     */
    @DELETE
+   @Path("")
    @ExceptionParser(ReturnFalseOnNotFoundOr404.class)
    ListenableFuture<Boolean> delete(@EndpointParam URI location);
 

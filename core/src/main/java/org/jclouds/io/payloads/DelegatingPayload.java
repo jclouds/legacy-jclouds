@@ -123,6 +123,54 @@ public class DelegatingPayload implements Payload {
     * {@inheritDoc}
     */
    @Override
+   public void setContentDisposition(String contentDisposition) {
+      delegate.setContentDisposition(contentDisposition);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContentDisposition() {
+      return delegate.getContentDisposition();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setContentLanguage(String contentLanguage) {
+      delegate.setContentLanguage(contentLanguage);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContentLanguage() {
+      return delegate.getContentLanguage();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setContentEncoding(String contentEncoding) {
+      delegate.setContentEncoding(contentEncoding);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContentEncoding() {
+      return delegate.getContentEncoding();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public int hashCode() {
       return delegate.hashCode();
    }

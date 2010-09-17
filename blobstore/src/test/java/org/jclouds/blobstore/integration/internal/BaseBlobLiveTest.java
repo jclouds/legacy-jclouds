@@ -52,7 +52,7 @@ public class BaseBlobLiveTest extends BaseBlobStoreIntegrationTest {
 
       httpStreamETag = checkNotNull(httpStreamETag != null ? httpStreamETag : sysHttpStreamETag, "httpStreamMd5");
 
-      String key = "hello";
+      String name = "hello";
 
       URL url = new URL(httpStreamUrl);
       byte[] md5 = CryptoStreams.hex(httpStreamETag);
@@ -61,16 +61,17 @@ public class BaseBlobLiveTest extends BaseBlobStoreIntegrationTest {
       long length = connection.getContentLength();
       InputStream input = connection.getInputStream();
 
-      Blob object = context.getBlobStore().newBlob(key);
-      object.setPayload(input);
-      object.getPayload().setContentLength(length);
-      object.getPayload().setContentMD5(md5);
-      String bucketName = getContainerName();
+      Blob blob = context.getBlobStore().newBlob(name);
+      blob.setPayload(input);
+      blob.getPayload().setContentLength(length);
+      blob.getPayload().setContentMD5(md5);
+      String container = getContainerName();
       try {
-         context.getBlobStore().putBlob(bucketName, object);
-         assertEquals(context.getBlobStore().blobMetadata(bucketName, key).getContentMD5(), md5);
+         context.getBlobStore().putBlob(container, blob);
+         assertEquals(context.getBlobStore().blobMetadata(container, name).getContentMD5(), md5);
       } finally {
-         returnContainer(bucketName);
+         returnContainer(container);
       }
    }
+
 }

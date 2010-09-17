@@ -31,7 +31,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -58,7 +58,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
 
    protected abstract Supplier<Set<? extends Image>> getSourceImageSupplier(Injector injector);
 
-   protected abstract Supplier<Set<? extends Size>> getSourceSizeSupplier(Injector injector);
+   protected abstract Supplier<Set<? extends Hardware>> getSourceSizeSupplier(Injector injector);
 
    /**
     * By default allows you to use a static set of locations bound to Set<? extends Location>
@@ -152,15 +152,15 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Supplier<Map<String, ? extends Size>> provideSizeMap(Supplier<Set<? extends Size>> sizes) {
-      return Suppliers.compose(new Function<Set<? extends Size>, Map<String, ? extends Size>>() {
+   protected Supplier<Map<String, ? extends Hardware>> provideSizeMap(Supplier<Set<? extends Hardware>> sizes) {
+      return Suppliers.compose(new Function<Set<? extends Hardware>, Map<String, ? extends Hardware>>() {
 
          @Override
-         public Map<String, ? extends Size> apply(Set<? extends Size> from) {
-            return Maps.uniqueIndex(from, new Function<Size, String>() {
+         public Map<String, ? extends Hardware> apply(Set<? extends Hardware> from) {
+            return Maps.uniqueIndex(from, new Function<Hardware, String>() {
 
                @Override
-               public String apply(Size from) {
+               public String apply(Hardware from) {
                   return from.getId();
                }
 
@@ -172,12 +172,12 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Supplier<Set<? extends Size>> supplySizeCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
+   protected Supplier<Set<? extends Hardware>> supplySizeCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
             final Injector injector) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Size>>(authException, seconds,
-               new Supplier<Set<? extends Size>>() {
+      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Hardware>>(authException, seconds,
+               new Supplier<Set<? extends Hardware>>() {
                   @Override
-                  public Set<? extends Size> get() {
+                  public Set<? extends Hardware> get() {
                      return getSourceSizeSupplier(injector).get();
                   }
                });

@@ -32,7 +32,7 @@ import java.util.Set;
 import org.easymock.IArgumentMatcher;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.compute.domain.EC2Size;
+import org.jclouds.aws.ec2.compute.domain.EC2Hardware;
 import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
@@ -90,7 +90,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       return null;
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    private void assertRegionAndZoneForLocation(Location location, String region, String zone) {
       String imageId = "ami1";
       String instanceCreatedId = "instance1";
@@ -157,7 +157,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       Template template = createMock(Template.class);
       Set<NodeMetadata> nodes = createMock(Set.class);
       Map<NodeMetadata, Exception> badNodes = createMock(Map.class);
-      EC2Size size = createMock(EC2Size.class);
+      EC2Hardware size = createMock(EC2Hardware.class);
       Image image = createMock(Image.class);
       final Location location;
       EC2TemplateOptions options = createMock(EC2TemplateOptions.class);

@@ -25,6 +25,7 @@ import java.net.ProxySelector;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.net.ssl.SSLContext;
 
@@ -53,8 +54,10 @@ import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.TransformingHttpCommandExecutorServiceImpl;
 import org.jclouds.http.apachehc.ApacheHCHttpCommandExecutorService;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
+import org.jclouds.http.config.SSLModule;
 import org.jclouds.lifecycle.Closer;
 
+import com.google.common.base.Supplier;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
@@ -72,6 +75,7 @@ public class ApacheHCHttpCommandExecutorServiceModule extends AbstractModule {
 
    @Override
    protected void configure() {
+      install(new SSLModule());
       bindClient();
    }
 
@@ -80,14 +84,12 @@ public class ApacheHCHttpCommandExecutorServiceModule extends AbstractModule {
    HttpParams newBasicHttpParams(HttpUtils utils) {
       BasicHttpParams params = new BasicHttpParams();
 
-      params.setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE, 8 * 1024)
-               .setBooleanParameter(CoreConnectionPNames.STALE_CONNECTION_CHECK, true)
-               .setBooleanParameter(CoreConnectionPNames.TCP_NODELAY, true).setParameter(
-                        CoreProtocolPNames.ORIGIN_SERVER, "jclouds/1.0");
+      params.setIntParameter(CoreConnectionPNames.SOCKET_BUFFER_SIZE, 8 * 1024).setBooleanParameter(
+               CoreConnectionPNames.STALE_CONNECTION_CHECK, true).setBooleanParameter(CoreConnectionPNames.TCP_NODELAY,
+               true).setParameter(CoreProtocolPNames.ORIGIN_SERVER, "jclouds/1.0");
 
       if (utils.getConnectionTimeout() > 0) {
-         params.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, utils
-                  .getConnectionTimeout());
+         params.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, utils.getConnectionTimeout());
       }
 
       if (utils.getSocketOpenTimeout() > 0) {
@@ -96,7 +98,7 @@ public class ApacheHCHttpCommandExecutorServiceModule extends AbstractModule {
 
       if (utils.getMaxConnections() > 0)
          ConnManagerParams.setMaxTotalConnections(params, utils.getMaxConnections());
-      
+
       if (utils.getMaxConnectionsPerHost() > 0) {
          ConnPerRoute connectionsPerRoute = new ConnPerRouteBean(utils.getMaxConnectionsPerHost());
          ConnManagerParams.setMaxConnectionsPerRoute(params, connectionsPerRoute);
@@ -114,17 +116,26 @@ public class ApacheHCHttpCommandExecutorServiceModule extends AbstractModule {
 
    @Singleton
    @Provides
-   ClientConnectionManager newClientConnectionManager(HttpParams params,
-            X509HostnameVerifier verifier, Closer closer) throws NoSuchAlgorithmException,
-            KeyManagementException {
+   SSLContext newSSLSocketFactory(HttpUtils utils, @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider)
+            throws NoSuchAlgorithmException, KeyManagementException {
+      if (utils.trustAllCerts())
+         return untrustedSSLContextProvider.get();
+      SSLContext context = SSLContext.getInstance("TLS");
+
+      context.init(null, null, null);
+      return context;
+   }
+
+   @Singleton
+   @Provides
+   ClientConnectionManager newClientConnectionManager(HttpParams params, X509HostnameVerifier verifier,
+            SSLContext context, Closer closer) throws NoSuchAlgorithmException, KeyManagementException {
 
       SchemeRegistry schemeRegistry = new SchemeRegistry();
 
       Scheme http = new Scheme("http", PlainSocketFactory.getSocketFactory(), 80);
-      SSLContext context = SSLContext.getInstance("TLS");
-
-      context.init(null, null, null);
       SSLSocketFactory sf = new SSLSocketFactory(context);
+
       sf.setHostnameVerifier(verifier);
 
       Scheme https = new Scheme("https", sf, 443);
@@ -134,7 +145,7 @@ public class ApacheHCHttpCommandExecutorServiceModule extends AbstractModule {
       sr.register(https);
 
       schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-      schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
+      schemeRegistry.register(new Scheme("https", sf, 443));
       final ClientConnectionManager cm = new ThreadSafeClientConnManager(params, schemeRegistry);
       closer.addToClose(new Closeable() {
          @Override
@@ -147,23 +158,21 @@ public class ApacheHCHttpCommandExecutorServiceModule extends AbstractModule {
 
    @Provides
    @Singleton
-   HttpClient newDefaultHttpClient(HttpUtils utils, BasicHttpParams params,
-            ClientConnectionManager cm) {
+   HttpClient newDefaultHttpClient(HttpUtils utils, BasicHttpParams params, ClientConnectionManager cm) {
       DefaultHttpClient client = new DefaultHttpClient(cm, params);
       if (utils.useSystemProxies()) {
-         ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(client
-                  .getConnectionManager().getSchemeRegistry(), ProxySelector.getDefault());
+         ProxySelectorRoutePlanner routePlanner = new ProxySelectorRoutePlanner(client.getConnectionManager()
+                  .getSchemeRegistry(), ProxySelector.getDefault());
          client.setRoutePlanner(routePlanner);
       }
       return client;
    }
 
    protected void bindClient() {
-      bind(HttpCommandExecutorService.class).to(ApacheHCHttpCommandExecutorService.class).in(
-               Scopes.SINGLETON);
+      bind(HttpCommandExecutorService.class).to(ApacheHCHttpCommandExecutorService.class).in(Scopes.SINGLETON);
 
-      bind(TransformingHttpCommandExecutorService.class).to(
-               TransformingHttpCommandExecutorServiceImpl.class).in(Scopes.SINGLETON);
+      bind(TransformingHttpCommandExecutorService.class).to(TransformingHttpCommandExecutorServiceImpl.class).in(
+               Scopes.SINGLETON);
    }
 
 }

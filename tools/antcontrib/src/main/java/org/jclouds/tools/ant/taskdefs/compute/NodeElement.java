@@ -28,7 +28,7 @@ import java.io.File;
 public class NodeElement {
    private String id;
    private String tag;
-   private String size;
+   private String hardware;
    private String os;
    private String image;
    private int count = 1;
@@ -99,12 +99,12 @@ public class NodeElement {
    }
 
 
-   public void setSize(String size) {
-      this.size = size;
+   public void setHardware(String hardware) {
+      this.hardware = hardware;
    }
 
-   public String getSize() {
-      return size;
+   public String getHardware() {
+      return hardware;
    }
 
    public void setOs(String os) {

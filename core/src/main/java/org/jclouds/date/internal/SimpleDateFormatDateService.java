@@ -154,7 +154,7 @@ public class SimpleDateFormatDateService implements DateService {
 
    private String trimTZ(String toParse) {
       if (TZ_PATTERN.matcher(toParse).matches()) {
-         logger.warn("trimming tz from %s", toParse);
+         logger.trace("trimming tz from %s", toParse);
          toParse = toParse.substring(0, toParse.length() - 6) + 'Z';
       }
       if (toParse.length() == 25 && SECOND_PATTERN.matcher(toParse).matches())

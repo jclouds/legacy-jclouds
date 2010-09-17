@@ -72,8 +72,10 @@ public class ExecutorServiceModule extends AbstractModule {
       }
    }
 
-   private final ExecutorService userExecutorFromConstructor;
-   private final ExecutorService ioExecutorFromConstructor;
+   @VisibleForTesting
+   final ExecutorService userExecutorFromConstructor;
+   @VisibleForTesting
+   final ExecutorService ioExecutorFromConstructor;
 
    @Inject
    public ExecutorServiceModule(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
@@ -107,7 +109,7 @@ public class ExecutorServiceModule extends AbstractModule {
    @Named(Constants.PROPERTY_USER_THREADS)
    ExecutorService provideExecutorService(@Named(Constants.PROPERTY_USER_THREADS) int count, Closer closer) {
       if (userExecutorFromConstructor != null)
-         return shutdownOnClose(userExecutorFromConstructor, closer);
+         return userExecutorFromConstructor;
       return shutdownOnClose(newThreadPoolNamed("user thread %d", count), closer);
    }
 
@@ -116,7 +118,7 @@ public class ExecutorServiceModule extends AbstractModule {
    @Named(Constants.PROPERTY_IO_WORKER_THREADS)
    ExecutorService provideIOExecutor(@Named(Constants.PROPERTY_IO_WORKER_THREADS) int count, Closer closer) {
       if (ioExecutorFromConstructor != null)
-         return shutdownOnClose(ioExecutorFromConstructor, closer);
+         return ioExecutorFromConstructor;
       return shutdownOnClose(newThreadPoolNamed("i/o thread %d", count), closer);
    }
 

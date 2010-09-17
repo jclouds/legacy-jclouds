@@ -42,7 +42,7 @@ import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.compute.domain.VCloudLocation;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
-import org.jclouds.vcloud.compute.functions.GetExtraFromVCloudExpressVApp;
+import org.jclouds.vcloud.compute.functions.HardwareForVCloudExpressVApp;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressGetNodeMetadataStrategy;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.terremark.compute.domain.KeyPairCredentials;
@@ -64,7 +64,7 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudExpressGetNode
    @Inject
    protected TerremarkVCloudGetNodeMetadataStrategy(VCloudExpressClient client,
             VCloudExpressComputeClient computeClient, Map<Status, NodeState> vAppStatusToNodeState,
-            GetExtraFromVCloudExpressVApp getExtra, FindLocationForResource findLocationForResourceInVDC,
+            HardwareForVCloudExpressVApp getExtra, FindLocationForResource findLocationForResourceInVDC,
             Supplier<Set<? extends Image>> images, ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
       super(client, computeClient, vAppStatusToNodeState, getExtra, findLocationForResourceInVDC, images);
       this.credentialsMap = credentialsMap;

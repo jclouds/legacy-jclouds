@@ -78,6 +78,7 @@ public interface CommonVCloudAsyncClient {
     * @see CommonVCloudClient#getOrg
     */
    @GET
+   @Path("")
    @XMLResponseParser(OrgHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(ORG_XML)
@@ -87,6 +88,7 @@ public interface CommonVCloudAsyncClient {
     * @see CommonVCloudClient#getOrgNamed
     */
    @GET
+   @Path("")
    @XMLResponseParser(OrgHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(ORG_XML)
@@ -97,6 +99,7 @@ public interface CommonVCloudAsyncClient {
     * @see CommonVCloudClient#getCatalog
     */
    @GET
+   @Path("")
    @XMLResponseParser(CatalogHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(CATALOG_XML)
@@ -106,6 +109,7 @@ public interface CommonVCloudAsyncClient {
     * @see CommonVCloudClient#findCatalogInOrgNamed
     */
    @GET
+   @Path("")
    @XMLResponseParser(CatalogHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(CATALOG_XML)
@@ -117,6 +121,7 @@ public interface CommonVCloudAsyncClient {
     * @see CommonVCloudClient#getCatalogItem
     */
    @GET
+   @Path("")
    @Consumes(CATALOGITEM_XML)
    @XMLResponseParser(CatalogItemHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -126,6 +131,7 @@ public interface CommonVCloudAsyncClient {
     * @see CommonVCloudClient#getCatalogItemInOrg
     */
    @GET
+   @Path("")
    @Consumes(CATALOGITEM_XML)
    @XMLResponseParser(CatalogItemHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -138,6 +144,7 @@ public interface CommonVCloudAsyncClient {
     * @see CommonVCloudClient#findNetworkInOrgVDCNamed
     */
    @GET
+   @Path("")
    @Consumes(NETWORK_XML)
    @XMLResponseParser(OrgNetworkHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -150,6 +157,7 @@ public interface CommonVCloudAsyncClient {
     * @see CommonVCloudClient#getNetwork
     */
    @GET
+   @Path("")
    @Consumes(NETWORK_XML)
    @XMLResponseParser(OrgNetworkHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -159,6 +167,7 @@ public interface CommonVCloudAsyncClient {
     * @see CommonVCloudClient#getVDC(URI)
     */
    @GET
+   @Path("")
    @XMLResponseParser(VDCHandler.class)
    @Consumes(VDC_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -168,6 +177,7 @@ public interface CommonVCloudAsyncClient {
     * @see CommonVCloudClient#findVDCInOrgNamed(String, String)
     */
    @GET
+   @Path("")
    @XMLResponseParser(VDCHandler.class)
    @Consumes(VDC_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -179,6 +189,7 @@ public interface CommonVCloudAsyncClient {
     * @see CommonVCloudClient#getTasksList
     */
    @GET
+   @Path("")
    @Consumes(TASKSLIST_XML)
    @XMLResponseParser(TasksListHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -188,6 +199,7 @@ public interface CommonVCloudAsyncClient {
     * @see CommonVCloudClient#findTasksListInOrgNamed
     */
    @GET
+   @Path("")
    @Consumes(TASKSLIST_XML)
    @XMLResponseParser(TasksListHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -198,6 +210,7 @@ public interface CommonVCloudAsyncClient {
     * @see CommonVCloudClient#getTask
     */
    @GET
+   @Path("")
    @Consumes(TASK_XML)
    @XMLResponseParser(TaskHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -209,6 +222,5 @@ public interface CommonVCloudAsyncClient {
    @POST
    @Path("/action/cancel")
    ListenableFuture<Void> cancelTask(@EndpointParam URI taskId);
-
 
 }

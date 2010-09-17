@@ -19,7 +19,10 @@
 
 package org.jclouds.scriptbuilder.domain;
 
+import java.net.URI;
 import java.util.Map;
+
+import com.google.common.collect.Multimap;
 
 /**
  * Statements used in shell scripts.
@@ -41,13 +44,17 @@ public class Statements {
       return new Call(function, args);
    }
 
-   public static Statement createRunScript(String instanceName, Iterable<String> exports,
-            String pwd, String... execLines) {// TODO: convert so
+   public static Statement createFile(String path, Iterable<String> lines) {
+      return new CreateFile(path, lines);
+   }
+
+   public static Statement createRunScript(String instanceName, Iterable<String> exports, String pwd,
+            Iterable<Statement> statements) {// TODO: convert so
       // that
       // createRunScript
       // can take from a
       // variable
-      return new CreateRunScript(instanceName, exports, pwd, execLines);
+      return new CreateRunScript(instanceName, exports, pwd, statements);
    }
 
    /**
@@ -87,20 +94,49 @@ public class Statements {
    public static Statement kill() {
       return KILL;
    }
-   
+
    /**
-    * statement can have multiple newlines, note you should use {@code {lf} } to be portable
+    * statement can have multiple newlines, note you should use {@code lf} to be portable
     * 
     * @see ShellToken
     */
-   public static Statement interpret(String portableStatement) {
-      return new InterpretableStatement(portableStatement);
+   public static Statement interpret(String... portableStatements) {
+      return new InterpretableStatement(portableStatements);
    }
 
    /**
     * interprets and adds a newline to the statement
     */
    public static Statement exec(String portableStatement) {
-      return interpret(portableStatement+"{lf}");
+      return interpret(portableStatement + "{lf}");
+   }
+
+   /**
+    * untar, ungzip the data received from the request parameters.
+    * 
+    * @param method
+    *           http method: ex GET
+    * @param endpoint
+    *           uri corresponding to the request
+    * @param headers
+    *           request headers to send
+    */
+   public static Statement extractTargzIntoDirectory(String method, URI endpoint, Multimap<String, String> headers,
+            String directory) {
+      return new PipeHttpResponseToTarxpzfIntoDirectory( method, endpoint, headers,directory);
+   }
+
+   /**
+    * exec the data received from the request parameters.
+    * 
+    * @param method
+    *           http method: ex GET
+    * @param endpoint
+    *           uri corresponding to the request
+    * @param headers
+    *           request headers to send
+    */
+   public static Statement pipeHttpResponseToBash(String method, URI endpoint, Multimap<String, String> headers) {
+      return new PipeHttpResponseToBash(method, endpoint, headers);
    }
 }

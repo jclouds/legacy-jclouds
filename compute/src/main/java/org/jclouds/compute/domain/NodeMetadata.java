@@ -19,7 +19,6 @@
 
 package org.jclouds.compute.domain;
 
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -44,6 +43,13 @@ public interface NodeMetadata extends ComputeMetadata {
     * 
     */
    String getTag();
+  
+   /**
+    * 
+    * The harware this node is running, if possible to determine.
+    */
+   @Nullable
+   Hardware getHardware();
 
    /**
     * 
@@ -80,8 +86,4 @@ public interface NodeMetadata extends ComputeMetadata {
     */
    Credentials getCredentials();
 
-   /**
-    * Other variables present that the provider supports
-    */
-   Map<String, String> getExtra();
 }

@@ -26,9 +26,11 @@ import java.util.concurrent.ConcurrentMap;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.AsyncBlobStore;
+import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.TransientAsyncBlobStore;
+import org.jclouds.blobstore.TransientBlobRequestSigner;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
@@ -68,6 +70,7 @@ public class TransientBlobStoreContextModule extends AbstractModule {
       install(new BlobStoreObjectModule());
       install(new BlobStoreMapModule());
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
+      bind(BlobRequestSigner.class).to(TransientBlobRequestSigner.class);
    }
 
    @Provides

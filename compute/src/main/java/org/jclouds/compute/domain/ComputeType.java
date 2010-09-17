@@ -25,6 +25,6 @@ package org.jclouds.compute.domain;
  */
 public enum ComputeType {
 
-   NODE, IMAGE, SIZE;
+   NODE, IMAGE, HARDWARE;
 
 }

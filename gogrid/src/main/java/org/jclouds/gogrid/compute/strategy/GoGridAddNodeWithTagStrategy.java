@@ -28,7 +28,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
@@ -51,14 +51,14 @@ import com.google.common.collect.Iterables;
 @Singleton
 public class GoGridAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
    private final GoGridClient client;
-   private final Function<Size, String> sizeToRam;
+   private final Function<Hardware, String> sizeToRam;
    private final Function<Server, NodeMetadata> serverToNodeMetadata;
    private RetryablePredicate<Server> serverLatestJobCompleted;
    private RetryablePredicate<Server> serverLatestJobCompletedShort;
 
    @Inject
    protected GoGridAddNodeWithTagStrategy(GoGridClient client,
-            Function<Server, NodeMetadata> serverToNodeMetadata, Function<Size, String> sizeToRam,
+            Function<Server, NodeMetadata> serverToNodeMetadata, Function<Hardware, String> sizeToRam,
             Timeouts timeouts) {
       this.client = client;
       this.serverToNodeMetadata = serverToNodeMetadata;
@@ -109,7 +109,7 @@ public class GoGridAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
       Server addedServer;
       addedServer = client.getServerServices().addServer(name,
                checkNotNull(template.getImage().getProviderId()),
-               sizeToRam.apply(template.getSize()), availableIp.getIp());
+               sizeToRam.apply(template.getHardware()), availableIp.getIp());
       return addedServer;
    }
 }

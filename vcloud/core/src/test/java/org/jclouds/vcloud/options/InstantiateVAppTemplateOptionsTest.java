@@ -20,6 +20,7 @@
 package org.jclouds.vcloud.options;
 
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.addNetworkConfig;
+import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.customizeOnInstantiate;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.disk;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.memory;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
@@ -75,6 +76,19 @@ public class InstantiateVAppTemplateOptionsTest {
    public void testCpuCountStatic() {
       InstantiateVAppTemplateOptions options = processorCount(3);
       assertEquals(options.getCpuCount(), "3");
+   }
+
+   @Test
+   public void testCustomizeOnInstantiate() {
+      InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
+      options.customizeOnInstantiate(true);
+      assertEquals(options.shouldCustomizeOnInstantiate(), new Boolean(true));
+   }
+
+   @Test
+   public void testCustomizeOnInstantiateStatic() {
+      InstantiateVAppTemplateOptions options = customizeOnInstantiate(true);
+      assertEquals(options.shouldCustomizeOnInstantiate(), new Boolean(true));
    }
 
    @Test

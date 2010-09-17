@@ -166,7 +166,7 @@ public class AzureBlobClientLiveTest {
          }
       }
       ListBlobsResponse list = client.listBlobs();
-      assertEquals(list.getUrl(), URI.create(String.format("https://%s.blob.core.windows.net/%%24root", identity)));
+      assertEquals(list.getUrl(), URI.create(String.format("https://%s.blob.core.windows.net/$root", identity)));
    }
 
    @Test

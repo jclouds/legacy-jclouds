@@ -118,6 +118,9 @@ public class GuestCustomizationSectionHandler extends ParseSax.HandlerWithResult
          this.resetPasswordRequired = Boolean.parseBoolean(currentOrNull());
       } else if (qName.endsWith("CustomizationScript")) {
          this.customizationScript = currentOrNull();
+         if (this.customizationScript != null)
+            customizationScript = customizationScript.replace("&lt;", "<").replace(">", "&gt;").replace("&quot;", "\"")
+                     .replace("&apos;", "'").replace("&#13;", "\r\n").replace("&#13;", "\n").replace("&amp;", "&");
       } else if (qName.endsWith("ComputerName")) {
          this.computerName = currentOrNull();
       } else if (qName.endsWith("Name")) {

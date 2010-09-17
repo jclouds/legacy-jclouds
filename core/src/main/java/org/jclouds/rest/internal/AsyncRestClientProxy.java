@@ -109,21 +109,23 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       if (exceptionParser instanceof InvocationContext) {
          ((InvocationContext) exceptionParser).setContext(null);
       }
-      HttpRequest request;
-      try {
-         request = annotationProcessor.createRequest(method, args);
-         if (exceptionParser instanceof InvocationContext) {
-            ((InvocationContext) exceptionParser).setContext((GeneratedHttpRequest<T>) request);
-         }
-      } catch (RuntimeException e) {
-         if (exceptionParser != null) {
-            try {
-               return Futures.immediateFuture(exceptionParser.apply(e));
-            } catch (Exception ex) {
-               return Futures.immediateFailedFuture(ex);
+      HttpRequest request = RestAnnotationProcessor.findHttpRequestInArgs(args);
+      if (request == null) {
+         try {
+            request = annotationProcessor.createRequest(method, args);
+            if (exceptionParser instanceof InvocationContext && request instanceof GeneratedHttpRequest) {
+               ((InvocationContext) exceptionParser).setContext((GeneratedHttpRequest<T>) request);
             }
+         } catch (RuntimeException e) {
+            if (exceptionParser != null) {
+               try {
+                  return Futures.immediateFuture(exceptionParser.apply(e));
+               } catch (Exception ex) {
+                  return Futures.immediateFailedFuture(ex);
+               }
+            }
+            return Futures.immediateFailedFuture(e);
          }
-         return Futures.immediateFailedFuture(e);
       }
       logger.trace("Converted %s.%s to %s", declaring.getSimpleName(), method.getName(), request.getRequestLine());
 

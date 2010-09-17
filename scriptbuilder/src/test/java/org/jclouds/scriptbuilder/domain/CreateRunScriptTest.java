@@ -19,6 +19,8 @@
 
 package org.jclouds.scriptbuilder.domain;
 
+import static org.jclouds.scriptbuilder.domain.Statements.call;
+import static org.jclouds.scriptbuilder.domain.Statements.createFile;
 import static org.jclouds.scriptbuilder.domain.Statements.createRunScript;
 import static org.testng.Assert.assertEquals;
 
@@ -36,30 +38,32 @@ import com.google.common.io.Resources;
  */
 @Test(groups = "unit", testName = "scriptbuilder.CreateRunScriptTest")
 public class CreateRunScriptTest {
-   Statement statement = createRunScript("yahooprod", ImmutableList.<String> of("javaHome"),
-            "{tmp}{fs}{uid}{fs}scripttest", "echo hello",
-            "echo {varl}JAVA_HOME{varr}{fs}bin{fs}java -DinstanceName={varl}INSTANCE_NAME{varr} myServer.Main");
+   Statement statement = createRunScript(
+            "yahooprod",
+            ImmutableList.<String> of("javaHome"),
+            "{tmp}{fs}{uid}{fs}scripttest",
+            ImmutableList
+                     .<Statement> of(
+                              call("echo hello"),
+                              createFile("{tmp}{fs}{uid}{fs}scripttest{fs}temp.txt", ImmutableList
+                                       .<String> of("hello world")),
+                              call("echo {varl}JAVA_HOME{varr}{fs}bin{fs}java -DinstanceName={varl}INSTANCE_NAME{varr} myServer.Main")));
 
    public void testUNIX() throws IOException {
-      assertEquals(statement.render(OsFamily.UNIX), CharStreams.toString(Resources
-               .newReaderSupplier(Resources.getResource("test_runrun."
-                        + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
+      assertEquals(statement.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
+               .getResource("test_runrun." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
 
    public void testWINDOWS() throws IOException {
-      assertEquals(statement.render(OsFamily.WINDOWS), CharStreams.toString(Resources
-               .newReaderSupplier(Resources.getResource("test_runrun."
-                        + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
+      assertEquals(statement.render(OsFamily.WINDOWS), CharStreams.toString(Resources.newReaderSupplier(Resources
+               .getResource("test_runrun." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
    }
 
    public void testRedirectGuard() {
       assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo>>"), "foo>>");
-      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo0>>"),
-               "foo0 >>");
-      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo1>>"),
-               "foo1 >>");
-      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo2>>"),
-               "foo2 >>");
+      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo0>>"), "foo0 >>");
+      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo1>>"), "foo1 >>");
+      assertEquals(CreateRunScript.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo2>>"), "foo2 >>");
    }
 
 }

@@ -65,23 +65,23 @@ public interface IntegrationTestAsyncClient {
    }
 
    @ROWDY
-   @Path("objects/{id}")
+   @Path("/objects/{id}")
    ListenableFuture<String> rowdy(@PathParam("id") String path);
 
    @HEAD
-   @Path("objects/{id}")
+   @Path("/objects/{id}")
    ListenableFuture<Boolean> exists(@PathParam("id") String path);
 
    @GET
-   @Path("objects/{id}")
+   @Path("/objects/{id}")
    ListenableFuture<String> download(@PathParam("id") String id);
 
    @GET
-   @Path("{path}")
+   @Path("/{path}")
    ListenableFuture<String> synch(@PathParam("path") String id);
 
    @GET
-   @Path("objects/{id}")
+   @Path("/objects/{id}")
    @ExceptionParser(FooOnException.class)
    ListenableFuture<String> downloadException(@PathParam("id") String id, HttpRequestOptions options);
 
@@ -94,20 +94,20 @@ public interface IntegrationTestAsyncClient {
    }
 
    @GET
-   @Path("objects/{id}")
+   @Path("/objects/{id}")
    @ExceptionParser(FooOnException.class)
    ListenableFuture<String> synchException(@PathParam("id") String id, @HeaderParam("Range") String header);
 
    @PUT
-   @Path("objects/{id}")
+   @Path("/objects/{id}")
    ListenableFuture<String> upload(@PathParam("id") String id, @BinderParam(BindToStringPayload.class) String toPut);
 
    @POST
-   @Path("objects/{id}")
+   @Path("/objects/{id}")
    ListenableFuture<String> post(@PathParam("id") String id, @BinderParam(BindToStringPayload.class) String toPut);
 
    @POST
-   @Path("objects/{id}")
+   @Path("/objects/{id}")
    ListenableFuture<String> postAsInputStream(@PathParam("id") String id,
             @BinderParam(BindToInputStreamPayload.class) String toPut);
 
@@ -121,7 +121,7 @@ public interface IntegrationTestAsyncClient {
    }
 
    @POST
-   @Path("objects/{id}")
+   @Path("/objects/{id}")
    ListenableFuture<String> postWithMd5(@PathParam("id") String id, @HeaderParam("Content-MD5") String base64MD5,
             @BinderParam(BindToFilePayload.class) File file);
 
@@ -134,17 +134,17 @@ public interface IntegrationTestAsyncClient {
    }
 
    @POST
-   @Path("objects/{id}")
+   @Path("/objects/{id}")
    @MapBinder(BindToJsonPayload.class)
    ListenableFuture<String> postJson(@PathParam("id") String id, @MapPayloadParam("key") String toPut);
 
    @POST
-   @Path("objects/{id}/action/{action}")
+   @Path("/objects/{id}/action/{action}")
    ListenableFuture<String> action(@PathParam("id") String id, @PathParam("action") String action,
             @BinderParam(BindMapToMatrixParams.class) Map<String, String> options);
 
    @GET
-   @Path("objects/{id}")
+   @Path("/objects/{id}")
    @RequestFilters(Filter.class)
    ListenableFuture<String> downloadFilter(@PathParam("id") String id, @HeaderParam("filterme") String header);
 
@@ -157,11 +157,11 @@ public interface IntegrationTestAsyncClient {
    }
 
    @GET
-   @Path("objects/{id}")
+   @Path("/objects/{id}")
    ListenableFuture<String> download(@PathParam("id") String id, @HeaderParam("test") String header);
 
    @GET
-   @Path("objects/{id}")
+   @Path("/objects/{id}")
    @XMLResponseParser(BarHandler.class)
    ListenableFuture<String> downloadAndParse(@PathParam("id") String id);
 

@@ -37,7 +37,7 @@ import org.jclouds.concurrent.Timeout;
  * 
  * @author Adrian Cole
  */
-@Timeout(duration = 45, timeUnit = TimeUnit.SECONDS)
+@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface AvailabilityZoneAndRegionClient {
 
    /**

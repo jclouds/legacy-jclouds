@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.jclouds.io.Payload;
 
@@ -61,7 +62,9 @@ public interface HttpClient {
     * @return null if the resource didn't exist.
     */
    InputStream get(URI location);
-
+   
+   InputStream invoke(HttpRequest location);
+   
    InputStream get(URI location, HttpRequestOptions options);
 
    /**

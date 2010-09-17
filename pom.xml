@@ -34,18 +34,16 @@
         <module>project</module>
         <module>assemblies</module>
         <module>archetypes</module>
-        <module>thirdparty</module>
         <module>core</module>
         <module>compute</module>
         <module>blobstore</module>
+        <module>filesystem</module>
         <module>extensions</module>
         <module>tools</module>
         <module>scriptbuilder</module>
         <module>aws</module>
         <module>azure</module>
         <module>atmos</module>
-        <module>mezeo</module>        
-        <module>nirvanix</module>
         <module>rackspace</module>
         <module>rimuhosting</module>        
         <module>twitter</module>
@@ -53,8 +51,6 @@
         <module>gogrid</module>
         <module>chef</module>
         <module>opscodeplatform</module>
-        <module>ibmdev</module>
-        <module>boxdotnet</module>
         <module>slicehost</module>
         <module>allcompute</module>
         <module>allblobstore</module>

@@ -20,7 +20,6 @@
 package org.jclouds.scriptbuilder.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.scriptbuilder.domain.Statements.interpret;
 
 import java.util.Collections;
@@ -48,19 +47,13 @@ public class CreateRunScript implements Statement {
    final String instanceName;
    final Iterable<String> exports;
    final String pwd;
-   final String[] execLines;
+   final Iterable<Statement> statements;
 
-   public CreateRunScript(String instanceName, Iterable<String> exports, String pwd,
-            String... execLines) {// TODO: convert so
-      // that
-      // createRunScript
-      // can take from a
-      // variable
+   public CreateRunScript(String instanceName, Iterable<String> exports, String pwd, Iterable<Statement> statements) {
       this.instanceName = checkNotNull(instanceName, "instanceName");
       this.exports = checkNotNull(exports, "exports");
       this.pwd = checkNotNull(pwd, "pwd").replaceAll("[/\\\\]", "{fs}");
-      this.execLines = checkNotNull(execLines, "execLines");
-      checkState(execLines.length > 0, "you must pass something to execute");
+      this.statements = checkNotNull(statements, "statements");
    }
 
    public static class AddTitleToFile implements Statement {
@@ -72,10 +65,9 @@ public class CreateRunScript implements Statement {
          this.file = checkNotNull(file, "file");
       }
 
-      public static final Map<OsFamily, String> OS_TO_TITLE_PATTERN = ImmutableMap.of(
-               OsFamily.UNIX,
-               "echo \"PROMPT_COMMAND='echo -ne \\\"\\033]0;{title}\\007\\\"'\">>{file}\n",
-               OsFamily.WINDOWS, "echo title {title}>>{file}\r\n");
+      public static final Map<OsFamily, String> OS_TO_TITLE_PATTERN = ImmutableMap.of(OsFamily.UNIX,
+               "echo \"PROMPT_COMMAND='echo -ne \\\"\\033]0;{title}\\007\\\"'\">>{file}\n", OsFamily.WINDOWS,
+               "echo title {title}>>{file}\r\n");
 
       @Override
       public Iterable<String> functionDependecies(OsFamily family) {
@@ -84,8 +76,8 @@ public class CreateRunScript implements Statement {
 
       @Override
       public String render(OsFamily family) {
-         return addSpaceToEnsureWeDontAccidentallyRedirectFd(Utils.replaceTokens(
-                  OS_TO_TITLE_PATTERN.get(family), ImmutableMap.of("title", title, "file", file)));
+         return addSpaceToEnsureWeDontAccidentallyRedirectFd(Utils.replaceTokens(OS_TO_TITLE_PATTERN.get(family),
+                  ImmutableMap.of("title", title, "file", file)));
       }
    }
 
@@ -95,14 +87,13 @@ public class CreateRunScript implements Statement {
       final String file;
 
       public AddExportToFile(String export, String value, String file) {
-         this.export = checkNotNull(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, export),
-                  "export");
+         this.export = checkNotNull(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, export), "export");
          this.value = checkNotNull(value, "value");
          this.file = checkNotNull(file, "file");
       }
 
-      public static final Map<OsFamily, String> OS_TO_EXPORT_PATTERN = ImmutableMap.of(
-               OsFamily.UNIX, "echo \"export {export}='{value}'\">>{file}\n", OsFamily.WINDOWS,
+      public static final Map<OsFamily, String> OS_TO_EXPORT_PATTERN = ImmutableMap.of(OsFamily.UNIX,
+               "echo \"export {export}='{value}'\">>{file}\n", OsFamily.WINDOWS,
                "echo set {export}={value}>>{file}\r\n");
 
       @Override
@@ -112,9 +103,8 @@ public class CreateRunScript implements Statement {
 
       @Override
       public String render(OsFamily family) {
-         return addSpaceToEnsureWeDontAccidentallyRedirectFd(Utils.replaceTokens(
-                  OS_TO_EXPORT_PATTERN.get(family), ImmutableMap.of("export", export, "value",
-                           value, "file", file)));
+         return addSpaceToEnsureWeDontAccidentallyRedirectFd(Utils.replaceTokens(OS_TO_EXPORT_PATTERN.get(family),
+                  ImmutableMap.of("export", export, "value", value, "file", file)));
       }
    }
 
@@ -137,8 +127,8 @@ public class CreateRunScript implements Statement {
       return Collections.emptyList();
    }
 
-   public static final Map<OsFamily, String> OS_TO_CHMOD_PATTERN = ImmutableMap.of(OsFamily.UNIX,
-            "chmod u+x {file}\n", OsFamily.WINDOWS, "");
+   public static final Map<OsFamily, String> OS_TO_CHMOD_PATTERN = ImmutableMap.of(OsFamily.UNIX, "chmod u+x {file}\n",
+            OsFamily.WINDOWS, "");
 
    @Override
    public String render(OsFamily family) {
@@ -158,32 +148,29 @@ public class CreateRunScript implements Statement {
          statements.add(interpret(builder.toString()));
       } else {
          statements.add(interpret(String.format("{rm} %s 2{closeFd}{lf}", runScript)));
-         for (String line : Splitter.on(ShellToken.LF.to(family)).split(
-                  ShellToken.BEGIN_SCRIPT.to(family))) {
+         for (String line : Splitter.on(ShellToken.LF.to(family)).split(ShellToken.BEGIN_SCRIPT.to(family))) {
             if (!line.equals(""))
                statements.add(appendToFile(line, runScript, family));
          }
          statements.add(new AddTitleToFile(instanceName, runScript));
-         statements.add(appendToFile(Utils.writeZeroPath(family).replace(ShellToken.LF.to(family),
-                  ""), runScript, family));
+         statements.add(appendToFile(Utils.writeZeroPath(family).replace(ShellToken.LF.to(family), ""), runScript,
+                  family));
          statements.add(new AddExportToFile("instanceName", instanceName, runScript));
          for (String export : exports) {
-            statements.add(new AddExportToFile(export, Utils.replaceTokens("{varl}"
-                     + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, export) + "{varr}",
-                     tokenMap), runScript));
+            statements
+                     .add(new AddExportToFile(export, Utils.replaceTokens("{varl}"
+                              + CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, export) + "{varr}", tokenMap),
+                              runScript));
          }
          statements.add(appendToFile("{cd} " + pwd, runScript, family));
-         for (String execLine : execLines) {
-            statements.add(appendToFile(execLine, runScript, family));
-         }
-         for (String line : Splitter.on(ShellToken.LF.to(family)).split(
-                  ShellToken.END_SCRIPT.to(family))) {
+         statements.addAll(statements);
+         for (String line : Splitter.on(ShellToken.LF.to(family)).split(ShellToken.END_SCRIPT.to(family))) {
             if (!line.equals(""))
                statements.add(appendToFile(line, runScript, family));
          }
       }
-      statements.add(interpret(Utils.replaceTokens(OS_TO_CHMOD_PATTERN.get(family), ImmutableMap
-               .of("file", runScript))));
+      statements
+               .add(interpret(Utils.replaceTokens(OS_TO_CHMOD_PATTERN.get(family), ImmutableMap.of("file", runScript))));
       return new StatementList(statements).render(family);
    }
 
@@ -198,8 +185,8 @@ public class CreateRunScript implements Statement {
       builder.append("# add desired commands from the user\n");
       builder.append("cat >> ").append(runScript).append(" <<'").append(MARKER).append("'\n");
       builder.append("cd ").append(pwd).append("\n");
-      for (String execLine : execLines) {
-         builder.append(execLine).append("\n");
+      for (Statement statement : statements) {
+         builder.append(statement.render(OsFamily.UNIX)).append("\n");
       }
       builder.append(MARKER).append("\n");
    }
@@ -208,15 +195,12 @@ public class CreateRunScript implements Statement {
       builder.append("# create runscript header\n");
       builder.append("cat > ").append(runScript).append(" <<").append(MARKER).append("\n");
       builder.append(ShellToken.BEGIN_SCRIPT.to(family));
-      builder.append("PROMPT_COMMAND='echo -ne \"\\033]0;").append(instanceName).append(
-               "\\007\"'\n");
+      builder.append("PROMPT_COMMAND='echo -ne \"\\033]0;").append(instanceName).append("\\007\"'\n");
       builder.append(Utils.writeZeroPath(family));
       builder.append("export INSTANCE_NAME='").append(instanceName).append("'\n");
       for (String export : exports) {
-         String variableNameInUpper = CaseFormat.LOWER_CAMEL
-                  .to(CaseFormat.UPPER_UNDERSCORE, export);
-         builder.append("export ").append(variableNameInUpper).append("='$").append(
-                  variableNameInUpper).append("'\n");
+         String variableNameInUpper = CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, export);
+         builder.append("export ").append(variableNameInUpper).append("='$").append(variableNameInUpper).append("'\n");
       }
       builder.append(MARKER).append("\n");
    }
@@ -228,8 +212,8 @@ public class CreateRunScript implements Statement {
       } else {
          line = escapeVarTokens(line, family);
       }
-      return interpret(addSpaceToEnsureWeDontAccidentallyRedirectFd(String.format(
-               "echo %s%s%s>>%s{lf}", quote, line, quote, runScript)));
+      return interpret(addSpaceToEnsureWeDontAccidentallyRedirectFd(String.format("echo %s%s%s>>%s{lf}", quote, line,
+               quote, runScript)));
    }
 
    public static final Pattern REDIRECT_FD_PATTERN = Pattern.compile(".*[0-2]>>.*");

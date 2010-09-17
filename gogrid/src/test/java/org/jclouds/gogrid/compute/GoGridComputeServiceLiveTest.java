@@ -19,6 +19,7 @@
 
 package org.jclouds.gogrid.compute;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
@@ -50,7 +51,7 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
       assertEquals(defaultTemplate.getLocation().getId(), "1");
-      assertEquals(defaultTemplate.getSize().getCores(), 0.5d);
+      assertEquals(getCores(defaultTemplate.getHardware()), 0.5d);
    }
 
    @Override

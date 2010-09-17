@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.compute.strategy;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.vcloud.options.InstantiateVAppTemplateOptions.Builder.processorCount;
 
 import java.net.URI;
@@ -37,8 +38,8 @@ import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
-import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.Status;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.common.collect.ImmutableMap;
@@ -62,8 +63,9 @@ public class VCloudExpressAddNodeWithTagStrategy implements AddNodeWithTagStrate
 
    @Override
    public NodeMetadata execute(String tag, String name, Template template) {
-      InstantiateVAppTemplateOptions options = processorCount(Double.valueOf(template.getSize().getCores()).intValue())
-               .memory(template.getSize().getRam()).disk(template.getSize().getDisk() * 1024 * 1024l);
+      InstantiateVAppTemplateOptions options = processorCount((int) getCores(template.getHardware())).memory(
+               template.getHardware().getRam()).disk(
+               (long) ((template.getHardware().getVolumes().get(0).getSize()) * 1024 * 1024l));
       if (!template.getOptions().shouldBlockUntilRunning())
          options.block(false);
       Map<String, String> metaMap = computeClient.start(URI.create(template.getLocation().getId()), URI.create(template
@@ -72,13 +74,14 @@ public class VCloudExpressAddNodeWithTagStrategy implements AddNodeWithTagStrate
       return newCreateNodeResponse(tag, template, metaMap, vApp);
    }
 
-   protected NodeMetadata newCreateNodeResponse(String tag, Template template, Map<String, String> metaMap, VCloudExpressVApp vApp) {
-      return new NodeMetadataImpl(vApp.getHref().toASCIIString(), vApp.getName(), vApp.getHref().toASCIIString(), template
-               .getLocation(), vApp.getHref(), ImmutableMap.<String, String> of(), tag, template.getImage().getId(),
-               getOperatingSystemForVAppOrDefaultTo(vApp, template.getImage().getOperatingSystem()),
-               vAppStatusToNodeState.get(vApp.getStatus()), computeClient.getPublicAddresses(vApp.getHref()),
-               computeClient.getPrivateAddresses(vApp.getHref()), ImmutableMap.<String, String> of(), new Credentials(
-                        metaMap.get("username"), metaMap.get("password")));
+   protected NodeMetadata newCreateNodeResponse(String tag, Template template, Map<String, String> metaMap,
+            VCloudExpressVApp vApp) {
+      return new NodeMetadataImpl(vApp.getHref().toASCIIString(), vApp.getName(), vApp.getHref().toASCIIString(),
+               template.getLocation(), vApp.getHref(), ImmutableMap.<String, String> of(), tag, template.getHardware(),
+               template.getImage().getId(), getOperatingSystemForVAppOrDefaultTo(vApp, template.getImage()
+                        .getOperatingSystem()), vAppStatusToNodeState.get(vApp.getStatus()), computeClient
+                        .getPublicAddresses(vApp.getHref()), computeClient.getPrivateAddresses(vApp.getHref()),
+               new Credentials(metaMap.get("username"), metaMap.get("password")));
    }
 
    private OperatingSystem getOperatingSystemForVAppOrDefaultTo(VCloudExpressVApp vApp, OperatingSystem operatingSystem) {

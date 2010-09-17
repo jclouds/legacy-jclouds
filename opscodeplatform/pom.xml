@@ -52,7 +52,7 @@
         </repository>
         <repository>
             <id>jclouds-rimu-snapshots-nexus</id>
-            <url>http://jclouds.rimuhosting.com:8081/nexus/content/repositories/snapshots</url>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>

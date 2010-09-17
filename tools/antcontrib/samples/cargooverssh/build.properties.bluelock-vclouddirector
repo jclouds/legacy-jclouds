@@ -1,0 +1,5 @@
+provider=bluelock-vcloudirector
+driver=bluelock
+identity=user@your_org
+credential=password
+tag=name_of_your_vapp

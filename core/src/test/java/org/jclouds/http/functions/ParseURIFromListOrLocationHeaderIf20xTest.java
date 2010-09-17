@@ -33,7 +33,6 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
 
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -42,6 +41,7 @@ import org.mortbay.jetty.HttpHeaders;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.sun.jersey.api.uri.UriBuilderImpl;
 
 @Test(groups = { "unit" })
 public class ParseURIFromListOrLocationHeaderIf20xTest {

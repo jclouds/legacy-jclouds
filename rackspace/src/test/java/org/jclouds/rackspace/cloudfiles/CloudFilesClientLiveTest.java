@@ -258,13 +258,8 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          String containerName2 = containerName + "?should-be-illegal-question-char";
          assert getApi().createContainer(containerName2);
 
-         // TODO: Should throw a specific exception, not
-         // UndeclaredThrowableException
-         try {
-            getApi().createContainer(containerName + "/illegal-slash-char");
-            fail("Should not be able to create container with illegal '/' character");
-         } catch (Exception e) {
-         }
+         assert getApi().createContainer(containerName + "/illegal-slash-char");
+
          assertTrue(getApi().deleteContainerIfEmpty(containerName1));
          assertTrue(getApi().deleteContainerIfEmpty(containerName2));
       } finally {
@@ -313,14 +308,10 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
 
          // Test HEAD of object
          MutableObjectInfoWithMetadata metadata = getApi().getObjectInfo(containerName, object.getInfo().getName());
-         // TODO assertEquals(metadata.getName(),
-         // object.getMetadata().getName());
+         assertEquals(metadata.getName(), object.getInfo().getName());
 
-         // rackspace recently doesn't return a content-length or type on head
-         assertEquals(metadata.getBytes(), null);
-         assertEquals(metadata.getContentType(), null);
-         // assertEquals(metadata.getBytes(), new Long(data.length()));
-         // assertEquals(metadata.getContentType(), "text/plain");
+         assertEquals(metadata.getBytes(), new Long(data.length()));
+         assertEquals(metadata.getContentType(), "text/plain; charset=UTF-8");
 
          assertEquals(CryptoStreams.hex(md5), CryptoStreams.hex(metadata.getHash()));
          assertEquals(metadata.getHash(), CryptoStreams.hex(newEtag));
@@ -341,7 +332,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          // TODO assertEquals(getBlob.getName(),
          // object.getMetadata().getName());
          assertEquals(getBlob.getInfo().getBytes(), new Long(data.length()));
-         assertEquals(getBlob.getInfo().getContentType(), "text/plain");
+         assertEquals(getBlob.getInfo().getContentType(), "text/plain; charset=UTF-8");
          assertEquals(CryptoStreams.hex(md5), CryptoStreams.hex(getBlob.getInfo().getHash()));
          assertEquals(CryptoStreams.hex(newEtag), getBlob.getInfo().getHash());
          assertEquals(getBlob.getInfo().getMetadata().entrySet().size(), 2);

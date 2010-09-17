@@ -19,6 +19,12 @@
 
 package org.jclouds.compute.util;
 
+import static com.google.common.base.Throwables.getStackTraceAsString;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.find;
+import static org.jclouds.scriptbuilder.domain.Statements.pipeHttpResponseToBash;
+
+import java.net.URI;
 import java.util.Formatter;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -29,17 +35,23 @@ import java.util.regex.Pattern;
 
 import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.Volume;
+import org.jclouds.compute.domain.internal.HardwareImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.domain.Credentials;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.logging.Logger;
+import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -48,9 +60,57 @@ import com.google.common.collect.Iterables;
 public class ComputeServiceUtils {
    public static final Pattern DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX = Pattern.compile("([^-]+)-[0-9a-f]+");
 
+   /**
+    * build a shell script that invokes the contents of the http request in bash.
+    * 
+    * @return a shell script that will invoke the http request
+    */
+   public static Statement execHttpResponse(HttpRequest request) {
+      return pipeHttpResponseToBash(request.getMethod(), request.getEndpoint(), request.getHeaders());
+   }
+
+   public static Statement execHttpResponse(URI location) {
+      return execHttpResponse(new HttpRequest("GET", location));
+   }
+
+   /**
+    * build a shell script that invokes the contents of the http request in bash.
+    * 
+    * @return a shell script that will invoke the http request
+    */
+   public static Statement extractTargzIntoDirectory(HttpRequest targz, String directory) {
+      return Statements
+               .extractTargzIntoDirectory(targz.getMethod(), targz.getEndpoint(), targz.getHeaders(), directory);
+   }
+
+   public static Statement extractTargzIntoDirectory(URI targz, String directory) {
+      return extractTargzIntoDirectory(new HttpRequest("GET", targz), directory);
+   }
+
    public static String parseTagFromName(String from) {
       Matcher matcher = DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX.matcher(from);
       return matcher.find() ? matcher.group(1) : "NOTAG-" + from;
+   }
+
+   public static double getCores(Hardware input) {
+      double cores = 0;
+      for (Processor processor : input.getProcessors())
+         cores += processor.getCores();
+      return cores;
+   }
+
+   public static double getCoresAndSpeed(Hardware input) {
+      double total = 0;
+      for (Processor processor : input.getProcessors())
+         total += (processor.getCores() * processor.getSpeed());
+      return total;
+   }
+
+   public static double getSpace(Hardware input) {
+      double total = 0;
+      for (Volume volume : input.getVolumes())
+         total += volume.getSize() != null ? volume.getSize() : 0;
+      return total;
    }
 
    public static final Map<org.jclouds.compute.domain.OsFamily, Map<String, String>> NAME_VERSION_MAP = ImmutableMap
@@ -61,17 +121,17 @@ public class ComputeServiceUtils {
                               .build(), org.jclouds.compute.domain.OsFamily.UBUNTU, ImmutableMap
                               .<String, String> builder().put("hardy", "8.04").put("intrepid", "8.10").put("jaunty",
                                        "9.04").put("karmic", "9.10").put("lucid", "10.04").put("maverick", "10.10")
-                              .build());
+                              .put("natty", "11.04").build());
 
    public static String parseVersionOrReturnEmptyString(org.jclouds.compute.domain.OsFamily family, final String in) {
       if (NAME_VERSION_MAP.containsKey(family)) {
          CONTAINS_SUBSTRING contains = new CONTAINS_SUBSTRING(in.replace('-', '.'));
          try {
-            String key = Iterables.find(NAME_VERSION_MAP.get(family).keySet(), contains);
+            String key = find(NAME_VERSION_MAP.get(family).keySet(), contains);
             return NAME_VERSION_MAP.get(family).get(key);
          } catch (NoSuchElementException e) {
             try {
-               return Iterables.find(NAME_VERSION_MAP.get(family).values(), contains);
+               return find(NAME_VERSION_MAP.get(family).values(), contains);
             } catch (NoSuchElementException e1) {
             }
          }
@@ -79,12 +139,15 @@ public class ComputeServiceUtils {
       return "";
    }
 
-   public static org.jclouds.compute.domain.OsFamily parseOsFamilyOrNull(String in) {
+   public static org.jclouds.compute.domain.OsFamily parseOsFamilyOrNull(String provider, String in) {
       org.jclouds.compute.domain.OsFamily myOs = null;
       for (org.jclouds.compute.domain.OsFamily os : org.jclouds.compute.domain.OsFamily.values()) {
          if (in.toLowerCase().replaceAll("\\s", "").indexOf(os.toString()) != -1) {
             myOs = os;
          }
+      }
+      if (myOs == null && provider.indexOf("nebula") != -1) {
+         myOs = OsFamily.UBUNTU;
       }
       return myOs;
    }
@@ -94,7 +157,7 @@ public class ComputeServiceUtils {
       int index = 1;
       for (Entry<?, Exception> errorMessage : executionExceptions.entrySet()) {
          fmt.format("%s) %s on %s:%n%s%n%n", index++, errorMessage.getValue().getClass().getSimpleName(), errorMessage
-                  .getKey(), Throwables.getStackTraceAsString(errorMessage.getValue()));
+                  .getKey(), getStackTraceAsString(errorMessage.getValue()));
       }
       return fmt.format("%s error[s]", executionExceptions.size()).toString();
    }
@@ -104,14 +167,14 @@ public class ComputeServiceUtils {
       int index = 1;
       for (Entry<? extends NodeMetadata, ? extends Throwable> errorMessage : failedNodes.entrySet()) {
          fmt.format("%s) %s on node %s:%n%s%n%n", index++, errorMessage.getValue().getClass().getSimpleName(),
-                  errorMessage.getKey().getId(), Throwables.getStackTraceAsString(errorMessage.getValue()));
+                  errorMessage.getKey().getId(), getStackTraceAsString(errorMessage.getValue()));
       }
       return fmt.format("%s error[s]", failedNodes.size()).toString();
    }
 
    public static Iterable<? extends ComputeMetadata> filterByName(Iterable<? extends ComputeMetadata> nodes,
             final String name) {
-      return Iterables.filter(nodes, new Predicate<ComputeMetadata>() {
+      return filter(nodes, new Predicate<ComputeMetadata>() {
          @Override
          public boolean apply(ComputeMetadata input) {
             return input.getName().equalsIgnoreCase(name);
@@ -149,9 +212,19 @@ public class ComputeServiceUtils {
     */
    public static NodeMetadata installNewCredentials(NodeMetadata node, Credentials newCredentials) {
       return new NodeMetadataImpl(node.getProviderId(), node.getName(), node.getId(), node.getLocation(),
-               node.getUri(), node.getUserMetadata(), node.getTag(), node.getImageId(), node.getOperatingSystem(), node
-                        .getState(), node.getPublicAddresses(), node.getPrivateAddresses(), node.getExtra(),
+               node.getUri(), node.getUserMetadata(), node.getTag(), node.getHardware(), node.getImageId(), node
+                        .getOperatingSystem(), node.getState(), node.getPublicAddresses(), node.getPrivateAddresses(),
                newCredentials);
+   }
+
+   /**
+    * Given the instances of {@link Hardware} (immutable) and {@link Iterable<? extends Volume>}
+    * (immutable), returns a new instance of {@link Hardware} with the new volumes
+    */
+   public static Hardware replacesVolumes(Hardware hardware, Iterable<? extends Volume> volumes) {
+      return new HardwareImpl(hardware.getProviderId(), hardware.getName(), hardware.getId(), hardware.getLocation(),
+               hardware.getUri(), hardware.getUserMetadata(), hardware.getProcessors(), hardware.getRam(), volumes,
+               hardware.supportsImage());
    }
 
    public static Iterable<String> getSupportedProviders() {

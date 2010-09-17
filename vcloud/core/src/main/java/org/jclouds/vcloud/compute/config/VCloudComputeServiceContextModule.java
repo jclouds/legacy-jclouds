@@ -23,8 +23,10 @@ import java.util.Set;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
@@ -35,14 +37,16 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.compute.functions.ImagesInOrg;
-import org.jclouds.vcloud.compute.functions.SizesInOrg;
+import org.jclouds.vcloud.compute.functions.HardwareInOrg;
+import org.jclouds.vcloud.compute.internal.VCloudTemplateBuilderImpl;
+import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
 import org.jclouds.vcloud.compute.strategy.GetLoginCredentialsFromGuestConfiguration;
 import org.jclouds.vcloud.compute.strategy.VCloudAddNodeWithTagStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudGetNodeMetadataStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
-import org.jclouds.vcloud.compute.suppliers.VCloudSizeSupplier;
+import org.jclouds.vcloud.compute.suppliers.VCloudHardwareSupplier;
 import org.jclouds.vcloud.domain.Org;
 
 import com.google.common.base.Function;
@@ -62,6 +66,8 @@ public class VCloudComputeServiceContextModule extends CommonVCloudComputeServic
    @Override
    protected void configure() {
       super.configure();
+      bind(TemplateOptions.class).to(VCloudTemplateOptions.class);
+      bind(TemplateBuilder.class).to(VCloudTemplateBuilderImpl.class);
       bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
       bind(GetNodeMetadataStrategy.class).to(VCloudGetNodeMetadataStrategy.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
@@ -73,8 +79,8 @@ public class VCloudComputeServiceContextModule extends CommonVCloudComputeServic
       bind(new TypeLiteral<Function<Org, Iterable<? extends Image>>>() {
       }).to(new TypeLiteral<ImagesInOrg>() {
       });
-      bind(new TypeLiteral<Function<Org, Iterable<? extends Size>>>() {
-      }).to(new TypeLiteral<SizesInOrg>() {
+      bind(new TypeLiteral<Function<Org, Iterable<? extends Hardware>>>() {
+      }).to(new TypeLiteral<HardwareInOrg>() {
       });
       bind(AddNodeWithTagStrategy.class).to(VCloudAddNodeWithTagStrategy.class);
       bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
@@ -83,8 +89,8 @@ public class VCloudComputeServiceContextModule extends CommonVCloudComputeServic
    }
 
    @Override
-   protected Supplier<Set<? extends Size>> getSourceSizeSupplier(Injector injector) {
-      return injector.getInstance(VCloudSizeSupplier.class);
+   protected Supplier<Set<? extends Hardware>> getSourceSizeSupplier(Injector injector) {
+      return injector.getInstance(VCloudHardwareSupplier.class);
    }
 
 }

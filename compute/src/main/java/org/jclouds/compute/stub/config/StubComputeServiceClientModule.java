@@ -25,11 +25,10 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings("rawtypes")
 @ConfiguresRestClient
 @RequiresHttp
-public class StubComputeServiceClientModule extends
-         RestClientModule<ConcurrentMap, ConcurrentMap> {
+public class StubComputeServiceClientModule extends RestClientModule<ConcurrentMap, ConcurrentMap> {
 
    public StubComputeServiceClientModule() {
       super(ConcurrentMap.class, ConcurrentMap.class);

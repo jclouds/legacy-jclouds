@@ -19,10 +19,24 @@
 
 package org.jclouds.chef.config;
 
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Singleton;
+
 import org.jclouds.chef.ChefAsyncClient;
 import org.jclouds.chef.ChefClient;
+import org.jclouds.chef.domain.Client;
+import org.jclouds.chef.functions.ClientForTag;
+import org.jclouds.chef.functions.RunListForTag;
+import org.jclouds.chef.statements.InstallChefGems;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.scriptbuilder.domain.Statement;
+
+import com.google.common.collect.MapMaker;
+import com.google.inject.Provides;
+import com.google.inject.name.Names;
 
 /**
  * Configures the Chef connection.
@@ -35,6 +49,24 @@ public class ChefRestClientModule extends BaseChefRestClientModule<ChefClient, C
 
    public ChefRestClientModule() {
       super(ChefClient.class, ChefAsyncClient.class);
+   }
+
+   @Provides
+   @Singleton
+   Map<String, List<String>> runListForTag(RunListForTag runListForTag) {
+      return new MapMaker().makeComputingMap(runListForTag);
+   }
+
+   @Provides
+   @Singleton
+   Map<String, Client> tagToClient(ClientForTag tagToClient) {
+      return new MapMaker().makeComputingMap(tagToClient);
+   }
+
+   @Override
+   protected void configure() {
+      bind(Statement.class).annotatedWith(Names.named("installChefGems")).to(InstallChefGems.class);
+      super.configure();
    }
 
 }

@@ -1,5 +1,5 @@
-service=rimuhosting
+provider=rimuhosting
 driver=rimuhosting
-account=apikey
-key=apikey
-nodetag=name_of_your_server
+identity=apicredential
+credential=apicredential
+tag=name_of_your_server

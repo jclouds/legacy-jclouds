@@ -116,6 +116,54 @@ public class StreamingPayload implements Payload {
     * {@inheritDoc}
     */
    @Override
+   public void setContentDisposition(String contentDisposition) {
+      throw new UnsupportedOperationException("this payload is for streaming writes only");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContentDisposition() {
+      throw new UnsupportedOperationException("this payload is for streaming writes only");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setContentLanguage(String contentLanguage) {
+      throw new UnsupportedOperationException("this payload is for streaming writes only");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContentLanguage() {
+      throw new UnsupportedOperationException("this payload is for streaming writes only");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setContentEncoding(String contentEncoding) {
+      throw new UnsupportedOperationException("this payload is for streaming writes only");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContentEncoding() {
+      throw new UnsupportedOperationException("this payload is for streaming writes only");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public void writeTo(OutputStream outstream) throws IOException {
       writeTo.writeTo(outstream);
    }
@@ -172,4 +220,5 @@ public class StreamingPayload implements Payload {
    public void close() {
       release();
    }
+
 }

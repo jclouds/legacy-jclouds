@@ -33,6 +33,16 @@ import org.jclouds.aws.ec2.EC2AsyncClient;
  */
 public class InstanceType {
    /**
+    * Micro Instance
+    * <ul>
+    * <li>613 MB of memory</li>
+    * <li>up to 2 ECUs (for short periodic bursts)</li>
+    * <li>No instance storage (EBS storage only)</li>
+    * <li>32-bit or 64-bit platform</li>
+    * </ul>
+    */
+   public static final String T1_MICRO = "t1.micro";
+   /**
     * Small Instance
     * <ul>
     * <li>1.7 GB memory</li>

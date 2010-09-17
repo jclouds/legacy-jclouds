@@ -72,6 +72,54 @@ public interface Payload extends InputSupplier<InputStream>, WriteTo, Closeable 
    @Nullable
    String getContentType();
 
+
+   /**
+    * Set Content Disposition of the payload
+    * <p/>
+    * Not all providers may support it
+    *
+    * @param contentDisposition
+    */
+   void setContentDisposition(@Nullable String contentDisposition);
+
+   /**
+    * Get Content Disposition of the payload
+    * <p/>
+    * Not all providers may support it
+    */
+   @Nullable String getContentDisposition();
+
+   /**
+    * Set Content Language of the payload
+    * <p/>
+    * Not all providers may support it
+    *
+    * @param contentLanguage
+    */
+   void setContentLanguage(@Nullable String contentLanguage);
+   /**
+    * Get Content Language of the payload
+    * <p/>
+    * Not all providers may support it
+    */
+   @Nullable String getContentLanguage();
+
+   /**
+    * Set Content Encoding of the payload
+    * <p/>
+    * Not all providers may support it
+    *
+    * @param contentEncoding
+    */
+   void setContentEncoding(@Nullable String contentEncoding);
+   /**
+    * Get Content Encoding of the payload
+    * <p/>
+    * Not all providers may support it
+    */
+   @Nullable String getContentEncoding();
+
+
    /**
     * release resources used by this entity. This should be called when data is
     * discarded.

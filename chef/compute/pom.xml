@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <!--
+        $HeadURL$ $Revision$ $Date$ Copyright (C) 2010 Cloud Conscious,
+        LLC <info@cloudconscious.com>
+
+        ====================================================================
+        Licensed to the Apache Software Foundation (ASF) under one or
+        more contributor license agreements. See the NOTICE file
+        distributed with this work for additional information regarding
+        copyright ownership. The ASF licenses this file to you under the
+        Apache License, Version 2.0 (the "License"); you may not use
+        this file except in compliance with the License. You may obtain
+        a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0.html Unless required
+        by applicable law or agreed to in writing, software distributed
+        under the License is distributed on an "AS IS" BASIS, WITHOUT
+        WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+        See the License for the specific language governing permissions
+        and limitations under the License.
+        ====================================================================
+    -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jclouds</groupId>
+        <artifactId>jclouds-chef-project</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <groupId>org.jclouds</groupId>
+    <artifactId>jclouds-chef-compute</artifactId>
+    <name>jclouds chef compute integration</name>
+    <description>provisions nodes with jclouds and kick's off chef to configure and integrate</description>
+    <properties>
+        <!--
+            for example: ec2, trmk-ecloud, bluelock-vclouddirector,
+            cloudservers, etc
+        -->
+        <jclouds.compute.provider>YOUR_PREFERRED_PROVIDER</jclouds.compute.provider>
+        <!-- leave blank unless you have a different url to override -->
+        <jclouds.compute.endpoint></jclouds.compute.endpoint>
+        <jclouds.compute.identity>YOUR_ACCOUNT</jclouds.compute.identity>
+        <jclouds.compute.credential>YOUR_CREDENTIAL</jclouds.compute.credential>
+        <!--  tag for nodes used in the tests  -->
+        <jclouds.compute.tag>jcloudschef</jclouds.compute.tag>
+        <jclouds.chef.identity>YOUR_USER</jclouds.chef.identity>
+        <jclouds.chef.credential.pem>${user.home}/.chef/${jclouds.chef.identity}.pem</jclouds.chef.credential.pem>
+        <jclouds.opscodeplatform.org>YOUR_ORG</jclouds.opscodeplatform.org>
+        <jclouds.chef.endpoint>https://api.opscode.com/organizations/${jclouds.opscodeplatform.org}</jclouds.chef.endpoint>
+    </properties>
+
+    <!-- bootstrapping: need to fetch the project POM -->
+    <repositories>
+        <repository>
+            <id>jclouds-googlecode-deploy</id>
+            <url>http://jclouds.googlecode.com/svn/repo</url>
+        </repository>
+        <repository>
+            <id>jclouds-rimu-snapshots-nexus</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-chef</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-compute</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-jsch</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-log4j</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-compute</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-allcompute</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+    <profiles>
+        <profile>
+            <id>live</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>integration</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <excludes>
+                                        <exclude>none</exclude>
+                                    </excludes>
+                                    <includes>
+                                        <include>**/*LiveTest.java</include>
+                                    </includes>
+                                    <systemProperties>
+                                        <property>
+                                            <name>jclouds.compute.provider</name>
+                                            <value>${jclouds.compute.provider}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.compute.endpoint</name>
+                                            <value>${jclouds.compute.endpoint}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.compute.identity</name>
+                                            <value>${jclouds.compute.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.compute.credential</name>
+                                            <value>${jclouds.compute.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.compute.tag</name>
+                                            <value>${jclouds.compute.tag}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.compute.credential</name>
+                                            <value>${jclouds.compute.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.chef.credential.pem</name>
+                                            <value>${jclouds.chef.credential.pem}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.chef.endpoint</name>
+                                            <value>${jclouds.chef.endpoint}</value>
+                                        </property>
+                                    </systemProperties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

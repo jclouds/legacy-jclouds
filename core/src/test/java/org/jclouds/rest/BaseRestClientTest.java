@@ -84,21 +84,27 @@ public abstract class BaseRestClientTest {
             propagate(e);
          }
          assertEquals(payload, toMatch);
-         if (request.getFirstHeaderOrNull(TRANSFER_ENCODING) == null) {
-            assertEquals(request.getPayload().getContentLength(), new Long(payload.getBytes().length));
-         } else {
-            assertEquals(request.getFirstHeaderOrNull(TRANSFER_ENCODING), "chunked");
-            assert request.getPayload().getContentLength() == null
-                     || request.getPayload().getContentLength().equals(new Long(payload.getBytes().length));
-         }
-         assertEquals(request.getPayload().getContentType(), contentType);
+         Long length = new Long(payload.getBytes().length);
          try {
-            assertEquals(request.getPayload().getContentMD5(), contentMD5 ? CryptoStreams.md5(request.getPayload())
-                     : null);
+            assertContentHeadersEqual(request, contentType, length, contentMD5 ? CryptoStreams
+                     .md5(request.getPayload()) : null);
          } catch (IOException e) {
             propagate(e);
          }
       }
+   }
+
+   protected void assertContentHeadersEqual(HttpRequest request, String contentType, Long length, byte[] contentMD5) {
+      if (request.getFirstHeaderOrNull(TRANSFER_ENCODING) == null) {
+         assertEquals(request.getPayload().getContentLength(), length);
+      } else {
+         assertEquals(request.getFirstHeaderOrNull(TRANSFER_ENCODING), "chunked");
+         assert request.getPayload().getContentLength() == null
+                  || request.getPayload().getContentLength().equals(length);
+      }
+      assertEquals(request.getPayload().getContentType(), contentType);
+      assertEquals(request.getPayload().getContentMD5(), contentMD5);
+
    }
 
    protected void assertNonPayloadHeadersEqual(HttpRequest request, String toMatch) {

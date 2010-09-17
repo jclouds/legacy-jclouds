@@ -31,7 +31,7 @@ import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.compute.EC2ComputeServiceTest;
-import org.jclouds.aws.ec2.compute.domain.EC2Size;
+import org.jclouds.aws.ec2.compute.domain.EC2Hardware;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.aws.ec2.compute.functions.CreatePlacementGroupIfNeeded;
@@ -58,7 +58,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String tag = "tag";
-      EC2Size size = EC2Size.M1_SMALL;
+      EC2Hardware size = EC2Hardware.M1_SMALL;
       String systemGeneratedKeyPairName = "systemGeneratedKeyPair";
       String generatedGroup = "group";
       Set<String> generatedGroups = ImmutableSet.of(generatedGroup);
@@ -80,7 +80,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       Template template = createMock(Template.class);
 
       // setup expectations
-      expect(template.getSize()).andReturn(size).atLeastOnce();
+      expect(template.getHardware()).andReturn(size).atLeastOnce();
       expect(template.getOptions()).andReturn(options).atLeastOnce();
       expect(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options)).andReturn(
                systemGeneratedKeyPairName);
@@ -112,7 +112,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup constants
       String region = Region.US_EAST_1;
       String tag = "tag";
-      EC2Size size = EC2ComputeServiceTest.CC1_4XLARGE;
+      EC2Hardware size = EC2ComputeServiceTest.CC1_4XLARGE;
       String systemGeneratedKeyPairName = "systemGeneratedKeyPair";
       String generatedGroup = "group";
       Set<String> generatedGroups = ImmutableSet.of(generatedGroup);
@@ -134,7 +134,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       Template template = createMock(Template.class);
 
       // setup expectations
-      expect(template.getSize()).andReturn(size).atLeastOnce();
+      expect(template.getHardware()).andReturn(size).atLeastOnce();
       expect(template.getOptions()).andReturn(options).atLeastOnce();
       expect(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options)).andReturn(
                systemGeneratedKeyPairName);
@@ -168,7 +168,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup constants
       String region = Region.US_EAST_1;
       String tag = "tag";
-      EC2Size size = EC2ComputeServiceTest.CC1_4XLARGE;
+      EC2Hardware size = EC2ComputeServiceTest.CC1_4XLARGE;
       String systemGeneratedKeyPairName = "systemGeneratedKeyPair";
       String generatedGroup = "group";
       Set<String> generatedGroups = ImmutableSet.of(generatedGroup);
@@ -190,7 +190,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       Template template = createMock(Template.class);
 
       // setup expectations
-      expect(template.getSize()).andReturn(size).atLeastOnce();
+      expect(template.getHardware()).andReturn(size).atLeastOnce();
       expect(template.getOptions()).andReturn(options).atLeastOnce();
       expect(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options)).andReturn(
                systemGeneratedKeyPairName);
@@ -224,7 +224,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String tag = "tag";
-      EC2Size size = EC2Size.M1_SMALL;
+      EC2Hardware size = EC2Hardware.M1_SMALL;
       String systemGeneratedKeyPairName = "systemGeneratedKeyPair";
 
       // create mocks
@@ -244,7 +244,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       Template template = createMock(Template.class);
 
       // setup expectations
-      expect(template.getSize()).andReturn(size).atLeastOnce();
+      expect(template.getHardware()).andReturn(size).atLeastOnce();
       expect(template.getOptions()).andReturn(options).atLeastOnce();
       expect(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options)).andReturn(
                systemGeneratedKeyPairName);

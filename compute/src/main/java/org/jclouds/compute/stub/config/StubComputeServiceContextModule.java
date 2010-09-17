@@ -31,6 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
@@ -42,15 +43,17 @@ import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
 import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
+import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
@@ -71,6 +74,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -154,7 +158,7 @@ public class StubComputeServiceContextModule extends BaseComputeServiceContextMo
 
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings( { "rawtypes" })
    @Override
    protected void configure() {
       bind(new TypeLiteral<ComputeServiceContext>() {
@@ -178,11 +182,11 @@ public class StubComputeServiceContextModule extends BaseComputeServiceContextMo
       private final ExecutorService service;
 
       public StubNodeMetadata(String providerId, String name, String id, Location location, URI uri,
-               Map<String, String> userMetadata, String tag, String imageId, Image image, OperatingSystem os,
-               NodeState state, Iterable<String> publicAddresses, Iterable<String> privateAddresses,
-               Map<String, String> extra, Credentials credentials, ExecutorService service) {
-         super(providerId, name, id, location, uri, userMetadata, tag, imageId, os, state, publicAddresses,
-                  privateAddresses, extra, credentials);
+               Map<String, String> userMetadata, String tag, @Nullable Hardware hardware, String imageId, Image image,
+               OperatingSystem os, NodeState state, Iterable<String> publicAddresses,
+               Iterable<String> privateAddresses, Credentials credentials, ExecutorService service) {
+         super(providerId, name, id, location, uri, userMetadata, tag, hardware, imageId, os, state, publicAddresses,
+                  privateAddresses, credentials);
          this.setState(state, 0);
          this.service = service;
       }
@@ -242,10 +246,9 @@ public class StubComputeServiceContextModule extends BaseComputeServiceContextMo
          checkArgument(location.get().equals(template.getLocation()), "invalid location: " + template.getLocation());
          int id = idProvider.get();
          StubNodeMetadata node = new StubNodeMetadata(id + "", name, id + "", location.get(), null, ImmutableMap
-                  .<String, String> of(), tag, template.getImage().getId(), template.getImage(), template.getImage()
-                  .getOperatingSystem(), NodeState.PENDING, ImmutableSet.<String> of(publicIpPrefix + id), ImmutableSet
-                  .<String> of(privateIpPrefix + id), ImmutableMap.<String, String> of(), new Credentials("root",
-                  passwordPrefix + id), service);
+                  .<String, String> of(), tag, null, template.getImage().getId(), template.getImage(), template
+                  .getImage().getOperatingSystem(), NodeState.PENDING, ImmutableSet.<String> of(publicIpPrefix + id),
+                  ImmutableSet.<String> of(privateIpPrefix + id), new Credentials("root", passwordPrefix + id), service);
          nodes.put(id, node);
          node.setState(NodeState.RUNNING, 100);
          return node;
@@ -378,17 +381,18 @@ public class StubComputeServiceContextModule extends BaseComputeServiceContextMo
    }
 
    @Override
-   protected Supplier<Set<? extends Size>> getSourceSizeSupplier(Injector injector) {
-      return Suppliers.<Set<? extends Size>> ofInstance(ImmutableSet.<Size> of(new StubSize("small", 1, 1740, 160),
-               new StubSize("medium", 4, 7680, 850), new StubSize("large", 8, 15360, 1690)));
+   protected Supplier<Set<? extends Hardware>> getSourceSizeSupplier(Injector injector) {
+      return Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet.<Hardware> of(new StubHardware("small", 1,
+               1740, 160), new StubHardware("medium", 4, 7680, 850), new StubHardware("large", 8, 15360, 1690)));
    }
 
-   private static class StubSize extends org.jclouds.compute.domain.internal.SizeImpl {
+   private static class StubHardware extends org.jclouds.compute.domain.internal.HardwareImpl {
       /** The serialVersionUID */
       private static final long serialVersionUID = -1842135761654973637L;
 
-      StubSize(String type, int cores, int ram, int disk) {
-         super(type, type, type, null, null, ImmutableMap.<String, String> of(), cores, ram, disk, any());
+      StubHardware(String type, int cores, int ram, float disk) {
+         super(type, type, type, null, null, ImmutableMap.<String, String> of(), ImmutableList.of(new Processor(cores,
+                  1.0)), ram, ImmutableList.of(new VolumeImpl(disk, true, false)), any());
       }
    }
 

@@ -35,7 +35,6 @@ import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.PerformanceTest;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
@@ -47,6 +46,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Multimap;
+import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * This tests the performance of Digest commands.

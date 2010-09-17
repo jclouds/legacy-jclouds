@@ -92,13 +92,6 @@
             </snapshots>
         </repository>
         <repository>
-            <id>jboss</id>
-            <url>http://repository.jboss.org/nexus/content/groups/public-jboss</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>googlecode.java-xmlbuilder</id>
             <url>http://java-xmlbuilder.googlecode.com/svn/repo</url>
             <snapshots>
@@ -230,8 +223,8 @@
         <dependencies>
             <dependency>
                 <groupId>org.mortbay.jetty</groupId>
-                <artifactId>jetty</artifactId>
-                <version>7.0.0pre3</version>
+                <artifactId>jetty-ssl</artifactId>
+                <version>7.0.0.pre5</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

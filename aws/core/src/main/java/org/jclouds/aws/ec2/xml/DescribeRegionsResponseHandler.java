@@ -33,8 +33,7 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-public class DescribeRegionsResponseHandler extends
-      ParseSax.HandlerWithResult<Map<String, URI>> {
+public class DescribeRegionsResponseHandler extends ParseSax.HandlerWithResult<Map<String, URI>> {
    private StringBuilder currentText = new StringBuilder();
 
    private Map<String, URI> regionEndpoints = Maps.newHashMap();
@@ -52,11 +51,11 @@ public class DescribeRegionsResponseHandler extends
          String pending = currentText.toString().trim();
          if (pending.indexOf("Walrus") == -1)
             region = pending;
-      } else if (qName.equals("regionEndpoint")) {
+         // Nova uses regionUrl
+      } else if (qName.equals("regionEndpoint") || qName.equals("regionUrl")) {
          String pending = currentText.toString().trim();
          if (pending.indexOf("Walrus") == -1)
-            regionEndpoint = URI.create(pending.startsWith("http") ? pending
-                  : String.format("https://%s", pending));
+            regionEndpoint = URI.create(pending.startsWith("http") ? pending : String.format("https://%s", pending));
       } else if (qName.equals("item") && region != null) {
          regionEndpoints.put(region, regionEndpoint);
          this.region = null;

@@ -31,12 +31,12 @@ import javax.inject.Provider;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.UriBuilder;
 
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * Tests behavior of {@code BindMapToMatrixParams}

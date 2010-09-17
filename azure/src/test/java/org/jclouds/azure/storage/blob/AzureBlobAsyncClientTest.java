@@ -28,6 +28,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Properties;
 
+import org.jclouds.azure.storage.blob.functions.ParseBlobFromHeadersAndHttpContent;
 import org.jclouds.azure.storage.blob.functions.ParseContainerPropertiesFromHeaders;
 import org.jclouds.azure.storage.blob.functions.ReturnFalseIfContainerAlreadyExists;
 import org.jclouds.azure.storage.blob.options.CreateContainerOptions;
@@ -37,11 +38,13 @@ import org.jclouds.azure.storage.blob.xml.ContainerNameEnumerationResultsHandler
 import org.jclouds.azure.storage.filters.SharedKeyLiteAuthentication;
 import org.jclouds.azure.storage.options.ListOptions;
 import org.jclouds.blobstore.functions.ReturnNullOnContainerNotFound;
+import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.ReturnTrueOn404;
+import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
@@ -80,7 +83,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
       HttpRequest request = processor.createRequest(method, maxResults(1).marker("marker").prefix("prefix"));
 
       assertRequestLineEquals(request,
-            "GET https://identity.blob.core.windows.net/?comp=list&maxresults=1&marker=marker&prefix=prefix HTTP/1.1");
+               "GET https://identity.blob.core.windows.net/?comp=list&maxresults=1&marker=marker&prefix=prefix HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -91,11 +94,11 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
 
    public void testCreateContainer() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AzureBlobAsyncClient.class.getMethod("createContainer", String.class,
-            CreateContainerOptions[].class);
+               CreateContainerOptions[].class);
       HttpRequest request = processor.createRequest(method, "container");
 
       assertRequestLineEquals(request,
-            "PUT https://identity.blob.core.windows.net/container?restype=container HTTP/1.1");
+               "PUT https://identity.blob.core.windows.net/container?restype=container HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -109,7 +112,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
       HttpRequest request = processor.createRequest(method, "container");
 
       assertRequestLineEquals(request,
-            "DELETE https://identity.blob.core.windows.net/container?restype=container HTTP/1.1");
+               "DELETE https://identity.blob.core.windows.net/container?restype=container HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -120,14 +123,14 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
 
    public void testCreateContainerOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AzureBlobAsyncClient.class.getMethod("createContainer", String.class,
-            CreateContainerOptions[].class);
+               CreateContainerOptions[].class);
       HttpRequest request = processor.createRequest(method, "container", withPublicAcl().withMetadata(
-            ImmutableMultimap.of("foo", "bar")));
+               ImmutableMultimap.of("foo", "bar")));
 
       assertRequestLineEquals(request,
-            "PUT https://identity.blob.core.windows.net/container?restype=container HTTP/1.1");
+               "PUT https://identity.blob.core.windows.net/container?restype=container HTTP/1.1");
       assertNonPayloadHeadersEqual(request,
-            "x-ms-meta-foo: bar\nx-ms-prop-publicaccess: true\nx-ms-version: 2009-09-19\n");
+               "x-ms-meta-foo: bar\nx-ms-prop-publicaccess: true\nx-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
@@ -140,7 +143,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
 
       HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(request, "PUT https://identity.blob.core.windows.net/%24root?restype=container HTTP/1.1");
+      assertRequestLineEquals(request, "PUT https://identity.blob.core.windows.net/$root?restype=container HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -153,8 +156,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
       Method method = AzureBlobAsyncClient.class.getMethod("deleteRootContainer");
       HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(request,
-            "DELETE https://identity.blob.core.windows.net/%24root?restype=container HTTP/1.1");
+      assertRequestLineEquals(request, "DELETE https://identity.blob.core.windows.net/$root?restype=container HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -166,11 +168,11 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
    public void testCreateRootContainerOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AzureBlobAsyncClient.class.getMethod("createRootContainer", CreateContainerOptions[].class);
       HttpRequest request = processor.createRequest(method, withPublicAcl().withMetadata(
-            ImmutableMultimap.of("foo", "bar")));
+               ImmutableMultimap.of("foo", "bar")));
 
-      assertRequestLineEquals(request, "PUT https://identity.blob.core.windows.net/%24root?restype=container HTTP/1.1");
+      assertRequestLineEquals(request, "PUT https://identity.blob.core.windows.net/$root?restype=container HTTP/1.1");
       assertNonPayloadHeadersEqual(request,
-            "x-ms-meta-foo: bar\nx-ms-prop-publicaccess: true\nx-ms-version: 2009-09-19\n");
+               "x-ms-meta-foo: bar\nx-ms-prop-publicaccess: true\nx-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
@@ -183,7 +185,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
       HttpRequest request = processor.createRequest(method, "container");
 
       assertRequestLineEquals(request,
-            "GET https://identity.blob.core.windows.net/container?restype=container&comp=list HTTP/1.1");
+               "GET https://identity.blob.core.windows.net/container?restype=container&comp=list HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -197,7 +199,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
       HttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request,
-            "GET https://identity.blob.core.windows.net/%24root?restype=container&comp=list HTTP/1.1");
+               "GET https://identity.blob.core.windows.net/$root?restype=container&comp=list HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -211,7 +213,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
       HttpRequest request = processor.createRequest(method, "container");
 
       assertRequestLineEquals(request,
-            "HEAD https://identity.blob.core.windows.net/container?restype=container HTTP/1.1");
+               "HEAD https://identity.blob.core.windows.net/container?restype=container HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -223,10 +225,10 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
    public void testSetResourceMetadata() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AzureBlobAsyncClient.class.getMethod("setResourceMetadata", String.class, Map.class);
       HttpRequest request = processor.createRequest(method,
-            new Object[] { "container", ImmutableMap.of("key", "value") });
+               new Object[] { "container", ImmutableMap.of("key", "value") });
 
       assertRequestLineEquals(request,
-            "PUT https://identity.blob.core.windows.net/container?restype=container&comp=metadata HTTP/1.1");
+               "PUT https://identity.blob.core.windows.net/container?restype=container&comp=metadata HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "x-ms-meta-key: value\nx-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
 
@@ -235,12 +237,25 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
       assertExceptionParserClassEquals(method, null);
    }
 
+   public void testGetBlob() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = AzureBlobAsyncClient.class.getMethod("getBlob", String.class, String.class, GetOptions[].class);
+      HttpRequest request = processor.createRequest(method, "container", "blob");
+
+      assertRequestLineEquals(request, "GET https://identity.blob.core.windows.net/container/blob HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "x-ms-version: 2009-09-19\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseBlobFromHeadersAndHttpContent.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnKeyNotFound.class);
+   }
+
    public void testSetBlobMetadata() throws SecurityException, NoSuchMethodException, IOException {
       Method method = AzureBlobAsyncClient.class.getMethod("setBlobMetadata", String.class, String.class, Map.class);
       HttpRequest request = processor.createRequest(method, "container", "blob", ImmutableMap.of("key", "value"));
 
       assertRequestLineEquals(request,
-            "PUT https://identity.blob.core.windows.net/container/blob?comp=metadata HTTP/1.1");
+               "PUT https://identity.blob.core.windows.net/container/blob?comp=metadata HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "x-ms-meta-key: value\nx-ms-version: 2009-09-19\n");
       assertPayloadEquals(request, null, null, false);
 

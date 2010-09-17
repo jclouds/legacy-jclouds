@@ -21,6 +21,7 @@ package domain;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
+import javax.ws.rs.Path;
 
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.Endpoint;
@@ -44,10 +45,11 @@ import com.google.common.util.concurrent.ListenableFuture;
 public interface VCloudLoginAsyncClient {
 
    /**
-    * This request returns a token to use in subsequent requests. After ten minutes of inactivity,
+    * This request returns a token to use in subsequent requests. After 30 minutes of inactivity,
     * the token expires and you have to request a new token with this call.
     */
    @POST
+   @Path("")
    @ResponseParser(ParseLoginResponseFromHeaders.class)
    @Consumes(VCloudMediaType.ORGLIST_XML)
    ListenableFuture<VCloudSession> login();

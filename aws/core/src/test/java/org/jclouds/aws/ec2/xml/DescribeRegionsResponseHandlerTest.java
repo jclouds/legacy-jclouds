@@ -95,6 +95,21 @@ public class DescribeRegionsResponseHandlerTest extends BaseHandlerTest {
 
       assertEquals(result, expected);
    }
+   
+   public void testEuc2() {
+
+      InputStream is = Utils
+            .toInputStream("<?xml version=\"1.0\" ?><DescribeRegionsResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-11-30/\"><requestId>1LAQRTCLTLPS6CEIC627</requestId><regionInfo><item><regionUrl>http://10.255.255.1:8773/services/Cloud</regionUrl><regionName>nova</regionName></item></regionInfo></DescribeRegionsResponse>");
+
+      Map<String, URI> expected = ImmutableMap.<String, URI> of("nova",
+            URI.create("http://10.255.255.1:8773/services/Cloud"));
+
+      Map<String, URI> result = factory.create(
+            injector.getInstance(DescribeRegionsResponseHandler.class)).parse(
+            is);
+
+      assertEquals(result, expected);
+   }
 
    public void testUnsupportedAdditionalRegionDoesntBreak() {
 

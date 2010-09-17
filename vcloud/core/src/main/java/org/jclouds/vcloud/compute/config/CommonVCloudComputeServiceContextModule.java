@@ -29,12 +29,12 @@ import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.Size;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.vcloud.compute.suppliers.OrgAndVDCToLocationSupplier;
-import org.jclouds.vcloud.compute.suppliers.StaticSizeSupplier;
+import org.jclouds.vcloud.compute.suppliers.StaticHardwareSupplier;
 import org.jclouds.vcloud.compute.suppliers.VCloudImageSupplier;
 import org.jclouds.vcloud.domain.Status;
 
@@ -80,8 +80,8 @@ public abstract class CommonVCloudComputeServiceContextModule extends BaseComput
    }
 
    @Override
-   protected Supplier<Set<? extends Size>> getSourceSizeSupplier(Injector injector) {
-      return injector.getInstance(StaticSizeSupplier.class);
+   protected Supplier<Set<? extends Hardware>> getSourceSizeSupplier(Injector injector) {
+      return injector.getInstance(StaticHardwareSupplier.class);
    }
 
    @Override

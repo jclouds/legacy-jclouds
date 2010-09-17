@@ -88,14 +88,14 @@ public interface AzureQueueAsyncClient {
     * @see AzureQueueClient#createQueue
     */
    @PUT
-   @Path("{queue}")
+   @Path("/{queue}")
    ListenableFuture<Boolean> createQueue(@PathParam("queue") String queue, CreateOptions... options);
 
    /**
     * @see AzureQueueClient#getMessages
     */
    @GET
-   @Path("{queue}/messages")
+   @Path("/{queue}/messages")
    @XMLResponseParser(QueueMessagesListHandler.class)
    ListenableFuture<Set<QueueMessage>> getMessages(@PathParam("queue") String queue,
             GetOptions... options);
@@ -104,14 +104,14 @@ public interface AzureQueueAsyncClient {
     * @see AzureQueueClient#deleteQueue
     */
    @DELETE
-   @Path("{queue}")
+   @Path("/{queue}")
    ListenableFuture<Void> deleteQueue(@PathParam("queue") String queue);
 
    /**
     * @see AzureQueueClient#putMessage
     */
    @POST
-   @Path("{queue}/messages")
+   @Path("/{queue}/messages")
    ListenableFuture<Void> putMessage(@PathParam("queue") String queue,
             @BinderParam(BindToXmlStringPayload.class) String message, PutMessageOptions... options);
 
@@ -119,6 +119,6 @@ public interface AzureQueueAsyncClient {
     * @see AzureQueueClient#clearMessages
     */
    @DELETE
-   @Path("{queue}/messages")
+   @Path("/{queue}/messages")
    ListenableFuture<Void> clearMessages(@PathParam("queue") String queue);
 }

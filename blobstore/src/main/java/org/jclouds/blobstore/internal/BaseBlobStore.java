@@ -219,4 +219,5 @@ public abstract class BaseBlobStore implements BlobStore {
    }
 
    protected abstract boolean deleteAndVerifyContainerGone(String container);
+
 }

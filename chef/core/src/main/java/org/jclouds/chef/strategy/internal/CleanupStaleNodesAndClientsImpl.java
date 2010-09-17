@@ -37,6 +37,9 @@ import javax.inject.Singleton;
 import org.jclouds.chef.domain.Node;
 import org.jclouds.chef.reference.ChefConstants;
 import org.jclouds.chef.strategy.CleanupStaleNodesAndClients;
+import org.jclouds.chef.strategy.DeleteAllClientsInList;
+import org.jclouds.chef.strategy.DeleteAllNodesInList;
+import org.jclouds.chef.strategy.ListNodes;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.logging.Logger;
 
@@ -55,13 +58,16 @@ public class CleanupStaleNodesAndClientsImpl implements CleanupStaleNodesAndClie
    @Named(ChefConstants.CHEF_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final GetNodesImpl getAllNodes;
-   private final DeleteAllNodesInListImpl deleter;
+   private final ListNodes nodeLister;
+   private final DeleteAllNodesInList nodeDeleter;
+   private final DeleteAllClientsInList clientDeleter;
 
    @Inject
-   public CleanupStaleNodesAndClientsImpl(DeleteAllNodesInListImpl deleter, GetNodesImpl getAllNodes) {
-      this.getAllNodes = checkNotNull(getAllNodes, "getAllNodes");
-      this.deleter = checkNotNull(deleter, "deleter");
+   public CleanupStaleNodesAndClientsImpl(DeleteAllNodesInList nodeDeleter, DeleteAllClientsInList clientDeleter,
+            ListNodes nodeLister) {
+      this.nodeLister = checkNotNull(nodeLister, "nodeLister");
+      this.nodeDeleter = checkNotNull(nodeDeleter, "nodeDeleter");
+      this.clientDeleter = checkNotNull(clientDeleter, "clientDeleter");
    }
 
    @Override
@@ -69,7 +75,7 @@ public class CleanupStaleNodesAndClientsImpl implements CleanupStaleNodesAndClie
       final Calendar expired = Calendar.getInstance();
       expired.setTime(new Date());
       expired.add(Calendar.SECOND, -secondsStale);
-      Iterable<? extends Node> staleNodes = filter(getAllNodes.execute(new Predicate<String>() {
+      Iterable<? extends Node> staleNodes = filter(nodeLister.execute(new Predicate<String>() {
 
          @Override
          public boolean apply(String input) {
@@ -88,13 +94,15 @@ public class CleanupStaleNodesAndClientsImpl implements CleanupStaleNodesAndClie
          }
 
       }));
-      deleter.execute(transform(staleNodes, new Function<Node, String>() {
+      Iterable<String> nodeNames = transform(staleNodes, new Function<Node, String>() {
 
          @Override
          public String apply(Node from) {
             return from.getName();
          }
 
-      }));
+      });
+      nodeDeleter.execute(nodeNames);
+      clientDeleter.execute(nodeNames);
    }
 }

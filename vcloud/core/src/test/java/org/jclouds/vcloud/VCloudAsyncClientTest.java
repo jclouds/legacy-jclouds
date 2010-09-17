@@ -41,15 +41,18 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
+import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
@@ -62,11 +65,13 @@ import org.jclouds.vcloud.domain.internal.VDCImpl;
 import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
+import org.jclouds.vcloud.options.CaptureVAppOptions;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.CatalogItemHandler;
 import org.jclouds.vcloud.xml.OrgHandler;
+import org.jclouds.vcloud.xml.OrgListHandler;
 import org.jclouds.vcloud.xml.OrgNetworkHandler;
 import org.jclouds.vcloud.xml.TaskHandler;
 import org.jclouds.vcloud.xml.TasksListHandler;
@@ -95,6 +100,44 @@ import domain.VCloudVersionsAsyncClient;
  */
 @Test(groups = "unit", testName = "vcloud.VCloudAsyncClientTest")
 public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
+
+   public void testGetThumbnailOfVm() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("getThumbnailOfVm", URI.class);
+      HttpRequest request = processor
+               .createRequest(method, URI.create("http://vcloud.example.com/api/v1.0/vApp/vm-12"));
+
+      assertRequestLineEquals(request, "GET http://vcloud.example.com/api/v1.0/vApp/vm-12/screen HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: image/png\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ReturnInputStream.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
+   public void testUpdateGuestConfiguration() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("updateGuestCustomizationOfVm", URI.class,
+               GuestCustomizationSection.class);
+      GuestCustomizationSection guest = new GuestCustomizationSection(URI
+               .create("http://vcloud.example.com/api/v1.0/vApp/vm-12/guestCustomizationSection"));
+      guest.setCustomizationScript("cat > /tmp/foo.txt<<EOF\nI love candy\nEOF");
+      HttpRequest request = processor.createRequest(method,
+               URI.create("http://vcloud.example.com/api/v1.0/vApp/vm-12"), guest);
+
+      assertRequestLineEquals(request,
+               "PUT http://vcloud.example.com/api/v1.0/vApp/vm-12/guestCustomizationSection HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
+      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
+               "/guestCustomizationSection.xml")), "application/vnd.vmware.vcloud.guestCustomizationSection+xml", false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TaskHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(request);
+   }
 
    public void testInstantiateVAppTemplateInVDCURIOptions() throws SecurityException, NoSuchMethodException,
             IOException {
@@ -169,6 +212,65 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, TaskHandler.class);
       assertExceptionParserClassEquals(method, null);
+
+      checkFilters(request);
+   }
+
+
+   public void testCaptureVAppInVDC() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("captureVAppInVDC", URI.class, URI.class, String.class,
+               CaptureVAppOptions[].class);
+      HttpRequest request = processor.createRequest(method, URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vapp/4181"), "my-template");
+
+      assertRequestLineEquals(request,
+               "POST https://vcenterprise.bluelock.com/api/v1.0/vdc/1/action/captureVApp HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vAppTemplate+xml\n");
+      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream("/captureVApp-default.xml")),
+               "application/vnd.vmware.vcloud.captureVAppParams+xml", false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, VAppTemplateHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(request);
+   }
+
+   public void testCaptureVAppInVDCOptions() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("captureVAppInVDC", URI.class, URI.class, String.class,
+               CaptureVAppOptions[].class);
+      HttpRequest request = processor.createRequest(method, URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vapp/201"), "my-template",
+               new CaptureVAppOptions().withDescription("The description of the new vApp Template"));
+
+      assertRequestLineEquals(request,
+               "POST https://vcenterprise.bluelock.com/api/v1.0/vdc/1/action/captureVApp HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vAppTemplate+xml\n");
+      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream("/captureVApp.xml")),
+               "application/vnd.vmware.vcloud.captureVAppParams+xml", false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, VAppTemplateHandler.class);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(request);
+   }
+
+   
+   
+   public void testlistOrgs() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = VCloudAsyncClient.class.getMethod("listOrgs");
+      HttpRequest request = processor.createRequest(method);
+
+      assertRequestLineEquals(request, "GET https://vcenterprise.bluelock.com/api/v1.0/org HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.orgList+xml\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, OrgListHandler.class);
+      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
 
       checkFilters(request);
    }
