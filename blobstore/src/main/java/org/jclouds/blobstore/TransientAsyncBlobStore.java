@@ -530,6 +530,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
       blob.getMetadata().setSize(payload.getContentLength());
       blob.getMetadata().setContentMD5(payload.getContentMD5());
       blob.getMetadata().setContentType(payload.getContentType());
+      blob.getMetadata().setContentDisposition(payload.getContentDisposition());
 
       String eTag = CryptoStreams.hex(payload.getContentMD5());
       blob.getMetadata().setETag(eTag);
@@ -542,6 +543,7 @@ public class TransientAsyncBlobStore extends BaseAsyncBlobStore {
                Collections.singleton(payload.getContentLength() + ""));
       blob.getAllHeaders().replaceValues("Content-MD5",
                Collections.singleton(CryptoStreams.base64(payload.getContentMD5())));
+      //TODO maybe i should change here content-disposition
       blob.getAllHeaders().putAll(Multimaps.forMap(blob.getMetadata().getUserMetadata()));
       return blob;
    }

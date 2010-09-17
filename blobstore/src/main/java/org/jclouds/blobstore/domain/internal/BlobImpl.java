@@ -144,6 +144,7 @@ public class BlobImpl extends PayloadEnclosingImpl implements Blob, Comparable<B
          super(delegate);
          this.metadata = metadata;
          setContentType(metadata.getContentType());
+         setContentDisposition(metadata.getContentDisposition());
       }
 
       @Override
@@ -152,6 +153,11 @@ public class BlobImpl extends PayloadEnclosingImpl implements Blob, Comparable<B
          metadata.setContentType(md5);
       }
 
+      @Override
+      public void setContentDisposition(String contentDisposition) {
+         super.setContentDisposition(contentDisposition);
+         metadata.setContentDisposition(contentDisposition);
+      }
    }
 
    /**

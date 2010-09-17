@@ -109,11 +109,12 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    @Test(groups = { "integration", "live" })
    public void testBigFileGets() throws InterruptedException, IOException {
+      final String expectedContentDisposition = "attachment; filename=constit.txt";
       String containerName = getContainerName();
       try {
          String key = "constitution.txt";
 
-         uploadConstitution(containerName, key);
+         uploadConstitution(containerName, key, expectedContentDisposition);
          Map<Integer, Future<?>> responses = Maps.newHashMap();
          for (int i = 0; i < 10; i++) {
 
@@ -124,6 +125,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
                      public Void apply(Blob from) {
                         try {
                            assertEquals(CryptoStreams.md5(from.getPayload()), oneHundredOneConstitutionsMD5);
+                           checkContentDispostion(from, expectedContentDisposition);
                         } catch (IOException e) {
                            Throwables.propagate(e);
                         }
@@ -142,12 +144,24 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    }
 
-   private void uploadConstitution(String containerName, String key) throws IOException {
+   private void uploadConstitution(String containerName, String key, String contentDisposition) throws IOException {
       Blob sourceObject = context.getBlobStore().newBlob(key);
       sourceObject.getMetadata().setContentType("text/plain");
       sourceObject.getMetadata().setContentMD5(oneHundredOneConstitutionsMD5);
+      sourceObject.getMetadata().setContentDisposition(contentDisposition);
       sourceObject.setPayload(oneHundredOneConstitutions.getInput());
       context.getBlobStore().putBlob(containerName, sourceObject);
+   }
+
+   /**
+    * Methods for checking Content-Disposition. In this way, in implementations
+    * that do not support the new field, it is easy to override with empty,
+    * and allow the rest of the test to work.
+    * @param blob
+    * @param expected
+    */
+   protected void checkContentDispostion(Blob blob, String expected){
+         assertEquals(blob.getPayload().getContentDisposition(), expected);
    }
 
    @Test(groups = { "integration", "live" })

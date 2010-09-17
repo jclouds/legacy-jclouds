@@ -41,4 +41,12 @@ public interface BlobMetadata extends StorageMetadata {
 
    byte[] getContentMD5();
 
+   /**
+    * Content-Disposition to set for the blob.
+    * <p/>
+    * <b>Attention</b>: Not all provider support it!
+    * @return
+    */
+   String getContentDisposition();
+
 }

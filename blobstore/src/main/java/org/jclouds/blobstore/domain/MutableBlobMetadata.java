@@ -43,4 +43,6 @@ public interface MutableBlobMetadata extends BlobMetadata, MutableStorageMetadat
 
    void setContentMD5(@Nullable byte[] md5);
 
+   String setContentDisposition(@Nullable String contentDisposition);
+
 }
