@@ -67,5 +67,10 @@ list, Alan Dipert and MeikelBrandmeyer."
       (is (= OsFamily/CENTOS
              (-> (build-template service {:os-family :centos})
                  bean :image bean :operatingSystem bean :family))))
+    (testing "varags"
+      (is (java.util.Arrays/equals
+           (int-array [22 8080])
+           (-> (build-template service {:inbound-ports [22 8080]})
+               bean :options bean :inboundPorts))))
     (testing "invalid"
       (is (thrown? Condition (build-template service {:xx :yy}))))))
