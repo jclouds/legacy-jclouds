@@ -41,8 +41,6 @@ import org.jclouds.demo.tweetstore.controller.AddTweetsController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.demo.tweetstore.functions.ServiceToStoredTweetStatuses;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.twitter.TwitterClient;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,6 +49,9 @@ import org.springframework.web.servlet.HandlerAdapter;
 import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.handler.SimpleServletHandlerAdapter;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
+
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
 
 import com.google.appengine.api.labs.taskqueue.Queue;
 import com.google.appengine.api.labs.taskqueue.QueueFactory;
@@ -74,7 +75,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
    private ServletConfig servletConfig;
 
    private Map<String, BlobStoreContext> providerTypeToBlobStoreMap;
-   private TwitterClient twitterClient;
+   private Twitter twitterClient;
    private String container;
 
    @PostConstruct
@@ -88,24 +89,19 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       Set<Module> modules = ImmutableSet.<Module> of(googleModule);
       // shared across all blobstores and used to retrieve tweets
       try {
-         twitterClient = (TwitterClient) new RestContextFactory().createContext("twitter", modules,
-                  props).getApi();
-
+         twitterClient = new TwitterFactory().getInstance(props.getProperty("twitter.identity"), props
+                  .getProperty("credential"));
       } catch (IllegalArgumentException e) {
-         throw new IllegalArgumentException("properties for twitter not configured properly in "
-                  + props.toString(), e);
+         throw new IllegalArgumentException("properties for twitter not configured properly in " + props.toString(), e);
       }
       // common namespace for storing tweets
-      container = checkNotNull(props.getProperty(PROPERTY_TWEETSTORE_CONTAINER),
-               PROPERTY_TWEETSTORE_CONTAINER);
+      container = checkNotNull(props.getProperty(PROPERTY_TWEETSTORE_CONTAINER), PROPERTY_TWEETSTORE_CONTAINER);
 
       // instantiate and store references to all blobstores by provider name
       providerTypeToBlobStoreMap = Maps.newHashMap();
       for (String hint : Splitter.on(',').split(
-               checkNotNull(props.getProperty(PROPERTY_BLOBSTORE_CONTEXTS),
-                        PROPERTY_BLOBSTORE_CONTEXTS))) {
-         providerTypeToBlobStoreMap.put(hint, blobStoreContextFactory.createContext(hint, modules,
-                  props));
+               checkNotNull(props.getProperty(PROPERTY_BLOBSTORE_CONTEXTS), PROPERTY_BLOBSTORE_CONTEXTS))) {
+         providerTypeToBlobStoreMap.put(hint, blobStoreContextFactory.createContext(hint, modules, props));
       }
 
       // get a queue for submitting store tweet requests
@@ -114,16 +110,14 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       for (String name : providerTypeToBlobStoreMap.keySet()) {
          queue.add(url("/store/do").header("context", name).method(Method.GET));
       }
-      logger.trace(
-               "Members initialized. TwitterClient: '%s', container: '%s', provider types: '%s'",
-               twitterClient, container, providerTypeToBlobStoreMap.keySet());
+      logger.trace("Members initialized. Twitter: '%s', container: '%s', provider types: '%s'", twitterClient,
+               container, providerTypeToBlobStoreMap.keySet());
    }
 
    private Properties loadJCloudsProperties() {
       logger.trace("About to read properties from '%s'", "/WEB-INF/jclouds.properties");
       Properties props = new Properties();
-      InputStream input = servletConfig.getServletContext().getResourceAsStream(
-               "/WEB-INF/jclouds.properties");
+      InputStream input = servletConfig.getServletContext().getResourceAsStream("/WEB-INF/jclouds.properties");
       try {
          props.load(input);
       } catch (IOException e) {
@@ -137,8 +131,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
 
    @Bean
    public StoreTweetsController storeTweetsController() {
-      StoreTweetsController controller = new StoreTweetsController(providerTypeToBlobStoreMap,
-               container, twitterClient);
+      StoreTweetsController controller = new StoreTweetsController(providerTypeToBlobStoreMap, container, twitterClient);
       injectServletConfig(controller);
       return controller;
    }

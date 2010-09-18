@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -41,8 +40,9 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.demo.tweetstore.reference.TweetStoreConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.twitter.TwitterClient;
-import org.jclouds.twitter.domain.Status;
+
+import twitter4j.Status;
+import twitter4j.Twitter;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -75,7 +75,7 @@ public class StoreTweetsController extends HttpServlet {
    private static final long serialVersionUID = 7215420527854203714L;
 
    private final Map<String, BlobStoreContext> contexts;
-   private final TwitterClient client;
+   private final Twitter client;
    private final String container;
 
    @Resource
@@ -84,18 +84,18 @@ public class StoreTweetsController extends HttpServlet {
    @Inject
    @VisibleForTesting
    public StoreTweetsController(Map<String, BlobStoreContext> contexts,
-         @Named(TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER) String container, TwitterClient client) {
+         @Named(TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER) String container, Twitter client) {
       this.container = container;
       this.contexts = contexts;
       this.client = client;
    }
 
    @VisibleForTesting
-   public void addMyTweets(String contextName, Set<Status> allAboutMe) {
+   public void addMyTweets(String contextName, Iterable<Status> responseList) {
       BlobStoreContext context = checkNotNull(contexts.get(contextName), "no context for " + contextName + " in "
             + contexts.keySet());
       BlobMap map = context.createBlobMap(container);
-      for (Status status : allAboutMe) {
+      for (Status status : responseList) {
          Blob blob = null;
          try {
             blob = new StatusToBlob(map).apply(status);
@@ -115,7 +115,7 @@ public class StoreTweetsController extends HttpServlet {
          try {
             String contextName = checkNotNull(request.getHeader("context"), "missing header context");
             logger.info("retrieving tweets");
-            addMyTweets(contextName, client.getMyMentions());
+            addMyTweets(contextName, client.getMentions());
             logger.debug("done storing tweets");
             response.setContentType(MediaType.TEXT_PLAIN);
             response.getWriter().println("Done!");

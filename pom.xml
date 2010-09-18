@@ -47,7 +47,6 @@
         <module>rackspace</module>
         <module>slicehost</module>
         <module>rimuhosting</module>        
-        <module>twitter</module>
         <module>vcloud</module>
         <module>gogrid</module>
         <module>allcompute</module>

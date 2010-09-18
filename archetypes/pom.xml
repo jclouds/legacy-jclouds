@@ -32,7 +32,7 @@
     <packaging>pom</packaging>
     <name>jclouds Maven archetypes</name>
     <modules>
-        <module>json-client-archetype</module>
+        <module>rest-client-archetype</module>
         <module>compute-service-archetype</module>
     </modules>
 </project>

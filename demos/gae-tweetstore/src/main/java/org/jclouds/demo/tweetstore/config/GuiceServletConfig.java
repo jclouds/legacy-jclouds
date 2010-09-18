@@ -36,8 +36,9 @@ import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.demo.tweetstore.controller.AddTweetsController;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.gae.config.GoogleAppEngineConfigurationModule;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.twitter.TwitterClient;
+
+import twitter4j.Twitter;
+import twitter4j.TwitterFactory;
 
 import com.google.appengine.api.labs.taskqueue.Queue;
 import com.google.appengine.api.labs.taskqueue.QueueFactory;
@@ -63,7 +64,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
    public static final String PROPERTY_BLOBSTORE_CONTEXTS = "blobstore.contexts";
 
    private Map<String, BlobStoreContext> providerTypeToBlobStoreMap;
-   private TwitterClient twitterClient;
+   private Twitter twitterClient;
    private String container;
 
    @Override
@@ -77,24 +78,19 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       Set<Module> modules = ImmutableSet.<Module> of(googleModule);
       // shared across all blobstores and used to retrieve tweets
       try {
-         twitterClient = (TwitterClient) new RestContextFactory().createContext("twitter", modules,
-                  props).getApi();
-
+         twitterClient = new TwitterFactory().getInstance(props.getProperty("twitter.identity"), props
+                  .getProperty("credential"));
       } catch (IllegalArgumentException e) {
-         throw new IllegalArgumentException("properties for twitter not configured properly in "
-                  + props.toString(), e);
+         throw new IllegalArgumentException("properties for twitter not configured properly in " + props.toString(), e);
       }
       // common namespace for storing tweets
-      container = checkNotNull(props.getProperty(PROPERTY_TWEETSTORE_CONTAINER),
-               PROPERTY_TWEETSTORE_CONTAINER);
+      container = checkNotNull(props.getProperty(PROPERTY_TWEETSTORE_CONTAINER), PROPERTY_TWEETSTORE_CONTAINER);
 
       // instantiate and store references to all blobstores by provider name
       providerTypeToBlobStoreMap = Maps.newHashMap();
       for (String hint : Splitter.on(',').split(
-               checkNotNull(props.getProperty(PROPERTY_BLOBSTORE_CONTEXTS),
-                        PROPERTY_BLOBSTORE_CONTEXTS))) {
-         providerTypeToBlobStoreMap.put(hint, blobStoreContextFactory.createContext(hint, modules,
-                  props));
+               checkNotNull(props.getProperty(PROPERTY_BLOBSTORE_CONTEXTS), PROPERTY_BLOBSTORE_CONTEXTS))) {
+         providerTypeToBlobStoreMap.put(hint, blobStoreContextFactory.createContext(hint, modules, props));
       }
 
       // get a queue for submitting store tweet requests
@@ -108,8 +104,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
    }
 
    private Properties loadJCloudsProperties(ServletContextEvent servletContextEvent) {
-      InputStream input = servletContextEvent.getServletContext().getResourceAsStream(
-               "/WEB-INF/jclouds.properties");
+      InputStream input = servletContextEvent.getServletContext().getResourceAsStream("/WEB-INF/jclouds.properties");
       Properties props = new Properties();
       try {
          props.load(input);
@@ -128,7 +123,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
          protected void configureServlets() {
             bind(new TypeLiteral<Map<String, BlobStoreContext>>() {
             }).toInstance(providerTypeToBlobStoreMap);
-            bind(TwitterClient.class).toInstance(twitterClient);
+            bind(Twitter.class).toInstance(twitterClient);
             bindConstant().annotatedWith(Names.named(PROPERTY_TWEETSTORE_CONTAINER)).to(container);
             serve("/store/*").with(StoreTweetsController.class);
             serve("/tweets/*").with(AddTweetsController.class);

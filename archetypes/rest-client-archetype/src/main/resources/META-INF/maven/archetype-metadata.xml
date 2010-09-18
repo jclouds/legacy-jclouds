@@ -2,7 +2,7 @@
 <!--
 
 
-    Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+    Copyright (C) 2009 Cloud Conscious, LLC. <info@cloudconscious.com>
 
     ====================================================================
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@
     ====================================================================
 
 -->
-<archetype-descriptor name="jclouds-compute-service-archetype" partial="true">
+<archetype-descriptor name="jclouds-rest-client-archetype">
   <requiredProperties>
     <requiredProperty key="groupId">
       <defaultValue>org.jclouds</defaultValue>
@@ -33,7 +33,8 @@
     <requiredProperty key="providerName" />
     <requiredProperty key="providerEndpoint" />
     <requiredProperty key="providerIdentity" />
-    <requiredProperty key="providerCredential" />  
+    <requiredProperty key="providerApiVersion" />
+    <requiredProperty key="providerCredential" />    
   </requiredProperties>
   <fileSets>
     <fileSet filtered="true" packaged="true" encoding="UTF-8">
