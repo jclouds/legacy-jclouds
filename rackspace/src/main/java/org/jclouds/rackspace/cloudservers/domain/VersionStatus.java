@@ -21,14 +21,18 @@ package org.jclouds.rackspace.cloudservers.domain;
 
 public enum VersionStatus {
 
-   BETA, CURRENT, DEPRECATED;
+   BETA, CURRENT, DEPRECATED, UNRECOGNIZED;
 
    public String value() {
       return name();
    }
 
    public static VersionStatus fromValue(String v) {
-      return valueOf(v);
+      try {
+         return valueOf(v);
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 
 }

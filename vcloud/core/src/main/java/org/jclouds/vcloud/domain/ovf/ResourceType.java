@@ -33,7 +33,7 @@ import org.jclouds.vcloud.VCloudExpressAsyncClient;
  * 
  */
 public enum ResourceType {
-   OTHER, PROCESSOR, MEMORY, IDE_CONTROLLER, SCSI_CONTROLLER, ETHERNET_ADAPTER, FLOPPY_DRIVE, CD_DRIVE, DVD_DRIVE, DISK_DRIVE, USB_CONTROLLER;
+   OTHER, PROCESSOR, MEMORY, IDE_CONTROLLER, SCSI_CONTROLLER, ETHERNET_ADAPTER, FLOPPY_DRIVE, CD_DRIVE, DVD_DRIVE, DISK_DRIVE, USB_CONTROLLER, UNRECOGNIZED;
 
    public String value() {
       switch (this) {
@@ -65,7 +65,11 @@ public enum ResourceType {
    }
 
    public static ResourceType fromValue(String type) {
-      return fromValue(Integer.parseInt(checkNotNull(type, "type")));
+      try {
+         return fromValue(Integer.parseInt(checkNotNull(type, "type")));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 
    public static ResourceType fromValue(int v) {
@@ -93,7 +97,7 @@ public enum ResourceType {
          case 23:
             return USB_CONTROLLER;
          default:
-            throw new IllegalArgumentException("invalid type:" + v);
+            return UNRECOGNIZED;
       }
    }
 }

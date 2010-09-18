@@ -19,13 +19,15 @@
 
 package org.jclouds.demo.tweetstore.controller;
 
+import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.replay;
+import static org.easymock.classextension.EasyMock.verify;
 import static org.jclouds.util.Utils.toStringAndClose;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.SortedSet;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 
@@ -34,13 +36,14 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.demo.tweetstore.reference.TweetStoreConstants;
-import org.jclouds.twitter.TwitterClient;
-import org.jclouds.twitter.domain.Status;
-import org.jclouds.twitter.domain.User;
 import org.testng.annotations.Test;
 
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.User;
+
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
 
 /**
  * Tests behavior of {@code StoreTweetsController}
@@ -50,8 +53,8 @@ import com.google.common.collect.Sets;
 @Test(groups = "unit", testName = "tweetstore.StoreTweetsControllerTest")
 public class StoreTweetsControllerTest {
 
-   TwitterClient createTwitterClient() {
-      return createMock(TwitterClient.class);
+   Twitter createTwitter() {
+      return createMock(Twitter.class);
    }
 
    Map<String, BlobStoreContext> createBlobStores() throws InterruptedException, ExecutionException {
@@ -66,35 +69,48 @@ public class StoreTweetsControllerTest {
 
    public void testStoreTweets() throws IOException, InterruptedException, ExecutionException {
       Map<String, BlobStoreContext> stores = createBlobStores();
-      StoreTweetsController function = new StoreTweetsController(stores, "favo",
-               createTwitterClient());
+      StoreTweetsController function = new StoreTweetsController(stores, "favo", createTwitter());
 
-      SortedSet<Status> allAboutMe = Sets.newTreeSet();
-      User frank = new User(1l, "frank");
-      Status frankStatus = new Status(1l, frank, "I love beans!");
+      User frank = createMock(User.class);
+      expect(frank.getScreenName()).andReturn("frank").atLeastOnce();
 
-      User jimmy = new User(2l, "jimmy");
-      Status jimmyStatus = new Status(2l, jimmy, "cloud is king");
+      Status frankStatus = createMock(Status.class);
+      expect(frankStatus.getId()).andReturn(1l).atLeastOnce();
+      expect(frankStatus.getUser()).andReturn(frank).atLeastOnce();
+      expect(frankStatus.getText()).andReturn("I love beans!").atLeastOnce();
+      
+      User jimmy = createMock(User.class);
+      expect(jimmy.getScreenName()).andReturn("jimmy").atLeastOnce();
 
-      allAboutMe.add(frankStatus);
-      allAboutMe.add(jimmyStatus);
+      Status jimmyStatus = createMock(Status.class);
+      expect(jimmyStatus.getId()).andReturn(2l).atLeastOnce();
+      expect(jimmyStatus.getUser()).andReturn(jimmy).atLeastOnce();
+      expect(jimmyStatus.getText()).andReturn("cloud is king").atLeastOnce();
 
-      function.addMyTweets("test1", allAboutMe);
-      function.addMyTweets("test2", allAboutMe);
+      replay(frank);
+      replay(frankStatus);
+      replay(jimmy);
+      replay(jimmyStatus);
+
+      function.addMyTweets("test1", ImmutableList.of(frankStatus, jimmyStatus));
+      function.addMyTweets("test2", ImmutableList.of(frankStatus, jimmyStatus));
+
+      verify(frank);
+      verify(frankStatus);
+      verify(jimmy);
+      verify(jimmyStatus);
 
       for (Entry<String, BlobStoreContext> entry : stores.entrySet()) {
          BlobMap map = entry.getValue().createBlobMap("favo");
          Blob frankBlob = map.get("1");
          assertEquals(frankBlob.getMetadata().getName(), "1");
-         assertEquals(frankBlob.getMetadata().getUserMetadata()
-                  .get(TweetStoreConstants.SENDER_NAME), "frank");
+         assertEquals(frankBlob.getMetadata().getUserMetadata().get(TweetStoreConstants.SENDER_NAME), "frank");
          assertEquals(frankBlob.getMetadata().getContentType(), "text/plain");
          assertEquals(toStringAndClose(frankBlob.getPayload().getInput()), "I love beans!");
 
          Blob jimmyBlob = map.get("2");
          assertEquals(jimmyBlob.getMetadata().getName(), "2");
-         assertEquals(jimmyBlob.getMetadata().getUserMetadata()
-                  .get(TweetStoreConstants.SENDER_NAME), "jimmy");
+         assertEquals(jimmyBlob.getMetadata().getUserMetadata().get(TweetStoreConstants.SENDER_NAME), "jimmy");
          assertEquals(jimmyBlob.getMetadata().getContentType(), "text/plain");
          assertEquals(toStringAndClose(jimmyBlob.getPayload().getInput()), "cloud is king");
       }

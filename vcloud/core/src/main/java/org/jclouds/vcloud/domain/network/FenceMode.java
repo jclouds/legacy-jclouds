@@ -51,7 +51,7 @@ public enum FenceMode {
     * 
     * @since vcloud api 0.8
     */
-   NAT_ROUTED;
+   NAT_ROUTED, UNRECOGNIZED;
 
    public String value() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name());
@@ -63,7 +63,11 @@ public enum FenceMode {
    }
 
    public static FenceMode fromValue(String fenceMode) {
-      return valueOf(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(fenceMode, "fenceMode")));
+      try {
+         return valueOf(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(fenceMode, "fenceMode")));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 
 }

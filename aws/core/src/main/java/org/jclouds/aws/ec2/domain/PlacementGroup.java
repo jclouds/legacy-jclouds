@@ -41,7 +41,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class PlacementGroup implements Comparable<PlacementGroup> {
    public static enum State {
-      PENDING, AVAILABLE, DELETING, DELETED;
+      PENDING, AVAILABLE, DELETING, DELETED, UNRECOGNIZED;
       public String value() {
          return name().toLowerCase();
       }
@@ -52,7 +52,11 @@ public class PlacementGroup implements Comparable<PlacementGroup> {
       }
 
       public static State fromValue(String state) {
-         return valueOf(checkNotNull(state, "state").toUpperCase());
+         try {
+            return valueOf(checkNotNull(state, "state").toUpperCase());
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
       }
    }
 
@@ -146,8 +150,7 @@ public class PlacementGroup implements Comparable<PlacementGroup> {
 
    @Override
    public String toString() {
-      return "[name=" + name + ", region=" + region + ", state=" + state + ", strategy=" + strategy
-               + "]";
+      return "[name=" + name + ", region=" + region + ", state=" + state + ", strategy=" + strategy + "]";
    }
 
 }

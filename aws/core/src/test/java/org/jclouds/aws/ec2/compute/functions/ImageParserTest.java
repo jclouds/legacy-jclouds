@@ -217,7 +217,7 @@ public class ImageParserTest extends BaseEC2HandlerTest {
       assertEquals(image.getOperatingSystem().getArch(), "paravirtual");
       assertEquals(image.getOperatingSystem().getDescription(),
                "vostok-builds/vostok-0.95-5622/vostok-0.95-5622.manifest.xml");
-      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UNKNOWN);
+      assertEquals(image.getOperatingSystem().getFamily(), OsFamily.UNRECOGNIZED);
       assertEquals(image.getUserMetadata(), ImmutableMap.<String, String> of("owner", "133804938231", "rootDeviceType",
                "instance-store"));
       assertEquals(image.getVersion(), "5622");

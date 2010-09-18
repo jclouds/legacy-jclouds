@@ -28,7 +28,7 @@ public enum ServerImageState {
 
     AVAILABLE("Available"),
     SAVING("Saving"),
-    UNKNOWN("Unknown");
+    UNRECOGNIZED("Unknown");
 
     String type;
     ServerImageState(String type) {
@@ -44,6 +44,6 @@ public enum ServerImageState {
         for(ServerImageState serverImageState : values()) {
             if(serverImageState.type.equals(checkNotNull(type))) return serverImageState;
         }
-        return UNKNOWN;
+        return UNRECOGNIZED;
     }
 }

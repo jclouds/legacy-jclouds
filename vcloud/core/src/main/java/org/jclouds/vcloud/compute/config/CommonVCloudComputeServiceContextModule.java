@@ -27,9 +27,9 @@ import javax.inject.Singleton;
 import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
 import org.jclouds.domain.Location;
@@ -56,9 +56,9 @@ public abstract class CommonVCloudComputeServiceContextModule extends BaseComput
    @VisibleForTesting
    static final Map<Status, NodeState> vAppStatusToNodeState = ImmutableMap.<Status, NodeState> builder().put(
             Status.OFF, NodeState.SUSPENDED).put(Status.ON, NodeState.RUNNING).put(Status.RESOLVED, NodeState.PENDING)
-            .put(Status.ERROR, NodeState.ERROR).put(Status.UNRECOGNIZED, NodeState.UNKNOWN).put(Status.DEPLOYED,
+            .put(Status.ERROR, NodeState.ERROR).put(Status.UNRECOGNIZED, NodeState.UNRECOGNIZED).put(Status.DEPLOYED,
                      NodeState.PENDING).put(Status.INCONSISTENT, NodeState.PENDING).put(Status.UNKNOWN,
-                     NodeState.UNKNOWN).put(Status.MIXED, NodeState.PENDING).put(Status.WAITING_FOR_INPUT,
+                     NodeState.UNRECOGNIZED).put(Status.MIXED, NodeState.PENDING).put(Status.WAITING_FOR_INPUT,
                      NodeState.PENDING).put(Status.SUSPENDED, NodeState.SUSPENDED).put(Status.UNRESOLVED,
                      NodeState.PENDING).build();
 

@@ -62,7 +62,7 @@ public enum InstanceState {
    /**
     * the instance is stopped
     */
-   STOPPED;
+   STOPPED, UNRECOGNIZED;
 
    public String value() {
       return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name()));
@@ -74,8 +74,11 @@ public enum InstanceState {
    }
 
    public static InstanceState fromValue(String state) {
-      return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state,
-               "state")));
+      try {
+         return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 
    public static InstanceState fromValue(int v) {
@@ -93,7 +96,7 @@ public enum InstanceState {
          case 80:
             return STOPPED;
          default:
-            throw new IllegalArgumentException("invalid state:" + v);
+            return UNRECOGNIZED;
       }
    }
 }

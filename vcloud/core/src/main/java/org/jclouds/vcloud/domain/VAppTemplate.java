@@ -93,7 +93,9 @@ public interface VAppTemplate extends ReferenceType {
    /**
     * description of the predefined vApp internal networks in this template
     * 
+    * @return null if the vAppTemplate is still copying
     * @since vcloud api 1.0
     */
+   @Nullable
    VCloudNetworkSection getNetworkSection();
 }

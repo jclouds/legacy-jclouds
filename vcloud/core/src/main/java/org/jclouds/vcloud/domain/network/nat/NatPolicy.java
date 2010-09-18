@@ -35,7 +35,7 @@ public enum NatPolicy {
    /**
     * only inbound packets of this type pass through the firewall
     */
-   ALLOW_TRAFFIC_IN;
+   ALLOW_TRAFFIC_IN, UNRECOGNIZED;
 
    public String value() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name());
@@ -50,7 +50,7 @@ public enum NatPolicy {
       try {
          return valueOf(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(policy, "policy")));
       } catch (IllegalArgumentException e) {
-         return ALLOW_TRAFFIC_IN;
+         return UNRECOGNIZED;
       }
    }
 

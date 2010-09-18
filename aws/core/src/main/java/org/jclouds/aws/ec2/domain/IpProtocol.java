@@ -27,7 +27,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public enum IpProtocol {
 
-   TCP, UDP, ICMP;
+   TCP, UDP, ICMP, UNRECOGNIZED;
 
    public String value() {
       return name().toLowerCase();
@@ -39,7 +39,11 @@ public enum IpProtocol {
    }
 
    public static IpProtocol fromValue(String protocol) {
-      return valueOf(checkNotNull(protocol, "protocol").toUpperCase());
+      try {
+         return valueOf(checkNotNull(protocol, "protocol").toUpperCase());
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 
 }

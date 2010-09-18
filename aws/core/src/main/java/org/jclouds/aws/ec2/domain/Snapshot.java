@@ -31,7 +31,7 @@ import java.util.Date;
  */
 public class Snapshot implements Comparable<Snapshot> {
    public static enum Status {
-      PENDING, COMPLETED, ERROR;
+      PENDING, COMPLETED, ERROR, UNRECOGNIZED;
       public String value() {
          return name().toLowerCase();
       }
@@ -42,7 +42,11 @@ public class Snapshot implements Comparable<Snapshot> {
       }
 
       public static Status fromValue(String status) {
-         return valueOf(checkNotNull(status, "status").toUpperCase());
+         try {
+            return valueOf(checkNotNull(status, "status").toUpperCase());
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
       }
    }
 
@@ -57,8 +61,8 @@ public class Snapshot implements Comparable<Snapshot> {
    private final String description;
    private final String ownerAlias;
 
-   public Snapshot(String region, String id, String volumeId, int volumeSize, Status status,
-            Date startTime, int progress, String ownerId, String description, String ownerAlias) {
+   public Snapshot(String region, String id, String volumeId, int volumeSize, Status status, Date startTime,
+            int progress, String ownerId, String description, String ownerAlias) {
       this.region = checkNotNull(region, "region");
       this.id = id;
       this.volumeId = volumeId;
@@ -135,8 +139,8 @@ public class Snapshot implements Comparable<Snapshot> {
    }
 
    /**
-    * The AWS identity alias (e.g., "amazon", "redhat", "self", etc.) or AWS identity ID that owns the
-    * AMI.
+    * The AWS identity alias (e.g., "amazon", "redhat", "self", etc.) or AWS identity ID that owns
+    * the AMI.
     */
    public String getOwnerAlias() {
       return ownerAlias;
@@ -217,10 +221,9 @@ public class Snapshot implements Comparable<Snapshot> {
 
    @Override
    public String toString() {
-      return "Snapshot [description=" + description + ", id=" + id + ", ownerAlias=" + ownerAlias
-               + ", ownerId=" + ownerId + ", progress=" + progress + ", startTime=" + startTime
-               + ", status=" + status + ", volumeId=" + volumeId + ", volumeSize=" + volumeSize
-               + "]";
+      return "Snapshot [description=" + description + ", id=" + id + ", ownerAlias=" + ownerAlias + ", ownerId="
+               + ownerId + ", progress=" + progress + ", startTime=" + startTime + ", status=" + status + ", volumeId="
+               + volumeId + ", volumeSize=" + volumeSize + "]";
    }
 
    @Override

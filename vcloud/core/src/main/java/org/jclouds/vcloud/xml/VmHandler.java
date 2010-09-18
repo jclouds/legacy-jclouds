@@ -86,8 +86,8 @@ public class VmHandler extends ParseSax.HandlerWithResult<Vm> {
    private boolean inGuestCustomization;
 
    public Vm getResult() {
-      return new VmImpl(vm.getName(), vm.getType(), vm.getHref(), status, vdc, description, tasks, hardware, os,
-               networkConnectionSection, guestCustomization, vAppScopedLocalId);
+      return vm == null ? null : new VmImpl(vm.getName(), vm.getType(), vm.getHref(), status, vdc, description, tasks,
+               hardware, os, networkConnectionSection, guestCustomization, vAppScopedLocalId);
    }
 
    @Override

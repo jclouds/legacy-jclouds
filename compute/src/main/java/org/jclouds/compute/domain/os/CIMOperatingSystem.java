@@ -28,8 +28,7 @@ import com.google.common.annotations.Beta;
  * Operating system based on DMTF CIM model.
  * 
  * @author Adrian Cole
- * @see <a href="http://dmtf.org/standards/cim/cim_schema_v2260">DMTF CIM
- *      model</a>
+ * @see <a href="http://dmtf.org/standards/cim/cim_schema_v2260">DMTF CIM model</a>
  */
 @Beta
 public class CIMOperatingSystem extends OperatingSystem {
@@ -38,7 +37,7 @@ public class CIMOperatingSystem extends OperatingSystem {
       /**
        * Other
        */
-      OTHER(1, "Other", OsFamily.UNKNOWN, false),
+      OTHER(1, "Other", OsFamily.UNRECOGNIZED, false),
       /**
        * MACOS
        */
@@ -66,7 +65,7 @@ public class CIMOperatingSystem extends OperatingSystem {
       /**
        * Not Applicable
        */
-      NOT_APPLICABLE(66, "Not Applicable", OsFamily.UNKNOWN, false),
+      NOT_APPLICABLE(66, "Not Applicable", OsFamily.UNRECOGNIZED, false),
       /**
        * Microsoft Windows Server 2003
        */
@@ -174,7 +173,7 @@ public class CIMOperatingSystem extends OperatingSystem {
       /**
        * Other 64-Bit
        */
-      OTHER_64(102, "Other 64-Bit", OsFamily.UNKNOWN, true),
+      OTHER_64(102, "Other 64-Bit", OsFamily.UNRECOGNIZED, true),
       /**
        * Microsoft Windows Server 2008 R2
        */
@@ -202,7 +201,8 @@ public class CIMOperatingSystem extends OperatingSystem {
       /**
        * Oracle Enterprise Linux 64-bit
        */
-      ORACLE_ENTERPRISE_LINUX_64(109, "Oracle Enterprise Linux 64-bit", OsFamily.OEL, true);
+      ORACLE_ENTERPRISE_LINUX_64(109, "Oracle Enterprise Linux 64-bit", OsFamily.OEL, true), UNRECOGNIZED(
+               Integer.MAX_VALUE, "UNRECOGNIZED", null, true);
 
       private final int code;
 
@@ -238,7 +238,7 @@ public class CIMOperatingSystem extends OperatingSystem {
             if (type.code == code)
                return type;
          }
-         return OTHER;
+         return UNRECOGNIZED;
       }
 
    }
@@ -253,6 +253,7 @@ public class CIMOperatingSystem extends OperatingSystem {
       super(osType.getFamily(), osType.getValue(), version, arch, description, osType.is64Bit());
       this.osType = osType;
    }
+
    /**
     * CIM OSType of the image
     */
@@ -288,6 +289,6 @@ public class CIMOperatingSystem extends OperatingSystem {
    @Override
    public String toString() {
       return "[osType=" + osType + ", version=" + getVersion() + ", arch=" + getArch() + ", description="
-            + getDescription() + "]";
+               + getDescription() + "]";
    }
 }

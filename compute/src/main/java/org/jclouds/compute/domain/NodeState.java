@@ -46,8 +46,8 @@ public enum NodeState {
     */
    ERROR,
    /**
-    * The state of the node is unknown.
+    * The state of the node is unrecognized.
     */
-   UNKNOWN;
+   UNRECOGNIZED;
 
 }

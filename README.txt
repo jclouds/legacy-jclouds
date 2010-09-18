@@ -39,8 +39,8 @@ our blobstore api supports: s3, rackspace, azure, atmos online, att synaptic,
   * note * the pom dependency org.jclouds/jclouds-allblobstore gives you access to
            to all of these providers
 
-we also have rest clients for: chef, opscodeplatform, twitter, as well a number of features
-   in the sandbox
+we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, as well a number of features
+ the sandbox
 
 
 If you want access to all jclouds components, include the maven dependency org.jclouds/jclouds-all

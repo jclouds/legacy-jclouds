@@ -21,7 +21,6 @@ package org.jclouds.demo.tweetstore.integration;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
-import static org.jclouds.rest.RestContextFactory.contextSpec;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,15 +38,16 @@ import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.demo.tweetstore.config.SpringServletConfig;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.twitter.TwitterAsyncClient;
-import org.jclouds.twitter.TwitterClient;
-import org.jclouds.twitter.domain.Status;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+
+import twitter4j.ResponseList;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -56,8 +56,8 @@ import com.google.common.collect.Maps;
 import com.google.inject.Module;
 
 /**
- * Starts up the Google App Engine for Java Development environment and deploys
- * an application which tests accesses twitter and blobstores.
+ * Starts up the Google App Engine for Java Development environment and deploys an application which
+ * tests accesses twitter and blobstores.
  * 
  * @author Adrian Cole
  */
@@ -70,16 +70,16 @@ public class TweetStoreLiveTest {
    private String container;
 
    private static final String blobs = System.getProperty("jclouds.tweetstore.blobstores",
-         "cloudfiles,googlestorage,s3,azureblob");
+            "cloudfiles,googlestorage,s3,azureblob");
    private static final Iterable<String> blobstores = Splitter.on(',').split(blobs);
    private static final Properties props = new Properties();
 
    @BeforeTest
-   void clearAndCreateContainers() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+   void clearAndCreateContainers() throws InterruptedException, ExecutionException, TimeoutException, IOException, TwitterException {
       container = checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER));
 
       props.setProperty(PROPERTY_TWEETSTORE_CONTAINER, checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER),
-            PROPERTY_TWEETSTORE_CONTAINER));
+               PROPERTY_TWEETSTORE_CONTAINER));
 
       props.setProperty(SpringServletConfig.PROPERTY_BLOBSTORE_CONTEXTS, Joiner.on(',').join(blobstores));
 
@@ -98,17 +98,17 @@ public class TweetStoreLiveTest {
          contexts.put(provider, factory.createContext(provider, wiring, props));
       }
 
-      RestContext<TwitterClient, TwitterAsyncClient> twitterContext = new RestContextFactory().createContext("twitter",
-            wiring, props);
-      StoreTweetsController controller = new StoreTweetsController(contexts, container, twitterContext.getApi());
+      Twitter client = new TwitterFactory().getInstance(props.getProperty("twitter.identity"), props
+               .getProperty("twitter.credential"));
+      StoreTweetsController controller = new StoreTweetsController(contexts, container, client);
 
-      Set<Status> statuses = twitterContext.getApi().getMyMentions();
+      ResponseList<Status> statuses = client.getMentions();
 
       boolean deleted = false;
       for (BlobStoreContext context : contexts.values()) {
          if (context.getBlobStore().containerExists(container)) {
             System.err.printf("deleting container %s at %s%n", container, context.getProviderSpecificContext()
-                  .getEndpoint());
+                     .getEndpoint());
             context.getBlobStore().deleteContainer(container);
             deleted = true;
          }
@@ -119,7 +119,7 @@ public class TweetStoreLiveTest {
       }
       for (BlobStoreContext context : contexts.values()) {
          System.err.printf("creating container %s at %s%n", container, context.getProviderSpecificContext()
-               .getEndpoint());
+                  .getEndpoint());
          context.getBlobStore().createContainerInLocation(null, container);
       }
       if (deleted) {
@@ -134,19 +134,17 @@ public class TweetStoreLiveTest {
    }
 
    private void addConfigurationForTwitter(Properties props) {
-      String twitterIdentity = checkNotNull(System.getProperty("twitter.identity"), "twitter.identity");
-      String twitterCredential = checkNotNull(System.getProperty("twitter.credential"), "twitter.credential");
-
-      props.putAll(RestContextFactory.toProperties(contextSpec("twitter", "http://twitter.com", "1", twitterIdentity,
-            twitterCredential, TwitterClient.class, TwitterAsyncClient.class)));
+      props.setProperty("twitter.identity", checkNotNull(System.getProperty("twitter.identity"), "twitter.identity"));
+      props.setProperty("twitter.credential", checkNotNull(System.getProperty("twitter.credential"),
+               "twitter.credential"));
    }
 
    private void addCredentialsForBlobStores(Properties props) {
       for (String provider : blobstores) {
          props.setProperty(provider + ".identity", checkNotNull(System.getProperty(provider + ".identity"), provider
-               + ".identity"));
+                  + ".identity"));
          props.setProperty(provider + ".credential", checkNotNull(System.getProperty(provider + ".credential"),
-               provider + ".credential"));
+                  provider + ".credential"));
       }
    }
 

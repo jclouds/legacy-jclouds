@@ -21,14 +21,18 @@ package org.jclouds.atmosonline.saas.domain;
 
 public enum FileType {
 
-   DIRECTORY, REGULAR;
+   DIRECTORY, REGULAR, UNRECOGNIZED;
 
    public String value() {
       return name().toLowerCase();
    }
 
    public static FileType fromValue(String v) {
-      return valueOf(v.toUpperCase());
+      try {
+         return valueOf(v.toUpperCase());
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 
 }

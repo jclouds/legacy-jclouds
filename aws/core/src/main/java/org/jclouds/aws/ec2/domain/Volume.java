@@ -46,7 +46,7 @@ public class Volume implements Comparable<Volume> {
     * @author Adrian Cole
     */
    public static enum InstanceInitiatedShutdownBehavior {
-      STOP, TERMINATE;
+      STOP, TERMINATE, UNRECOGNIZED;
       public String value() {
          return name().toLowerCase();
       }
@@ -57,12 +57,16 @@ public class Volume implements Comparable<Volume> {
       }
 
       public static InstanceInitiatedShutdownBehavior fromValue(String status) {
-         return valueOf(checkNotNull(status, "status").toUpperCase());
+         try {
+            return valueOf(checkNotNull(status, "status").toUpperCase());
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
       }
    }
 
    public static enum Status {
-      CREATING, AVAILABLE, IN_USE, DELETING;
+      CREATING, AVAILABLE, IN_USE, DELETING, UNRECOGNIZED;
       public String value() {
          return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
       }
@@ -73,8 +77,11 @@ public class Volume implements Comparable<Volume> {
       }
 
       public static Status fromValue(String status) {
-         return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(
-                  status, "status")));
+         try {
+            return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(status, "status")));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
       }
    }
 
@@ -88,9 +95,8 @@ public class Volume implements Comparable<Volume> {
    private final Date createTime;
    private final Set<Attachment> attachments = Sets.newLinkedHashSet();
 
-   public Volume(String region, String id, int size, String snapshotId,
-            String availabilityZone, Volume.Status status, Date createTime,
-            Iterable<Attachment> attachments) {
+   public Volume(String region, String id, int size, String snapshotId, String availabilityZone, Volume.Status status,
+            Date createTime, Iterable<Attachment> attachments) {
       this.region = checkNotNull(region, "region");
       this.id = id;
       this.size = size;
@@ -208,8 +214,8 @@ public class Volume implements Comparable<Volume> {
 
    @Override
    public String toString() {
-      return "Volume [attachments=" + attachments + ", availabilityZone=" + availabilityZone
-               + ", createTime=" + createTime + ", id=" + id + ", region=" + region + ", size="
-               + size + ", snapshotId=" + snapshotId + ", status=" + status + "]";
+      return "Volume [attachments=" + attachments + ", availabilityZone=" + availabilityZone + ", createTime="
+               + createTime + ", id=" + id + ", region=" + region + ", size=" + size + ", snapshotId=" + snapshotId
+               + ", status=" + status + "]";
    }
 }

@@ -58,7 +58,7 @@ public enum ImageAttribute {
    /**
     * the mapping that defines native device names to use when exposing virtual devices.
     */
-   BLOCK_DEVICE_MAPPING;
+   BLOCK_DEVICE_MAPPING, UNRECOGNIZED;
    public String value() {
       switch (this) {
          case PRODUCT_CODES:
@@ -97,7 +97,7 @@ public enum ImageAttribute {
       else if ("blockDeviceMapping".equals(attribute))
          return BLOCK_DEVICE_MAPPING;
       else
-         throw new IllegalArgumentException("unmapped attribute: " + attribute);
+         return UNRECOGNIZED;
    }
 
 }

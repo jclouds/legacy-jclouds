@@ -27,13 +27,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public enum LoadBalancerOs {
 
     F5,
-    UNKNOWN;
+    UNRECOGNIZED;
 
     public static LoadBalancerOs fromValue(String value) {
         try {
             return valueOf(checkNotNull(value));
         } catch(IllegalArgumentException e) {
-            return UNKNOWN;
+            return UNRECOGNIZED;
         }
     }
 

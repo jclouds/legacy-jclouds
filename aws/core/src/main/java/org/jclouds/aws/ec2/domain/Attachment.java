@@ -32,7 +32,7 @@ import java.util.Date;
  */
 public class Attachment implements Comparable<Attachment> {
    public static enum Status {
-      ATTACHING, ATTACHED, DETACHING, DETACHED, BUSY;
+      ATTACHING, ATTACHED, DETACHING, DETACHED, BUSY, UNRECOGNIZED;
       public String value() {
          return name().toLowerCase();
       }
@@ -43,7 +43,11 @@ public class Attachment implements Comparable<Attachment> {
       }
 
       public static Status fromValue(String status) {
-         return valueOf(checkNotNull(status, "status").toUpperCase());
+         try {
+            return valueOf(checkNotNull(status, "status").toUpperCase());
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
       }
    }
 
@@ -54,8 +58,7 @@ public class Attachment implements Comparable<Attachment> {
    private final Status status;
    private final Date attachTime;
 
-   public Attachment(String region, String volumeId, String instanceId, String device,
-            Status status, Date attachTime) {
+   public Attachment(String region, String volumeId, String instanceId, String device, Status status, Date attachTime) {
       this.region = checkNotNull(region, "region");
       this.volumeId = volumeId;
       this.instanceId = instanceId;
@@ -164,9 +167,8 @@ public class Attachment implements Comparable<Attachment> {
 
    @Override
    public String toString() {
-      return "Attachment [region=" + region + ", volumeId=" + volumeId + ", instanceId="
-               + instanceId + ", device=" + device + ", attachTime=" + attachTime + ", status="
-               + status + "]";
+      return "Attachment [region=" + region + ", volumeId=" + volumeId + ", instanceId=" + instanceId + ", device="
+               + device + ", attachTime=" + attachTime + ", status=" + status + "]";
    }
 
    @Override

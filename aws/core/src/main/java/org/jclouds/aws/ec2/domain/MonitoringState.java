@@ -35,7 +35,7 @@ import org.jclouds.aws.ec2.services.MonitoringClient;
  */
 public enum MonitoringState {
 
-   PENDING, ENABLED, DISABLING, DISABLED;
+   PENDING, ENABLED, DISABLING, DISABLED, UNRECOGNIZED;
 
    public String value() {
       return name().toLowerCase();
@@ -54,6 +54,10 @@ public enum MonitoringState {
          return DISABLED;
       if ("true".endsWith(state))
          return ENABLED;
-      return valueOf(checkNotNull(state, "state").toUpperCase());
+      try {
+         return valueOf(checkNotNull(state, "state").toUpperCase());
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 }

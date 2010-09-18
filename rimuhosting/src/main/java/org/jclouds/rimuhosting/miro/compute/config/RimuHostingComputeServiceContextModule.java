@@ -31,10 +31,10 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
@@ -53,9 +53,9 @@ import org.jclouds.rimuhosting.miro.compute.strategy.RimuHostingDestroyNodeStrat
 import org.jclouds.rimuhosting.miro.compute.strategy.RimuHostingGetNodeMetadataStrategy;
 import org.jclouds.rimuhosting.miro.compute.strategy.RimuHostingListNodesStrategy;
 import org.jclouds.rimuhosting.miro.compute.strategy.RimuHostingRebootNodeStrategy;
+import org.jclouds.rimuhosting.miro.compute.suppliers.RimuHostingHardwareSupplier;
 import org.jclouds.rimuhosting.miro.compute.suppliers.RimuHostingImageSupplier;
 import org.jclouds.rimuhosting.miro.compute.suppliers.RimuHostingLocationSupplier;
-import org.jclouds.rimuhosting.miro.compute.suppliers.RimuHostingHardwareSupplier;
 import org.jclouds.rimuhosting.miro.domain.Server;
 import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
 
@@ -116,6 +116,7 @@ public class RimuHostingComputeServiceContextModule extends BaseComputeServiceCo
             .put(RunningState.NOTRUNNING, NodeState.SUSPENDED)//
             .put(RunningState.POWERCYCLING, NodeState.PENDING)//
             .put(RunningState.RESTARTING, NodeState.PENDING)//
+            .put(RunningState.UNRECOGNIZED, NodeState.UNRECOGNIZED)//
             .build();
 
    @Singleton

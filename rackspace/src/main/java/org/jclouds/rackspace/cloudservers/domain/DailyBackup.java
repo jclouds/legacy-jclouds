@@ -21,26 +21,18 @@ package org.jclouds.rackspace.cloudservers.domain;
 
 public enum DailyBackup {
 
-    DISABLED,
-    H_0000_0200,
-    H_0200_0400,
-    H_0400_0600,
-    H_0600_0800,
-    H_0800_1000,
-    H_1000_1200,
-    H_1200_1400,
-    H_1400_1600,
-    H_1600_1800,
-    H_1800_2000,
-    H_2000_2200,
-    H_2200_0000;
+   DISABLED, H_0000_0200, H_0200_0400, H_0400_0600, H_0600_0800, H_0800_1000, H_1000_1200, H_1200_1400, H_1400_1600, H_1600_1800, H_1800_2000, H_2000_2200, H_2200_0000, UNRECOGNIZED;
 
-    public String value() {
-        return name();
-    }
+   public String value() {
+      return name();
+   }
 
-    public static DailyBackup fromValue(String v) {
-        return valueOf(v);
-    }
+   public static DailyBackup fromValue(String v) {
+      try {
+         return valueOf(v);
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
+   }
 
 }

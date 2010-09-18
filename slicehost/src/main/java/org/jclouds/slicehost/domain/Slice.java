@@ -28,8 +28,8 @@ import javax.annotation.Nullable;
 import com.google.common.base.CaseFormat;
 
 /**
- * A slice is a virtual machine instance in the Slicehost system. Flavor and
- * image are requisite elements when creating a slice.
+ * A slice is a virtual machine instance in the Slicehost system. Flavor and image are requisite
+ * elements when creating a slice.
  * 
  * @author Adrian Cole
  */
@@ -40,7 +40,7 @@ public class Slice {
     */
    public enum Status {
 
-      ACTIVE, BUILD, REBOOT, HARD_REBOOT, TERMINATED;
+      ACTIVE, BUILD, REBOOT, HARD_REBOOT, TERMINATED, UNRECOGNIZED;
 
       public String value() {
          return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_UNDERSCORE, name()));
@@ -52,7 +52,11 @@ public class Slice {
       }
 
       public static Status fromValue(String state) {
-         return valueOf(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
+         try {
+            return valueOf(CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
       }
    }
 
@@ -73,8 +77,8 @@ public class Slice {
    private final String rootPassword;
 
    public Slice(int id, String name, int flavorId, @Nullable Integer imageId, @Nullable Integer backupId,
-         Status status, @Nullable Integer progress, float bandwidthIn, float bandwidthOut, Set<String> addresses,
-         @Nullable String rootPassword) {
+            Status status, @Nullable Integer progress, float bandwidthIn, float bandwidthOut, Set<String> addresses,
+            @Nullable String rootPassword) {
       this.id = id;
       this.name = name;
       this.flavorId = flavorId;
@@ -145,8 +149,7 @@ public class Slice {
    }
 
    /**
-    * @return an array of strings representing the Slice's IPs, including
-    *         private IPs
+    * @return an array of strings representing the Slice's IPs, including private IPs
     */
    public Set<String> getAddresses() {
       return addresses;
@@ -242,9 +245,9 @@ public class Slice {
    @Override
    public String toString() {
       return "[id=" + id + ", name=" + name + ", flavorId=" + flavorId + ", imageId=" + imageId + ", backupId="
-            + backupId + ", status=" + status + ", progress=" + progress + ", bandwidthIn=" + bandwidthIn
-            + ", bandwidthOut=" + bandwidthOut + ", addresses=" + addresses + ", rootPassword="
-            + (rootPassword != null) + "]";
+               + backupId + ", status=" + status + ", progress=" + progress + ", bandwidthIn=" + bandwidthIn
+               + ", bandwidthOut=" + bandwidthOut + ", addresses=" + addresses + ", rootPassword="
+               + (rootPassword != null) + "]";
    }
 
 }

@@ -32,8 +32,8 @@
     </requiredProperty>
     <requiredProperty key="providerName" />
     <requiredProperty key="providerEndpoint" />
-    <requiredProperty key="providerAccount" />
-    <requiredProperty key="providerKey" />  
+    <requiredProperty key="providerIdentity" />
+    <requiredProperty key="providerCredential" />  
   </requiredProperties>
   <fileSets>
     <fileSet filtered="true" packaged="true" encoding="UTF-8">

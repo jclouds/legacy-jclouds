@@ -61,13 +61,17 @@ import com.google.common.base.CaseFormat;
  *      "http://docs.amazonwebservices.com/AmazonS3/latest/index.html?RESTrequestPaymentGET.html" />
  */
 public enum Payer {
-   REQUESTER, BUCKET_OWNER;
+   REQUESTER, BUCKET_OWNER, UNRECOGNIZED;
 
    public String value() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
    }
 
    public static Payer fromValue(String payer) {
-      return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, payer));
+      try {
+         return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, payer));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 }

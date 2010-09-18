@@ -35,7 +35,7 @@ public enum FirewallPolicy {
    /**
     * allow packets of this type to pass through the firewall
     */
-   ALLOW;
+   ALLOW, UNRECOGNIZED;
 
    public String value() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name());
@@ -50,7 +50,7 @@ public enum FirewallPolicy {
       try {
          return valueOf(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(policy, "policy")));
       } catch (IllegalArgumentException e) {
-         return DROP;
+         return UNRECOGNIZED;
       }
    }
 

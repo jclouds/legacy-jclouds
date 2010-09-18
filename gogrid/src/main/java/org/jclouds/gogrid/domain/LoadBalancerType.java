@@ -28,7 +28,7 @@ public enum LoadBalancerType {
 
     ROUND_ROBIN("Round Robin"),
     LEAST_CONNECTED("Least Connect"),
-    UNKNOWN("Unknown");
+    UNRECOGNIZED("Unknown");
 
     String type;
     LoadBalancerType(String type) {
@@ -44,7 +44,7 @@ public enum LoadBalancerType {
         for(LoadBalancerType persistenceType : values()) {
             if(persistenceType.type.equals(checkNotNull(type))) return persistenceType;
         }
-        return UNKNOWN;
+        return UNRECOGNIZED;
     }
 
 }

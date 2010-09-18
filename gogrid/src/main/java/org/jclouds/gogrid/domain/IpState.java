@@ -27,13 +27,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Oleksiy Yarmula
  */
 public enum IpState {
-    UNASSIGNED, ASSIGNED;
+   UNASSIGNED, ASSIGNED, UNRECOGNIZED;
 
-    public String toString() {
-        return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
-    }
+   public String toString() {
+      return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
+   }
 
-    public static IpState fromValue(String state) {
-        return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
-    }
+   public static IpState fromValue(String state) {
+      try {
+         return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
+   }
 }

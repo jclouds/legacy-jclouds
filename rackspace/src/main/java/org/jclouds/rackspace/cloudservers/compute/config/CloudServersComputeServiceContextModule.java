@@ -125,7 +125,7 @@ public class CloudServersComputeServiceContextModule extends BaseComputeServiceC
             .put(ServerStatus.SHARE_IP, NodeState.PENDING)//
             .put(ServerStatus.REBOOT, NodeState.PENDING)//
             .put(ServerStatus.HARD_REBOOT, NodeState.PENDING)//
-            .put(ServerStatus.UNKNOWN, NodeState.UNKNOWN).build();
+            .put(ServerStatus.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
 
    @Singleton
    @Provides

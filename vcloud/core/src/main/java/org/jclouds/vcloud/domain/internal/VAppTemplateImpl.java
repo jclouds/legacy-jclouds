@@ -54,11 +54,13 @@ public class VAppTemplateImpl extends ReferenceTypeImpl implements VAppTemplate 
    private final boolean ovfDescriptorUploaded;
    private final String vAppScopedLocalId;
    private final Set<Vm> children = Sets.newLinkedHashSet();
+   @Nullable
    private final VCloudNetworkSection networkSection;
 
    public VAppTemplateImpl(String name, String type, URI id, Status status, ReferenceType vdc,
             @Nullable String description, Iterable<Task> tasks, boolean ovfDescriptorUploaded,
-            @Nullable String vAppScopedLocalId, Iterable<? extends Vm> children, VCloudNetworkSection networkSection) {
+            @Nullable String vAppScopedLocalId, Iterable<? extends Vm> children,
+            @Nullable VCloudNetworkSection networkSection) {
       super(name, type, id);
       this.status = checkNotNull(status, "status");
       this.vdc = vdc;// TODO: once <1.0 is killed check not null
@@ -67,7 +69,7 @@ public class VAppTemplateImpl extends ReferenceTypeImpl implements VAppTemplate 
       this.vAppScopedLocalId = vAppScopedLocalId;
       this.ovfDescriptorUploaded = ovfDescriptorUploaded;
       Iterables.addAll(this.children, checkNotNull(children, "children"));
-      this.networkSection = checkNotNull(networkSection, "networkSection");
+      this.networkSection = networkSection; // can be null when copying
    }
 
    /**

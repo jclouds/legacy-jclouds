@@ -35,7 +35,7 @@ public enum MappingMode {
    /**
     * the external IP address is assigned automatically
     */
-   AUTOMATIC;
+   AUTOMATIC, UNRECOGNIZED;
 
    public String value() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name());
@@ -47,7 +47,11 @@ public enum MappingMode {
    }
 
    public static MappingMode fromValue(String mode) {
-      return valueOf(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(mode, "mode")));
+      try {
+         return valueOf(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(mode, "mode")));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 
 }

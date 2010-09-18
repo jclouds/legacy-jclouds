@@ -21,14 +21,18 @@ package org.jclouds.rackspace.cloudservers.domain;
 
 public enum RateLimitUnit {
 
-   MINUTE, HOUR, DAY;
+   MINUTE, HOUR, DAY, UNRECOGNIZED;
 
    public String value() {
       return name();
    }
 
    public static RateLimitUnit fromValue(String v) {
-      return valueOf(v);
+      try {
+         return valueOf(v);
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 
 }

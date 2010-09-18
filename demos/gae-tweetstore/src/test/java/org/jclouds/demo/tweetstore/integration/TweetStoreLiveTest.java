@@ -21,7 +21,6 @@ package org.jclouds.demo.tweetstore.integration;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.demo.tweetstore.reference.TweetStoreConstants.PROPERTY_TWEETSTORE_CONTAINER;
-import static org.jclouds.rest.RestContextFactory.contextSpec;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,15 +39,16 @@ import org.jclouds.demo.tweetstore.config.GuiceServletConfig;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.twitter.TwitterAsyncClient;
-import org.jclouds.twitter.TwitterClient;
-import org.jclouds.twitter.domain.Status;
 import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+
+import twitter4j.ResponseList;
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
@@ -75,7 +75,7 @@ public class TweetStoreLiveTest {
    private static final Properties props = new Properties();
 
    @BeforeTest
-   void clearAndCreateContainers() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+   void clearAndCreateContainers() throws InterruptedException, ExecutionException, TimeoutException, IOException, TwitterException {
       container = checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER));
 
       props.setProperty(PROPERTY_TWEETSTORE_CONTAINER, checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER),
@@ -98,11 +98,11 @@ public class TweetStoreLiveTest {
          contexts.put(provider, factory.createContext(provider, wiring, props));
       }
 
-      RestContext<TwitterClient, TwitterAsyncClient> twitterContext = new RestContextFactory().createContext("twitter",
-            wiring, props);
-      StoreTweetsController controller = new StoreTweetsController(contexts, container, twitterContext.getApi());
+      Twitter client = new TwitterFactory().getInstance(props.getProperty("twitter.identity"), props
+               .getProperty("twitter.credential"));
+      StoreTweetsController controller = new StoreTweetsController(contexts, container, client);
 
-      Set<Status> statuses = twitterContext.getApi().getMyMentions();
+      ResponseList<Status> statuses = client.getMentions();
 
       boolean deleted = false;
       for (BlobStoreContext context : contexts.values()) {
@@ -148,11 +148,9 @@ public class TweetStoreLiveTest {
    }
 
    private void addConfigurationForTwitter(Properties props) {
-      String twitterIdentity = checkNotNull(System.getProperty("twitter.identity"), "twitter.identity");
-      String twitterCredential = checkNotNull(System.getProperty("twitter.credential"), "twitter.credential");
-
-      props.putAll(RestContextFactory.toProperties(contextSpec("twitter", "http://twitter.com", "1", twitterIdentity,
-            twitterCredential, TwitterClient.class, TwitterAsyncClient.class)));
+      props.setProperty("twitter.identity", checkNotNull(System.getProperty("twitter.identity"), "twitter.identity"));
+      props.setProperty("twitter.credential", checkNotNull(System.getProperty("twitter.credential"),
+               "twitter.credential"));
    }
 
    private void addCredentialsForBlobStores(Properties props) {
