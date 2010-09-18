@@ -175,12 +175,16 @@ public enum Status {
          case QUARANTINE_EXPIRED:
             return "15";
          default:
-            throw new IllegalArgumentException("invalid status:" + this);
+            return "7";
       }
    }
 
    public static Status fromValue(String status) {
-      return fromValue(Integer.parseInt(checkNotNull(status, "status")));
+      try {
+         return fromValue(Integer.parseInt(checkNotNull(status, "status")));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 
    public static Status fromValue(int v) {
@@ -218,7 +222,7 @@ public enum Status {
          case 15:
             return QUARANTINE_EXPIRED;
          default:
-            throw new IllegalArgumentException("invalid status:" + v);
+            return UNRECOGNIZED;
       }
    }
 

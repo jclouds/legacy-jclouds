@@ -29,7 +29,7 @@ import com.google.common.base.CaseFormat;
  * @author Adrian Cole
  */
 public enum StandardUnit {
-   SECONDS, PERCENT, BYTES, BITS, COUNT, BITS_PER_SECOND, COUNT_PER_SECOND, NONE;
+   SECONDS, PERCENT, BYTES, BITS, COUNT, BITS_PER_SECOND, COUNT_PER_SECOND, NONE, UNRECOGNIZED;
 
    public String value() {
       return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name().replace("_PER_", "/")));
@@ -41,7 +41,11 @@ public enum StandardUnit {
    }
 
    public static StandardUnit fromValue(String state) {
-      return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state").replace("/",
-               "_PER_")));
+      try {
+         return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state").replace(
+                  "/", "_PER_")));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 }

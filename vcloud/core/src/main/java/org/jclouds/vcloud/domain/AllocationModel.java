@@ -43,7 +43,7 @@ public enum AllocationModel {
    /**
     * The VCloud API returned a model unsupported in the version 1.0 spec.
     */
-   UNRECOGNIZED_MODEL;
+   UNRECOGNIZED;
 
    public String value() {
       switch (this) {
@@ -64,6 +64,10 @@ public enum AllocationModel {
    }
 
    public static AllocationModel fromValue(String model) {
-      return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(model, "model")));
+      try {
+         return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(model, "model")));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 }

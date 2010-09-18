@@ -34,7 +34,7 @@ public enum ObjectType {
     STORAGE_DNS,
     SERVER_IMAGE,
     DEDICATED_SERVER,
-    UNKNOWN;
+    UNRECOGNIZED;
 
     public String value() {
         return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
@@ -50,7 +50,7 @@ public enum ObjectType {
         try {
             return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(type, "type")));
         } catch(IllegalArgumentException e) {
-            return UNKNOWN;
+            return UNRECOGNIZED;
         }
     }
 

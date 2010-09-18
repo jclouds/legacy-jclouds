@@ -31,7 +31,7 @@ public enum RootDeviceType {
 
    INSTANCE_STORE,
 
-   EBS;
+   EBS, UNRECOGNIZED;
 
    public String value() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_HYPHEN, name());
@@ -42,6 +42,10 @@ public enum RootDeviceType {
    }
 
    public static RootDeviceType fromValue(String v) {
-      return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, v));
+      try {
+         return valueOf(CaseFormat.LOWER_HYPHEN.to(CaseFormat.UPPER_UNDERSCORE, v));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 }

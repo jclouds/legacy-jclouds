@@ -28,7 +28,7 @@ import com.google.common.base.CaseFormat;
  */
 public enum ServerState {
 
-   ON, STARTING, OFF, STOPPING, RESTARTING, SAVING, RESTORING, UPDATING;
+   ON, STARTING, OFF, STOPPING, RESTARTING, SAVING, RESTORING, UPDATING, UNRECOGNIZED;
 
    public String value() {
       return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
@@ -40,6 +40,10 @@ public enum ServerState {
    }
 
    public static ServerState fromValue(String state) {
-      return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
+      try {
+         return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 }

@@ -27,7 +27,7 @@ import com.google.common.base.CaseFormat;
  * @author Adrian Cole
  */
 public enum BlobType {
-   BLOCK_BLOB, PAGE_BLOB;
+   BLOCK_BLOB, PAGE_BLOB, UNRECOGNIZED;
 
    public String value() {
       return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
@@ -39,7 +39,10 @@ public enum BlobType {
    }
 
    public static BlobType fromValue(String type) {
-      return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(type,
-               "type")));
+      try {
+         return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(type, "type")));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 }

@@ -24,15 +24,18 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.URI;
 
+import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
 import org.jclouds.vcloud.domain.Status;
+import org.jclouds.vcloud.domain.TaskStatus;
 import org.jclouds.vcloud.domain.VAppTemplate;
 import org.jclouds.vcloud.domain.Vm;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
+import org.jclouds.vcloud.domain.internal.TaskImpl;
 import org.jclouds.vcloud.domain.ovf.VCloudNetworkSection;
 import org.jclouds.vcloud.domain.ovf.network.Network;
 import org.testng.annotations.Test;
@@ -50,6 +53,7 @@ import com.google.inject.Injector;
  */
 @Test(groups = "unit", testName = "vcloud.VAppTemplateHandlerTest")
 public class VAppTemplateHandlerTest {
+
    public void testUbuntuTemplate() {
       InputStream is = getClass().getResourceAsStream("/vAppTemplate.xml");
       Injector injector = Guice.createInjector(new SaxParserModule());
@@ -115,4 +119,34 @@ public class VAppTemplateHandlerTest {
 
    }
 
+   public void testCopyingTemplate() {
+      InputStream is = getClass().getResourceAsStream("/vAppTemplate-copying.xml");
+      Injector injector = Guice.createInjector(new SaxParserModule());
+      Factory factory = injector.getInstance(ParseSax.Factory.class);
+      DateService dateService = injector.getInstance(DateService.class);
+
+      VAppTemplate result = factory.create(injector.getInstance(VAppTemplateHandler.class)).parse(is);
+      assertEquals(result.getName(), "Ubuntu10.04_v2");
+      assertEquals(result.getHref(), URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-699683881"));
+      assertEquals(result.getType(), "application/vnd.vmware.vcloud.vAppTemplate+xml");
+      assertEquals(result.getStatus(), Status.UNRESOLVED);
+      assertEquals(result.getVDC(), new ReferenceTypeImpl(null, VCloudMediaType.VDC_XML, URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/105186609")));
+      assertEquals(result.getDescription(), null);
+      assertEquals(result.getTasks(), ImmutableList.of(new TaskImpl(URI
+               .create("https://vcenterprise.bluelock.com/api/v1.0/task/q62gxhi32xgd9yrqvr"),
+               "Copying Virtual Application Template Ubuntu10.04_v2(699683881)", TaskStatus.RUNNING, dateService
+                        .iso8601DateParse("2010-09-17T23:20:46.039-04:00"), dateService
+                        .iso8601DateParse("9999-12-31T23:59:59.999-05:00"), dateService
+                        .iso8601DateParse("2010-12-16T23:20:46.039-05:00"), new ReferenceTypeImpl("Ubuntu10.04_v2",
+                        "application/vnd.vmware.vcloud.vAppTemplate+xml",
+                        URI.create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-699683881")),
+               null)));
+      assertEquals(result.getVAppScopedLocalId(), null);
+      assert result.isOvfDescriptorUploaded();
+      assertEquals(result.getChildren(), ImmutableList.of());
+      assertEquals(result.getNetworkSection(), null);
+
+   }
 }

@@ -706,7 +706,7 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
 
             ImmutableMap.<String, org.jclouds.vcloud.domain.VDC> of("vdc", new TerremarkVDCImpl("vdc", null, URI
                      .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"), VDCStatus.READY, null, "description",
-                     ImmutableSet.<Task> of(), AllocationModel.UNRECOGNIZED_MODEL, new Capacity("MB", 0, 0, 0, 0),
+                     ImmutableSet.<Task> of(), AllocationModel.UNRECOGNIZED, new Capacity("MB", 0, 0, 0, 0),
                      new Capacity("MB", 0, 0, 0, 0), new Capacity("MB", 0, 0, 0, 0),
                      ImmutableMap.<String, ReferenceType> of("vapp", new ReferenceTypeImpl("vapp",
                               "application/vnd.vmware.vcloud.vApp+xml", URI

@@ -21,14 +21,18 @@ package org.jclouds.rackspace.cloudservers.domain;
 
 public enum WeeklyBackup {
 
-   DISABLED, SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY;
+   DISABLED, SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, UNRECOGNIZED;
 
    public String value() {
       return name();
    }
 
    public static WeeklyBackup fromValue(String v) {
-      return valueOf(v);
+      try {
+         return valueOf(v);
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 
 }

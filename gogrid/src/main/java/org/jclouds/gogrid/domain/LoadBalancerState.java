@@ -31,7 +31,7 @@ public enum LoadBalancerState {
     ON,
     OFF,
     UNAVAILABLE,
-    UNKNOWN;
+    UNRECOGNIZED;
 
     public String value() {
         return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name()));
@@ -46,7 +46,7 @@ public enum LoadBalancerState {
         try {
             return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state")));
         } catch(IllegalArgumentException e) {
-            return UNKNOWN;
+            return UNRECOGNIZED;
         }
     }
     

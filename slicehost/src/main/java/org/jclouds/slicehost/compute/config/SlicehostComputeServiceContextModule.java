@@ -30,10 +30,10 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
@@ -56,8 +56,8 @@ import org.jclouds.slicehost.compute.strategy.SlicehostDestroyNodeStrategy;
 import org.jclouds.slicehost.compute.strategy.SlicehostGetNodeMetadataStrategy;
 import org.jclouds.slicehost.compute.strategy.SlicehostListNodesStrategy;
 import org.jclouds.slicehost.compute.strategy.SlicehostRebootNodeStrategy;
-import org.jclouds.slicehost.compute.suppliers.SlicehostImageSupplier;
 import org.jclouds.slicehost.compute.suppliers.SlicehostHardwareSupplier;
+import org.jclouds.slicehost.compute.suppliers.SlicehostImageSupplier;
 import org.jclouds.slicehost.domain.Slice;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -109,6 +109,7 @@ public class SlicehostComputeServiceContextModule extends BaseComputeServiceCont
             .put(Slice.Status.REBOOT, NodeState.PENDING)//
             .put(Slice.Status.HARD_REBOOT, NodeState.PENDING)//
             .put(Slice.Status.TERMINATED, NodeState.TERMINATED)//
+            .put(Slice.Status.UNRECOGNIZED, NodeState.UNRECOGNIZED)//
             .build();
 
    @Singleton

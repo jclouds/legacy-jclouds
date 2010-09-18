@@ -287,10 +287,10 @@ See http://code.google.com/p/jclouds for details."
   [#^NodeMetadata node]
   (state-predicate node ERROR))
 
-(defn unknown-state?
-  "Predicate for the node being in an unknown state."
+(defn unrecognized-state?
+  "Predicate for the node being in an unrecognized state."
   [#^NodeMetadata node]
-  (state-predicate node UNKNOWN))
+  (state-predicate node UNRECOGNIZED))
 
 (defn public-ips
   "Returns the node's public ips"

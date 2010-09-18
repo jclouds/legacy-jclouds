@@ -76,7 +76,8 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
             .put(InstanceState.PENDING, NodeState.PENDING).put(InstanceState.RUNNING, NodeState.RUNNING).put(
                      InstanceState.SHUTTING_DOWN, NodeState.PENDING)
             .put(InstanceState.TERMINATED, NodeState.TERMINATED).put(InstanceState.STOPPING, NodeState.PENDING).put(
-                     InstanceState.STOPPED, NodeState.SUSPENDED).build();
+                     InstanceState.STOPPED, NodeState.SUSPENDED)
+            .put(InstanceState.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
 
    private final EC2Client client;
    private final Map<RegionAndName, KeyPair> credentialsMap;

@@ -28,7 +28,7 @@ public enum ServerImageType {
 
     WEB_APPLICATION_SERVER("Web Server"),
     DATABASE_SERVER("Database Server"),
-    UNKNOWN("Unknown");
+    UNRECOGNIZED("Unknown");
 
     String type;
     ServerImageType(String type) {
@@ -44,6 +44,6 @@ public enum ServerImageType {
         for(ServerImageType serverImageType : values()) {
             if(serverImageType.type.equals(checkNotNull(type))) return serverImageType;
         }
-        return UNKNOWN;
+        return UNRECOGNIZED;
     }
 }

@@ -114,6 +114,7 @@ public class GoGridComputeServiceContextModule extends BaseComputeServiceContext
             .put(ServerState.STOPPING, NodeState.PENDING)//
             .put(ServerState.RESTARTING, NodeState.PENDING)//
             .put(ServerState.SAVING, NodeState.PENDING)//
+            .put(ServerState.UNRECOGNIZED, NodeState.UNRECOGNIZED)//
             .put(ServerState.RESTORING, NodeState.PENDING)//
             .put(ServerState.UPDATING, NodeState.PENDING).build();
 

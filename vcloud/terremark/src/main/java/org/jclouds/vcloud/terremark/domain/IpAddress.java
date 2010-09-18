@@ -31,7 +31,7 @@ import com.google.common.base.CaseFormat;
 public class IpAddress implements Comparable<IpAddress> {
 
    public static enum Status {
-      AVAILABLE, ASSIGNED;
+      AVAILABLE, ASSIGNED, UNRECOGNIZED;
       public String value() {
          return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name());
       }
@@ -42,8 +42,11 @@ public class IpAddress implements Comparable<IpAddress> {
       }
 
       public static Status fromValue(String status) {
-         return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(status,
-                  "status")));
+         try {
+            return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(status, "status")));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
       }
 
    }

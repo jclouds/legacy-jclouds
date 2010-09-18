@@ -84,7 +84,7 @@ public class TerremarkVCloudExpressComputeServiceLiveTest extends VCloudExpressC
    @Override
    protected void checkOsMatchesTemplate(NodeMetadata node) {
       if (node.getOperatingSystem() != null)
-         assertEquals(node.getOperatingSystem().getFamily(), OsFamily.UNKNOWN);
+         assertEquals(node.getOperatingSystem().getFamily(), OsFamily.UNRECOGNIZED);
    }
 
    @Override

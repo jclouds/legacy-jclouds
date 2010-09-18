@@ -61,7 +61,7 @@ public class VDCHandler extends ParseSax.HandlerWithResult<VDC> {
    protected ReferenceType org;
    protected String description;
    protected List<Task> tasks = Lists.newArrayList();
-   protected AllocationModel allocationModel = AllocationModel.UNRECOGNIZED_MODEL;
+   protected AllocationModel allocationModel = AllocationModel.UNRECOGNIZED;
 
    protected Capacity storageCapacity;
    protected Capacity cpuCapacity;

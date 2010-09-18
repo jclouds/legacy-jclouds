@@ -26,7 +26,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public enum LoadBalancerPersistenceType {
 
-   NONE("None"), SSL_STICKY("SSL Sticky"), SOURCE_ADDRESS("Source Address"), UNKNOWN("Unknown");
+   NONE("None"), SSL_STICKY("SSL Sticky"), SOURCE_ADDRESS("Source Address"), UNRECOGNIZED("Unknown");
 
    String type;
 
@@ -44,6 +44,6 @@ public enum LoadBalancerPersistenceType {
          if (persistenceType.type.equals(checkNotNull(type)))
             return persistenceType;
       }
-      return UNKNOWN;
+      return UNRECOGNIZED;
    }
 }

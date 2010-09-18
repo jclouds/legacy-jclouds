@@ -19,11 +19,21 @@
 
 package org.jclouds.rimuhosting.miro.domain.internal;
 
+
 /**
  * States an instance can be in.
  * 
  * @author Ivan Meredith
  */
 public enum RunningState {
-   RUNNING, NOTRUNNING, RESTARTING, POWERCYCLING
+   RUNNING, NOTRUNNING, RESTARTING, POWERCYCLING, UNRECOGNIZED;
+
+   public static RunningState fromValue(String v) {
+      try {
+         return valueOf(v);
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
+   }
+
 }

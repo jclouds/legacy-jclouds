@@ -29,21 +29,27 @@ package org.jclouds.rackspace.cloudservers.domain;
  * available. The 'ACTIVE' label is really misleading in the fact that it just means the system
  * doesn't have any activity going on related to it's configuration.
  * <p/>
- * Processes such as ssh will not be available until 5-10 seconds following the phase ACTIVE 
- * <ul><li>[Web Hosting #119335]</li></ul>
+ * Processes such as ssh will not be available until 5-10 seconds following the phase ACTIVE
+ * <ul>
+ * <li>[Web Hosting #119335]</li>
+ * </ul>
  * 
  * @author Adrian Cole
  */
 public enum ServerStatus {
 
-   ACTIVE, SUSPENDED, DELETED, QUEUE_RESIZE, PREP_RESIZE, RESIZE, VERIFY_RESIZE, QUEUE_MOVE, PREP_MOVE, MOVE, VERIFY_MOVE, RESCUE, ERROR, BUILD, RESTORING, PASSWORD, REBUILD, DELETE_IP, SHARE_IP_NO_CONFIG, SHARE_IP, REBOOT, HARD_REBOOT, UNKNOWN;
+   ACTIVE, SUSPENDED, DELETED, QUEUE_RESIZE, PREP_RESIZE, RESIZE, VERIFY_RESIZE, QUEUE_MOVE, PREP_MOVE, MOVE, VERIFY_MOVE, RESCUE, ERROR, BUILD, RESTORING, PASSWORD, REBUILD, DELETE_IP, SHARE_IP_NO_CONFIG, SHARE_IP, REBOOT, HARD_REBOOT, UNRECOGNIZED;
 
    public String value() {
       return name();
    }
 
    public static ServerStatus fromValue(String v) {
-      return valueOf(v);
+      try {
+         return valueOf(v);
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 
 }

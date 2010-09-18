@@ -22,10 +22,10 @@ package org.jclouds.vcloud.util;
 import java.net.URI;
 import java.util.Map;
 
+import org.jclouds.vcloud.domain.Error;
 import org.jclouds.vcloud.domain.ReferenceType;
-import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.internal.ErrorImpl;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
-import org.jclouds.vcloud.domain.internal.TaskImpl.ErrorImpl;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Maps;
@@ -57,7 +57,11 @@ public class Utils {
       return newReferenceType(attributes, null);
    }
 
-   public static Task.Error newError(Map<String, String> attributes) {
+   /**
+    * note that vCloud 0.9+ the error isn't attributes, it is a nested object. see
+    * {@link ErrorHandler}
+    */
+   public static Error newError(Map<String, String> attributes) {
       String minorErrorCode = attributes.get("minorErrorCode");
       String vendorSpecificErrorCode = attributes.get("vendorSpecificErrorCode");
       int errorCode;

@@ -110,7 +110,9 @@ public class VAppTemplateHandler extends ParseSax.HandlerWithResult<VAppTemplate
    public void endElement(String uri, String name, String qName) {
       if (qName.endsWith("Children")) {
          inChildren = false;
-         this.children.add(vmHandler.getResult());
+         Vm vm = vmHandler.getResult();
+         if (vm != null)
+            this.children.add(vmHandler.getResult());
       } else if (qName.endsWith("Tasks")) {
          inTasks = false;
          this.tasks.add(taskHandler.getResult());

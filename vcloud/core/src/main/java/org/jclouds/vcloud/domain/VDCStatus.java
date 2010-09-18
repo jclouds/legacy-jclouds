@@ -26,7 +26,7 @@ package org.jclouds.vcloud.domain;
  */
 public enum VDCStatus {
 
-   CREATION_FAILED, NOT_READY, READY, UNKNOWN, UNRECOGNIZED_STATUS;
+   CREATION_FAILED, NOT_READY, READY, UNKNOWN, UNRECOGNIZED;
 
    public int value() {
       switch (this) {
@@ -54,7 +54,7 @@ public enum VDCStatus {
          case 2:
             return UNKNOWN;
          default:
-            return UNRECOGNIZED_STATUS;
+            return UNRECOGNIZED;
       }
    }
 }

@@ -43,7 +43,7 @@ public enum NatType {
     * 
     * @since vcloud api 0.9
     */
-   PORT_FORWARDING;
+   PORT_FORWARDING, UNRECOGNIZED;
 
    public String value() {
       return CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, name());
@@ -55,6 +55,10 @@ public enum NatType {
    }
 
    public static NatType fromValue(String natType) {
-      return valueOf(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(natType, "natType")));
+      try {
+         return valueOf(CaseFormat.LOWER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(natType, "natType")));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 }
