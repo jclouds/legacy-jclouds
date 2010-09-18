@@ -44,15 +44,5 @@
             <artifactId>jclouds-twitter</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-chef</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-opscodeplatform</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 </project>

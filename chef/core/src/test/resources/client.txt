@@ -1,7 +1,0 @@
-{
-    "certificate": "-----BEGIN CERTIFICATE-----\ndXQ==\n-----END CERTIFICATE-----\n",
-    "orgname": "jclouds",
-    "clientname": "adrian-jcloudstest",
-    "name": "adrian-jcloudstest",
-    "validator": false
-}
