@@ -45,7 +45,7 @@ public enum TaskStatus {
    /**
     * not an official status, temporarily in.
     */
-   CANCELLED;
+   CANCELLED, UNRECOGNIZED;
    public String value() {
       return name().toLowerCase();
    }
@@ -64,7 +64,11 @@ public enum TaskStatus {
       } else if ("COMPLETED".equals(status.toUpperCase())) {
          status = "SUCCESS";
       }
-      return valueOf(checkNotNull(status, "status").toUpperCase());
+      try {
+         return valueOf(checkNotNull(status, "status").toUpperCase());
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 
 }

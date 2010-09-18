@@ -30,10 +30,10 @@ import javax.inject.Inject;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
+import org.jclouds.vcloud.domain.Error;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
-import org.jclouds.vcloud.domain.Task.Error;
 import org.jclouds.vcloud.domain.internal.TaskImpl;
 import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
@@ -44,7 +44,7 @@ import org.xml.sax.SAXException;
  */
 public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    protected final DateService dateService;
-
+   private String operation;
    private ReferenceType taskLink;
    private ReferenceType owner;
    private TaskStatus status;
@@ -53,6 +53,7 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    private Date expiryTime;
    private Task task;
    private Error error;
+   private boolean inOwner;
 
    protected Logger logger = Logger.NULL;
 
@@ -69,10 +70,11 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = cleanseAttributes(attrs);
       if (qName.equalsIgnoreCase("Task")) {
-         if (attributes.get("href") != null)// queued tasks may not have an
+         if (attributes.get("href") != null && !inOwner)// queued tasks may not have an
             // href yet
             taskLink = Utils.newReferenceType(attributes);
          status = TaskStatus.fromValue(attributes.get("status"));
+         operation = attributes.get("operation");
          if (attributes.containsKey("startTime"))
             startTime = parseDate(attributes.get("startTime"));
          if (attributes.containsKey("endTime"))
@@ -107,13 +109,16 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    @Override
    public void endElement(String uri, String localName, String qName) {
       if (qName.equalsIgnoreCase("Task")) {
-         this.task = new TaskImpl(taskLink.getHref(), status, startTime, endTime, expiryTime, owner, error);
+         this.task = new TaskImpl(taskLink.getHref(), operation, status, startTime, endTime, expiryTime, owner, error);
+         operation = null;
          taskLink = null;
          status = null;
          startTime = null;
          endTime = null;
          owner = null;
          error = null;
+      } else if (qName.equalsIgnoreCase("Owner")) {
+         inOwner = false;
       }
    }
 

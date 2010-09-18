@@ -37,6 +37,11 @@ public interface Task extends ReferenceType {
    /**
     * The current status of the task.
     */
+   String getOperation();
+
+   /**
+    * The current status of the task.
+    */
    TaskStatus getStatus();
 
    /**
@@ -67,41 +72,5 @@ public interface Task extends ReferenceType {
     */
    @Nullable
    Error getError();
-
-   @ImplementedBy(TaskImpl.ErrorImpl.class)
-   static interface Error {
-      /**
-       * 
-       * @return message describing the error
-       */
-      String getMessage();
-
-      /**
-       * 
-       * @return matches the HTTP status code
-       */
-      int getMajorErrorCode();
-
-      /**
-       * 
-       * @return error code specific to the failed operation or null if vcloud <0.9
-       */
-      @Nullable
-      String getMinorErrorCode();
-
-      /**
-       * 
-       * @return optional additional information about the source of the error
-       */
-      @Nullable
-      String getVendorSpecificErrorCode();
-
-      /**
-       * 
-       * @return stack trace of the error, if available. This attribute is returned only when a
-       *         request is made by the system administrator.
-       */
-      String getStackTrace();
-   }
 
 }

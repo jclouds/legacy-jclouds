@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VAppTemplate xmlns="http://www.vmware.com/vcloud/v1"
+    xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"
+    ovfDescriptorUploaded="true" status="0" name="Ubuntu10.04_v2"
+    type="application/vnd.vmware.vcloud.vAppTemplate+xml"
+    href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-699683881"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://schemas.dmtf.org/ovf/envelope/1 http://schemas.dmtf.org/ovf/envelope/1/dsp8023_1.1.0.xsd http://www.vmware.com/vcloud/v1 http://vcenterprise.bluelock.com/api/v1.0/schema/master.xsd">
+    <Link rel="up" type="application/vnd.vmware.vcloud.vdc+xml"
+        href="https://vcenterprise.bluelock.com/api/v1.0/vdc/105186609" />
+    <Description />
+    <Tasks>
+        <Task status="running" startTime="2010-09-17T23:20:46.039-04:00"
+            operation="Copying Virtual Application Template Ubuntu10.04_v2(699683881)"
+            expiryTime="2010-12-16T23:20:46.039-05:00" endTime="9999-12-31T23:59:59.999-05:00"
+            type="application/vnd.vmware.vcloud.task+xml"
+            href="https://vcenterprise.bluelock.com/api/v1.0/task/q62gxhi32xgd9yrqvr">
+            <Owner type="application/vnd.vmware.vcloud.vAppTemplate+xml"
+                name="Ubuntu10.04_v2"
+                href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-699683881" />
+        </Task>
+    </Tasks>
+    <Children />
+    <LeaseSettingsSection
+        type="application/vnd.vmware.vcloud.leaseSettingsSection+xml"
+        href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-699683881/leaseSettingsSection/"
+        ovf:required="false">
+        <ovf:Info>Lease settings section</ovf:Info>
+        <Link rel="edit"
+            type="application/vnd.vmware.vcloud.leaseSettingsSection+xml"
+            href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-699683881/leaseSettingsSection/" />
+        <StorageLeaseInSeconds>0</StorageLeaseInSeconds>
+    </LeaseSettingsSection>
+    <CustomizationSection
+        type="application/vnd.vmware.vcloud.customizationSection+xml"
+        href="https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/vappTemplate-699683881/customizationSection/"
+        ovf:required="false">
+        <ovf:Info>VApp template customization section</ovf:Info>
+        <CustomizeOnInstantiate>true</CustomizeOnInstantiate>
+    </CustomizationSection>
+</VAppTemplate>
