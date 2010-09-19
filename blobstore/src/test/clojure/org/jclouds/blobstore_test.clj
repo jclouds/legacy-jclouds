@@ -109,18 +109,35 @@
                         (download-blob container-name name data-file)))
            (finally (.delete data-file))))))
 
-;; this will fail until somebody fixes it!
-#_
-(deftest sing-blob-request-test
-  (let [request (sign-blob-request "container" "path" {:method :delete})]
-    (is (= "DELETE" (.getMethod request))))
-  (let [request (sign-blob-request "container" "path" {:method :get})]
-    (is (= "GET" (.getMethod request))))
-  (let [request (sign-blob-request
-                 "container" "path" {:method :put :content-length 10})]
-    (is (= "PUT" (.getMethod request)))
-    (is (= "10" (get "Content-Length" (.getHeaders request))))
-    (is (= "text/plain" (get "Content-Type" (.getHeaders request))))))
+(deftest sign-blob-request-test
+  (testing "delete"
+    (let [request (sign-blob-request "container" "path" {:method :delete})]
+      (is (= "DELETE" (.getMethod request)))))
+  (testing "get"
+    (let [request (sign-blob-request "container" "path" {:method :get})]
+      (is (= "GET" (.getMethod request)))))
+  (testing "put"
+    (let [request (sign-blob-request
+                   "container" "path" {:method :put :content-length 10})]
+      (is (= "http://localhost/container/path" (str (.getEndpoint request))))
+      (is (= "PUT" (.getMethod request)))
+      (is (= "10" (first (.get (.getHeaders request) "Content-Length"))))
+      (is (nil?
+           (first (.get (.getHeaders request) "Content-Type"))))))
+  (testing "put with headers"
+    (let [request (sign-blob-request
+                   "container" "path"
+                   {:method :put :content-length 10
+                    :content-type "x"
+                    :content-language "en"
+                    :content-disposition "f"
+                    :content-encoding "g"})]
+      (is (= "PUT" (.getMethod request)))
+      (is (= "10" (first (.get (.getHeaders request) "Content-Length"))))
+      (is (= "x" (first (.get (.getHeaders request) "Content-Type"))))
+      (is (= "en" (first (.get (.getHeaders request) "Content-Language"))))
+      (is (= "f" (first (.get (.getHeaders request) "Content-Disposition"))))
+      (is (= "g" (first (.get (.getHeaders request) "Content-Encoding")))))))
 
 ;; TODO: more tests involving blob-specific functions
 

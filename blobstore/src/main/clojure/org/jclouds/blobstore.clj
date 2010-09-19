@@ -241,26 +241,40 @@ Options can also be specified for extension modules
 
 (defn sign-blob-request
   "Get a signed http request for manipulating a blob in another application.
-   ex. curl"
+   ex. curl.
+   The request argument is used to specify charecteristics of the request
+   to be signed.  The :method key must be set to one of :get, :delete, and
+   :put. For :put requests, :content-length must be specified. Optionally,
+   :content-type and content-md5 may be given."
   ([container-name path
-    {:keys [method content-type content-length content-md5] :as request}]
+    {:keys [method content-type content-length content-md5
+            content-disposition content-encoding content-language] :as request}]
      (sign-blob-request container-name path request *blobstore*))
   ([container-name path
-    {:keys [method content-type content-length content-md5]} blobstore]
-     {:pre [(or content-length (#{:delete :get} method))]}
+    {:keys [method content-type content-length content-md5
+            content-disposition content-encoding content-language]} blobstore]
+     {:pre [(#{:delete :get :put} method)
+            (or content-length (#{:delete :get} method))]}
      (case method
-       :delete (.signRemoveBlob (.. blobstore getContext getSigner) container-name path)
-       :get (.signGetBlob (.. blobstore getContext getSigner) container-name path)
+       :delete (.signRemoveBlob
+                (.. blobstore getContext getSigner) container-name path)
+       :get (.signGetBlob
+             (.. blobstore getContext getSigner) container-name path)
        :put (.signPutBlob
              (.. blobstore getContext getSigner) container-name
              (doto (.newBlob blobstore path)
                (.setPayload
-                (doto 
-                   (PhantomPayload. )
-                   ;; TODO look into use of ContentMetadata constructor
-                            (.getContentMetadata (.setContentLength (long content-length)))
-                            (.getContentMetadata (.setContentType content-type))
-                            (.getContentMetadata (.setContentMD5 content-md5)))))))))
+                (let [payload (PhantomPayload.)
+                      metadata (.getContentMetadata payload)]
+                  ;; TODO look into use of ContentMetadata constructor
+                  (doto metadata
+                    (.setContentLength (long content-length))
+                    (.setContentType content-type)
+                    (.setContentMD5 content-md5)
+                    (.setContentDisposition content-disposition)
+                    (.setContentEncoding content-encoding)
+                    (.setContentLanguage content-language))
+                  payload)))))))
 
 (defn get-blob-stream
   "Get an inputstream from the blob at a given path"
