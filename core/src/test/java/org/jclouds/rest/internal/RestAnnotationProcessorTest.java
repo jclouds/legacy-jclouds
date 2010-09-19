@@ -1501,9 +1501,29 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       HttpRequest request = factory(TestQuery.class).createRequest(method, payload);
       assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "");
-      assertPayloadEquals(request, "whoops", "application/unknown", "attachment; filename=photo.jpg", false);
+      assertPayloadEquals(request, "whoops", "application/unknown", "attachment; filename=photo.jpg", null, null, false);
    }
 
+   public void testPutPayloadContentEncoding() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestTransformers.class.getMethod("put", Payload.class);
+      Payload payload = newStringPayload("whoops");
+      payload.setContentEncoding("gzip");
+      HttpRequest request = factory(TestQuery.class).createRequest(method, payload);
+      assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, "whoops", "application/unknown", null, "gzip", null, false);
+   }
+
+   public void testPutPayloadContentLanguage() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestTransformers.class.getMethod("put", Payload.class);
+      Payload payload = newStringPayload("whoops");
+      payload.setContentLanguage("en");
+      HttpRequest request = factory(TestQuery.class).createRequest(method, payload);
+      assertRequestLineEquals(request, "PUT http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, "whoops", "application/unknown", null, null, "en", false);
+   }
+   
    public void testPutPayloadWithGeneratedMD5AndNoContentType() throws SecurityException, NoSuchMethodException,
          IOException {
       Payload payload = newStringPayload("whoops");

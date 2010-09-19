@@ -72,10 +72,13 @@ public abstract class BaseRestClientTest {
          bind(TransformingHttpCommandExecutorService.class).toInstance(mock);
       }
    }
+
    protected void assertPayloadEquals(HttpRequest request, String toMatch, String contentType, boolean contentMD5) {
-       assertPayloadEquals(request, toMatch, contentType, null, contentMD5);
+      assertPayloadEquals(request, toMatch, contentType, null, null, null, contentMD5);
    }
-   protected void assertPayloadEquals(HttpRequest request, String toMatch, String contentType, String contentDispositon, boolean contentMD5) {
+
+   protected void assertPayloadEquals(HttpRequest request, String toMatch, String contentType,
+         String contentDispositon, String contentEncoding, String contentLanguage, boolean contentMD5) {
       if (request.getPayload() == null) {
          assertNull(toMatch);
       } else {
@@ -88,28 +91,31 @@ public abstract class BaseRestClientTest {
          assertEquals(payload, toMatch);
          Long length = new Long(payload.getBytes().length);
          try {
-            assertContentHeadersEqual(request, contentType, contentDispositon, length, contentMD5 ? CryptoStreams
-                     .md5(request.getPayload()) : null);
+            assertContentHeadersEqual(request, contentType, contentDispositon, contentEncoding, contentLanguage,
+                  length, contentMD5 ? CryptoStreams.md5(request.getPayload()) : null);
          } catch (IOException e) {
             propagate(e);
          }
       }
    }
 
-   protected void assertContentHeadersEqual(HttpRequest request, String contentType, String contentDispositon, Long length, byte[] contentMD5) {
+   protected void assertContentHeadersEqual(HttpRequest request, String contentType, String contentDispositon,
+         String contentEncoding, String contentLanguage, Long length, byte[] contentMD5) {
       if (request.getFirstHeaderOrNull(TRANSFER_ENCODING) == null) {
          assertEquals(request.getPayload().getContentLength(), length);
       } else {
          assertEquals(request.getFirstHeaderOrNull(TRANSFER_ENCODING), "chunked");
          assert request.getPayload().getContentLength() == null
-                  || request.getPayload().getContentLength().equals(length);
+               || request.getPayload().getContentLength().equals(length);
       }
       assertEquals(request.getPayload().getContentType(), contentType);
       assertEquals(request.getPayload().getContentDisposition(), contentDispositon);
+      assertEquals(request.getPayload().getContentEncoding(), contentEncoding);
+      assertEquals(request.getPayload().getContentLanguage(), contentLanguage);
       assertEquals(request.getPayload().getContentMD5(), contentMD5);
    }
 
-   //FIXME Shouldn't be assertPayloadHeadersEqual?
+   // FIXME Shouldn't be assertPayloadHeadersEqual?
    protected void assertNonPayloadHeadersEqual(HttpRequest request, String toMatch) {
       assertEquals(sortAndConcatHeadersIntoString(request.getHeaders()), toMatch);
    }
@@ -121,10 +127,10 @@ public abstract class BaseRestClientTest {
    protected void assertExceptionParserClassEquals(Method method, @Nullable Class<?> parserClass) {
       if (parserClass == null)
          assertEquals(RestAnnotationProcessor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(injector,
-                  method).getClass(), MapHttp4xxCodesToExceptions.class);
+               method).getClass(), MapHttp4xxCodesToExceptions.class);
       else
          assertEquals(RestAnnotationProcessor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(injector,
-                  method).getClass(), parserClass);
+               method).getClass(), parserClass);
    }
 
    protected void assertSaxResponseParserClassEquals(Method method, @Nullable Class<?> parserClass) {
@@ -133,7 +139,7 @@ public abstract class BaseRestClientTest {
 
    protected void assertResponseParserClassEquals(Method method, HttpRequest request, @Nullable Class<?> parserClass) {
       assertEquals(RestAnnotationProcessor.createResponseParser(parserFactory, injector, method, request).getClass(),
-               parserClass);
+            parserClass);
    }
 
 }

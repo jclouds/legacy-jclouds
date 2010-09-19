@@ -203,6 +203,10 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
             connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, request.getPayload().getContentType());
          if (request.getPayload().getContentDisposition() != null)
             connection.setRequestProperty("Content-Disposition", request.getPayload().getContentDisposition());
+         if (request.getPayload().getContentEncoding() != null)
+            connection.setRequestProperty("Content-Encoding", request.getPayload().getContentEncoding());
+         if (request.getPayload().getContentLanguage() != null)
+            connection.setRequestProperty("Content-Language", request.getPayload().getContentLanguage());
          if (chunked) {
             connection.setChunkedStreamingMode(8196);
          } else {

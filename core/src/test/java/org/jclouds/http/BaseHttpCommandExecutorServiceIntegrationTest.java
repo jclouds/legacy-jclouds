@@ -241,6 +241,26 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
       assertEquals(headers.get("x-Content-Disposition"), Collections.singleton("attachment; filename=photo.jpg"));
       payload.release();
    }
+   
+   @Test(invocationCount = 5, timeOut = 5000)
+   public void testPostContentEncoding() throws ExecutionException, InterruptedException, TimeoutException,
+         IOException {
+      Payload payload = Payloads.newStringPayload("foo");
+      payload.setContentEncoding("gzip");
+      Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
+      assertEquals(headers.get("x-Content-Encoding"), Collections.singleton("gzip"));
+      payload.release();
+   }
+   
+   @Test(invocationCount = 5, timeOut = 5000)
+   public void testPostContentLanguage() throws ExecutionException, InterruptedException, TimeoutException,
+         IOException {
+      Payload payload = Payloads.newStringPayload("foo");
+      payload.setContentLanguage("mi, en");
+      Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
+      assertEquals(headers.get("x-Content-Language"), Collections.singleton("mi, en"));
+      payload.release();
+   }
 
    @Test(invocationCount = 5, timeOut = 5000)
    public void testPut() throws MalformedURLException, ExecutionException, InterruptedException, TimeoutException {
