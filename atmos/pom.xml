@@ -123,6 +123,10 @@
                                             <name>test.synaptic.credential</name>
                                             <value>${test.synaptic.credential}</value>
                                         </property>
+                                        <property>
+                                            <name>test.initializer</name>
+                                            <value>${test.initializer}</value>
+                                        </property>
                                     </systemProperties>
                                 </configuration>
                             </execution>
