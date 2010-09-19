@@ -28,7 +28,6 @@ import static com.google.common.io.Closeables.closeQuietly;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.net.Authenticator;
 import java.net.HttpURLConnection;
@@ -85,11 +84,11 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
 
    @Inject
    public JavaUrlHttpCommandExecutorService(HttpUtils utils,
-            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
-            DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
-            DelegatingErrorHandler errorHandler, HttpWire wire, @Named("untrusted") HostnameVerifier verifier,
-            @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider) throws SecurityException,
-            NoSuchFieldException {
+         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
+         DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
+         DelegatingErrorHandler errorHandler, HttpWire wire, @Named("untrusted") HostnameVerifier verifier,
+         @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider) throws SecurityException,
+         NoSuchFieldException {
       super(utils, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       if (utils.getMaxConnections() > 0)
          System.setProperty("http.maxConnections", String.valueOf(checkNotNull(utils, "utils").getMaxConnections()));
@@ -198,26 +197,25 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
       connection.setRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
 
       if (request.getPayload() != null) {
-         OutputStream out = null;
+         if (request.getPayload().getContentMD5() != null)
+            connection.setRequestProperty("Content-MD5", CryptoStreams.base64(request.getPayload().getContentMD5()));
+         if (request.getPayload().getContentType() != null)
+            connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, request.getPayload().getContentType());
+         if (request.getPayload().getContentDisposition() != null)
+            connection.setRequestProperty("Content-Disposition", request.getPayload().getContentDisposition());
+         if (chunked) {
+            connection.setChunkedStreamingMode(8196);
+         } else {
+            Long length = checkNotNull(request.getPayload().getContentLength(), "payload.getContentLength");
+            connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, length.toString());
+            connection.setFixedLengthStreamingMode(length.intValue());
+         }
+         // writeTo will close the output stream
          try {
-            if (request.getPayload().getContentMD5() != null)
-               connection.setRequestProperty("Content-MD5", CryptoStreams.base64(request.getPayload().getContentMD5()));
-            if (request.getPayload().getContentType() != null)
-               connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, request.getPayload().getContentType());
-            if (request.getPayload().getContentDisposition() != null)
-               connection.setRequestProperty("Content-Disposition", request.getPayload().getContentDisposition());
-            if (chunked) {
-               connection.setChunkedStreamingMode(8196);
-            } else {
-               Long length = checkNotNull(request.getPayload().getContentLength(), "payload.getContentLength");
-               connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, length.toString());
-               connection.setFixedLengthStreamingMode(length.intValue());
-            }
-            out = connection.getOutputStream();
-            request.getPayload().writeTo(out);
-            out.flush();
-         } finally {
-            closeQuietly(out);
+         request.getPayload().writeTo(connection.getOutputStream());
+         } catch (IOException e){
+            e.printStackTrace();
+            throw e;
          }
       } else {
          connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, "0");
@@ -227,7 +225,8 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
    }
 
    /**
-    * Only disconnect if there is no content, as disconnecting will throw away unconsumed content.
+    * Only disconnect if there is no content, as disconnecting will throw away
+    * unconsumed content.
     */
    @Override
    protected void cleanup(HttpURLConnection connection) {

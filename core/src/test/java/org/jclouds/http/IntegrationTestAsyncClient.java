@@ -19,13 +19,13 @@
 
 package org.jclouds.http;
 
-import java.io.File;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Map;
 
+import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
 import javax.ws.rs.HeaderParam;
@@ -37,12 +37,13 @@ import javax.ws.rs.PathParam;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.options.HttpRequestOptions;
-import org.jclouds.rest.Binder;
+import org.jclouds.io.Payload;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.MapBinder;
 import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.binders.BindMapToMatrixParams;
 import org.jclouds.rest.binders.BindToJsonPayload;
@@ -50,6 +51,7 @@ import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -109,7 +111,7 @@ public interface IntegrationTestAsyncClient {
    @POST
    @Path("/objects/{id}")
    ListenableFuture<String> postAsInputStream(@PathParam("id") String id,
-            @BinderParam(BindToInputStreamPayload.class) String toPut);
+         @BinderParam(BindToInputStreamPayload.class) String toPut);
 
    static class BindToInputStreamPayload extends BindToStringPayload {
       @Override
@@ -120,23 +122,20 @@ public interface IntegrationTestAsyncClient {
       }
    }
 
-   @POST
-   @Path("/objects/{id}")
-   ListenableFuture<String> postWithMd5(@PathParam("id") String id, @HeaderParam("Content-MD5") String base64MD5,
-            @BinderParam(BindToFilePayload.class) File file);
+   @Singleton
+   static class ResponsePayload implements Function<HttpResponse, Multimap<String, String>> {
 
-   static class BindToFilePayload implements Binder {
-      @Override
-      public void bindToRequest(HttpRequest request, Object payload) {
-         File f = (File) payload;
-         request.setPayload(f);
+      public Multimap<String, String> apply(HttpResponse from) {
+         return from.getHeaders();
       }
+
    }
 
    @POST
    @Path("/objects/{id}")
-   String postWithContentDisposition(@PathParam("id") String id, @HeaderParam("Content-Disposition") String contentDisposition,
-           @BinderParam(BindToStringPayload.class) String toPut);
+   @ResponseParser(ResponsePayload.class)
+   ListenableFuture<Multimap<String, String>> postPayloadAndReturnHeaders(@PathParam("id") String id,
+         Payload payload);
 
    @POST
    @Path("/objects/{id}")
@@ -146,7 +145,7 @@ public interface IntegrationTestAsyncClient {
    @POST
    @Path("/objects/{id}/action/{action}")
    ListenableFuture<String> action(@PathParam("id") String id, @PathParam("action") String action,
-            @BinderParam(BindMapToMatrixParams.class) Map<String, String> options);
+         @BinderParam(BindMapToMatrixParams.class) Map<String, String> options);
 
    @GET
    @Path("/objects/{id}")

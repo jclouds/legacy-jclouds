@@ -180,6 +180,7 @@ public abstract class BasePayload<V> implements Payload {
       InputStream in = getInput();
       try {
          copy(in, outstream);
+         outstream.flush();
       } finally {
          closeQuietly(in);
       }

@@ -19,12 +19,14 @@
 
 package org.jclouds.http;
 
-import java.io.File;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.io.Payload;
+
+import com.google.common.collect.Multimap;
 
 /**
  * Sample test for the behaviour of our Integration Test jetty server.
@@ -33,37 +35,35 @@ import org.jclouds.http.options.HttpRequestOptions;
  */
 @Timeout(duration = 40, timeUnit = TimeUnit.SECONDS)
 public interface IntegrationTestClient {
-   String rowdy(String path);
+	String rowdy(String path);
 
-   boolean exists(String path);
+	boolean exists(String path);
 
-   String synch(String id);
+	String synch(String id);
 
-   String download(String id);
+	String download(String id);
 
-   String downloadException(String id, HttpRequestOptions options);
+	String downloadException(String id, HttpRequestOptions options);
 
-   String synchException(String id, String header);
+	String synchException(String id, String header);
 
-   String upload(String id, String toPut);
+	String upload(String id, String toPut);
 
-   String post(String id, String toPut);
+	String post(String id, String toPut);
 
-   String postAsInputStream(String id, String toPut);
+	String postAsInputStream(String id, String toPut);
 
-   String postWithMd5(String id, String base64MD5, File file);
+   Multimap<String, String> postPayloadAndReturnHeaders(String id, Payload payload);
 
-   String postWithContentDisposition(String id, String contentDisposition, String toPut);
+	String postJson(String id, String toPut);
 
-   String postJson(String id, String toPut);
+	String action(String id, String action, Map<String, String> options);
 
-   String action(String id, String action, Map<String, String> options);
+	String downloadFilter(String id, String header);
 
-   String downloadFilter(String id, String header);
+	String download(String id, String header);
 
-   String download(String id, String header);
+	String downloadAndParse(String id);
 
-   String downloadAndParse(String id);
-
-   StringBuffer newStringBuffer();
+	StringBuffer newStringBuffer();
 }

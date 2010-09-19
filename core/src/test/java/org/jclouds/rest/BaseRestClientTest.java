@@ -72,8 +72,10 @@ public abstract class BaseRestClientTest {
          bind(TransformingHttpCommandExecutorService.class).toInstance(mock);
       }
    }
-
    protected void assertPayloadEquals(HttpRequest request, String toMatch, String contentType, boolean contentMD5) {
+       assertPayloadEquals(request, toMatch, contentType, null, contentMD5);
+   }
+   protected void assertPayloadEquals(HttpRequest request, String toMatch, String contentType, String contentDispositon, boolean contentMD5) {
       if (request.getPayload() == null) {
          assertNull(toMatch);
       } else {
@@ -86,7 +88,7 @@ public abstract class BaseRestClientTest {
          assertEquals(payload, toMatch);
          Long length = new Long(payload.getBytes().length);
          try {
-            assertContentHeadersEqual(request, contentType, length, contentMD5 ? CryptoStreams
+            assertContentHeadersEqual(request, contentType, contentDispositon, length, contentMD5 ? CryptoStreams
                      .md5(request.getPayload()) : null);
          } catch (IOException e) {
             propagate(e);
@@ -94,7 +96,7 @@ public abstract class BaseRestClientTest {
       }
    }
 
-   protected void assertContentHeadersEqual(HttpRequest request, String contentType, Long length, byte[] contentMD5) {
+   protected void assertContentHeadersEqual(HttpRequest request, String contentType, String contentDispositon, Long length, byte[] contentMD5) {
       if (request.getFirstHeaderOrNull(TRANSFER_ENCODING) == null) {
          assertEquals(request.getPayload().getContentLength(), length);
       } else {
@@ -103,8 +105,8 @@ public abstract class BaseRestClientTest {
                   || request.getPayload().getContentLength().equals(length);
       }
       assertEquals(request.getPayload().getContentType(), contentType);
+      assertEquals(request.getPayload().getContentDisposition(), contentDispositon);
       assertEquals(request.getPayload().getContentMD5(), contentMD5);
-
    }
 
    //FIXME Shouldn't be assertPayloadHeadersEqual?
