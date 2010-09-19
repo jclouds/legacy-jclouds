@@ -112,9 +112,15 @@
 (deftest sign-blob-request-test
   (testing "delete"
     (let [request (sign-blob-request "container" "path" {:method :delete})]
+      (is (= "http://localhost/container/path" (str (.getEndpoint request))))
       (is (= "DELETE" (.getMethod request)))))
+  (testing "default request"
+    (let [request (sign-blob-request "container" "path")]
+      (is (= "http://localhost/container/path" (str (.getEndpoint request))))
+      (is (= "GET" (.getMethod request)))))
   (testing "get"
     (let [request (sign-blob-request "container" "path" {:method :get})]
+      (is (= "http://localhost/container/path" (str (.getEndpoint request))))
       (is (= "GET" (.getMethod request)))))
   (testing "put"
     (let [request (sign-blob-request

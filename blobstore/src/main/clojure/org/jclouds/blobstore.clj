@@ -241,11 +241,14 @@ Options can also be specified for extension modules
 
 (defn sign-blob-request
   "Get a signed http request for manipulating a blob in another application.
-   ex. curl.
+   ex. curl.  The default is for a :get request.
    The request argument is used to specify charecteristics of the request
    to be signed.  The :method key must be set to one of :get, :delete, and
    :put. For :put requests, :content-length must be specified. Optionally,
-   :content-type and content-md5 may be given."
+   :content-type, :content-disposition, :content-language, :content-encoding
+    and :content-md5  may be given."
+  ([container-name path]
+     (sign-blob-request container-name path {:method :get} *blobstore*))
   ([container-name path
     {:keys [method content-type content-length content-md5
             content-disposition content-encoding content-language] :as request}]
