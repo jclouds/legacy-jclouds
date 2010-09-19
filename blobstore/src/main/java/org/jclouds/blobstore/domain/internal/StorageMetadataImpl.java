@@ -36,25 +36,22 @@ import com.google.inject.internal.Nullable;
  * 
  * @author Adrian Cole
  */
-public class StorageMetadataImpl extends ResourceMetadataImpl<StorageType> implements
-         StorageMetadata, Serializable {
+public class StorageMetadataImpl extends ResourceMetadataImpl<StorageType> implements StorageMetadata, Serializable {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -280558162576368264L;
 
    @Nullable
    private final String eTag;
-   @Nullable
-   private final Long size;
+
    @Nullable
    private final Date lastModified;
 
    public StorageMetadataImpl(StorageType type, @Nullable String id, @Nullable String name,
-            @Nullable Location location, @Nullable URI uri, @Nullable String eTag,
-            @Nullable Long size, @Nullable Date lastModified, Map<String, String> userMetadata) {
+            @Nullable Location location, @Nullable URI uri, @Nullable String eTag, @Nullable Date lastModified,
+            Map<String, String> userMetadata) {
       super(type, id, name, location, uri, userMetadata);
       this.eTag = eTag;
-      this.size = size;
       this.lastModified = lastModified;
    }
 
@@ -64,14 +61,6 @@ public class StorageMetadataImpl extends ResourceMetadataImpl<StorageType> imple
    @Override
    public String getETag() {
       return eTag;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Long getSize() {
-      return size;
    }
 
    /**

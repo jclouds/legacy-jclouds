@@ -32,6 +32,7 @@ import org.jclouds.blobstore.domain.internal.BlobMetadataImpl;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.domain.internal.StorageMetadataImpl;
 import org.jclouds.domain.Location;
+import org.jclouds.io.payloads.BaseMutableContentMetadata;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -59,11 +60,11 @@ public class DirectoryEntryListToResourceMetadataList implements
                   public StorageMetadata apply(DirectoryEntry from) {
                      StorageType type = from.getType() == FileType.DIRECTORY ? StorageType.FOLDER : StorageType.BLOB;
                      if (type == StorageType.FOLDER)
-                        return new StorageMetadataImpl(type, from.getObjectID(), from.getObjectName(), defaultLocation.get(),
-                                 null, null, null, null, Maps.<String, String> newHashMap());
+                        return new StorageMetadataImpl(type, from.getObjectID(), from.getObjectName(), defaultLocation
+                                 .get(), null, null, null, Maps.<String, String> newHashMap());
                      else
-                        return new BlobMetadataImpl(from.getObjectID(), from.getObjectName(), defaultLocation.get(), null,
-                                 null, null, null, Maps.<String, String> newHashMap(), null, null, null, null, null);
+                        return new BlobMetadataImpl(from.getObjectID(), from.getObjectName(), defaultLocation.get(),
+                                 null, null, null, Maps.<String, String> newHashMap(), new BaseMutableContentMetadata());
                   }
 
                }), from.getToken());

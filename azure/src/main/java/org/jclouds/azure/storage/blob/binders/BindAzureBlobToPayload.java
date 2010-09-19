@@ -39,40 +39,27 @@ public class BindAzureBlobToPayload implements Binder {
    private final BindUserMetadataToHeadersWithPrefix blobBinder;
 
    @Inject
-   public BindAzureBlobToPayload(AzureBlobToBlob azureBlob2Blob,
-            BindUserMetadataToHeadersWithPrefix blobBinder) {
+   public BindAzureBlobToPayload(AzureBlobToBlob azureBlob2Blob, BindUserMetadataToHeadersWithPrefix blobBinder) {
       this.azureBlob2Blob = azureBlob2Blob;
       this.blobBinder = blobBinder;
    }
 
    public void bindToRequest(HttpRequest request, Object payload) {
       AzureBlob blob = (AzureBlob) payload;
-      checkArgument(blob.getPayload().getContentLength() >= 0, "size must be set");
+      checkArgument(blob.getPayload().getContentMetadata().getContentLength() >= 0, "size must be set");
       request.getHeaders().put("x-ms-blob-type", blob.getProperties().getType().toString());
 
       switch (blob.getProperties().getType()) {
          case PAGE_BLOB:
             request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, "0");
             request.getHeaders().put("x-ms-blob-content-length",
-                     blob.getPayload().getContentLength().toString());
+                     blob.getPayload().getContentMetadata().getContentLength().toString());
             break;
          case BLOCK_BLOB:
-            checkArgument(checkNotNull(blob.getPayload().getContentLength(),
-                     "blob.getContentLength()") <= 64l * 1024 * 1024,
-                     "maximum size for put Blob is 64MB");
+            checkArgument(checkNotNull(blob.getPayload().getContentMetadata().getContentLength(),
+                     "blob.getContentLength()") <= 64l * 1024 * 1024, "maximum size for put Blob is 64MB");
             break;
       }
       blobBinder.bindToRequest(request, azureBlob2Blob.apply(blob));
-
-      if (blob.getProperties().getContentLanguage() != null) {
-         request.getHeaders().put(HttpHeaders.CONTENT_LANGUAGE,
-                  blob.getProperties().getContentLanguage());
-      }
-
-      if (blob.getProperties().getContentEncoding() != null) {
-         request.getHeaders().put(HttpHeaders.CONTENT_ENCODING,
-                  blob.getProperties().getContentEncoding());
-      }
-
    }
 }

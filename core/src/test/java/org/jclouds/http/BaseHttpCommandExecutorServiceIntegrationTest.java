@@ -200,7 +200,7 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
 
          Payload payload = Payloads.newFilePayload(f);
          byte[] digest = digester.digest();
-         payload.setContentMD5(digest);
+         payload.getContentMetadata().setContentMD5(digest);
          Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
          assertEquals(headers.get("x-Content-MD5"), Collections.singleton(CryptoStreams.base64Encode(InputSuppliers
                .of(digest))));
@@ -236,7 +236,7 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    public void testPostContentDisposition() throws ExecutionException, InterruptedException, TimeoutException,
          IOException {
       Payload payload = Payloads.newStringPayload("foo");
-      payload.setContentDisposition("attachment; filename=photo.jpg");
+      payload.getContentMetadata().setContentDisposition("attachment; filename=photo.jpg");
       Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
       assertEquals(headers.get("x-Content-Disposition"), Collections.singleton("attachment; filename=photo.jpg"));
       payload.release();
@@ -246,7 +246,7 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    public void testPostContentEncoding() throws ExecutionException, InterruptedException, TimeoutException,
          IOException {
       Payload payload = Payloads.newStringPayload("foo");
-      payload.setContentEncoding("gzip");
+      payload.getContentMetadata().setContentEncoding("gzip");
       Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
       assertEquals(headers.get("x-Content-Encoding"), Collections.singleton("gzip"));
       payload.release();
@@ -256,7 +256,7 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    public void testPostContentLanguage() throws ExecutionException, InterruptedException, TimeoutException,
          IOException {
       Payload payload = Payloads.newStringPayload("foo");
-      payload.setContentLanguage("mi, en");
+      payload.getContentMetadata().setContentLanguage("mi, en");
       Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
       assertEquals(headers.get("x-Content-Language"), Collections.singleton("mi, en"));
       payload.release();

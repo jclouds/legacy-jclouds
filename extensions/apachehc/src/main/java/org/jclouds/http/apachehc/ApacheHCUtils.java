@@ -127,35 +127,38 @@ public class ApacheHCUtils {
          } catch (UnsupportedEncodingException e) {
             throw new UnsupportedOperationException("Encoding not supported", e);
          }
-         nStringEntity.setContentType(payload.getContentType());
+         nStringEntity.setContentType(payload.getContentMetadata().getContentType());
          apacheRequest.setEntity(nStringEntity);
       } else if (payload instanceof FilePayload) {
-         apacheRequest.setEntity(new FileEntity((File) payload.getRawContent(), payload.getContentType()));
+         apacheRequest.setEntity(new FileEntity((File) payload.getRawContent(), payload.getContentMetadata()
+                  .getContentType()));
       } else if (payload instanceof ByteArrayPayload) {
          ByteArrayEntity Entity = new ByteArrayEntity((byte[]) payload.getRawContent());
-         Entity.setContentType(payload.getContentType());
+         Entity.setContentType(payload.getContentMetadata().getContentType());
          apacheRequest.setEntity(Entity);
       } else {
          InputStream inputStream = payload.getInput();
-         if (payload.getContentLength() == null)
+         if (payload.getContentMetadata().getContentLength() == null)
             throw new IllegalArgumentException("you must specify size when content is an InputStream");
-         InputStreamEntity Entity = new InputStreamEntity(inputStream, payload.getContentLength());
-         Entity.setContentType(payload.getContentType());
+         InputStreamEntity Entity = new InputStreamEntity(inputStream, payload.getContentMetadata().getContentLength());
+         Entity.setContentType(payload.getContentMetadata().getContentType());
          apacheRequest.setEntity(Entity);
       }
-      if (payload.getContentDisposition() != null)
-         apacheRequest.addHeader("Content-Disposition", payload.getContentDisposition());
-      if (payload.getContentEncoding() != null)
-         apacheRequest.addHeader("Content-Encoding", payload.getContentEncoding());
-      if (payload.getContentLanguage() != null)
-         apacheRequest.addHeader("Content-Language", payload.getContentLanguage());
+      if (payload.getContentMetadata().getContentDisposition() != null)
+         apacheRequest.addHeader("Content-Disposition", payload.getContentMetadata().getContentDisposition());
+      if (payload.getContentMetadata().getContentEncoding() != null)
+         apacheRequest.addHeader("Content-Encoding", payload.getContentMetadata().getContentEncoding());
+      if (payload.getContentMetadata().getContentLanguage() != null)
+         apacheRequest.addHeader("Content-Language", payload.getContentMetadata().getContentLanguage());
       assert (apacheRequest.getEntity() != null);
    }
 
    public static class HttpEntityPayload extends BasePayload<HttpEntity> {
 
       HttpEntityPayload(HttpEntity content) {
-         super(content, content.getContentType().getValue(), content.getContentLength(), null);
+         super(content);
+         getContentMetadata().setContentType(content.getContentType().getValue());
+         getContentMetadata().setContentLength(content.getContentLength());
       }
 
       @Override

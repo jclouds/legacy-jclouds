@@ -35,7 +35,8 @@ import com.google.common.base.Throwables;
 public class FilePayload extends BasePayload<File> {
 
    public FilePayload(File content) {
-      super(content, null, content.length(), null);
+      super(content);
+      getContentMetadata().setContentLength(content.length());
       checkArgument(checkNotNull(content, "content").exists(), "file must exist: " + content);
    }
 

@@ -20,7 +20,6 @@
 package org.jclouds.gae;
 
 import static com.google.appengine.api.urlfetch.FetchOptions.Builder.disallowTruncate;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.io.Closeables.closeQuietly;
 
 import java.io.ByteArrayOutputStream;
@@ -28,12 +27,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map.Entry;
 
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.io.Payload;
 
 import com.google.appengine.api.urlfetch.FetchOptions;
@@ -42,6 +42,7 @@ import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.repackaged.com.google.common.base.Throwables;
 import com.google.common.base.Function;
+import com.google.common.collect.LinkedHashMultimap;
 
 /**
  * 
@@ -52,8 +53,8 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
    public static final String USER_AGENT = "jclouds/1.0 urlfetch/1.3.5";
 
    /**
-    * byte [] content is replayable and the only content type supportable by
-    * GAE. As such, we convert the original request content to a byte array.
+    * byte [] content is replayable and the only content type supportable by GAE. As such, we
+    * convert the original request content to a byte array.
     */
    @Override
    public HTTPRequest apply(HttpRequest request) {
@@ -77,8 +78,8 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
       }
       gaeRequest.addHeader(new HTTPHeader(HttpHeaders.USER_AGENT, USER_AGENT));
       /**
-       * byte [] content is replayable and the only content type supportable by
-       * GAE. As such, we convert the original request content to a byte array.
+       * byte [] content is replayable and the only content type supportable by GAE. As such, we
+       * convert the original request content to a byte array.
        */
       if (request.getPayload() != null) {
          InputStream input = request.getPayload().getInput();
@@ -89,16 +90,7 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
             if (!request.getPayload().isRepeatable()) {
                Payload oldPayload = request.getPayload();
                request.setPayload(array);
-               if (oldPayload.getContentMD5() != null)
-                  request.getPayload().setContentMD5(oldPayload.getContentMD5());
-               if (oldPayload.getContentType() != null)
-                  request.getPayload().setContentType(oldPayload.getContentType());
-               if (oldPayload.getContentDisposition() != null)
-                  request.getPayload().setContentDisposition(oldPayload.getContentDisposition());
-               if (oldPayload.getContentEncoding() != null)
-                  request.getPayload().setContentEncoding(oldPayload.getContentEncoding());
-               if (oldPayload.getContentLanguage() != null)
-                  request.getPayload().setContentLanguage(oldPayload.getContentLanguage());
+               HttpUtils.copy(oldPayload.getContentMetadata(), request.getPayload().getContentMetadata());
             }
             gaeRequest.setPayload(array);
          } catch (IOException e) {
@@ -106,19 +98,11 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
          } finally {
             closeQuietly(input);
          }
-         if (request.getPayload().getContentMD5() != null)
-            gaeRequest.setHeader(new HTTPHeader("Content-MD5", CryptoStreams.base64(request.getPayload()
-                  .getContentMD5())));
-         if (request.getPayload().getContentType() != null)
-            gaeRequest.setHeader(new HTTPHeader(HttpHeaders.CONTENT_TYPE, request.getPayload().getContentType()));
-         if (request.getPayload().getContentDisposition() != null)
-            gaeRequest.setHeader(new HTTPHeader("Content-Disposition", request.getPayload().getContentDisposition()));
-         if (request.getPayload().getContentEncoding() != null)
-            gaeRequest.setHeader(new HTTPHeader("Content-Encoding", request.getPayload().getContentEncoding()));
-         if (request.getPayload().getContentLanguage() != null)
-            gaeRequest.setHeader(new HTTPHeader("Content-Language", request.getPayload().getContentLanguage()));
-         Long length = checkNotNull(request.getPayload().getContentLength(), "payload.getContentLength");
-         gaeRequest.setHeader(new HTTPHeader(HttpHeaders.CONTENT_LENGTH, length.toString()));
+         LinkedHashMultimap<String, String> map = LinkedHashMultimap.create();
+         HttpUtils.addContentHeadersFromMetadata(request.getPayload().getContentMetadata(), map);
+         for (Entry<String, String> header : map.entries()) {
+            gaeRequest.setHeader(new HTTPHeader(header.getKey(), header.getValue()));
+         }
       } else {
          gaeRequest.setHeader(new HTTPHeader(HttpHeaders.CONTENT_LENGTH, "0"));
       }

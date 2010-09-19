@@ -29,7 +29,8 @@ import org.jclouds.util.Utils;
 public class StringPayload extends BasePayload<String> {
 
    public StringPayload(String content) {
-      super(content, null, new Long(content.length()), null);
+      super(content);
+      getContentMetadata().setContentLength((long) content.length());
    }
 
    /**

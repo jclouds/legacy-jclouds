@@ -84,14 +84,6 @@ public interface StorageMetadata extends ResourceMetadata<StorageType> {
    String getETag();
 
    /**
-    * Size of the resource in bytes
-    * 
-    * @see org.jclouds.blobstore.attr.ContainerCapability#CONTAINER_SIZE
-    * @see org.jclouds.blobstore.attr.ContainerCapability#BLOB_SIZE
-    */
-   Long getSize();
-
-   /**
     * Last modification time of the resource
     * 
     * @see org.jclouds.blobstore.attr.ContainerCapability#CONTAINER_LAST_MODIFIED

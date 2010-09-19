@@ -19,10 +19,11 @@
 
 package org.jclouds.filesystem.predicates.validators.internal;
 
-import com.google.inject.Singleton;
 import java.io.File;
+
 import org.jclouds.filesystem.predicates.validators.FilesystemBlobKeyValidator;
-import org.jclouds.predicates.Validator;
+
+import com.google.inject.Singleton;
 
 /**
  * Validates name for filesystem container blob keys implementation

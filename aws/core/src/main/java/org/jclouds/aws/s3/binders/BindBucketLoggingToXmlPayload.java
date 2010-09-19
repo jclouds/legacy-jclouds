@@ -52,7 +52,7 @@ public class BindBucketLoggingToXmlPayload implements Binder {
       try {
          String stringPayload = generateBuilder(from).asString(outputProperties);
          request.setPayload(stringPayload);
-         request.getPayload().setContentType(MediaType.TEXT_XML);
+         request.getPayload().getContentMetadata().setContentType(MediaType.TEXT_XML);
       } catch (Exception e) {
          Throwables.propagateIfPossible(e);
          throw new RuntimeException("error transforming bucketLogging: " + from, e);

@@ -33,7 +33,6 @@ import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.io.payloads.PhantomPayload;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
@@ -83,9 +82,11 @@ public class AtmosBlobRequestSignerTest extends RestClientTest<AtmosStorageAsync
             NoSuchMethodException, IOException {
       Blob blob = blobFactory.create(null);
       blob.getMetadata().setName("name");
-      blob.setPayload(new PhantomPayload(2l, new byte[] { 0, 2, 4, 8 }));
-      blob.getPayload().setContentType("text/plain");
-
+      blob.setPayload("");
+      blob.getPayload().getContentMetadata().setContentLength(2l);
+      blob.getPayload().getContentMetadata().setContentMD5(new byte[] { 0, 2, 4, 8 });
+      blob.getPayload().getContentMetadata().setContentType("text/plain");
+      
       HttpRequest request = signer.signPutBlob("container", blob);
 
       assertRequestLineEquals(request,

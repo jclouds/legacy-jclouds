@@ -52,8 +52,8 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
    public void testApply() {
       HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
             .getResourceAsStream("/orglist.xml")));
-      response.getPayload().setContentType("Content-Type: application/xml; charset=utf-8");
-      response.getPayload().setContentLength(307l);
+      response.getPayload().getContentMetadata().setContentType("Content-Type: application/xml; charset=utf-8");
+      response.getPayload().getContentMetadata().setContentLength(307l);
 
       response.getHeaders().put(HttpHeaders.SET_COOKIE, "vcloud-token=9er4d061-4bff-48fa-84b1-5da7166764d2; path=/");
       VCloudSession reply = parser.apply(response);
@@ -67,8 +67,8 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
    public void testApplyBlueLock() {
       HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
             .getResourceAsStream("/orglist.xml")));
-      response.getPayload().setContentType("Content-Type: application/xml; charset=utf-8");
-      response.getPayload().setContentLength(307l);
+      response.getPayload().getContentMetadata().setContentType("Content-Type: application/xml; charset=utf-8");
+      response.getPayload().getContentMetadata().setContentLength(307l);
 
       response.getHeaders().put(HttpHeaders.SET_COOKIE,
             "vcloud-token=c9f232506df9b65d7b7d97b7499eddd7; Domain=.bluelock.com; Path=/");

@@ -40,6 +40,7 @@ import org.jclouds.functions.ExceptionToValueOrPropagate;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
 import com.google.common.collect.ImmutableMultimap;
@@ -79,8 +80,7 @@ public class BlobStoreUtils {
    public static Blob newBlob(BlobStore blobStore, StorageMetadata blobMeta) {
       Blob blob = blobStore.newBlob(blobMeta.getName());
       if (blobMeta instanceof BlobMetadata) {
-         blob.getMetadata().setContentMD5(((BlobMetadata) blobMeta).getContentMD5());
-         blob.getMetadata().setContentType(((BlobMetadata) blobMeta).getContentType());
+         HttpUtils.copy(((BlobMetadata) blobMeta).getContentMetadata(), blob.getMetadata().getContentMetadata());
       }
       blob.getMetadata().setETag(blobMeta.getETag());
       blob.getMetadata().setId(blobMeta.getProviderId());

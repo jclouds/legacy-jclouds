@@ -134,7 +134,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
             return o1.getKey().compareTo(o2.getKey());
          }
       }));
-      request.getPayload().setContentType("application/x-www-form-urlencoded");
+      request.getPayload().getContentMetadata().setContentType("application/x-www-form-urlencoded");
    }
 
    @VisibleForTesting

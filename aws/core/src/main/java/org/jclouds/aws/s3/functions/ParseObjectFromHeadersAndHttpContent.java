@@ -50,8 +50,6 @@ public class ParseObjectFromHeadersAndHttpContent implements Function<HttpRespon
 
    public S3Object apply(HttpResponse from) {
       MutableObjectMetadata metadata = metadataParser.apply(from);
-      if (metadata.getContentMD5() != null)
-         from.getPayload().setContentMD5(metadata.getContentMD5());
       S3Object object = objectProvider.create(metadata);
       object.getAllHeaders().putAll(from.getHeaders());
       object.setPayload(from.getPayload());

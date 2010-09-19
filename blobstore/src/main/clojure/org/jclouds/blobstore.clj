@@ -239,35 +239,6 @@ Options can also be specified for extension modules
   ([container-name path #^BlobStore blobstore]
      (.getBlob blobstore container-name path)))
 
-(defn sign-get-blob-request
-  "Get a signed http request for a blob, so that you can retrieve it
-in another application.  ex. curl"
-  ([container-name path]
-     (sign-get-blob-request container-name path *blobstore*))
-  ([container-name path #^BlobStore blobstore]
-     (.signGetBlob (.. blobstore getContext getSigner) container-name path)))
-
-(defn sign-remove-blob-request
-  "Get a signed http request for deleting a blob in another application.
-  ex. curl"
-  ([container-name path]
-     (sign-remove-blob-request container-name path *blobstore*))
-  ([container-name path #^BlobStore blobstore]
-     (.signRemoveBlob (.. blobstore getContext getSigner) container-name path)))
-
-(defn sign-put-blob-request
-  "Get a signed http request for uploading a blob in another application.
-  ex. curl"
-  ([container-name path content-type size]
-     (sign-put-blob-request container-name path content-type  size *blobstore*))
-  ([container-name path content-type size #^BlobStore blobstore]
-     (.signPutBlob (.. blobstore getContext getSigner) container-name
-       (doto (.newBlob blobstore path)
-             (.setPayload (doto
-                            ;; until we pass content md5
-                            (PhantomPayload. (long size) nil)
-                            (.setContentType content-type)))))))
-
 (defn sign-blob-request
   "Get a signed http request for manipulating a blob in another application.
    ex. curl"
@@ -278,14 +249,18 @@ in another application.  ex. curl"
     {:keys [method content-type content-length content-md5]} blobstore]
      {:pre [(or content-length (#{:delete :get} method))]}
      (case method
-       :delete (sign-remove-blob-request container-name path blobstore)
-       :get (sign-get-blob-request container-name path blobstore)
+       :delete (.signRemoveBlob (.. blobstore getContext getSigner) container-name path)
+       :get (.signGetBlob (.. blobstore getContext getSigner) container-name path)
        :put (.signPutBlob
              (.. blobstore getContext getSigner) container-name
              (doto (.newBlob blobstore path)
                (.setPayload
-                (doto (PhantomPayload. (long content-length) content-md5)
-                  (.setContentType content-type))))))))
+                (doto 
+                   (PhantomPayload. )
+                   ;; TODO look into use of ContentMetadata constructor
+                            (.getContentMetadata (.setContentLength (long content-length)))
+                            (.getContentMetadata (.setContentType content-type))
+                            (.getContentMetadata (.setContentMD5 content-md5)))))))))
 
 (defn get-blob-stream
   "Get an inputstream from the blob at a given path"
@@ -371,7 +346,7 @@ container, name, string -> etag"
                        target (.md5(.crypto (.utils (blobstore-context blobstore)))))]
     (.writeTo (.getPayload blob) digest-stream)
     (let [digest (.digest (.getMessageDigest digest-stream))
-          metadata-digest (.getContentMD5 (.getPayload blob))]
+          metadata-digest (.getContentMD5 (.getContentMetadata (.getPayload blob)))]
       (when-not (Arrays/equals digest metadata-digest)
         (if (<= (or retries 0) *max-retries*)
           (recur container-name name target blobstore [(inc (or retries 1))])

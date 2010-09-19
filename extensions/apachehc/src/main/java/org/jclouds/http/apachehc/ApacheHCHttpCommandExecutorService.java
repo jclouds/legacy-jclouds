@@ -68,7 +68,7 @@ public class ApacheHCHttpCommandExecutorService extends BaseHttpCommandExecutorS
    @Override
    protected HttpUriRequest convert(HttpRequest request) throws IOException {
       HttpUriRequest returnVal = ApacheHCUtils.convertToApacheRequest(request);
-      if (request.getPayload() != null && request.getPayload().getContentMD5() != null)
+      if (request.getPayload() != null && request.getPayload().getContentMetadata().getContentMD5() != null)
          returnVal.addHeader("Content-MD5", CryptoStreams.md5Base64(request.getPayload()));
       return returnVal;
    }
@@ -82,9 +82,9 @@ public class ApacheHCHttpCommandExecutorService extends BaseHttpCommandExecutorS
          try {
             payload = Payloads.newInputStreamPayload(consumeOnClose(apacheResponse.getEntity().getContent()));
             if (apacheResponse.getEntity().getContentLength() >= 0)
-               payload.setContentLength(apacheResponse.getEntity().getContentLength());
+               payload.getContentMetadata().setContentLength(apacheResponse.getEntity().getContentLength());
             if (apacheResponse.getEntity().getContentType() != null)
-               payload.setContentType(apacheResponse.getEntity().getContentType().getValue());
+               payload.getContentMetadata().setContentType(apacheResponse.getEntity().getContentType().getValue());
          } catch (IOException e) {
             logger.warn(e, "couldn't receive payload for request: %s", nativeRequest.getRequestLine());
             throw e;

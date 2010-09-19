@@ -29,6 +29,7 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.blobstore.binders.BindUserMetadataToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlob;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
@@ -54,15 +55,18 @@ public class BindCFObjectToPayloadTest {
       Payload payload = createMock(Payload.class);
       Blob blob = createMock(Blob.class);
       MutableObjectInfoWithMetadata md = createMock(MutableObjectInfoWithMetadata.class);
+      MutableContentMetadata content = createMock(MutableContentMetadata.class);
 
       expect(object.getPayload()).andReturn(payload).atLeastOnce();
-      expect(payload.getContentType()).andReturn(null).atLeastOnce();
-      payload.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-      expect(payload.getContentLength()).andReturn(5368709120l).atLeastOnce();
+      expect(payload.getContentMetadata()).andReturn(content).atLeastOnce();
+      expect(content.getContentType()).andReturn(null).atLeastOnce();
+      content.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+      expect(content.getContentLength()).andReturn(5368709120l).atLeastOnce();
       expect(object2Blob.apply(object)).andReturn(blob);
       mdBinder.bindToRequest(request, blob);
 
       replay(payload);
+      replay(content);
       replay(mdBinder);
       replay(object2Blob);
       replay(request);
@@ -75,6 +79,7 @@ public class BindCFObjectToPayloadTest {
       binder.bindToRequest(request, object);
 
       verify(payload);
+      verify(content);
       verify(mdBinder);
       verify(object2Blob);
       verify(request);
@@ -96,11 +101,13 @@ public class BindCFObjectToPayloadTest {
       Blob blob = createMock(Blob.class);
       MutableObjectInfoWithMetadata md = createMock(MutableObjectInfoWithMetadata.class);
       Multimap<String, String> headers = createMock(Multimap.class);
+      MutableContentMetadata content = createMock(MutableContentMetadata.class);
 
+      expect(payload.getContentMetadata()).andReturn(content).atLeastOnce();
       expect(object.getPayload()).andReturn(payload).atLeastOnce();
-      expect(payload.getContentType()).andReturn(null).atLeastOnce();
-      payload.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-      expect(payload.getContentLength()).andReturn(null).atLeastOnce();
+      expect(content.getContentType()).andReturn(null).atLeastOnce();
+      content.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+      expect(content.getContentLength()).andReturn(null).atLeastOnce();
       expect(object2Blob.apply(object)).andReturn(blob);
       mdBinder.bindToRequest(request, blob);
       expect(request.getHeaders()).andReturn(headers).atLeastOnce();
@@ -108,6 +115,7 @@ public class BindCFObjectToPayloadTest {
 
       replay(headers);
       replay(payload);
+      replay(content);
       replay(mdBinder);
       replay(object2Blob);
       replay(request);
@@ -120,6 +128,7 @@ public class BindCFObjectToPayloadTest {
       binder.bindToRequest(request, object);
 
       verify(headers);
+      verify(content);
       verify(payload);
       verify(mdBinder);
       verify(object2Blob);
@@ -140,16 +149,19 @@ public class BindCFObjectToPayloadTest {
       Payload payload = createMock(Payload.class);
       Blob blob = createMock(Blob.class);
       MutableObjectInfoWithMetadata md = createMock(MutableObjectInfoWithMetadata.class);
+      MutableContentMetadata content = createMock(MutableContentMetadata.class);
 
+      expect(payload.getContentMetadata()).andReturn(content).atLeastOnce();
       expect(object.getPayload()).andReturn(payload).atLeastOnce();
-      expect(payload.getContentType()).andReturn(null).atLeastOnce();
-      payload.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-      expect(payload.getContentLength()).andReturn(5368709121l).atLeastOnce();
+      expect(content.getContentType()).andReturn(null).atLeastOnce();
+      content.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+      expect(content.getContentLength()).andReturn(5368709121l).atLeastOnce();
       expect(object2Blob.apply(object)).andReturn(blob);
       mdBinder.bindToRequest(request, blob);
       expect(object.getInfo()).andReturn(md).atLeastOnce();
 
       replay(payload);
+      replay(content);
       replay(mdBinder);
       replay(object2Blob);
       replay(request);
@@ -162,6 +174,7 @@ public class BindCFObjectToPayloadTest {
       bindCFObjectToPayload.bindToRequest(request, object);
 
       verify(payload);
+      verify(content);
       verify(mdBinder);
       verify(object2Blob);
       verify(request);

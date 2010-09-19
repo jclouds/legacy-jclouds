@@ -42,9 +42,9 @@ public class UrlEncodedFormPayload extends BasePayload<String> {
 
    public UrlEncodedFormPayload(Multimap<String, String> formParams,
             @Nullable Comparator<Map.Entry<String, String>> sorter, char... skips) {
-      super(makeQueryLine(formParams, sorter, skips), MediaType.APPLICATION_FORM_URLENCODED, null,
-               null);
-      setContentLength(new Long(content.length()));
+      super(makeQueryLine(formParams, sorter, skips));
+      getContentMetadata().setContentLength((long) content.length());
+      getContentMetadata().setContentType(MediaType.APPLICATION_FORM_URLENCODED);
    }
 
    /**
@@ -54,6 +54,5 @@ public class UrlEncodedFormPayload extends BasePayload<String> {
    public InputStream getInput() {
       return Utils.toInputStream(content);
    }
-
 
 }

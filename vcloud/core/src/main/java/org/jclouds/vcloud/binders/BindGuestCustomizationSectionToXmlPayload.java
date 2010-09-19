@@ -105,7 +105,7 @@ public class BindGuestCustomizationSectionToXmlPayload extends BindToStringPaylo
          Properties outputProperties = new Properties();
          outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
          super.bindToRequest(request, guestCustomizationSection.asString(outputProperties));
-         request.getPayload().setContentType(guest.getType());
+         request.getPayload().getContentMetadata().setContentType(guest.getType());
       } catch (Exception e) {
          Throwables.propagate(e);
       }

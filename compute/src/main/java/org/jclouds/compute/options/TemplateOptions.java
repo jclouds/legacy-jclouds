@@ -257,7 +257,7 @@ public class TemplateOptions {
       checkArgument(checkNotNull(privateKey, "privateKey").startsWith("-----BEGIN RSA PRIVATE KEY-----"),
                "key should start with -----BEGIN RSA PRIVATE KEY-----");
       Payload payload = newStringPayload(privateKey);
-      payload.setContentType("text/plain");
+      payload.getContentMetadata().setContentType("text/plain");
       return installPrivateKey(payload);
    }
 
@@ -300,7 +300,7 @@ public class TemplateOptions {
    public TemplateOptions authorizePublicKey(String publicKey) {
       checkArgument(checkNotNull(publicKey, "publicKey").startsWith("ssh-rsa"), "key should start with ssh-rsa");
       Payload payload = newStringPayload(publicKey);
-      payload.setContentType("text/plain");
+      payload.getContentMetadata().setContentType("text/plain");
       return authorizePublicKey(payload);
    }
 

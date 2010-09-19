@@ -19,38 +19,44 @@
 
 package org.jclouds.io;
 
-import java.io.Closeable;
-import java.io.InputStream;
-
-import com.google.common.io.InputSupplier;
+import javax.annotation.Nullable;
 
 /**
  * @author Adrian Cole
  */
-public interface Payload extends InputSupplier<InputStream>, WriteTo, Closeable {
+public interface MutableContentMetadata extends ContentMetadata {
+
+   void setContentLength(@Nullable Long contentLength);
+
+   void setContentMD5(@Nullable byte[] md5);
+
+   void setContentType(@Nullable String md5);
 
    /**
-    * Creates a new InputStream object of the payload.
+    * Set Content Disposition of the payload
+    * <p/>
+    * Not all providers may support it
+    * 
+    * @param contentDisposition
     */
-   InputStream getInput();
+   void setContentDisposition(@Nullable String contentDisposition);
 
    /**
-    * Payload in its original form.
+    * Set Content Language of the payload
+    * <p/>
+    * Not all providers may support it
+    * 
+    * @param contentLanguage
     */
-   Object getRawContent();
+   void setContentLanguage(@Nullable String contentLanguage);
 
    /**
-    * Tells if the payload is capable of producing its data more than once.
+    * Set Content Encoding of the payload
+    * <p/>
+    * Not all providers may support it
+    * 
+    * @param contentEncoding
     */
-   boolean isRepeatable();
-
-   /**
-    * release resources used by this entity. This should be called when data is discarded.
-    */
-   void release();
-
-   MutableContentMetadata getContentMetadata();
-
-   void setContentMetadata(MutableContentMetadata in);
+   void setContentEncoding(@Nullable String contentEncoding);
 
 }

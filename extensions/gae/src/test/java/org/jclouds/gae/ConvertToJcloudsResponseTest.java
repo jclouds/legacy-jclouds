@@ -105,7 +105,7 @@ public class ConvertToJcloudsResponseTest {
       assertEquals(response.getStatusCode(), 200);
       assertEquals(Utils.toStringAndClose(response.getPayload().getInput()), "hello");
       assertEquals(response.getHeaders().size(), 0);
-      assertEquals(response.getPayload().getContentType(), "text/xml");
+      assertEquals(response.getPayload().getContentMetadata().getContentType(), "text/xml");
    }
 
 }

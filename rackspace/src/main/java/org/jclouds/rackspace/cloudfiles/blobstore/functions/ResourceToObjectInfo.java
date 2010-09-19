@@ -43,8 +43,9 @@ public class ResourceToObjectInfo implements Function<StorageMetadata, MutableOb
          return null;
       MutableObjectInfoWithMetadata to = new MutableObjectInfoWithMetadataImpl();
       if (from.getType() == StorageType.BLOB) {
-         to.setContentType(((BlobMetadata) from).getContentType());
-         to.setHash(((BlobMetadata) from).getContentMD5());
+         to.setContentType(((BlobMetadata) from).getContentMetadata().getContentType());
+         to.setBytes(((BlobMetadata) from).getContentMetadata().getContentLength());
+         to.setHash(((BlobMetadata) from).getContentMetadata().getContentMD5());
       } else if (from.getType() == StorageType.RELATIVE_PATH) {
          to.setContentType("application/directory");
       }
@@ -52,8 +53,6 @@ public class ResourceToObjectInfo implements Function<StorageMetadata, MutableOb
          to.setHash(CryptoStreams.hex(from.getETag()));
       to.setName(from.getName());
       to.setLastModified(from.getLastModified());
-      if (from.getSize() != null)
-         to.setBytes(from.getSize());
       if (from.getUserMetadata() != null) {
          for (Entry<String, String> entry : from.getUserMetadata().entrySet())
             to.getMetadata().put(entry.getKey().toLowerCase(), entry.getValue());

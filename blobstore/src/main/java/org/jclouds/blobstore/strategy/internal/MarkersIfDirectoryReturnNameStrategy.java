@@ -48,8 +48,8 @@ public class MarkersIfDirectoryReturnNameStrategy implements IfDirectoryReturnNa
             }
             // It is important that this is last, in case there is a file with a known directory
             // suffix who also has content type set to application/directory
-            if (blobMd.getContentType() != null
-                     && blobMd.getContentType().equals("application/directory"))
+            if (blobMd.getContentMetadata().getContentType() != null
+                     && blobMd.getContentMetadata().getContentType().equals("application/directory"))
                return metadata.getName();
       }
       return null;

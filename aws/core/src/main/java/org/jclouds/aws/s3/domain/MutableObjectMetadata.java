@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.aws.s3.domain.internal.MutableObjectMetadataImpl;
+import org.jclouds.io.MutableContentMetadata;
 
 import com.google.inject.ImplementedBy;
 
@@ -68,46 +69,13 @@ public interface MutableObjectMetadata extends ObjectMetadata {
     */
    void setCacheControl(String cacheControl);
 
-   /**
-    * Specifies presentational information for the object.
-    * 
-    * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html?sec19.5.1."/>
-    */
-   void setContentDisposition(String contentDisposition);
+   MutableContentMetadata getContentMetadata();
 
-   /**
-    * Specifies what content encodings have been applied to the object and thus what decoding
-    * mechanisms must be applied in order to obtain the media-type referenced by the Content-Type
-    * header field.
-    * 
-    * @see <a href= "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.11" />
-    */
-   void setContentEncoding(String encoding);
-
-   /**
-    * 
-    * A standard MIME type describing the format of the contents. If none is provided, the default
-    * is binary/octet-stream.
-    * 
-    * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17"/>
-    */
-   void setContentType(String type);
-
-   /**
-    * The base64 decoded 128-bit MD5 digest of the message (without the headers) according to RFC
-    * 1864. This header can be used as a message integrity check to verify that the data is the same
-    * data that was originally sent. Although it is optional, we recommend using the Content-MD5
-    * mechanism as an end-to-end integrity check.
-    * 
-    * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/RESTAuthentication.html"/>
-    */
-   void setContentMD5(byte[] md5);
+   void setContentMetadata(MutableContentMetadata md);
 
    void setLastModified(Date lastModified);
 
    void setETag(String eTag);
-
-   void setSize(Long size);
 
    void setUserMetadata(Map<String, String> userMetadata);
 

@@ -32,6 +32,8 @@ import static com.google.common.collect.Sets.newTreeSet;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
 import static java.util.Collections.singletonList;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_ENCODING;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_LANGUAGE;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.HttpHeaders.HOST;
@@ -52,6 +54,7 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -69,7 +72,9 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.Constants;
 import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.InputSuppliers;
+import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.io.Payloads;
@@ -200,6 +205,21 @@ public class HttpUtils {
       }
    }
 
+   public static void addContentHeadersFromMetadata(ContentMetadata md, Multimap<String, String> allHeaders) {
+      if (md.getContentType() != null)
+         allHeaders.replaceValues(HttpHeaders.CONTENT_TYPE, Collections.singleton(md.getContentType()));
+      if (md.getContentDisposition() != null)
+         allHeaders.replaceValues("Content-Disposition", Collections.singleton(md.getContentDisposition()));
+      if (md.getContentEncoding() != null)
+         allHeaders.replaceValues(HttpHeaders.CONTENT_ENCODING, Collections.singleton(md.getContentEncoding()));
+      if (md.getContentEncoding() != null)
+         allHeaders.replaceValues(HttpHeaders.CONTENT_LANGUAGE, Collections.singleton(md.getContentLanguage()));
+      if (md.getContentLength() != null)
+         allHeaders.replaceValues(HttpHeaders.CONTENT_LENGTH, Collections.singleton(md.getContentLength() + ""));
+      if (md.getContentMD5() != null)
+         allHeaders.replaceValues("Content-MD5", Collections.singleton(CryptoStreams.base64(md.getContentMD5())));
+   }
+
    /**
     * Web browsers do not always handle '+' characters well, use the well-supported '%20' instead.
     */
@@ -255,11 +275,21 @@ public class HttpUtils {
       byte[] returnVal = toByteArrayOrNull(response);
       if (returnVal != null && !response.getPayload().isRepeatable()) {
          Payload newPayload = Payloads.newByteArrayPayload(returnVal);
-         newPayload.setContentMD5(response.getPayload().getContentMD5());
-         newPayload.setContentType(response.getPayload().getContentType());
+         MutableContentMetadata fromMd = response.getPayload().getContentMetadata();
+         MutableContentMetadata toMd = newPayload.getContentMetadata();
+         copy(fromMd, toMd);
          response.setPayload(newPayload);
       }
       return returnVal;
+   }
+
+   public static void copy(ContentMetadata fromMd, MutableContentMetadata toMd) {
+      toMd.setContentLength(fromMd.getContentLength());
+      toMd.setContentMD5(fromMd.getContentMD5());
+      toMd.setContentType(fromMd.getContentType());
+      toMd.setContentDisposition(fromMd.getContentDisposition());
+      toMd.setContentEncoding(fromMd.getContentEncoding());
+      toMd.setContentLanguage(fromMd.getContentLanguage());
    }
 
    public static URI parseEndPoint(String hostHeader) {
@@ -338,17 +368,27 @@ public class HttpUtils {
             logger.debug("%s %s: %s", prefix, header.getKey(), header.getValue());
       }
       if (message.getPayload() != null) {
-         if (message.getPayload().getContentType() != null)
-            logger.debug("%s %s: %s", prefix, HttpHeaders.CONTENT_TYPE, message.getPayload().getContentType());
-         if (message.getPayload().getContentLength() != null)
-            logger.debug("%s %s: %s", prefix, HttpHeaders.CONTENT_LENGTH, message.getPayload().getContentLength());
-         if (message.getPayload().getContentMD5() != null)
+         if (message.getPayload().getContentMetadata().getContentType() != null)
+            logger.debug("%s %s: %s", prefix, CONTENT_TYPE, message.getPayload().getContentMetadata().getContentType());
+         if (message.getPayload().getContentMetadata().getContentLength() != null)
+            logger.debug("%s %s: %s", prefix, CONTENT_LENGTH, message.getPayload().getContentMetadata()
+                     .getContentLength());
+         if (message.getPayload().getContentMetadata().getContentMD5() != null)
             try {
                logger.debug("%s %s: %s", prefix, "Content-MD5", CryptoStreams.base64Encode(InputSuppliers.of(message
-                        .getPayload().getContentMD5())));
+                        .getPayload().getContentMetadata().getContentMD5())));
             } catch (IOException e) {
                logger.warn(e, " error getting md5 for %s", message);
             }
+         if (message.getPayload().getContentMetadata().getContentDisposition() != null)
+            logger.debug("%s %s: %s", prefix, "Content-Disposition", message.getPayload().getContentMetadata()
+                     .getContentDisposition());
+         if (message.getPayload().getContentMetadata().getContentEncoding() != null)
+            logger.debug("%s %s: %s", prefix, CONTENT_ENCODING, message.getPayload().getContentMetadata()
+                     .getContentEncoding());
+         if (message.getPayload().getContentMetadata().getContentLanguage() != null)
+            logger.debug("%s %s: %s", prefix, CONTENT_LANGUAGE, message.getPayload().getContentMetadata()
+                     .getContentLanguage());
       }
    }
 
@@ -503,16 +543,22 @@ public class HttpUtils {
       for (Entry<String, String> header : headers.entries()) {
          if (!chunked && CONTENT_LENGTH.equalsIgnoreCase(header.getKey())) {
             if (payload != null)
-               payload.setContentLength(new Long(header.getValue()));
+               payload.getContentMetadata().setContentLength(new Long(header.getValue()));
          } else if ("Content-MD5".equalsIgnoreCase(header.getKey())) {
             if (payload != null)
-               payload.setContentMD5(CryptoStreams.base64(header.getValue()));
+               payload.getContentMetadata().setContentMD5(CryptoStreams.base64(header.getValue()));
          } else if (CONTENT_TYPE.equalsIgnoreCase(header.getKey())) {
             if (payload != null)
-               payload.setContentType(header.getValue());
+               payload.getContentMetadata().setContentType(header.getValue());
          } else if ("Content-Disposition".equalsIgnoreCase(header.getKey())) {
             if (payload != null)
-               payload.setContentDisposition(header.getValue());
+               payload.getContentMetadata().setContentDisposition(header.getValue());
+         } else if ("Content-Encoding".equalsIgnoreCase(header.getKey())) {
+            if (payload != null)
+               payload.getContentMetadata().setContentEncoding(header.getValue());
+         } else if ("Content-Language".equalsIgnoreCase(header.getKey())) {
+            if (payload != null)
+               payload.getContentMetadata().setContentLanguage(header.getValue());
          } else {
             message.getHeaders().put(header.getKey(), header.getValue());
          }
@@ -521,19 +567,34 @@ public class HttpUtils {
       if (message instanceof HttpRequest) {
          checkArgument(
                   message.getPayload() == null || message.getFirstHeaderOrNull(CONTENT_TYPE) == null,
-                  "configuration error please use request.getPayload().setContentType(value) as opposed to adding a content type   header: "
+                  "configuration error please use request.getPayload().getContentMetadata().setContentType(value) as opposed to adding a content type header: "
                            + message);
          checkArgument(
                   message.getPayload() == null || message.getFirstHeaderOrNull(CONTENT_LENGTH) == null,
-                  "configuration error please use request.getPayload().setContentLength(value) as opposed to adding a content length header: "
+                  "configuration error please use request.getPayload().getContentMetadata().setContentLength(value) as opposed to adding a content length header: "
                            + message);
-         checkArgument(message.getPayload() == null || message.getPayload().getContentLength() != null
+         checkArgument(message.getPayload() == null
+                  || message.getPayload().getContentMetadata().getContentLength() != null
                   || "chunked".equalsIgnoreCase(message.getFirstHeaderOrNull("Transfer-Encoding")),
                   "either chunked encoding must be set on the http request or contentlength set on the payload: "
                            + message);
-         checkArgument(message.getPayload() == null || message.getFirstHeaderOrNull("Content-MD5") == null,
-                  "configuration error please use request.getPayload().setContentMD5(value) as opposed to adding a content md5 header: "
+         checkArgument(
+                  message.getPayload() == null || message.getFirstHeaderOrNull("Content-MD5") == null,
+                  "configuration error please use request.getPayload().getContentMetadata().setContentMD5(value) as opposed to adding a content md5 header: "
                            + message);
+         checkArgument(
+                  message.getPayload() == null || message.getFirstHeaderOrNull("Content-Disposition") == null,
+                  "configuration error please use request.getPayload().getContentMetadata().setContentDisposition(value) as opposed to adding a content disposition header: "
+                           + message);
+         checkArgument(
+                  message.getPayload() == null || message.getFirstHeaderOrNull(CONTENT_ENCODING) == null,
+                  "configuration error please use request.getPayload().getContentMetadata().setContentEncoding(value) as opposed to adding a content encoding header: "
+                           + message);
+         checkArgument(
+                  message.getPayload() == null || message.getFirstHeaderOrNull(CONTENT_LANGUAGE) == null,
+                  "configuration error please use request.getPayload().getContentMetadata().setContentLanguage(value) as opposed to adding a content language header: "
+                           + message);
+
       }
    }
 
@@ -557,7 +618,7 @@ public class HttpUtils {
    public static Long attemptToParseSizeAndRangeFromHeaders(HttpResponse from) throws HttpException {
       String contentRange = from.getFirstHeaderOrNull("Content-Range");
       if (contentRange == null && from.getPayload() != null) {
-         return from.getPayload().getContentLength();
+         return from.getPayload().getContentMetadata().getContentLength();
       } else if (contentRange != null) {
          return Long.parseLong(contentRange.substring(contentRange.lastIndexOf('/') + 1));
       }
@@ -566,7 +627,8 @@ public class HttpUtils {
 
    public static void checkRequestHasContentLengthOrChunkedEncoding(HttpRequest request, String message) {
       boolean chunked = "chunked".equals(request.getFirstHeaderOrNull("Transfer-Encoding"));
-      checkArgument(request.getPayload() == null || chunked || request.getPayload().getContentLength() != null, message);
+      checkArgument(request.getPayload() == null || chunked
+               || request.getPayload().getContentMetadata().getContentLength() != null, message);
    }
 
    public static void wirePayloadIfEnabled(Wire wire, HttpRequest request) {

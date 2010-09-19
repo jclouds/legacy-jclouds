@@ -32,10 +32,6 @@ import java.io.OutputStream;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.io.Payloads;
-import org.jclouds.io.payloads.FilePayload;
-import org.jclouds.io.payloads.MultipartForm;
-import org.jclouds.io.payloads.Part;
-import org.jclouds.io.payloads.StringPayload;
 import org.jclouds.io.payloads.Part.PartOptions;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
@@ -60,7 +56,7 @@ public class MultipartFormTest {
       MultipartForm multipartForm = new MultipartForm(boundary, newPart("hello"));
 
       assertEquals(Utils.toStringAndClose(multipartForm.getInput()), expects);
-      assertEquals(multipartForm.getContentLength(), new Long(199));
+      assertEquals(multipartForm.getContentMetadata().getContentLength(), new Long(199));
    }
 
    public static class MockFilePayload extends FilePayload {
@@ -74,16 +70,11 @@ public class MultipartFormTest {
 
       private static File createMockFile(String content) {
          File file = createMock(File.class);
-         expect(file.length()).andReturn((long)content.length());
+         expect(file.length()).andReturn((long) content.length());
          expect(file.exists()).andReturn(true);
          expect(file.getName()).andReturn("testfile.txt");
          replay(file);
          return file;
-      }
-
-      @Override
-      public Long getContentLength() {
-         return realPayload.getContentLength();
       }
 
       @Override
@@ -104,14 +95,13 @@ public class MultipartFormTest {
    }
 
    private Part newPart(String data) {
-      return Part.create("file", new MockFilePayload(data), new PartOptions()
-               .contentType(MediaType.TEXT_PLAIN));
+      return Part.create("file", new MockFilePayload(data), new PartOptions().contentType(MediaType.TEXT_PLAIN));
    }
 
    private void addData(String boundary, String data, StringBuilder builder) {
       builder.append("--").append(boundary).append("\r\n");
-      builder.append("Content-Disposition").append(": ").append(
-               "form-data; name=\"file\"; filename=\"testfile.txt\"").append("\r\n");
+      builder.append("Content-Disposition").append(": ").append("form-data; name=\"file\"; filename=\"testfile.txt\"")
+               .append("\r\n");
       builder.append("Content-Type").append(": ").append("text/plain").append("\r\n");
       builder.append("\r\n");
       builder.append(data).append("\r\n");
@@ -128,15 +118,14 @@ public class MultipartFormTest {
 
       assertEquals(expects.length(), 352);
 
-      MultipartForm multipartForm = new MultipartForm(boundary, newPart("hello"),
-               newPart("goodbye"));
+      MultipartForm multipartForm = new MultipartForm(boundary, newPart("hello"), newPart("goodbye"));
 
       assertEquals(Utils.toStringAndClose(multipartForm.getInput()), expects);
 
       // test repeatable
       assert multipartForm.isRepeatable();
       assertEquals(Utils.toStringAndClose(multipartForm.getInput()), expects);
-      assertEquals(multipartForm.getContentLength(), new Long(352));
+      assertEquals(multipartForm.getContentMetadata().getContentLength(), new Long(352));
    }
 
 }

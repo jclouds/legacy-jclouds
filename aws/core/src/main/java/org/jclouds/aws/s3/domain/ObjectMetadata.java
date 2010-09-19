@@ -22,6 +22,8 @@ package org.jclouds.aws.s3.domain;
 import java.util.Date;
 import java.util.Map;
 
+import org.jclouds.io.ContentMetadata;
+
 /**
  * /** Amazon S3 is designed to store objects. Objects are stored in {@link S3BucketListing buckets}
  * and consist of a {@link org.jclouds.aws.s3.domain.S3Object#getData() value}, a
@@ -67,47 +69,12 @@ public interface ObjectMetadata extends Comparable<ObjectMetadata> {
     */
    String getCacheControl();
 
-   /**
-    * Specifies presentational information for the object.
-    * 
-    * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html?sec19.5.1."/>
-    */
-   String getContentDisposition();
-
-   /**
-    * Specifies what content encodings have been applied to the object and thus what decoding
-    * mechanisms must be applied in order to obtain the media-type referenced by the Content-Type
-    * header field.
-    * 
-    * @see <a href= "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.11" />
-    */
-   String getContentEncoding();
-
-   /**
-    * 
-    * A standard MIME type describing the format of the contents. If none is provided, the default
-    * is binary/octet-stream.
-    * 
-    * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17"/>
-    */
-   String getContentType();
-
-   /**
-    * The base64 decoded 128-bit MD5 digest of the message (without the headers) according to RFC
-    * 1864. This header can be used as a message integrity check to verify that the data is the same
-    * data that was originally sent. Although it is optional, we recommend using the Content-MD5
-    * mechanism as an end-to-end integrity check.
-    * 
-    * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/RESTAuthentication.html"/>
-    */
-   byte[] getContentMD5();
-
    Date getLastModified();
 
    String getETag();
 
-   Long getSize();
-
    Map<String, String> getUserMetadata();
+
+   ContentMetadata getContentMetadata();
 
 }

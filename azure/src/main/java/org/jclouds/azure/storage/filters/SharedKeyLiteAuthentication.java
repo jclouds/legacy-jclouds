@@ -103,9 +103,9 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    }
 
    private void appendPayloadMetadata(HttpRequest request, StringBuilder buffer) {
-      buffer.append(utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMD5()))
+      buffer.append(utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata().getContentMD5()))
                .append("\n");
-      buffer.append(utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentType()))
+      buffer.append(utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata().getContentType()))
                .append("\n");
    }
 

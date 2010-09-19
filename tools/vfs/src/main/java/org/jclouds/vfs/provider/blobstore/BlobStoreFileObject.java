@@ -55,6 +55,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.options.ListContainerOptions;
@@ -105,7 +106,7 @@ public class BlobStoreFileObject extends AbstractFileObject {
             blob.setPayload(file);
             Payloads.calculateMD5(blob);
             logger.info(String.format(">> put: %s/%s %d bytes", getContainer(), getNameTrimLeadingSlashes(), blob
-                     .getPayload().getContentLength()));
+                     .getPayload().getContentMetadata().getContentLength()));
             String tag = context.putBlob(getContainer(), blob);
             logger.info(String.format("<< tag %s: %s/%s", tag, getContainer(), getNameTrimLeadingSlashes()));
          } finally {
@@ -120,10 +121,15 @@ public class BlobStoreFileObject extends AbstractFileObject {
 
    @Override
    protected long doGetContentSize() throws Exception {
-      if (metadata == null || metadata.getSize() == null || metadata.getSize() == 0) {
+      if (metadata == null && metadata.getType() == StorageType.BLOB)
          getMetadataAtPath(getNameTrimLeadingSlashes());
+
+      if (metadata != null && metadata.getType() == StorageType.BLOB) {
+         BlobMetadata blobMd = BlobMetadata.class.cast(metadata);
+         return blobMd.getContentMetadata().getContentLength() != null ? blobMd.getContentMetadata().getContentLength()
+                  : 0;
       }
-      return metadata.getSize() != null ? metadata.getSize() : 0;
+      return 0;
    }
 
    @Override

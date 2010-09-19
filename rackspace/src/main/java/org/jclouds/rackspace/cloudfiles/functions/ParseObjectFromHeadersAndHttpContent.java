@@ -51,7 +51,7 @@ public class ParseObjectFromHeadersAndHttpContent implements Function<HttpRespon
    public CFObject apply(HttpResponse from) {
       MutableObjectInfoWithMetadata metadata = infoParser.apply(from);
       if (metadata.getHash() != null)
-         from.getPayload().setContentMD5(metadata.getHash());
+         from.getPayload().getContentMetadata().setContentMD5(metadata.getHash());
       CFObject object = objectProvider.create(metadata);
       object.getAllHeaders().putAll(from.getHeaders());
       object.setPayload(from.getPayload());

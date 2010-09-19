@@ -32,6 +32,7 @@ import org.jclouds.atmosonline.saas.functions.AtmosObjectName;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
+import org.jclouds.http.HttpUtils;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
@@ -58,11 +59,8 @@ public class ObjectToBlobMetadata implements Function<AtmosObject, MutableBlobMe
       MutableBlobMetadata to = new MutableBlobMetadataImpl();
       to.setId(from.getSystemMetadata().getObjectID());
       to.setLastModified(from.getSystemMetadata().getLastUserDataModification());
-      to.setContentMD5(from.getSystemMetadata().getContentMD5());
-      if (from.getContentMetadata().getContentType() != null)
-         to.setContentType(from.getContentMetadata().getContentType());
+      HttpUtils.copy(from.getContentMetadata(), to.getContentMetadata());
       to.setName(objectName.apply(from));
-      to.setSize(from.getSystemMetadata().getSize());
       if (from.getSystemMetadata().getType() == FileType.DIRECTORY) {
          to.setType(StorageType.FOLDER);
       } else {

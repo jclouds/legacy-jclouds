@@ -131,7 +131,7 @@ public class S3ParserTest extends PerformanceTest {
       assert object.getLastModified().equals(expected) : String.format("expected %1$s, but got %1$s", expected, object
                .getLastModified());
       assertEquals(object.getETag(), "\"9d7bb64e8e18ee34eec06dd2cf37b766\"");
-      assert object.getSize() == 136;
+      assert object.getContentMetadata().getContentLength() == 136;
       CanonicalUser owner = new CanonicalUser("e1a5f66a480ca99a4fdfe8e318c3020446c9989d7004e7778029fbcc5d990fa0");
       owner.setDisplayName("ferncam");
       assert object.getOwner().equals(owner);

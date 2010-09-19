@@ -27,8 +27,6 @@ import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
 import org.jclouds.http.internal.PayloadEnclosingImpl;
 import org.jclouds.io.Payload;
-import org.jclouds.io.PayloadEnclosing;
-import org.jclouds.io.payloads.DelegatingPayload;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -40,15 +38,13 @@ import com.google.common.collect.Multimap;
  */
 public class AzureBlobImpl extends PayloadEnclosingImpl implements AzureBlob, Comparable<AzureBlob> {
 
-   private final MutableBlobProperties _properties;
-   private final SetPayloadPropertiesMutableBlobProperties properties;
+   private final MutableBlobProperties properties;
    private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
 
    @Inject
    public AzureBlobImpl(MutableBlobProperties properties) {
       super();
-      this.properties = linkMetadataToThis(properties);
-      this._properties = this.properties.getDelegate();
+      this.properties = properties;
    }
 
    /**
@@ -89,7 +85,7 @@ public class AzureBlobImpl extends PayloadEnclosingImpl implements AzureBlob, Co
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((_properties == null) ? 0 : _properties.hashCode());
+      result = prime * result + ((properties == null) ? 0 : properties.hashCode());
       return result;
    }
 
@@ -102,83 +98,23 @@ public class AzureBlobImpl extends PayloadEnclosingImpl implements AzureBlob, Co
       if (getClass() != obj.getClass())
          return false;
       AzureBlobImpl other = (AzureBlobImpl) obj;
-      if (_properties == null) {
-         if (other._properties != null)
+      if (properties == null) {
+         if (other.properties != null)
             return false;
-      } else if (!_properties.equals(other._properties))
+      } else if (!properties.equals(other.properties))
          return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "[properties=" + _properties + "]";
+      return "[properties=" + properties + "]";
    }
 
    @Override
    public void setPayload(Payload data) {
-      linkPayloadToMetadata(data);
+      super.setPayload(data);
+      properties.setContentMetadata(data.getContentMetadata());
    }
 
-   /**
-    * link the new payload to the properties object so that when content-related properties is
-    * updated on the payload, it is also copied the properties object.
-    */
-   void linkPayloadToMetadata(Payload data) {
-      if (data instanceof DelegatingPayload)
-         super.setPayload(new SetMetadataPropertiesPayload(DelegatingPayload.class.cast(data)
-                  .getDelegate(), _properties));
-      else
-         super.setPayload(new SetMetadataPropertiesPayload(data, _properties));
-   }
-
-   static class SetMetadataPropertiesPayload extends DelegatingPayload {
-
-      private transient final MutableBlobProperties properties;
-
-      public SetMetadataPropertiesPayload(Payload delegate, MutableBlobProperties properties) {
-         super(delegate);
-         this.properties = properties;
-      }
-
-      @Override
-      public void setContentType(String md5) {
-         super.setContentType(md5);
-         properties.setContentType(md5);
-      }
-
-   }
-
-   /**
-    * link the properties object to this so that when content-related properties is updated, it is
-    * also copied the currentpayload object.
-    */
-   SetPayloadPropertiesMutableBlobProperties linkMetadataToThis(MutableBlobProperties properties) {
-      return properties instanceof DelegatingMutableBlobProperties ? new SetPayloadPropertiesMutableBlobProperties(
-               DelegatingMutableBlobProperties.class.cast(properties).getDelegate(), this)
-               : new SetPayloadPropertiesMutableBlobProperties(properties, this);
-   }
-
-   static class SetPayloadPropertiesMutableBlobProperties extends DelegatingMutableBlobProperties {
-      /** The serialVersionUID */
-      private static final long serialVersionUID = -5072270546219814521L;
-      private transient final PayloadEnclosing blob;
-
-      public SetPayloadPropertiesMutableBlobProperties(MutableBlobProperties delegate,
-               PayloadEnclosing blob) {
-         super(delegate);
-         this.blob = blob;
-      }
-
-      @Override
-      public void setContentType(String type) {
-         super.setContentType(type);
-         if (canSetPayload())
-            blob.getPayload().setContentType(type);
-      }
-
-      private boolean canSetPayload() {
-         return blob != null && blob.getPayload() != null;
-      }
-   }
 }

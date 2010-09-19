@@ -19,6 +19,8 @@
 
 package org.jclouds.blobstore.domain.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Date;
@@ -28,6 +30,7 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.domain.Location;
+import org.jclouds.io.ContentMetadata;
 
 import com.google.inject.internal.Nullable;
 
@@ -39,68 +42,20 @@ import com.google.inject.internal.Nullable;
 public class BlobMetadataImpl extends StorageMetadataImpl implements Serializable, BlobMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = -5932618957134612231L;
+   private final ContentMetadata contentMetadata;
 
-   private final String contentType;
-   private final String contentDisposition;
-   private final String contentEncoding;
-   private final String contentLanguage;
-   private final byte[] contentMD5;
-
-   public BlobMetadataImpl(String id, String name, @Nullable Location location, URI uri, String eTag, Long size,
-         Date lastModified, Map<String, String> userMetadata, String contentType, String contentDisposition,
-         String contentEncoding, String contentLanguage, byte[] contentMD5) {
-      super(StorageType.BLOB, id, name, location, uri, eTag, size, lastModified, userMetadata);
-      this.contentType = contentType;
-      this.contentDisposition = contentDisposition;
-      this.contentEncoding = contentEncoding;
-      this.contentLanguage = contentLanguage;
-      this.contentMD5 = contentMD5;
+   public BlobMetadataImpl(String id, String name, @Nullable Location location, URI uri, String eTag,
+            Date lastModified, Map<String, String> userMetadata, ContentMetadata contentMetadata) {
+      super(StorageType.BLOB, id, name, location, uri, eTag, lastModified, userMetadata);
+      this.contentMetadata = checkNotNull(contentMetadata, "contentMetadata");
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public String getContentType() {
-      return contentType;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentDisposition() {
-      return contentDisposition;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentEncoding() {
-      return contentEncoding;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentLanguage() {
-      return contentLanguage;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public byte[] getContentMD5() {
-      if (contentMD5 != null) {
-         byte[] retval = new byte[contentMD5.length];
-         System.arraycopy(this.contentMD5, 0, retval, 0, contentMD5.length);
-         return retval;
-      } else {
-         return null;
-      }
+   public ContentMetadata getContentMetadata() {
+      return contentMetadata;
    }
 
 }

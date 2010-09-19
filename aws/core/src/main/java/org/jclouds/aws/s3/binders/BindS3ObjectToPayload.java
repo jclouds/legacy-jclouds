@@ -20,7 +20,6 @@
 package org.jclouds.aws.s3.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -42,32 +41,21 @@ public class BindS3ObjectToPayload implements Binder {
    private final ObjectToBlob object2Blob;
 
    @Inject
-   public BindS3ObjectToPayload(ObjectToBlob object2Blob,
-            BindUserMetadataToHeadersWithPrefix blobBinder) {
+   public BindS3ObjectToPayload(ObjectToBlob object2Blob, BindUserMetadataToHeadersWithPrefix blobBinder) {
       this.blobBinder = blobBinder;
       this.object2Blob = object2Blob;
    }
 
    public void bindToRequest(HttpRequest request, Object payload) {
       S3Object s3Object = (S3Object) payload;
-      checkNotNull(s3Object.getPayload().getContentLength(), "contentLength");
-      checkArgument(s3Object.getPayload().getContentLength() <= 5l * 1024 * 1024 * 1024,
+      checkArgument(s3Object.getPayload().getContentMetadata().getContentLength() != null,
+               "contentLength must be set, streaming not supported");
+      checkArgument(s3Object.getPayload().getContentMetadata().getContentLength() <= 5l * 1024 * 1024 * 1024,
                "maximum size for put object is 5GB");
       blobBinder.bindToRequest(request, object2Blob.apply(s3Object));
 
       if (s3Object.getMetadata().getCacheControl() != null) {
-         request.getHeaders().put(HttpHeaders.CACHE_CONTROL,
-                  s3Object.getMetadata().getCacheControl());
-      }
-
-      if (s3Object.getMetadata().getContentDisposition() != null) {
-         request.getHeaders().put("Content-Disposition",
-                  s3Object.getMetadata().getContentDisposition());
-      }
-
-      if (s3Object.getMetadata().getContentEncoding() != null) {
-         request.getHeaders().put(HttpHeaders.CONTENT_ENCODING,
-                  s3Object.getMetadata().getContentEncoding());
+         request.getHeaders().put(HttpHeaders.CACHE_CONTROL, s3Object.getMetadata().getCacheControl());
       }
 
    }

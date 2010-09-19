@@ -39,7 +39,7 @@ public class BindBlobToMultipartForm implements Binder {
       Blob blob = (Blob) payload;
 
       Part part = Part.create(blob.getMetadata().getName(), blob.getPayload(),
-               new PartOptions().contentType(blob.getMetadata().getContentType()));
+               new PartOptions().contentType(blob.getMetadata().getContentMetadata().getContentType()));
 
       request.setPayload(new MultipartForm(part));
    }

@@ -19,19 +19,25 @@
 
 package org.jclouds.io.payloads;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.annotation.Nullable;
+import org.jclouds.io.MutableContentMetadata;
 
 /**
  * @author Adrian Cole
  */
 public class PhantomPayload extends BasePayload<Object> {
 
-   public PhantomPayload(@Nullable Long contentLength, @Nullable byte[] contentMD5) {
-      super(Object.class, null, contentLength, contentMD5);
+   public PhantomPayload() {
+      super(Object.class);
+   }
+
+   public PhantomPayload(MutableContentMetadata contentMetadata) {
+      super(Object.class, checkNotNull(contentMetadata, "contentMetadata"));
    }
 
    /**

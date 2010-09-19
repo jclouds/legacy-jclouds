@@ -44,16 +44,18 @@ public class MultipartForm extends BasePayload<Iterable<? extends Part>> {
 
    @SuppressWarnings("unchecked")
    public MultipartForm(String boundary, Iterable<? extends Part> content) {
-      super(content, "multipart/form-data; boundary=" + boundary, 0l, null);
+      super(content);
+      getContentMetadata().setContentType("multipart/form-data; boundary=" + boundary);
+      getContentMetadata().setContentLength(0l);
       String boundaryrn = boundary + rn;
       isRepeatable = true;
       InputSupplier<? extends InputStream> chain = join();
       for (Part part : content) {
          if (!part.isRepeatable())
             isRepeatable = false;
-         contentLength += part.getContentLength();
-         chain = join(chain, addLengthAndReturnHeaders(boundaryrn, part), part,
-                  addLengthAndReturnRn());
+         getContentMetadata().setContentLength(
+                  getContentMetadata().getContentLength() + part.getContentMetadata().getContentLength());
+         chain = join(chain, addLengthAndReturnHeaders(boundaryrn, part), part, addLengthAndReturnRn());
       }
       chain = join(chain, addLengthAndReturnFooter(boundary));
       this.chain = chain;
@@ -68,25 +70,24 @@ public class MultipartForm extends BasePayload<Iterable<? extends Part>> {
    }
 
    private InputSupplier<? extends InputStream> addLengthAndReturnRn() {
-      contentLength += rn.length();
+      getContentMetadata().setContentLength(getContentMetadata().getContentLength() + rn.length());
       return newInputStreamSupplier(rn.getBytes());
    }
 
-   private InputSupplier<? extends InputStream> addLengthAndReturnHeaders(String boundaryrn,
-            Part part) {
+   private InputSupplier<? extends InputStream> addLengthAndReturnHeaders(String boundaryrn, Part part) {
       StringBuilder builder = new StringBuilder(dd).append(boundaryrn);
       for (Entry<String, String> entry : part.getHeaders().entries()) {
          String header = String.format("%s: %s%s", entry.getKey(), entry.getValue(), rn);
          builder.append(header);
       }
       builder.append(rn);
-      contentLength += builder.length();
+      getContentMetadata().setContentLength(getContentMetadata().getContentLength() + builder.length());
       return newInputStreamSupplier(builder.toString().getBytes());
    }
 
    private InputSupplier<? extends InputStream> addLengthAndReturnFooter(String boundary) {
       String end = dd + boundary + dd + rn;
-      contentLength += end.length();
+      getContentMetadata().setContentLength(getContentMetadata().getContentLength() + end.length());
       return newInputStreamSupplier(end.getBytes());
    }
 

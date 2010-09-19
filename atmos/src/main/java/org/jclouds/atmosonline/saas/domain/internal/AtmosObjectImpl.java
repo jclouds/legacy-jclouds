@@ -29,8 +29,6 @@ import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.domain.UserMetadata;
 import org.jclouds.http.internal.PayloadEnclosingImpl;
 import org.jclouds.io.Payload;
-import org.jclouds.io.PayloadEnclosing;
-import org.jclouds.io.payloads.DelegatingPayload;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -40,8 +38,7 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
-public class AtmosObjectImpl extends PayloadEnclosingImpl implements AtmosObject,
-         Comparable<AtmosObject> {
+public class AtmosObjectImpl extends PayloadEnclosingImpl implements AtmosObject, Comparable<AtmosObject> {
    private final UserMetadata userMetadata;
    private final SystemMetadata systemMetadata;
 
@@ -53,15 +50,13 @@ public class AtmosObjectImpl extends PayloadEnclosingImpl implements AtmosObject
       return userMetadata;
    }
 
-   private final MutableContentMetadata _contentMetadata;
-   private final SetPayloadPropertiesMutableContentMetadata contentMetadata;
+   private  MutableContentMetadata contentMetadata;
    private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
 
    public AtmosObjectImpl(MutableContentMetadata contentMetadata, SystemMetadata systemMetadata,
             UserMetadata userMetadata) {
       super();
-      this.contentMetadata = linkMetadataToThis(contentMetadata);
-      this._contentMetadata = this.contentMetadata.getDelegate();
+      this.contentMetadata = contentMetadata;
       this.systemMetadata = systemMetadata;
       this.userMetadata = userMetadata;
    }
@@ -102,15 +97,16 @@ public class AtmosObjectImpl extends PayloadEnclosingImpl implements AtmosObject
    public int compareTo(AtmosObject o) {
       if (getContentMetadata().getName() == null)
          return -1;
-      return (this == o) ? 0 : getContentMetadata().getName().compareTo(
-               o.getContentMetadata().getName());
+      return (this == o) ? 0 : getContentMetadata().getName().compareTo(o.getContentMetadata().getName());
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((_contentMetadata == null) ? 0 : _contentMetadata.hashCode());
+      result = prime * result + ((contentMetadata == null) ? 0 : contentMetadata.hashCode());
+      result = prime * result + ((systemMetadata == null) ? 0 : systemMetadata.hashCode());
+      result = prime * result + ((userMetadata == null) ? 0 : userMetadata.hashCode());
       return result;
    }
 
@@ -123,85 +119,32 @@ public class AtmosObjectImpl extends PayloadEnclosingImpl implements AtmosObject
       if (getClass() != obj.getClass())
          return false;
       AtmosObjectImpl other = (AtmosObjectImpl) obj;
-      if (_contentMetadata == null) {
-         if (other._contentMetadata != null)
+      if (contentMetadata == null) {
+         if (other.contentMetadata != null)
             return false;
-      } else if (!_contentMetadata.equals(other._contentMetadata))
+      } else if (!contentMetadata.equals(other.contentMetadata))
+         return false;
+      if (systemMetadata == null) {
+         if (other.systemMetadata != null)
+            return false;
+      } else if (!systemMetadata.equals(other.systemMetadata))
+         return false;
+      if (userMetadata == null) {
+         if (other.userMetadata != null)
+            return false;
+      } else if (!userMetadata.equals(other.userMetadata))
          return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "[contentMetadata=" + _contentMetadata + "]";
+      return "[contentMetadata=" + contentMetadata + "]";
    }
 
    @Override
    public void setPayload(Payload data) {
-      linkPayloadToMetadata(data);
-   }
-
-   /**
-    * link the new payload to the contentMetadata object so that when content-related
-    * contentMetadata is updated on the payload, it is also copied the contentMetadata object.
-    */
-   void linkPayloadToMetadata(Payload data) {
-      if (data instanceof DelegatingPayload)
-         super.setPayload(new SetMetadataPropertiesPayload(DelegatingPayload.class.cast(data)
-                  .getDelegate(), _contentMetadata));
-      else
-         super.setPayload(new SetMetadataPropertiesPayload(data, _contentMetadata));
-   }
-
-   static class SetMetadataPropertiesPayload extends DelegatingPayload {
-
-      private transient final MutableContentMetadata contentMetadata;
-
-      public SetMetadataPropertiesPayload(Payload delegate, MutableContentMetadata contentMetadata) {
-         super(delegate);
-         this.contentMetadata = contentMetadata;
-         setContentType(contentMetadata.getContentType());
-      }
-
-      @Override
-      public void setContentType(String md5) {
-         super.setContentType(md5);
-         contentMetadata.setContentType(md5);
-      }
-
-   }
-
-   /**
-    * link the contentMetadata object to this so that when content-related contentMetadata is
-    * updated, it is also copied the currentpayload object.
-    */
-   SetPayloadPropertiesMutableContentMetadata linkMetadataToThis(
-            MutableContentMetadata contentMetadata) {
-      return contentMetadata instanceof DelegatingMutableContentMetadata ? new SetPayloadPropertiesMutableContentMetadata(
-               DelegatingMutableContentMetadata.class.cast(contentMetadata).getDelegate(), this)
-               : new SetPayloadPropertiesMutableContentMetadata(contentMetadata, this);
-   }
-
-   static class SetPayloadPropertiesMutableContentMetadata extends DelegatingMutableContentMetadata {
-      /** The serialVersionUID */
-      private static final long serialVersionUID = -5072270546219814521L;
-      private transient final PayloadEnclosing object;
-
-      public SetPayloadPropertiesMutableContentMetadata(MutableContentMetadata delegate,
-               PayloadEnclosing object) {
-         super(delegate);
-         this.object = object;
-      }
-
-      @Override
-      public void setContentType(String type) {
-         super.setContentType(type);
-         if (canSetPayload())
-            object.getPayload().setContentType(type);
-      }
-
-      private boolean canSetPayload() {
-         return object != null && object.getPayload() != null;
-      }
+      this.payload = data;
+      this.contentMetadata = new DelegatingMutableContentMetadata(contentMetadata.getName(), payload.getContentMetadata());
    }
 }

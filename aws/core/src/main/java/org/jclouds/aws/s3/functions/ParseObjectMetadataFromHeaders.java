@@ -20,7 +20,6 @@
 package org.jclouds.aws.s3.functions;
 
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
-import static org.jclouds.http.HttpUtils.attemptToParseSizeAndRangeFromHeaders;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -30,11 +29,9 @@ import org.jclouds.aws.s3.blobstore.functions.BlobToObjectMetadata;
 import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
-import org.jclouds.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -67,11 +64,7 @@ public class ParseObjectMetadataFromHeaders implements Function<HttpResponse, Mu
       BlobMetadata base = blobMetadataParser.apply(from);
       MutableObjectMetadata to = blobToObjectMetadata.apply(base);
       addETagTo(from, to);
-      to.setSize(attemptToParseSizeAndRangeFromHeaders(from));
-      to.setContentMD5(CryptoStreams.hex(Utils.replaceAll(to.getETag(), '"', "")));
       to.setCacheControl(from.getFirstHeaderOrNull(HttpHeaders.CACHE_CONTROL));
-      to.setContentDisposition(from.getFirstHeaderOrNull("Content-Disposition"));
-      to.setContentEncoding(from.getFirstHeaderOrNull(HttpHeaders.CONTENT_ENCODING));
       return to;
    }
 

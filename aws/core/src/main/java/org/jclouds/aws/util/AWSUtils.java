@@ -67,8 +67,8 @@ public class AWSUtils {
       if (response.getPayload() == null)
          return null;
       // Eucalyptus and Walrus occasionally return text/plain
-      if (response.getPayload().getContentType() != null
-               && response.getPayload().getContentType().indexOf("text/plain") != -1)
+      if (response.getPayload().getContentMetadata().getContentType() != null
+               && response.getPayload().getContentMetadata().getContentType().indexOf("text/plain") != -1)
          return null;
       try {
          AWSError error = (AWSError) factory.create(errorHandlerProvider.get()).setContext(request)

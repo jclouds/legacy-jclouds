@@ -103,7 +103,7 @@ public class StubAtmosStorageAsyncClient implements AtmosStorageAsyncClient {
          public URI apply(Boolean from) {
             if (path != null) {
                Blob blob = blobStore.newBlob(path + "/");
-               blob.getMetadata().setContentType("application/directory");
+               blob.getMetadata().getContentMetadata().setContentType("application/directory");
                blob.setPayload("");
                blobStore.putBlob(container, blob);
             }

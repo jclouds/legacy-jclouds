@@ -34,7 +34,9 @@ public class ByteArrayPayload extends BasePayload<byte[]> {
    }
 
    public ByteArrayPayload(byte[] content, byte[] md5) {
-      super(content, null, new Long(checkNotNull(content, "content").length), md5);
+      super(content);
+      getContentMetadata().setContentLength(new Long(checkNotNull(content, "content").length));
+      getContentMetadata().setContentMD5(md5);
       checkArgument(content.length >= 0, "length cannot me negative");
    }
 

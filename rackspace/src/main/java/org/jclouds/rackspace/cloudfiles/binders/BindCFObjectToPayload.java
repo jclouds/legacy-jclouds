@@ -38,19 +38,19 @@ public class BindCFObjectToPayload implements Binder {
    private final ObjectToBlob object2Blob;
 
    @Inject
-   public BindCFObjectToPayload(ObjectToBlob object2Blob,
-            BindUserMetadataToHeadersWithPrefix mdBinder) {
+   public BindCFObjectToPayload(ObjectToBlob object2Blob, BindUserMetadataToHeadersWithPrefix mdBinder) {
       this.mdBinder = mdBinder;
       this.object2Blob = object2Blob;
    }
 
    public void bindToRequest(HttpRequest request, Object payload) {
       CFObject object = (CFObject) payload;
-      if (object.getPayload().getContentType() == null)
-         object.getPayload().setContentType(MediaType.APPLICATION_OCTET_STREAM);
-      if (object.getPayload().getContentLength() != null
-               && object.getPayload().getContentLength() >= 0) {
-         checkArgument(object.getPayload().getContentLength() <= 5l * 1024 * 1024 * 1024,
+      if (object.getPayload().getContentMetadata().getContentType() == null)
+         object.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+      if (object.getPayload().getContentMetadata().getContentLength() != null
+               && object.getPayload().getContentMetadata().getContentLength() >= 0) {
+         checkArgument(object.getPayload().getContentMetadata().getContentLength() <= 5l * 1024 * 1024 * 1024,
                   "maximum size for put object is 5GB");
       } else {
          // Enable "chunked"/"streamed" data, where the size needn't be known in advance.
@@ -58,5 +58,4 @@ public class BindCFObjectToPayload implements Binder {
       }
       mdBinder.bindToRequest(request, object2Blob.apply(object));
    }
-
 }

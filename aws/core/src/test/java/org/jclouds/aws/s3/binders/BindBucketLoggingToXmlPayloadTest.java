@@ -57,7 +57,7 @@ public class BindBucketLoggingToXmlPayloadTest  extends BaseHandlerTest {
                .getInstance(BindBucketLoggingToXmlPayload.class);
 
       binder.bindToRequest(request, bucketLogging);
-      assertEquals(request.getPayload().getContentType(), "text/xml");
+      assertEquals(request.getPayload().getContentMetadata().getContentType(), "text/xml");
       assertEquals(request.getPayload().getRawContent(), expected);
 
    }

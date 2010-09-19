@@ -109,19 +109,19 @@ public class Payloads {
    public static Payload calculateMD5(Payload payload, MessageDigest md5) throws IOException {
       checkNotNull(payload, "payload");
       if (!payload.isRepeatable()) {
-         String oldContentType = payload.getContentType();
+         String oldContentType = payload.getContentMetadata().getContentType();
          Payload oldPayload = payload;
          try {
             payload = newByteArrayPayload(toByteArray(payload));
          } finally {
             oldPayload.release();
          }
-         payload.setContentType(oldContentType);
+         payload.getContentMetadata().setContentType(oldContentType);
       }
-      payload.setContentMD5(CryptoStreams.digest(payload, md5));
+      payload.getContentMetadata().setContentMD5(CryptoStreams.digest(payload, md5));
       return payload;
    }
-   
+
    /**
     * Uses default md5 generator.
     * 

@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.azure.storage.blob.domain.internal.MutableBlobPropertiesImpl;
+import org.jclouds.io.MutableContentMetadata;
 
 import com.google.inject.ImplementedBy;
 
@@ -54,30 +55,9 @@ public interface MutableBlobProperties extends BlobProperties {
     */
    void setETag(String eTag);
 
-   /**
-    * @see ListableContainerProperties#getContentLength
-    */
-   void setContentLength(Long size);
+   MutableContentMetadata getContentMetadata();
 
-   /**
-    * @see ListableContainerProperties#getContentMD5
-    */
-   void setContentMD5(byte[] md5);
-
-   /**
-    * @see ListableContainerProperties#getContentType
-    */
-   void setContentType(String contentType);
-
-   /**
-    * @see ListableContainerProperties#getContentEncoding
-    */
-   void setContentEncoding(String contentEncoding);
-
-   /**
-    * @see ListableContainerProperties#getContentLanguage
-    */
-   void setContentLanguage(String contentLanguage);
+   void setContentMetadata(MutableContentMetadata md);
 
    /**
     * @see ListableContainerProperties#getMetadata

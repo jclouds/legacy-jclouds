@@ -28,8 +28,6 @@ import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.http.internal.PayloadEnclosingImpl;
 import org.jclouds.io.Payload;
-import org.jclouds.io.PayloadEnclosing;
-import org.jclouds.io.payloads.DelegatingPayload;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -59,15 +57,13 @@ public class S3ObjectImpl extends PayloadEnclosingImpl implements S3Object, Comp
       return this.accessControlList;
    }
 
-   private final MutableObjectMetadata _metadata;
-   private final SetPayloadPropertiesMutableObjectMetadata metadata;
+   private final MutableObjectMetadata metadata;
    private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
 
    @Inject
    public S3ObjectImpl(MutableObjectMetadata metadata) {
       super();
-      this.metadata = linkMetadataToThis(metadata);
-      this._metadata = this.metadata.getDelegate();
+      this.metadata = metadata;
    }
 
    /**
@@ -108,7 +104,7 @@ public class S3ObjectImpl extends PayloadEnclosingImpl implements S3Object, Comp
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((_metadata == null) ? 0 : _metadata.hashCode());
+      result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
       return result;
    }
 
@@ -121,85 +117,23 @@ public class S3ObjectImpl extends PayloadEnclosingImpl implements S3Object, Comp
       if (getClass() != obj.getClass())
          return false;
       S3ObjectImpl other = (S3ObjectImpl) obj;
-      if (_metadata == null) {
-         if (other._metadata != null)
+      if (metadata == null) {
+         if (other.metadata != null)
             return false;
-      } else if (!_metadata.equals(other._metadata))
+      } else if (!metadata.equals(other.metadata))
          return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "[metadata=" + _metadata + "]";
+      return "[metadata=" + metadata + "]";
    }
 
    @Override
    public void setPayload(Payload data) {
-      linkPayloadToMetadata(data);
-   }
-
-   /**
-    * metadata link the new payload to the metadata object so that when content-related metadata is
-    * updated on the payload, it is also copied the metadata object.
-    */
-   void linkPayloadToMetadata(Payload data) {
-      if (data instanceof DelegatingPayload)
-         super.setPayload(new SetMetadataPropertiesPayload(DelegatingPayload.class.cast(data)
-                  .getDelegate(), _metadata));
-      else
-         super.setPayload(new SetMetadataPropertiesPayload(data, _metadata));
-   }
-
-   static class SetMetadataPropertiesPayload extends DelegatingPayload {
-
-      private transient final MutableObjectMetadata metadata;
-
-      public SetMetadataPropertiesPayload(Payload delegate, MutableObjectMetadata metadata) {
-         super(delegate);
-         this.metadata = checkNotNull(metadata, "metadata");
-         setContentType(metadata.getContentType());
-      }
-
-      @Override
-      public void setContentType(String md5) {
-         super.setContentType(md5);
-         metadata.setContentType(md5);
-      }
-
-   }
-
-   /**
-    * link the metadata object to this so that when content-related metadata is updated, it is also
-    * copied the currentpayload object.
-    */
-   SetPayloadPropertiesMutableObjectMetadata linkMetadataToThis(MutableObjectMetadata metadata) {
-      return metadata instanceof DelegatingMutableObjectMetadata ? new SetPayloadPropertiesMutableObjectMetadata(
-               DelegatingMutableObjectMetadata.class.cast(metadata).getDelegate(), this)
-               : new SetPayloadPropertiesMutableObjectMetadata(metadata, this);
-   }
-
-   static class SetPayloadPropertiesMutableObjectMetadata extends DelegatingMutableObjectMetadata {
-      /** The serialVersionUID */
-      private static final long serialVersionUID = -5072270546219814521L;
-      private transient final PayloadEnclosing object;
-
-      public SetPayloadPropertiesMutableObjectMetadata(MutableObjectMetadata delegate,
-               PayloadEnclosing object) {
-         super(delegate);
-         this.object = object;
-      }
-
-      @Override
-      public void setContentType(String type) {
-         super.setContentType(type);
-         if (canSetPayload())
-            object.getPayload().setContentType(type);
-      }
-
-      private boolean canSetPayload() {
-         return object != null && object.getPayload() != null;
-      }
+      super.setPayload(data);
+      metadata.setContentMetadata(data.getContentMetadata());
    }
 
 }

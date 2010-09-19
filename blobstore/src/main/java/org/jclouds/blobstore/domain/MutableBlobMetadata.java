@@ -19,9 +19,8 @@
 
 package org.jclouds.blobstore.domain;
 
-import javax.annotation.Nullable;
-
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
+import org.jclouds.io.MutableContentMetadata;
 
 import com.google.inject.ImplementedBy;
 
@@ -32,22 +31,8 @@ import com.google.inject.ImplementedBy;
  */
 @ImplementedBy(MutableBlobMetadataImpl.class)
 public interface MutableBlobMetadata extends BlobMetadata, MutableStorageMetadata {
+   MutableContentMetadata getContentMetadata();
 
-   /**
-    * A standard MIME type describing the format of the contents. If none is
-    * provided, the default is binary/octet-stream.
-    * 
-    * @see <a href=
-    *      "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.17." />
-    */
-   void setContentType(@Nullable String type);
-
-   void setContentMD5(@Nullable byte[] md5);
-
-   void setContentDisposition(@Nullable String contentDisposition);
-
-   void setContentEncoding(@Nullable String contentEncoding);
-
-   void setContentLanguage(@Nullable String contentLanguage);
+   void setContentMetadata(MutableContentMetadata md);
 
 }

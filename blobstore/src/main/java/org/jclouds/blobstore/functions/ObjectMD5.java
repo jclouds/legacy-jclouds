@@ -49,13 +49,13 @@ public class ObjectMD5 implements Function<Object, byte[]> {
          object = blobFactory.create(null);
          object.setPayload(Payloads.newPayload(from));
       }
-      if (object.getMetadata().getContentMD5() == null)
+      if (object.getMetadata().getContentMetadata().getContentMD5() == null)
          try {
             Payloads.calculateMD5(object, crypto.md5());
          } catch (IOException e) {
             Throwables.propagate(e);
          }
-      return object.getPayload().getContentMD5();
+      return object.getPayload().getContentMetadata().getContentMD5();
    }
 
 }

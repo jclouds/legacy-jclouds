@@ -79,8 +79,8 @@ public class ParseBlobFromHeadersAndHttpContentTest {
                metadataParser, blobProvider);
 
       HttpResponse response = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
-      response.getPayload().setContentType(MediaType.APPLICATION_JSON);
-      response.getPayload().setContentLength(10485760l);
+      response.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_JSON);
+      response.getPayload().getContentMetadata().setContentLength(10485760l);
       response.getHeaders().put("Content-Range", "0-10485759/20232760");
 
       MutableBlobMetadata meta = blobMetadataProvider.get();
@@ -88,8 +88,7 @@ public class ParseBlobFromHeadersAndHttpContentTest {
       replay(metadataParser);
 
       Blob object = callable.apply(response);
-      assertEquals(object.getPayload().getContentLength(), new Long(10485760));
-      assertEquals(object.getMetadata().getSize(), null);// TODO
+      assertEquals(object.getPayload().getContentMetadata().getContentLength(), new Long(10485760));
       assertEquals(object.getAllHeaders().get("Content-Range"), Collections
                .singletonList("0-10485759/20232760"));
 

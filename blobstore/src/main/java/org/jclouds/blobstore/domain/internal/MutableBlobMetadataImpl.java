@@ -23,6 +23,9 @@ import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
+import org.jclouds.http.HttpUtils;
+import org.jclouds.io.MutableContentMetadata;
+import org.jclouds.io.payloads.BaseMutableContentMetadata;
 
 /**
  * System and user Metadata for the {@link Blob}.
@@ -32,115 +35,34 @@ import org.jclouds.blobstore.domain.StorageType;
 public class MutableBlobMetadataImpl extends MutableStorageMetadataImpl implements MutableBlobMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = -5932618957134612231L;
-
-   private String contentType;
-   private String contentDisposition;
-   private String contentEncoding;
-   private String contentLanguage;
-   private byte[] contentMD5;
+   private MutableContentMetadata contentMetadata;
 
    public MutableBlobMetadataImpl() {
       super();
       this.setType(StorageType.BLOB);
+      this.contentMetadata = new BaseMutableContentMetadata();
    }
 
    public MutableBlobMetadataImpl(BlobMetadata from) {
       super(from);
-      this.contentType = from.getContentType();
-      this.contentDisposition = from.getContentDisposition();
-      this.contentEncoding = from.getContentEncoding();
-      this.contentLanguage = from.getContentLanguage();
-      this.contentMD5 = from.getContentMD5();
+      this.contentMetadata = new BaseMutableContentMetadata();
+      HttpUtils.copy(from.getContentMetadata(), this.contentMetadata);
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public String getContentType() {
-      return contentType;
+   public MutableContentMetadata getContentMetadata() {
+      return contentMetadata;
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public void setContentType(String contentType) {
-      this.contentType = contentType;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentDisposition() {
-      return contentDisposition;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentDisposition(String contentDisposition) {
-      this.contentDisposition = contentDisposition;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentEncoding() {
-      return contentEncoding;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentEncoding(String contentEncoding) {
-      this.contentEncoding = contentEncoding;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentLanguage() {
-      return contentLanguage;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentLanguage(String contentLanguage) {
-      this.contentLanguage = contentLanguage;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public byte[] getContentMD5() {
-      if (contentMD5 != null) {
-         byte[] retval = new byte[contentMD5.length];
-         System.arraycopy(this.contentMD5, 0, retval, 0, contentMD5.length);
-         return retval;
-      } else {
-         return null;
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentMD5(byte[] md5) {
-      if (md5 != null) {
-         byte[] retval = new byte[md5.length];
-         System.arraycopy(md5, 0, retval, 0, md5.length);
-         this.contentMD5 = md5;
-      }
+   public void setContentMetadata(MutableContentMetadata contentMetadata) {
+      this.contentMetadata = contentMetadata;
    }
 
 }

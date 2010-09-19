@@ -270,7 +270,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
    protected String addBlobToContainer(String sourceContainer, String key) {
       S3Object sourceObject = getApi().newS3Object();
       sourceObject.getMetadata().setKey(key);
-      sourceObject.getMetadata().setContentType("text/xml");
+      sourceObject.getMetadata().getContentMetadata().setContentType("text/xml");
       sourceObject.setPayload(TEST_STRING);
       return getApi().putObject(sourceContainer, sourceObject);
    }
@@ -291,7 +291,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
       object.getMetadata().setKey(key);
       object.setPayload(TEST_STRING);
       object.getMetadata().setCacheControl("no-cache");
-      object.getMetadata().setContentDisposition("attachment; filename=hello.txt");
+      object.getMetadata().getContentMetadata().setContentDisposition("attachment; filename=hello.txt");
       String containerName = getContainerName();
       try {
          getApi().putObject(containerName, object);
@@ -299,7 +299,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
          S3Object newObject = validateObject(containerName, key);
 
          assertEquals(newObject.getMetadata().getCacheControl(), "no-cache");
-         assertEquals(newObject.getMetadata().getContentDisposition(),
+         assertEquals(newObject.getMetadata().getContentMetadata().getContentDisposition(),
                   "attachment; filename=hello.txt");
       } finally {
          returnContainer(containerName);
@@ -313,13 +313,13 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
       S3Object object = getApi().newS3Object();
       object.getMetadata().setKey(key);
       object.setPayload(TEST_STRING);
-      object.getMetadata().setContentEncoding("x-compress");
+      object.getMetadata().getContentMetadata().setContentEncoding("x-compress");
       String containerName = getContainerName();
       try {
          getApi().putObject(containerName, object);
          S3Object newObject = validateObject(containerName, key);
 
-         assertEquals(newObject.getMetadata().getContentEncoding(), "x-compress");
+         assertEquals(newObject.getMetadata().getContentMetadata().getContentEncoding(), "x-compress");
       } finally {
          returnContainer(containerName);
       }

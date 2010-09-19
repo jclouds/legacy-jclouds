@@ -110,8 +110,8 @@ public class SignRequestTest {
    public HttpRequest newRequest() {
       HttpRequest request = new HttpRequest("POST", URI.create("http://localhost/rest/objects"));
       request.setPayload("");
-      request.getPayload().setContentLength(4286l);
-      request.getPayload().setContentType(MediaType.APPLICATION_OCTET_STREAM);
+      request.getPayload().getContentMetadata().setContentLength(4286l);
+      request.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
       request.getHeaders().put(AtmosStorageHeaders.LISTABLE_META, "part4/part7/part8=quick");
       request.getHeaders().put(AtmosStorageHeaders.META, "part1=buy");

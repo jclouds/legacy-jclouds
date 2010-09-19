@@ -19,83 +19,20 @@
 
 package org.jclouds.atmosonline.saas.domain;
 
-import javax.ws.rs.core.MediaType;
+import org.jclouds.atmosonline.saas.domain.internal.DelegatingMutableContentMetadata;
+
+import com.google.inject.ImplementedBy;
 
 /**
  * metadata of the object
  * 
  * @author Adrian Cole
  */
-public class MutableContentMetadata {
+@ImplementedBy(DelegatingMutableContentMetadata.class)
+public interface MutableContentMetadata extends org.jclouds.io.MutableContentMetadata {
 
-   private String name;
-   private Long contentLength;
-   private String contentType = MediaType.APPLICATION_OCTET_STREAM;
-   private byte[] contentMD5;
+   public String getName();
 
-   public String getName() {
-      return name;
-   }
-
-   public void setName(String name) {
-      this.name = name;
-   }
-
-   /**
-    * Returns the total size of the downloaded object, or the chunk that's available.
-    * <p/>
-    * Chunking is only used when org.jclouds.http.GetOptions is called with options like tail,
-    * range, or startAt.
-    * 
-    * @return the length in bytes that can be be obtained from {@link #getInput()}
-    * @see org.jclouds.http.HttpHeaders#CONTENT_LENGTH
-    * @see GetObjectOptions
-    */
-   public Long getContentLength() {
-      return contentLength;
-   }
-
-   /**
-    * @see #getContentLength
-    */
-   public void setContentLength(Long contentLength) {
-      this.contentLength = contentLength;
-   }
-
-   /**
-    * 
-    * A standard MIME type describing the format of the contents. If none is provided, the default
-    * is binary/octet-stream.
-    * 
-    * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17"/>
-    */
-   public String getContentType() {
-      return contentType;
-   }
-
-   /**
-    * @see #getContentType
-    */
-   public void setContentType(String contentType) {
-      this.contentType = contentType;
-   }
-
-   /**
-    * The 128-bit MD5 digest of the message (without the headers) according to RFC 1864. This header
-    * can be used as a message integrity check to verify that the data is the same data that was
-    * originally sent. Although it is optional, we recommend using the Content-MD5 mechanism as an
-    * end-to-end integrity check.
-    * 
-    */
-   public byte[] getContentMD5() {
-      return contentMD5;
-   }
-
-   /**
-    * @see #getContentMD5
-    */
-   public void setContentMD5(byte[] contentMD5) {
-      this.contentMD5 = contentMD5;
-   }
+   public void setName(String name);
 
 }

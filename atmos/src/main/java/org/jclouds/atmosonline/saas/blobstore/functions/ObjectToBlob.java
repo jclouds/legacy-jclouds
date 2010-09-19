@@ -27,6 +27,7 @@ import javax.inject.Singleton;
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
+import org.jclouds.http.HttpUtils;
 
 import com.google.common.base.Function;
 
@@ -49,9 +50,7 @@ public class ObjectToBlob implements Function<AtmosObject, Blob> {
          return null;
       Blob blob = blobFactory.create(object2BlobMd.apply(from));
       blob.setPayload(checkNotNull(from.getPayload(), "payload: " + from));
-      if (from.getContentMetadata().getContentLength() != null)
-         blob.getMetadata().setSize(from.getContentMetadata().getContentLength());
-      blob.getMetadata().setContentMD5(from.getSystemMetadata().getContentMD5());
+      HttpUtils.copy(from.getContentMetadata(), blob.getPayload().getContentMetadata());
       blob.setAllHeaders(from.getAllHeaders());
       return blob;
    }

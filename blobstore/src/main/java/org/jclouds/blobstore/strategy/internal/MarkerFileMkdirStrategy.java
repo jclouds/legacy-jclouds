@@ -54,7 +54,7 @@ public class MarkerFileMkdirStrategy implements MkdirStrategy {
    public void execute(String containerName, String directory) {
       Blob blob = connection.newBlob(directory + directorySuffix);
       blob.setPayload(Payloads.newByteArrayPayload(new byte[] {}));
-      blob.getPayload().setContentType("application/directory");
+      blob.getPayload().getContentMetadata().setContentType("application/directory");
       blob.getMetadata().setType(StorageType.RELATIVE_PATH);
       connection.putBlob(containerName, blob);
    }

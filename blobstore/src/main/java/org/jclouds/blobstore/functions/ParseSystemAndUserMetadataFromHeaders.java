@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.jclouds.blobstore.util.BlobStoreUtils.getKeyFor;
-import static org.jclouds.http.HttpUtils.attemptToParseSizeAndRangeFromHeaders;
 
 import java.util.Map.Entry;
 
@@ -37,6 +36,7 @@ import org.jclouds.date.DateService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 
@@ -47,7 +47,7 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpResponse, MutableBlobMetadata>,
-      InvocationContext {
+         InvocationContext {
    private final String metadataPrefix;
    private final DateService dateParser;
    private final Provider<MutableBlobMetadata> metadataFactory;
@@ -57,7 +57,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
 
    @Inject
    public ParseSystemAndUserMetadataFromHeaders(Provider<MutableBlobMetadata> metadataFactory, DateService dateParser,
-         @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix, @Named(PROPERTY_API_VERSION) String apiVersion) {
+            @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix, @Named(PROPERTY_API_VERSION) String apiVersion) {
       this.metadataFactory = metadataFactory;
       this.dateParser = dateParser;
       this.metadataPrefix = metadataPrefix;
@@ -68,11 +68,9 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
       String objectKey = getKeyFor(request, from);
       MutableBlobMetadata to = metadataFactory.get();
       to.setName(objectKey);
-      setContentTypeOrThrowException(from, to);
+      HttpUtils.copy(from.getPayload().getContentMetadata(), to.getContentMetadata());
       addETagTo(from, to);
-      addContentMD5To(from, to);
       parseLastModifiedOrThrowException(from, to);
-      setContentLength(from, to);
       addUserMetadataTo(from, to);
       return to;
    }
@@ -82,13 +80,8 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
       for (Entry<String, String> header : from.getHeaders().entries()) {
          if (header.getKey() != null && header.getKey().startsWith(metadataPrefix))
             metadata.getUserMetadata().put((header.getKey().substring(metadataPrefix.length())).toLowerCase(),
-                  header.getValue());
+                     header.getValue());
       }
-   }
-
-   @VisibleForTesting
-   void setContentLength(HttpResponse from, MutableBlobMetadata metadata) throws HttpException {
-      metadata.setSize(attemptToParseSizeAndRangeFromHeaders(from));
    }
 
    @VisibleForTesting
@@ -113,21 +106,6 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
       if (metadata.getETag() == null && eTag != null) {
          metadata.setETag(eTag);
       }
-   }
-
-   @VisibleForTesting
-   protected void addContentMD5To(HttpResponse from, MutableBlobMetadata metadata) {
-      if (from.getPayload() != null)
-         metadata.setContentMD5(from.getPayload().getContentMD5());
-   }
-
-   @VisibleForTesting
-   void setContentTypeOrThrowException(HttpResponse from, MutableBlobMetadata metadata) throws HttpException {
-      if (from.getPayload() != null)
-         metadata.setContentType(from.getPayload().getContentType());
-      if (from.getStatusCode() != 204 && (metadata.getContentType() == null
-            || "application/unknown".equals(metadata.getContentType())))
-         throw new HttpException(HttpHeaders.CONTENT_TYPE + " not found in headers");
    }
 
    public ParseSystemAndUserMetadataFromHeaders setContext(HttpRequest request) {

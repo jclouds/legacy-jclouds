@@ -22,7 +22,10 @@ package org.jclouds.atmosonline.saas.blobstore.functions;
 import javax.inject.Singleton;
 
 import org.jclouds.atmosonline.saas.domain.MutableContentMetadata;
+import org.jclouds.atmosonline.saas.domain.internal.DelegatingMutableContentMetadata;
 import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
+import org.jclouds.http.HttpUtils;
 
 import com.google.common.base.Function;
 
@@ -32,13 +35,9 @@ import com.google.common.base.Function;
 @Singleton
 public class BlobToContentMetadata implements Function<BlobMetadata, MutableContentMetadata> {
    public MutableContentMetadata apply(BlobMetadata base) {
-      MutableContentMetadata to = new MutableContentMetadata();
-      to.setContentType(base.getContentType());
-      to.setContentMD5(base.getContentMD5());
-      to.setName(base.getName());
-      if (base.getSize() != null)
-         to.setContentLength(base.getSize());
-      return to;
+      MutableBlobMetadataImpl to = new MutableBlobMetadataImpl();
+      HttpUtils.copy(base.getContentMetadata(), to.getContentMetadata());
+      return new DelegatingMutableContentMetadata(base.getName(), to.getContentMetadata());
    }
 
 }

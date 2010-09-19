@@ -22,6 +22,7 @@ package org.jclouds.rackspace.cloudfiles.domain.internal;
 import java.util.Date;
 import java.util.Map;
 
+import org.jclouds.io.payloads.BaseMutableContentMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 
@@ -30,7 +31,10 @@ import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
  * @author Adrian Cole
  * 
  */
-public class DelegatingMutableObjectInfoWithMetadata implements MutableObjectInfoWithMetadata {
+public class DelegatingMutableObjectInfoWithMetadata extends BaseMutableContentMetadata implements
+         MutableObjectInfoWithMetadata {
+   /** The serialVersionUID */
+   private static final long serialVersionUID = 5280642704532078500L;
    private final MutableObjectInfoWithMetadata delegate;
 
    public DelegatingMutableObjectInfoWithMetadata(MutableObjectInfoWithMetadata delegate) {
@@ -38,17 +42,7 @@ public class DelegatingMutableObjectInfoWithMetadata implements MutableObjectInf
    }
 
    @Override
-   public int compareTo(ObjectInfo o) {
-      return delegate.compareTo(o);
-   }
-
-   @Override
-   public boolean equals(Object obj) {
-      return delegate.equals(obj);
-   }
-
-   @Override
-   public Long getBytes() {
+   public Long getContentLength() {
       return delegate.getBytes();
    }
 
@@ -58,23 +52,8 @@ public class DelegatingMutableObjectInfoWithMetadata implements MutableObjectInf
    }
 
    @Override
-   public byte[] getHash() {
+   public byte[] getContentMD5() {
       return delegate.getHash();
-   }
-
-   @Override
-   public Date getLastModified() {
-      return delegate.getLastModified();
-   }
-
-   @Override
-   public Map<String, String> getMetadata() {
-      return delegate.getMetadata();
-   }
-
-   @Override
-   public String getName() {
-      return delegate.getName();
    }
 
    @Override
@@ -83,13 +62,32 @@ public class DelegatingMutableObjectInfoWithMetadata implements MutableObjectInf
    }
 
    @Override
-   public void setBytes(Long bytes) {
+   public void setContentLength(Long bytes) {
       delegate.setBytes(bytes);
    }
 
    @Override
    public void setContentType(String contentType) {
       delegate.setContentType(contentType);
+   }
+
+   @Override
+   public void setContentMD5(byte[] hash) {
+      delegate.setHash(hash);
+   }
+
+   public MutableObjectInfoWithMetadata getDelegate() {
+      return delegate;
+   }
+
+   @Override
+   public Map<String, String> getMetadata() {
+      return delegate.getMetadata();
+   }
+
+   @Override
+   public void setBytes(Long bytes) {
+      delegate.setBytes(bytes);
    }
 
    @Override
@@ -108,12 +106,27 @@ public class DelegatingMutableObjectInfoWithMetadata implements MutableObjectInf
    }
 
    @Override
-   public String toString() {
-      return delegate.toString();
+   public Long getBytes() {
+     return  delegate.getBytes();
    }
 
-   public MutableObjectInfoWithMetadata getDelegate() {
-      return delegate;
+   @Override
+   public byte[] getHash() {
+      return delegate.getHash();
    }
 
+   @Override
+   public Date getLastModified() {
+      return delegate.getLastModified();
+   }
+
+   @Override
+   public String getName() {
+      return delegate.getName();
+   }
+
+   @Override
+   public int compareTo(ObjectInfo o) {
+      return delegate.compareTo(o);
+   }
 }

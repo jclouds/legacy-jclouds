@@ -45,6 +45,6 @@ public class BindPayerToXmlPayload implements Binder {
                         "<RequestPaymentConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Payer>%s</Payer></RequestPaymentConfiguration>",
                         ((Payer) toBind).value());
       request.setPayload(text);
-      request.getPayload().setContentType(MediaType.TEXT_XML);
+      request.getPayload().getContentMetadata().setContentType(MediaType.TEXT_XML);
    }
 }

@@ -31,6 +31,7 @@ import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
 import org.jclouds.blobstore.binders.BindUserMetadataToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 import org.testng.annotations.Test;
 
@@ -55,9 +56,11 @@ public class BindAzureBlobToPayloadTest {
       Blob blob = createMock(Blob.class);
       MutableBlobProperties md = createMock(MutableBlobProperties.class);
       Multimap<String, String> headers = createMock(Multimap.class);
+      MutableContentMetadata content = createMock(MutableContentMetadata.class);
 
       expect(object.getPayload()).andReturn(payload).atLeastOnce();
-      expect(payload.getContentLength()).andReturn(1024l).atLeastOnce();
+      expect(payload.getContentMetadata()).andReturn(content).atLeastOnce();
+      expect(content.getContentLength()).andReturn(1024l).atLeastOnce();
       expect(object2Blob.apply(object)).andReturn(blob);
       mdBinder.bindToRequest(request, blob);
       expect(object.getProperties()).andReturn(md).atLeastOnce();
@@ -65,10 +68,8 @@ public class BindAzureBlobToPayloadTest {
       expect(request.getHeaders()).andReturn(headers).atLeastOnce();
       expect(headers.put("x-ms-blob-type", "BlockBlob")).andReturn(true);
 
-      expect(md.getContentLanguage()).andReturn(null).atLeastOnce();
-      expect(md.getContentEncoding()).andReturn(null).atLeastOnce();
-
       replay(headers);
+      replay(content);
       replay(payload);
       replay(mdBinder);
       replay(object2Blob);
@@ -82,6 +83,7 @@ public class BindAzureBlobToPayloadTest {
       binder.bindToRequest(request, object);
 
       verify(headers);
+      verify(content);
       verify(payload);
       verify(mdBinder);
       verify(object2Blob);
@@ -104,9 +106,11 @@ public class BindAzureBlobToPayloadTest {
       Blob blob = createMock(Blob.class);
       MutableBlobProperties md = createMock(MutableBlobProperties.class);
       Multimap<String, String> headers = createMock(Multimap.class);
+      MutableContentMetadata content = createMock(MutableContentMetadata.class);
 
       expect(object.getPayload()).andReturn(payload).atLeastOnce();
-      expect(payload.getContentLength()).andReturn(1024l).atLeastOnce();
+      expect(payload.getContentMetadata()).andReturn(content).atLeastOnce();
+      expect(content.getContentLength()).andReturn(1024l).atLeastOnce();
       expect(object2Blob.apply(object)).andReturn(blob);
       mdBinder.bindToRequest(request, blob);
       expect(object.getProperties()).andReturn(md).atLeastOnce();
@@ -114,14 +118,9 @@ public class BindAzureBlobToPayloadTest {
       expect(request.getHeaders()).andReturn(headers).atLeastOnce();
       expect(headers.put("x-ms-blob-type", "BlockBlob")).andReturn(true);
 
-      expect(md.getContentLanguage()).andReturn("en").atLeastOnce();
-      expect(headers.put("Content-Language", "en")).andReturn(true);
-
-      expect(md.getContentEncoding()).andReturn("gzip").atLeastOnce();
-      expect(headers.put("Content-Encoding", "gzip")).andReturn(true);
-
       replay(headers);
       replay(payload);
+      replay(content);
       replay(mdBinder);
       replay(object2Blob);
       replay(request);
@@ -135,6 +134,7 @@ public class BindAzureBlobToPayloadTest {
 
       verify(headers);
       verify(payload);
+      verify(content);
       verify(mdBinder);
       verify(object2Blob);
       verify(request);
@@ -156,9 +156,11 @@ public class BindAzureBlobToPayloadTest {
       Blob blob = createMock(Blob.class);
       MutableBlobProperties md = createMock(MutableBlobProperties.class);
       Multimap<String, String> headers = createMock(Multimap.class);
+      MutableContentMetadata content = createMock(MutableContentMetadata.class);
 
       expect(object.getPayload()).andReturn(payload).atLeastOnce();
-      expect(payload.getContentLength()).andReturn(5368709121l).atLeastOnce();
+      expect(payload.getContentMetadata()).andReturn(content).atLeastOnce();
+      expect(content.getContentLength()).andReturn(5368709121l).atLeastOnce();
       expect(object2Blob.apply(object)).andReturn(blob);
       mdBinder.bindToRequest(request, blob);
       expect(object.getProperties()).andReturn(md).atLeastOnce();
@@ -166,11 +168,13 @@ public class BindAzureBlobToPayloadTest {
       expect(request.getHeaders()).andReturn(headers).atLeastOnce();
       expect(headers.put("x-ms-blob-type", "BlockBlob")).andReturn(true);
 
-      expect(md.getContentLanguage()).andReturn(null).atLeastOnce();
-      expect(md.getContentEncoding()).andReturn(null).atLeastOnce();
+      expect(content.getContentLanguage()).andReturn(null).atLeastOnce();
+      expect(content.getContentEncoding()).andReturn(null).atLeastOnce();
 
       replay(headers);
       replay(payload);
+      replay(content);
+
       replay(mdBinder);
       replay(object2Blob);
       replay(request);
@@ -178,12 +182,12 @@ public class BindAzureBlobToPayloadTest {
       replay(blob);
       replay(md);
 
-      BindAzureBlobToPayload bindAzureBlobToPayload = new BindAzureBlobToPayload(object2Blob,
-               mdBinder);
+      BindAzureBlobToPayload bindAzureBlobToPayload = new BindAzureBlobToPayload(object2Blob, mdBinder);
 
       bindAzureBlobToPayload.bindToRequest(request, object);
 
       verify(headers);
+      verify(content);
       verify(payload);
       verify(mdBinder);
       verify(object2Blob);

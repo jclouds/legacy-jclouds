@@ -20,15 +20,22 @@
 package org.jclouds.atmosonline.saas.domain.internal;
 
 import org.jclouds.atmosonline.saas.domain.MutableContentMetadata;
+import org.jclouds.io.payloads.BaseMutableContentMetadata;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class DelegatingMutableContentMetadata extends MutableContentMetadata {
-   private final MutableContentMetadata delegate;
+public class DelegatingMutableContentMetadata implements MutableContentMetadata {
+   private String name;
+   private final org.jclouds.io.MutableContentMetadata delegate;
 
-   public DelegatingMutableContentMetadata(MutableContentMetadata delegate) {
+   public DelegatingMutableContentMetadata() {
+      this(null, new BaseMutableContentMetadata());
+   }
+
+   public DelegatingMutableContentMetadata(String name, org.jclouds.io.MutableContentMetadata delegate) {
+      this.name = name;
       this.delegate = delegate;
    }
 
@@ -49,7 +56,7 @@ public class DelegatingMutableContentMetadata extends MutableContentMetadata {
 
    @Override
    public String getName() {
-      return delegate.getName();
+      return name;
    }
 
    @Override
@@ -69,26 +76,78 @@ public class DelegatingMutableContentMetadata extends MutableContentMetadata {
 
    @Override
    public void setName(String name) {
-      delegate.setName(name);
+      this.name = name;
    }
 
    @Override
    public boolean equals(Object obj) {
-      return delegate.equals(obj);
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      DelegatingMutableContentMetadata other = (DelegatingMutableContentMetadata) obj;
+      if (delegate == null) {
+         if (other.delegate != null)
+            return false;
+      } else if (!delegate.equals(other.delegate))
+         return false;
+      if (name == null) {
+         if (other.name != null)
+            return false;
+      } else if (!name.equals(other.name))
+         return false;
+      return true;
    }
 
    @Override
    public int hashCode() {
-      return delegate.hashCode();
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((delegate == null) ? 0 : delegate.hashCode());
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      return result;
    }
 
    @Override
    public String toString() {
-      return delegate.toString();
+      return "[name=" + name + ", delegate=" + delegate + "]";
    }
 
-   public MutableContentMetadata getDelegate() {
+   public org.jclouds.io.MutableContentMetadata getDelegate() {
       return delegate;
+   }
+
+   @Override
+   public void setContentDisposition(String contentDisposition) {
+      delegate.setContentDisposition(contentDisposition);
+
+   }
+
+   @Override
+   public void setContentEncoding(String contentEncoding) {
+      delegate.setContentEncoding(contentEncoding);
+   }
+
+   @Override
+   public void setContentLanguage(String contentLanguage) {
+      delegate.setContentLanguage(contentLanguage);
+   }
+
+   @Override
+   public String getContentDisposition() {
+      return delegate.getContentDisposition();
+   }
+
+   @Override
+   public String getContentEncoding() {
+      return delegate.getContentEncoding();
+   }
+
+   @Override
+   public String getContentLanguage() {
+      return delegate.getContentLanguage();
    }
 
 }

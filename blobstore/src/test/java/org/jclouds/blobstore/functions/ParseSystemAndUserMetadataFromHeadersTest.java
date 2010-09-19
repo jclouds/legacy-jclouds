@@ -63,7 +63,7 @@ public class ParseSystemAndUserMetadataFromHeadersTest {
    void setUp() {
 
       parser = new ParseSystemAndUserMetadataFromHeaders(blobMetadataProvider, new SimpleDateFormatDateService(),
-            "prefix", "default");
+               "prefix", "default");
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
@@ -75,9 +75,9 @@ public class ParseSystemAndUserMetadataFromHeadersTest {
    @Test
    public void testApplySetsKey() {
       HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
-      from.getPayload().setContentType(MediaType.APPLICATION_JSON);
+      from.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_JSON);
       from.getHeaders().put(HttpHeaders.LAST_MODIFIED, "Wed, 09 Sep 2009 19:50:23 GMT");
-      from.getPayload().setContentLength(100l);
+      from.getPayload().getContentMetadata().setContentLength(100l);
       BlobMetadata metadata = parser.apply(from);
       assertEquals(metadata.getName(), "key");
    }
@@ -90,45 +90,13 @@ public class ParseSystemAndUserMetadataFromHeadersTest {
    }
 
    @Test
-   public void testSetContentLength() {
-      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
-      from.getPayload().setContentLength(100l);
-      MutableBlobMetadata metadata = blobMetadataProvider.get();
-      parser.setContentLength(from, metadata);
-      assertEquals(metadata.getSize(), new Long(100));
-   }
-
-   public void testSetContentLengthNoHeader() {
-      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
-      MutableBlobMetadata metadata = blobMetadataProvider.get();
-      parser.setContentLength(from, metadata);
-      assertEquals(metadata.getSize(), new Long(0));
-   }
-
-   @Test
-   public void testSetContentType() {
-      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
-      from.getPayload().setContentType(MediaType.APPLICATION_JSON);
-      MutableBlobMetadata metadata = blobMetadataProvider.get();
-      parser.setContentTypeOrThrowException(from, metadata);
-      assertEquals(metadata.getContentType(), MediaType.APPLICATION_JSON);
-   }
-
-   @Test(expectedExceptions = HttpException.class)
-   public void testSetContentTypeException() {
-      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
-      MutableBlobMetadata metadata = blobMetadataProvider.get();
-      parser.setContentTypeOrThrowException(from, metadata);
-   }
-
-   @Test
    public void testSetLastModified() {
       HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
       from.getHeaders().put(HttpHeaders.LAST_MODIFIED, "Wed, 09 Sep 2009 19:50:23 GMT");
       MutableBlobMetadata metadata = blobMetadataProvider.get();
       parser.parseLastModifiedOrThrowException(from, metadata);
       assertEquals(metadata.getLastModified(), new SimpleDateFormatDateService()
-            .rfc822DateParse("Wed, 09 Sep 2009 19:50:23 GMT"));
+               .rfc822DateParse("Wed, 09 Sep 2009 19:50:23 GMT"));
    }
 
    @Test(expectedExceptions = HttpException.class)

@@ -39,7 +39,6 @@ public class MutableStorageMetadataImpl extends MutableResourceMetadataImpl<Stor
    private static final long serialVersionUID = -280558162576368264L;
 
    private String eTag;
-   private Long size;
    private Date lastModified;
 
    public MutableStorageMetadataImpl() {
@@ -49,7 +48,6 @@ public class MutableStorageMetadataImpl extends MutableResourceMetadataImpl<Stor
    public MutableStorageMetadataImpl(StorageMetadata from) {
       super(from);
       this.eTag = from.getETag();
-      this.size = from.getSize();
       this.lastModified = from.getLastModified();
    }
 
@@ -59,14 +57,6 @@ public class MutableStorageMetadataImpl extends MutableResourceMetadataImpl<Stor
    @Override
    public String getETag() {
       return eTag;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public Long getSize() {
-      return size;
    }
 
    /**
@@ -83,14 +73,6 @@ public class MutableStorageMetadataImpl extends MutableResourceMetadataImpl<Stor
    @Override
    public void setLastModified(Date lastModified) {
       this.lastModified = lastModified;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setSize(Long size) {
-      this.size = size;
    }
 
    /**

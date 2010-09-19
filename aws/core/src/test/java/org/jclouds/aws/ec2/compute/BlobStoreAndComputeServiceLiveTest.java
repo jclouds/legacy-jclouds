@@ -90,7 +90,7 @@ public class BlobStoreAndComputeServiceLiveTest {
    protected void uploadBlob(String container, String name, String script) {
       Blob blob = blobContext.getBlobStore().newBlob(name);
       blob.setPayload(script);
-      blob.getPayload().setContentType("text/plain");
+      blob.getPayload().getContentMetadata().setContentType("text/plain");
       blobContext.getBlobStore().putBlob(container, blob);
    }
 

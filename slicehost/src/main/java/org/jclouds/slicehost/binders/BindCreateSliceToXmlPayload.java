@@ -56,7 +56,7 @@ public class BindCreateSliceToXmlPayload implements MapBinder {
       builder.append("<name>").append(name).append("</name>");
       builder.append("</slice>");
       binder.bindToRequest(request, builder.toString());
-      request.getPayload().setContentType(MediaType.APPLICATION_XML);
+      request.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_XML);
    }
 
    @Override

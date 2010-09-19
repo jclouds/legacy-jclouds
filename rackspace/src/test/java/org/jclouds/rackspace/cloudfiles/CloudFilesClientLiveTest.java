@@ -23,7 +23,6 @@ import static org.jclouds.rackspace.cloudfiles.options.ListContainerOptions.Buil
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -298,10 +297,10 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          String data = "Here is my data";
          String key = "object";
          CFObject object = newCFObject(data, key);
-         byte[] md5 = object.getPayload().getContentMD5();
+         byte[] md5 = object.getPayload().getContentMetadata().getContentMD5();
          String newEtag = getApi().putObject(containerName, object);
          assert newEtag != null;
-         assertEquals(CryptoStreams.hex(md5), CryptoStreams.hex(object.getPayload().getContentMD5()));
+         assertEquals(CryptoStreams.hex(md5), CryptoStreams.hex(object.getPayload().getContentMetadata().getContentMD5()));
 
          // Test HEAD of missing object
          assert getApi().getObjectInfo(containerName, "non-existent-object") == null;

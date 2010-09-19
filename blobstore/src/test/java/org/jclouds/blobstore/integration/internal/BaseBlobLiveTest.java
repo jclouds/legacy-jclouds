@@ -63,12 +63,12 @@ public class BaseBlobLiveTest extends BaseBlobStoreIntegrationTest {
 
       Blob blob = context.getBlobStore().newBlob(name);
       blob.setPayload(input);
-      blob.getPayload().setContentLength(length);
-      blob.getPayload().setContentMD5(md5);
+      blob.getPayload().getContentMetadata().setContentLength(length);
+      blob.getPayload().getContentMetadata().setContentMD5(md5);
       String container = getContainerName();
       try {
          context.getBlobStore().putBlob(container, blob);
-         assertEquals(context.getBlobStore().blobMetadata(container, name).getContentMD5(), md5);
+         assertEquals(context.getBlobStore().blobMetadata(container, name).getContentMetadata().getContentMD5(), md5);
       } finally {
          returnContainer(container);
       }

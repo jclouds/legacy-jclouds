@@ -25,28 +25,29 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.annotation.Nullable;
-
+import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.io.WriteTo;
 
 /**
- * Note that not all services accept streaming payloads. For example, Rackspace
- * CloudFiles accepts streaming while Amazon S3 does not.
+ * Note that not all services accept streaming payloads. For example, Rackspace CloudFiles accepts
+ * streaming while Amazon S3 does not.
  * 
  * @author Adrian Cole
  */
 public class StreamingPayload implements Payload {
-   protected String contentType;
-   protected String contentDisposition;
-   protected String contentEncoding;
-   protected String contentLanguage;
+
    protected transient volatile boolean written;
    protected final WriteTo writeTo;
+   protected MutableContentMetadata contentMetadata;
 
    public StreamingPayload(WriteTo writeTo) {
+      this(writeTo, new BaseMutableContentMetadata());
+   }
+
+   protected StreamingPayload(WriteTo writeTo, MutableContentMetadata contentMetadata) {
       this.writeTo = checkNotNull(writeTo, "writeTo");
-      this.contentType = "application/unknown";
+      this.contentMetadata = checkNotNull(contentMetadata, "contentMetadata");
    }
 
    /**
@@ -71,109 +72,13 @@ public class StreamingPayload implements Payload {
     * {@inheritDoc}
     */
    @Override
-   public Long getContentLength() {
-      return null;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentLength(@Nullable Long contentLength) {
-      throw new UnsupportedOperationException("this payload is for streaming writes only");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public byte[] getContentMD5() {
-      return null;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentMD5(byte[] md5) {
-      throw new UnsupportedOperationException("this payload is for streaming writes only");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentType() {
-      return contentType;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentType(@Nullable String contentType) {
-      this.contentType = contentType;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentDisposition() {
-      return contentDisposition;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentDisposition(@Nullable String contentDisposition) {
-      this.contentDisposition = contentDisposition;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentEncoding() {
-      return contentEncoding;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentEncoding(@Nullable String contentEncoding) {
-      this.contentEncoding = contentEncoding;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentLanguage() {
-      return contentLanguage;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentLanguage(@Nullable String contentLanguage) {
-      this.contentLanguage = contentLanguage;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public void writeTo(OutputStream outstream) throws IOException {
       writeTo.writeTo(outstream);
    }
 
    @Override
    public String toString() {
-      return "[contentType=" + contentType + ", written=" + written + "]";
+      return "[contentMetadata=" + contentMetadata + ", written=" + written + "]";
    }
 
    /**
@@ -188,7 +93,7 @@ public class StreamingPayload implements Payload {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
+      result = prime * result + ((contentMetadata == null) ? 0 : contentMetadata.hashCode());
       return result;
    }
 
@@ -201,10 +106,10 @@ public class StreamingPayload implements Payload {
       if (getClass() != obj.getClass())
          return false;
       StreamingPayload other = (StreamingPayload) obj;
-      if (contentType == null) {
-         if (other.contentType != null)
+      if (contentMetadata == null) {
+         if (other.contentMetadata != null)
             return false;
-      } else if (!contentType.equals(other.contentType))
+      } else if (!contentMetadata.equals(other.contentMetadata))
          return false;
       return true;
    }
@@ -224,4 +129,16 @@ public class StreamingPayload implements Payload {
       release();
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public MutableContentMetadata getContentMetadata() {
+      return contentMetadata;
+   }
+
+   @Override
+   public void setContentMetadata(MutableContentMetadata in) {
+      contentMetadata = in;
+   }
 }

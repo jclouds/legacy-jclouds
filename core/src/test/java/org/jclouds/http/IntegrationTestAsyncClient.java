@@ -111,14 +111,14 @@ public interface IntegrationTestAsyncClient {
    @POST
    @Path("/objects/{id}")
    ListenableFuture<String> postAsInputStream(@PathParam("id") String id,
-         @BinderParam(BindToInputStreamPayload.class) String toPut);
+            @BinderParam(BindToInputStreamPayload.class) String toPut);
 
    static class BindToInputStreamPayload extends BindToStringPayload {
       @Override
       public void bindToRequest(HttpRequest request, Object payload) {
          super.bindToRequest(request, payload);
          request.setPayload(Utils.toInputStream(payload.toString()));
-         request.getPayload().setContentLength((long) payload.toString().getBytes().length);
+         request.getPayload().getContentMetadata().setContentLength((long) payload.toString().getBytes().length);
       }
    }
 
@@ -134,8 +134,7 @@ public interface IntegrationTestAsyncClient {
    @POST
    @Path("/objects/{id}")
    @ResponseParser(ResponsePayload.class)
-   ListenableFuture<Multimap<String, String>> postPayloadAndReturnHeaders(@PathParam("id") String id,
-         Payload payload);
+   ListenableFuture<Multimap<String, String>> postPayloadAndReturnHeaders(@PathParam("id") String id, Payload payload);
 
    @POST
    @Path("/objects/{id}")
@@ -145,7 +144,7 @@ public interface IntegrationTestAsyncClient {
    @POST
    @Path("/objects/{id}/action/{action}")
    ListenableFuture<String> action(@PathParam("id") String id, @PathParam("action") String action,
-         @BinderParam(BindMapToMatrixParams.class) Map<String, String> options);
+            @BinderParam(BindMapToMatrixParams.class) Map<String, String> options);
 
    @GET
    @Path("/objects/{id}")

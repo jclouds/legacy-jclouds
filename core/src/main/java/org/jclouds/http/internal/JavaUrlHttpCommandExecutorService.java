@@ -58,6 +58,7 @@ import org.jclouds.http.HttpUtils;
 import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
+import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
@@ -197,20 +198,21 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
       connection.setRequestProperty(HttpHeaders.USER_AGENT, USER_AGENT);
 
       if (request.getPayload() != null) {
-         if (request.getPayload().getContentMD5() != null)
-            connection.setRequestProperty("Content-MD5", CryptoStreams.base64(request.getPayload().getContentMD5()));
-         if (request.getPayload().getContentType() != null)
-            connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, request.getPayload().getContentType());
-         if (request.getPayload().getContentDisposition() != null)
-            connection.setRequestProperty("Content-Disposition", request.getPayload().getContentDisposition());
-         if (request.getPayload().getContentEncoding() != null)
-            connection.setRequestProperty("Content-Encoding", request.getPayload().getContentEncoding());
-         if (request.getPayload().getContentLanguage() != null)
-            connection.setRequestProperty("Content-Language", request.getPayload().getContentLanguage());
+         MutableContentMetadata md = request.getPayload().getContentMetadata();
+         if (md.getContentMD5() != null)
+            connection.setRequestProperty("Content-MD5", CryptoStreams.base64(md.getContentMD5()));
+         if (md.getContentType() != null)
+            connection.setRequestProperty(HttpHeaders.CONTENT_TYPE, md.getContentType());
+         if (md.getContentDisposition() != null)
+            connection.setRequestProperty("Content-Disposition", md.getContentDisposition());
+         if (md.getContentEncoding() != null)
+            connection.setRequestProperty("Content-Encoding", md.getContentEncoding());
+         if (md.getContentLanguage() != null)
+            connection.setRequestProperty("Content-Language", md.getContentLanguage());
          if (chunked) {
             connection.setChunkedStreamingMode(8196);
          } else {
-            Long length = checkNotNull(request.getPayload().getContentLength(), "payload.getContentLength");
+            Long length = checkNotNull(md.getContentLength(), "payload.getContentLength");
             connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, length.toString());
             connection.setFixedLengthStreamingMode(length.intValue());
          }

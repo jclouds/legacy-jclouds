@@ -25,11 +25,10 @@ import java.net.URI;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpUtils;
 import org.jclouds.http.filters.BasicAuthentication;
 
 /**
@@ -57,12 +56,7 @@ public class TransientBlobRequestSigner implements BlobRequestSigner {
    public HttpRequest signPutBlob(String container, Blob blob) {
       HttpRequest request = new HttpRequest("PUT", URI.create(String.format("http://localhost/%s/%s", container, blob
                .getMetadata().getName())));
-      if (blob.getPayload().getContentLength() != null)
-         request.getHeaders().put(HttpHeaders.CONTENT_LENGTH, blob.getPayload().getContentLength().toString());
-      if (blob.getPayload().getContentType() != null)
-         request.getHeaders().put(HttpHeaders.CONTENT_TYPE, blob.getPayload().getContentType());
-      if (blob.getPayload().getContentMD5() != null)
-         request.getHeaders().put("Content-MD5", CryptoStreams.base64(blob.getPayload().getContentMD5()));
+      HttpUtils.addContentHeadersFromMetadata(blob.getMetadata().getContentMetadata(), request.getHeaders());
       request.setPayload(blob.getPayload());
       basicAuth.filter(request);
       return request;

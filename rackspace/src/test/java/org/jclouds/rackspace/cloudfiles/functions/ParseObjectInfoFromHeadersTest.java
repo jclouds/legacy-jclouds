@@ -66,7 +66,7 @@ public class ParseObjectInfoFromHeadersTest {
       replay(request);
       parser.setContext(request);
       HttpResponse response = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
-      response.getPayload().setContentType("text/plain");
+      response.getPayload().getContentMetadata().setContentType("text/plain");
       response.getHeaders().put("Last-Modified", "Fri, 12 Jun 2007 13:40:18 GMT");
       response.getHeaders().put("Content-Length", "0");
 

@@ -171,7 +171,7 @@ public class SignRequest implements HttpRequestFilter {
    }
 
    private void appendPayloadMetadata(HttpRequest request, StringBuilder buffer) {
-      buffer.append(utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentType()))
+      buffer.append(utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata().getContentType()))
                .append("\n");
    }
 

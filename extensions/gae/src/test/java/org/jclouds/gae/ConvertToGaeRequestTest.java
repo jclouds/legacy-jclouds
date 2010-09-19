@@ -118,6 +118,7 @@ public class ConvertToGaeRequestTest {
    void testConvertRequestInputStreamContent() throws IOException {
       HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
       request.setPayload(Utils.toInputStream("hoot!"));
+      request.getPayload().getContentMetadata().setContentLength(5l);
       testHoot(request);
    }
 
@@ -147,16 +148,15 @@ public class ConvertToGaeRequestTest {
    }
 
    private void testHoot(HttpRequest request) throws IOException {
-      request.getPayload().setContentType("text/plain");
-      request.getPayload().setContentMD5(new byte[] { 1, 2, 3, 4 });
+      request.getPayload().getContentMetadata().setContentType("text/plain");
+      request.getPayload().getContentMetadata().setContentMD5(new byte[] { 1, 2, 3, 4 });
       HTTPRequest gaeRequest = req.apply(request);
 
       StringBuilder builder = new StringBuilder();
       for (HTTPHeader header : gaeRequest.getHeaders()) {
          builder.append(header.getName()).append(": ").append(header.getValue()).append("\n");
       }
-      assertEquals(builder.toString(),
-               "User-Agent: jclouds/1.0 urlfetch/1.3.5\nContent-MD5: AQIDBA==\nContent-Type: text/plain\nContent-Length: 5\n");
+      assertEquals(builder.toString(), "User-Agent: jclouds/1.0 urlfetch/1.3.5\nContent-Type: text/plain\nContent-Length: 5\nContent-MD5: AQIDBA==\n");
       assertEquals(new String(gaeRequest.getPayload()), "hoot!");
    }
 }

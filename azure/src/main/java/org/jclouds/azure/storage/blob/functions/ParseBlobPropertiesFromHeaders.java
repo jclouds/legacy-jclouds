@@ -19,10 +19,7 @@
 
 package org.jclouds.azure.storage.blob.functions;
 
-import static org.jclouds.http.HttpUtils.attemptToParseSizeAndRangeFromHeaders;
-
 import javax.inject.Inject;
-import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.azure.storage.blob.blobstore.functions.BlobMetadataToBlobProperties;
 import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
@@ -41,8 +38,7 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
-public class ParseBlobPropertiesFromHeaders implements
-         Function<HttpResponse, MutableBlobProperties>, InvocationContext {
+public class ParseBlobPropertiesFromHeaders implements Function<HttpResponse, MutableBlobProperties>, InvocationContext {
    private final ParseSystemAndUserMetadataFromHeaders blobMetadataParser;
    private final BlobMetadataToBlobProperties blobToBlobProperties;
 
@@ -59,9 +55,6 @@ public class ParseBlobPropertiesFromHeaders implements
    public MutableBlobProperties apply(HttpResponse from) {
       BlobMetadata base = blobMetadataParser.apply(from);
       MutableBlobProperties to = blobToBlobProperties.apply(base);
-      to.setContentLength(attemptToParseSizeAndRangeFromHeaders(from));
-      to.setContentLanguage(from.getFirstHeaderOrNull(HttpHeaders.CONTENT_LANGUAGE));
-      to.setContentEncoding(from.getFirstHeaderOrNull(HttpHeaders.CONTENT_ENCODING));
       return to;
    }
 

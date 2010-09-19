@@ -19,18 +19,23 @@
 
 package org.jclouds.filesystem;
 
-import org.jclouds.filesystem.reference.FilesystemConstants;
-import org.jclouds.filesystem.utils.TestUtils;
-import com.google.inject.CreationException;
-import org.jclouds.blobstore.options.GetOptions;
-import java.util.Iterator;
-import java.util.Set;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNotSame;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Properties;
+import java.util.Set;
+
 import org.apache.commons.io.FileUtils;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -42,11 +47,15 @@ import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
-import org.jclouds.blobstore.domain.internal.BlobImpl;
+import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.testng.annotations.*;
-        
-import static org.testng.Assert.*;
+import org.jclouds.filesystem.reference.FilesystemConstants;
+import org.jclouds.filesystem.utils.TestUtils;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.google.inject.CreationException;
 
 
 /**
@@ -667,8 +676,8 @@ public class FilesystemAsyncBlobStoreTest {
 
         assertEquals(metadata.getName(), BLOB_KEY, "Wrong blob name");
         assertEquals(metadata.getType(), StorageType.BLOB, "Wrong blob type");
-        assertEquals(metadata.getContentType(), "", "Wrong blob content-type");
-        assertEquals(metadata.getContentMD5(), null, "Wrong blob MD5");
+        assertEquals(metadata.getContentMetadata().getContentType(), "application/unknown", "Wrong blob content-type");
+        assertEquals(metadata.getContentMetadata().getContentMD5(), null, "Wrong blob MD5");
         assertEquals(metadata.getLocation(), null, "Wrong blob location");
         assertEquals(metadata.getProviderId(), null, "Wrong blob provider id");
         assertEquals(metadata.getUri(), null, "Wrong blob URI");
@@ -676,7 +685,7 @@ public class FilesystemAsyncBlobStoreTest {
         assertEquals(metadata.getUserMetadata().size(), 0, "Wrong blob UserMetadata");
         //metadata.getLastModified()
         File file = new File(TARGET_CONTAINER_NAME + File.separator + BLOB_KEY);
-        assertEquals(metadata.getSize(), new Long(file.length()), "Wrong blob size");
+        assertEquals(metadata.getContentMetadata().getContentLength(), new Long(file.length()), "Wrong blob size");
         //don't know how to calculate ETAG
         //assertEquals(metadata.getETag(), "105cf4e6c052d65352dabd20028ff102", "Wrong blob ETag");
     }

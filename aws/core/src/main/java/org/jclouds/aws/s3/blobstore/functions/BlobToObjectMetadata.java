@@ -26,6 +26,7 @@ import javax.inject.Singleton;
 import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.aws.s3.domain.internal.MutableObjectMetadataImpl;
 import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.http.HttpUtils;
 
 import com.google.common.base.Function;
 
@@ -38,18 +39,14 @@ public class BlobToObjectMetadata implements Function<BlobMetadata, MutableObjec
       if (from == null)
          return null;
       MutableObjectMetadata to = new MutableObjectMetadataImpl();
-      to.setContentType(from.getContentType());
+      HttpUtils.copy(from.getContentMetadata(), to.getContentMetadata());
       to.setETag(from.getETag());
-      to.setContentMD5(from.getContentMD5());
       to.setKey(from.getName());
       to.setLastModified(from.getLastModified());
-      if (from.getSize() != null)
-         to.setSize(from.getSize());
       if (from.getUserMetadata() != null) {
          for (Entry<String, String> entry : from.getUserMetadata().entrySet())
             to.getUserMetadata().put(entry.getKey().toLowerCase(), entry.getValue());
       }
       return to;
    }
-
 }

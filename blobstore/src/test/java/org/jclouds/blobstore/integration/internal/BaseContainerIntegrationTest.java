@@ -77,8 +77,7 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
 
       Blob object = context.getBlobStore().newBlob(key);
       object.setPayload(TEST_STRING);
-      object.getMetadata().setContentType(MediaType.TEXT_PLAIN);
-      object.getMetadata().setSize(new Long(TEST_STRING.length()));
+      object.getMetadata().getContentMetadata().setContentType(MediaType.TEXT_PLAIN);
       // NOTE all metadata in jclouds comes out as lowercase, in an effort to
       // normalize the
       // providers.
@@ -94,10 +93,10 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
 
          BlobMetadata metadata = BlobMetadata.class.cast(get(container, 0));
 
-         assert metadata.getContentType().startsWith("text/plain") : metadata.getContentType();
-         assertEquals(metadata.getSize(), new Long(TEST_STRING.length()));
+         assert metadata.getContentMetadata().getContentType().startsWith("text/plain") : metadata.getContentMetadata().getContentType();
+         assertEquals(metadata.getContentMetadata().getContentLength(), new Long(TEST_STRING.length()));
          assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
-         assertEquals(metadata.getContentMD5(), CryptoStreams.md5(InputSuppliers.of(TEST_STRING)));
+         assertEquals(metadata.getContentMetadata().getContentMD5(), CryptoStreams.md5(InputSuppliers.of(TEST_STRING)));
       } finally {
          returnContainer(containerName);
       }

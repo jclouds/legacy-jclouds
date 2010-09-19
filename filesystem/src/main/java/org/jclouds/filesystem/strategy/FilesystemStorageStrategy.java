@@ -21,11 +21,10 @@ package org.jclouds.filesystem.strategy;
 
 import java.io.File;
 import java.io.IOException;
+
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.filesystem.predicates.validators.FilesystemContainerNameValidator;
 import org.jclouds.io.Payload;
-import org.jclouds.rest.annotations.ParamValidators;
 
 /**
  * Strategy for filesystem operations related to container and blob

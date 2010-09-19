@@ -73,7 +73,7 @@ public class AWSUtilsTest {
 
    HttpResponse response(InputStream content) {
       HttpResponse response = new HttpResponse(400, "boa", Payloads.newInputStreamPayload(content));
-      response.getPayload().setContentType("text/xml");
+      response.getPayload().getContentMetadata().setContentType("text/xml");
       response.getHeaders().put("x-amz-request-id", "requestid");
       response.getHeaders().put("x-amz-id-2", "requesttoken");
       return response;

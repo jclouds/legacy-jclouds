@@ -28,8 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.annotation.Nullable;
-
+import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 
 /**
@@ -37,22 +36,16 @@ import org.jclouds.io.Payload;
  */
 public abstract class BasePayload<V> implements Payload {
    protected final V content;
-   protected String contentType;
-   protected Long contentLength;
-   protected byte[] contentMD5;
-   protected String contentDisposition;
-   protected String contentLanguage;
-   protected String contentEncoding;
    protected transient volatile boolean written;
+   protected MutableContentMetadata contentMetadata;
 
-   protected BasePayload(V content, @Nullable String contentType,
-         @Nullable Long contentLength, @Nullable byte[] contentMD5) {
+   protected BasePayload(V content) {
+      this(content, new BaseMutableContentMetadata());
+   }
+
+   protected BasePayload(V content, MutableContentMetadata contentMetadata) {
       this.content = checkNotNull(content, "content");
-      this.contentType = contentType == null ? "application/unknown"
-            : contentType;
-      this.contentLength = contentLength;
-      if (contentMD5 != null)
-         setContentMD5(contentMD5);
+      this.contentMetadata = checkNotNull(contentMetadata, "contentMetadata");
    }
 
    /**
@@ -67,115 +60,8 @@ public abstract class BasePayload<V> implements Payload {
     * {@inheritDoc}
     */
    @Override
-   public Long getContentLength() {
-      return contentLength;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentLength(@Nullable Long contentLength) {
-      this.contentLength = contentLength;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public byte[] getContentMD5() {
-      if (contentMD5 != null) {
-         byte[] retval = new byte[contentMD5.length];
-         System.arraycopy(this.contentMD5, 0, retval, 0, contentMD5.length);
-         return retval;
-      } else {
-         return null;
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentMD5(byte[] md5) {
-      if (md5 != null) {
-         byte[] retval = new byte[md5.length];
-         System.arraycopy(md5, 0, retval, 0, md5.length);
-         this.contentMD5 = md5;
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentType() {
-      return contentType;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentType(@Nullable String contentType) {
-      this.contentType = contentType;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentDisposition(@Nullable String contentDisposition) {
-      this.contentDisposition = contentDisposition;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentDisposition() {
-      return this.contentDisposition;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentLanguage(@Nullable String contentLanguage) {
-      this.contentLanguage = contentLanguage;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentLanguage() {
-      return this.contentLanguage;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentEncoding(@Nullable String contentEncoding) {
-      this.contentEncoding = contentEncoding;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentEncoding() {
-      return this.contentEncoding;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public void writeTo(OutputStream outstream) throws IOException {
-      checkState(!written || isRepeatable(),
-            "can only be writted to an outputstream once");
+      checkState(!written || isRepeatable(), "can only be writted to an outputstream once");
       written = true;
       InputStream in = getInput();
       try {
@@ -213,9 +99,7 @@ public abstract class BasePayload<V> implements Payload {
 
    @Override
    public String toString() {
-      return "[content=" + (content != null) + ", contentLength="
-            + contentLength + ", contentMD5=" + (contentMD5 != null)
-            + ", contentType=" + contentType + ", written=" + written + "]";
+      return "[content=" + (content != null) + ", contentMetadata=" + contentMetadata + ", written=" + written + "]";
    }
 
    /**
@@ -240,4 +124,23 @@ public abstract class BasePayload<V> implements Payload {
    public void close() {
       release();
    }
+
+   /**
+    * 
+    * {@inheritDoc}
+    */
+   @Override
+   public MutableContentMetadata getContentMetadata() {
+      return contentMetadata;
+   }
+
+   /**
+    * 
+    * {@inheritDoc}
+    */
+   @Override
+   public void setContentMetadata(MutableContentMetadata in) {
+      this.contentMetadata = in;
+   }
+
 }

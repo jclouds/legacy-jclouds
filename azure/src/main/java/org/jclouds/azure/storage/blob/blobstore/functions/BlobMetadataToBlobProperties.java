@@ -26,6 +26,7 @@ import javax.inject.Singleton;
 import org.jclouds.azure.storage.blob.domain.MutableBlobProperties;
 import org.jclouds.azure.storage.blob.domain.internal.MutableBlobPropertiesImpl;
 import org.jclouds.blobstore.domain.BlobMetadata;
+import org.jclouds.http.HttpUtils;
 
 import com.google.common.base.Function;
 
@@ -38,13 +39,10 @@ public class BlobMetadataToBlobProperties implements Function<BlobMetadata, Muta
       if (from == null)
          return null;
       MutableBlobProperties to = new MutableBlobPropertiesImpl();
-      to.setContentType(from.getContentType());
+      HttpUtils.copy(from.getContentMetadata(), to.getContentMetadata());
       to.setETag(from.getETag());
-      to.setContentMD5(from.getContentMD5());
       to.setName(from.getName());
       to.setLastModified(from.getLastModified());
-      if (from.getSize() != null)
-         to.setContentLength(from.getSize());
       if (from.getUserMetadata() != null) {
          for (Entry<String, String> entry : from.getUserMetadata().entrySet())
             to.getMetadata().put(entry.getKey().toLowerCase(), entry.getValue());

@@ -369,7 +369,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
         MutableBlobMetadata metadata = new MutableBlobMetadataImpl();
         metadata.setName(key);
         metadata.setLastModified(new Date(blobPayload.lastModified()));
-        metadata.setSize(blobPayload.length());
+        metadata.getContentMetadata().setContentLength(blobPayload.length());
         // TODO What about the MD5? are we supposed to calculate it each time we load
         //the file?
         try {
@@ -378,8 +378,8 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
             logger.error("An error occurred calculating MD5 for blob %s from container ", key, container);
             Throwables.propagateIfPossible(e);
         }
-        metadata.setContentType("");
-        String eTag = CryptoStreams.hex(payload.getContentMD5());
+        metadata.getContentMetadata().setContentType("");
+        String eTag = CryptoStreams.hex(payload.getContentMetadata().getContentMD5());
         metadata.setETag(eTag);
         // Creating new blob object
         Blob blob = blobFactory.create(metadata);
@@ -590,7 +590,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
 
              }
              blob.setPayload(out.toByteArray());
-             blob.getMetadata().setSize(new Long(data.length));
+             blob.getMetadata().getContentMetadata().setContentLength(new Long(data.length));
           }
        }
       checkNotNull(blob.getPayload(), "payload " + blob);
@@ -660,7 +660,7 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
             Throwables.propagate(ex);
         }
 
-        String eTag = CryptoStreams.hex(object.getPayload().getContentMD5());
+        String eTag = CryptoStreams.hex(object.getPayload().getContentMetadata().getContentMD5());
         return eTag;
     }
 }

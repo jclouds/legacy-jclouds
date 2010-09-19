@@ -30,6 +30,7 @@ import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.blobstore.binders.BindUserMetadataToHeadersWithPrefix;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 import org.testng.annotations.Test;
 
@@ -52,17 +53,19 @@ public class BindS3ObjectToPayloadTest {
       Payload payload = createMock(Payload.class);
       Blob blob = createMock(Blob.class);
       MutableObjectMetadata md = createMock(MutableObjectMetadata.class);
+      MutableContentMetadata content = createMock(MutableContentMetadata.class);
 
       expect(object.getPayload()).andReturn(payload).atLeastOnce();
-      expect(payload.getContentLength()).andReturn(5368709120l).atLeastOnce();
+      expect(payload.getContentMetadata()).andReturn(content).atLeastOnce();
+
+      expect(content.getContentLength()).andReturn(5368709120l).atLeastOnce();
       expect(object2Blob.apply(object)).andReturn(blob);
       mdBinder.bindToRequest(request, blob);
       expect(object.getMetadata()).andReturn(md).atLeastOnce();
       expect(md.getCacheControl()).andReturn(null).atLeastOnce();
-      expect(md.getContentDisposition()).andReturn(null).atLeastOnce();
-      expect(md.getContentEncoding()).andReturn(null).atLeastOnce();
 
       replay(payload);
+      replay(content);
       replay(mdBinder);
       replay(object2Blob);
       replay(request);
@@ -75,6 +78,7 @@ public class BindS3ObjectToPayloadTest {
       binder.bindToRequest(request, object);
 
       verify(payload);
+      verify(content);
       verify(mdBinder);
       verify(object2Blob);
       verify(request);
@@ -96,9 +100,11 @@ public class BindS3ObjectToPayloadTest {
       Blob blob = createMock(Blob.class);
       MutableObjectMetadata md = createMock(MutableObjectMetadata.class);
       Multimap<String, String> headers = createMock(Multimap.class);
+      MutableContentMetadata content = createMock(MutableContentMetadata.class);
 
       expect(object.getPayload()).andReturn(payload).atLeastOnce();
-      expect(payload.getContentLength()).andReturn(5368709120l).atLeastOnce();
+      expect(payload.getContentMetadata()).andReturn(content).atLeastOnce();
+      expect(content.getContentLength()).andReturn(5368709120l).atLeastOnce();
       expect(object2Blob.apply(object)).andReturn(blob);
       mdBinder.bindToRequest(request, blob);
       expect(object.getMetadata()).andReturn(md).atLeastOnce();
@@ -106,15 +112,9 @@ public class BindS3ObjectToPayloadTest {
       expect(md.getCacheControl()).andReturn("no-cache").atLeastOnce();
       expect(headers.put("Cache-Control", "no-cache")).andReturn(true);
 
-      expect(md.getContentDisposition()).andReturn("attachment; filename=\"fname.ext\"")
-               .atLeastOnce();
-      expect(headers.put("Content-Disposition", "attachment; filename=\"fname.ext\"")).andReturn(true);
-
-      expect(md.getContentEncoding()).andReturn("gzip").atLeastOnce();
-      expect(headers.put("Content-Encoding", "gzip")).andReturn(true);
-
       replay(headers);
       replay(payload);
+      replay(content);
       replay(mdBinder);
       replay(object2Blob);
       replay(request);
@@ -127,6 +127,7 @@ public class BindS3ObjectToPayloadTest {
       binder.bindToRequest(request, object);
 
       verify(headers);
+      verify(content);
       verify(payload);
       verify(mdBinder);
       verify(object2Blob);
@@ -147,17 +148,20 @@ public class BindS3ObjectToPayloadTest {
       Payload payload = createMock(Payload.class);
       Blob blob = createMock(Blob.class);
       MutableObjectMetadata md = createMock(MutableObjectMetadata.class);
+      MutableContentMetadata content = createMock(MutableContentMetadata.class);
 
       expect(object.getPayload()).andReturn(payload).atLeastOnce();
-      expect(payload.getContentLength()).andReturn(5368709121l).atLeastOnce();
+      expect(payload.getContentMetadata()).andReturn(content).atLeastOnce();
+      expect(content.getContentLength()).andReturn(5368709121l).atLeastOnce();
       expect(object2Blob.apply(object)).andReturn(blob);
       mdBinder.bindToRequest(request, blob);
       expect(object.getMetadata()).andReturn(md).atLeastOnce();
       expect(md.getCacheControl()).andReturn(null).atLeastOnce();
-      expect(md.getContentDisposition()).andReturn(null).atLeastOnce();
-      expect(md.getContentEncoding()).andReturn(null).atLeastOnce();
+      expect(content.getContentDisposition()).andReturn(null).atLeastOnce();
+      expect(content.getContentEncoding()).andReturn(null).atLeastOnce();
 
       replay(payload);
+      replay(content);
       replay(mdBinder);
       replay(object2Blob);
       replay(request);
@@ -170,6 +174,7 @@ public class BindS3ObjectToPayloadTest {
       bindS3ObjectToPayload.bindToRequest(request, object);
 
       verify(payload);
+      verify(content);
       verify(mdBinder);
       verify(object2Blob);
       verify(request);

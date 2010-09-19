@@ -32,7 +32,6 @@ import org.jclouds.atmosonline.saas.filters.SignRequest;
 import org.jclouds.atmosonline.saas.xml.ErrorHandler;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.crypto.Crypto;
-import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
@@ -72,8 +71,6 @@ public class AtmosStorageUtils {
             String container, Blob blob) {
       final String path = container + "/" + blob.getMetadata().getName();
       deleteAndEnsureGone(sync, path);
-      if (blob.getMetadata().getContentMD5() != null)
-         blob.getMetadata().getUserMetadata().put("content-md5", CryptoStreams.hex(blob.getMetadata().getContentMD5()));
       sync.createFile(container, blob2Object.apply(blob));
       return path;
    }

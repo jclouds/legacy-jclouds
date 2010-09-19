@@ -54,7 +54,7 @@ public class BindCreateBackupToXmlPayload implements MapBinder {
       builder.append("<name>").append(name).append("</name>");
       builder.append("</backup>");
       binder.bindToRequest(request, builder.toString());
-      request.getPayload().setContentType(MediaType.APPLICATION_XML);
+      request.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_XML);
    }
 
    @Override

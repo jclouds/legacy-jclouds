@@ -20,12 +20,13 @@
 package org.jclouds.aws.s3.domain.internal;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.aws.s3.domain.CanonicalUser;
 import org.jclouds.aws.s3.domain.ObjectMetadata;
+import org.jclouds.io.ContentMetadata;
+import org.jclouds.io.payloads.BaseImmutableContentMetadata;
 
 import com.google.common.collect.Maps;
 
@@ -42,29 +43,21 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
    private final String key;
    private final Date lastModified;
    private final String eTag;
-   private final long size;
    private final CanonicalUser owner;
    private final StorageClass storageClass;
-   private final String contentType;
-   private final byte[] contentMD5;
    private final String cacheControl;
-   private final String contentDisposition;
-   private final String contentEncoding;
    private final Map<String, String> userMetadata;
+   private final ContentMetadata contentMetadata;
 
-   public BucketListObjectMetadata(String key, Date lastModified, String eTag, byte[] md5,
-            long size, CanonicalUser owner, StorageClass storageClass) {
+   public BucketListObjectMetadata(String key, Date lastModified, String eTag, byte[] md5, long contentLength,
+            CanonicalUser owner, StorageClass storageClass) {
       this.key = key;
       this.lastModified = lastModified;
       this.eTag = eTag;
-      this.size = size;
       this.owner = owner;
-      this.contentMD5 = md5;
+      this.contentMetadata = new BaseImmutableContentMetadata(null, contentLength, md5, null, null, null);
       this.storageClass = storageClass;
-      this.contentType = null;
       this.cacheControl = null;
-      this.contentDisposition = null;
-      this.contentEncoding = null;
       this.userMetadata = Maps.newHashMap();
    }
 
@@ -99,27 +92,6 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
    /**
     *{@inheritDoc}
     */
-   public String getContentDisposition() {
-      return contentDisposition;
-   }
-
-   /**
-    *{@inheritDoc}
-    */
-   public String getContentEncoding() {
-      return contentEncoding;
-   }
-
-   /**
-    *{@inheritDoc}
-    */
-   public String getContentType() {
-      return contentType;
-   }
-
-   /**
-    *{@inheritDoc}
-    */
    public Date getLastModified() {
       return lastModified;
    }
@@ -129,13 +101,6 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
     */
    public String getETag() {
       return eTag;
-   }
-
-   /**
-    *{@inheritDoc}
-    */
-   public Long getSize() {
-      return size;
    }
 
    /**
@@ -155,8 +120,9 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
    /**
     *{@inheritDoc}
     */
-   public byte[] getContentMD5() {
-      return contentMD5;
+   @Override
+   public ContentMetadata getContentMetadata() {
+      return contentMetadata;
    }
 
    @Override
@@ -164,15 +130,11 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((cacheControl == null) ? 0 : cacheControl.hashCode());
-      result = prime * result + ((contentDisposition == null) ? 0 : contentDisposition.hashCode());
-      result = prime * result + ((contentEncoding == null) ? 0 : contentEncoding.hashCode());
-      result = prime * result + Arrays.hashCode(contentMD5);
-      result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
+      result = prime * result + ((contentMetadata == null) ? 0 : contentMetadata.hashCode());
       result = prime * result + ((eTag == null) ? 0 : eTag.hashCode());
       result = prime * result + ((key == null) ? 0 : key.hashCode());
       result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
       result = prime * result + ((owner == null) ? 0 : owner.hashCode());
-      result = prime * result + (int) (size ^ (size >>> 32));
       result = prime * result + ((storageClass == null) ? 0 : storageClass.hashCode());
       result = prime * result + ((userMetadata == null) ? 0 : userMetadata.hashCode());
       return result;
@@ -192,22 +154,10 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
             return false;
       } else if (!cacheControl.equals(other.cacheControl))
          return false;
-      if (contentDisposition == null) {
-         if (other.contentDisposition != null)
+      if (contentMetadata == null) {
+         if (other.contentMetadata != null)
             return false;
-      } else if (!contentDisposition.equals(other.contentDisposition))
-         return false;
-      if (contentEncoding == null) {
-         if (other.contentEncoding != null)
-            return false;
-      } else if (!contentEncoding.equals(other.contentEncoding))
-         return false;
-      if (!Arrays.equals(contentMD5, other.contentMD5))
-         return false;
-      if (contentType == null) {
-         if (other.contentType != null)
-            return false;
-      } else if (!contentType.equals(other.contentType))
+      } else if (!contentMetadata.equals(other.contentMetadata))
          return false;
       if (eTag == null) {
          if (other.eTag != null)
@@ -228,8 +178,6 @@ public class BucketListObjectMetadata implements Serializable, ObjectMetadata {
          if (other.owner != null)
             return false;
       } else if (!owner.equals(other.owner))
-         return false;
-      if (size != other.size)
          return false;
       if (storageClass == null) {
          if (other.storageClass != null)

@@ -43,7 +43,7 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
 
       Blob blob = context.getBlobStore().newBlob(name);
       blob.setPayload(text);
-      blob.getPayload().setContentType("text/plain");
+      blob.getPayload().getContentMetadata().setContentType("text/plain");
       String container = getContainerName();
       try {
          context.getBlobStore().putBlob(container, blob);
@@ -63,7 +63,7 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
 
       Blob blob = context.getBlobStore().newBlob(name);
       blob.setPayload(text);
-      blob.getPayload().setContentType("text/plain");
+      blob.getPayload().getContentMetadata().setContentType("text/plain");
       String container = getContainerName();
       try {
          context.getBlobStore().putBlob(container, blob);
@@ -82,7 +82,7 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
 
       Blob blob = context.getBlobStore().newBlob(name);
       blob.setPayload(text);
-      blob.getPayload().setContentType("text/plain");
+      blob.getPayload().getContentMetadata().setContentType("text/plain");
       String container = getContainerName();
       try {
          HttpRequest request = context.getSigner().signPutBlob(container, blob);

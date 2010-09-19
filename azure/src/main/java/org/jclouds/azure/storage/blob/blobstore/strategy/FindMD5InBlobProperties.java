@@ -60,7 +60,7 @@ public class FindMD5InBlobProperties implements ContainsValueInListStrategy {
          byte[] toSearch = objectMD5.apply(value);
          for (BlobMetadata metadata : getAllBlobMetadata.execute(containerName, options)) {
             BlobProperties properties = client.getBlobProperties(containerName, metadata.getName());
-            if (Arrays.equals(toSearch, properties.getContentMD5()))
+            if (Arrays.equals(toSearch, properties.getContentMetadata().getContentMD5()))
                return true;
          }
          return false;

@@ -65,7 +65,7 @@ public class MarkersGetDirectoryStrategy implements GetDirectoryStrategy {
 
    public StorageMetadata execute(String containerName, String directory) {
       BlobMetadata md = connection.blobMetadata(containerName, directory);
-      if (md != null && md.getContentType().equals("application/directory"))
+      if (md != null && md.getContentMetadata().getContentType().equals("application/directory"))
          return resource2Directory.apply(md);
       for (String suffix : BlobStoreConstants.DIRECTORY_SUFFIXES) {
          md = connection.blobMetadata(containerName, directory + suffix);

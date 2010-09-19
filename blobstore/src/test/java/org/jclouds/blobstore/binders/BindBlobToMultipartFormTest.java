@@ -46,8 +46,8 @@ public class BindBlobToMultipartFormTest {
    public static final Blob TEST_BLOB;
 
    static {
-      blobProvider = new RestContextFactory().createContextBuilder("transient", "identity",
-               "credential").buildInjector().getInstance(Blob.Factory.class);
+      blobProvider = new RestContextFactory().createContextBuilder("transient", "identity", "credential")
+               .buildInjector().getInstance(Blob.Factory.class);
       StringBuilder builder = new StringBuilder("--");
       addData(BOUNDARY, "hello", builder);
       builder.append("--").append(BOUNDARY).append("--").append("\r\n");
@@ -55,7 +55,7 @@ public class BindBlobToMultipartFormTest {
       TEST_BLOB = blobProvider.create(null);
       TEST_BLOB.getMetadata().setName("hello");
       TEST_BLOB.setPayload("hello");
-      TEST_BLOB.getMetadata().setContentType(MediaType.TEXT_PLAIN);
+      TEST_BLOB.getMetadata().getContentMetadata().setContentType(MediaType.TEXT_PLAIN);
    }
 
    public void testSinglePart() throws IOException {
@@ -68,16 +68,15 @@ public class BindBlobToMultipartFormTest {
       binder.bindToRequest(request, TEST_BLOB);
 
       assertEquals(toStringAndClose(request.getPayload().getInput()), EXPECTS);
-      assertEquals(request.getPayload().getContentLength(), new Long(113));
+      assertEquals(request.getPayload().getContentMetadata().getContentLength(), new Long(113));
 
-      assertEquals(request.getPayload().getContentType(), "multipart/form-data; boundary="
+      assertEquals(request.getPayload().getContentMetadata().getContentType(), "multipart/form-data; boundary="
                + BOUNDARY);
    }
 
    private static void addData(String boundary, String data, StringBuilder builder) {
       builder.append(boundary).append("\r\n");
-      builder.append("Content-Disposition").append(": ").append("form-data; name=\"hello\"")
-               .append("\r\n");
+      builder.append("Content-Disposition").append(": ").append("form-data; name=\"hello\"").append("\r\n");
       builder.append("Content-Type").append(": ").append("text/plain").append("\r\n");
       builder.append("\r\n");
       builder.append(data).append("\r\n");

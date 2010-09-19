@@ -23,6 +23,8 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
+import org.jclouds.io.ContentMetadata;
+
 /**
  * 
  * @author Adrian Cole
@@ -47,31 +49,6 @@ public interface BlobProperties extends Comparable<BlobProperties> {
 
    String getETag();
 
-   Long getContentLength();
+   ContentMetadata getContentMetadata();
 
-   /**
-    * This value present in system metadata requests on blobs which were created specifying the
-    * Content-MD5 header.
-    */
-   byte[] getContentMD5();
-
-   /**
-    * 
-    * A standard MIME type describing the format of the contents. If none is provided, the default
-    * is binary/octet-stream.
-    * 
-    * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.17"/>
-    */
-   String getContentType();
-
-   /**
-    * Specifies what content encodings have been applied to the object and thus what decoding
-    * mechanisms must be applied in order to obtain the media-type referenced by the Content-Type
-    * header field.
-    * 
-    * @see <a href= "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.11" />
-    */
-   public String getContentEncoding();
-
-   public String getContentLanguage();
 }

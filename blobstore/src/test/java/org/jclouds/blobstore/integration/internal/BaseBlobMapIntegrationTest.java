@@ -197,7 +197,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
          for (String key : fiveInputs.keySet()) {
             Blob blob = context.getBlobStore().newBlob(key);
             blob.setPayload(fiveInputs.get(key));
-            blob.getPayload().setContentLength((long) fiveBytes.get(key).length);
+            blob.getPayload().getContentMetadata().setContentLength((long) fiveBytes.get(key).length);
             newMap.put(key, blob);
          }
          map.putAll(newMap);

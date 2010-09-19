@@ -53,11 +53,11 @@ public class ParseObjectMetadataFromHeadersTest {
    @Test
    void testNormal() throws Exception {
       HttpResponse http = new HttpResponse(400, "boa", Payloads.newStringPayload(""));
-      http.getPayload().setContentLength(1025l);
+      http.getPayload().getContentMetadata().setContentLength(1025l);
 
       http.getHeaders().put(HttpHeaders.CACHE_CONTROL, "cacheControl");
-      http.getHeaders().put("Content-Disposition", "contentDisposition");
-      http.getHeaders().put(HttpHeaders.CONTENT_ENCODING, "encoding");
+      http.getPayload().getContentMetadata().setContentDisposition("contentDisposition");
+      http.getPayload().getContentMetadata().setContentEncoding("encoding");
       ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(blobParser(http, "\"abcd\""),
                blobToObjectMetadata, "x-amz-meta-");
       MutableObjectMetadata response = parser.apply(http);
@@ -68,11 +68,10 @@ public class ParseObjectMetadataFromHeadersTest {
    void testAmzEtag() throws Exception {
 
       HttpResponse http = new HttpResponse(400, "boa", Payloads.newStringPayload(""));
-      http.getPayload().setContentLength(1025l);
-
+      http.getPayload().getContentMetadata().setContentLength(1025l);
+      http.getPayload().getContentMetadata().setContentDisposition("contentDisposition");
+      http.getPayload().getContentMetadata().setContentEncoding("encoding");
       http.getHeaders().put(HttpHeaders.CACHE_CONTROL, "cacheControl");
-      http.getHeaders().put("Content-Disposition", "contentDisposition");
-      http.getHeaders().put(HttpHeaders.CONTENT_ENCODING, "encoding");
       http.getHeaders().put("x-amz-meta-object-eTag", "\"abcd\"");
       ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(blobParser(http, null),
                blobToObjectMetadata, "x-amz-meta-");
@@ -88,11 +87,14 @@ public class ParseObjectMetadataFromHeadersTest {
    private ParseSystemAndUserMetadataFromHeaders blobParser(HttpResponse response, String etag) {
       ParseSystemAndUserMetadataFromHeaders parser = createMock(ParseSystemAndUserMetadataFromHeaders.class);
       MutableBlobMetadata md = new MutableBlobMetadataImpl();
-      md.setContentType("type");
+      md.getContentMetadata().setContentType("type");
       md.setETag(etag);
       md.setName("key");
       md.setLastModified(now);
-      md.setSize(1025l);
+      md.getContentMetadata().setContentLength(1025l);
+      md.getContentMetadata().setContentDisposition("contentDisposition");
+      md.getContentMetadata().setContentEncoding("encoding");
+      md.getContentMetadata().setContentMD5(CryptoStreams.hex("abcd"));
       md.setUserMetadata(userMetadata);
       expect(parser.apply(response)).andReturn(md);
       replay(parser);
@@ -104,15 +106,15 @@ public class ParseObjectMetadataFromHeadersTest {
       blobToObjectMetadata = new BlobToObjectMetadata();
       expects = new MutableObjectMetadataImpl();
       expects.setCacheControl("cacheControl");
-      expects.setContentDisposition("contentDisposition");
-      expects.setContentEncoding("encoding");
-      expects.setContentMD5(CryptoStreams.hex("abcd"));
-      expects.setContentType("type");
+      expects.getContentMetadata().setContentDisposition("contentDisposition");
+      expects.getContentMetadata().setContentEncoding("encoding");
+      expects.getContentMetadata().setContentMD5(CryptoStreams.hex("abcd"));
+      expects.getContentMetadata().setContentType("type");
+      expects.getContentMetadata().setContentLength(1025l);
       expects.setETag("\"abcd\"");
       expects.setKey("key");
       expects.setLastModified(now);
       expects.setOwner(null);
-      expects.setSize(1025l);
       expects.setStorageClass(StorageClass.STANDARD);
       expects.setUserMetadata(userMetadata);
    }

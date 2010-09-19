@@ -81,8 +81,10 @@ public class S3BlobRequestSignerTest extends RestClientTest<S3AsyncClient> {
             NoSuchMethodException, IOException {
       Blob blob = blobFactory.create(null);
       blob.getMetadata().setName("name");
-      blob.setPayload(new PhantomPayload(2l, new byte[] { 0, 2, 4, 8 }));
-      blob.getPayload().setContentType("text/plain");
+      blob.setPayload(new PhantomPayload());
+      blob.getPayload().getContentMetadata().setContentLength(2l);
+      blob.getPayload().getContentMetadata().setContentMD5(new byte[] { 0, 2, 4, 8 });
+      blob.getPayload().getContentMetadata().setContentType("text/plain");
 
       HttpRequest request = signer.signPutBlob("container", blob);
 

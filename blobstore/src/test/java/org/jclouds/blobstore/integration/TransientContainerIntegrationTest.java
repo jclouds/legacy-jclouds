@@ -47,8 +47,7 @@ public class TransientContainerIntegrationTest extends BaseContainerIntegrationT
 
       Blob object = context.getBlobStore().newBlob(key);
       object.setPayload(TEST_STRING);
-      object.getMetadata().setContentType(MediaType.TEXT_PLAIN);
-      object.getMetadata().setSize(new Long(TEST_STRING.length()));
+      object.getMetadata().getContentMetadata().setContentType(MediaType.TEXT_PLAIN);
       // NOTE all metadata in jclouds comes out as lowercase, in an effort to normalize the
       // providers.
       object.getMetadata().getUserMetadata().put("Adrian", "powderpuff");

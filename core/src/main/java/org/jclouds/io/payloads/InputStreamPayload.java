@@ -29,7 +29,7 @@ import java.io.InputStream;
 public class InputStreamPayload extends BasePayload<InputStream> {
 
    public InputStreamPayload(InputStream content) {
-      super(content, null, null, null);
+      super(content);
    }
 
    /**

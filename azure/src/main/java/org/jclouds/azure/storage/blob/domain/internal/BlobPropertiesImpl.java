@@ -23,13 +23,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
 import org.jclouds.azure.storage.blob.domain.BlobProperties;
 import org.jclouds.azure.storage.blob.domain.BlobType;
 import org.jclouds.azure.storage.blob.domain.LeaseStatus;
+import org.jclouds.io.ContentMetadata;
+import org.jclouds.io.payloads.BaseImmutableContentMetadata;
 
 import com.google.common.collect.Maps;
 import com.google.inject.internal.Nullable;
@@ -48,38 +49,22 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
    private final URI url;
    private final Date lastModified;
    private final String eTag;
-   private final long size;
-   private final String contentType;
-   private final byte[] contentMD5;
-   private final String contentEncoding;
-   private final String contentLanguage;
    private final Map<String, String> metadata = Maps.newLinkedHashMap();
    private final LeaseStatus leaseStatus;
+   private final BaseImmutableContentMetadata contentMetadata;
 
-   public BlobPropertiesImpl(BlobType type, String name, URI url, Date lastModified, String eTag,
-            long size, String contentType, @Nullable byte[] contentMD5,
-            @Nullable String contentEncoding, @Nullable String contentLanguage,
-            LeaseStatus leaseStatus, Map<String, String> metadata) {
+   public BlobPropertiesImpl(BlobType type, String name, URI url, Date lastModified, String eTag, long size,
+            String contentType, @Nullable byte[] contentMD5, @Nullable String contentMetadata,
+            @Nullable String contentLanguage, LeaseStatus leaseStatus, Map<String, String> metadata) {
       this.type = checkNotNull(type, "type");
       this.leaseStatus = checkNotNull(leaseStatus, "leaseStatus");
       this.name = checkNotNull(name, "name");
       this.url = checkNotNull(url, "url");
       this.lastModified = checkNotNull(lastModified, "lastModified");
       this.eTag = checkNotNull(eTag, "eTag");
-      this.size = size;
-      this.contentType = checkNotNull(contentType, "contentType");
-      this.contentMD5 = contentMD5;
-      this.contentEncoding = contentEncoding;
-      this.contentLanguage = contentLanguage;
+      this.contentMetadata = new BaseImmutableContentMetadata(contentType, size, contentMD5, null, contentLanguage,
+               contentMetadata);
       this.metadata.putAll(checkNotNull(metadata, "metadata"));
-   }
-
-   /**
-    *{@inheritDoc}
-    */
-   @Override
-   public byte[] getContentMD5() {
-      return contentMD5;
    }
 
    /**
@@ -102,22 +87,6 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
     *{@inheritDoc}
     */
    @Override
-   public String getContentEncoding() {
-      return contentEncoding;
-   }
-
-   /**
-    *{@inheritDoc}
-    */
-   @Override
-   public String getContentType() {
-      return contentType;
-   }
-
-   /**
-    *{@inheritDoc}
-    */
-   @Override
    public Date getLastModified() {
       return lastModified;
    }
@@ -128,14 +97,6 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
    @Override
    public String getETag() {
       return eTag;
-   }
-
-   /**
-    *{@inheritDoc}
-    */
-   @Override
-   public Long getContentLength() {
-      return size;
    }
 
    /**
@@ -158,14 +119,6 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
     *{@inheritDoc}
     */
    @Override
-   public String getContentLanguage() {
-      return contentLanguage;
-   }
-
-   /**
-    *{@inheritDoc}
-    */
-   @Override
    public URI getUrl() {
       return url;
    }
@@ -178,20 +131,24 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
       return leaseStatus;
    }
 
+   /**
+    *{@inheritDoc}
+    */
+   @Override
+   public ContentMetadata getContentMetadata() {
+      return contentMetadata;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((contentEncoding == null) ? 0 : contentEncoding.hashCode());
-      result = prime * result + ((contentLanguage == null) ? 0 : contentLanguage.hashCode());
-      result = prime * result + Arrays.hashCode(contentMD5);
-      result = prime * result + ((contentType == null) ? 0 : contentType.hashCode());
+      result = prime * result + ((contentMetadata == null) ? 0 : contentMetadata.hashCode());
       result = prime * result + ((eTag == null) ? 0 : eTag.hashCode());
       result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
       result = prime * result + ((leaseStatus == null) ? 0 : leaseStatus.hashCode());
       result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + (int) (size ^ (size >>> 32));
       result = prime * result + ((type == null) ? 0 : type.hashCode());
       result = prime * result + ((url == null) ? 0 : url.hashCode());
       return result;
@@ -206,22 +163,10 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
       if (getClass() != obj.getClass())
          return false;
       BlobPropertiesImpl other = (BlobPropertiesImpl) obj;
-      if (contentEncoding == null) {
-         if (other.contentEncoding != null)
+      if (contentMetadata == null) {
+         if (other.contentMetadata != null)
             return false;
-      } else if (!contentEncoding.equals(other.contentEncoding))
-         return false;
-      if (contentLanguage == null) {
-         if (other.contentLanguage != null)
-            return false;
-      } else if (!contentLanguage.equals(other.contentLanguage))
-         return false;
-      if (!Arrays.equals(contentMD5, other.contentMD5))
-         return false;
-      if (contentType == null) {
-         if (other.contentType != null)
-            return false;
-      } else if (!contentType.equals(other.contentType))
+      } else if (!contentMetadata.equals(other.contentMetadata))
          return false;
       if (eTag == null) {
          if (other.eTag != null)
@@ -248,8 +193,6 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
             return false;
       } else if (!name.equals(other.name))
          return false;
-      if (size != other.size)
-         return false;
       if (type == null) {
          if (other.type != null)
             return false;
@@ -265,8 +208,8 @@ public class BlobPropertiesImpl implements Serializable, BlobProperties {
 
    @Override
    public String toString() {
-      return "[name=" + name + ", type=" + type + ", contentType=" + contentType
-               + ", eTag=" + eTag + ", lastModified=" + lastModified + ", size=" + size + "]";
+      return "[name=" + name + ", type=" + type + ", contentMetadata=" + contentMetadata + ", eTag=" + eTag
+               + ", lastModified=" + lastModified + "]";
    }
 
 }

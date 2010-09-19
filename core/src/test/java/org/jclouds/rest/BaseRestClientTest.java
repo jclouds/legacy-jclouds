@@ -41,6 +41,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.TransformingHttpCommandExecutorService;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 
@@ -101,18 +102,19 @@ public abstract class BaseRestClientTest {
 
    protected void assertContentHeadersEqual(HttpRequest request, String contentType, String contentDispositon,
          String contentEncoding, String contentLanguage, Long length, byte[] contentMD5) {
+      MutableContentMetadata md = request.getPayload().getContentMetadata();
       if (request.getFirstHeaderOrNull(TRANSFER_ENCODING) == null) {
-         assertEquals(request.getPayload().getContentLength(), length);
+         assertEquals(md.getContentLength(), length);
       } else {
          assertEquals(request.getFirstHeaderOrNull(TRANSFER_ENCODING), "chunked");
-         assert request.getPayload().getContentLength() == null
-               || request.getPayload().getContentLength().equals(length);
+         assert md.getContentLength() == null
+               || md.getContentLength().equals(length);
       }
-      assertEquals(request.getPayload().getContentType(), contentType);
-      assertEquals(request.getPayload().getContentDisposition(), contentDispositon);
-      assertEquals(request.getPayload().getContentEncoding(), contentEncoding);
-      assertEquals(request.getPayload().getContentLanguage(), contentLanguage);
-      assertEquals(request.getPayload().getContentMD5(), contentMD5);
+      assertEquals(md.getContentType(), contentType);
+      assertEquals(md.getContentDisposition(), contentDispositon);
+      assertEquals(md.getContentEncoding(), contentEncoding);
+      assertEquals(md.getContentLanguage(), contentLanguage);
+      assertEquals(md.getContentMD5(), contentMD5);
    }
 
    // FIXME Shouldn't be assertPayloadHeadersEqual?

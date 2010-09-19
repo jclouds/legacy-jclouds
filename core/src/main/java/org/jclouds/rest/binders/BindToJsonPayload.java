@@ -49,7 +49,7 @@ public class BindToJsonPayload implements MapBinder {
       checkState(jsonBinder != null, "Program error: json should have been injected at this point");
       String json = jsonBinder.toJson(toBind);
       request.setPayload(json);
-      request.getPayload().setContentType(MediaType.APPLICATION_JSON);
+      request.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_JSON);
    }
 
 }

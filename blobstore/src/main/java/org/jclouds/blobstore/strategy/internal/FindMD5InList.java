@@ -54,7 +54,7 @@ public class FindMD5InList implements ContainsValueInListStrategy {
       try {
          byte[] toSearch = objectMD5.apply(value);
          for (BlobMetadata metadata : getAllBlobMetadata.execute(containerName, options)) {
-            if (Arrays.equals(toSearch, metadata.getContentMD5()))
+            if (Arrays.equals(toSearch, metadata.getContentMetadata().getContentMD5()))
                return true;
          }
          return false;

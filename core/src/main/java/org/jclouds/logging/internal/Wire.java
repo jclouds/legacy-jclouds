@@ -30,6 +30,7 @@ import java.io.InputStream;
 
 import javax.annotation.Resource;
 
+import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.io.Payloads;
@@ -124,10 +125,15 @@ public abstract class Wire {
    }
 
    private void copyPayloadMetadata(Payload oldContent, Payload wiredPayload) {
-      if (oldContent.getContentLength() != null)
-         wiredPayload.setContentLength(oldContent.getContentLength());
-      wiredPayload.setContentType(oldContent.getContentType());
-      wiredPayload.setContentMD5(oldContent.getContentMD5());
+      MutableContentMetadata oldMd = oldContent.getContentMetadata();
+      MutableContentMetadata wiredMd = wiredPayload.getContentMetadata();
+      if (oldMd.getContentLength() != null)
+         wiredMd.setContentLength(oldMd.getContentLength());
+      wiredMd.setContentType(oldMd.getContentType());
+      wiredMd.setContentMD5(oldMd.getContentMD5());
+      wiredMd.setContentDisposition(oldMd.getContentDisposition());
+      wiredMd.setContentEncoding(oldMd.getContentEncoding());
+      wiredMd.setContentLanguage(oldMd.getContentLanguage());
    }
 
    @SuppressWarnings("unchecked")

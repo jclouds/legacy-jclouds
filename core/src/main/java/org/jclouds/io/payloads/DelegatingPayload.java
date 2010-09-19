@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 
 /**
@@ -75,102 +76,6 @@ public class DelegatingPayload implements Payload {
     * {@inheritDoc}
     */
    @Override
-   public Long getContentLength() {
-      return delegate.getContentLength();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public byte[] getContentMD5() {
-      return delegate.getContentMD5();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentLength(Long contentLength) {
-      delegate.setContentLength(contentLength);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentMD5(byte[] md5) {
-      delegate.setContentMD5(md5);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentType() {
-      return delegate.getContentType();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentType(String md5) {
-      delegate.setContentType(md5);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentDisposition(String contentDisposition) {
-      delegate.setContentDisposition(contentDisposition);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentDisposition() {
-      return delegate.getContentDisposition();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentLanguage(String contentLanguage) {
-      delegate.setContentLanguage(contentLanguage);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentLanguage() {
-      return delegate.getContentLanguage();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentEncoding(String contentEncoding) {
-      delegate.setContentEncoding(contentEncoding);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentEncoding() {
-      return delegate.getContentEncoding();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public int hashCode() {
       return delegate.hashCode();
    }
@@ -196,5 +101,15 @@ public class DelegatingPayload implements Payload {
    @Override
    public void close() throws IOException {
       delegate.close();
+   }
+
+   @Override
+   public MutableContentMetadata getContentMetadata() {
+      return delegate.getContentMetadata();
+   }
+
+   @Override
+   public void setContentMetadata(MutableContentMetadata in) {
+       delegate.setContentMetadata(in);
    }
 }

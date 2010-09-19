@@ -123,7 +123,7 @@ public class ParseSlicehostErrorFromHttpResponse implements HttpErrorHandler {
 
    String parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
       // slicehost returns " " which is unparsable
-      if (response.getPayload() != null && response.getPayload().getContentLength() != 1) {
+      if (response.getPayload() != null && response.getPayload().getContentMetadata().getContentLength() != 1) {
          return errorParser.parse(response.getPayload());
       }
       return null;

@@ -29,8 +29,7 @@ import org.jclouds.blobstore.reference.BlobStoreConstants;
 import com.google.common.base.Function;
 
 @Singleton
-public class ResourceMetadataToRelativePathResourceMetadata implements
-         Function<StorageMetadata, StorageMetadata> {
+public class ResourceMetadataToRelativePathResourceMetadata implements Function<StorageMetadata, StorageMetadata> {
 
    public StorageMetadata apply(StorageMetadata md) {
       String name = md.getName();
@@ -38,9 +37,8 @@ public class ResourceMetadataToRelativePathResourceMetadata implements
          if (name.endsWith(suffix))
             name = name.substring(0, name.length() - suffix.length());
       }
-      return new StorageMetadataImpl(StorageType.RELATIVE_PATH, md.getProviderId(), name, md
-               .getLocation(), md.getUri(), md.getETag(), md.getSize(), md.getLastModified(), md
-               .getUserMetadata());
+      return new StorageMetadataImpl(StorageType.RELATIVE_PATH, md.getProviderId(), name, md.getLocation(),
+               md.getUri(), md.getETag(), md.getLastModified(), md.getUserMetadata());
    }
 
 }

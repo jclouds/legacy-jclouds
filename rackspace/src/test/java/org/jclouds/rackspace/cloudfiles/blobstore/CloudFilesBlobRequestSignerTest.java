@@ -28,7 +28,6 @@ import org.jclouds.blobstore.BlobRequestSigner;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.io.payloads.PhantomPayload;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.config.CloudFilesRestClientModule;
 import org.jclouds.rackspace.cloudservers.TestRackspaceAuthenticationRestClientModule;
@@ -74,9 +73,11 @@ public class CloudFilesBlobRequestSignerTest extends RestClientTest<CloudFilesAs
             NoSuchMethodException, IOException {
       Blob blob = blobFactory.create(null);
       blob.getMetadata().setName("name");
-      blob.setPayload(new PhantomPayload(2l, new byte[] { 0, 2, 4, 8 }));
-      blob.getPayload().setContentType("text/plain");
-
+      blob.setPayload("");
+      blob.getPayload().getContentMetadata().setContentLength(2l);
+      blob.getPayload().getContentMetadata().setContentMD5(new byte[] { 0, 2, 4, 8 });
+      blob.getPayload().getContentMetadata().setContentType("text/plain");
+      
       HttpRequest request = signer.signPutBlob("container", blob);
 
       assertRequestLineEquals(request, "PUT http://storageUrl/container/name HTTP/1.1");

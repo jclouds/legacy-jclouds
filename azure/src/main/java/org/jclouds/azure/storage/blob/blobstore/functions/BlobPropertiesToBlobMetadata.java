@@ -27,6 +27,7 @@ import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
+import org.jclouds.http.HttpUtils;
 
 import com.google.common.base.Function;
 
@@ -46,15 +47,11 @@ public class BlobPropertiesToBlobMetadata implements Function<BlobProperties, Mu
       if (from == null)
          return null;
       MutableBlobMetadata to = new MutableBlobMetadataImpl();
-      if (from.getContentMD5() != null)
-         to.setContentMD5(from.getContentMD5());
-      if (from.getContentType() != null)
-         to.setContentType(from.getContentType());
+      HttpUtils.copy(from.getContentMetadata(), to.getContentMetadata());
       to.setUserMetadata(from.getMetadata());
       to.setETag(from.getETag());
       to.setLastModified(from.getLastModified());
       to.setName(from.getName());
-      to.setSize(from.getContentLength());
       String directoryName = ifDirectoryReturnName.execute(to);
       if (directoryName != null) {
          to.setName(directoryName);

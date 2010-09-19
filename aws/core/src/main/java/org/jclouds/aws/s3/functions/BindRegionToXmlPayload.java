@@ -74,6 +74,6 @@ public class BindRegionToXmlPayload extends BindToStringPayload {
                         "<CreateBucketConfiguration><LocationConstraint>%s</LocationConstraint></CreateBucketConfiguration>",
                         value);
       super.bindToRequest(request, payload);
-      request.getPayload().setContentType(MediaType.TEXT_XML);
+      request.getPayload().getContentMetadata().setContentType(MediaType.TEXT_XML);
    }
 }
