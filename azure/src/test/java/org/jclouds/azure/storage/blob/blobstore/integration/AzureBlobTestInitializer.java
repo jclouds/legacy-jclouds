@@ -20,7 +20,6 @@
 package org.jclouds.azure.storage.blob.blobstore.integration;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
@@ -36,16 +35,15 @@ import com.google.inject.Module;
  */
 public class AzureBlobTestInitializer extends TransientBlobStoreTestInitializer {
 
+   public AzureBlobTestInitializer() {
+      provider = "azureblob";
+   }
+
    @Override
-   protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
-            String identity, String key) throws IOException {
-      Properties properties = new Properties();
-      // properties.setProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT, Integer.toString(0));
-      // properties.setProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST, Integer.toString(0));
-      // properties.setProperty(PROPERTY_USER_THREADS, Integer.toString(0));
-      // properties.setProperty(PROPERTY_IO_WORKER_THREADS, Integer.toString(20));
-      return (BlobStoreContext) new BlobStoreContextFactory().createContext("azureblob", identity,
-               key, ImmutableSet.of(configurationModule, new Log4JLoggingModule()), properties);
+   protected BlobStoreContext createLiveContext(Module configurationModule, String endpoint, String apiversion,
+            String app, String identity, String credential) throws IOException {
+      return new BlobStoreContextFactory().createContext(provider, ImmutableSet.of(configurationModule,
+               new Log4JLoggingModule()), setupProperties(endpoint, apiversion, identity, credential));
    }
 
 }

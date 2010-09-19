@@ -19,11 +19,12 @@
 
 package org.jclouds.vcloud.terremark.compute;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
+import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -31,7 +32,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rest.RestContext;
-import org.jclouds.vcloud.compute.VCloudExpressComputeServiceLiveTest;
+import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressClient;
 import org.testng.annotations.Test;
@@ -42,18 +43,14 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "terremark.TerremarkVCloudComputeServiceLiveTest")
-public class TerremarkVCloudExpressComputeServiceLiveTest extends VCloudExpressComputeServiceLiveTest {
-
-   @Override
-   public void setServiceDefaults() {
+public class TerremarkVCloudExpressComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+   public TerremarkVCloudExpressComputeServiceLiveTest() {
       provider = "trmk-vcloudexpress";
-      tag = "vcx";
    }
 
    @Override
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("trmk-vcloudexpress.identity"), "trmk-vcloudexpress.identity");
-      credential = checkNotNull(System.getProperty("trmk-vcloudexpress.credential"), "trmk-vcloudexpress.credential");
+   public void setServiceDefaults() {
+      tag = "vcx";
    }
 
    @Test
@@ -97,6 +94,22 @@ public class TerremarkVCloudExpressComputeServiceLiveTest extends VCloudExpressC
          if (image.getOperatingSystem().getFamily() != OsFamily.WINDOWS)
             assert image.getDefaultCredentials().credential != null : image;
       }
+   }
+
+   @Override
+   public void testListNodes() throws Exception {
+      for (ComputeMetadata node : client.listNodes()) {
+         assert node.getProviderId() != null;
+         assert node.getLocation() != null;
+         assertEquals(node.getType(), ComputeType.NODE);
+         NodeMetadata allData = client.getNodeMetadata(node.getId());
+         System.out.println(allData.getHardware());
+      }
+   }
+
+   @Override
+   protected JschSshClientModule getSshModule() {
+      return new JschSshClientModule();
    }
 
 }

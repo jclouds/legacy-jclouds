@@ -33,12 +33,21 @@
     <name>jclouds azure services core</name>
     <description>jclouds core components to access azure services</description>
 
-   <properties>
-        <jclouds.test.identity>${jclouds.azure.storage.account}</jclouds.test.identity>
-        <jclouds.test.credential>${jclouds.azure.storage.key}</jclouds.test.credential>
-        <jclouds.test.initializer>org.jclouds.azure.storage.blob.blobstore.integration.AzureBlobTestInitializer</jclouds.test.initializer>
+    <properties>
+        <test.azure.endpoint>https://auth.api.azurecloud.com</test.azure.endpoint>
+        <test.azure.apiversion>2009-09-19</test.azure.apiversion>
+        <test.azure.identity>FIXME</test.azure.identity>
+        <test.azure.credential>FIXME</test.azure.credential>
+        <test.initializer>org.jclouds.azure.storage.blob.blobstore.integration.AzureBlobTestInitializer</test.initializer>
+        <test.azureblob.endpoint>https://${test.azure.identity}.blob.core.windows.net</test.azureblob.endpoint>
+        <test.azureblob.apiversion>${test.azure.apiversion}</test.azureblob.apiversion>
+        <test.azureblob.identity>${test.azure.identity}</test.azureblob.identity>
+        <test.azureblob.credential>${test.azure.credential}</test.azureblob.credential>
+        <test.azurequeue.endpoint>https://${test.azure.identity}.queue.core.windows.net</test.azurequeue.endpoint>
+        <test.azurequeue.apiversion>${test.azure.apiversion}</test.azurequeue.apiversion>
+        <test.azurequeue.identity>${test.azure.identity}</test.azurequeue.identity>
+        <test.azurequeue.credential>${test.azure.credential}</test.azurequeue.credential>
     </properties>
-
     <scm>
         <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk/azure</connection>
         <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk/azure</developerConnection>
@@ -78,5 +87,67 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+        <profiles>
+        <profile>
+            <id>live</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>integration</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemProperties>
+                                        <property>
+                                            <name>test.azureblob.endpoint</name>
+                                            <value>${test.azureblob.endpoint}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.azureblob.apiversion</name>
+                                            <value>${test.azureblob.apiversion}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.azureblob.identity</name>
+                                            <value>${test.azureblob.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.azureblob.credential</name>
+                                            <value>${test.azureblob.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.azurequeue.endpoint</name>
+                                            <value>${test.azurequeue.endpoint}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.azurequeue.apiversion</name>
+                                            <value>${test.azurequeue.apiversion}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.azurequeue.identity</name>
+                                            <value>${test.azurequeue.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.azurequeue.credential</name>
+                                            <value>${test.azurequeue.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.initializer</name>
+                                            <value>${test.initializer}</value>
+                                        </property>
+                                    </systemProperties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
     
 </project>

@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.terremark;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.size;
@@ -33,10 +34,12 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.Constants;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
@@ -87,7 +90,6 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       super.testCatalog();
    }
 
-   protected String provider = "trmk-vcloudexpress";
    protected String expectedOs = "Ubuntu Linux (32-bit)";
    protected String itemName = "Ubuntu JeOS 9.10 (32-bit)";
 
@@ -101,7 +103,6 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
    private RetryablePredicate<URI> successTester;
    private VCloudExpressVApp clone;
    private VDC vdc;
-   protected String credential;
    public static final String PREFIX = System.getProperty("user.name") + "-terremark";
 
    @Test
@@ -427,13 +428,39 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
 
    }
 
+   protected String provider = "trmk-vcloudexpress";
+   protected String identity;
+   protected String credential;
+   protected String endpoint;
+   protected String apiversion;
+
+   protected void setupCredentials() {
+      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
+               + ".credential");
+      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
+      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
+               + ".apiversion");
+   }
+
+   protected Properties setupProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      overrides.setProperty(provider + ".identity", identity);
+      overrides.setProperty(provider + ".credential", credential);
+      overrides.setProperty(provider + ".endpoint", endpoint);
+      overrides.setProperty(provider + ".apiversion", apiversion);
+      return overrides;
+   }
+
    @BeforeGroups(groups = { "live" })
-   @Override
    public void setupClient() {
       setupCredentials();
+      Properties overrides = setupProperties();
 
-      Injector injector = new RestContextFactory().createContextBuilder(provider, identity, credential,
-               ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule())).buildInjector();
+      Injector injector = new RestContextFactory().createContextBuilder(provider,
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()),overrides).buildInjector();
 
       connection = tmClient = injector.getInstance(TerremarkVCloudClient.class);
 
@@ -446,7 +473,5 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       // service timeout
       successTester = new RetryablePredicate<URI>(injector.getInstance(TaskSuccess.class), 650, 10, TimeUnit.SECONDS);
    }
-
-   protected abstract void setupCredentials();
 
 }

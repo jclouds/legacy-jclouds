@@ -19,8 +19,6 @@
 
 package org.jclouds.vcloud.bluelock;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import org.jclouds.vcloud.VCloudGuestCustomizationLiveTest;
 import org.testng.annotations.Test;
 
@@ -32,13 +30,8 @@ import org.testng.annotations.Test;
 @Test(groups = "live", enabled = true, sequential = true, testName = "vcloud.BlueLockVCloudDirectorGuestCustomizationLiveTest")
 public class BlueLockVCloudDirectorGuestCustomizationLiveTest extends VCloudGuestCustomizationLiveTest {
 
-   @Override
-   protected void setupCredentials() {
+   public BlueLockVCloudDirectorGuestCustomizationLiveTest() {
       provider = "bluelock-vcdirector";
-      identity = checkNotNull(System.getProperty("bluelock-vcdirector.identity"),
-               "bluelock-vcdirector.identity");
-      credential = checkNotNull(System.getProperty("bluelock-vcdirector.credential"),
-               "bluelock-vcdirector.credential");
    }
 
 }

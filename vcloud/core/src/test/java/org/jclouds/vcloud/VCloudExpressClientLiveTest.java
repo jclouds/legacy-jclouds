@@ -19,13 +19,12 @@
 
 package org.jclouds.vcloud;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.domain.VDC;
 import org.testng.annotations.Test;
@@ -36,14 +35,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", sequential = true, testName = "vcloud.VCloudClientLiveTest")
-public class VCloudExpressClientLiveTest extends
+public abstract class VCloudExpressClientLiveTest extends
          CommonVCloudClientLiveTest<VCloudExpressClient, VCloudExpressAsyncClient> {
 
-   protected void setupCredentials() {
-      provider = "vcloudexpress";
-      identity = checkNotNull(System.getProperty("vcloudexpress.identity"), "vcloudexpress.identity");
-      credential = checkNotNull(System.getProperty("vcloudexpress.credential"), "vcloudexpress.credential");
-   }
    @Test
    public void testGetVAppTemplate() throws Exception {
       Org org = connection.findOrgNamed(null);
@@ -88,7 +82,7 @@ public class VCloudExpressClientLiveTest extends
                CatalogItem item = connection.getCatalogItem(resource.getHref());
                if (item.getEntity().getType().equals(VCloudMediaType.VAPPTEMPLATE_XML)) {
                   assertNotNull(connection.findVAppTemplateInOrgCatalogNamed(org.getName(), response.getName(), item
-                        .getEntity().getName()));
+                           .getEntity().getName()));
                }
             }
          }

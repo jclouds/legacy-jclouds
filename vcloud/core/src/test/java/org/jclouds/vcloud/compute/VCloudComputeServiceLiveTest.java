@@ -19,7 +19,6 @@
 
 package org.jclouds.vcloud.compute;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
@@ -41,15 +40,8 @@ import org.testng.annotations.Test;
 @Test(groups = "live", enabled = true, sequential = true, testName = "vcloud.VCloudComputeServiceLiveTest")
 public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
-   @Override
-   public void setServiceDefaults() {
+   public VCloudComputeServiceLiveTest() {
       provider = "vcloud";
-   }
-
-   @Override
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("vcloud.identity"), "vcloud.identity");
-      credential = checkNotNull(System.getProperty("vcloud.credential"), "vcloud.credential");
    }
 
    @Override

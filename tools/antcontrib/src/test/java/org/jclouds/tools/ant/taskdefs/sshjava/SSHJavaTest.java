@@ -139,11 +139,11 @@ public class SSHJavaTest {
    }
 
    private void addDestinationTo(SSHJava javaOverSsh) throws UnknownHostException {
-      String sshHost = System.getProperty("jclouds.test.ssh.host");
-      String sshPort = System.getProperty("jclouds.test.ssh.port");
-      String sshUser = System.getProperty("jclouds.test.ssh.username");
-      String sshPass = System.getProperty("jclouds.test.ssh.password");
-      String sshKeyFile = System.getProperty("jclouds.test.ssh.keyfile");
+      String sshHost = System.getProperty("test.ssh.host");
+      String sshPort = System.getProperty("test.ssh.port");
+      String sshUser = System.getProperty("test.ssh.username");
+      String sshPass = System.getProperty("test.ssh.password");
+      String sshKeyFile = System.getProperty("test.ssh.keyfile");
 
       int port = (sshPort != null) ? Integer.parseInt(sshPort) : 22;
       InetAddress host = (sshHost != null) ? InetAddress.getByName(sshHost) : InetAddress

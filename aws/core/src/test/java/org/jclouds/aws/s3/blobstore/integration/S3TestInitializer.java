@@ -20,7 +20,6 @@
 package org.jclouds.aws.s3.blobstore.integration;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
@@ -37,12 +36,16 @@ import com.google.inject.Module;
  */
 public class S3TestInitializer extends TransientBlobStoreTestInitializer {
 
-   @Override
-   protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
-            String identity, String key) throws IOException {
+   public S3TestInitializer() {
+      provider = "s3";
       BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
-      return new BlobStoreContextFactory().createContext("s3", identity, key, ImmutableSet.of(
-               configurationModule, new Log4JLoggingModule()), new Properties());
+   }
+
+   @Override
+   protected BlobStoreContext createLiveContext(Module configurationModule, String endpoint, String apiversion,
+            String app, String identity, String credential) throws IOException {
+      return new BlobStoreContextFactory().createContext(provider, ImmutableSet.of(configurationModule,
+               new Log4JLoggingModule()), setupProperties(endpoint, apiversion, identity, credential));
    }
 
 }

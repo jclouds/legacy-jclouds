@@ -19,6 +19,7 @@
 
 package org.jclouds.azure.storage.blob;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.azure.storage.blob.options.CreateContainerOptions.Builder.withMetadata;
 import static org.jclouds.azure.storage.blob.options.CreateContainerOptions.Builder.withPublicAcl;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.includeMetadata;
@@ -26,12 +27,13 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.security.SecureRandom;
+import java.util.Properties;
 import java.util.Set;
 
+import org.jclouds.Constants;
 import org.jclouds.azure.storage.AzureStorageResponseException;
 import org.jclouds.azure.storage.blob.domain.AzureBlob;
 import org.jclouds.azure.storage.blob.domain.BlobProperties;
@@ -49,7 +51,7 @@ import org.jclouds.http.options.GetOptions;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.util.Utils;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -71,13 +73,38 @@ public class AzureBlobClientLiveTest {
    private String containerPrefix = System.getProperty("user.name") + "-azureblob";
 
    private BlobStoreContext context;
+   protected String provider = "azurequeue";
+   protected String identity;
+   protected String credential;
+   protected String endpoint;
+   protected String apiversion;
 
-   @BeforeTest
-   public void setupClient() throws IOException {
-      identity = System.getProperty("jclouds.test.identity");
-      String credential = System.getProperty("jclouds.test.credential");
-      context = new BlobStoreContextFactory().createContext("azureblob", identity, credential, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()));
+   protected void setupCredentials() {
+      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
+               + ".credential");
+      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
+      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
+               + ".apiversion");
+   }
+
+   protected Properties setupProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      overrides.setProperty(provider + ".identity", identity);
+      overrides.setProperty(provider + ".credential", credential);
+      overrides.setProperty(provider + ".endpoint", endpoint);
+      overrides.setProperty(provider + ".apiversion", apiversion);
+      return overrides;
+   }
+
+   @BeforeGroups(groups = { "live" })
+   public void setupClient() {
+      setupCredentials();
+      Properties overrides = setupProperties();
+      context = new BlobStoreContextFactory().createContext(provider, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()), overrides);
       client = (AzureBlobClient) context.getProviderSpecificContext().getApi();
    }
 
@@ -92,7 +119,6 @@ public class AzureBlobClientLiveTest {
 
    String privateContainer;
    String publicContainer;
-   String identity;
 
    @Test(timeOut = 5 * 60 * 1000)
    public void testCreateContainer() throws Exception {

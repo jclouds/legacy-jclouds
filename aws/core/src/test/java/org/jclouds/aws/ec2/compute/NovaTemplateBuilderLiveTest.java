@@ -25,19 +25,18 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
+import org.jclouds.Constants;
 import org.jclouds.aws.ec2.reference.EC2Constants;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * 
@@ -45,21 +44,38 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "live", testName = "ec2.NebulaTemplateBuilderLiveTest")
 public class NovaTemplateBuilderLiveTest {
-   private String password;
-   private String user;
+   protected String provider = "nova";
+   protected String identity;
+   protected String credential;
+   protected String endpoint;
+   protected String apiversion;
 
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
-      user = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      password = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+   protected void setupCredentials() {
+      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
+               + ".credential");
+      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
+      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
+               + ".apiversion");
+   }
+
+   protected Properties setupProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      overrides.setProperty(provider + ".identity", identity);
+      overrides.setProperty(provider + ".credential", credential);
+      overrides.setProperty(provider + ".endpoint", endpoint);
+      overrides.setProperty(provider + ".apiversion", apiversion);
+      return overrides;
    }
 
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
       ComputeServiceContext newContext = null;
       try {
-         newContext = new ComputeServiceContextFactory().createContext("nova", user, password, ImmutableSet
-                  .of(new Log4JLoggingModule()));
+         newContext = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
+                  .<Module> of(new Log4JLoggingModule()), setupProperties());
 
          Template defaultTemplate = newContext.getComputeService().templateBuilder().build();
          assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
@@ -80,12 +96,12 @@ public class NovaTemplateBuilderLiveTest {
    public void testTemplateBuilderWithNoOwnersParsesImageOnDemand() throws IOException {
       ComputeServiceContext newContext = null;
       try {
-         Properties overrides = new Properties();
+         Properties overrides = setupProperties();
          // set owners to nothing
          overrides.setProperty(EC2Constants.PROPERTY_EC2_AMI_OWNERS, "");
 
-         newContext = new ComputeServiceContextFactory().createContext("nova", user, password, ImmutableSet
-                  .of(new Log4JLoggingModule()), overrides);
+         newContext = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
+                  .<Module> of(new Log4JLoggingModule()), overrides);
 
          assertEquals(newContext.getComputeService().listImages().size(), 0);
 

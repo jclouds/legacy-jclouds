@@ -24,18 +24,16 @@ import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "ec2.NebulaComputeServiceLiveTest")
+@Test(enabled = false, groups = "live", sequential = true, testName = "ec2.NebulaComputeServiceLiveTest")
 public class NovaComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
-   @BeforeClass
-   @Override
-   public void setServiceDefaults() {
+
+   public NovaComputeServiceLiveTest() {
       provider = "nova";
    }
 

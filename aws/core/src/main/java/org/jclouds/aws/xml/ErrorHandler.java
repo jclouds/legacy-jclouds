@@ -19,8 +19,6 @@
 
 package org.jclouds.aws.xml;
 
-import javax.inject.Singleton;
-
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.http.functions.ParseSax;
 
@@ -32,7 +30,6 @@ import org.jclouds.http.functions.ParseSax;
  *      />
  * @author Adrian Cole
  */
-@Singleton
 public class ErrorHandler extends ParseSax.HandlerWithResult<AWSError> {
 
    private AWSError error = new AWSError();

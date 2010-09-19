@@ -24,8 +24,10 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import java.util.Properties;
 import java.util.Set;
 
+import org.jclouds.Constants;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
@@ -52,11 +54,36 @@ public class RimuHostingClientLiveTest {
    private RimuHostingClient connection;
    private RestContext<RimuHostingClient, RimuHostingAsyncClient> context;
 
+   protected String provider = "rimuhosting";
+   protected String identity;
+   protected String credential;
+   protected String endpoint;
+   protected String apiversion;
+
+   protected void setupCredentials() {
+      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
+      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
+               + ".apiversion");
+   }
+
+   protected Properties setupProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      overrides.setProperty(provider + ".identity", identity);
+      overrides.setProperty(provider + ".endpoint", endpoint);
+      overrides.setProperty(provider + ".apiversion", apiversion);
+      return overrides;
+   }
+
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
-      this.context = new RestContextFactory().createContext("rimuhosting", credential, credential, ImmutableSet
-            .<Module> of(new Log4JLoggingModule()));
+      setupCredentials();
+      Properties overrides = setupProperties();
+
+      this.context = new RestContextFactory().createContext("rimuhosting", ImmutableSet
+               .<Module> of(new Log4JLoggingModule()), overrides);
       this.connection = context.getApi();
 
    }

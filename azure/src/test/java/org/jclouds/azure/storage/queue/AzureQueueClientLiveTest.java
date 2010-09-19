@@ -19,16 +19,18 @@
 
 package org.jclouds.azure.storage.queue;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.azure.storage.options.ListOptions.Builder.prefix;
 import static org.jclouds.azure.storage.queue.options.GetOptions.Builder.maxMessages;
 import static org.jclouds.azure.storage.queue.options.PutMessageOptions.Builder.withTTL;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.Properties;
 import java.util.Set;
 
+import org.jclouds.Constants;
 import org.jclouds.azure.storage.domain.BoundedSet;
 import org.jclouds.azure.storage.options.CreateOptions;
 import org.jclouds.azure.storage.queue.domain.QueueMessage;
@@ -51,18 +53,43 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", sequential = true, testName = "azurequeue.AzureQueueClientLiveTest")
 public class AzureQueueClientLiveTest {
-   String identity;
 
    protected AzureQueueClient connection;
 
    private String queuePrefix = System.getProperty("user.name") + "-azurequeue";
+   protected String provider = "azurequeue";
+   protected String identity;
+   protected String credential;
+   protected String endpoint;
+   protected String apiversion;
+
+   protected void setupCredentials() {
+      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
+               + ".credential");
+      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
+      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
+               + ".apiversion");
+   }
+
+   protected Properties setupProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      overrides.setProperty(provider + ".identity", identity);
+      overrides.setProperty(provider + ".credential", credential);
+      overrides.setProperty(provider + ".endpoint", endpoint);
+      overrides.setProperty(provider + ".apiversion", apiversion);
+      return overrides;
+   }
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() throws IOException {
-      identity = System.getProperty("jclouds.test.identity");
-      String credential = System.getProperty("jclouds.test.credential");
-      connection = (AzureQueueClient) new RestContextFactory().createContext("azurequeue", identity,
-               credential, ImmutableSet.<Module> of(new Log4JLoggingModule())).getApi();
+   public void setupClient() {
+      setupCredentials();
+      Properties overrides = setupProperties();
+
+      connection = (AzureQueueClient) new RestContextFactory().createContext(provider,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getApi();
    }
 
    @Test
@@ -83,8 +110,8 @@ public class AzureQueueClientLiveTest {
       while (!created) {
          privateQueue = queuePrefix + new SecureRandom().nextInt();
          try {
-            created = connection.createQueue(privateQueue, CreateOptions.Builder
-                     .withMetadata(ImmutableMultimap.of("foo", "bar")));
+            created = connection.createQueue(privateQueue, CreateOptions.Builder.withMetadata(ImmutableMultimap.of(
+                     "foo", "bar")));
          } catch (HttpResponseException htpe) {
             if (htpe.getResponse().getStatusCode() == 409) {
                continue;
@@ -102,8 +129,7 @@ public class AzureQueueClientLiveTest {
 
    @Test(timeOut = 5 * 60 * 1000, dependsOnMethods = { "testCreateQueue" })
    public void testListQueuesWithOptions() throws Exception {
-      BoundedSet<QueueMetadata> response = connection
-               .listQueues(prefix(privateQueue).maxResults(1));
+      BoundedSet<QueueMetadata> response = connection.listQueues(prefix(privateQueue).maxResults(1));
       assert null != response;
       long initialQueueCount = response.size();
       assertTrue(initialQueueCount >= 0);

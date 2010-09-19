@@ -22,6 +22,9 @@ package org.jclouds.aws.ec2.compute;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.get;
 
+import java.util.Properties;
+
+import org.jclouds.Constants;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.domain.Blob;
@@ -48,24 +51,35 @@ public class BlobStoreAndComputeServiceLiveTest {
    protected ComputeServiceContext computeContext;
    protected BlobStoreContext blobContext;
    protected String tag = System.getProperty("user.name") + "happy";
-   protected String identity;
-   protected String credential;
+
    protected String blobStoreProvider;
    protected String computeServiceProvider;
 
-   protected void setupCredentials() {
-      tag = System.getProperty("user.name") + "happy";
-      identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+   protected Properties setupCredentials(String provider) {
+      String identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider
+               + ".identity");
+      String credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
+               + ".credential");
+      String endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider
+               + ".endpoint");
+      String apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
+               + ".apiversion");
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      overrides.setProperty(provider + ".identity", identity);
+      overrides.setProperty(provider + ".credential", credential);
+      overrides.setProperty(provider + ".endpoint", endpoint);
+      overrides.setProperty(provider + ".apiversion", apiversion);
+      return overrides;
    }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      setupCredentials();
-      computeContext = new ComputeServiceContextFactory().createContext(computeServiceProvider, identity, credential,
-               ImmutableSet.of(new Log4JLoggingModule(), new JschSshClientModule()));
-      blobContext = new BlobStoreContextFactory().createContext(blobStoreProvider, identity, credential, ImmutableSet
-               .of(new Log4JLoggingModule()));
+      computeContext = new ComputeServiceContextFactory().createContext(computeServiceProvider, ImmutableSet.of(
+               new Log4JLoggingModule(), new JschSshClientModule()), setupCredentials(computeServiceProvider));
+      blobContext = new BlobStoreContextFactory().createContext(blobStoreProvider, ImmutableSet
+               .of(new Log4JLoggingModule()), setupCredentials(blobStoreProvider));
       blobContext.getAsyncBlobStore().createContainerInLocation(null, tag);
       computeContext.getComputeService().destroyNodesMatching(NodePredicates.withTag(tag));
    }

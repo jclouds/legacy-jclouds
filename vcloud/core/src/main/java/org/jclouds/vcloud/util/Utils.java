@@ -69,8 +69,9 @@ public class Utils {
          errorCode = 500;
          vendorSpecificErrorCode = attributes.get("majorErrorCode");
       }
-      MinorCode minorErrorCode = MinorCode.fromValue(attributes.get("minorErrorCode"));
-      if (minorErrorCode == MinorCode.UNRECOGNIZED) {
+      MinorCode minorErrorCode = attributes.containsKey("minorErrorCode") ? MinorCode.fromValue(attributes
+               .get("minorErrorCode")) : null;
+      if (minorErrorCode == null || minorErrorCode == MinorCode.UNRECOGNIZED) {
          vendorSpecificErrorCode = attributes.get("minorErrorCode");
       }
 

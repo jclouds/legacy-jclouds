@@ -33,10 +33,14 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", sequential = true, testName = "ec2.EucalyptusComputeServiceLiveTest")
 public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
+
+   public EucalyptusComputeServiceLiveTest() {
+      provider = "eucalyptus";
+   }
+
    @BeforeClass
    @Override
    public void setServiceDefaults() {
-      provider = "eucalyptus";
       // security groups must be <30 characters
       tag = "euc";
    }

@@ -127,27 +127,27 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>jclouds.test.identity.azureblob</name>
+                                            <name>test.identity.azureblob</name>
                                             <value>${jclouds.azure.storage.account}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.test.credential.azureblob</name>
+                                            <name>test.credential.azureblob</name>
                                             <value>${jclouds.azure.storage.key}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.test.identity.cloudfiles</name>
+                                            <name>test.identity.cloudfiles</name>
                                             <value>${jclouds.rackspace.user}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.test.credential.cloudfiles</name>
+                                            <name>test.credential.cloudfiles</name>
                                             <value>${jclouds.rackspace.key}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.test.identity.s3</name>
+                                            <name>test.identity.s3</name>
                                             <value>${jclouds.aws.accesskeyid}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.test.credential.s3</name>
+                                            <name>test.credential.s3</name>
                                             <value>${jclouds.aws.secretaccesskey}</value>
                                         </property>
                                         <property>

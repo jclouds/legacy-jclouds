@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -50,10 +51,7 @@ import com.google.inject.Module;
 public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A extends CommonVCloudAsyncClient> {
 
    protected S connection;
-   protected String provider;
-   protected String identity;
    protected RestContext<S, A> context;
-   protected String credential;
 
    @Test
    public void testOrg() throws Exception {
@@ -176,16 +174,38 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
       }
    }
 
-   protected abstract void setupCredentials();
+   protected String provider = "vcloud";
+   protected String identity;
+   protected String credential;
+   protected String endpoint;
+   protected String apiversion;
+
+   protected void setupCredentials() {
+      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
+               + ".credential");
+      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
+      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
+               + ".apiversion");
+   }
+
+   protected Properties setupProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      overrides.setProperty(provider + ".identity", identity);
+      overrides.setProperty(provider + ".credential", credential);
+      overrides.setProperty(provider + ".endpoint", endpoint);
+      overrides.setProperty(provider + ".apiversion", apiversion);
+      return overrides;
+   }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
       setupCredentials();
-      Properties props = new Properties();
-      props.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      props.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      context = new ComputeServiceContextFactory().createContext(provider, identity, credential,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), props).getProviderSpecificContext();
+      Properties overrides = setupProperties();
+      context = new ComputeServiceContextFactory().createContext(provider,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
 
       connection = context.getApi();
    }

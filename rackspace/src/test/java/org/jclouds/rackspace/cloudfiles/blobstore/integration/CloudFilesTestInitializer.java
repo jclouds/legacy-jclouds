@@ -20,7 +20,6 @@
 package org.jclouds.rackspace.cloudfiles.blobstore.integration;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
@@ -36,12 +35,15 @@ import com.google.inject.Module;
  */
 public class CloudFilesTestInitializer extends TransientBlobStoreTestInitializer {
 
+   public CloudFilesTestInitializer() {
+      provider = "cloudfiles";
+   }
+
    @Override
-   protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
-            String identity, String key) throws IOException {
-      return (BlobStoreContext) new BlobStoreContextFactory().createContext("cloudfiles", identity,
-               key, ImmutableSet.of(configurationModule, new Log4JLoggingModule()),
-               new Properties());
+   protected BlobStoreContext createLiveContext(Module configurationModule, String endpoint, String apiversion,
+            String app, String identity, String credential) throws IOException {
+      return new BlobStoreContextFactory().createContext(provider, ImmutableSet.of(configurationModule,
+               new Log4JLoggingModule()), setupProperties(endpoint, apiversion, identity, credential));
    }
 
 }

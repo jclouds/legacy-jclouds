@@ -31,9 +31,15 @@
     <artifactId>jclouds-atmos</artifactId>
     <name>jclouds atmosonline components</name>
     <properties>
-        <jclouds.test.initializer>org.jclouds.atmosonline.saas.blobstore.integration.AtmosStorageTestInitializer</jclouds.test.initializer>
-        <jclouds.test.identity>${jclouds.emcsaas.uid}</jclouds.test.identity>
-        <jclouds.test.credential>${jclouds.emcsaas.key}</jclouds.test.credential>
+        <test.initializer>org.jclouds.atmosonline.saas.blobstore.integration.AtmosStorageTestInitializer</test.initializer>
+        <test.atmosonline.endpoint>https://accesspoint.atmosonline.com</test.atmosonline.endpoint>
+        <test.atmosonline.apiversion>1.3.0</test.atmosonline.apiversion>
+        <test.atmosonline.identity>FIXME</test.atmosonline.identity>
+        <test.atmosonline.credential>FIXME</test.atmosonline.credential>
+        <test.synaptic.endpoint>https://storage.synaptic.att.com</test.synaptic.endpoint>
+        <test.synaptic.apiversion>1.3.0</test.synaptic.apiversion>
+        <test.synaptic.identity>FIXME</test.synaptic.identity>
+        <test.synaptic.credential>FIXME</test.synaptic.credential>
     </properties>
     <dependencies>
         <dependency>
@@ -68,5 +74,63 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+      <profiles>
+        <profile>
+            <id>live</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>integration</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemProperties>
+                                        <property>
+                                            <name>test.atmosonline.endpoint</name>
+                                            <value>${test.atmosonline.endpoint}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.atmosonline.apiversion</name>
+                                            <value>${test.atmosonline.apiversion}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.atmosonline.identity</name>
+                                            <value>${test.atmosonline.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.atmosonline.credential</name>
+                                            <value>${test.atmosonline.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.synaptic.endpoint</name>
+                                            <value>${test.synaptic.endpoint}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.synaptic.apiversion</name>
+                                            <value>${test.synaptic.apiversion}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.synaptic.identity</name>
+                                            <value>${test.synaptic.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.synaptic.credential</name>
+                                            <value>${test.synaptic.credential}</value>
+                                        </property>
+                                    </systemProperties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
   
 </project>

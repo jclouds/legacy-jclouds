@@ -216,7 +216,7 @@
         <jclouds.wire.httpstream.url>http://apache.opensourceresources.org/commons/logging/binaries/commons-logging-1.1.1-bin.tar.gz</jclouds.wire.httpstream.url>
         <jclouds.wire.httpstream.md5>e5de09672af9b386c30a311654d8541a</jclouds.wire.httpstream.md5>
         <jclouds.test.listener>org.jclouds.test.testng.UnitTestStatusListener</jclouds.test.listener>
-        <jclouds.test.ssh.keyfile />
+        <test.ssh.keyfile />
     </properties>
 
     <dependencyManagement>
@@ -352,8 +352,8 @@
                    </properties>
                    <systemProperties>
                        <property>
-                          <name>jclouds.test.initializer</name>
-                          <value>${jclouds.test.initializer}</value>
+                          <name>test.initializer</name>
+                          <value>${test.initializer}</value>
                        </property>
                        <property>
                            <name>jclouds.wire.httpstream.url</name>
@@ -565,32 +565,12 @@ pageTracker._trackPageview();
                                             <value>${project.build.sourceEncoding}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.test.initializer</name>
-                                            <value>${jclouds.test.initializer}</value>
+                                            <name>test.initializer</name>
+                                            <value>${test.initializer}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.test.identity</name>
-                                            <value>${jclouds.test.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.test.credential</name>
-                                            <value>${jclouds.test.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.test.endpoint</name>
-                                            <value>${jclouds.test.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.test.appname</name>
-                                            <value>${jclouds.test.appname}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.test.appid</name>
-                                            <value>${jclouds.test.appid}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.test.ssh.keyfile</name>
-                                            <value>${jclouds.test.ssh.keyfile}</value>
+                                            <name>test.ssh.keyfile</name>
+                                            <value>${test.ssh.keyfile}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.blobstore.httpstream.url</name>

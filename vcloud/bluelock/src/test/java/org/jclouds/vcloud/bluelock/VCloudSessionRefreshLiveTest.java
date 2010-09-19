@@ -22,11 +22,11 @@ package org.jclouds.vcloud.bluelock;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
-import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -48,7 +48,6 @@ public class VCloudSessionRefreshLiveTest {
 
    private final static int timeOut = 40;
    protected VCloudClient connection;
-   protected String identity;
    protected ComputeServiceContext context;
 
    @Test
@@ -58,17 +57,41 @@ public class VCloudSessionRefreshLiveTest {
       connection.findOrgNamed(null);
    }
 
+   protected String provider = "bluelock-vcdirector";
+   protected String identity;
+   protected String credential;
+   protected String endpoint;
+   protected String apiversion;
+
+   protected void setupCredentials() {
+      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
+               + ".credential");
+      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
+      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
+               + ".apiversion");
+   }
+
+   protected Properties setupProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      overrides.setProperty(provider + ".identity", identity);
+      overrides.setProperty(provider + ".credential", credential);
+      overrides.setProperty(provider + ".endpoint", endpoint);
+      overrides.setProperty(provider + ".apiversion", apiversion);
+      return overrides;
+   }
+
    @BeforeGroups(groups = { "live" })
-   public void setupClient() throws IOException {
-      identity = checkNotNull(System.getProperty("bluelock-vcdirector.identity"), "bluelock-vcdirector.identity");
-      String credential = checkNotNull(System.getProperty("bluelock-vcdirector.credential"),
-               "bluelock-vcdirector.credential");
+   public void setupClient() {
+      setupCredentials();
+      Properties overrides = setupProperties();
 
-      Properties props = new Properties();
-      props.setProperty(PROPERTY_SESSION_INTERVAL, 40 + "");
+      overrides.setProperty(PROPERTY_SESSION_INTERVAL, 40 + "");
 
-      context = new ComputeServiceContextFactory().createContext("bluelock-vcdirector", identity, credential,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), props);
+      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()), overrides);
 
       connection = VCloudClient.class.cast(context.getProviderSpecificContext().getApi());
    }

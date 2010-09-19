@@ -37,14 +37,12 @@ public class ProvidersInPropertiesTest {
    public void testSupportedProviders() {
       Iterable<String> providers = Utils.getSupportedProviders();
       assert Iterables.contains(providers, "vcloud") : providers;
-      assert Iterables.contains(providers, "vcloudexpress") : providers;
    }
 
    @Test
    public void testSupportedComputeServiceProviders() {
       Iterable<String> providers = ComputeServiceUtils.getSupportedProviders();
       assert Iterables.contains(providers, "vcloud") : providers;
-      assert Iterables.contains(providers, "vcloudexpress") : providers;
    }
 
 }

@@ -25,16 +25,18 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.HttpHeaders;
 
+import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.annotations.Provider;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.vcloud.VCloudLoginLiveTest.VCloudLoginClient;
+import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.endpoints.VCloudLogin;
 import org.jclouds.vcloud.functions.ParseLoginResponseFromHeaders;
 import org.testng.annotations.Test;
@@ -99,6 +101,12 @@ public class VCloudLoginAsyncClientTest extends RestClientTest<VCloudExpressLogi
 
       };
    }
+   @Timeout(duration = 10, timeUnit = TimeUnit.SECONDS)
+   public interface VCloudLoginClient {
+
+      VCloudSession login();
+   }
+
 
    @Override
    public ContextSpec<VCloudLoginClient, VCloudExpressLoginAsyncClient> createContextSpec() {

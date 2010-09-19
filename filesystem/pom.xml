@@ -68,7 +68,7 @@
     </dependencies>
 
     <properties>
-        <jclouds.test.initializer>org.jclouds.filesystem.integration.FilesystemTestInitializer</jclouds.test.initializer>
+        <test.initializer>org.jclouds.filesystem.integration.FilesystemTestInitializer</test.initializer>
     </properties>
 
 </project>

@@ -35,10 +35,10 @@
     <properties>
         <!-- when instances are hung, open a ticket and add their names here -->
         <jclouds.compute.blacklist.nodes></jclouds.compute.blacklist.nodes>
-        <bluelock-vcdirector.endpoint>https://vcenterprise.bluelock.com/api</bluelock-vcdirector.endpoint>
-        <bluelock-vcdirector.apiversion>1.0</bluelock-vcdirector.apiversion>
-        <bluelock-vcdirector.identity>FIXME</bluelock-vcdirector.identity>
-        <bluelock-vcdirector.credential>FIXME</bluelock-vcdirector.credential>
+        <test.bluelock-vcdirector.endpoint>https://vcenterprise.bluelock.com/api</test.bluelock-vcdirector.endpoint>
+        <test.bluelock-vcdirector.apiversion>1.0</test.bluelock-vcdirector.apiversion>
+        <test.bluelock-vcdirector.identity>FIXME</test.bluelock-vcdirector.identity>
+        <test.bluelock-vcdirector.credential>FIXME</test.bluelock-vcdirector.credential>
     </properties>
 
     <scm>
@@ -79,20 +79,20 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>bluelock-vcdirector.endpoint</name>
-                                            <value>${bluelock-vcdirector.endpoint}</value>
+                                            <name>test.bluelock-vcdirector.endpoint</name>
+                                            <value>${test.bluelock-vcdirector.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>bluelock-vcdirector.apiversion</name>
-                                            <value>${bluelock-vcdirector.apiversion}</value>
+                                            <name>test.bluelock-vcdirector.apiversion</name>
+                                            <value>${test.bluelock-vcdirector.apiversion}</value>
                                         </property>
                                         <property>
-                                            <name>bluelock-vcdirector.identity</name>
-                                            <value>${bluelock-vcdirector.identity}</value>
+                                            <name>test.bluelock-vcdirector.identity</name>
+                                            <value>${test.bluelock-vcdirector.identity}</value>
                                         </property>
                                         <property>
-                                            <name>bluelock-vcdirector.credential</name>
-                                            <value>${bluelock-vcdirector.credential}</value>
+                                            <name>test.bluelock-vcdirector.credential</name>
+                                            <value>${test.bluelock-vcdirector.credential}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.compute.blacklist.nodes</name>

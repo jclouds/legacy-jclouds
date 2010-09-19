@@ -46,11 +46,11 @@ import com.google.inject.Injector;
  */
 @Test(groups = "live", testName = "ssh.JschSshClientLiveTest")
 public class JschSshClientLiveTest {
-   protected static final String sshHost = System.getProperty("jclouds.test.ssh.host");
-   protected static final String sshPort = System.getProperty("jclouds.test.ssh.port");
-   protected static final String sshUser = System.getProperty("jclouds.test.ssh.username");
-   protected static final String sshPass = System.getProperty("jclouds.test.ssh.password");
-   protected static final String sshKeyFile = System.getProperty("jclouds.test.ssh.keyfile");
+   protected static final String sshHost = System.getProperty("test.ssh.host");
+   protected static final String sshPort = System.getProperty("test.ssh.port");
+   protected static final String sshUser = System.getProperty("test.ssh.username");
+   protected static final String sshPass = System.getProperty("test.ssh.password");
+   protected static final String sshKeyFile = System.getProperty("test.ssh.keyfile");
    private File temp;
 
    @BeforeGroups(groups = { "live" })

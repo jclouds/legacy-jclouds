@@ -30,7 +30,6 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.slicehost.SlicehostAsyncClient;
 import org.jclouds.slicehost.SlicehostClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -41,10 +40,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "slicehost.SlicehostComputeServiceLiveTest")
 public class SlicehostComputeServiceLiveTest extends BaseComputeServiceLiveTest {
-
-   @BeforeClass
-   @Override
-   public void setServiceDefaults() {
+   public SlicehostComputeServiceLiveTest() {
       provider = "slicehost";
    }
 

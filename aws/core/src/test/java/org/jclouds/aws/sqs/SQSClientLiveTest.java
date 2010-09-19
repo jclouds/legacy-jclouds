@@ -25,9 +25,11 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
+import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 
+import org.jclouds.Constants;
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.sqs.domain.Queue;
@@ -57,14 +59,38 @@ public class SQSClientLiveTest {
    private RestContext<SQSClient, SQSAsyncClient> context;
 
    private Set<Queue> queues = Sets.newHashSet();
+   protected String provider = "sqs";
+   protected String identity;
+   protected String credential;
+   protected String endpoint;
+   protected String apiversion;
+
+   protected void setupCredentials() {
+      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
+               + ".credential");
+      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
+      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
+               + ".apiversion");
+   }
+
+   protected Properties setupProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      overrides.setProperty(provider + ".identity", identity);
+      overrides.setProperty(provider + ".credential", credential);
+      overrides.setProperty(provider + ".endpoint", endpoint);
+      overrides.setProperty(provider + ".apiversion", apiversion);
+      return overrides;
+   }
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() throws IOException {
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
-
-      context = new RestContextFactory().createContext("sqs", identity, credential, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()));
+   public void setupClient() {
+      setupCredentials();
+      Properties overrides = setupProperties();
+      context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
+               overrides);
       this.client = context.getApi();
    }
 

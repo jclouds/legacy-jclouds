@@ -89,7 +89,7 @@
                             </includes>
                             <systemProperties>
                                 <property>
-                                    <name>jclouds.test.initializer</name>
+                                    <name>test.initializer</name>
                                     <value>org.jclouds.blobstore.integration.TransientBlobStoreTestInitializer</value>
                                 </property>
                                 <property>

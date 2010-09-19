@@ -34,10 +34,13 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", sequential = true, testName = "rimuhosting.RimuHostingNodeServiceLiveTest")
 public class RimuHostingComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+   public RimuHostingComputeServiceLiveTest() {
+      provider = "rimuhosting";
+   }
+
    @BeforeClass
    @Override
    public void setServiceDefaults() {
-      provider = "rimuhosting";
       tag = "rimuhosting.jclouds";
    }
 

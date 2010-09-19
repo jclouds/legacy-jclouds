@@ -81,8 +81,8 @@ public abstract class BaseLoadBalancerServiceLiveTest {
             IOException, RunNodesException {
       if (tag == null)
          tag = checkNotNull(provider, "provider") + "lb";
-      identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider + ".credential");
 
       initializeContextAndClient();
 

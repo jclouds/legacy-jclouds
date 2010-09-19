@@ -34,7 +34,7 @@ import org.jclouds.rackspace.RackspaceAuthAsyncClient.AuthenticationResponse;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
-import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -55,8 +55,6 @@ public class RackspaceAuthenticationLiveTest {
    }
 
    private RestContext<RackspaceAuthClient, RackspaceAuthAsyncClient> context;
-   private String identity;
-   private String credential;
 
    @Test
    public void testAuthentication() throws Exception {
@@ -75,14 +73,27 @@ public class RackspaceAuthenticationLiveTest {
       authentication.authenticate("foo", "bar").get(10, TimeUnit.SECONDS);
    }
 
-   @BeforeClass
-   void setupFactory() {
+   protected String provider = "rackspace";
+   protected String identity;
+   protected String credential;
+   protected String endpoint;
+   protected String apiversion;
 
-      identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+   protected void setupCredentials() {
+      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
+               + ".credential");
+      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
+      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
+               + ".apiversion");
+   }
 
-      ContextSpec<RackspaceAuthClient, RackspaceAuthAsyncClient> contextSpec = contextSpec("test",
-               "https://api.mosso.com", "1", null, null, RackspaceAuthClient.class, RackspaceAuthAsyncClient.class);
+   @BeforeGroups(groups = { "live" })
+   public void setupFactory() {
+      setupCredentials();
+
+      ContextSpec<RackspaceAuthClient, RackspaceAuthAsyncClient> contextSpec = contextSpec(endpoint, endpoint,
+               apiversion, null, null, RackspaceAuthClient.class, RackspaceAuthAsyncClient.class);
 
       context = createContextBuilder(
                contextSpec,

@@ -91,7 +91,7 @@ public class BaseBlobStoreIntegrationTest {
    @SuppressWarnings("unchecked")
    private BlobStoreContext getCloudResources(ITestContext testContext) throws ClassNotFoundException,
             InstantiationException, IllegalAccessException, Exception {
-      String initializerClass = checkNotNull(System.getProperty("jclouds.test.initializer"), "jclouds.test.initializer");
+      String initializerClass = checkNotNull(System.getProperty("test.initializer"), "test.initializer");
       Class<BaseTestInitializer> clazz = (Class<BaseTestInitializer>) Class.forName(initializerClass);
       BaseTestInitializer initializer = clazz.newInstance();
       return initializer.init(createHttpModule(), testContext);

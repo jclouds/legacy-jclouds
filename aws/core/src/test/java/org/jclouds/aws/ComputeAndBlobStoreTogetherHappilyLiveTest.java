@@ -47,7 +47,6 @@ public class ComputeAndBlobStoreTogetherHappilyLiveTest extends BlobStoreAndComp
    protected void setupCredentials() {
       blobStoreProvider = "s3";
       computeServiceProvider = "ec2";
-      super.setupCredentials();
    }
 
    /**

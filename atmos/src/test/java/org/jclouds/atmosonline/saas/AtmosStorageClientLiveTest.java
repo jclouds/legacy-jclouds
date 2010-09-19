@@ -19,7 +19,6 @@
 
 package org.jclouds.atmosonline.saas;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -35,26 +34,19 @@ import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
 import org.jclouds.atmosonline.saas.domain.FileType;
 import org.jclouds.atmosonline.saas.domain.SystemMetadata;
 import org.jclouds.atmosonline.saas.options.ListOptions;
-import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.KeyAlreadyExistsException;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.InputStreamPayload;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
 import org.jclouds.util.Utils;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code AtmosStorageClient}
@@ -62,7 +54,11 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live", sequential = true, testName = "emcsaas.AtmosStorageClientLiveTest")
-public class AtmosStorageClientLiveTest {
+public class AtmosStorageClientLiveTest extends BaseBlobStoreIntegrationTest {
+
+   public AtmosStorageClient getApi() {
+      return (AtmosStorageClient) context.getProviderSpecificContext().getApi();
+   }
 
    private static final class HeadMatches implements Runnable {
       private final AtmosStorageClient connection;
@@ -112,22 +108,6 @@ public class AtmosStorageClientLiveTest {
 
    URI container1;
    URI container2;
-   private BlobStoreContext context;
-
-   @BeforeGroups(groups = { "live" })
-   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
-      context = new BlobStoreContextFactory().createContext("atmosonline", identity, credential, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()));
-      RestContext<AtmosStorageClient, AtmosStorageAsyncClient> restContext = context.getProviderSpecificContext();
-      connection = restContext.getApi();
-      for (DirectoryEntry entry : connection.listDirectories()) {
-         if (entry.getObjectName().startsWith(containerPrefix)) {
-            context.getBlobStore().deleteContainer(entry.getObjectName());
-         }
-      }
-   }
 
    @Test
    public void testListDirectorys() throws Exception {

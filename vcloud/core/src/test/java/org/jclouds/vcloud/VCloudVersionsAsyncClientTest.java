@@ -24,13 +24,16 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.util.SortedMap;
+import java.util.concurrent.TimeUnit;
 
+import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.vcloud.VCloudVersionsLiveTest.VCloudVersionsClient;
 import org.jclouds.vcloud.xml.SupportedVersionsHandler;
 import org.testng.annotations.Test;
 
@@ -72,10 +75,16 @@ public class VCloudVersionsAsyncClientTest extends RestClientTest<VCloudVersions
       };
    }
 
+   @Timeout(duration = 10, timeUnit = TimeUnit.SECONDS)
+   public interface VCloudVersionsClient {
+
+      SortedMap<String, URI> getSupportedVersions();
+   }
+
    @Override
    public ContextSpec<VCloudVersionsClient, VCloudVersionsAsyncClient> createContextSpec() {
       return contextSpec("test", "http://localhost:8080", "1", "identity", "credential", VCloudVersionsClient.class,
-            VCloudVersionsAsyncClient.class);
+               VCloudVersionsAsyncClient.class);
    }
 
 }

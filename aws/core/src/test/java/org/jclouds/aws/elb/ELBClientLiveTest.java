@@ -22,10 +22,11 @@ package org.jclouds.aws.elb;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
-import java.io.IOException;
+import java.util.Properties;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.elb.domain.LoadBalancer;
@@ -51,14 +52,38 @@ public class ELBClientLiveTest {
 
    private ELBClient client;
    private RestContext<ELBClient, ELBAsyncClient> context;
+   protected String provider = "elb";
+   protected String identity;
+   protected String credential;
+   protected String endpoint;
+   protected String apiversion;
+
+   protected void setupCredentials() {
+      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
+               + ".credential");
+      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
+      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
+               + ".apiversion");
+   }
+
+   protected Properties setupProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      overrides.setProperty(provider + ".identity", identity);
+      overrides.setProperty(provider + ".credential", credential);
+      overrides.setProperty(provider + ".endpoint", endpoint);
+      overrides.setProperty(provider + ".apiversion", apiversion);
+      return overrides;
+   }
 
    @BeforeGroups(groups = { "live" })
-   public void setupClient() throws IOException {
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
-
-      context = new RestContextFactory().createContext("elb", identity, credential, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()));
+   public void setupClient() {
+      setupCredentials();
+      Properties overrides = setupProperties();
+      context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
+               overrides);
       client = context.getApi();
    }
 
@@ -66,11 +91,10 @@ public class ELBClientLiveTest {
    void testCreateLoadBalancer() {
       String name = "TestLoadBalancer";
       for (Entry<String, String> regionZone : ImmutableMap.<String, String> of(Region.US_EAST_1,
-               AvailabilityZone.US_EAST_1A, Region.US_WEST_1, AvailabilityZone.US_WEST_1A,
-               Region.EU_WEST_1, AvailabilityZone.EU_WEST_1A, Region.AP_SOUTHEAST_1,
-               AvailabilityZone.AP_SOUTHEAST_1A).entrySet()) {
-         String dnsName = client.createLoadBalancerInRegion(regionZone.getKey(), name, "http", 80,
-                  80, regionZone.getValue());
+               AvailabilityZone.US_EAST_1A, Region.US_WEST_1, AvailabilityZone.US_WEST_1A, Region.EU_WEST_1,
+               AvailabilityZone.EU_WEST_1A, Region.AP_SOUTHEAST_1, AvailabilityZone.AP_SOUTHEAST_1A).entrySet()) {
+         String dnsName = client.createLoadBalancerInRegion(regionZone.getKey(), name, "http", 80, 80, regionZone
+                  .getValue());
          assertNotNull(dnsName);
          assert (dnsName.startsWith(name));
       }
@@ -78,8 +102,8 @@ public class ELBClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateLoadBalancer")
    void testDescribeLoadBalancers() {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
-               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
+               Region.AP_SOUTHEAST_1)) {
          Set<LoadBalancer> allResults = client.describeLoadBalancersInRegion(region);
          assertNotNull(allResults);
          assert (allResults.size() >= 1);
@@ -88,8 +112,8 @@ public class ELBClientLiveTest {
 
    @Test
    void testDeleteLoadBalancer() {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
-               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
+               Region.AP_SOUTHEAST_1)) {
          client.deleteLoadBalancerInRegion(region, "TestLoadBalancer");
       }
    }

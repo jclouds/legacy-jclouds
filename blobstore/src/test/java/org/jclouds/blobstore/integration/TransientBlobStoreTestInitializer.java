@@ -22,7 +22,6 @@ package org.jclouds.blobstore.integration;
 import java.io.IOException;
 
 import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.integration.internal.BaseTestInitializer;
 
 import com.google.inject.Module;
@@ -34,14 +33,10 @@ import com.google.inject.Module;
 public class TransientBlobStoreTestInitializer extends BaseTestInitializer {
 
    @Override
-   protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
+   protected BlobStoreContext createLiveContext(Module configurationModule, String url, String apiversion, String app,
             String identity, String key) throws IOException {
       return createStubContext();
    }
 
-   @Override
-   protected BlobStoreContext createStubContext() throws IOException {
-      return new BlobStoreContextFactory().createContext("transient", "foo", "bar");
-   }
 
 }

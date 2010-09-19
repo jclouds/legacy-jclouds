@@ -26,13 +26,12 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.integration.TransientBlobStoreTestInitializer;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
+import org.jclouds.filesystem.reference.FilesystemConstants;
+import org.jclouds.filesystem.utils.TestUtils;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
-
-import org.jclouds.filesystem.reference.FilesystemConstants;
-import org.jclouds.filesystem.utils.TestUtils;
 
 /**
  * 
@@ -40,17 +39,23 @@ import org.jclouds.filesystem.utils.TestUtils;
  */
 public class FilesystemTestInitializer extends TransientBlobStoreTestInitializer {
 
-   @Override
-   protected BlobStoreContext createLiveContext(Module configurationModule, String url, String app,
-            String identity, String key) throws IOException {
+   public FilesystemTestInitializer() {
+      provider = "filesystem";
       BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
+   }
 
-      Properties prop = new Properties();
-      prop.setProperty(FilesystemConstants.PROPERTY_BASEDIR, TestUtils.TARGET_BASE_DIR);
-      return new  BlobStoreContextFactory().createContext(
-            "filesystem",
-            ImmutableSet.of(configurationModule, new Log4JLoggingModule()),
-            prop);
+   @Override
+   protected BlobStoreContext createLiveContext(Module configurationModule, String endpoint, String apiversion,
+            String app, String identity, String credential) throws IOException {
+      return new BlobStoreContextFactory().createContext(provider, ImmutableSet.of(configurationModule,
+               new Log4JLoggingModule()), setupProperties(endpoint, apiversion, identity, credential));
+   }
+
+   @Override
+   protected Properties setupProperties(String endpoint, String apiversion, String identity, String credential) {
+      Properties props = super.setupProperties(endpoint, apiversion, identity, credential);
+      props.setProperty(FilesystemConstants.PROPERTY_BASEDIR, TestUtils.TARGET_BASE_DIR);
+      return props;
    }
 
 }

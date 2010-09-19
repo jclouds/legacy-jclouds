@@ -83,8 +83,8 @@ nova.propertiesbuilder=org.jclouds.aws.ec2.NovaPropertiesBuilder
 cloudservers.contextbuilder=org.jclouds.rackspace.cloudservers.CloudServersContextBuilder
 cloudservers.propertiesbuilder=org.jclouds.rackspace.RackspacePropertiesBuilder
 
-bluelock-vclouddirector.contextbuilder=org.jclouds.vcloud.bluelock.BlueLockVCloudDirectorContextBuilder
-bluelock-vclouddirector.propertiesbuilder=org.jclouds.vcloud.bluelock.BlueLockVCloudDirectorPropertiesBuilder
+bluelock-vcdirector.contextbuilder=org.jclouds.vcloud.bluelock.BlueLockVCloudDirectorContextBuilder
+bluelock-vcdirector.propertiesbuilder=org.jclouds.vcloud.bluelock.BlueLockVCloudDirectorPropertiesBuilder
 
 gogrid.propertiesbuilder=org.jclouds.gogrid.GoGridPropertiesBuilder
 gogrid.contextbuilder=org.jclouds.gogrid.GoGridContextBuilder

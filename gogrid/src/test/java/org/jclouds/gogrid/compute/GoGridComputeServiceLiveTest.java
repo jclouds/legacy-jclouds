@@ -30,7 +30,6 @@ import org.jclouds.gogrid.GoGridAsyncClient;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -38,10 +37,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "gogrid.GoGridComputeServiceLiveTest")
 public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
-
-   @BeforeClass
-   @Override
-   public void setServiceDefaults() {
+   public GoGridComputeServiceLiveTest() {
       provider = "gogrid";
    }
 
@@ -61,7 +57,7 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
-      RestContext<GoGridClient, GoGridAsyncClient> goGridContext = new ComputeServiceContextFactory()
-               .createContext(provider, identity, credential).getProviderSpecificContext();
+      RestContext<GoGridClient, GoGridAsyncClient> goGridContext = new ComputeServiceContextFactory().createContext(
+               provider, identity, credential).getProviderSpecificContext();
    }
 }

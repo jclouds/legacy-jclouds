@@ -51,15 +51,17 @@ import com.google.inject.Module;
 @Test(groups = "unit", testName = "rest.RestContextFactoryTest")
 public class RestContextFactoryTest {
 
+   private static final String provider = "test";
+
    public void testBuilder() {
-      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
+      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", null, IntegrationTestClient.class, IntegrationTestAsyncClient.class);
 
       createContextBuilder(contextSpec);
    }
 
    public void testBuilderProperties() {
-      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
+      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", null, IntegrationTestClient.class, IntegrationTestAsyncClient.class);
 
       Properties props = RestContextFactory.toProperties(contextSpec);
@@ -73,11 +75,11 @@ public class RestContextFactoryTest {
       assertEquals(props.getProperty("test.contextbuilder"), null);
       assertEquals(props.getProperty("test.modules"), null);
 
-      new RestContextFactory().createContext("test", props);
+      new RestContextFactory().createContext(provider, props);
    }
 
    public void testBuilderPropertiesWithCredential() {
-      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
+      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", "credential", IntegrationTestClient.class,
             IntegrationTestAsyncClient.class);
 
@@ -92,12 +94,12 @@ public class RestContextFactoryTest {
       assertEquals(props.getProperty("test.contextbuilder"), null);
       assertEquals(props.getProperty("test.modules"), null);
 
-      new RestContextFactory().createContext("test", props);
+      new RestContextFactory().createContext(provider, props);
    }
 
    @SuppressWarnings("unchecked")
    public void testBuilderPropertiesWithContextBuilder() {
-      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
+      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
             (Class) IntegrationTestContextBuilder.class, Collections.EMPTY_LIST);
 
@@ -112,12 +114,12 @@ public class RestContextFactoryTest {
       assertEquals(props.getProperty("test.contextbuilder"), IntegrationTestContextBuilder.class.getName());
       assertEquals(props.getProperty("test.modules"), null);
 
-      new RestContextFactory().createContext("test", props);
+      new RestContextFactory().createContext(provider, props);
    }
 
    @SuppressWarnings("unchecked")
    public void testBuilderPropertiesWithModule() {
-      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
+      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
             (Class) IntegrationTestContextBuilder.class, Collections.<Module> singleton(new A()));
 
@@ -132,12 +134,12 @@ public class RestContextFactoryTest {
       assertEquals(props.getProperty("test.contextbuilder"), IntegrationTestContextBuilder.class.getName());
       assertEquals(props.getProperty("test.modules"), "org.jclouds.rest.RestContextFactoryTest$A");
 
-      new RestContextFactory().createContext("test", props);
+      new RestContextFactory().createContext(provider, props);
    }
 
    @SuppressWarnings("unchecked")
    public void testBuilderPropertiesWithModules() {
-      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
+      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
             (Class) IntegrationTestContextBuilder.class, Arrays.<Module> asList(new A(), new B()));
 
@@ -153,7 +155,7 @@ public class RestContextFactoryTest {
       assertEquals(props.getProperty("test.modules"),
             "org.jclouds.rest.RestContextFactoryTest$A,org.jclouds.rest.RestContextFactoryTest$B");
 
-      new RestContextFactory().createContext("test", props);
+      new RestContextFactory().createContext(provider, props);
    }
 
    public void testBuilderPropertiesJCloudsScope() {
@@ -181,7 +183,7 @@ public class RestContextFactoryTest {
             return spec;
          }
 
-      }.createContext("test", props);
+      }.createContext(provider, props);
    }
 
    public void testBuilderPropertiesJCloudsScopeWithProviderIdentityAndFileCredential() throws IOException {
@@ -213,7 +215,7 @@ public class RestContextFactoryTest {
             return spec;
          }
 
-      }.createContext("test", props);
+      }.createContext(provider, props);
    }
 
    public static class A extends AbstractModule {
@@ -238,7 +240,7 @@ public class RestContextFactoryTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testBuilderPropertiesWithWrongConfig() {
       @SuppressWarnings("unused")
-      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
+      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", null, (Class) null, (Class) null,
             (Class) IntegrationTestContextBuilder.class, (Class) PropertiesBuilder.class, Collections.EMPTY_LIST);
    }

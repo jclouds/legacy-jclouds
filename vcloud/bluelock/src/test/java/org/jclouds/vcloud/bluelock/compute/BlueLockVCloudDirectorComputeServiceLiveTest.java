@@ -19,7 +19,6 @@
 
 package org.jclouds.vcloud.bluelock.compute;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
@@ -38,18 +37,13 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "bluelock.BlueLockVCloudComputeServiceLiveTest")
 public class BlueLockVCloudDirectorComputeServiceLiveTest extends VCloudComputeServiceLiveTest {
-   @Override
-   public void setServiceDefaults() {
+   public BlueLockVCloudDirectorComputeServiceLiveTest() {
       provider = "bluelock-vcdirector";
-      tag = "director";
    }
 
    @Override
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("bluelock-vcdirector.identity"),
-               "bluelock-vcdirector.identity");
-      credential = checkNotNull(System.getProperty("bluelock-vcdirector.credential"),
-               "bluelock-vcdirector.credential");
+   public void setServiceDefaults() {
+      tag = "director";
    }
 
    @Test

@@ -19,7 +19,6 @@
 
 package org.jclouds.vcloud.terremark;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -43,11 +42,6 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", sequential = true, testName = "vcloud.TerremarkVCloudClientLiveTest")
 public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTest {
-   @Override
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("trmk-vcloudexpress.identity"), "trmk-vcloudexpress.identity");
-      credential = checkNotNull(System.getProperty("trmk-vcloudexpress.credential"), "trmk-vcloudexpress.credential");
-   }
 
    KeyPair key;
 

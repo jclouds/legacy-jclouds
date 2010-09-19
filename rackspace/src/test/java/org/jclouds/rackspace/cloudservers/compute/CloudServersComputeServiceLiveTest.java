@@ -44,9 +44,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "cloudservers.CloudServersComputeServiceLiveTest")
 public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTest {
-
-   @Override
-   public void setServiceDefaults() {
+   public CloudServersComputeServiceLiveTest() {
       provider = "cloudservers";
    }
 
@@ -77,4 +75,5 @@ public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTe
          assertEquals(node.getLocation().getScope(), LocationScope.HOST);
       }
    }
+
 }

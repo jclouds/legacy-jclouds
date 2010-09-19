@@ -22,10 +22,12 @@ package org.jclouds.vcloud.terremark;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
@@ -77,7 +79,8 @@ public class InternetServiceLiveTest {
 
    @Test
    public void testGetAllPublicIps() throws Exception {
-      for (PublicIpAddress ip : tmClient.getPublicIpsAssociatedWithVDC(tmClient.findVDCInOrgNamed(null, null).getHref())) {
+      for (PublicIpAddress ip : tmClient
+               .getPublicIpsAssociatedWithVDC(tmClient.findVDCInOrgNamed(null, null).getHref())) {
          tmClient.getInternetServicesOnPublicIp(ip.getId());
       }
    }
@@ -87,13 +90,40 @@ public class InternetServiceLiveTest {
       delete(services);
    }
 
+   protected String provider = "trmk-vcloudexpress";
+   protected String identity;
+   protected String credential;
+   protected String endpoint;
+   protected String apiversion;
+
+   protected void setupCredentials() {
+      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
+               + ".credential");
+      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
+      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
+               + ".apiversion");
+   }
+
+   protected Properties setupProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      overrides.setProperty(provider + ".identity", identity);
+      overrides.setProperty(provider + ".credential", credential);
+      overrides.setProperty(provider + ".endpoint", endpoint);
+      overrides.setProperty(provider + ".apiversion", apiversion);
+      return overrides;
+   }
+
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String identity = checkNotNull(System.getProperty("trmk-vcloudexpress.identity"), "trmk-vcloudexpress.identity");
-      String credential = checkNotNull(System.getProperty("trmk-vcloudexpress.credential"), "trmk-vcloudexpress.credential");
+      setupCredentials();
+      Properties overrides = setupProperties();
 
-      context = new ComputeServiceContextFactory().createContext("trmk-vcloudexpress", identity, credential, ImmutableSet
-               .<Module> of(new Log4JLoggingModule(), new JschSshClientModule())).getProviderSpecificContext();
+      context = new ComputeServiceContextFactory().createContext(provider,
+               ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), overrides)
+               .getProviderSpecificContext();
 
       tmClient = context.getApi();
 

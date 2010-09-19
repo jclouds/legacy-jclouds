@@ -39,8 +39,11 @@
         <url>http://jclouds.googlecode.com/svn/trunk/rimuhosting</url>
     </scm>
     <properties>
-        <jclouds.test.identity>${jclouds.rimuhosting.apikey}</jclouds.test.identity>
-        <jclouds.test.credential>${jclouds.rimuhosting.apikey}</jclouds.test.credential>
+        <!-- when instances are hung, open a ticket and add here -->
+        <jclouds.compute.blacklist.nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist.nodes>
+        <test.rimuhosting.endpoint>https://rimuhosting.com/r</test.rimuhosting.endpoint>
+        <test.rimuhosting.apiversion>1.0</test.rimuhosting.apiversion>
+        <test.rimuhosting.identity>FIXME</test.rimuhosting.identity>
     </properties>
     <dependencies>
         <dependency>
@@ -81,5 +84,46 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+    <profiles>
+        <profile>
+            <id>live</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>integration</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemProperties>
+                                        <property>
+                                            <name>test.rimuhosting.endpoint</name>
+                                            <value>${test.rimuhosting.endpoint}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.rimuhosting.apiversion</name>
+                                            <value>${test.rimuhosting.apiversion}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.rimuhosting.identity</name>
+                                            <value>${test.rimuhosting.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.compute.blacklist.nodes</name>
+                                            <value>${jclouds.compute.blacklist.nodes}</value>
+                                        </property>
+                                    </systemProperties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

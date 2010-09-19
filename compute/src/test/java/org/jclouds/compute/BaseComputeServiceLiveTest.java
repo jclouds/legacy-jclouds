@@ -124,30 +124,19 @@ public abstract class BaseComputeServiceLiveTest {
             .append("sudo zypper install java-1.6.0-openjdk-devl\n")//
             .toString();
 
-   abstract public void setServiceDefaults();
+   public void setServiceDefaults() {
 
-   protected String provider;
+   }
+
    protected String tag;
 
    protected RetryablePredicate<IPSocket> socketTester;
    protected SortedSet<NodeMetadata> nodes;
    protected ComputeServiceContext context;
    protected ComputeService client;
-   protected String identity;
-   protected String credential;
+
    protected Template template;
    protected Map<String, String> keyPair;
-
-   @BeforeGroups(groups = { "integration", "live" })
-   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
-      setServiceDefaults();
-      if (tag == null)
-         tag = checkNotNull(provider, "provider");
-      setupCredentials();
-      setupKeyPairForTest();
-      initializeContextAndClient();
-      buildSocketTester();
-   }
 
    protected void buildSocketTester() {
       SocketOpen socketOpen = Guice.createInjector(getSshModule()).getInstance(SocketOpen.class);
@@ -161,7 +150,7 @@ public abstract class BaseComputeServiceLiveTest {
    public static Map<String, String> setupKeyPair() throws FileNotFoundException, IOException {
       String secretKeyFile;
       try {
-         secretKeyFile = checkNotNull(System.getProperty("jclouds.test.ssh.keyfile"), "jclouds.test.ssh.keyfile");
+         secretKeyFile = checkNotNull(System.getProperty("test.ssh.keyfile"), "test.ssh.keyfile");
       } catch (NullPointerException e) {
          secretKeyFile = System.getProperty("user.home") + "/.ssh/id_rsa";
       }
@@ -172,24 +161,56 @@ public abstract class BaseComputeServiceLiveTest {
                + ".pub"), Charsets.UTF_8));
    }
 
+   protected String provider;
+   protected String identity;
+   protected String credential;
+   protected String endpoint;
+   protected String apiversion;
+
    protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      credential = System.getProperty("test." + provider + ".credential");
+      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
+      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
+               + ".apiversion");
+   }
+
+   protected Properties setupProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      overrides.setProperty(provider + ".identity", identity);
+      if (credential != null)
+         overrides.setProperty(provider + ".credential", credential);
+      if (endpoint != null)
+         overrides.setProperty(provider + ".endpoint", endpoint);
+      if (apiversion != null)
+         overrides.setProperty(provider + ".apiversion", apiversion);
+      return overrides;
+   }
+
+   @BeforeGroups(groups = { "integration", "live" })
+   public void setupClient() throws InterruptedException, ExecutionException, TimeoutException, IOException {
+      setServiceDefaults();
+      if (tag == null)
+         tag = checkNotNull(provider, "provider");
+      setupCredentials();
+      setupKeyPairForTest();
+      initializeContextAndClient();
+      buildSocketTester();
    }
 
    private void initializeContextAndClient() throws IOException {
       if (context != null)
          context.close();
-      Properties props = new Properties();
-      props.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      props.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      context = new ComputeServiceContextFactory().createContext(provider, identity, credential, ImmutableSet.of(
-               new Log4JLoggingModule(), getSshModule()), props);
+      Properties props = setupProperties();
+      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.of(new Log4JLoggingModule(),
+               getSshModule()), props);
       client = context.getComputeService();
    }
 
    private static void checkSecretKeyFile(String secretKeyFile) throws FileNotFoundException {
-      Utils.checkNotEmpty(secretKeyFile, "System property: [jclouds.test.ssh.keyfile] set to an empty string");
+      Utils.checkNotEmpty(secretKeyFile, "System property: [test.ssh.keyfile] set to an empty string");
       if (!new File(secretKeyFile).exists()) {
          throw new FileNotFoundException("secretKeyFile not found at: " + secretKeyFile);
       }
@@ -200,33 +221,19 @@ public abstract class BaseComputeServiceLiveTest {
    // wait up to 5 seconds for an auth exception
    @Test(enabled = true, expectedExceptions = AuthorizationException.class)
    public void testCorrectAuthException() throws Exception {
-      synchronized (ComputeServiceContext.class) {
-         ComputeServiceContext context = null;
-         // system properties override crendentials passed
-         // if in the form provider.identity, provider.credential
-         // we want this to fail, so we save off old state and reset those
-         // properties to garbage.
-         String oldIdentity = System.getProperty(provider + ".identity");
-         String oldCredential = System.getProperty(provider + ".credential");
-         try {
-            System.setProperty(provider + ".identity", "MOMMA");
-            System.setProperty(provider + ".credential", "MIA");
-            context = new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA", ImmutableSet
-                     .<Module> of(new Log4JLoggingModule()));
-            context.getComputeService().listNodes();
-         } catch (AuthorizationException e) {
-            throw e;
-         } catch (RuntimeException e) {
-            e.printStackTrace();
-            throw e;
-         } finally {
-            if (oldIdentity != null)
-               System.setProperty(provider + ".identity", oldIdentity);
-            if (oldCredential != null)
-               System.setProperty(provider + ".credential", oldCredential);
-            if (context != null)
-               context.close();
-         }
+      ComputeServiceContext context = null;
+      try {
+         context = new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA", ImmutableSet
+                  .<Module> of(new Log4JLoggingModule()));
+         context.getComputeService().listNodes();
+      } catch (AuthorizationException e) {
+         throw e;
+      } catch (RuntimeException e) {
+         e.printStackTrace();
+         throw e;
+      } finally {
+         if (context != null)
+            context.close();
       }
    }
 

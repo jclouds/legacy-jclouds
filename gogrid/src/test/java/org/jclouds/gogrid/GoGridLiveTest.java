@@ -32,11 +32,13 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.Constants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.IpPortPair;
@@ -92,14 +94,38 @@ public class GoGridLiveTest {
    private List<String> loadBalancersToDeleteAfterTest = new ArrayList<String>();
 
    private RestContext<GoGridClient, GoGridAsyncClient> context;
+   protected String provider = "gogrid";
+   protected String identity;
+   protected String credential;
+   protected String endpoint;
+   protected String apiversion;
+
+   protected void setupCredentials() {
+      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
+               + ".credential");
+      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
+      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
+               + ".apiversion");
+   }
+
+   protected Properties setupProperties() {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      overrides.setProperty(provider + ".identity", identity);
+      overrides.setProperty(provider + ".credential", credential);
+      overrides.setProperty(provider + ".endpoint", endpoint);
+      overrides.setProperty(provider + ".apiversion", apiversion);
+      return overrides;
+   }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() {
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
-
-      context = new RestContextFactory().createContext("gogrid", identity, credential, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()));
+      setupCredentials();
+      Properties overrides = setupProperties();
+      context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
+               overrides);
 
       client = context.getApi();
       serverLatestJobCompleted = new RetryablePredicate<Server>(new ServerLatestJobCompleted(client.getJobServices()),

@@ -64,9 +64,8 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", sequential = true, testName = "ec2.EC2ComputeServiceLiveTest")
 public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
-   @BeforeClass
-   @Override
-   public void setServiceDefaults() {
+
+   public EC2ComputeServiceLiveTest() {
       provider = "ec2";
    }
 
@@ -237,7 +236,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsWithSubnetId() throws Exception {
 
-      String subnetId = System.getProperty("jclouds.test.subnetId");
+      String subnetId = System.getProperty("test.subnetId");
       if (subnetId == null) {
          // Skip test and return
          return;

@@ -81,11 +81,11 @@ public class GetPathLiveTest {
       contexts = Sets.newLinkedHashSet();
       BlobStoreContextFactory factory = new BlobStoreContextFactory();
       for (String provider : new String[] { "s3", "cloudfiles", "azureblob" }) {
-         String identity = checkNotNull(System.getProperty("jclouds.test.identity." + provider),
-                  "jclouds.test.identity." + provider);
+         String identity = checkNotNull(System.getProperty("test.identity." + provider),
+                  "test.identity." + provider);
          String credential = checkNotNull(
-                  System.getProperty("jclouds.test.credential." + provider),
-                  "jclouds.test.credential." + provider);
+                  System.getProperty("test.credential." + provider),
+                  "test.credential." + provider);
 
          contexts.add(factory.createContext(provider, identity, credential, ImmutableSet
                   .of(new Log4JLoggingModule())));

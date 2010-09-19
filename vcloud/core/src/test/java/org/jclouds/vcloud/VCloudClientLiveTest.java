@@ -19,7 +19,6 @@
 
 package org.jclouds.vcloud;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -40,12 +39,6 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", sequential = true, testName = "vcloud.VCloudClientLiveTest")
 public class VCloudClientLiveTest extends CommonVCloudClientLiveTest<VCloudClient, VCloudAsyncClient> {
-
-   protected void setupCredentials() {
-      provider = "vcloud";
-      identity = checkNotNull(System.getProperty("vcloud.identity"), "vcloud.identity");
-      credential = checkNotNull(System.getProperty("vcloud.credential"), "vcloud.credential");
-   }
 
    @Test
    public void testListOrgs() throws Exception {

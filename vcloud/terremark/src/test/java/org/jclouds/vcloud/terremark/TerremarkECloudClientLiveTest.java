@@ -19,7 +19,6 @@
 
 package org.jclouds.vcloud.terremark;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
 
 import org.jclouds.net.IPSocket;
@@ -44,12 +43,6 @@ public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
    @Override
    TerremarkInstantiateVAppTemplateOptions createInstantiateOptions() {
       return processorCount(1).memory(512);
-   }
-
-   @Override
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("trmk-ecloud.identity"), "trmk-ecloud.identity");
-      credential = checkNotNull(System.getProperty("trmk-ecloud.credential"), "trmk-ecloud.credential");
    }
 
    @Override

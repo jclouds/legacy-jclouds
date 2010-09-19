@@ -20,37 +20,61 @@
 package org.jclouds.blobstore.integration.internal;
 
 import java.io.IOException;
+import java.util.Properties;
 
+import org.jclouds.Constants;
 import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.testng.ITestContext;
 
 import com.google.inject.Module;
 
 public abstract class BaseTestInitializer {
 
-   public BlobStoreContext init(Module configurationModule, ITestContext testContext)
-            throws Exception {
-      String endpoint = System.getProperty("jclouds.test.endpoint");
-      String app = System.getProperty("jclouds.test.app");
-      String identity = System.getProperty("jclouds.test.identity");
-      String credential = System.getProperty("jclouds.test.credential");
+   protected String provider = "transient";
+
+   public BlobStoreContext init(Module configurationModule, ITestContext testContext) throws Exception {
+      String endpoint = System.getProperty("test." + provider + ".endpoint");
+      String app = System.getProperty("test.app");
+      String identity = System.getProperty("test." + provider + ".identity");
+      String credential = System.getProperty("test." + provider + ".credential");
+      String apiversion = System.getProperty("test." + provider + ".apiversion");
       if (endpoint != null)
-         testContext.setAttribute("jclouds.test.endpoint", endpoint);
+         testContext.setAttribute("test." + provider + ".endpoint", endpoint);
       if (app != null)
-         testContext.setAttribute("jclouds.test.app", app);
+         testContext.setAttribute("test.app", app);
       if (identity != null)
-         testContext.setAttribute("jclouds.test.identity", identity);
+         testContext.setAttribute("test." + provider + ".identity", identity);
       if (credential != null)
-         testContext.setAttribute("jclouds.test.credential", credential);
+         testContext.setAttribute("test." + provider + ".credential", credential);
+      if (credential != null)
+         testContext.setAttribute("test." + provider + ".apiversion", apiversion);
       if (identity != null) {
-         return createLiveContext(configurationModule, endpoint, app, identity, credential);
+         return createLiveContext(configurationModule, endpoint, apiversion, app, identity, credential);
       } else {
          return createStubContext();
       }
    }
 
-   protected abstract BlobStoreContext createStubContext() throws IOException;
+   protected Properties setupProperties(String endpoint, String apiversion, String identity, String credential) {
+      Properties overrides = new Properties();
+      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
+      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
+      if (identity != null)
+         overrides.setProperty(provider + ".identity", identity);
+      if (credential != null)
+         overrides.setProperty(provider + ".credential", credential);
+      if (endpoint != null)
+         overrides.setProperty(provider + ".endpoint", endpoint);
+      if (apiversion != null)
+         overrides.setProperty(provider + ".apiversion", apiversion);
+      return overrides;
+   }
 
-   protected abstract BlobStoreContext createLiveContext(Module configurationModule, String url,
+   protected BlobStoreContext createStubContext() throws IOException {
+      return new BlobStoreContextFactory().createContext("transient", "foo", "bar");
+   }
+
+   protected abstract BlobStoreContext createLiveContext(Module configurationModule, String url, String apiversion,
             String app, String identity, String key) throws IOException;
 }
