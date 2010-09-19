@@ -29,12 +29,14 @@ import org.jclouds.blobstore.domain.StorageType;
  * 
  * @author Adrian Cole
  */
-public class MutableBlobMetadataImpl extends MutableStorageMetadataImpl implements
-         MutableBlobMetadata {
+public class MutableBlobMetadataImpl extends MutableStorageMetadataImpl implements MutableBlobMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = -5932618957134612231L;
 
    private String contentType;
+   private String contentDisposition;
+   private String contentEncoding;
+   private String contentLanguage;
    private byte[] contentMD5;
 
    public MutableBlobMetadataImpl() {
@@ -45,6 +47,9 @@ public class MutableBlobMetadataImpl extends MutableStorageMetadataImpl implemen
    public MutableBlobMetadataImpl(BlobMetadata from) {
       super(from);
       this.contentType = from.getContentType();
+      this.contentDisposition = from.getContentDisposition();
+      this.contentEncoding = from.getContentEncoding();
+      this.contentLanguage = from.getContentLanguage();
       this.contentMD5 = from.getContentMD5();
    }
 
@@ -54,6 +59,62 @@ public class MutableBlobMetadataImpl extends MutableStorageMetadataImpl implemen
    @Override
    public String getContentType() {
       return contentType;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setContentType(String contentType) {
+      this.contentType = contentType;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContentDisposition() {
+      return contentDisposition;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setContentDisposition(String contentDisposition) {
+      this.contentDisposition = contentDisposition;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContentEncoding() {
+      return contentEncoding;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setContentEncoding(String contentEncoding) {
+      this.contentEncoding = contentEncoding;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContentLanguage() {
+      return contentLanguage;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setContentLanguage(String contentLanguage) {
+      this.contentLanguage = contentLanguage;
    }
 
    /**
@@ -80,14 +141,6 @@ public class MutableBlobMetadataImpl extends MutableStorageMetadataImpl implemen
          System.arraycopy(md5, 0, retval, 0, md5.length);
          this.contentMD5 = md5;
       }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentType(String type) {
-      this.contentType = type;
    }
 
 }

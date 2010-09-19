@@ -34,15 +34,20 @@ import com.google.inject.ImplementedBy;
 public interface MutableBlobMetadata extends BlobMetadata, MutableStorageMetadata {
 
    /**
-    * A standard MIME type describing the format of the contents. If none is provided, the default
-    * is binary/octet-stream.
+    * A standard MIME type describing the format of the contents. If none is
+    * provided, the default is binary/octet-stream.
     * 
-    * @see <a href= "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.17." />
+    * @see <a href=
+    *      "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.17." />
     */
    void setContentType(@Nullable String type);
 
    void setContentMD5(@Nullable byte[] md5);
 
-   String setContentDisposition(@Nullable String contentDisposition);
+   void setContentDisposition(@Nullable String contentDisposition);
+
+   void setContentEncoding(@Nullable String contentEncoding);
+
+   void setContentLanguage(@Nullable String contentLanguage);
 
 }

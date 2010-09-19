@@ -44,7 +44,7 @@ public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyn
    private Factory blobFactory;
 
    public void testSignGetBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
-            NoSuchMethodException, IOException {
+         NoSuchMethodException, IOException {
       HttpRequest request = signer.signGetBlob("container", "name");
 
       assertRequestLineEquals(request, "GET http://localhost/container/name HTTP/1.1");
@@ -55,7 +55,7 @@ public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyn
    }
 
    public void testSignRemoveBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
-            NoSuchMethodException, IOException {
+         NoSuchMethodException, IOException {
       HttpRequest request = signer.signRemoveBlob("container", "name");
 
       assertRequestLineEquals(request, "DELETE http://localhost/container/name HTTP/1.1");
@@ -66,7 +66,7 @@ public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyn
    }
 
    public void testSignPutBlob() throws ArrayIndexOutOfBoundsException, SecurityException, IllegalArgumentException,
-            NoSuchMethodException, IOException {
+         NoSuchMethodException, IOException {
       Blob blob = blobFactory.create(null);
       blob.getMetadata().setName("name");
       blob.setPayload(new PhantomPayload(2l, new byte[] { 0, 2, 4, 8 }));
@@ -75,8 +75,10 @@ public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyn
       HttpRequest request = signer.signPutBlob("container", blob);
 
       assertRequestLineEquals(request, "PUT http://localhost/container/name HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Authorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\nContent-Length: 2\nContent-MD5: AAIECA==\nContent-Type: text/plain\n");
-      assertContentHeadersEqual(request, "text/plain", (long) 2l, new byte[] { 0, 2, 4, 8 });
+      assertNonPayloadHeadersEqual(
+            request,
+            "Authorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\nContent-Length: 2\nContent-MD5: AAIECA==\nContent-Type: text/plain\n");
+      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 });
 
       assertEquals(request.getFilters().size(), 0);
    }

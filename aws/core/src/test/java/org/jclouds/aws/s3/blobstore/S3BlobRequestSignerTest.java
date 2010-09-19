@@ -91,7 +91,7 @@ public class S3BlobRequestSignerTest extends RestClientTest<S3AsyncClient> {
                request,
                "Authorization: AWS identity:j9Dy/lmmvlCKjA4lkqZenLxMkR4=\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nHost: container.s3.amazonaws.com\n");
 
-      assertContentHeadersEqual(request, "text/plain", (long) 2l, new byte[] { 0, 2, 4, 8 });
+      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 });
 
       assertEquals(request.getFilters().size(), 0);
    }

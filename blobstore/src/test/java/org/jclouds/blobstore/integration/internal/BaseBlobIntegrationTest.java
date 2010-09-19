@@ -45,6 +45,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.zip.GZIPInputStream;
 
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.ContainerNotFoundException;
@@ -155,13 +156,14 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
 
    /**
     * Methods for checking Content-Disposition. In this way, in implementations
-    * that do not support the new field, it is easy to override with empty,
-    * and allow the rest of the test to work.
+    * that do not support the new field, it is easy to override with empty, and
+    * allow the rest of the test to work.
+    * 
     * @param blob
     * @param expected
     */
-   protected void checkContentDispostion(Blob blob, String expected){
-         assertEquals(blob.getPayload().getContentDisposition(), expected);
+   protected void checkContentDispostion(Blob blob, String expected) {
+      assertEquals(blob.getPayload().getContentDisposition(), expected);
    }
 
    @Test(groups = { "integration", "live" })
@@ -456,6 +458,9 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
          }
       }));
       blob.getMetadata().setContentType("text/csv");
+      blob.getMetadata().setContentDisposition("attachment; filename=photo.jpg");
+      blob.getMetadata().setContentEncoding("gzip");
+      blob.getMetadata().setContentLanguage("en");
 
       String containerName = getContainerName();
       try {
@@ -465,12 +470,49 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
          blob = context.getBlobStore().getBlob(containerName, blob.getMetadata().getName());
          String returnedString = getContentAsStringOrNullAndClose(blob);
          assertEquals(returnedString, "foo");
-         assert blob.getPayload().getContentType().startsWith("text/csv") : blob.getPayload().getContentType();
+         checkContentType(blob, "text/csv");
+         checkContentDisposition(blob, "attachment; filename=photo.jpg");
+         checkContentEncoding(blob, "gzip");
+         checkContentLanguage(blob, "en");
          PageSet<? extends StorageMetadata> set = context.getBlobStore().list(containerName);
          assert set.size() == 1 : set;
       } finally {
          returnContainer(containerName);
       }
+   }
+
+   protected void checkContentType(Blob blob, String contentType) {
+      assert blob.getPayload().getContentType().startsWith(contentType) : blob.getPayload().getContentType();
+      assert blob.getMetadata().getContentType().startsWith(contentType) : blob.getMetadata().getContentType();
+      assert Iterables.getOnlyElement(blob.getAllHeaders().get(HttpHeaders.CONTENT_TYPE)).startsWith(contentType) : blob
+            .getAllHeaders().get(HttpHeaders.CONTENT_TYPE);
+   }
+
+   protected void checkContentDisposition(Blob blob, String contentDisposition) {
+      assert blob.getPayload().getContentDisposition().startsWith(contentDisposition) : blob.getPayload()
+            .getContentDisposition();
+      assert blob.getMetadata().getContentDisposition().startsWith(contentDisposition) : blob.getMetadata()
+            .getContentDisposition();
+      assert Iterables.getOnlyElement(blob.getAllHeaders().get("Content-Disposition")).startsWith(contentDisposition) : blob
+            .getAllHeaders().get("Content-Disposition");
+   }
+
+   protected void checkContentEncoding(Blob blob, String contentEncoding) {
+      assert blob.getPayload().getContentEncoding().startsWith(contentEncoding) : blob.getPayload()
+            .getContentEncoding();
+      assert blob.getMetadata().getContentEncoding().startsWith(contentEncoding) : blob.getMetadata()
+            .getContentEncoding();
+      assert Iterables.getOnlyElement(blob.getAllHeaders().get(HttpHeaders.CONTENT_ENCODING)).startsWith(
+            contentEncoding) : blob.getAllHeaders().get(HttpHeaders.CONTENT_ENCODING);
+   }
+
+   protected void checkContentLanguage(Blob blob, String contentLanguage) {
+      assert blob.getPayload().getContentLanguage().startsWith(contentLanguage) : blob.getPayload()
+            .getContentLanguage();
+      assert blob.getMetadata().getContentLanguage().startsWith(contentLanguage) : blob.getMetadata()
+            .getContentLanguage();
+      assert Iterables.getOnlyElement(blob.getAllHeaders().get(HttpHeaders.CONTENT_LANGUAGE)).startsWith(
+            contentLanguage) : blob.getAllHeaders().get(HttpHeaders.CONTENT_LANGUAGE);
    }
 
    protected volatile static Crypto crypto;

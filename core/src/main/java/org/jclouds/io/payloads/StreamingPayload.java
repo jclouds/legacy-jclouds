@@ -38,6 +38,9 @@ import org.jclouds.io.WriteTo;
  */
 public class StreamingPayload implements Payload {
    protected String contentType;
+   protected String contentDisposition;
+   protected String contentEncoding;
+   protected String contentLanguage;
    protected transient volatile boolean written;
    protected final WriteTo writeTo;
 
@@ -116,40 +119,16 @@ public class StreamingPayload implements Payload {
     * {@inheritDoc}
     */
    @Override
-   public void setContentDisposition(String contentDisposition) {
-      throw new UnsupportedOperationException("this payload is for streaming writes only");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
    public String getContentDisposition() {
-      throw new UnsupportedOperationException("this payload is for streaming writes only");
+      return contentDisposition;
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public void setContentLanguage(String contentLanguage) {
-      throw new UnsupportedOperationException("this payload is for streaming writes only");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String getContentLanguage() {
-      throw new UnsupportedOperationException("this payload is for streaming writes only");
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setContentEncoding(String contentEncoding) {
-      throw new UnsupportedOperationException("this payload is for streaming writes only");
+   public void setContentDisposition(@Nullable String contentDisposition) {
+      this.contentDisposition = contentDisposition;
    }
 
    /**
@@ -157,7 +136,31 @@ public class StreamingPayload implements Payload {
     */
    @Override
    public String getContentEncoding() {
-      throw new UnsupportedOperationException("this payload is for streaming writes only");
+      return contentEncoding;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setContentEncoding(@Nullable String contentEncoding) {
+      this.contentEncoding = contentEncoding;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContentLanguage() {
+      return contentLanguage;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setContentLanguage(@Nullable String contentLanguage) {
+      this.contentLanguage = contentLanguage;
    }
 
    /**

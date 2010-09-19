@@ -41,13 +41,19 @@ public class BlobMetadataImpl extends StorageMetadataImpl implements Serializabl
    private static final long serialVersionUID = -5932618957134612231L;
 
    private final String contentType;
+   private final String contentDisposition;
+   private final String contentEncoding;
+   private final String contentLanguage;
    private final byte[] contentMD5;
 
-   public BlobMetadataImpl(String id, String name, @Nullable Location location, URI uri,
-            String eTag, Long size, Date lastModified, Map<String, String> userMetadata,
-            String contentType, byte[] contentMD5) {
+   public BlobMetadataImpl(String id, String name, @Nullable Location location, URI uri, String eTag, Long size,
+         Date lastModified, Map<String, String> userMetadata, String contentType, String contentDisposition,
+         String contentEncoding, String contentLanguage, byte[] contentMD5) {
       super(StorageType.BLOB, id, name, location, uri, eTag, size, lastModified, userMetadata);
       this.contentType = contentType;
+      this.contentDisposition = contentDisposition;
+      this.contentEncoding = contentEncoding;
+      this.contentLanguage = contentLanguage;
       this.contentMD5 = contentMD5;
    }
 
@@ -57,6 +63,30 @@ public class BlobMetadataImpl extends StorageMetadataImpl implements Serializabl
    @Override
    public String getContentType() {
       return contentType;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContentDisposition() {
+      return contentDisposition;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContentEncoding() {
+      return contentEncoding;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getContentLanguage() {
+      return contentLanguage;
    }
 
    /**

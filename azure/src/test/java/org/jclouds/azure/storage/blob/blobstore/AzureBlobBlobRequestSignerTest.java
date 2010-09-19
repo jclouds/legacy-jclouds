@@ -90,7 +90,7 @@ public class AzureBlobBlobRequestSignerTest extends RestClientTest<AzureBlobAsyn
       assertNonPayloadHeadersEqual(
                request,
                "Authorization: SharedKeyLite identity:LT+HBNzhbRsZY07kC+/JxeuAURbxTmwJaIe464LO36c=\nDate: Thu, 05 Jun 2008 16:38:19 GMT\nx-ms-blob-type: BlockBlob\nx-ms-version: 2009-09-19\n");
-      assertContentHeadersEqual(request, "text/plain", (long) 2l, new byte[] { 0, 2, 4, 8 });
+      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 });
 
       assertEquals(request.getFilters().size(), 0);
    }

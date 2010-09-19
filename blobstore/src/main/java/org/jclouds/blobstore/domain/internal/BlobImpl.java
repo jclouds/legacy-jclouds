@@ -125,13 +125,13 @@ public class BlobImpl extends PayloadEnclosingImpl implements Blob, Comparable<B
    }
 
    /**
-    * link the new payload to the metadata object so that when content-related metadata is updated
-    * on the payload, it is also copied the metadata object.
+    * link the new payload to the metadata object so that when content-related
+    * metadata is updated on the payload, it is also copied the metadata object.
     */
    void linkPayloadToMetadata(Payload data) {
       if (data instanceof DelegatingPayload)
-         super.setPayload(new SetMetadataPropertiesPayload(DelegatingPayload.class.cast(data)
-                  .getDelegate(), _metadata));
+         super
+               .setPayload(new SetMetadataPropertiesPayload(DelegatingPayload.class.cast(data).getDelegate(), _metadata));
       else
          super.setPayload(new SetMetadataPropertiesPayload(data, _metadata));
    }
@@ -145,6 +145,8 @@ public class BlobImpl extends PayloadEnclosingImpl implements Blob, Comparable<B
          this.metadata = metadata;
          setContentType(metadata.getContentType());
          setContentDisposition(metadata.getContentDisposition());
+         setContentEncoding(metadata.getContentEncoding());
+         setContentLanguage(metadata.getContentLanguage());
       }
 
       @Override
@@ -158,16 +160,28 @@ public class BlobImpl extends PayloadEnclosingImpl implements Blob, Comparable<B
          super.setContentDisposition(contentDisposition);
          metadata.setContentDisposition(contentDisposition);
       }
+
+      @Override
+      public void setContentEncoding(String contentEncoding) {
+         super.setContentEncoding(contentEncoding);
+         metadata.setContentEncoding(contentEncoding);
+      }
+
+      @Override
+      public void setContentLanguage(String contentLanguage) {
+         super.setContentLanguage(contentLanguage);
+         metadata.setContentLanguage(contentLanguage);
+      }
    }
 
    /**
-    * link the metadata object to this so that when content-related metadata is updated, it is also
-    * copied the currentpayload object.
+    * link the metadata object to this so that when content-related metadata is
+    * updated, it is also copied the currentpayload object.
     */
    SetPayloadPropertiesMutableBlobMetadata linkMetadataToThis(MutableBlobMetadata metadata) {
       return metadata instanceof DelegatingMutableBlobMetadata ? new SetPayloadPropertiesMutableBlobMetadata(
-               DelegatingMutableBlobMetadata.class.cast(metadata).getDelegate(), this)
-               : new SetPayloadPropertiesMutableBlobMetadata(metadata, this);
+            DelegatingMutableBlobMetadata.class.cast(metadata).getDelegate(), this)
+            : new SetPayloadPropertiesMutableBlobMetadata(metadata, this);
    }
 
    static class SetPayloadPropertiesMutableBlobMetadata extends DelegatingMutableBlobMetadata {
@@ -175,8 +189,7 @@ public class BlobImpl extends PayloadEnclosingImpl implements Blob, Comparable<B
       private static final long serialVersionUID = -5072270546219814521L;
       private transient final PayloadEnclosing blob;
 
-      public SetPayloadPropertiesMutableBlobMetadata(MutableBlobMetadata delegate,
-               PayloadEnclosing blob) {
+      public SetPayloadPropertiesMutableBlobMetadata(MutableBlobMetadata delegate, PayloadEnclosing blob) {
          super(delegate);
          this.blob = blob;
       }
@@ -186,6 +199,27 @@ public class BlobImpl extends PayloadEnclosingImpl implements Blob, Comparable<B
          super.setContentType(type);
          if (canSetPayload())
             blob.getPayload().setContentType(type);
+      }
+
+      @Override
+      public void setContentDisposition(String Disposition) {
+         super.setContentDisposition(Disposition);
+         if (canSetPayload())
+            blob.getPayload().setContentDisposition(Disposition);
+      }
+
+      @Override
+      public void setContentEncoding(String Encoding) {
+         super.setContentEncoding(Encoding);
+         if (canSetPayload())
+            blob.getPayload().setContentEncoding(Encoding);
+      }
+
+      @Override
+      public void setContentLanguage(String Language) {
+         super.setContentLanguage(Language);
+         if (canSetPayload())
+            blob.getPayload().setContentLanguage(Language);
       }
 
       private boolean canSetPayload() {

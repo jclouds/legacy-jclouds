@@ -19,6 +19,8 @@
 
 package org.jclouds.blobstore.domain;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.blobstore.domain.internal.BlobMetadataImpl;
 
 import com.google.inject.ImplementedBy;
@@ -32,10 +34,11 @@ import com.google.inject.ImplementedBy;
 public interface BlobMetadata extends StorageMetadata {
 
    /**
-    * A standard MIME type describing the format of the contents. If none is provided, the default
-    * is binary/octet-stream.
+    * A standard MIME type describing the format of the contents. If none is
+    * provided, the default is binary/octet-stream.
     * 
-    * @see <a href= "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.17." />
+    * @see <a href=
+    *      "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html?sec14.17." />
     */
    String getContentType();
 
@@ -45,8 +48,24 @@ public interface BlobMetadata extends StorageMetadata {
     * Content-Disposition to set for the blob.
     * <p/>
     * <b>Attention</b>: Not all provider support it!
+    * 
     * @return
     */
    String getContentDisposition();
 
+   /**
+    * Get Content Encoding of the blob
+    * <p/>
+    * Not all providers may support it
+    */
+   @Nullable
+   String getContentEncoding();
+   
+   /**
+    * Get Content Language of the blob
+    * <p/>
+    * Not all providers may support it
+    */
+   @Nullable
+   String getContentLanguage();
 }

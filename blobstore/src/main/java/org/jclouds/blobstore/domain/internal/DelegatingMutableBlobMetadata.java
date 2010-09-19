@@ -176,4 +176,34 @@ public class DelegatingMutableBlobMetadata implements MutableBlobMetadata, Seria
       return delegate;
    }
 
+   @Override
+   public void setContentDisposition(String contentDisposition) {
+      delegate.setContentDisposition(contentDisposition);
+   }
+
+   @Override
+   public String getContentDisposition() {
+      return delegate.getContentDisposition();
+   }
+
+   @Override
+   public String getContentEncoding() {
+      return delegate.getContentEncoding();
+   }
+
+   @Override
+   public String getContentLanguage() {
+      return delegate.getContentLanguage();
+   }
+
+   @Override
+   public void setContentEncoding(String contentEncoding) {
+      delegate.setContentEncoding(contentEncoding);
+   }
+
+   @Override
+   public void setContentLanguage(String contentLanguage) {
+      delegate.setContentLanguage(contentLanguage);
+   }
+
 }

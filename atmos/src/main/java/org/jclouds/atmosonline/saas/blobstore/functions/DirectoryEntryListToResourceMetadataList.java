@@ -63,7 +63,7 @@ public class DirectoryEntryListToResourceMetadataList implements
                                  null, null, null, null, Maps.<String, String> newHashMap());
                      else
                         return new BlobMetadataImpl(from.getObjectID(), from.getObjectName(), defaultLocation.get(), null,
-                                 null, null, null, Maps.<String, String> newHashMap(), null, null);
+                                 null, null, null, Maps.<String, String> newHashMap(), null, null, null, null, null);
                   }
 
                }), from.getToken());

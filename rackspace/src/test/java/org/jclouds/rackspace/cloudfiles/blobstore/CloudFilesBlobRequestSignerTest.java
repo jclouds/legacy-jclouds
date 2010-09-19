@@ -81,7 +81,7 @@ public class CloudFilesBlobRequestSignerTest extends RestClientTest<CloudFilesAs
 
       assertRequestLineEquals(request, "PUT http://storageUrl/container/name HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "X-Auth-Token: testtoken\n");
-      assertContentHeadersEqual(request, "text/plain", (long) 2l, new byte[] { 0, 2, 4, 8 });
+      assertContentHeadersEqual(request, "text/plain", null, null, null, (long) 2l, new byte[] { 0, 2, 4, 8 });
 
       assertEquals(request.getFilters().size(), 0);
    }
