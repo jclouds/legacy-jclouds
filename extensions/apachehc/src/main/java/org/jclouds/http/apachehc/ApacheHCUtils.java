@@ -143,6 +143,12 @@ public class ApacheHCUtils {
          Entity.setContentType(payload.getContentType());
          apacheRequest.setEntity(Entity);
       }
+      if (payload.getContentDisposition() != null)
+         apacheRequest.addHeader("Content-Disposition", payload.getContentDisposition());
+      if (payload.getContentEncoding() != null)
+         apacheRequest.addHeader("Content-Encoding", payload.getContentEncoding());
+      if (payload.getContentLanguage() != null)
+         apacheRequest.addHeader("Content-Language", payload.getContentLanguage());
       assert (apacheRequest.getEntity() != null);
    }
 

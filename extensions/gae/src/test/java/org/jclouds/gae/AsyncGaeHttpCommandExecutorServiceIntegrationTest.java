@@ -357,6 +357,25 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
       // disabled since test data is too big
    }
 
+   @Override
+   public void testPostContentDisposition() throws ExecutionException, InterruptedException, TimeoutException,
+         IOException {
+      setupApiProxy();
+      super.testPostContentDisposition();
+   }
+
+   @Override
+   public void testPostContentEncoding() throws ExecutionException, InterruptedException, TimeoutException, IOException {
+      setupApiProxy();
+      super.testPostContentEncoding();
+   }
+
+   @Override
+   public void testPostContentLanguage() throws ExecutionException, InterruptedException, TimeoutException, IOException {
+      setupApiProxy();
+      super.testPostContentLanguage();
+   }
+
    // http://code.google.com/p/googleappengine/issues/detail?id=3599
    @Override
    @Test(enabled = true, expectedExceptions = IllegalArgumentException.class)

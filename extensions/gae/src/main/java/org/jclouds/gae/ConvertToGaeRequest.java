@@ -93,6 +93,12 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
                   request.getPayload().setContentMD5(oldPayload.getContentMD5());
                if (oldPayload.getContentType() != null)
                   request.getPayload().setContentType(oldPayload.getContentType());
+               if (oldPayload.getContentDisposition() != null)
+                  request.getPayload().setContentDisposition(oldPayload.getContentDisposition());
+               if (oldPayload.getContentEncoding() != null)
+                  request.getPayload().setContentEncoding(oldPayload.getContentEncoding());
+               if (oldPayload.getContentLanguage() != null)
+                  request.getPayload().setContentLanguage(oldPayload.getContentLanguage());
             }
             gaeRequest.setPayload(array);
          } catch (IOException e) {
@@ -105,6 +111,12 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
                   .getContentMD5())));
          if (request.getPayload().getContentType() != null)
             gaeRequest.setHeader(new HTTPHeader(HttpHeaders.CONTENT_TYPE, request.getPayload().getContentType()));
+         if (request.getPayload().getContentDisposition() != null)
+            gaeRequest.setHeader(new HTTPHeader("Content-Disposition", request.getPayload().getContentDisposition()));
+         if (request.getPayload().getContentEncoding() != null)
+            gaeRequest.setHeader(new HTTPHeader("Content-Encoding", request.getPayload().getContentEncoding()));
+         if (request.getPayload().getContentLanguage() != null)
+            gaeRequest.setHeader(new HTTPHeader("Content-Language", request.getPayload().getContentLanguage()));
          Long length = checkNotNull(request.getPayload().getContentLength(), "payload.getContentLength");
          gaeRequest.setHeader(new HTTPHeader(HttpHeaders.CONTENT_LENGTH, length.toString()));
       } else {
