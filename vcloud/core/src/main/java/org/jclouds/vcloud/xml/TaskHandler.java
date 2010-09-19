@@ -30,10 +30,10 @@ import javax.inject.Inject;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.domain.Error;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
+import org.jclouds.vcloud.domain.VCloudError;
 import org.jclouds.vcloud.domain.internal.TaskImpl;
 import org.jclouds.vcloud.util.Utils;
 import org.xml.sax.Attributes;
@@ -52,7 +52,7 @@ public class TaskHandler extends ParseSax.HandlerWithResult<Task> {
    private Date endTime;
    private Date expiryTime;
    private Task task;
-   private Error error;
+   private VCloudError error;
    private boolean inOwner;
 
    protected Logger logger = Logger.NULL;

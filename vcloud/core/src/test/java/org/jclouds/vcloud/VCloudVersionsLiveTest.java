@@ -69,9 +69,9 @@ public class VCloudVersionsLiveTest {
 
    @BeforeClass
    void setupFactory() {
-      String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"), "jclouds.test.endpoint");
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      String endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
+      String identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      String credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider + ".credential");
 
       ContextSpec<VCloudVersionsClient, VCloudVersionsAsyncClient> contextSpec = contextSpec("test", endpoint, "1",
                identity, credential, VCloudVersionsClient.class, VCloudVersionsAsyncClient.class);

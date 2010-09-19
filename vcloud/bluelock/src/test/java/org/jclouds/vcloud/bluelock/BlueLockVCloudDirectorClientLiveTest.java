@@ -43,11 +43,11 @@ public class BlueLockVCloudDirectorClientLiveTest extends VCloudClientLiveTest {
    @BeforeGroups(groups = { "live" })
    @Override
    public void setupClient() {
-      identity = checkNotNull(System.getProperty("bluelock-vclouddirector.identity"),
-               "bluelock-vclouddirector.identity");
-      String credential = checkNotNull(System.getProperty("bluelock-vclouddirector.credential"),
-               "bluelock-vclouddirector.credential");
-      context = new ComputeServiceContextFactory().createContext("bluelock-vclouddirector", identity, credential, ImmutableSet
+      identity = checkNotNull(System.getProperty("bluelock-vcdirector.identity"),
+               "bluelock-vcdirector.identity");
+      String credential = checkNotNull(System.getProperty("bluelock-vcdirector.credential"),
+               "bluelock-vcdirector.credential");
+      context = new ComputeServiceContextFactory().createContext("bluelock-vcdirector", identity, credential, ImmutableSet
                .<Module> of(new Log4JLoggingModule()), new Properties()).getProviderSpecificContext();
       connection = context.getApi();
    }

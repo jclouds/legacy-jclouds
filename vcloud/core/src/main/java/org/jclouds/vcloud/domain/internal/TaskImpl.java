@@ -25,7 +25,7 @@ import java.net.URI;
 import java.util.Date;
 
 import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.domain.Error;
+import org.jclouds.vcloud.domain.VCloudError;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
@@ -48,10 +48,10 @@ public class TaskImpl extends ReferenceTypeImpl implements Task {
    private final Date expiryTime;
    private final ReferenceType owner;
    @Nullable
-   private final Error error;
+   private final VCloudError error;
 
    public TaskImpl(URI id, String operation, TaskStatus status, Date startTime, @Nullable Date endTime,
-            @Nullable Date expiryTime, ReferenceType owner, Error error) {
+            @Nullable Date expiryTime, ReferenceType owner, VCloudError error) {
       super(null, VCloudMediaType.TASK_XML, id);
       this.operation = operation;
       this.status = checkNotNull(status, "status");
@@ -83,7 +83,7 @@ public class TaskImpl extends ReferenceTypeImpl implements Task {
    }
 
    @Override
-   public Error getError() {
+   public VCloudError getError() {
       return error;
    }
 

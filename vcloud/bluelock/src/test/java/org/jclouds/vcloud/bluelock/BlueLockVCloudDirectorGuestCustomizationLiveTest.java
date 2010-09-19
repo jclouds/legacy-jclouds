@@ -34,11 +34,11 @@ public class BlueLockVCloudDirectorGuestCustomizationLiveTest extends VCloudGues
 
    @Override
    protected void setupCredentials() {
-      provider = "bluelock-vclouddirector";
-      identity = checkNotNull(System.getProperty("bluelock-vclouddirector.identity"),
-               "bluelock-vclouddirector.identity");
-      credential = checkNotNull(System.getProperty("bluelock-vclouddirector.credential"),
-               "bluelock-vclouddirector.credential");
+      provider = "bluelock-vcdirector";
+      identity = checkNotNull(System.getProperty("bluelock-vcdirector.identity"),
+               "bluelock-vcdirector.identity");
+      credential = checkNotNull(System.getProperty("bluelock-vcdirector.credential"),
+               "bluelock-vcdirector.credential");
    }
 
 }

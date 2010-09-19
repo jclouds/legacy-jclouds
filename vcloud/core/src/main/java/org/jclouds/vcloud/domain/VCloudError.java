@@ -19,6 +19,8 @@
 
 package org.jclouds.vcloud.domain;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.annotation.Nullable;
 
 import org.jclouds.vcloud.domain.internal.ErrorImpl;
@@ -31,7 +33,7 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  */
 @ImplementedBy(ErrorImpl.class)
-public interface Error {
+public interface VCloudError {
    public static enum MinorCode {
       /**
        * The request was made by a user who had insufficient rights to the object or operation.
@@ -75,8 +77,15 @@ public interface Error {
       /**
        * The wrong content type was specified for the request.
        */
-      UNSUPPORTED_MEDIA_TYPE;
+      UNSUPPORTED_MEDIA_TYPE, UNRECOGNIZED;
 
+      public static MinorCode fromValue(String minorCode) {
+         try {
+            return valueOf(checkNotNull(minorCode, "minorCode"));
+         } catch (IllegalArgumentException e) {
+            return UNRECOGNIZED;
+         }
+      }
    }
 
    /**
@@ -96,7 +105,7 @@ public interface Error {
     * @return error code specific to the failed operation or null if vcloud <0.9
     */
    @Nullable
-   String getMinorErrorCode();
+   MinorCode getMinorErrorCode();
 
    /**
     * 

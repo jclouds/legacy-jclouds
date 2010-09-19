@@ -29,6 +29,7 @@ import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
+import org.jclouds.vcloud.domain.VCloudError.MinorCode;
 import org.jclouds.vcloud.domain.internal.ErrorImpl;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.internal.TaskImpl;
@@ -121,9 +122,9 @@ public class TaskHandlerTest extends BaseHandlerTest {
       Task expects = new TaskImpl(URI.create("http://10.150.4.49/api/v0.8/task/23"), null, TaskStatus.ERROR,
                dateService.iso8601SecondsDateParse("2009-12-07T19:05:02Z"), dateService
                         .iso8601SecondsDateParse("2009-12-10T14:40:32Z"), null, new ReferenceTypeImpl("testapp1",
-                        VCloudMediaType.VAPP_XML, URI.create("http://10.150.4.49/api/v0.8/vapp/1")),
-               new ErrorImpl("Error processing job", 500,
-                        " Error in runDailySummaries date used:2009-12-09 19:40:30.577326+00:00", null, null));
+                        VCloudMediaType.VAPP_XML, URI.create("http://10.150.4.49/api/v0.8/vapp/1")), new ErrorImpl(
+                        "Error processing job", 500, MinorCode.UNRECOGNIZED,
+                        " Error in runDailySummaries date used:2009-12-09 19:40:30.577326+00:00", null));
       assertEquals(result, expects);
 
    }

@@ -75,11 +75,11 @@ public class VCloudLoginLiveTest {
 
    @BeforeClass
    void setupFactory() {
-      String endpoint = checkNotNull(System.getProperty("jclouds.test.endpoint"), "jclouds.test.endpoint")
+      String endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint")
                + "/v0.8/login";
 
-      String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
-      String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
+      String identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      String credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider + ".credential");
 
       ContextSpec<VCloudLoginClient, VCloudExpressLoginAsyncClient> contextSpec = contextSpec("test", endpoint, "1", identity,
                credential, VCloudLoginClient.class, VCloudExpressLoginAsyncClient.class);

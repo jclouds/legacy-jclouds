@@ -17,33 +17,33 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.bluelock;
+package org.jclouds.vcloud.xml;
 
-import org.jclouds.compute.util.ComputeServiceUtils;
-import org.jclouds.util.Utils;
-import org.testng.annotations.Test;
+import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
 
-import com.google.common.collect.Iterables;
+import java.util.Map;
+
+import org.jclouds.http.functions.ParseSax;
+import org.jclouds.vcloud.domain.VCloudError;
+import org.jclouds.vcloud.util.Utils;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
 
 /**
- * 
  * @author Adrian Cole
- * 
  */
-@Test(groups = "unit")
-public class ProvidersInPropertiesTest {
+public class ErrorHandler extends ParseSax.HandlerWithResult<VCloudError> {
+   private VCloudError error;
 
-   @Test
-   public void testSupportedProviders() {
-      Iterable<String> providers = Utils.getSupportedProviders();
-      assert Iterables.contains(providers, "bluelock-vcdirector") : providers;
-
+   public VCloudError getResult() {
+      return error;
    }
 
-   @Test
-   public void testSupportedComputeServiceProviders() {
-      Iterable<String> providers = ComputeServiceUtils.getSupportedProviders();
-      assert Iterables.contains(providers, "bluelock-vcdirector") : providers;
+   @Override
+   public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
+      Map<String, String> attributes = cleanseAttributes(attrs);
+      if (qName.equals("Error")) {
+         error = Utils.newError(attributes);
+      }
    }
-
 }

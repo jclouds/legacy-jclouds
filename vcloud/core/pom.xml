@@ -31,9 +31,9 @@
     <name>jclouds vcloud Components Core</name>
     <description>jclouds Core components to access vcloud</description>
     <properties>
-        <jclouds.test.identity>${jclouds.vcloud.user}</jclouds.test.identity>
-        <jclouds.test.credential>${jclouds.vcloud.password}</jclouds.test.credential>
-        <jclouds.test.endpoint>${jclouds.vcloud.endpoint}</jclouds.test.endpoint>
+        <test.identity>${jclouds.vcloud.user}</test.identity>
+        <test.credential>${jclouds.vcloud.password}</test.credential>
+        <test.endpoint>${jclouds.vcloud.endpoint}</test.endpoint>
     </properties>
 
     <scm>

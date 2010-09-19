@@ -28,6 +28,16 @@ import javax.ws.rs.core.MediaType;
  */
 public interface VCloudMediaType {
    /**
+    * "application/vnd.vmware.vcloud.error+xml"
+    */
+   public final static String ERROR_XML = "application/vnd.vmware.vcloud.error+xml";
+
+   /**
+    * "application/vnd.vmware.vcloud.error+xml"
+    */
+   public final static MediaType ERROR_XML_TYPE = new MediaType("application", "vnd.vmware.vcloud.error+xml");
+   
+   /**
     * "application/vnd.vmware.vcloud.vcloud+xml"
     */
    public final static String VCLOUD_XML = "application/vnd.vmware.vcloud.vcloud+xml";

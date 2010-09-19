@@ -71,6 +71,6 @@ public interface Task extends ReferenceType {
     * error message or related information returned by the task
     */
    @Nullable
-   Error getError();
+   VCloudError getError();
 
 }

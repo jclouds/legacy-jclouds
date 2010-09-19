@@ -40,16 +40,16 @@ import org.testng.annotations.Test;
 public class BlueLockVCloudDirectorComputeServiceLiveTest extends VCloudComputeServiceLiveTest {
    @Override
    public void setServiceDefaults() {
-      provider = "bluelock-vclouddirector";
+      provider = "bluelock-vcdirector";
       tag = "director";
    }
 
    @Override
    protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("bluelock-vclouddirector.identity"),
-               "bluelock-vclouddirector.identity");
-      credential = checkNotNull(System.getProperty("bluelock-vclouddirector.credential"),
-               "bluelock-vclouddirector.credential");
+      identity = checkNotNull(System.getProperty("bluelock-vcdirector.identity"),
+               "bluelock-vcdirector.identity");
+      credential = checkNotNull(System.getProperty("bluelock-vcdirector.credential"),
+               "bluelock-vcdirector.credential");
    }
 
    @Test

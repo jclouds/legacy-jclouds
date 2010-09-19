@@ -22,8 +22,9 @@ package org.jclouds.vcloud.util;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.vcloud.domain.Error;
+import org.jclouds.vcloud.domain.VCloudError;
 import org.jclouds.vcloud.domain.ReferenceType;
+import org.jclouds.vcloud.domain.VCloudError.MinorCode;
 import org.jclouds.vcloud.domain.internal.ErrorImpl;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.xml.sax.Attributes;
@@ -57,12 +58,8 @@ public class Utils {
       return newReferenceType(attributes, null);
    }
 
-   /**
-    * note that vCloud 0.9+ the error isn't attributes, it is a nested object. see
-    * {@link ErrorHandler}
-    */
-   public static Error newError(Map<String, String> attributes) {
-      String minorErrorCode = attributes.get("minorErrorCode");
+   public static VCloudError newError(Map<String, String> attributes) {
+
       String vendorSpecificErrorCode = attributes.get("vendorSpecificErrorCode");
       int errorCode;
       // remove this logic when vcloud 0.8 is gone
@@ -72,6 +69,11 @@ public class Utils {
          errorCode = 500;
          vendorSpecificErrorCode = attributes.get("majorErrorCode");
       }
+      MinorCode minorErrorCode = MinorCode.fromValue(attributes.get("minorErrorCode"));
+      if (minorErrorCode == MinorCode.UNRECOGNIZED) {
+         vendorSpecificErrorCode = attributes.get("minorErrorCode");
+      }
+
       return new ErrorImpl(attributes.get("message"), errorCode, minorErrorCode, vendorSpecificErrorCode, attributes
                .get("stackTrace"));
    }

@@ -32,15 +32,15 @@
     <description>jclouds Core components to access terremark</description>
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
-        <jclouds.compute.blacklist.nodes>trmkrun-ccc,trmk-924</jclouds.compute.blacklist.nodes>
-        <trmk-vcloudexpress.endpoint>https://services.vcloudexpress.terremark.com/api</trmk-vcloudexpress.endpoint>
-        <trmk-vcloudexpress.apiversion>0.8a-ext1.6</trmk-vcloudexpress.apiversion>
-        <trmk-vcloudexpress.identity>FIXME</trmk-vcloudexpress.identity>
-        <trmk-vcloudexpress.credential>FIXME</trmk-vcloudexpress.credential>
-        <trmk-ecloud.endpoint>https://services.enterprisecloud.terremark.com/api</trmk-ecloud.endpoint>
-        <trmk-ecloud.apiversion>0.8b-ext2.3</trmk-ecloud.apiversion>
-        <trmk-ecloud.identity>FIXME</trmk-ecloud.identity>
-        <trmk-ecloud.credential>FIXME</trmk-ecloud.credential>
+        <jclouds.compute.blacklist.nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist.nodes>
+        <test.trmk-vcloudexpress.endpoint>https://services.vcloudexpress.terremark.com/api</test.trmk-vcloudexpress.endpoint>
+        <test.trmk-vcloudexpress.apiversion>0.8a-ext1.6</test.trmk-vcloudexpress.apiversion>
+        <test.trmk-vcloudexpress.identity>FIXME</test.trmk-vcloudexpress.identity>
+        <test.trmk-vcloudexpress.credential>FIXME</test.trmk-vcloudexpress.credential>
+        <test.trmk-ecloud.endpoint>https://services.enterprisecloud.terremark.com/api</test.trmk-ecloud.endpoint>
+        <test.trmk-ecloud.apiversion>0.8b-ext2.3</test.trmk-ecloud.apiversion>
+        <test.trmk-ecloud.identity>FIXME</test.trmk-ecloud.identity>
+        <test.trmk-ecloud.credential>FIXME</test.trmk-ecloud.credential>
     </properties>
 
     <scm>
@@ -82,36 +82,36 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>trmk-vcloudexpress.endpoint</name>
-                                            <value>${trmk-vcloudexpress.endpoint}</value>
+                                            <name>test.trmk-vcloudexpress.endpoint</name>
+                                            <value>${test.trmk-vcloudexpress.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>trmk-vcloudexpress.apiversion</name>
-                                            <value>${trmk-vcloudexpress.apiversion}</value>
+                                            <name>test.trmk-vcloudexpress.apiversion</name>
+                                            <value>${test.trmk-vcloudexpress.apiversion}</value>
                                         </property>
                                         <property>
-                                            <name>trmk-vcloudexpress.identity</name>
-                                            <value>${trmk-vcloudexpress.identity}</value>
+                                            <name>test.trmk-vcloudexpress.identity</name>
+                                            <value>${test.trmk-vcloudexpress.identity}</value>
                                         </property>
                                         <property>
-                                            <name>trmk-vcloudexpress.credential</name>
-                                            <value>${trmk-vcloudexpress.credential}</value>
+                                            <name>test.trmk-vcloudexpress.credential</name>
+                                            <value>${test.trmk-vcloudexpress.credential}</value>
                                         </property>
                                         <property>
-                                            <name>trmk-ecloud.endpoint</name>
-                                            <value>${trmk-ecloud.endpoint}</value>
+                                            <name>test.trmk-ecloud.endpoint</name>
+                                            <value>${test.trmk-ecloud.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>trmk-ecloud.apiversion</name>
-                                            <value>${trmk-ecloud.apiversion}</value>
+                                            <name>test.trmk-ecloud.apiversion</name>
+                                            <value>${test.trmk-ecloud.apiversion}</value>
                                         </property>
                                         <property>
-                                            <name>trmk-ecloud.identity</name>
-                                            <value>${trmk-ecloud.identity}</value>
+                                            <name>test.trmk-ecloud.identity</name>
+                                            <value>${test.trmk-ecloud.identity}</value>
                                         </property>
                                         <property>
-                                            <name>trmk-ecloud.credential</name>
-                                            <value>${trmk-ecloud.credential}</value>
+                                            <name>test.trmk-ecloud.credential</name>
+                                            <value>${test.trmk-ecloud.credential}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.compute.blacklist.nodes</name>

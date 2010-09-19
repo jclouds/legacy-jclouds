@@ -21,7 +21,7 @@ package org.jclouds.vcloud.domain.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.vcloud.domain.Error;
+import org.jclouds.vcloud.domain.VCloudError;
 
 import com.google.inject.internal.Nullable;
 
@@ -30,19 +30,19 @@ import com.google.inject.internal.Nullable;
  * @author Adrian Cole
  * 
  */
-public class ErrorImpl implements Error {
+public class ErrorImpl implements VCloudError {
    private final String message;
    private final int majorErrorCode;
-   private final String minorErrorCode;
+   private final MinorCode minorErrorCode;
    @Nullable
    private final String vendorSpecificErrorCode;
    @Nullable
    private final String stackTrace;
 
-   public ErrorImpl(String message, int majorErrorCode, @Nullable String minorErrorCode,
+   public ErrorImpl(String message, int majorErrorCode, @Nullable MinorCode minorErrorCode,
             @Nullable String vendorSpecificErrorCode, @Nullable String stackTrace) {
       this.message = checkNotNull(message, "message");
-      this.majorErrorCode = checkNotNull(majorErrorCode, "majorErrorCode");
+      this.majorErrorCode = majorErrorCode;
       this.minorErrorCode = minorErrorCode; // check null after 0.8 is gone
       this.vendorSpecificErrorCode = vendorSpecificErrorCode;
       this.stackTrace = stackTrace;
@@ -56,7 +56,7 @@ public class ErrorImpl implements Error {
       return majorErrorCode;
    }
 
-   public String getMinorErrorCode() {
+   public MinorCode getMinorErrorCode() {
       return minorErrorCode;
    }
 
