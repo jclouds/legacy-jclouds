@@ -45,7 +45,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.zip.GZIPInputStream;
 
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.ContainerNotFoundException;
@@ -85,6 +84,7 @@ import com.google.common.io.InputSupplier;
 public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    private InputSupplier<InputStream> oneHundredOneConstitutions;
    private byte[] oneHundredOneConstitutionsMD5;
+   private static long oneHundredOneConstitutionsLength;
 
    @BeforeClass(groups = { "integration", "live" })
    @Override
@@ -105,6 +105,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       for (int i = 0; i < 100; i++) {
          temp = ByteStreams.join(temp, constitutionSupplier);
       }
+      oneHundredOneConstitutionsLength = oneConstitution.length * 101l;
       return temp;
    }
 
@@ -150,6 +151,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       sourceObject.setPayload(oneHundredOneConstitutions.getInput());
       sourceObject.getMetadata().getContentMetadata().setContentType("text/plain");
       sourceObject.getMetadata().getContentMetadata().setContentMD5(oneHundredOneConstitutionsMD5);
+      sourceObject.getMetadata().getContentMetadata().setContentLength(oneHundredOneConstitutionsLength);
       sourceObject.getMetadata().getContentMetadata().setContentDisposition(contentDisposition);
       context.getBlobStore().putBlob(containerName, sourceObject);
    }
@@ -497,8 +499,6 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
                .getContentMetadata().getContentType();
       assert blob.getMetadata().getContentMetadata().getContentType().startsWith(contentType) : blob.getMetadata()
                .getContentMetadata().getContentType();
-      assert Iterables.getOnlyElement(blob.getAllHeaders().get(HttpHeaders.CONTENT_TYPE)).startsWith(contentType) : blob
-               .getAllHeaders().get(HttpHeaders.CONTENT_TYPE);
    }
 
    protected void checkContentDisposition(Blob blob, String contentDisposition) {
@@ -578,6 +578,10 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
                .getContentType();
       assertEquals(metadata.getContentMetadata().getContentLength(), new Long(TEST_STRING.length()));
       assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
+      checkMD5(metadata);
+   }
+
+   protected void checkMD5(BlobMetadata metadata) throws IOException {
       assertEquals(metadata.getContentMetadata().getContentMD5(), CryptoStreams.md5(InputSuppliers.of(TEST_STRING)));
    }
 

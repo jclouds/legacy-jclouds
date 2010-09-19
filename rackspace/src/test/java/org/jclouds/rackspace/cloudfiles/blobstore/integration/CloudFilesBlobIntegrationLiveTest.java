@@ -19,6 +19,7 @@
 
 package org.jclouds.rackspace.cloudfiles.blobstore.integration;
 
+import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
 import org.testng.annotations.Test;
 
@@ -34,6 +35,20 @@ public class CloudFilesBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
    @Test(enabled = false)
    public void testGetTwoRanges() {
       // not supported in cloud files
+   }
+
+   // not supported
+   @Override
+   protected void checkContentDisposition(Blob blob, String contentDisposition) {
+      assert blob.getPayload().getContentMetadata().getContentDisposition() == null;
+      assert blob.getMetadata().getContentMetadata().getContentDisposition() == null;
+   }
+
+   // not supported
+   @Override
+   protected void checkContentLanguage(Blob blob, String contentLanguage) {
+      assert blob.getPayload().getContentMetadata().getContentLanguage() == null;
+      assert blob.getMetadata().getContentMetadata().getContentLanguage() == null;
    }
 
 }

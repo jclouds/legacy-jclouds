@@ -46,7 +46,8 @@ public class BindAzureBlobToPayload implements Binder {
 
    public void bindToRequest(HttpRequest request, Object payload) {
       AzureBlob blob = (AzureBlob) payload;
-      checkArgument(blob.getPayload().getContentMetadata().getContentLength() >= 0, "size must be set");
+      checkArgument(blob.getPayload().getContentMetadata().getContentLength() != null
+               && blob.getPayload().getContentMetadata().getContentLength() >= 0, "size must be set");
       request.getHeaders().put("x-ms-blob-type", blob.getProperties().getType().toString());
 
       switch (blob.getProperties().getType()) {

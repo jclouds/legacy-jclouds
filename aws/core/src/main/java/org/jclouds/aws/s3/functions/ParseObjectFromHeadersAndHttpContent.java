@@ -35,8 +35,7 @@ import com.google.common.base.Function;
  * @see ParseMetadataFromHeaders
  * @author Adrian Cole
  */
-public class ParseObjectFromHeadersAndHttpContent implements Function<HttpResponse, S3Object>,
-         InvocationContext {
+public class ParseObjectFromHeadersAndHttpContent implements Function<HttpResponse, S3Object>, InvocationContext {
 
    private final ParseObjectMetadataFromHeaders metadataParser;
    private final S3Object.Factory objectProvider;
@@ -53,6 +52,7 @@ public class ParseObjectFromHeadersAndHttpContent implements Function<HttpRespon
       S3Object object = objectProvider.create(metadata);
       object.getAllHeaders().putAll(from.getHeaders());
       object.setPayload(from.getPayload());
+
       return object;
    }
 

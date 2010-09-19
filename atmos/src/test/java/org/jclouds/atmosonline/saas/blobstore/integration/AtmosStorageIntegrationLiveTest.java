@@ -19,6 +19,13 @@
 
 package org.jclouds.atmosonline.saas.blobstore.integration;
 
+import static org.testng.Assert.assertEquals;
+
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+
+import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -71,6 +78,39 @@ public class AtmosStorageIntegrationLiveTest extends BaseBlobIntegrationTest {
    @Test(enabled = false)
    public void testGetTwoRanges() {
       // not supported
+   }
+
+   // not supported
+   @Override
+   protected void checkContentDisposition(Blob blob, String contentDisposition) {
+      assert blob.getPayload().getContentMetadata().getContentDisposition() == null;
+      assert blob.getMetadata().getContentMetadata().getContentDisposition() == null;
+   }
+
+   // not supported
+   @Override
+   protected void checkContentEncoding(Blob blob, String contentEncoding) {
+      assert blob.getPayload().getContentMetadata().getContentEncoding() == null;
+      assert blob.getMetadata().getContentMetadata().getContentEncoding() == null;
+   }
+
+   // not supported
+   @Override
+   protected void checkContentLanguage(Blob blob, String contentLanguage) {
+      assert blob.getPayload().getContentMetadata().getContentLanguage() == null;
+      assert blob.getMetadata().getContentMetadata().getContentLanguage() == null;
+   }
+
+   @Override
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testPutObjectStream() throws InterruptedException, IOException, ExecutionException {
+      super.testPutObjectStream();
+   }
+
+   // not supported
+   @Override
+   protected void checkMD5(BlobMetadata metadata) throws IOException {
+      assertEquals(metadata.getContentMetadata().getContentMD5(), null);
    }
 
    @Test(enabled = false)

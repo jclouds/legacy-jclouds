@@ -29,6 +29,7 @@ import org.jclouds.aws.s3.blobstore.functions.BlobToObjectMetadata;
 import org.jclouds.aws.s3.domain.MutableObjectMetadata;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.functions.ParseSystemAndUserMetadataFromHeaders;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
@@ -64,6 +65,12 @@ public class ParseObjectMetadataFromHeaders implements Function<HttpResponse, Mu
       BlobMetadata base = blobMetadataParser.apply(from);
       MutableObjectMetadata to = blobToObjectMetadata.apply(base);
       addETagTo(from, to);
+      if (to.getContentMetadata().getContentMD5() == null && to.getETag() != null) {
+         byte[] md5 = CryptoStreams.hex(to.getETag().replaceAll("\"", ""));
+         // it is possible others will look at the http payload directly
+         from.getPayload().getContentMetadata().setContentMD5(md5);
+         to.getContentMetadata().setContentMD5(md5);
+      }
       to.setCacheControl(from.getFirstHeaderOrNull(HttpHeaders.CACHE_CONTROL));
       return to;
    }

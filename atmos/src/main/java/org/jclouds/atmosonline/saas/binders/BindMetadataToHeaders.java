@@ -19,6 +19,8 @@
 
 package org.jclouds.atmosonline.saas.binders;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -32,13 +34,14 @@ public class BindMetadataToHeaders implements Binder {
    private final BindUserMetadataToHeaders metaBinder;
 
    @Inject
-   protected BindMetadataToHeaders(BindUserMetadataToHeaders metaBinder,
-            Crypto crypto) {
+   protected BindMetadataToHeaders(BindUserMetadataToHeaders metaBinder, Crypto crypto) {
       this.metaBinder = metaBinder;
    }
 
    public void bindToRequest(HttpRequest request, Object payload) {
       AtmosObject object = (AtmosObject) payload;
+      checkArgument(object.getPayload().getContentMetadata().getContentLength() != null,
+               "contentLength must be set, streaming not supported");
       metaBinder.bindToRequest(request, object.getUserMetadata());
    }
 }

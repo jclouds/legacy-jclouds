@@ -19,8 +19,11 @@
 
 package org.jclouds.azure.storage.blob.blobstore.integration;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.ExecutionException;
 
+import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
 import org.testng.annotations.Test;
 
@@ -34,5 +37,19 @@ public class AzureBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
    @Override
    public void testGetIfMatch() throws InterruptedException, UnsupportedEncodingException {
       // this currently fails
+   }
+
+   @Override
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testPutObjectStream() throws InterruptedException, IOException, ExecutionException {
+      super.testPutObjectStream();
+   }
+
+   // according to docs, content disposition is not persisted
+   // http://msdn.microsoft.com/en-us/library/dd179440.aspx
+   @Override
+   protected void checkContentDisposition(Blob blob, String contentDisposition) {
+      assert blob.getPayload().getContentMetadata().getContentDisposition() == null;
+      assert blob.getMetadata().getContentMetadata().getContentDisposition() == null;
    }
 }

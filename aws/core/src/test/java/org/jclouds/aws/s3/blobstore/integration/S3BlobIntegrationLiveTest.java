@@ -19,6 +19,9 @@
 
 package org.jclouds.aws.s3.blobstore.integration;
 
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
 import org.testng.annotations.Test;
 
@@ -29,5 +32,11 @@ import org.testng.annotations.Test;
  */
 @Test(groups = { "live" }, testName = "s3.S3BlobIntegrationTest")
 public class S3BlobIntegrationLiveTest extends BaseBlobIntegrationTest {
+
+   @Override
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testPutObjectStream() throws InterruptedException, IOException, ExecutionException {
+      super.testPutObjectStream();
+   }
 
 }

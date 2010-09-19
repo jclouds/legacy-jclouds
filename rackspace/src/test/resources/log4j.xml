@@ -161,12 +161,12 @@
     <category name="jclouds.ssh">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCSSH" />
-    </category>
+    </category><!--
     <category name="jclouds.wire">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
     </category>
-    <category name="jclouds.blobstore">
+    --><category name="jclouds.blobstore">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCBLOBSTORE" />
     </category>
