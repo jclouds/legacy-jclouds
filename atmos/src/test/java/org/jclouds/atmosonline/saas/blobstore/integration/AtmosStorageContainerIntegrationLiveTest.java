@@ -19,8 +19,12 @@
 
 package org.jclouds.atmosonline.saas.blobstore.integration;
 
+import static org.testng.Assert.assertEquals;
+
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.integration.internal.BaseContainerIntegrationTest;
 import org.testng.annotations.Test;
 
@@ -39,5 +43,10 @@ public class AtmosStorageContainerIntegrationLiveTest extends BaseContainerInteg
    @Override
    public void testListContainerMarker() throws InterruptedException, UnsupportedEncodingException {
       // Not currently working https://community.emc.com/thread/100545
+   }
+   
+   protected void checkMD5(BlobMetadata metadata) throws IOException {
+      // atmos doesn't support MD5
+      assertEquals(metadata.getContentMetadata().getContentMD5(), null);
    }
 }

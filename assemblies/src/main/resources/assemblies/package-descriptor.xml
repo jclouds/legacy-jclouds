@@ -189,33 +189,6 @@
             <outputDirectory>providers/aws</outputDirectory>            
         </fileSet>         
  
-        <!-- aws extensions: jets3t -->
-        <fileSet>
-            <directory>aws/extensions/jets3t/target</directory>
-            <includes>
-                <include>jclouds-jets3t-${project.version}.jar</include>
-            </includes>
-            <outputDirectory>providers/aws/extensions/jets3t/lib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>aws/extensions/jets3t/target</directory>
-            <includes>
-                <include>jclouds-jets3t-${project.version}-sources.jar</include>
-            </includes>
-            <outputDirectory>providers/aws/extensions/jets3t/src</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>aws/extensions/jets3t/target/apidocs</directory>
-            <outputDirectory>providers/aws/extensions/jets3t/docs</outputDirectory>            
-        </fileSet>
-        <fileSet>
-            <directory>aws/extensions/jets3t</directory>
-            <includes>
-                <include>README.txt</include>
-            </includes>
-            <outputDirectory>providers/aws/extensions/jets3t</outputDirectory>            
-        </fileSet>
-                
         <!-- providers: azure -->
         <fileSet>
             <directory>azure/target</directory>
@@ -357,6 +330,33 @@
             <includes>
                 <include>jclouds-vcloud-${project.version}.jar</include>
             </includes>
+            <outputDirectory>providers/vcloud/lib</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>vcloud/core/target</directory>
+            <includes>
+                <include>jclouds-vcloud-${project.version}-sources.jar</include>
+            </includes>
+            <outputDirectory>providers/vcloud/src</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>vcloud/vcloud/target/apidocs</directory>
+            <outputDirectory>providers/vcloud/docs</outputDirectory>            
+        </fileSet>
+        <fileSet>
+            <directory>vcloud/core</directory>
+            <includes>
+                <include>README.txt</include>
+            </includes>
+            <outputDirectory>providers/vcloud</outputDirectory>            
+        </fileSet>     
+        
+        <!-- providers: bluelock -->
+        <fileSet>
+            <directory>vcloud/core/target</directory>
+            <includes>
+                <include>jclouds-vcloud-${project.version}.jar</include>
+            </includes>
             <outputDirectory>providers/bluelock/lib</outputDirectory>
         </fileSet>
         <fileSet>
@@ -433,33 +433,6 @@
             <outputDirectory>providers/terremark</outputDirectory>            
         </fileSet>     
         
-        <!-- providers: twitter -->
-        <fileSet>
-            <directory>twitter/target</directory>
-            <includes>
-                <include>jclouds-twitter-${project.version}.jar</include>
-            </includes>
-            <outputDirectory>providers/twitter/lib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>twitter/target</directory>
-            <includes>
-                <include>jclouds-twitter-${project.version}-sources.jar</include>
-            </includes>
-            <outputDirectory>providers/twitter/src</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>twitter/target/apidocs</directory>
-            <outputDirectory>providers/twitter/docs</outputDirectory>            
-        </fileSet>
-        <fileSet>
-            <directory>twitter</directory>
-            <includes>
-                <include>README.txt</include>
-            </includes>
-            <outputDirectory>providers/twitter</outputDirectory>            
-        </fileSet> 
-
         <!-- extensions: bouncycastle -->
         <fileSet>
             <directory>extensions/bouncycastle/target</directory>
@@ -568,31 +541,31 @@
             <outputDirectory>extensions/joda</outputDirectory>            
         </fileSet>
 
-        <!-- extensions: httpnio -->
+        <!-- extensions: apachehc -->
         <fileSet>
-            <directory>extensions/httpnio/target</directory>
+            <directory>extensions/apachehc/target</directory>
             <includes>
-                <include>jclouds-httpnio-${project.version}.jar</include>
+                <include>jclouds-apachehc-${project.version}.jar</include>
             </includes>
-            <outputDirectory>extensions/httpnio/lib</outputDirectory>
+            <outputDirectory>extensions/apachehc/lib</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>extensions/httpnio/target</directory>
+            <directory>extensions/apachehc/target</directory>
             <includes>
-                <include>jclouds-httpnio-${project.version}-sources.jar</include>
+                <include>jclouds-apachehc-${project.version}-sources.jar</include>
             </includes>
-            <outputDirectory>extensions/httpnio/src</outputDirectory>
+            <outputDirectory>extensions/apachehc/src</outputDirectory>
         </fileSet>
         <fileSet>
-            <directory>extensions/httpnio/target/apidocs</directory>
-            <outputDirectory>extensions/httpnio/docs</outputDirectory>            
+            <directory>extensions/apachehc/target/apidocs</directory>
+            <outputDirectory>extensions/apachehc/docs</outputDirectory>            
         </fileSet>
         <fileSet>
-            <directory>extensions/httpnio</directory>
+            <directory>extensions/apachehc</directory>
             <includes>
                 <include>README.txt</include>
             </includes>
-            <outputDirectory>extensions/httpnio</outputDirectory>            
+            <outputDirectory>extensions/apachehc</outputDirectory>            
         </fileSet>
         
         <!-- extensions: jsch -->

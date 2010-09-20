@@ -298,33 +298,6 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
       }
    }
 
-   /**
-    * using scratch bucketName as we are changing location
-    */
-   public void testNorthernCalifornia() throws Exception {
-      final String bucketName = getScratchContainerName();
-      try {
-         getApi().putBucketInRegion(Region.EU_WEST_1, bucketName + "cali",
-                  withBucketAcl(CannedAccessPolicy.PUBLIC_READ));
-         assertConsistencyAware(new Runnable() {
-            public void run() {
-               try {
-                  AccessControlList acl = getApi().getBucketACL(bucketName + "cali");
-                  assertTrue(acl.hasPermission(GroupGranteeURI.ALL_USERS, Permission.READ), acl.toString());
-               } catch (Exception e) {
-                  Throwables.propagateIfPossible(e);
-               }
-            }
-         });
-         assertEquals(Region.EU_WEST_1, getApi().getBucketLocation(bucketName + "cali"));
-         // TODO: I believe that the following should work based on the above acl assertion passing.
-         // However, it fails on 403
-         // URL url = new URL(String.format("http://%s.s3.amazonaws.com", bucketName));
-         // Utils.toStringAndClose(url.openStream());
-      } finally {
-         destroyContainer(bucketName + "cali");
-      }
-   }
 
    void bucketExists() throws Exception {
       String bucketName = getContainerName();

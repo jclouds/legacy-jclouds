@@ -73,7 +73,11 @@ public class SliceHandler extends ParseSax.HandlerWithResult<Slice> {
       } else if (qName.equalsIgnoreCase("status")) {
          this.status = Slice.Status.fromValue(currentText.toString().trim());
       } else if (qName.equalsIgnoreCase("progress")) {
-         progress = Integer.parseInt(currentText.toString().trim());
+         try {
+            progress = Integer.parseInt(currentText.toString().trim());
+         } catch (NumberFormatException e) {
+
+         }
       } else if (qName.equalsIgnoreCase("bw-in")) {
          bandwidthIn = Float.parseFloat(currentText.toString().trim());
       } else if (qName.equalsIgnoreCase("bw-out")) {
@@ -84,7 +88,7 @@ public class SliceHandler extends ParseSax.HandlerWithResult<Slice> {
          this.rootPassword = currentText.toString().trim();
       } else if (qName.equalsIgnoreCase("slice")) {
          this.slice = new Slice(id, name, flavorId, imageId, backupId, status, progress, bandwidthIn, bandwidthOut,
-               addresses, rootPassword);
+                  addresses, rootPassword);
          this.id = -1;
          this.name = null;
          this.flavorId = -1;

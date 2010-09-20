@@ -34,6 +34,7 @@ import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -51,13 +52,12 @@ public class EC2TemplateBuilderLiveTest {
    protected String endpoint;
    protected String apiversion;
 
+   @BeforeClass
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
-      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
-      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
-               + ".apiversion");
+      credential = System.getProperty("test." + provider + ".credential");
+      endpoint = System.getProperty("test." + provider + ".endpoint");
+      apiversion = System.getProperty("test." + provider + ".apiversion");
    }
 
    protected Properties setupProperties() {
@@ -65,9 +65,12 @@ public class EC2TemplateBuilderLiveTest {
       overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
-      overrides.setProperty(provider + ".endpoint", endpoint);
-      overrides.setProperty(provider + ".apiversion", apiversion);
+      if (credential != null)
+         overrides.setProperty(provider + ".credential", credential);
+      if (endpoint != null)
+         overrides.setProperty(provider + ".endpoint", endpoint);
+      if (apiversion != null)
+         overrides.setProperty(provider + ".apiversion", apiversion);
       return overrides;
    }
 
@@ -79,7 +82,7 @@ public class EC2TemplateBuilderLiveTest {
                   .<Module> of(new Log4JLoggingModule()), setupProperties());
 
          Template template = newContext.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5")
-               .hardwareId(InstanceType.M2_2XLARGE).build();
+                  .hardwareId(InstanceType.M2_2XLARGE).build();
 
          System.out.println(template.getHardware());
          assert (template.getImage().getProviderId().startsWith("ami-")) : template;
@@ -106,7 +109,7 @@ public class EC2TemplateBuilderLiveTest {
 
          Template defaultTemplate = newContext.getComputeService().templateBuilder().build();
          assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
-         assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "0.9.7-beta");
+         assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "0.9.8-beta");
          assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
          assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
          assertEquals(defaultTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
@@ -127,7 +130,7 @@ public class EC2TemplateBuilderLiveTest {
                   .<Module> of(new Log4JLoggingModule()), setupProperties());
 
          Template microTemplate = newContext.getComputeService().templateBuilder().hardwareId(InstanceType.T1_MICRO)
-               .build();
+                  .build();
          System.out.println(microTemplate.getHardware());
 
          assert (microTemplate.getImage().getProviderId().startsWith("ami-")) : microTemplate;
@@ -153,7 +156,7 @@ public class EC2TemplateBuilderLiveTest {
 
          newContext = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
                   .<Module> of(new Log4JLoggingModule()), overrides);
-         
+
          assertEquals(newContext.getComputeService().listImages().size(), 0);
 
          Template template = newContext.getComputeService().templateBuilder().imageId("us-east-1/ami-ccb35ea5").build();
@@ -167,7 +170,7 @@ public class EC2TemplateBuilderLiveTest {
          assertEquals(template.getLocation().getId(), "us-east-1");
          assertEquals(getCores(template.getHardware()), 2.0d);
          assertEquals(template.getHardware().getId(), "m1.large"); // because it
-                                                                   // is 64bit
+         // is 64bit
 
          // ensure we cache the new image for next time
          assertEquals(newContext.getComputeService().listImages().size(), 1);

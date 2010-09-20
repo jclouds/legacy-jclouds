@@ -26,9 +26,9 @@ import java.util.Properties;
 import org.jclouds.Constants;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -79,8 +79,8 @@ public class WindowsClientLiveTest {
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-               overrides);
+      context = new ComputeServiceContextFactory().createContext(provider,
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
       client = context.getApi().getWindowsServices();
    }
 

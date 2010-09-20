@@ -187,11 +187,11 @@
                                     <systemProperties>
                                         <property>
                                             <name>jclouds.test.identity</name>
-                                            <value>${jclouds.aws.accesskeyid}</value>
+                                            <value>${test.aws.identity}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.test.credential</name>
-                                            <value>${jclouds.aws.secretaccesskey}</value>
+                                            <value>${test.aws.credential}</value>
                                         </property>
                                         <property>
                                             <name>appengine.home</name>

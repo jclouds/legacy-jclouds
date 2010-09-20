@@ -34,6 +34,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.scriptbuilder.domain.Statement;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -43,7 +44,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups = "live", testName = "jclouds.ComputeAndBlobStoreTogetherHappilyLiveTest")
 public class ComputeAndBlobStoreTogetherHappilyLiveTest extends BlobStoreAndComputeServiceLiveTest {
-
+   @BeforeClass
    protected void setupCredentials() {
       blobStoreProvider = "s3";
       computeServiceProvider = "ec2";

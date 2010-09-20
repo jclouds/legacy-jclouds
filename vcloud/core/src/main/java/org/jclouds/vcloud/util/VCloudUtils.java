@@ -24,7 +24,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
@@ -59,7 +58,7 @@ public class VCloudUtils {
       if (VCloudMediaType.ERROR_XML.equals(response.getPayload().getContentMetadata().getContentType())) {
          try {
             return (VCloudError) factory.create(errorHandlerProvider.get()).setContext(request).apply(response);
-         } catch (HttpException e) {
+         } catch (RuntimeException e) {
             logger.warn(e, "error parsing error");
          }
       }

@@ -32,8 +32,8 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "vcloud.TerremarkECloudClientLiveTest")
-public class TerremarkECloudClientLiveTest extends TerremarkClientLiveTest {
+@Test(groups = "live", enabled = false, sequential = true, testName = "vcloud.TerremarkECloudClientLiveTest")
+public class TerremarkECloudClientLiveTestDisabled extends TerremarkClientLiveTest {
    @BeforeClass
    void setProvider() {
       this.provider = "trmk-ecloud";

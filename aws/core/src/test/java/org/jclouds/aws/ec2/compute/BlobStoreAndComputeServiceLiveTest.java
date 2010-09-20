@@ -60,17 +60,17 @@ public class BlobStoreAndComputeServiceLiveTest {
                + ".identity");
       String credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
                + ".credential");
-      String endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider
-               + ".endpoint");
-      String apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
-               + ".apiversion");
+      String endpoint = System.getProperty("test." + provider + ".endpoint");
+      String apiversion = System.getProperty("test." + provider + ".apiversion");
       Properties overrides = new Properties();
       overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       overrides.setProperty(provider + ".identity", identity);
       overrides.setProperty(provider + ".credential", credential);
-      overrides.setProperty(provider + ".endpoint", endpoint);
-      overrides.setProperty(provider + ".apiversion", apiversion);
+      if (endpoint != null)
+         overrides.setProperty(provider + ".endpoint", endpoint);
+      if (apiversion != null)
+         overrides.setProperty(provider + ".apiversion", apiversion);
       return overrides;
    }
 

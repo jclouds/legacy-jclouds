@@ -38,13 +38,13 @@ import org.jclouds.vcloud.terremark.TerremarkECloudClient;
 import org.testng.annotations.Test;
 
 /**
- * 
+ * This test is disabled, as it doesn't work while there are too few public ip addresses.
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "terremark.TerremarkVCloudComputeServiceLiveTest")
-public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
-   public TerremarkECloudComputeServiceLiveTest() {
+@Test(groups = "live", enabled = false, sequential = true, testName = "terremark.TerremarkVCloudComputeServiceLiveTest")
+public class TerremarkECloudComputeServiceLiveTestDisabled extends BaseComputeServiceLiveTest {
+   public TerremarkECloudComputeServiceLiveTestDisabled() {
       provider = "trmk-ecloud";
    }
 

@@ -108,8 +108,8 @@ public class PlacementGroupClientLiveTest {
    public void setupClient() throws FileNotFoundException, IOException {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-               overrides);
+      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()), overrides);
       keyPair = BaseComputeServiceLiveTest.setupKeyPair();
 
       client = EC2Client.class.cast(context.getProviderSpecificContext().getApi());

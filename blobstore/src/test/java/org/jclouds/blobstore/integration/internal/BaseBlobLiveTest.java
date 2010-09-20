@@ -68,10 +68,14 @@ public class BaseBlobLiveTest extends BaseBlobStoreIntegrationTest {
       String container = getContainerName();
       try {
          context.getBlobStore().putBlob(container, blob);
-         assertEquals(context.getBlobStore().blobMetadata(container, name).getContentMetadata().getContentMD5(), md5);
+         checkMD5(container, name, md5);
       } finally {
          returnContainer(container);
       }
+   }
+
+   protected void checkMD5(String container, String name, byte[] md5) {
+      assertEquals(context.getBlobStore().blobMetadata(container, name).getContentMetadata().getContentMD5(), md5);
    }
 
 }

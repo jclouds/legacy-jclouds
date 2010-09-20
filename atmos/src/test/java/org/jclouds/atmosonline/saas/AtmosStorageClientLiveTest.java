@@ -103,7 +103,6 @@ public class AtmosStorageClientLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    private static final int INCONSISTENCY_WINDOW = 5000;
-   protected AtmosStorageClient connection;
    private String containerPrefix = BaseBlobStoreIntegrationTest.CONTAINER_PREFIX + "live";
 
    URI container1;
@@ -111,13 +110,12 @@ public class AtmosStorageClientLiveTest extends BaseBlobStoreIntegrationTest {
 
    @Test
    public void testListDirectorys() throws Exception {
-      BoundedSet<? extends DirectoryEntry> response = connection.listDirectories();
+      BoundedSet<? extends DirectoryEntry> response = getApi().listDirectories();
       assert null != response;
    }
 
    String privateDirectory;
    String publicDirectory;
-   String identity;
 
    @Test(timeOut = 5 * 60 * 1000)
    public void testCreateDirectory() throws Exception {
@@ -125,7 +123,7 @@ public class AtmosStorageClientLiveTest extends BaseBlobStoreIntegrationTest {
       while (!created) {
          privateDirectory = containerPrefix + new SecureRandom().nextInt();
          try {
-            created = connection.createDirectory(privateDirectory) != null;
+            created = getApi().createDirectory(privateDirectory) != null;
          } catch (UndeclaredThrowableException e) {
             HttpResponseException htpe = (HttpResponseException) e.getCause().getCause();
             if (htpe.getResponse().getStatusCode() == 409)
@@ -133,9 +131,9 @@ public class AtmosStorageClientLiveTest extends BaseBlobStoreIntegrationTest {
             throw e;
          }
       }
-      BoundedSet<? extends DirectoryEntry> response = connection.listDirectories();
+      BoundedSet<? extends DirectoryEntry> response = getApi().listDirectories();
       for (DirectoryEntry id : response) {
-         BoundedSet<? extends DirectoryEntry> r2 = connection.listDirectory(id.getObjectName());
+         BoundedSet<? extends DirectoryEntry> r2 = getApi().listDirectory(id.getObjectName());
          assert r2 != null;
       }
    }
@@ -145,12 +143,11 @@ public class AtmosStorageClientLiveTest extends BaseBlobStoreIntegrationTest {
       createOrReplaceObject("object2", "here is my data!", "meta-value1");
       createOrReplaceObject("object3", "here is my data!", "meta-value1");
       createOrReplaceObject("object4", "here is my data!", "meta-value1");
-      BoundedSet<? extends DirectoryEntry> r2 = connection
-               .listDirectory(privateDirectory, ListOptions.Builder.limit(1));
+      BoundedSet<? extends DirectoryEntry> r2 = getApi().listDirectory(privateDirectory, ListOptions.Builder.limit(1));
       assertEquals(r2.size(), 1);
       assert r2.getToken() != null;
       assertEquals(Iterables.getLast(Sets.newTreeSet(r2)).getObjectName(), "object2");
-      r2 = connection.listDirectory(privateDirectory, ListOptions.Builder.token(r2.getToken()));
+      r2 = getApi().listDirectory(privateDirectory, ListOptions.Builder.token(r2.getToken()));
       assertEquals(r2.size(), 2);
       assert r2.getToken() == null;
       assertEquals(Iterables.getLast(Sets.newTreeSet(r2)).getObjectName(), "object4");
@@ -195,7 +192,7 @@ public class AtmosStorageClientLiveTest extends BaseBlobStoreIntegrationTest {
 
    private void createOrReplaceObject(String name, Object data, String metadataValue) throws Exception {
       // Test PUT with string data, ETag hash, and a piece of metadata
-      AtmosObject object = connection.newObject();
+      AtmosObject object = getApi().newObject();
       object.getContentMetadata().setName(name);
       object.setPayload(Payloads.newPayload(data));
       object.getContentMetadata().setContentLength(16l);
@@ -231,12 +228,12 @@ public class AtmosStorageClientLiveTest extends BaseBlobStoreIntegrationTest {
 
    protected void assertEventuallyObjectMatches(final String name, final String compare, final String metadataValue)
             throws InterruptedException {
-      assertEventually(new ObjectMatches(connection, privateDirectory + "/" + name, metadataValue, compare));
+      assertEventually(new ObjectMatches(getApi(), privateDirectory + "/" + name, metadataValue, compare));
    }
 
    protected void assertEventuallyHeadMatches(final String name, final String metadataValue)
             throws InterruptedException {
-      assertEventually(new HeadMatches(connection, privateDirectory + "/" + name, metadataValue));
+      assertEventually(new HeadMatches(getApi(), privateDirectory + "/" + name, metadataValue));
    }
 
    private static void verifyHeadObject(AtmosStorageClient connection, String path, String metadataValue)
@@ -291,7 +288,7 @@ public class AtmosStorageClientLiveTest extends BaseBlobStoreIntegrationTest {
       deleteConfirmed(privateDirectory + "/" + object.getContentMetadata().getName());
       long time = System.currentTimeMillis();
       try {
-         connection.createFile(privateDirectory, object);
+         getApi().createFile(privateDirectory, object);
          System.err.printf("%s %s; %dms%n", "created", object.getPayload() instanceof InputStreamPayload ? "stream"
                   : "string", System.currentTimeMillis() - time);
       } catch (Exception e) {
@@ -312,12 +309,12 @@ public class AtmosStorageClientLiveTest extends BaseBlobStoreIntegrationTest {
    protected void deleteImmediateAndVerifyWithHead(final String path) throws InterruptedException, ExecutionException,
             TimeoutException {
       try {
-         connection.deletePath(path);
+         getApi().deletePath(path);
       } catch (KeyNotFoundException ex) {
       }
-      assert !connection.pathExists(path);
+      assert !getApi().pathExists(path);
       System.err.printf("path %s doesn't exist%n", path);
-      assert !connection.pathExists(path);
+      assert !getApi().pathExists(path);
       System.err.printf("path %s doesn't exist%n", path);
 
    }
@@ -325,12 +322,12 @@ public class AtmosStorageClientLiveTest extends BaseBlobStoreIntegrationTest {
    protected void deleteConsistencyAware(final String path) throws InterruptedException, ExecutionException,
             TimeoutException {
       try {
-         connection.deletePath(path);
+         getApi().deletePath(path);
       } catch (KeyNotFoundException ex) {
       }
       assert Utils.eventuallyTrue(new Supplier<Boolean>() {
          public Boolean get() {
-            return !connection.pathExists(path);
+            return !getApi().pathExists(path);
          }
       }, INCONSISTENCY_WINDOW);
    }
@@ -358,15 +355,15 @@ public class AtmosStorageClientLiveTest extends BaseBlobStoreIntegrationTest {
       long time = System.currentTimeMillis();
       boolean update = true;
       try {
-         connection.getSystemMetadata(privateDirectory + "/object");
+         getApi().getSystemMetadata(privateDirectory + "/object");
       } catch (KeyNotFoundException ex) {
          update = false;
       }
       try {
          if (update)
-            connection.updateFile(privateDirectory, object);
+            getApi().updateFile(privateDirectory, object);
          else
-            connection.createFile(privateDirectory, object);
+            getApi().createFile(privateDirectory, object);
          System.err.printf("%s %s; %dms%n", update ? "updated" : "created",
                   object.getPayload() instanceof InputStreamPayload ? "stream" : "string", System.currentTimeMillis()
                            - time);

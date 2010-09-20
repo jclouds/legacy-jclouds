@@ -96,10 +96,14 @@ public class BaseContainerIntegrationTest extends BaseBlobStoreIntegrationTest {
          assert metadata.getContentMetadata().getContentType().startsWith("text/plain") : metadata.getContentMetadata().getContentType();
          assertEquals(metadata.getContentMetadata().getContentLength(), new Long(TEST_STRING.length()));
          assertEquals(metadata.getUserMetadata().get("adrian"), "powderpuff");
-         assertEquals(metadata.getContentMetadata().getContentMD5(), CryptoStreams.md5(InputSuppliers.of(TEST_STRING)));
+         checkMD5(metadata);
       } finally {
          returnContainer(containerName);
       }
+   }
+
+   protected void checkMD5(BlobMetadata metadata) throws IOException {
+      assertEquals(metadata.getContentMetadata().getContentMD5(), CryptoStreams.md5(InputSuppliers.of(TEST_STRING)));
    }
 
    @Test(groups = { "integration", "live" })

@@ -50,7 +50,7 @@ public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest 
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
-      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
+      assertEquals(getCores(defaultTemplate.getHardware()), 2.0d);
    }
 
 }

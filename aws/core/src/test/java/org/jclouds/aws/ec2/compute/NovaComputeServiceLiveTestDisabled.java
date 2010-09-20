@@ -31,9 +31,9 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(enabled = false, groups = "live", sequential = true, testName = "ec2.NebulaComputeServiceLiveTest")
-public class NovaComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
+public class NovaComputeServiceLiveTestDisabled extends EC2ComputeServiceLiveTest {
 
-   public NovaComputeServiceLiveTest() {
+   public NovaComputeServiceLiveTestDisabled() {
       provider = "nova";
    }
 

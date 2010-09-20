@@ -77,11 +77,13 @@ import com.google.inject.Module;
 
 /**
  * End to end live test for GoGrid
+ * <p/>
+ * Takes too long to execute.  Please split into multiple tests
  * 
  * @author Oleksiy Yarmula
  */
-@Test(groups = "live", testName = "gogrid.GoGridLiveTest")
-public class GoGridLiveTest {
+@Test(enabled = false, groups = "live", testName = "gogrid.GoGridLiveTest")
+public class GoGridLiveTestDisabled {
 
    private GoGridClient client;
 

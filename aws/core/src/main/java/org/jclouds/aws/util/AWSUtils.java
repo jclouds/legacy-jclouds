@@ -29,7 +29,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.xml.ErrorHandler;
-import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
@@ -71,8 +70,7 @@ public class AWSUtils {
                && response.getPayload().getContentMetadata().getContentType().indexOf("text/plain") != -1)
          return null;
       try {
-         AWSError error = (AWSError) factory.create(errorHandlerProvider.get()).setContext(request)
-                  .apply(response);
+         AWSError error = (AWSError) factory.create(errorHandlerProvider.get()).setContext(request).apply(response);
          if (error.getRequestId() == null)
             error.setRequestId(response.getFirstHeaderOrNull(requestId));
          error.setRequestToken(response.getFirstHeaderOrNull(requestToken));
@@ -81,7 +79,7 @@ public class AWSUtils {
             error.setSignature(signer.sign(error.getStringSigned()));
          }
          return error;
-      } catch (HttpException e) {
+      } catch (RuntimeException e) {
          logger.warn(e, "error parsing error");
          return null;
       }

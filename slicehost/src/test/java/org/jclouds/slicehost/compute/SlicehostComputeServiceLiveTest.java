@@ -49,7 +49,7 @@ public class SlicehostComputeServiceLiveTest extends BaseComputeServiceLiveTest 
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getLocation().getId(), "DFW");
+      assertEquals(defaultTemplate.getLocation().getId(), "DFW1");
       assertEquals(getCores(defaultTemplate.getHardware()), 0.25d);
    }
 

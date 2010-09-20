@@ -23,12 +23,15 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_DEFAULT_REGIONS;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_REGIONS;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.aws.domain.Region;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.logging.Logger;
 import org.jclouds.rest.binders.BindToStringPayload;
 
 import com.google.common.base.Splitter;
@@ -44,6 +47,8 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class BindRegionToXmlPayload extends BindToStringPayload {
+   @Resource
+   protected Logger logger = Logger.NULL;
 
    private final Iterable<String> defaultRegions;
    private final Iterable<String> regions;
@@ -67,12 +72,16 @@ public class BindRegionToXmlPayload extends BindToStringPayload {
       } else if (Iterables.contains(regions, constraint)) {
          value = constraint;
       } else {
-         throw new IllegalStateException("unimplemented location: " + constraint);
+         if (constraint.equals(Region.EU_WEST_1)) {
+            value = "EU";
+         } else {
+            logger.warn("region %s not in %s ", constraint, regions);
+            value = constraint;
+         }
       }
-      String payload = String
-               .format(
-                        "<CreateBucketConfiguration><LocationConstraint>%s</LocationConstraint></CreateBucketConfiguration>",
-                        value);
+      String payload = String.format(
+               "<CreateBucketConfiguration><LocationConstraint>%s</LocationConstraint></CreateBucketConfiguration>",
+               value);
       super.bindToRequest(request, payload);
       request.getPayload().getContentMetadata().setContentType(MediaType.TEXT_XML);
    }
