@@ -264,6 +264,7 @@ public class JschSshClient implements SshClient {
       try {
          try {
             executor = (ChannelExec) session.openChannel("exec");
+            executor.setPty(true);
          } catch (JSchException e) {
             throw new SshException(String.format("%s@%s:%d: Error connecting to exec.", username, host, port), e);
          }

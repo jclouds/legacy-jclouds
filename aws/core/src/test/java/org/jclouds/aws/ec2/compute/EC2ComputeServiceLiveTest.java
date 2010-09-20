@@ -303,10 +303,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       try {
          for (SecurityGroup group : securityGroupClient.describeSecurityGroupsInRegion(null))
             if (group.getName().startsWith("jclouds#" + tag) || group.getName().equals(tag)) {
-               System.err.printf("deleting group %s%n", group.getName());
                securityGroupClient.deleteSecurityGroupInRegion(null, group.getName());
-            } else {
-               System.err.printf("group %s didn't match %s%n", group.getName(), tag);
             }
       } catch (Exception e) {
 
@@ -314,10 +311,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       try {
          for (KeyPair pair : keyPairClient.describeKeyPairsInRegion(null))
             if (pair.getKeyName().startsWith("jclouds#" + tag) || pair.getKeyName().equals(tag)) {
-               System.err.printf("deleting key %s%n", pair.getKeyName());
                keyPairClient.deleteKeyPairInRegion(null, pair.getKeyName());
-            } else {
-               System.err.printf("key %s didn't match %s%n", pair.getKeyName(), tag);
             }
       } catch (Exception e) {
 

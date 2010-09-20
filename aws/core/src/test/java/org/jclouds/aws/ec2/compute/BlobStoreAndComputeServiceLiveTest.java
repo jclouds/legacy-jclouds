@@ -22,12 +22,16 @@ package org.jclouds.aws.ec2.compute;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.get;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.Constants;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.domain.Blob;
+import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -54,6 +58,7 @@ public class BlobStoreAndComputeServiceLiveTest {
 
    protected String blobStoreProvider;
    protected String computeServiceProvider;
+   protected Map<String, String> keyPair;
 
    protected Properties setupCredentials(String provider) {
       String identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider
@@ -74,8 +79,13 @@ public class BlobStoreAndComputeServiceLiveTest {
       return overrides;
    }
 
+   protected void setupKeyPairForTest() throws FileNotFoundException, IOException {
+      keyPair = BaseComputeServiceLiveTest.setupKeyPair();
+   }
+
    @BeforeGroups(groups = { "live" })
-   public void setupClient() {
+   public void setupClient() throws FileNotFoundException, IOException {
+      setupKeyPairForTest();
       computeContext = new ComputeServiceContextFactory().createContext(computeServiceProvider, ImmutableSet.of(
                new Log4JLoggingModule(), new JschSshClientModule()), setupCredentials(computeServiceProvider));
       blobContext = new BlobStoreContextFactory().createContext(blobStoreProvider, ImmutableSet

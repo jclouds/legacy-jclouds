@@ -94,13 +94,14 @@ public class RunScriptOnNode implements SshCallable<ExecResponse> {
       ssh.put(scriptName, script);
       ExecResponse returnVal = ssh.exec("chmod 755 " + scriptName);
       returnVal = ssh.exec("./" + scriptName + " init");
+      logger.debug("<< initialized(%d)", returnVal.getExitCode());
 
-      if (runAsRoot)
-         returnVal = runScriptAsRoot();
-      else
-         returnVal = runScriptAsDefaultUser();
-      runScriptNotRunning.apply(new CommandUsingClient("./" + scriptName + " status", ssh));
-      logger.debug("<< complete(%d)", returnVal.getExitCode());
+      String command = (runAsRoot) ? runScriptAsRoot() : runScriptAsDefaultUser();
+      returnVal = runCommand(command);
+      logger.debug("<< start(%d)", returnVal.getExitCode());
+
+      boolean complete = runScriptNotRunning.apply(new CommandUsingClient("./" + scriptName + " status", ssh));
+      logger.debug("<< complete(%s)", complete);
       if (logger.isDebugEnabled() || returnVal.getExitCode() != 0) {
          logger.debug("<< stdout from %s as %s@%s\n%s", scriptName, node.getCredentials().identity, Iterables.get(node
                   .getPublicAddresses(), 0), ssh.exec("./" + scriptName + " tail").getOutput());
@@ -110,33 +111,34 @@ public class RunScriptOnNode implements SshCallable<ExecResponse> {
       return returnVal;
    }
 
+   private ExecResponse runCommand(String command) {
+      ExecResponse returnVal;
+      logger.debug(">> running [%s] as %s@%s", command.replace(node.getCredentials().credential, "XXXXX"), node
+               .getCredentials().identity, Iterables.get(node.getPublicAddresses(), 0));
+      returnVal = ssh.exec(command);
+      return returnVal;
+   }
+
    @Override
    public void setConnection(SshClient ssh, Logger logger) {
       this.logger = checkNotNull(logger, "logger");
       this.ssh = checkNotNull(ssh, "ssh");
    }
 
-   private ExecResponse runScriptAsRoot() {
+   private String runScriptAsRoot() {
+      String command;
       if (node.getCredentials().identity.equals("root")) {
-         logger.debug(">> running %s as %s@%s", scriptName, node.getCredentials().identity, Iterables.get(node
-                  .getPublicAddresses(), 0));
-         return ssh.exec("./" + scriptName + " start");
+         command = "./" + scriptName + " start";
       } else if (ComputeServiceUtils.isKeyAuth(node)) {
-         logger.debug(">> running sudo %s as %s@%s", scriptName, node.getCredentials().identity, Iterables.get(node
-                  .getPublicAddresses(), 0));
-         return ssh.exec("sudo ./" + scriptName + " start");
+         command = "sudo ./" + scriptName + " start";
       } else {
-         logger.debug(">> running sudo -S %s as %s@%s", scriptName, node.getCredentials().identity, Iterables.get(node
-                  .getPublicAddresses(), 0));
-         return ssh.exec(String.format("echo '%s'|sudo -S ./%s", node.getCredentials().credential, scriptName
-                  + " start"));
+         command = String.format("echo '%s'|sudo -S ./%s", node.getCredentials().credential, scriptName + " start");
       }
+      return command;
    }
 
-   private ExecResponse runScriptAsDefaultUser() {
-      logger.debug(">> running script %s as %s@%s", scriptName, node.getCredentials().identity, Iterables.get(node
-               .getPublicAddresses(), 0));
-      return ssh.exec(String.format("./%s", scriptName + " start"));
+   private String runScriptAsDefaultUser() {
+      return "./" + scriptName + " start";
    }
 
    @Override
