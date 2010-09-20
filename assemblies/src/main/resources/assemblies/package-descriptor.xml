@@ -649,33 +649,6 @@
             <outputDirectory>tools/antcontrib</outputDirectory>
         </fileSet>
         
-        <!-- tools: vfs -->
-        <fileSet>
-            <directory>tools/vfs/target</directory>
-            <includes>
-                <include>jclouds-vfs-${project.version}-jar-with-dependencies.jar</include>
-            </includes>
-            <outputDirectory>tools/vfs/lib</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>tools/vfs/target</directory>
-            <includes>
-                <include>jclouds-vfs-${project.version}-sources.jar</include>
-            </includes>
-            <outputDirectory>tools/vfs/src</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>tools/vfs/target/apidocs</directory>
-            <outputDirectory>tools/vfs/docs</outputDirectory>
-        </fileSet>
-        <fileSet>
-            <directory>tools/vfs</directory>
-            <includes>
-                <include>README.txt</include>
-            </includes>
-            <outputDirectory>tools/vfs</outputDirectory>
-        </fileSet>
-
         <!-- samples -->
         <fileSet>
             <directory>demos/gae-tweetstore/target/jclouds-demo-gae-tweetstore</directory>

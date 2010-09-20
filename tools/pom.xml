@@ -34,6 +34,5 @@
     <modules>
         <module>getpath</module>
         <module>antcontrib</module>
-        <module>vfs</module>
     </modules>
 </project>
