@@ -71,8 +71,10 @@ public class ParseCloudServersErrorFromHttpResponse implements HttpErrorHandler 
                break;
             case 409:
                exception = new IllegalStateException(content);
+               break;
             default:
                exception = new HttpResponseException(command, response, content);
+               break;
          }
       } finally {
          releasePayload(response);

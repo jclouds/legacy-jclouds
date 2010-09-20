@@ -73,7 +73,7 @@ public class RackspaceAuthenticationLiveTest {
       authentication.authenticate("foo", "bar").get(10, TimeUnit.SECONDS);
    }
 
-   protected String provider = "rackspace";
+   protected String provider = "cloudservers";
    protected String identity;
    protected String credential;
    protected String endpoint;

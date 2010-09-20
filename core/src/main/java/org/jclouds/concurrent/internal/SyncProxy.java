@@ -45,6 +45,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.inject.ProvisionException;
 
 /**
  * Generates RESTful clients from appropriately annotated interfaces.
@@ -56,7 +57,7 @@ public class SyncProxy implements InvocationHandler {
 
    @SuppressWarnings("unchecked")
    public static <T> T proxy(Class<T> clazz, SyncProxy proxy) throws IllegalArgumentException, SecurityException,
-         NoSuchMethodException {
+            NoSuchMethodException {
       return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz }, proxy);
    }
 
@@ -71,8 +72,8 @@ public class SyncProxy implements InvocationHandler {
 
    @Inject
    public SyncProxy(Class<?> declaring, Object async,
-         @Named("sync") ConcurrentMap<ClassMethodArgs, Object> delegateMap, Map<Class<?>, Class<?>> sync2Async)
-         throws SecurityException, NoSuchMethodException {
+            @Named("sync") ConcurrentMap<ClassMethodArgs, Object> delegateMap, Map<Class<?>, Class<?>> sync2Async)
+            throws SecurityException, NoSuchMethodException {
       this.delegateMap = delegateMap;
       this.delegate = async;
       this.declaring = declaring;
@@ -91,7 +92,7 @@ public class SyncProxy implements InvocationHandler {
             Method delegatedMethod = delegate.getClass().getMethod(method.getName(), method.getParameterTypes());
             if (!Arrays.equals(delegatedMethod.getExceptionTypes(), method.getExceptionTypes()))
                throw new IllegalArgumentException(String.format(
-                     "method %s has different typed exceptions than delegated method %s", method, delegatedMethod));
+                        "method %s has different typed exceptions than delegated method %s", method, delegatedMethod));
             if (delegatedMethod.getReturnType().isAssignableFrom(ListenableFuture.class)) {
                if (method.isAnnotationPresent(Timeout.class)) {
                   Timeout methodTimeout = method.getAnnotation(Timeout.class);
@@ -123,7 +124,7 @@ public class SyncProxy implements InvocationHandler {
       } else if (method.isAnnotationPresent(Delegate.class)) {
          Class<?> asyncClass = sync2Async.get(method.getReturnType());
          checkState(asyncClass != null, "please configure corresponding async class for " + method.getReturnType()
-               + " in your RestClientModule");
+                  + " in your RestClientModule");
          Object returnVal = delegateMap.get(new ClassMethodArgs(asyncClass, method, args));
          return returnVal;
       } else if (syncMethodMap.containsKey(method)) {
@@ -131,7 +132,9 @@ public class SyncProxy implements InvocationHandler {
       } else {
          try {
             return ((ListenableFuture<?>) methodMap.get(method).invoke(delegate, args)).get(timeoutMap.get(method),
-                  TimeUnit.NANOSECONDS);
+                     TimeUnit.NANOSECONDS);
+         } catch (ProvisionException e) {
+            throw throwTypedExceptionOrCause(method.getExceptionTypes(), e);
          } catch (ExecutionException e) {
             throw throwTypedExceptionOrCause(method.getExceptionTypes(), e);
          } catch (Exception e) {

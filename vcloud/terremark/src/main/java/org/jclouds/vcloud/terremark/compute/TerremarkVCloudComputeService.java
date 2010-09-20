@@ -30,12 +30,13 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
@@ -61,23 +62,24 @@ public class TerremarkVCloudComputeService extends BaseComputeService {
 
    @Inject
    protected TerremarkVCloudComputeService(ComputeServiceContext context, Supplier<Set<? extends Image>> images,
-         Supplier<Set<? extends Hardware>> sizes, Supplier<Set<? extends Location>> locations,
-         ListNodesStrategy listNodesStrategy, GetNodeMetadataStrategy getNodeMetadataStrategy,
-         RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy, RebootNodeStrategy rebootNodeStrategy,
-         DestroyNodeStrategy destroyNodeStrategy, Provider<TemplateBuilder> templateBuilderProvider,
-         Provider<TemplateOptions> templateOptionsProvider, @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
-         @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated, ComputeUtils utils,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, CleanupOrphanKeys cleanupOrphanKeys,
-         ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap, NodeMetadataToOrgAndName nodeToOrgAndName) {
+            Supplier<Set<? extends Hardware>> sizes, Supplier<Set<? extends Location>> locations,
+            ListNodesStrategy listNodesStrategy, GetNodeMetadataStrategy getNodeMetadataStrategy,
+            RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy, RebootNodeStrategy rebootNodeStrategy,
+            DestroyNodeStrategy destroyNodeStrategy, Provider<TemplateBuilder> templateBuilderProvider,
+            Provider<TemplateOptions> templateOptionsProvider,
+            @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
+            @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated, ComputeUtils utils, Timeouts timeouts,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, CleanupOrphanKeys cleanupOrphanKeys,
+            ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap, NodeMetadataToOrgAndName nodeToOrgAndName) {
       super(context, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy, runNodesAndAddToSetStrategy,
-            rebootNodeStrategy, destroyNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning,
-            nodeTerminated, utils, executor);
+               rebootNodeStrategy, destroyNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning,
+               nodeTerminated, utils, timeouts, executor);
       this.cleanupOrphanKeys = cleanupOrphanKeys;
    }
 
    /**
-    * like {@link BaseComputeService#destroyNodesMatching} except that this will
-    * clean implicit keypairs.
+    * like {@link BaseComputeService#destroyNodesMatching} except that this will clean implicit
+    * keypairs.
     */
    @Override
    public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
@@ -87,8 +89,7 @@ public class TerremarkVCloudComputeService extends BaseComputeService {
    }
 
    /**
-    * returns template options, except of type
-    * {@link TerremarkVCloudTemplateOptions}.
+    * returns template options, except of type {@link TerremarkVCloudTemplateOptions}.
     */
    @Override
    public TerremarkVCloudTemplateOptions templateOptions() {

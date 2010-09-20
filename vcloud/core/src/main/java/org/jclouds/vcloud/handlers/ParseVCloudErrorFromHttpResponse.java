@@ -41,6 +41,7 @@ import org.jclouds.util.Utils;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.VCloudResponseException;
 import org.jclouds.vcloud.domain.VCloudError;
+import org.jclouds.vcloud.domain.VCloudError.MinorCode;
 import org.jclouds.vcloud.util.VCloudUtils;
 
 /**
@@ -87,7 +88,12 @@ public class ParseVCloudErrorFromHttpResponse implements HttpErrorHandler {
 
          switch (response.getStatusCode()) {
             case 400:
-               exception = new IllegalArgumentException(message, exception);
+               if (error != null && error.getMinorErrorCode() != null
+                        && error.getMinorErrorCode() == MinorCode.BUSY_ENTITY)
+                  exception = new IllegalStateException(message, exception);
+               else
+                  exception = new IllegalArgumentException(message, exception);
+               break;
             case 401:
             case 403:
                exception = new AuthorizationException(command.getRequest(), message);

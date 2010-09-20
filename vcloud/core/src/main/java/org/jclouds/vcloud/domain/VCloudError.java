@@ -48,6 +48,10 @@ public interface VCloudError {
        */
       CONFLICT,
       /**
+       * The entity is busy
+       */
+      BUSY_ENTITY,
+      /**
        * An attempt to instantiate a vAppTemplate or use a vAppTemplate or a Vm in a composition did
        * not include an AllEULAsAccepted element with a value of true.
        */

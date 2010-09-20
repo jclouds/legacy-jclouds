@@ -43,7 +43,7 @@ public interface ComputeServiceConstants {
    public static final String PROPERTY_BLACKLIST_NODES = "jclouds.compute.blacklist.nodes";
 
    @Singleton
-   static class Timeouts {
+   public static class Timeouts {
       @Inject(optional = true)
       @Named(PROPERTY_TIMEOUT_NODE_TERMINATED)
       public long nodeTerminated = 30 * 1000;

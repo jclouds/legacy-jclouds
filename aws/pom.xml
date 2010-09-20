@@ -271,6 +271,14 @@
                                             <name>test.initializer</name>
                                             <value>${test.initializer}</value>
                                         </property>
+                                        <property>
+                                            <name>jclouds.blobstore.httpstream.url</name>
+                                            <value>${jclouds.blobstore.httpstream.url}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.blobstore.httpstream.md5</name>
+                                            <value>${jclouds.blobstore.httpstream.md5}</value>
+                                        </property>
                                     </systemProperties>
                                 </configuration>
                             </execution>

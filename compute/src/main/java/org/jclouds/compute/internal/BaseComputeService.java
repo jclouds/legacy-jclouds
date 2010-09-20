@@ -30,6 +30,8 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
@@ -45,15 +47,16 @@ import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.RunScriptOnNodesException;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
@@ -63,6 +66,7 @@ import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Location;
 import org.jclouds.io.Payload;
 import org.jclouds.logging.Logger;
+import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 
@@ -100,6 +104,7 @@ public class BaseComputeService implements ComputeService {
    protected final Predicate<NodeMetadata> nodeRunning;
    protected final Predicate<NodeMetadata> nodeTerminated;
    protected final ComputeUtils utils;
+   protected final Timeouts timeouts;
    protected final ExecutorService executor;
 
    @Inject
@@ -110,7 +115,7 @@ public class BaseComputeService implements ComputeService {
             DestroyNodeStrategy destroyNodeStrategy, Provider<TemplateBuilder> templateBuilderProvider,
             Provider<TemplateOptions> templateOptionsProvider,
             @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
-            @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated, ComputeUtils utils,
+            @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated, ComputeUtils utils, Timeouts timeouts,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.context = checkNotNull(context, "context");
       this.images = checkNotNull(images, "images");
@@ -126,6 +131,7 @@ public class BaseComputeService implements ComputeService {
       this.nodeRunning = checkNotNull(nodeRunning, "nodeRunning");
       this.nodeTerminated = checkNotNull(nodeTerminated, "nodeTerminated");
       this.utils = checkNotNull(utils, "utils");
+      this.timeouts = checkNotNull(timeouts, "timeouts");
       this.executor = checkNotNull(executor, "executor");
    }
 
@@ -145,9 +151,9 @@ public class BaseComputeService implements ComputeService {
             throws RunNodesException {
       checkArgument(tag.indexOf('-') == -1, "tag cannot contain hyphens");
       checkNotNull(template.getLocation(), "location");
-      logger.debug(">> running %d node%s tag(%s) location(%s) image(%s) hardwareProfile(%s) options(%s)", count, count > 1 ? "s"
-               : "", tag, template.getLocation().getId(), template.getImage().getId(), template.getHardware().getId(),
-               template.getOptions());
+      logger.debug(">> running %d node%s tag(%s) location(%s) image(%s) hardwareProfile(%s) options(%s)", count,
+               count > 1 ? "s" : "", tag, template.getLocation().getId(), template.getImage().getId(), template
+                        .getHardware().getId(), template.getOptions());
       Set<NodeMetadata> nodes = Sets.newHashSet();
       Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
       Map<?, Future<Void>> responses = runNodesAndAddToSetStrategy.execute(tag, count, template, nodes, badNodes);
@@ -179,11 +185,27 @@ public class BaseComputeService implements ComputeService {
     * {@inheritDoc}
     */
    @Override
-   public void destroyNode(String id) {
+   public void destroyNode(final String id) {
       checkNotNull(id, "id");
       logger.debug(">> destroying node(%s)", id);
-      NodeMetadata node = destroyNodeStrategy.execute(id);
-      boolean successful = node == null ? true : nodeTerminated.apply(node);
+      final AtomicReference<NodeMetadata> node = new AtomicReference<NodeMetadata>();
+      RetryablePredicate<String> tester = new RetryablePredicate<String>(new Predicate<String>() {
+
+         @Override
+         public boolean apply(String input) {
+            try {
+               NodeMetadata md = destroyNodeStrategy.execute(id);
+               if (md != null)
+                  node.set(md);
+               return true;
+            } catch (IllegalStateException e) {
+               logger.warn("<< illegal state destroying node(%s)", id);
+               return false;
+            }
+         }
+
+      }, timeouts.nodeRunning, 1000, TimeUnit.MILLISECONDS);
+      boolean successful = tester.apply(id) && (node.get() == null || nodeTerminated.apply(node.get()));
       logger.debug("<< destroyed node(%s) success(%s)", id, successful);
    }
 

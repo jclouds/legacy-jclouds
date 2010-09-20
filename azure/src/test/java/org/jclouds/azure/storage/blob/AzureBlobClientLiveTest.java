@@ -73,7 +73,7 @@ public class AzureBlobClientLiveTest {
    private String containerPrefix = System.getProperty("user.name") + "-azureblob";
 
    private BlobStoreContext context;
-   protected String provider = "azurequeue";
+   protected String provider = "azureblob";
    protected String identity;
    protected String credential;
    protected String endpoint;

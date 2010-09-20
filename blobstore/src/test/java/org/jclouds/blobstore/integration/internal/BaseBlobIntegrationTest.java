@@ -127,7 +127,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
                         public Void apply(Blob from) {
                            try {
                               assertEquals(CryptoStreams.md5(from.getPayload()), oneHundredOneConstitutionsMD5);
-                              checkContentDispostion(from, expectedContentDisposition);
+                              checkContentDisposition(from, expectedContentDisposition);
                            } catch (IOException e) {
                               Throwables.propagate(e);
                            }
@@ -156,16 +156,6 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
       context.getBlobStore().putBlob(containerName, sourceObject);
    }
 
-   /**
-    * Methods for checking Content-Disposition. In this way, in implementations that do not support
-    * the new field, it is easy to override with empty, and allow the rest of the test to work.
-    * 
-    * @param blob
-    * @param expected
-    */
-   protected void checkContentDispostion(Blob blob, String expected) {
-      assertEquals(blob.getPayload().getContentMetadata().getContentDisposition(), expected);
-   }
 
    @Test(groups = { "integration", "live" })
    public void testGetIfModifiedSince() throws InterruptedException {

@@ -40,8 +40,10 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommand;
 import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.annotations.Delegate;
+import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
@@ -117,6 +119,9 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
                ((InvocationContext) exceptionParser).setContext((GeneratedHttpRequest<T>) request);
             }
          } catch (RuntimeException e) {
+            AuthorizationException aex = Utils.getFirstThrowableOfType(e, AuthorizationException.class);
+            if (aex != null)
+               e = aex;
             if (exceptionParser != null) {
                try {
                   return Futures.immediateFuture(exceptionParser.apply(e));
