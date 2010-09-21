@@ -75,6 +75,32 @@ public class EC2TemplateBuilderLiveTest {
    }
 
    @Test
+   public void testTemplateBuilderM1SMALLWithDescription() {
+      ComputeServiceContext newContext = null;
+      try {
+         newContext = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
+                  .<Module> of(new Log4JLoggingModule()), setupProperties());
+
+         Template template = newContext.getComputeService().templateBuilder().hardwareId(InstanceType.M1_SMALL)
+                  .osVersionMatches("10.04").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU).build();
+
+         System.out.println(template.getHardware());
+         assert (template.getImage().getProviderId().startsWith("ami-")) : template;
+         assertEquals(template.getImage().getOperatingSystem().getVersion(), "10.04");
+         assertEquals(template.getImage().getOperatingSystem().is64Bit(), false);
+         assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+         assertEquals(template.getImage().getVersion(), "20100921");
+         assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
+         assertEquals(template.getLocation().getId(), "us-east-1");
+         assertEquals(getCores(template.getHardware()), 1.0d);
+         assertEquals(template.getHardware().getId(), InstanceType.M1_SMALL);
+      } finally {
+         if (newContext != null)
+            newContext.close();
+      }
+   }
+
+   @Test
    public void testTemplateBuilderCanUseImageIdAndhardwareId() {
       ComputeServiceContext newContext = null;
       try {

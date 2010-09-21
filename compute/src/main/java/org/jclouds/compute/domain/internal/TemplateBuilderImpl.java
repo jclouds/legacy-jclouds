@@ -320,7 +320,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       public boolean apply(Image input) {
          boolean returnVal = true;
          if (imageDescription != null) {
-            if (input.getName() == null)
+            if (input.getDescription() == null)
                returnVal = false;
             else
                returnVal = input.getDescription().equals(imageDescription)
