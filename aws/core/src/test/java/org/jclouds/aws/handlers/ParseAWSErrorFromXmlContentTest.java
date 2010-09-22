@@ -76,6 +76,12 @@ public class ParseAWSErrorFromXmlContentTest {
    }
    
    @Test
+   public void test400WithInvalidKeyPairGroupDuplicateIllegalStateException() {
+      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400,"Bad Request", "application/unknown",
+               "<Error><Code>InvalidKeyPair.Duplicate</Code></Error>", IllegalStateException.class);
+   }
+   
+   @Test
    public void test400WithTextPlainIllegalArgumentException() {
       assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "Bad Request", "text/plain",
                "Failure: 400 Bad Request\nFailed to bind the following fields\nMonitoring.Enabled = true\n\n\n",
