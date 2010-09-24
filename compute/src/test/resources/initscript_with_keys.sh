@@ -8,14 +8,13 @@ function abort {
    exit 1
 }
 function default {
-   export INSTANCE_NAME="mkebsboot"
-export INSTANCE_HOME="/mnt/tmp"
-export LOG_DIR="/mnt/tmp"
+   export INSTANCE_NAME="bootstrap"
+export INSTANCE_HOME="/tmp/bootstrap"
+export LOG_DIR="/tmp/bootstrap"
    return 0
 }
-function mkebsboot {
-   export TMP_DIR="/mnt/tmp"
-   return 0
+function bootstrap {
+      return 0
 }
 function findPid {
    unset FOUND_PID;
@@ -57,41 +56,52 @@ export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 case $1 in
 init)
    default || exit 1
-   mkebsboot || exit 1
+   bootstrap || exit 1
    mkdir -p $INSTANCE_HOME
    
    # create runscript header
-   cat > $INSTANCE_HOME/mkebsboot.sh <<END_OF_SCRIPT
+   cat > $INSTANCE_HOME/bootstrap.sh <<END_OF_SCRIPT
 #!/bin/bash
 set +u
 shopt -s xpg_echo
 shopt -s expand_aliases
-PROMPT_COMMAND='echo -ne "\033]0;mkebsboot\007"'
+PROMPT_COMMAND='echo -ne "\033]0;bootstrap\007"'
 export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
-export INSTANCE_NAME='mkebsboot'
-export TMP_DIR='$TMP_DIR'
+export INSTANCE_NAME='bootstrap'
 export INSTANCE_NAME='$INSTANCE_NAME'
 export INSTANCE_HOME='$INSTANCE_HOME'
 export LOG_DIR='$LOG_DIR'
 END_OF_SCRIPT
    
    # add desired commands from the user
-   cat >> $INSTANCE_HOME/mkebsboot.sh <<'END_OF_SCRIPT'
+   cat >> $INSTANCE_HOME/bootstrap.sh <<'END_OF_SCRIPT'
 cd $INSTANCE_HOME
-cat >> /tmp/$USER/scripttest/temp.txt <<'END_OF_FILE'
-hello world
-END_OF_FILE
+echo nameserver 208.67.222.222 >> /etc/resolv.conf
+cp /etc/apt/sources.list /etc/apt/sources.list.old
+sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list
+apt-get update
+apt-get install -f -y --force-yes openjdk-6-jdk
 
-find / || exit 1
+mkdir -p .ssh
+cat >> .ssh/authorized_keys <<'END_OF_FILE'
+ssh-rsa
+END_OF_FILE
+chmod 600 .ssh/authorized_keys
+mkdir -p .ssh
+rm .ssh/id_rsa
+cat >> .ssh/id_rsa <<'END_OF_FILE'
+-----BEGIN RSA PRIVATE KEY-----
+END_OF_FILE
+chmod 600 .ssh/id_rsa
 
 END_OF_SCRIPT
    
    # add runscript footer
-   cat >> $INSTANCE_HOME/mkebsboot.sh <<'END_OF_SCRIPT'
+   cat >> $INSTANCE_HOME/bootstrap.sh <<'END_OF_SCRIPT'
 exit 0
 END_OF_SCRIPT
    
-   chmod u+x $INSTANCE_HOME/mkebsboot.sh
+   chmod u+x $INSTANCE_HOME/bootstrap.sh
    ;;
 status)
    default || exit 1

@@ -17,29 +17,27 @@
  * ====================================================================
  */
 
-package org.jclouds.compute.stub.config;
+package org.jclouds.scriptbuilder.domain;
 
-import java.util.concurrent.ConcurrentMap;
+import static org.testng.Assert.assertEquals;
 
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.config.RestClientModule;
+import org.testng.annotations.Test;
 
-@SuppressWarnings("unchecked")
-@ConfiguresRestClient
-@RequiresHttp
-public class StubComputeServiceClientModule extends RestClientModule<ConcurrentMap, ConcurrentMap> {
+/**
+ * @author Adrian Cole
+ */
+@Test(groups = "unit", testName = "scriptbuilder.AuthorizeRSAPublicKeyTest")
+public class CopyOfAuthorizeRSAPublicKeyTest {
 
-   public StubComputeServiceClientModule() {
-      super(ConcurrentMap.class, ConcurrentMap.class);
-   }
+   AuthorizeRSAPublicKey auth = new AuthorizeRSAPublicKey("ssh-dss AAAAB");
 
-   @Override
-   protected void bindAsyncClient() {
-   }
+   public void testAuthorizeRSAPublicKeyUNIX() {
+      assertEquals(
+               auth.render(OsFamily.UNIX),
+               "mkdir -p .ssh\ncat >> .ssh/authorized_keys <<'END_OF_FILE'\nssh-dss AAAAB\nEND_OF_FILE\nchmod 600 .ssh/authorized_keys\n");   }
 
-   @Override
-   protected void bindClient() {
-
+   @Test(expectedExceptions = UnsupportedOperationException.class)
+   public void testAuthorizeRSAPublicKeyWINDOWS() {
+      auth.render(OsFamily.WINDOWS);
    }
 }

@@ -320,9 +320,8 @@ public abstract class BaseComputeServiceLiveTest {
    private void refreshTemplate() {
       template = buildTemplate(client.templateBuilder());
 
-      template.getOptions().installPrivateKey(newStringPayload(keyPair.get("private"))).authorizePublicKey(
-               newStringPayload(keyPair.get("public"))).runScript(
-               newStringPayload(buildScript(template.getImage().getOperatingSystem())));
+      template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(keyPair.get("public"))
+               .runScript(newStringPayload(buildScript(template.getImage().getOperatingSystem())));
    }
 
    protected void checkImageIdMatchesTemplate(NodeMetadata node) {
@@ -362,7 +361,7 @@ public abstract class BaseComputeServiceLiveTest {
             Credentials creds) throws RunScriptOnNodesException {
       try {
          return client.runScriptOnNodesMatching(runningWithTag(tag), newStringPayload(buildScript(os)),
-                  overrideCredentialsWith(creds));
+                  overrideCredentialsWith(creds).nameTask("runScriptWithCreds"));
       } catch (SshException e) {
          throw e;
       }
@@ -606,7 +605,7 @@ public abstract class BaseComputeServiceLiveTest {
          ExecResponse hello = ssh.exec("echo hello");
          assertEquals(hello.getOutput().trim(), "hello");
          ExecResponse exec = ssh.exec("java -version");
-         assert exec.getError().indexOf("OpenJDK") != -1 : exec;
+         assert exec.getError().indexOf("OpenJDK") != -1 || exec.getOutput().indexOf("OpenJDK") != -1 : exec;
       } finally {
          if (ssh != null)
             ssh.disconnect();

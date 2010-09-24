@@ -30,7 +30,6 @@ import java.io.IOException;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.io.Payloads;
-import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
 /**
@@ -78,8 +77,8 @@ public class VCloudTemplateOptionsTest {
    @Test
    public void testinstallPrivateKey() throws IOException {
       VCloudTemplateOptions options = new VCloudTemplateOptions();
-      options.installPrivateKey(Payloads.newPayload("-----BEGIN RSA PRIVATE KEY-----"));
-      assertEquals(Utils.toStringAndClose(options.getPrivateKey().getInput()), "-----BEGIN RSA PRIVATE KEY-----");
+      options.installPrivateKey("-----BEGIN RSA PRIVATE KEY-----");
+      assertEquals(options.getPrivateKey(), "-----BEGIN RSA PRIVATE KEY-----");
    }
 
    @Test
@@ -91,7 +90,7 @@ public class VCloudTemplateOptionsTest {
    @Test
    public void testinstallPrivateKeyStatic() throws IOException {
       VCloudTemplateOptions options = installPrivateKey(Payloads.newPayload("-----BEGIN RSA PRIVATE KEY-----"));
-      assertEquals(Utils.toStringAndClose(options.getPrivateKey().getInput()), "-----BEGIN RSA PRIVATE KEY-----");
+      assertEquals(options.getPrivateKey(), "-----BEGIN RSA PRIVATE KEY-----");
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -102,8 +101,8 @@ public class VCloudTemplateOptionsTest {
    @Test
    public void testauthorizePublicKey() throws IOException {
       VCloudTemplateOptions options = new VCloudTemplateOptions();
-      options.authorizePublicKey(Payloads.newPayload("ssh-rsa"));
-      assertEquals(Utils.toStringAndClose(options.getPublicKey().getInput()), "ssh-rsa");
+      options.authorizePublicKey("ssh-rsa");
+      assertEquals(options.getPublicKey(), "ssh-rsa");
    }
 
    @Test
@@ -115,7 +114,7 @@ public class VCloudTemplateOptionsTest {
    @Test
    public void testauthorizePublicKeyStatic() throws IOException {
       VCloudTemplateOptions options = authorizePublicKey(Payloads.newPayload("ssh-rsa"));
-      assertEquals(Utils.toStringAndClose(options.getPublicKey().getInput()), "ssh-rsa");
+      assertEquals(options.getPublicKey(), "ssh-rsa");
    }
 
    @Test(expectedExceptions = NullPointerException.class)

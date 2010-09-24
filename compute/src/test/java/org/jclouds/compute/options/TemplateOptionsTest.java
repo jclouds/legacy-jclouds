@@ -28,7 +28,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
-import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
 /**
@@ -37,19 +36,17 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 public class TemplateOptionsTest {
-   @SuppressWarnings("deprecation")
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testinstallPrivateKeyBadFormat() {
       TemplateOptions options = new TemplateOptions();
       options.installPrivateKey("whompy");
    }
 
-   @SuppressWarnings("deprecation")
    @Test
    public void testinstallPrivateKey() throws IOException {
       TemplateOptions options = new TemplateOptions();
       options.installPrivateKey("-----BEGIN RSA PRIVATE KEY-----");
-      assertEquals(Utils.toStringAndClose(options.getPrivateKey().getInput()), "-----BEGIN RSA PRIVATE KEY-----");
+      assertEquals(options.getPrivateKey(), "-----BEGIN RSA PRIVATE KEY-----");
    }
 
    @Test
@@ -62,7 +59,7 @@ public class TemplateOptionsTest {
    @Test
    public void testinstallPrivateKeyStatic() throws IOException {
       TemplateOptions options = installPrivateKey("-----BEGIN RSA PRIVATE KEY-----");
-      assertEquals(Utils.toStringAndClose(options.getPrivateKey().getInput()), "-----BEGIN RSA PRIVATE KEY-----");
+      assertEquals(options.getPrivateKey(), "-----BEGIN RSA PRIVATE KEY-----");
    }
 
    @SuppressWarnings("deprecation")
@@ -71,7 +68,6 @@ public class TemplateOptionsTest {
       installPrivateKey((String) null);
    }
 
-   @SuppressWarnings("deprecation")
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testauthorizePublicKeyBadFormat() {
       TemplateOptions options = new TemplateOptions();
@@ -79,11 +75,10 @@ public class TemplateOptionsTest {
    }
 
    @Test
-   @SuppressWarnings("deprecation")
    public void testauthorizePublicKey() throws IOException {
       TemplateOptions options = new TemplateOptions();
       options.authorizePublicKey("ssh-rsa");
-      assertEquals(Utils.toStringAndClose(options.getPublicKey().getInput()), "ssh-rsa");
+      assertEquals(options.getPublicKey(), "ssh-rsa");
    }
 
    @Test
@@ -96,7 +91,7 @@ public class TemplateOptionsTest {
    @Test
    public void testauthorizePublicKeyStatic() throws IOException {
       TemplateOptions options = authorizePublicKey("ssh-rsa");
-      assertEquals(Utils.toStringAndClose(options.getPublicKey().getInput()), "ssh-rsa");
+      assertEquals(options.getPublicKey(), "ssh-rsa");
    }
 
    @SuppressWarnings("deprecation")

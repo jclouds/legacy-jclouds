@@ -39,12 +39,12 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-public class CreateFile implements Statement {
+public class AppendFile implements Statement {
    public final static String MARKER = "END_OF_FILE";
    final String path;
    final Iterable<String> lines;
 
-   public CreateFile(String path, Iterable<String> lines) {// TODO: convert so
+   public AppendFile(String path, Iterable<String> lines) {// TODO: convert so
       this.path = checkNotNull(path, "path");
       this.lines = checkNotNull(lines, "lines");
       checkState(Iterables.size(lines) > 0, "you must pass something to execute");
@@ -77,7 +77,6 @@ public class CreateFile implements Statement {
          hereFile(path, builder);
          statements.add(interpret(builder.toString()));
       } else {
-         statements.add(interpret(String.format("{rm} %s 2{closeFd}{lf}", path)));
          for (String line : lines) {
             statements.add(appendToFile(line, path, family));
          }
@@ -86,7 +85,7 @@ public class CreateFile implements Statement {
    }
 
    private void hereFile(String path, StringBuilder builder) {
-      builder.append("cat > ").append(path).append(" <<'").append(MARKER).append("'\n");
+      builder.append("cat >> ").append(path).append(" <<'").append(MARKER).append("'\n");
       for (String line : lines) {
          builder.append(line).append("\n");
       }

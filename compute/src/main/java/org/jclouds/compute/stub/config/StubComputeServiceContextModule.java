@@ -158,7 +158,7 @@ public class StubComputeServiceContextModule extends BaseComputeServiceContextMo
 
    }
 
-   @SuppressWarnings( { "rawtypes" })
+   @SuppressWarnings("unchecked")
    @Override
    protected void configure() {
       bind(new TypeLiteral<ComputeServiceContext>() {

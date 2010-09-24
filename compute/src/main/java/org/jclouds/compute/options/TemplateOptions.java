@@ -21,18 +21,17 @@ package org.jclouds.compute.options;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.io.Payloads.newByteArrayPayload;
-import static org.jclouds.io.Payloads.newStringPayload;
 
+import java.io.IOException;
 import java.util.Arrays;
 
-import javax.annotation.Nullable;
-
-import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.predicates.OperatingSystemPredicates;
+import org.jclouds.domain.Credentials;
 import org.jclouds.io.Payload;
-import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.domain.Statements;
+import org.jclouds.util.Utils;
+
+import com.google.common.base.Throwables;
 
 /**
  * Contains options supported in the {@code ComputeService#runNodesWithTag} operation. <h2>
@@ -50,7 +49,7 @@ import org.jclouds.scriptbuilder.domain.Statement;
  * 
  * @author Adrian Cole
  */
-public class TemplateOptions {
+public class TemplateOptions extends RunScriptOptions {
 
    public static final TemplateOptions NONE = new ImmutableTemplateOptions(new TemplateOptions());
 
@@ -82,38 +81,23 @@ public class TemplateOptions {
       }
 
       @Override
-      public TemplateOptions blockOnPort(int port, int seconds) {
-         throw new IllegalArgumentException("port, seconds are immutable");
-      }
-
-      @Override
       public int[] getInboundPorts() {
          return delegate.getInboundPorts();
       }
 
       @Override
-      public int getPort() {
-         return delegate.getPort();
-      }
-
-      @Override
-      public Payload getPrivateKey() {
+      public String getPrivateKey() {
          return delegate.getPrivateKey();
       }
 
       @Override
-      public Payload getPublicKey() {
+      public String getPublicKey() {
          return delegate.getPublicKey();
       }
 
       @Override
-      public Payload getRunScript() {
+      public Statement getRunScript() {
          return delegate.getRunScript();
-      }
-
-      @Override
-      public int getSeconds() {
-         return delegate.getSeconds();
       }
 
       @Override
@@ -150,41 +134,29 @@ public class TemplateOptions {
 
    protected int[] inboundPorts = new int[] { 22 };
 
-   protected Payload script;
+   protected Statement script;
 
-   protected Payload privateKey;
+   protected String privateKey;
 
-   protected Payload publicKey;
-
-   protected int port = -1;
-
-   protected int seconds = -1;
+   protected String publicKey;
 
    protected boolean includeMetadata;
 
    protected boolean blockUntilRunning = true;
 
-   public int getPort() {
-      return port;
-   }
-
-   public int getSeconds() {
-      return seconds;
-   }
-
    public int[] getInboundPorts() {
       return inboundPorts;
    }
 
-   public Payload getRunScript() {
+   public Statement getRunScript() {
       return script;
    }
 
-   public Payload getPrivateKey() {
+   public String getPrivateKey() {
       return privateKey;
    }
 
-   public Payload getPublicKey() {
+   public String getPublicKey() {
       return publicKey;
    }
 
@@ -201,27 +173,16 @@ public class TemplateOptions {
    }
 
    /**
-    * When the node is started, wait until the following port is active
-    */
-   public TemplateOptions blockOnPort(int port, int seconds) {
-      checkArgument(port > 0 && port < 65536, "port must be a positive integer < 65535");
-      checkArgument(seconds > 0, "seconds must be a positive integer");
-      this.port = port;
-      this.seconds = seconds;
-      return this;
-   }
-
-   /**
     * This script will be executed as the root user upon system startup. This script gets a
     * prologue, so no #!/bin/bash required, path set up, etc
     * <p/>
-    * please use alternative that uses the {@link org.jclouds.io.Payload} object
+    * please use alternative that uses the {@link org.jclouds.scriptbuilder.domain.Statement} object
     * 
     * @see org.jclouds.io.Payloads
     */
    @Deprecated
    public TemplateOptions runScript(byte[] script) {
-      return runScript(newByteArrayPayload(checkNotNull(script, "script")));
+      return runScript(Statements.exec(new String(checkNotNull(script, "script"))));
    }
 
    /**
@@ -231,44 +192,44 @@ public class TemplateOptions {
     * @see org.jclouds.io.Payloads
     */
    public TemplateOptions runScript(Payload script) {
-      checkNotNull(script, "script");
-      this.script = script;
-      return this;
-   }
-
-   public TemplateOptions runScript(Statement script, @Nullable OperatingSystem os) {
-      return runScript(newStringPayload(checkNotNull(script, "script").render(
-               os == null || OperatingSystemPredicates.isUnix().apply(os) ? OsFamily.UNIX : OsFamily.WINDOWS)));
+      try {
+         return runScript(Statements.exec(Utils.toStringAndClose(checkNotNull(script, "script").getInput())));
+      } catch (IOException e) {
+         Throwables.propagate(e);
+         return this;
+      }
    }
 
    public TemplateOptions runScript(Statement script) {
-      return runScript(script, null);
+      this.script = checkNotNull(script, "script");
+      return this;
+   }
+
+   /**
+    * replaces the rsa ssh key used at login.
+    */
+   public TemplateOptions installPrivateKey(String privateKey) {
+      checkArgument(checkNotNull(privateKey, "privateKey").startsWith("-----BEGIN RSA PRIVATE KEY-----"),
+               "key should start with -----BEGIN RSA PRIVATE KEY-----");
+      this.privateKey = privateKey;
+      return this;
    }
 
    /**
     * replaces the rsa ssh key used at login.
     * <p/>
-    * please use alternative that uses the {@link org.jclouds.io.Payload} object
+    * please use alternative that uses {@link java.lang.String}
     * 
     * @see org.jclouds.io.Payloads
     */
    @Deprecated
-   public TemplateOptions installPrivateKey(String privateKey) {
-      checkArgument(checkNotNull(privateKey, "privateKey").startsWith("-----BEGIN RSA PRIVATE KEY-----"),
-               "key should start with -----BEGIN RSA PRIVATE KEY-----");
-      Payload payload = newStringPayload(privateKey);
-      payload.getContentMetadata().setContentType("text/plain");
-      return installPrivateKey(payload);
-   }
-
-   /**
-    * replaces the rsa ssh key used at login.
-    * 
-    * @see org.jclouds.io.Payloads
-    */
    public TemplateOptions installPrivateKey(Payload privateKey) {
-      this.privateKey = checkNotNull(privateKey, "privateKey");
-      return this;
+      try {
+         return installPrivateKey(Utils.toStringAndClose(checkNotNull(privateKey, "privateKey").getInput()));
+      } catch (IOException e) {
+         Throwables.propagate(e);
+         return this;
+      }
    }
 
    public TemplateOptions dontAuthorizePublicKey() {
@@ -277,41 +238,29 @@ public class TemplateOptions {
    }
 
    /**
-    * if true, return when node(s) are NODE_RUNNING, if false, return as soon as the server is
-    * provisioned.
-    * <p/>
-    * default is true
+    * authorize an rsa ssh key.
     */
-   public TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
-      this.blockUntilRunning = blockUntilRunning;
-      if (!blockUntilRunning)
-         port = seconds = -1;
+   public TemplateOptions authorizePublicKey(String publicKey) {
+      checkArgument(checkNotNull(publicKey, "publicKey").startsWith("ssh-rsa"), "key should start with ssh-rsa");
+      this.publicKey = publicKey;
       return this;
    }
 
    /**
     * authorize an rsa ssh key.
     * <p/>
-    * please use alternative that uses the {@link org.jclouds.io.Payload} object
+    * please use alternative that uses {@link java.lang.String}
     * 
     * @see org.jclouds.io.Payloads
     */
    @Deprecated
-   public TemplateOptions authorizePublicKey(String publicKey) {
-      checkArgument(checkNotNull(publicKey, "publicKey").startsWith("ssh-rsa"), "key should start with ssh-rsa");
-      Payload payload = newStringPayload(publicKey);
-      payload.getContentMetadata().setContentType("text/plain");
-      return authorizePublicKey(payload);
-   }
-
-   /**
-    * authorize an rsa ssh key.
-    * 
-    * @see org.jclouds.io.Payloads
-    */
    public TemplateOptions authorizePublicKey(Payload publicKey) {
-      this.publicKey = checkNotNull(publicKey, "publicKey");
-      return this;
+      try {
+         return authorizePublicKey(Utils.toStringAndClose(checkNotNull(publicKey, "publicKey").getInput()));
+      } catch (IOException e) {
+         Throwables.propagate(e);
+         return this;
+      }
    }
 
    /**
@@ -329,7 +278,30 @@ public class TemplateOptions {
       return this;
    }
 
-   public static class Builder {
+   public static class Builder extends org.jclouds.compute.options.RunScriptOptions.Builder {
+
+      public static TemplateOptions nameTask(String name) {
+         TemplateOptions options = new TemplateOptions();
+         return options.nameTask(name);
+      }
+
+      public static TemplateOptions overrideCredentialsWith(Credentials credentials) {
+         TemplateOptions options = new TemplateOptions();
+         return options.withOverridingCredentials(credentials);
+      }
+
+      public static TemplateOptions runAsRoot(boolean value) {
+         TemplateOptions options = new TemplateOptions();
+         return options.runAsRoot(value);
+      }
+
+      /**
+       * @see TemplateOptions#blockOnPort
+       */
+      public static TemplateOptions blockOnPort(int port, int seconds) {
+         TemplateOptions options = new TemplateOptions();
+         return options.blockOnPort(port, seconds);
+      }
 
       /**
        * @see TemplateOptions#inboundPorts
@@ -337,14 +309,6 @@ public class TemplateOptions {
       public static TemplateOptions inboundPorts(int... ports) {
          TemplateOptions options = new TemplateOptions();
          return options.inboundPorts(ports);
-      }
-
-      /**
-       * @see TemplateOptions#port
-       */
-      public static TemplateOptions blockOnPort(int port, int seconds) {
-         TemplateOptions options = new TemplateOptions();
-         return options.blockOnPort(port, seconds);
       }
 
       /**
@@ -436,10 +400,16 @@ public class TemplateOptions {
 
    @Override
    public String toString() {
-      return "TemplateOptions [inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null)
-               + ", publicKey=" + (publicKey != null) + ", runScript=" + (script != null) + ", blockUntilRunning="
-               + blockUntilRunning + ", port:seconds=" + port + ":" + seconds + ", metadata/details: "
-               + includeMetadata + "]";
+      return "[inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
+               + (publicKey != null) + ", runScript=" + (script != null) + ", blockUntilRunning=" + blockUntilRunning
+               + ", port:seconds=" + port + ":" + seconds + ", metadata/details: " + includeMetadata + "]";
+   }
+
+   public TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
+      this.blockUntilRunning = blockUntilRunning;
+      if (!blockUntilRunning)
+         port = seconds = -1;
+      return this;
    }
 
    @Override
@@ -492,5 +462,25 @@ public class TemplateOptions {
       if (seconds != other.seconds)
          return false;
       return true;
+   }
+
+   @Override
+   public TemplateOptions blockOnPort(int port, int seconds) {
+      return TemplateOptions.class.cast(super.blockOnPort(port, seconds));
+   }
+
+   @Override
+   public TemplateOptions nameTask(String name) {
+      return TemplateOptions.class.cast(super.nameTask(name));
+   }
+
+   @Override
+   public TemplateOptions runAsRoot(boolean runAsRoot) {
+      return TemplateOptions.class.cast(super.runAsRoot(runAsRoot));
+   }
+
+   @Override
+   public TemplateOptions withOverridingCredentials(Credentials overridingCredentials) {
+      return TemplateOptions.class.cast(super.withOverridingCredentials(overridingCredentials));
    }
 }

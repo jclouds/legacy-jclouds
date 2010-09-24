@@ -152,7 +152,6 @@ public class VCloudTemplateOptions extends TemplateOptions {
     * @see TemplateOptions#authorizePublicKey(String)
     */
    @Override
-   @Deprecated
    public VCloudTemplateOptions authorizePublicKey(String publicKey) {
       return VCloudTemplateOptions.class.cast(super.authorizePublicKey(publicKey));
    }
@@ -161,6 +160,7 @@ public class VCloudTemplateOptions extends TemplateOptions {
     * @see TemplateOptions#authorizePublicKey(Payload)
     */
    @Override
+   @Deprecated
    public VCloudTemplateOptions authorizePublicKey(Payload publicKey) {
       return VCloudTemplateOptions.class.cast(super.authorizePublicKey(publicKey));
    }
@@ -169,7 +169,6 @@ public class VCloudTemplateOptions extends TemplateOptions {
     * @see TemplateOptions#installPrivateKey(String)
     */
    @Override
-   @Deprecated
    public VCloudTemplateOptions installPrivateKey(String privateKey) {
       return VCloudTemplateOptions.class.cast(super.installPrivateKey(privateKey));
    }
@@ -178,6 +177,7 @@ public class VCloudTemplateOptions extends TemplateOptions {
     * @see TemplateOptions#installPrivateKey(Payload)
     */
    @Override
+   @Deprecated
    public VCloudTemplateOptions installPrivateKey(Payload privateKey) {
       return VCloudTemplateOptions.class.cast(super.installPrivateKey(privateKey));
    }

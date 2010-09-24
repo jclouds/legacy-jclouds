@@ -20,7 +20,7 @@
 package org.jclouds.scriptbuilder;
 
 import static org.jclouds.scriptbuilder.domain.Statements.call;
-import static org.jclouds.scriptbuilder.domain.Statements.createFile;
+import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -47,17 +47,17 @@ public class InitBuilderTest {
 
    InitBuilder testInitBuilder = new InitBuilder("mkebsboot", "/mnt/tmp", "/mnt/tmp", ImmutableMap.of("tmpDir",
             "/mnt/tmp"), ImmutableList.<Statement> of(
-   createFile("{tmp}{fs}{uid}{fs}scripttest{fs}temp.txt", ImmutableList.<String> of("hello world")), call("find /")));
+   appendFile("{tmp}{fs}{uid}{fs}scripttest{fs}temp.txt", ImmutableList.<String> of("hello world")), call("find /")));
 
    @Test
    public void testBuildSimpleWindows() throws MalformedURLException, IOException {
-      assertEquals(testInitBuilder.build(OsFamily.WINDOWS), CharStreams.toString(Resources.newReaderSupplier(Resources
+      assertEquals(testInitBuilder.render(OsFamily.WINDOWS), CharStreams.toString(Resources.newReaderSupplier(Resources
                .getResource("test_init." + ShellToken.SH.to(OsFamily.WINDOWS)), Charsets.UTF_8)));
    }
 
    @Test
    public void testBuildSimpleUNIX() throws MalformedURLException, IOException {
-      assertEquals(testInitBuilder.build(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
+      assertEquals(testInitBuilder.render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
                .getResource("test_init." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
 
@@ -87,7 +87,7 @@ public class InitBuilderTest {
                         "tar -cSf - * | tar xf - -C {varl}EBS_MOUNT_POINT{varr}", "echo size of ebs",
                         "du -sk {varl}EBS_MOUNT_POINT{varr}", "echo size of source", "du -sk {varl}IMAGE_DIR{varr}",
                         "rm -rf {varl}IMAGE_DIR{varr}/*", "umount {varl}EBS_MOUNT_POINT{varr}", "echo ----COMPLETE----")
-                        )).build(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
+                        )).render(OsFamily.UNIX), CharStreams.toString(Resources.newReaderSupplier(Resources
                         .getResource("test_ebs." + ShellToken.SH.to(OsFamily.UNIX)), Charsets.UTF_8)));
    }
 }

@@ -22,7 +22,7 @@ stop)
    echo stop $RUNTIME
    ;;
 status)
-   cat > /tmp/$USER/scripttest/temp.txt <<'END_OF_FILE'
+   cat >> /tmp/$USER/scripttest/temp.txt <<'END_OF_FILE'
 hello world
 END_OF_FILE
    echo "the following should be []: [$RUNTIME]"

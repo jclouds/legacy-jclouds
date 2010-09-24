@@ -299,7 +299,7 @@ public class EBSBootEC2ClientLiveTest {
                                           "du -sk {varl}EBS_MOUNT_POINT{varr}", "echo size of source",
                                           "du -sk {varl}IMAGE_DIR{varr}", "rm -rf {varl}IMAGE_DIR{varr}/*",
                                           "umount {varl}EBS_MOUNT_POINT{varr}", "echo " + SCRIPT_END)))
-               .build(OsFamily.UNIX);
+               .render(OsFamily.UNIX);
    }
 
    @Test(enabled = false, dependsOnMethods = "testCreateAndAttachVolume")

@@ -26,8 +26,11 @@ import static com.google.common.base.Preconditions.checkState;
 import java.util.Arrays;
 import java.util.Set;
 
+import org.jclouds.aws.cloudwatch.CloudWatchClient;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.domain.Credentials;
 import org.jclouds.io.Payload;
+import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Utils;
 
 import com.google.common.collect.ImmutableSet;
@@ -261,7 +264,7 @@ public class EC2TemplateOptions extends TemplateOptions {
    // methods that only facilitate returning the correct object type
 
    /**
-    * @see TemplateOptions#blockOnPort
+    * {@inheritDoc}
     */
    @Override
    public EC2TemplateOptions blockOnPort(int port, int seconds) {
@@ -269,12 +272,7 @@ public class EC2TemplateOptions extends TemplateOptions {
    }
 
    /**
-    * 
-    * special thing is that we do assume if you are passing groups that you have everything you need
-    * already defined. for example, our option inboundPorts normally creates ingress rules
-    * accordingly but if we notice you've specified securityGroups, we do not mess with rules at all
-    * 
-    * @see TemplateOptions#inboundPorts
+    * {@inheritDoc}
     */
    @Override
    public EC2TemplateOptions inboundPorts(int... ports) {
@@ -282,41 +280,41 @@ public class EC2TemplateOptions extends TemplateOptions {
    }
 
    /**
-    * @see TemplateOptions#authorizePublicKey(String)
+    * {@inheritDoc}
     */
    @Override
-   @Deprecated
    public EC2TemplateOptions authorizePublicKey(String publicKey) {
       return EC2TemplateOptions.class.cast(super.authorizePublicKey(publicKey));
    }
 
    /**
-    * @see TemplateOptions#authorizePublicKey(Payload)
+    * {@inheritDoc}
     */
    @Override
+   @Deprecated
    public EC2TemplateOptions authorizePublicKey(Payload publicKey) {
       return EC2TemplateOptions.class.cast(super.authorizePublicKey(publicKey));
    }
 
    /**
-    * @see TemplateOptions#installPrivateKey(String)
+    * {@inheritDoc}
     */
    @Override
-   @Deprecated
    public EC2TemplateOptions installPrivateKey(String privateKey) {
       return EC2TemplateOptions.class.cast(super.installPrivateKey(privateKey));
    }
 
    /**
-    * @see TemplateOptions#installPrivateKey(Payload)
+    * {@inheritDoc}
     */
    @Override
+   @Deprecated
    public EC2TemplateOptions installPrivateKey(Payload privateKey) {
       return EC2TemplateOptions.class.cast(super.installPrivateKey(privateKey));
    }
 
    /**
-    * @see TemplateOptions#runScript(Payload)
+    * {@inheritDoc}
     */
    @Override
    public EC2TemplateOptions runScript(Payload script) {
@@ -324,7 +322,7 @@ public class EC2TemplateOptions extends TemplateOptions {
    }
 
    /**
-    * @see TemplateOptions#runScript(byte[])
+    * {@inheritDoc}
     */
    @Override
    @Deprecated
@@ -333,11 +331,59 @@ public class EC2TemplateOptions extends TemplateOptions {
    }
 
    /**
-    * @see TemplateOptions#withMetadata
+    * {@inheritDoc}
     */
    @Override
    public EC2TemplateOptions withMetadata() {
       return EC2TemplateOptions.class.cast(super.withMetadata());
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public EC2TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
+      return EC2TemplateOptions.class.cast(super.blockUntilRunning(blockUntilRunning));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public EC2TemplateOptions dontAuthorizePublicKey() {
+      return EC2TemplateOptions.class.cast(super.dontAuthorizePublicKey());
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public EC2TemplateOptions nameTask(String name) {
+      return EC2TemplateOptions.class.cast(super.nameTask(name));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public EC2TemplateOptions runAsRoot(boolean runAsRoot) {
+      return EC2TemplateOptions.class.cast(super.runAsRoot(runAsRoot));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public EC2TemplateOptions runScript(Statement script) {
+      return EC2TemplateOptions.class.cast(super.runScript(script));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public EC2TemplateOptions withOverridingCredentials(Credentials overridingCredentials) {
+      return EC2TemplateOptions.class.cast(super.withOverridingCredentials(overridingCredentials));
    }
 
    /**

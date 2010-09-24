@@ -19,7 +19,6 @@
 
 package org.jclouds.compute;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.easymock.EasyMock.aryEq;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -48,9 +47,6 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.RestContext;
-import org.jclouds.scriptbuilder.InitBuilder;
-import org.jclouds.scriptbuilder.domain.Statement;
-import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
@@ -58,11 +54,8 @@ import org.jclouds.util.Utils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.inject.AbstractModule;
 import com.google.inject.Module;
 
@@ -127,7 +120,12 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
                      .atLeastOnce();
 
             client1.connect();
-            runScript(client1, "computeserv", 1);
+            try {
+               runScript(client1, "runScriptWithCreds", Utils.toStringAndClose(StubComputeServiceIntegrationTest.class
+                        .getResourceAsStream("/runscript.sh")), 1);
+            } catch (IOException e) {
+               Throwables.propagate(e);
+            }
             client1.disconnect();
 
             expect(factory.create(new IPSocket("144.175.1.2", 22), "root", "password2")).andReturn(client2)
@@ -137,9 +135,9 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             expect(factory.create(new IPSocket("144.175.1.4", 22), "root", "password4")).andReturn(client4)
                      .atLeastOnce();
 
-            runScriptAndInstallSsh(client2, "runscript", 2);
-            runScriptAndInstallSsh(client3, "runscript", 3);
-            runScriptAndInstallSsh(client4, "runscript", 4);
+            runScriptAndInstallSsh(client2, "bootstrap", 2);
+            runScriptAndInstallSsh(client3, "bootstrap", 3);
+            runScriptAndInstallSsh(client4, "bootstrap", 4);
 
             expect(
                      factory.create(eq(new IPSocket("144.175.1.1", 22)), eq("root"), aryEq(keyPair.get("private")
@@ -171,24 +169,19 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
          private void runScriptAndInstallSsh(SshClient client, String scriptName, int nodeId) {
             client.connect();
 
-            runScript(client, scriptName, nodeId);
-
-            expect(client.exec("mkdir .ssh")).andReturn(EXEC_GOOD);
-            expect(client.exec("cat .ssh/id_rsa.pub >> .ssh/authorized_keys")).andReturn(EXEC_GOOD);
-            expect(client.exec("chmod 600 .ssh/authorized_keys")).andReturn(EXEC_GOOD);
-            client.put(eq(".ssh/id_rsa.pub"), payloadEq(keyPair.get("public")));
-
-            expect(client.exec("mkdir .ssh")).andReturn(EXEC_GOOD);
-            client.put(eq(".ssh/id_rsa"), payloadEq(keyPair.get("private")));
-            expect(client.exec("chmod 600 .ssh/id_rsa")).andReturn(EXEC_GOOD);
+            try {
+               runScript(client, scriptName, Utils.toStringAndClose(StubComputeServiceIntegrationTest.class
+                        .getResourceAsStream("/initscript_with_keys.sh")), nodeId);
+            } catch (IOException e) {
+               Throwables.propagate(e);
+            }
 
             client.disconnect();
 
          }
 
-         private void runScript(SshClient client, String scriptName, int nodeId) {
-            client.put(eq("" + scriptName + ""), payloadEq(initScript(scriptName,
-                     BaseComputeServiceLiveTest.APT_RUN_SCRIPT)));
+         private void runScript(SshClient client, String scriptName, String script, int nodeId) {
+            client.put(eq("" + scriptName + ""), payloadEq(script));
             expect(client.exec("chmod 755 " + scriptName + "")).andReturn(EXEC_GOOD);
             expect(client.getUsername()).andReturn("root").atLeastOnce();
             expect(client.getHostAddress()).andReturn(nodeId + "").atLeastOnce();
@@ -223,13 +216,6 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
       // TODO: this fails so we override it.
    }
 
-   public static String initScript(String scriptName, String script) {
-      return new InitBuilder(scriptName, "/tmp/" + scriptName, "/tmp/" + scriptName,
-               ImmutableMap.<String, String> of(), ImmutableList.<Statement> of(Statements.interpret(Iterables.toArray(
-                        Splitter.on("\n").split(new String(checkNotNull(script, "script"))), String.class))))
-               .build(org.jclouds.scriptbuilder.domain.OsFamily.UNIX);
-   }
-
    public static Payload payloadEq(String value) {
       reportMatcher(new PayloadEquals(value));
       return null;
@@ -257,10 +243,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
          }
          try {
             String real = Utils.toStringAndClose(((Payload) actual).getInput());
-            if (!expected.equals(real)) {
-               System.err.println(real);
-               return false;
-            }
+            assertEquals(real, expected);
             return true;
          } catch (IOException e) {
             Throwables.propagate(e);

@@ -32,6 +32,7 @@ import org.jclouds.scriptbuilder.util.Utils;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -41,7 +42,7 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-public class ScriptBuilder {
+public class ScriptBuilder implements Statement {
 
    @VisibleForTesting
    List<Statement> statements = Lists.newArrayList();
@@ -69,8 +70,7 @@ public class ScriptBuilder {
     * Exports a variable inside the script
     */
    public ScriptBuilder addEnvironmentVariableScope(String scopeName, Map<String, String> variables) {
-      variableScopes
-               .put(checkNotNull(scopeName, "scopeName"), checkNotNull(variables, "variables"));
+      variableScopes.put(checkNotNull(scopeName, "scopeName"), checkNotNull(variables, "variables"));
       return this;
    }
 
@@ -85,19 +85,21 @@ public class ScriptBuilder {
     * @param osFamily
     *           whether to write a cmd or bash script.
     */
-   public String build(final OsFamily osFamily) {
+
+   @Override
+   public String render(OsFamily osFamily) {
       Map<String, String> functions = Maps.newLinkedHashMap();
       functions.put("abort", Utils.writeFunctionFromResource("abort", osFamily));
 
       for (Entry<String, Map<String, String>> entry : variableScopes.entrySet()) {
-         functions.put(entry.getKey(), Utils.writeFunction(entry.getKey(), Utils
-                  .writeVariableExporters(entry.getValue())));
+         functions.put(entry.getKey(), Utils.writeFunction(entry.getKey(), Utils.writeVariableExporters(entry
+                  .getValue())));
       }
       final Map<String, String> tokenValueMap = ShellToken.tokenValueMap(osFamily);
       StringBuilder builder = new StringBuilder();
       builder.append(ShellToken.BEGIN_SCRIPT.to(osFamily));
-      builder.append(Utils.writeUnsetVariables(Lists.newArrayList(Iterables.transform(
-               variablesToUnset, new Function<String, String>() {
+      builder.append(Utils.writeUnsetVariables(Lists.newArrayList(Iterables.transform(variablesToUnset,
+               new Function<String, String>() {
                   @Override
                   public String apply(String from) {
                      if (tokenValueMap.containsKey(from + "Variable"))
@@ -140,5 +142,10 @@ public class ScriptBuilder {
       for (String functionName : unresolvedFunctions) {
          functions.put(functionName, Utils.writeFunctionFromResource(functionName, osFamily));
       }
+   }
+
+   @Override
+   public Iterable<String> functionDependecies(OsFamily family) {
+      return ImmutableSet.<String> of();
    }
 }
