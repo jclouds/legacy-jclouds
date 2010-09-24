@@ -51,7 +51,7 @@ public class InstallRSAPrivateKey implements Statement {
       checkNotNull(family, "family");
       if (family == OsFamily.WINDOWS)
          throw new UnsupportedOperationException("windows not yet implemented");
-      return new StatementList(ImmutableList.of(exec("{md} .ssh"), rm(".ssh/id_rsa"), appendFile(".ssh/id_rsa", Splitter.on('\n')
-               .split(privateKey)), exec("chmod 600 .ssh/id_rsa"))).render(family);
+      return new StatementList(ImmutableList.of(exec("{md} ~/.ssh"), rm("~/.ssh/id_rsa"), appendFile("~/.ssh/id_rsa", Splitter.on('\n')
+               .split(privateKey)), exec("chmod 600 ~/.ssh/id_rsa"))).render(family);
    }
 }

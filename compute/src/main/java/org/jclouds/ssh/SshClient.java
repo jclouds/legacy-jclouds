@@ -52,4 +52,6 @@ public interface SshClient {
    @PreDestroy
    void disconnect();
 
+   void put(String path, String contents);
+
 }

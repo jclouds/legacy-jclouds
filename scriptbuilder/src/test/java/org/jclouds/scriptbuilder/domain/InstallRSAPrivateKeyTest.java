@@ -34,7 +34,7 @@ public class InstallRSAPrivateKeyTest {
    public void testInstallRSAPrivateKeyUNIX() {
       assertEquals(
                key.render(OsFamily.UNIX),
-               "mkdir -p .ssh\nrm .ssh/id_rsa\ncat >> .ssh/id_rsa <<'END_OF_FILE'\n-----BEGIN RSA PRIVATE KEY-----\n-----END RSA PRIVATE KEY-----\n\nEND_OF_FILE\nchmod 600 .ssh/id_rsa\n");
+               "mkdir -p ~/.ssh\nrm ~/.ssh/id_rsa\ncat >> ~/.ssh/id_rsa <<'END_OF_FILE'\n-----BEGIN RSA PRIVATE KEY-----\n-----END RSA PRIVATE KEY-----\n\nEND_OF_FILE\nchmod 600 ~/.ssh/id_rsa\n");
    }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)

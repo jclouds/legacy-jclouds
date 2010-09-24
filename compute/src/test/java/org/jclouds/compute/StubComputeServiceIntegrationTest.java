@@ -32,6 +32,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -96,10 +97,16 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
       expect(socketOpen.apply(new IPSocket("144.175.1.2", 22))).andReturn(true);
       expect(socketOpen.apply(new IPSocket("144.175.1.3", 22))).andReturn(true);
       expect(socketOpen.apply(new IPSocket("144.175.1.4", 22))).andReturn(true);
+      expect(socketOpen.apply(new IPSocket("144.175.1.5", 22))).andReturn(true);
 
       replay(socketOpen);
 
       socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
+   }
+
+   @Override
+   protected void checkHttpGet(TreeSet<NodeMetadata> nodes) {
+
    }
 
    @Override
@@ -113,31 +120,36 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             SshClient client2 = createMock(SshClient.class);
             SshClient client3 = createMock(SshClient.class);
             SshClient client4 = createMock(SshClient.class);
+            SshClient client5 = createMock(SshClient.class);
 
-            expect(factory.create(new IPSocket("144.175.1.1", 22), "root", "romeo")).andThrow(
-                     new SshException("Auth fail"));
             expect(factory.create(new IPSocket("144.175.1.1", 22), "root", "password1")).andReturn(client1)
                      .atLeastOnce();
+            runScriptAndService(client1, 1);
 
-            client1.connect();
+            expect(factory.create(new IPSocket("144.175.1.2", 22), "root", "romeo")).andThrow(
+                     new SshException("Auth fail"));
+            expect(factory.create(new IPSocket("144.175.1.2", 22), "root", "password2")).andReturn(client2)
+                     .atLeastOnce();
+
+            client2.connect();
             try {
-               runScript(client1, "runScriptWithCreds", Utils.toStringAndClose(StubComputeServiceIntegrationTest.class
-                        .getResourceAsStream("/runscript.sh")), 1);
+               runScript(client2, "runScriptWithCreds", Utils.toStringAndClose(StubComputeServiceIntegrationTest.class
+                        .getResourceAsStream("/runscript.sh")), 2);
             } catch (IOException e) {
                Throwables.propagate(e);
             }
-            client1.disconnect();
+            client2.disconnect();
 
-            expect(factory.create(new IPSocket("144.175.1.2", 22), "root", "password2")).andReturn(client2)
-                     .atLeastOnce();
             expect(factory.create(new IPSocket("144.175.1.3", 22), "root", "password3")).andReturn(client3)
                      .atLeastOnce();
             expect(factory.create(new IPSocket("144.175.1.4", 22), "root", "password4")).andReturn(client4)
                      .atLeastOnce();
+            expect(factory.create(new IPSocket("144.175.1.5", 22), "root", "password5")).andReturn(client5)
+                     .atLeastOnce();
 
-            runScriptAndInstallSsh(client2, "bootstrap", 2);
             runScriptAndInstallSsh(client3, "bootstrap", 3);
             runScriptAndInstallSsh(client4, "bootstrap", 4);
+            runScriptAndInstallSsh(client5, "bootstrap", 5);
 
             expect(
                      factory.create(eq(new IPSocket("144.175.1.1", 22)), eq("root"), aryEq(keyPair.get("private")
@@ -151,19 +163,37 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             expect(
                      factory.create(eq(new IPSocket("144.175.1.4", 22)), eq("root"), aryEq(keyPair.get("private")
                               .getBytes()))).andReturn(client4).atLeastOnce();
+            expect(
+                     factory.create(eq(new IPSocket("155.175.1.5", 22)), eq("root"), aryEq(keyPair.get("private")
+                              .getBytes()))).andReturn(client5).atLeastOnce();
 
-            helloAndJava(client1);
             helloAndJava(client2);
             helloAndJava(client3);
             helloAndJava(client4);
+            helloAndJava(client5);
 
             replay(factory);
             replay(client1);
             replay(client2);
             replay(client3);
             replay(client4);
+            replay(client5);
 
             bind(SshClient.Factory.class).toInstance(factory);
+         }
+
+         private void runScriptAndService(SshClient client, int nodeId) {
+            client.connect();
+
+            try {
+               runScript(client, "jboss", Utils.toStringAndClose(StubComputeServiceIntegrationTest.class
+                        .getResourceAsStream("/initscript_with_jboss.sh")), nodeId);
+            } catch (IOException e) {
+               Throwables.propagate(e);
+            }
+
+            client.disconnect();
+
          }
 
          private void runScriptAndInstallSsh(SshClient client, String scriptName, int nodeId) {
@@ -171,7 +201,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
 
             try {
                runScript(client, scriptName, Utils.toStringAndClose(StubComputeServiceIntegrationTest.class
-                        .getResourceAsStream("/initscript_with_keys.sh")), nodeId);
+                        .getResourceAsStream("/initscript_with_java.sh")), nodeId);
             } catch (IOException e) {
                Throwables.propagate(e);
             }
@@ -181,7 +211,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
          }
 
          private void runScript(SshClient client, String scriptName, String script, int nodeId) {
-            client.put(eq("" + scriptName + ""), payloadEq(script));
+            client.put(scriptName, script);
             expect(client.exec("chmod 755 " + scriptName + "")).andReturn(EXEC_GOOD);
             expect(client.getUsername()).andReturn("root").atLeastOnce();
             expect(client.getHostAddress()).andReturn(nodeId + "").atLeastOnce();
@@ -297,6 +327,11 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    @Test(enabled = true, dependsOnMethods = { "testImagesCache" })
    public void testAScriptExecutionAfterBootWithBasicTemplate() throws Exception {
       super.testAScriptExecutionAfterBootWithBasicTemplate();
+   }
+
+   @Test(enabled = true, dependsOnMethods = { "testCompareSizes" })
+   public void testCreateAndRunAService() throws Exception {
+      super.testCreateAndRunAService();
    }
 
    @Test(enabled = true, dependsOnMethods = "testTemplateMatch")

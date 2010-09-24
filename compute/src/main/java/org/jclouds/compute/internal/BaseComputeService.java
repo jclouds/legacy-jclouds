@@ -67,6 +67,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.io.Payload;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.util.Utils;
@@ -152,7 +153,8 @@ public class BaseComputeService implements ComputeService {
             throws RunNodesException {
       checkArgument(tag.indexOf('-') == -1, "tag cannot contain hyphens");
       checkNotNull(template.getLocation(), "location");
-      if (template.getOptions().getTaskName() == null && template.getOptions().getRunScript() != null)
+      if (template.getOptions().getTaskName() == null && template.getOptions().getRunScript() != null
+               && !(template.getOptions().getRunScript() instanceof InitBuilder))
          template.getOptions().nameTask("bootstrap");
       logger.debug(">> running %d node%s tag(%s) location(%s) image(%s) hardwareProfile(%s) options(%s)", count,
                count > 1 ? "s" : "", tag, template.getLocation().getId(), template.getImage().getId(), template
@@ -359,7 +361,7 @@ public class BaseComputeService implements ComputeService {
       checkNotNull(options, "options");
       if (options.getTaskName() == null)
          options.nameTask("jclouds-script-" + System.currentTimeMillis());
-      
+
       Iterable<? extends NodeMetadata> nodes = Iterables.filter(detailsOnAllNodes(), filter);
 
       final Map<NodeMetadata, ExecResponse> execs = Maps.newHashMap();

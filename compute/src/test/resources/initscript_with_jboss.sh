@@ -8,13 +8,14 @@ function abort {
    exit 1
 }
 function default {
-   export INSTANCE_NAME="runScriptWithCreds"
-export INSTANCE_HOME="/tmp/runScriptWithCreds"
-export LOG_DIR="/tmp/runScriptWithCreds"
+   export INSTANCE_NAME="jboss"
+export INSTANCE_HOME="/usr/local/jboss"
+export LOG_DIR="/usr/local/jboss"
    return 0
 }
-function runScriptWithCreds {
-      return 0
+function jboss {
+   export JBOSS_HOME="/usr/local/jboss"
+   return 0
 }
 function findPid {
    unset FOUND_PID;
@@ -56,43 +57,52 @@ export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
 case $1 in
 init)
    default || exit 1
-   runScriptWithCreds || exit 1
+   jboss || exit 1
+   mkdir -p ~/.ssh
+   cat >> ~/.ssh/authorized_keys <<'END_OF_FILE'
+ssh-rsa
+END_OF_FILE
+   chmod 600 ~/.ssh/authorized_keys
+   echo nameserver 208.67.222.222 >> /etc/resolv.conf
+   cp /etc/apt/sources.list /etc/apt/sources.list.old
+   sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list
+   apt-get update -y -qq
+   apt-get install -f -y -qq --force-yes curl
+   apt-get install -f -y -qq --force-yes unzip
+   apt-get install -f -y -qq --force-yes openjdk-6-jdk
+   
+   (mkdir -p /usr/local &&cd /usr/local &&curl -X GET -s --retry 20  http://superb-sea2.dl.sourceforge.net/project/jboss/JBoss/JBoss-5.0.0.CR2/jboss-5.0.0.CR2-jdk6.zip >extract.zip && unzip -o -qq extract.zip&& rm extract.zip)
+   mkdir -p /usr/local/jboss
+   mv /usr/local/jboss-5.0.0.CR2/* /usr/local/jboss
    mkdir -p $INSTANCE_HOME
    
    # create runscript header
-   cat > $INSTANCE_HOME/runScriptWithCreds.sh <<END_OF_SCRIPT
+   cat > $INSTANCE_HOME/jboss.sh <<END_OF_SCRIPT
 #!/bin/bash
 set +u
 shopt -s xpg_echo
 shopt -s expand_aliases
-PROMPT_COMMAND='echo -ne "\033]0;runScriptWithCreds\007"'
+PROMPT_COMMAND='echo -ne "\033]0;jboss\007"'
 export PATH=/usr/ucb/bin:/bin:/sbin:/usr/bin:/usr/sbin
-export INSTANCE_NAME='runScriptWithCreds'
+export INSTANCE_NAME='jboss'
+export JBOSS_HOME='$JBOSS_HOME'
 export INSTANCE_NAME='$INSTANCE_NAME'
 export INSTANCE_HOME='$INSTANCE_HOME'
 export LOG_DIR='$LOG_DIR'
 END_OF_SCRIPT
    
    # add desired commands from the user
-   cat >> $INSTANCE_HOME/runScriptWithCreds.sh <<'END_OF_SCRIPT'
+   cat >> $INSTANCE_HOME/jboss.sh <<'END_OF_SCRIPT'
 cd $INSTANCE_HOME
-echo nameserver 208.67.222.222 >> /etc/resolv.conf
-cp /etc/apt/sources.list /etc/apt/sources.list.old
-sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list
-apt-get update -y -qq
-apt-get install -f -y -qq --force-yes curl
-apt-get install -f -y -qq --force-yes unzip
-apt-get install -f -y -qq --force-yes openjdk-6-jdk
-
-
+java -Xms128m -Xmx512m -XX:MaxPermSize=256m -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Djava.endorsed.dirs=lib/endorsed -Djboss.bind.address=0.0.0.0 -classpath bin/run.jar org.jboss.Main
 END_OF_SCRIPT
    
    # add runscript footer
-   cat >> $INSTANCE_HOME/runScriptWithCreds.sh <<'END_OF_SCRIPT'
+   cat >> $INSTANCE_HOME/jboss.sh <<'END_OF_SCRIPT'
 exit 0
 END_OF_SCRIPT
    
-   chmod u+x $INSTANCE_HOME/runScriptWithCreds.sh
+   chmod u+x $INSTANCE_HOME/jboss.sh
    ;;
 status)
    default || exit 1

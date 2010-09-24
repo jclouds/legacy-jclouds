@@ -396,13 +396,19 @@ public class TemplateOptions extends RunScriptOptions {
          return options.withMetadata();
       }
 
+      public static TemplateOptions blockOnComplete(boolean value) {
+         TemplateOptions options = new TemplateOptions();
+         return options.blockOnComplete(value);
+      }
+
    }
 
    @Override
    public String toString() {
       return "[inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
                + (publicKey != null) + ", runScript=" + (script != null) + ", blockUntilRunning=" + blockUntilRunning
-               + ", port:seconds=" + port + ":" + seconds + ", metadata/details: " + includeMetadata + "]";
+               + ", blockOnComplete=" + blockOnComplete + ", port:seconds=" + port + ":" + seconds
+               + ", metadata/details: " + includeMetadata + "]";
    }
 
    public TemplateOptions blockUntilRunning(boolean blockUntilRunning) {
@@ -482,5 +488,10 @@ public class TemplateOptions extends RunScriptOptions {
    @Override
    public TemplateOptions withOverridingCredentials(Credentials overridingCredentials) {
       return TemplateOptions.class.cast(super.withOverridingCredentials(overridingCredentials));
+   }
+
+   @Override
+   public TemplateOptions blockOnComplete(boolean blockOnComplete) {
+      return TemplateOptions.class.cast(super.blockOnComplete(blockOnComplete));
    }
 }

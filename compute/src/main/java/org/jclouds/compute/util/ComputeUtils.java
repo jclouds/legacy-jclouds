@@ -40,6 +40,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.compute.callables.InitAndStartScriptOnNode;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.RunScriptOptions;
@@ -146,8 +147,8 @@ public class ComputeUtils {
          bootstrap.add(new AuthorizeRSAPublicKey(options.getPublicKey()));
       if (options.getPrivateKey() != null)
          bootstrap.add(new InstallRSAPrivateKey(options.getPrivateKey()));
-      if (bootstrap.size() >0)
-         runScriptOnNode(node, new StatementList(bootstrap), options);
+      if (bootstrap.size() >= 1)
+         runScriptOnNode(node, bootstrap.size() == 1 ? bootstrap.get(0) : new StatementList(bootstrap), options);
       return node;
    }
 
@@ -155,15 +156,9 @@ public class ComputeUtils {
       checkState(node.getPublicAddresses().size() > 0, "node does not have IP addresses configured: " + node);
    }
 
-   public ExecResponse runScriptOnNode(NodeMetadata node, Statement runScript, RunScriptOptions options)
-    {
-      RunScriptOnNode callable;
-      String taskName = options.getTaskName();
+   public ExecResponse runScriptOnNode(NodeMetadata node, Statement runScript, RunScriptOptions options) {
+      InitAndStartScriptOnNode callable = generateScript(node, runScript, options);
       ExecResponse response;
-      if (options.isRunAsRoot()) {
-         callable = runScriptOnNode(node, taskName, runScript);
-      } else
-         callable = runScriptOnNodeAsDefaultUser(node, taskName, runScript);
       SshClient ssh = createSshClientOncePortIsListeningOnNode(node);
       try {
          ssh.connect();
@@ -192,12 +187,10 @@ public class ComputeUtils {
          logger.warn("<< port %s:%d didn't open after %d seconds", inetAddress, port, seconds);
    }
 
-   public RunScriptOnNode runScriptOnNode(NodeMetadata node, String scriptName, Statement script) {
-      return new RunScriptOnNode(runScriptNotRunning, node, scriptName, script);
-   }
-
-   public RunScriptOnNode runScriptOnNodeAsDefaultUser(NodeMetadata node, String scriptName, Statement script) {
-      return new RunScriptOnNode(runScriptNotRunning, node, scriptName, script, false);
+   public InitAndStartScriptOnNode generateScript(NodeMetadata node, Statement script, RunScriptOptions options) {
+      return options.shouldBlockOnComplete() ? new RunScriptOnNode(runScriptNotRunning, node, options.getTaskName(),
+               script, options.shouldRunAsRoot()) : new InitAndStartScriptOnNode(node, options.getTaskName(), script,
+               options.shouldRunAsRoot());
    }
 
    public Map<SshCallable<?>, ?> runCallablesOnNode(NodeMetadata node, Iterable<SshCallable<?>> parallel,

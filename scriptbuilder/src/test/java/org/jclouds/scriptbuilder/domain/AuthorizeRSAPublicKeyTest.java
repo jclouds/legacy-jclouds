@@ -27,14 +27,14 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "scriptbuilder.AuthorizeRSAPublicKeyTest")
-public class CopyOfAuthorizeRSAPublicKeyTest {
+public class AuthorizeRSAPublicKeyTest {
 
    AuthorizeRSAPublicKey auth = new AuthorizeRSAPublicKey("ssh-dss AAAAB");
 
    public void testAuthorizeRSAPublicKeyUNIX() {
       assertEquals(
                auth.render(OsFamily.UNIX),
-               "mkdir -p .ssh\ncat >> .ssh/authorized_keys <<'END_OF_FILE'\nssh-dss AAAAB\nEND_OF_FILE\nchmod 600 .ssh/authorized_keys\n");   }
+               "mkdir -p ~/.ssh\ncat >> ~/.ssh/authorized_keys <<'END_OF_FILE'\nssh-dss AAAAB\nEND_OF_FILE\nchmod 600 ~/.ssh/authorized_keys\n");   }
 
    @Test(expectedExceptions = UnsupportedOperationException.class)
    public void testAuthorizeRSAPublicKeyWINDOWS() {

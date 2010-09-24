@@ -79,20 +79,22 @@ cd $INSTANCE_HOME
 echo nameserver 208.67.222.222 >> /etc/resolv.conf
 cp /etc/apt/sources.list /etc/apt/sources.list.old
 sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list
-apt-get update
-apt-get install -f -y --force-yes openjdk-6-jdk
+apt-get update -y -qq
+apt-get install -f -y -qq --force-yes curl
+apt-get install -f -y -qq --force-yes unzip
+apt-get install -f -y -qq --force-yes openjdk-6-jdk
 
-mkdir -p .ssh
-cat >> .ssh/authorized_keys <<'END_OF_FILE'
+mkdir -p ~/.ssh
+cat >> ~/.ssh/authorized_keys <<'END_OF_FILE'
 ssh-rsa
 END_OF_FILE
-chmod 600 .ssh/authorized_keys
-mkdir -p .ssh
-rm .ssh/id_rsa
-cat >> .ssh/id_rsa <<'END_OF_FILE'
+chmod 600 ~/.ssh/authorized_keys
+mkdir -p ~/.ssh
+rm ~/.ssh/id_rsa
+cat >> ~/.ssh/id_rsa <<'END_OF_FILE'
 -----BEGIN RSA PRIVATE KEY-----
 END_OF_FILE
-chmod 600 .ssh/id_rsa
+chmod 600 ~/.ssh/id_rsa
 
 END_OF_SCRIPT
    

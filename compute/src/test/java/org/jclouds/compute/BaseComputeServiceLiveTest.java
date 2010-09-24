@@ -30,7 +30,8 @@ import static com.google.common.collect.Maps.newLinkedHashMap;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static com.google.common.collect.Sets.filter;
 import static com.google.common.collect.Sets.newTreeSet;
-import static org.jclouds.compute.options.RunScriptOptions.Builder.overrideCredentialsWith;
+import static org.jclouds.compute.options.TemplateOptions.Builder.blockOnComplete;
+import static org.jclouds.compute.options.TemplateOptions.Builder.overrideCredentialsWith;
 import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
 import static org.jclouds.compute.predicates.NodePredicates.all;
 import static org.jclouds.compute.predicates.NodePredicates.runningWithTag;
@@ -43,6 +44,7 @@ import static org.testng.Assert.assertNotNull;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -96,33 +98,6 @@ import com.google.inject.Module;
  */
 @Test(groups = { "integration", "live" }, sequential = true, testName = "compute.ComputeServiceLiveTest")
 public abstract class BaseComputeServiceLiveTest {
-   public static final String APT_RUN_SCRIPT = new StringBuilder()//
-            .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
-            .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
-            .append(
-                     "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
-            .append("apt-get update\n")//
-            .append("apt-get install -f -y --force-yes openjdk-6-jdk\n")//
-            .toString();
-
-   public static final String YUM_RUN_SCRIPT = new StringBuilder()
-            .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")
-            //
-            .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-            //
-            .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n")
-            //
-            .append(
-                     "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
-            .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
-            .append("yum --nogpgcheck -y install java-1.6.0-openjdk\n")//
-            .append("echo \"export PATH=\\\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\\$PATH\\\"\" >> /root/.bashrc\n")//
-            .toString();
-
-   public static final String ZYPPER_RUN_SCRIPT = new StringBuilder()//
-            .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
-            .append("sudo zypper install java-1.6.0-openjdk-devl\n")//
-            .toString();
 
    public void setServiceDefaults() {
 
@@ -289,6 +264,37 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
+   public void testCreateAndRunAService() throws Exception {
+
+      String tag = this.tag + "service";
+      try {
+         client.destroyNodesMatching(withTag(tag));
+      } catch (Exception e) {
+
+      }
+
+      template = client.templateBuilder().options(blockOnComplete(false).blockOnPort(8080, 300).inboundPorts(22, 8080))
+               .build();
+      // note this is a dependency on the template resolution
+      template.getOptions().runScript(
+               RunScriptData.createScriptInstallAndStartJBoss(keyPair.get("public"), template.getImage()
+                        .getOperatingSystem()));
+      try {
+         TreeSet<NodeMetadata> nodes = newTreeSet(client.runNodesWithTag(tag, 1, template));
+
+         checkHttpGet(nodes);
+      } finally {
+         client.destroyNodesMatching(withTag(tag));
+      }
+
+   }
+
+   protected void checkHttpGet(TreeSet<NodeMetadata> nodes) {
+      assert context.utils().http().get(
+               URI.create(String.format("http://%s:8080", get(nodes.last().getPublicAddresses(), 0)))) != null;
+   }
+
+   @Test(enabled = true, dependsOnMethods = "testCreateAndRunAService")
    public void testCreateTwoNodesWithRunScript() throws Exception {
       try {
          client.destroyNodesMatching(withTag(tag));
@@ -389,11 +395,11 @@ public abstract class BaseComputeServiceLiveTest {
 
    public static String buildScript(OperatingSystem os) {
       if (OperatingSystemPredicates.supportsApt().apply(os))
-         return APT_RUN_SCRIPT;
+         return RunScriptData.APT_RUN_SCRIPT;
       else if (OperatingSystemPredicates.supportsYum().apply(os))
-         return YUM_RUN_SCRIPT;
+         return RunScriptData.YUM_RUN_SCRIPT;
       else if (OperatingSystemPredicates.supportsZypper().apply(os))
-         return ZYPPER_RUN_SCRIPT;
+         return RunScriptData.ZYPPER_RUN_SCRIPT;
       else
          throw new IllegalArgumentException("don't know how to handle" + os.toString());
    }

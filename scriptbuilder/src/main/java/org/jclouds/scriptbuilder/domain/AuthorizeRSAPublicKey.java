@@ -50,7 +50,7 @@ public class AuthorizeRSAPublicKey implements Statement {
       checkNotNull(family, "family");
       if (family == OsFamily.WINDOWS)
          throw new UnsupportedOperationException("windows not yet implemented");
-      return new StatementList(ImmutableList.of(exec("{md} .ssh"), appendFile(".ssh/authorized_keys", Splitter.on('\n')
-               .split(publicKey)), exec("chmod 600 .ssh/authorized_keys"))).render(family);
+      return new StatementList(ImmutableList.of(exec("{md} ~/.ssh"), appendFile("~/.ssh/authorized_keys", Splitter.on('\n')
+               .split(publicKey)), exec("chmod 600 ~/.ssh/authorized_keys"))).render(family);
    }
 }

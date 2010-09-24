@@ -21,11 +21,13 @@ package org.jclouds.compute.callables;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Collections;
+
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.compute.util.ComputeServiceUtils.SshCallable;
-import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
+import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.ssh.ExecResponse;
@@ -40,28 +42,36 @@ import com.google.common.collect.Iterables;
 public class InitAndStartScriptOnNode implements SshCallable<ExecResponse> {
    protected SshClient ssh;
    protected final NodeMetadata node;
-   protected final String scriptName;
-   protected final Statement script;
+   protected final InitBuilder init;
    protected final boolean runAsRoot;
    protected Logger logger = Logger.NULL;
 
-   public InitAndStartScriptOnNode(NodeMetadata node, String scriptName, Statement script, boolean runAsRoot) {
+   public InitAndStartScriptOnNode(NodeMetadata node, String name, Statement script, boolean runAsRoot) {
       this.node = checkNotNull(node, "node");
-      this.scriptName = checkNotNull(scriptName, "scriptName");
-      this.script = checkNotNull(script, "script");
+      this.init = checkNotNull(script, "script") instanceof InitBuilder ? InitBuilder.class.cast(script)
+               : createInitScript(checkNotNull(name, "name"), script);
       this.runAsRoot = runAsRoot;
+   }
+
+   public static InitBuilder createInitScript(String name, Statement script) {
+      String path = "/tmp/" + name;
+      return new InitBuilder(name, path, path, Collections.<String, String> emptyMap(), Collections.singleton(script));
    }
 
    @Override
    public ExecResponse call() {
-      ssh.put(scriptName, Payloads.newPayload(script.render(OsFamily.UNIX)));
-      ExecResponse returnVal = ssh.exec("chmod 755 " + scriptName);
-      returnVal = ssh.exec("./" + scriptName + " init");
-      logger.debug("<< initialized(%d)", returnVal.getExitCode());
+      ssh.put(init.getInstanceName(), init.render(OsFamily.UNIX));
+      ssh.exec("chmod 755 " + init.getInstanceName());
+      runAction("init");
+      return runAction("start");
+   }
 
-      String command = (runAsRoot) ? startScriptAsRoot() : startScriptAsDefaultUser();
+   private ExecResponse runAction(String action) {
+      ExecResponse returnVal;
+      String command = (runAsRoot) ? execScriptAsRoot(action) : execScriptAsDefaultUser(action);
       returnVal = runCommand(command);
-      logger.debug("<< start(%d)", returnVal.getExitCode());
+      logger.debug("<< %s(%d)", action, returnVal.getExitCode());
+      logger.trace("<< %s[%s]", action, returnVal);
       return returnVal;
    }
 
@@ -79,20 +89,21 @@ public class InitAndStartScriptOnNode implements SshCallable<ExecResponse> {
       this.ssh = checkNotNull(ssh, "ssh");
    }
 
-   protected String startScriptAsRoot() {
+   protected String execScriptAsRoot(String action) {
       String command;
       if (node.getCredentials().identity.equals("root")) {
-         command = "./" + scriptName + " start";
+         command = "./" + init.getInstanceName() + " " + action;
       } else if (ComputeServiceUtils.isKeyAuth(node)) {
-         command = "sudo ./" + scriptName + " start";
+         command = "sudo ./" + init.getInstanceName() + " " + action;
       } else {
-         command = String.format("echo '%s'|sudo -S ./%s", node.getCredentials().credential, scriptName + " start");
+         command = String.format("echo '%s'|sudo -S ./%s %s", node.getCredentials().credential, init.getInstanceName(),
+                  action);
       }
       return command;
    }
 
-   protected String startScriptAsDefaultUser() {
-      return "./" + scriptName + " start";
+   protected String execScriptAsDefaultUser(String action) {
+      return "./" + init.getInstanceName() + " " + action;
    }
 
    @Override

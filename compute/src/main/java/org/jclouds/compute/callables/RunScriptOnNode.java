@@ -19,13 +19,10 @@
 
 package org.jclouds.compute.callables;
 
-import java.util.Collections;
-
 import javax.inject.Named;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
-import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.ssh.ExecResponse;
 
@@ -40,33 +37,22 @@ public class RunScriptOnNode extends InitAndStartScriptOnNode {
    protected final Predicate<CommandUsingClient> runScriptNotRunning;
 
    public RunScriptOnNode(@Named("SCRIPT_COMPLETE") Predicate<CommandUsingClient> runScriptNotRunning,
-            NodeMetadata node, String scriptName, Statement script) {
-      this(runScriptNotRunning, node, scriptName, script, true);
-   }
-
-   public RunScriptOnNode(@Named("SCRIPT_COMPLETE") Predicate<CommandUsingClient> runScriptNotRunning,
             NodeMetadata node, String scriptName, Statement script, boolean runAsRoot) {
-      super(node, scriptName, createInitScript(scriptName, script), runAsRoot);
+      super(node, scriptName, script, runAsRoot);
       this.runScriptNotRunning = runScriptNotRunning;
    }
 
-   public static Statement createInitScript(String scriptName, Statement script) {
-      String path = "/tmp/" + scriptName;
-      return new InitBuilder(scriptName, path, path, Collections.<String, String> emptyMap(), Collections
-               .singleton(script));
-   }
 
    @Override
    public ExecResponse call() {
       ExecResponse returnVal = super.call();
-
-      boolean complete = runScriptNotRunning.apply(new CommandUsingClient("./" + scriptName + " status", ssh));
+      boolean complete = runScriptNotRunning.apply(new CommandUsingClient("./" + init.getInstanceName() + " status", ssh));
       logger.debug("<< complete(%s)", complete);
       if (logger.isDebugEnabled() || returnVal.getExitCode() != 0) {
-         logger.debug("<< stdout from %s as %s@%s\n%s", scriptName, node.getCredentials().identity, Iterables.get(node
-                  .getPublicAddresses(), 0), ssh.exec("./" + scriptName + " tail").getOutput());
-         logger.debug("<< stderr from %s as %s@%s\n%s", scriptName, node.getCredentials().identity, Iterables.get(node
-                  .getPublicAddresses(), 0), ssh.exec("./" + scriptName + " tailerr").getOutput());
+         logger.debug("<< stdout from %s as %s@%s\n%s", init.getInstanceName(), node.getCredentials().identity, Iterables.get(node
+                  .getPublicAddresses(), 0), ssh.exec("./" + init.getInstanceName() + " tail").getOutput());
+         logger.debug("<< stderr from %s as %s@%s\n%s", init.getInstanceName(), node.getCredentials().identity, Iterables.get(node
+                  .getPublicAddresses(), 0), ssh.exec("./" + init.getInstanceName() + " tailerr").getOutput());
       }
       return returnVal;
    }
