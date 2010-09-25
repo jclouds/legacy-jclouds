@@ -94,7 +94,7 @@ END_OF_SCRIPT
    # add desired commands from the user
    cat >> $INSTANCE_HOME/jboss.sh <<'END_OF_SCRIPT'
 cd $INSTANCE_HOME
-java -Xms128m -Xmx512m -XX:MaxPermSize=256m -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Djava.endorsed.dirs=lib/endorsed -Djboss.bind.address=0.0.0.0 -classpath bin/run.jar org.jboss.Main
+java -Xms128m -Xmx512m -XX:MaxPermSize=256m -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Djava.endorsed.dirs=lib/endorsed -classpath bin/run.jar org.jboss.Main -b 0.0.0.0
 END_OF_SCRIPT
    
    # add runscript footer

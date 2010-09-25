@@ -68,7 +68,7 @@ public class RunScriptData {
                                  jbossVersion, jboss)), "/usr/local"), exec("{md} " + jbossHome),
                         exec("mv /usr/local/jboss-" + jbossVersion + "/* " + jbossHome)),
                ImmutableList
-                        .<Statement> of(interpret("java -Xms128m -Xmx512m -XX:MaxPermSize=256m -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Djava.endorsed.dirs=lib/endorsed -Djboss.bind.address=0.0.0.0 -classpath bin/run.jar org.jboss.Main")));
+                        .<Statement> of(interpret("java -Xms128m -Xmx512m -XX:MaxPermSize=256m -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Djava.endorsed.dirs=lib/endorsed -classpath bin/run.jar org.jboss.Main -b 0.0.0.0")));
       return toReturn;
    }
 
