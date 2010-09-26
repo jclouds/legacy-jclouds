@@ -815,6 +815,12 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          to.withMetadata();
       if (!from.shouldBlockUntilRunning())
          to.blockUntilRunning(false);
+      if (!from.shouldBlockOnComplete())
+         to.blockOnComplete(false);
+      if (from.getOverrideCredentials() != null)
+         to.withOverridingCredentials(from.getOverrideCredentials());
+      if (from.getTaskName() != null)
+         to.nameTask(from.getTaskName());
    }
 
    @VisibleForTesting
