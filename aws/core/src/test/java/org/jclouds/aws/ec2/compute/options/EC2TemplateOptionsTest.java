@@ -32,7 +32,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -194,19 +193,17 @@ public class EC2TemplateOptionsTest {
    }
 
    // superclass tests
-   @SuppressWarnings("deprecation")
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testinstallPrivateKeyBadFormat() {
       EC2TemplateOptions options = new EC2TemplateOptions();
       options.installPrivateKey("whompy");
    }
 
-   @SuppressWarnings("deprecation")
    @Test
    public void testinstallPrivateKey() throws IOException {
       EC2TemplateOptions options = new EC2TemplateOptions();
       options.installPrivateKey("-----BEGIN RSA PRIVATE KEY-----");
-      assertEquals(Utils.toStringAndClose(options.getPrivateKey().getInput()), "-----BEGIN RSA PRIVATE KEY-----");
+      assertEquals(options.getPrivateKey(), "-----BEGIN RSA PRIVATE KEY-----");
    }
 
    @Test
@@ -218,7 +215,7 @@ public class EC2TemplateOptionsTest {
    @Test
    public void testinstallPrivateKeyStatic() throws IOException {
       EC2TemplateOptions options = installPrivateKey("-----BEGIN RSA PRIVATE KEY-----");
-      assertEquals(Utils.toStringAndClose(options.getPrivateKey().getInput()), "-----BEGIN RSA PRIVATE KEY-----");
+      assertEquals(options.getPrivateKey(), "-----BEGIN RSA PRIVATE KEY-----");
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -226,19 +223,17 @@ public class EC2TemplateOptionsTest {
       installPrivateKey(null);
    }
 
-   @SuppressWarnings("deprecation")
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testauthorizePublicKeyBadFormat() {
       EC2TemplateOptions options = new EC2TemplateOptions();
       options.authorizePublicKey("whompy");
    }
 
-   @SuppressWarnings("deprecation")
    @Test
    public void testauthorizePublicKey() throws IOException {
       EC2TemplateOptions options = new EC2TemplateOptions();
       options.authorizePublicKey("ssh-rsa");
-      assertEquals(Utils.toStringAndClose(options.getPublicKey().getInput()), "ssh-rsa");
+      assertEquals(options.getPublicKey(), "ssh-rsa");
    }
 
    @Test
@@ -250,7 +245,7 @@ public class EC2TemplateOptionsTest {
    @Test
    public void testauthorizePublicKeyStatic() throws IOException {
       EC2TemplateOptions options = authorizePublicKey("ssh-rsa");
-      assertEquals(Utils.toStringAndClose(options.getPublicKey().getInput()), "ssh-rsa");
+      assertEquals(options.getPublicKey(), "ssh-rsa");
    }
 
    @Test(expectedExceptions = NullPointerException.class)

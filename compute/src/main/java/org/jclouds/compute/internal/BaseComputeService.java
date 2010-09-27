@@ -45,7 +45,6 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.RunScriptOnNodesException;
-import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -63,12 +62,15 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.util.ComputeUtils;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.io.Payload;
 import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.scriptbuilder.InitBuilder;
+import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.ExecResponse;
-import org.jclouds.ssh.SshClient;
+import org.jclouds.util.Utils;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -151,6 +153,9 @@ public class BaseComputeService implements ComputeService {
             throws RunNodesException {
       checkArgument(tag.indexOf('-') == -1, "tag cannot contain hyphens");
       checkNotNull(template.getLocation(), "location");
+      if (template.getOptions().getTaskName() == null && template.getOptions().getRunScript() != null
+               && !(template.getOptions().getRunScript() instanceof InitBuilder))
+         template.getOptions().nameTask("bootstrap");
       logger.debug(">> running %d node%s tag(%s) location(%s) image(%s) hardwareProfile(%s) options(%s)", count,
                count > 1 ? "s" : "", tag, template.getLocation().getId(), template.getImage().getId(), template
                         .getHardware().getId(), template.getOptions());
@@ -350,14 +355,19 @@ public class BaseComputeService implements ComputeService {
    @Override
    public Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
             final Payload runScript, @Nullable final RunScriptOptions options) throws RunScriptOnNodesException {
-      Iterable<NodeMetadata> nodes = verifyParametersAndListNodes(filter, runScript, (options != null) ? options
-               : RunScriptOptions.NONE);
+
+      checkNotNull(filter, "Filter must be provided");
+      checkNotNull(runScript, "runScript");
+      checkNotNull(options, "options");
+      if (options.getTaskName() == null)
+         options.nameTask("jclouds-script-" + System.currentTimeMillis());
+
+      Iterable<? extends NodeMetadata> nodes = Iterables.filter(detailsOnAllNodes(), filter);
 
       final Map<NodeMetadata, ExecResponse> execs = Maps.newHashMap();
-
+      final Map<NodeMetadata, Future<Void>> responses = Maps.newHashMap();
       final Map<NodeMetadata, Exception> badNodes = Maps.newLinkedHashMap();
-
-      Map<NodeMetadata, Future<Void>> responses = Maps.newHashMap();
+      nodes = filterNodesWhoCanRunScripts(nodes, badNodes, options.getOverrideCredentials());
 
       for (final NodeMetadata node : nodes) {
 
@@ -365,66 +375,53 @@ public class BaseComputeService implements ComputeService {
             @Override
             public Void call() throws Exception {
                try {
-                  RunScriptOnNode callable;
-                  if (options.isRunAsRoot())
-                     callable = utils.runScriptOnNode(node, "computeserv", runScript);
-                  else
-                     callable = utils.runScriptOnNodeAsDefaultUser(node, "computeserv", runScript);
-                  SshClient ssh = utils.createSshClientOncePortIsListeningOnNode(node);
-                  try {
-                     ssh.connect();
-                     callable.setConnection(ssh, logger);
-                     execs.put(node, callable.call());
-                  } finally {
-                     if (ssh != null)
-                        ssh.disconnect();
-                  }
+                  ExecResponse response = utils.runScriptOnNode(node, Statements.exec(Utils.toStringAndClose(runScript
+                           .getInput())), options);
+                  if (response != null)
+                     execs.put(node, response);
                } catch (Exception e) {
                   badNodes.put(node, e);
-
                }
                return null;
             }
+
          }));
 
       }
-      Map<?, Exception> exceptions = awaitCompletion(responses, executor, null, logger, "starting nodes");
+      Map<?, Exception> exceptions = awaitCompletion(responses, executor, null, logger, "running script on nodes");
       if (exceptions.size() > 0 || badNodes.size() > 0) {
          throw new RunScriptOnNodesException(runScript, options, execs, exceptions, badNodes);
       }
+
       return execs;
 
    }
 
-   private Iterable<NodeMetadata> verifyParametersAndListNodes(Predicate<NodeMetadata> filter, Payload runScript,
-            final RunScriptOptions options) {
-      checkNotNull(filter, "Filter must be provided");
-      checkNotNull(runScript, "The script (represented by bytes array - use \"script\".getBytes() must be provided");
-      checkNotNull(options, "options");
-
-      Iterable<? extends NodeMetadata> nodes = Iterables.filter(detailsOnAllNodes(), filter);
-      // TODO parallel
-      return Iterables.transform(nodes, new Function<NodeMetadata, NodeMetadata>() {
+   private Iterable<? extends NodeMetadata> filterNodesWhoCanRunScripts(Iterable<? extends NodeMetadata> nodes,
+            final Map<NodeMetadata, Exception> badNodes, final @Nullable Credentials overridingCredentials) {
+      nodes = Iterables.filter(Iterables.transform(nodes, new Function<NodeMetadata, NodeMetadata>() {
 
          @Override
          public NodeMetadata apply(NodeMetadata node) {
-
-            checkArgument(node.getPublicAddresses().size() > 0, "no public ip addresses on node: " + node);
-            if (options.getOverrideCredentials() != null) {
-               // override the credentials with provided to this
-               // method
-               node = installNewCredentials(node, options.getOverrideCredentials());
-            } else {
-               // don't override
-               checkNotNull(node.getCredentials(), "If the default credentials need to be used, they can't be null");
-               checkNotNull(node.getCredentials().identity, "Account name for ssh authentication must be "
-                        + "specified. Try passing RunScriptOptions with new credentials");
-               checkNotNull(node.getCredentials().credential, "Key or password for ssh authentication must be "
-                        + "specified. Try passing RunScriptOptions with new credentials");
+            try {
+               checkArgument(node.getPublicAddresses().size() > 0, "no public ip addresses on node: " + node);
+               if (overridingCredentials != null) {
+                  node = installNewCredentials(node, overridingCredentials);
+               } else {
+                  checkNotNull(node.getCredentials(), "If the default credentials need to be used, they can't be null");
+                  checkNotNull(node.getCredentials().identity, "Account name for ssh authentication must be "
+                           + "specified. Try passing RunScriptOptions with new credentials");
+                  checkNotNull(node.getCredentials().credential, "Key or password for ssh authentication must be "
+                           + "specified. Try passing RunScriptOptions with new credentials");
+               }
+               return node;
+            } catch (Exception e) {
+               badNodes.put(node, e);
+               return null;
             }
-            return node;
          }
-      });
+      }), Predicates.notNull());
+      return nodes;
    }
 
    private Set<? extends NodeMetadata> detailsOnAllNodes() {

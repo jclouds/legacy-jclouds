@@ -160,7 +160,7 @@ public class MainApp {
                .addStatement(exec("runurl run.alestic.com/apt/upgrade"))//
                .addStatement(exec("runurl run.alestic.com/install/lamp"))//
                .addStatement(exec("apt-get -y install openjdk-6-jdk"))// no license agreement!
-               .build(OsFamily.UNIX);
+               .render(OsFamily.UNIX);
 
       System.out.printf("%d: running instance%n", System.currentTimeMillis());
       Reservation<? extends RunningInstance> reservation = client.getInstanceServices().runInstancesInRegion(null, null, // allow

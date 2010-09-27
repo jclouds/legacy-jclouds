@@ -19,6 +19,7 @@
 
 package org.jclouds.compute.options;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.domain.Credentials;
@@ -59,8 +60,8 @@ public class RunScriptOptions {
       }
 
       @Override
-      public boolean isRunAsRoot() {
-         return delegate.isRunAsRoot();
+      public boolean shouldRunAsRoot() {
+         return delegate.shouldRunAsRoot();
 
       }
 
@@ -70,14 +71,53 @@ public class RunScriptOptions {
       }
 
       @Override
+      public boolean shouldBlockOnComplete() {
+         return delegate.shouldBlockOnComplete();
+
+      }
+
+      @Override
+      public RunScriptOptions blockOnComplete(boolean blockOnComplete) {
+         throw new IllegalArgumentException("blockOnComplete is immutable");
+      }
+
+      @Override
       public RunScriptOptions withOverridingCredentials(Credentials overridingCredentials) {
          throw new IllegalArgumentException("overridingCredentials is immutable");
       }
 
+      @Override
+      public String getTaskName() {
+         return delegate.getTaskName();
+      }
+
+      @Override
+      public RunScriptOptions nameTask(String name) {
+         throw new IllegalArgumentException("taskName is immutable");
+      }
+
+      @Override
+      public RunScriptOptions blockOnPort(int port, int seconds) {
+         throw new IllegalArgumentException("port, seconds are immutable");
+      }
+
+      @Override
+      public int getPort() {
+         return delegate.getPort();
+      }
+
+      @Override
+      public int getSeconds() {
+         return delegate.getSeconds();
+      }
    }
 
-   private Credentials overridingCredentials;
-   private boolean runAsRoot = true;
+   protected int port = -1;
+   protected int seconds = -1;
+   protected String taskName;
+   protected Credentials overridingCredentials;
+   protected boolean runAsRoot = true;
+   protected boolean blockOnComplete = true;
 
    public RunScriptOptions withOverridingCredentials(Credentials overridingCredentials) {
       checkNotNull(overridingCredentials, "overridingCredentials");
@@ -87,9 +127,47 @@ public class RunScriptOptions {
       return this;
    }
 
+   /**
+    * @return What to call the task relating to this script; default {@code
+    *         jclouds-script-timestamp} where timestamp is millis since epoch
+    * 
+    */
+   public RunScriptOptions nameTask(String name) {
+      this.taskName = name;
+      return this;
+   }
+
    public RunScriptOptions runAsRoot(boolean runAsRoot) {
       this.runAsRoot = runAsRoot;
       return this;
+   }
+
+   public RunScriptOptions blockOnComplete(boolean blockOnComplete) {
+      this.blockOnComplete = blockOnComplete;
+      return this;
+   }
+
+   /**
+    * When the node is started, wait until the following port is active
+    */
+   public RunScriptOptions blockOnPort(int port, int seconds) {
+      checkArgument(port > 0 && port < 65536, "port must be a positive integer < 65535");
+      checkArgument(seconds > 0, "seconds must be a positive integer");
+      this.port = port;
+      this.seconds = seconds;
+      return this;
+   }
+
+   public String getTaskName() {
+      return taskName;
+   }
+
+   public int getPort() {
+      return port;
+   }
+
+   public int getSeconds() {
+      return seconds;
    }
 
    /**
@@ -107,11 +185,25 @@ public class RunScriptOptions {
     * 
     * @return value
     */
-   public boolean isRunAsRoot() {
+   public boolean shouldRunAsRoot() {
       return runAsRoot;
    }
 
+   /**
+    * Whether to wait until the script has completed. By default, true.
+    * 
+    * @return value
+    */
+   public boolean shouldBlockOnComplete() {
+      return blockOnComplete;
+   }
+
    public static class Builder {
+
+      public static RunScriptOptions nameTask(String name) {
+         RunScriptOptions options = new RunScriptOptions();
+         return options.nameTask(name);
+      }
 
       public static RunScriptOptions overrideCredentialsWith(Credentials credentials) {
          RunScriptOptions options = new RunScriptOptions();
@@ -123,12 +215,22 @@ public class RunScriptOptions {
          return options.runAsRoot(value);
       }
 
+      public static RunScriptOptions blockOnComplete(boolean value) {
+         RunScriptOptions options = new RunScriptOptions();
+         return options.blockOnComplete(value);
+      }
+
+      public static RunScriptOptions blockOnPort(int port, int seconds) {
+         RunScriptOptions options = new RunScriptOptions();
+         return options.blockOnPort(port, seconds);
+      }
+
    }
 
    @Override
    public String toString() {
-      return "RunScriptOptions [overridingCredentials=" + (overridingCredentials != null)
-               + ", runAsRoot=" + runAsRoot + "]";
+      return "[overridingCredentials=" + (overridingCredentials != null) + ", port:seconds=" + port + ":" + seconds
+               + ", runAsRoot=" + runAsRoot + ", blockOnComplete=" + blockOnComplete + "]";
    }
 
 }

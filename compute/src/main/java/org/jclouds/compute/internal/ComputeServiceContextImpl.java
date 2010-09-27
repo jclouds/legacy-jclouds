@@ -41,7 +41,7 @@ public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
    private final RestContext<S, A> providerSpecificContext;
    private final Utils utils;
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings({ "unchecked" })
    @Inject
    public ComputeServiceContextImpl(ComputeService computeService, Utils utils,
             @Nullable LoadBalancerService loadBalancerService, RestContext providerSpecificContext) {

@@ -172,7 +172,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       String script = new ScriptBuilder() // lamp install script
                .addStatement(exec("runurl run.alestic.com/apt/upgrade"))//
                .addStatement(exec("runurl run.alestic.com/install/lamp"))//
-               .build(OsFamily.UNIX);
+               .render(OsFamily.UNIX);
 
       RunningInstance instance = null;
       while (instance == null) {

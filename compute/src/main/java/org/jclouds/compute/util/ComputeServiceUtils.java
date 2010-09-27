@@ -87,6 +87,20 @@ public class ComputeServiceUtils {
       return extractTargzIntoDirectory(new HttpRequest("GET", targz), directory);
    }
 
+   /**
+    * build a shell script that invokes the contents of the http request in bash.
+    * 
+    * @return a shell script that will invoke the http request
+    */
+   public static Statement extractZipIntoDirectory(HttpRequest zip, String directory) {
+      return Statements
+               .extractZipIntoDirectory(zip.getMethod(), zip.getEndpoint(), zip.getHeaders(), directory);
+   }
+
+   public static Statement extractZipIntoDirectory(URI zip, String directory) {
+      return extractZipIntoDirectory(new HttpRequest("GET", zip), directory);
+   }
+   
    public static String parseTagFromName(String from) {
       Matcher matcher = DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX.matcher(from);
       return matcher.find() ? matcher.group(1) : "NOTAG-" + from;

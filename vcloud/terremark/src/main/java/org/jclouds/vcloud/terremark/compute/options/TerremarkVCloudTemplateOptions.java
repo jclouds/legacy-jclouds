@@ -29,11 +29,10 @@ import org.jclouds.io.Payload;
 import org.jclouds.util.Utils;
 
 /**
- * Contains options supported in the {@code ComputeService#runNode} operation on
- * the "trmk-vcloudexpress" provider. <h2>
- * Usage</h2> The recommended way to instantiate a
- * TerremarkVCloudTemplateOptions object is to statically import
- * TerremarkVCloudTemplateOptions.* and invoke a static creation method followed
+ * Contains options supported in the {@code ComputeService#runNode} operation on the
+ * "trmk-vcloudexpress" provider. <h2>
+ * Usage</h2> The recommended way to instantiate a TerremarkVCloudTemplateOptions object is to
+ * statically import TerremarkVCloudTemplateOptions.* and invoke a static creation method followed
  * by an instance mutator (if needed):
  * <p/>
  * <code>
@@ -162,10 +161,9 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
 
    /**
     * 
-    * special thing is that we do assume if you are passing groups that you have
-    * everything you need already defined. for example, our option inboundPorts
-    * normally creates ingress rules accordingly but if we notice you've
-    * specified securityGroups, we do not mess with rules at all
+    * special thing is that we do assume if you are passing groups that you have everything you need
+    * already defined. for example, our option inboundPorts normally creates ingress rules
+    * accordingly but if we notice you've specified securityGroups, we do not mess with rules at all
     * 
     * @see TemplateOptions#inboundPorts
     */
@@ -178,7 +176,6 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
     * @see TemplateOptions#authorizePublicKey(String)
     */
    @Override
-   @Deprecated
    public TerremarkVCloudTemplateOptions authorizePublicKey(String publicKey) {
       return TerremarkVCloudTemplateOptions.class.cast(super.authorizePublicKey(publicKey));
    }
@@ -187,6 +184,7 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
     * @see TemplateOptions#authorizePublicKey(Payload)
     */
    @Override
+   @Deprecated
    public TerremarkVCloudTemplateOptions authorizePublicKey(Payload publicKey) {
       return TerremarkVCloudTemplateOptions.class.cast(super.authorizePublicKey(publicKey));
    }
@@ -195,7 +193,6 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
     * @see TemplateOptions#installPrivateKey(String)
     */
    @Override
-   @Deprecated
    public TerremarkVCloudTemplateOptions installPrivateKey(String privateKey) {
       return TerremarkVCloudTemplateOptions.class.cast(super.installPrivateKey(privateKey));
    }
@@ -204,6 +201,7 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
     * @see TemplateOptions#installPrivateKey(Payload)
     */
    @Override
+   @Deprecated
    public TerremarkVCloudTemplateOptions installPrivateKey(Payload privateKey) {
       return TerremarkVCloudTemplateOptions.class.cast(super.installPrivateKey(privateKey));
    }
@@ -234,8 +232,7 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
    }
 
    /**
-    * @return keyPair to use when running the instance or null, to generate a
-    *         keypair.
+    * @return keyPair to use when running the instance or null, to generate a keypair.
     */
    public String getSshKeyFingerprint() {
       return keyPair;
@@ -279,9 +276,9 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
    @Override
    public String toString() {
       return "TerremarkVCloudTemplateOptions [keyPair=" + keyPair + ", noKeyPair=" + noKeyPair + ", inboundPorts="
-            + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
-            + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port + ":" + seconds
-            + ", metadata/details: " + includeMetadata + "]";
+               + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null) + ", publicKey="
+               + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port + ":" + seconds
+               + ", metadata/details: " + includeMetadata + "]";
    }
 
 }

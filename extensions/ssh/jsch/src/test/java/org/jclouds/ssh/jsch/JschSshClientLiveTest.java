@@ -46,8 +46,8 @@ import com.google.inject.Injector;
  */
 @Test(groups = "live", testName = "ssh.JschSshClientLiveTest")
 public class JschSshClientLiveTest {
-   protected static final String sshHost = System.getProperty("test.ssh.host");
-   protected static final String sshPort = System.getProperty("test.ssh.port");
+   protected static final String sshHost = System.getProperty("test.ssh.host", "localhost");
+   protected static final String sshPort = System.getProperty("test.ssh.port", "22");
    protected static final String sshUser = System.getProperty("test.ssh.username");
    protected static final String sshPass = System.getProperty("test.ssh.password");
    protected static final String sshKeyFile = System.getProperty("test.ssh.keyfile");
@@ -55,7 +55,7 @@ public class JschSshClientLiveTest {
 
    @BeforeGroups(groups = { "live" })
    public SshClient setupClient() throws NumberFormatException, FileNotFoundException, IOException {
-      int port = (sshPort != null) ? Integer.parseInt(sshPort) : 22;
+      int port = Integer.parseInt(sshPort);
       if (sshUser == null
             || ((sshPass == null || sshPass.trim().equals("")) && (sshKeyFile == null || sshKeyFile.trim().equals("")))
             || sshUser.trim().equals("")) {
@@ -97,6 +97,11 @@ public class JschSshClientLiveTest {
             @Override
             public String getUsername() {
                return null;
+            }
+
+            @Override
+            public void put(String path, String contents) {
+               
             }
 
          };

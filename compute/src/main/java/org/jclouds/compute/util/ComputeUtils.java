@@ -40,20 +40,24 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.compute.callables.AuthorizeRSAPublicKey;
-import org.jclouds.compute.callables.InstallRSAPrivateKey;
+import org.jclouds.compute.callables.InitAndStartScriptOnNode;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.util.ComputeServiceUtils.SshCallable;
-import org.jclouds.io.Payload;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.scriptbuilder.domain.AuthorizeRSAPublicKey;
+import org.jclouds.scriptbuilder.domain.InstallRSAPrivateKey;
+import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.domain.StatementList;
+import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Predicate;
@@ -136,35 +140,43 @@ public class ComputeUtils {
          throw new IllegalStateException(String.format(
                   "node didn't achieve the state running on node %s within %d seconds, final state: %s", node.getId(),
                   timeouts.nodeRunning / 1000, node.getState()));
+      List<Statement> bootstrap = Lists.newArrayList();
+      if (options.getRunScript() != null)
+         bootstrap.add(options.getRunScript());
+      if (options.getPublicKey() != null)
+         bootstrap.add(new AuthorizeRSAPublicKey(options.getPublicKey()));
+      if (options.getPrivateKey() != null)
+         bootstrap.add(new InstallRSAPrivateKey(options.getPrivateKey()));
+      if (bootstrap.size() >= 1)
+         runScriptOnNode(node, bootstrap.size() == 1 ? bootstrap.get(0) : new StatementList(bootstrap), options);
+      return node;
+   }
 
-      List<SshCallable<?>> callables = Lists.newArrayList();
-      if (options.getRunScript() != null) {
-         callables.add(runScriptOnNode(node, "runscript", options.getRunScript()));
-      }
-      if (options.getPublicKey() != null) {
-         callables.add(authorizeKeyOnNode(node, options.getPublicKey()));
-      }
+   public void checkNodeHasPublicIps(NodeMetadata node) {
+      checkState(node.getPublicAddresses().size() > 0, "node does not have IP addresses configured: " + node);
+   }
 
-      // changing the key "MUST" come last or else the other commands may
-      // fail.
-      if (callables.size() > 0 || options.getPrivateKey() != null) {
-         runCallablesOnNode(node, callables, options.getPrivateKey() != null ? installKeyOnNode(node, options
-                  .getPrivateKey()) : null);
+   public ExecResponse runScriptOnNode(NodeMetadata node, Statement runScript, RunScriptOptions options) {
+      InitAndStartScriptOnNode callable = generateScript(node, runScript, options);
+      ExecResponse response;
+      SshClient ssh = createSshClientOncePortIsListeningOnNode(node);
+      try {
+         ssh.connect();
+         callable.setConnection(ssh, logger);
+         response = callable.call();
+      } finally {
+         if (ssh != null)
+            ssh.disconnect();
       }
-
       if (options.getPort() > 0) {
          checkNodeHasPublicIps(node);
          blockUntilPortIsListeningOnPublicIp(options.getPort(), options.getSeconds(), Iterables.get(node
                   .getPublicAddresses(), 0));
       }
-      return node;
+      return response;
    }
 
-   private void checkNodeHasPublicIps(NodeMetadata node) {
-      checkState(node.getPublicAddresses().size() > 0, "node does not have IP addresses configured: " + node);
-   }
-
-   private void blockUntilPortIsListeningOnPublicIp(int port, int seconds, String inetAddress) {
+   public void blockUntilPortIsListeningOnPublicIp(int port, int seconds, String inetAddress) {
       logger.debug(">> blocking on port %s:%d for %d seconds", inetAddress, port, seconds);
       RetryablePredicate<IPSocket> tester = new RetryablePredicate<IPSocket>(socketTester, seconds, 1, TimeUnit.SECONDS);
       IPSocket socket = new IPSocket(inetAddress, port);
@@ -175,20 +187,10 @@ public class ComputeUtils {
          logger.warn("<< port %s:%d didn't open after %d seconds", inetAddress, port, seconds);
    }
 
-   public InstallRSAPrivateKey installKeyOnNode(NodeMetadata node, Payload privateKey) {
-      return new InstallRSAPrivateKey(node, privateKey);
-   }
-
-   public AuthorizeRSAPublicKey authorizeKeyOnNode(NodeMetadata node, Payload publicKey) {
-      return new AuthorizeRSAPublicKey(node, publicKey);
-   }
-
-   public RunScriptOnNode runScriptOnNode(NodeMetadata node, String scriptName, Payload script) {
-      return new RunScriptOnNode(runScriptNotRunning, node, scriptName, script);
-   }
-
-   public RunScriptOnNode runScriptOnNodeAsDefaultUser(NodeMetadata node, String scriptName, Payload script) {
-      return new RunScriptOnNode(runScriptNotRunning, node, scriptName, script, false);
+   public InitAndStartScriptOnNode generateScript(NodeMetadata node, Statement script, RunScriptOptions options) {
+      return options.shouldBlockOnComplete() ? new RunScriptOnNode(runScriptNotRunning, node, options.getTaskName(),
+               script, options.shouldRunAsRoot()) : new InitAndStartScriptOnNode(node, options.getTaskName(), script,
+               options.shouldRunAsRoot());
    }
 
    public Map<SshCallable<?>, ?> runCallablesOnNode(NodeMetadata node, Iterable<SshCallable<?>> parallel,

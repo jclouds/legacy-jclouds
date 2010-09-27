@@ -376,7 +376,7 @@ public class SSHJava extends Java {
 
       InitBuilder testInitBuilder = new InitBuilder(id, basedir, basedir, envVariables,
                ImmutableList.<Statement> of(Statements.interpret( commandBuilder.toString())));
-      return testInitBuilder.build(osFamily);
+      return testInitBuilder.render(osFamily);
    }
 
    @Override

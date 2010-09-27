@@ -98,6 +98,8 @@ public class ComputeTask extends Task {
                invokeActionOnService(act, context.getComputeService());
             } catch (RunNodesException e) {
                throw new BuildException(e);
+            } catch (IOException e) {
+               throw new BuildException(e);
             }
          }
       } finally {
@@ -105,7 +107,7 @@ public class ComputeTask extends Task {
       }
    }
 
-   private void invokeActionOnService(Action action, ComputeService computeService) throws RunNodesException {
+   private void invokeActionOnService(Action action, ComputeService computeService) throws RunNodesException, IOException {
       switch (action) {
          case CREATE:
          case GET:
@@ -191,7 +193,7 @@ public class ComputeTask extends Task {
       }
    }
 
-   private void create(ComputeService computeService) throws RunNodesException {
+   private void create(ComputeService computeService) throws RunNodesException, IOException {
       String tag = nodeElement.getTag();
 
       log(String.format("create tag: %s, count: %d, hardware: %s, os: %s", tag, nodeElement.getCount(), nodeElement

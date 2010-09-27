@@ -132,15 +132,7 @@ public class JschSshClient implements SshClient {
    public Payload get(String path) {
       checkNotNull(path, "path");
 
-      checkConnected();
-      logger.debug("%s@%s:%d: Opening sftp Channel.", username, host, port);
-      ChannelSftp sftp = null;
-      try {
-         sftp = (ChannelSftp) session.openChannel("sftp");
-         sftp.connect();
-      } catch (JSchException e) {
-         throw new SshException(String.format("%s@%s:%d: Error connecting to sftp.", username, host, port), e);
-      }
+      ChannelSftp sftp = getSftp();
       try {
          return Payloads.newInputStreamPayload(new CloseFtpChannelOnCloseInputStream(sftp.get(path), sftp));
       } catch (SftpException e) {
@@ -148,10 +140,26 @@ public class JschSshClient implements SshClient {
       }
    }
 
+   @Override
    public void put(String path, Payload contents) {
       checkNotNull(path, "path");
       checkNotNull(contents, "contents");
+      ChannelSftp sftp = getSftp();
+      try {
+         sftp.put(contents.getInput(), path);
+      } catch (SftpException e) {
+         throw new SshException(String.format("%s@%s:%d: Error putting path: %s", username, host, port, path), e);
+      } finally {
+         Closeables.closeQuietly(contents);
+      }
+   }
 
+   @Override
+   public void put(String path, String contents) {
+      put(path, Payloads.newStringPayload(checkNotNull(contents, "contents")));
+   }
+
+   private ChannelSftp getSftp() {
       checkConnected();
       logger.debug("%s@%s:%d: Opening sftp Channel.", username, host, port);
       ChannelSftp sftp = null;
@@ -161,13 +169,7 @@ public class JschSshClient implements SshClient {
       } catch (JSchException e) {
          throw new SshException(String.format("%s@%s:%d: Error connecting to sftp.", username, host, port), e);
       }
-      try {
-         sftp.put(contents.getInput(), path);
-      } catch (SftpException e) {
-         throw new SshException(String.format("%s@%s:%d: Error putting path: %s", username, host, port, path), e);
-      } finally {
-         Closeables.closeQuietly(contents);
-      }
+      return sftp;
    }
 
    private void checkConnected() {

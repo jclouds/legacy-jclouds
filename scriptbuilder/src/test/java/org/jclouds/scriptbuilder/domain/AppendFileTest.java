@@ -19,7 +19,7 @@
 
 package org.jclouds.scriptbuilder.domain;
 
-import static org.jclouds.scriptbuilder.domain.Statements.createFile;
+import static org.jclouds.scriptbuilder.domain.Statements.appendFile;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -34,9 +34,9 @@ import com.google.common.io.Resources;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "scriptbuilder.CreateFileTest")
-public class CreateFileTest {
-   Statement statement = createFile("{root}etc{fs}chef{fs}client.rb", ImmutableList.of("log_level :info",
+@Test(groups = "unit", testName = "scriptbuilder.AppendFileTest")
+public class AppendFileTest {
+   Statement statement = appendFile("{root}etc{fs}chef{fs}client.rb", ImmutableList.of("log_level :info",
             "log_location STDOUT", String.format("chef_server_url \"%s\"", "http://localhost:4000")));
 
    public void testUNIX() throws IOException {
@@ -50,10 +50,10 @@ public class CreateFileTest {
    }
 
    public void testRedirectGuard() {
-      assertEquals(CreateFile.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo>>"), "foo>>");
-      assertEquals(CreateFile.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo0>>"), "foo0 >>");
-      assertEquals(CreateFile.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo1>>"), "foo1 >>");
-      assertEquals(CreateFile.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo2>>"), "foo2 >>");
+      assertEquals(AppendFile.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo>>"), "foo>>");
+      assertEquals(AppendFile.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo0>>"), "foo0 >>");
+      assertEquals(AppendFile.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo1>>"), "foo1 >>");
+      assertEquals(AppendFile.addSpaceToEnsureWeDontAccidentallyRedirectFd("foo2>>"), "foo2 >>");
    }
 
 }

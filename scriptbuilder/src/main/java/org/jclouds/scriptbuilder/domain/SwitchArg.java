@@ -99,7 +99,7 @@ public class SwitchArg implements Statement {
                inRunScript = inRunScript ? false : true;
 
             }
-            if (line.indexOf(CreateFile.MARKER) != -1) {
+            if (line.indexOf(AppendFile.MARKER) != -1) {
                inCreateFile = inCreateFile ? false : true;
             }
             shouldIndent = !inCreateFile && !inRunScript;

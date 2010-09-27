@@ -44,7 +44,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit", testName = "ec2.RegionAndIdToImageTest")
 public class RegionAndIdToImageTest {
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings({ "unchecked"})
    @Test
    public void testApply() {
 
@@ -76,7 +76,7 @@ public class RegionAndIdToImageTest {
 
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings({ "unchecked"})
    @Test
    public void testApplyNotFound() {
 

@@ -26,13 +26,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 
@@ -59,7 +59,8 @@ public class CreateUniqueKeyPair implements Function<RegionAndName, KeyPair> {
       return createNewKeyPairInRegion(from.getRegion(), from.getName());
    }
 
-   private KeyPair createNewKeyPairInRegion(String region, String tag) {
+   @VisibleForTesting
+   KeyPair createNewKeyPairInRegion(String region, String tag) {
       checkNotNull(region, "region");
       checkNotNull(tag, "tag");
       logger.debug(">> creating keyPair region(%s) tag(%s)", region, tag);
@@ -68,10 +69,8 @@ public class CreateUniqueKeyPair implements Function<RegionAndName, KeyPair> {
          try {
             keyPair = ec2Client.getKeyPairServices().createKeyPairInRegion(region, getNextName(region, tag));
             logger.debug("<< created keyPair(%s)", keyPair.getKeyName());
-         } catch (AWSResponseException e) {
-            if (!e.getError().getCode().equals("InvalidKeyPair.Duplicate")) {
-               throw e;
-            }
+         } catch (IllegalStateException e) {
+
          }
       }
       return keyPair;

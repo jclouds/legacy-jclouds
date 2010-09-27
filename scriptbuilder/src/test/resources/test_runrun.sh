@@ -17,7 +17,7 @@ cat >> /tmp/$USER/scripttest/yahooprod.sh <<'END_OF_SCRIPT'
 cd /tmp/$USER/scripttest
 echo hello || return 1
 
-cat > /tmp/$USER/scripttest/temp.txt <<'END_OF_FILE'
+cat >> /tmp/$USER/scripttest/temp.txt <<'END_OF_FILE'
 hello world
 END_OF_FILE
 

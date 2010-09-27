@@ -22,6 +22,7 @@ package org.jclouds.scriptbuilder.domain;
 import java.net.URI;
 import java.util.Map;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 
 /**
@@ -40,12 +41,31 @@ public class Statements {
       return new SwitchArg(arg, valueToActions);
    }
 
+   public static Statement rm(final String path) {
+      return new Statement() {
+
+         @Override
+         public Iterable<String> functionDependecies(OsFamily family) {
+            return ImmutableList.of();
+         }
+
+         @Override
+         public String render(OsFamily family) {
+            if (family == OsFamily.WINDOWS)
+               return exec(String.format("{rm} %s 2{closeFd}", path)).render(family);
+            else
+               return exec(String.format("{rm} %s", path)).render(family);
+         }
+
+      };
+   }
+
    public static Statement call(String function, String... args) {
       return new Call(function, args);
    }
 
-   public static Statement createFile(String path, Iterable<String> lines) {
-      return new CreateFile(path, lines);
+   public static Statement appendFile(String path, Iterable<String> lines) {
+      return new AppendFile(path, lines);
    }
 
    public static Statement createRunScript(String instanceName, Iterable<String> exports, String pwd,
@@ -120,10 +140,27 @@ public class Statements {
     *           uri corresponding to the request
     * @param headers
     *           request headers to send
+    * @param directory
     */
    public static Statement extractTargzIntoDirectory(String method, URI endpoint, Multimap<String, String> headers,
             String directory) {
-      return new PipeHttpResponseToTarxpzfIntoDirectory( method, endpoint, headers,directory);
+      return new PipeHttpResponseToTarxpzfIntoDirectory(method, endpoint, headers, directory);
+   }
+
+   /**
+    * unzip the data received from the request parameters.
+    * 
+    * @param method
+    *           http method: ex GET
+    * @param endpoint
+    *           uri corresponding to the request
+    * @param headers
+    *           request headers to send
+    * @param directory
+    */
+   public static Statement extractZipIntoDirectory(String method, URI endpoint, Multimap<String, String> headers,
+            String directory) {
+      return new UnzipHttpResponseIntoDirectory(method, endpoint, headers, directory);
    }
 
    /**

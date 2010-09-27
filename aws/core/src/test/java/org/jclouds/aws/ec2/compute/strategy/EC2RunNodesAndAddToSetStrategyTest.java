@@ -90,7 +90,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       return null;
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings({ "unchecked"})
    private void assertRegionAndZoneForLocation(Location location, String region, String zone) {
       String imageId = "ami1";
       String instanceCreatedId = "instance1";
