@@ -55,6 +55,8 @@ public class FilesystemStorageStrategyImplTest {
     private static final String LOGGING_CONFIG_KEY = "java.util.logging.config.file";
     private static final String LOGGING_CONFIG_VALUE = "src/main/resources/logging.properties";
 
+    private static final String FS = File.separator;
+
     static  {
         System.setProperty(LOGGING_CONFIG_KEY,
                            LOGGING_CONFIG_VALUE);
@@ -89,16 +91,16 @@ public class FilesystemStorageStrategyImplTest {
         TestUtils.directoryExists(TARGET_CONTAINER_NAME, true);
 
         storageStrategy.createDirectory(CONTAINER_NAME, "subdir");
-        TestUtils.directoryExists(TARGET_CONTAINER_NAME + File.separator + "subdir", true);
+        TestUtils.directoryExists(TARGET_CONTAINER_NAME + FS + "subdir", true);
 
-        storageStrategy.createDirectory(CONTAINER_NAME, "subdir1" + File.separator);
-        TestUtils.directoryExists(TARGET_CONTAINER_NAME + File.separator + "subdir1", true);
+        storageStrategy.createDirectory(CONTAINER_NAME, "subdir1" + FS);
+        TestUtils.directoryExists(TARGET_CONTAINER_NAME + FS + "subdir1", true);
 
-        storageStrategy.createDirectory(CONTAINER_NAME, File.separator + "subdir2");
-        TestUtils.directoryExists(TARGET_CONTAINER_NAME + File.separator + "subdir2", true);
+        storageStrategy.createDirectory(CONTAINER_NAME, FS + "subdir2");
+        TestUtils.directoryExists(TARGET_CONTAINER_NAME + FS + "subdir2", true);
 
-        storageStrategy.createDirectory(CONTAINER_NAME, "subdir3" + File.separator + "subdir4");
-        TestUtils.directoryExists(TARGET_CONTAINER_NAME + File.separator + "subdir2", true);
+        storageStrategy.createDirectory(CONTAINER_NAME, "subdir3" + FS + "subdir4");
+        TestUtils.directoryExists(TARGET_CONTAINER_NAME + FS + "subdir2", true);
     }
 
     public void testCreateDirectory_DirectoryAlreadyExists() {
@@ -108,7 +110,7 @@ public class FilesystemStorageStrategyImplTest {
 
     public void testCreateDirectory_WrongDirectoryName() {
         try {
-            storageStrategy.createDirectory(CONTAINER_NAME, "$%&!'`\\");
+            storageStrategy.createDirectory(CONTAINER_NAME, "$%&!'`\\/");
             fail("No exception throwed");
         } catch(Exception e) {
         }
@@ -140,30 +142,30 @@ public class FilesystemStorageStrategyImplTest {
         TestUtils.createBlobsInContainer(
                 CONTAINER_NAME,
                 new String[]{
-                    TestUtils.createRandomBlobKey("lev1/lev2/lev3/", ".txt"),
-                    TestUtils.createRandomBlobKey("lev1/lev2/lev4/", ".jpg")
+                    TestUtils.createRandomBlobKey("lev1" + FS + "lev2" + FS + "lev3" + FS, ".txt"),
+                    TestUtils.createRandomBlobKey("lev1" + FS + "lev2" + FS + "lev4" + FS, ".jpg")
                 }
         );
 
         //delete directory in different ways
-        storageStrategy.deleteDirectory(CONTAINER_NAME, "lev1/lev2/lev4");
-        TestUtils.directoryExists(TARGET_CONTAINER_NAME + File.separator + "lev1/lev2/lev4", false);
-        TestUtils.directoryExists(TARGET_CONTAINER_NAME + File.separator + "lev1/lev2", true);
+        storageStrategy.deleteDirectory(CONTAINER_NAME, "lev1" + FS + "lev2" + FS + "lev4");
+        TestUtils.directoryExists(TARGET_CONTAINER_NAME + FS + "lev1" + FS + "lev2" + FS + "lev4", false);
+        TestUtils.directoryExists(TARGET_CONTAINER_NAME + FS + "lev1" + FS + "lev2", true);
 
-        storageStrategy.deleteDirectory(CONTAINER_NAME, "lev1/lev2/lev3/");
-        TestUtils.directoryExists(TARGET_CONTAINER_NAME + File.separator + "lev1/lev2/lev3", false);
-        TestUtils.directoryExists(TARGET_CONTAINER_NAME + File.separator + "lev1/lev2", true);
+        storageStrategy.deleteDirectory(CONTAINER_NAME, "lev1" + FS + "lev2" + FS + "lev3" + FS);
+        TestUtils.directoryExists(TARGET_CONTAINER_NAME + FS + "lev1" + FS + "lev2" + FS + "lev3", false);
+        TestUtils.directoryExists(TARGET_CONTAINER_NAME + FS + "lev1" + FS + "lev2", true);
 
-        storageStrategy.deleteDirectory(CONTAINER_NAME, "/lev1");
-        TestUtils.directoryExists(TARGET_CONTAINER_NAME + File.separator + "lev1", false);
+        storageStrategy.deleteDirectory(CONTAINER_NAME, FS + "lev1");
+        TestUtils.directoryExists(TARGET_CONTAINER_NAME + FS + "lev1", false);
         TestUtils.directoryExists(TARGET_CONTAINER_NAME, true);
 
         //delete the directory and all the files inside
         TestUtils.createBlobsInContainer(
                 CONTAINER_NAME,
                 new String[]{
-                    TestUtils.createRandomBlobKey("lev1/lev2/lev3/", ".txt"),
-                    TestUtils.createRandomBlobKey("lev1/lev2/lev4/", ".jpg")
+                    TestUtils.createRandomBlobKey("lev1" + FS + "lev2" + FS + "lev3" + FS, ".txt"),
+                    TestUtils.createRandomBlobKey("lev1" + FS + "lev2" + FS + "lev4" + FS, ".jpg")
                 }
         );
         storageStrategy.deleteDirectory(CONTAINER_NAME, null);
@@ -180,7 +182,7 @@ public class FilesystemStorageStrategyImplTest {
 
     
     public void testDirectoryExists() throws IOException {
-        final String SUBDIRECTORY_NAME = "ad" + File.separator + "sda" + File.separator + "asd";
+        final String SUBDIRECTORY_NAME = "ad" + FS + "sda" + FS + "asd";
         boolean result;
 
         result = storageStrategy.directoryExists(CONTAINER_NAME, null);
@@ -191,7 +193,7 @@ public class FilesystemStorageStrategyImplTest {
         //check if exists
         result = storageStrategy.directoryExists(CONTAINER_NAME, null);
         assertTrue(result, "Directory doesn't exist");
-        result = storageStrategy.directoryExists(CONTAINER_NAME + File.separator, null);
+        result = storageStrategy.directoryExists(CONTAINER_NAME + FS, null);
         assertTrue(result, "Directory doesn't exist");
 
 
@@ -199,15 +201,15 @@ public class FilesystemStorageStrategyImplTest {
         assertFalse(result, "Directory exist");
 
         //create subdirs inside the container
-        TestUtils.createContainerAsDirectory(CONTAINER_NAME + File.separator + SUBDIRECTORY_NAME);
+        TestUtils.createContainerAsDirectory(CONTAINER_NAME + FS + SUBDIRECTORY_NAME);
         //check if exists
         result = storageStrategy.directoryExists(CONTAINER_NAME, SUBDIRECTORY_NAME);
         assertTrue(result, "Directory doesn't exist");
-        result = storageStrategy.directoryExists(CONTAINER_NAME, File.separator + SUBDIRECTORY_NAME);
+        result = storageStrategy.directoryExists(CONTAINER_NAME, FS + SUBDIRECTORY_NAME);
         assertTrue(result, "Directory doesn't exist");
-        result = storageStrategy.directoryExists(CONTAINER_NAME, SUBDIRECTORY_NAME + File.separator);
+        result = storageStrategy.directoryExists(CONTAINER_NAME, SUBDIRECTORY_NAME + FS);
         assertTrue(result, "Directory doesn't exist");
-        result = storageStrategy.directoryExists(CONTAINER_NAME + File.separator, File.separator + SUBDIRECTORY_NAME);
+        result = storageStrategy.directoryExists(CONTAINER_NAME + FS, FS + SUBDIRECTORY_NAME);
         assertTrue(result, "Directory doesn't exist");
 
     }
@@ -219,11 +221,11 @@ public class FilesystemStorageStrategyImplTest {
                 CONTAINER_NAME,
                 new String[]{
                     TestUtils.createRandomBlobKey("clean_container-", ".jpg"),
-                    TestUtils.createRandomBlobKey("bf/sd/as/clean_container-", ".jpg")}
+                    TestUtils.createRandomBlobKey("bf" + FS + "sd" + FS + "as" + FS + "clean_container-", ".jpg")}
                 );
         //test if file exits
         for(String blob:blobs) {
-            TestUtils.fileExists(TARGET_CONTAINER_NAME + File.separator + blob, true);
+            TestUtils.fileExists(TARGET_CONTAINER_NAME + FS + blob, true);
         }
 
         //clear the container
@@ -232,7 +234,7 @@ public class FilesystemStorageStrategyImplTest {
         TestUtils.directoryExists(TARGET_CONTAINER_NAME, true);
         //test if file was cleared
         for(String blob:blobs) {
-            TestUtils.fileExists(TARGET_CONTAINER_NAME + File.separator + blob, false);
+            TestUtils.fileExists(TARGET_CONTAINER_NAME + FS + blob, false);
         }
     }
 
@@ -253,11 +255,11 @@ public class FilesystemStorageStrategyImplTest {
                 CONTAINER_NAME,
                 new String[]{
                     TestUtils.createRandomBlobKey("clean_container-", ".jpg"),
-                    TestUtils.createRandomBlobKey("bf/sd/as/clean_container-", ".jpg")}
+                    TestUtils.createRandomBlobKey("bf" + FS + "sd" + FS + "as" + FS + "clean_container-", ".jpg")}
                 );
         //test if file exits
         for(String blob:blobs) {
-            TestUtils.fileExists(TARGET_CONTAINER_NAME + File.separator + blob, true);
+            TestUtils.fileExists(TARGET_CONTAINER_NAME + FS + blob, true);
         }
 
         //clear the container
@@ -266,7 +268,7 @@ public class FilesystemStorageStrategyImplTest {
         TestUtils.directoryExists(TARGET_CONTAINER_NAME, true);
         //test if file was cleared
         for(String blob:blobs) {
-            TestUtils.fileExists(TARGET_CONTAINER_NAME + File.separator + blob, false);
+            TestUtils.fileExists(TARGET_CONTAINER_NAME + FS + blob, false);
         }
 
         //delete the container
@@ -279,7 +281,7 @@ public class FilesystemStorageStrategyImplTest {
 
     public void testDeleteContainer() throws IOException {
         final String BLOB_KEY1 = "blobName.jpg";
-        final String BLOB_KEY2 = "aa/bb/cc/dd/ee/ff/23/blobName.jpg";
+        final String BLOB_KEY2 = "aa" + FS + "bb" + FS + "cc" + FS + "dd" + FS + "ee" + FS + "ff" + FS + "23" + FS + "blobName.jpg";
         boolean result;
 
         result = storageStrategy.createContainer(CONTAINER_NAME);
@@ -366,7 +368,7 @@ public class FilesystemStorageStrategyImplTest {
         newBlob = storageStrategy.newBlob(blobKey);
         assertEquals(newBlob.getMetadata().getName(), blobKey, "Created blob name is different");
 
-        blobKey = TestUtils.createRandomBlobKey("asd/asd/asdasd/afadsf-", "");
+        blobKey = TestUtils.createRandomBlobKey("asd" + FS + "asd" + FS + "asdasd" + FS + "afadsf-", "");
         newBlob = storageStrategy.newBlob(blobKey);
         assertEquals(newBlob.getMetadata().getName(), blobKey, "Created blob name is different");
     }
@@ -383,7 +385,7 @@ public class FilesystemStorageStrategyImplTest {
         //write files
         storageStrategy.writePayloadOnFile(CONTAINER_NAME, blobKey, filePayload);
         //verify that the files is equal
-        String blobFullPath = TARGET_CONTAINER_NAME + File.separator + blobKey;
+        String blobFullPath = TARGET_CONTAINER_NAME + FS + blobKey;
         InputStream expectedInput = new FileInputStream(sourceFile);
         InputStream currentInput = new FileInputStream(blobFullPath);
         assertTrue(TestUtils.isSame(expectedInput, currentInput), "Files aren't equals");
@@ -402,14 +404,14 @@ public class FilesystemStorageStrategyImplTest {
     public void testGetFileForBlobKey() {
         String blobKey;
         File fileForPayload;
-        String fullPath = (new File(TARGET_CONTAINER_NAME).getAbsolutePath()) + File.separator;
+        String fullPath = (new File(TARGET_CONTAINER_NAME).getAbsolutePath()) + FS;
 
         blobKey = TestUtils.createRandomBlobKey("getFileForBlobKey-", ".img");
         fileForPayload = storageStrategy.getFileForBlobKey(CONTAINER_NAME, blobKey);
         assertNotNull(fileForPayload, "Result File object is null");
         assertEquals(fileForPayload.getAbsolutePath(), fullPath + blobKey, "Wrong file path");
 
-        blobKey = TestUtils.createRandomBlobKey("asd/vmad/andsnf/getFileForBlobKey-", ".img");
+        blobKey = TestUtils.createRandomBlobKey("asd" + FS + "vmad" + FS + "andsnf" + FS + "getFileForBlobKey-", ".img");
         fileForPayload = storageStrategy.getFileForBlobKey(CONTAINER_NAME, blobKey);
         assertEquals(fileForPayload.getAbsolutePath(), fullPath + blobKey, "Wrong file path");
     }
@@ -419,7 +421,7 @@ public class FilesystemStorageStrategyImplTest {
         String[] sourceBlobKeys = new String[]{
             TestUtils.createRandomBlobKey("blobExists-", ".jpg"),
             TestUtils.createRandomBlobKey("blobExists-", ".jpg"),
-            TestUtils.createRandomBlobKey("afasd" + File.separator + "asdma" + File.separator + "blobExists-", ".jpg")
+            TestUtils.createRandomBlobKey("afasd" + FS + "asdma" + FS + "blobExists-", ".jpg")
         };
 
         for(String blobKey:sourceBlobKeys) {
@@ -439,8 +441,8 @@ public class FilesystemStorageStrategyImplTest {
                 new String[]{
                     TestUtils.createRandomBlobKey("removeBlob-", ".jpg"),
                     TestUtils.createRandomBlobKey("removeBlob-", ".jpg"),
-                    TestUtils.createRandomBlobKey("346" + File.separator + "g3sx2" + File.separator + "removeBlob-", ".jpg"),
-                    TestUtils.createRandomBlobKey("346" + File.separator + "g3sx2" + File.separator + "removeBlob-", ".jpg")
+                    TestUtils.createRandomBlobKey("346" + FS + "g3sx2" + FS + "removeBlob-", ".jpg"),
+                    TestUtils.createRandomBlobKey("346" + FS + "g3sx2" + FS + "removeBlob-", ".jpg")
                 });
 
         Set<String> remainingBlobKeys = new HashSet<String>();
@@ -454,7 +456,7 @@ public class FilesystemStorageStrategyImplTest {
             remainingBlobKeys.remove(blobKeyToRemove);
             //checks if all other blobs still exists
             for(String remainingBlobKey:remainingBlobKeys) {
-                TestUtils.fileExists(TARGET_CONTAINER_NAME + File.separator + remainingBlobKey, true);
+                TestUtils.fileExists(TARGET_CONTAINER_NAME + FS + remainingBlobKey, true);
             }
         }
     }
@@ -484,8 +486,8 @@ public class FilesystemStorageStrategyImplTest {
                 new String[]{
                     TestUtils.createRandomBlobKey("GetBlobKeys-", ".jpg"),
                     TestUtils.createRandomBlobKey("GetBlobKeys-", ".jpg"),
-                    TestUtils.createRandomBlobKey("563" + File.separator + "g3sx2" + File.separator + "removeBlob-", ".jpg"),
-                    TestUtils.createRandomBlobKey("563" + File.separator + "g3sx2" + File.separator + "removeBlob-", ".jpg")
+                    TestUtils.createRandomBlobKey("563" + FS + "g3sx2" + FS + "removeBlob-", ".jpg"),
+                    TestUtils.createRandomBlobKey("563" + FS + "g3sx2" + FS + "removeBlob-", ".jpg")
                 });
         storageStrategy.getBlobKeysInsideContainer(CONTAINER_NAME);
 
@@ -513,14 +515,14 @@ public class FilesystemStorageStrategyImplTest {
 
     public void testInvalidBlobKey() {
         try {
-            storageStrategy.newBlob("/test.jpg");
+            storageStrategy.newBlob(FS + "test.jpg");
             fail("Wrong blob key not recognized");
         } catch (IllegalArgumentException e) {}
     }
 
     public void testInvalidContainerName() {
         try {
-            storageStrategy.createContainer("file/system");
+            storageStrategy.createContainer("file" + FS + "system");
             fail("Wrong container name not recognized");
         } catch (IllegalArgumentException e) {}
     }
