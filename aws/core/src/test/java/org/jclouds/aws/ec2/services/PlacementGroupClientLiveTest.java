@@ -20,7 +20,13 @@
 package org.jclouds.aws.ec2.services;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.io.Payloads.newStringPayload;
+import static com.google.common.collect.Iterables.any;
+import static com.google.common.collect.Iterables.getOnlyElement;
+import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Sets.newTreeSet;
+import static org.jclouds.compute.ComputeTestUtils.buildScript;
+import static org.jclouds.compute.ComputeTestUtils.setupKeyPair;
+import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -41,7 +47,6 @@ import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.PlacementGroup.State;
 import org.jclouds.aws.ec2.predicates.PlacementGroupAvailable;
 import org.jclouds.aws.ec2.predicates.PlacementGroupDeleted;
-import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
@@ -59,9 +64,6 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.inject.Module;
 
 /**
@@ -87,10 +89,10 @@ public class PlacementGroupClientLiveTest {
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
+            + ".credential");
       endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
       apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
-               + ".apiversion");
+            + ".apiversion");
    }
 
    protected Properties setupProperties() {
@@ -108,35 +110,35 @@ public class PlacementGroupClientLiveTest {
    public void setupClient() throws FileNotFoundException, IOException {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()), overrides);
-      keyPair = BaseComputeServiceLiveTest.setupKeyPair();
+      context = new ComputeServiceContextFactory().createContext(provider,
+            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+      keyPair = setupKeyPair();
 
       client = EC2Client.class.cast(context.getProviderSpecificContext().getApi());
 
       availableTester = new RetryablePredicate<PlacementGroup>(new PlacementGroupAvailable(client), 60, 1,
-               TimeUnit.SECONDS);
+            TimeUnit.SECONDS);
 
       deletedTester = new RetryablePredicate<PlacementGroup>(new PlacementGroupDeleted(client), 60, 1, TimeUnit.SECONDS);
    }
 
    @Test
    void testDescribe() {
-      for (String region : Lists.newArrayList(Region.US_EAST_1)) {
-         SortedSet<PlacementGroup> allResults = Sets.newTreeSet(client.getPlacementGroupServices()
-                  .describePlacementGroupsInRegion(region));
+      for (String region : newArrayList(Region.US_EAST_1)) {
+         SortedSet<PlacementGroup> allResults = newTreeSet(client.getPlacementGroupServices()
+               .describePlacementGroupsInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
             PlacementGroup group = allResults.last();
-            SortedSet<PlacementGroup> result = Sets.newTreeSet(client.getPlacementGroupServices()
-                     .describePlacementGroupsInRegion(region, group.getName()));
+            SortedSet<PlacementGroup> result = newTreeSet(client.getPlacementGroupServices()
+                  .describePlacementGroupsInRegion(region, group.getName()));
             assertNotNull(result);
             PlacementGroup compare = result.last();
             assertEquals(compare, group);
          }
       }
 
-      for (String region : Lists.newArrayList(Region.EU_WEST_1, Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
+      for (String region : newArrayList(Region.EU_WEST_1, Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
          try {
             client.getPlacementGroupServices().describePlacementGroupsInRegion(region);
             assert false : "should be unsupported";
@@ -158,7 +160,7 @@ public class PlacementGroupClientLiveTest {
    private void verifyPlacementGroup(String groupName) {
       assert availableTester.apply(new PlacementGroup(Region.US_EAST_1, groupName, "cluster", State.PENDING)) : group;
       Set<PlacementGroup> oneResult = client.getPlacementGroupServices().describePlacementGroupsInRegion(null,
-               groupName);
+            groupName);
       assertNotNull(oneResult);
       assertEquals(oneResult.size(), 1);
       group = oneResult.iterator().next();
@@ -169,7 +171,7 @@ public class PlacementGroupClientLiveTest {
 
    public void testStartCCInstance() throws Exception {
       Set<? extends Hardware> sizes = context.getComputeService().listHardwareProfiles();
-      assert Iterables.any(sizes, new Predicate<Hardware>() {
+      assert any(sizes, new Predicate<Hardware>() {
 
          @Override
          public boolean apply(Hardware arg0) {
@@ -178,7 +180,7 @@ public class PlacementGroupClientLiveTest {
 
       }) : sizes;
       Set<? extends Image> images = context.getComputeService().listImages();
-      assert Iterables.any(images, new Predicate<Image>() {
+      assert any(images, new Predicate<Image>() {
 
          @Override
          public boolean apply(Image arg0) {
@@ -193,19 +195,17 @@ public class PlacementGroupClientLiveTest {
       assertEquals(template.getImage().getId(), "us-east-1/ami-7ea24a17");
 
       template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(keyPair.get("public"))
-               .runScript(
-                        newStringPayload(BaseComputeServiceLiveTest.buildScript(template.getImage()
-                                 .getOperatingSystem())));
+            .runScript(exec(buildScript(template.getImage().getOperatingSystem())));
 
       String tag = PREFIX + "cccluster";
       context.getComputeService().destroyNodesMatching(NodePredicates.withTag(tag));
 
       try {
          Set<? extends NodeMetadata> nodes = context.getComputeService().runNodesWithTag(tag, 1, template);
-         NodeMetadata node = Iterables.getOnlyElement(nodes);
+         NodeMetadata node = getOnlyElement(nodes);
 
-         Iterables.getOnlyElement(Iterables.getOnlyElement(client.getInstanceServices().describeInstancesInRegion(null,
-                  node.getProviderId())));
+         getOnlyElement(getOnlyElement(client.getInstanceServices().describeInstancesInRegion(null,
+               node.getProviderId())));
 
       } catch (RunNodesException e) {
          System.err.println(e.getNodeErrors().keySet());

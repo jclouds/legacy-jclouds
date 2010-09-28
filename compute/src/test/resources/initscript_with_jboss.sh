@@ -66,14 +66,15 @@ END_OF_FILE
    echo nameserver 208.67.222.222 >> /etc/resolv.conf
    cp /etc/apt/sources.list /etc/apt/sources.list.old
    sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list
-   apt-get update -y -qq
-   apt-get install -f -y -qq --force-yes curl
-   apt-get install -f -y -qq --force-yes unzip
-   apt-get install -f -y -qq --force-yes openjdk-6-jdk
+   which curl || apt-get update -y -qq && apt-get install -f -y -qq --force-yes curl
+   (which java && java -fullversion 2>&1|egrep -q 1.6 ) || apt-get install -f -y -qq --force-yes openjdk-6-jre
+   rm -rf /var/cache/apt /usr/lib/vmware-tools
    
-   (mkdir -p /usr/local &&cd /usr/local &&curl -X GET -s --retry 20  http://superb-sea2.dl.sourceforge.net/project/jboss/JBoss/JBoss-5.0.0.CR2/jboss-5.0.0.CR2-jdk6.zip >extract.zip && unzip -o -qq extract.zip&& rm extract.zip)
+   rm -rf /var/cache/apt /usr/lib/vmware-tools
+   curl -X GET -s --retry 20  http://commondatastorage.googleapis.com/jclouds-repo/jboss-as-distribution-6.0.0.20100911-M5.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
    mkdir -p /usr/local/jboss
-   mv /usr/local/jboss-5.0.0.CR2/* /usr/local/jboss
+   mv /usr/local/jboss-*/* /usr/local/jboss
+   chmod -R oug+r+w /usr/local/jboss
    mkdir -p $INSTANCE_HOME
    
    # create runscript header

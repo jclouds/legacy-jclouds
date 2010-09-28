@@ -79,10 +79,9 @@ cd $INSTANCE_HOME
 echo nameserver 208.67.222.222 >> /etc/resolv.conf
 cp /etc/apt/sources.list /etc/apt/sources.list.old
 sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list
-apt-get update -y -qq
-apt-get install -f -y -qq --force-yes curl
-apt-get install -f -y -qq --force-yes unzip
-apt-get install -f -y -qq --force-yes openjdk-6-jdk
+which curl || apt-get update -y -qq && apt-get install -f -y -qq --force-yes curl
+(which java && java -fullversion 2>&1|egrep -q 1.6 ) || apt-get install -f -y -qq --force-yes openjdk-6-jre
+rm -rf /var/cache/apt /usr/lib/vmware-tools
 
 
 END_OF_SCRIPT

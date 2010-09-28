@@ -32,7 +32,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -105,7 +104,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    }
 
    @Override
-   protected void checkHttpGet(TreeSet<NodeMetadata> nodes) {
+   protected void checkHttpGet(NodeMetadata node) {
 
    }
 
@@ -228,7 +227,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             client.connect();
 
             expect(client.exec("echo hello")).andReturn(new ExecResponse("hello", "", 0));
-            expect(client.exec("java -version")).andReturn(new ExecResponse("", "OpenJDK", 0));
+            expect(client.exec("java -version")).andReturn(new ExecResponse("", "1.6", 0));
 
             client.disconnect();
          }

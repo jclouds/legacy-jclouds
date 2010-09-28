@@ -54,7 +54,6 @@ public class InitBuilder extends ScriptBuilder {
       this(instanceName, instanceHome, logDir, variables, ImmutableSet.<Statement>of(), statements);
    }
 
-   @SuppressWarnings("unchecked")
    public InitBuilder(String instanceName, String instanceHome, String logDir, Map<String, String> variables,
             Iterable<Statement> initStatements, Iterable<Statement> statements) {
       this.instanceName = checkNotNull(instanceName, "instanceName");
@@ -67,7 +66,7 @@ public class InitBuilder extends ScriptBuilder {
                .addStatement(
                         switchArg(
                                  1,
-                                 new ImmutableMap.Builder()
+                                 new ImmutableMap.Builder<String,Statement>()
                                           .put(
                                                    "init",
                                                    newStatementList(call("default"), call(instanceName),
