@@ -43,7 +43,7 @@ public class RunScriptData {
 
    private static String jbossHome = "/usr/local/jboss";
 
-   public static String createScriptInstallBase(OperatingSystem os) {
+   public static String installJavaAndCurl(OperatingSystem os) {
       if (os == null || OperatingSystemPredicates.supportsApt().apply(os))
          return APT_RUN_SCRIPT;
       else if (OperatingSystemPredicates.supportsYum().apply(os))
@@ -63,7 +63,7 @@ public class RunScriptData {
             envVariables,
             ImmutableList.<Statement> of(
                   new AuthorizeRSAPublicKey(publicKey),
-                  exec(createScriptInstallBase(os)),
+                  exec(installJavaAndCurl(os)),
                   exec("rm -rf /var/cache/apt /usr/lib/vmware-tools"),// jeos hasn't enough room!
                   extractTargzIntoDirectory(
                         URI.create("http://commondatastorage.googleapis.com/jclouds-repo/jboss-as-distribution-6.0.0.20100911-M5.tar.gz"),
@@ -92,7 +92,6 @@ public class RunScriptData {
          .append(
                "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
          .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
-         // .append("which unzip ||yum --nogpgcheck -y install unzip\n")//
          .append("which curl ||yum --nogpgcheck -y install curl\n")//
          .append(
                "(which java && java -fullversion 2>&1|egrep -q 1.6 ) || yum --nogpgcheck -y install java-1.6.0-openjdk&&")//
@@ -101,7 +100,6 @@ public class RunScriptData {
 
    public static final String ZYPPER_RUN_SCRIPT = new StringBuilder()//
          .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
-         // .append("which unzip ||sudo zypper install unzip\n")//
          .append("which curl || zypper install curl\n")//
          .append("(which java && java -fullversion 2>&1|egrep -q 1.6 ) || zypper install java-1.6.0-openjdk\n")//
          .toString();
