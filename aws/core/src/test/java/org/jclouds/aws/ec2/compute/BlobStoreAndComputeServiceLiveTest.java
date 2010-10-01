@@ -21,6 +21,7 @@ package org.jclouds.aws.ec2.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.get;
+import static org.jclouds.compute.ComputeTestUtils.setupKeyPair;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,7 +32,6 @@ import org.jclouds.Constants;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -62,9 +62,9 @@ public class BlobStoreAndComputeServiceLiveTest {
 
    protected Properties setupCredentials(String provider) {
       String identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider
-               + ".identity");
+            + ".identity");
       String credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
+            + ".credential");
       String endpoint = System.getProperty("test." + provider + ".endpoint");
       String apiversion = System.getProperty("test." + provider + ".apiversion");
       Properties overrides = new Properties();
@@ -80,16 +80,17 @@ public class BlobStoreAndComputeServiceLiveTest {
    }
 
    protected void setupKeyPairForTest() throws FileNotFoundException, IOException {
-      keyPair = BaseComputeServiceLiveTest.setupKeyPair();
+      keyPair = setupKeyPair();
    }
 
    @BeforeGroups(groups = { "live" })
    public void setupClient() throws FileNotFoundException, IOException {
       setupKeyPairForTest();
-      computeContext = new ComputeServiceContextFactory().createContext(computeServiceProvider, ImmutableSet.of(
-               new Log4JLoggingModule(), new JschSshClientModule()), setupCredentials(computeServiceProvider));
-      blobContext = new BlobStoreContextFactory().createContext(blobStoreProvider, ImmutableSet
-               .of(new Log4JLoggingModule()), setupCredentials(blobStoreProvider));
+      computeContext = new ComputeServiceContextFactory().createContext(computeServiceProvider,
+            ImmutableSet.of(new Log4JLoggingModule(), new JschSshClientModule()),
+            setupCredentials(computeServiceProvider));
+      blobContext = new BlobStoreContextFactory().createContext(blobStoreProvider,
+            ImmutableSet.of(new Log4JLoggingModule()), setupCredentials(blobStoreProvider));
       blobContext.getAsyncBlobStore().createContainerInLocation(null, tag);
       computeContext.getComputeService().destroyNodesMatching(NodePredicates.withTag(tag));
    }
@@ -98,8 +99,8 @@ public class BlobStoreAndComputeServiceLiveTest {
       for (NodeMetadata node : nodes) {
          IPSocket socket = new IPSocket(get(node.getPublicAddresses(), 0), 22);
 
-         SshClient ssh = computeContext.utils().sshFactory().create(socket, node.getCredentials().identity,
-                  node.getCredentials().credential.getBytes());
+         SshClient ssh = computeContext.utils().sshFactory()
+               .create(socket, node.getCredentials().identity, node.getCredentials().credential.getBytes());
          try {
             ssh.connect();
             ExecResponse exec = ssh.exec(cmd);

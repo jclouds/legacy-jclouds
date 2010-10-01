@@ -19,7 +19,7 @@
 
 package org.jclouds.aws;
 
-import static org.jclouds.compute.BaseComputeServiceLiveTest.buildScript;
+import static org.jclouds.compute.ComputeTestUtils.buildScript;
 import static org.jclouds.compute.options.TemplateOptions.Builder.runScript;
 import static org.jclouds.compute.util.ComputeServiceUtils.execHttpResponse;
 import static org.jclouds.compute.util.ComputeServiceUtils.extractTargzIntoDirectory;
@@ -74,7 +74,7 @@ public class ComputeAndBlobStoreTogetherHappilyLiveTest extends BlobStoreAndComp
    public void testWeCanIndirectBootstrapInstructionsToAnArbitraryAndPrivateBlobStore() throws RunNodesException {
 
       OperatingSystem defaultOperatingSystem = computeContext.getComputeService().templateBuilder().build().getImage()
-               .getOperatingSystem();
+            .getOperatingSystem();
 
       // using jclouds ability to detect operating systems before we launch them, we can avoid
       // the bad practice of assuming everything is ubuntu.
@@ -89,22 +89,22 @@ public class ComputeAndBlobStoreTogetherHappilyLiveTest extends BlobStoreAndComp
 
       // if we want to, we can mix and match batched and ad-hoc commands, such as extracting maven
       String mavenVersion = "3.0-beta-3";
-      Statement extractMavenIntoUsrLocal = extractTargzIntoDirectory(URI
-               .create("http://mirrors.ibiblio.org/pub/mirrors/apache//maven/binaries/apache-maven-" + mavenVersion
-                        + "-bin.tar.gz"), "/usr/local");
+      Statement extractMavenIntoUsrLocal = extractTargzIntoDirectory(
+            URI.create("http://mirrors.ibiblio.org/pub/mirrors/apache//maven/binaries/apache-maven-" + mavenVersion
+                  + "-bin.tar.gz"), "/usr/local");
 
       // have both of these commands occur on boot
       Statement bootstrapInstructions = newStatementList(installOpenJDK, extractMavenIntoUsrLocal);
 
       // now that we have the correct instructions, kick-off the provisioner
       Iterable<? extends NodeMetadata> nodes = computeContext.getComputeService().runNodesWithTag(tag, 2,
-               runScript(bootstrapInstructions));
+            runScript(bootstrapInstructions));
 
       // ensure the bootstrap operated by checking for the components we installed at boot time.
       // Note this test will ensure both nodes are in sync.
       assertSshOutputOfCommandContains(nodes, "java -version", "OpenJDK");
       assertSshOutputOfCommandContains(nodes, "/usr/local/apache-maven-" + mavenVersion + "/bin/mvn -version",
-               "Apache Maven " + mavenVersion + "");
+            "Apache Maven " + mavenVersion + "");
 
    }
 }
