@@ -22,7 +22,7 @@
 
 <project xmlns:artifact="urn:maven-artifact-ant" name="cargooverssh" default="cargooverssh" basedir=".">
   <property file="build.properties" />
-  <property name="jclouds.version" value="1.0-SNAPSHOT" />
+  <property name="jclouds.version" value="1.0-beta-7" />
   <property name="privatekeyfile" value="${user.home}/.ssh/id_rsa" />
   <property name="publickeyfile" value="${user.home}/.ssh/id_rsa.pub" />
   <property name="listenport" value="8080" />
@@ -85,7 +85,7 @@
 
   <target name="create" description="create the nodes ${tag}" >
      <compute actions="destroy,create" provider="${url}">
-        <nodes tag="${tag}" os="UBUNTU" size="SMALLEST"
+        <nodes tag="${tag}" os="UBUNTU" hardware="SMALLEST"
               runscript="runscript.sh" openports="22,${listenport}"
               privatekeyfile="${privatekeyfile}" publickeyfile="${publickeyfile}"
               hostproperty="host" usernameproperty="username" />
