@@ -85,7 +85,7 @@
 
   <target name="create" description="create the nodes ${tag}" >
      <compute actions="destroy,create" provider="${url}">
-        <nodes tag="${tag}" os="UBUNTU" size="SMALLEST"
+        <nodes tag="${tag}" os="UBUNTU" hardware="SMALLEST"
               runscript="runscript.sh" openports="22,${listenport}"
               privatekeyfile="${privatekeyfile}" publickeyfile="${publickeyfile}"
               hostproperty="host" usernameproperty="username" />
