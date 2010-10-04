@@ -106,6 +106,11 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
       if (placementGroupName != null)
          instanceOptions.inPlacementGroup(placementGroupName);
 
+      byte[] userData = EC2TemplateOptions.class.cast(template.getOptions()).getUserData();
+
+      if (userData != null)
+         instanceOptions.withUserData(userData);
+
       return instanceOptions;
    }
 
