@@ -238,44 +238,44 @@
 								<configuration>
 									<systemProperties>
 										<property>
-											<name>twitter.identity</name>
-											<value>${jclouds.twitter.user}</value>
+											<name>test.twitter.identity</name>
+											<value>${test.twitter.identity}</value>
 										</property>
 										<property>
-											<name>twitter.credential</name>
-											<value>${jclouds.twitter.password}</value>
+											<name>test.twitter.credential</name>
+											<value>${test.twitter.credential}</value>
 										</property>
 										<property>
-											<name>azureblob.identity</name>
-											<value>${jclouds.azure.storage.account}</value>
+											<name>test.azureblob.identity</name>
+											<value>${test.azureblob.identity}</value>
 										</property>
 										<property>
-											<name>azureblob.credential</name>
-											<value>${jclouds.azure.storage.key}</value>
+											<name>test.azureblob.credential</name>
+											<value>${test.azureblob.credential}</value>
 										</property>
 										<property>
-											<name>cloudfiles.identity</name>
-											<value>${jclouds.rackspace.user}</value>
+											<name>test.cloudfiles.identity</name>
+											<value>${test.cloudfiles.identity}</value>
 										</property>
 										<property>
-											<name>cloudfiles.credential</name>
-											<value>${jclouds.rackspace.key}</value>
+											<name>test.cloudfiles.credential</name>
+											<value>${test.cloudfiles.credential}</value>
 										</property>
 										<property>
-											<name>s3.identity</name>
-											<value>${jclouds.aws.accesskeyid}</value>
+											<name>test.s3.identity</name>
+											<value>${test.s3.identity}</value>
 										</property>
 										<property>
-											<name>s3.credential</name>
-											<value>${jclouds.aws.secretaccesskey}</value>
+											<name>test.s3.credential</name>
+											<value>${test.s3.credential}</value>
 										</property>
 										<property>
-											<name>googlestorage.identity</name>
-											<value>${jclouds.googlestorage.accesskeyid}</value>
+											<name>test.googlestorage.identity</name>
+											<value>${test.googlestorage.identity}</value>
 										</property>
 										<property>
-											<name>googlestorage.credential</name>
-											<value>${jclouds.googlestorage.secretaccesskey}</value>
+											<name>test.googlestorage.credential</name>
+											<value>${test.googlestorage.credential}</value>
 										</property>
 										<property>
 											<name>appengine.home</name>
