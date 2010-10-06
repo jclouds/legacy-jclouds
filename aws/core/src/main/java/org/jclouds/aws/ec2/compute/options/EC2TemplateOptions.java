@@ -62,6 +62,7 @@ public class EC2TemplateOptions extends TemplateOptions {
    private String placementGroup = null;
    private boolean noPlacementGroup;
    private String subnetId;
+   private byte[] userData;
 
    public static final EC2TemplateOptions NONE = new EC2TemplateOptions();
 
@@ -94,6 +95,17 @@ public class EC2TemplateOptions extends TemplateOptions {
       return this;
    }
 
+
+   /**
+    * Unencoded data
+    */
+   public EC2TemplateOptions userData(byte[] unencodedData) {
+      checkArgument(checkNotNull(unencodedData, "unencodedData").length <= 16 * 1024,
+      "userData cannot be larger than 16kb");
+      this.userData = unencodedData;
+      return this;
+   }
+   
    /**
     * Specifies the keypair used to run instances with
     */
@@ -168,6 +180,14 @@ public class EC2TemplateOptions extends TemplateOptions {
       public static EC2TemplateOptions keyPair(String keyPair) {
          EC2TemplateOptions options = new EC2TemplateOptions();
          return EC2TemplateOptions.class.cast(options.keyPair(keyPair));
+      }
+      
+      /**
+       * @see EC2TemplateOptions#userData
+       */
+      public static EC2TemplateOptions userData(byte[] unencodedData) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return EC2TemplateOptions.class.cast(options.userData(unencodedData));
       }
 
       /**
@@ -435,6 +455,13 @@ public class EC2TemplateOptions extends TemplateOptions {
    public String getSubnetId() {
       return subnetId;
    }
+   
+   /**
+    * @return unencoded user data.
+    */
+   public byte[] getUserData() {
+      return userData;
+   }
 
    @Override
    public int hashCode() {
@@ -447,6 +474,7 @@ public class EC2TemplateOptions extends TemplateOptions {
       result = prime * result + (monitoringEnabled ? 1231 : 1237);
       result = prime * result + ((placementGroup == null) ? 0 : placementGroup.hashCode());
       result = prime * result + ((subnetId == null) ? 0 : subnetId.hashCode());
+      result = prime * result + ((userData == null) ? 0 : userData.hashCode());
       return result;
    }
 
@@ -484,6 +512,11 @@ public class EC2TemplateOptions extends TemplateOptions {
          if (other.subnetId != null)
             return false;
       } else if (!subnetId.equals(other.subnetId))
+         return false;
+      if (userData == null) {
+         if (other.userData != null)
+            return false;
+      } else if (!userData.equals(other.userData))
          return false;
       return true;
    }

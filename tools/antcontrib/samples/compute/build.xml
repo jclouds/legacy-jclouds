@@ -83,7 +83,7 @@
   </target>
 
   <target name="list-hardwares" description="list the hardwares supported">
-    <compute actions="list-hardwares" provider="${jclouds.compute.url}" />
+    <compute actions="list-sizes" provider="${jclouds.compute.url}" />
   </target>
 
   <target name="list-locations" description="list the locations supported">
@@ -91,7 +91,7 @@
   </target>
 
   <target name="dump" description="list all information we can obtain about the cloud">
-    <compute actions="list-locations,list-hardwares,list-images,list-details" provider="${jclouds.compute.url}" />
+    <compute actions="list-locations,list-sizes,list-images,list-details" provider="${jclouds.compute.url}" />
   </target>
 
   <target name="reboot" depends="reboot-id,reboot-tag" />
