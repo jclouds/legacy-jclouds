@@ -29,7 +29,7 @@ package org.jclouds.rackspace.cloudservers.domain;
  */
 public enum ImageStatus {
 
-   UNRECOGNIZED, ACTIVE, SAVING, PREPARING, QUEUED, FAILED;
+   UNRECOGNIZED, UNKNOWN, ACTIVE, SAVING, PREPARING, QUEUED, FAILED;
 
    public String value() {
       return name();
