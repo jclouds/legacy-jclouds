@@ -37,7 +37,8 @@
       :ning 'org.jclouds.http.ning.config.NingHttpCommandExecutorServiceModule
       :bouncycastle 'org.jclouds.encryption.bouncycastle.config.BouncyCastleCryptoModule
       :joda 'org.jclouds.date.joda.config.JodaDateServiceModule
-      :gae 'org.jclouds.gae.config.GoogleAppEngineConfigurationModule})
+      :gae 'org.jclouds.gae.config.GoogleAppEngineConfigurationModule
+      :gae-async 'org.jclouds.gae.config.AsyncGoogleAppEngineConfigurationModule})
 
 (defn- instantiate [sym]
   (let [loader (.getContextClassLoader (Thread/currentThread))]
