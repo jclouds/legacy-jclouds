@@ -27,19 +27,14 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 import org.jclouds.rimuhosting.miro.domain.NewServerResponse;
 import org.jclouds.rimuhosting.miro.domain.Server;
-import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * 
@@ -47,29 +42,27 @@ import com.google.common.collect.ImmutableMap;
  */
 @Singleton
 public class RimuHostingAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
-   private final RimuHostingClient client;
-   private final Function<Server, Iterable<String>> getPublicAddresses;
-   private final Map<RunningState, NodeState> runningStateToNodeState;
+   protected final RimuHostingClient client;
+   protected final Map<String, Credentials> credentialStore;
+   protected final Function<Server, NodeMetadata> serverToNodeMetadata;
 
    @Inject
-   protected RimuHostingAddNodeWithTagStrategy(RimuHostingClient client,
-            Function<Server, Iterable<String>> getPublicAddresses, Map<RunningState, NodeState> runningStateToNodeState) {
+   protected RimuHostingAddNodeWithTagStrategy(RimuHostingClient client, Map<String, Credentials> credentialStore,
+         Function<Server, NodeMetadata> serverToNodeMetadata) {
       this.client = client;
-      this.getPublicAddresses = getPublicAddresses;
-      this.runningStateToNodeState = runningStateToNodeState;
+      this.credentialStore = credentialStore;
+      this.serverToNodeMetadata = serverToNodeMetadata;
    }
 
    @Override
    public NodeMetadata execute(String tag, String name, Template template) {
-      NewServerResponse serverResponse = client.createServer(name, checkNotNull(template.getImage().getProviderId(),
-               "imageId"), checkNotNull(template.getHardware().getProviderId(), "hardwareId"));
-      Server server = client.getServer(serverResponse.getServer().getId());
-      NodeMetadata node = new NodeMetadataImpl(server.getId().toString(), name, server.getId().toString(), template
-               .getLocation(), null, ImmutableMap.<String, String> of(), tag, template.getHardware(), template
-               .getImage().getId(), template.getImage().getOperatingSystem(), runningStateToNodeState.get(server
-               .getState()), getPublicAddresses.apply(server), ImmutableList.<String> of(), new Credentials("root",
-               serverResponse.getNewInstanceRequest().getCreateOptions().getPassword()));
-      return node;
+      NewServerResponse serverResponse = client.createServer(name,
+            checkNotNull(template.getImage().getProviderId(), "imageId"),
+            checkNotNull(template.getHardware().getProviderId(), "hardwareId"));
+      Server from = client.getServer(serverResponse.getServer().getId());
+      credentialStore.put(from.getId() + "", new Credentials("root", serverResponse.getNewInstanceRequest()
+            .getCreateOptions().getPassword()));
+      return serverToNodeMetadata.apply(from);
    }
 
 }

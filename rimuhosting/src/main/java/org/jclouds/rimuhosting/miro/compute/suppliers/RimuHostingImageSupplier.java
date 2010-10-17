@@ -29,16 +29,15 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
 /**
@@ -63,32 +62,38 @@ public class RimuHostingImageSupplier implements Supplier<Set<? extends Image>> 
    public Set<? extends Image> get() {
       final Set<Image> images = Sets.newHashSet();
       logger.debug(">> providing images");
-      for (final org.jclouds.rimuhosting.miro.domain.Image from : sync.getImageList()) {
-         String version = null;
-
-         OsFamily osFamily = null;
-         String osName = null;
-         String osArch = null;
-         String osVersion = null;
-         String osDescription = from.getId();
-         boolean is64Bit = from.getId().indexOf("64") != -1;
-
-         osDescription = from.getId();
-
-         Matcher matcher = RIMU_PATTERN.matcher(from.getId());
-         if (matcher.find()) {
-            try {
-               osFamily = OsFamily.fromValue(matcher.group(1).toLowerCase());
-            } catch (IllegalArgumentException e) {
-               logger.debug("<< didn't match os(%s)", matcher.group(2));
-            }
-         }
-         OperatingSystem os = new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
-
-         images.add(new ImageImpl(from.getId(), from.getDescription(), from.getId(), null, null, ImmutableMap
-                  .<String, String> of(), os, from.getDescription(), version, new Credentials("root", null)));
+      for (org.jclouds.rimuhosting.miro.domain.Image from : sync.getImageList()) {
+         ImageBuilder builder = new ImageBuilder();
+         builder.ids(from.getId() + "");
+         builder.name(from.getDescription());
+         builder.description(from.getDescription());
+         builder.operatingSystem(parseOs(from));
+         builder.defaultCredentials(new Credentials("root", null));
+         images.add(builder.build());
       }
       logger.debug("<< images(%d)", images.size());
       return images;
+   }
+
+   protected OperatingSystem parseOs(final org.jclouds.rimuhosting.miro.domain.Image from) {
+      OsFamily osFamily = null;
+      String osName = null;
+      String osArch = null;
+      String osVersion = null;
+      String osDescription = from.getId();
+      boolean is64Bit = from.getId().indexOf("64") != -1;
+
+      osDescription = from.getId();
+
+      Matcher matcher = RIMU_PATTERN.matcher(from.getId());
+      if (matcher.find()) {
+         try {
+            osFamily = OsFamily.fromValue(matcher.group(1).toLowerCase());
+         } catch (IllegalArgumentException e) {
+            logger.debug("<< didn't match os(%s)", matcher.group(2));
+         }
+      }
+      OperatingSystem os = new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
+      return os;
    }
 }

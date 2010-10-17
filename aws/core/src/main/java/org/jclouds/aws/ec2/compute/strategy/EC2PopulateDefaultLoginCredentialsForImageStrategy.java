@@ -32,19 +32,24 @@ import org.jclouds.domain.Credentials;
  */
 @Singleton
 public class EC2PopulateDefaultLoginCredentialsForImageStrategy implements
-         PopulateDefaultLoginCredentialsForImageStrategy {
+      PopulateDefaultLoginCredentialsForImageStrategy {
 
    @Override
    public Credentials execute(Object resourceToAuthenticate) {
       Credentials credentials = new Credentials("root", null);
       if (resourceToAuthenticate != null) {
-         checkArgument(resourceToAuthenticate instanceof Image, "Resource must be an image (for EC2)");
-         Image image = (Image) resourceToAuthenticate;
+         String owner = null;
+         if (resourceToAuthenticate instanceof Image) {
+            owner = Image.class.cast(resourceToAuthenticate).getImageOwnerId();
+         } else if (resourceToAuthenticate instanceof org.jclouds.compute.domain.Image) {
+            owner = org.jclouds.compute.domain.Image.class.cast(resourceToAuthenticate).getUserMetadata().get("owner");
+         }
+         checkArgument(owner != null, "Resource must be an image (for EC2)");
          // canonical/alestic images use the ubuntu user to login
-         if (image.getImageOwnerId().matches("063491364108|099720109477")) {
+         if (owner.matches("063491364108|099720109477")) {
             credentials = new Credentials("ubuntu", null);
             // http://aws.typepad.com/aws/2010/09/introducing-amazon-linux-ami.html
-         } else if (image.getImageOwnerId().equals("137112412989")) {
+         } else if (owner.equals("137112412989")) {
             credentials = new Credentials("ec2-user", null);
          }
       }

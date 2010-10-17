@@ -17,19 +17,25 @@
  * ====================================================================
  */
 
-package com.google.gson;
+package org.jclouds.rest;
+
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import com.google.common.annotations.Beta;
 
 /**
- * The gson project use package to control access to their objects. However,
- * this prevents us from doing valid work, like controling the json emitted on a
- * per-object basis. This is here to afford us to do this.
+ * designates the module configures a {@code Map<String, ? extends Credentials>}
  * 
  * @author Adrian Cole
+ * 
  */
-public class ExposedEscaper extends Escaper {
-
-   public ExposedEscaper(boolean escapeHtmlCharacters) {
-      super(escapeHtmlCharacters);
-   }
+@Beta
+@Retention(RUNTIME)
+@Target(TYPE)
+public @interface ConfiguresCredentialStore {
 
 }

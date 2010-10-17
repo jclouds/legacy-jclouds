@@ -31,9 +31,9 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
-import org.jclouds.compute.domain.internal.HardwareImpl;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
@@ -44,7 +44,6 @@ import org.jclouds.vcloud.domain.ovf.ResourceType;
 import org.jclouds.vcloud.domain.ovf.VirtualHardwareSection;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -61,7 +60,7 @@ public class HardwareForVApp implements Function<VApp, Hardware> {
 
    @Inject
    protected HardwareForVApp(FindLocationForResource findLocationForResource,
-            ResourceAllocationsToVolumes resourceAllocationsToVolumes) {
+         ResourceAllocationsToVolumes resourceAllocationsToVolumes) {
       this.findLocationForResource = checkNotNull(findLocationForResource, "findLocationForResource");
       this.resourceAllocationsToVolumes = checkNotNull(resourceAllocationsToVolumes, "resourceAllocationsToVolumes");
    }
@@ -79,18 +78,19 @@ public class HardwareForVApp implements Function<VApp, Hardware> {
 
       int ram = (int) find(hardware.getResourceAllocations(), resourceType(ResourceType.MEMORY)).getVirtualQuantity();
 
-      List<Processor> processors = Lists.newArrayList(transform(filter(hardware.getResourceAllocations(),
-               resourceType(ResourceType.PROCESSOR)), new Function<ResourceAllocation, Processor>() {
+      List<Processor> processors = Lists.newArrayList(transform(
+            filter(hardware.getResourceAllocations(), resourceType(ResourceType.PROCESSOR)),
+            new Function<ResourceAllocation, Processor>() {
 
-         @Override
-         public Processor apply(ResourceAllocation arg0) {
-            return new Processor(arg0.getVirtualQuantity(), 1);
-         }
+               @Override
+               public Processor apply(ResourceAllocation arg0) {
+                  return new Processor(arg0.getVirtualQuantity(), 1);
+               }
 
-      }));
-      Iterable<? extends Volume> volumes = resourceAllocationsToVolumes.apply(hardware.getResourceAllocations());
-      return new HardwareImpl(from.getHref().toASCIIString(), from.getName(), from.getHref().toASCIIString(), location,
-               null, ImmutableMap.<String, String> of(), processors, ram, volumes, ImagePredicates.idEquals(from
-                        .getHref().toASCIIString()));
+            }));
+      List<Volume> volumes = Lists.newArrayList(resourceAllocationsToVolumes.apply(hardware.getResourceAllocations()));
+      return new HardwareBuilder().ids(from.getHref().toASCIIString()).uri(from.getHref()).name(from.getName())
+            .location(location).processors(processors).ram(ram).volumes(volumes)
+            .supportsImage(ImagePredicates.idEquals(from.getHref().toASCIIString())).build();
    }
 }

@@ -47,7 +47,7 @@ public class SlicesHandlerTest extends BaseHandlerTest {
 
    public void test() {
       InputStream is = getClass().getResourceAsStream("/test_get_slice.xml");
-      Set<? extends Slice> expects = ImmutableSet.of(new Slice(1, "jclouds-foo", 1, 10, null, Slice.Status.BUILD, 0, 0,
+      Set<? extends Slice> expects = ImmutableSet.of(new Slice(1, "jclouds-foo", 1, 2, null, Slice.Status.BUILD, 0, 0,
             0, ImmutableSet.<String> of("174.143.212.229", "10.176.164.199"), null));
 
       assertEquals(createParser().parse(is), expects);

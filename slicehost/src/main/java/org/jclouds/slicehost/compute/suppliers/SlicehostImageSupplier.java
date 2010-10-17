@@ -20,8 +20,6 @@
 package org.jclouds.slicehost.compute.suppliers;
 
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -29,17 +27,13 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.Credentials;
-import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.slicehost.SlicehostClient;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
@@ -48,52 +42,28 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class SlicehostImageSupplier implements Supplier<Set<? extends Image>> {
-   public static final Pattern SLICEHOST_PATTERN = Pattern.compile("(([^ ]*) .*)");
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   private final SlicehostClient sync;
-   private final Supplier<Location> location;
+
+   protected final SlicehostClient sync;
+   protected final Function<org.jclouds.slicehost.domain.Image, Image> slicehostImageToImage;
 
    @Inject
-   SlicehostImageSupplier(SlicehostClient sync, Supplier<Location> location) {
+   SlicehostImageSupplier(SlicehostClient sync,
+         Function<org.jclouds.slicehost.domain.Image, Image> slicehostImageToImage) {
       this.sync = sync;
-      this.location = location;
+      this.slicehostImageToImage = slicehostImageToImage;
    }
 
    @Override
    public Set<? extends Image> get() {
-      final Set<Image> images = Sets.newHashSet();
+      Set<Image> images;
       logger.debug(">> providing images");
-      for (final org.jclouds.slicehost.domain.Image from : sync.listImages()) {
-         String version = null;
-         Matcher matcher = SLICEHOST_PATTERN.matcher(from.getName());
-
-         OsFamily osFamily = null;
-         String osName = null;
-         String osArch = null;
-         String osVersion = null;
-         String osDescription = from.getName();
-         boolean is64Bit = true;
-
-         if (from.getName().indexOf("Red Hat EL") != -1) {
-            osFamily = OsFamily.RHEL;
-         } else if (from.getName().indexOf("Oracle EL") != -1) {
-            osFamily = OsFamily.OEL;
-         } else if (matcher.find()) {
-            try {
-               osFamily = OsFamily.fromValue(matcher.group(2).toLowerCase());
-            } catch (IllegalArgumentException e) {
-               logger.debug("<< didn't match os(%s)", matcher.group(2));
-            }
-         }
-         OperatingSystem os = new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
-
-         images.add(new ImageImpl(from.getId() + "", from.getName(), from.getId() + "", location.get(), null,
-                  ImmutableMap.<String, String> of(), os, from.getName(), version, new Credentials("root", null)));
-      }
+      images = Sets.newLinkedHashSet(Iterables.transform(sync.listImages(), slicehostImageToImage));
       logger.debug("<< images(%d)", images.size());
       return images;
    }
+
 }

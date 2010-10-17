@@ -19,10 +19,6 @@
 
 package org.jclouds.rackspace.cloudservers.compute.functions;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
 import static org.testng.Assert.assertEquals;
 
 import java.net.UnknownHostException;
@@ -30,19 +26,28 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.Volume;
+import org.jclouds.compute.domain.VolumeBuilder;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.rackspace.cloudservers.domain.Addresses;
+import org.jclouds.rackspace.cloudservers.compute.config.CloudServersComputeServiceContextModule;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
+import org.jclouds.rackspace.cloudservers.functions.ParseServerFromJsonResponseTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -51,76 +56,151 @@ import com.google.common.collect.ImmutableSet;
  */
 @Test(groups = "unit", testName = "cloudservers.ServerToNodeMetadataTest")
 public class ServerToNodeMetadataTest {
+   Location provider = new LocationImpl(LocationScope.ZONE, "dallas", "description", null);
 
-   @SuppressWarnings("unchecked")
    @Test
-   public void testApplySetsTagFromNameAndSetsMetadata() throws UnknownHostException {
-      Map<ServerStatus, NodeState> serverStateToNodeState = createMock(Map.class);
-      org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
+   public void testApplyWhereImageAndHardwareNotFoundButCredentialsFound()
+         throws UnknownHostException {
+      Credentials creds = new Credentials("root", "abdce");
 
-      Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
+      Map<ServerStatus, NodeState> serverStateToNodeState = CloudServersComputeServiceContextModule.serverToNodeState;
+      Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of();
+      Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
+      Server server = ParseServerFromJsonResponseTest.parseServer();
 
-      org.jclouds.compute.domain.Hardware jcHardware = createMock(org.jclouds.compute.domain.Hardware.class);
-
-      Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of(jcHardware);
-
-      Server server = createMock(Server.class);
-
-      expect(server.getId()).andReturn(10000).atLeastOnce();
-      expect(server.getName()).andReturn("cloudservers-ea3").atLeastOnce();
-      expect(server.getHostId()).andReturn("AHOST").atLeastOnce();
-      expect(server.getMetadata()).andReturn(ImmutableMap.<String, String> of()).atLeastOnce();
-
-      expect(server.getStatus()).andReturn(ServerStatus.ACTIVE).atLeastOnce();
-
-      expect(serverStateToNodeState.get(ServerStatus.ACTIVE)).andReturn(NodeState.RUNNING);
-      Location provider = new LocationImpl(LocationScope.ZONE, "dallas", "description", null);
-      Location location = new LocationImpl(LocationScope.HOST, "AHOST", "AHOST", provider);
-
-      Addresses addresses = createMock(Addresses.class);
-      expect(server.getAddresses()).andReturn(addresses).atLeastOnce();
-
-      Set<String> publicAddresses = ImmutableSet.of("12.10.10.1");
-      Set<String> privateAddresses = ImmutableSet.of("10.10.10.1");
-
-      expect(addresses.getPublicAddresses()).andReturn(publicAddresses);
-      expect(addresses.getPrivateAddresses()).andReturn(privateAddresses);
-
-      expect(server.getImageId()).andReturn(2000).atLeastOnce();
-      
-      expect(jcImage.getProviderId()).andReturn("2000").atLeastOnce();
-      expect(jcHardware.getProviderId()).andReturn("1000").atLeastOnce();
-      expect(server.getFlavorId()).andReturn(1000).atLeastOnce();
-
-      expect(jcImage.getLocation()).andReturn(provider).atLeastOnce();
-      expect(jcImage.getOperatingSystem()).andReturn(createMock(OperatingSystem.class)).atLeastOnce();
-
-      replay(addresses);
-      replay(jcImage);
-      replay(jcHardware);
-      replay(serverStateToNodeState);
-      replay(server);
-
-      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, Suppliers
-               .<Set<? extends Image>> ofInstance(images), Suppliers.ofInstance(provider), Suppliers
-               .<Set<? extends Hardware>> ofInstance(hardwares));
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState,
+            ImmutableMap.<String, Credentials> of("1234", creds), Suppliers.<Set<? extends Image>> ofInstance(images),
+            Suppliers.ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
 
       NodeMetadata metadata = parser.apply(server);
-      assertEquals(metadata.getLocation(), location);
-      assertEquals(metadata.getImageId(), "2000");
-      assert metadata.getUserMetadata() != null;
-      assertEquals(metadata.getTag(), "cloudservers");
-      assertEquals(metadata.getCredentials(), null);
 
-      assertEquals(metadata.getPrivateAddresses(), privateAddresses);
-      assertEquals(metadata.getPublicAddresses(), publicAddresses);
+      assertEquals(
+            metadata,
+            new NodeMetadataBuilder()
+                  .state(NodeState.PENDING)
+                  .publicAddresses(ImmutableSet.of("67.23.10.132", "67.23.10.131"))
+                  .privateAddresses(ImmutableSet.of("10.176.42.16"))
+                  .tag("NOTAG-sample-server")
+                  .imageId("2")
+                  .id("1234")
+                  .providerId("1234")
+                  .name("sample-server")
+                  .credentials(creds)
+                  .location(
+                        new LocationImpl(LocationScope.HOST, "e4d909c290d0fb1ca068ffaddf22cbd0",
+                              "e4d909c290d0fb1ca068ffaddf22cbd0", new LocationImpl(LocationScope.ZONE, "dallas",
+                                    "description", null)))
+                  .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+   }
 
-      verify(addresses);
-      verify(serverStateToNodeState);
-      verify(server);
-      verify(jcImage);
-      verify(jcHardware);
+   @Test
+   public void testApplyWhereImageAndHardwareNotFound() throws UnknownHostException {
+      Map<ServerStatus, NodeState> serverStateToNodeState = CloudServersComputeServiceContextModule.serverToNodeState;
+      Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of();
+      Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
+      Server server = ParseServerFromJsonResponseTest.parseServer();
+
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState,
+            ImmutableMap.<String, Credentials> of(), Suppliers.<Set<? extends Image>> ofInstance(images),
+            Suppliers.ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
+
+      NodeMetadata metadata = parser.apply(server);
+
+      assertEquals(
+            metadata,
+            new NodeMetadataBuilder()
+                  .state(NodeState.PENDING)
+                  .publicAddresses(ImmutableSet.of("67.23.10.132", "67.23.10.131"))
+                  .privateAddresses(ImmutableSet.of("10.176.42.16"))
+                  .tag("NOTAG-sample-server")
+                  .imageId("2")
+                  .id("1234")
+                  .providerId("1234")
+                  .name("sample-server")
+                  .location(
+                        new LocationImpl(LocationScope.HOST, "e4d909c290d0fb1ca068ffaddf22cbd0",
+                              "e4d909c290d0fb1ca068ffaddf22cbd0", new LocationImpl(LocationScope.ZONE, "dallas",
+                                    "description", null)))
+                  .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
 
    }
 
+   @Test
+   public void testApplyWhereImageFoundAndHardwareNotFound() throws UnknownHostException {
+      Map<ServerStatus, NodeState> serverStateToNodeState = CloudServersComputeServiceContextModule.serverToNodeState;
+      org.jclouds.compute.domain.Image jcImage = CloudServersImageToImageTest.convertImage();
+      Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(jcImage);
+      Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of();
+      Server server = ParseServerFromJsonResponseTest.parseServer();
+
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState,
+            ImmutableMap.<String, Credentials> of(), Suppliers.<Set<? extends Image>> ofInstance(images),
+            Suppliers.ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
+
+      NodeMetadata metadata = parser.apply(server);
+
+      assertEquals(
+            metadata,
+            new NodeMetadataBuilder()
+                  .state(NodeState.PENDING)
+                  .publicAddresses(ImmutableSet.of("67.23.10.132", "67.23.10.131"))
+                  .privateAddresses(ImmutableSet.of("10.176.42.16"))
+                  .tag("NOTAG-sample-server")
+                  .imageId("2")
+                  .operatingSystem(
+                        new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").is64Bit(true)
+                              .build())
+                  .id("1234")
+                  .providerId("1234")
+                  .name("sample-server")
+                  .location(
+                        new LocationImpl(LocationScope.HOST, "e4d909c290d0fb1ca068ffaddf22cbd0",
+                              "e4d909c290d0fb1ca068ffaddf22cbd0", new LocationImpl(LocationScope.ZONE, "dallas",
+                                    "description", null)))
+                  .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+
+   }
+
+   @Test
+   public void testApplyWhereImageAndHardwareFound() throws UnknownHostException {
+      Map<ServerStatus, NodeState> serverStateToNodeState = CloudServersComputeServiceContextModule.serverToNodeState;
+      Set<org.jclouds.compute.domain.Image> images = ImmutableSet.of(CloudServersImageToImageTest.convertImage());
+      Set<org.jclouds.compute.domain.Hardware> hardwares = ImmutableSet.of(FlavorToHardwareTest.convertFlavor());
+      Server server = ParseServerFromJsonResponseTest.parseServer();
+
+      ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState,
+            ImmutableMap.<String, Credentials> of(), Suppliers.<Set<? extends Image>> ofInstance(images),
+            Suppliers.ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
+
+      NodeMetadata metadata = parser.apply(server);
+
+      assertEquals(
+            metadata,
+            new NodeMetadataBuilder()
+                  .state(NodeState.PENDING)
+                  .publicAddresses(ImmutableSet.of("67.23.10.132", "67.23.10.131"))
+                  .privateAddresses(ImmutableSet.of("10.176.42.16"))
+                  .tag("NOTAG-sample-server")
+                  .imageId("2")
+                  .hardware(
+                        new HardwareBuilder()
+                              .ids("1")
+                              .name("256 MB Server")
+                              .processors(ImmutableList.of(new Processor(1.0, 1.0)))
+                              .ram(256)
+                              .volumes(
+                                    ImmutableList.of(new VolumeBuilder().type(Volume.Type.LOCAL).size(10.0f)
+                                          .durable(true).bootDevice(true).build())).build())
+                  .operatingSystem(
+                        new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").is64Bit(true)
+                              .build())
+                  .id("1234")
+                  .providerId("1234")
+                  .name("sample-server")
+                  .location(
+                        new LocationImpl(LocationScope.HOST, "e4d909c290d0fb1ca068ffaddf22cbd0",
+                              "e4d909c290d0fb1ca068ffaddf22cbd0", new LocationImpl(LocationScope.ZONE, "dallas",
+                                    "description", null)))
+                  .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+   }
 }

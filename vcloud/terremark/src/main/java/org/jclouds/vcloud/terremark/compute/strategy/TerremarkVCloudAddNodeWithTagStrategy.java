@@ -22,7 +22,6 @@ package org.jclouds.vcloud.terremark.compute.strategy;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -30,38 +29,36 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeClient;
 import org.jclouds.vcloud.terremark.compute.functions.TemplateToInstantiateOptions;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
+
+import com.google.common.base.Function;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
 public class TerremarkVCloudAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
-   protected final TerremarkVCloudClient client;
    protected final TerremarkVCloudComputeClient computeClient;
-   protected final GetNodeMetadataStrategy getNode;
    protected final TemplateToInstantiateOptions getOptions;
+   protected final Function<VCloudExpressVApp, NodeMetadata> vAppToNodeMetadata;
 
    @Inject
-   protected TerremarkVCloudAddNodeWithTagStrategy(TerremarkVCloudClient client,
-            TerremarkVCloudComputeClient computeClient, GetNodeMetadataStrategy getNode,
-            TemplateToInstantiateOptions getOptions) {
-      this.client = client;
+   protected TerremarkVCloudAddNodeWithTagStrategy(TerremarkVCloudComputeClient computeClient,
+         Function<VCloudExpressVApp, NodeMetadata> vAppToNodeMetadata, TemplateToInstantiateOptions getOptions) {
       this.computeClient = computeClient;
-      this.getNode = getNode;
+      this.vAppToNodeMetadata = vAppToNodeMetadata;
       this.getOptions = checkNotNull(getOptions, "getOptions");
    }
 
    @Override
    public NodeMetadata execute(String tag, String name, Template template) {
       TerremarkInstantiateVAppTemplateOptions options = getOptions.apply(template);
-      Map<String, String> metaMap = computeClient.start(URI.create(template.getLocation().getId()), URI.create(template
-               .getImage().getId()), name, options, template.getOptions().getInboundPorts());
-      return getNode.execute(metaMap.get("id"));
+      VCloudExpressVApp vApp = computeClient.start(URI.create(template.getLocation().getId()),
+            URI.create(template.getImage().getId()), name, options, template.getOptions().getInboundPorts());
+      return vAppToNodeMetadata.apply(vApp);
    }
 
 }

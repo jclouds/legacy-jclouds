@@ -36,12 +36,11 @@ import javax.inject.Singleton;
 import org.jclouds.aws.ec2.domain.Image.Architecture;
 import org.jclouds.aws.ec2.domain.Image.ImageType;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
@@ -72,17 +71,17 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
    // amzn-ami-us-east-1/amzn-ami-0.9.7-beta.x86_64.manifest.xml
    // amzn-ami-us-east-1/amzn-ami-0.9.7-beta.i386.manifest.xml
    public static final Pattern AMZN_PATTERN = Pattern
-            .compile(".*/amzn-ami-(.*)\\.(i386|x86_64)(-ebs|\\.manifest.xml)?");
+         .compile(".*/amzn-ami-(.*)\\.(i386|x86_64)(-ebs|\\.manifest.xml)?");
 
    public static final Pattern CANONICAL_PATTERN = Pattern.compile(".*/([^-]*)-([^-]*)-.*-(.*)(\\.manifest.xml)?");
 
    // ex rightscale-us-east/CentOS_5.4_x64_v4.4.10.manifest.xml
    public static final Pattern RIGHTSCALE_PATTERN = Pattern
-            .compile("[^/]*/([^_]*)_([^_]*)_[^vV]*[vV](.*)(\\.manifest.xml)?");
+         .compile("[^/]*/([^_]*)_([^_]*)_[^vV]*[vV](.*)(\\.manifest.xml)?");
 
    // ex 411009282317/RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha
    public static final Pattern RIGHTIMAGE_PATTERN = Pattern
-            .compile("[^/]*/RightImage_([^_]*)_([^_]*)_[^vV]*[vV](.*)(\\.manifest.xml)?");
+         .compile("[^/]*/RightImage_([^_]*)_([^_]*)_[^vV]*[vV](.*)(\\.manifest.xml)?");
 
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialProvider;
    private final Supplier<Set<? extends Location>> locations;
@@ -92,7 +91,7 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
 
    @Inject
    ImageParser(PopulateDefaultLoginCredentialsForImageStrategy credentialProvider,
-            Supplier<Set<? extends Location>> locations, Supplier<Location> defaultLocation, @Provider String provider) {
+         Supplier<Set<? extends Location>> locations, Supplier<Location> defaultLocation, @Provider String provider) {
       this.credentialProvider = checkNotNull(credentialProvider, "credentialProvider");
       this.locations = checkNotNull(locations, "locations");
       this.defaultLocation = checkNotNull(defaultLocation, "defaultLocation");
@@ -105,9 +104,12 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
          logger.trace("skipping as not a machine image(%s)", from.getId());
          return null;
       }
-      String name = null;
-      String description = from.getDescription() != null ? from.getDescription() : from.getImageLocation();
-      String version = null;
+      ImageBuilder builder = new ImageBuilder();
+      builder.providerId(from.getId());
+      builder.id(from.getRegion() + "/" + from.getId());
+      builder.description(from.getDescription() != null ? from.getDescription() : from.getImageLocation());
+      builder.userMetadata(ImmutableMap.<String, String> of("owner", from.getImageOwnerId(), "rootDeviceType", from
+            .getRootDeviceType().toString()));
 
       OsFamily osFamily = parseOsFamilyOrNull(provider, from.getImageLocation());
       String osName = null;
@@ -119,13 +121,14 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
          Matcher matcher = getMatcherAndFind(from.getImageLocation());
          if (matcher.pattern() == AMZN_PATTERN) {
             osFamily = OsFamily.AMZN_LINUX;
-            version = osVersion = matcher.group(1);
+            osVersion = matcher.group(1);
+            builder.version(osVersion);
          } else if (matcher.pattern() == NEBULA_PATTERN) {
             osVersion = parseVersionOrReturnEmptyString(osFamily, matcher.group(2));
          } else {
             osFamily = OsFamily.fromValue(matcher.group(1));
             osVersion = parseVersionOrReturnEmptyString(osFamily, matcher.group(2));
-            version = matcher.group(3).replace(".manifest.xml", "");
+            builder.version(matcher.group(3).replace(".manifest.xml", ""));
          }
       } catch (IllegalArgumentException e) {
          logger.debug("<< didn't match os(%s)", from.getImageLocation());
@@ -133,28 +136,24 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
          logger.debug("<< didn't match at all(%s)", from.getImageLocation());
       }
 
-      Credentials defaultCredentials = credentialProvider.execute(from);
+      builder.defaultCredentials(credentialProvider.execute(from));
 
-      Location location = null;
       try {
-         location = Iterables.find(locations.get(), new Predicate<Location>() {
+         builder.location(Iterables.find(locations.get(), new Predicate<Location>() {
 
             @Override
             public boolean apply(Location input) {
                return input.getId().equals(from.getRegion());
             }
 
-         });
+         }));
       } catch (NoSuchElementException e) {
          System.err.printf("unknown region %s for image %s; not in %s", from.getRegion(), from.getId(), locations);
-         location = new LocationImpl(LocationScope.REGION, from.getRegion(), from.getRegion(), defaultLocation.get()
-                  .getParent());
+         builder.location(new LocationImpl(LocationScope.REGION, from.getRegion(), from.getRegion(), defaultLocation
+               .get().getParent()));
       }
-      OperatingSystem os = new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
-      return new ImageImpl(from.getId(), name, from.getRegion() + "/" + from.getId(), location, null, ImmutableMap
-               .<String, String> of("owner", from.getImageOwnerId(), "rootDeviceType", from.getRootDeviceType()
-                        .toString()), os, description, version, defaultCredentials);
-
+      builder.operatingSystem(new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit));
+      return builder.build();
    }
 
    /**
@@ -164,7 +163,7 @@ public class ImageParser implements Function<org.jclouds.aws.ec2.domain.Image, I
     */
    private Matcher getMatcherAndFind(String manifest) {
       for (Pattern pattern : new Pattern[] { AMZN_PATTERN, NEBULA_PATTERN, CANONICAL_PATTERN, RIGHTIMAGE_PATTERN,
-               RIGHTSCALE_PATTERN }) {
+            RIGHTSCALE_PATTERN }) {
          Matcher matcher = pattern.matcher(manifest);
          if (matcher.find())
             return matcher;

@@ -35,39 +35,43 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * @author Adrian Cole
  * @author Ivan Meredith
  */
 public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadata {
+
    /** The serialVersionUID */
    private static final long serialVersionUID = 7924307572338157887L;
 
    private final NodeState state;
-   private final Set<String> publicAddresses = Sets.newLinkedHashSet();
-   private final Set<String> privateAddresses = Sets.newLinkedHashSet();
+   private final Set<String> publicAddresses;
+   private final Set<String> privateAddresses;
+   @Nullable
    private final Credentials credentials;
+   @Nullable
    private final String tag;
+   @Nullable
    private final String imageId;
    @Nullable
    private final Hardware hardware;
+   @Nullable
    private final OperatingSystem os;
 
    public NodeMetadataImpl(String providerId, String name, String id, Location location, URI uri,
-            Map<String, String> userMetadata, @Nullable String tag, @Nullable Hardware hardware,
-            @Nullable String imageId, @Nullable OperatingSystem os, NodeState state, Iterable<String> publicAddresses,
-            Iterable<String> privateAddresses, @Nullable Credentials credentials) {
+         Map<String, String> userMetadata, @Nullable String tag, @Nullable Hardware hardware, @Nullable String imageId,
+         @Nullable OperatingSystem os, NodeState state, Iterable<String> publicAddresses,
+         Iterable<String> privateAddresses, @Nullable Credentials credentials) {
       super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata);
       this.tag = tag;
       this.hardware = hardware;
       this.imageId = imageId;
       this.os = os;
       this.state = checkNotNull(state, "state");
-      Iterables.addAll(this.publicAddresses, checkNotNull(publicAddresses, "publicAddresses"));
-      Iterables.addAll(this.privateAddresses, checkNotNull(privateAddresses, "privateAddresses"));
+      this.publicAddresses = ImmutableSet.copyOf(checkNotNull(publicAddresses, "publicAddresses"));
+      this.privateAddresses = ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses"));
       this.credentials = credentials;
    }
 
@@ -138,10 +142,10 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    @Override
    public String toString() {
       return "[id=" + getId() + ", providerId=" + getProviderId() + ", tag=" + getTag() + ", name=" + getName()
-               + ", location=" + getLocation() + ", uri=" + getUri() + ", imageId=" + getImageId() + ", os="
-               + getOperatingSystem() + ", userMetadata=" + getUserMetadata() + ", state=" + getState()
-               + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses + ", hardware="
-               + getHardware() + "]";
+            + ", location=" + getLocation() + ", uri=" + getUri() + ", imageId=" + getImageId() + ", os="
+            + getOperatingSystem() + ", state=" + getState() + ", privateAddresses=" + privateAddresses
+            + ", publicAddresses=" + publicAddresses + ", hardware=" + getHardware() + ", loginUser="
+            + ((credentials != null) ? credentials.identity : null) + ", userMetadata=" + getUserMetadata() + "]";
    }
 
    @Override
@@ -154,6 +158,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((hardware == null) ? 0 : hardware.hashCode());
       result = prime * result + ((os == null) ? 0 : os.hashCode());
+      result = prime * result + ((credentials == null) ? 0 : credentials.hashCode());
       return result;
    }
 
@@ -195,6 +200,11 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
          if (other.os != null)
             return false;
       } else if (!os.equals(other.os))
+         return false;
+      if (credentials == null) {
+         if (other.credentials != null)
+            return false;
+      } else if (!credentials.equals(other.credentials))
          return false;
       return true;
    }

@@ -46,7 +46,8 @@ import com.google.common.collect.Sets;
  * DescribeImagesResponse xmlns="http://ec2.amazonaws.com/doc/2010-06-15/"
  * 
  * @author Adrian Cole
- * @see <a href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImages.html"
+ * @see <a href=
+ *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/ApiReference-query-DescribeImages.html"
  *      />
  */
 public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Set<Image>> {
@@ -159,12 +160,12 @@ public class DescribeImagesResponseHandler extends ParseSax.HandlerForGeneratedR
             this.deleteOnTermination = true;
          } else if (!inProductCodes) {
             try {
-               String region = EC2Utils.findRegionInArgsOrNull(getRequest());
+               String region = getRequest() != null ? EC2Utils.findRegionInArgsOrNull(getRequest()) : null;
                if (region == null)
                   region = defaultRegion;
                contents.add(new Image(region, architecture, this.name, description, imageId, imageLocation,
-                        imageOwnerId, imageState, imageType, isPublic, productCodes, kernelId, platform, ramdiskId,
-                        rootDeviceType, rootDeviceName, ebsBlockDevices, virtualizationType));
+                     imageOwnerId, imageState, imageType, isPublic, productCodes, kernelId, platform, ramdiskId,
+                     rootDeviceType, rootDeviceName, ebsBlockDevices, virtualizationType));
             } catch (NullPointerException e) {
                logger.warn(e, "malformed image: %s", imageId);
             }

@@ -52,7 +52,6 @@ import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_CC_AMIs;
 import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -87,12 +86,12 @@ public class RegionAndNameToImageSupplier implements Supplier<Map<RegionAndName,
    private final String[] ccAmis;
    private final String[] amiOwners;
    private final ImageParser parser;
-   private final ConcurrentMap<RegionAndName, Image> images;
+   private final Map<RegionAndName, Image> images;
 
    @Inject
    RegionAndNameToImageSupplier(@Region Map<String, URI> regionMap, DescribeImagesParallel describer,
-            @Named(PROPERTY_EC2_CC_AMIs) String[] ccAmis, @Named(PROPERTY_EC2_AMI_OWNERS) final String[] amiOwners,
-            final ImageParser parser, final ConcurrentMap<RegionAndName, Image> images) {
+         @Named(PROPERTY_EC2_CC_AMIs) String[] ccAmis, @Named(PROPERTY_EC2_AMI_OWNERS) final String[] amiOwners,
+         final ImageParser parser, final Map<RegionAndName, Image> images) {
       this.regionMap = regionMap;
       this.describer = describer;
       this.ccAmis = ccAmis;
@@ -108,11 +107,12 @@ public class RegionAndNameToImageSupplier implements Supplier<Map<RegionAndName,
       } else {
          logger.debug(">> providing images");
 
-         Iterable<Entry<String, DescribeImagesOptions>> queries = concat(getDescribeQueriesForOwnersInRegions(
-                  regionMap, amiOwners).entrySet(), ccAmisToDescribeQueries(ccAmis).entrySet());
+         Iterable<Entry<String, DescribeImagesOptions>> queries = concat(
+               getDescribeQueriesForOwnersInRegions(regionMap, amiOwners).entrySet(), ccAmisToDescribeQueries(ccAmis)
+                     .entrySet());
 
-         Iterable<? extends Image> parsedImages = filter(transform(describer.apply(queries), parser), Predicates
-                  .notNull());
+         Iterable<? extends Image> parsedImages = filter(transform(describer.apply(queries), parser),
+               Predicates.notNull());
 
          images.putAll(uniqueIndex(parsedImages, new Function<Image, RegionAndName>() {
 
@@ -137,7 +137,7 @@ public class RegionAndNameToImageSupplier implements Supplier<Map<RegionAndName,
    }
 
    private static Map<String, DescribeImagesOptions> getDescribeQueriesForOwnersInRegions(Map<String, URI> regionMap,
-            final String[] amiOwners) {
+         final String[] amiOwners) {
       final DescribeImagesOptions options = getOptionsForOwners(amiOwners);
 
       return transformValues(regionMap, new Function<URI, DescribeImagesOptions>() {

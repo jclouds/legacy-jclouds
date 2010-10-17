@@ -50,14 +50,8 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "cloudservers.ParseServerFromJsonResponseTest")
 public class ParseServerFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
-
    public void testApplyInputStreamDetails() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/cloudservers/test_get_server_detail.json");
-
-      UnwrapOnlyJsonValue<Server> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Server>>() {
-      }));
-      Server response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      Server response = parseServer();
 
       assertEquals(response.getId(), 1234);
       assertEquals(response.getName(), "sample-server");
@@ -74,6 +68,17 @@ public class ParseServerFromJsonResponseTest {
       assertEquals(response.getAddresses(), addresses1);
       assertEquals(response.getMetadata(), ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1"));
 
+   }
+
+   public static Server parseServer() {
+      Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
+
+      InputStream is = ParseServerFromJsonResponseTest.class.getResourceAsStream("/cloudservers/test_get_server_detail.json");
+
+      UnwrapOnlyJsonValue<Server> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Server>>() {
+      }));
+      Server response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      return response;
    }
 
 }

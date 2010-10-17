@@ -39,28 +39,27 @@ import org.jclouds.domain.ResourceMetadata;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 
 /**
  * @author Adrian Cole
  */
 public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
+
    /** The serialVersionUID */
    private static final long serialVersionUID = 8994255275911717567L;
-   private final List<Processor> processors = Lists.newArrayList();
+   private final List<Processor> processors;
    private final int ram;
-   private final List<Volume> volumes = Lists.newArrayList();
-
-   private Predicate<Image> supportsImage;
+   private final List<Volume> volumes;
+   private final Predicate<Image> supportsImage;
 
    public HardwareImpl(String providerId, String name, String id, @Nullable Location location, URI uri,
-            Map<String, String> userMetadata, Iterable<? extends Processor> processors, int ram,
-            Iterable<? extends Volume> volumes, Predicate<Image> supportsImage) {
+         Map<String, String> userMetadata, Iterable<? extends Processor> processors, int ram,
+         Iterable<? extends Volume> volumes, Predicate<Image> supportsImage) {
       super(ComputeType.HARDWARE, providerId, name, id, location, uri, userMetadata);
-      Iterables.addAll(this.processors, checkNotNull(processors, "processors"));
+      this.processors = ImmutableList.copyOf(checkNotNull(processors, "processors"));
       this.ram = ram;
-      Iterables.addAll(this.volumes, checkNotNull(volumes, "volumes"));
+      this.volumes = ImmutableList.copyOf(checkNotNull(volumes, "volumes"));
       this.supportsImage = supportsImage;
    }
 
@@ -95,8 +94,8 @@ public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
    public int compareTo(ResourceMetadata<ComputeType> that) {
       if (that instanceof Hardware) {
          Hardware thatHardware = Hardware.class.cast(that);
-         return ComparisonChain.start().compare(getCoresAndSpeed(this), getCoresAndSpeed(thatHardware)).compare(
-                  this.getRam(), thatHardware.getRam()).compare(getSpace(this), getSpace(thatHardware)).result();
+         return ComparisonChain.start().compare(getCoresAndSpeed(this), getCoresAndSpeed(thatHardware))
+               .compare(this.getRam(), thatHardware.getRam()).compare(getSpace(this), getSpace(thatHardware)).result();
       } else {
          return super.compareTo(that);
       }
@@ -108,7 +107,7 @@ public class HardwareImpl extends ComputeMetadataImpl implements Hardware {
    @Override
    public String toString() {
       return "[id=" + getId() + ", providerId=" + getProviderId() + ", name=" + getName() + ", processors="
-               + processors + ", ram=" + ram + ", volumes=" + volumes + ", supportsImage=" + supportsImage + "]";
+            + processors + ", ram=" + ram + ", volumes=" + volumes + ", supportsImage=" + supportsImage + "]";
    }
 
    /**

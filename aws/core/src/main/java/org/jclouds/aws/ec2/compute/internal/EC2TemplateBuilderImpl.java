@@ -21,9 +21,9 @@ package org.jclouds.aws.ec2.compute.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -47,14 +47,13 @@ import com.google.common.collect.ComputationException;
  */
 public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
 
-   private final ConcurrentMap<RegionAndName, Image> imageMap;
+   private final Map<RegionAndName, Image> imageMap;
 
    @Inject
    protected EC2TemplateBuilderImpl(Supplier<Set<? extends Location>> locations, Supplier<Set<? extends Image>> images,
-            Supplier<Set<? extends Hardware>> sizes, Supplier<Location> defaultLocation,
-            Provider<TemplateOptions> optionsProvider,
-            @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider,
-            ConcurrentMap<RegionAndName, Image> imageMap) {
+         Supplier<Set<? extends Hardware>> sizes, Supplier<Location> defaultLocation,
+         Provider<TemplateOptions> optionsProvider,
+         @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider, Map<RegionAndName, Image> imageMap) {
       super(locations, images, sizes, defaultLocation, optionsProvider, defaultTemplateProvider);
       this.imageMap = imageMap;
    }
@@ -87,8 +86,7 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
          if (imageId != null) {
             String[] regionName = imageId.split("/");
             checkArgument(regionName.length == 2,
-                     "amazon image ids must include the region ( ex. us-east-1/ami-7ea24a17 ) you specified: "
-                              + imageId);
+                  "amazon image ids must include the region ( ex. us-east-1/ami-7ea24a17 ) you specified: " + imageId);
             RegionAndName key = new RegionAndName(regionName[0], regionName[1]);
             try {
                return imageMap.get(key);

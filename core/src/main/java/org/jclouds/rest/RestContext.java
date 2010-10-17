@@ -20,10 +20,13 @@
 package org.jclouds.rest;
 
 import java.net.URI;
+import java.util.Map;
+import java.util.concurrent.Future;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.rest.internal.RestContextImpl;
 
-import java.util.concurrent.Future;
+import com.google.common.annotations.Beta;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -55,6 +58,18 @@ public interface RestContext<S, A> {
    S getApi();
 
    URI getEndpoint();
+
+   /**
+    * retrieves a list of credentials for resources created within this context, keyed on {@code id}
+    * of the resource. We are testing this approach for resources such as compute nodes, where you
+    * could access this externally.
+    * 
+    */
+   @Beta
+   Map<String, Credentials> getCredentialStore();
+
+   @Beta
+   Map<String, Credentials> credentialStore();
 
    String getIdentity();
 

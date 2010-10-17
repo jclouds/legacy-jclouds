@@ -31,12 +31,11 @@ import java.util.Set;
 import javax.inject.Provider;
 
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.domain.Location;
@@ -44,8 +43,6 @@ import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -64,16 +61,14 @@ public class TemplateBuilderImplTest {
       Image image2 = createMock(Image.class);
       OperatingSystem os2 = createMock(OperatingSystem.class);
 
-      Hardware size = new HardwareImpl("hardwareId", null, "hardwareId", defaultLocation, null, ImmutableMap
-               .<String, String> of(), ImmutableList.of(new Processor(1.0, 1.0)), 0, ImmutableList.<Volume> of(),
-               ImagePredicates.any());
+      Hardware hardware = new HardwareBuilder().id("hardwareId").build();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of(defaultLocation));
+            .<Location> of(defaultLocation));
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(
-               image, image2));
-      Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-               .<Hardware> of(size));
+            image, image2));
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+            .<Hardware> of(hardware));
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
       TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
@@ -102,10 +97,10 @@ public class TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-               optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
+            optionsProvider, templateBuilderProvider);
 
-      assertEquals(template.resolveImage(size, images.get()), image2);
+      assertEquals(template.resolveImage(hardware, images.get()), image2);
 
       verify(image);
       verify(image2);
@@ -126,16 +121,14 @@ public class TemplateBuilderImplTest {
       OperatingSystem os = createMock(OperatingSystem.class);
       OperatingSystem os2 = createMock(OperatingSystem.class);
 
-      Hardware size = new HardwareImpl("hardwareId", null, "hardwareId", defaultLocation, null, ImmutableMap
-               .<String, String> of(), ImmutableList.of(new Processor(1.0, 1.0)), 0, ImmutableList.<Volume> of(),
-               ImagePredicates.any());
+      Hardware hardware = new HardwareBuilder().id("hardwareId").build();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of(defaultLocation));
+            .<Location> of(defaultLocation));
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of(
-               image, image2));
-      Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-               .<Hardware> of(size));
+            image, image2));
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+            .<Hardware> of(hardware));
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
       TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
@@ -159,8 +152,8 @@ public class TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-               optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
+            optionsProvider, templateBuilderProvider);
 
       assertEquals(template.smallest().osArchMatches("X86_32").build().getImage(), image);
 
@@ -181,16 +174,15 @@ public class TemplateBuilderImplTest {
       Image image = createMock(Image.class);
       OperatingSystem os = createMock(OperatingSystem.class);
 
-      Hardware size = new HardwareImpl("hardwareId", null, "hardwareId", defaultLocation, null, ImmutableMap
-               .<String, String> of(), ImmutableList.of(new Processor(1.0, 1.0)), 0, ImmutableList.<Volume> of(),
-               ImagePredicates.idEquals("imageId"));
+      Hardware hardware = new HardwareBuilder().id("hardwareId")
+            .supportsImage(ImagePredicates.idEquals("imageId")).build();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of(defaultLocation));
+            .<Location> of(defaultLocation));
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet
-               .<Image> of(image));
-      Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-               .<Hardware> of(size));
+            .<Image> of(image));
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+            .<Hardware> of(hardware));
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
       TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
@@ -217,8 +209,8 @@ public class TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-               optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
+            optionsProvider, templateBuilderProvider);
 
       template.imageId("imageId").build();
 
@@ -237,16 +229,15 @@ public class TemplateBuilderImplTest {
       Image image = createMock(Image.class);
       OperatingSystem os = createMock(OperatingSystem.class);
 
-      Hardware size = new HardwareImpl("hardwareId", null, "hardwareId", defaultLocation, null, ImmutableMap
-               .<String, String> of(), ImmutableList.of(new Processor(1.0, 1.0)), 0, ImmutableList.<Volume> of(),
-               ImagePredicates.idEquals("imageId"));
+      Hardware hardware = new HardwareBuilder().id("hardwareId")
+            .supportsImage(ImagePredicates.idEquals("imageId")).build();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of(defaultLocation));
+            .<Location> of(defaultLocation));
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet
-               .<Image> of(image));
-      Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-               .<Hardware> of(size));
+            .<Image> of(image));
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+            .<Hardware> of(hardware));
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
       TemplateBuilder defaultTemplate = createMock(TemplateBuilder.class);
@@ -273,8 +264,8 @@ public class TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(image, locations, images, sizes, defaultLocation,
-               optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(image, locations, images, hardwares, defaultLocation,
+            optionsProvider, templateBuilderProvider);
       try {
          template.imageId("notImageId").build();
          assert false;
@@ -295,10 +286,10 @@ public class TemplateBuilderImplTest {
       TemplateOptions from = provideTemplateOptions();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of());
+            .<Location> of());
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
-      Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-               .<Hardware> of());
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+            .<Hardware> of());
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -314,8 +305,8 @@ public class TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-               optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
+            optionsProvider, templateBuilderProvider);
 
       template.options(options).build();
 
@@ -330,10 +321,10 @@ public class TemplateBuilderImplTest {
    public void testNothingUsesDefaultTemplateBuilder() {
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of());
+            .<Location> of());
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
-      Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-               .<Hardware> of());
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+            .<Hardware> of());
 
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
@@ -348,8 +339,8 @@ public class TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-               optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
+            optionsProvider, templateBuilderProvider);
 
       template.build();
 
@@ -360,10 +351,10 @@ public class TemplateBuilderImplTest {
    }
 
    protected TemplateBuilderImpl createTemplateBuilder(Image knownImage, Supplier<Set<? extends Location>> locations,
-            Supplier<Set<? extends Image>> images, Supplier<Set<? extends Hardware>> sizes, Location defaultLocation,
-            Provider<TemplateOptions> optionsProvider, Provider<TemplateBuilder> templateBuilderProvider) {
-      TemplateBuilderImpl template = new TemplateBuilderImpl(locations, images, sizes, Suppliers
-               .ofInstance(defaultLocation), optionsProvider, templateBuilderProvider);
+         Supplier<Set<? extends Image>> images, Supplier<Set<? extends Hardware>> hardwares, Location defaultLocation,
+         Provider<TemplateOptions> optionsProvider, Provider<TemplateBuilder> templateBuilderProvider) {
+      TemplateBuilderImpl template = new TemplateBuilderImpl(locations, images, hardwares,
+            Suppliers.ofInstance(defaultLocation), optionsProvider, templateBuilderProvider);
       return template;
    }
 
@@ -371,10 +362,10 @@ public class TemplateBuilderImplTest {
    @Test
    public void testSuppliedLocationWithNoOptions() {
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of());
+            .<Location> of());
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
-      Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-               .<Hardware> of());
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+            .<Hardware> of());
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -385,8 +376,8 @@ public class TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-               optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
+            optionsProvider, templateBuilderProvider);
 
       try {
          template.imageId("foo").locationId("location").build();
@@ -407,10 +398,10 @@ public class TemplateBuilderImplTest {
       TemplateOptions from = provideTemplateOptions();
 
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of());
+            .<Location> of());
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
-      Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-               .<Hardware> of());
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+            .<Hardware> of());
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -421,8 +412,8 @@ public class TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-               optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
+            optionsProvider, templateBuilderProvider);
 
       try {
          template.imageId("foo").options(provideTemplateOptions()).locationId("location").build();
@@ -440,10 +431,10 @@ public class TemplateBuilderImplTest {
    @Test
    public void testDefaultLocationWithNoOptionsNoSuchElement() {
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of());
+            .<Location> of());
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
-      Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-               .<Hardware> of());
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+            .<Hardware> of());
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -456,8 +447,8 @@ public class TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-               optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
+            optionsProvider, templateBuilderProvider);
 
       try {
          template.imageId("region/ami").build();
@@ -480,10 +471,10 @@ public class TemplateBuilderImplTest {
    @Test
    public void testDefaultLocationWithOptions() {
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of());
+            .<Location> of());
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
-      Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-               .<Hardware> of());
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+            .<Hardware> of());
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       TemplateOptions from = provideTemplateOptions();
@@ -497,8 +488,8 @@ public class TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-               optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
+            optionsProvider, templateBuilderProvider);
 
       try {
          template.imageId("region/ami").options(provideTemplateOptions()).build();
@@ -516,10 +507,10 @@ public class TemplateBuilderImplTest {
    @Test
    public void testImageIdNullsEverythingElse() {
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of());
+            .<Location> of());
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet.<Image> of());
-      Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-               .<Hardware> of());
+      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+            .<Hardware> of());
       Location defaultLocation = createMock(Location.class);
       Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
       Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
@@ -528,8 +519,8 @@ public class TemplateBuilderImplTest {
       replay(optionsProvider);
       replay(templateBuilderProvider);
 
-      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, sizes, defaultLocation,
-               optionsProvider, templateBuilderProvider);
+      TemplateBuilderImpl template = createTemplateBuilder(null, locations, images, hardwares, defaultLocation,
+            optionsProvider, templateBuilderProvider);
 
       template.imageDescriptionMatches("imageDescriptionMatches");
       template.imageNameMatches("imageNameMatches");

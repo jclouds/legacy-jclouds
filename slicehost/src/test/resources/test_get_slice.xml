@@ -1,7 +1,7 @@
 <slices type="array">
   <slice>
     <name>jclouds-foo</name>
-    <image-id type="integer">10</image-id>
+    <image-id type="integer">2</image-id>
     <addresses type="array">
       <address>174.143.212.229</address>
       <address>10.176.164.199</address>

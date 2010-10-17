@@ -31,7 +31,7 @@ import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.compute.EC2ComputeServiceTest;
-import org.jclouds.aws.ec2.compute.domain.EC2Hardware;
+import org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.aws.ec2.compute.functions.CreatePlacementGroupIfNeeded;
@@ -41,6 +41,7 @@ import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.encryption.internal.Base64;
@@ -59,7 +60,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String tag = "tag";
-      EC2Hardware size = EC2Hardware.M1_SMALL;
+      Hardware size = EC2HardwareBuilder.m1_small().build();
       String systemGeneratedKeyPairName = "systemGeneratedKeyPair";
       String generatedGroup = "group";
       Set<String> generatedGroups = ImmutableSet.of(generatedGroup);
@@ -115,7 +116,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup constants
       String region = Region.US_EAST_1;
       String tag = "tag";
-      EC2Hardware size = EC2ComputeServiceTest.CC1_4XLARGE;
+      Hardware size = EC2ComputeServiceTest.CC1_4XLARGE;
       String systemGeneratedKeyPairName = "systemGeneratedKeyPair";
       String generatedGroup = "group";
       Set<String> generatedGroups = ImmutableSet.of(generatedGroup);
@@ -174,7 +175,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup constants
       String region = Region.US_EAST_1;
       String tag = "tag";
-      EC2Hardware size = EC2ComputeServiceTest.CC1_4XLARGE;
+      Hardware size = EC2ComputeServiceTest.CC1_4XLARGE;
       String systemGeneratedKeyPairName = "systemGeneratedKeyPair";
       String generatedGroup = "group";
       Set<String> generatedGroups = ImmutableSet.of(generatedGroup);
@@ -233,7 +234,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String tag = "tag";
-      EC2Hardware size = EC2Hardware.M1_SMALL;
+      Hardware size = EC2HardwareBuilder.m1_small().build();
       String systemGeneratedKeyPairName = "systemGeneratedKeyPair";
 
       // create mocks
@@ -286,7 +287,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String tag = "tag";
-      EC2Hardware size = EC2Hardware.M1_SMALL;
+      Hardware size = EC2HardwareBuilder.m1_small().build();
       String systemGeneratedKeyPairName = "systemGeneratedKeyPair";
       String generatedGroup = "group";
       Set<String> generatedGroups = ImmutableSet.of(generatedGroup);

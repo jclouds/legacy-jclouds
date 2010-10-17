@@ -19,9 +19,9 @@
 
 package org.jclouds.rackspace.cloudservers.compute.suppliers;
 
+import static org.jclouds.rackspace.cloudservers.options.ListOptions.Builder.withDetails;
+
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -29,18 +29,13 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.internal.ImageImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.Credentials;
-import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.rackspace.cloudservers.CloudServersClient;
-import org.jclouds.rackspace.cloudservers.options.ListOptions;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
@@ -49,52 +44,27 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class CloudServersImageSupplier implements Supplier<Set<? extends Image>> {
-   public static final Pattern RACKSPACE_PATTERN = Pattern.compile("(([^ ]*) .*)");
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   private CloudServersClient sync;
-   private Supplier<Location> location;
+
+   protected final CloudServersClient sync;
+   protected final Function<org.jclouds.rackspace.cloudservers.domain.Image, Image> cloudServersImageToImage;
 
    @Inject
-   CloudServersImageSupplier(CloudServersClient sync, Supplier<Location> location) {
+   CloudServersImageSupplier(CloudServersClient sync,
+         Function<org.jclouds.rackspace.cloudservers.domain.Image, Image> cloudServersImageToImage) {
       this.sync = sync;
-      this.location = location;
+      this.cloudServersImageToImage = cloudServersImageToImage;
    }
 
    @Override
    public Set<? extends Image> get() {
-      final Set<Image> images = Sets.newHashSet();
+      Set<Image> images;
       logger.debug(">> providing images");
-      for (final org.jclouds.rackspace.cloudservers.domain.Image from : sync.listImages(ListOptions.Builder
-               .withDetails())) {
-         String version = from.getUpdated().getTime() + "";
-         Matcher matcher = RACKSPACE_PATTERN.matcher(from.getName());
-
-         OsFamily osFamily = null;
-         String osName = null;
-         String osArch = null;
-         String osVersion = null;
-         String osDescription = from.getName();
-         boolean is64Bit = true;
-
-         if (from.getName().indexOf("Red Hat EL") != -1) {
-            osFamily = OsFamily.RHEL;
-         } else if (from.getName().indexOf("Oracle EL") != -1) {
-            osFamily = OsFamily.OEL;
-         } else if (matcher.find()) {
-            try {
-               osFamily = OsFamily.fromValue(matcher.group(2).toLowerCase());
-            } catch (IllegalArgumentException e) {
-               logger.debug("<< didn't match os(%s)", matcher.group(2));
-            }
-         }
-         OperatingSystem os = new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
-
-         images.add(new ImageImpl(from.getId() + "", from.getName(), from.getId() + "", location.get(), null,
-                  ImmutableMap.<String, String> of(), os, from.getName(), version, new Credentials("root", null)));
-      }
+      images = Sets.<Image> newLinkedHashSet(Iterables.transform(sync.listImages(withDetails()),
+            cloudServersImageToImage));
       logger.debug("<< images(%d)", images.size());
       return images;
    }

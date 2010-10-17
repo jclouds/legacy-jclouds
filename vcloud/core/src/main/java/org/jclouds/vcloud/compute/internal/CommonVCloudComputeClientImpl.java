@@ -19,10 +19,7 @@
 
 package org.jclouds.vcloud.compute.internal;
 
-import static com.google.common.base.Preconditions.checkState;
-
 import java.net.URI;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -38,7 +35,6 @@ import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 
 /**
@@ -57,22 +53,6 @@ public abstract class CommonVCloudComputeClientImpl<T, A extends ReferenceType> 
    public CommonVCloudComputeClientImpl(CommonVCloudClient client, Predicate<URI> successTester) {
       this.client = client;
       this.taskTester = successTester;
-   }
-
-   protected Map<String, String> parseAndValidateResponse(T template, A vAppResponse) {
-      Map<String, String> response = parseResponse(template, vAppResponse);
-      checkState(response.containsKey("id"), "bad configuration: [id] should be in response");
-      checkState(response.containsKey("username"), "bad configuration: [username] should be in response");
-      checkState(response.containsKey("password"), "bad configuration: [password] should be in response");
-      return response;
-   }
-
-   protected Map<String, String> parseResponse(T template, A vAppResponse) {
-      Map<String, String> config = Maps.newLinkedHashMap();// Allows nulls
-      config.put("id", vAppResponse.getHref().toASCIIString());
-      config.put("username", null);
-      config.put("password", null);
-      return config;
    }
 
    @Override

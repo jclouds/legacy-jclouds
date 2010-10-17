@@ -46,18 +46,20 @@ import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.compute.config.VCloudExpressComputeServiceContextModule;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressDestroyNodeStrategy;
+import org.jclouds.vcloud.compute.strategy.VCloudExpressGetNodeMetadataStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressRebootNodeStrategy;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeClient;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeService;
 import org.jclouds.vcloud.terremark.compute.domain.KeyPairCredentials;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
 import org.jclouds.vcloud.terremark.compute.functions.NodeMetadataToOrgAndName;
+import org.jclouds.vcloud.terremark.compute.functions.TerremarkVCloudExpressVAppToNodeMetadata;
 import org.jclouds.vcloud.terremark.compute.options.TerremarkVCloudTemplateOptions;
 import org.jclouds.vcloud.terremark.compute.strategy.ParseVAppTemplateDescriptionToGetDefaultLoginCredentials;
 import org.jclouds.vcloud.terremark.compute.strategy.TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy;
 import org.jclouds.vcloud.terremark.compute.strategy.TerremarkVCloudAddNodeWithTagStrategy;
-import org.jclouds.vcloud.terremark.compute.strategy.TerremarkVCloudGetNodeMetadataStrategy;
 import org.jclouds.vcloud.terremark.compute.suppliers.VAppTemplatesInOrgs;
 
 import com.google.common.base.Function;
@@ -99,7 +101,9 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudExpressCom
       bind(RunNodesAndAddToSetStrategy.class).to(TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy.class);
       bind(ListNodesStrategy.class).to(VCloudExpressListNodesStrategy.class);
       // NOTE
-      bind(GetNodeMetadataStrategy.class).to(TerremarkVCloudGetNodeMetadataStrategy.class);
+      bind(new TypeLiteral<Function<VCloudExpressVApp, NodeMetadata>>() {
+      }).to(TerremarkVCloudExpressVAppToNodeMetadata.class);
+      bind(GetNodeMetadataStrategy.class).to(VCloudExpressGetNodeMetadataStrategy.class);
       bind(RebootNodeStrategy.class).to(VCloudExpressRebootNodeStrategy.class);
       bind(DestroyNodeStrategy.class).to(VCloudExpressDestroyNodeStrategy.class);
       bindLoadBalancer();
@@ -111,7 +115,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudExpressCom
       bind(ComputeService.class).to(TerremarkVCloudComputeService.class);
       bind(VCloudExpressComputeClient.class).to(TerremarkVCloudComputeClient.class);
       bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(
-               ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
+            ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
       bind(SecureRandom.class).toInstance(new SecureRandom());
    }
 
@@ -127,7 +131,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudExpressCom
    // bind(LoadBalanceNodesStrategy.class).to(TerremarkLoadBalanceNodesStrategy.class);
    // bind(DestroyLoadBalancerStrategy.class).to(TerremarkDestroyLoadBalancerStrategy.class);
    // }
-   //   
+   //
 
    @Named("PASSWORD")
    @Provides

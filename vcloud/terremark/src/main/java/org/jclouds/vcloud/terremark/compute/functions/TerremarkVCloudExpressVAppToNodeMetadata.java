@@ -17,34 +17,30 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.terremark.compute.strategy;
+package org.jclouds.vcloud.terremark.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.installNewCredentials;
 
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
-import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.compute.domain.VCloudLocation;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
 import org.jclouds.vcloud.compute.functions.HardwareForVCloudExpressVApp;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressGetNodeMetadataStrategy;
+import org.jclouds.vcloud.compute.functions.VCloudExpressVAppToNodeMetadata;
 import org.jclouds.vcloud.domain.Status;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.terremark.compute.domain.KeyPairCredentials;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
 
@@ -54,25 +50,24 @@ import com.google.common.base.Supplier;
  * @author Adrian Cole
  */
 @Singleton
-public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudExpressGetNodeMetadataStrategy {
-   @Resource
-   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-   protected Logger logger = Logger.NULL;
-
+public class TerremarkVCloudExpressVAppToNodeMetadata extends VCloudExpressVAppToNodeMetadata {
    private final ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap;
 
    @Inject
-   protected TerremarkVCloudGetNodeMetadataStrategy(VCloudExpressClient client,
-            VCloudExpressComputeClient computeClient, Map<Status, NodeState> vAppStatusToNodeState,
-            HardwareForVCloudExpressVApp getExtra, FindLocationForResource findLocationForResourceInVDC,
-            Supplier<Set<? extends Image>> images, ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
-      super(client, computeClient, vAppStatusToNodeState, getExtra, findLocationForResourceInVDC, images);
-      this.credentialsMap = credentialsMap;
+   public TerremarkVCloudExpressVAppToNodeMetadata(VCloudExpressComputeClient computeClient,
+         Map<String, Credentials> credentialStore, Map<Status, NodeState> vAppStatusToNodeState,
+         HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp,
+         FindLocationForResource findLocationForResourceInVDC, Supplier<Set<? extends Image>> images,
+         ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
+      super(computeClient, credentialStore, vAppStatusToNodeState, hardwareForVCloudExpressVApp,
+            findLocationForResourceInVDC, images);
+      this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
+      ;
    }
 
    @Override
-   public NodeMetadata execute(String id) {
-      NodeMetadata node = super.execute(checkNotNull(id, "node.id"));
+   public NodeMetadata apply(VCloudExpressVApp from) {
+      NodeMetadata node = super.apply(from);
       if (node == null)
          return null;
       if (node.getTag() != null) {
@@ -85,7 +80,7 @@ public class TerremarkVCloudGetNodeMetadataStrategy extends VCloudExpressGetNode
       OrgAndName orgAndName = getOrgAndNameFromNode(node);
       if (credentialsMap.containsKey(orgAndName)) {
          Credentials creds = credentialsMap.get(orgAndName);
-         node = installNewCredentials(node, creds);
+         node = NodeMetadataBuilder.fromNodeMetadata(node).credentials(creds).build();
       }
       return node;
    }

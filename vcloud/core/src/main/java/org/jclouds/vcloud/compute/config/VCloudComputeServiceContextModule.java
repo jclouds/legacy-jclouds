@@ -22,8 +22,9 @@ package org.jclouds.vcloud.compute.config;
 import java.util.Set;
 
 import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.options.TemplateOptions;
@@ -36,8 +37,10 @@ import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.compute.functions.ImagesInOrg;
+import org.jclouds.vcloud.compute.functions.HardwareForVApp;
 import org.jclouds.vcloud.compute.functions.HardwareInOrg;
+import org.jclouds.vcloud.compute.functions.ImagesInOrg;
+import org.jclouds.vcloud.compute.functions.VAppToNodeMetadata;
 import org.jclouds.vcloud.compute.internal.VCloudTemplateBuilderImpl;
 import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
 import org.jclouds.vcloud.compute.strategy.GetLoginCredentialsFromGuestConfiguration;
@@ -48,6 +51,7 @@ import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
 import org.jclouds.vcloud.compute.suppliers.VCloudHardwareSupplier;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.VApp;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -66,9 +70,14 @@ public class VCloudComputeServiceContextModule extends CommonVCloudComputeServic
    @Override
    protected void configure() {
       super.configure();
+      bind(new TypeLiteral<Function<VApp, NodeMetadata>>() {
+      }).to(VAppToNodeMetadata.class);
       bind(TemplateOptions.class).to(VCloudTemplateOptions.class);
       bind(TemplateBuilder.class).to(VCloudTemplateBuilderImpl.class);
       bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
+      bind(new TypeLiteral<Function<VApp, Hardware>>() {
+      }).to(new TypeLiteral<HardwareForVApp>() {
+      });
       bind(GetNodeMetadataStrategy.class).to(VCloudGetNodeMetadataStrategy.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudClient>>() {

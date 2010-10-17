@@ -27,19 +27,14 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.Processor;
-import org.jclouds.compute.domain.internal.HardwareImpl;
-import org.jclouds.compute.domain.internal.VolumeImpl;
-import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.slicehost.SlicehostClient;
 import org.jclouds.slicehost.domain.Flavor;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
@@ -53,25 +48,20 @@ public class SlicehostHardwareSupplier implements Supplier<Set<? extends Hardwar
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    private final SlicehostClient sync;
-   private final Supplier<Location> location;
+   private final Function<Flavor, Hardware> flavorToHardware;
 
    @Inject
-   SlicehostHardwareSupplier(SlicehostClient sync, Supplier<Location> location) {
+   SlicehostHardwareSupplier(SlicehostClient sync, Function<Flavor, Hardware> flavorToHardware) {
       this.sync = sync;
-      this.location = location;
+      this.flavorToHardware = flavorToHardware;
    }
 
    @Override
    public Set<? extends Hardware> get() {
-      final Set<Hardware> sizes = Sets.newHashSet();
-      logger.debug(">> providing sizes");
-      for (final Flavor from : sync.listFlavors()) {
-         sizes.add(new HardwareImpl(from.getId() + "", from.getName(), from.getId() + "", location.get(), null,
-                  ImmutableMap.<String, String> of(), ImmutableList.of(new Processor(from.getRam() / 1024.0, 1.0)),
-                  from.getRam(), ImmutableList.of(new VolumeImpl((from.getRam() * 4) / 1024.0f, true, true)),
-                  ImagePredicates.any()));
-      }
-      logger.debug("<< sizes(%d)", sizes.size());
-      return sizes;
+      final Set<Hardware> hardware;
+      logger.debug(">> providing hardware");
+      hardware = Sets.newLinkedHashSet(Iterables.transform(sync.listFlavors(), flavorToHardware));
+      logger.debug("<< hardware(%d)", hardware.size());
+      return hardware;
    }
 }

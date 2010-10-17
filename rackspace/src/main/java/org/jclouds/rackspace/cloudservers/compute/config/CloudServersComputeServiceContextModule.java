@@ -30,10 +30,11 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
@@ -44,14 +45,18 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.rackspace.cloudservers.CloudServersAsyncClient;
 import org.jclouds.rackspace.cloudservers.CloudServersClient;
+import org.jclouds.rackspace.cloudservers.compute.functions.CloudServersImageToImage;
+import org.jclouds.rackspace.cloudservers.compute.functions.CloudServersImageToOperatingSystem;
+import org.jclouds.rackspace.cloudservers.compute.functions.FlavorToHardware;
 import org.jclouds.rackspace.cloudservers.compute.functions.ServerToNodeMetadata;
 import org.jclouds.rackspace.cloudservers.compute.strategy.CloudServersAddNodeWithTagStrategy;
 import org.jclouds.rackspace.cloudservers.compute.strategy.CloudServersDestroyNodeStrategy;
 import org.jclouds.rackspace.cloudservers.compute.strategy.CloudServersGetNodeMetadataStrategy;
 import org.jclouds.rackspace.cloudservers.compute.strategy.CloudServersListNodesStrategy;
 import org.jclouds.rackspace.cloudservers.compute.strategy.CloudServersRebootNodeStrategy;
-import org.jclouds.rackspace.cloudservers.compute.suppliers.CloudServersImageSupplier;
 import org.jclouds.rackspace.cloudservers.compute.suppliers.CloudServersHardwareSupplier;
+import org.jclouds.rackspace.cloudservers.compute.suppliers.CloudServersImageSupplier;
+import org.jclouds.rackspace.cloudservers.domain.Flavor;
 import org.jclouds.rackspace.cloudservers.domain.Server;
 import org.jclouds.rackspace.cloudservers.domain.ServerStatus;
 import org.jclouds.rackspace.config.RackspaceLocationsModule;
@@ -82,6 +87,16 @@ public class CloudServersComputeServiceContextModule extends BaseComputeServiceC
       install(new RackspaceLocationsModule());
       bind(new TypeLiteral<Function<Server, NodeMetadata>>() {
       }).to(ServerToNodeMetadata.class);
+
+      bind(new TypeLiteral<Function<org.jclouds.rackspace.cloudservers.domain.Image, Image>>() {
+      }).to(CloudServersImageToImage.class);
+
+      bind(new TypeLiteral<Function<org.jclouds.rackspace.cloudservers.domain.Image, OperatingSystem>>() {
+      }).to(CloudServersImageToOperatingSystem.class);
+
+      bind(new TypeLiteral<Function<Flavor, Hardware>>() {
+      }).to(FlavorToHardware.class);
+      
       bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<CloudServersClient, CloudServersAsyncClient>>() {
@@ -102,31 +117,31 @@ public class CloudServersComputeServiceContextModule extends BaseComputeServiceC
    }
 
    @VisibleForTesting
-   static final Map<ServerStatus, NodeState> serverToNodeState = ImmutableMap.<ServerStatus, NodeState> builder().put(
-            ServerStatus.ACTIVE, NodeState.RUNNING)//
-            .put(ServerStatus.SUSPENDED, NodeState.SUSPENDED)//
-            .put(ServerStatus.DELETED, NodeState.TERMINATED)//
-            .put(ServerStatus.QUEUE_RESIZE, NodeState.PENDING)//
-            .put(ServerStatus.PREP_RESIZE, NodeState.PENDING)//
-            .put(ServerStatus.RESIZE, NodeState.PENDING)//
-            .put(ServerStatus.VERIFY_RESIZE, NodeState.PENDING)//
-            .put(ServerStatus.QUEUE_MOVE, NodeState.PENDING)//
-            .put(ServerStatus.PREP_MOVE, NodeState.PENDING)//
-            .put(ServerStatus.MOVE, NodeState.PENDING)//
-            .put(ServerStatus.VERIFY_MOVE, NodeState.PENDING)//
-            .put(ServerStatus.RESCUE, NodeState.PENDING)//
-            .put(ServerStatus.ERROR, NodeState.ERROR)//
-            .put(ServerStatus.BUILD, NodeState.PENDING)//
-            .put(ServerStatus.RESTORING, NodeState.PENDING)//
-            .put(ServerStatus.PASSWORD, NodeState.PENDING)//
-            .put(ServerStatus.REBUILD, NodeState.PENDING)//
-            .put(ServerStatus.DELETE_IP, NodeState.PENDING)//
-            .put(ServerStatus.SHARE_IP_NO_CONFIG, NodeState.PENDING)//
-            .put(ServerStatus.SHARE_IP, NodeState.PENDING)//
-            .put(ServerStatus.REBOOT, NodeState.PENDING)//
-            .put(ServerStatus.HARD_REBOOT, NodeState.PENDING)//
-            .put(ServerStatus.UNKNOWN, NodeState.UNRECOGNIZED)//
-            .put(ServerStatus.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
+   public static final Map<ServerStatus, NodeState> serverToNodeState = ImmutableMap
+         .<ServerStatus, NodeState> builder().put(ServerStatus.ACTIVE, NodeState.RUNNING)//
+         .put(ServerStatus.SUSPENDED, NodeState.SUSPENDED)//
+         .put(ServerStatus.DELETED, NodeState.TERMINATED)//
+         .put(ServerStatus.QUEUE_RESIZE, NodeState.PENDING)//
+         .put(ServerStatus.PREP_RESIZE, NodeState.PENDING)//
+         .put(ServerStatus.RESIZE, NodeState.PENDING)//
+         .put(ServerStatus.VERIFY_RESIZE, NodeState.PENDING)//
+         .put(ServerStatus.QUEUE_MOVE, NodeState.PENDING)//
+         .put(ServerStatus.PREP_MOVE, NodeState.PENDING)//
+         .put(ServerStatus.MOVE, NodeState.PENDING)//
+         .put(ServerStatus.VERIFY_MOVE, NodeState.PENDING)//
+         .put(ServerStatus.RESCUE, NodeState.PENDING)//
+         .put(ServerStatus.ERROR, NodeState.ERROR)//
+         .put(ServerStatus.BUILD, NodeState.PENDING)//
+         .put(ServerStatus.RESTORING, NodeState.PENDING)//
+         .put(ServerStatus.PASSWORD, NodeState.PENDING)//
+         .put(ServerStatus.REBUILD, NodeState.PENDING)//
+         .put(ServerStatus.DELETE_IP, NodeState.PENDING)//
+         .put(ServerStatus.SHARE_IP_NO_CONFIG, NodeState.PENDING)//
+         .put(ServerStatus.SHARE_IP, NodeState.PENDING)//
+         .put(ServerStatus.REBOOT, NodeState.PENDING)//
+         .put(ServerStatus.HARD_REBOOT, NodeState.PENDING)//
+         .put(ServerStatus.UNKNOWN, NodeState.UNRECOGNIZED)//
+         .put(ServerStatus.UNRECOGNIZED, NodeState.UNRECOGNIZED).build();
 
    @Singleton
    @Provides

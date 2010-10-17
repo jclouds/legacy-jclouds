@@ -32,8 +32,10 @@ import javax.inject.Inject;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.internal.NodeMetadataImpl;
+import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.slicehost.domain.Slice;
@@ -41,17 +43,17 @@ import org.jclouds.slicehost.domain.Slice;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
  */
 public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
-   private final Supplier<Location> location;
-   private final Map<Slice.Status, NodeState> sliceToNodeState;
-   private final Supplier<Set<? extends Image>> images;
-   private final Supplier<Set<? extends Hardware>> hardwares;
+   protected final Supplier<Location> location;
+   protected final Map<Slice.Status, NodeState> sliceToNodeState;
+   protected final Supplier<Set<? extends Image>> images;
+   protected final Supplier<Set<? extends Hardware>> hardwares;
+   protected final Map<String, Credentials> credentialStore;
 
    @Resource
    protected Logger logger = Logger.NULL;
@@ -83,9 +85,10 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
    }
 
    @Inject
-   SliceToNodeMetadata(Map<Slice.Status, NodeState> sliceStateToNodeState, Supplier<Set<? extends Image>> images,
-            Supplier<Location> location, Supplier<Set<? extends Hardware>> hardwares) {
+   SliceToNodeMetadata(Map<Slice.Status, NodeState> sliceStateToNodeState, Map<String, Credentials> credentialStore,
+         Supplier<Set<? extends Image>> images, Supplier<Location> location, Supplier<Set<? extends Hardware>> hardwares) {
       this.sliceToNodeState = checkNotNull(sliceStateToNodeState, "sliceStateToNodeState");
+      this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.images = checkNotNull(images, "images");
       this.location = checkNotNull(location, "location");
       this.hardwares = checkNotNull(hardwares, "hardwares");
@@ -93,36 +96,50 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
 
    @Override
    public NodeMetadata apply(Slice from) {
-      String tag = parseTagFromName(from.getName());
-      Image image = null;
+      NodeMetadataBuilder builder = new NodeMetadataBuilder();
+      builder.ids(from.getId() + "");
+      builder.name(from.getName());
+      builder.location(location.get());
+      builder.tag(parseTagFromName(from.getName()));
+      builder.imageId(from.getImageId() + "");
+      builder.operatingSystem(parseOperatingSystem(from));
+      builder.hardware(parseHardware(from));
+      builder.state(sliceToNodeState.get(from.getStatus()));
+      builder.publicAddresses(Iterables.filter(from.getAddresses(), new Predicate<String>() {
+
+         @Override
+         public boolean apply(String input) {
+            return !input.startsWith("10.");
+         }
+
+      }));
+      builder.privateAddresses(Iterables.filter(from.getAddresses(), new Predicate<String>() {
+
+         @Override
+         public boolean apply(String input) {
+            return input.startsWith("10.");
+         }
+
+      }));
+      builder.credentials(credentialStore.get(from.getId() + ""));
+      return builder.build();
+   }
+
+   protected Hardware parseHardware(Slice from) {
       try {
-         image = Iterables.find(images.get(), new FindImageForSlice(from));
-      } catch (NoSuchElementException e) {
-         logger.warn("could not find a matching image for slice %s in location %s", from, location);
-      }
-      Hardware hardware = null;
-      try {
-         hardware = Iterables.find(hardwares.get(), new FindHardwareForSlice(from));
+         return Iterables.find(hardwares.get(), new FindHardwareForSlice(from));
       } catch (NoSuchElementException e) {
          logger.warn("could not find a matching hardware for slice %s", from);
       }
-      return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", location.get(), null,
-               ImmutableMap.<String, String> of(), tag, hardware, from.getImageId() + "", image != null ? image
-                        .getOperatingSystem() : null, sliceToNodeState.get(from.getStatus()), Iterables.filter(from
-                        .getAddresses(), new Predicate<String>() {
+      return null;
+   }
 
-                  @Override
-                  public boolean apply(String input) {
-                     return !input.startsWith("10.");
-                  }
-
-               }), Iterables.filter(from.getAddresses(), new Predicate<String>() {
-
-                  @Override
-                  public boolean apply(String input) {
-                     return input.startsWith("10.");
-                  }
-
-               }), null);
+   protected OperatingSystem parseOperatingSystem(Slice from) {
+      try {
+         return Iterables.find(images.get(), new FindImageForSlice(from)).getOperatingSystem();
+      } catch (NoSuchElementException e) {
+         logger.warn("could not find a matching image for slice %s in location %s", from, location);
+      }
+      return null;
    }
 }

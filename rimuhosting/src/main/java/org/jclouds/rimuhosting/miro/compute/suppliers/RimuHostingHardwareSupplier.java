@@ -27,10 +27,10 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Processor;
-import org.jclouds.compute.domain.internal.HardwareImpl;
+import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
-import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
@@ -40,7 +40,6 @@ import org.jclouds.rimuhosting.miro.domain.PricingPlan;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
@@ -78,9 +77,9 @@ public class RimuHostingHardwareSupplier implements Supplier<Set<? extends Hardw
                }
 
             });
-            sizes.add(new HardwareImpl(from.getId(), from.getId(), from.getId(), location, null, ImmutableMap
-                     .<String, String> of(), ImmutableList.of(new Processor(1, 1.0)), from.getRam(), ImmutableList
-                     .of(new VolumeImpl((float) from.getDiskSize(), true, true)), ImagePredicates.any()));
+            sizes.add(new HardwareBuilder().ids(from.getId()).location(location)
+                  .processors(ImmutableList.of(new Processor(1, 1.0))).ram(from.getRam())
+                  .volumes(ImmutableList.<Volume> of(new VolumeImpl((float) from.getDiskSize(), true, true))).build());
          } catch (NullPointerException e) {
             logger.warn("datacenter not present in " + from.getId());
          }

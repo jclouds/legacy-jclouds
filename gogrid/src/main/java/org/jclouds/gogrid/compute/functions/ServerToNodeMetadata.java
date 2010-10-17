@@ -33,9 +33,8 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.internal.NodeMetadataImpl;
-import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.domain.Server;
@@ -45,8 +44,6 @@ import org.jclouds.logging.Logger;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
@@ -75,8 +72,8 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       @Override
       public boolean apply(Image input) {
          return input.getProviderId().equals(instance.getImage().getId() + "")
-                  && (input.getLocation() == null || input.getLocation().getId().equals(
-                           instance.getDatacenter().getId() + ""));
+               && (input.getLocation() == null || input.getLocation().getId()
+                     .equals(instance.getDatacenter().getId() + ""));
       }
    }
 
@@ -96,8 +93,8 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Inject
    ServerToNodeMetadata(Map<ServerState, NodeState> serverStateToNodeState, GoGridClient client,
-            Supplier<Set<? extends Image>> images, Supplier<Set<? extends Hardware>> hardwares,
-            Supplier<Map<String, ? extends Location>> locations) {
+         Supplier<Set<? extends Image>> images, Supplier<Set<? extends Hardware>> hardwares,
+         Supplier<Map<String, ? extends Location>> locations) {
       this.serverStateToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
       this.client = checkNotNull(client, "client");
       this.images = checkNotNull(images, "images");
@@ -107,28 +104,41 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Override
    public NodeMetadata apply(Server from) {
-      String tag = parseTagFromName(from.getName());
-      Set<String> ipSet = ImmutableSet.of(from.getIp().getIp());
-      NodeState state = serverStateToNodeState.get(from.getState());
-      Credentials creds = client.getServerServices().getServerCredentialsList().get(from.getName());
+      NodeMetadataBuilder builder = new NodeMetadataBuilder();
+      builder.ids(from.getId() + "");
+      builder.name(from.getName());
+      builder.location(locations.get().get(from.getDatacenter().getId() + ""));
+      builder.tag(parseTagFromName(from.getName()));
+      builder.hardware(parseHardware(from));
+      builder.imageId(from.getImage().getId() + "");
+      
+      Image image = parseImage(from);
+      if (image != null)
+         builder.operatingSystem(image.getOperatingSystem());
+      
+      builder.state(serverStateToNodeState.get(from.getState()));
+      builder.publicAddresses(ImmutableSet.of(from.getIp().getIp()));
+      builder.credentials(client.getServerServices().getServerCredentialsList().get(from.getName()));
+      return builder.build();
+   }
+
+   protected Image parseImage(Server from) {
       Image image = null;
       try {
          image = Iterables.find(images.get(), new FindImageForServer(from));
       } catch (NoSuchElementException e) {
          logger.warn("could not find a matching image for server %s", from);
       }
+      return image;
+   }
 
+   protected Hardware parseHardware(Server from) {
       Hardware hardware = null;
       try {
          hardware = Iterables.find(hardwares.get(), new FindHardwareForServer(from));
       } catch (NoSuchElementException e) {
          logger.warn("could not find a matching hardware for server %s", from);
       }
-
-      return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", locations.get().get(
-               from.getDatacenter().getId() + ""), null, ImmutableMap.<String, String> of(), tag, hardware, from
-               .getImage().getId()
-               + "", image != null ? image.getOperatingSystem() : null, state, ipSet, ImmutableList.<String> of(),
-               creds);
+      return hardware;
    }
 }

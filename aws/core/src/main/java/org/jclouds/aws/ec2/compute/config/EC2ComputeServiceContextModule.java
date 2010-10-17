@@ -31,7 +31,6 @@ import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 import java.security.SecureRandom;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Named;
@@ -44,7 +43,9 @@ import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.compute.functions.CreatePlacementGroupIfNeeded;
 import org.jclouds.aws.ec2.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.aws.ec2.compute.functions.CreateUniqueKeyPair;
+import org.jclouds.aws.ec2.compute.functions.CredentialsForInstance;
 import org.jclouds.aws.ec2.compute.functions.RegionAndIdToImage;
+import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.aws.ec2.compute.internal.EC2TemplateBuilderImpl;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.aws.ec2.compute.strategy.EC2DestroyLoadBalancerStrategy;
@@ -57,6 +58,7 @@ import org.jclouds.aws.ec2.compute.strategy.EC2RunNodesAndAddToSetStrategy;
 import org.jclouds.aws.ec2.compute.suppliers.EC2HardwareSupplier;
 import org.jclouds.aws.ec2.compute.suppliers.EC2LocationSupplier;
 import org.jclouds.aws.ec2.compute.suppliers.RegionAndNameToImageSupplier;
+import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.RunningInstance;
@@ -70,6 +72,8 @@ import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.options.TemplateOptions;
@@ -80,6 +84,7 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.LoadBalanceNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
@@ -92,6 +97,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Sets;
 import com.google.inject.Injector;
@@ -106,6 +112,19 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class EC2ComputeServiceContextModule extends BaseComputeServiceContextModule {
+
+   public static final Map<InstanceState, NodeState> instanceToNodeState = ImmutableMap
+         .<InstanceState, NodeState> builder().put(InstanceState.PENDING, NodeState.PENDING)
+         .put(InstanceState.RUNNING, NodeState.RUNNING).put(InstanceState.SHUTTING_DOWN, NodeState.PENDING)
+         .put(InstanceState.TERMINATED, NodeState.TERMINATED).put(InstanceState.STOPPING, NodeState.PENDING)
+         .put(InstanceState.STOPPED, NodeState.SUSPENDED).put(InstanceState.UNRECOGNIZED, NodeState.UNRECOGNIZED)
+         .build();
+
+   @Singleton
+   @Provides
+   Map<InstanceState, NodeState> provideServerToNodeState() {
+      return instanceToNodeState;
+   }
 
    @Provides
    @Singleton
@@ -134,6 +153,10 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
       bind(TemplateBuilder.class).to(EC2TemplateBuilderImpl.class);
       bind(TemplateOptions.class).to(EC2TemplateOptions.class);
       bind(ComputeService.class).to(EC2ComputeService.class);
+      bind(new TypeLiteral<Function<RunningInstance, NodeMetadata>>() {
+      }).to(RunningInstanceToNodeMetadata.class);
+      bind(new TypeLiteral<Function<RunningInstance, Credentials>>() {
+      }).to(CredentialsForInstance.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<EC2Client, EC2AsyncClient>>() {
       }).in(Scopes.SINGLETON);
@@ -220,28 +243,28 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
 
    @Provides
    @Singleton
-   protected ConcurrentMap<RegionAndName, Image> provideImageMap(RegionAndIdToImage regionAndIdToImage) {
+   protected Map<RegionAndName, Image> provideImageMap(RegionAndIdToImage regionAndIdToImage) {
       return new MapMaker().makeComputingMap(regionAndIdToImage);
    }
 
    @Provides
    @Singleton
    protected Supplier<Map<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
-            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final RegionAndNameToImageSupplier supplier) {
+         @Named(PROPERTY_SESSION_INTERVAL) long seconds, final RegionAndNameToImageSupplier supplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<RegionAndName, ? extends Image>>(
-               authException, seconds, new Supplier<Map<RegionAndName, ? extends Image>>() {
-                  @Override
-                  public Map<RegionAndName, ? extends Image> get() {
-                     return supplier.get();
-                  }
-               });
+            authException, seconds, new Supplier<Map<RegionAndName, ? extends Image>>() {
+               @Override
+               public Map<RegionAndName, ? extends Image> get() {
+                  return supplier.get();
+               }
+            });
    }
 
    @Override
    protected Supplier<Set<? extends Image>> getSourceImageSupplier(Injector injector) {
       Supplier<Map<RegionAndName, ? extends Image>> map = injector.getInstance(Key
-               .get(new TypeLiteral<Supplier<Map<RegionAndName, ? extends Image>>>() {
-               }));
+            .get(new TypeLiteral<Supplier<Map<RegionAndName, ? extends Image>>>() {
+            }));
       return Suppliers.compose(new Function<Map<RegionAndName, ? extends Image>, Set<? extends Image>>() {
          @Override
          public Set<? extends Image> apply(Map<RegionAndName, ? extends Image> from) {

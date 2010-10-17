@@ -19,6 +19,8 @@
 
 package org.jclouds.rackspace.cloudservers.compute.suppliers;
 
+import static org.jclouds.rackspace.cloudservers.options.ListOptions.Builder.withDetails;
+
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -26,23 +28,15 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.Processor;
-import org.jclouds.compute.domain.internal.HardwareImpl;
-import org.jclouds.compute.domain.internal.VolumeImpl;
-import org.jclouds.compute.predicates.ImagePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.rackspace.cloudservers.CloudServersClient;
 import org.jclouds.rackspace.cloudservers.domain.Flavor;
-import org.jclouds.rackspace.cloudservers.options.ListOptions;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
@@ -55,27 +49,20 @@ public class CloudServersHardwareSupplier implements Supplier<Set<? extends Hard
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
    private final CloudServersClient sync;
-   private final Supplier<Location> location;
+   private final Function<Flavor, Hardware> flavorToHardware;
 
    @Inject
-   CloudServersHardwareSupplier(CloudServersClient sync, Supplier<Location> location,
-            Function<ComputeMetadata, String> indexer) {
+   CloudServersHardwareSupplier(CloudServersClient sync, Function<Flavor, Hardware> flavorToHardware) {
       this.sync = sync;
-      this.location = location;
+      this.flavorToHardware = flavorToHardware;
    }
 
    @Override
    public Set<? extends Hardware> get() {
-      final Set<Hardware> sizes = Sets.newHashSet();
-      logger.debug(">> providing sizes");
-      for (final Flavor from : sync.listFlavors(ListOptions.Builder.withDetails())) {
-         sizes.add(new HardwareImpl(from.getId() + "", from.getName(), from.getId() + "", location.get(), null,
-                  ImmutableMap.<String, String> of(), ImmutableList.of(new Processor(from.getDisk() / 10.0, 1.0)), from
-                           .getRam(), ImmutableList.of(new VolumeImpl((float) from.getDisk(), true, true)),
-                  ImagePredicates.any()));
-      }
-      logger.debug("<< sizes(%d)", sizes.size());
-      return sizes;
+      final Set<Hardware> hardware;
+      logger.debug(">> providing hardware");
+      hardware = Sets.newLinkedHashSet(Iterables.transform(sync.listFlavors(withDetails()), flavorToHardware));
+      logger.debug("<< hardware(%d)", hardware.size());
+      return hardware;
    }
-
 }

@@ -34,6 +34,7 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
@@ -50,7 +51,10 @@ import org.jclouds.rest.annotations.Provider;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.slicehost.SlicehostAsyncClient;
 import org.jclouds.slicehost.SlicehostClient;
+import org.jclouds.slicehost.compute.functions.FlavorToHardware;
 import org.jclouds.slicehost.compute.functions.SliceToNodeMetadata;
+import org.jclouds.slicehost.compute.functions.SlicehostImageToImage;
+import org.jclouds.slicehost.compute.functions.SlicehostImageToOperatingSystem;
 import org.jclouds.slicehost.compute.strategy.SlicehostAddNodeWithTagStrategy;
 import org.jclouds.slicehost.compute.strategy.SlicehostDestroyNodeStrategy;
 import org.jclouds.slicehost.compute.strategy.SlicehostGetNodeMetadataStrategy;
@@ -58,6 +62,7 @@ import org.jclouds.slicehost.compute.strategy.SlicehostListNodesStrategy;
 import org.jclouds.slicehost.compute.strategy.SlicehostRebootNodeStrategy;
 import org.jclouds.slicehost.compute.suppliers.SlicehostHardwareSupplier;
 import org.jclouds.slicehost.compute.suppliers.SlicehostImageSupplier;
+import org.jclouds.slicehost.domain.Flavor;
 import org.jclouds.slicehost.domain.Slice;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -83,6 +88,15 @@ public class SlicehostComputeServiceContextModule extends BaseComputeServiceCont
       install(new ComputeServiceTimeoutsModule());
       bind(new TypeLiteral<Function<Slice, NodeMetadata>>() {
       }).to(SliceToNodeMetadata.class);
+
+      bind(new TypeLiteral<Function<org.jclouds.slicehost.domain.Image, Image>>() {
+      }).to(SlicehostImageToImage.class);
+
+      bind(new TypeLiteral<Function<org.jclouds.slicehost.domain.Image, OperatingSystem>>() {
+      }).to(SlicehostImageToOperatingSystem.class);
+      bind(new TypeLiteral<Function<Flavor, Hardware>>() {
+      }).to(FlavorToHardware.class);
+
       bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<SlicehostClient, SlicehostAsyncClient>>() {
@@ -103,14 +117,14 @@ public class SlicehostComputeServiceContextModule extends BaseComputeServiceCont
    }
 
    @VisibleForTesting
-   static final Map<Slice.Status, NodeState> sliceStatusToNodeState = ImmutableMap.<Slice.Status, NodeState> builder()
-            .put(Slice.Status.ACTIVE, NodeState.RUNNING)//
-            .put(Slice.Status.BUILD, NodeState.PENDING)//
-            .put(Slice.Status.REBOOT, NodeState.PENDING)//
-            .put(Slice.Status.HARD_REBOOT, NodeState.PENDING)//
-            .put(Slice.Status.TERMINATED, NodeState.TERMINATED)//
-            .put(Slice.Status.UNRECOGNIZED, NodeState.UNRECOGNIZED)//
-            .build();
+   public static final Map<Slice.Status, NodeState> sliceStatusToNodeState = ImmutableMap
+         .<Slice.Status, NodeState> builder().put(Slice.Status.ACTIVE, NodeState.RUNNING)//
+         .put(Slice.Status.BUILD, NodeState.PENDING)//
+         .put(Slice.Status.REBOOT, NodeState.PENDING)//
+         .put(Slice.Status.HARD_REBOOT, NodeState.PENDING)//
+         .put(Slice.Status.TERMINATED, NodeState.TERMINATED)//
+         .put(Slice.Status.UNRECOGNIZED, NodeState.UNRECOGNIZED)//
+         .build();
 
    @Singleton
    @Provides

@@ -51,11 +51,7 @@ public class ParseImageFromJsonResponseTest {
    DateService dateService = i.getInstance(DateService.class);
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
-      InputStream is = getClass().getResourceAsStream("/cloudservers/test_get_image_details.json");
-
-      UnwrapOnlyJsonValue<Image> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Image>>() {
-      }));
-      Image response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      Image response = parseImage();
 
       assertEquals(response.getId(), 2);
       assertEquals(response.getName(), "CentOS 5.2");
@@ -64,5 +60,19 @@ public class ParseImageFromJsonResponseTest {
       assertEquals(response.getServerId(), new Integer(12));
       assertEquals(response.getStatus(), ImageStatus.SAVING);
       assertEquals(response.getUpdated(), dateService.iso8601SecondsDateParse(("2010-10-10T12:00:00Z")));
+
    }
+
+   public static Image parseImage() {
+      Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
+
+      InputStream is = ParseImageFromJsonResponseTest.class
+            .getResourceAsStream("/cloudservers/test_get_image_details.json");
+
+      UnwrapOnlyJsonValue<Image> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Image>>() {
+      }));
+      Image response = parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
+      return response;
+   }
+
 }
