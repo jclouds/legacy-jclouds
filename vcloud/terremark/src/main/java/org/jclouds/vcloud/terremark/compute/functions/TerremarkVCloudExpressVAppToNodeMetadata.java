@@ -35,7 +35,6 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
-import org.jclouds.vcloud.compute.domain.VCloudLocation;
 import org.jclouds.vcloud.compute.functions.FindLocationForResource;
 import org.jclouds.vcloud.compute.functions.HardwareForVCloudExpressVApp;
 import org.jclouds.vcloud.compute.functions.VCloudExpressVAppToNodeMetadata;
@@ -55,12 +54,12 @@ public class TerremarkVCloudExpressVAppToNodeMetadata extends VCloudExpressVAppT
 
    @Inject
    public TerremarkVCloudExpressVAppToNodeMetadata(VCloudExpressComputeClient computeClient,
-         Map<String, Credentials> credentialStore, Map<Status, NodeState> vAppStatusToNodeState,
-         HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp,
-         FindLocationForResource findLocationForResourceInVDC, Supplier<Set<? extends Image>> images,
-         ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
+            Map<String, Credentials> credentialStore, Map<Status, NodeState> vAppStatusToNodeState,
+            HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp,
+            FindLocationForResource findLocationForResourceInVDC, Supplier<Set<? extends Image>> images,
+            ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
       super(computeClient, credentialStore, vAppStatusToNodeState, hardwareForVCloudExpressVApp,
-            findLocationForResourceInVDC, images);
+               findLocationForResourceInVDC, images);
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
       ;
    }
@@ -86,7 +85,7 @@ public class TerremarkVCloudExpressVAppToNodeMetadata extends VCloudExpressVAppT
    }
 
    OrgAndName getOrgAndNameFromNode(NodeMetadata node) {
-      URI orgId = VCloudLocation.class.cast(node.getLocation().getParent()).getResource().getHref();
+      URI orgId = URI.create(node.getLocation().getParent().getId());
       OrgAndName orgAndName = new OrgAndName(orgId, node.getTag());
       return orgAndName;
    }
