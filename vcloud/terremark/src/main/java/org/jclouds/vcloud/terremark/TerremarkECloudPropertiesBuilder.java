@@ -35,10 +35,10 @@ public class TerremarkECloudPropertiesBuilder extends TerremarkVCloudPropertiesB
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_API_VERSION, "0.8b-ext2.3");
+      properties.setProperty(PROPERTY_API_VERSION, "0.8b-ext2.5");
       properties.setProperty(PROPERTY_ENDPOINT, "https://services.enterprisecloud.terremark.com/api");
       properties.setProperty(PROPERTY_TERREMARK_EXTENSION_NAME, "eCloudExtensions");
-      properties.setProperty(PROPERTY_TERREMARK_EXTENSION_VERSION, "2.3");
+      properties.setProperty(PROPERTY_TERREMARK_EXTENSION_VERSION, "2.5");
       return properties;
    }
 

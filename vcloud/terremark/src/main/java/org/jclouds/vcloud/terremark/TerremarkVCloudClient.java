@@ -31,6 +31,7 @@ import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.terremark.domain.CustomizationParameters;
 import org.jclouds.vcloud.terremark.domain.InternetService;
+import org.jclouds.vcloud.terremark.domain.KeyPair;
 import org.jclouds.vcloud.terremark.domain.Node;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.domain.PublicIpAddress;
@@ -142,4 +143,25 @@ public interface TerremarkVCloudClient extends VCloudExpressClient {
     */
    Task configureVApp(VCloudExpressVApp vApp, VAppConfiguration configuration);
 
+   /**
+    */
+   Set<KeyPair> listKeyPairsInOrg(URI org);
+
+   /**
+    * @throws IllegalStateException
+    *            if a key of the same name already exists
+    */
+   KeyPair generateKeyPairInOrg(URI org, String name, boolean makeDefault);
+
+   /**
+    */
+   KeyPair findKeyPairInOrg(URI org, String keyPairName);
+
+   KeyPair getKeyPair(URI keyPair);
+
+   // TODO
+   // KeyPair configureKeyPair(int keyPairId, KeyPairConfiguration
+   // keyPairConfiguration);
+
+   void deleteKeyPair(URI keyPair);
 }

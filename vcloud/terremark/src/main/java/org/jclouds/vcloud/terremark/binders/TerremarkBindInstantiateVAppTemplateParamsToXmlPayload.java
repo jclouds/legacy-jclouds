@@ -41,6 +41,7 @@ import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
 
+import com.google.inject.internal.Nullable;
 import com.jamesmurty.utils.XMLBuilder;
 
 /**
@@ -55,7 +56,7 @@ public class TerremarkBindInstantiateVAppTemplateParamsToXmlPayload extends
    @Inject
    public TerremarkBindInstantiateVAppTemplateParamsToXmlPayload(BindToStringPayload stringBinder,
             @Named(PROPERTY_API_VERSION) String apiVersion, @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
-            @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema, @Network URI network,
+            @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema, @Nullable @Network URI network,
             @Named(PROPERTY_VCLOUD_DEFAULT_FENCEMODE) String fenceMode) {
       super(stringBinder, apiVersion, ns, schema, network, fenceMode);
    }
