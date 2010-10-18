@@ -258,7 +258,7 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     * @see TerremarkVCloudExpressClient#getPublicIpsAssociatedWithVDC
     */
    @GET
-   @Path("/publicIps")
+   @Path("")
    @Consumes(PUBLICIPSLIST_XML)
    @XMLResponseParser(PublicIpAddressesHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)

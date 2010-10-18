@@ -20,12 +20,10 @@
 package org.jclouds.vcloud.terremark;
 
 import java.net.URI;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.vcloud.terremark.domain.InternetService;
-import org.jclouds.vcloud.terremark.domain.KeyPair;
 import org.jclouds.vcloud.terremark.domain.Protocol;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 
@@ -39,29 +37,6 @@ import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
  */
 @Timeout(duration = 300, timeUnit = TimeUnit.SECONDS)
 public interface TerremarkVCloudExpressClient extends TerremarkVCloudClient {
-
-   /**
-
-    */
-   Set<KeyPair> listKeyPairsInOrg(URI org);
-
-   /**
-    * @throws IllegalStateException
-    *            if a key of the same name already exists
-    */
-   KeyPair generateKeyPairInOrg(URI org, String name, boolean makeDefault);
-
-   /**
-    */
-   KeyPair findKeyPairInOrg(URI org, String keyPairName);
-
-   KeyPair getKeyPair(URI keyPair);
-
-   // TODO
-   // KeyPair configureKeyPair(int keyPairId, KeyPairConfiguration
-   // keyPairConfiguration);
-
-   void deleteKeyPair(URI keyPair);
 
    InternetService addInternetServiceToVDC(URI vDCId, String serviceName, Protocol protocol, int port,
          AddInternetServiceOptions... options);

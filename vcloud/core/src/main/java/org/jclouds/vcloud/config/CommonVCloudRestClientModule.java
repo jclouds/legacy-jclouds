@@ -415,8 +415,13 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
             checkState(network != null, String.format("network named %s not in %s", networkName, networks.keySet()));
             return network.getHref();
          } catch (ConfigurationException e) {
-            throw new IllegalStateException(String.format("you must specify the property %s as one of %s",
-                  PROPERTY_VCLOUD_DEFAULT_NETWORK, networks.keySet()), e);
+            // TODO FIXME XXX: In Terremark Enterprise environment with multiple VDC's this does not work well.
+            // Each VDC will have differnt network subnets. So we cannot assume the default VDC's networks will
+            // work with non-default VDC's. So make PROPERTY_VCLOUD_DEFAULT_NETWORK optional. If this property
+            // is not set, they are expected to add NetworkConfig to the options when launching a server.
+            return null;
+            //throw new IllegalStateException(String.format("you must specify the property %s as one of %s",
+            //      PROPERTY_VCLOUD_DEFAULT_NETWORK, networks.keySet()), e);
          }
       } catch (AuthorizationException e) {
          authException.set(e);

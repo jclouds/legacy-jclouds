@@ -19,8 +19,12 @@
 
 package org.jclouds.vcloud.terremark.config;
 
-import java.io.IOException;
+import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
+import java.io.IOException;
+import java.util.Map;
+ 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -28,12 +32,19 @@ import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.util.Utils;
 import org.jclouds.vcloud.config.BaseVCloudExpressRestClientModule;
+import org.jclouds.vcloud.domain.ReferenceType;
+import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
+import org.jclouds.vcloud.terremark.endpoints.KeysList;
 import org.jclouds.vcloud.terremark.handlers.ParseTerremarkVCloudErrorFromHttpResponse;
 
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import com.google.common.collect.Maps;
 import com.google.inject.Provides;
 
 public abstract class TerremarkRestClientModule<S extends TerremarkVCloudClient, A extends TerremarkVCloudAsyncClient>
@@ -69,4 +80,48 @@ public abstract class TerremarkRestClientModule<S extends TerremarkVCloudClient,
                ParseTerremarkVCloudErrorFromHttpResponse.class);
    }
 
+   @Singleton
+   public static class OrgNameToKeysListSupplier implements Supplier<Map<String, ReferenceType>> {
+      protected final Supplier<VCloudSession> sessionSupplier;
+      private final TerremarkVCloudClient client;
+
+      @Inject
+      protected OrgNameToKeysListSupplier(Supplier<VCloudSession> sessionSupplier, TerremarkVCloudClient client) {
+         this.sessionSupplier = sessionSupplier;
+         this.client = client;
+      }
+
+      @Override
+      public Map<String, ReferenceType> get() {
+         return Maps.transformValues(sessionSupplier.get().getOrgs(), new Function<ReferenceType, ReferenceType>() {
+
+            @Override
+            public ReferenceType apply(ReferenceType from) {
+               return client.findOrgNamed(from.getName()).getKeysList();
+            }
+
+         });
+      }
+   }
+
+   @Provides
+   @Singleton
+   @KeysList
+   protected Supplier<Map<String, ReferenceType>> provideOrgToKeysListCache(
+            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final OrgNameToKeysListSupplier supplier) {
+      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<String, ReferenceType>>(authException,
+               seconds, new Supplier<Map<String, ReferenceType>>() {
+                  @Override
+                  public Map<String, ReferenceType> get() {
+                     return supplier.get();
+                  }
+               });
+   }
+
+   @Singleton
+   @Provides
+   @Named("CreateKey")
+   String provideCreateKey() throws IOException {
+      return Utils.toStringAndClose(getClass().getResourceAsStream("/terremark/CreateKey.xml"));
+   }
 }
