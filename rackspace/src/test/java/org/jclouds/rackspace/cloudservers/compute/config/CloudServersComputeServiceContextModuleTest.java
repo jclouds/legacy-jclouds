@@ -31,7 +31,7 @@ public class CloudServersComputeServiceContextModuleTest {
    public void testAllStatusCovered() {
 
       for (ServerStatus state : ServerStatus.values()) {
-         assert CloudServersComputeServiceContextModule.serverToNodeState.containsKey(state) : state;
+         assert CloudServersComputeServiceDependenciesModule.serverToNodeState.containsKey(state) : state;
       }
 
    }

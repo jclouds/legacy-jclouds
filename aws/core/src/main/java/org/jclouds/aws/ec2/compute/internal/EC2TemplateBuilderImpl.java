@@ -31,6 +31,7 @@ import javax.inject.Provider;
 
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -50,10 +51,10 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
    private final Map<RegionAndName, Image> imageMap;
 
    @Inject
-   protected EC2TemplateBuilderImpl(Supplier<Set<? extends Location>> locations, Supplier<Set<? extends Image>> images,
-         Supplier<Set<? extends Hardware>> sizes, Supplier<Location> defaultLocation,
-         Provider<TemplateOptions> optionsProvider,
-         @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider, Map<RegionAndName, Image> imageMap) {
+   protected EC2TemplateBuilderImpl(@Memoized Supplier<Set<? extends Location>> locations,
+            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
+            Supplier<Location> defaultLocation, Provider<TemplateOptions> optionsProvider,
+            @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider, Map<RegionAndName, Image> imageMap) {
       super(locations, images, sizes, defaultLocation, optionsProvider, defaultTemplateProvider);
       this.imageMap = imageMap;
    }
@@ -86,7 +87,8 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
          if (imageId != null) {
             String[] regionName = imageId.split("/");
             checkArgument(regionName.length == 2,
-                  "amazon image ids must include the region ( ex. us-east-1/ami-7ea24a17 ) you specified: " + imageId);
+                     "amazon image ids must include the region ( ex. us-east-1/ami-7ea24a17 ) you specified: "
+                              + imageId);
             RegionAndName key = new RegionAndName(regionName[0], regionName[1]);
             try {
                return imageMap.get(key);

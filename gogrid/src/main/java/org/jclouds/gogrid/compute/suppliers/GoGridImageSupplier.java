@@ -69,7 +69,7 @@ public class GoGridImageSupplier implements Supplier<Set<? extends Image>> {
       Set<ServerImage> allImages = sync.getImageServices().getImageList();
       for (ServerImage from : allImages) {
          ImageBuilder builder = new ImageBuilder();
-         builder.ids(from.getId()+"");
+         builder.ids(from.getId() + "");
          builder.name(from.getFriendlyName());
          builder.description(from.getDescription());
          builder.defaultCredentials(authenticator.execute(from));

@@ -17,22 +17,36 @@
  * ====================================================================
  */
 
-package org.jclouds.rimuhosting.miro.compute.config;
+package org.jclouds.aws.ec2.compute.suppliers;
 
-import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
-import org.testng.annotations.Test;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jclouds.aws.ec2.compute.domain.RegionAndName;
+import org.jclouds.compute.domain.Image;
+
+import com.google.common.base.Supplier;
+import com.google.common.collect.Sets;
 
 /**
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "rimuhosting.RimuHostingComputeServiceContextModuleTest")
-public class RimuHostingComputeServiceContextModuleTest {
+@Singleton
+public class EC2ImageSupplier implements Supplier<Set<? extends Image>> {
+   private final Supplier<Map<RegionAndName, ? extends Image>> map;
 
-   public void testAllStatusCovered() {
-
-      for (RunningState state : RunningState.values()) {
-         assert RimuHostingComputeServiceDependenciesModule.runningStateToNodeState.containsKey(state) : state;
-      }
-
+   @Inject
+   EC2ImageSupplier(Supplier<Map<RegionAndName, ? extends Image>> map) {
+      this.map = map;
    }
+
+   @Override
+   public Set<? extends Image> get() {
+      return Sets.newLinkedHashSet(map.get().values());
+   }
+
 }

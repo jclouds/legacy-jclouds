@@ -54,7 +54,7 @@ public class CloudServersImageSupplier implements Supplier<Set<? extends Image>>
 
    @Inject
    CloudServersImageSupplier(CloudServersClient sync,
-         Function<org.jclouds.rackspace.cloudservers.domain.Image, Image> cloudServersImageToImage) {
+            Function<org.jclouds.rackspace.cloudservers.domain.Image, Image> cloudServersImageToImage) {
       this.sync = sync;
       this.cloudServersImageToImage = cloudServersImageToImage;
    }
@@ -64,7 +64,7 @@ public class CloudServersImageSupplier implements Supplier<Set<? extends Image>>
       Set<Image> images;
       logger.debug(">> providing images");
       images = Sets.<Image> newLinkedHashSet(Iterables.transform(sync.listImages(withDetails()),
-            cloudServersImageToImage));
+               cloudServersImageToImage));
       logger.debug("<< images(%d)", images.size());
       return images;
    }

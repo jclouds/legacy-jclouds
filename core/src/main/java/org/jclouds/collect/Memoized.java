@@ -17,22 +17,26 @@
  * ====================================================================
  */
 
-package org.jclouds.rimuhosting.miro.compute.config;
+package org.jclouds.collect;
 
-import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
-import org.testng.annotations.Test;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import javax.inject.Qualifier;
 
 /**
+ * Designates that this object is going to return cached results
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "rimuhosting.RimuHostingComputeServiceContextModuleTest")
-public class RimuHostingComputeServiceContextModuleTest {
+@Target( { TYPE, METHOD, PARAMETER })
+@Retention(RUNTIME)
+@Qualifier
+public @interface Memoized {
 
-   public void testAllStatusCovered() {
-
-      for (RunningState state : RunningState.values()) {
-         assert RimuHostingComputeServiceDependenciesModule.runningStateToNodeState.containsKey(state) : state;
-      }
-
-   }
 }

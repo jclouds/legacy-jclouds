@@ -42,6 +42,7 @@ import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
+import org.jclouds.collect.Memoized;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
@@ -83,7 +84,7 @@ public class CloudFilesAsyncBlobStore extends BaseAsyncBlobStore {
    @Inject
    CloudFilesAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
-            Supplier<Set<? extends Location>> locations, CloudFilesClient sync, CloudFilesAsyncClient async,
+            @Memoized Supplier<Set<? extends Location>> locations, CloudFilesClient sync, CloudFilesAsyncClient async,
             ContainerToResourceMetadata container2ResourceMd,
             BlobStoreListContainerOptionsToListContainerOptions container2ContainerListOptions,
             ContainerToResourceList container2ResourceList, ObjectToBlob object2Blob, BlobToObject blob2Object,

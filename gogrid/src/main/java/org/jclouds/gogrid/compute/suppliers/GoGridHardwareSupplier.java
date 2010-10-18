@@ -40,21 +40,21 @@ import com.google.common.collect.ImmutableSet;
 @Singleton
 public class GoGridHardwareSupplier implements Supplier<Set<? extends Hardware>> {
 
-   public static final Hardware H8192 = new HardwareBuilder().ids("5").ram(8192)
-         .processors(ImmutableList.of(new Processor(8, 1.0)))
-         .volumes(ImmutableList.<Volume> of(new VolumeImpl(480.0f, true, true))).build();
-   public static final Hardware H4096 = new HardwareBuilder().ids("4").ram(4096)
-         .processors(ImmutableList.of(new Processor(4, 1.0)))
-         .volumes(ImmutableList.<Volume> of(new VolumeImpl(240.0f, true, true))).build();
-   public static final Hardware H2048 = new HardwareBuilder().ids("3").ram(2048)
-         .processors(ImmutableList.of(new Processor(2, 1.0)))
-         .volumes(ImmutableList.<Volume> of(new VolumeImpl(120.0f, true, true))).build();
-   public static final Hardware H1024 = new HardwareBuilder().ids("2").ram(1024)
-         .processors(ImmutableList.of(new Processor(1, 1.0)))
-         .volumes(ImmutableList.<Volume> of(new VolumeImpl(60.0f, true, true))).build();
-   public static final Hardware H512 = new HardwareBuilder().ids("1").ram(512)
-         .processors(ImmutableList.of(new Processor(0.5, 1.0)))
-         .volumes(ImmutableList.<Volume> of(new VolumeImpl(30.0f, true, true))).build();
+   public static final Hardware H8192 = new HardwareBuilder().ids("5").ram(8192).processors(
+            ImmutableList.of(new Processor(8, 1.0))).volumes(
+            ImmutableList.<Volume> of(new VolumeImpl(480.0f, true, true))).build();
+   public static final Hardware H4096 = new HardwareBuilder().ids("4").ram(4096).processors(
+            ImmutableList.of(new Processor(4, 1.0))).volumes(
+            ImmutableList.<Volume> of(new VolumeImpl(240.0f, true, true))).build();
+   public static final Hardware H2048 = new HardwareBuilder().ids("3").ram(2048).processors(
+            ImmutableList.of(new Processor(2, 1.0))).volumes(
+            ImmutableList.<Volume> of(new VolumeImpl(120.0f, true, true))).build();
+   public static final Hardware H1024 = new HardwareBuilder().ids("2").ram(1024).processors(
+            ImmutableList.of(new Processor(1, 1.0))).volumes(
+            ImmutableList.<Volume> of(new VolumeImpl(60.0f, true, true))).build();
+   public static final Hardware H512 = new HardwareBuilder().ids("1").ram(512).processors(
+            ImmutableList.of(new Processor(0.5, 1.0))).volumes(
+            ImmutableList.<Volume> of(new VolumeImpl(30.0f, true, true))).build();
 
    public static final ImmutableSet<Hardware> H_ALL = ImmutableSet.of(H512, H1024, H2048, H4096, H8192);
 

@@ -45,9 +45,8 @@ public class StaticHardwareSupplier implements Supplier<Set<? extends Hardware>>
       for (int cpus : new int[] { 1, 2, 4, 8 })
          for (int ram : new int[] { 512, 1024, 2048, 4096, 8192, 16384 }) {
             String id = String.format("cpu=%d,ram=%s,disk=%d", cpus, ram, 10);
-            hardware.add(new HardwareBuilder().ids(id).ram(ram)
-                  .processors(ImmutableList.of(new Processor(cpus, 1.0)))
-                  .volumes(ImmutableList.<Volume> of(new VolumeImpl(10f, true, true))).build());
+            hardware.add(new HardwareBuilder().ids(id).ram(ram).processors(ImmutableList.of(new Processor(cpus, 1.0)))
+                     .volumes(ImmutableList.<Volume> of(new VolumeImpl(10f, true, true))).build());
          }
       return hardware;
    }

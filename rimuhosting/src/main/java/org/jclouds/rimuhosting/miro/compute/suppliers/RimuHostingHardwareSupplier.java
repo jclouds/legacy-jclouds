@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Processor;
@@ -53,11 +54,12 @@ public class RimuHostingHardwareSupplier implements Supplier<Set<? extends Hardw
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   private RimuHostingClient sync;
-   private Supplier<Set<? extends Location>> locations;
+
+   private final RimuHostingClient sync;
+   private final Supplier<Set<? extends Location>> locations;
 
    @Inject
-   RimuHostingHardwareSupplier(RimuHostingClient sync, Supplier<Set<? extends Location>> locations) {
+   RimuHostingHardwareSupplier(RimuHostingClient sync, @Memoized Supplier<Set<? extends Location>> locations) {
       this.sync = sync;
       this.locations = locations;
    }
@@ -77,9 +79,9 @@ public class RimuHostingHardwareSupplier implements Supplier<Set<? extends Hardw
                }
 
             });
-            sizes.add(new HardwareBuilder().ids(from.getId()).location(location)
-                  .processors(ImmutableList.of(new Processor(1, 1.0))).ram(from.getRam())
-                  .volumes(ImmutableList.<Volume> of(new VolumeImpl((float) from.getDiskSize(), true, true))).build());
+            sizes.add(new HardwareBuilder().ids(from.getId()).location(location).processors(
+                     ImmutableList.of(new Processor(1, 1.0))).ram(from.getRam()).volumes(
+                     ImmutableList.<Volume> of(new VolumeImpl((float) from.getDiskSize(), true, true))).build());
          } catch (NullPointerException e) {
             logger.warn("datacenter not present in " + from.getId());
          }

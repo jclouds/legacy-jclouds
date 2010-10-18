@@ -53,6 +53,7 @@ import org.jclouds.blobstore.functions.BlobToHttpGetOptions;
 import org.jclouds.blobstore.internal.BaseAsyncBlobStore;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
+import org.jclouds.collect.Memoized;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.domain.Location;
@@ -81,9 +82,9 @@ public class AtmosAsyncBlobStore extends BaseAsyncBlobStore {
    @Inject
    AtmosAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
-            Supplier<Set<? extends Location>> locations, AtmosStorageAsyncClient async, AtmosStorageClient sync,
-            ObjectToBlob object2Blob, ObjectToBlobMetadata object2BlobMd, BlobToObject blob2Object,
-            BlobStoreListOptionsToListOptions container2ContainerListOptions,
+            @Memoized Supplier<Set<? extends Location>> locations, AtmosStorageAsyncClient async,
+            AtmosStorageClient sync, ObjectToBlob object2Blob, ObjectToBlobMetadata object2BlobMd,
+            BlobToObject blob2Object, BlobStoreListOptionsToListOptions container2ContainerListOptions,
             DirectoryEntryListToResourceMetadataList container2ResourceList, Crypto crypto,
             BlobToHttpGetOptions blob2ObjectGetOptions, Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
       super(context, blobUtils, service, defaultLocation, locations);

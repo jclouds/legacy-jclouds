@@ -55,7 +55,6 @@ import org.jclouds.vcloud.domain.VApp;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.inject.Injector;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
@@ -74,11 +73,9 @@ public class VCloudComputeServiceContextModule extends CommonVCloudComputeServic
       }).to(VAppToNodeMetadata.class);
       bind(TemplateOptions.class).to(VCloudTemplateOptions.class);
       bind(TemplateBuilder.class).to(VCloudTemplateBuilderImpl.class);
-      bind(RebootNodeStrategy.class).to(VCloudRebootNodeStrategy.class);
       bind(new TypeLiteral<Function<VApp, Hardware>>() {
       }).to(new TypeLiteral<HardwareForVApp>() {
       });
-      bind(GetNodeMetadataStrategy.class).to(VCloudGetNodeMetadataStrategy.class);
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudClient, VCloudClient>>() {
       }).in(Scopes.SINGLETON);
@@ -91,15 +88,36 @@ public class VCloudComputeServiceContextModule extends CommonVCloudComputeServic
       bind(new TypeLiteral<Function<Org, Iterable<? extends Hardware>>>() {
       }).to(new TypeLiteral<HardwareInOrg>() {
       });
-      bind(AddNodeWithTagStrategy.class).to(VCloudAddNodeWithTagStrategy.class);
-      bind(ListNodesStrategy.class).to(VCloudListNodesStrategy.class);
       bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(GetLoginCredentialsFromGuestConfiguration.class);
-      bind(DestroyNodeStrategy.class).to(VCloudDestroyNodeStrategy.class);
    }
 
    @Override
-   protected Supplier<Set<? extends Hardware>> getSourceSizeSupplier(Injector injector) {
-      return injector.getInstance(VCloudHardwareSupplier.class);
+   protected Class<? extends Supplier<Set<? extends Hardware>>> defineHardwareSupplier() {
+      return VCloudHardwareSupplier.class;
    }
 
+   @Override
+   protected Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy() {
+      return VCloudAddNodeWithTagStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends DestroyNodeStrategy> defineDestroyNodeStrategy() {
+      return VCloudDestroyNodeStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends GetNodeMetadataStrategy> defineGetNodeMetadataStrategy() {
+      return VCloudGetNodeMetadataStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends ListNodesStrategy> defineListNodesStrategy() {
+      return VCloudListNodesStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends RebootNodeStrategy> defineRebootNodeStrategy() {
+      return VCloudRebootNodeStrategy.class;
+   }
 }

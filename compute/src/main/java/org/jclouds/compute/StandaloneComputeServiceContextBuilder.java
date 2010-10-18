@@ -17,41 +17,39 @@
  * ====================================================================
  */
 
-package org.jclouds.compute.stub;
+package org.jclouds.compute;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
 
-import java.net.URI;
+import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.PropertiesBuilder;
+import org.jclouds.compute.config.StandaloneComputeServiceClientModule;
+
+import com.google.inject.Module;
 
 /**
- * Builds properties used in stub compute services
  * 
  * @author Adrian Cole
  */
-public class StubComputeServicePropertiesBuilder extends PropertiesBuilder {
+public class StandaloneComputeServiceContextBuilder extends
+         ComputeServiceContextBuilder<ComputeService, ComputeService> {
+
+   public StandaloneComputeServiceContextBuilder(Properties props) {
+      super(ComputeService.class, ComputeService.class, props);
+      if (!properties.containsKey(PROPERTY_ENDPOINT))
+         properties.setProperty(PROPERTY_ENDPOINT, "standalone");
+      if (!properties.containsKey(PROPERTY_API_VERSION))
+         properties.setProperty(PROPERTY_API_VERSION, "1");
+      if (!properties.containsKey(PROPERTY_IDENTITY))
+         properties.setProperty(PROPERTY_IDENTITY, System.getProperty("user.name"));
+   }
+
    @Override
-   protected Properties defaultProperties() {
-      Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_ENDPOINT, "http://localhost/stub");
-      properties.setProperty(PROPERTY_API_VERSION, "1");
-      properties.setProperty(PROPERTY_IDENTITY, System.getProperty("user.name"));
-      return properties;
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new StandaloneComputeServiceClientModule());
    }
 
-   public StubComputeServicePropertiesBuilder(Properties properties) {
-      super(properties);
-   }
-
-   public StubComputeServicePropertiesBuilder withCredentials(String id, String secret) {
-      return this;
-   }
-
-   public StubComputeServicePropertiesBuilder withEndpoint(URI endpoint) {
-      return this;
-   }
 }

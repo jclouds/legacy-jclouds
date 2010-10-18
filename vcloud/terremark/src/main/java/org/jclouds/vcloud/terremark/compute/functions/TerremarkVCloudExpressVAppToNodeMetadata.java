@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentMap;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
@@ -56,12 +57,11 @@ public class TerremarkVCloudExpressVAppToNodeMetadata extends VCloudExpressVAppT
    public TerremarkVCloudExpressVAppToNodeMetadata(VCloudExpressComputeClient computeClient,
             Map<String, Credentials> credentialStore, Map<Status, NodeState> vAppStatusToNodeState,
             HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp,
-            FindLocationForResource findLocationForResourceInVDC, Supplier<Set<? extends Image>> images,
+            FindLocationForResource findLocationForResourceInVDC, @Memoized Supplier<Set<? extends Image>> images,
             ConcurrentMap<OrgAndName, KeyPairCredentials> credentialsMap) {
       super(computeClient, credentialStore, vAppStatusToNodeState, hardwareForVCloudExpressVApp,
                findLocationForResourceInVDC, images);
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
-      ;
    }
 
    @Override

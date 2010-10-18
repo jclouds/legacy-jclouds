@@ -17,22 +17,24 @@
  * ====================================================================
  */
 
-package org.jclouds.rimuhosting.miro.compute.config;
+package org.jclouds.compute.config;
 
-import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
-import org.testng.annotations.Test;
+import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.internal.ComputeServiceContextImpl;
 
+import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
 /**
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "rimuhosting.RimuHostingComputeServiceContextModuleTest")
-public class RimuHostingComputeServiceContextModuleTest {
-
-   public void testAllStatusCovered() {
-
-      for (RunningState state : RunningState.values()) {
-         assert RimuHostingComputeServiceDependenciesModule.runningStateToNodeState.containsKey(state) : state;
-      }
-
+public abstract class StandaloneComputeServiceContextModule extends BaseComputeServiceContextModule {
+   @Override
+   protected void configure() {
+      super.configure();
+      bind(new TypeLiteral<ComputeServiceContext>() {
+      }).to(new TypeLiteral<ComputeServiceContextImpl<ComputeService, ComputeService>>() {
+      }).in(Scopes.SINGLETON);
    }
 }

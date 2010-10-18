@@ -25,8 +25,9 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
-import org.jclouds.compute.domain.Image;
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.TemplateOptions;
@@ -42,8 +43,8 @@ import com.google.common.base.Supplier;
 public class VCloudTemplateBuilderImpl extends TemplateBuilderImpl {
 
    @Inject
-   protected VCloudTemplateBuilderImpl(Supplier<Set<? extends Location>> locations,
-            Supplier<Set<? extends Image>> images, Supplier<Set<? extends Hardware>> sizes,
+   protected VCloudTemplateBuilderImpl(@Memoized Supplier<Set<? extends Location>> locations,
+            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
             Supplier<Location> defaultLocation, Provider<TemplateOptions> optionsProvider,
             @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider) {
       super(locations, images, sizes, defaultLocation, optionsProvider, defaultTemplateProvider);

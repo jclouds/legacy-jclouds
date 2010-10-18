@@ -28,6 +28,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
@@ -56,9 +57,9 @@ public class VCloudExpressVAppToNodeMetadata implements Function<VCloudExpressVA
 
    @Inject
    protected VCloudExpressVAppToNodeMetadata(VCloudExpressComputeClient computeClient,
-         Map<String, Credentials> credentialStore, Map<Status, NodeState> vAppStatusToNodeState,
-         HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp,
-         FindLocationForResource findLocationForResourceInVDC, Supplier<Set<? extends Image>> images) {
+            Map<String, Credentials> credentialStore, Map<Status, NodeState> vAppStatusToNodeState,
+            HardwareForVCloudExpressVApp hardwareForVCloudExpressVApp,
+            FindLocationForResource findLocationForResourceInVDC, @Memoized Supplier<Set<? extends Image>> images) {
       this.images = checkNotNull(images, "images");
       this.hardwareForVCloudExpressVApp = checkNotNull(hardwareForVCloudExpressVApp, "hardwareForVCloudExpressVApp");
       this.findLocationForResourceInVDC = checkNotNull(findLocationForResourceInVDC, "findLocationForResourceInVDC");
@@ -76,7 +77,7 @@ public class VCloudExpressVAppToNodeMetadata implements Function<VCloudExpressVA
       builder.location(findLocationForResourceInVDC.apply(from.getVDC()));
       builder.tag(parseTagFromName(from.getName()));
       builder.operatingSystem(from.getOsType() != null ? new CIMOperatingSystem(CIMOperatingSystem.OSType
-            .fromValue(from.getOsType()), null, null, from.getOperatingSystemDescription()) : null);
+               .fromValue(from.getOsType()), null, null, from.getOperatingSystemDescription()) : null);
       builder.hardware(hardwareForVCloudExpressVApp.apply(from));
       builder.state(vAppStatusToNodeState.get(from.getStatus()));
       builder.publicAddresses(computeClient.getPublicAddresses(from.getHref()));

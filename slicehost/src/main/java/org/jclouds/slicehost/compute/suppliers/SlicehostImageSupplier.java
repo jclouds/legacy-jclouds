@@ -52,7 +52,7 @@ public class SlicehostImageSupplier implements Supplier<Set<? extends Image>> {
 
    @Inject
    SlicehostImageSupplier(SlicehostClient sync,
-         Function<org.jclouds.slicehost.domain.Image, Image> slicehostImageToImage) {
+            Function<org.jclouds.slicehost.domain.Image, Image> slicehostImageToImage) {
       this.sync = sync;
       this.slicehostImageToImage = slicehostImageToImage;
    }

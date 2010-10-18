@@ -41,6 +41,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
@@ -66,8 +67,8 @@ public class EC2HardwareSupplier implements Supplier<Set<? extends Hardware>> {
    private final String providerName;
 
    @Inject
-   EC2HardwareSupplier(Supplier<Set<? extends Location>> locations, @Provider String providerName,
-         @Named(PROPERTY_EC2_CC_AMIs) String[] ccAmis) {
+   EC2HardwareSupplier(@Memoized Supplier<Set<? extends Location>> locations, @Provider String providerName,
+            @Named(PROPERTY_EC2_CC_AMIs) String[] ccAmis) {
       this.locations = locations;
       this.ccAmis = ccAmis;
       this.providerName = providerName;
@@ -89,8 +90,8 @@ public class EC2HardwareSupplier implements Supplier<Set<? extends Hardware>> {
          sizes.add(cc1_4xlarge().location(location).supportsImageIds(ccAmi).build());
       }
       sizes.addAll(ImmutableSet.<Hardware> of(t1_micro().build(), c1_medium().build(), c1_xlarge().build(), m1_large()
-            .build(), "nova".equals(providerName) ? m1_small().supportsImage(any()).build() : m1_small().build(),
-            m1_xlarge().build(), m2_xlarge().build(), m2_2xlarge().build(), m2_4xlarge().build()));
+               .build(), "nova".equals(providerName) ? m1_small().supportsImage(any()).build() : m1_small().build(),
+               m1_xlarge().build(), m2_xlarge().build(), m2_2xlarge().build(), m2_4xlarge().build()));
       return sizes;
    }
 }

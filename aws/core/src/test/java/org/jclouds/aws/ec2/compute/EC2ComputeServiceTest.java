@@ -33,6 +33,7 @@ import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.m2_2xlarge;
 import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.m2_4xlarge;
 import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.m2_xlarge;
 import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.t1_micro;
+import static org.testng.Assert.assertEquals;
 
 import java.util.Set;
 
@@ -58,7 +59,6 @@ import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableSet;
-import static org.testng.Assert.assertEquals;
 
 /**
  * Tests compute service specifically to EC2.
@@ -74,7 +74,7 @@ public class EC2ComputeServiceTest {
    private static final Location location = new LocationImpl(LocationScope.REGION, "us-east-1", "us east", null);
 
    public static final Hardware CC1_4XLARGE = cc1_4xlarge().location(location).supportsImageIds("us-east-1/cc-image")
-         .build();
+            .build();
 
    /**
     * Verifies that {@link TemplateBuilderImpl} would choose the correct size of the instance, based
@@ -87,10 +87,10 @@ public class EC2ComputeServiceTest {
       Template template = newTemplateBuilder().os64Bit(true).hardwareId("m2.xlarge").locationId("us-east-1").build();
 
       assert template != null : "The returned template was null, but it should have a value.";
-//      assert m2_xlarge().build().equals(template.getHardware()) : format(
-//            "Incorrect image determined by the template. Expected: %s. Found: %s.", "m2.xlarge",
-//            String.valueOf(template.getHardware()));
-      assertEquals( m2_xlarge().build(), template.getHardware());
+      // assert m2_xlarge().build().equals(template.getHardware()) : format(
+      // "Incorrect image determined by the template. Expected: %s. Found: %s.", "m2.xlarge",
+      // String.valueOf(template.getHardware()));
+      assertEquals(m2_xlarge().build(), template.getHardware());
    }
 
    @Test
@@ -99,8 +99,8 @@ public class EC2ComputeServiceTest {
 
       assert template != null : "The returned template was null, but it should have a value.";
       assert CC1_4XLARGE.equals(template.getHardware()) : format(
-            "Incorrect image determined by the template. Expected: %s. Found: %s.", CC1_4XLARGE.getId(),
-            String.valueOf(template.getHardware()));
+               "Incorrect image determined by the template. Expected: %s. Found: %s.", CC1_4XLARGE.getId(), String
+                        .valueOf(template.getHardware()));
    }
 
    /**
@@ -111,13 +111,13 @@ public class EC2ComputeServiceTest {
     */
    @Test
    public void testTemplateChoiceForInstanceByAttributes() throws Exception {
-      Template template = newTemplateBuilder().os64Bit(true).minRam(17510).minCores(6.5).smallest()
-            .locationId("us-east-1").build();
+      Template template = newTemplateBuilder().os64Bit(true).minRam(17510).minCores(6.5).smallest().locationId(
+               "us-east-1").build();
 
       assert template != null : "The returned template was null, but it should have a value.";
       assert CC1_4XLARGE.equals(template.getHardware()) : format(
-            "Incorrect image determined by the template. Expected: %s. Found: %s.", CC1_4XLARGE,
-            String.valueOf(template.getHardware()));
+               "Incorrect image determined by the template. Expected: %s. Found: %s.", CC1_4XLARGE, String
+                        .valueOf(template.getHardware()));
    }
 
    /**
@@ -130,13 +130,13 @@ public class EC2ComputeServiceTest {
     */
    @Test
    public void testNegativeTemplateChoiceForInstanceByAttributes() throws Exception {
-      Template template = newTemplateBuilder().os64Bit(true).minRam(17510).minCores(6.7).smallest()
-            .locationId("us-east-1").build();
+      Template template = newTemplateBuilder().os64Bit(true).minRam(17510).minCores(6.7).smallest().locationId(
+               "us-east-1").build();
 
       assert template != null : "The returned template was null, but it should have a value.";
       assert !m2_xlarge().build().equals(template.getHardware()) : format(
-            "Incorrect image determined by the template. Expected: not %s. Found: %s.", "m2.xlarge",
-            String.valueOf(template.getHardware()));
+               "Incorrect image determined by the template. Expected: not %s. Found: %s.", "m2.xlarge", String
+                        .valueOf(template.getHardware()));
    }
 
    @SuppressWarnings("unchecked")
@@ -148,23 +148,22 @@ public class EC2ComputeServiceTest {
 
       expect(optionsProvider.get()).andReturn(defaultOptions);
 
-      Image image = new ImageBuilder().providerId("cc-image").name("image").id("us-east-1/cc-image")
-            .location(location)
-            .operatingSystem(new OperatingSystem(OsFamily.UBUNTU, null, "1.0", null, "ubuntu", true))
-            .description("description").version("1.0").defaultCredentials(new Credentials("root", null)).build();
+      Image image = new ImageBuilder().providerId("cc-image").name("image").id("us-east-1/cc-image").location(location)
+               .operatingSystem(new OperatingSystem(OsFamily.UBUNTU, null, "1.0", null, "ubuntu", true)).description(
+                        "description").version("1.0").defaultCredentials(new Credentials("root", null)).build();
       replay(optionsProvider);
       replay(templateBuilderProvider);
       Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-            .<Location> of(location));
+               .<Location> of(location));
       Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet
-            .<Image> of(image));
+               .<Image> of(image));
       Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-            .<Hardware> of(t1_micro().build(), c1_medium().build(), c1_xlarge().build(), m1_large().build(), m1_small()
-                  .build(), m1_xlarge().build(), m2_xlarge().build(), m2_2xlarge().build(), m2_4xlarge().build(),
-                  CC1_4XLARGE));
+               .<Hardware> of(t1_micro().build(), c1_medium().build(), c1_xlarge().build(), m1_large().build(),
+                        m1_small().build(), m1_xlarge().build(), m2_xlarge().build(), m2_2xlarge().build(),
+                        m2_4xlarge().build(), CC1_4XLARGE));
 
       return new TemplateBuilderImpl(locations, images, sizes, Suppliers.ofInstance(location), optionsProvider,
-            templateBuilderProvider) {
+               templateBuilderProvider) {
 
       };
    }

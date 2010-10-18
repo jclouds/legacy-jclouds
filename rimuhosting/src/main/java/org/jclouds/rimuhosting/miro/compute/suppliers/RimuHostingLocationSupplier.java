@@ -48,8 +48,8 @@ public class RimuHostingLocationSupplier implements Supplier<Set<? extends Locat
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-   private RimuHostingClient sync;
-   private String providerName;
+   private final RimuHostingClient sync;
+   private final String providerName;
 
    @Inject
    RimuHostingLocationSupplier(RimuHostingClient sync, @Provider String providerName) {

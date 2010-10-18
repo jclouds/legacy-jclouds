@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -72,8 +73,8 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       @Override
       public boolean apply(Image input) {
          return input.getProviderId().equals(instance.getImage().getId() + "")
-               && (input.getLocation() == null || input.getLocation().getId()
-                     .equals(instance.getDatacenter().getId() + ""));
+                  && (input.getLocation() == null || input.getLocation().getId().equals(
+                           instance.getDatacenter().getId() + ""));
       }
    }
 
@@ -93,8 +94,8 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Inject
    ServerToNodeMetadata(Map<ServerState, NodeState> serverStateToNodeState, GoGridClient client,
-         Supplier<Set<? extends Image>> images, Supplier<Set<? extends Hardware>> hardwares,
-         Supplier<Map<String, ? extends Location>> locations) {
+            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwares,
+            Supplier<Map<String, ? extends Location>> locations) {
       this.serverStateToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
       this.client = checkNotNull(client, "client");
       this.images = checkNotNull(images, "images");
@@ -111,11 +112,11 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.tag(parseTagFromName(from.getName()));
       builder.hardware(parseHardware(from));
       builder.imageId(from.getImage().getId() + "");
-      
+
       Image image = parseImage(from);
       if (image != null)
          builder.operatingSystem(image.getOperatingSystem());
-      
+
       builder.state(serverStateToNodeState.get(from.getState()));
       builder.publicAddresses(ImmutableSet.of(from.getIp().getIp()));
       builder.credentials(client.getServerServices().getServerCredentialsList().get(from.getName()));

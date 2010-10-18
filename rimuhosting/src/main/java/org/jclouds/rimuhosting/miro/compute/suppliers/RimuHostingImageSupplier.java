@@ -46,11 +46,11 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class RimuHostingImageSupplier implements Supplier<Set<? extends Image>> {
-   private RimuHostingClient sync;
    public static final Pattern RIMU_PATTERN = Pattern.compile("([^0-9]*)(.*)");
+   private final RimuHostingClient sync;
 
    @Inject
-   RimuHostingImageSupplier(final RimuHostingClient sync) {
+   RimuHostingImageSupplier(RimuHostingClient sync) {
       this.sync = sync;
    }
 

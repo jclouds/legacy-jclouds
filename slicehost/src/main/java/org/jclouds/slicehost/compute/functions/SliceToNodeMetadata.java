@@ -28,7 +28,9 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -48,6 +50,7 @@ import com.google.common.collect.Iterables;
 /**
  * @author Adrian Cole
  */
+@Singleton
 public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
    protected final Supplier<Location> location;
    protected final Map<Slice.Status, NodeState> sliceToNodeState;
@@ -86,7 +89,8 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
 
    @Inject
    SliceToNodeMetadata(Map<Slice.Status, NodeState> sliceStateToNodeState, Map<String, Credentials> credentialStore,
-         Supplier<Set<? extends Image>> images, Supplier<Location> location, Supplier<Set<? extends Hardware>> hardwares) {
+            @Memoized Supplier<Set<? extends Image>> images, Supplier<Location> location,
+            @Memoized Supplier<Set<? extends Hardware>> hardwares) {
       this.sliceToNodeState = checkNotNull(sliceStateToNodeState, "sliceStateToNodeState");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.images = checkNotNull(images, "images");

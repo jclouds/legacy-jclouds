@@ -17,29 +17,23 @@
  * ====================================================================
  */
 
-package org.jclouds.compute.stub.config;
+package org.jclouds.compute;
 
-import java.util.concurrent.ConcurrentMap;
+import org.jclouds.compute.stub.config.StubComputeServiceContextModule;
+import org.testng.annotations.Test;
 
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.config.RestClientModule;
+/**
+ * 
+ * @author Adrian Cole
+ * 
+ */
+@Test(groups = "unit")
+public class ComputeServiceContextFactoryTest {
 
-@SuppressWarnings("unchecked")
-@ConfiguresRestClient
-@RequiresHttp
-public class StubComputeServiceClientModule extends RestClientModule<ConcurrentMap, ConcurrentMap> {
-
-   public StubComputeServiceClientModule() {
-      super(ConcurrentMap.class, ConcurrentMap.class);
+   @Test
+   public void testStandalone() {
+      ComputeServiceContext context = ComputeServiceContextFactory.createStandaloneContext(new StubComputeServiceContextModule());
+      context.getComputeService().listNodes();
    }
 
-   @Override
-   protected void bindAsyncClient() {
-   }
-
-   @Override
-   protected void bindClient() {
-
-   }
 }

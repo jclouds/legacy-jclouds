@@ -17,22 +17,27 @@
  * ====================================================================
  */
 
-package org.jclouds.rimuhosting.miro.compute.config;
+package org.jclouds.compute.config;
 
-import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
-import org.testng.annotations.Test;
+import org.jclouds.compute.ComputeService;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.config.RestClientModule;
 
-/**
- * @author Adrian Cole
- */
-@Test(groups = "unit", testName = "rimuhosting.RimuHostingComputeServiceContextModuleTest")
-public class RimuHostingComputeServiceContextModuleTest {
+@ConfiguresRestClient
+@RequiresHttp
+public class StandaloneComputeServiceClientModule extends RestClientModule<ComputeService, ComputeService> {
 
-   public void testAllStatusCovered() {
+   public StandaloneComputeServiceClientModule() {
+      super(ComputeService.class, ComputeService.class);
+   }
 
-      for (RunningState state : RunningState.values()) {
-         assert RimuHostingComputeServiceDependenciesModule.runningStateToNodeState.containsKey(state) : state;
-      }
+   @Override
+   protected void bindAsyncClient() {
+   }
+
+   @Override
+   protected void bindClient() {
 
    }
 }

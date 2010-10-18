@@ -31,7 +31,7 @@ public class SlicehostComputeServiceContextModuleTest {
    public void testAllStatusCovered() {
 
       for (Slice.Status state : Slice.Status.values()) {
-         assert SlicehostComputeServiceContextModule.sliceStatusToNodeState.containsKey(state) : state;
+         assert SlicehostComputeServiceDependenciesModule.sliceStatusToNodeState.containsKey(state) : state;
       }
 
    }

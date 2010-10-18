@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.ReferenceType;
@@ -45,7 +46,7 @@ public class FindLocationForResource {
    final Supplier<Set<? extends Location>> locations;
 
    @Inject
-   public FindLocationForResource(Supplier<Set<? extends Location>> locations) {
+   public FindLocationForResource(@Memoized Supplier<Set<? extends Location>> locations) {
       this.locations = locations;
    }
 

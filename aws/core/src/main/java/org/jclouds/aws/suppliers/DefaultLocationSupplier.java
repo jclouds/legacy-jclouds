@@ -26,6 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.Region;
+import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 
@@ -42,7 +43,7 @@ public class DefaultLocationSupplier implements Supplier<Location> {
    private final Supplier<Set<? extends Location>> set;
 
    @Inject
-   DefaultLocationSupplier(@Region final String region, Supplier<Set<? extends Location>> set) {
+   DefaultLocationSupplier(@Region final String region, @Memoized Supplier<Set<? extends Location>> set) {
       this.region = region;
       this.set = set;
    }

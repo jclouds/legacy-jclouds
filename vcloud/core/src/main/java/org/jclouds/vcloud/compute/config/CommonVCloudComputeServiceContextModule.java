@@ -24,9 +24,7 @@ import java.util.Set;
 
 import javax.inject.Singleton;
 
-import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
-import org.jclouds.compute.config.ComputeServiceTimeoutsModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeState;
@@ -41,9 +39,7 @@ import org.jclouds.vcloud.domain.Status;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.Injector;
 import com.google.inject.Provides;
-import com.google.inject.util.Providers;
 
 /**
  * Configures the {@link VCloudComputeServiceContext}; requires {@link VCloudComputeClientImpl}
@@ -70,28 +66,26 @@ public abstract class CommonVCloudComputeServiceContextModule extends BaseComput
 
    @Override
    protected void configure() {
-      install(new ComputeServiceTimeoutsModule());
-      bind(RunNodesAndAddToSetStrategy.class).to(EncodeTagIntoNameRunNodesAndAddToSetStrategy.class);
-      bindLoadBalancer();
-   }
-
-   protected void bindLoadBalancer() {
-      bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null));
+      super.configure();
    }
 
    @Override
-   protected Supplier<Set<? extends Hardware>> getSourceSizeSupplier(Injector injector) {
-      return injector.getInstance(StaticHardwareSupplier.class);
+   protected Class<? extends RunNodesAndAddToSetStrategy> defineRunNodesAndAddToSetStrategy() {
+      return EncodeTagIntoNameRunNodesAndAddToSetStrategy.class;
    }
 
    @Override
-   protected Supplier<Set<? extends Location>> getSourceLocationSupplier(Injector injector) {
-      return injector.getInstance(OrgAndVDCToLocationSupplier.class);
+   protected Class<? extends Supplier<Set<? extends Hardware>>> defineHardwareSupplier() {
+      return StaticHardwareSupplier.class;
    }
 
    @Override
-   protected Supplier<Set<? extends Image>> getSourceImageSupplier(Injector injector) {
-      return injector.getInstance(VCloudImageSupplier.class);
+   protected Class<? extends Supplier<Set<? extends Image>>> defineImageSupplier() {
+      return VCloudImageSupplier.class;
    }
 
+   @Override
+   protected Class<? extends Supplier<Set<? extends Location>>> defineLocationSupplier() {
+      return OrgAndVDCToLocationSupplier.class;
+   }
 }

@@ -24,9 +24,9 @@ import static org.jclouds.util.Utils.nullSafeSet;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -37,6 +37,7 @@ import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.domain.RunningInstance.EbsBlockDevice;
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
@@ -73,8 +74,8 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
    @Inject
    RunningInstanceToNodeMetadata(Map<InstanceState, NodeState> instanceToNodeState,
-         Map<String, Credentials> credentialStore, Map<RegionAndName, Image> instanceToImage,
-         Supplier<Set<? extends Location>> locations, Supplier<Set<? extends Hardware>> hardware) {
+            Map<String, Credentials> credentialStore, Map<RegionAndName, Image> instanceToImage,
+            @Memoized Supplier<Set<? extends Location>> locations, @Memoized Supplier<Set<? extends Hardware>> hardware) {
       this.locations = checkNotNull(locations, "locations");
       this.hardware = checkNotNull(hardware, "hardware");
       this.instanceToImage = checkNotNull(instanceToImage, "instanceToImage");
@@ -119,14 +120,15 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    @VisibleForTesting
    static List<Volume> addEBS(final RunningInstance instance, Iterable<? extends Volume> volumes) {
       Iterable<Volume> ebsVolumes = Iterables.transform(instance.getEbsBlockDevices().entrySet(),
-            new Function<Entry<String, EbsBlockDevice>, Volume>() {
+               new Function<Entry<String, EbsBlockDevice>, Volume>() {
 
-               @Override
-               public Volume apply(Entry<String, EbsBlockDevice> from) {
-                  return new VolumeImpl(from.getValue().getVolumeId(), Volume.Type.SAN, null, from.getKey(), instance
-                        .getRootDeviceName() != null && instance.getRootDeviceName().equals(from.getKey()), true);
-               }
-            });
+                  @Override
+                  public Volume apply(Entry<String, EbsBlockDevice> from) {
+                     return new VolumeImpl(from.getValue().getVolumeId(), Volume.Type.SAN, null, from.getKey(),
+                              instance.getRootDeviceName() != null
+                                       && instance.getRootDeviceName().equals(from.getKey()), true);
+                  }
+               });
 
       if (instance.getRootDeviceType() == RootDeviceType.EBS) {
          volumes = Iterables.filter(volumes, new Predicate<Volume>() {
@@ -158,7 +160,9 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       } catch (NoSuchElementException e) {
          logger.debug("no tag parsed from %s's groups: %s", instance.getId(), instance.getGroupIds());
       } catch (IllegalArgumentException e) {
-         logger.debug("too many groups match %s; %s's groups: %s", "jclouds#", instance.getId(), instance.getGroupIds());
+         logger
+                  .debug("too many groups match %s; %s's groups: %s", "jclouds#", instance.getId(), instance
+                           .getGroupIds());
       }
       return tag;
    }

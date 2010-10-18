@@ -54,6 +54,7 @@ import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.RunNodesException;
@@ -120,14 +121,15 @@ public class BaseComputeService implements ComputeService {
 
    @Inject
    protected BaseComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
-         Supplier<Set<? extends Image>> images, Supplier<Set<? extends Hardware>> hardwareProfiles,
-         Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-         GetNodeMetadataStrategy getNodeMetadataStrategy, RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
-         RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
-         Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
-         @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
-         @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated, ComputeUtils utils, Timeouts timeouts,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+            @Memoized Supplier<Set<? extends Image>> images,
+            @Memoized Supplier<Set<? extends Hardware>> hardwareProfiles,
+            @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
+            GetNodeMetadataStrategy getNodeMetadataStrategy, RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
+            RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
+            Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
+            @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
+            @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated, ComputeUtils utils, Timeouts timeouts,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.context = checkNotNull(context, "context");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.images = checkNotNull(images, "images");
@@ -160,15 +162,15 @@ public class BaseComputeService implements ComputeService {
     */
    @Override
    public Set<? extends NodeMetadata> runNodesWithTag(String tag, int count, Template template)
-         throws RunNodesException {
+            throws RunNodesException {
       checkArgument(tag.indexOf('-') == -1, "tag cannot contain hyphens");
       checkNotNull(template.getLocation(), "location");
       if (template.getOptions().getTaskName() == null && template.getOptions().getRunScript() != null
-            && !(template.getOptions().getRunScript() instanceof InitBuilder))
+               && !(template.getOptions().getRunScript() instanceof InitBuilder))
          template.getOptions().nameTask("bootstrap");
       logger.debug(">> running %d node%s tag(%s) location(%s) image(%s) hardwareProfile(%s) options(%s)", count,
-            count > 1 ? "s" : "", tag, template.getLocation().getId(), template.getImage().getId(), template
-                  .getHardware().getId(), template.getOptions());
+               count > 1 ? "s" : "", tag, template.getLocation().getId(), template.getImage().getId(), template
+                        .getHardware().getId(), template.getOptions());
       Set<NodeMetadata> nodes = newHashSet();
       Map<NodeMetadata, Exception> badNodes = newLinkedHashMap();
       Map<?, Future<Void>> responses = runNodesAndAddToSetStrategy.execute(tag, count, template, nodes, badNodes);
@@ -187,7 +189,7 @@ public class BaseComputeService implements ComputeService {
     */
    @Override
    public Set<? extends NodeMetadata> runNodesWithTag(String tag, int count, TemplateOptions templateOptions)
-         throws RunNodesException {
+            throws RunNodesException {
       return runNodesWithTag(tag, count, templateBuilder().any().options(templateOptions).build());
    }
 
@@ -236,23 +238,23 @@ public class BaseComputeService implements ComputeService {
    public Set<? extends NodeMetadata> destroyNodesMatching(Predicate<NodeMetadata> filter) {
       logger.debug(">> destroying nodes matching(%s)", filter);
       Set<NodeMetadata> set = newLinkedHashSet(transformParallel(nodesMatchingFilterAndNotTerminated(filter),
-            new Function<NodeMetadata, Future<NodeMetadata>>() {
+               new Function<NodeMetadata, Future<NodeMetadata>>() {
 
-               // TODO make an async interface instead of re-wrapping
-               @Override
-               public Future<NodeMetadata> apply(final NodeMetadata from) {
-                  return executor.submit(new Callable<NodeMetadata>() {
+                  // TODO make an async interface instead of re-wrapping
+                  @Override
+                  public Future<NodeMetadata> apply(final NodeMetadata from) {
+                     return executor.submit(new Callable<NodeMetadata>() {
 
-                     @Override
-                     public NodeMetadata call() throws Exception {
-                        destroyNode(from.getId());
-                        return from;
-                     }
+                        @Override
+                        public NodeMetadata call() throws Exception {
+                           destroyNode(from.getId());
+                           return from;
+                        }
 
-                  });
-               }
+                     });
+                  }
 
-            }, executor, null, logger, "destroying nodes"));
+               }, executor, null, logger, "destroying nodes"));
       logger.debug("<< destroyed(%d)", set.size());
       return set;
    }
@@ -360,7 +362,7 @@ public class BaseComputeService implements ComputeService {
     */
    @Override
    public Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, Payload runScript)
-         throws RunScriptOnNodesException {
+            throws RunScriptOnNodesException {
       return runScriptOnNodesMatching(filter, runScript, RunScriptOptions.NONE);
    }
 
@@ -369,7 +371,7 @@ public class BaseComputeService implements ComputeService {
     */
    @Override
    public Map<NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
-         final Payload runScript, @Nullable final RunScriptOptions options) throws RunScriptOnNodesException {
+            final Payload runScript, @Nullable final RunScriptOptions options) throws RunScriptOnNodesException {
 
       checkNotNull(filter, "Filter must be provided");
       checkNotNull(runScript, "runScript");
@@ -390,8 +392,8 @@ public class BaseComputeService implements ComputeService {
             @Override
             public Void call() throws Exception {
                try {
-                  ExecResponse response = utils.runScriptOnNode(node,
-                        Statements.exec(Utils.toStringAndClose(runScript.getInput())), options);
+                  ExecResponse response = utils.runScriptOnNode(node, Statements.exec(Utils.toStringAndClose(runScript
+                           .getInput())), options);
                   if (response != null)
                      execs.put(node, response);
                } catch (Exception e) {
@@ -413,7 +415,7 @@ public class BaseComputeService implements ComputeService {
    }
 
    private Iterable<? extends NodeMetadata> filterNodesWhoCanRunScripts(Iterable<? extends NodeMetadata> nodes,
-         final Map<NodeMetadata, Exception> badNodes, final @Nullable Credentials overridingCredentials) {
+            final Map<NodeMetadata, Exception> badNodes, final @Nullable Credentials overridingCredentials) {
       nodes = filter(transform(nodes, new Function<NodeMetadata, NodeMetadata>() {
 
          @Override
@@ -425,9 +427,9 @@ public class BaseComputeService implements ComputeService {
                } else {
                   checkNotNull(node.getCredentials(), "If the default credentials need to be used, they can't be null");
                   checkNotNull(node.getCredentials().identity, "Account name for ssh authentication must be "
-                        + "specified. Try passing RunScriptOptions with new credentials");
+                           + "specified. Try passing RunScriptOptions with new credentials");
                   checkNotNull(node.getCredentials().credential, "Key or password for ssh authentication must be "
-                        + "specified. Try passing RunScriptOptions with new credentials");
+                           + "specified. Try passing RunScriptOptions with new credentials");
                }
                return node;
             } catch (Exception e) {

@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
@@ -74,15 +75,15 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       @Override
       public boolean apply(Image input) {
          return input.getProviderId().equals(instance.getImageId())
-               && (input.getLocation() == null || input.getLocation().equals(location) || input.getLocation().equals(
-                     location.getParent()));
+                  && (input.getLocation() == null || input.getLocation().equals(location) || input.getLocation()
+                           .equals(location.getParent()));
       }
    }
 
    @Inject
    ServerToNodeMetadata(Function<Server, Iterable<String>> getPublicAddresses,
-         Map<String, Credentials> credentialStore, Map<RunningState, NodeState> runningStateToNodeState,
-         Supplier<Set<? extends Image>> images) {
+            Map<String, Credentials> credentialStore, Map<RunningState, NodeState> runningStateToNodeState,
+            @Memoized Supplier<Set<? extends Image>> images) {
       this.getPublicAddresses = checkNotNull(getPublicAddresses, "serverStateToNodeState");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.runningStateToNodeState = checkNotNull(runningStateToNodeState, "serverStateToNodeState");
@@ -96,7 +97,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.name(from.getName());
       // TODO properly look up location
       LocationImpl location = new LocationImpl(LocationScope.ZONE, from.getLocation().getId(), from.getLocation()
-            .getName(), null);
+               .getName(), null);
       builder.location(location);
       builder.tag(parseTagFromName(from.getName()));
       builder.imageId(from.getImageId() + "");

@@ -21,31 +21,32 @@ package org.jclouds.rackspace.config;
 
 import java.util.Set;
 
-import javax.inject.Singleton;
+import javax.inject.Inject;
 
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.rest.annotations.Provider;
 
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
 
 /**
  * Configures the locations used in Rackspace services
  * 
  * @author Adrian Cole
  */
-public class RackspaceLocationsModule extends AbstractModule {
+public class RackspaceLocationsSupplier implements Supplier<Set<? extends Location>> {
 
-   @Override
-   protected void configure() {
+   private final String providerName;
+
+   @Inject
+   RackspaceLocationsSupplier(@Provider String providerName) {
+      this.providerName = providerName;
    }
 
-   @Provides
-   @Singleton
-   Set<? extends Location> provideLocations(@Provider String providerName) {
+   @Override
+   public Set<? extends Location> get() {
       Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
       return ImmutableSet.of(new LocationImpl(LocationScope.ZONE, "DFW1", "Dallas, TX", provider));
    }

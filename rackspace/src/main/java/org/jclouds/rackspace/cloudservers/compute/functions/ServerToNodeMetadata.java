@@ -30,6 +30,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -91,7 +92,8 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Inject
    ServerToNodeMetadata(Map<ServerStatus, NodeState> serverStateToNodeState, Map<String, Credentials> credentialStore,
-         Supplier<Set<? extends Image>> images, Supplier<Location> location, Supplier<Set<? extends Hardware>> hardwares) {
+            @Memoized Supplier<Set<? extends Image>> images, Supplier<Location> location,
+            @Memoized Supplier<Set<? extends Hardware>> hardwares) {
       this.serverToNodeState = checkNotNull(serverStateToNodeState, "serverStateToNodeState");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.images = checkNotNull(images, "images");

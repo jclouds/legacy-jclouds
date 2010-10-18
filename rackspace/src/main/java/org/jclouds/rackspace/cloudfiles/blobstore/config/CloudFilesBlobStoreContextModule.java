@@ -30,13 +30,14 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
+import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.rackspace.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.rackspace.cloudfiles.CloudFilesClient;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesAsyncBlobStore;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobRequestSigner;
 import org.jclouds.rackspace.cloudfiles.blobstore.CloudFilesBlobStore;
-import org.jclouds.rackspace.config.RackspaceLocationsModule;
+import org.jclouds.rackspace.config.RackspaceLocationsSupplier;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
@@ -56,8 +57,11 @@ public class CloudFilesBlobStoreContextModule extends AbstractModule {
 
    @Override
    protected void configure() {
-      install(new RackspaceLocationsModule());
       install(new BlobStoreMapModule());
+      bind(new TypeLiteral<Supplier<Set<? extends Location>>>() {
+      }).annotatedWith(Memoized.class).to(new TypeLiteral<RackspaceLocationsSupplier>() {
+      });
+
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
       bind(AsyncBlobStore.class).to(CloudFilesAsyncBlobStore.class).in(Scopes.SINGLETON);
       bind(BlobStore.class).to(CloudFilesBlobStore.class).in(Scopes.SINGLETON);
@@ -68,14 +72,8 @@ public class CloudFilesBlobStoreContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Supplier<Set<? extends Location>> getSourceLocationSupplier(Set<? extends Location> locations) {
-      return Suppliers.<Set<? extends Location>> ofInstance(locations);
-   }
-
-   @Provides
-   @Singleton
-   protected Supplier<Location> getLocation(Set<? extends Location> locations) {
-      return Suppliers.<Location> ofInstance(Iterables.get(locations, 0));
+   protected Supplier<Location> getLocation(@Memoized Supplier<Set<? extends Location>> locations) {
+      return Suppliers.<Location> ofInstance(Iterables.get(locations.get(), 0));
    }
 
 }

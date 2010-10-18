@@ -85,7 +85,7 @@ public class CredentialsForInstanceTest {
 //      expect(client.getAMIServices()).andReturn(amiClient).atLeastOnce();
 //      Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
 //      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
-//      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
 //            .<Hardware> of(m1_small().build()));
 //      PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
 //      RunningInstance instance = createMock(RunningInstance.class);
@@ -97,7 +97,7 @@ public class CredentialsForInstanceTest {
 //      expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
 //
 //      Location location = new LocationImpl(LocationScope.ZONE, "us-east-1d", "description", null);
-//      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
 //            .<Location> of(location));
 //      org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
 //
@@ -180,7 +180,7 @@ public class CredentialsForInstanceTest {
 //      expect(client.getAMIServices()).andReturn(amiClient).atLeastOnce();
 //      Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
 //      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
-//      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
 //            .<Hardware> of(m1_small().build()));
 //      PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
 //      RunningInstance instance = createMock(RunningInstance.class);
@@ -192,7 +192,7 @@ public class CredentialsForInstanceTest {
 //      expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
 //
 //      Location region = new LocationImpl(LocationScope.REGION, "us-east-1", "description", null);
-//      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
 //            .<Location> of(region));
 //      org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
 //
@@ -264,7 +264,7 @@ public class CredentialsForInstanceTest {
 //      expect(client.getAMIServices()).andReturn(amiClient).atLeastOnce();
 //      Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
 //      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
-//      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
 //            .<Hardware> of(m1_small().build()));
 //      PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
 //      RunningInstance instance = createMock(RunningInstance.class);
@@ -276,7 +276,7 @@ public class CredentialsForInstanceTest {
 //      expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
 //
 //      Location region = new LocationImpl(LocationScope.REGION, "us-east-1", "description", null);
-//      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
 //            .<Location> of(region));
 //      org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
 //
@@ -339,7 +339,7 @@ public class CredentialsForInstanceTest {
 //      expect(client.getAMIServices()).andReturn(amiClient).atLeastOnce();
 //      Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
 //      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
-//      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
 //            .<Hardware> of(m1_small().build()));
 //      PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
 //      RunningInstance instance = createMock(RunningInstance.class);
@@ -350,7 +350,7 @@ public class CredentialsForInstanceTest {
 //      expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
 //
 //      Location region = new LocationImpl(LocationScope.REGION, "us-east-1", "description", null);
-//      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
 //            .<Location> of(region));
 //      org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
 //
@@ -426,9 +426,9 @@ public class CredentialsForInstanceTest {
 //      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
 //
 //      Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
-//      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
 //            .<Location> of(location));
-//      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
 //            .<Hardware> of(m2_4xlarge().build()));
 //      PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
 //      RunningInstance instance = createMock(RunningInstance.class);
@@ -487,9 +487,9 @@ public class CredentialsForInstanceTest {
 //      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
 //
 //      Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
-//      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
 //            .<Location> of(location));
-//      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
 //            .<Hardware> of(m2_4xlarge().build()));
 //      PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
 //      RunningInstance instance = createMock(RunningInstance.class);
@@ -549,9 +549,9 @@ public class CredentialsForInstanceTest {
 //      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
 //
 //      Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
-//      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
 //            .<Location> of(location));
-//      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
 //            .<Hardware> of(m2_4xlarge().build()));
 //      PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
 //      RunningInstance instance = createMock(RunningInstance.class);
@@ -616,9 +616,9 @@ public class CredentialsForInstanceTest {
 //      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
 //
 //      Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
-//      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
 //            .<Location> of(location));
-//      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
 //            .<Hardware> of(m2_4xlarge().build()));
 //      PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
 //      RunningInstance instance = createMock(RunningInstance.class);
@@ -677,9 +677,9 @@ public class CredentialsForInstanceTest {
 //      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
 //
 //      Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
-//      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
 //            .<Location> of(location));
-//      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
 //            .<Hardware> of(m2_4xlarge().build()));
 //      PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
 //      RunningInstance instance = createMock(RunningInstance.class);
@@ -736,7 +736,7 @@ public class CredentialsForInstanceTest {
 //      expect(client.getAMIServices()).andReturn(amiClient).atLeastOnce();
 //      Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
 //      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
-//      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
 //            .<Hardware> of(m2_4xlarge().build()));
 //      PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
 //      RunningInstance instance = createMock(RunningInstance.class);
@@ -748,7 +748,7 @@ public class CredentialsForInstanceTest {
 //      expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
 //
 //      Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
-//      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
 //            .<Location> of(location));
 //      org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
 //
@@ -810,7 +810,7 @@ public class CredentialsForInstanceTest {
 //      expect(client.getAMIServices()).andReturn(amiClient).atLeastOnce();
 //      Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
 //      ConcurrentMap<RegionAndName, org.jclouds.compute.domain.Image> imageMap = createMock(ConcurrentMap.class);
-//      Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Hardware>> hardwares = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
 //            .<Hardware> of(m2_4xlarge().build()));
 //      PopulateDefaultLoginCredentialsForImageStrategy credentialProvider = createMock(PopulateDefaultLoginCredentialsForImageStrategy.class);
 //      RunningInstance instance = createMock(RunningInstance.class);
@@ -822,7 +822,7 @@ public class CredentialsForInstanceTest {
 //      expect(instance.getInstanceState()).andReturn(InstanceState.RUNNING);
 //
 //      Location location = new LocationImpl(LocationScope.ZONE, "us-east-1a", "description", null);
-//      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
+//      @Memoized Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
 //            .<Location> of(location));
 //      org.jclouds.compute.domain.Image jcImage = createMock(org.jclouds.compute.domain.Image.class);
 //

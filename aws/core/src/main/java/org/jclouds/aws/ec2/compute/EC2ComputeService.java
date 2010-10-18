@@ -24,8 +24,8 @@ import static org.jclouds.aws.ec2.util.EC2Utils.parseHandle;
 import static org.jclouds.util.Utils.checkNotEmpty;
 
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
@@ -42,6 +42,7 @@ import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.PlacementGroup.State;
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -77,20 +78,20 @@ public class EC2ComputeService extends BaseComputeService {
 
    @Inject
    protected EC2ComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
-         Supplier<Set<? extends Image>> images, Supplier<Set<? extends Hardware>> sizes,
-         Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-         GetNodeMetadataStrategy getNodeMetadataStrategy, RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
-         RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
-         Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
-         @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
-         @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated, ComputeUtils utils, Timeouts timeouts,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
-         Map<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Map<RegionAndName, String> securityGroupMap,
-         @Named("PLACEMENT") Map<RegionAndName, String> placementGroupMap,
-         @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted) {
+            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
+            @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
+            GetNodeMetadataStrategy getNodeMetadataStrategy, RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
+            RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
+            Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
+            @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
+            @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated, ComputeUtils utils, Timeouts timeouts,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
+            Map<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Map<RegionAndName, String> securityGroupMap,
+            @Named("PLACEMENT") Map<RegionAndName, String> placementGroupMap,
+            @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
-            runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, templateBuilderProvider,
-            templateOptionsProvider, nodeRunning, nodeTerminated, utils, timeouts, executor);
+               runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, templateBuilderProvider,
+               templateOptionsProvider, nodeRunning, nodeTerminated, utils, timeouts, executor);
       this.ec2Client = ec2Client;
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;
@@ -106,8 +107,8 @@ public class EC2ComputeService extends BaseComputeService {
          logger.debug(">> deleting placementGroup(%s)", group);
          try {
             ec2Client.getPlacementGroupServices().deletePlacementGroupInRegion(region, group);
-            checkState(placementGroupDeleted.apply(new PlacementGroup(region, group, "cluster", State.PENDING)),
-                  String.format("placementGroup region(%s) name(%s) failed to delete", region, group));
+            checkState(placementGroupDeleted.apply(new PlacementGroup(region, group, "cluster", State.PENDING)), String
+                     .format("placementGroup region(%s) name(%s) failed to delete", region, group));
             placementGroupMap.remove(new RegionAndName(region, tag));
             logger.debug("<< deleted placementGroup(%s)", group);
          } catch (AWSResponseException e) {

@@ -62,10 +62,7 @@ public class VCloudExpressComputeServiceContextModule extends CommonVCloudComput
    @Override
    protected void configure() {
       super.configure();
-      bind(RebootNodeStrategy.class).to(VCloudExpressRebootNodeStrategy.class);
-      bind(GetNodeMetadataStrategy.class).to(VCloudExpressGetNodeMetadataStrategy.class);
-      bind(new TypeLiteral<Function<VCloudExpressVApp, NodeMetadata>>() {
-      }).to(VCloudExpressVAppToNodeMetadata.class);
+      bindVAppConverter();
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudExpressClient, VCloudExpressClient>>() {
       }).in(Scopes.SINGLETON);
@@ -75,14 +72,41 @@ public class VCloudExpressComputeServiceContextModule extends CommonVCloudComput
       bind(new TypeLiteral<Function<Org, Iterable<? extends Image>>>() {
       }).to(new TypeLiteral<ImagesInVCloudExpressOrg>() {
       });
-      bind(AddNodeWithTagStrategy.class).to(VCloudExpressAddNodeWithTagStrategy.class);
-      bind(ListNodesStrategy.class).to(VCloudExpressListNodesStrategy.class);
-      bind(DestroyNodeStrategy.class).to(VCloudExpressDestroyNodeStrategy.class);
+   }
+
+   protected void bindVAppConverter() {
+      bind(new TypeLiteral<Function<VCloudExpressVApp, NodeMetadata>>() {
+      }).to(VCloudExpressVAppToNodeMetadata.class);
    }
 
    @Provides
    @Singleton
    CommonVCloudComputeClient provideCommonVCloudComputeClient(VCloudExpressComputeClient in) {
       return in;
+   }
+
+   @Override
+   protected Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy() {
+      return VCloudExpressAddNodeWithTagStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends DestroyNodeStrategy> defineDestroyNodeStrategy() {
+      return VCloudExpressDestroyNodeStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends GetNodeMetadataStrategy> defineGetNodeMetadataStrategy() {
+      return VCloudExpressGetNodeMetadataStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends ListNodesStrategy> defineListNodesStrategy() {
+      return VCloudExpressListNodesStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends RebootNodeStrategy> defineRebootNodeStrategy() {
+      return VCloudExpressRebootNodeStrategy.class;
    }
 }
