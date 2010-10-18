@@ -31,6 +31,7 @@ import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
+import org.jclouds.domain.Location;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Sets;
@@ -64,6 +65,7 @@ public abstract class StandaloneComputeServiceContextModule extends BaseComputeS
       private Class<? extends RebootNodeStrategy> rebootNodeStrategy;
       private Class<? extends Supplier<Set<? extends Hardware>>> hardwareSupplier;
       private Class<? extends Supplier<Set<? extends Image>>> imageSupplier;
+      private Class<? extends Supplier<Set<? extends Location>>> locationSupplier = LocationSupplier.class;
 
       public Builder install(Module module) {
          this.modules.add(module);
@@ -105,6 +107,11 @@ public abstract class StandaloneComputeServiceContextModule extends BaseComputeS
          return this;
       }
 
+      public Builder defineLocationSupplier(Class<? extends Supplier<Set<? extends Location>>> locationSupplier) {
+         this.locationSupplier = locationSupplier;
+         return this;
+      }
+
       public StandaloneComputeServiceContextModule build() {
          return new StandaloneComputeServiceContextModule() {
 
@@ -141,6 +148,10 @@ public abstract class StandaloneComputeServiceContextModule extends BaseComputeS
             @Override
             protected Class<? extends RebootNodeStrategy> defineRebootNodeStrategy() {
                return rebootNodeStrategy;
+            }
+
+            protected Class<? extends Supplier<Set<? extends Location>>> defineLocationSupplier() {
+               return locationSupplier;
             }
 
             @Override
