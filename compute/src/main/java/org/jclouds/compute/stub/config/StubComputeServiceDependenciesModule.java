@@ -313,7 +313,7 @@ public class StubComputeServiceDependenciesModule extends AbstractModule {
    }
 
    @Singleton
-   static class StubImageSupplier implements Supplier<Set<? extends Image>> {
+   public static class StubImageSupplier implements Supplier<Set<? extends Image>> {
       private final Supplier<Location> defaultLocation;
 
       @Inject
@@ -359,7 +359,7 @@ public class StubComputeServiceDependenciesModule extends AbstractModule {
    }
 
    @Singleton
-   static class StubHardwareSupplier implements Supplier<Set<? extends Hardware>> {
+   public static class StubHardwareSupplier implements Supplier<Set<? extends Hardware>> {
 
       static Hardware stub(String type, int cores, int ram, float disk) {
          return new org.jclouds.compute.domain.HardwareBuilder().id(type).providerId(type).name(type).processors(
