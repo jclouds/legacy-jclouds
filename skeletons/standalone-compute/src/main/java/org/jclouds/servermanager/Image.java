@@ -17,31 +17,40 @@
  * ====================================================================
  */
 
-package org.jclouds.compute.strategy;
+package org.jclouds.servermanager;
 
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Template;
+import com.google.common.base.Objects;
 
 /**
- * Adds a node into an existing tag set, or creates one new.
+ * This would be replaced with the real java object related to the underlying image
  * 
  * @author Adrian Cole
  */
-public interface AddNodeWithTagStrategy {
+public class Image {
 
-   /**
-    * create a node given the name and template parameters such as imageid, hardwareid, and
-    * locationid.
-    * 
-    * @param tag
-    *           tag supplied by the user
-    * @param name
-    *           supplied by {@link RunNodesAndAddToSetStrategy } and must have the tag encoded into
-    *           it.
-    * @param template
-    *           supplied by the user
-    * @return NodeMetadata from the new object, most likely in some pending state.
-    */
-   NodeMetadata execute(String tag, String name, Template template);
+   public int id;
+   public String name;
+
+   public Image(int id, String name) {
+      this.id = id;
+      this.name = name;
+   }
+
+   @Override
+   public int hashCode() {
+      return Objects.hashCode(id, name);
+   }
+
+   @Override
+   public boolean equals(Object that) {
+      if (that == null)
+         return false;
+      return Objects.equal(this.toString(), that.toString());
+   }
+
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).add("id", id).add("name", name).toString();
+   }
 
 }

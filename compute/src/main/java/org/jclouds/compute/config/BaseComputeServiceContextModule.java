@@ -204,12 +204,19 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
 
    }
 
+   /**
+    * The default template if none is provided.
+    */
    @Provides
    @Named("DEFAULT")
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       return template.osFamily(UBUNTU);
    }
 
+   /**
+    * supplies how the tag is encoded into the name. A string of hex characters is the last argument
+    * and tag is the first
+    */
    @Provides
    @Named("NAMING_CONVENTION")
    @Singleton
@@ -243,20 +250,20 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Memoized
    protected Supplier<Set<? extends Image>> supplyImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final Supplier<Set<? extends Image>> imageSupplier) {
+         final Supplier<Set<? extends Image>> imageSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Image>>(authException, seconds,
-               new Supplier<Set<? extends Image>>() {
-                  @Override
-                  public Set<? extends Image> get() {
-                     return imageSupplier.get();
-                  }
-               });
+            new Supplier<Set<? extends Image>>() {
+               @Override
+               public Set<? extends Image> get() {
+                  return imageSupplier.get();
+               }
+            });
    }
 
    @Provides
    @Singleton
    protected Supplier<Map<String, ? extends Location>> provideLocationMap(
-            @Memoized Supplier<Set<? extends Location>> locations) {
+         @Memoized Supplier<Set<? extends Location>> locations) {
       return Suppliers.compose(new Function<Set<? extends Location>, Map<String, ? extends Location>>() {
 
          @Override
@@ -278,14 +285,14 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Memoized
    protected Supplier<Set<? extends Location>> supplyLocationCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final Supplier<Set<? extends Location>> locationSupplier) {
+         final Supplier<Set<? extends Location>> locationSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Location>>(authException, seconds,
-               new Supplier<Set<? extends Location>>() {
-                  @Override
-                  public Set<? extends Location> get() {
-                     return locationSupplier.get();
-                  }
-               });
+            new Supplier<Set<? extends Location>>() {
+               @Override
+               public Set<? extends Location> get() {
+                  return locationSupplier.get();
+               }
+            });
    }
 
    @Provides
@@ -312,14 +319,14 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Memoized
    protected Supplier<Set<? extends Hardware>> supplySizeCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final Supplier<Set<? extends Hardware>> hardwareSupplier) {
+         final Supplier<Set<? extends Hardware>> hardwareSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Hardware>>(authException, seconds,
-               new Supplier<Set<? extends Hardware>>() {
-                  @Override
-                  public Set<? extends Hardware> get() {
-                     return hardwareSupplier.get();
-                  }
-               });
+            new Supplier<Set<? extends Hardware>>() {
+               @Override
+               public Set<? extends Hardware> get() {
+                  return hardwareSupplier.get();
+               }
+            });
    }
 
    @Provides

@@ -17,31 +17,32 @@
  * ====================================================================
  */
 
-package org.jclouds.compute.strategy;
+package org.jclouds.collect;
 
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Template;
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Sets.newHashSet;
+
+import java.util.Set;
+
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 
 /**
- * Adds a node into an existing tag set, or creates one new.
  * 
  * @author Adrian Cole
  */
-public interface AddNodeWithTagStrategy {
 
-   /**
-    * create a node given the name and template parameters such as imageid, hardwareid, and
-    * locationid.
-    * 
-    * @param tag
-    *           tag supplied by the user
-    * @param name
-    *           supplied by {@link RunNodesAndAddToSetStrategy } and must have the tag encoded into
-    *           it.
-    * @param template
-    *           supplied by the user
-    * @return NodeMetadata from the new object, most likely in some pending state.
-    */
-   NodeMetadata execute(String tag, String name, Template template);
+public abstract class TransformingSetSupplier<F, T> implements Supplier<Set<? extends T>> {
+   private final Function<F, T> converter;
 
+   public TransformingSetSupplier(Function<F, T> converter) {
+      this.converter = converter;
+   }
+
+   @Override
+   public Set<? extends T> get() {
+      return newHashSet(transform(supplyFrom(), converter));
+   }
+
+   public abstract Iterable<F> supplyFrom();
 }

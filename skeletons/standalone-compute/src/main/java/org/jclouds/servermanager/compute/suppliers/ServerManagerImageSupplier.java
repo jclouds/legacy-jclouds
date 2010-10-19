@@ -17,31 +17,31 @@
  * ====================================================================
  */
 
-package org.jclouds.compute.strategy;
+package org.jclouds.servermanager.compute.suppliers;
 
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Template;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jclouds.collect.TransformingSetSupplier;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.servermanager.ServerManager;
+import org.jclouds.servermanager.compute.functions.ServerManagerImageToImage;
 
 /**
- * Adds a node into an existing tag set, or creates one new.
  * 
  * @author Adrian Cole
  */
-public interface AddNodeWithTagStrategy {
+@Singleton
+public class ServerManagerImageSupplier extends TransformingSetSupplier<org.jclouds.servermanager.Image, Image> {
+   private final ServerManager client;
 
-   /**
-    * create a node given the name and template parameters such as imageid, hardwareid, and
-    * locationid.
-    * 
-    * @param tag
-    *           tag supplied by the user
-    * @param name
-    *           supplied by {@link RunNodesAndAddToSetStrategy } and must have the tag encoded into
-    *           it.
-    * @param template
-    *           supplied by the user
-    * @return NodeMetadata from the new object, most likely in some pending state.
-    */
-   NodeMetadata execute(String tag, String name, Template template);
+   @Inject
+   protected ServerManagerImageSupplier(ServerManager client, ServerManagerImageToImage serverManagerImageToImage) {
+      super(serverManagerImageToImage);
+      this.client = client;
+   }
 
+   public Iterable<org.jclouds.servermanager.Image> supplyFrom() {
+      return client.listImages();
+   }
 }
