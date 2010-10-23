@@ -101,23 +101,21 @@ public class BaseLoadBalancerService implements LoadBalancerService {
       checkArgument(protocol.toUpperCase().equals("HTTP") || protocol.toUpperCase().equals("TCP"),
                "Acceptable values for protocol are HTTP or TCP");
 
-      Map<Location, Set<String>> locationMap = Maps.newHashMap();
+      Set<String> ids = Sets.newHashSet();
+      Location location = null;
       for (NodeMetadata node : Iterables.filter(context.getComputeService().listNodesDetailsMatching(
-               NodePredicates.all()), Predicates.and(filter, Predicates.not(NodePredicates.TERMINATED)))) {
-         Set<String> ids = locationMap.get(node.getLocation());
-         if (ids == null)
-            ids = Sets.newHashSet();
+               NodePredicates.all()), filter)) {
          ids.add(node.getProviderId());
-         locationMap.put(node.getLocation(), ids);
+         location = node.getLocation();
       }
       Set<String> dnsNames = Sets.newHashSet();
-      for (Location location : locationMap.keySet()) {
-         logger.debug(">> creating load balancer (%s)", loadBalancerName);
-         String dnsName = loadBalancerStrategy.execute(location, loadBalancerName, protocol, loadBalancerPort,
-                  instancePort, locationMap.get(location));
-         dnsNames.add(dnsName);
-         logger.debug("<< created load balancer (%s) DNS (%s)", loadBalancerName, dnsName);
-      }
+
+      logger.debug(">> creating load balancer (%s)", loadBalancerName);
+      String dnsName = loadBalancerStrategy.execute(location, loadBalancerName, protocol, loadBalancerPort,
+                  instancePort, ids);
+      dnsNames.add(dnsName);
+      logger.debug("<< created load balancer (%s) DNS (%s)", loadBalancerName, dnsName);
+
       return dnsNames;
    }
 
