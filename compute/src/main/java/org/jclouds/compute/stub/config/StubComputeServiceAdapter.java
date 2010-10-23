@@ -27,7 +27,7 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeServiceAdapter;
+import org.jclouds.compute.JCloudsNativeComputeServiceAdapter;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
@@ -52,7 +52,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 @Singleton
-public class StubComputeServiceAdapter implements ComputeServiceAdapter<NodeMetadata, Hardware, Image, Location> {
+public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAdapter {
    private final Supplier<Location> location;
    private final ConcurrentMap<String, NodeMetadata> nodes;
    private final Provider<Integer> idProvider;
