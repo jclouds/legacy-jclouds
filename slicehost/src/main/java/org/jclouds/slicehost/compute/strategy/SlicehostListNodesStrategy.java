@@ -49,7 +49,7 @@ public class SlicehostListNodesStrategy implements ListNodesStrategy {
    }
 
    @Override
-   public Iterable<? extends ComputeMetadata> list() {
+   public Iterable<? extends ComputeMetadata> listNodes() {
       return listDetailsOnNodesMatching(NodePredicates.all());
    }
 

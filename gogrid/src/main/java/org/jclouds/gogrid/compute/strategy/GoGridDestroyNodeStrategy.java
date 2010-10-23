@@ -43,9 +43,9 @@ public class GoGridDestroyNodeStrategy implements DestroyNodeStrategy {
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata destroyNode(String id) {
       client.getServerServices().deleteById(new Long(id));
-      return getNode.execute(id);
+      return getNode.getNode(id);
    }
 
 }

@@ -22,14 +22,11 @@ package org.jclouds.vcloud.compute.config;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.config.BindComputeStrategiesByClass;
+import org.jclouds.compute.config.BindComputeSuppliersByClass;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
-import org.jclouds.compute.strategy.DestroyNodeStrategy;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.VCloudExpressClient;
@@ -38,11 +35,6 @@ import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.compute.functions.ImagesInVCloudExpressOrg;
 import org.jclouds.vcloud.compute.functions.VCloudExpressVAppToNodeMetadata;
 import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressAddNodeWithTagStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressDestroyNodeStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressGetNodeMetadataStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressListNodesStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressRebootNodeStrategy;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
 
@@ -86,27 +78,12 @@ public class VCloudExpressComputeServiceContextModule extends CommonVCloudComput
    }
 
    @Override
-   protected Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy() {
-      return VCloudExpressAddNodeWithTagStrategy.class;
+   public BindComputeStrategiesByClass defineComputeStrategyModule() {
+      return new VCloudExpressBindComputeStrategiesByClass();
    }
 
    @Override
-   protected Class<? extends DestroyNodeStrategy> defineDestroyNodeStrategy() {
-      return VCloudExpressDestroyNodeStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends GetNodeMetadataStrategy> defineGetNodeMetadataStrategy() {
-      return VCloudExpressGetNodeMetadataStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends ListNodesStrategy> defineListNodesStrategy() {
-      return VCloudExpressListNodesStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends RebootNodeStrategy> defineRebootNodeStrategy() {
-      return VCloudExpressRebootNodeStrategy.class;
+   public BindComputeSuppliersByClass defineComputeSupplierModule() {
+      return new CommonVCloudBindComputeSuppliersByClass();
    }
 }

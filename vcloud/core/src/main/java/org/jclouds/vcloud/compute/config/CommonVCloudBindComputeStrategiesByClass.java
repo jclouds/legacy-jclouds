@@ -17,31 +17,20 @@
  * ====================================================================
  */
 
-package org.jclouds.servermanager.compute.suppliers;
+package org.jclouds.vcloud.compute.config;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.jclouds.collect.TransformingSetSupplier;
-import org.jclouds.compute.domain.Image;
-import org.jclouds.servermanager.ServerManager;
-import org.jclouds.servermanager.compute.functions.ServerManagerImageToImage;
+import org.jclouds.compute.config.BindComputeStrategiesByClass;
+import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
 
 /**
- * 
  * @author Adrian Cole
  */
-@Singleton
-public class ServerManagerImageSupplier extends TransformingSetSupplier<org.jclouds.servermanager.Image, Image> {
-   private final ServerManager client;
+public abstract class CommonVCloudBindComputeStrategiesByClass extends BindComputeStrategiesByClass {
 
-   @Inject
-   protected ServerManagerImageSupplier(ServerManager client, ServerManagerImageToImage serverManagerImageToImage) {
-      super(serverManagerImageToImage);
-      this.client = client;
+   @Override
+   protected Class<? extends RunNodesAndAddToSetStrategy> defineRunNodesAndAddToSetStrategy() {
+      return EncodeTagIntoNameRunNodesAndAddToSetStrategy.class;
    }
 
-   public Iterable<org.jclouds.servermanager.Image> supplyFrom() {
-      return client.listImages();
-   }
 }

@@ -53,7 +53,7 @@ public class EC2GetNodeMetadataStrategy implements GetNodeMetadataStrategy {
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata getNode(String id) {
       String[] parts = parseHandle(id);
       String region = parts[0];
       String instanceId = parts[1];

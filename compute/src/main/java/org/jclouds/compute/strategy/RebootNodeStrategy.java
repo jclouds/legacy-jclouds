@@ -28,6 +28,6 @@ import org.jclouds.compute.domain.NodeMetadata;
  */
 public interface RebootNodeStrategy {
 
-   NodeMetadata execute(String id);
+   NodeMetadata rebootNode(String id);
 
 }

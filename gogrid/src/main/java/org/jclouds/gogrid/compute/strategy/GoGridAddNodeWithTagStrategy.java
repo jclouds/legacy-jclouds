@@ -71,7 +71,7 @@ public class GoGridAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
    }
 
    @Override
-   public NodeMetadata execute(String tag, String name, Template template) {
+   public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
       Server addedServer = null;
       boolean notStarted = true;
       int numOfRetries = 20;

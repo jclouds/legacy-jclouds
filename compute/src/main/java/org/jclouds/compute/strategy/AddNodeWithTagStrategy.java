@@ -42,6 +42,6 @@ public interface AddNodeWithTagStrategy {
     *           supplied by the user
     * @return NodeMetadata from the new object, most likely in some pending state.
     */
-   NodeMetadata execute(String tag, String name, Template template);
+   NodeMetadata addNodeWithTag(String tag, String name, Template template);
 
 }

@@ -47,9 +47,9 @@ public class VCloudExpressDestroyNodeStrategy implements DestroyNodeStrategy {
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata destroyNode(String id) {
       computeClient.stop(URI.create(checkNotNull(id, "node.id")));
-      return getNode.execute(id);
+      return getNode.getNode(id);
    }
 
 }

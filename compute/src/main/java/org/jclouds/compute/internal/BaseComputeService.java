@@ -214,7 +214,7 @@ public class BaseComputeService implements ComputeService {
          @Override
          public boolean apply(String input) {
             try {
-               NodeMetadata md = destroyNodeStrategy.execute(id);
+               NodeMetadata md = destroyNodeStrategy.destroyNode(id);
                if (md != null)
                   node.set(md);
                return true;
@@ -269,7 +269,7 @@ public class BaseComputeService implements ComputeService {
    @Override
    public Set<ComputeMetadata> listNodes() {
       logger.debug(">> listing nodes");
-      Set<ComputeMetadata> set = newLinkedHashSet(listNodesStrategy.list());
+      Set<ComputeMetadata> set = newLinkedHashSet(listNodesStrategy.listNodes());
       logger.debug("<< list(%d)", set.size());
       return set;
    }
@@ -324,7 +324,7 @@ public class BaseComputeService implements ComputeService {
    @Override
    public NodeMetadata getNodeMetadata(String id) {
       checkNotNull(id, "id");
-      return getNodeMetadataStrategy.execute(id);
+      return getNodeMetadataStrategy.getNode(id);
    }
 
    /**
@@ -334,7 +334,7 @@ public class BaseComputeService implements ComputeService {
    public void rebootNode(String id) {
       checkNotNull(id, "id");
       logger.debug(">> rebooting node(%s)", id);
-      NodeMetadata node = rebootNodeStrategy.execute(id);
+      NodeMetadata node = rebootNodeStrategy.rebootNode(id);
       boolean successful = nodeRunning.apply(node);
       logger.debug("<< rebooted node(%s) success(%s)", id, successful);
    }

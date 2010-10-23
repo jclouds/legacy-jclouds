@@ -19,9 +19,16 @@
 
 package org.jclouds.compute.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.transform;
+import static com.google.common.collect.Sets.newHashSet;
+
 import java.util.Set;
 
+import javax.inject.Singleton;
+
 import org.jclouds.compute.ComputeService;
+import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -31,11 +38,13 @@ import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
+import org.jclouds.compute.strategy.impl.AdaptingComputeServiceStrategies;
+import org.jclouds.compute.suppliers.DefaultLocationSupplier;
 import org.jclouds.domain.Location;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Sets;
-import com.google.inject.Module;
+import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
@@ -43,125 +52,122 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public abstract class StandaloneComputeServiceContextModule extends BaseComputeServiceContextModule {
+public class StandaloneComputeServiceContextModule<N, H, I, L> extends BaseComputeServiceContextModule {
+
    @Override
    protected void configure() {
       super.configure();
+      bindDefaultLocation();
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<ComputeService, ComputeService>>() {
       }).in(Scopes.SINGLETON);
    }
 
-   public static Builder builder() {
-      return new Builder();
+   public class TransformingSetSupplier<F, T> implements Supplier<Set<? extends T>> {
+      private final Supplier<Iterable<F>> backingSupplier;
+      private final Function<F, T> converter;
+
+      public TransformingSetSupplier(Supplier<Iterable<F>> backingSupplier, Function<F, T> converter) {
+         this.backingSupplier = checkNotNull(backingSupplier, "backingSupplier");
+         this.converter = checkNotNull(converter, "converter");
+      }
+
+      @Override
+      public Set<? extends T> get() {
+         return newHashSet(transform(backingSupplier.get(), converter));
+      }
+
    }
 
-   public static class Builder {
-      private Set<Module> modules = Sets.newLinkedHashSet();
-      private Class<? extends AddNodeWithTagStrategy> addNodeWithTagStrategy;
-      private Class<? extends DestroyNodeStrategy> destroyNodeStrategy;
-      private Class<? extends GetNodeMetadataStrategy> getNodeMetadataStrategy;
-      private Class<? extends ListNodesStrategy> listNodesStrategy;
-      private Class<? extends RebootNodeStrategy> rebootNodeStrategy;
-      private Class<? extends Supplier<Set<? extends Hardware>>> hardwareSupplier;
-      private Class<? extends Supplier<Set<? extends Image>>> imageSupplier;
-      private Class<? extends Supplier<Set<? extends Location>>> locationSupplier = LocationSupplier.class;
+   @Provides
+   @Singleton
+   protected Supplier<Set<? extends Hardware>> provideHardware(final ComputeServiceAdapter<N, H, I, L> adapter,
+         Function<H, Hardware> transformer) {
+      return new TransformingSetSupplier<H, Hardware>(new Supplier<Iterable<H>>() {
 
-      public Builder install(Module module) {
-         this.modules.add(module);
-         return this;
+         @Override
+         public Iterable<H> get() {
+            return adapter.listHardware();
+         }
+
+      }, transformer);
+   }
+
+   @Provides
+   @Singleton
+   protected Supplier<Set<? extends Image>> provideImages(final ComputeServiceAdapter<N, H, I, L> adapter,
+         Function<I, Image> transformer) {
+      return new TransformingSetSupplier<I, Image>(new Supplier<Iterable<I>>() {
+
+         @Override
+         public Iterable<I> get() {
+            return adapter.listImages();
+         }
+
+      }, transformer);
+   }
+
+   protected void bindDefaultLocation() {
+      bind(new TypeLiteral<Supplier<Location>>() {
+      }).to(DefaultLocationSupplier.class);
+   }
+
+   @Provides
+   @Singleton
+   protected Supplier<Set<? extends Location>> provideLocations(final ComputeServiceAdapter<N, H, I, L> adapter,
+         Function<L, Location> transformer) {
+      return new TransformingSetSupplier<L, Location>(new Supplier<Iterable<L>>() {
+
+         @Override
+         public Iterable<L> get() {
+            return adapter.listLocations();
+         }
+
+      }, transformer);
+   }
+
+   @Provides
+   @Singleton
+   protected AddNodeWithTagStrategy defineAddNodeWithTagStrategy(AdaptingComputeServiceStrategies<N, H, I, L> in) {
+      return in;
+   }
+
+   @Provides
+   @Singleton
+   protected DestroyNodeStrategy defineDestroyNodeStrategy(AdaptingComputeServiceStrategies<N, H, I, L> in) {
+      return in;
+   }
+
+   @Provides
+   @Singleton
+   protected GetNodeMetadataStrategy defineGetNodeMetadataStrategy(AdaptingComputeServiceStrategies<N, H, I, L> in) {
+      return in;
+   }
+
+   @Provides
+   @Singleton
+   protected ListNodesStrategy defineListNodesStrategy(AdaptingComputeServiceStrategies<N, H, I, L> in) {
+      return in;
+   }
+
+   @Provides
+   @Singleton
+   protected RebootNodeStrategy defineRebootNodeStrategy(AdaptingComputeServiceStrategies<N, H, I, L> in) {
+      return in;
+   }
+
+   // enum singleton pattern
+   public static enum IdentityFunction implements Function<Object, Object> {
+      INSTANCE;
+
+      public Object apply(Object o) {
+         return o;
       }
 
-      public Builder defineAddNodeWithTagStrategy(Class<? extends AddNodeWithTagStrategy> addNodeWithTagStrategy) {
-         this.addNodeWithTagStrategy = addNodeWithTagStrategy;
-         return this;
-      }
-
-      public Builder defineDestroyNodeStrategy(Class<? extends DestroyNodeStrategy> destroyNodeStrategy) {
-         this.destroyNodeStrategy = destroyNodeStrategy;
-         return this;
-      }
-
-      public Builder defineGetNodeMetadataStrategy(Class<? extends GetNodeMetadataStrategy> getNodeMetadataStrategy) {
-         this.getNodeMetadataStrategy = getNodeMetadataStrategy;
-         return this;
-      }
-
-      public Builder defineListNodesStrategy(Class<? extends ListNodesStrategy> listNodesStrategy) {
-         this.listNodesStrategy = listNodesStrategy;
-         return this;
-      }
-
-      public Builder defineRebootNodeStrategy(Class<? extends RebootNodeStrategy> rebootNodeStrategy) {
-         this.rebootNodeStrategy = rebootNodeStrategy;
-         return this;
-      }
-
-      public Builder defineHardwareSupplier(Class<? extends Supplier<Set<? extends Hardware>>> hardwareSupplier) {
-         this.hardwareSupplier = hardwareSupplier;
-         return this;
-      }
-
-      public Builder defineImageSupplier(Class<? extends Supplier<Set<? extends Image>>> imageSupplier) {
-         this.imageSupplier = imageSupplier;
-         return this;
-      }
-
-      public Builder defineLocationSupplier(Class<? extends Supplier<Set<? extends Location>>> locationSupplier) {
-         this.locationSupplier = locationSupplier;
-         return this;
-      }
-
-      public StandaloneComputeServiceContextModule build() {
-         return new StandaloneComputeServiceContextModule() {
-
-            @Override
-            protected Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy() {
-               return addNodeWithTagStrategy;
-            }
-
-            @Override
-            protected Class<? extends DestroyNodeStrategy> defineDestroyNodeStrategy() {
-               return destroyNodeStrategy;
-            }
-
-            @Override
-            protected Class<? extends GetNodeMetadataStrategy> defineGetNodeMetadataStrategy() {
-               return getNodeMetadataStrategy;
-            }
-
-            @Override
-            protected Class<? extends Supplier<Set<? extends Hardware>>> defineHardwareSupplier() {
-               return hardwareSupplier;
-            }
-
-            @Override
-            protected Class<? extends Supplier<Set<? extends Image>>> defineImageSupplier() {
-               return imageSupplier;
-            }
-
-            @Override
-            protected Class<? extends ListNodesStrategy> defineListNodesStrategy() {
-               return listNodesStrategy;
-            }
-
-            @Override
-            protected Class<? extends RebootNodeStrategy> defineRebootNodeStrategy() {
-               return rebootNodeStrategy;
-            }
-
-            protected Class<? extends Supplier<Set<? extends Location>>> defineLocationSupplier() {
-               return locationSupplier;
-            }
-
-            @Override
-            protected void configure() {
-               for (Module module : modules)
-                  install(module);
-               super.configure();
-            }
-
-         };
+      @Override
+      public String toString() {
+         return "identity";
       }
    }
+
 }

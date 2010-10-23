@@ -24,63 +24,33 @@
    com.google.inject.Module
    org.jclouds.net.IPSocket
    [org.jclouds.compute ComputeService ComputeServiceContextFactory]
-   java.util.Set
+   [java.util Set Map]
    [org.jclouds.compute.domain NodeMetadata Template]
    [com.google.common.base Supplier Predicate]
-   [org.jclouds.compute.strategy AddNodeWithTagStrategy DestroyNodeStrategy RebootNodeStrategy GetNodeMetadataStrategy ListNodesStrategy]
    org.jclouds.compute.domain.NodeMetadataBuilder))
 
 
 (defn compute-module
   []
-  (.. (org.jclouds.compute.config.StandaloneComputeServiceContextModule$Builder.) 
-    (defineAddNodeWithTagStrategy (defrecord ClojureAddNodeWithTagStrategy []
-          AddNodeWithTagStrategy
-          (^NodeMetadata execute [this ^String tag ^String name ^Template template]
-            ())))
-    (defineDestroyNodeStrategy (defrecord ClojureDestroyNodeStrategy []
-          DestroyNodeStrategy
-          (^NodeMetadata execute [this ^String id]
-            ())))
-    (defineRebootNodeStrategy (defrecord ClojureRebootNodeStrategy []
-          RebootNodeStrategy
-          (^NodeMetadata execute [this ^String id]
-            ())))
-    (defineGetNodeMetadataStrategy (defrecord ClojureGetNodeMetadataStrategy []
-          GetNodeMetadataStrategy
-          (^NodeMetadata execute [this ^String id]
-            ())))
-    (defineListNodesStrategy (defrecord ClojureListNodesStrategy []
-          ListNodesStrategy
-          (^Iterable list [this ]
+  (org.jclouds.compute.config.JCloudsNativeStandaloneComputeServiceContextModule 
+    (defrecord ClojureComputeServiceAdapter []
+          org.jclouds.compute.JCloudsNativeComputeServiceAdapter
+          (^NodeMetadata createNodeAndStoreCredentials [this ^String tag ^String name ^Template template ^Map credentialStore]
             ())
-            (^Iterable listDetailsOnNodesMatching [this ^Predicate filter]
+          (^Iterable listNodes [this ]
             ())
-          ))
-      ;; this needs to return Set<Hardware>
-
-    (defineHardwareSupplier
-     (defrecord HardwareSupplier []
-          Supplier
-          (get [this]
+          (^Iterable listImages [this ]
             ())
-          ))
-      ;; this needs to return Set<Image>
-
-  (defineImageSupplier (defrecord ImageSupplier []
-          Supplier
-          ( get [this]
+          (^Iterable listHardware [this ]
             ())
-          ))
-  ;; this needs to return Set<Location>
-    (defineLocationSupplier (defrecord LocationSupplier []
-          Supplier
-          ( get [this]
+          (^Iterable listLocations [this ]
             ())
-          ))
-    (build)
-
-  ))
+          (^NodeMetadata getNode [this ^String id]
+            ())
+          (^void destroyNode [this ^String id]
+            ())
+          (^void rebootNode  [this ^String id]
+            ()))))
 
 (defn compute-context [module] 
   (ComputeServiceContextFactory/createStandaloneContext module))

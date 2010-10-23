@@ -77,7 +77,7 @@ public class EC2ListNodesStrategy implements ListNodesStrategy {
    }
 
    @Override
-   public Set<? extends ComputeMetadata> list() {
+   public Set<? extends ComputeMetadata> listNodes() {
       return listDetailsOnNodesMatching(NodePredicates.all());
    }
 

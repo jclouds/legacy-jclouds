@@ -32,6 +32,6 @@ public interface DestroyNodeStrategy {
     * 
     * @return null if the node wasn't found
     */
-   NodeMetadata execute(String id);
+   NodeMetadata destroyNode(String id);
 
 }

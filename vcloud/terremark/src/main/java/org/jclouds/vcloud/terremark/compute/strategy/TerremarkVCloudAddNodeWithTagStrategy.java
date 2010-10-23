@@ -54,7 +54,7 @@ public class TerremarkVCloudAddNodeWithTagStrategy implements AddNodeWithTagStra
    }
 
    @Override
-   public NodeMetadata execute(String tag, String name, Template template) {
+   public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
       TerremarkInstantiateVAppTemplateOptions options = getOptions.apply(template);
       VCloudExpressVApp vApp = computeClient.start(URI.create(template.getLocation().getId()),
             URI.create(template.getImage().getId()), name, options, template.getOptions().getInboundPorts());

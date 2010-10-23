@@ -63,7 +63,7 @@ public class VCloudDestroyNodeStrategy implements DestroyNodeStrategy {
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata destroyNode(String id) {
       URI vappId = URI.create(checkNotNull(id, "node.id"));
       VApp vApp = client.getVApp(vappId);
       if (vApp == null)
@@ -72,7 +72,7 @@ public class VCloudDestroyNodeStrategy implements DestroyNodeStrategy {
       vApp = undeployVAppIfDeployed(vApp);
       deleteVApp(vappId);
       try {
-         return getNode.execute(id);
+         return getNode.getNode(id);
       } catch (AuthorizationException e) {
          logger.trace("authorization error getting %s after deletion: %s", id, e.getMessage());
          return null;

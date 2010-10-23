@@ -24,27 +24,12 @@ import java.util.Set;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.internal.BaseComputeService;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
-import org.jclouds.compute.strategy.DestroyNodeStrategy;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.rest.annotations.Provider;
-import org.jclouds.slicehost.compute.strategy.SlicehostAddNodeWithTagStrategy;
-import org.jclouds.slicehost.compute.strategy.SlicehostDestroyNodeStrategy;
-import org.jclouds.slicehost.compute.strategy.SlicehostGetNodeMetadataStrategy;
-import org.jclouds.slicehost.compute.strategy.SlicehostListNodesStrategy;
-import org.jclouds.slicehost.compute.strategy.SlicehostRebootNodeStrategy;
-import org.jclouds.slicehost.compute.suppliers.SlicehostHardwareSupplier;
-import org.jclouds.slicehost.compute.suppliers.SlicehostImageSupplier;
 
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Provides;
 
@@ -71,41 +56,8 @@ public class SlicehostComputeServiceContextModule extends BaseComputeServiceCont
    @Override
    protected void configure() {
       install(new SlicehostComputeServiceDependenciesModule());
+      install(new SlicehostBindComputeStrategiesByClass());
+      install(new SlicehostBindComputeSuppliersByClass());
       super.configure();
-   }
-
-   @Override
-   protected Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy() {
-      return SlicehostAddNodeWithTagStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends DestroyNodeStrategy> defineDestroyNodeStrategy() {
-      return SlicehostDestroyNodeStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends GetNodeMetadataStrategy> defineGetNodeMetadataStrategy() {
-      return SlicehostGetNodeMetadataStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends Supplier<Set<? extends Hardware>>> defineHardwareSupplier() {
-      return SlicehostHardwareSupplier.class;
-   }
-
-   @Override
-   protected Class<? extends Supplier<Set<? extends Image>>> defineImageSupplier() {
-      return SlicehostImageSupplier.class;
-   }
-
-   @Override
-   protected Class<? extends ListNodesStrategy> defineListNodesStrategy() {
-      return SlicehostListNodesStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends RebootNodeStrategy> defineRebootNodeStrategy() {
-      return SlicehostRebootNodeStrategy.class;
    }
 }

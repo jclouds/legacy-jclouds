@@ -54,7 +54,7 @@ public class StandaloneComputeServiceContextBuilder extends
 
    @Override
    protected void addClientModule(List<Module> modules) {
-      modules.add(new StandaloneComputeServiceClientModule());
+      modules.add(new StandaloneComputeServiceClientModule<ComputeService>(ComputeService.class));
    }
 
 }

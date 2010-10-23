@@ -47,7 +47,7 @@ public class RimuHostingGetNodeMetadataStrategy implements GetNodeMetadataStrate
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata getNode(String id) {
       long serverId = Long.parseLong(id);
       Server server = client.getServer(serverId);
       return server == null ? null : serverToNodeMetadata.apply(server);

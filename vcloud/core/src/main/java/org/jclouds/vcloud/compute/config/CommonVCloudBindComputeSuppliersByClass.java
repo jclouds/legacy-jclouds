@@ -17,38 +17,36 @@
  * ====================================================================
  */
 
-package org.jclouds.servermanager.compute.suppliers;
+package org.jclouds.vcloud.compute.config;
 
 import java.util.Set;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
+import org.jclouds.compute.config.BindComputeSuppliersByClass;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.rest.annotations.Provider;
+import org.jclouds.vcloud.compute.suppliers.OrgAndVDCToLocationSupplier;
+import org.jclouds.vcloud.compute.suppliers.StaticHardwareSupplier;
+import org.jclouds.vcloud.compute.suppliers.VCloudImageSupplier;
 
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableSet;
 
 /**
- * 
  * @author Adrian Cole
  */
-@Singleton
-public class ServerManagerLocationSupplier implements Supplier<Set<? extends Location>> {
-
-   private final String providerName;
-
-   @Inject
-   ServerManagerLocationSupplier(@Provider String providerName) {
-      this.providerName = providerName;
+public class CommonVCloudBindComputeSuppliersByClass extends BindComputeSuppliersByClass {
+   @Override
+   protected Class<? extends Supplier<Set<? extends Hardware>>> defineHardwareSupplier() {
+      return StaticHardwareSupplier.class;
    }
 
    @Override
-   public Set<? extends Location> get() {
-      Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
-      return ImmutableSet.of(new LocationImpl(LocationScope.ZONE, "1", "SFO", provider));
+   protected Class<? extends Supplier<Set<? extends Image>>> defineImageSupplier() {
+      return VCloudImageSupplier.class;
+   }
+
+   @Override
+   protected Class<? extends Supplier<Set<? extends Location>>> defineLocationSupplier() {
+      return OrgAndVDCToLocationSupplier.class;
    }
 }

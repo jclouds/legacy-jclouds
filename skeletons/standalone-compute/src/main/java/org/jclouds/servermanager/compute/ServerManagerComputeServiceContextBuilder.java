@@ -22,17 +22,26 @@ package org.jclouds.servermanager.compute;
 import java.util.List;
 import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
 import org.jclouds.compute.config.StandaloneComputeServiceContextModule;
-import org.jclouds.servermanager.compute.strategy.ServerManagerAddNodeWithTagStrategy;
-import org.jclouds.servermanager.compute.strategy.ServerManagerDestroyNodeStrategy;
-import org.jclouds.servermanager.compute.strategy.ServerManagerGetAndListNodesStrategy;
-import org.jclouds.servermanager.compute.strategy.ServerManagerRebootNodeStrategy;
-import org.jclouds.servermanager.compute.suppliers.ServerManagerHardwareSupplier;
-import org.jclouds.servermanager.compute.suppliers.ServerManagerImageSupplier;
-import org.jclouds.servermanager.compute.suppliers.ServerManagerLocationSupplier;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.suppliers.DefaultLocationSupplier;
+import org.jclouds.domain.Location;
+import org.jclouds.servermanager.Datacenter;
+import org.jclouds.servermanager.Hardware;
+import org.jclouds.servermanager.Image;
+import org.jclouds.servermanager.Server;
+import org.jclouds.servermanager.compute.functions.DatacenterToLocation;
+import org.jclouds.servermanager.compute.functions.ServerManagerHardwareToHardware;
+import org.jclouds.servermanager.compute.functions.ServerManagerImageToImage;
+import org.jclouds.servermanager.compute.functions.ServerToNodeMetadata;
+import org.jclouds.servermanager.compute.strategy.ServerManagerComputeServiceAdapter;
 
+import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.inject.Module;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -49,16 +58,27 @@ public class ServerManagerComputeServiceContextBuilder extends StandaloneCompute
       modules.add(createContextModule());
    }
 
-   public static StandaloneComputeServiceContextModule createContextModule() {
-      return StandaloneComputeServiceContextModule.builder()
-            .defineAddNodeWithTagStrategy(ServerManagerAddNodeWithTagStrategy.class)
-            .defineDestroyNodeStrategy(ServerManagerDestroyNodeStrategy.class)
-            .defineGetNodeMetadataStrategy(ServerManagerGetAndListNodesStrategy.class)
-            .defineListNodesStrategy(ServerManagerGetAndListNodesStrategy.class)
-            .defineRebootNodeStrategy(ServerManagerRebootNodeStrategy.class)
-            .defineHardwareSupplier(ServerManagerHardwareSupplier.class)
-            .defineLocationSupplier(ServerManagerLocationSupplier.class)
-            .defineImageSupplier(ServerManagerImageSupplier.class).build();
+   public static StandaloneComputeServiceContextModule<Server, Hardware, Image, Datacenter> createContextModule() {
+      return new StandaloneComputeServiceContextModule<Server, Hardware, Image, Datacenter>() {
+
+         @Override
+         protected void configure() {
+            super.configure();
+            bind(new TypeLiteral<ComputeServiceAdapter<Server, Hardware, Image, Datacenter>>() {
+            }).to(ServerManagerComputeServiceAdapter.class);
+            bind(new TypeLiteral<Supplier<Location>>() {
+            }).to(DefaultLocationSupplier.class);
+            bind(new TypeLiteral<Function<Server, NodeMetadata>>() {
+            }).to(ServerToNodeMetadata.class);
+            bind(new TypeLiteral<Function<Image, org.jclouds.compute.domain.Image>>() {
+            }).to(ServerManagerImageToImage.class);
+            bind(new TypeLiteral<Function<Hardware, org.jclouds.compute.domain.Hardware>>() {
+            }).to(ServerManagerHardwareToHardware.class);
+            bind(new TypeLiteral<Function<Datacenter, Location>>() {
+            }).to(DatacenterToLocation.class);
+         }
+
+      };
    }
 
 }

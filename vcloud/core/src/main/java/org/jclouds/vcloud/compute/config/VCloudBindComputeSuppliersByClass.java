@@ -17,33 +17,21 @@
  * ====================================================================
  */
 
-package org.jclouds.servermanager.compute.suppliers;
+package org.jclouds.vcloud.compute.config;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import java.util.Set;
 
-import org.jclouds.collect.TransformingSetSupplier;
 import org.jclouds.compute.domain.Hardware;
-import org.jclouds.servermanager.ServerManager;
-import org.jclouds.servermanager.compute.functions.ServerManagerHardwareToHardware;
+import org.jclouds.vcloud.compute.suppliers.VCloudHardwareSupplier;
 
+import com.google.common.base.Supplier;
 /**
- * 
  * @author Adrian Cole
  */
-@Singleton
-public class ServerManagerHardwareSupplier extends
-      TransformingSetSupplier<org.jclouds.servermanager.Hardware, Hardware> {
-   private final ServerManager client;
+public class VCloudBindComputeSuppliersByClass extends CommonVCloudBindComputeSuppliersByClass {
 
-   @Inject
-   protected ServerManagerHardwareSupplier(ServerManager client,
-         ServerManagerHardwareToHardware serverManagerHardwareToHardware) {
-      super(serverManagerHardwareToHardware);
-      this.client = client;
-   }
-
-   public Iterable<org.jclouds.servermanager.Hardware> supplyFrom() {
-      return client.listHardware();
+   @Override
+   protected Class<? extends Supplier<Set<? extends Hardware>>> defineHardwareSupplier() {
+      return VCloudHardwareSupplier.class;
    }
 }

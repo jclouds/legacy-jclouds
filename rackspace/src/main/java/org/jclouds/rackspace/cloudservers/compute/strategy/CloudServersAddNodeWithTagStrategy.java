@@ -53,7 +53,7 @@ public class CloudServersAddNodeWithTagStrategy implements AddNodeWithTagStrateg
    }
 
    @Override
-   public NodeMetadata execute(String tag, String name, Template template) {
+   public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
       Server from = client.createServer(name, Integer.parseInt(template.getImage().getProviderId()),
             Integer.parseInt(template.getHardware().getProviderId()));
       credentialStore.put(from.getId() + "", new Credentials("root", from.getAdminPass()));

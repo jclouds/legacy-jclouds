@@ -43,11 +43,11 @@ public class SlicehostDestroyNodeStrategy implements DestroyNodeStrategy {
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata destroyNode(String id) {
       int sliceId = Integer.parseInt(id);
       // if false slice wasn't around in the first place
       client.destroySlice(sliceId);
-      return getNode.execute(id);
+      return getNode.getNode(id);
    }
 
 }

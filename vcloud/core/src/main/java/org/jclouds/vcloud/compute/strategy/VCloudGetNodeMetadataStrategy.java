@@ -48,7 +48,7 @@ public class VCloudGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
       this.vAppToNodeMetadata = checkNotNull(vAppToNodeMetadata, "vAppToNodeMetadata");
    }
 
-   public NodeMetadata execute(String in) {
+   public NodeMetadata getNode(String in) {
       URI id = URI.create(in);
       VApp from = client.getVApp(id);
       if (from == null)

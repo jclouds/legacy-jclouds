@@ -19,6 +19,7 @@
 
 package org.jclouds.collect;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Sets.newHashSet;
 
@@ -31,18 +32,18 @@ import com.google.common.base.Supplier;
  * 
  * @author Adrian Cole
  */
-
-public abstract class TransformingSetSupplier<F, T> implements Supplier<Set<? extends T>> {
+public class TransformingSetSupplier<F, T> implements Supplier<Set<? extends T>> {
+   private final Supplier<Iterable<F>> backingSupplier;
    private final Function<F, T> converter;
 
-   public TransformingSetSupplier(Function<F, T> converter) {
-      this.converter = converter;
+   public TransformingSetSupplier(Supplier<Iterable<F>> backingSupplier, Function<F, T> converter) {
+      this.backingSupplier = checkNotNull(backingSupplier, "backingSupplier");
+      this.converter = checkNotNull(converter, "converter");
    }
 
    @Override
    public Set<? extends T> get() {
-      return newHashSet(transform(supplyFrom(), converter));
+      return newHashSet(transform(backingSupplier.get(), converter));
    }
 
-   public abstract Iterable<F> supplyFrom();
 }

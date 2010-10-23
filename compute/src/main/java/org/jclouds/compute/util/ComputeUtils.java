@@ -133,7 +133,7 @@ public class ComputeUtils {
          return node;
 
       if (nodeRunning.apply(node))
-         node = NodeMetadataBuilder.fromNodeMetadata(getNode.execute(node.getId()))
+         node = NodeMetadataBuilder.fromNodeMetadata(getNode.getNode(node.getId()))
                .credentials(node.getCredentials()).build();
       else
          throw new IllegalStateException(String.format(
