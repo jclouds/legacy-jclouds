@@ -116,9 +116,9 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
    @Inject
    protected TemplateBuilderImpl(@Memoized Supplier<Set<? extends Location>> locations,
-            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwares,
-            Supplier<Location> defaultLocation2, Provider<TemplateOptions> optionsProvider,
-            @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider) {
+         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwares,
+         Supplier<Location> defaultLocation2, Provider<TemplateOptions> optionsProvider,
+         @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider) {
       this.locations = locations;
       this.images = images;
       this.hardwares = hardwares;
@@ -140,7 +140,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          boolean returnVal = true;
          if (location != null && input.getLocation() != null)
             returnVal = location.equals(input.getLocation()) || location.getParent() != null
-                     && location.getParent().equals(input.getLocation());
+                  && location.getParent().equals(input.getLocation());
          return returnVal;
       }
 
@@ -180,6 +180,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          return returnVal;
       }
 
+      @Override
+      public String toString() {
+         return "osFamily(" + osFamily + ")";
+      }
    };
 
    private final Predicate<OperatingSystem> osNamePredicate = new Predicate<OperatingSystem>() {
@@ -210,7 +214,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                returnVal = false;
             else
                returnVal = input.getDescription().contains(osDescription)
-                        || input.getDescription().matches(osDescription);
+                     || input.getDescription().matches(osDescription);
          }
          return returnVal;
       }
@@ -324,8 +328,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
                returnVal = false;
             else
                returnVal = input.getDescription().equals(imageDescription)
-                        || input.getDescription().contains(imageDescription)
-                        || input.getDescription().matches(imageDescription);
+                     || input.getDescription().contains(imageDescription)
+                     || input.getDescription().matches(imageDescription);
          }
          return returnVal;
       }
@@ -380,12 +384,12 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       }
    };
    private final Predicate<Hardware> hardwarePredicate = and(hardwareIdPredicate, locationPredicate,
-            hardwareCoresPredicate, hardwareRamPredicate);
+         hardwareCoresPredicate, hardwareRamPredicate);
 
    static final Ordering<Hardware> DEFAULT_SIZE_ORDERING = new Ordering<Hardware>() {
       public int compare(Hardware left, Hardware right) {
          return ComparisonChain.start().compare(getCores(left), getCores(right)).compare(left.getRam(), right.getRam())
-                  .compare(getSpace(left), getSpace(right)).result();
+               .compare(getSpace(left), getSpace(right)).result();
       }
    };
    static final Ordering<Hardware> BY_CORES_ORDERING = new Ordering<Hardware>() {
@@ -395,16 +399,16 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    };
    static final Ordering<Image> DEFAULT_IMAGE_ORDERING = new Ordering<Image>() {
       public int compare(Image left, Image right) {
-         return ComparisonChain.start().compare(left.getName(), right.getName(),
-                  Ordering.<String> natural().nullsLast()).compare(left.getVersion(), right.getVersion(),
-                  Ordering.<String> natural().nullsLast()).compare(left.getOperatingSystem().getName(),
-                  right.getOperatingSystem().getName(),//
-                  Ordering.<String> natural().nullsLast()).compare(left.getOperatingSystem().getVersion(),
-                  right.getOperatingSystem().getVersion(),//
-                  Ordering.<String> natural().nullsLast()).compare(left.getOperatingSystem().getDescription(),
-                  right.getOperatingSystem().getDescription(),//
-                  Ordering.<String> natural().nullsLast()).compare(left.getOperatingSystem().getArch(),
-                  right.getOperatingSystem().getArch()).result();
+         return ComparisonChain.start()
+               .compare(left.getName(), right.getName(), Ordering.<String> natural().nullsLast())
+               .compare(left.getVersion(), right.getVersion(), Ordering.<String> natural().nullsLast())
+               .compare(left.getOperatingSystem().getName(), right.getOperatingSystem().getName(),//
+                     Ordering.<String> natural().nullsLast())
+               .compare(left.getOperatingSystem().getVersion(), right.getOperatingSystem().getVersion(),//
+                     Ordering.<String> natural().nullsLast())
+               .compare(left.getOperatingSystem().getDescription(), right.getOperatingSystem().getDescription(),//
+                     Ordering.<String> natural().nullsLast())
+               .compare(left.getOperatingSystem().getArch(), right.getOperatingSystem().getArch()).result();
       }
    };
 
@@ -535,7 +539,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       Iterable<? extends Image> supportedImages = filter(images, buildImagePredicate());
       if (Iterables.size(supportedImages) == 0)
          throw new NoSuchElementException(String.format(
-                  "no image matched predicate %s images that didn't match below:\n%s", imagePredicate, images));
+               "no image matched predicate %s images that didn't match below:\n%s", imagePredicate, images));
       Hardware hardware = resolveSize(hardwareSorter(), supportedImages);
       Image image = resolveImage(hardware, supportedImages);
       logger.debug("<<   matched image(%s)", image);
@@ -548,29 +552,29 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       Hardware hardware;
       try {
          Iterable<? extends Hardware> hardwaresThatAreCompatibleWithOurImages = filter(hardwaresl,
-                  new Predicate<Hardware>() {
-                     @Override
-                     public boolean apply(final Hardware hardware) {
-                        return Iterables.any(images, new Predicate<Image>() {
+               new Predicate<Hardware>() {
+                  @Override
+                  public boolean apply(final Hardware hardware) {
+                     return Iterables.any(images, new Predicate<Image>() {
 
-                           @Override
-                           public boolean apply(Image input) {
-                              return hardware.supportsImage().apply(input);
-                           }
+                        @Override
+                        public boolean apply(Image input) {
+                           return hardware.supportsImage().apply(input);
+                        }
 
-                           @Override
-                           public String toString() {
-                              return "hardware(" + hardware + ").supportsImage()";
-                           }
+                        @Override
+                        public String toString() {
+                           return "hardware(" + hardware + ").supportsImage()";
+                        }
 
-                        });
+                     });
 
-                     }
-                  });
+                  }
+               });
          hardware = hardwareOrdering.max(filter(hardwaresThatAreCompatibleWithOurImages, hardwarePredicate));
       } catch (NoSuchElementException exception) {
          throw new NoSuchElementException("hardwares don't support any images: " + toString() + "\n" + hardwaresl
-                  + "\n" + images);
+               + "\n" + images);
       }
       logger.debug("<<   matched hardware(%s)", hardware);
       return hardware;
@@ -637,7 +641,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
                @Override
                public String toString() {
-                  return locationPredicate.toString();
+                  return "location(" + location + ")";
                }
             });
 
@@ -678,7 +682,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
       // looks verbose, but explicit <Image> type needed for this to compile
       // properly
       Predicate<Image> imagePredicate = predicates.size() == 1 ? Iterables.<Predicate<Image>> get(predicates, 0)
-               : Predicates.<Image> and(predicates);
+            : Predicates.<Image> and(predicates);
       return imagePredicate;
    }
 
@@ -826,9 +830,8 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @VisibleForTesting
    boolean nothingChangedExceptOptions() {
       return osFamily == null && location == null && imageId == null && hardwareId == null && osName == null
-               && osDescription == null && imageVersion == null && osVersion == null && osArch == null
-               && os64Bit == null && imageName == null && imageDescription == null && minCores == 0 && minRam == 0
-               && !biggest && !fastest;
+            && osDescription == null && imageVersion == null && osVersion == null && osArch == null && os64Bit == null
+            && imageName == null && imageDescription == null && minCores == 0 && minRam == 0 && !biggest && !fastest;
    }
 
    /**
@@ -842,10 +845,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    @Override
    public String toString() {
       return "[biggest=" + biggest + ", fastest=" + fastest + ", imageName=" + imageName + ", imageDescription="
-               + imageDescription + ", imageId=" + imageId + ", imageVersion=" + imageVersion + ", location="
-               + location + ", minCores=" + minCores + ", minRam=" + minRam + ", osFamily=" + osFamily + ", osName="
-               + osName + ", osDescription=" + osDescription + ", osVersion=" + osVersion + ", osArch=" + osArch
-               + ", os64Bit=" + os64Bit + ", hardwareId=" + hardwareId + "]";
+            + imageDescription + ", imageId=" + imageId + ", imageVersion=" + imageVersion + ", location=" + location
+            + ", minCores=" + minCores + ", minRam=" + minRam + ", osFamily=" + osFamily + ", osName=" + osName
+            + ", osDescription=" + osDescription + ", osVersion=" + osVersion + ", osArch=" + osArch + ", os64Bit="
+            + os64Bit + ", hardwareId=" + hardwareId + "]";
    }
 
    @Override
