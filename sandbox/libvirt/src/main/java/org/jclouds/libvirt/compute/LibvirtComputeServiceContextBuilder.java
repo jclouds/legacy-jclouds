@@ -25,7 +25,6 @@ import java.util.Properties;
 import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
 import org.jclouds.compute.config.StandaloneComputeServiceContextModule;
 import org.jclouds.libvirt.Datacenter;
-import org.jclouds.libvirt.Hardware;
 import org.jclouds.libvirt.Image;
 import org.jclouds.libvirt.compute.domain.LibvirtComputeServiceContextModule;
 import org.libvirt.Domain;
@@ -47,7 +46,7 @@ public class LibvirtComputeServiceContextBuilder extends StandaloneComputeServic
       modules.add(createContextModule());
    }
 
-   public  StandaloneComputeServiceContextModule<Domain, Hardware, Image, Datacenter> createContextModule() {
+   public  StandaloneComputeServiceContextModule<Domain, Domain, Image, Datacenter> createContextModule() {
       return new LibvirtComputeServiceContextModule();
    }
 

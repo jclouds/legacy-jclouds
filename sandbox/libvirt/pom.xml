@@ -33,9 +33,10 @@
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist.nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist.nodes>
-        <test.libvirt.endpoint>https://libvirt.com</test.libvirt.endpoint>
+        <test.libvirt.endpoint>test:///default</test.libvirt.endpoint>
         <test.libvirt.apiversion>1.0</test.libvirt.apiversion>
         <test.libvirt.identity>FIXME</test.libvirt.identity>
+        <test.libvirt.credential>FIXME</test.libvirt.credential>
     </properties>
     <dependencies>
         <dependency>
@@ -116,6 +117,10 @@
                                         <property>
                                             <name>test.libvirt.identity</name>
                                             <value>${test.libvirt.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.libvirt.credential</name>
+                                            <value>${test.libvirt.credential}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.compute.blacklist.nodes</name>

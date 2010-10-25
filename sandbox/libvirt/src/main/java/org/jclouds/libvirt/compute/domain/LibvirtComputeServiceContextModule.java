@@ -27,15 +27,15 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.StandaloneComputeServiceContextModule;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.suppliers.DefaultLocationSupplier;
 import org.jclouds.domain.Location;
 import org.jclouds.libvirt.Datacenter;
-import org.jclouds.libvirt.Hardware;
 import org.jclouds.libvirt.Image;
 import org.jclouds.libvirt.compute.functions.DatacenterToLocation;
+import org.jclouds.libvirt.compute.functions.DomainToHardware;
 import org.jclouds.libvirt.compute.functions.DomainToNodeMetadata;
-import org.jclouds.libvirt.compute.functions.LibvirtHardwareToHardware;
 import org.jclouds.libvirt.compute.functions.LibvirtImageToImage;
 import org.jclouds.libvirt.compute.strategy.LibvirtComputeServiceAdapter;
 import org.jclouds.rest.annotations.Provider;
@@ -53,11 +53,11 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class LibvirtComputeServiceContextModule extends
-      StandaloneComputeServiceContextModule<Domain, Hardware, Image, Datacenter> {
+      StandaloneComputeServiceContextModule<Domain, Domain, Image, Datacenter> {
    @Override
    protected void configure() {
       super.configure();
-      bind(new TypeLiteral<ComputeServiceAdapter<Domain, Hardware, Image, Datacenter>>() {
+      bind(new TypeLiteral<ComputeServiceAdapter<Domain, Domain, Image, Datacenter>>() {
       }).to(LibvirtComputeServiceAdapter.class);
       bind(new TypeLiteral<Supplier<Location>>() {
       }).to(DefaultLocationSupplier.class);
@@ -65,8 +65,8 @@ public class LibvirtComputeServiceContextModule extends
       }).to(DomainToNodeMetadata.class);
       bind(new TypeLiteral<Function<Image, org.jclouds.compute.domain.Image>>() {
       }).to(LibvirtImageToImage.class);
-      bind(new TypeLiteral<Function<Hardware, org.jclouds.compute.domain.Hardware>>() {
-      }).to(LibvirtHardwareToHardware.class);
+      bind(new TypeLiteral<Function<Domain, Hardware>>() {
+      }).to(DomainToHardware.class);
       bind(new TypeLiteral<Function<Datacenter, Location>>() {
       }).to(DatacenterToLocation.class);
    }

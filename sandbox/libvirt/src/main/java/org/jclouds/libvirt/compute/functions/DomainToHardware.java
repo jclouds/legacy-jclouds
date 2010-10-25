@@ -19,31 +19,45 @@
 
 package org.jclouds.libvirt.compute.functions;
 
+import java.util.List;
+
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Processor;
-import org.jclouds.compute.domain.Volume;
-import org.jclouds.compute.domain.internal.VolumeImpl;
+import org.libvirt.Domain;
+import org.libvirt.LibvirtException;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class LibvirtHardwareToHardware implements Function<org.jclouds.libvirt.Hardware, Hardware> {
+public class DomainToHardware implements Function<Domain, Hardware> {
 
    @Override
-   public Hardware apply(org.jclouds.libvirt.Hardware from) {
+   public Hardware apply(Domain from) {
       HardwareBuilder builder = new HardwareBuilder();
-      builder.ids(from.id + "");
-      builder.name(from.name);
-      builder.processors(ImmutableList.of(new Processor(from.cores, 1.0)));
-      builder.ram(from.ram);
-      builder.volumes(ImmutableList.<Volume> of(new VolumeImpl(from.disk, true, false)));
+      try {
+         builder.id(from.getUUIDString());
+
+         builder.providerId(from.getID() + "");
+         builder.name(from.getName());
+         List<Processor> processors = Lists.newArrayList();
+         for (int i = 0; i < from.getInfo().nrVirtCpu; i++) {
+            processors.add(new Processor(i + 1, 1));
+         }
+         builder.processors(processors);
+
+         builder.ram((int) from.getInfo().maxMem);
+         // TODO volumes
+      } catch (LibvirtException e) {
+         // TODO Auto-generated catch block
+         e.printStackTrace();
+      }
       return builder.build();
    }
 

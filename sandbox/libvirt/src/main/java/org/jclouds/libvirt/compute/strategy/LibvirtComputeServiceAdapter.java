@@ -2,6 +2,7 @@ package org.jclouds.libvirt.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -12,13 +13,15 @@ import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
 import org.jclouds.libvirt.Datacenter;
-import org.jclouds.libvirt.Hardware;
 import org.jclouds.libvirt.Image;
 import org.libvirt.Connect;
 import org.libvirt.Domain;
+import org.libvirt.LibvirtException;
 import org.libvirt.jna.Libvirt;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
 
 /**
  * defines the connection between the {@link Libvirt} implementation and the jclouds
@@ -26,7 +29,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  */
 @Singleton
-public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domain, Hardware, Image, Datacenter> {
+public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domain, Domain, Image, Datacenter> {
    private final Connect client;
 
    @Inject
@@ -47,10 +50,8 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
    }
 
    @Override
-   public Iterable<Hardware> listHardware() {
-      return ImmutableSet.of();
-      // TODO
-      // return client.listHardware();
+   public Iterable<Domain> listHardware() {
+      return listNodes();
    }
 
    @Override
@@ -62,9 +63,21 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
 
    @Override
    public Iterable<Domain> listNodes() {
-      return ImmutableSet.of();
-      // TODO
-      // return client.listDomains();
+      try {
+         List<Domain> domains = Lists.newArrayList();
+         for (int domain : client.listDomains()) {
+            domains.add(client.domainLookupByID(domain));
+         }
+         return domains;
+      } catch (LibvirtException e) {
+         return propogate(e);
+      }
+   }
+
+   protected <T> T propogate(LibvirtException e) {
+      Throwables.propagate(e);
+      assert false;
+      return null;
    }
 
    @Override
@@ -74,18 +87,28 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
 
    @Override
    public Domain getNode(String id) {
-      // int serverId = Integer.parseInt(id);
-      // return client.getDomain(serverId);
-      return null;
+      try {
+         return client.domainLookupByUUIDString(id);
+      } catch (LibvirtException e) {
+         return propogate(e);
+      }
    }
 
    @Override
    public void destroyNode(String id) {
-      // client.destroyDomain(Integer.parseInt(id));
+      try {
+         client.domainLookupByUUIDString(id).destroy();
+      } catch (LibvirtException e) {
+         propogate(e);
+      }
    }
 
    @Override
    public void rebootNode(String id) {
-      // client.rebootDomain(Integer.parseInt(id));
+      try {
+         client.domainLookupByUUIDString(id).reboot(0);
+      } catch (LibvirtException e) {
+         propogate(e);
+      }
    }
 }
