@@ -32,10 +32,56 @@ import org.jclouds.domain.Credentials;
  * 
  */
 public interface ComputeServiceAdapter<N, H, I, L> {
-   N createNodeAndStoreCredentials(String tag, String name, Template template, Map<String, Credentials> credentialStore);
 
-   Iterable<H> listHardware();
+   /**
+    * {@link ComputeService#runNodesWithTag(String, int, Template)} generates the parameters passed
+    * into this method such that each node in the set has a unique name.
+    * <p/>
+    * Your responsibility is to create a node with the underlying library and return after storing
+    * its credentials in the supplied map.
+    * <p/>
+    * Note that it is intentional to return the library native node object, as generic type
+    * {@code N}. If you are not using library-native objects (such as libvirt {@code Domain}) use
+    * {@link JCloudsNativeComputeServiceAdapter} instead.
+    * 
+    * @param tag
+    *           used to aggregate nodes with identical configuration
+    * @param name
+    *           unique supplied name for the node, which has the tag encoded into it.
+    * @param template
+    *           includes {@code imageId}, {@code locationId}, and {@code hardwareId} used to start
+    *           the instance.
+    * @param credentialStore
+    *           once the node is started, its login user and password will be encoded based on the
+    *           node {@code id}
+    * @return library-native representation of a node.
+    * 
+    * @see ComputeService#runNodesWithTag(String, int, Template)
+    */
+   N runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
+         Map<String, Credentials> credentialStore);
 
+   /**
+    * Hardware profiles describe available cpu, memory, and disk configurations that can be used to
+    * run a node.
+    * <p/>
+    * To implement this method, return the library native hardware profiles available to the user.
+    * These will be used to launch nodes as a part of the template.
+    * 
+    * @return a non-null iterable of available hardware profiles.
+    * @see ComputeService#listHardwareProfiles()
+    */
+   Iterable<H> listHardwareProfiles();
+
+   /**
+    * Images are the available configured operating systems that someone can run a node with. *
+    * <p/>
+    * To implement this method, return the library native images available to the user. These will
+    * be used to launch nodes as a part of the template.
+    * 
+    * @return a non-null iterable of available images.
+    * @see ComputeService#listImages()
+    */
    Iterable<I> listImages();
 
    Iterable<L> listLocations();

@@ -36,28 +36,52 @@ import org.jclouds.domain.Location;
  */
 public interface JCloudsNativeComputeServiceAdapter extends
       ComputeServiceAdapter<NodeMetadata, Hardware, Image, Location> {
+   /**
+    * {@inheritDoc}
+    */
    @Override
-   NodeMetadata createNodeAndStoreCredentials(String tag, String name, Template template,
+   NodeMetadata runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
          Map<String, Credentials> credentialStore);
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    Iterable<NodeMetadata> listNodes();
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    Iterable<Image> listImages();
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
-   Iterable<Hardware> listHardware();
+   Iterable<Hardware> listHardwareProfiles();
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    Iterable<Location> listLocations();
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    NodeMetadata getNode(String id);
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    void destroyNode(String id);
 
+   /**
+    * {@inheritDoc}
+    */
    @Override
    void rebootNode(String id);
 

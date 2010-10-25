@@ -76,7 +76,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
    }
 
    @Override
-   public NodeMetadata createNodeAndStoreCredentials(String tag, String name, Template template,
+   public NodeMetadata runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
          Map<String, Credentials> credentialStore) {
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       String id = idProvider.get() + "";
@@ -98,7 +98,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
    }
 
    @Override
-   public Iterable<Hardware> listHardware() {
+   public Iterable<Hardware> listHardwareProfiles() {
       return ImmutableSet.<Hardware> of(StubComputeServiceDependenciesModule.stub("small", 1, 1740, 160),
             StubComputeServiceDependenciesModule.stub("medium", 4, 7680, 850),
             StubComputeServiceDependenciesModule.stub("large", 8, 15360, 1690));

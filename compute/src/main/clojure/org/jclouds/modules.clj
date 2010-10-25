@@ -36,13 +36,13 @@
   (org.jclouds.compute.config.JCloudsNativeStandaloneComputeServiceContextModule 
     (defrecord ClojureComputeServiceAdapter []
           org.jclouds.compute.JCloudsNativeComputeServiceAdapter
-          (^NodeMetadata createNodeAndStoreCredentials [this ^String tag ^String name ^Template template ^Map credentialStore]
+          (^NodeMetadata runNodeWithTagAndNameAndStoreCredentials [this ^String tag ^String name ^Template template ^Map credentialStore]
             ())
           (^Iterable listNodes [this ]
             ())
           (^Iterable listImages [this ]
             ())
-          (^Iterable listHardware [this ]
+          (^Iterable listHardwareProfiles [this ]
             ())
           (^Iterable listLocations [this ]
             ())

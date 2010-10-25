@@ -87,7 +87,7 @@ public class StandaloneComputeServiceContextModule<N, H, I, L> extends BaseCompu
 
          @Override
          public Iterable<H> get() {
-            return adapter.listHardware();
+            return adapter.listHardwareProfiles();
          }
 
       }, transformer);

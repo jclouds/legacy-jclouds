@@ -127,7 +127,7 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements AddNodeWith
             template.getLocation().getId(), name, template.getImage().getProviderId(), template.getHardware()
                   .getProviderId());
 
-      N from = client.createNodeAndStoreCredentials(tag, name, template, credentialStore);
+      N from = client.runNodeWithTagAndNameAndStoreCredentials(tag, name, template, credentialStore);
       NodeMetadata node = nodeMetadataAdapter.apply(from);
       logger.debug("<< instantiated node(%s)", node.getId());
       return node;

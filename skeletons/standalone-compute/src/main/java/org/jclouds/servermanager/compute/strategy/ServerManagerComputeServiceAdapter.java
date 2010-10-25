@@ -34,7 +34,7 @@ public class ServerManagerComputeServiceAdapter implements ComputeServiceAdapter
    }
 
    @Override
-   public Server createNodeAndStoreCredentials(String tag, String name, Template template,
+   public Server runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
          Map<String, Credentials> credentialStore) {
       // create the backend object using parameters from the template.
       Server from = client.createServerInDC(template.getLocation().getId(), name,
@@ -46,7 +46,7 @@ public class ServerManagerComputeServiceAdapter implements ComputeServiceAdapter
    }
 
    @Override
-   public Iterable<Hardware> listHardware() {
+   public Iterable<Hardware> listHardwareProfiles() {
       return client.listHardware();
    }
 
