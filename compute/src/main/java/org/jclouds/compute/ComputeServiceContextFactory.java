@@ -26,12 +26,9 @@ import java.util.Properties;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.PropertiesBuilder;
-import org.jclouds.compute.config.StandaloneComputeServiceContextModule;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
 /**
@@ -126,9 +123,9 @@ public class ComputeServiceContextFactory {
    }
 
    /**
-    * @see RestContextFactory#createContextBuilder(ContextSpec)
+    * @see RestContextFactory#createContextBuilder(RestContextSpec)
     */
-   public <S, A> ComputeServiceContext createContext(ContextSpec<S, A> contextSpec) {
+   public <S, A> ComputeServiceContext createContext(RestContextSpec<S, A> contextSpec) {
       ComputeServiceContextBuilder<?, ?> builder = ComputeServiceContextBuilder.class
             .cast(createContextBuilder(contextSpec));
       return buildContextUnwrappingExceptions(builder);
@@ -136,26 +133,22 @@ public class ComputeServiceContextFactory {
    }
 
    /**
-    * @see RestContextFactory#createContextBuilder(ContextSpec, Properties)
+    * @see RestContextFactory#createContextBuilder(RestContextSpec, Properties)
     */
-   public <S, A> ComputeServiceContext createContext(ContextSpec<S, A> contextSpec, Properties overrides) {
+   public <S, A> ComputeServiceContext createContext(RestContextSpec<S, A> contextSpec, Properties overrides) {
       ComputeServiceContextBuilder<?, ?> builder = ComputeServiceContextBuilder.class.cast(createContextBuilder(
             contextSpec, overrides));
       return buildContextUnwrappingExceptions(builder);
    }
 
-   public static <N, H, I, L> ComputeServiceContext createStandaloneContext(
-         StandaloneComputeServiceContextModule<N, H, I, L> contextModule) {
-      return createStandaloneContext(contextModule, ImmutableSet.<Module> of());
+   /**
+    * @see RestContextFactory#createContextBuilder(RestContextSpec, Iterable, Properties)
+    */
+   public <S, A> ComputeServiceContext createContext(RestContextSpec<S, A> contextSpec, Iterable<Module> modules,
+         Properties overrides) {
+      ComputeServiceContextBuilder<?, ?> builder = ComputeServiceContextBuilder.class.cast(createContextBuilder(
+            contextSpec, modules, overrides));
+      return buildContextUnwrappingExceptions(builder);
    }
 
-   @SuppressWarnings("unchecked")
-   public static <N, H, I, L> ComputeServiceContext createStandaloneContext(
-         StandaloneComputeServiceContextModule<N, H, I, L> contextModule, Iterable<Module> modules) {
-      return new ComputeServiceContextFactory().createContext(RestContextFactory
-            .<ComputeService, ComputeService> contextSpec("standalone", "standalone", "1", "standalone", null,
-                  (Class) null, (Class) null, PropertiesBuilder.class,
-                  (Class) StandaloneComputeServiceContextBuilder.class,
-                  ImmutableSet.<Module> builder().add(contextModule).addAll(modules).build()));
-   }
 }

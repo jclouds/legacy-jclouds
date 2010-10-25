@@ -34,7 +34,6 @@ import org.jclouds.PropertiesBuilder;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.http.RequiresHttp;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.config.RestClientModule;
 import org.testng.annotations.Test;
 
@@ -54,14 +53,14 @@ public class RestContextFactoryTest {
    private static final String provider = "test";
 
    public void testBuilder() {
-      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
+      RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", null, IntegrationTestClient.class, IntegrationTestAsyncClient.class);
 
       createContextBuilder(contextSpec);
    }
 
    public void testBuilderProperties() {
-      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
+      RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", null, IntegrationTestClient.class, IntegrationTestAsyncClient.class);
 
       Properties props = RestContextFactory.toProperties(contextSpec);
@@ -79,7 +78,7 @@ public class RestContextFactoryTest {
    }
 
    public void testBuilderPropertiesWithCredential() {
-      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
+      RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", "credential", IntegrationTestClient.class,
             IntegrationTestAsyncClient.class);
 
@@ -99,7 +98,7 @@ public class RestContextFactoryTest {
 
    @SuppressWarnings("unchecked")
    public void testBuilderPropertiesWithContextBuilder() {
-      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
+      RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
             (Class) IntegrationTestContextBuilder.class, Collections.EMPTY_LIST);
 
@@ -119,7 +118,7 @@ public class RestContextFactoryTest {
 
    @SuppressWarnings("unchecked")
    public void testBuilderPropertiesWithModule() {
-      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
+      RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
             (Class) IntegrationTestContextBuilder.class, Collections.<Module> singleton(new A()));
 
@@ -139,7 +138,7 @@ public class RestContextFactoryTest {
 
    @SuppressWarnings("unchecked")
    public void testBuilderPropertiesWithModules() {
-      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
+      RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
             (Class) IntegrationTestContextBuilder.class, Arrays.<Module> asList(new A(), new B()));
 
@@ -174,9 +173,9 @@ public class RestContextFactoryTest {
 
          @SuppressWarnings("hiding")
          @Override
-         public <S, A> ContextSpec<S, A> createContextSpec(String providerName, String identity, String credential,
+         public <S, A> RestContextSpec<S, A> createContextSpec(String providerName, String identity, String credential,
                Iterable<? extends Module> wiring, Properties _overrides) {
-            ContextSpec<S, A> spec = super.createContextSpec(providerName, identity, credential, wiring, _overrides);
+            RestContextSpec<S, A> spec = super.createContextSpec(providerName, identity, credential, wiring, _overrides);
             assertEquals(spec.identity, "foo");
             assertEquals(spec.credential, "bar");
             assertEquals(Iterables.size(spec.modules), 2);
@@ -206,9 +205,9 @@ public class RestContextFactoryTest {
 
          @SuppressWarnings("hiding")
          @Override
-         public <S, A> ContextSpec<S, A> createContextSpec(String providerName, String identity, String credential,
+         public <S, A> RestContextSpec<S, A> createContextSpec(String providerName, String identity, String credential,
                Iterable<? extends Module> wiring, Properties _overrides) {
-            ContextSpec<S, A> spec = super.createContextSpec(providerName, identity, credential, wiring, _overrides);
+            RestContextSpec<S, A> spec = super.createContextSpec(providerName, identity, credential, wiring, _overrides);
             assertEquals(spec.identity, "foo");
             assertEquals(spec.credential, "bar");
             assertEquals(Iterables.size(spec.modules), 2);
@@ -240,7 +239,7 @@ public class RestContextFactoryTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testBuilderPropertiesWithWrongConfig() {
       @SuppressWarnings("unused")
-      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
+      RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", null, (Class) null, (Class) null,
             (Class) IntegrationTestContextBuilder.class, (Class) PropertiesBuilder.class, Collections.EMPTY_LIST);
    }

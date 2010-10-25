@@ -51,7 +51,7 @@ import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Request;
@@ -264,7 +264,7 @@ public abstract class BaseJettyTest {
          Properties properties, Module... connectionModules) {
       properties.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       properties.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
+      RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
             "http://localhost:" + testPort, "1", "identity", null, IntegrationTestClient.class,
             IntegrationTestAsyncClient.class, ImmutableSet.<Module> copyOf(connectionModules));
       return createContextBuilder(contextSpec, properties);

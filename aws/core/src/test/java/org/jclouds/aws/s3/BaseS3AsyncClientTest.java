@@ -29,7 +29,7 @@ import org.jclouds.aws.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 
@@ -65,7 +65,7 @@ public abstract class BaseS3AsyncClientTest extends RestClientTest<S3AsyncClient
    }
 
    @Override
-   public ContextSpec<?, ?> createContextSpec() {
+   public RestContextSpec<?, ?> createContextSpec() {
       return new RestContextFactory().createContextSpec("s3", "identity", "credential", new Properties());
    }
 

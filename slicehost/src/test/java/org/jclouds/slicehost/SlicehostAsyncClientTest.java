@@ -30,7 +30,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -252,7 +252,7 @@ public class SlicehostAsyncClientTest extends RestClientTest<SlicehostAsyncClien
    }
 
    @Override
-   public ContextSpec<SlicehostClient, SlicehostAsyncClient> createContextSpec() {
+   public RestContextSpec<SlicehostClient, SlicehostAsyncClient> createContextSpec() {
       return new RestContextFactory().createContextSpec("slicehost", "apikey", null, new Properties());
    }
 

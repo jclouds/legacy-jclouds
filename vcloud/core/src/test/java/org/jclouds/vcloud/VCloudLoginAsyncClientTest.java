@@ -33,7 +33,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.annotations.Provider;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.domain.VCloudSession;
@@ -109,7 +109,7 @@ public class VCloudLoginAsyncClientTest extends RestClientTest<VCloudExpressLogi
 
 
    @Override
-   public ContextSpec<VCloudLoginClient, VCloudExpressLoginAsyncClient> createContextSpec() {
+   public RestContextSpec<VCloudLoginClient, VCloudExpressLoginAsyncClient> createContextSpec() {
       return contextSpec("test", "http://localhost:8080/login", "1", "identity", "credential", VCloudLoginClient.class,
             VCloudExpressLoginAsyncClient.class);
    }

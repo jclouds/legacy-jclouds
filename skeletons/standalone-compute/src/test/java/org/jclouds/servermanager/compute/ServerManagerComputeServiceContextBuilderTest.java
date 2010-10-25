@@ -6,7 +6,15 @@ import java.util.Properties;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.StandaloneComputeServiceContextSpec;
+import org.jclouds.servermanager.Datacenter;
+import org.jclouds.servermanager.Hardware;
+import org.jclouds.servermanager.Image;
+import org.jclouds.servermanager.Server;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * 
@@ -30,8 +38,11 @@ public class ServerManagerComputeServiceContextBuilderTest {
 
    @Test
    public void testCanBuildWithComputeService() {
-      ComputeServiceContext context = ComputeServiceContextFactory
-            .createStandaloneContext(ServerManagerComputeServiceContextBuilder.createContextModule());
+      ComputeServiceContext context = new ComputeServiceContextFactory()
+            .createContext(new StandaloneComputeServiceContextSpec<Server, Hardware, Image, Datacenter>(
+                  "servermanager", "http://host", "1", "identity", "credential",
+                  ServerManagerComputeServiceContextBuilder.createContextModule(), ImmutableSet.<Module> of()));
+
       context.close();
 
    }

@@ -43,7 +43,7 @@ import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -637,7 +637,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
    }
 
    @Override
-   public ContextSpec<?, ?> createContextSpec() {
+   public RestContextSpec<?, ?> createContextSpec() {
       Properties overrides = new Properties();
       overrides.setProperty("vcloudexpress.endpoint", "https://vcloud.safesecureweb.com/api/v0.8");
       return new RestContextFactory().createContextSpec("vcloudexpress", "identity", "credential", overrides);

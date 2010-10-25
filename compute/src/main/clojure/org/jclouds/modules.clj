@@ -22,8 +22,9 @@
   (:import
    [org.jclouds.ssh SshClient ExecResponse]
    com.google.inject.Module
+   com.google.common.collect.ImmutableSet
    org.jclouds.net.IPSocket
-   [org.jclouds.compute ComputeService ComputeServiceContextFactory]
+   [org.jclouds.compute ComputeService ComputeServiceContextFactory StandaloneComputeServiceContextSpec]
    [java.util Set Map]
    [org.jclouds.compute.domain NodeMetadata Template]
    [com.google.common.base Supplier Predicate]
@@ -52,8 +53,11 @@
           (^void rebootNode  [this ^String id]
             ()))))
 
-(defn compute-context [module] 
-  (ComputeServiceContextFactory/createStandaloneContext module))
+(defn compute-context [^RestContextSpec spec] 
+  (.createContext (ComputeServiceContextFactory.)  spec))
+
+(^RestContextSpec defn context-spec [^StandaloneComputeServiceContextModule module]
+  (StandaloneComputeServiceContextSpec. "servermanager", "http://host", "1", "identity", "credential", module, (ImmutableSet/of)))
 
 (defrecord NodeListComputeService
     [node-list]

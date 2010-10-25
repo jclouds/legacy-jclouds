@@ -41,7 +41,6 @@ public abstract class BlobStoreContextBuilder<S, A> extends RestContextBuilder<S
 
    public BlobStoreContextBuilder(Class<S> syncClientType, Class<A> asyncClientType, Properties properties) {
       super(syncClientType, asyncClientType, properties);
-
    }
 
    public BlobStoreContext buildBlobStoreContext() {

@@ -42,7 +42,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
@@ -595,7 +595,7 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
    }
 
    @Override
-   public ContextSpec<?, ?> createContextSpec() {
+   public RestContextSpec<?, ?> createContextSpec() {
       return new RestContextFactory().createContextSpec("trmk-vcloudexpress", "identity", "credential",
                new Properties());
    }

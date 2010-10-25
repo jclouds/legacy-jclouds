@@ -33,7 +33,7 @@ import org.jclouds.rackspace.cloudfiles.config.CloudFilesRestClientModule;
 import org.jclouds.rackspace.cloudservers.TestRackspaceAuthenticationRestClientModule;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -110,7 +110,7 @@ public class CloudFilesBlobRequestSignerTest extends RestClientTest<CloudFilesAs
    }
 
    @Override
-   public ContextSpec<?, ?> createContextSpec() {
+   public RestContextSpec<?, ?> createContextSpec() {
       return new RestContextFactory().createContextSpec("cloudfiles", "identity", "credential", new Properties());
    }
 

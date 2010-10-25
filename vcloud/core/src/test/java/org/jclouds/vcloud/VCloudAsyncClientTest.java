@@ -45,7 +45,7 @@ import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
@@ -809,7 +809,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
    }
 
    @Override
-   public ContextSpec<?, ?> createContextSpec() {
+   public RestContextSpec<?, ?> createContextSpec() {
       Properties overrides = new Properties();
       overrides.setProperty("vcloud.endpoint", "https://vcenterprise.bluelock.com/api/v1.0");
       return new RestContextFactory().createContextSpec("vcloud", "identity", "credential", overrides);

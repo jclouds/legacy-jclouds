@@ -27,7 +27,6 @@ import java.util.Properties;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 
@@ -45,7 +44,7 @@ public abstract class RestClientTest<T> extends BaseRestClientTest {
 
    protected abstract void checkFilters(HttpRequest request);
 
-   abstract public ContextSpec<?, ?> createContextSpec();
+   abstract public RestContextSpec<?, ?> createContextSpec();
 
    protected Module createModule() {
       return new Module() {
@@ -60,7 +59,7 @@ public abstract class RestClientTest<T> extends BaseRestClientTest {
 
    @BeforeClass
    protected void setupFactory() throws IOException {
-      ContextSpec<?, ?> contextSpec = createContextSpec();
+      RestContextSpec<?, ?> contextSpec = createContextSpec();
       injector = createContextBuilder(contextSpec,
                ImmutableSet.of(new MockModule(), new NullLoggingModule(), createModule()),
                getProperties()).buildInjector();

@@ -27,7 +27,7 @@ import java.util.Properties;
 import javax.annotation.Nullable;
 
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 
 import com.google.inject.Module;
 
@@ -124,18 +124,18 @@ public class BlobStoreContextFactory {
    }
 
    /**
-    * @see RestContextFactory#createContextBuilder(ContextSpec)
+    * @see RestContextFactory#createContextBuilder(RestContextSpec)
     */
-   public <S, A> BlobStoreContext createContext(ContextSpec<S, A> contextSpec) {
+   public <S, A> BlobStoreContext createContext(RestContextSpec<S, A> contextSpec) {
       BlobStoreContextBuilder<?, ?> builder = BlobStoreContextBuilder.class.cast(createContextBuilder(contextSpec));
       return buildContextUnwrappingExceptions(builder);
 
    }
 
    /**
-    * @see RestContextFactory#createContextBuilder(ContextSpec, Properties)
+    * @see RestContextFactory#createContextBuilder(RestContextSpec, Properties)
     */
-   public <S, A> BlobStoreContext createContext(ContextSpec<S, A> contextSpec, Properties overrides) {
+   public <S, A> BlobStoreContext createContext(RestContextSpec<S, A> contextSpec, Properties overrides) {
       BlobStoreContextBuilder<?, ?> builder = BlobStoreContextBuilder.class.cast(createContextBuilder(contextSpec,
             overrides));
       return buildContextUnwrappingExceptions(builder);

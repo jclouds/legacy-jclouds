@@ -19,31 +19,25 @@
 
 package org.jclouds.compute;
 
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.stub.config.StubComputeServiceContextModule;
-import org.jclouds.domain.Location;
-import org.testng.annotations.Test;
+import org.jclouds.PropertiesBuilder;
+import org.jclouds.compute.config.StandaloneComputeServiceContextModule;
+import org.jclouds.rest.RestContextSpec;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 
 /**
- * 
  * @author Adrian Cole
- * 
  */
-@Test(groups = "unit")
-public class ComputeServiceContextFactoryTest {
+public class StandaloneComputeServiceContextSpec<N, H, I, L> extends RestContextSpec<ComputeService, ComputeService> {
 
-   @Test
-   public void testStandalone() {
-      ComputeServiceContext context = new ComputeServiceContextFactory()
-            .createContext(new StandaloneComputeServiceContextSpec<NodeMetadata, Hardware, Image, Location>("stub",
-                  "stub", "1", "identity", "credential", new StubComputeServiceContextModule(), ImmutableSet
-                        .<Module> of()));
-
-      context.getComputeService().listNodes();
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   public StandaloneComputeServiceContextSpec(String provider, String endpoint, String apiVersion, String identity,
+         String credential, StandaloneComputeServiceContextModule<N, H, I, L> contextModule, Iterable<Module> modules) {
+      super(provider, endpoint, apiVersion, identity, credential, ComputeService.class, ComputeService.class,
+            PropertiesBuilder.class, (Class) StandaloneComputeServiceContextBuilder.class, Iterables.concat(
+                  ImmutableSet.of(contextModule), modules));
    }
+
 }
