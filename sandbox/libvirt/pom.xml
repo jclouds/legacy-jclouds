@@ -41,8 +41,14 @@
         <dependency>
            <groupId>org.libvirt</groupId>
            <artifactId>libvirt</artifactId>
-           <version>0.4.1</version>
+           <version>0.4.6</version>
         </dependency>
+<dependency>
+    <groupId>com.sun.jna</groupId>
+    <artifactId>jna</artifactId>
+    <version>3.0.9</version>
+    <scope>provided</scope>
+</dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-core</artifactId>

@@ -14,6 +14,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.libvirt.Datacenter;
 import org.jclouds.libvirt.Hardware;
 import org.jclouds.libvirt.Image;
+import org.libvirt.Connect;
 import org.libvirt.Domain;
 import org.libvirt.jna.Libvirt;
 
@@ -26,10 +27,10 @@ import com.google.common.collect.ImmutableSet;
  */
 @Singleton
 public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domain, Hardware, Image, Datacenter> {
-   private final Libvirt client;
+   private final Connect client;
 
    @Inject
-   public LibvirtComputeServiceAdapter(Libvirt client) {
+   public LibvirtComputeServiceAdapter(Connect client) {
       this.client = checkNotNull(client, "client");
    }
 
