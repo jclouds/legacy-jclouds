@@ -23,6 +23,7 @@
    [org.jclouds.ssh SshClient ExecResponse]
    com.google.inject.Module
    com.google.common.collect.ImmutableSet
+   org.jclouds.domain.Credentials
    org.jclouds.net.IPSocket
    [org.jclouds.compute ComputeService ComputeServiceContextFactory StandaloneComputeServiceContextSpec]
    [java.util Set Map]
@@ -75,6 +76,9 @@
   [ctor]
   (reify
    org.jclouds.ssh.SshClient$Factory
+   (^org.jclouds.ssh.SshClient create
+    [_ ^IPSocket socket ^Credentials credentials]
+    (ctor socket credentials))
    (^org.jclouds.ssh.SshClient create
     [_ ^IPSocket socket ^String username ^String password-or-key]
     (ctor socket username password-or-key))
