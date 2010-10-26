@@ -1,6 +1,6 @@
 /**
  *
- * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>		
  *
  * ====================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.StandaloneComputeServiceContextSpec;
+import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.libvirt.Datacenter;
 import org.jclouds.libvirt.Image;
 import org.jclouds.libvirt.compute.domain.LibvirtComputeServiceContextModule;
@@ -63,9 +67,26 @@ public class LibvirtExperimentLiveTest {
                      endpoint, apiversion, identity, credential, new LibvirtComputeServiceContextModule(), ImmutableSet
                            .<Module> of()));
          
-        context.getComputeService().listNodes(); 
+         System.out.println("images " + context.getComputeService().listImages());
+         System.out.println("hardware profiles " + context.getComputeService().listHardwareProfiles()); 
+         
+         Template defaultTemplate = context.getComputeService().templateBuilder()
+         //.hardwareId("").locationId("").imageId("")
+         .build();
+         	
+    /*
+     * We will probably make a default template out of properties at some point
+     * You can control the default template via overriding a method in standalonecomputeservicexontextmodule
+     */
+         
+         
+//         context.getComputeService().templateOptions().;
+         context.getComputeService().runNodesWithTag("test", 1);
+        System.out.println(context.getComputeService().listNodes()); 
         
-      } finally {
+      } catch (RunNodesException e) {
+		e.printStackTrace();
+	} finally {
          if (context != null)
             context.close();
       }

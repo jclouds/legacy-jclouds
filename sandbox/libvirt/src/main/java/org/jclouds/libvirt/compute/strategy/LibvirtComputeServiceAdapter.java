@@ -46,7 +46,29 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
       // Integer.parseInt(template.getHardware().getProviderId()));
       // store the credentials so that later functions can use them
       // credentialStore.put(from.id + "", new Credentials(from.loginUser, from.password));
-      return null;
+	   
+       String xmlDesc ="<domain type='kvm'>" + "<name>test</name>" + "<uuid>abcf2039-a9f1-a659-7f91-e0f82f59d52e</uuid>" +
+       "<memory>524288</memory>" +
+       "<currentMemory>524288</currentMemory>" +
+       "<vcpu>1</vcpu>" +
+       "<os><type arch='i686' machine='pc-0.12'>hvm</type><boot dev='hd'/></os>" +
+       "<features><acpi/>              <apic/>              <pae/>            </features>" +
+       "<clock offset='utc'/>" +
+       "<on_poweroff>destroy</on_poweroff>"+
+       "<on_reboot>restart</on_reboot>"+
+       "<on_crash>restart</on_crash>"+
+       "<devices><emulator>/usr/bin/kvm</emulator><disk type='file' device='disk'><driver name='qemu' type='raw'/><source file='/var/lib/libvirt/images/test.img'/>                <target dev='vda' bus='virtio'/>              </disk> <disk type='block' device='cdrom'>                <driver name='qemu' type='raw'/>                <target dev='hdc' bus='ide'/><readonly/></disk>               <interface type='network'>                <mac address='52:54:00:05:cf:92'/>                <source network='default'/>                <model type='virtio'/>              </interface>              <console type='pty'>                <target port='0'/>              </console>              <console type='pty'>                <target port='0'/>              </console>              <input type='mouse' bus='ps2'/>              <graphics type='vnc' port='-1' autoport='yes'/>              <video>                <model type='cirrus' vram='9216' heads='1'/>              </video> </devices>"+
+       "</domain>";
+       
+       Domain domain = null;
+       try {
+		client.domainDefineXML(xmlDesc);
+		domain = client.domainCreateXML(xmlDesc, 1);	   
+	} catch (LibvirtException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	return domain;
    }
 
    @Override
@@ -74,6 +96,19 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
       }
    }
 
+//   @Override
+//   public Iterable<Domain> listNodes() {
+//	      try {
+//	         List<Domain> domains = Lists.newArrayList();
+//	         for (String domain : client.listDefinedDomains()) {
+//	            domains.add(client.domainLookupByName(domain));
+//	         }
+//	         return domains;
+//	      } catch (LibvirtException e) {
+//	         return propogate(e);
+//	      }
+//	   }
+   
    protected <T> T propogate(LibvirtException e) {
       Throwables.propagate(e);
       assert false;
@@ -111,4 +146,14 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
          propogate(e);
       }
    }
+   
+   public void createDomain() throws LibvirtException {
+       Domain domain = client.domainDefineXML("<domain type='test' id='2'>" + "  <name>deftest</name>"
+               + "  <uuid>004b96e1-2d78-c30f-5aa5-f03c87d21e70</uuid>" + "  <memory>8388608</memory>"
+               + "  <vcpu>2</vcpu>" + "  <os><type arch='i686'>hvm</type></os>" + "  <on_reboot>restart</on_reboot>"
+               + "  <on_poweroff>destroy</on_poweroff>" + "  <on_crash>restart</on_crash>" + "</domain>");
+       
+       
+   }
+   
 }
