@@ -30,9 +30,7 @@ import org.jclouds.compute.predicates.NodeTerminated;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
-import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.predicates.SocketOpen;
 
 import com.google.common.base.Predicate;
 import com.google.inject.AbstractModule;
@@ -50,7 +48,7 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
    @Named("NODE_RUNNING")
    protected Predicate<NodeMetadata> nodeRunning(NodeRunning stateRunning, Timeouts timeouts) {
       return timeouts.nodeRunning == 0 ? stateRunning : new RetryablePredicate<NodeMetadata>(stateRunning,
-               timeouts.nodeRunning);
+            timeouts.nodeRunning);
    }
 
    @Provides
@@ -58,7 +56,7 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
    @Named("NODE_TERMINATED")
    protected Predicate<NodeMetadata> serverTerminated(NodeTerminated stateTerminated, Timeouts timeouts) {
       return timeouts.nodeTerminated == 0 ? stateTerminated : new RetryablePredicate<NodeMetadata>(stateTerminated,
-               timeouts.nodeTerminated);
+            timeouts.nodeTerminated);
    }
 
    @Provides
@@ -66,13 +64,7 @@ public class ComputeServiceTimeoutsModule extends AbstractModule {
    @Named("SCRIPT_COMPLETE")
    protected Predicate<CommandUsingClient> runScriptRunning(ScriptStatusReturnsZero stateRunning, Timeouts timeouts) {
       return timeouts.scriptComplete == 0 ? not(stateRunning) : new RetryablePredicate<CommandUsingClient>(
-               not(stateRunning), timeouts.scriptComplete);
-   }
-
-   @Provides
-   @Singleton
-   protected Predicate<IPSocket> socketTester(SocketOpen open, Timeouts timeouts) {
-      return timeouts.portOpen == 0 ? open : new RetryablePredicate<IPSocket>(open, timeouts.portOpen);
+            not(stateRunning), timeouts.scriptComplete);
    }
 
    @Override

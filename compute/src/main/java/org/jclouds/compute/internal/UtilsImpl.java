@@ -26,14 +26,17 @@ import javax.inject.Singleton;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.Utils;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.date.DateService;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.HttpAsyncClient;
 import org.jclouds.rest.HttpClient;
+import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshClient.Factory;
 
+import com.google.common.base.Function;
 import com.google.inject.Inject;
 
 /**
@@ -44,15 +47,15 @@ import com.google.inject.Inject;
 public class UtilsImpl extends org.jclouds.rest.internal.UtilsImpl implements Utils {
    @Inject(optional = true)
    private Factory sshFactory;
+   private final Function<NodeMetadata, SshClient> sshForNode;
 
    @Inject
-   UtilsImpl(Json json, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient,
-            Crypto encryption, DateService date,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
-            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads,
-            LoggerFactory loggerFactory) {
-      super(json, simpleClient, simpleAsyncClient, encryption, date, userThreads, ioThreads,
-               loggerFactory);
+   UtilsImpl(Json json, HttpClient simpleClient, HttpAsyncClient simpleAsyncClient, Crypto encryption,
+         DateService date, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads,
+         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioThreads, LoggerFactory loggerFactory,
+         Function<NodeMetadata, SshClient> sshForNode) {
+      super(json, simpleClient, simpleAsyncClient, encryption, date, userThreads, ioThreads, loggerFactory);
+      this.sshForNode = sshForNode;
    }
 
    @Override
@@ -63,6 +66,11 @@ public class UtilsImpl extends org.jclouds.rest.internal.UtilsImpl implements Ut
    @Override
    public Factory sshFactory() {
       return sshFactory;
+   }
+
+   @Override
+   public Function<NodeMetadata, SshClient> sshForNode() {
+      return sshForNode;
    }
 
 }

@@ -564,20 +564,7 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    protected void doCheckJavaIsInstalledViaSsh(NodeMetadata node) throws IOException {
-      IPSocket socket = new IPSocket(get(node.getPublicAddresses(), 0), 22);
-      socketTester.apply(socket); // TODO add transitionTo option that accepts
-      // a socket conection
-      // state.
-      SshClient ssh = (node.getCredentials().credential != null && !node.getCredentials().credential
-            .startsWith("-----BEGIN RSA PRIVATE KEY-----")) ? context.utils().sshFactory()
-            .create(socket, node.getCredentials().identity, node.getCredentials().credential) : context
-            .utils()
-            .sshFactory()
-            .create(
-                  socket,
-                  node.getCredentials().identity,
-                  node.getCredentials().credential != null ? node.getCredentials().credential.getBytes() : keyPair.get(
-                        "private").getBytes());
+      SshClient ssh = context.utils().sshForNode().apply(node);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");

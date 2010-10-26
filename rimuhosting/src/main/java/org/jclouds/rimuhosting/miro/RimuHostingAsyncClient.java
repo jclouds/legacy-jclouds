@@ -139,7 +139,7 @@ public interface RimuHostingAsyncClient {
    ListenableFuture<ServerInfo> restartServer(@PathParam("id") Long id);
 
    /**
-    * @see RimuHostingClient#destoryServer
+    * @see RimuHostingClient#destroyServer
     */
    @DELETE
    @Path("/orders/order-{id}-blah/vps")

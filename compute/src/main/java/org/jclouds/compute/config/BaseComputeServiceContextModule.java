@@ -34,10 +34,13 @@ import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.functions.CreateSshClientOncePortIsListeningOnNode;
 import org.jclouds.domain.Location;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
+import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -47,6 +50,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
 import com.google.inject.util.Providers;
 
 /**
@@ -58,6 +62,8 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    protected void configure() {
       install(new ComputeServiceTimeoutsModule());
       bindLoadBalancerService();
+      bind(new TypeLiteral<Function<NodeMetadata, SshClient>>() {
+      }).to(CreateSshClientOncePortIsListeningOnNode.class);
    }
 
    protected void bindLoadBalancerService() {

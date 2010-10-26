@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.ssh.jsch.predicates;
+package org.jclouds.predicates;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -29,7 +29,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
-import org.jclouds.predicates.SocketOpen;
 
 import com.google.inject.Inject;
 

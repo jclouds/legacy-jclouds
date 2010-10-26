@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Collections;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.compute.util.ComputeServiceUtils.SshCallable;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.InitBuilder;
@@ -32,6 +31,7 @@ import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
+import org.jclouds.util.Utils;
 
 import com.google.common.collect.Iterables;
 
@@ -93,7 +93,7 @@ public class InitAndStartScriptOnNode implements SshCallable<ExecResponse> {
       String command;
       if (node.getCredentials().identity.equals("root")) {
          command = "./" + init.getInstanceName() + " " + action;
-      } else if (ComputeServiceUtils.isKeyAuth(node)) {
+      } else if (Utils.isPrivateKeyCredential(node.getCredentials())) {
          command = "sudo ./" + init.getInstanceName() + " " + action;
       } else {
          command = String.format("echo '%s'|sudo -S ./%s %s", node.getCredentials().credential, init.getInstanceName(),

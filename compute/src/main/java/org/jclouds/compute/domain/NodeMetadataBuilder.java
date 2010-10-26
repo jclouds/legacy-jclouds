@@ -45,7 +45,7 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
    private Credentials credentials;
    @Nullable
    private String tag;
-   private int loginPort;
+   private int loginPort = 22;
    @Nullable
    private String imageId;
    @Nullable
