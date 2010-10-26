@@ -48,6 +48,7 @@ import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
 import org.jclouds.rest.annotations.Provider;
+import org.jclouds.rest.config.CredentialStoreModule;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.config.RestModule;
 import org.jclouds.rest.internal.RestContextImpl;
@@ -67,17 +68,14 @@ import com.google.inject.name.Names;
 import com.google.inject.util.Types;
 
 /**
- * Creates {@link RestContext} or {@link Injector} instances based on the most
- * commonly requested arguments.
+ * Creates {@link RestContext} or {@link Injector} instances based on the most commonly requested
+ * arguments.
  * <p/>
- * Note that Threadsafe objects will be bound as singletons to the Injector or
- * Context provided.
+ * Note that Threadsafe objects will be bound as singletons to the Injector or Context provided.
  * <p/>
  * <p/>
- * If no <code>Module</code>s are specified, the default
- * {@link JDKLoggingModule logging} and
- * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be
- * installed.
+ * If no <code>Module</code>s are specified, the default {@link JDKLoggingModule logging} and
+ * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole, Andrew Newdigate
  * @see RestContext
@@ -137,6 +135,7 @@ public class RestContextBuilder<S, A> {
       addHttpModuleIfNeededAndNotPresent(modules);
       ifHttpConfigureRestOtherwiseGuiceClientFactory(modules);
       addExecutorServiceIfNotPresent(modules);
+      addCredentialStoreIfNotPresent(modules);
       modules.add(new BindPropertiesAndPrincipalContext(properties));
       return Guice.createInjector(modules);
    }
@@ -245,10 +244,24 @@ public class RestContextBuilder<S, A> {
                return input.getClass().isAnnotationPresent(SingleThreaded.class);
             }
          })) {
-            modules.add(new ExecutorServiceModule(MoreExecutors.sameThreadExecutor(), MoreExecutors.sameThreadExecutor()));
+            modules.add(new ExecutorServiceModule(MoreExecutors.sameThreadExecutor(), MoreExecutors
+                  .sameThreadExecutor()));
          } else {
             modules.add(new ExecutorServiceModule());
          }
+      }
+   }
+
+   @VisibleForTesting
+   protected void addCredentialStoreIfNotPresent(List<Module> modules) {
+      if (!Iterables.any(modules, new Predicate<Module>() {
+         public boolean apply(Module input) {
+            return input.getClass().isAnnotationPresent(ConfiguresCredentialStore.class);
+         }
+      }
+
+      )) {
+         modules.add(new CredentialStoreModule());
       }
    }
 

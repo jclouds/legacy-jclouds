@@ -41,7 +41,6 @@ import org.easymock.IArgumentMatcher;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.stub.config.StubComputeServiceContextModule.StubNodeMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
@@ -122,49 +121,49 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             SshClient client5 = createMock(SshClient.class);
 
             expect(factory.create(new IPSocket("144.175.1.1", 22), "root", "password1")).andReturn(client1)
-                     .atLeastOnce();
+                  .atLeastOnce();
             runScriptAndService(client1, 1);
 
             expect(factory.create(new IPSocket("144.175.1.2", 22), "root", "romeo")).andThrow(
-                     new SshException("Auth fail"));
+                  new SshException("Auth fail"));
             expect(factory.create(new IPSocket("144.175.1.2", 22), "root", "password2")).andReturn(client2)
-                     .atLeastOnce();
+                  .atLeastOnce();
 
             client2.connect();
             try {
                runScript(client2, "runScriptWithCreds", Utils.toStringAndClose(StubComputeServiceIntegrationTest.class
-                        .getResourceAsStream("/runscript.sh")), 2);
+                     .getResourceAsStream("/runscript.sh")), 2);
             } catch (IOException e) {
                Throwables.propagate(e);
             }
             client2.disconnect();
 
             expect(factory.create(new IPSocket("144.175.1.3", 22), "root", "password3")).andReturn(client3)
-                     .atLeastOnce();
+                  .atLeastOnce();
             expect(factory.create(new IPSocket("144.175.1.4", 22), "root", "password4")).andReturn(client4)
-                     .atLeastOnce();
+                  .atLeastOnce();
             expect(factory.create(new IPSocket("144.175.1.5", 22), "root", "password5")).andReturn(client5)
-                     .atLeastOnce();
+                  .atLeastOnce();
 
             runScriptAndInstallSsh(client3, "bootstrap", 3);
             runScriptAndInstallSsh(client4, "bootstrap", 4);
             runScriptAndInstallSsh(client5, "bootstrap", 5);
 
             expect(
-                     factory.create(eq(new IPSocket("144.175.1.1", 22)), eq("root"), aryEq(keyPair.get("private")
-                              .getBytes()))).andReturn(client1).atLeastOnce();
+                  factory.create(eq(new IPSocket("144.175.1.1", 22)), eq("root"), aryEq(keyPair.get("private")
+                        .getBytes()))).andReturn(client1).atLeastOnce();
             expect(
-                     factory.create(eq(new IPSocket("144.175.1.2", 22)), eq("root"), aryEq(keyPair.get("private")
-                              .getBytes()))).andReturn(client2).atLeastOnce();
+                  factory.create(eq(new IPSocket("144.175.1.2", 22)), eq("root"), aryEq(keyPair.get("private")
+                        .getBytes()))).andReturn(client2).atLeastOnce();
             expect(
-                     factory.create(eq(new IPSocket("144.175.1.3", 22)), eq("root"), aryEq(keyPair.get("private")
-                              .getBytes()))).andReturn(client3).atLeastOnce();
+                  factory.create(eq(new IPSocket("144.175.1.3", 22)), eq("root"), aryEq(keyPair.get("private")
+                        .getBytes()))).andReturn(client3).atLeastOnce();
             expect(
-                     factory.create(eq(new IPSocket("144.175.1.4", 22)), eq("root"), aryEq(keyPair.get("private")
-                              .getBytes()))).andReturn(client4).atLeastOnce();
+                  factory.create(eq(new IPSocket("144.175.1.4", 22)), eq("root"), aryEq(keyPair.get("private")
+                        .getBytes()))).andReturn(client4).atLeastOnce();
             expect(
-                     factory.create(eq(new IPSocket("155.175.1.5", 22)), eq("root"), aryEq(keyPair.get("private")
-                              .getBytes()))).andReturn(client5).atLeastOnce();
+                  factory.create(eq(new IPSocket("155.175.1.5", 22)), eq("root"), aryEq(keyPair.get("private")
+                        .getBytes()))).andReturn(client5).atLeastOnce();
 
             helloAndJava(client2);
             helloAndJava(client3);
@@ -186,7 +185,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
 
             try {
                runScript(client, "jboss", Utils.toStringAndClose(StubComputeServiceIntegrationTest.class
-                        .getResourceAsStream("/initscript_with_jboss.sh")), nodeId);
+                     .getResourceAsStream("/initscript_with_jboss.sh")), nodeId);
             } catch (IOException e) {
                Throwables.propagate(e);
             }
@@ -200,7 +199,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
 
             try {
                runScript(client, scriptName, Utils.toStringAndClose(StubComputeServiceIntegrationTest.class
-                        .getResourceAsStream("/initscript_with_java.sh")), nodeId);
+                     .getResourceAsStream("/initscript_with_java.sh")), nodeId);
             } catch (IOException e) {
                Throwables.propagate(e);
             }
@@ -252,8 +251,8 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
 
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
-      RestContext<ConcurrentMap<Integer, StubNodeMetadata>, ConcurrentMap<Integer, StubNodeMetadata>> stubContext = new ComputeServiceContextFactory()
-               .createContext(provider, identity, credential).getProviderSpecificContext();
+      RestContext<ConcurrentMap<String, NodeMetadata>, ConcurrentMap<String, NodeMetadata>> stubContext = new ComputeServiceContextFactory()
+            .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
    private static class PayloadEquals implements IArgumentMatcher, Serializable {
@@ -300,7 +299,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             return false;
          PayloadEquals other = (PayloadEquals) o;
          return this.expected == null && other.expected == null || this.expected != null
-                  && this.expected.equals(other.expected);
+               && this.expected.equals(other.expected);
       }
 
       @Override
@@ -341,6 +340,11 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    @Test(enabled = true, dependsOnMethods = "testCreateTwoNodesWithRunScript")
    public void testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired() throws Exception {
       super.testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired();
+   }
+
+   @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
+   public void testCredentialsCache() throws Exception {
+      super.testCredentialsCache();
    }
 
    @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")

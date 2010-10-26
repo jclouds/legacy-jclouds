@@ -30,7 +30,7 @@ import com.google.common.base.Predicate;
  */
 public interface ListNodesStrategy {
 
-   Iterable<? extends ComputeMetadata> list();
+   Iterable<? extends ComputeMetadata> listNodes();
 
    Iterable<? extends NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter);
 

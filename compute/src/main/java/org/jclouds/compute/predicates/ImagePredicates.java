@@ -23,6 +23,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.compute.domain.Image;
 
 import com.google.common.base.Predicate;
@@ -38,6 +40,24 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class ImagePredicates {
+   private static final class Is64BitPredicate implements Predicate<Image> {
+      @Override
+      public boolean apply(Image image) {
+         return image.getOperatingSystem().is64Bit();
+      }
+
+      @Override
+      public String toString() {
+         return "is64Bit()";
+      }
+
+      @Override
+      public boolean equals(@Nullable Object obj) {
+         return (obj instanceof Is64BitPredicate);
+      }
+
+   }
+
    /**
     * evaluates true if the Image
     * 
@@ -87,17 +107,7 @@ public class ImagePredicates {
     * return true if this is a 64bit image.
     */
    public static Predicate<Image> is64Bit() {
-      return new Predicate<Image>() {
-         @Override
-         public boolean apply(Image image) {
-            return image.getOperatingSystem().is64Bit();
-         }
-
-         @Override
-         public String toString() {
-            return "is64Bit()";
-         }
-      };
+      return new Is64BitPredicate();
    }
 
    /**

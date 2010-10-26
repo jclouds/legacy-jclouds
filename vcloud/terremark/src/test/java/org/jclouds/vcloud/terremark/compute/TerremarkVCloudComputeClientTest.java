@@ -33,6 +33,7 @@ import java.util.Map;
 import javax.inject.Provider;
 
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.domain.Status;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
@@ -44,6 +45,7 @@ import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOpti
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 
 /**
@@ -54,6 +56,7 @@ public class TerremarkVCloudComputeClientTest {
    @SuppressWarnings("unchecked")
    @Test
    public void testStartWindows() throws IOException {
+      Map<String, Credentials> credentialStore = Maps.newHashMap();
       InputStream is = getClass().getResourceAsStream("/terremark/windows_description.txt");
       String description = new String(ByteStreams.toByteArray(is));
       VCloudExpressVAppTemplate template = createMock(VCloudExpressVAppTemplate.class);
@@ -65,14 +68,11 @@ public class TerremarkVCloudComputeClientTest {
       TerremarkVCloudExpressClient client = createMock(TerremarkVCloudExpressClient.class);
       VCloudExpressVApp vApp = createMock(VCloudExpressVApp.class);
 
-      // TODO make this call only once
       expect(client.getVAppTemplate(templateURI)).andReturn(template);
-      expect(client.getVAppTemplate(templateURI)).andReturn(template);
-
       expect(
-               client.instantiateVAppTemplateInVDC(vdcURI, templateURI, "name",
-                        new TerremarkInstantiateVAppTemplateOptions().productProperty("password", "password")))
-               .andReturn(vApp);
+            client.instantiateVAppTemplateInVDC(vdcURI, templateURI, "name",
+                  new TerremarkInstantiateVAppTemplateOptions().productProperty("password", "password"))).andReturn(
+            vApp);
       Task task = createMock(Task.class);
       URI vappLocation = URI.create("vapp");
       URI taskLocation = URI.create("task");
@@ -89,14 +89,14 @@ public class TerremarkVCloudComputeClientTest {
       Map<Status, NodeState> vAppStatusToNodeState = createMock(Map.class);
 
       TerremarkVCloudComputeClient computeClient = new TerremarkVCloudComputeClient(client,
-               new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(), new Provider<String>() {
+            new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials(), new Provider<String>() {
 
-                  @Override
-                  public String get() {
-                     return "password";
-                  }
+               @Override
+               public String get() {
+                  return "password";
+               }
 
-               }, successTester, vAppStatusToNodeState);
+            }, successTester, vAppStatusToNodeState, credentialStore);
 
       replay(vdc);
       replay(template);
@@ -107,12 +107,11 @@ public class TerremarkVCloudComputeClientTest {
       replay(notFoundTester);
       replay(vAppStatusToNodeState);
 
-      Map<String, String> response = computeClient.start(vdcURI, templateURI, "name",
-               new TerremarkInstantiateVAppTemplateOptions());
+      VCloudExpressVApp response = computeClient.start(vdcURI, templateURI, "name",
+            new TerremarkInstantiateVAppTemplateOptions());
 
-      assertEquals(response.get("id"), "vapp");
-      assertEquals(response.get("username"), "Administrator");
-      assertEquals(response.get("password"), "password");
+      assertEquals(response.getHref().toASCIIString(), "vapp");
+      assertEquals(credentialStore.get("vapp"), new Credentials("Administrator", "password"));
 
       verify(vdc);
       verify(template);

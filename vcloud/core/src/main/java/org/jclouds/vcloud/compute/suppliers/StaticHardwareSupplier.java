@@ -24,14 +24,13 @@ import java.util.Set;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Processor;
-import org.jclouds.compute.domain.internal.HardwareImpl;
+import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
-import org.jclouds.compute.predicates.ImagePredicates;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 
 /**
@@ -42,15 +41,13 @@ public class StaticHardwareSupplier implements Supplier<Set<? extends Hardware>>
 
    @Override
    public Set<? extends Hardware> get() {
-      Set<Hardware> sizes = Sets.newHashSet();
+      Set<Hardware> hardware = Sets.newHashSet();
       for (int cpus : new int[] { 1, 2, 4, 8 })
          for (int ram : new int[] { 512, 1024, 2048, 4096, 8192, 16384 }) {
             String id = String.format("cpu=%d,ram=%s,disk=%d", cpus, ram, 10);
-            sizes.add(new HardwareImpl(id, null, id, null, null, ImmutableMap.<String, String> of(), ImmutableList
-                     .of(new Processor(cpus, 1.0)), ram, ImmutableList.of(new VolumeImpl(10f, true, true)),
-                     ImagePredicates.any()));
+            hardware.add(new HardwareBuilder().ids(id).ram(ram).processors(ImmutableList.of(new Processor(cpus, 1.0)))
+                     .volumes(ImmutableList.<Volume> of(new VolumeImpl(10f, true, true))).build());
          }
-      return sizes;
+      return hardware;
    }
-
 }

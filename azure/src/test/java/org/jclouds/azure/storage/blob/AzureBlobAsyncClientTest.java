@@ -47,7 +47,7 @@ import org.jclouds.http.functions.ReturnTrueOn404;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
@@ -277,7 +277,7 @@ public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClien
    }
 
    @Override
-   public ContextSpec<?, ?> createContextSpec() {
+   public RestContextSpec<?, ?> createContextSpec() {
       return new RestContextFactory().createContextSpec("azureblob", "identity", "credential", new Properties());
    }
 }

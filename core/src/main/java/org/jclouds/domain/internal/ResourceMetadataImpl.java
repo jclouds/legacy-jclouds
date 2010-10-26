@@ -36,12 +36,11 @@ import com.google.inject.internal.Nullable;
  * 
  * @author Adrian Cole
  */
-public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata<T>, Serializable {
+public abstract class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata<T>, Serializable {
 
    /** The serialVersionUID */
    private static final long serialVersionUID = -280558162576368264L;
 
-   private final T type;
    @Nullable
    private final String providerId;
    @Nullable
@@ -52,9 +51,8 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
    private final URI uri;
    private final Map<String, String> userMetadata = Maps.newLinkedHashMap();
 
-   public ResourceMetadataImpl(T type, @Nullable String providerId, @Nullable String name,
-            @Nullable Location location, @Nullable URI uri, Map<String, String> userMetadata) {
-      this.type = checkNotNull(type, "type");
+   public ResourceMetadataImpl(@Nullable String providerId, @Nullable String name, @Nullable Location location,
+         @Nullable URI uri, Map<String, String> userMetadata) {
       this.providerId = providerId;
       this.name = name;
       this.location = location;
@@ -70,14 +68,6 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
       if (getName() == null)
          return -1;
       return (this == o) ? 0 : getName().compareTo(o.getName());
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public T getType() {
-      return type;
    }
 
    /**
@@ -122,8 +112,8 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
 
    @Override
    public String toString() {
-      return "[type=" + type + ", providerId=" + providerId + ", name=" + name + ", location=" + location
-               + ", uri=" + uri + ", userMetadata=" + userMetadata + "]";
+      return "[type=" + getType() + ", providerId=" + providerId + ", name=" + name + ", location=" + location
+            + ", uri=" + uri + ", userMetadata=" + userMetadata + "]";
    }
 
    @Override
@@ -133,7 +123,6 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
       result = prime * result + ((providerId == null) ? 0 : providerId.hashCode());
       result = prime * result + ((location == null) ? 0 : location.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
-      result = prime * result + ((type == null) ? 0 : type.hashCode());
       result = prime * result + ((uri == null) ? 0 : uri.hashCode());
       return result;
    }
@@ -161,11 +150,6 @@ public class ResourceMetadataImpl<T extends Enum<T>> implements ResourceMetadata
          if (other.name != null)
             return false;
       } else if (!name.equals(other.name))
-         return false;
-      if (type == null) {
-         if (other.type != null)
-            return false;
-      } else if (!type.equals(other.type))
          return false;
       if (uri == null) {
          if (other.uri != null)

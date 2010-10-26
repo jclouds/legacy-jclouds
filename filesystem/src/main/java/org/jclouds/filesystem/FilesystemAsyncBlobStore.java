@@ -38,12 +38,12 @@ import static com.google.common.util.concurrent.Futures.immediateFuture;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
-import java.io.File;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
@@ -55,10 +55,16 @@ import java.util.TreeSet;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 
 import org.jclouds.Constants;
+import org.jclouds.blobstore.BlobStoreContext;
+import org.jclouds.blobstore.ContainerNotFoundException;
+import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
@@ -67,6 +73,7 @@ import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.Blob.Factory;
+import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
 import org.jclouds.blobstore.domain.internal.PageSetImpl;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
@@ -75,17 +82,23 @@ import org.jclouds.blobstore.options.GetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
 import org.jclouds.blobstore.util.BlobUtils;
+import org.jclouds.collect.Memoized;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
 import org.jclouds.domain.Location;
+import org.jclouds.filesystem.predicates.validators.FilesystemContainerNameValidator;
 import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
+import org.jclouds.io.payloads.FilePayload;
+import org.jclouds.logging.Logger;
+import org.jclouds.rest.annotations.ParamValidators;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -95,24 +108,11 @@ import com.google.common.collect.Iterables;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.internal.Nullable;
-import javax.annotation.Resource;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.ContainerNotFoundException;
-import org.jclouds.blobstore.KeyNotFoundException;
-import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
-import org.jclouds.filesystem.predicates.validators.FilesystemContainerNameValidator;
-import org.jclouds.io.Payload;
-import org.jclouds.io.payloads.FilePayload;
-import org.jclouds.logging.Logger;
-import org.jclouds.rest.annotations.ParamValidators;
 
 /**
- *
- * Preconditions:
- * Blob name cannot start with / char (or \ under windows)
- *
+ * 
+ * Preconditions: Blob name cannot start with / char (or \ under windows)
+ * 
  * @author Alfredo "Rainbowbreeze" Morresi
  */
 public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
@@ -127,17 +127,14 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
    protected final Factory blobFactory;
    protected final FilesystemStorageStrategy storageStrategy;
 
-
    @Inject
    protected FilesystemAsyncBlobStore(BlobStoreContext context, DateService dateService, Crypto crypto,
             HttpGetOptionsListToGetOptions httpGetOptionsConverter,
             IfDirectoryReturnNameStrategy ifDirectoryReturnName, Blob.Factory blobFactory, BlobUtils blobUtils,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-            Supplier<Location> defaultLocation,
-            Supplier<Set<? extends Location>> locations,
-            FilesystemStorageStrategy storageStrategy) {
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
+            @Memoized Supplier<Set<? extends Location>> locations, FilesystemStorageStrategy storageStrategy) {
       super(context, blobUtils, service, defaultLocation, locations);
-      //super(context, blobUtils, service, null, null);
+      // super(context, blobUtils, service, null, null);
       this.blobFactory = blobFactory;
       this.dateService = dateService;
       this.crypto = crypto;
@@ -156,23 +153,20 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       if (!containerExistsSyncImpl(container)) {
          return immediateFailedFuture(cnfe(container));
       }
-       
+
       // Loading blobs from container
       Iterable<String> blobBelongingToContainer = null;
       try {
-        blobBelongingToContainer = storageStrategy.getBlobKeysInsideContainer(container);
-       } catch(IOException e) {
-           logger.error(e, 
-                        "An error occurred loading blobs contained into container %s",
-                        container);
-           Throwables.propagate(e);
-       }
-
+         blobBelongingToContainer = storageStrategy.getBlobKeysInsideContainer(container);
+      } catch (IOException e) {
+         logger.error(e, "An error occurred loading blobs contained into container %s", container);
+         Throwables.propagate(e);
+      }
 
       SortedSet<StorageMetadata> contents = newTreeSet(transform(blobBelongingToContainer,
-             new Function<String, StorageMetadata>() {
-                public StorageMetadata apply(String key) {
-                   Blob oldBlob = loadFileBlob(container, key);
+               new Function<String, StorageMetadata>() {
+                  public StorageMetadata apply(String key) {
+                     Blob oldBlob = loadFileBlob(container, key);
 
                      checkState(oldBlob != null, "blob " + key + " is not present although it was in the list of "
                               + container);
@@ -188,72 +182,72 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
                }));
 
       String marker = null;
-      if(options!=null) {
-          if (options.getMarker() != null) {
-             final String finalMarker = options.getMarker();
-             StorageMetadata lastMarkerMetadata = find(contents, new Predicate<StorageMetadata>() {
-                public boolean apply(StorageMetadata metadata) {
-                   return metadata.getName().equals(finalMarker);
-                }
-             });
-             contents = contents.tailSet(lastMarkerMetadata);
-             contents.remove(lastMarkerMetadata);
-          }
+      if (options != null) {
+         if (options.getMarker() != null) {
+            final String finalMarker = options.getMarker();
+            StorageMetadata lastMarkerMetadata = find(contents, new Predicate<StorageMetadata>() {
+               public boolean apply(StorageMetadata metadata) {
+                  return metadata.getName().equals(finalMarker);
+               }
+            });
+            contents = contents.tailSet(lastMarkerMetadata);
+            contents.remove(lastMarkerMetadata);
+         }
 
-          final String prefix = options.getDir();
-          if (prefix != null) {
-             contents = newTreeSet(filter(contents, new Predicate<StorageMetadata>() {
-                public boolean apply(StorageMetadata o) {
-                   return (o != null && o.getName().startsWith(prefix) && !o.getName().equals(prefix));
-                }
-             }));
-          }
+         final String prefix = options.getDir();
+         if (prefix != null) {
+            contents = newTreeSet(filter(contents, new Predicate<StorageMetadata>() {
+               public boolean apply(StorageMetadata o) {
+                  return (o != null && o.getName().startsWith(prefix) && !o.getName().equals(prefix));
+               }
+            }));
+         }
 
-          Integer maxResults = options.getMaxResults() != null ? options.getMaxResults() : 1000;
-          if (contents.size() > 0) {
-             SortedSet<StorageMetadata> contentsSlice = firstSliceOfSize(contents, maxResults);
-             if (!contentsSlice.contains(contents.last())) {
-                // Partial listing
-                marker = contentsSlice.last().getName();
-             } else {
-                marker = null;
-             }
-             contents = contentsSlice;
-          }
+         Integer maxResults = options.getMaxResults() != null ? options.getMaxResults() : 1000;
+         if (contents.size() > 0) {
+            SortedSet<StorageMetadata> contentsSlice = firstSliceOfSize(contents, maxResults);
+            if (!contentsSlice.contains(contents.last())) {
+               // Partial listing
+               marker = contentsSlice.last().getName();
+            } else {
+               marker = null;
+            }
+            contents = contentsSlice;
+         }
 
-          final String delimiter = options.isRecursive() ? null : File.separator;
-          if (delimiter != null) {
-             SortedSet<String> commonPrefixes = null;
-             Iterable<String> iterable = transform(contents, new CommonPrefixes(prefix != null ? prefix : null, delimiter));
-             commonPrefixes = iterable != null ? newTreeSet(iterable) : new TreeSet<String>();
-             commonPrefixes.remove(CommonPrefixes.NO_PREFIX);
+         final String delimiter = options.isRecursive() ? null : File.separator;
+         if (delimiter != null) {
+            SortedSet<String> commonPrefixes = null;
+            Iterable<String> iterable = transform(contents, new CommonPrefixes(prefix != null ? prefix : null,
+                     delimiter));
+            commonPrefixes = iterable != null ? newTreeSet(iterable) : new TreeSet<String>();
+            commonPrefixes.remove(CommonPrefixes.NO_PREFIX);
 
-             contents = newTreeSet(filter(contents, new DelimiterFilter(prefix != null ? prefix : null, delimiter)));
+            contents = newTreeSet(filter(contents, new DelimiterFilter(prefix != null ? prefix : null, delimiter)));
 
-             Iterables.<StorageMetadata> addAll(contents, transform(commonPrefixes,
-                      new Function<String, StorageMetadata>() {
-                         public StorageMetadata apply(String o) {
-                            MutableStorageMetadata md = new MutableStorageMetadataImpl();
-                            md.setType(StorageType.RELATIVE_PATH);
-                            md.setName(o);
-                            return md;
-                         }
-                      }));
-          }
+            Iterables.<StorageMetadata> addAll(contents, transform(commonPrefixes,
+                     new Function<String, StorageMetadata>() {
+                        public StorageMetadata apply(String o) {
+                           MutableStorageMetadata md = new MutableStorageMetadataImpl();
+                           md.setType(StorageType.RELATIVE_PATH);
+                           md.setName(o);
+                           return md;
+                        }
+                     }));
+         }
 
-          // trim metadata, if the response isn't supposed to be detailed.
-          if (!options.isDetailed()) {
-             for (StorageMetadata md : contents) {
-                md.getUserMetadata().clear();
-             }
-          }
+         // trim metadata, if the response isn't supposed to be detailed.
+         if (!options.isDetailed()) {
+            for (StorageMetadata md : contents) {
+               md.getUserMetadata().clear();
+            }
+         }
       }
 
       return Futures.<PageSet<? extends StorageMetadata>> immediateFuture(new PageSetImpl<StorageMetadata>(contents,
                marker));
 
    }
-
 
    private ContainerNotFoundException cnfe(final String name) {
       return new ContainerNotFoundException(name, String.format("container %s not in filesystem", name));
@@ -295,37 +289,36 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<Void> removeBlob(final String container, final String key) {
-       storageStrategy.removeBlob(container, key);
-       return immediateFuture(null);
+      storageStrategy.removeBlob(container, key);
+      return immediateFuture(null);
    }
-
 
    /**
     * {@inheritDoc}
     */
    @Override
    public ListenableFuture<Boolean> containerExists(final String containerName) {
-       boolean exists = containerExistsSyncImpl(containerName);
-       return immediateFuture(exists);
+      boolean exists = containerExistsSyncImpl(containerName);
+      return immediateFuture(exists);
    }
 
-    /**
+   /**
     * {@inheritDoc}
     */
-    @Override
-    public ListenableFuture<PageSet<? extends StorageMetadata>> list() {
-        Iterable<String> containers =  storageStrategy.getAllContainerNames();
+   @Override
+   public ListenableFuture<PageSet<? extends StorageMetadata>> list() {
+      Iterable<String> containers = storageStrategy.getAllContainerNames();
 
-        return Futures.<PageSet<? extends StorageMetadata>> immediateFuture(new PageSetImpl<StorageMetadata>(transform(
-                containers, new Function<String, StorageMetadata>() {
-                    public StorageMetadata apply(String name) {
-                        MutableStorageMetadata cmd = create();
-                        cmd.setName(name);
-                        cmd.setType(StorageType.CONTAINER);
-                        return cmd;
-                    }
-                }), null));
-    }
+      return Futures.<PageSet<? extends StorageMetadata>> immediateFuture(new PageSetImpl<StorageMetadata>(transform(
+               containers, new Function<String, StorageMetadata>() {
+                  public StorageMetadata apply(String name) {
+                     MutableStorageMetadata cmd = create();
+                     cmd.setName(name);
+                     cmd.setType(StorageType.CONTAINER);
+                     return cmd;
+                  }
+               }), null));
+   }
 
    protected MutableStorageMetadata create() {
       return new MutableStorageMetadataImpl();
@@ -336,11 +329,10 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Path("{container}")
    @Override
-   public ListenableFuture<Boolean> createContainerInLocation(
-           final Location location,
-           @PathParam("container") @ParamValidators( { FilesystemContainerNameValidator.class }) String name) {
-       boolean result = storageStrategy.createContainer(name);
-       return immediateFuture(result);
+   public ListenableFuture<Boolean> createContainerInLocation(final Location location,
+            @PathParam("container") @ParamValidators( { FilesystemContainerNameValidator.class }) String name) {
+      boolean result = storageStrategy.createContainer(name);
+      return immediateFuture(result);
    }
 
    public String getFirstQueryOrNull(String string, @Nullable HttpRequestOptions options) {
@@ -350,44 +342,44 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       return (values != null && values.size() >= 1) ? values.iterator().next() : null;
    }
 
-    /**
-     * Load the blob with the given key belonging to the container with the given
-     * name. There must exist a resource on the file system whose complete name
-     * is given concatenating the container name and the key
-     *
-     * @param container it's the name of the container the blob belongs to
-     * @param key it's the key of the blob
-     *
-     * @return the blob belonging to the given container with the given key
-     */
-    private Blob loadFileBlob(final String container, final String key) {
-        logger.debug("Opening blob in container: %s - %s", container, key);
-        File blobPayload = storageStrategy.getFileForBlobKey(container, key);
+   /**
+    * Load the blob with the given key belonging to the container with the given name. There must
+    * exist a resource on the file system whose complete name is given concatenating the container
+    * name and the key
+    * 
+    * @param container
+    *           it's the name of the container the blob belongs to
+    * @param key
+    *           it's the key of the blob
+    * 
+    * @return the blob belonging to the given container with the given key
+    */
+   private Blob loadFileBlob(final String container, final String key) {
+      logger.debug("Opening blob in container: %s - %s", container, key);
+      File blobPayload = storageStrategy.getFileForBlobKey(container, key);
 
-        Payload payload = new FilePayload(blobPayload);
-        // Loading object metadata
-        MutableBlobMetadata metadata = new MutableBlobMetadataImpl();
-        metadata.setName(key);
-        metadata.setLastModified(new Date(blobPayload.lastModified()));
-        metadata.getContentMetadata().setContentLength(blobPayload.length());
-        // TODO What about the MD5? are we supposed to calculate it each time we load
-        //the file?
-        try {
-            payload = Payloads.calculateMD5(payload);
-        } catch (IOException e) {
-            logger.error("An error occurred calculating MD5 for blob %s from container ", key, container);
-            Throwables.propagateIfPossible(e);
-        }
-        metadata.getContentMetadata().setContentType("");
-        String eTag = CryptoStreams.hex(payload.getContentMetadata().getContentMD5());
-        metadata.setETag(eTag);
-        // Creating new blob object
-        Blob blob = blobFactory.create(metadata);
-        blob.setPayload(blobPayload);
-        return blob;
-    }
-
-
+      Payload payload = new FilePayload(blobPayload);
+      // Loading object metadata
+      MutableBlobMetadata metadata = new MutableBlobMetadataImpl();
+      metadata.setName(key);
+      metadata.setLastModified(new Date(blobPayload.lastModified()));
+      metadata.getContentMetadata().setContentLength(blobPayload.length());
+      // TODO What about the MD5? are we supposed to calculate it each time we load
+      // the file?
+      try {
+         payload = Payloads.calculateMD5(payload);
+      } catch (IOException e) {
+         logger.error("An error occurred calculating MD5 for blob %s from container ", key, container);
+         Throwables.propagateIfPossible(e);
+      }
+      metadata.getContentMetadata().setContentType("");
+      String eTag = CryptoStreams.hex(payload.getContentMetadata().getContentMD5());
+      metadata.setETag(eTag);
+      // Creating new blob object
+      Blob blob = blobFactory.create(metadata);
+      blob.setPayload(blobPayload);
+      return blob;
+   }
 
    protected static class DelimiterFilter implements Predicate<StorageMetadata> {
       private final String prefix;
@@ -496,14 +488,13 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       logger.debug("Put object with key [%s] to container [%s]", blobKey, containerName);
       String eTag = getEtag(object);
       try {
-         //TODO
-         //must override existing file?
+         // TODO
+         // must override existing file?
 
          storageStrategy.writePayloadOnFile(containerName, blobKey, object.getPayload());
       } catch (IOException e) {
-         logger.error(e, "An error occurred storing the new object with name [%s] to container [%s].",
-               blobKey,
-               containerName);
+         logger.error(e, "An error occurred storing the new object with name [%s] to container [%s].", blobKey,
+                  containerName);
          Throwables.propagate(e);
       }
       return immediateFuture(eTag);
@@ -522,9 +513,9 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
     */
    @Override
    public ListenableFuture<Blob> getBlob(final String containerName, final String key, GetOptions options) {
-      logger.debug("Retrieving blob with key %s from container %s", key,containerName);
+      logger.debug("Retrieving blob with key %s from container %s", key, containerName);
       // If the container doesn't exist, an exception is thrown
-      if(!containerExistsSyncImpl(containerName))  {
+      if (!containerExistsSyncImpl(containerName)) {
          logger.debug("Container %s does not exist", containerName);
          return immediateFailedFuture(cnfe(containerName));
       }
@@ -536,63 +527,63 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
 
       Blob blob = loadFileBlob(containerName, key);
 
-      if(options!=null) {
-        if (options.getIfMatch() != null) {
-             if (!blob.getMetadata().getETag().equals(options.getIfMatch()))
-                return immediateFailedFuture(returnResponseException(412));
-        }
-        if (options.getIfNoneMatch() != null) {
-             if (blob.getMetadata().getETag().equals(options.getIfNoneMatch()))
-                return immediateFailedFuture(returnResponseException(304));
-        }
-        if (options.getIfModifiedSince() != null) {
-             Date modifiedSince = options.getIfModifiedSince();
+      if (options != null) {
+         if (options.getIfMatch() != null) {
+            if (!blob.getMetadata().getETag().equals(options.getIfMatch()))
+               return immediateFailedFuture(returnResponseException(412));
+         }
+         if (options.getIfNoneMatch() != null) {
+            if (blob.getMetadata().getETag().equals(options.getIfNoneMatch()))
+               return immediateFailedFuture(returnResponseException(304));
+         }
+         if (options.getIfModifiedSince() != null) {
+            Date modifiedSince = options.getIfModifiedSince();
             if (blob.getMetadata().getLastModified().before(modifiedSince)) {
-                HttpResponse response = new HttpResponse(304, null, null);
-                return immediateFailedFuture(new HttpResponseException(String.format("%1$s is before %2$s", blob
-                         .getMetadata().getLastModified(), modifiedSince), null, response));
+               HttpResponse response = new HttpResponse(304, null, null);
+               return immediateFailedFuture(new HttpResponseException(String.format("%1$s is before %2$s", blob
+                        .getMetadata().getLastModified(), modifiedSince), null, response));
             }
 
-          }
-          if (options.getIfUnmodifiedSince() != null) {
-             Date unmodifiedSince = options.getIfUnmodifiedSince();
-             if (blob.getMetadata().getLastModified().after(unmodifiedSince)) {
-                HttpResponse response = new HttpResponse(412, null, null);
-                return immediateFailedFuture(new HttpResponseException(String.format("%1$s is after %2$s", blob
-                         .getMetadata().getLastModified(), unmodifiedSince), null, response));
-             }
-          }
+         }
+         if (options.getIfUnmodifiedSince() != null) {
+            Date unmodifiedSince = options.getIfUnmodifiedSince();
+            if (blob.getMetadata().getLastModified().after(unmodifiedSince)) {
+               HttpResponse response = new HttpResponse(412, null, null);
+               return immediateFailedFuture(new HttpResponseException(String.format("%1$s is after %2$s", blob
+                        .getMetadata().getLastModified(), unmodifiedSince), null, response));
+            }
+         }
 
-          if (options.getRanges() != null && options.getRanges().size() > 0) {
-             byte[] data;
-             try {
-                data = toByteArray(blob.getPayload().getInput());
-             } catch (IOException e) {
-                return immediateFailedFuture(new RuntimeException(e));
-             }
-             ByteArrayOutputStream out = new ByteArrayOutputStream();
-             for (String s : options.getRanges()) {
-                if (s.startsWith("-")) {
-                   int length = Integer.parseInt(s.substring(1));
-                   out.write(data, data.length - length, length);
-                } else if (s.endsWith("-")) {
-                   int offset = Integer.parseInt(s.substring(0, s.length() - 1));
-                   out.write(data, offset, data.length - offset);
-                } else if (s.contains("-")) {
-                   String[] firstLast = s.split("\\-");
-                   int offset = Integer.parseInt(firstLast[0]);
-                   int last = Integer.parseInt(firstLast[1]);
-                   int length = (last < data.length) ? last + 1 : data.length - offset;
-                   out.write(data, offset, length);
-                } else {
-                   return immediateFailedFuture(new IllegalArgumentException("first and last were null!"));
-                }
+         if (options.getRanges() != null && options.getRanges().size() > 0) {
+            byte[] data;
+            try {
+               data = toByteArray(blob.getPayload().getInput());
+            } catch (IOException e) {
+               return immediateFailedFuture(new RuntimeException(e));
+            }
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            for (String s : options.getRanges()) {
+               if (s.startsWith("-")) {
+                  int length = Integer.parseInt(s.substring(1));
+                  out.write(data, data.length - length, length);
+               } else if (s.endsWith("-")) {
+                  int offset = Integer.parseInt(s.substring(0, s.length() - 1));
+                  out.write(data, offset, data.length - offset);
+               } else if (s.contains("-")) {
+                  String[] firstLast = s.split("\\-");
+                  int offset = Integer.parseInt(firstLast[0]);
+                  int last = Integer.parseInt(firstLast[1]);
+                  int length = (last < data.length) ? last + 1 : data.length - offset;
+                  out.write(data, offset, length);
+               } else {
+                  return immediateFailedFuture(new IllegalArgumentException("first and last were null!"));
+               }
 
-             }
-             blob.setPayload(out.toByteArray());
-             blob.getMetadata().getContentMetadata().setContentLength(new Long(data.length));
-          }
-       }
+            }
+            blob.setPayload(out.toByteArray());
+            blob.getMetadata().getContentMetadata().setContentLength(new Long(data.length));
+         }
+      }
       checkNotNull(blob.getPayload(), "payload " + blob);
       return immediateFuture(blob);
    }
@@ -618,11 +609,10 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       return containerExistsSyncImpl(container);
    }
 
-
    /**
-    * Override parent method because it uses strange futures and listenables
-    * that creates problem in the test if more than one test that deletes the
-    * container is executed
+    * Override parent method because it uses strange futures and listenables that creates problem in
+    * the test if more than one test that deletes the container is executed
+    * 
     * @param container
     * @return
     */
@@ -632,35 +622,33 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
       return immediateFuture(null);
    }
 
-
    /**
-    * Each container is a directory, so in order to check if a container exists
-    * the corresponding directory must exists. Synchronous implementation
+    * Each container is a directory, so in order to check if a container exists the corresponding
+    * directory must exists. Synchronous implementation
+    * 
     * @param containerName
     * @return
     */
    private boolean containerExistsSyncImpl(String containerName) {
-       return storageStrategy.containerExists(containerName);
+      return storageStrategy.containerExists(containerName);
    }
 
-
-
    /**
-    *
+    * 
     * Calculates the object MD5 and returns it as eTag
+    * 
     * @param object
     * @return
     */
-    private String getEtag(Blob object) {
-        try {
-            Payloads.calculateMD5(object, crypto.md5());
-        } catch (IOException ex) {
-            logger.error(ex, "An error occurred calculating MD5 for object with name %s.",
-                object.getMetadata().getName());
-            Throwables.propagate(ex);
-        }
+   private String getEtag(Blob object) {
+      try {
+         Payloads.calculateMD5(object, crypto.md5());
+      } catch (IOException ex) {
+         logger.error(ex, "An error occurred calculating MD5 for object with name %s.", object.getMetadata().getName());
+         Throwables.propagate(ex);
+      }
 
-        String eTag = CryptoStreams.hex(object.getPayload().getContentMetadata().getContentMD5());
-        return eTag;
-    }
+      String eTag = CryptoStreams.hex(object.getPayload().getContentMetadata().getContentMD5());
+      return eTag;
+   }
 }

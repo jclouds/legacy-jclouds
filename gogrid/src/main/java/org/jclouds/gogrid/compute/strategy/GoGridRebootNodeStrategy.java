@@ -56,12 +56,12 @@ public class GoGridRebootNodeStrategy implements RebootNodeStrategy {
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata rebootNode(String id) {
       Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(new Long(id)));
       client.getServerServices().power(server.getName(), PowerCommand.RESTART);
       serverLatestJobCompleted.apply(server);
       client.getServerServices().power(server.getName(), PowerCommand.START);
       serverLatestJobCompletedShort.apply(server);
-      return getNode.execute(id);
+      return getNode.getNode(id);
    }
 }

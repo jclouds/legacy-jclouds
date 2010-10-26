@@ -21,10 +21,12 @@ package org.jclouds.rest.internal;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.lifecycle.Closer;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RestContext;
@@ -54,11 +56,13 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
    private final String provider;
    private final String apiVersion;
    private final Utils utils;
+   private final Map<String, Credentials> credentialStore;
 
    @Inject
-   protected RestContextImpl(Closer closer, Utils utils, Injector injector, TypeLiteral<S> syncApi,
-         TypeLiteral<A> asyncApi, @Provider URI endpoint, @Provider String provider, @Identity String identity,
-         @ApiVersion String apiVersion) {
+   protected RestContextImpl(Closer closer, Map<String, Credentials> credentialStore, Utils utils, Injector injector,
+         TypeLiteral<S> syncApi, TypeLiteral<A> asyncApi, @Provider URI endpoint, @Provider String provider,
+         @Identity String identity, @ApiVersion String apiVersion) {
+      this.credentialStore = credentialStore;
       this.utils = utils;
       this.asyncApi = injector.getInstance(Key.get(asyncApi));
       this.syncApi = injector.getInstance(Key.get(syncApi));
@@ -169,7 +173,17 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
 
    @Override
    public String toString() {
-      return "RestContextImpl [provider=" + provider + ", endpoint=" + endpoint + ", apiVersion=" + apiVersion
-            + ", identity=" + identity + "]";
+      return " [provider=" + provider + ", endpoint=" + endpoint + ", apiVersion=" + apiVersion + ", identity="
+            + identity + "]";
+   }
+
+   @Override
+   public Map<String, Credentials> getCredentialStore() {
+      return credentialStore;
+   }
+
+   @Override
+   public Map<String, Credentials> credentialStore() {
+      return credentialStore;
    }
 }

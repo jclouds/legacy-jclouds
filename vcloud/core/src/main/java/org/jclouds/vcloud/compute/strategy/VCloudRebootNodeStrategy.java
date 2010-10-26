@@ -52,10 +52,10 @@ public class VCloudRebootNodeStrategy implements RebootNodeStrategy {
    }
 
    @Override
-   public NodeMetadata execute(String in) {
+   public NodeMetadata rebootNode(String in) {
       URI id = URI.create(checkNotNull(in, "node.id"));
       Task task = client.resetVAppOrVm(id);
       taskTester.apply(task.getHref());
-      return getNode.execute(in);
+      return getNode.getNode(in);
    }
 }

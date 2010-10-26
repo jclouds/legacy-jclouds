@@ -47,10 +47,10 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -71,7 +71,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.io.OutputSupplier;
-import com.google.gson.ExposedEscaper;
 import com.google.inject.Module;
 import com.google.inject.ProvisionException;
 import com.google.inject.spi.Message;
@@ -82,11 +81,6 @@ import com.google.inject.spi.Message;
  * @author Adrian Cole
  */
 public class Utils {
-   private static final ExposedEscaper escaper = new ExposedEscaper(false);
-
-   public static String escapeJsonString(CharSequence plainText) {
-      return escaper.escapeJsonString(plainText);
-   }
 
    public static <K, V> Supplier<Map<K, V>> composeMapSupplier(Iterable<Supplier<Map<K, V>>> suppliers) {
       return new ListMapSupplier<K, V>(suppliers);

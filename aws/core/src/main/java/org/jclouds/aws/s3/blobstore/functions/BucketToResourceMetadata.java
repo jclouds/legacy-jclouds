@@ -33,6 +33,7 @@ import org.jclouds.blobstore.domain.MutableStorageMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
+import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 
@@ -54,7 +55,7 @@ public class BucketToResourceMetadata implements Function<BucketMetadata, Storag
    protected Logger logger = Logger.NULL;
 
    @Inject
-   BucketToResourceMetadata(S3Client client, Supplier<Set<? extends Location>> locations) {
+   BucketToResourceMetadata(S3Client client, @Memoized Supplier<Set<? extends Location>> locations) {
       this.client = client;
       this.onlyLocation = locations.get().size() == 1 ? Iterables.get(locations.get(), 0) : null;
       this.locations = locations;

@@ -37,6 +37,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
+import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
@@ -73,6 +74,7 @@ public class S3BlobStoreContextModule extends AbstractModule {
 
    @Provides
    @Singleton
+   @Memoized
    Supplier<Set<? extends Location>> provideLocations(@Region Set<String> regions, @Provider String providerName) {
       Set<Location> locations = Sets.newHashSet();
       Location s3 = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);

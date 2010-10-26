@@ -20,8 +20,19 @@
 package org.jclouds.aws.ec2.compute.suppliers;
 
 import static com.google.common.collect.Iterables.find;
-import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Sets.newLinkedHashSet;
+import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.c1_medium;
+import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.c1_xlarge;
+import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.cc1_4xlarge;
+import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.m1_large;
+import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.m1_small;
+import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.m1_xlarge;
+import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.m2_2xlarge;
+import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.m2_4xlarge;
+import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.m2_xlarge;
+import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.t1_micro;
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_CC_AMIs;
+import static org.jclouds.compute.predicates.ImagePredicates.any;
 
 import java.util.Set;
 
@@ -30,11 +41,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.compute.domain.EC2Hardware;
-import org.jclouds.aws.ec2.domain.InstanceType;
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.Processor;
-import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -43,7 +51,6 @@ import org.jclouds.rest.annotations.Provider;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -60,7 +67,7 @@ public class EC2HardwareSupplier implements Supplier<Set<? extends Hardware>> {
    private final String providerName;
 
    @Inject
-   EC2HardwareSupplier(Supplier<Set<? extends Location>> locations, @Provider String providerName,
+   EC2HardwareSupplier(@Memoized Supplier<Set<? extends Location>> locations, @Provider String providerName,
             @Named(PROPERTY_EC2_CC_AMIs) String[] ccAmis) {
       this.locations = locations;
       this.ccAmis = ccAmis;
@@ -69,7 +76,7 @@ public class EC2HardwareSupplier implements Supplier<Set<? extends Hardware>> {
 
    @Override
    public Set<? extends Hardware> get() {
-      Set<Hardware> sizes = newHashSet();
+      Set<Hardware> sizes = newLinkedHashSet();
       for (String ccAmi : ccAmis) {
          final String region = ccAmi.split("/")[0];
          Location location = find(locations.get(), new Predicate<Location>() {
@@ -80,14 +87,11 @@ public class EC2HardwareSupplier implements Supplier<Set<? extends Hardware>> {
             }
 
          });
-         sizes.add(new EC2Hardware(location, InstanceType.CC1_4XLARGE, ImmutableList.of(new Processor(4.0, 4.0),
-                  new Processor(4.0, 4.0)), 23 * 1024, ImmutableList.of(
-                  new VolumeImpl(10.0f, "/dev/sda1", true, false), new VolumeImpl(840.0f, "/dev/sdb", false, false),
-                  new VolumeImpl(840.0f, "/dev/sdc", false, false)), ccAmis));
+         sizes.add(cc1_4xlarge().location(location).supportsImageIds(ccAmi).build());
       }
-      sizes.addAll(ImmutableSet.<Hardware> of(EC2Hardware.T1_MICRO, EC2Hardware.C1_MEDIUM, EC2Hardware.C1_XLARGE,
-               EC2Hardware.M1_LARGE, "nova".equals(providerName) ? EC2Hardware.M1_SMALL_NOVA : EC2Hardware.M1_SMALL,
-               EC2Hardware.M1_XLARGE, EC2Hardware.M2_XLARGE, EC2Hardware.M2_2XLARGE, EC2Hardware.M2_4XLARGE));
+      sizes.addAll(ImmutableSet.<Hardware> of(t1_micro().build(), c1_medium().build(), c1_xlarge().build(), m1_large()
+               .build(), "nova".equals(providerName) ? m1_small().supportsImage(any()).build() : m1_small().build(),
+               m1_xlarge().build(), m2_xlarge().build(), m2_2xlarge().build(), m2_4xlarge().build()));
       return sizes;
    }
 }

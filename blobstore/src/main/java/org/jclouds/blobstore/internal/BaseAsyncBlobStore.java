@@ -39,6 +39,7 @@ import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.blobstore.util.internal.BlobUtilsImpl;
+import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.util.Utils;
 
@@ -61,7 +62,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
    @Inject
    protected BaseAsyncBlobStore(BlobStoreContext context, BlobUtils blobUtils,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService service, Supplier<Location> defaultLocation,
-            Supplier<Set<? extends Location>> locations) {
+            @Memoized Supplier<Set<? extends Location>> locations) {
       this.context = checkNotNull(context, "context");
       this.blobUtils = checkNotNull(blobUtils, "blobUtils");
       this.service = checkNotNull(service, "service");
@@ -266,6 +267,5 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
    }
 
    protected abstract boolean deleteAndVerifyContainerGone(String container);
-
 
 }

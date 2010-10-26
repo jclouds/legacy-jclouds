@@ -21,21 +21,19 @@ package org.jclouds.slicehost.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.slicehost.SlicehostClient;
 import org.jclouds.slicehost.domain.Slice;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
+import com.google.common.base.Function;
 
 /**
  * 
@@ -43,35 +41,23 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class SlicehostAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
-   private final SlicehostClient client;
+   protected final SlicehostClient client;
+   protected final Map<String, Credentials> credentialStore;
+   protected final Function<Slice, NodeMetadata> sliceToNodeMetadata;
 
    @Inject
-   protected SlicehostAddNodeWithTagStrategy(SlicehostClient client) {
+   protected SlicehostAddNodeWithTagStrategy(SlicehostClient client, Map<String, Credentials> credentialStore,
+         Function<Slice, NodeMetadata> sliceToNodeMetadata) {
       this.client = checkNotNull(client, "client");
+      this.credentialStore = checkNotNull(credentialStore, "credentialStore");
+      this.sliceToNodeMetadata = checkNotNull(sliceToNodeMetadata, "sliceToNodeMetadata");
    }
 
    @Override
-   public NodeMetadata execute(String tag, String name, Template template) {
-      Slice slice = client.createSlice(name, Integer.parseInt(template.getImage().getProviderId()), Integer
-               .parseInt(template.getHardware().getProviderId()));
-      return new NodeMetadataImpl(slice.getId() + "", name, slice.getId() + "", template.getLocation(), null,
-               ImmutableMap.<String, String> of(), tag, template.getHardware(), template.getImage().getId(), template
-                        .getImage().getOperatingSystem(), NodeState.PENDING, Iterables.filter(slice.getAddresses(),
-                        new Predicate<String>() {
-
-                           @Override
-                           public boolean apply(String input) {
-                              return !input.startsWith("10.");
-                           }
-
-                        }), Iterables.filter(slice.getAddresses(), new Predicate<String>() {
-
-                  @Override
-                  public boolean apply(String input) {
-                     return input.startsWith("10.");
-                  }
-
-               }), new Credentials("root", slice.getRootPassword()));
+   public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
+      Slice from = client.createSlice(name, Integer.parseInt(template.getImage().getProviderId()),
+            Integer.parseInt(template.getHardware().getProviderId()));
+      credentialStore.put(from.getId() + "", new Credentials("root", from.getRootPassword()));
+      return sliceToNodeMetadata.apply(from);
    }
-
 }

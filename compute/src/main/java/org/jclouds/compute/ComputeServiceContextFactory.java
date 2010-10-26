@@ -27,7 +27,7 @@ import java.util.Properties;
 import javax.annotation.Nullable;
 
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 
 import com.google.inject.Module;
 
@@ -41,8 +41,8 @@ public class ComputeServiceContextFactory {
    private final RestContextFactory contextFactory;
 
    /**
-    * Initializes with the default properties built-in to jclouds. This is
-    * typically stored in the classpath resource {@code rest.properties}
+    * Initializes with the default properties built-in to jclouds. This is typically stored in the
+    * classpath resource {@code rest.properties}
     * 
     * @see RestContextFactory#getPropertiesFromResource
     */
@@ -59,8 +59,7 @@ public class ComputeServiceContextFactory {
 
    /**
     * 
-    * Uses the supplied RestContextFactory to create
-    * {@link ComputeServiceContext}s
+    * Uses the supplied RestContextFactory to create {@link ComputeServiceContext}s
     */
    public ComputeServiceContextFactory(RestContextFactory restContextFactory) {
       this.contextFactory = restContextFactory;
@@ -104,8 +103,7 @@ public class ComputeServiceContextFactory {
    }
 
    /**
-    * @see RestContextFactory#createContextBuilder(String, String,String,
-    *      Iterable)
+    * @see RestContextFactory#createContextBuilder(String, String,String, Iterable)
     */
    public ComputeServiceContext createContext(String provider, @Nullable String identity, @Nullable String credential,
          Iterable<? extends Module> modules) {
@@ -115,8 +113,7 @@ public class ComputeServiceContextFactory {
    }
 
    /**
-    * @see RestContextFactory#createContextBuilder(String, String,String,
-    *      Iterable, Properties)
+    * @see RestContextFactory#createContextBuilder(String, String,String, Iterable, Properties)
     */
    public ComputeServiceContext createContext(String provider, @Nullable String identity, @Nullable String credential,
          Iterable<? extends Module> modules, Properties overrides) {
@@ -126,9 +123,9 @@ public class ComputeServiceContextFactory {
    }
 
    /**
-    * @see RestContextFactory#createContextBuilder(ContextSpec)
+    * @see RestContextFactory#createContextBuilder(RestContextSpec)
     */
-   public <S, A> ComputeServiceContext createContext(ContextSpec<S, A> contextSpec) {
+   public <S, A> ComputeServiceContext createContext(RestContextSpec<S, A> contextSpec) {
       ComputeServiceContextBuilder<?, ?> builder = ComputeServiceContextBuilder.class
             .cast(createContextBuilder(contextSpec));
       return buildContextUnwrappingExceptions(builder);
@@ -136,11 +133,21 @@ public class ComputeServiceContextFactory {
    }
 
    /**
-    * @see RestContextFactory#createContextBuilder(ContextSpec, Properties)
+    * @see RestContextFactory#createContextBuilder(RestContextSpec, Properties)
     */
-   public <S, A> ComputeServiceContext createContext(ContextSpec<S, A> contextSpec, Properties overrides) {
+   public <S, A> ComputeServiceContext createContext(RestContextSpec<S, A> contextSpec, Properties overrides) {
       ComputeServiceContextBuilder<?, ?> builder = ComputeServiceContextBuilder.class.cast(createContextBuilder(
             contextSpec, overrides));
+      return buildContextUnwrappingExceptions(builder);
+   }
+
+   /**
+    * @see RestContextFactory#createContextBuilder(RestContextSpec, Iterable, Properties)
+    */
+   public <S, A> ComputeServiceContext createContext(RestContextSpec<S, A> contextSpec, Iterable<Module> modules,
+         Properties overrides) {
+      ComputeServiceContextBuilder<?, ?> builder = ComputeServiceContextBuilder.class.cast(createContextBuilder(
+            contextSpec, modules, overrides));
       return buildContextUnwrappingExceptions(builder);
    }
 

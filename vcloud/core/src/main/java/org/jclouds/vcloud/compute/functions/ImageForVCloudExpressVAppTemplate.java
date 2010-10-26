@@ -25,16 +25,14 @@ import static org.jclouds.compute.util.ComputeServiceUtils.parseOsFamilyOrNull;
 import javax.inject.Inject;
 
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.OperatingSystemBuilder;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
-import org.jclouds.domain.Location;
-import org.jclouds.vcloud.compute.domain.VCloudExpressImage;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 
 import com.google.common.base.Function;
-import com.google.common.collect.ImmutableMap;
 
 /**
  * @author Adrian Cole
@@ -46,7 +44,7 @@ public class ImageForVCloudExpressVAppTemplate implements Function<VCloudExpress
 
    @Inject
    protected ImageForVCloudExpressVAppTemplate(FindLocationForResource findLocationForResource,
-            PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider) {
+         PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider) {
       this.findLocationForResource = checkNotNull(findLocationForResource, "findLocationForResource");
       this.credentialsProvider = checkNotNull(credentialsProvider, "credentialsProvider");
    }
@@ -58,23 +56,23 @@ public class ImageForVCloudExpressVAppTemplate implements Function<VCloudExpress
 
    @Override
    public Image apply(VCloudExpressVAppTemplate from) {
-      OsFamily osFamily = parseOsFamilyOrNull("vcloudexpress", checkNotNull(from, "vapp template").getName());
-      String osName = null;
-      String osArch = null;
-      String osVersion = null;
-      String osDescription = from.getName();
-      boolean is64Bit = from.getName().indexOf("64") != -1;
-      OperatingSystem os = new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
-
-      Location location = findLocationForResource.apply(checkNotNull(parent, "parent"));
-      String name = getName(from.getName());
-      String desc = from.getDescription() != null ? from.getDescription() : from.getName();
-      return new VCloudExpressImage(from, from.getHref().toASCIIString(), name, from.getHref().toASCIIString(),
-               location, from.getHref(), ImmutableMap.<String, String> of(), os, desc, "", credentialsProvider
-                        .execute(from));
+      ImageBuilder builder = new ImageBuilder();
+      builder.ids(from.getHref().toASCIIString());
+      builder.uri(from.getHref());
+      builder.name(from.getName());
+      builder.location(findLocationForResource.apply(checkNotNull(parent, "parent")));
+      builder.description(from.getDescription() != null ? from.getDescription() : from.getName());
+      builder.operatingSystem(parseOs(from));
+      builder.defaultCredentials(credentialsProvider.execute(from));
+      return builder.build();
    }
 
-   protected String getName(String name) {
-      return name;
+   protected OperatingSystem parseOs(VCloudExpressVAppTemplate from) {
+      OperatingSystemBuilder builder = new OperatingSystemBuilder();
+      builder.family(parseOsFamilyOrNull("vcloudexpress", checkNotNull(from, "vapp template").getName()));
+      builder.description(from.getName());
+      builder.is64Bit(from.getName().indexOf("64") != -1);
+      return builder.build();
    }
+
 }

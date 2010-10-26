@@ -47,14 +47,13 @@ import com.google.inject.Inject;
  */
 @Singleton
 public class VCloudExpressComputeClientImpl extends
-         CommonVCloudComputeClientImpl<VCloudExpressVAppTemplate, VCloudExpressVApp> implements
-         VCloudExpressComputeClient {
+      CommonVCloudComputeClientImpl<VCloudExpressVAppTemplate, VCloudExpressVApp> implements VCloudExpressComputeClient {
 
    protected final Map<Status, NodeState> vAppStatusToNodeState;
 
    @Inject
    public VCloudExpressComputeClientImpl(VCloudExpressClient client, Predicate<URI> successTester,
-            Map<Status, NodeState> vAppStatusToNodeState) {
+         Map<Status, NodeState> vAppStatusToNodeState) {
       super(client, successTester);
       this.vAppStatusToNodeState = vAppStatusToNodeState;
    }
@@ -66,13 +65,13 @@ public class VCloudExpressComputeClientImpl extends
    }
 
    @Override
-   public Map<String, String> start(@Nullable URI VDC, URI templateId, String name,
-            InstantiateVAppTemplateOptions options, int... portsToOpen) {
+   public VCloudExpressVApp start(@Nullable URI VDC, URI templateId, String name,
+         InstantiateVAppTemplateOptions options, int... portsToOpen) {
       checkNotNull(options, "options");
       logger.debug(">> instantiating vApp vDC(%s) template(%s) name(%s) options(%s) ", VDC, templateId, name, options);
 
       VCloudExpressVApp vAppResponse = VCloudExpressClient.class.cast(client).instantiateVAppTemplateInVDC(VDC,
-               templateId, name, options);
+            templateId, name, options);
       logger.debug("<< instantiated VApp(%s)", vAppResponse.getName());
       if (options.shouldDeploy()) {
          logger.debug(">> deploying vApp(%s)", vAppResponse.getName());
@@ -88,13 +87,13 @@ public class VCloudExpressComputeClientImpl extends
                task = VCloudExpressClient.class.cast(client).powerOnVApp(vAppResponse.getHref());
                if (!taskTester.apply(task.getHref())) {
                   throw new RuntimeException(String.format("failed to %s %s: %s", "powerOn", vAppResponse.getName(),
-                           task));
+                        task));
                }
                logger.debug("<< on vApp(%s)", vAppResponse.getName());
             }
          }
       }
-      return parseAndValidateResponse(VCloudExpressClient.class.cast(client).getVAppTemplate(templateId), vAppResponse);
+      return vAppResponse;
    }
 
    @Override

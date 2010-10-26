@@ -54,7 +54,7 @@ import org.jclouds.rackspace.filters.AddTimestampQuery;
 import org.jclouds.rackspace.filters.AuthenticateRequest;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnFalseOnNotFoundOr404;
@@ -863,7 +863,7 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
    }
 
    @Override
-   public ContextSpec<CloudServersClient, CloudServersAsyncClient> createContextSpec() {
+   public RestContextSpec<CloudServersClient, CloudServersAsyncClient> createContextSpec() {
       return new RestContextFactory().createContextSpec("cloudservers", "user", "password", new Properties());
    }
 

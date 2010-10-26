@@ -230,14 +230,14 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
    protected void inItem() {
       if (inBlockDeviceMapping) {
          ebsBlockDevices.put(deviceName, new RunningInstance.EbsBlockDevice(volumeId, attachmentStatus, attachTime,
-                  deleteOnTermination));
+               deleteOnTermination));
          this.deviceName = null;
          this.volumeId = null;
          this.attachmentStatus = null;
          this.attachTime = null;
          this.deleteOnTermination = true;
       } else if (inInstances && !inProductCodes && !inBlockDeviceMapping) {
-         String region = EC2Utils.findRegionInArgsOrNull(getRequest());
+         String region = getRequest() != null ? EC2Utils.findRegionInArgsOrNull(getRequest()) : null;
 
          // Eucalyptus
          if (ipAddress == null && dnsName != null && dnsName.matches(".*[0-9]$")) {
@@ -252,10 +252,10 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
          if (region == null)
             region = defaultRegion;
          instances.add(new RunningInstance(region, groupIds, amiLaunchIndex, dnsName, imageId, instanceId,
-                  instanceState, instanceType, ipAddress, kernelId, keyName, launchTime, monitoringState,
-                  availabilityZone, placementGroup, virtualizationType, platform, privateDnsName, privateIpAddress,
-                  productCodes, ramdiskId, reason, subnetId, spotInstanceRequestId, vpcId, rootDeviceType,
-                  rootDeviceName, ebsBlockDevices));
+               instanceState, instanceType, ipAddress, kernelId, keyName, launchTime, monitoringState,
+               availabilityZone, placementGroup, virtualizationType, platform, privateDnsName, privateIpAddress,
+               productCodes, ramdiskId, reason, subnetId, spotInstanceRequestId, vpcId, rootDeviceType, rootDeviceName,
+               ebsBlockDevices));
          this.amiLaunchIndex = null;
          this.dnsName = null;
          this.imageId = null;
@@ -290,11 +290,11 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
    }
 
    protected Reservation<? extends RunningInstance> newReservation() {
-      String region = EC2Utils.findRegionInArgsOrNull(getRequest());
+      String region = getRequest() != null ? EC2Utils.findRegionInArgsOrNull(getRequest()) : null;
       if (region == null)
          region = defaultRegion;
       Reservation<? extends RunningInstance> info = new Reservation<RunningInstance>(region, groupIds, instances,
-               ownerId, requesterId, reservationId);
+            ownerId, requesterId, reservationId);
       this.groupIds = Sets.newLinkedHashSet();
       this.instances = Sets.newLinkedHashSet();
       this.ownerId = null;

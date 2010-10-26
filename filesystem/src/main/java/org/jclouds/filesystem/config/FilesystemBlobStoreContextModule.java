@@ -19,15 +19,8 @@
 
 package org.jclouds.filesystem.config;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Scopes;
-import com.google.inject.Singleton;
-import com.google.inject.TypeLiteral;
 import java.util.Set;
+
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
@@ -36,6 +29,7 @@ import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.util.BlobUtils;
+import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
@@ -48,8 +42,17 @@ import org.jclouds.filesystem.strategy.FilesystemStorageStrategy;
 import org.jclouds.filesystem.strategy.internal.FilesystemStorageStrategyImpl;
 import org.jclouds.filesystem.util.internal.FileSystemBlobUtilsImpl;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
+import com.google.inject.Scopes;
+import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
+
 /**
- *
+ * 
  * @author Alfredo "Rainbowbreeze" Morresi
  */
 public class FilesystemBlobStoreContextModule extends AbstractModule {
@@ -76,6 +79,7 @@ public class FilesystemBlobStoreContextModule extends AbstractModule {
 
    @Provides
    @Singleton
+   @Memoized
    Supplier<Set<? extends Location>> provideLocations(Supplier<Location> defaultLocation) {
       return Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet.of(defaultLocation.get()));
    }

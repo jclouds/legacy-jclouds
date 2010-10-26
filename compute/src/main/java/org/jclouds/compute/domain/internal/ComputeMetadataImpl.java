@@ -33,17 +33,25 @@ import org.jclouds.domain.internal.ResourceMetadataImpl;
  * @author Adrian Cole
  * @author Ivan Meredith
  */
-public class ComputeMetadataImpl extends ResourceMetadataImpl<ComputeType> implements
-         ComputeMetadata {
-
+public class ComputeMetadataImpl extends ResourceMetadataImpl<ComputeType> implements ComputeMetadata {
    /** The serialVersionUID */
    private static final long serialVersionUID = 7374704415964898694L;
    private final String id;
+   private final ComputeType type;
 
-   public ComputeMetadataImpl(ComputeType type, String providerId, String name, String id,
-            Location location, URI uri, Map<String, String> userMetadata) {
-      super(type, providerId, name, location, uri, userMetadata);
+   public ComputeMetadataImpl(ComputeType type, String providerId, String name, String id, Location location, URI uri,
+         Map<String, String> userMetadata) {
+      super(providerId, name, location, uri, userMetadata);
       this.id = checkNotNull(id, "id");
+      this.type = checkNotNull(type, "type");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public ComputeType getType() {
+      return type;
    }
 
    /**
@@ -59,6 +67,7 @@ public class ComputeMetadataImpl extends ResourceMetadataImpl<ComputeType> imple
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((type == null) ? 0 : type.hashCode());
       return result;
    }
 
@@ -75,6 +84,8 @@ public class ComputeMetadataImpl extends ResourceMetadataImpl<ComputeType> imple
          if (other.id != null)
             return false;
       } else if (!id.equals(other.id))
+         return false;
+      if (type != other.type)
          return false;
       return true;
    }

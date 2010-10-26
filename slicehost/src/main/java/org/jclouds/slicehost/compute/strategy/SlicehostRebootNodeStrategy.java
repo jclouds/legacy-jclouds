@@ -43,10 +43,10 @@ public class SlicehostRebootNodeStrategy implements RebootNodeStrategy {
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata rebootNode(String id) {
       int sliceId = Integer.parseInt(id);
       client.hardRebootSlice(sliceId);
-      return getNode.execute(id);
+      return getNode.getNode(id);
    }
 
 }

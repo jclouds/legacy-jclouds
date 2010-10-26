@@ -97,7 +97,7 @@ public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload implemen
       SortedMap<ResourceType, String> virtualHardwareQuantity = Maps.newTreeMap();
 
       InstantiateVAppTemplateOptions options = findOptionsInArgsOrNull(gRequest);
-      String network = defaultNetwork.toASCIIString();
+      String network = (defaultNetwork != null) ? defaultNetwork.toASCIIString() : null;
       String fenceMode = defaultFenceMode;
       String networkName = name;
       if (options != null) {

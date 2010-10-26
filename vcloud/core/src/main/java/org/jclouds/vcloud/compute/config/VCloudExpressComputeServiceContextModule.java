@@ -22,26 +22,21 @@ package org.jclouds.vcloud.compute.config;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.config.BindComputeStrategiesByClass;
+import org.jclouds.compute.config.BindComputeSuppliersByClass;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
-import org.jclouds.compute.strategy.DestroyNodeStrategy;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.compute.CommonVCloudComputeClient;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.compute.functions.ImagesInVCloudExpressOrg;
+import org.jclouds.vcloud.compute.functions.VCloudExpressVAppToNodeMetadata;
 import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressAddNodeWithTagStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressDestroyNodeStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressGetNodeMetadataStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressListNodesStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressRebootNodeStrategy;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 
 import com.google.common.base.Function;
 import com.google.inject.Provides;
@@ -59,8 +54,7 @@ public class VCloudExpressComputeServiceContextModule extends CommonVCloudComput
    @Override
    protected void configure() {
       super.configure();
-      bind(RebootNodeStrategy.class).to(VCloudExpressRebootNodeStrategy.class);
-      bind(GetNodeMetadataStrategy.class).to(VCloudExpressGetNodeMetadataStrategy.class);
+      bindVAppConverter();
       bind(new TypeLiteral<ComputeServiceContext>() {
       }).to(new TypeLiteral<ComputeServiceContextImpl<VCloudExpressClient, VCloudExpressClient>>() {
       }).in(Scopes.SINGLETON);
@@ -70,14 +64,26 @@ public class VCloudExpressComputeServiceContextModule extends CommonVCloudComput
       bind(new TypeLiteral<Function<Org, Iterable<? extends Image>>>() {
       }).to(new TypeLiteral<ImagesInVCloudExpressOrg>() {
       });
-      bind(AddNodeWithTagStrategy.class).to(VCloudExpressAddNodeWithTagStrategy.class);
-      bind(ListNodesStrategy.class).to(VCloudExpressListNodesStrategy.class);
-      bind(DestroyNodeStrategy.class).to(VCloudExpressDestroyNodeStrategy.class);
+   }
+
+   protected void bindVAppConverter() {
+      bind(new TypeLiteral<Function<VCloudExpressVApp, NodeMetadata>>() {
+      }).to(VCloudExpressVAppToNodeMetadata.class);
    }
 
    @Provides
    @Singleton
    CommonVCloudComputeClient provideCommonVCloudComputeClient(VCloudExpressComputeClient in) {
       return in;
+   }
+
+   @Override
+   public BindComputeStrategiesByClass defineComputeStrategyModule() {
+      return new VCloudExpressBindComputeStrategiesByClass();
+   }
+
+   @Override
+   public BindComputeSuppliersByClass defineComputeSupplierModule() {
+      return new CommonVCloudBindComputeSuppliersByClass();
    }
 }

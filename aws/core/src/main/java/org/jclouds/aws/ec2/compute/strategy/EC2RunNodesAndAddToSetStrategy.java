@@ -35,7 +35,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
@@ -45,11 +44,14 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.util.ComputeUtils;
+import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * creates futures that correlate to
@@ -68,62 +70,77 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
    @VisibleForTesting
    final CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions;
    @VisibleForTesting
-   final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
+   final Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata;
    @VisibleForTesting
    final ComputeUtils utils;
-
    final Predicate<RunningInstance> instancePresent;
+   final Function<RunningInstance, Credentials> instanceToCredentials;
+   final Map<String, Credentials> credentialStore;
 
    @Inject
    EC2RunNodesAndAddToSetStrategy(
-            EC2Client client,
-            CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions,
-            @Named("PRESENT") Predicate<RunningInstance> instancePresent,
-            RunningInstanceToNodeMetadata runningInstanceToNodeMetadata, ComputeUtils utils) {
+         EC2Client client,
+         CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions,
+         @Named("PRESENT") Predicate<RunningInstance> instancePresent,
+         Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
+         Function<RunningInstance, Credentials> instanceToCredentials, Map<String, Credentials> credentialStore,
+         ComputeUtils utils) {
       this.client = client;
       this.instancePresent = instancePresent;
       this.createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions = createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions;
       this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
+      this.instanceToCredentials = instanceToCredentials;
+      this.credentialStore = credentialStore;
       this.utils = utils;
    }
 
    @Override
    public Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> goodNodes,
-            Map<NodeMetadata, Exception> badNodes) {
+         Map<NodeMetadata, Exception> badNodes) {
 
       Reservation<? extends RunningInstance> reservation = createKeyPairAndSecurityGroupsAsNeededThenRunInstances(tag,
-               count, template);
+            count, template);
 
       Iterable<String> ids = transform(reservation, instanceToId);
 
       String idsString = Joiner.on(',').join(ids);
+      if (Iterables.size(ids) > 0) {
+         logger.debug("<< started instances(%s)", idsString);
+         all(reservation, instancePresent);
+         logger.debug("<< present instances(%s)", idsString);
+         populateCredentials(reservation);
+      }
 
-      logger.debug("<< started instances(%s)", idsString);
-      all(reservation, instancePresent);
-      logger.debug("<< present instances(%s)", idsString);
+      return utils.runOptionsOnNodesAndAddToGoodSetOrPutExceptionIntoBadMap(template.getOptions(),
+            transform(reservation, runningInstanceToNodeMetadata), goodNodes, badNodes);
+   }
 
-      return utils.runOptionsOnNodesAndAddToGoodSetOrPutExceptionIntoBadMap(template.getOptions(), transform(
-               reservation, runningInstanceToNodeMetadata), goodNodes, badNodes);
+   protected void populateCredentials(Reservation<? extends RunningInstance> reservation) {
+      RunningInstance instance1 = Iterables.get(reservation, 0);
+      Credentials credentials = instanceToCredentials.apply(instance1);
+      if (credentials != null)
+         for (RunningInstance instance : reservation)
+            credentialStore.put(instance.getRegion() + "/" + instance.getId(), credentials);
    }
 
    @VisibleForTesting
    Reservation<? extends RunningInstance> createKeyPairAndSecurityGroupsAsNeededThenRunInstances(String tag, int count,
-            Template template) {
+         Template template) {
       String region = getRegionFromLocationOrNull(template.getLocation());
       String zone = getZoneFromLocationOrNull(template.getLocation());
 
       RunInstancesOptions instanceOptions = createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.execute(region,
-               tag, template);
+            tag, template);
 
       if (EC2TemplateOptions.class.cast(template.getOptions()).isMonitoringEnabled())
          instanceOptions.enableMonitoring();
 
       if (logger.isDebugEnabled())
          logger.debug(">> running %d instance region(%s) zone(%s) ami(%s) params(%s)", count, region, zone, template
-                  .getImage().getProviderId(), instanceOptions.buildFormParameters());
+               .getImage().getProviderId(), instanceOptions.buildFormParameters());
 
       return client.getInstanceServices().runInstancesInRegion(region, zone, template.getImage().getProviderId(), 1,
-               count, instanceOptions);
+            count, instanceOptions);
    }
 
 }

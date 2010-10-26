@@ -49,6 +49,7 @@ import org.jclouds.blobstore.internal.BaseBlobStore;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.blobstore.strategy.internal.FetchBlobMetadata;
 import org.jclouds.blobstore.util.BlobUtils;
+import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.util.Utils;
@@ -75,10 +76,11 @@ public class S3BlobStore extends BaseBlobStore {
 
    @Inject
    S3BlobStore(BlobStoreContext context, BlobUtils blobUtils, Supplier<Location> defaultLocation,
-            Supplier<Set<? extends Location>> locations, S3Client sync, BucketToResourceMetadata bucket2ResourceMd,
-            ContainerToBucketListOptions container2BucketListOptions, BucketToResourceList bucket2ResourceList,
-            ObjectToBlob object2Blob, BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object,
-            ObjectToBlobMetadata object2BlobMd, Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
+            @Memoized Supplier<Set<? extends Location>> locations, S3Client sync,
+            BucketToResourceMetadata bucket2ResourceMd, ContainerToBucketListOptions container2BucketListOptions,
+            BucketToResourceList bucket2ResourceList, ObjectToBlob object2Blob,
+            BlobToHttpGetOptions blob2ObjectGetOptions, BlobToObject blob2Object, ObjectToBlobMetadata object2BlobMd,
+            Provider<FetchBlobMetadata> fetchBlobMetadataProvider) {
       super(context, blobUtils, defaultLocation, locations);
       this.blob2ObjectGetOptions = checkNotNull(blob2ObjectGetOptions, "blob2ObjectGetOptions");
       this.sync = checkNotNull(sync, "sync");

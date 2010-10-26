@@ -19,9 +19,13 @@
 
 package org.jclouds.compute;
 
+import java.util.Map;
+
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
+import org.jclouds.domain.Credentials;
 import org.jclouds.rest.RestContext;
 
+import com.google.common.annotations.Beta;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -43,6 +47,18 @@ public interface ComputeServiceContext {
    LoadBalancerService getLoadBalancerService();
 
    <S, A> RestContext<S, A> getProviderSpecificContext();
+
+   /**
+    * retrieves a list of credentials for resources created within this context, keyed on {@code id}
+    * of the resource. We are testing this approach for resources such as compute nodes, where you
+    * could access this externally.
+    * 
+    */
+   @Beta
+   Map<String, Credentials> getCredentialStore();
+
+   @Beta
+   Map<String, Credentials> credentialStore();
 
    Utils getUtils();
 

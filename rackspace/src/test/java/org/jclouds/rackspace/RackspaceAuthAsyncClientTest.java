@@ -30,7 +30,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rackspace.RackspaceAuthAsyncClient.AuthenticationResponse;
 import org.jclouds.rackspace.functions.ParseAuthenticationResponseFromHeaders;
 import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
@@ -60,7 +60,7 @@ public class RackspaceAuthAsyncClientTest extends RestClientTest<RackspaceAuthAs
    }
 
    @Override
-   public ContextSpec<RackspaceAuthClient, RackspaceAuthAsyncClient> createContextSpec() {
+   public RestContextSpec<RackspaceAuthClient, RackspaceAuthAsyncClient> createContextSpec() {
       return contextSpec("test", "http://localhost:8080", "1", "identity", "credential", RackspaceAuthClient.class,
                RackspaceAuthAsyncClient.class);
    }

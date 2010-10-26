@@ -29,52 +29,54 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.collect.Memoized;
+import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.domain.ComputeMetadata;
-import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Provides;
-import com.google.inject.TypeLiteral;
+import com.google.inject.Scopes;
+import com.google.inject.util.Providers;
 
 /**
  * 
  * @author Adrian Cole
  */
 public abstract class BaseComputeServiceContextModule extends AbstractModule {
-
-   protected abstract Supplier<Set<? extends Image>> getSourceImageSupplier(Injector injector);
-
-   protected abstract Supplier<Set<? extends Hardware>> getSourceSizeSupplier(Injector injector);
-
-   /**
-    * By default allows you to use a static set of locations bound to Set<? extends Location>
-    */
-   protected Supplier<Set<? extends Location>> getSourceLocationSupplier(Injector injector) {
-      Set<? extends Location> locations = injector.getInstance(Key.get(new TypeLiteral<Set<? extends Location>>() {
-      }));
-      return Suppliers.<Set<? extends Location>> ofInstance(locations);
+   @Override
+   protected void configure() {
+      install(new ComputeServiceTimeoutsModule());
+      bindLoadBalancerService();
    }
 
+   protected void bindLoadBalancerService() {
+      bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null)).in(Scopes.SINGLETON);
+   }
+
+   /**
+    * The default template if none is provided.
+    */
    @Provides
    @Named("DEFAULT")
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       return template.osFamily(UBUNTU);
    }
 
+   /**
+    * supplies how the tag is encoded into the name. A string of hex characters is the last argument
+    * and tag is the first
+    */
    @Provides
    @Named("NAMING_CONVENTION")
    @Singleton
@@ -86,7 +88,7 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
 
    @Provides
    @Singleton
-   protected Supplier<Map<String, ? extends Image>> provideImageMap(Supplier<Set<? extends Image>> images) {
+   protected Supplier<Map<String, ? extends Image>> provideImageMap(@Memoized Supplier<Set<? extends Image>> images) {
       return Suppliers.compose(new Function<Set<? extends Image>, Map<String, ? extends Image>>() {
 
          @Override
@@ -106,20 +108,22 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
 
    @Provides
    @Singleton
+   @Memoized
    protected Supplier<Set<? extends Image>> supplyImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final Injector injector) {
+         final Supplier<Set<? extends Image>> imageSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Image>>(authException, seconds,
-               new Supplier<Set<? extends Image>>() {
-                  @Override
-                  public Set<? extends Image> get() {
-                     return getSourceImageSupplier(injector).get();
-                  }
-               });
+            new Supplier<Set<? extends Image>>() {
+               @Override
+               public Set<? extends Image> get() {
+                  return imageSupplier.get();
+               }
+            });
    }
 
    @Provides
    @Singleton
-   protected Supplier<Map<String, ? extends Location>> provideLocationMap(Supplier<Set<? extends Location>> locations) {
+   protected Supplier<Map<String, ? extends Location>> provideLocationMap(
+         @Memoized Supplier<Set<? extends Location>> locations) {
       return Suppliers.compose(new Function<Set<? extends Location>, Map<String, ? extends Location>>() {
 
          @Override
@@ -139,20 +143,21 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
 
    @Provides
    @Singleton
+   @Memoized
    protected Supplier<Set<? extends Location>> supplyLocationCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final Injector injector) {
+         final Supplier<Set<? extends Location>> locationSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Location>>(authException, seconds,
-               new Supplier<Set<? extends Location>>() {
-                  @Override
-                  public Set<? extends Location> get() {
-                     return getSourceLocationSupplier(injector).get();
-                  }
-               });
+            new Supplier<Set<? extends Location>>() {
+               @Override
+               public Set<? extends Location> get() {
+                  return locationSupplier.get();
+               }
+            });
    }
 
    @Provides
    @Singleton
-   protected Supplier<Map<String, ? extends Hardware>> provideSizeMap(Supplier<Set<? extends Hardware>> sizes) {
+   protected Supplier<Map<String, ? extends Hardware>> provideSizeMap(@Memoized Supplier<Set<? extends Hardware>> sizes) {
       return Suppliers.compose(new Function<Set<? extends Hardware>, Map<String, ? extends Hardware>>() {
 
          @Override
@@ -172,15 +177,16 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
 
    @Provides
    @Singleton
+   @Memoized
    protected Supplier<Set<? extends Hardware>> supplySizeCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final Injector injector) {
+         final Supplier<Set<? extends Hardware>> hardwareSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Hardware>>(authException, seconds,
-               new Supplier<Set<? extends Hardware>>() {
-                  @Override
-                  public Set<? extends Hardware> get() {
-                     return getSourceSizeSupplier(injector).get();
-                  }
-               });
+            new Supplier<Set<? extends Hardware>>() {
+               @Override
+               public Set<? extends Hardware> get() {
+                  return hardwareSupplier.get();
+               }
+            });
    }
 
    @Provides
@@ -192,27 +198,6 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
             return from.getProviderId();
          }
       };
-   }
-
-   @Provides
-   @Singleton
-   protected Supplier<Location> supplyDefaultLocation(Injector injector, Supplier<Set<? extends Location>> locations) {
-      return Suppliers.compose(new Function<Set<? extends Location>, Location>() {
-
-         @Override
-         public Location apply(Set<? extends Location> from) {
-            return Iterables.find(from, new Predicate<Location>() {
-
-               @Override
-               public boolean apply(Location input) {
-                  return input.getScope() == LocationScope.ZONE;
-               }
-
-            });
-         }
-
-      }, locations);
-
    }
 
 }

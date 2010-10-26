@@ -42,6 +42,7 @@ import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.domain.PlacementGroup.State;
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -56,6 +57,7 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.util.ComputeUtils;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -75,21 +77,21 @@ public class EC2ComputeService extends BaseComputeService {
    private final Predicate<PlacementGroup> placementGroupDeleted;
 
    @Inject
-   protected EC2ComputeService(ComputeServiceContext context, Supplier<Set<? extends Image>> images,
-            Supplier<Set<? extends Hardware>> sizes, Supplier<Set<? extends Location>> locations,
-            ListNodesStrategy listNodesStrategy, GetNodeMetadataStrategy getNodeMetadataStrategy,
-            RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy, RebootNodeStrategy rebootNodeStrategy,
-            DestroyNodeStrategy destroyNodeStrategy, Provider<TemplateBuilder> templateBuilderProvider,
-            Provider<TemplateOptions> templateOptionsProvider,
+   protected EC2ComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
+            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
+            @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
+            GetNodeMetadataStrategy getNodeMetadataStrategy, RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
+            RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
+            Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
             @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
             @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated, ComputeUtils utils, Timeouts timeouts,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
             Map<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Map<RegionAndName, String> securityGroupMap,
             @Named("PLACEMENT") Map<RegionAndName, String> placementGroupMap,
             @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted) {
-      super(context, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy, runNodesAndAddToSetStrategy,
-               rebootNodeStrategy, destroyNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning,
-               nodeTerminated, utils, timeouts, executor);
+      super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
+               runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, templateBuilderProvider,
+               templateOptionsProvider, nodeRunning, nodeTerminated, utils, timeouts, executor);
       this.ec2Client = ec2Client;
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;

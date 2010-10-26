@@ -28,9 +28,8 @@ import javax.inject.Singleton;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.vcloud.compute.domain.VCloudLocation;
-import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Sets;
@@ -59,9 +58,9 @@ public class OrgAndVDCToLocationSupplier implements Supplier<Set<? extends Locat
       Set<Location> locations = Sets.newLinkedHashSet();
 
       for (ReferenceType org : orgNameToResource.get().values()) {
-         Location orgL = new VCloudLocation(org, provider);
+         Location orgL = new LocationImpl(LocationScope.REGION, org.getHref().toASCIIString(), org.getName(), provider);
          for (ReferenceType vdc : orgNameToVDCResource.get().get(org.getName()).getVDCs().values()) {
-            locations.add(new VCloudLocation(vdc, orgL));
+            locations.add(new LocationImpl(LocationScope.ZONE, vdc.getHref().toASCIIString(), vdc.getName(), orgL));
          }
       }
       return locations;

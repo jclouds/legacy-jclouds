@@ -37,6 +37,7 @@ import org.jclouds.blobstore.attr.ConsistencyModel;
 import org.jclouds.blobstore.config.BlobStoreMapModule;
 import org.jclouds.blobstore.internal.BlobStoreContextImpl;
 import org.jclouds.blobstore.strategy.ContainsValueInListStrategy;
+import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
@@ -72,6 +73,7 @@ public class AtmosBlobStoreContextModule extends AbstractModule {
 
    @Provides
    @Singleton
+   @Memoized
    Supplier<Set<? extends Location>> provideLocations(Supplier<Location> defaultLocation) {
       return Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet.of(defaultLocation.get()));
    }

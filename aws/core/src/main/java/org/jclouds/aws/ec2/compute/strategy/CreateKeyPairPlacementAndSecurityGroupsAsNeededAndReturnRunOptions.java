@@ -19,7 +19,6 @@
 
 package org.jclouds.aws.ec2.compute.strategy;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.asType;
 
 import java.util.Map;
@@ -30,7 +29,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.ec2.compute.domain.EC2Hardware;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.aws.ec2.compute.functions.CreatePlacementGroupIfNeeded;
@@ -66,10 +64,10 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
 
    @Inject
    CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions(Map<RegionAndName, KeyPair> credentialsMap,
-            @Named("SECURITY") Map<RegionAndName, String> securityGroupMap,
-            @Named("PLACEMENT") Map<RegionAndName, String> placementGroupMap, CreateUniqueKeyPair createUniqueKeyPair,
-            CreateSecurityGroupIfNeeded createSecurityGroupIfNeeded,
-            CreatePlacementGroupIfNeeded createPlacementGroupIfNeeded) {
+         @Named("SECURITY") Map<RegionAndName, String> securityGroupMap,
+         @Named("PLACEMENT") Map<RegionAndName, String> placementGroupMap, CreateUniqueKeyPair createUniqueKeyPair,
+         CreateSecurityGroupIfNeeded createSecurityGroupIfNeeded,
+         CreatePlacementGroupIfNeeded createPlacementGroupIfNeeded) {
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;
       this.placementGroupMap = placementGroupMap;
@@ -79,17 +77,13 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
    }
 
    public RunInstancesOptions execute(String region, String tag, Template template) {
-      checkArgument(template.getHardware() instanceof EC2Hardware, "unexpected image type. should be EC2Size, was: "
-               + template.getHardware().getClass());
-      EC2Hardware ec2Size = EC2Hardware.class.cast(template.getHardware());
 
-      RunInstancesOptions instanceOptions = asType(ec2Size.getInstanceType()).withAdditionalInfo(tag);
+      RunInstancesOptions instanceOptions = asType(template.getHardware().getId()).withAdditionalInfo(tag);
 
       String keyPairName = createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, template.getOptions());
 
-      String placementGroupName = ec2Size.getId().startsWith("cc") ? createNewPlacementGroupUnlessUserSpecifiedOtherwise(
-               region, tag, template.getOptions())
-               : null;
+      String placementGroupName = template.getHardware().getId().startsWith("cc") ? createNewPlacementGroupUnlessUserSpecifiedOtherwise(
+            region, tag, template.getOptions()) : null;
 
       String subnetId = EC2TemplateOptions.class.cast(template.getOptions()).getSubnetId();
 
@@ -122,7 +116,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
          keyPairName = EC2TemplateOptions.class.cast(options).getKeyPair();
          if (keyPairName == null)
             shouldAutomaticallyCreateKeyPair = EC2TemplateOptions.class.cast(options)
-                     .shouldAutomaticallyCreateKeyPair();
+                  .shouldAutomaticallyCreateKeyPair();
       }
       if (keyPairName == null && shouldAutomaticallyCreateKeyPair) {
          RegionAndName regionAndName = new RegionAndName(region, tag);
@@ -147,7 +141,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
          placementGroupName = EC2TemplateOptions.class.cast(options).getPlacementGroup();
          if (placementGroupName == null)
             shouldAutomaticallyCreatePlacementGroup = EC2TemplateOptions.class.cast(options)
-                     .shouldAutomaticallyCreatePlacementGroup();
+                  .shouldAutomaticallyCreatePlacementGroup();
       }
       if (placementGroupName == null && shouldAutomaticallyCreatePlacementGroup) {
          placementGroupName = String.format("jclouds#%s#%s", tag, region);
@@ -171,17 +165,17 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
 
          if (options instanceof EC2TemplateOptions && EC2TemplateOptions.class.cast(options).getGroupIds().size() > 0) {
             regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region, markerGroup, new int[] {},
-                     false);
+                  false);
             groups.addAll(EC2TemplateOptions.class.cast(options).getGroupIds());
 
          } else {
-            regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region, markerGroup, options
-                     .getInboundPorts(), true);
+            regionNameAndIngessRulesForMarkerGroup = new RegionNameAndIngressRules(region, markerGroup,
+                  options.getInboundPorts(), true);
          }
 
          if (!securityGroupMap.containsKey(regionNameAndIngessRulesForMarkerGroup)) {
-            securityGroupMap.put(regionNameAndIngessRulesForMarkerGroup, createSecurityGroupIfNeeded
-                     .apply(regionNameAndIngessRulesForMarkerGroup));
+            securityGroupMap.put(regionNameAndIngessRulesForMarkerGroup,
+                  createSecurityGroupIfNeeded.apply(regionNameAndIngessRulesForMarkerGroup));
          }
       }
       return groups;

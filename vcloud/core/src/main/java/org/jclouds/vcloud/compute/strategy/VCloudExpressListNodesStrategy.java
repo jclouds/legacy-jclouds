@@ -30,11 +30,10 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.ComputeMetadataBuilder;
 import org.jclouds.compute.domain.ComputeType;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.internal.ComputeMetadataImpl;
 import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.VCloudMediaType;
@@ -46,7 +45,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.internal.util.ImmutableSet;
@@ -75,8 +73,8 @@ public class VCloudExpressListNodesStrategy implements ListNodesStrategy {
 
    @Inject
    protected VCloudExpressListNodesStrategy(CommonVCloudClient client,
-            @Org Supplier<Map<String, ReferenceType>> orgNameToEndpoint, VCloudExpressGetNodeMetadataStrategy getNodeMetadata,
-            FindLocationForResource findLocationForResourceInVDC) {
+         @Org Supplier<Map<String, ReferenceType>> orgNameToEndpoint,
+         VCloudExpressGetNodeMetadataStrategy getNodeMetadata, FindLocationForResource findLocationForResourceInVDC) {
       this.client = client;
       this.orgNameToEndpoint = orgNameToEndpoint;
       this.getNodeMetadata = getNodeMetadata;
@@ -84,7 +82,7 @@ public class VCloudExpressListNodesStrategy implements ListNodesStrategy {
    }
 
    @Override
-   public Iterable<ComputeMetadata> list() {
+   public Iterable<ComputeMetadata> listNodes() {
       Set<ComputeMetadata> nodes = Sets.newHashSet();
       for (String org : orgNameToEndpoint.get().keySet()) {
          for (ReferenceType vdc : client.findOrgNamed(org).getVDCs().values()) {
@@ -103,9 +101,12 @@ public class VCloudExpressListNodesStrategy implements ListNodesStrategy {
    }
 
    private ComputeMetadata convertVAppToComputeMetadata(ReferenceType vdc, ReferenceType resource) {
-      Location location = findLocationForResourceInVDC.apply(vdc);
-      return new ComputeMetadataImpl(ComputeType.NODE, resource.getHref().toASCIIString(), resource.getName(), resource
-               .getHref().toASCIIString(), location, null, ImmutableMap.<String, String> of());
+      ComputeMetadataBuilder builder = new ComputeMetadataBuilder(ComputeType.NODE);
+      builder.providerId(resource.getHref().toASCIIString());
+      builder.name(resource.getName());
+      builder.id(resource.getHref().toASCIIString());
+      builder.location(findLocationForResourceInVDC.apply(vdc));
+      return builder.build();
    }
 
    @Override
@@ -129,7 +130,7 @@ public class VCloudExpressListNodesStrategy implements ListNodesStrategy {
       int i = 0;
       while (node == null && i++ < 3) {
          try {
-            node = getNodeMetadata.execute(resource.getHref().toASCIIString());
+            node = getNodeMetadata.getNode(resource.getHref().toASCIIString());
             nodes.add(node);
          } catch (NullPointerException e) {
             logger.warn("vApp %s not yet present in vdc %s", resource.getName(), vdc.getName());

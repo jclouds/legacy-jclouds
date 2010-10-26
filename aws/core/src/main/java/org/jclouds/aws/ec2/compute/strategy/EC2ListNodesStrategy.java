@@ -39,7 +39,6 @@ import javax.inject.Singleton;
 import org.jclouds.Constants;
 import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.EC2AsyncClient;
-import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.compute.domain.ComputeMetadata;
@@ -64,13 +63,13 @@ public class EC2ListNodesStrategy implements ListNodesStrategy {
 
    private final EC2AsyncClient client;
    private final Map<String, URI> regionMap;
-   private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
+   private final Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata;
    private final ExecutorService executor;
 
    @Inject
    protected EC2ListNodesStrategy(EC2AsyncClient client, @Region Map<String, URI> regionMap,
-            RunningInstanceToNodeMetadata runningInstanceToNodeMetadata,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
+         Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.client = client;
       this.regionMap = regionMap;
       this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
@@ -78,21 +77,21 @@ public class EC2ListNodesStrategy implements ListNodesStrategy {
    }
 
    @Override
-   public Set<? extends ComputeMetadata> list() {
+   public Set<? extends ComputeMetadata> listNodes() {
       return listDetailsOnNodesMatching(NodePredicates.all());
    }
 
    @Override
    public Set<? extends NodeMetadata> listDetailsOnNodesMatching(Predicate<ComputeMetadata> filter) {
-      Iterable<Set<? extends Reservation<? extends RunningInstance>>> reservations = transformParallel(regionMap
-               .keySet(), new Function<String, Future<Set<? extends Reservation<? extends RunningInstance>>>>() {
+      Iterable<Set<? extends Reservation<? extends RunningInstance>>> reservations = transformParallel(
+            regionMap.keySet(), new Function<String, Future<Set<? extends Reservation<? extends RunningInstance>>>>() {
 
-         @Override
-         public Future<Set<? extends Reservation<? extends RunningInstance>>> apply(String from) {
-            return client.getInstanceServices().describeInstancesInRegion(from);
-         }
+               @Override
+               public Future<Set<? extends Reservation<? extends RunningInstance>>> apply(String from) {
+                  return client.getInstanceServices().describeInstancesInRegion(from);
+               }
 
-      }, executor, null, logger, "reservations");
+            }, executor, null, logger, "reservations");
 
       Iterable<? extends RunningInstance> instances = concat(concat(reservations));
       Iterable<? extends NodeMetadata> nodes = filter(transform(instances, runningInstanceToNodeMetadata), filter);

@@ -19,7 +19,6 @@
 
 package org.jclouds.vcloud.terremark.xml;
 
-import static org.jclouds.vcloud.terremark.TerremarkVCloudExpressMediaType.KEYSLIST_XML;
 import static org.jclouds.vcloud.util.Utils.cleanseAttributes;
 import static org.jclouds.vcloud.util.Utils.newReferenceType;
 
@@ -28,6 +27,8 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.jclouds.vcloud.domain.ReferenceType;
+import org.jclouds.vcloud.terremark.TerremarkECloudMediaType;
+import org.jclouds.vcloud.terremark.TerremarkVCloudExpressMediaType;
 import org.jclouds.vcloud.terremark.domain.TerremarkOrg;
 import org.jclouds.vcloud.terremark.domain.internal.TerremarkOrgImpl;
 import org.jclouds.vcloud.xml.OrgHandler;
@@ -57,8 +58,10 @@ public class TerremarkOrgHandler extends OrgHandler {
       super.startElement(uri, localName, qName, attrs);
       if (qName.equals("Link")) {
          if (attributes.containsKey("type")) {
-            if (attributes.get("type").equals(KEYSLIST_XML)) {
-               keysList = newReferenceType(attributes);
+             String type = attributes.get("type");
+             if (type.equals(TerremarkVCloudExpressMediaType.KEYSLIST_XML)
+                     || type.equals(TerremarkECloudMediaType.KEYSLIST_XML)) {
+                 keysList = newReferenceType(attributes);
             }
          }
       }

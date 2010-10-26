@@ -29,6 +29,19 @@ import org.jclouds.compute.domain.Template;
  */
 public interface AddNodeWithTagStrategy {
 
-   NodeMetadata execute(String tag, String name, Template template);
+   /**
+    * create a node given the name and template parameters such as imageid, hardwareid, and
+    * locationid.
+    * 
+    * @param tag
+    *           tag supplied by the user
+    * @param name
+    *           supplied by {@link RunNodesAndAddToSetStrategy } and must have the tag encoded into
+    *           it.
+    * @param template
+    *           supplied by the user
+    * @return NodeMetadata from the new object, most likely in some pending state.
+    */
+   NodeMetadata addNodeWithTag(String tag, String name, Template template);
 
 }

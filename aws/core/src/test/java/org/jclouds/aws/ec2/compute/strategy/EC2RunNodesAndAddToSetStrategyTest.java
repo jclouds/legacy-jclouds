@@ -32,7 +32,6 @@ import java.util.Set;
 import org.easymock.IArgumentMatcher;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.compute.domain.EC2Hardware;
 import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
@@ -40,15 +39,18 @@ import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.aws.ec2.services.InstanceClient;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.util.ComputeUtils;
+import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -90,7 +92,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       return null;
    }
 
-   @SuppressWarnings({ "unchecked"})
+   @SuppressWarnings({ "unchecked" })
    private void assertRegionAndZoneForLocation(Location location, String region, String zone) {
       String imageId = "ami1";
       String instanceCreatedId = "instance1";
@@ -100,29 +102,36 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       InstanceClient instanceClient = createMock(InstanceClient.class);
       RunInstancesOptions ec2Options = createMock(RunInstancesOptions.class);
       RunningInstance instance = createMock(RunningInstance.class);
-      Reservation<? extends RunningInstance> reservation = new Reservation<RunningInstance>(region, ImmutableSet
-               .<String> of(), ImmutableSet.<RunningInstance> of(instance), "ownerId", "requesterId", "reservationId");
+      Reservation<? extends RunningInstance> reservation = new Reservation<RunningInstance>(region,
+            ImmutableSet.<String> of(), ImmutableSet.<RunningInstance> of(instance), "ownerId", "requesterId",
+            "reservationId");
       NodeMetadata nodeMetadata = createMock(NodeMetadata.class);
 
       // setup expectations
       expect(strategy.client.getInstanceServices()).andReturn(instanceClient).atLeastOnce();
       expect(
-               strategy.createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.execute(region, input.tag,
-                        input.template)).andReturn(ec2Options);
+            strategy.createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.execute(region, input.tag,
+                  input.template)).andReturn(ec2Options);
       expect(input.template.getLocation()).andReturn(input.location).atLeastOnce();
       expect(input.template.getImage()).andReturn(input.image).atLeastOnce();
       expect(input.image.getProviderId()).andReturn(imageId).atLeastOnce();
       expect(instanceClient.runInstancesInRegion(region, zone, imageId, 1, input.count, ec2Options)).andReturn(
-               (Reservation) reservation);
+            (Reservation) reservation);
       expect(instance.getId()).andReturn(instanceCreatedId).atLeastOnce();
+      // simulate a lazy credentials fetch
+      Credentials creds = new Credentials("foo","bar");
+      expect(strategy.instanceToCredentials.apply(instance)).andReturn(creds);
+      expect(instance.getRegion()).andReturn(region);
+      expect(strategy.credentialStore.put(region + "/" + instanceCreatedId, creds)).andReturn(null);
+
       expect(strategy.instancePresent.apply(instance)).andReturn(true);
       expect(input.template.getOptions()).andReturn(input.options).atLeastOnce();
       expect(input.options.isMonitoringEnabled()).andReturn(false);
 
       expect(strategy.runningInstanceToNodeMetadata.apply(instance)).andReturn(nodeMetadata);
       expect(
-               strategy.utils.runOptionsOnNodesAndAddToGoodSetOrPutExceptionIntoBadMap(eq(input.options),
-                        containsNodeMetadata(nodeMetadata), eq(input.nodes), eq(input.badNodes))).andReturn(null);
+            strategy.utils.runOptionsOnNodesAndAddToGoodSetOrPutExceptionIntoBadMap(eq(input.options),
+                  containsNodeMetadata(nodeMetadata), eq(input.nodes), eq(input.badNodes))).andReturn(null);
 
       // replay mocks
       replay(instanceClient);
@@ -145,9 +154,9 @@ public class EC2RunNodesAndAddToSetStrategyTest {
    }
 
    private static final Location REGION_AP_SOUTHEAST_1 = new LocationImpl(LocationScope.REGION, Region.AP_SOUTHEAST_1,
-            Region.AP_SOUTHEAST_1, new LocationImpl(LocationScope.PROVIDER, "ec2", "ec2", null));
+         Region.AP_SOUTHEAST_1, new LocationImpl(LocationScope.PROVIDER, "ec2", "ec2", null));
    private static final Location ZONE_AP_SOUTHEAST_1A = new LocationImpl(LocationScope.ZONE,
-            AvailabilityZone.AP_SOUTHEAST_1A, AvailabilityZone.AP_SOUTHEAST_1A, REGION_AP_SOUTHEAST_1);
+         AvailabilityZone.AP_SOUTHEAST_1A, AvailabilityZone.AP_SOUTHEAST_1A, REGION_AP_SOUTHEAST_1);
 
    // /////////////////////////////////////////////////////////////////////
    @SuppressWarnings("unchecked")
@@ -157,7 +166,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       Template template = createMock(Template.class);
       Set<NodeMetadata> nodes = createMock(Set.class);
       Map<NodeMetadata, Exception> badNodes = createMock(Map.class);
-      EC2Hardware size = createMock(EC2Hardware.class);
+      Hardware hardware = createMock(Hardware.class);
       Image image = createMock(Image.class);
       final Location location;
       EC2TemplateOptions options = createMock(EC2TemplateOptions.class);
@@ -168,7 +177,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
 
       void replayMe() {
          replay(template);
-         replay(size);
+         replay(hardware);
          replay(image);
          replay(nodes);
          replay(badNodes);
@@ -177,7 +186,7 @@ public class EC2RunNodesAndAddToSetStrategyTest {
 
       void verifyMe() {
          verify(template);
-         verify(size);
+         verify(hardware);
          verify(image);
          verify(nodes);
          verify(badNodes);
@@ -190,6 +199,8 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       verify(strategy.client);
       verify(strategy.instancePresent);
       verify(strategy.runningInstanceToNodeMetadata);
+      verify(strategy.instanceToCredentials);
+      verify(strategy.credentialStore);
       verify(strategy.utils);
    }
 
@@ -199,9 +210,11 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions = createMock(CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions.class);
       Predicate<RunningInstance> instanceStateRunning = createMock(Predicate.class);
       RunningInstanceToNodeMetadata runningInstanceToNodeMetadata = createMock(RunningInstanceToNodeMetadata.class);
+      Function<RunningInstance, Credentials> instanceToCredentials = createMock(Function.class);
+      Map<String, Credentials> credentialStore = createMock(Map.class);
       ComputeUtils utils = createMock(ComputeUtils.class);
       return new EC2RunNodesAndAddToSetStrategy(client, createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions,
-               instanceStateRunning, runningInstanceToNodeMetadata, utils);
+            instanceStateRunning, runningInstanceToNodeMetadata, instanceToCredentials, credentialStore, utils);
    }
 
    private void replayStrategy(EC2RunNodesAndAddToSetStrategy strategy) {
@@ -209,6 +222,8 @@ public class EC2RunNodesAndAddToSetStrategyTest {
       replay(strategy.client);
       replay(strategy.instancePresent);
       replay(strategy.runningInstanceToNodeMetadata);
+      replay(strategy.instanceToCredentials);
+      replay(strategy.credentialStore);
       replay(strategy.utils);
    }
 

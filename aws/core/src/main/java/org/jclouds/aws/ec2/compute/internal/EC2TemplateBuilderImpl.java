@@ -21,9 +21,9 @@ package org.jclouds.aws.ec2.compute.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,6 +31,7 @@ import javax.inject.Provider;
 
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.compute.options.EC2TemplateOptions;
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -47,14 +48,13 @@ import com.google.common.collect.ComputationException;
  */
 public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
 
-   private final ConcurrentMap<RegionAndName, Image> imageMap;
+   private final Map<RegionAndName, Image> imageMap;
 
    @Inject
-   protected EC2TemplateBuilderImpl(Supplier<Set<? extends Location>> locations, Supplier<Set<? extends Image>> images,
-            Supplier<Set<? extends Hardware>> sizes, Supplier<Location> defaultLocation,
-            Provider<TemplateOptions> optionsProvider,
-            @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider,
-            ConcurrentMap<RegionAndName, Image> imageMap) {
+   protected EC2TemplateBuilderImpl(@Memoized Supplier<Set<? extends Location>> locations,
+            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
+            Supplier<Location> defaultLocation, Provider<TemplateOptions> optionsProvider,
+            @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider, Map<RegionAndName, Image> imageMap) {
       super(locations, images, sizes, defaultLocation, optionsProvider, defaultTemplateProvider);
       this.imageMap = imageMap;
    }

@@ -23,10 +23,13 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
-import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.slicehost.domain.Flavor;
 import org.testng.annotations.Test;
+
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 /**
  * Tests behavior of {@code FlavorHandler}
@@ -34,18 +37,24 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "unit", testName = "slicehost.FlavorHandler")
-public class FlavorHandlerTest extends BaseHandlerTest {
+public class FlavorHandlerTest {
 
-   ParseSax<Flavor> createParser() {
-      ParseSax<Flavor> parser = (ParseSax<Flavor>) factory.create(injector.getInstance(FlavorHandler.class));
+   static ParseSax<Flavor> createParser() {
+      Injector injector = Guice.createInjector(new SaxParserModule());
+      ParseSax<Flavor> parser = (ParseSax<Flavor>) injector.getInstance(ParseSax.Factory.class).create(
+            injector.getInstance(FlavorHandler.class));
       return parser;
    }
 
+   public static Flavor parseFlavor() {
+      InputStream is = FlavorHandlerTest.class.getResourceAsStream("/test_get_flavor.xml");
+      return createParser().parse(is);
+   }
+
    public void test() {
-      InputStream is = getClass().getResourceAsStream("/test_get_flavor.xml");
       Flavor expects = new Flavor(1, "256 slice", 2000, 256);
 
-      assertEquals(createParser().parse(is), expects);
+      assertEquals(parseFlavor(), expects);
    }
 
 }

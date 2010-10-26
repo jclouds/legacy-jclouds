@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.terremark.compute.strategy;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -36,7 +37,6 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.vcloud.compute.domain.VCloudLocation;
 import org.jclouds.vcloud.terremark.compute.options.TerremarkVCloudTemplateOptions;
 
 /**
@@ -51,21 +51,21 @@ public class TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy extends Encod
 
    @Inject
    protected TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy(AddNodeWithTagStrategy addNodeWithTagStrategy,
-         ListNodesStrategy listNodesStrategy, @Named("NAMING_CONVENTION") String nodeNamingConvention,
-         ComputeUtils utils, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-         CreateNewKeyPairUnlessUserSpecifiedOtherwise createNewKeyPairUnlessUserSpecifiedOtherwise) {
+            ListNodesStrategy listNodesStrategy, @Named("NAMING_CONVENTION") String nodeNamingConvention,
+            ComputeUtils utils, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+            CreateNewKeyPairUnlessUserSpecifiedOtherwise createNewKeyPairUnlessUserSpecifiedOtherwise) {
       super(addNodeWithTagStrategy, listNodesStrategy, nodeNamingConvention, utils, executor);
       this.createNewKeyPairUnlessUserSpecifiedOtherwise = createNewKeyPairUnlessUserSpecifiedOtherwise;
    }
 
    @Override
    public Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> nodes,
-         Map<NodeMetadata, Exception> badNodes) {
+            Map<NodeMetadata, Exception> badNodes) {
       assert template.getLocation().getParent().getScope() == LocationScope.REGION : "template location should have a parent of org, which should be mapped to region: "
-            + template.getLocation();
-      createNewKeyPairUnlessUserSpecifiedOtherwise.execute(VCloudLocation.class
-            .cast(template.getLocation().getParent()).getResource().getHref(), tag, template.getImage()
-            .getDefaultCredentials().identity, template.getOptions().as(TerremarkVCloudTemplateOptions.class));
+               + template.getLocation();
+      createNewKeyPairUnlessUserSpecifiedOtherwise.execute(URI.create(template.getLocation().getParent().getId()), tag,
+               template.getImage().getDefaultCredentials().identity, template.getOptions().as(
+                        TerremarkVCloudTemplateOptions.class));
       return super.execute(tag, count, template, nodes, badNodes);
    }
 }

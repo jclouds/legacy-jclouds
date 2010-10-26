@@ -31,7 +31,7 @@ public class RimuHostingComputeServiceContextModuleTest {
    public void testAllStatusCovered() {
 
       for (RunningState state : RunningState.values()) {
-         assert RimuHostingComputeServiceContextModule.runningStateToNodeState.containsKey(state) : state;
+         assert RimuHostingComputeServiceDependenciesModule.runningStateToNodeState.containsKey(state) : state;
       }
 
    }

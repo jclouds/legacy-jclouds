@@ -21,10 +21,8 @@ package org.jclouds.compute.stub;
 
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentMap;
 
-import org.jclouds.compute.ComputeServiceContextBuilder;
-import org.jclouds.compute.stub.config.StubComputeServiceClientModule;
+import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
 import org.jclouds.compute.stub.config.StubComputeServiceContextModule;
 
 import com.google.inject.Module;
@@ -33,21 +31,15 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@SuppressWarnings("unchecked")
-public class StubComputeServiceContextBuilder extends ComputeServiceContextBuilder<ConcurrentMap, ConcurrentMap> {
+public class StubComputeServiceContextBuilder extends StandaloneComputeServiceContextBuilder {
 
    public StubComputeServiceContextBuilder(Properties props) {
-      super(ConcurrentMap.class, ConcurrentMap.class, props);
+      super(props);
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
       modules.add(new StubComputeServiceContextModule());
-   }
-
-   @Override
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new StubComputeServiceClientModule());
    }
 
 }

@@ -29,10 +29,11 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.compute.functions.RunningInstanceToNodeMetadata;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
+
+import com.google.common.base.Function;
 
 /**
  * 
@@ -42,22 +43,23 @@ import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 public class EC2GetNodeMetadataStrategy implements GetNodeMetadataStrategy {
 
    private final EC2Client client;
-   private final RunningInstanceToNodeMetadata runningInstanceToNodeMetadata;
+   private final Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata;
 
    @Inject
-   protected EC2GetNodeMetadataStrategy(EC2Client client, RunningInstanceToNodeMetadata runningInstanceToNodeMetadata) {
+   protected EC2GetNodeMetadataStrategy(EC2Client client,
+         Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata) {
       this.client = client;
       this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata getNode(String id) {
       String[] parts = parseHandle(id);
       String region = parts[0];
       String instanceId = parts[1];
       try {
          RunningInstance runningInstance = getOnlyElement(getAllRunningInstancesInRegion(client.getInstanceServices(),
-                  region, instanceId));
+               region, instanceId));
          return runningInstanceToNodeMetadata.apply(runningInstance);
       } catch (NoSuchElementException e) {
          return null;

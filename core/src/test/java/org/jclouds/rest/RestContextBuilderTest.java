@@ -26,12 +26,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
+import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
+import org.jclouds.rest.config.CredentialStoreModule;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -73,6 +75,28 @@ public class RestContextBuilderTest {
       modules.add(module);
       new RestContextBuilder<String, String>(String.class, String.class, new Properties())
             .addLoggingModuleIfNotPresent(modules);
+      assertEquals(modules.size(), 1);
+      assertEquals(modules.remove(0), module);
+   }
+
+   @Test
+   public void testAddExecutorServiceModuleIfNotPresent() {
+      List<Module> modules = new ArrayList<Module>();
+      ExecutorServiceModule module = new ExecutorServiceModule();
+      modules.add(module);
+      new RestContextBuilder<String, String>(String.class, String.class, new Properties())
+            .addExecutorServiceIfNotPresent(modules);
+      assertEquals(modules.size(), 1);
+      assertEquals(modules.remove(0), module);
+   }
+
+   @Test
+   public void testAddCredentialStoreModuleIfNotPresent() {
+      List<Module> modules = new ArrayList<Module>();
+      CredentialStoreModule module = new CredentialStoreModule();
+      modules.add(module);
+      new RestContextBuilder<String, String>(String.class, String.class, new Properties())
+            .addCredentialStoreIfNotPresent(modules);
       assertEquals(modules.size(), 1);
       assertEquals(modules.remove(0), module);
    }

@@ -335,6 +335,13 @@ public abstract class BaseComputeServiceLiveTest {
       checkOsMatchesTemplate(node);
    }
 
+   @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
+   public void testCredentialsCache() throws Exception {
+      initializeContextAndClient();
+      for (NodeMetadata node : nodes)
+         assert (context.getCredentialStore().get(node.getId()) != null) : "credentials for " + node.getId();
+   }
+
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String tag, OperatingSystem os,
          Credentials creds) throws RunScriptOnNodesException {
       try {
@@ -351,6 +358,7 @@ public abstract class BaseComputeServiceLiveTest {
          assertNotNull(node.getTag());
          assertEquals(node.getTag(), tag);
          assertEquals(node.getState(), NodeState.RUNNING);
+         assertEquals(context.getCredentialStore().get(node.getId()), node.getCredentials());
          assert node.getPublicAddresses().size() >= 1 || node.getPrivateAddresses().size() >= 1 : "no ips in" + node;
          assertNotNull(node.getCredentials());
          if (node.getCredentials().identity != null) {
@@ -588,6 +596,7 @@ public abstract class BaseComputeServiceLiveTest {
          client.destroyNodesMatching(withTag(tag));
          for (NodeMetadata node : filter(client.listNodesDetailsMatching(all()), withTag(tag))) {
             assert node.getState() == NodeState.TERMINATED : node;
+            assertEquals(context.getCredentialStore().get(node.getId()), null);
          }
       }
       context.close();

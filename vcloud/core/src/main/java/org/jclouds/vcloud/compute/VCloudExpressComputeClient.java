@@ -20,11 +20,11 @@
 package org.jclouds.vcloud.compute;
 
 import java.net.URI;
-import java.util.Map;
 
 import javax.annotation.Nullable;
 
 import org.jclouds.vcloud.compute.internal.VCloudExpressComputeClientImpl;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
 import com.google.inject.ImplementedBy;
@@ -63,7 +63,7 @@ public interface VCloudExpressComputeClient extends CommonVCloudComputeClient {
     *         login password</li>
     *         </ol>
     */
-   Map<String, String> start(@Nullable URI VDC, URI templateId, String name, InstantiateVAppTemplateOptions options,
+   VCloudExpressVApp start(@Nullable URI VDC, URI templateId, String name, InstantiateVAppTemplateOptions options,
             int... portsToOpen);
 
 }

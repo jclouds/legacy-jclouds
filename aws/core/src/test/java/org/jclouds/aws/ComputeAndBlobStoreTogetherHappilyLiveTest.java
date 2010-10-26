@@ -39,6 +39,10 @@ import org.testng.annotations.Test;
 
 /**
  * This test helps us understand how we can use the power of blobstores to our favor.
+ * <p/>
+ * This test is in aws only because it happens to have both blobstore and compute
+ * 
+ * TODO create a blobstore and compute integration module
  * 
  * @author Adrian Cole
  */

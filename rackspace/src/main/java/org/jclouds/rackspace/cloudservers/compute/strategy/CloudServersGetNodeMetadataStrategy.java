@@ -46,7 +46,7 @@ public class CloudServersGetNodeMetadataStrategy implements GetNodeMetadataStrat
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata getNode(String id) {
       int serverId = Integer.parseInt(id);
       Server server = client.getServer(serverId);
       return server == null ? null : serverToNodeMetadata.apply(server);

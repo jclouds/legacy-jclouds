@@ -27,18 +27,22 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Map;
 import java.util.Properties;
 
+import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.rest.ConfiguresRestClient;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
@@ -50,20 +54,23 @@ import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExt
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.VCloudSession;
+import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
-import org.jclouds.vcloud.terremark.TerremarkVCloudExpressAsyncClientTest.TerremarkVCloudRestClientModuleExtension.TestOrgNameToKeysListSupplier;
-import org.jclouds.vcloud.terremark.TerremarkVCloudExpressAsyncClientTest.TerremarkVCloudRestClientModuleExtension.TestTerremarkOrgMapSupplier;
 import org.jclouds.vcloud.terremark.TerremarkVCloudExpressAsyncClientTest.TerremarkVCloudRestClientModuleExtension.TestTerremarkOrgVDCSupplier;
 import org.jclouds.vcloud.terremark.config.TerremarkVCloudExpressRestClientModule;
 import org.jclouds.vcloud.terremark.domain.Protocol;
+import org.jclouds.vcloud.terremark.domain.internal.TerremarkOrgImpl;
 import org.jclouds.vcloud.terremark.options.AddInternetServiceOptions;
 import org.jclouds.vcloud.terremark.options.AddNodeOptions;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
 import org.jclouds.vcloud.terremark.xml.CustomizationParametersHandler;
 import org.jclouds.vcloud.terremark.xml.InternetServiceHandler;
 import org.jclouds.vcloud.terremark.xml.InternetServicesHandler;
+import org.jclouds.vcloud.terremark.xml.KeyPairByNameHandler;
+import org.jclouds.vcloud.terremark.xml.KeyPairHandler;
+import org.jclouds.vcloud.terremark.xml.KeyPairsHandler;
 import org.jclouds.vcloud.terremark.xml.NodeHandler;
 import org.jclouds.vcloud.terremark.xml.NodesHandler;
 import org.jclouds.vcloud.terremark.xml.PublicIpAddressesHandler;
@@ -72,7 +79,10 @@ import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.VCloudExpressVAppHandler;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
@@ -298,6 +308,22 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
       checkFilters(request);
    }
 
+   public void testGetKeyPairInOrg() throws SecurityException, NoSuchMethodException, IOException {
+       Method method = TerremarkECloudAsyncClient.class.getMethod("findKeyPairInOrg", URI.class, String.class);
+       HttpRequest request = processor.createRequest(method, URI
+                .create("https://vcloud.safesecureweb.com/api/v0.8/org/1"), "keyPair");
+ 
+       assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/keysList/1 HTTP/1.1");
+       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.ecloud.keysList+xml\n");
+       assertPayloadEquals(request, null, null, false);
+ 
+       assertResponseParserClassEquals(method, request, ParseSax.class);
+       assertSaxResponseParserClassEquals(method, KeyPairByNameHandler.class);
+       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+ 
+       checkFilters(request);
+    }
+
    public void testConfigureNodeWithDescription() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TerremarkECloudAsyncClient.class.getMethod("configureNode", URI.class, String.class,
                boolean.class, String.class);
@@ -382,6 +408,58 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
       checkFilters(request);
    }
 
+   public void testListKeyPairsInOrg() throws SecurityException, NoSuchMethodException, IOException {
+       Method method = TerremarkECloudAsyncClient.class.getMethod("listKeyPairsInOrg", URI.class);
+       HttpRequest request = processor.createRequest(method, URI
+                .create("https://vcloud.safesecureweb.com/api/v0.8/org/1"));
+ 
+       assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/keysList/1 HTTP/1.1");
+       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.ecloud.keysList+xml\n");
+       assertPayloadEquals(request, null, null, false);
+ 
+       assertResponseParserClassEquals(method, request, ParseSax.class);
+       assertSaxResponseParserClassEquals(method, KeyPairsHandler.class);
+       assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+ 
+       checkFilters(request);
+    }
+ 
+    @Test(expectedExceptions = ResourceNotFoundException.class)
+    public void testListKeyPairsInOrgNotFound() throws SecurityException, NoSuchMethodException, IOException {
+       Method method = TerremarkECloudAsyncClient.class.getMethod("listKeyPairsInOrg", URI.class);
+       processor.createRequest(method, URI.create("d"));
+    }
+ 
+    public void testGetKeyPair() throws SecurityException, NoSuchMethodException, IOException {
+       Method method = TerremarkECloudAsyncClient.class.getMethod("getKeyPair", URI.class);
+       HttpRequest request = processor.createRequest(method, URI.create("https://vcloud/extensions/key/12"));
+ 
+       assertRequestLineEquals(request, "GET https://vcloud/extensions/key/12 HTTP/1.1");
+       assertNonPayloadHeadersEqual(request, "Accept: application/xml\n");
+       assertPayloadEquals(request, null, null, false);
+ 
+       assertResponseParserClassEquals(method, request, ParseSax.class);
+       assertSaxResponseParserClassEquals(method, KeyPairHandler.class);
+       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+ 
+       checkFilters(request);
+    }
+ 
+    public void testDeleteKeyPair() throws SecurityException, NoSuchMethodException, IOException {
+       Method method = TerremarkECloudAsyncClient.class.getMethod("deleteKeyPair", URI.class);
+       HttpRequest request = processor.createRequest(method, URI.create("https://vcloud/extensions/key/12"));
+ 
+       assertRequestLineEquals(request, "DELETE https://vcloud/extensions/key/12 HTTP/1.1");
+       assertNonPayloadHeadersEqual(request, "");
+       assertPayloadEquals(request, null, null, false);
+ 
+       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
+       assertSaxResponseParserClassEquals(method, null);
+       assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+ 
+       checkFilters(request);
+    }
+
    public void testGetNode() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TerremarkECloudAsyncClient.class.getMethod("getNode", URI.class);
       HttpRequest request = processor.createRequest(method, URI.create("https://vcloud/extensions/nodeService/12"));
@@ -415,7 +493,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
    }
 
    @Override
-   public ContextSpec<?, ?> createContextSpec() {
+   public RestContextSpec<?, ?> createContextSpec() {
       return new RestContextFactory().createContextSpec("trmk-vcloudexpress", "identity", "credential",
                new Properties());
    }
@@ -437,6 +515,51 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
          bind(OrgCatalogSupplier.class).to(TestOrgCatalogSupplier.class);
          bind(OrgCatalogItemSupplier.class).to(TestOrgCatalogItemSupplier.class);
          bind(OrgVDCSupplier.class).to(TestTerremarkOrgVDCSupplier.class);
+      }
+
+      @Singleton
+      public static class TestOrgNameToKeysListSupplier extends OrgNameToKeysListSupplier {
+         @Inject
+         protected TestOrgNameToKeysListSupplier(Supplier<VCloudSession> sessionSupplier) {
+            super(sessionSupplier, null);
+         }
+
+         @Override
+         public Map<String, ReferenceType> get() {
+            return Maps.transformValues(sessionSupplier.get().getOrgs(), new Function<ReferenceType, ReferenceType>() {
+
+               @Override
+               public ReferenceType apply(ReferenceType from) {
+                  return new ReferenceTypeImpl(from.getName(), TerremarkECloudMediaType.KEYSLIST_XML, URI
+                           .create(from.getHref().toASCIIString() + "/keysList"));
+               }
+            });
+         }
+      }
+
+      @Singleton
+      public static class TestTerremarkOrgMapSupplier extends OrgMapSupplier {
+         @Inject
+         protected TestTerremarkOrgMapSupplier() {
+            super(null, null);
+         }
+
+         @Override
+         public Map<String, Org> get() {
+            return ImmutableMap.<String, Org> of("org", new TerremarkOrgImpl("org", null, URI
+                     .create("https://vcloud.safesecureweb.com/api/v0.8/org/1"), null, ImmutableMap
+                     .<String, ReferenceType> of("catalog", new ReferenceTypeImpl("catalog",
+                             TerremarkECloudMediaType.CATALOG_XML, URI
+                                       .create("https://vcloud.safesecureweb.com/api/v0.8/catalog/1"))), ImmutableMap
+                     .<String, ReferenceType> of("vdc", new ReferenceTypeImpl("vdc",
+                             TerremarkECloudMediaType.VDC_XML, URI
+                                       .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"))), ImmutableMap
+                     .<String, ReferenceType> of(), new ReferenceTypeImpl("tasksList",
+                             TerremarkECloudMediaType.TASKSLIST_XML, URI
+                              .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/1")), new ReferenceTypeImpl(
+                     "keysList", TerremarkECloudMediaType.KEYSLIST_XML, URI
+                              .create("https://vcloud.safesecureweb.com/api/v0.8/keysList/1"))));
+         }
       }
 
       @Override

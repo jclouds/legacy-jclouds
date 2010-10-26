@@ -46,12 +46,12 @@ public class EC2RebootNodeStrategy implements RebootNodeStrategy {
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata rebootNode(String id) {
       String[] parts = parseHandle(id);
       String region = parts[0];
       String instanceId = parts[1];
       client.rebootInstancesInRegion(region, instanceId);
-      return getNode.execute(id);
+      return getNode.getNode(id);
    }
 
 }

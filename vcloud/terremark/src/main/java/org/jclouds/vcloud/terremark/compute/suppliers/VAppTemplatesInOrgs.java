@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
@@ -54,7 +55,7 @@ public class VAppTemplatesInOrgs implements Supplier<Set<? extends Image>> {
    private final ImagesInVCloudExpressOrg imagesInOrg;
 
    @Inject
-   VAppTemplatesInOrgs(Supplier<Set<? extends Location>> locations,
+   VAppTemplatesInOrgs(@Memoized Supplier<Set<? extends Location>> locations,
             Function<Iterable<? extends Location>, Iterable<? extends Org>> organizatonsForLocations,
             ImagesInVCloudExpressOrg imagesInOrg) {
       this.locations = locations;

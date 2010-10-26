@@ -43,10 +43,10 @@ public class RimuHostingDestroyNodeStrategy implements DestroyNodeStrategy {
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata destroyNode(String id) {
       Long serverId = Long.parseLong(id);
       client.destroyServer(serverId);
-      return getNode.execute(id);
+      return getNode.getNode(id);
    }
 
 }

@@ -38,6 +38,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -114,9 +115,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    protected TemplateOptions options;
 
    @Inject
-   protected TemplateBuilderImpl(Supplier<Set<? extends Location>> locations, Supplier<Set<? extends Image>> images,
-         Supplier<Set<? extends Hardware>> hardwares, Supplier<Location> defaultLocation2,
-         Provider<TemplateOptions> optionsProvider, @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider) {
+   protected TemplateBuilderImpl(@Memoized Supplier<Set<? extends Location>> locations,
+         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> hardwares,
+         Supplier<Location> defaultLocation2, Provider<TemplateOptions> optionsProvider,
+         @Named("DEFAULT") Provider<TemplateBuilder> defaultTemplateProvider) {
       this.locations = locations;
       this.images = images;
       this.hardwares = hardwares;
@@ -126,13 +128,11 @@ public class TemplateBuilderImpl implements TemplateBuilder {
    }
 
    /**
-    * If the current location id is null, then we don't care where to launch a
-    * node.
+    * If the current location id is null, then we don't care where to launch a node.
     * 
     * If the input location is null, then the data isn't location sensitive
     * 
-    * If the input location is a parent of the specified location, then we are
-    * ok.
+    * If the input location is a parent of the specified location, then we are ok.
     */
    private final Predicate<ComputeMetadata> locationPredicate = new Predicate<ComputeMetadata>() {
       @Override
@@ -180,6 +180,10 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          return returnVal;
       }
 
+      @Override
+      public String toString() {
+         return "osFamily(" + osFamily + ")";
+      }
    };
 
    private final Predicate<OperatingSystem> osNamePredicate = new Predicate<OperatingSystem>() {
@@ -637,7 +641,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
 
                @Override
                public String toString() {
-                  return locationPredicate.toString();
+                  return "location(" + location + ")";
                }
             });
 

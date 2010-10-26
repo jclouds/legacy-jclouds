@@ -19,6 +19,8 @@
 
 package org.jclouds.blobstore.domain.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Date;
@@ -47,12 +49,57 @@ public class StorageMetadataImpl extends ResourceMetadataImpl<StorageType> imple
    @Nullable
    private final Date lastModified;
 
+   private final StorageType type;
+
    public StorageMetadataImpl(StorageType type, @Nullable String id, @Nullable String name,
-            @Nullable Location location, @Nullable URI uri, @Nullable String eTag, @Nullable Date lastModified,
-            Map<String, String> userMetadata) {
-      super(type, id, name, location, uri, userMetadata);
+         @Nullable Location location, @Nullable URI uri, @Nullable String eTag, @Nullable Date lastModified,
+         Map<String, String> userMetadata) {
+      super(id, name, location, uri, userMetadata);
       this.eTag = eTag;
       this.lastModified = lastModified;
+      this.type = checkNotNull(type, "type");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public StorageType getType() {
+      return type;
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((eTag == null) ? 0 : eTag.hashCode());
+      result = prime * result + ((lastModified == null) ? 0 : lastModified.hashCode());
+      result = prime * result + ((type == null) ? 0 : type.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (!super.equals(obj))
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      StorageMetadataImpl other = (StorageMetadataImpl) obj;
+      if (eTag == null) {
+         if (other.eTag != null)
+            return false;
+      } else if (!eTag.equals(other.eTag))
+         return false;
+      if (lastModified == null) {
+         if (other.lastModified != null)
+            return false;
+      } else if (!lastModified.equals(other.lastModified))
+         return false;
+      if (type != other.type)
+         return false;
+      return true;
    }
 
    /**

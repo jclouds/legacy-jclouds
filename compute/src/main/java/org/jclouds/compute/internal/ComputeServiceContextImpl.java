@@ -21,6 +21,8 @@ package org.jclouds.compute.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Map;
+
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -29,6 +31,7 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.Utils;
+import org.jclouds.domain.Credentials;
 import org.jclouds.rest.RestContext;
 
 /**
@@ -40,11 +43,13 @@ public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
    private final LoadBalancerService loadBalancerService;
    private final RestContext<S, A> providerSpecificContext;
    private final Utils utils;
+   private final Map<String, Credentials> credentialStore;
 
    @SuppressWarnings({ "unchecked" })
    @Inject
-   public ComputeServiceContextImpl(ComputeService computeService, Utils utils,
-            @Nullable LoadBalancerService loadBalancerService, RestContext providerSpecificContext) {
+   public ComputeServiceContextImpl(ComputeService computeService, Map<String, Credentials> credentialStore,
+         Utils utils, @Nullable LoadBalancerService loadBalancerService, RestContext providerSpecificContext) {
+      this.credentialStore = credentialStore;
       this.utils = utils;
       this.providerSpecificContext = providerSpecificContext;
       this.computeService = checkNotNull(computeService, "computeService");
@@ -55,7 +60,7 @@ public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
       return computeService;
    }
 
-   @SuppressWarnings( { "unchecked", "hiding" })
+   @SuppressWarnings({ "unchecked", "hiding" })
    @Override
    public <S, A> RestContext<S, A> getProviderSpecificContext() {
       return (RestContext<S, A>) providerSpecificContext;
@@ -93,5 +98,15 @@ public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
    @Override
    public boolean equals(Object obj) {
       return providerSpecificContext.equals(obj);
+   }
+
+   @Override
+   public Map<String, Credentials> getCredentialStore() {
+      return credentialStore;
+   }
+
+   @Override
+   public Map<String, Credentials> credentialStore() {
+      return credentialStore;
    }
 }

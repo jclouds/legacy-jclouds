@@ -29,7 +29,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.rimuhosting.miro.binder.CreateServerOptions;
@@ -80,7 +80,7 @@ public class RimuHostingAsyncClientTest extends RestClientTest<RimuHostingAsyncC
    }
 
    @Override
-   public ContextSpec<RimuHostingClient, RimuHostingAsyncClient> createContextSpec() {
+   public RestContextSpec<RimuHostingClient, RimuHostingAsyncClient> createContextSpec() {
       return new RestContextFactory().createContextSpec("rimuhosting", "apikey", "null", new Properties());
    }
 }

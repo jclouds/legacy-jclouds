@@ -30,10 +30,12 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.internal.NodeMetadataImpl;
+import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -45,8 +47,6 @@ import org.jclouds.rimuhosting.miro.domain.internal.RunningState;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 
 /**
@@ -58,9 +58,10 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Resource
    protected Logger logger = Logger.NULL;
-   private final Function<Server, Iterable<String>> getPublicAddresses;
-   private final Map<RunningState, NodeState> runningStateToNodeState;
-   private final Supplier<Set<? extends Image>> images;
+   protected final Map<String, Credentials> credentialStore;
+   protected final Function<Server, Iterable<String>> getPublicAddresses;
+   protected final Map<RunningState, NodeState> runningStateToNodeState;
+   protected final Supplier<Set<? extends Image>> images;
 
    private static class FindImageForServer implements Predicate<Image> {
       private final Location location;
@@ -81,31 +82,39 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
 
    @Inject
    ServerToNodeMetadata(Function<Server, Iterable<String>> getPublicAddresses,
-            Map<RunningState, NodeState> runningStateToNodeState, Supplier<Set<? extends Image>> images) {
+            Map<String, Credentials> credentialStore, Map<RunningState, NodeState> runningStateToNodeState,
+            @Memoized Supplier<Set<? extends Image>> images) {
       this.getPublicAddresses = checkNotNull(getPublicAddresses, "serverStateToNodeState");
+      this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.runningStateToNodeState = checkNotNull(runningStateToNodeState, "serverStateToNodeState");
       this.images = checkNotNull(images, "images");
    }
 
    @Override
    public NodeMetadata apply(Server from) {
+      NodeMetadataBuilder builder = new NodeMetadataBuilder();
+      builder.ids(from.getId() + "");
+      builder.name(from.getName());
       // TODO properly look up location
-      Location location = new LocationImpl(LocationScope.ZONE, from.getLocation().getId(),
-               from.getLocation().getName(), null);
-      String tag = parseTagFromName(from.getName());
-      Credentials creds = null;
+      LocationImpl location = new LocationImpl(LocationScope.ZONE, from.getLocation().getId(), from.getLocation()
+               .getName(), null);
+      builder.location(location);
+      builder.tag(parseTagFromName(from.getName()));
+      builder.imageId(from.getImageId() + "");
+      builder.operatingSystem(parseOperatingSystem(from, location));
+      builder.hardware(null);// TODO
+      builder.state(runningStateToNodeState.get(from.getState()));
+      builder.publicAddresses(getPublicAddresses.apply(from));
+      builder.credentials(credentialStore.get(from.getId() + ""));
+      return builder.build();
+   }
 
-      Image image = null;
+   protected OperatingSystem parseOperatingSystem(Server from, LocationImpl location) {
       try {
-         image = Iterables.find(images.get(), new FindImageForServer(location, from));
+         return Iterables.find(images.get(), new FindImageForServer(location, from)).getOperatingSystem();
       } catch (NoSuchElementException e) {
          logger.warn("could not find a matching image for server %s in location %s", from, location);
       }
-
-      NodeState state = runningStateToNodeState.get(from.getState());
-      return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", location, null, ImmutableMap
-               .<String, String> of(), tag, null, from.getImageId(), image != null ? image.getOperatingSystem() : null,
-               state, getPublicAddresses.apply(from), ImmutableList.<String> of(), creds);
-
+      return null;
    }
 }

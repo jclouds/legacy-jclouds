@@ -37,26 +37,25 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class ResourceAllocationsToVolumes implements
-         Function<Iterable<? extends ResourceAllocation>, Iterable<? extends Volume>> {
+public class ResourceAllocationsToVolumes implements Function<Iterable<? extends ResourceAllocation>, Iterable<Volume>> {
    @Override
-   public Iterable<? extends Volume> apply(Iterable<? extends ResourceAllocation> resourceAllocations) {
+   public Iterable<Volume> apply(Iterable<? extends ResourceAllocation> resourceAllocations) {
       Iterable<Volume> volumes = transform(filter(resourceAllocations, resourceType(ResourceType.DISK_DRIVE)),
-               new Function<ResourceAllocation, Volume>() {
+            new Function<ResourceAllocation, Volume>() {
 
-                  @Override
-                  public Volume apply(ResourceAllocation from) {
-                     if (from instanceof VCloudHardDisk) {
-                        VCloudHardDisk vDisk = VCloudHardDisk.class.cast(from);
-                        return new VolumeImpl(from.getAddressOnParent() + "", Volume.Type.LOCAL,
-                                 vDisk.getCapacity() / 1024f, null, from.getAddressOnParent() == 0, true);
-                     } else {
-                        return new VolumeImpl(from.getAddressOnParent() + "", Volume.Type.LOCAL, from
-                                 .getVirtualQuantity() / 1024 / 1024f, null, from.getAddressOnParent() == 0, true);
-                     }
+               @Override
+               public Volume apply(ResourceAllocation from) {
+                  if (from instanceof VCloudHardDisk) {
+                     VCloudHardDisk vDisk = VCloudHardDisk.class.cast(from);
+                     return new VolumeImpl(from.getAddressOnParent() + "", Volume.Type.LOCAL,
+                           vDisk.getCapacity() / 1024f, null, from.getAddressOnParent() == 0, true);
+                  } else {
+                     return new VolumeImpl(from.getAddressOnParent() + "", Volume.Type.LOCAL,
+                           from.getVirtualQuantity() / 1024 / 1024f, null, from.getAddressOnParent() == 0, true);
                   }
+               }
 
-               });
+            });
       return volumes;
    }
 }

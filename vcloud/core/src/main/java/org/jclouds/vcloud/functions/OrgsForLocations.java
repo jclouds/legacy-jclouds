@@ -38,7 +38,6 @@ import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.CommonVCloudAsyncClient;
-import org.jclouds.vcloud.compute.domain.VCloudLocation;
 import org.jclouds.vcloud.domain.Org;
 
 import com.google.common.base.Function;
@@ -80,7 +79,7 @@ public class OrgsForLocations implements Function<Iterable<? extends Location>, 
 
          @Override
          public URI apply(Location from) {
-            return VCloudLocation.class.cast(from.getParent()).getResource().getHref();
+            return URI.create(from.getParent().getId());
          }
 
       })), new Function<URI, Future<Org>>() {

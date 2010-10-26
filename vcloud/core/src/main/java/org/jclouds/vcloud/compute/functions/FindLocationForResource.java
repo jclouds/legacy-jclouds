@@ -19,6 +19,7 @@
 
 package org.jclouds.vcloud.compute.functions;
 
+import java.net.URI;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -26,9 +27,9 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
-import org.jclouds.vcloud.compute.domain.VCloudLocation;
 import org.jclouds.vcloud.domain.ReferenceType;
 
 import com.google.common.base.Supplier;
@@ -45,7 +46,7 @@ public class FindLocationForResource {
    final Supplier<Set<? extends Location>> locations;
 
    @Inject
-   public FindLocationForResource(Supplier<Set<? extends Location>> locations) {
+   public FindLocationForResource(@Memoized Supplier<Set<? extends Location>> locations) {
       this.locations = locations;
    }
 
@@ -60,7 +61,7 @@ public class FindLocationForResource {
          do {
             // The "name" isn't always present, ex inside a vApp we have a rel
             // link that only includes href and type.
-            if (VCloudLocation.class.cast(input).getResource().getHref().equals(resource.getHref()))
+            if (URI.create(input.getId()).equals(resource.getHref()))
                return input;
             input = input.getParent();
          } while (input.getParent() != null);

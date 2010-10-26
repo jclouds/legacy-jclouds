@@ -53,12 +53,12 @@ public class EC2DestroyNodeStrategy implements DestroyNodeStrategy {
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata destroyNode(String id) {
       String[] parts = parseHandle(id);
       String region = parts[0];
       String instanceId = parts[1];
       ec2Client.getInstanceServices().terminateInstancesInRegion(region,
             instanceId);
-      return getNode.execute(id);
+      return getNode.getNode(id);
    }
 }
