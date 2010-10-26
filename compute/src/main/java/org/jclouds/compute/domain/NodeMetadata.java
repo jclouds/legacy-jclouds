@@ -43,7 +43,7 @@ public interface NodeMetadata extends ComputeMetadata {
     * 
     */
    String getTag();
-  
+
    /**
     * 
     * The harware this node is running, if possible to determine.
@@ -71,6 +71,17 @@ public interface NodeMetadata extends ComputeMetadata {
    NodeState getState();
 
    /**
+    * @return the TCP port used for terminal connections. Generally, this is port 22 for ssh.
+    */
+   int getLoginPort();
+
+   /**
+    * If possible, these are returned upon all detail requests. However, it is often the case that
+    * credentials are only available at "run" time.
+    */
+   Credentials getCredentials();
+
+   /**
     * All public IP addresses, potentially including shared ips.
     */
    Set<String> getPublicAddresses();
@@ -79,11 +90,5 @@ public interface NodeMetadata extends ComputeMetadata {
     * All private IP addresses.
     */
    Set<String> getPrivateAddresses();
-
-   /**
-    * If possible, these are returned upon all detail requests. However, it is often the case that
-    * credentials are only available at "run" time.
-    */
-   Credentials getCredentials();
 
 }

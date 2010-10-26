@@ -45,6 +45,7 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
    private Credentials credentials;
    @Nullable
    private String tag;
+   private int loginPort;
    @Nullable
    private String imageId;
    @Nullable
@@ -54,6 +55,11 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
 
    public NodeMetadataBuilder() {
       super(ComputeType.NODE);
+   }
+
+   public NodeMetadataBuilder loginPort(int loginPort) {
+      this.loginPort = loginPort;
+      return this;
    }
 
    public NodeMetadataBuilder state(NodeState state) {
@@ -134,14 +140,14 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
    @Override
    public NodeMetadata build() {
       return new NodeMetadataImpl(providerId, name, id, location, uri, userMetadata, tag, hardware, imageId, os, state,
-            publicAddresses, privateAddresses, credentials);
+            loginPort, publicAddresses, privateAddresses, credentials);
    }
 
    public static NodeMetadataBuilder fromNodeMetadata(NodeMetadata node) {
       return new NodeMetadataBuilder().providerId(node.getProviderId()).name(node.getName()).id(node.getId())
             .location(node.getLocation()).uri(node.getUri()).userMetadata(node.getUserMetadata()).tag(node.getTag())
             .hardware(node.getHardware()).imageId(node.getImageId()).operatingSystem(node.getOperatingSystem())
-            .state(node.getState()).publicAddresses(node.getPublicAddresses())
+            .state(node.getState()).loginPort(node.getLoginPort()).publicAddresses(node.getPublicAddresses())
             .privateAddresses(node.getPrivateAddresses()).credentials(node.getCredentials());
    }
 
