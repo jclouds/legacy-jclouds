@@ -31,7 +31,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.inject.Singleton;
-import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.crypto.CryptoStreams;
@@ -58,6 +57,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Request;
+import com.ning.http.client.RequestBuilder;
 import com.ning.http.client.Response;
 import com.ning.http.client.Request.EntityWriter;
 
@@ -148,51 +148,47 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
             filter.filter(request);
          }
 
-         AsyncHttpClient client = new AsyncHttpClient();
-         AsyncHttpClient.BoundRequestBuilder nativeRequestBuilder;
-         String endpoint = request.getEndpoint().toASCIIString();
-         if (request.getMethod().equals(HttpMethod.HEAD)) {
-            nativeRequestBuilder = client.prepareHead(endpoint);
-         } else if (request.getMethod().equals(HttpMethod.GET)) {
-            nativeRequestBuilder = client.prepareGet(endpoint);
-         } else if (request.getMethod().equals(HttpMethod.DELETE)) {
-            nativeRequestBuilder = client.prepareDelete(endpoint);
-         } else if (request.getMethod().equals(HttpMethod.PUT)) {
-            nativeRequestBuilder = client.preparePut(endpoint);
-         } else if (request.getMethod().equals(HttpMethod.POST)) {
-            nativeRequestBuilder = client.preparePost(endpoint);
-         } else {
-            throw new UnsupportedOperationException(request.getMethod());
-         }
+         RequestBuilder builder = new RequestBuilder(request.getMethod());
+         builder.setUrl(request.getEndpoint().toASCIIString());
          Payload payload = request.getPayload();
          if (payload != null) {
             boolean chunked = "chunked".equals(request.getFirstHeaderOrNull("Transfer-Encoding"));
 
-            if (request.getPayload().getContentMD5() != null)
-               nativeRequestBuilder
-                        .addHeader("Content-MD5", CryptoStreams.base64(request.getPayload().getContentMD5()));
-            if (request.getPayload().getContentType() != null)
-               nativeRequestBuilder.addHeader(HttpHeaders.CONTENT_TYPE, request.getPayload().getContentType());
+            if (request.getPayload().getContentMetadata().getContentMD5() != null)
+               builder.addHeader("Content-MD5", CryptoStreams.base64(request.getPayload().getContentMetadata()
+                        .getContentMD5()));
+            if (request.getPayload().getContentMetadata().getContentType() != null)
+               builder.addHeader(HttpHeaders.CONTENT_TYPE, request.getPayload().getContentMetadata().getContentType());
+            if (request.getPayload().getContentMetadata().getContentLanguage() != null)
+               builder.addHeader(HttpHeaders.CONTENT_LANGUAGE, request.getPayload().getContentMetadata()
+                        .getContentLanguage());
+            if (request.getPayload().getContentMetadata().getContentEncoding() != null)
+               builder.addHeader(HttpHeaders.CONTENT_ENCODING, request.getPayload().getContentMetadata()
+                        .getContentEncoding());
+            if (request.getPayload().getContentMetadata().getContentDisposition() != null)
+               builder.addHeader("Content-Disposition", request.getPayload().getContentMetadata()
+                        .getContentDisposition());
             if (!chunked) {
-               Long length = checkNotNull(request.getPayload().getContentLength(), "payload.getContentLength");
-               nativeRequestBuilder.addHeader(HttpHeaders.CONTENT_LENGTH, length.toString());
+               Long length = checkNotNull(request.getPayload().getContentMetadata().getContentLength(),
+                        "payload.getContentLength");
+               builder.addHeader(HttpHeaders.CONTENT_LENGTH, length.toString());
             }
-            setPayload(nativeRequestBuilder, payload);
+            setPayload(builder, payload);
          } else {
-            nativeRequestBuilder.addHeader(HttpHeaders.CONTENT_LENGTH, "0");
+            builder.addHeader(HttpHeaders.CONTENT_LENGTH, "0");
          }
 
-         nativeRequestBuilder.addHeader(HttpHeaders.USER_AGENT, USER_AGENT);
+         builder.addHeader(HttpHeaders.USER_AGENT, USER_AGENT);
          for (String header : request.getHeaders().keySet()) {
             for (String value : request.getHeaders().get(header)) {
-               nativeRequestBuilder.addHeader(header, value);
+               builder.addHeader(header, value);
             }
          }
 
-         return nativeRequestBuilder.build();
+         return builder.build();
       }
 
-      void setPayload(AsyncHttpClient.BoundRequestBuilder requestBuilder, Payload payload) {
+      void setPayload(RequestBuilder requestBuilder, Payload payload) {
          requestBuilder.setBody(new PayloadEntityWriter(payload));
       }
    }
