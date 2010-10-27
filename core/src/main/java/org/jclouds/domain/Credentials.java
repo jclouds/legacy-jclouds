@@ -61,8 +61,8 @@ public class Credentials {
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((identity == null) ? 0 : identity.hashCode());
       result = prime * result + ((credential == null) ? 0 : credential.hashCode());
+      result = prime * result + ((identity == null) ? 0 : identity.hashCode());
       return result;
    }
 
@@ -72,20 +72,19 @@ public class Credentials {
          return true;
       if (obj == null)
          return false;
-      if (getClass() != obj.getClass())
+      if (!(obj instanceof Credentials))
          return false;
       Credentials other = (Credentials) obj;
-      if (identity == null) {
-         if (other.identity != null)
-            return false;
-      } else if (!identity.equals(other.identity))
-         return false;
       if (credential == null) {
          if (other.credential != null)
             return false;
       } else if (!credential.equals(other.credential))
          return false;
-
+      if (identity == null) {
+         if (other.identity != null)
+            return false;
+      } else if (!identity.equals(other.identity))
+         return false;
       return true;
    }
 
