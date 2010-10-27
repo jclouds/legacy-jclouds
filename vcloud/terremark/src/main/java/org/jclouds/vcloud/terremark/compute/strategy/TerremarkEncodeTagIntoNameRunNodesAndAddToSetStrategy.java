@@ -63,9 +63,10 @@ public class TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy extends Encod
             Map<NodeMetadata, Exception> badNodes) {
       assert template.getLocation().getParent().getScope() == LocationScope.REGION : "template location should have a parent of org, which should be mapped to region: "
                + template.getLocation();
-      createNewKeyPairUnlessUserSpecifiedOtherwise.execute(URI.create(template.getLocation().getParent().getId()), tag,
-               template.getImage().getDefaultCredentials().identity, template.getOptions().as(
-                        TerremarkVCloudTemplateOptions.class));
+      String orgId = template.getLocation().getParent().getId();
+      assert orgId.startsWith("http") : "parent id should be a rest url: " + template.getLocation().getParent();
+      createNewKeyPairUnlessUserSpecifiedOtherwise.execute(URI.create(orgId), tag, template.getImage()
+               .getDefaultCredentials().identity, template.getOptions().as(TerremarkVCloudTemplateOptions.class));
       return super.execute(tag, count, template, nodes, badNodes);
    }
 }
