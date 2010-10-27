@@ -42,6 +42,8 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
    private Set<String> publicAddresses = Sets.newLinkedHashSet();
    private Set<String> privateAddresses = Sets.newLinkedHashSet();
    @Nullable
+   private String adminPassword;
+   @Nullable
    private Credentials credentials;
    @Nullable
    private String tag;
@@ -79,6 +81,11 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
 
    public NodeMetadataBuilder credentials(@Nullable Credentials credentials) {
       this.credentials = credentials;
+      return this;
+   }
+
+   public NodeMetadataBuilder adminPassword(@Nullable String adminPassword) {
+      this.adminPassword = adminPassword;
       return this;
    }
 
@@ -140,15 +147,16 @@ public class NodeMetadataBuilder extends ComputeMetadataBuilder {
    @Override
    public NodeMetadata build() {
       return new NodeMetadataImpl(providerId, name, id, location, uri, userMetadata, tag, hardware, imageId, os, state,
-            loginPort, publicAddresses, privateAddresses, credentials);
+               loginPort, publicAddresses, privateAddresses, adminPassword, credentials);
    }
 
    public static NodeMetadataBuilder fromNodeMetadata(NodeMetadata node) {
-      return new NodeMetadataBuilder().providerId(node.getProviderId()).name(node.getName()).id(node.getId())
-            .location(node.getLocation()).uri(node.getUri()).userMetadata(node.getUserMetadata()).tag(node.getTag())
-            .hardware(node.getHardware()).imageId(node.getImageId()).operatingSystem(node.getOperatingSystem())
-            .state(node.getState()).loginPort(node.getLoginPort()).publicAddresses(node.getPublicAddresses())
-            .privateAddresses(node.getPrivateAddresses()).credentials(node.getCredentials());
+      return new NodeMetadataBuilder().providerId(node.getProviderId()).name(node.getName()).id(node.getId()).location(
+               node.getLocation()).uri(node.getUri()).userMetadata(node.getUserMetadata()).tag(node.getTag()).hardware(
+               node.getHardware()).imageId(node.getImageId()).operatingSystem(node.getOperatingSystem()).state(
+               node.getState()).loginPort(node.getLoginPort()).publicAddresses(node.getPublicAddresses())
+               .privateAddresses(node.getPrivateAddresses()).adminPassword(node.getAdminPassword()).credentials(
+                        node.getCredentials());
    }
 
 }

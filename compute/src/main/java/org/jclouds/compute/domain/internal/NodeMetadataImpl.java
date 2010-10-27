@@ -51,6 +51,8 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    private final Set<String> publicAddresses;
    private final Set<String> privateAddresses;
    @Nullable
+   private final String adminPassword;
+   @Nullable
    private final Credentials credentials;
    @Nullable
    private final String tag;
@@ -62,9 +64,10 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    private final OperatingSystem os;
 
    public NodeMetadataImpl(String providerId, String name, String id, Location location, URI uri,
-         Map<String, String> userMetadata, @Nullable String tag, @Nullable Hardware hardware, @Nullable String imageId,
-         @Nullable OperatingSystem os, NodeState state, int loginPort, Iterable<String> publicAddresses,
-         Iterable<String> privateAddresses, @Nullable Credentials credentials) {
+            Map<String, String> userMetadata, @Nullable String tag, @Nullable Hardware hardware,
+            @Nullable String imageId, @Nullable OperatingSystem os, NodeState state, int loginPort,
+            Iterable<String> publicAddresses, Iterable<String> privateAddresses, @Nullable String adminPassword,
+            @Nullable Credentials credentials) {
       super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata);
       this.tag = tag;
       this.hardware = hardware;
@@ -74,6 +77,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       this.loginPort = loginPort;
       this.publicAddresses = ImmutableSet.copyOf(checkNotNull(publicAddresses, "publicAddresses"));
       this.privateAddresses = ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses"));
+      this.adminPassword = adminPassword;
       this.credentials = credentials;
    }
 
@@ -91,6 +95,14 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    @Override
    public Hardware getHardware() {
       return hardware;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getAdminPassword() {
+      return adminPassword;
    }
 
    /**
@@ -152,11 +164,11 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    @Override
    public String toString() {
       return "[id=" + getId() + ", providerId=" + getProviderId() + ", tag=" + getTag() + ", name=" + getName()
-            + ", location=" + getLocation() + ", uri=" + getUri() + ", imageId=" + getImageId() + ", os="
-            + getOperatingSystem() + ", state=" + getState() + ", loginPort=" + getLoginPort() + ", privateAddresses="
-            + privateAddresses + ", publicAddresses=" + publicAddresses + ", hardware=" + getHardware()
-            + ", loginUser=" + ((credentials != null) ? credentials.identity : null) + ", userMetadata="
-            + getUserMetadata() + "]";
+               + ", location=" + getLocation() + ", uri=" + getUri() + ", imageId=" + getImageId() + ", os="
+               + getOperatingSystem() + ", state=" + getState() + ", loginPort=" + getLoginPort()
+               + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses + ", hardware="
+               + getHardware() + ", loginUser=" + ((credentials != null) ? credentials.identity : null)
+               + ", userMetadata=" + getUserMetadata() + "]";
    }
 
    @Override
@@ -170,6 +182,7 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((hardware == null) ? 0 : hardware.hashCode());
       result = prime * result + ((os == null) ? 0 : os.hashCode());
+      result = prime * result + ((adminPassword == null) ? 0 : adminPassword.hashCode());
       result = prime * result + ((credentials == null) ? 0 : credentials.hashCode());
       return result;
    }
@@ -214,6 +227,11 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
          if (other.os != null)
             return false;
       } else if (!os.equals(other.os))
+         return false;
+      if (adminPassword == null) {
+         if (other.adminPassword != null)
+            return false;
+      } else if (!adminPassword.equals(other.adminPassword))
          return false;
       if (credentials == null) {
          if (other.credentials != null)

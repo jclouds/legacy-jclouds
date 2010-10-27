@@ -37,6 +37,8 @@ public class ImageBuilder extends ComputeMetadataBuilder {
    private OperatingSystem operatingSystem;
    private String version;
    private String description;
+   @Nullable
+   private String adminPassword;
    private Credentials defaultCredentials;
 
    public ImageBuilder() {
@@ -55,6 +57,11 @@ public class ImageBuilder extends ComputeMetadataBuilder {
 
    public ImageBuilder description(String description) {
       this.description = checkNotNull(description, "description");
+      return this;
+   }
+
+   public ImageBuilder adminPassword(@Nullable String adminPassword) {
+      this.adminPassword = adminPassword;
       return this;
    }
 
@@ -101,7 +108,14 @@ public class ImageBuilder extends ComputeMetadataBuilder {
    @Override
    public Image build() {
       return new ImageImpl(providerId, name, id, location, uri, userMetadata, operatingSystem, description, version,
-            defaultCredentials);
+               adminPassword, defaultCredentials);
+   }
+
+   public static ImageBuilder fromImage(Image image) {
+      return new ImageBuilder().providerId(image.getProviderId()).name(image.getName()).id(image.getId()).location(
+               image.getLocation()).uri(image.getUri()).userMetadata(image.getUserMetadata()).version(
+               image.getVersion()).description(image.getDescription()).operatingSystem(image.getOperatingSystem())
+               .adminPassword(image.getAdminPassword()).defaultCredentials(image.getDefaultCredentials());
    }
 
 }

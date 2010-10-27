@@ -76,6 +76,17 @@ public interface NodeMetadata extends ComputeMetadata {
    int getLoginPort();
 
    /**
+    * secures access to root with a password. This password is required to access either the console
+    * or run sudo as root.
+    * <p/>
+    * ex. {@code echo 'password' |sudo -S command}
+    * 
+    * @return root or console password, if configured, or null.
+    */
+   @Nullable
+   String getAdminPassword();
+
+   /**
     * If possible, these are returned upon all detail requests. However, it is often the case that
     * credentials are only available at "run" time.
     */
