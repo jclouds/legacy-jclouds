@@ -20,24 +20,16 @@
 package org.jclouds.vcloud.compute.config;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Singleton;
 
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.config.BindComputeStrategiesByClass;
+import org.jclouds.compute.config.BindComputeSuppliersByClass;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
-import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
-import org.jclouds.domain.Location;
-import org.jclouds.vcloud.compute.suppliers.OrgAndVDCToLocationSupplier;
-import org.jclouds.vcloud.compute.suppliers.StaticHardwareSupplier;
-import org.jclouds.vcloud.compute.suppliers.VCloudImageSupplier;
 import org.jclouds.vcloud.domain.Status;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
 
@@ -50,13 +42,13 @@ import com.google.inject.Provides;
 public abstract class CommonVCloudComputeServiceContextModule extends BaseComputeServiceContextModule {
 
    @VisibleForTesting
-   static final Map<Status, NodeState> vAppStatusToNodeState = ImmutableMap.<Status, NodeState> builder().put(
-            Status.OFF, NodeState.SUSPENDED).put(Status.ON, NodeState.RUNNING).put(Status.RESOLVED, NodeState.PENDING)
-            .put(Status.ERROR, NodeState.ERROR).put(Status.UNRECOGNIZED, NodeState.UNRECOGNIZED).put(Status.DEPLOYED,
-                     NodeState.PENDING).put(Status.INCONSISTENT, NodeState.PENDING).put(Status.UNKNOWN,
-                     NodeState.UNRECOGNIZED).put(Status.MIXED, NodeState.PENDING).put(Status.WAITING_FOR_INPUT,
-                     NodeState.PENDING).put(Status.SUSPENDED, NodeState.SUSPENDED).put(Status.UNRESOLVED,
-                     NodeState.PENDING).build();
+   static final Map<Status, NodeState> vAppStatusToNodeState = ImmutableMap.<Status, NodeState> builder()
+         .put(Status.OFF, NodeState.SUSPENDED).put(Status.ON, NodeState.RUNNING)
+         .put(Status.RESOLVED, NodeState.PENDING).put(Status.ERROR, NodeState.ERROR)
+         .put(Status.UNRECOGNIZED, NodeState.UNRECOGNIZED).put(Status.DEPLOYED, NodeState.PENDING)
+         .put(Status.INCONSISTENT, NodeState.PENDING).put(Status.UNKNOWN, NodeState.UNRECOGNIZED)
+         .put(Status.MIXED, NodeState.PENDING).put(Status.WAITING_FOR_INPUT, NodeState.PENDING)
+         .put(Status.SUSPENDED, NodeState.SUSPENDED).put(Status.UNRESOLVED, NodeState.PENDING).build();
 
    @Singleton
    @Provides
@@ -67,25 +59,12 @@ public abstract class CommonVCloudComputeServiceContextModule extends BaseComput
    @Override
    protected void configure() {
       super.configure();
+      install(defineComputeStrategyModule());
+      install(defineComputeSupplierModule());
    }
 
-   @Override
-   protected Class<? extends RunNodesAndAddToSetStrategy> defineRunNodesAndAddToSetStrategy() {
-      return EncodeTagIntoNameRunNodesAndAddToSetStrategy.class;
-   }
+   public abstract BindComputeStrategiesByClass defineComputeStrategyModule();
 
-   @Override
-   protected Class<? extends Supplier<Set<? extends Hardware>>> defineHardwareSupplier() {
-      return StaticHardwareSupplier.class;
-   }
+   public abstract BindComputeSuppliersByClass defineComputeSupplierModule();
 
-   @Override
-   protected Class<? extends Supplier<Set<? extends Image>>> defineImageSupplier() {
-      return VCloudImageSupplier.class;
-   }
-
-   @Override
-   protected Class<? extends Supplier<Set<? extends Location>>> defineLocationSupplier() {
-      return OrgAndVDCToLocationSupplier.class;
-   }
 }

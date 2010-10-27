@@ -20,7 +20,6 @@
 package org.jclouds.vcloud.terremark.compute.config;
 
 import java.security.SecureRandom;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -28,12 +27,11 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.config.BindComputeStrategiesByClass;
+import org.jclouds.compute.config.BindComputeSuppliersByClass;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
-import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
 import org.jclouds.vcloud.compute.config.VCloudExpressComputeServiceContextModule;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
@@ -45,9 +43,6 @@ import org.jclouds.vcloud.terremark.compute.functions.NodeMetadataToOrgAndName;
 import org.jclouds.vcloud.terremark.compute.functions.TerremarkVCloudExpressVAppToNodeMetadata;
 import org.jclouds.vcloud.terremark.compute.options.TerremarkVCloudTemplateOptions;
 import org.jclouds.vcloud.terremark.compute.strategy.ParseVAppTemplateDescriptionToGetDefaultLoginCredentials;
-import org.jclouds.vcloud.terremark.compute.strategy.TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy;
-import org.jclouds.vcloud.terremark.compute.strategy.TerremarkVCloudAddNodeWithTagStrategy;
-import org.jclouds.vcloud.terremark.compute.suppliers.VAppTemplatesInOrgs;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -95,13 +90,13 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudExpressCom
    }
 
    @Override
-   protected Class<? extends RunNodesAndAddToSetStrategy> defineRunNodesAndAddToSetStrategy() {
-      return TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy.class;
+   public BindComputeStrategiesByClass defineComputeStrategyModule() {
+      return new TerremarkBindComputeStrategiesByClass();
    }
 
    @Override
-   protected Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy() {
-      return TerremarkVCloudAddNodeWithTagStrategy.class;
+   public BindComputeSuppliersByClass defineComputeSupplierModule() {
+      return new TerremarkBindComputeSuppliersByClass();
    }
 
    @Provides
@@ -124,8 +119,4 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudExpressCom
       return random.nextLong() + "";
    }
 
-   @Override
-   protected Class<? extends Supplier<Set<? extends Image>>> defineImageSupplier() {
-      return VAppTemplatesInOrgs.class;
-   }
 }

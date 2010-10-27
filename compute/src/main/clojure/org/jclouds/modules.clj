@@ -22,68 +22,43 @@
   (:import
    [org.jclouds.ssh SshClient ExecResponse]
    com.google.inject.Module
+   com.google.common.collect.ImmutableSet
+   org.jclouds.domain.Credentials
    org.jclouds.net.IPSocket
-   [org.jclouds.compute ComputeService ComputeServiceContextFactory]
-   java.util.Set
+   [org.jclouds.compute ComputeService ComputeServiceContextFactory StandaloneComputeServiceContextSpec]
+   [java.util Set Map]
    [org.jclouds.compute.domain NodeMetadata Template]
    [com.google.common.base Supplier Predicate]
-   [org.jclouds.compute.strategy AddNodeWithTagStrategy DestroyNodeStrategy RebootNodeStrategy GetNodeMetadataStrategy ListNodesStrategy]
    org.jclouds.compute.domain.NodeMetadataBuilder))
 
 
 (defn compute-module
   []
-  (.. (org.jclouds.compute.config.StandaloneComputeServiceContextModule$Builder.) 
-    (defineAddNodeWithTagStrategy (defrecord ClojureAddNodeWithTagStrategy []
-          AddNodeWithTagStrategy
-          (^NodeMetadata execute [this ^String tag ^String name ^Template template]
-            ())))
-    (defineDestroyNodeStrategy (defrecord ClojureDestroyNodeStrategy []
-          DestroyNodeStrategy
-          (^NodeMetadata execute [this ^String id]
-            ())))
-    (defineRebootNodeStrategy (defrecord ClojureRebootNodeStrategy []
-          RebootNodeStrategy
-          (^NodeMetadata execute [this ^String id]
-            ())))
-    (defineGetNodeMetadataStrategy (defrecord ClojureGetNodeMetadataStrategy []
-          GetNodeMetadataStrategy
-          (^NodeMetadata execute [this ^String id]
-            ())))
-    (defineListNodesStrategy (defrecord ClojureListNodesStrategy []
-          ListNodesStrategy
-          (^Iterable list [this ]
+  (org.jclouds.compute.config.JCloudsNativeStandaloneComputeServiceContextModule 
+    (defrecord ClojureComputeServiceAdapter []
+          org.jclouds.compute.JCloudsNativeComputeServiceAdapter
+          (^NodeMetadata runNodeWithTagAndNameAndStoreCredentials [this ^String tag ^String name ^Template template ^Map credentialStore]
             ())
-            (^Iterable listDetailsOnNodesMatching [this ^Predicate filter]
+          (^Iterable listNodes [this ]
             ())
-          ))
-      ;; this needs to return Set<Hardware>
+          (^Iterable listImages [this ]
+            ())
+          (^Iterable listHardwareProfiles [this ]
+            ())
+          (^Iterable listLocations [this ]
+            ())
+          (^NodeMetadata getNode [this ^String id]
+            ())
+          (^void destroyNode [this ^String id]
+            ())
+          (^void rebootNode  [this ^String id]
+            ()))))
 
-    (defineHardwareSupplier
-     (defrecord HardwareSupplier []
-          Supplier
-          (get [this]
-            ())
-          ))
-      ;; this needs to return Set<Image>
+(defn compute-context [^RestContextSpec spec] 
+  (.createContext (ComputeServiceContextFactory.)  spec))
 
-  (defineImageSupplier (defrecord ImageSupplier []
-          Supplier
-          ( get [this]
-            ())
-          ))
-  ;; this needs to return Set<Location>
-    (defineLocationSupplier (defrecord LocationSupplier []
-          Supplier
-          ( get [this]
-            ())
-          ))
-    (build)
-
-  ))
-
-(defn compute-context [module] 
-  (ComputeServiceContextFactory/createStandaloneContext module))
+(^RestContextSpec defn context-spec [^StandaloneComputeServiceContextModule module]
+  (StandaloneComputeServiceContextSpec. "servermanager", "http://host", "1", "identity", "credential", module, (ImmutableSet/of)))
 
 (defrecord NodeListComputeService
     [node-list]
@@ -101,6 +76,9 @@
   [ctor]
   (reify
    org.jclouds.ssh.SshClient$Factory
+   (^org.jclouds.ssh.SshClient create
+    [_ ^IPSocket socket ^Credentials credentials]
+    (ctor socket credentials))
    (^org.jclouds.ssh.SshClient create
     [_ ^IPSocket socket ^String username ^String password-or-key]
     (ctor socket username password-or-key))

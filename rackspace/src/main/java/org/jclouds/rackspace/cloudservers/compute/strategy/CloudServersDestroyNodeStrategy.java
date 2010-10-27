@@ -42,11 +42,11 @@ public class CloudServersDestroyNodeStrategy implements DestroyNodeStrategy {
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata destroyNode(String id) {
       int serverId = Integer.parseInt(id);
       // if false server wasn't around in the first place
       client.deleteServer(serverId);
-      return getNode.execute(id);
+      return getNode.getNode(id);
    }
 
 }

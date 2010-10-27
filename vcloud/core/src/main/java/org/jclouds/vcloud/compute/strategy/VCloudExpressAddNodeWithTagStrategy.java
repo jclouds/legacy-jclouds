@@ -55,7 +55,7 @@ public class VCloudExpressAddNodeWithTagStrategy implements AddNodeWithTagStrate
    }
 
    @Override
-   public NodeMetadata execute(String tag, String name, Template template) {
+   public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
       InstantiateVAppTemplateOptions options = processorCount((int) getCores(template.getHardware())).memory(
             template.getHardware().getRam()).disk(
             (long) ((template.getHardware().getVolumes().get(0).getSize()) * 1024 * 1024l));

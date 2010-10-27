@@ -46,7 +46,7 @@ public class SlicehostGetNodeMetadataStrategy implements GetNodeMetadataStrategy
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata getNode(String id) {
       int sliceId = Integer.parseInt(id);
       Slice slice = client.getSlice(sliceId);
       return slice == null ? null : sliceToNodeMetadata.apply(slice);

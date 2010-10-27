@@ -25,7 +25,6 @@ import static org.jclouds.compute.domain.OsFamily.CENTOS;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -33,30 +32,14 @@ import javax.inject.Singleton;
 import org.jclouds.aws.ec2.compute.EC2ComputeService;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.compute.strategy.EC2DestroyLoadBalancerStrategy;
-import org.jclouds.aws.ec2.compute.strategy.EC2DestroyNodeStrategy;
-import org.jclouds.aws.ec2.compute.strategy.EC2GetNodeMetadataStrategy;
-import org.jclouds.aws.ec2.compute.strategy.EC2ListNodesStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2LoadBalanceNodesStrategy;
-import org.jclouds.aws.ec2.compute.strategy.EC2RebootNodeStrategy;
-import org.jclouds.aws.ec2.compute.strategy.EC2RunNodesAndAddToSetStrategy;
-import org.jclouds.aws.ec2.compute.suppliers.EC2HardwareSupplier;
-import org.jclouds.aws.ec2.compute.suppliers.EC2ImageSupplier;
-import org.jclouds.aws.ec2.compute.suppliers.EC2LocationSupplier;
 import org.jclouds.aws.ec2.compute.suppliers.RegionAndNameToImageSupplier;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
-import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.DestroyLoadBalancerStrategy;
-import org.jclouds.compute.strategy.DestroyNodeStrategy;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.LoadBalanceNodesStrategy;
-import org.jclouds.compute.strategy.RebootNodeStrategy;
-import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
-import org.jclouds.domain.Location;
 import org.jclouds.rest.annotations.Provider;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
@@ -74,6 +57,8 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    @Override
    protected void configure() {
       install(new EC2ComputeServiceDependenciesModule());
+      install(new EC2BindComputeStrategiesByClass());
+      install(new EC2BindComputeSuppliersByClass());
       super.configure();
    }
 
@@ -91,79 +76,19 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    @Provides
    @Singleton
    protected Supplier<Map<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
-            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final RegionAndNameToImageSupplier supplier) {
+         @Named(PROPERTY_SESSION_INTERVAL) long seconds, final RegionAndNameToImageSupplier supplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<RegionAndName, ? extends Image>>(
-               authException, seconds, new Supplier<Map<RegionAndName, ? extends Image>>() {
-                  @Override
-                  public Map<RegionAndName, ? extends Image> get() {
-                     return supplier.get();
-                  }
-               });
+            authException, seconds, new Supplier<Map<RegionAndName, ? extends Image>>() {
+               @Override
+               public Map<RegionAndName, ? extends Image> get() {
+                  return supplier.get();
+               }
+            });
    }
 
    @Override
    protected void bindLoadBalancerService() {
       bind(LoadBalanceNodesStrategy.class).to(EC2LoadBalanceNodesStrategy.class);
       bind(DestroyLoadBalancerStrategy.class).to(EC2DestroyLoadBalancerStrategy.class);
-   }
-
-   @Override
-   protected Class<? extends RunNodesAndAddToSetStrategy> defineRunNodesAndAddToSetStrategy() {
-      return EC2RunNodesAndAddToSetStrategy.class;
-   }
-
-   /**
-    * not needed, as {@link EC2RunNodesAndAddToSetStrategy} is used and is already set-based.
-    */
-   @Override
-   protected Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy() {
-      return null;
-   }
-
-   /**
-    * not needed, as {@link EC2RunNodesAndAddToSetStrategy} is used and is already set-based.
-    */
-   @Override
-   protected void bindAddNodeWithTagStrategy(Class<? extends AddNodeWithTagStrategy> clazz) {
-   }
-
-   @Override
-   protected Class<? extends DestroyNodeStrategy> defineDestroyNodeStrategy() {
-      return EC2DestroyNodeStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends GetNodeMetadataStrategy> defineGetNodeMetadataStrategy() {
-      return EC2GetNodeMetadataStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends Supplier<Set<? extends Hardware>>> defineHardwareSupplier() {
-      return EC2HardwareSupplier.class;
-   }
-
-   @Override
-   protected Class<? extends Supplier<Set<? extends Image>>> defineImageSupplier() {
-      return EC2ImageSupplier.class;
-   }
-
-   @Override
-   protected Class<? extends ListNodesStrategy> defineListNodesStrategy() {
-      return EC2ListNodesStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends RebootNodeStrategy> defineRebootNodeStrategy() {
-      return EC2RebootNodeStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends Supplier<Location>> defineDefaultLocationSupplier() {
-      return org.jclouds.aws.suppliers.DefaultLocationSupplier.class;
-   }
-
-   @Override
-   protected Class<? extends Supplier<Set<? extends Location>>> defineLocationSupplier() {
-      return EC2LocationSupplier.class;
    }
 }

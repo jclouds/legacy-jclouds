@@ -82,7 +82,7 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
    }
 
    @Override
-   public Iterable<ComputeMetadata> list() {
+   public Iterable<ComputeMetadata> listNodes() {
       Set<ComputeMetadata> nodes = Sets.newHashSet();
       for (String org : orgNameToEndpoint.get().keySet()) {
          for (ReferenceType vdc : client.findOrgNamed(org).getVDCs().values()) {
@@ -130,7 +130,7 @@ public class VCloudListNodesStrategy implements ListNodesStrategy {
       int i = 0;
       while (node == null && i++ < 3) {
          try {
-            node = getNodeMetadata.execute(resource.getHref().toASCIIString());
+            node = getNodeMetadata.getNode(resource.getHref().toASCIIString());
             nodes.add(node);
          } catch (NullPointerException e) {
             logger.warn("vApp %s not yet present in vdc %s", resource.getName(), vdc.getName());

@@ -19,21 +19,17 @@
 
 package org.jclouds.vcloud.compute.config;
 
-import java.util.Set;
 
 import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.config.BindComputeStrategiesByClass;
+import org.jclouds.compute.config.BindComputeSuppliersByClass;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
-import org.jclouds.compute.strategy.DestroyNodeStrategy;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
-import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 import org.jclouds.vcloud.VCloudClient;
@@ -44,17 +40,10 @@ import org.jclouds.vcloud.compute.functions.VAppToNodeMetadata;
 import org.jclouds.vcloud.compute.internal.VCloudTemplateBuilderImpl;
 import org.jclouds.vcloud.compute.options.VCloudTemplateOptions;
 import org.jclouds.vcloud.compute.strategy.GetLoginCredentialsFromGuestConfiguration;
-import org.jclouds.vcloud.compute.strategy.VCloudAddNodeWithTagStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudDestroyNodeStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudGetNodeMetadataStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudListNodesStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudRebootNodeStrategy;
-import org.jclouds.vcloud.compute.suppliers.VCloudHardwareSupplier;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.VApp;
 
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
@@ -92,32 +81,12 @@ public class VCloudComputeServiceContextModule extends CommonVCloudComputeServic
    }
 
    @Override
-   protected Class<? extends Supplier<Set<? extends Hardware>>> defineHardwareSupplier() {
-      return VCloudHardwareSupplier.class;
+   public BindComputeStrategiesByClass defineComputeStrategyModule() {
+      return new VCloudBindComputeStrategiesByClass();
    }
 
    @Override
-   protected Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy() {
-      return VCloudAddNodeWithTagStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends DestroyNodeStrategy> defineDestroyNodeStrategy() {
-      return VCloudDestroyNodeStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends GetNodeMetadataStrategy> defineGetNodeMetadataStrategy() {
-      return VCloudGetNodeMetadataStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends ListNodesStrategy> defineListNodesStrategy() {
-      return VCloudListNodesStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends RebootNodeStrategy> defineRebootNodeStrategy() {
-      return VCloudRebootNodeStrategy.class;
+   public BindComputeSuppliersByClass defineComputeSupplierModule() {
+      return new VCloudBindComputeSuppliersByClass();
    }
 }

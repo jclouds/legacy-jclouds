@@ -19,72 +19,32 @@
 
 package org.jclouds.compute.stub.config;
 
-import java.util.Set;
-
-import org.jclouds.compute.config.StandaloneComputeServiceContextModule;
+import org.jclouds.compute.ComputeServiceAdapter;
+import org.jclouds.compute.config.JCloudsNativeStandaloneComputeServiceContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
-import org.jclouds.compute.strategy.DestroyNodeStrategy;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.compute.strategy.RebootNodeStrategy;
-import org.jclouds.compute.stub.config.StubComputeServiceDependenciesModule.StubAddNodeWithTagStrategy;
-import org.jclouds.compute.stub.config.StubComputeServiceDependenciesModule.StubDestroyNodeStrategy;
-import org.jclouds.compute.stub.config.StubComputeServiceDependenciesModule.StubGetNodeMetadataStrategy;
-import org.jclouds.compute.stub.config.StubComputeServiceDependenciesModule.StubHardwareSupplier;
-import org.jclouds.compute.stub.config.StubComputeServiceDependenciesModule.StubImageSupplier;
-import org.jclouds.compute.stub.config.StubComputeServiceDependenciesModule.StubListNodesStrategy;
-import org.jclouds.compute.stub.config.StubComputeServiceDependenciesModule.StubRebootNodeStrategy;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.concurrent.SingleThreaded;
+import org.jclouds.domain.Location;
 
-import com.google.common.base.Supplier;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
 @SingleThreaded
-public class StubComputeServiceContextModule extends StandaloneComputeServiceContextModule {
+public class StubComputeServiceContextModule extends JCloudsNativeStandaloneComputeServiceContextModule {
+
+   public StubComputeServiceContextModule() {
+      super(StubComputeServiceAdapter.class);
+   }
+
    @Override
    protected void configure() {
       install(new StubComputeServiceDependenciesModule());
+      bind(new TypeLiteral<ComputeServiceAdapter<NodeMetadata, Hardware, Image, Location>>() {
+      }).to(StubComputeServiceAdapter.class);
       super.configure();
    }
-
-   @Override
-   protected Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy() {
-      return StubAddNodeWithTagStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends DestroyNodeStrategy> defineDestroyNodeStrategy() {
-      return StubDestroyNodeStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends GetNodeMetadataStrategy> defineGetNodeMetadataStrategy() {
-      return StubGetNodeMetadataStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends ListNodesStrategy> defineListNodesStrategy() {
-      return StubListNodesStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends RebootNodeStrategy> defineRebootNodeStrategy() {
-      return StubRebootNodeStrategy.class;
-   }
-
-   @Override
-   protected Class<? extends Supplier<Set<? extends Hardware>>> defineHardwareSupplier() {
-      return StubHardwareSupplier.class;
-   }
-
-   @Override
-   protected Class<? extends Supplier<Set<? extends Image>>> defineImageSupplier() {
-      return StubImageSupplier.class;
-   }
-
 }

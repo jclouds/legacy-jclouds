@@ -43,11 +43,11 @@ public class RimuHostingRebootNodeStrategy implements RebootNodeStrategy {
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata rebootNode(String id) {
       Long serverId = Long.parseLong(id);
       // if false server wasn't around in the first place
       client.restartServer(serverId).getState();
-      return getNode.execute(id);
+      return getNode.getNode(id);
    }
 
 }

@@ -30,7 +30,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.io.payloads.PhantomPayload;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -97,7 +97,7 @@ public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyn
    }
 
    @Override
-   public ContextSpec<?, ?> createContextSpec() {
+   public RestContextSpec<?, ?> createContextSpec() {
       return new RestContextFactory().createContextSpec("transient", "identity", "credential", new Properties());
    }
 

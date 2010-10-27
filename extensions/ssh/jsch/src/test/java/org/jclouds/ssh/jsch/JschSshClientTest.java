@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.UnknownHostException;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
@@ -51,8 +52,8 @@ public class JschSshClientTest {
    protected JschSshClient createClient() throws UnknownHostException {
       Injector i = Guice.createInjector(module());
       SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
-      JschSshClient ssh = JschSshClient.class.cast(factory.create(new IPSocket("localhost", 22),
-               "username", "password"));
+      JschSshClient ssh = JschSshClient.class.cast(factory.create(new IPSocket("localhost", 22), new Credentials(
+            "username", "password")));
       return ssh;
    }
 
@@ -68,10 +69,8 @@ public class JschSshClientTest {
    }
 
    public void testExceptionMessagesRetry() {
-      assert ssh.shouldRetry(new JSchException(
-               "Session.connect: java.io.IOException: End of IO Stream Read"));
+      assert ssh.shouldRetry(new JSchException("Session.connect: java.io.IOException: End of IO Stream Read"));
       assert ssh.shouldRetry(new JSchException("Session.connect: invalid data"));
-      assert ssh.shouldRetry(new JSchException(
-               "Session.connect: java.net.SocketException: Connection reset"));
+      assert ssh.shouldRetry(new JSchException("Session.connect: java.net.SocketException: Connection reset"));
    }
 }

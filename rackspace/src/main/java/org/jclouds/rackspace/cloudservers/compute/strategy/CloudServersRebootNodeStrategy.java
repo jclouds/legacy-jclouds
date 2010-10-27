@@ -43,11 +43,11 @@ public class CloudServersRebootNodeStrategy implements RebootNodeStrategy {
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata rebootNode(String id) {
       int serverId = Integer.parseInt(id);
       // if false server wasn't around in the first place
       client.rebootServer(serverId, RebootType.HARD);
-      return getNode.execute(id);
+      return getNode.getNode(id);
    }
 
 }

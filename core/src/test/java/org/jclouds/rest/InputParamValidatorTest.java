@@ -33,7 +33,6 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.IntegrationTestAsyncClient;
 import org.jclouds.http.IntegrationTestClient;
 import org.jclouds.predicates.validators.AllLowerCaseValidator;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
 import org.jclouds.rest.annotations.ParamValidators;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
@@ -145,7 +144,7 @@ public class InputParamValidatorTest {
    @BeforeClass
    void setupFactory() {
 
-      ContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
+      RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
                "http://localhost:9999", "1", "userFoo", null, IntegrationTestClient.class,
                IntegrationTestAsyncClient.class);
 

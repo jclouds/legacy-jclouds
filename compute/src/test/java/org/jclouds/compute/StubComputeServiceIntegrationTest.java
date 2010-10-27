@@ -19,7 +19,6 @@
 
 package org.jclouds.compute;
 
-import static org.easymock.EasyMock.aryEq;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.reportMatcher;
@@ -41,6 +40,7 @@ import org.easymock.IArgumentMatcher;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.domain.Credentials;
 import org.jclouds.io.Payload;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
@@ -120,15 +120,14 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             SshClient client4 = createMock(SshClient.class);
             SshClient client5 = createMock(SshClient.class);
 
-            expect(factory.create(new IPSocket("144.175.1.1", 22), "root", "password1")).andReturn(client1)
-                  .atLeastOnce();
+            expect(factory.create(new IPSocket("144.175.1.1", 22), new Credentials("root", "password1"))).andReturn(
+                  client1);
             runScriptAndService(client1, 1);
 
-            expect(factory.create(new IPSocket("144.175.1.2", 22), "root", "romeo")).andThrow(
+            expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("root", "password2"))).andReturn(
+                  client2).times(2);
+            expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("root", "romeo"))).andThrow(
                   new SshException("Auth fail"));
-            expect(factory.create(new IPSocket("144.175.1.2", 22), "root", "password2")).andReturn(client2)
-                  .atLeastOnce();
-
             client2.connect();
             try {
                runScript(client2, "runScriptWithCreds", Utils.toStringAndClose(StubComputeServiceIntegrationTest.class
@@ -138,32 +137,32 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             }
             client2.disconnect();
 
-            expect(factory.create(new IPSocket("144.175.1.3", 22), "root", "password3")).andReturn(client3)
-                  .atLeastOnce();
-            expect(factory.create(new IPSocket("144.175.1.4", 22), "root", "password4")).andReturn(client4)
-                  .atLeastOnce();
-            expect(factory.create(new IPSocket("144.175.1.5", 22), "root", "password5")).andReturn(client5)
-                  .atLeastOnce();
+            expect(factory.create(new IPSocket("144.175.1.3", 22), new Credentials("root", "password3"))).andReturn(
+                  client3).times(2);
+            expect(factory.create(new IPSocket("144.175.1.4", 22), new Credentials("root", "password4"))).andReturn(
+                  client4).times(2);
+            expect(factory.create(new IPSocket("144.175.1.5", 22), new Credentials("root", "password5"))).andReturn(
+                  client5).times(2);
 
             runScriptAndInstallSsh(client3, "bootstrap", 3);
             runScriptAndInstallSsh(client4, "bootstrap", 4);
             runScriptAndInstallSsh(client5, "bootstrap", 5);
 
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.1", 22)), eq("root"), aryEq(keyPair.get("private")
-                        .getBytes()))).andReturn(client1).atLeastOnce();
+                  factory.create(eq(new IPSocket("144.175.1.1", 22)),
+                        eq(new Credentials("root", keyPair.get("private"))))).andReturn(client1);
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.2", 22)), eq("root"), aryEq(keyPair.get("private")
-                        .getBytes()))).andReturn(client2).atLeastOnce();
+                  factory.create(eq(new IPSocket("144.175.1.2", 22)),
+                        eq(new Credentials("root", keyPair.get("private"))))).andReturn(client2);
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.3", 22)), eq("root"), aryEq(keyPair.get("private")
-                        .getBytes()))).andReturn(client3).atLeastOnce();
+                  factory.create(eq(new IPSocket("144.175.1.3", 22)),
+                        eq(new Credentials("root", keyPair.get("private"))))).andReturn(client3);
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.4", 22)), eq("root"), aryEq(keyPair.get("private")
-                        .getBytes()))).andReturn(client4).atLeastOnce();
+                  factory.create(eq(new IPSocket("144.175.1.4", 22)),
+                        eq(new Credentials("root", keyPair.get("private"))))).andReturn(client4);
             expect(
-                  factory.create(eq(new IPSocket("155.175.1.5", 22)), eq("root"), aryEq(keyPair.get("private")
-                        .getBytes()))).andReturn(client5).atLeastOnce();
+                  factory.create(eq(new IPSocket("144.175.1.5", 22)),
+                        eq(new Credentials("root", keyPair.get("private"))))).andReturn(client5);
 
             helloAndJava(client2);
             helloAndJava(client3);

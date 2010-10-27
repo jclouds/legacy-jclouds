@@ -19,17 +19,16 @@
 
 package org.jclouds.compute.config;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
 @ConfiguresRestClient
 @RequiresHttp
-public class StandaloneComputeServiceClientModule extends RestClientModule<ComputeService, ComputeService> {
+public class StandaloneComputeServiceClientModule<C> extends RestClientModule<C, C> {
 
-   public StandaloneComputeServiceClientModule() {
-      super(ComputeService.class, ComputeService.class);
+   public StandaloneComputeServiceClientModule(Class<C> clazz) {
+      super(clazz, clazz);
    }
 
    @Override

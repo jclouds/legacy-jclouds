@@ -88,7 +88,7 @@ public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements RunNodesAnd
             public Void call() throws Exception {
                NodeMetadata node = null;
                logger.debug(">> starting node(%s) tag(%s)", name, tag);
-               node = addNodeWithTagStrategy.execute(tag, name, template);
+               node = addNodeWithTagStrategy.addNodeWithTag(tag, name, template);
                logger.debug("<< %s node(%s)", node.getState(), node.getId());
                utils.runOptionsOnNodeAndAddToGoodSetOrPutExceptionIntoBadMap(node, badNodes, nodes,
                         template.getOptions()).call();
@@ -111,7 +111,7 @@ public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements RunNodesAnd
     */
    protected Set<String> getNextNames(final String tag, final Template template, int count) {
       Set<String> names = Sets.newHashSet();
-      Iterable<? extends ComputeMetadata> currentNodes = listNodesStrategy.list();
+      Iterable<? extends ComputeMetadata> currentNodes = listNodesStrategy.listNodes();
       int maxTries = 100;
       int currentTries = 0;
       while (names.size() < count && currentTries++ < maxTries) {

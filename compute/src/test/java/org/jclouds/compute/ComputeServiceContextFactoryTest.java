@@ -19,17 +19,15 @@
 
 package org.jclouds.compute;
 
-import org.jclouds.compute.config.StandaloneComputeServiceContextModule;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.stub.config.StubComputeServiceContextModule;
-import org.jclouds.compute.stub.config.StubComputeServiceDependenciesModule;
-import org.jclouds.compute.stub.config.StubComputeServiceDependenciesModule.StubAddNodeWithTagStrategy;
-import org.jclouds.compute.stub.config.StubComputeServiceDependenciesModule.StubDestroyNodeStrategy;
-import org.jclouds.compute.stub.config.StubComputeServiceDependenciesModule.StubGetNodeMetadataStrategy;
-import org.jclouds.compute.stub.config.StubComputeServiceDependenciesModule.StubHardwareSupplier;
-import org.jclouds.compute.stub.config.StubComputeServiceDependenciesModule.StubImageSupplier;
-import org.jclouds.compute.stub.config.StubComputeServiceDependenciesModule.StubListNodesStrategy;
-import org.jclouds.compute.stub.config.StubComputeServiceDependenciesModule.StubRebootNodeStrategy;
+import org.jclouds.domain.Location;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * 
@@ -41,21 +39,11 @@ public class ComputeServiceContextFactoryTest {
 
    @Test
    public void testStandalone() {
-      ComputeServiceContext context = ComputeServiceContextFactory
-               .createStandaloneContext(new StubComputeServiceContextModule());
-      context.getComputeService().listNodes();
-   }
+      ComputeServiceContext context = new ComputeServiceContextFactory()
+            .createContext(new StandaloneComputeServiceContextSpec<NodeMetadata, Hardware, Image, Location>("stub",
+                  "stub", "1", "identity", "credential", new StubComputeServiceContextModule(), ImmutableSet
+                        .<Module> of()));
 
-   @Test
-   public void testStandaloneWithBuilder() {
-      ComputeServiceContext context = ComputeServiceContextFactory
-               .createStandaloneContext(StandaloneComputeServiceContextModule.builder().install(
-                        new StubComputeServiceDependenciesModule()).defineAddNodeWithTagStrategy(
-                        StubAddNodeWithTagStrategy.class).defineDestroyNodeStrategy(StubDestroyNodeStrategy.class)
-                        .defineGetNodeMetadataStrategy(StubGetNodeMetadataStrategy.class).defineListNodesStrategy(
-                                 StubListNodesStrategy.class).defineRebootNodeStrategy(StubRebootNodeStrategy.class)
-                        .defineHardwareSupplier(StubHardwareSupplier.class)
-                        .defineImageSupplier(StubImageSupplier.class).build());
       context.getComputeService().listNodes();
    }
 }

@@ -95,7 +95,7 @@ public abstract class Wire {
          out = new FileBackedOutputStream(limit);
          long bytesRead = ByteStreams.copy(instream, out);
          if (bytesRead >= limit)
-            logger.warn("over limit %d/%d: wrote temp file", bytesRead, limit);
+            logger.debug("over limit %d/%d: wrote temp file", bytesRead, limit);
          wire(header, out.getSupplier().getInput());
          return out.getSupplier().getInput();
       } catch (IOException e) {

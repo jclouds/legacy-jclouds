@@ -31,74 +31,74 @@ import org.jclouds.logging.Logger;
  * 
  */
 public class JDKLogger extends BaseLogger {
-    private final java.util.logging.Logger logger;
+   private final java.util.logging.Logger logger;
 
-    public static class JDKLoggerFactory implements LoggerFactory {
-	public Logger getLogger(String category) {
-	    return new JDKLogger(java.util.logging.Logger.getLogger(category));
-	}
-    }
+   public static class JDKLoggerFactory implements LoggerFactory {
+      public Logger getLogger(String category) {
+         return new JDKLogger(java.util.logging.Logger.getLogger(category));
+      }
+   }
 
-    public JDKLogger(java.util.logging.Logger logger) {
-	this.logger = logger;
-    }
+   public JDKLogger(java.util.logging.Logger logger) {
+      this.logger = logger;
+   }
 
-    @Override
-    protected void logTrace(String message) {
-	logger.finest(message);
-    }
+   @Override
+   protected void logTrace(String message) {
+      logger.finest(message);
+   }
 
-    public boolean isTraceEnabled() {
-	return logger.isLoggable(Level.FINEST);
-    }
+   public boolean isTraceEnabled() {
+      return logger.isLoggable(Level.FINEST);
+   }
 
-    @Override
-    protected void logDebug(String message) {
-	logger.fine(message);
-    }
+   @Override
+   protected void logDebug(String message) {
+      logger.fine(message);
+   }
 
-    public boolean isDebugEnabled() {
-	return logger.isLoggable(Level.FINE);
-    }
+   public boolean isDebugEnabled() {
+      return logger.isLoggable(Level.FINE);
+   }
 
-    @Override
-    protected void logInfo(String message) {
-	logger.info(message);
-    }
+   @Override
+   protected void logInfo(String message) {
+      logger.info(message);
+   }
 
-    public boolean isInfoEnabled() {
-	return logger.isLoggable(Level.INFO);
-    }
+   public boolean isInfoEnabled() {
+      return logger.isLoggable(Level.INFO);
+   }
 
-    @Override
-    protected void logWarn(String message) {
-	logger.warning(message);
-    }
+   @Override
+   protected void logWarn(String message) {
+      logger.warning(message);
+   }
 
-    @Override
-    protected void logWarn(String message, Throwable e) {
-	logger.log(Level.WARNING, message, e);
-    }
+   @Override
+   protected void logWarn(String message, Throwable e) {
+      logger.log(Level.WARNING, message, e);
+   }
 
-    public boolean isWarnEnabled() {
-	return logger.isLoggable(Level.WARNING);
-    }
+   public boolean isWarnEnabled() {
+      return logger.isLoggable(Level.WARNING);
+   }
 
-    @Override
-    protected void logError(String message) {
-	logger.severe(message);
-    }
+   @Override
+   protected void logError(String message) {
+      logger.severe(message);
+   }
 
-    @Override
-    protected void logError(String message, Throwable e) {
-	logger.log(Level.SEVERE, message, e);
-    }
+   @Override
+   protected void logError(String message, Throwable e) {
+      logger.log(Level.SEVERE, message, e);
+   }
 
-    public boolean isErrorEnabled() {
-	return logger.isLoggable(Level.SEVERE);
-    }
+   public boolean isErrorEnabled() {
+      return logger.isLoggable(Level.SEVERE);
+   }
 
-    public String getCategory() {
-	return logger.getName();
-    }
+   public String getCategory() {
+      return logger.getName();
+   }
 }

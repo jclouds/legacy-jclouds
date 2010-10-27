@@ -26,6 +26,7 @@ import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import java.util.List;
 import java.util.Properties;
 
+import org.jclouds.PropertiesBuilder;
 import org.jclouds.compute.config.StandaloneComputeServiceClientModule;
 
 import com.google.inject.Module;
@@ -35,10 +36,14 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class StandaloneComputeServiceContextBuilder extends
-         ComputeServiceContextBuilder<ComputeService, ComputeService> {
+      ComputeServiceContextBuilder<ComputeService, ComputeService> {
 
    public StandaloneComputeServiceContextBuilder(Properties props) {
       super(ComputeService.class, ComputeService.class, props);
+      if (properties.size() == 0)
+         properties.putAll(new PropertiesBuilder().build());
+      if (!properties.containsKey("jclouds.provider"))
+         properties.setProperty("jclouds.provider", "standalone");
       if (!properties.containsKey(PROPERTY_ENDPOINT))
          properties.setProperty(PROPERTY_ENDPOINT, "standalone");
       if (!properties.containsKey(PROPERTY_API_VERSION))
@@ -49,7 +54,7 @@ public class StandaloneComputeServiceContextBuilder extends
 
    @Override
    protected void addClientModule(List<Module> modules) {
-      modules.add(new StandaloneComputeServiceClientModule());
+      modules.add(new StandaloneComputeServiceClientModule<ComputeService>(ComputeService.class));
    }
 
 }

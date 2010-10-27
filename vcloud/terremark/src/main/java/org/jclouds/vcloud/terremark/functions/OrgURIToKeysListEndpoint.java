@@ -61,7 +61,7 @@ public class OrgURIToKeysListEndpoint implements Function<Object, URI> {
       try {
          return TerremarkOrg.class.cast(uriToOrg.get(from == null ? defaultOrg : from)).getKeysList().getHref();
       } catch (NullPointerException e) {
-         throw new ResourceNotFoundException("org " + from + " not found in " + uriToOrg);
+         throw new ResourceNotFoundException("org " + from + " not found in: " + uriToOrg, e);
       }
    }
 

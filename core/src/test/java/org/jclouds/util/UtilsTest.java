@@ -25,6 +25,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.rest.AuthorizationException;
 import org.testng.annotations.Test;
 
@@ -42,6 +43,33 @@ import com.google.inject.spi.Message;
 @Test(groups = "unit", testName = "jclouds.UtilsTest")
 public class UtilsTest {
 
+   public void testOverridingCredentialsWhenOverridingIsNull() {
+      Credentials defaultCredentials = new Credentials("foo", "bar");
+      Credentials overridingCredentials = null;
+      assertEquals(Utils.overrideCredentialsIfSupplied(defaultCredentials, overridingCredentials), defaultCredentials);
+   }
+
+   public void testOverridingCredentialsWhenOverridingLoginIsNull() {
+      Credentials defaultCredentials = new Credentials("foo", "bar");
+      Credentials overridingCredentials = new Credentials(null, "baz");
+      assertEquals(Utils.overrideCredentialsIfSupplied(defaultCredentials, overridingCredentials), new Credentials(
+            "foo", "baz"));
+   }
+
+   public void testOverridingCredentialsWhenOverridingCredentialIsNull() {
+      Credentials defaultCredentials = new Credentials("foo", "bar");
+      Credentials overridingCredentials = new Credentials("fooble", null);
+      assertEquals(Utils.overrideCredentialsIfSupplied(defaultCredentials, overridingCredentials), new Credentials(
+            "fooble", "bar"));
+   }
+
+   public void testOverridingCredentialsWhenOverridingCredentialsAreNull() {
+      Credentials defaultCredentials = new Credentials("foo", "bar");
+      Credentials overridingCredentials = new Credentials(null, null);
+      assertEquals(Utils.overrideCredentialsIfSupplied(defaultCredentials, overridingCredentials), new Credentials(
+            "foo", "bar"));
+   }
+   
    public void testGetCause() {
       AuthorizationException aex = createMock(AuthorizationException.class);
       Message message = new Message(ImmutableList.of(), "test", aex);

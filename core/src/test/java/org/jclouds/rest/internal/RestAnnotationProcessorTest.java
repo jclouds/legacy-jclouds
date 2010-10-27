@@ -108,7 +108,7 @@ import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.BaseRestClientTest;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.InvocationContext;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.rest.annotations.Endpoint;
@@ -278,7 +278,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    private Injector injectorForClient() {
 
-      ContextSpec<Caller, AsyncCaller> contextSpec = contextSpec("test", "http://localhost:9999", "1", "userfoo", null,
+      RestContextSpec<Caller, AsyncCaller> contextSpec = contextSpec("test", "http://localhost:9999", "1", "userfoo", null,
                Caller.class, AsyncCaller.class, ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(),
                         new CallerCalleeModule()));
 
@@ -2081,7 +2081,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    @BeforeClass
    void setupFactory() {
-      ContextSpec<String, Integer> contextSpec = contextSpec("test", "http://localhost:9999", "1", "userfoo", null,
+      RestContextSpec<String, Integer> contextSpec = contextSpec("test", "http://localhost:9999", "1", "userfoo", null,
                String.class, Integer.class, ImmutableSet.<Module> of(new MockModule(), new NullLoggingModule(),
                         new AbstractModule() {
 

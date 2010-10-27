@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
@@ -35,24 +34,17 @@ import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
-import org.jclouds.compute.strategy.DestroyNodeStrategy;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.compute.strategy.ListNodesStrategy;
-import org.jclouds.compute.strategy.RebootNodeStrategy;
-import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
-import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
+import org.jclouds.compute.functions.CreateSshClientOncePortIsListeningOnNode;
 import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
+import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
@@ -69,147 +61,28 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Override
    protected void configure() {
       install(new ComputeServiceTimeoutsModule());
-      bindRunNodesAndAddToSetStrategy(defineRunNodesAndAddToSetStrategy());
-      bindAddNodeWithTagStrategy(defineAddNodeWithTagStrategy());
-      bindListNodesStrategy(defineListNodesStrategy());
-      bindGetNodeMetadataStrategy(defineGetNodeMetadataStrategy());
-      bindRebootNodeStrategy(defineRebootNodeStrategy());
-      bindDestroyNodeStrategy(defineDestroyNodeStrategy());
-      bindImageSupplier(defineImageSupplier());
-      bindLocationSupplier(defineLocationSupplier());
-      bindHardwareSupplier(defineHardwareSupplier());
-      bindDefaultLocationSupplier(defineDefaultLocationSupplier());
       bindLoadBalancerService();
-   }
-
-   protected Class<? extends RunNodesAndAddToSetStrategy> defineRunNodesAndAddToSetStrategy() {
-      return EncodeTagIntoNameRunNodesAndAddToSetStrategy.class;
-   }
-
-   /**
-    * needed, if {@link RunNodesAndAddToSetStrategy} requires it
-    */
-   protected abstract Class<? extends AddNodeWithTagStrategy> defineAddNodeWithTagStrategy();
-
-   protected abstract Class<? extends DestroyNodeStrategy> defineDestroyNodeStrategy();
-
-   protected abstract Class<? extends RebootNodeStrategy> defineRebootNodeStrategy();
-
-   protected abstract Class<? extends GetNodeMetadataStrategy> defineGetNodeMetadataStrategy();
-
-   protected abstract Class<? extends ListNodesStrategy> defineListNodesStrategy();
-
-   protected abstract Class<? extends Supplier<Set<? extends Image>>> defineImageSupplier();
-
-   protected abstract Class<? extends Supplier<Set<? extends Hardware>>> defineHardwareSupplier();
-
-   protected Class<? extends Supplier<Set<? extends Location>>> defineLocationSupplier() {
-      return LocationSupplier.class;
-   }
-
-   protected Class<? extends Supplier<Location>> defineDefaultLocationSupplier() {
-      return DefaultLocationSupplier.class;
+      bind(new TypeLiteral<Function<NodeMetadata, SshClient>>() {
+      }).to(CreateSshClientOncePortIsListeningOnNode.class);
    }
 
    protected void bindLoadBalancerService() {
       bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null)).in(Scopes.SINGLETON);
    }
 
-   protected void bindRunNodesAndAddToSetStrategy(Class<? extends RunNodesAndAddToSetStrategy> clazz) {
-      bind(RunNodesAndAddToSetStrategy.class).to(clazz).in(Scopes.SINGLETON);
-   }
-
    /**
-    * needed, if {@link RunNodesAndAddToSetStrategy} requires it
+    * The default template if none is provided.
     */
-   protected void bindAddNodeWithTagStrategy(Class<? extends AddNodeWithTagStrategy> clazz) {
-      bind(AddNodeWithTagStrategy.class).to(clazz).in(Scopes.SINGLETON);
-   }
-
-   protected void bindDestroyNodeStrategy(Class<? extends DestroyNodeStrategy> clazz) {
-      bind(DestroyNodeStrategy.class).to(clazz).in(Scopes.SINGLETON);
-   }
-
-   protected void bindRebootNodeStrategy(Class<? extends RebootNodeStrategy> clazz) {
-      bind(RebootNodeStrategy.class).to(clazz).in(Scopes.SINGLETON);
-   }
-
-   protected void bindGetNodeMetadataStrategy(Class<? extends GetNodeMetadataStrategy> clazz) {
-      bind(GetNodeMetadataStrategy.class).to(clazz).in(Scopes.SINGLETON);
-   }
-
-   protected void bindListNodesStrategy(Class<? extends ListNodesStrategy> clazz) {
-      bind(ListNodesStrategy.class).to(clazz).in(Scopes.SINGLETON);
-   }
-
-   protected void bindImageSupplier(Class<? extends Supplier<Set<? extends Image>>> clazz) {
-      bind(new TypeLiteral<Supplier<Set<? extends Image>>>() {
-      }).to(clazz).in(Scopes.SINGLETON);
-   }
-
-   protected void bindLocationSupplier(Class<? extends Supplier<Set<? extends Location>>> clazz) {
-      bind(new TypeLiteral<Supplier<Set<? extends Location>>>() {
-      }).to(clazz).in(Scopes.SINGLETON);
-   }
-
-   protected void bindDefaultLocationSupplier(Class<? extends Supplier<Location>> clazz) {
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(clazz).in(Scopes.SINGLETON);
-   }
-
-   protected void bindHardwareSupplier(Class<? extends Supplier<Set<? extends Hardware>>> clazz) {
-      bind(new TypeLiteral<Supplier<Set<? extends Hardware>>>() {
-      }).to(clazz).in(Scopes.SINGLETON);
-   }
-
-   /**
-    * By default allows you to use a static set of locations bound to Set<? extends Location>
-    */
-   @Singleton
-   public static class LocationSupplier implements Supplier<Set<? extends Location>> {
-      private final Set<? extends Location> locations;
-
-      @Inject
-      LocationSupplier(Set<? extends Location> locations) {
-         this.locations = locations;
-      }
-
-      @Override
-      public Set<? extends Location> get() {
-         return locations;
-      }
-
-   }
-
-   @Singleton
-   public static class DefaultLocationSupplier implements Supplier<Location> {
-      private final Supplier<Set<? extends Location>> locations;
-
-      @Inject
-      DefaultLocationSupplier(@Memoized Supplier<Set<? extends Location>> locations) {
-         this.locations = locations;
-      }
-
-      @Override
-      public Location get() {
-         return Iterables.find(locations.get(), new Predicate<Location>() {
-
-            @Override
-            public boolean apply(Location input) {
-               return input.getScope() == LocationScope.ZONE;
-            }
-
-         });
-      }
-
-   }
-
    @Provides
    @Named("DEFAULT")
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       return template.osFamily(UBUNTU);
    }
 
+   /**
+    * supplies how the tag is encoded into the name. A string of hex characters is the last argument
+    * and tag is the first
+    */
    @Provides
    @Named("NAMING_CONVENTION")
    @Singleton
@@ -243,20 +116,20 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Memoized
    protected Supplier<Set<? extends Image>> supplyImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final Supplier<Set<? extends Image>> imageSupplier) {
+         final Supplier<Set<? extends Image>> imageSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Image>>(authException, seconds,
-               new Supplier<Set<? extends Image>>() {
-                  @Override
-                  public Set<? extends Image> get() {
-                     return imageSupplier.get();
-                  }
-               });
+            new Supplier<Set<? extends Image>>() {
+               @Override
+               public Set<? extends Image> get() {
+                  return imageSupplier.get();
+               }
+            });
    }
 
    @Provides
    @Singleton
    protected Supplier<Map<String, ? extends Location>> provideLocationMap(
-            @Memoized Supplier<Set<? extends Location>> locations) {
+         @Memoized Supplier<Set<? extends Location>> locations) {
       return Suppliers.compose(new Function<Set<? extends Location>, Map<String, ? extends Location>>() {
 
          @Override
@@ -278,14 +151,14 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Memoized
    protected Supplier<Set<? extends Location>> supplyLocationCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final Supplier<Set<? extends Location>> locationSupplier) {
+         final Supplier<Set<? extends Location>> locationSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Location>>(authException, seconds,
-               new Supplier<Set<? extends Location>>() {
-                  @Override
-                  public Set<? extends Location> get() {
-                     return locationSupplier.get();
-                  }
-               });
+            new Supplier<Set<? extends Location>>() {
+               @Override
+               public Set<? extends Location> get() {
+                  return locationSupplier.get();
+               }
+            });
    }
 
    @Provides
@@ -312,14 +185,14 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Memoized
    protected Supplier<Set<? extends Hardware>> supplySizeCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-            final Supplier<Set<? extends Hardware>> hardwareSupplier) {
+         final Supplier<Set<? extends Hardware>> hardwareSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Hardware>>(authException, seconds,
-               new Supplier<Set<? extends Hardware>>() {
-                  @Override
-                  public Set<? extends Hardware> get() {
-                     return hardwareSupplier.get();
-                  }
-               });
+            new Supplier<Set<? extends Hardware>>() {
+               @Override
+               public Set<? extends Hardware> get() {
+                  return hardwareSupplier.get();
+               }
+            });
    }
 
    @Provides

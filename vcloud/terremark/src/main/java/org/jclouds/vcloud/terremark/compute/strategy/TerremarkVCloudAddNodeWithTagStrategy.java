@@ -22,13 +22,16 @@ package org.jclouds.vcloud.terremark.compute.strategy;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.terremark.compute.TerremarkVCloudComputeClient;
 import org.jclouds.vcloud.terremark.compute.functions.TemplateToInstantiateOptions;
@@ -44,21 +47,35 @@ public class TerremarkVCloudAddNodeWithTagStrategy implements AddNodeWithTagStra
    protected final TerremarkVCloudComputeClient computeClient;
    protected final TemplateToInstantiateOptions getOptions;
    protected final Function<VCloudExpressVApp, NodeMetadata> vAppToNodeMetadata;
+   private final Map<String, Credentials> credentialStore;
 
    @Inject
    protected TerremarkVCloudAddNodeWithTagStrategy(TerremarkVCloudComputeClient computeClient,
-         Function<VCloudExpressVApp, NodeMetadata> vAppToNodeMetadata, TemplateToInstantiateOptions getOptions) {
+            Function<VCloudExpressVApp, NodeMetadata> vAppToNodeMetadata, TemplateToInstantiateOptions getOptions,
+            Map<String, Credentials> credentialStore) {
       this.computeClient = computeClient;
       this.vAppToNodeMetadata = vAppToNodeMetadata;
       this.getOptions = checkNotNull(getOptions, "getOptions");
+      this.credentialStore = checkNotNull(credentialStore, "credentialStore");
    }
 
    @Override
-   public NodeMetadata execute(String tag, String name, Template template) {
+   public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
       TerremarkInstantiateVAppTemplateOptions options = getOptions.apply(template);
-      VCloudExpressVApp vApp = computeClient.start(URI.create(template.getLocation().getId()),
-            URI.create(template.getImage().getId()), name, options, template.getOptions().getInboundPorts());
-      return vAppToNodeMetadata.apply(vApp);
+      VCloudExpressVApp vApp = computeClient.start(URI.create(template.getLocation().getId()), URI.create(template
+               .getImage().getId()), name, options, template.getOptions().getInboundPorts());
+      NodeMetadata node = vAppToNodeMetadata.apply(vApp);
+      NodeMetadataBuilder builder = NodeMetadataBuilder.fromNodeMetadata(node);
+      // TODO refactor this so that it is automatic in any provider
+      if (template.getImage().getAdminPassword() != null) {
+         builder.adminPassword(template.getImage().getAdminPassword());
+         // this is going to need refactoring.. we really need a credential list in the store per
+         // node.  we need to store the credential here explicitly, as there's no connection from a node
+         // in vcloud to the image it was created with.
+         credentialStore.put(node.getId() + "/adminPassword", new Credentials("root", template.getImage()
+                  .getAdminPassword()));
+      }
+      return builder.build();
    }
 
 }

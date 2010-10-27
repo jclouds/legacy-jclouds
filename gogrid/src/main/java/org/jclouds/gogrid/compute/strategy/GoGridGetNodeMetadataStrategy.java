@@ -50,7 +50,7 @@ public class GoGridGetNodeMetadataStrategy implements GetNodeMetadataStrategy {
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata getNode(String id) {
       try {
          Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(
                   new Long(checkNotNull(id, "id"))));

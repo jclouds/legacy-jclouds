@@ -49,7 +49,7 @@ public class VCloudExpressGetNodeMetadataStrategy implements GetNodeMetadataStra
       this.vAppToNodeMetadata = vAppToNodeMetadata;
    }
 
-   public NodeMetadata execute(String in) {
+   public NodeMetadata getNode(String in) {
       URI id = URI.create(in);
       VCloudExpressVApp from = client.getVApp(id);
       if (from == null)

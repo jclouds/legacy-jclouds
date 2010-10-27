@@ -32,7 +32,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.xml.SupportedVersionsHandler;
 import org.testng.annotations.Test;
@@ -82,7 +82,7 @@ public class VCloudVersionsAsyncClientTest extends RestClientTest<VCloudVersions
    }
 
    @Override
-   public ContextSpec<VCloudVersionsClient, VCloudVersionsAsyncClient> createContextSpec() {
+   public RestContextSpec<VCloudVersionsClient, VCloudVersionsAsyncClient> createContextSpec() {
       return contextSpec("test", "http://localhost:8080", "1", "identity", "credential", VCloudVersionsClient.class,
                VCloudVersionsAsyncClient.class);
    }

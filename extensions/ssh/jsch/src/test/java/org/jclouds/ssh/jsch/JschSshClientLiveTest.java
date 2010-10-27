@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.net.IPSocket;
@@ -101,7 +102,7 @@ public class JschSshClientLiveTest {
 
             @Override
             public void put(String path, String contents) {
-               
+
             }
 
          };
@@ -110,10 +111,10 @@ public class JschSshClientLiveTest {
          SshClient.Factory factory = i.getInstance(SshClient.Factory.class);
          SshClient connection;
          if (sshKeyFile != null && !sshKeyFile.trim().equals("")) {
-            connection = factory.create(new IPSocket(sshHost, port), sshUser, Utils.toStringAndClose(
-                  new FileInputStream(sshKeyFile)).getBytes());
+            connection = factory.create(new IPSocket(sshHost, port),
+                  new Credentials(sshUser, Utils.toStringAndClose(new FileInputStream(sshKeyFile))));
          } else {
-            connection = factory.create(new IPSocket(sshHost, port), sshUser, sshPass);
+            connection = factory.create(new IPSocket(sshHost, port), new Credentials(sshUser, sshPass));
          }
          connection.connect();
          return connection;
