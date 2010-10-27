@@ -326,7 +326,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                           <argLine>-Xmx512m -Xms256m -Xss256k</argLine>
+                           <argLine>-Xmx512m -Xms256m -Djava.awt.headless=true -XX:MaxPermSize=256m -Xss256k</argLine>
                            <parallel>tests</parallel>
                            <threadCount>5</threadCount>
                            <!-- note that the groups/excluded groups don't work due to some problem
