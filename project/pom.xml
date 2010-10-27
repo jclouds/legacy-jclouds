@@ -300,7 +300,7 @@
                     <testSourceDirectories>
                         <testSourceDirectory>src/test/clojure</testSourceDirectory>
                     </testSourceDirectories>
-                    <clojureOptions>-Xmx512m -Djava.awt.headless=true -XX:MaxPermSize=256m</clojureOptions>
+                    <clojureOptions>-Xmx512m -Djava.awt.headless=true -XX:MaxPermSize=256m -Xss256k</clojureOptions>
                     <warnOnReflection>true</warnOnReflection>
                     <compileDeclaredNamespaceOnly>true</compileDeclaredNamespaceOnly>
                     <testDeclaredNamespaceOnly>false</testDeclaredNamespaceOnly>
@@ -326,7 +326,7 @@
                             <goal>test</goal>
                         </goals>
                         <configuration>
-                           <argLine>-Xmx512m -Xms256m -Xss128k</argLine>
+                           <argLine>-Xmx512m -Xms256m -Xss256k</argLine>
                            <parallel>tests</parallel>
                            <threadCount>5</threadCount>
                            <!-- note that the groups/excluded groups don't work due to some problem
