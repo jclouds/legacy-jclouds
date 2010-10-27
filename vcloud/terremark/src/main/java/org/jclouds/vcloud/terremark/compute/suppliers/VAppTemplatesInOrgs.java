@@ -19,6 +19,8 @@
 
 package org.jclouds.vcloud.terremark.compute.suppliers;
 
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Sets.newLinkedHashSet;
 
 import java.util.Set;
@@ -30,6 +32,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
@@ -38,7 +41,6 @@ import org.jclouds.vcloud.domain.Org;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
@@ -70,7 +72,23 @@ public class VAppTemplatesInOrgs implements Supplier<Set<? extends Image>> {
    @Override
    public Set<? extends Image> get() {
       logger.debug(">> providing vAppTemplates");
-      return newLinkedHashSet(Iterables.concat(Iterables.transform(organizatonsForLocations.apply(locations.get()),
-               imagesInOrg)));
+      return newLinkedHashSet(transform(
+               concat(transform(organizatonsForLocations.apply(locations.get()), imagesInOrg)),
+               new Function<Image, Image>() {
+
+                  @Override
+                  public Image apply(Image from) {
+                     ImageBuilder builder = ImageBuilder.fromImage(from);
+                     // the password in the image is the sudo password
+                     // TODO refactor authenticate image logic so that it can populate the
+                     // adminPassword
+                     // value
+                     // independently
+                     if (from.getDefaultCredentials() != null)
+                        builder.adminPassword(from.getDefaultCredentials().credential);
+                     return builder.build();
+                  }
+
+               }));
    }
 }

@@ -79,7 +79,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudExpressCom
       bind(ComputeService.class).to(TerremarkVCloudComputeService.class);
       bind(VCloudExpressComputeClient.class).to(TerremarkVCloudComputeClient.class);
       bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(
-            ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
+               ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
       bind(SecureRandom.class).toInstance(new SecureRandom());
    }
 
