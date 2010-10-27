@@ -65,7 +65,9 @@ public class ExceptionParsingListenableFuture<T> implements ListenableFuture<T> 
    }
 
    private T attemptConvert(Exception e) {
-      return function.apply(e instanceof ExecutionException ? (Exception) e.getCause() : e);
+      if (e instanceof ExecutionException && e.getCause() instanceof Exception)
+         return function.apply((Exception) e.getCause());
+      return function.apply(e);
    }
 
    public T get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
