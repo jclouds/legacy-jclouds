@@ -85,11 +85,11 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
 
    @Inject
    public JavaUrlHttpCommandExecutorService(HttpUtils utils,
-         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
-         DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
-         DelegatingErrorHandler errorHandler, HttpWire wire, @Named("untrusted") HostnameVerifier verifier,
-         @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider) throws SecurityException,
-         NoSuchFieldException {
+            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
+            DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
+            DelegatingErrorHandler errorHandler, HttpWire wire, @Named("untrusted") HostnameVerifier verifier,
+            @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider) throws SecurityException,
+            NoSuchFieldException {
       super(utils, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       if (utils.getMaxConnections() > 0)
          System.setProperty("http.maxConnections", String.valueOf(checkNotNull(utils, "utils").getMaxConnections()));
@@ -218,21 +218,23 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
          }
          // writeTo will close the output stream
          try {
-         request.getPayload().writeTo(connection.getOutputStream());
-         } catch (IOException e){
+            request.getPayload().writeTo(connection.getOutputStream());
+         } catch (IOException e) {
             e.printStackTrace();
             throw e;
          }
       } else {
          connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, "0");
+         // for some reason POST undoes the content length header above.
+         if (connection.getRequestMethod().equals("POST"))
+            connection.setChunkedStreamingMode(0);
       }
       return connection;
 
    }
 
    /**
-    * Only disconnect if there is no content, as disconnecting will throw away
-    * unconsumed content.
+    * Only disconnect if there is no content, as disconnecting will throw away unconsumed content.
     */
    @Override
    protected void cleanup(HttpURLConnection connection) {
