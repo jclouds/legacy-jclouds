@@ -73,8 +73,9 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       builder.publicAddresses(getPublicIpsFromVApp(from));
       builder.privateAddresses(getPrivateIpsFromVApp(from));
       builder.credentials(getCredentialsFrom(from));
-      if (!credentialStore.containsKey("node#" + from.getHref().toASCIIString()))
-         credentialStore.put("node#" + from.getHref().toASCIIString(), getCredentialsFrom(from));
+      Credentials fromApi = getCredentialsFrom(from);
+      if (fromApi != null && !credentialStore.containsKey("node#" + from.getHref().toASCIIString()))
+         credentialStore.put("node#" + from.getHref().toASCIIString(), fromApi);
       builder.credentials(credentialStore.get("node#" + from.getHref().toASCIIString()));
       return builder.build();
    }
