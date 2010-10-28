@@ -75,7 +75,7 @@ public class RunningInstanceToNodeMetadataTest {
 
       RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.<Hardware> of(), ImmutableSet
                .<Location> of(), ImmutableSet.<Image> of(), ImmutableMap.<String, Credentials> of(
-               "us-east-1/i-9slweygo", creds));
+               "node#us-east-1/i-9slweygo", creds));
 
       RunningInstance server = firstInstanceFromResource("/ec2/describe_instances_nova.xml");
 

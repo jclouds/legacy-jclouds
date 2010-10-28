@@ -63,9 +63,9 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
 
    @Inject
    public StubComputeServiceAdapter(ConcurrentMap<String, NodeMetadata> nodes, Supplier<Location> location,
-         @Named("NODE_ID") Provider<Integer> idProvider, @Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
-         @Named("PRIVATE_IP_PREFIX") String privateIpPrefix, @Named("PASSWORD_PREFIX") String passwordPrefix,
-         @org.jclouds.rest.annotations.Provider String providerName) {
+            @Named("NODE_ID") Provider<Integer> idProvider, @Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
+            @Named("PRIVATE_IP_PREFIX") String privateIpPrefix, @Named("PASSWORD_PREFIX") String passwordPrefix,
+            @org.jclouds.rest.annotations.Provider String providerName) {
       this.nodes = nodes;
       this.location = location;
       this.idProvider = idProvider;
@@ -77,7 +77,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
 
    @Override
    public NodeMetadata runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
-         Map<String, Credentials> credentialStore) {
+            Map<String, Credentials> credentialStore) {
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       String id = idProvider.get() + "";
       builder.ids(id);
@@ -91,8 +91,8 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       builder.privateAddresses(ImmutableSet.<String> of(privateIpPrefix + id));
       builder.credentials(new Credentials("root", passwordPrefix + id));
       NodeMetadata node = builder.build();
+      credentialStore.put("node#" + node.getId(), node.getCredentials());
       nodes.put(node.getId(), node);
-      credentialStore.put(node.getId(), node.getCredentials());
       StubComputeServiceDependenciesModule.setState(node, NodeState.RUNNING, 100);
       return node;
    }
@@ -100,8 +100,8 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
    @Override
    public Iterable<Hardware> listHardwareProfiles() {
       return ImmutableSet.<Hardware> of(StubComputeServiceDependenciesModule.stub("small", 1, 1740, 160),
-            StubComputeServiceDependenciesModule.stub("medium", 4, 7680, 850),
-            StubComputeServiceDependenciesModule.stub("large", 8, 15360, 1690));
+               StubComputeServiceDependenciesModule.stub("medium", 4, 7680, 850), StubComputeServiceDependenciesModule
+                        .stub("large", 8, 15360, 1690));
    }
 
    @Override
@@ -109,34 +109,20 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       Location zone = location.get().getParent();
       String parentId = zone.getId();
       Credentials defaultCredentials = new Credentials("root", null);
-      return ImmutableSet
-            .<Image> of(
-                  new ImageBuilder()
-                        .providerId("1")
-                        .name(OsFamily.UBUNTU.name())
-                        .id(parentId + "/1")
-                        .location(zone)
+      return ImmutableSet.<Image> of(new ImageBuilder().providerId("1").name(OsFamily.UBUNTU.name())
+               .id(parentId + "/1").location(zone).operatingSystem(
+                        new OperatingSystem(OsFamily.UBUNTU, "ubuntu 32", null, "X86_32", "ubuntu 32", false))
+               .description("stub ubuntu 32").defaultCredentials(defaultCredentials).build(), //
+               new ImageBuilder().providerId("2").name(OsFamily.UBUNTU.name()).id(parentId + "/2").location(zone)
                         .operatingSystem(
-                              new OperatingSystem(OsFamily.UBUNTU, "ubuntu 32", null, "X86_32", "ubuntu 32", false))
-                        .description("stub ubuntu 32").defaultCredentials(defaultCredentials).build(), //
-                  new ImageBuilder()
-                        .providerId("2")
-                        .name(OsFamily.UBUNTU.name())
-                        .id(parentId + "/2")
-                        .location(zone)
-                        .operatingSystem(
-                              new OperatingSystem(OsFamily.UBUNTU, "ubuntu 64", null, "X86_64", "ubuntu 64", true))
+                                 new OperatingSystem(OsFamily.UBUNTU, "ubuntu 64", null, "X86_64", "ubuntu 64", true))
                         .description("stub ubuntu 64").defaultCredentials(defaultCredentials).build(), //
-                  new ImageBuilder()
-                        .providerId("3")
-                        .name(OsFamily.CENTOS.name())
-                        .id(parentId + "/3")
-                        .location(zone)
+               new ImageBuilder().providerId("3").name(OsFamily.CENTOS.name()).id(parentId + "/3").location(zone)
                         .operatingSystem(
-                              new OperatingSystem(OsFamily.CENTOS, "centos 64", null, "X86_64", "centos 64", true))
+                                 new OperatingSystem(OsFamily.CENTOS, "centos 64", null, "X86_64", "centos 64", true))
                         .description("stub centos 64").defaultCredentials(defaultCredentials).build() //
 
-            );
+               );
    }
 
    @Override
@@ -148,9 +134,9 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
    public Iterable<Location> listLocations() {
       Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
       Location region = new LocationImpl(LocationScope.REGION, providerName + "region", providerName + "region",
-            provider);
+               provider);
       return ImmutableSet.<Location> of(new LocationImpl(LocationScope.ZONE, providerName + "zone", providerName
-            + "zone", region));
+               + "zone", region));
    }
 
    @Override

@@ -38,19 +38,19 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
    }
 
    @Override
-   public Domain createNodeAndStoreCredentials(String tag, String name, Template template,
+   public Domain runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
          Map<String, Credentials> credentialStore) {
       // create the backend object using parameters from the template.
       // Domain from = client.createDomainInDC(template.getLocation().getId(), name,
       // Integer.parseInt(template.getImage().getProviderId()),
       // Integer.parseInt(template.getHardware().getProviderId()));
       // store the credentials so that later functions can use them
-      // credentialStore.put(from.id + "", new Credentials(from.loginUser, from.password));
+      // credentialStore.put("node#" + from.id + "", new Credentials(from.loginUser, from.password));
       return null;
    }
 
    @Override
-   public Iterable<Domain> listHardware() {
+   public Iterable<Domain> listHardwareProfiles() {
       return listNodes();
    }
 

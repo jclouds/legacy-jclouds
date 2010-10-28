@@ -33,6 +33,7 @@ import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -82,7 +83,7 @@ public class ComputeAndBlobStoreTogetherHappilyLiveTest extends BlobStoreAndComp
 
       // using jclouds ability to detect operating systems before we launch them, we can avoid
       // the bad practice of assuming everything is ubuntu.
-      uploadBlob(tag, "openjdk/install", buildScript(defaultOperatingSystem));
+      uploadBlob(tag, "openjdk/install", buildScript(defaultOperatingSystem).render(OsFamily.UNIX));
 
       // instead of hard-coding to amazon s3, we can use any blobstore, conceding this test is
       // configured for amz. Note we are getting temporary access to a private blob.

@@ -53,7 +53,7 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
 
    @Inject
    protected VAppToNodeMetadata(Map<Status, NodeState> vAppStatusToNodeState, Map<String, Credentials> credentialStore,
-         FindLocationForResource findLocationForResourceInVDC, Function<VApp, Hardware> hardwareForVApp) {
+            FindLocationForResource findLocationForResourceInVDC, Function<VApp, Hardware> hardwareForVApp) {
       this.hardwareForVApp = checkNotNull(hardwareForVApp, "hardwareForVApp");
       this.findLocationForResourceInVDC = checkNotNull(findLocationForResourceInVDC, "findLocationForResourceInVDC");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
@@ -73,9 +73,9 @@ public class VAppToNodeMetadata implements Function<VApp, NodeMetadata> {
       builder.publicAddresses(getPublicIpsFromVApp(from));
       builder.privateAddresses(getPrivateIpsFromVApp(from));
       builder.credentials(getCredentialsFrom(from));
-      if (!credentialStore.containsKey(from.getHref().toASCIIString()))
-         credentialStore.put(from.getHref().toASCIIString(), getCredentialsFrom(from));
-      builder.credentials(credentialStore.get(from.getHref().toASCIIString()));
+      if (!credentialStore.containsKey("node#" + from.getHref().toASCIIString()))
+         credentialStore.put("node#" + from.getHref().toASCIIString(), getCredentialsFrom(from));
+      builder.credentials(credentialStore.get("node#" + from.getHref().toASCIIString()));
       return builder.build();
    }
 }

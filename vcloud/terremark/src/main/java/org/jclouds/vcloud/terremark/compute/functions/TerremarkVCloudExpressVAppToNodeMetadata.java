@@ -80,11 +80,11 @@ public class TerremarkVCloudExpressVAppToNodeMetadata extends VCloudExpressVAppT
       if (credentialsMap.containsKey(orgAndName)) {
          Credentials creds = credentialsMap.get(orgAndName);
          node = NodeMetadataBuilder.fromNodeMetadata(node).credentials(creds).build();
-         credentialStore.put(node.getId(), creds);
+         credentialStore.put("node#" + node.getId(), creds);
       }
       // this is going to need refactoring.. we really need a credential list in the store per
       // node.
-      String adminPasswordKey = node.getId() + "/adminPassword";
+      String adminPasswordKey = "node#" + node.getId() + "#adminPassword";
       if (credentialStore.containsKey(adminPasswordKey)) {
          node = NodeMetadataBuilder.fromNodeMetadata(node).adminPassword(
                   credentialStore.get(adminPasswordKey).credential).build();

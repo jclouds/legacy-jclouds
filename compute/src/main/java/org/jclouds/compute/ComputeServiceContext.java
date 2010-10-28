@@ -50,13 +50,26 @@ public interface ComputeServiceContext {
 
    /**
     * retrieves a list of credentials for resources created within this context, keyed on {@code id}
-    * of the resource. We are testing this approach for resources such as compute nodes, where you
-    * could access this externally.
-    * 
+    * of the resource with a namespace prefix (ex. {@code node#}. We are testing this approach for
+    * resources such as compute nodes, where you could access this externally.
+    * <p/>
+    * <h4>accessing credentials for a node</h4>
+    * <p/>
+    * the key is in the form {@code node#id}.
+    * <ul>
+    * <li>if the node id is {@code 8}, then the key will be {@code node#8}</li>
+    * <li>if the node id is {@code us-east-1/i-asdfdas}, then the key will be {@code
+    * node#us-east-1/i-asdfdas}</li>
+    * <li>if the node id is {@code http://cloud/instances/1}, then the key will be {@code
+    * node#http://cloud/instances/1}</li>
+    * </ul>
     */
    @Beta
    Map<String, Credentials> getCredentialStore();
 
+   /**
+    * @see ComputeServiceContext#getCredentialStore
+    */
    @Beta
    Map<String, Credentials> credentialStore();
 

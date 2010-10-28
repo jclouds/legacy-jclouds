@@ -45,6 +45,7 @@ public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public void testTemplateBuilder() {
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "5.3");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
       assertEquals(defaultTemplate.getLocation().getId(), "1");
       assertEquals(getCores(defaultTemplate.getHardware()), 0.5d);

@@ -82,7 +82,7 @@ public class VCloudExpressVAppToNodeMetadata implements Function<VCloudExpressVA
       builder.state(vAppStatusToNodeState.get(from.getStatus()));
       builder.publicAddresses(computeClient.getPublicAddresses(from.getHref()));
       builder.privateAddresses(computeClient.getPrivateAddresses(from.getHref()));
-      builder.credentials(credentialStore.get(from.getHref().toASCIIString()));
+      builder.credentials(credentialStore.get("node#" + from.getHref().toASCIIString()));
       return builder.build();
    }
 }

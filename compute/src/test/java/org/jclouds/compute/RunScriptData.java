@@ -19,7 +19,7 @@
 
 package org.jclouds.compute;
 
-import static org.jclouds.compute.util.ComputeServiceUtils.extractTargzIntoDirectory;
+import static org.jclouds.compute.util.ComputeServiceUtils.*;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.jclouds.scriptbuilder.domain.Statements.interpret;
 
@@ -31,6 +31,7 @@ import org.jclouds.compute.predicates.OperatingSystemPredicates;
 import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.AuthorizeRSAPublicKey;
 import org.jclouds.scriptbuilder.domain.Statement;
+import static org.jclouds.scriptbuilder.domain.Statements.*;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -43,7 +44,7 @@ public class RunScriptData {
 
    private static String jbossHome = "/usr/local/jboss";
 
-   public static String installJavaAndCurl(OperatingSystem os) {
+   public static Statement installJavaAndCurl(OperatingSystem os) {
       if (os == null || OperatingSystemPredicates.supportsApt().apply(os))
          return APT_RUN_SCRIPT;
       else if (OperatingSystemPredicates.supportsYum().apply(os))
@@ -63,7 +64,7 @@ public class RunScriptData {
             envVariables,
             ImmutableList.<Statement> of(
                   new AuthorizeRSAPublicKey(publicKey),
-                  exec(installJavaAndCurl(os)),
+                  installJavaAndCurl(os),
                   exec("rm -rf /var/cache/apt /usr/lib/vmware-tools"),// jeos hasn't enough room!
                   extractTargzIntoDirectory(
                         URI.create("http://commondatastorage.googleapis.com/jclouds-repo/jboss-as-distribution-6.0.0.20100911-M5.tar.gz"),
@@ -74,18 +75,20 @@ public class RunScriptData {
       return toReturn;
    }
 
-   public static final String APT_RUN_SCRIPT = new StringBuilder()//
+   public static final Statement APT_RUN_SCRIPT = newStatementList(//
+          exec("(which java && java -fullversion 2>&1|egrep -q 1.6 ) ||"),//
+          execHttpResponse( URI.create("http://whirr.s3.amazonaws.com/0.2.0-incubating-SNAPSHOT/sun/java/install")),//
+          exec(new StringBuilder()//
          .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
-         .append("cp /etc/apt/sources.list /etc/apt/sources.list.old\n")//
-         .append(
-               "sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list\n")//
-         .append("which curl || apt-get update -y -qq && apt-get install -f -y -qq --force-yes curl\n")//
-         .append(
-               "(which java && java -fullversion 2>&1|egrep -q 1.6 ) || apt-get install -f -y -qq --force-yes openjdk-6-jre\n")//
+         .append("which curl || apt-get install -f -y -qq --force-yes curl\n")//
          .append("rm -rf /var/cache/apt /usr/lib/vmware-tools\n")// jeos hasn't enough room!
-         .toString();
+         .append("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /root/.bashrc")//
+         .toString()));
 
-   public static final String YUM_RUN_SCRIPT = new StringBuilder()
+   public static final Statement YUM_RUN_SCRIPT = newStatementList(//
+          exec("(which java && java -fullversion 2>&1|egrep -q 1.6 ) ||"),//
+          execHttpResponse( URI.create("http://whirr.s3.amazonaws.com/0.2.0-incubating-SNAPSHOT/sun/java/install")),//
+          exec(new StringBuilder()//
          .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n") //
          .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n") //
          .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n") //
@@ -93,14 +96,12 @@ public class RunScriptData {
                "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
          .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
          .append("which curl ||yum --nogpgcheck -y install curl\n")//
-         .append(
-               "(which java && java -fullversion 2>&1|egrep -q 1.6 ) || yum --nogpgcheck -y install java-1.6.0-openjdk&&")//
-         .append("echo \"export PATH=\\\"/usr/lib/jvm/jre-1.6.0-openjdk/bin/:\\$PATH\\\"\" >> /root/.bashrc\n")//
-         .toString();
+         .append("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /root/.bashrc")//
+         .toString()));
 
-   public static final String ZYPPER_RUN_SCRIPT = new StringBuilder()//
+   public static final Statement ZYPPER_RUN_SCRIPT = exec(new StringBuilder()//
          .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
          .append("which curl || zypper install curl\n")//
          .append("(which java && java -fullversion 2>&1|egrep -q 1.6 ) || zypper install java-1.6.0-openjdk\n")//
-         .toString();
+         .toString());
 }

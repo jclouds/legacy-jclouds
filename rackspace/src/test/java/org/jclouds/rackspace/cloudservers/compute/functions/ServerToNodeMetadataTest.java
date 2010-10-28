@@ -68,7 +68,7 @@ public class ServerToNodeMetadataTest {
       Server server = ParseServerFromJsonResponseTest.parseServer();
 
       ServerToNodeMetadata parser = new ServerToNodeMetadata(serverStateToNodeState, ImmutableMap
-               .<String, Credentials> of("1234", creds), Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
+               .<String, Credentials> of("node#1234", creds), Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
                .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
 
       NodeMetadata metadata = parser.apply(server);
@@ -123,12 +123,12 @@ public class ServerToNodeMetadataTest {
       assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
                ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16")).tag(
                "NOTAG-sample-server").imageId("2").operatingSystem(
-               new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").is64Bit(true).build())
-               .id("1234").providerId("1234").name("sample-server").location(
-                        new LocationImpl(LocationScope.HOST, "e4d909c290d0fb1ca068ffaddf22cbd0",
-                                 "e4d909c290d0fb1ca068ffaddf22cbd0", new LocationImpl(LocationScope.ZONE, "dallas",
-                                          "description", null))).userMetadata(
-                        ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+               new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2").is64Bit(
+                        true).build()).id("1234").providerId("1234").name("sample-server").location(
+               new LocationImpl(LocationScope.HOST, "e4d909c290d0fb1ca068ffaddf22cbd0",
+                        "e4d909c290d0fb1ca068ffaddf22cbd0", new LocationImpl(LocationScope.ZONE, "dallas",
+                                 "description", null))).userMetadata(
+               ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
 
    }
 
@@ -152,11 +152,11 @@ public class ServerToNodeMetadataTest {
                         ImmutableList.of(new Processor(1.0, 1.0))).ram(256).volumes(
                         ImmutableList.of(new VolumeBuilder().type(Volume.Type.LOCAL).size(10.0f).durable(true)
                                  .bootDevice(true).build())).build()).operatingSystem(
-               new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").is64Bit(true).build())
-               .id("1234").providerId("1234").name("sample-server").location(
-                        new LocationImpl(LocationScope.HOST, "e4d909c290d0fb1ca068ffaddf22cbd0",
-                                 "e4d909c290d0fb1ca068ffaddf22cbd0", new LocationImpl(LocationScope.ZONE, "dallas",
-                                          "description", null))).userMetadata(
-                        ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+               new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2").is64Bit(
+                        true).build()).id("1234").providerId("1234").name("sample-server").location(
+               new LocationImpl(LocationScope.HOST, "e4d909c290d0fb1ca068ffaddf22cbd0",
+                        "e4d909c290d0fb1ca068ffaddf22cbd0", new LocationImpl(LocationScope.ZONE, "dallas",
+                                 "description", null))).userMetadata(
+               ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
    }
 }

@@ -72,7 +72,7 @@ public class TerremarkVCloudAddNodeWithTagStrategy implements AddNodeWithTagStra
          // this is going to need refactoring.. we really need a credential list in the store per
          // node.  we need to store the credential here explicitly, as there's no connection from a node
          // in vcloud to the image it was created with.
-         credentialStore.put(node.getId() + "/adminPassword", new Credentials("root", template.getImage()
+         credentialStore.put("node#" + node.getId() + "#adminPassword", new Credentials("root", template.getImage()
                   .getAdminPassword()));
       }
       return builder.build();

@@ -42,18 +42,27 @@ public class ImageHandlerTest {
    static ParseSax<Image> createParser() {
       Injector injector = Guice.createInjector(new SaxParserModule());
       ParseSax<Image> parser = (ParseSax<Image>) injector.getInstance(ParseSax.Factory.class).create(
-            injector.getInstance(ImageHandler.class));
+               injector.getInstance(ImageHandler.class));
       return parser;
    }
 
    public static Image parseImage() {
-      InputStream is = ImageHandlerTest.class.getResourceAsStream("/test_get_image.xml");
+      return parseImage("/test_get_image.xml");
+   }
+
+   public static Image parseImage(String resource) {
+      InputStream is = ImageHandlerTest.class.getResourceAsStream(resource);
       return createParser().parse(is);
    }
 
    public void test() {
       Image expects = new Image(2, "CentOS 5.2");
       assertEquals(parseImage(), expects);
+   }
+
+   public void test32() {
+      Image expects = new Image(70, "Ubuntu 10.10 (maverick) 32-bit");
+      assertEquals(parseImage("/test_get_image32.xml"), expects);
    }
 
 }

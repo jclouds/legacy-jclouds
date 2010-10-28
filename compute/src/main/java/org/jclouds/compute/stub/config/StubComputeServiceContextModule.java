@@ -19,15 +19,8 @@
 
 package org.jclouds.compute.stub.config;
 
-import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.JCloudsNativeStandaloneComputeServiceContextModule;
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.concurrent.SingleThreaded;
-import org.jclouds.domain.Location;
-
-import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -43,8 +36,6 @@ public class StubComputeServiceContextModule extends JCloudsNativeStandaloneComp
    @Override
    protected void configure() {
       install(new StubComputeServiceDependenciesModule());
-      bind(new TypeLiteral<ComputeServiceAdapter<NodeMetadata, Hardware, Image, Location>>() {
-      }).to(StubComputeServiceAdapter.class);
       super.configure();
    }
 }

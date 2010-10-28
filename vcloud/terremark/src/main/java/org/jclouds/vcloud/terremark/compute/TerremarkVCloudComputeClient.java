@@ -100,7 +100,7 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
 
       VCloudExpressVApp vAppResponse = super.start(VDC, templateId, name, options, portsToOpen);
       if (password != null) {
-         credentialStore.put(vAppResponse.getHref().toASCIIString(), new Credentials(defaultCredentials.identity,
+         credentialStore.put("node#" + vAppResponse.getHref().toASCIIString(), new Credentials(defaultCredentials.identity,
                password));
       }
       if (portsToOpen.length > 0)

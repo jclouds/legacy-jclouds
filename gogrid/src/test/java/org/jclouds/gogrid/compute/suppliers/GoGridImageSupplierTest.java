@@ -17,30 +17,21 @@
  * ====================================================================
  */
 
-package org.jclouds.gogrid.util;
+package org.jclouds.gogrid.compute.suppliers;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import static org.testng.Assert.assertEquals;
+
+import org.testng.annotations.Test;
 
 /**
- * @author Oleksiy Yarmula
+ * 
+ * @author Adrian Cole
  */
-public class GoGridUtils {
+public class GoGridImageSupplierTest {
 
-    /**
-     * Matches nth group or returns null.
-     *  
-     * @param stringToParse string that the pattern will be applied to
-     * @param pattern regular expression {@link java.util.regex.Pattern pattern}
-     * @param nthGroup number of the group to extract / return
-     * @return matched group or null
-     */
-    public static String parseStringByPatternAndGetNthMatchGroup(String stringToParse, Pattern pattern, int nthGroup) {
-        Matcher osVersionMatcher = pattern.matcher(stringToParse);
-        if (osVersionMatcher.find()) {
-            return osVersionMatcher.group(nthGroup);
-        }
-        return null;
-    }
+   @Test
+   public void testParseVersion() {
+      assertEquals(GoGridImageSupplier.parseVersion("CentOS 5.3 (64-bit)"), "5.3");
+   }
 
 }

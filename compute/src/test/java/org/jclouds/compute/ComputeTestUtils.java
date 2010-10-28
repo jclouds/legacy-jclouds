@@ -19,7 +19,11 @@
 
 package org.jclouds.compute;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.get;
 import static org.jclouds.util.Utils.checkNotEmpty;
+import static org.testng.Assert.assertEquals;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,18 +31,16 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
-import static org.testng.Assert.assertEquals;
-import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.predicates.OperatingSystemPredicates;
 import org.jclouds.rest.HttpClient;
+import org.jclouds.scriptbuilder.domain.Statement;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
-import static com.google.common.collect.Iterables.get;
 
 /**
  * utilities helpful in testing compute providers
@@ -46,7 +48,7 @@ import static com.google.common.collect.Iterables.get;
  * @author Adrian Cole
  */
 public class ComputeTestUtils {
-   public static String buildScript(OperatingSystem os) {
+   public static Statement buildScript(OperatingSystem os) {
       if (OperatingSystemPredicates.supportsApt().apply(os))
          return RunScriptData.APT_RUN_SCRIPT;
       else if (OperatingSystemPredicates.supportsYum().apply(os))

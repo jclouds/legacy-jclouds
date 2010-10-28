@@ -177,7 +177,7 @@ public class BaseComputeService implements ComputeService {
       Map<?, Exception> executionExceptions = awaitCompletion(responses, executor, null, logger, "starting nodes");
       for (NodeMetadata node : concat(nodes, badNodes.keySet()))
          if (node.getCredentials() != null)
-            credentialStore.put("node/" + node.getId(), node.getCredentials());
+            credentialStore.put("node#" + node.getId(), node.getCredentials());
       if (executionExceptions.size() > 0 || badNodes.size() > 0) {
          throw new RunNodesException(tag, count, template, nodes, executionExceptions, badNodes);
       }
@@ -227,7 +227,7 @@ public class BaseComputeService implements ComputeService {
       }, timeouts.nodeRunning, 1000, TimeUnit.MILLISECONDS);
       boolean successful = tester.apply(id) && (node.get() == null || nodeTerminated.apply(node.get()));
       if (successful)
-         credentialStore.remove("node/" + id);
+         credentialStore.remove("node#" + id);
       logger.debug("<< destroyed node(%s) success(%s)", id, successful);
    }
 
