@@ -19,9 +19,11 @@
 
 package org.jclouds.compute;
 
-import static org.jclouds.compute.util.ComputeServiceUtils.*;
+import static org.jclouds.compute.util.ComputeServiceUtils.execHttpResponse;
+import static org.jclouds.compute.util.ComputeServiceUtils.extractTargzIntoDirectory;
 import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.jclouds.scriptbuilder.domain.Statements.interpret;
+import static org.jclouds.scriptbuilder.domain.Statements.newStatementList;
 
 import java.net.URI;
 import java.util.Map;
@@ -31,7 +33,6 @@ import org.jclouds.compute.predicates.OperatingSystemPredicates;
 import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.AuthorizeRSAPublicKey;
 import org.jclouds.scriptbuilder.domain.Statement;
-import static org.jclouds.scriptbuilder.domain.Statements.*;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -58,50 +59,59 @@ public class RunScriptData {
    public static Statement createScriptInstallAndStartJBoss(String publicKey, OperatingSystem os) {
       Map<String, String> envVariables = ImmutableMap.of("jbossHome", jbossHome);
       Statement toReturn = new InitBuilder(
-            "jboss",
-            jbossHome,
-            jbossHome,
-            envVariables,
-            ImmutableList.<Statement> of(
-                  new AuthorizeRSAPublicKey(publicKey),
-                  installJavaAndCurl(os),
-                  exec("rm -rf /var/cache/apt /usr/lib/vmware-tools"),// jeos hasn't enough room!
-                  extractTargzIntoDirectory(
-                        URI.create("http://commondatastorage.googleapis.com/jclouds-repo/jboss-as-distribution-6.0.0.20100911-M5.tar.gz"),
-                        "/usr/local"), exec("{md} " + jbossHome), exec("mv /usr/local/jboss-*/* " + jbossHome),
-                  exec("chmod -R oug+r+w " + jbossHome)),
-            ImmutableList
-                  .<Statement> of(interpret("java -Xms128m -Xmx512m -XX:MaxPermSize=256m -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Djava.endorsed.dirs=lib/endorsed -classpath bin/run.jar org.jboss.Main -b 0.0.0.0")));
+               "jboss",
+               jbossHome,
+               jbossHome,
+               envVariables,
+               ImmutableList
+                        .<Statement> of(
+                                 new AuthorizeRSAPublicKey(publicKey),//
+                                 installJavaAndCurl(os),//
+                                 // just in case iptables are being used, try to open 8080
+                                 exec("iptables -I INPUT 1 -p tcp --dport 8080 -j ACCEPT"),//
+                                 // TODO gogrid rules only allow ports 22, 3389, 80 and 443.
+                                 // the above rule will be ignored, so we have to apply this directly
+                                 exec("iptables -I RH-Firewall-1-INPUT 1 -p tcp --dport 8080 -j ACCEPT"),//
+                                 exec("iptables-save"),//
+                                 extractTargzIntoDirectory(
+                                          URI
+                                                   .create("http://commondatastorage.googleapis.com/jclouds-repo/jboss-as-distribution-6.0.0.20100911-M5.tar.gz"),
+                                          "/usr/local"), exec("{md} " + jbossHome), exec("mv /usr/local/jboss-*/* "
+                                          + jbossHome),//
+                                 exec("chmod -R oug+r+w " + jbossHome)),//
+               ImmutableList
+                        .<Statement> of(interpret("java -Xms128m -Xmx512m -XX:MaxPermSize=256m -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Djava.endorsed.dirs=lib/endorsed -classpath bin/run.jar org.jboss.Main -b 0.0.0.0")));
       return toReturn;
    }
 
    public static final Statement APT_RUN_SCRIPT = newStatementList(//
-          exec("(which java && java -fullversion 2>&1|egrep -q 1.6 ) ||"),//
-          execHttpResponse( URI.create("http://whirr.s3.amazonaws.com/0.2.0-incubating-SNAPSHOT/sun/java/install")),//
-          exec(new StringBuilder()//
-         .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
-         .append("which curl || apt-get install -f -y -qq --force-yes curl\n")//
-         .append("rm -rf /var/cache/apt /usr/lib/vmware-tools\n")// jeos hasn't enough room!
-         .append("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /root/.bashrc")//
-         .toString()));
+            exec("(which java && java -fullversion 2>&1|egrep -q 1.6 ) ||"),//
+            execHttpResponse(URI.create("http://whirr.s3.amazonaws.com/0.2.0-incubating-SNAPSHOT/sun/java/install")),//
+            exec(new StringBuilder()//
+                     .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
+                     .append("which curl || apt-get install -f -y -qq --force-yes curl\n")//
+                     // jeos hasn't enough room!
+                     .append("rm -rf /var/cache/apt /usr/lib/vmware-tools\n")//
+                     .append("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /root/.bashrc")//
+                     .toString()));
 
-   public static final Statement YUM_RUN_SCRIPT = newStatementList(//
-          exec("(which java && java -fullversion 2>&1|egrep -q 1.6 ) ||"),//
-          execHttpResponse( URI.create("http://whirr.s3.amazonaws.com/0.2.0-incubating-SNAPSHOT/sun/java/install")),//
-          exec(new StringBuilder()//
-         .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n") //
-         .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n") //
-         .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n") //
-         .append(
-               "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
-         .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
-         .append("which curl ||yum --nogpgcheck -y install curl\n")//
-         .append("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /root/.bashrc")//
-         .toString()));
+   public static final Statement YUM_RUN_SCRIPT = newStatementList(
+            exec("(which java && java -fullversion 2>&1|egrep -q 1.6 ) ||"),//
+            execHttpResponse(URI.create("http://whirr.s3.amazonaws.com/0.2.0-incubating-SNAPSHOT/sun/java/install")),//
+            exec(new StringBuilder()//
+                     .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n") //
+                     .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n") //
+                     .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n") //
+                     .append(
+                              "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
+                     .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
+                     .append("which curl ||yum --nogpgcheck -y install curl\n")//
+                     .append("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /root/.bashrc")//
+                     .toString()));
 
    public static final Statement ZYPPER_RUN_SCRIPT = exec(new StringBuilder()//
-         .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
-         .append("which curl || zypper install curl\n")//
-         .append("(which java && java -fullversion 2>&1|egrep -q 1.6 ) || zypper install java-1.6.0-openjdk\n")//
-         .toString());
+            .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
+            .append("which curl || zypper install curl\n")//
+            .append("(which java && java -fullversion 2>&1|egrep -q 1.6 ) || zypper install java-1.6.0-openjdk\n")//
+            .toString());
 }

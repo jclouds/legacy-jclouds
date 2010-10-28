@@ -388,7 +388,7 @@ public abstract class BaseComputeServiceLiveTest {
       testGet();
    }
 
-   @Test(enabled = true, dependsOnMethods = "testReboot")
+   @Test(enabled = true)
    public void testCreateAndRunAService() throws Exception {
 
       String tag = this.tag + "service";
