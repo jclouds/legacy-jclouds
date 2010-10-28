@@ -85,27 +85,22 @@ public class RunScriptData {
    }
 
    public static final Statement APT_RUN_SCRIPT = newStatementList(//
+            exec("which curl || apt-get install -f -y -qq --force-yes curl"),//
             exec("(which java && java -fullversion 2>&1|egrep -q 1.6 ) ||"),//
             execHttpResponse(URI.create("http://whirr.s3.amazonaws.com/0.2.0-incubating-SNAPSHOT/sun/java/install")),//
             exec(new StringBuilder()//
                      .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n")//
-                     .append("which curl || apt-get install -f -y -qq --force-yes curl\n")//
                      // jeos hasn't enough room!
                      .append("rm -rf /var/cache/apt /usr/lib/vmware-tools\n")//
                      .append("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /root/.bashrc")//
                      .toString()));
 
    public static final Statement YUM_RUN_SCRIPT = newStatementList(
+            exec("which curl ||yum --nogpgcheck -y install curl"),//
             exec("(which java && java -fullversion 2>&1|egrep -q 1.6 ) ||"),//
             execHttpResponse(URI.create("http://whirr.s3.amazonaws.com/0.2.0-incubating-SNAPSHOT/sun/java/install")),//
             exec(new StringBuilder()//
                      .append("echo nameserver 208.67.222.222 >> /etc/resolv.conf\n") //
-                     .append("echo \"[jdkrepo]\" >> /etc/yum.repos.d/CentOS-Base.repo\n") //
-                     .append("echo \"name=jdkrepository\" >> /etc/yum.repos.d/CentOS-Base.repo\n") //
-                     .append(
-                              "echo \"baseurl=http://ec2-us-east-mirror.rightscale.com/epel/5/i386/\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
-                     .append("echo \"enabled=1\" >> /etc/yum.repos.d/CentOS-Base.repo\n")//
-                     .append("which curl ||yum --nogpgcheck -y install curl\n")//
                      .append("echo \"export PATH=\\\"\\$JAVA_HOME/bin/:\\$PATH\\\"\" >> /root/.bashrc")//
                      .toString()));
 
