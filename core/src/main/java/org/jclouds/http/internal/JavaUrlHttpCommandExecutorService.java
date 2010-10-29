@@ -225,8 +225,8 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
          }
       } else {
          connection.setRequestProperty(HttpHeaders.CONTENT_LENGTH, "0");
-         // for some reason POST undoes the content length header above.
-         if (connection.getRequestMethod().equals("POST"))
+         // for some reason POST/PUT undoes the content length header above.
+         if (connection.getRequestMethod().equals("POST") || connection.getRequestMethod().equals("PUT"))
             connection.setChunkedStreamingMode(0);
       }
       return connection;
