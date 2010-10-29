@@ -68,10 +68,11 @@ public class LibvirtExperimentLiveTest {
                            .<Module> of()));
          
          System.out.println("images " + context.getComputeService().listImages());
+         System.out.println("nodes " + context.getComputeService().listNodes());
          System.out.println("hardware profiles " + context.getComputeService().listHardwareProfiles()); 
          
          Template defaultTemplate = context.getComputeService().templateBuilder()
-         //.hardwareId("").locationId("").imageId("")
+         	.hardwareId("c7ff2039-a9f1-a659-7f91-e0f82f59d52e").imageId("1") //.locationId("")
          .build();
          	
     /*
@@ -81,8 +82,7 @@ public class LibvirtExperimentLiveTest {
          
          
 //         context.getComputeService().templateOptions().;
-         context.getComputeService().runNodesWithTag("test", 1);
-        System.out.println(context.getComputeService().listNodes()); 
+         context.getComputeService().runNodesWithTag("ttylinux", 1, defaultTemplate);
         
       } catch (RunNodesException e) {
 		e.printStackTrace();

@@ -19,18 +19,34 @@
 
 package org.jclouds.libvirt.compute.functions;
 
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.List;
 
 import javax.inject.Singleton;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Processor;
+import org.jclouds.compute.domain.Volume;
+import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
+import org.libvirt.StorageVol;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+
+import com.jamesmurty.utils.XMLBuilder;
 
 /**
  * @author Adrian Cole
@@ -38,27 +54,52 @@ import com.google.common.collect.Lists;
 @Singleton
 public class DomainToHardware implements Function<Domain, Hardware> {
 
-   @Override
-   public Hardware apply(Domain from) {
-      HardwareBuilder builder = new HardwareBuilder();
-      try {
-         builder.id(from.getUUIDString());
+	@Override
+	public Hardware apply(Domain from) {
+		HardwareBuilder builder = new HardwareBuilder();
 
-         builder.providerId(from.getID() + "");
-         builder.name(from.getName());
-         List<Processor> processors = Lists.newArrayList();
-         for (int i = 0; i < from.getInfo().nrVirtCpu; i++) {
-            processors.add(new Processor(i + 1, 1));
-         }
-         builder.processors(processors);
+		try {
+			builder.id(from.getUUIDString());
+			builder.providerId(from.getID() + "");
+			builder.name(from.getName());
+			List<Processor> processors = Lists.newArrayList();
+			for (int i = 0; i < from.getInfo().nrVirtCpu; i++) {
+				processors.add(new Processor(i + 1, 1));
+			}
+			builder.processors(processors);
 
-         builder.ram((int) from.getInfo().maxMem);
-         // TODO volumes
-      } catch (LibvirtException e) {
-         // TODO Auto-generated catch block
-         e.printStackTrace();
-      }
-      return builder.build();
-   }
+			builder.ram((int) from.getInfo().maxMem);
+			// TODO volumes
+			List<Volume> volumes = Lists.newArrayList();
+			XMLBuilder xmlBuilder = XMLBuilder.parse(new InputSource(new StringReader(from.getXMLDesc(0))));
+			Document doc = xmlBuilder.getDocument();
+			XPathExpression expr = XPathFactory.newInstance().newXPath().compile("//devices/disk[@device='disk']/source/@file");
+			NodeList nodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+			String diskFileName = nodes.item(0).getNodeValue();
+			for (int i = 0; i < nodes.getLength(); i++) {
+				StorageVol storageVol = from.getConnect().storageVolLookupByPath(diskFileName);
+				String id = storageVol.getKey();
+				float size = new Long(storageVol.getInfo().capacity).floatValue();
+				volumes.add(new VolumeImpl(id, Volume.Type.LOCAL, size, null, true, false));
+			}
+			builder.volumes((List<Volume>) volumes);
+		} catch (LibvirtException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return builder.build();
+	}
 
 }
