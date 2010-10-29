@@ -130,7 +130,7 @@
     <!-- ======================= -->
 
     <root>
-        <priority value="WARN" />
+        <priority value="DEBUG" />
     </root>
 
 </log4j:configuration>
