@@ -64,17 +64,33 @@ public class ParseAzureStorageErrorFromXmlContent implements HttpErrorHandler {
 
    public void handleError(HttpCommand command, HttpResponse response) {
       Exception exception = new HttpResponseException(command, response);
+      String message = null;
       try {
-         AzureStorageError error = parseErrorFromContentOrNull(command, response);
+         if (response.getPayload() != null) {
+            String contentType = response.getPayload().getContentMetadata().getContentType();
+            if (contentType != null && (contentType.indexOf("xml") != -1 || contentType.indexOf("unknown") != -1)) {
+               AzureStorageError error = utils.parseAzureStorageErrorFromContent(command, response, response
+                        .getPayload().getInput());
+               if (error != null) {
+                  message = error.getMessage();
+                  exception = new AzureStorageResponseException(command, response, error);
+               }
+            } else {
+               try {
+                  message = Utils.toStringAndClose(response.getPayload().getInput());
+               } catch (IOException e) {
+               }
+            }
+         }
+         message = message != null ? message : String.format("%s -> %s", command.getRequest().getRequestLine(),
+                  response.getStatusLine());
          switch (response.getStatusCode()) {
             case 401:
-               exception = new AuthorizationException(command.getRequest(), error != null ? error
-                        .getMessage() : response.getStatusLine());
+               exception = new AuthorizationException(command.getRequest(), message);
                break;
             case 404:
+
                if (!command.getRequest().getMethod().equals("DELETE")) {
-                  String message = error != null ? error.getMessage() : String.format("%s -> %s",
-                           command.getRequest().getRequestLine(), response.getStatusLine());
                   String path = command.getRequest().getEndpoint().getPath();
                   Matcher matcher = CONTAINER_PATH.matcher(path);
                   if (matcher.find()) {
@@ -82,15 +98,14 @@ public class ParseAzureStorageErrorFromXmlContent implements HttpErrorHandler {
                   } else {
                      matcher = CONTAINER_KEY_PATH.matcher(path);
                      if (matcher.find()) {
-                        exception = new KeyNotFoundException(matcher.group(1), matcher.group(2),
-                                 message);
+                        exception = new KeyNotFoundException(matcher.group(1), matcher.group(2), message);
                      }
                   }
                }
                break;
-            default:
-               exception = error != null ? new AzureStorageResponseException(command, response,
-                        error) : new HttpResponseException(command, response);
+            case 411:
+               exception = new IllegalArgumentException(message);
+               break;
          }
       } finally {
          releasePayload(response);
@@ -98,17 +113,4 @@ public class ParseAzureStorageErrorFromXmlContent implements HttpErrorHandler {
       }
    }
 
-   AzureStorageError parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
-      if (response.getPayload() != null) {
-         try {
-            String content = Utils.toStringAndClose(response.getPayload().getInput());
-            if (content != null && content.indexOf('<') >= 0)
-               return utils.parseAzureStorageErrorFromContent(command, response, Utils
-                        .toInputStream(content));
-         } catch (IOException e) {
-            logger.warn(e, "exception reading error from response", response);
-         }
-      }
-      return null;
-   }
 }
