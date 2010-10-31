@@ -30,6 +30,7 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudClient;
+import org.jclouds.vcloud.domain.VApp;
 import org.testng.annotations.Test;
 
 /**
@@ -63,6 +64,11 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assertEquals(node.getType(), ComputeType.NODE);
          NodeMetadata allData = client.getNodeMetadata(node.getId());
          System.out.println(allData.getHardware());
+         RestContext<VCloudClient, VCloudAsyncClient> tmContext = new ComputeServiceContextFactory().createContext(
+                  provider, identity, credential).getProviderSpecificContext();
+         VApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
+         assertEquals(vApp.getName(), allData.getName());
       }
    }
+
 }

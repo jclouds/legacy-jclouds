@@ -852,10 +852,15 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       }
 
       @Override
-      protected URI provideDefaultVDC(Org org) {
+      protected URI provideDefaultVDC(Org org, @org.jclouds.vcloud.endpoints.VDC String defaultVDC) {
          return URI.create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1");
       }
 
+      @Override
+      protected String provideDefaultVDCName(@org.jclouds.vcloud.endpoints.VDC Supplier<Map<String, String>> vDCtoOrgSupplier) {
+         return "vdc";
+      }
+      
       @Override
       protected URI provideDefaultNetwork(URI vdc, CommonVCloudClient client, Injector injector) {
          return URI.create("https://vcenterprise.bluelock.com/api/v1.0/network/1990");

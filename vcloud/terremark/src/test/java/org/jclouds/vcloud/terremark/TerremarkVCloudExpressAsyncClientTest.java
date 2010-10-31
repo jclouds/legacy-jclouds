@@ -729,8 +729,14 @@ public class TerremarkVCloudExpressAsyncClientTest extends RestClientTest<Terrem
       }
 
       @Override
-      protected URI provideDefaultVDC(Org org) {
+      protected URI provideDefaultVDC(Org org, @org.jclouds.vcloud.endpoints.VDC String defaultVDC) {
          return URI.create("https://vdc/1");
+      }
+
+      @Override
+      protected String provideDefaultVDCName(
+               @org.jclouds.vcloud.endpoints.VDC Supplier<Map<String, String>> vDCtoOrgSupplier) {
+         return "vdc";
       }
 
       @Override
