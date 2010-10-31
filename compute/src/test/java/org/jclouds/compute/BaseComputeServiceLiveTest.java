@@ -513,7 +513,6 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true, dependsOnMethods = "testGet")
    public void testOptionToNotBlock() throws Exception {
       String tag = this.tag + "block";
       try {
