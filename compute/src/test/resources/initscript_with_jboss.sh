@@ -63,7 +63,7 @@ init)
 ssh-rsa
 END_OF_FILE
    chmod 600 ~/.ssh/authorized_keys
-   which curl || apt-get install -f -y -qq --force-yes curl
+   which curl || (apt-get install -f -y -qq --force-yes curl || (apt-get update && apt-get install -f -y -qq --force-yes curl))
    (which java && java -fullversion 2>&1|egrep -q 1.6 ) ||
    curl -X GET -s --retry 20  http://whirr.s3.amazonaws.com/0.2.0-incubating-SNAPSHOT/sun/java/install |(bash)
    echo nameserver 208.67.222.222 >> /etc/resolv.conf

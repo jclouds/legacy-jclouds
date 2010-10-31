@@ -34,7 +34,6 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.predicates.OperatingSystemPredicates;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.scriptbuilder.domain.Statement;
 
@@ -49,14 +48,7 @@ import com.google.common.io.Files;
  */
 public class ComputeTestUtils {
    public static Statement buildScript(OperatingSystem os) {
-      if (OperatingSystemPredicates.supportsApt().apply(os))
-         return RunScriptData.APT_RUN_SCRIPT;
-      else if (OperatingSystemPredicates.supportsYum().apply(os))
-         return RunScriptData.YUM_RUN_SCRIPT;
-      else if (OperatingSystemPredicates.supportsZypper().apply(os))
-         return RunScriptData.ZYPPER_RUN_SCRIPT;
-      else
-         throw new IllegalArgumentException("don't know how to handle" + os.toString());
+      return RunScriptData.installJavaAndCurl(os);
    }
 
    public static Map<String, String> setupKeyPair() throws FileNotFoundException, IOException {
@@ -69,8 +61,8 @@ public class ComputeTestUtils {
       checkSecretKeyFile(secretKeyFile);
       String secret = Files.toString(new File(secretKeyFile), Charsets.UTF_8);
       assert secret.startsWith("-----BEGIN RSA PRIVATE KEY-----") : "invalid key:\n" + secret;
-      return ImmutableMap.<String, String> of("private", secret, "public",
-            Files.toString(new File(secretKeyFile + ".pub"), Charsets.UTF_8));
+      return ImmutableMap.<String, String> of("private", secret, "public", Files.toString(new File(secretKeyFile
+               + ".pub"), Charsets.UTF_8));
    }
 
    public static void checkSecretKeyFile(String secretKeyFile) throws FileNotFoundException {

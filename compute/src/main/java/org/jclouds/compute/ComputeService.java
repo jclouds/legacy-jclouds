@@ -63,52 +63,48 @@ public interface ComputeService {
    TemplateOptions templateOptions();
 
    /**
-    * The list hardware profiles command shows you the options including virtual cpu count,
-    * memory, and disks. cpu count is not a portable quantity across clouds, as
-    * they are measured differently. However, it is a good indicator of relative
-    * speed within a cloud. memory is measured in megabytes and disks in
-    * gigabytes.
+    * The list hardware profiles command shows you the options including virtual cpu count, memory,
+    * and disks. cpu count is not a portable quantity across clouds, as they are measured
+    * differently. However, it is a good indicator of relative speed within a cloud. memory is
+    * measured in megabytes and disks in gigabytes.
     * 
-    * @return a map of hardware profiles by ID, conceding that in some clouds the "id" is
-    *         not used.
+    * @return a map of hardware profiles by ID, conceding that in some clouds the "id" is not used.
     */
    Set<? extends Hardware> listHardwareProfiles();
 
    /**
-    * Images define the operating system and metadata related to a node. In some
-    * clouds, Images are bound to a specific region, and their identifiers are
-    * different across these regions. For this reason, you should consider
-    * matching image requirements like operating system family with
-    * TemplateBuilder as opposed to choosing an image explicitly. The
-    * getImages() command returns a map of images by id.
+    * Images define the operating system and metadata related to a node. In some clouds, Images are
+    * bound to a specific region, and their identifiers are different across these regions. For this
+    * reason, you should consider matching image requirements like operating system family with
+    * TemplateBuilder as opposed to choosing an image explicitly. The getImages() command returns a
+    * map of images by id.
     */
    Set<? extends Image> listImages();
 
    /**
-    * all nodes available to the current user by id. If possible, the returned
-    * set will include {@link NodeMetadata} objects.
+    * all nodes available to the current user by id. If possible, the returned set will include
+    * {@link NodeMetadata} objects.
     */
    Set<? extends ComputeMetadata> listNodes();
 
    /**
-    * The list locations command returns all the valid locations for nodes. A
-    * location has a scope, which is typically region or zone. A region is a
-    * general area, like eu-west, where a zone is similar to a datacenter. If a
-    * location has a parent, that implies it is within that location. For
-    * example a location can be a rack, whose parent is likely to be a zone.
+    * The list locations command returns all the valid locations for nodes. A location has a scope,
+    * which is typically region or zone. A region is a general area, like eu-west, where a zone is
+    * similar to a datacenter. If a location has a parent, that implies it is within that location.
+    * For example a location can be a rack, whose parent is likely to be a zone.
     */
    Set<? extends Location> listAssignableLocations();
 
    /**
     * 
-    * The compute api treats nodes as a group based on a tag you specify. Using
-    * this tag, you can choose to operate one or many nodes as a logical unit
-    * without regard to the implementation details of the cloud.
+    * The compute api treats nodes as a group based on a tag you specify. Using this tag, you can
+    * choose to operate one or many nodes as a logical unit without regard to the implementation
+    * details of the cloud.
     * <p/>
     * 
-    * The set that is returned will include credentials you can use to ssh into
-    * the nodes. The "key" part of the credentials is either a password or a
-    * private key. You have to inspect the value to determine this.
+    * The set that is returned will include credentials you can use to ssh into the nodes. The "key"
+    * part of the credentials is either a password or a private key. You have to inspect the value
+    * to determine this.
     * 
     * <pre>
     * if (node.getCredentials().key.startsWith("-----BEGIN RSA PRIVATE KEY-----"))
@@ -116,11 +112,11 @@ public interface ComputeService {
     * </pre>
     * 
     * <p/>
-    * Note. if all you want to do is execute a script at bootup, you should
-    * consider use of the runscript option.
+    * Note. if all you want to do is execute a script at bootup, you should consider use of the
+    * runscript option.
     * <p/>
-    * If resources such as security groups are needed, they will be reused or
-    * created for you. Inbound port 22 will always be opened up.
+    * If resources such as security groups are needed, they will be reused or created for you.
+    * Inbound port 22 will always be opened up.
     * 
     * @param tag
     *           - common identifier to group nodes by, cannot contain hyphens
@@ -131,38 +127,65 @@ public interface ComputeService {
     * @return all of the nodes the api was able to launch in a running state.
     * 
     * @throws RunNodesException
-    *            when there's a problem applying options to nodes. Note that
-    *            successful and failed nodes are a part of this exception, so be
-    *            sure to inspect this carefully.
+    *            when there's a problem applying options to nodes. Note that successful and failed
+    *            nodes are a part of this exception, so be sure to inspect this carefully.
     */
    Set<? extends NodeMetadata> runNodesWithTag(String tag, int count, Template template) throws RunNodesException;
 
    /**
-    * Like {@link ComputeService#runNodesWithTag(String,int,Template)}, except
-    * that the template is default, equivalent to {@code
-    * templateBuilder().any().options(templateOptions)}.
+    * Like {@link ComputeService#runNodesWithTag(String,int,Template)}, except that the template is
+    * default, equivalent to {@code templateBuilder().any().options(templateOptions)}.
     */
    Set<? extends NodeMetadata> runNodesWithTag(String tag, int count, TemplateOptions templateOptions)
-         throws RunNodesException;
+            throws RunNodesException;
 
    /**
-    * Like {@link ComputeService#runNodesWithTag(String,int,TemplateOptions)},
-    * except that the options are default, as specified in
-    * {@link ComputeService#templateOptions}.
+    * Like {@link ComputeService#runNodesWithTag(String,int,TemplateOptions)}, except that the
+    * options are default, as specified in {@link ComputeService#templateOptions}.
     */
    Set<? extends NodeMetadata> runNodesWithTag(String tag, int count) throws RunNodesException;
 
    /**
-    * destroy the node, given its id. If it is the only node in a tag set, the
-    * dependent resources will also be destroyed.
+    * resume the node from {@link org.jclouds.compute.domain.NodeState#SUSPENDED suspended} state,
+    * given its id.
+    */
+   void resumeNode(String id);
+
+   /**
+    * nodes matching the filter are treated as a logical set. Using the resume command, you can save
+    * time by resumeing the nodes in parallel.
+    * 
+    * @throws UnsupportedOperationException
+    *            if the underlying provider doesn't support suspend/resume
+    */
+   void resumeNodesMatching(Predicate<NodeMetadata> filter);
+
+   /**
+    * suspend the node, given its id. This will result in
+    * {@link org.jclouds.compute.domain.NodeState#SUSPENDED suspended} state.
+    * 
+    * @throws UnsupportedOperationException
+    *            if the underlying provider doesn't support suspend/resume
+    */
+   void suspendNode(String id);
+
+   /**
+    * nodes matching the filter are treated as a logical set. Using the suspend command, you can
+    * save time by suspending the nodes in parallel.
+    * 
+    */
+   void suspendNodesMatching(Predicate<NodeMetadata> filter);
+
+   /**
+    * destroy the node, given its id. If it is the only node in a tag set, the dependent resources
+    * will also be destroyed.
     */
    void destroyNode(String id);
 
    /**
-    * nodes matching the filter are treated as a logical set. Using the delete
-    * command, you can save time by removing the nodes in parallel. When the
-    * last node in a set is destroyed, any indirect resources it uses, such as
-    * keypairs, are also destroyed.
+    * nodes matching the filter are treated as a logical set. Using the delete command, you can save
+    * time by removing the nodes in parallel. When the last node in a set is destroyed, any indirect
+    * resources it uses, such as keypairs, are also destroyed.
     * 
     * @return list of nodes destroyed
     */
@@ -174,8 +197,8 @@ public interface ComputeService {
    void rebootNode(String id);
 
    /**
-    * nodes matching the filter are treated as a logical set. Using this
-    * command, you can save time by rebooting the nodes in parallel.
+    * nodes matching the filter are treated as a logical set. Using this command, you can save time
+    * by rebooting the nodes in parallel.
     */
    void rebootNodesMatching(Predicate<NodeMetadata> filter);
 
@@ -185,8 +208,8 @@ public interface ComputeService {
    NodeMetadata getNodeMetadata(String id);
 
    /**
-    * get all nodes including details such as image and ip addresses even if it
-    * incurs extra requests to the service.
+    * get all nodes including details such as image and ip addresses even if it incurs extra
+    * requests to the service.
     * 
     * @param filter
     *           how to select the nodes you are interested in details on.
@@ -196,24 +219,22 @@ public interface ComputeService {
    /**
     * Runs the script without any additional options
     * 
-    * @see #runScriptOnNodesMatching(Predicate, Payload, 
+    * @see #runScriptOnNodesMatching(Predicate, Payload,
     *      org.jclouds.compute.options.RunScriptOptions)
     * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
     */
    Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, Payload runScript)
-         throws RunScriptOnNodesException;
+            throws RunScriptOnNodesException;
 
    /**
     * Run the script on all nodes with the specific tag.
     * 
     * @param filter
-    *           Predicate-based filter to define on which nodes the script is to
-    *           be executed
+    *           Predicate-based filter to define on which nodes the script is to be executed
     * @param runScript
     *           payload containing the script to run
     * @param options
-    *           nullable options to how to run the script, whether to override
-    *           credentials
+    *           nullable options to how to run the script, whether to override credentials
     * @return map with node identifiers and corresponding responses
     * @throws RunScriptOnNodesException
     *            if anything goes wrong during script execution
@@ -222,6 +243,6 @@ public interface ComputeService {
     * @see org.jclouds.io.Payloads
     */
    Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
-         Payload runScript, RunScriptOptions options) throws RunScriptOnNodesException;
+            Payload runScript, RunScriptOptions options) throws RunScriptOnNodesException;
 
 }

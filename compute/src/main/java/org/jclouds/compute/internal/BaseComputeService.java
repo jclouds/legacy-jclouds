@@ -74,7 +74,9 @@ import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
+import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
@@ -111,10 +113,13 @@ public class BaseComputeService implements ComputeService {
    protected final RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy;
    protected final RebootNodeStrategy rebootNodeStrategy;
    protected final DestroyNodeStrategy destroyNodeStrategy;
+   protected final ResumeNodeStrategy resumeNodeStrategy;
+   protected final SuspendNodeStrategy suspendNodeStrategy;
    protected final Provider<TemplateBuilder> templateBuilderProvider;
    protected final Provider<TemplateOptions> templateOptionsProvider;
    protected final Predicate<NodeMetadata> nodeRunning;
    protected final Predicate<NodeMetadata> nodeTerminated;
+   protected final Predicate<NodeMetadata> nodeSuspended;
    protected final ComputeUtils utils;
    protected final Timeouts timeouts;
    protected final ExecutorService executor;
@@ -126,9 +131,11 @@ public class BaseComputeService implements ComputeService {
             @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
             GetNodeMetadataStrategy getNodeMetadataStrategy, RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
             RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
+            ResumeNodeStrategy resumeNodeStrategy, SuspendNodeStrategy suspendNodeStrategy,
             Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
             @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
-            @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated, ComputeUtils utils, Timeouts timeouts,
+            @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
+            @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended, ComputeUtils utils, Timeouts timeouts,
             @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.context = checkNotNull(context, "context");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
@@ -139,11 +146,14 @@ public class BaseComputeService implements ComputeService {
       this.getNodeMetadataStrategy = checkNotNull(getNodeMetadataStrategy, "getNodeMetadataStrategy");
       this.runNodesAndAddToSetStrategy = checkNotNull(runNodesAndAddToSetStrategy, "runNodesAndAddToSetStrategy");
       this.rebootNodeStrategy = checkNotNull(rebootNodeStrategy, "rebootNodeStrategy");
+      this.resumeNodeStrategy = checkNotNull(resumeNodeStrategy, "resumeNodeStrategy");
+      this.suspendNodeStrategy = checkNotNull(suspendNodeStrategy, "suspendNodeStrategy");
       this.destroyNodeStrategy = checkNotNull(destroyNodeStrategy, "destroyNodeStrategy");
       this.templateBuilderProvider = checkNotNull(templateBuilderProvider, "templateBuilderProvider");
       this.templateOptionsProvider = checkNotNull(templateOptionsProvider, "templateOptionsProvider");
       this.nodeRunning = checkNotNull(nodeRunning, "nodeRunning");
       this.nodeTerminated = checkNotNull(nodeTerminated, "nodeTerminated");
+      this.nodeSuspended = checkNotNull(nodeSuspended, "nodeSuspended");
       this.utils = checkNotNull(utils, "utils");
       this.timeouts = checkNotNull(timeouts, "timeouts");
       this.executor = checkNotNull(executor, "executor");
@@ -174,7 +184,7 @@ public class BaseComputeService implements ComputeService {
       Set<NodeMetadata> nodes = newHashSet();
       Map<NodeMetadata, Exception> badNodes = newLinkedHashMap();
       Map<?, Future<Void>> responses = runNodesAndAddToSetStrategy.execute(tag, count, template, nodes, badNodes);
-      Map<?, Exception> executionExceptions = awaitCompletion(responses, executor, null, logger, "starting nodes");
+      Map<?, Exception> executionExceptions = awaitCompletion(responses, executor, null, logger, "resumeing nodes");
       for (NodeMetadata node : concat(nodes, badNodes.keySet()))
          if (node.getCredentials() != null)
             credentialStore.put("node#" + node.getId(), node.getCredentials());
@@ -355,6 +365,66 @@ public class BaseComputeService implements ComputeService {
 
       }, executor, null, logger, "rebooting nodes");
       logger.debug("<< rebooted");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void resumeNode(String id) {
+      checkNotNull(id, "id");
+      logger.debug(">> resumeing node(%s)", id);
+      NodeMetadata node = resumeNodeStrategy.resumeNode(id);
+      boolean successful = nodeRunning.apply(node);
+      logger.debug("<< resumeed node(%s) success(%s)", id, successful);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void resumeNodesMatching(Predicate<NodeMetadata> filter) {
+      logger.debug(">> resumeing nodes matching(%s)", filter);
+      transformParallel(nodesMatchingFilterAndNotTerminated(filter), new Function<NodeMetadata, Future<Void>>() {
+         // TODO use native async
+         @Override
+         public Future<Void> apply(NodeMetadata from) {
+            resumeNode(from.getId());
+            return immediateFuture(null);
+         }
+
+      }, executor, null, logger, "resumeing nodes");
+      logger.debug("<< resumeed");
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void suspendNode(String id) {
+      checkNotNull(id, "id");
+      logger.debug(">> suspendping node(%s)", id);
+      NodeMetadata node = suspendNodeStrategy.suspendNode(id);
+      boolean successful = nodeSuspended.apply(node);
+      logger.debug("<< suspendped node(%s) success(%s)", id, successful);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void suspendNodesMatching(Predicate<NodeMetadata> filter) {
+      logger.debug(">> suspending nodes matching(%s)", filter);
+      transformParallel(nodesMatchingFilterAndNotTerminated(filter), new Function<NodeMetadata, Future<Void>>() {
+         // TODO use native async
+         @Override
+         public Future<Void> apply(NodeMetadata from) {
+            suspendNode(from.getId());
+            return immediateFuture(null);
+         }
+
+      }, executor, null, logger, "suspending nodes");
+      logger.debug("<< suspended");
    }
 
    /**

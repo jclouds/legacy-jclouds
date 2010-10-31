@@ -38,6 +38,8 @@ import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
+import org.jclouds.compute.strategy.ResumeNodeStrategy;
+import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.compute.strategy.impl.AdaptingComputeServiceStrategies;
 import org.jclouds.compute.suppliers.DefaultLocationSupplier;
 import org.jclouds.domain.Location;
@@ -82,7 +84,7 @@ public class StandaloneComputeServiceContextModule<N, H, I, L> extends BaseCompu
    @Provides
    @Singleton
    protected Supplier<Set<? extends Hardware>> provideHardware(final ComputeServiceAdapter<N, H, I, L> adapter,
-         Function<H, Hardware> transformer) {
+            Function<H, Hardware> transformer) {
       return new TransformingSetSupplier<H, Hardware>(new Supplier<Iterable<H>>() {
 
          @Override
@@ -96,7 +98,7 @@ public class StandaloneComputeServiceContextModule<N, H, I, L> extends BaseCompu
    @Provides
    @Singleton
    protected Supplier<Set<? extends Image>> provideImages(final ComputeServiceAdapter<N, H, I, L> adapter,
-         Function<I, Image> transformer) {
+            Function<I, Image> transformer) {
       return new TransformingSetSupplier<I, Image>(new Supplier<Iterable<I>>() {
 
          @Override
@@ -115,7 +117,7 @@ public class StandaloneComputeServiceContextModule<N, H, I, L> extends BaseCompu
    @Provides
    @Singleton
    protected Supplier<Set<? extends Location>> provideLocations(final ComputeServiceAdapter<N, H, I, L> adapter,
-         Function<L, Location> transformer) {
+            Function<L, Location> transformer) {
       return new TransformingSetSupplier<L, Location>(new Supplier<Iterable<L>>() {
 
          @Override
@@ -153,6 +155,18 @@ public class StandaloneComputeServiceContextModule<N, H, I, L> extends BaseCompu
    @Provides
    @Singleton
    protected RebootNodeStrategy defineRebootNodeStrategy(AdaptingComputeServiceStrategies<N, H, I, L> in) {
+      return in;
+   }
+
+   @Provides
+   @Singleton
+   protected ResumeNodeStrategy defineStartNodeStrategy(AdaptingComputeServiceStrategies<N, H, I, L> in) {
+      return in;
+   }
+
+   @Provides
+   @Singleton
+   protected SuspendNodeStrategy defineStopNodeStrategy(AdaptingComputeServiceStrategies<N, H, I, L> in) {
       return in;
    }
 

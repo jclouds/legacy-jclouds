@@ -83,7 +83,9 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 
@@ -388,6 +390,28 @@ public abstract class BaseComputeServiceLiveTest {
       testGet();
    }
 
+   @Test(enabled = true, dependsOnMethods = "testReboot")
+   public void testSuspendResume() throws Exception {
+      client.suspendNodesMatching(withTag(tag));
+      Set<? extends NodeMetadata> stoppedNodes = refreshNodes();
+
+      assert Iterables.all(stoppedNodes, new Predicate<NodeMetadata>() {
+
+         @Override
+         public boolean apply(NodeMetadata input) {
+            return input.getState() == NodeState.SUSPENDED;
+         }
+
+      }) : nodes;
+
+      client.resumeNodesMatching(withTag(tag));
+      testGet();
+   }
+
+   private Set<? extends NodeMetadata> refreshNodes() {
+      return filter(client.listNodesDetailsMatching(all()), and(withTag(tag), not(TERMINATED)));
+   }
+
    @Test(enabled = true)
    public void testCreateAndRunAService() throws Exception {
 
@@ -572,7 +596,8 @@ public abstract class BaseComputeServiceLiveTest {
          ExecResponse hello = ssh.exec("echo hello");
          assertEquals(hello.getOutput().trim(), "hello");
          ExecResponse exec = ssh.exec("java -version");
-         assert exec.getError().indexOf("1.6") != -1 || exec.getOutput().indexOf("1.6") != -1 : exec;
+         assert exec.getError().indexOf("1.6") != -1 || exec.getOutput().indexOf("1.6") != -1 : exec + "\n"
+                  + ssh.exec("cat /tmp/bootstrap/stdout.log /tmp/bootstrap/stderr.log");
       } finally {
          if (ssh != null)
             ssh.disconnect();

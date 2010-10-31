@@ -34,6 +34,7 @@ public interface ComputeServiceConstants {
    public static final String LOCAL_PARTITION_GB_PATTERN = "disk_drive/%s/gb";
    public static final String PROPERTY_TIMEOUT_NODE_TERMINATED = "jclouds.compute.timeout.node-terminated";
    public static final String PROPERTY_TIMEOUT_NODE_RUNNING = "jclouds.compute.timeout.node-running";
+   public static final String PROPERTY_TIMEOUT_NODE_SUSPENDED = "jclouds.compute.timeout.node-suspended";
    public static final String PROPERTY_TIMEOUT_SCRIPT_COMPLETE = "jclouds.compute.timeout.script-complete";
    public static final String PROPERTY_TIMEOUT_PORT_OPEN = "jclouds.compute.timeout.port-open";
    /**
@@ -51,7 +52,11 @@ public interface ComputeServiceConstants {
       @Inject(optional = true)
       @Named(PROPERTY_TIMEOUT_NODE_RUNNING)
       public long nodeRunning = 1200 * 1000;
-
+      
+      @Inject(optional = true)
+      @Named(PROPERTY_TIMEOUT_NODE_SUSPENDED)
+      public long nodeSuspended = 30 * 1000;
+      
       @Inject(optional = true)
       @Named(PROPERTY_TIMEOUT_SCRIPT_COMPLETE)
       public long scriptComplete = 600 * 1000;

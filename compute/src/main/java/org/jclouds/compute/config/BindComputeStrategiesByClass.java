@@ -25,6 +25,8 @@ import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.ResumeNodeStrategy;
+import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
 
 import com.google.inject.AbstractModule;
@@ -42,6 +44,8 @@ public abstract class BindComputeStrategiesByClass extends AbstractModule {
       bindListNodesStrategy(defineListNodesStrategy());
       bindGetNodeMetadataStrategy(defineGetNodeMetadataStrategy());
       bindRebootNodeStrategy(defineRebootNodeStrategy());
+      bindStartNodeStrategy(defineStartNodeStrategy());
+      bindStopNodeStrategy(defineStopNodeStrategy());
       bindDestroyNodeStrategy(defineDestroyNodeStrategy());
    }
 
@@ -64,6 +68,14 @@ public abstract class BindComputeStrategiesByClass extends AbstractModule {
       bind(RebootNodeStrategy.class).to(clazz).in(Scopes.SINGLETON);
    }
 
+   protected void bindStartNodeStrategy(Class<? extends ResumeNodeStrategy> clazz) {
+      bind(ResumeNodeStrategy.class).to(clazz).in(Scopes.SINGLETON);
+   }
+
+   protected void bindStopNodeStrategy(Class<? extends SuspendNodeStrategy> clazz) {
+      bind(SuspendNodeStrategy.class).to(clazz).in(Scopes.SINGLETON);
+   }
+
    protected void bindGetNodeMetadataStrategy(Class<? extends GetNodeMetadataStrategy> clazz) {
       bind(GetNodeMetadataStrategy.class).to(clazz).in(Scopes.SINGLETON);
    }
@@ -84,6 +96,10 @@ public abstract class BindComputeStrategiesByClass extends AbstractModule {
    protected abstract Class<? extends DestroyNodeStrategy> defineDestroyNodeStrategy();
 
    protected abstract Class<? extends RebootNodeStrategy> defineRebootNodeStrategy();
+
+   protected abstract Class<? extends ResumeNodeStrategy> defineStartNodeStrategy();
+
+   protected abstract Class<? extends SuspendNodeStrategy> defineStopNodeStrategy();
 
    protected abstract Class<? extends GetNodeMetadataStrategy> defineGetNodeMetadataStrategy();
 

@@ -70,7 +70,8 @@ public class RunScriptData {
                                  // just in case iptables are being used, try to open 8080
                                  exec("iptables -I INPUT 1 -p tcp --dport 8080 -j ACCEPT"),//
                                  // TODO gogrid rules only allow ports 22, 3389, 80 and 443.
-                                 // the above rule will be ignored, so we have to apply this directly
+                                 // the above rule will be ignored, so we have to apply this
+                                 // directly
                                  exec("iptables -I RH-Firewall-1-INPUT 1 -p tcp --dport 8080 -j ACCEPT"),//
                                  exec("iptables-save"),//
                                  extractTargzIntoDirectory(
@@ -84,8 +85,15 @@ public class RunScriptData {
       return toReturn;
    }
 
+   public static String aptInstall = "apt-get install -f -y -qq --force-yes";
+
+   public static String installAfterUpdatingIfNotPresent(String cmd) {
+      String aptInstallCmd = aptInstall + " " + cmd;
+      return String.format("which %s || (%s || (apt-get update && %s))", cmd, aptInstallCmd, aptInstallCmd);
+   }
+
    public static final Statement APT_RUN_SCRIPT = newStatementList(//
-            exec("which curl || apt-get install -f -y -qq --force-yes curl"),//
+            exec(installAfterUpdatingIfNotPresent("curl")),//
             exec("(which java && java -fullversion 2>&1|egrep -q 1.6 ) ||"),//
             execHttpResponse(URI.create("http://whirr.s3.amazonaws.com/0.2.0-incubating-SNAPSHOT/sun/java/install")),//
             exec(new StringBuilder()//

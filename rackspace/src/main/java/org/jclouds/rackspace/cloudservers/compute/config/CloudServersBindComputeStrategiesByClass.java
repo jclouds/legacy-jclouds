@@ -25,11 +25,13 @@ import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
+import org.jclouds.compute.strategy.ResumeNodeStrategy;
+import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.rackspace.cloudservers.compute.strategy.CloudServersAddNodeWithTagStrategy;
 import org.jclouds.rackspace.cloudservers.compute.strategy.CloudServersDestroyNodeStrategy;
 import org.jclouds.rackspace.cloudservers.compute.strategy.CloudServersGetNodeMetadataStrategy;
 import org.jclouds.rackspace.cloudservers.compute.strategy.CloudServersListNodesStrategy;
-import org.jclouds.rackspace.cloudservers.compute.strategy.CloudServersRebootNodeStrategy;
+import org.jclouds.rackspace.cloudservers.compute.strategy.CloudServersLifeCycleStrategy;
 
 /**
  * 
@@ -60,6 +62,16 @@ public class CloudServersBindComputeStrategiesByClass extends BindComputeStrateg
 
    @Override
    protected Class<? extends RebootNodeStrategy> defineRebootNodeStrategy() {
-      return CloudServersRebootNodeStrategy.class;
+      return CloudServersLifeCycleStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends ResumeNodeStrategy> defineStartNodeStrategy() {
+      return CloudServersLifeCycleStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends SuspendNodeStrategy> defineStopNodeStrategy() {
+      return CloudServersLifeCycleStrategy.class;
    }
 }

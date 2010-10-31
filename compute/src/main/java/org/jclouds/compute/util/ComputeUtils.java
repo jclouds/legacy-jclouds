@@ -138,10 +138,10 @@ public class ComputeUtils {
                "node didn't achieve the state running on node %s within %d seconds, final state: %s", node.getId(),
                timeouts.nodeRunning / 1000, node.getState()));
       List<Statement> bootstrap = newArrayList();
-      if (options.getRunScript() != null)
-         bootstrap.add(options.getRunScript());
       if (options.getPublicKey() != null)
          bootstrap.add(new AuthorizeRSAPublicKey(options.getPublicKey()));
+      if (options.getRunScript() != null)
+         bootstrap.add(options.getRunScript());
       if (options.getPrivateKey() != null)
          bootstrap.add(new InstallRSAPrivateKey(options.getPrivateKey()));
       if (bootstrap.size() >= 1)
