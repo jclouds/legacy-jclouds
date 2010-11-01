@@ -83,7 +83,7 @@ public class LibvirtExperimentLiveTest {
      * You can control the default template via overriding a method in standalonecomputeservicexontextmodule
      */
 
-         context.getComputeService().runNodesWithTag("ubuntu", 1/*, defaultTemplate*/);
+         context.getComputeService().runNodesWithTag("ttylinux", 1/*, defaultTemplate*/);
 
 	} catch (RunNodesException e) {
 		// TODO Auto-generated catch block

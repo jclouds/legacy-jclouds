@@ -117,8 +117,10 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
                String xmlFinal = generateClonedDomainXML(domain.getXMLDesc(0));
                domain = client.domainDefineXML(xmlFinal);
 
+               domain.create();
+               
         	   // store the credentials so that later functions can use them
-               //credentialStore.put(domain.getUUIDString() + "", new Credentials("identity", "credential"));
+               credentialStore.put(domain.getUUIDString() + "", new Credentials("identity", "credential"));
 
             //}
          //}
@@ -260,7 +262,7 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
       newNode.getFirstChild().setNodeValue(UUID.randomUUID().toString());
       builder.getDocument().getDocumentElement().replaceChild(newNode, oldChild);
 
-      builder.xpathFind("//domain/devices/disk/source").a("file", "/var/lib/libvirt/images/ubuntu.img-clone");
+      builder.xpathFind("//domain/devices/disk/source").a("file", "/var/lib/libvirt/images/ttylinux.img-clone");
       // TODO generate valid MAC address
       builder.xpathFind("//domain/devices/interface/mac").a("address", "52:54:00:5c:dd:eb");
       return builder.asString(outputProperties);
