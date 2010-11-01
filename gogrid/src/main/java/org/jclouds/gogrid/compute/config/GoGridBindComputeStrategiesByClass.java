@@ -25,11 +25,13 @@ import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
+import org.jclouds.compute.strategy.ResumeNodeStrategy;
+import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.gogrid.compute.strategy.GoGridAddNodeWithTagStrategy;
 import org.jclouds.gogrid.compute.strategy.GoGridDestroyNodeStrategy;
 import org.jclouds.gogrid.compute.strategy.GoGridGetNodeMetadataStrategy;
+import org.jclouds.gogrid.compute.strategy.GoGridLifeCycleStrategy;
 import org.jclouds.gogrid.compute.strategy.GoGridListNodesStrategy;
-import org.jclouds.gogrid.compute.strategy.GoGridRebootNodeStrategy;
 
 /**
  * 
@@ -59,6 +61,16 @@ public class GoGridBindComputeStrategiesByClass extends BindComputeStrategiesByC
 
    @Override
    protected Class<? extends RebootNodeStrategy> defineRebootNodeStrategy() {
-      return GoGridRebootNodeStrategy.class;
+      return GoGridLifeCycleStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends ResumeNodeStrategy> defineStartNodeStrategy() {
+      return GoGridLifeCycleStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends SuspendNodeStrategy> defineStopNodeStrategy() {
+      return GoGridLifeCycleStrategy.class;
    }
 }

@@ -266,4 +266,22 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
       return builder.asString(outputProperties);
    }
 
+   @Override
+   public void resumeNode(String id) {
+      try {
+         client.domainLookupByUUIDString(id).resume();
+      } catch (LibvirtException e) {
+         propogate(e);
+      }      
+   }
+
+   @Override
+   public void suspendNode(String id) {
+      try {
+         client.domainLookupByUUIDString(id).suspend();
+      } catch (LibvirtException e) {
+         propogate(e);
+      }      
+   }
+
 }

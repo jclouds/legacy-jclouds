@@ -24,11 +24,13 @@ import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
+import org.jclouds.compute.strategy.ResumeNodeStrategy;
+import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressAddNodeWithTagStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressDestroyNodeStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressGetNodeMetadataStrategy;
 import org.jclouds.vcloud.compute.strategy.VCloudExpressListNodesStrategy;
-import org.jclouds.vcloud.compute.strategy.VCloudExpressRebootNodeStrategy;
+import org.jclouds.vcloud.compute.strategy.VCloudExpressLifeCycleStrategy;
 
 /**
  * @author Adrian Cole
@@ -57,6 +59,16 @@ public class VCloudExpressBindComputeStrategiesByClass extends CommonVCloudBindC
 
    @Override
    protected Class<? extends RebootNodeStrategy> defineRebootNodeStrategy() {
-      return VCloudExpressRebootNodeStrategy.class;
+      return VCloudExpressLifeCycleStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends ResumeNodeStrategy> defineStartNodeStrategy() {
+      return VCloudExpressLifeCycleStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends SuspendNodeStrategy> defineStopNodeStrategy() {
+      return VCloudExpressLifeCycleStrategy.class;
    }
 }

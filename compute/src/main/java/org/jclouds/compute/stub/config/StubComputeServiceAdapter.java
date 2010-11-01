@@ -175,4 +175,30 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
       StubComputeServiceDependenciesModule.setState(node, NodeState.PENDING, 0);
       StubComputeServiceDependenciesModule.setState(node, NodeState.RUNNING, 50);
    }
+
+   @Override
+   public void resumeNode(String id) {
+      NodeMetadata node = nodes.get(id);
+      if (node == null)
+         throw new ResourceNotFoundException("node not found: " + id);
+      if (node.getState() == NodeState.RUNNING)
+         return;
+      if (node.getState() != NodeState.SUSPENDED)
+         throw new IllegalStateException("to resume a node, it must be in suspended state, not: " + node.getState());
+      StubComputeServiceDependenciesModule.setState(node, NodeState.PENDING, 0);
+      StubComputeServiceDependenciesModule.setState(node, NodeState.RUNNING, 50);
+   }
+
+   @Override
+   public void suspendNode(String id) {
+      NodeMetadata node = nodes.get(id);
+      if (node == null)
+         throw new ResourceNotFoundException("node not found: " + id);
+      if (node.getState() == NodeState.SUSPENDED)
+         return;
+      if (node.getState() != NodeState.RUNNING)
+         throw new IllegalStateException("to suspend a node, it must be in running state, not: " + node.getState());
+      StubComputeServiceDependenciesModule.setState(node, NodeState.PENDING, 0);
+      StubComputeServiceDependenciesModule.setState(node, NodeState.SUSPENDED, 50);
+   }
 }

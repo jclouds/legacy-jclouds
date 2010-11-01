@@ -50,28 +50,28 @@ public class VCloudExpressNetworkHandler extends ParseSax.HandlerWithResult<VClo
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private StringBuilder currentText = new StringBuilder();
+   protected StringBuilder currentText = new StringBuilder();
 
-   private ReferenceType network;
+   protected ReferenceType network;
 
-   private String description;
+   protected String description;
 
-   private Set<String> dnsServers = Sets.newLinkedHashSet();
-   private String gateway;
-   private String netmask;
-   private Set<FenceMode> fenceModes = Sets.newLinkedHashSet();
-   private Boolean dhcp;
-   private Set<PortForwardingRule> natRules = Sets.newLinkedHashSet();
-   private Set<FirewallRule> firewallRules = Sets.newLinkedHashSet();
+   protected Set<String> dnsServers = Sets.newLinkedHashSet();
+   protected String gateway;
+   protected String netmask;
+   protected Set<FenceMode> fenceModes = Sets.newLinkedHashSet();
+   protected Boolean dhcp;
+   protected Set<PortForwardingRule> natRules = Sets.newLinkedHashSet();
+   protected Set<FirewallRule> firewallRules = Sets.newLinkedHashSet();
 
-   private String externalIP;
-   private Integer externalPort;
-   private String internalIP;
-   private Integer internalPort;
+   protected String externalIP;
+   protected Integer externalPort;
+   protected String internalIP;
+   protected Integer internalPort;
 
-   private FirewallPolicy policy;
-   private String sourceIP;
-   private int sourcePort;
+   protected FirewallPolicy policy;
+   protected String sourceIP;
+   protected int sourcePort;
 
    public VCloudExpressNetwork getResult() {
       return new VCloudExpressNetworkImpl(network.getName(), network.getType(), network.getHref(), description,

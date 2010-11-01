@@ -52,6 +52,10 @@
           (^void destroyNode [this ^String id]
             ())
           (^void rebootNode  [this ^String id]
+            ())
+          (^void suspendNode [this ^String id]
+            ())
+          (^void resumeNode [this ^String id]
             ()))))
 
 (defn compute-context [^RestContextSpec spec] 

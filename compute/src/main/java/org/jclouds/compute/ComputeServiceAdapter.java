@@ -50,10 +50,10 @@ public interface ComputeServiceAdapter<N, H, I, L> {
     * @param name
     *           unique supplied name for the node, which has the tag encoded into it.
     * @param template
-    *           includes {@code imageId}, {@code locationId}, and {@code hardwareId} used to start
+    *           includes {@code imageId}, {@code locationId}, and {@code hardwareId} used to resume
     *           the instance.
     * @param credentialStore
-    *           once the node is started, its login user and password must be stored keyed on
+    *           once the node is resumeed, its login user and password must be stored keyed on
     *           {@code node#id}.
     * @return library-native representation of a node.
     * 
@@ -93,6 +93,10 @@ public interface ComputeServiceAdapter<N, H, I, L> {
    void destroyNode(String id);
 
    void rebootNode(String id);
+
+   void resumeNode(String id);
+
+   void suspendNode(String id);
 
    Iterable<N> listNodes();
 

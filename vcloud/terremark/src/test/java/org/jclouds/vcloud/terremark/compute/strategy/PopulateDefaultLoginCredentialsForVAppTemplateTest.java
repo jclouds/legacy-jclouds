@@ -81,7 +81,21 @@ public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
       assertEquals(creds.credential, "vpncubed");
       verify(template);
    }
-   
+
+   @Test
+   public void testEC() throws IOException {
+      InputStream is = getClass().getResourceAsStream("/terremark/ec_description.txt");
+      String description = new String(ByteStreams.toByteArray(is));
+      VCloudExpressVAppTemplate template = createMock(VCloudExpressVAppTemplate.class);
+      expect(template.getDescription()).andReturn(description).atLeastOnce();
+      replay(template);
+      ParseVAppTemplateDescriptionToGetDefaultLoginCredentials converter = new ParseVAppTemplateDescriptionToGetDefaultLoginCredentials();
+      Credentials creds = converter.execute(template);
+      assertEquals(creds.identity, "ecloud");
+      assertEquals(creds.credential, "TmrkCl0ud1s#1!");
+      verify(template);
+   }
+
    @Test
    public void testWindows() throws IOException {
       InputStream is = getClass().getResourceAsStream("/terremark/windows_description.txt");

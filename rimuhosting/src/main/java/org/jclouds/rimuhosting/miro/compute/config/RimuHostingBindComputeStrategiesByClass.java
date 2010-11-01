@@ -6,11 +6,13 @@ import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
+import org.jclouds.compute.strategy.ResumeNodeStrategy;
+import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.rimuhosting.miro.compute.strategy.RimuHostingAddNodeWithTagStrategy;
 import org.jclouds.rimuhosting.miro.compute.strategy.RimuHostingDestroyNodeStrategy;
 import org.jclouds.rimuhosting.miro.compute.strategy.RimuHostingGetNodeMetadataStrategy;
+import org.jclouds.rimuhosting.miro.compute.strategy.RimuHostingLifeCycleStrategy;
 import org.jclouds.rimuhosting.miro.compute.strategy.RimuHostingListNodesStrategy;
-import org.jclouds.rimuhosting.miro.compute.strategy.RimuHostingRebootNodeStrategy;
 
 public class RimuHostingBindComputeStrategiesByClass extends BindComputeStrategiesByClass {
    @Override
@@ -35,6 +37,16 @@ public class RimuHostingBindComputeStrategiesByClass extends BindComputeStrategi
 
    @Override
    protected Class<? extends RebootNodeStrategy> defineRebootNodeStrategy() {
-      return RimuHostingRebootNodeStrategy.class;
+      return RimuHostingLifeCycleStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends ResumeNodeStrategy> defineStartNodeStrategy() {
+      return RimuHostingLifeCycleStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends SuspendNodeStrategy> defineStopNodeStrategy() {
+      return RimuHostingLifeCycleStrategy.class;
    }
 }

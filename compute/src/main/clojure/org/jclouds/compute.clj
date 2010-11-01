@@ -234,6 +234,30 @@ See http://code.google.com/p/jclouds for details."
   ([id #^ComputeService compute]
      (.getNodeMetadata compute id)))
 
+(defn suspend-nodes-with-tag
+  "Reboot all the nodes with the given tag."
+  ([tag] (suspend-nodes-with-tag tag *compute*))
+  ([#^String tag #^ComputeService compute]
+    (.suspendNodesMatching compute (NodePredicates/withTag tag))))
+
+(defn suspend-node
+  "Suspend a node, given its id."
+  ([id] (suspend-node id *compute*))
+  ([id #^ComputeService compute]
+     (.suspendNode compute id)))
+
+(defn resume-nodes-with-tag
+  "Suspend all the nodes with the given tag."
+  ([tag] (resume-nodes-with-tag tag *compute*))
+  ([#^String tag #^ComputeService compute]
+    (.resumeNodesMatching compute (NodePredicates/withTag tag))))
+
+(defn resume-node
+  "Resume a node, given its id."
+  ([id] (resume-node id *compute*))
+  ([id #^ComputeService compute]
+     (.resumeNode compute id)))
+
 (defn reboot-nodes-with-tag
   "Reboot all the nodes with the given tag."
   ([tag] (reboot-nodes-with-tag tag *compute*))

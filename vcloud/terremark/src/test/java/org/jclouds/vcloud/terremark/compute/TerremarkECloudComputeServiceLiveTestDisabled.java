@@ -33,8 +33,10 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.jclouds.vcloud.domain.VCloudExpressVApp;
 import org.jclouds.vcloud.terremark.TerremarkECloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkECloudClient;
+import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.testng.annotations.Test;
 
 /**
@@ -50,13 +52,14 @@ public class TerremarkECloudComputeServiceLiveTestDisabled extends BaseComputeSe
 
    @Override
    public void setServiceDefaults() {
-      tag = "trmke";
+      tag = "te";
    }
 
    @Test
    public void testTemplateBuilder() {
       Template defaultTemplate = client.templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assert defaultTemplate.getLocation().getDescription() != null;// different per org
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
@@ -90,7 +93,8 @@ public class TerremarkECloudComputeServiceLiveTestDisabled extends BaseComputeSe
          assert image.getProviderId() != null : image;
          // image.getLocationId() can be null, if it is a location-free image
          assertEquals(image.getType(), ComputeType.IMAGE);
-         if (image.getOperatingSystem().getFamily() != OsFamily.WINDOWS) {
+         if (image.getOperatingSystem().getFamily() != OsFamily.WINDOWS
+                  && image.getOperatingSystem().getFamily() != OsFamily.SOLARIS) {
             assert image.getDefaultCredentials() != null && image.getDefaultCredentials().identity != null : image;
             assert image.getDefaultCredentials().credential != null : image;
          }
@@ -105,7 +109,16 @@ public class TerremarkECloudComputeServiceLiveTestDisabled extends BaseComputeSe
          assertEquals(node.getType(), ComputeType.NODE);
          NodeMetadata allData = client.getNodeMetadata(node.getId());
          System.out.println(allData.getHardware());
+         RestContext<TerremarkVCloudClient, TerremarkVCloudClient> tmContext = new ComputeServiceContextFactory()
+                  .createContext(provider, identity, credential).getProviderSpecificContext();
+         VCloudExpressVApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
+         assertEquals(vApp.getName(), allData.getName());
       }
+   }
+
+   @Override
+   public void testDestroyNodes() {
+      super.testDestroyNodes();
    }
 
    @Override

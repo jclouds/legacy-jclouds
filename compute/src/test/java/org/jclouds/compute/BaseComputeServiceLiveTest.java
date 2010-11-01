@@ -83,7 +83,9 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 
@@ -388,6 +390,67 @@ public abstract class BaseComputeServiceLiveTest {
       testGet();
    }
 
+   @Test(enabled = true, dependsOnMethods = "testReboot")
+   public void testSuspendResume() throws Exception {
+      client.suspendNodesMatching(withTag(tag));
+      Set<? extends NodeMetadata> stoppedNodes = refreshNodes();
+
+      assert Iterables.all(stoppedNodes, new Predicate<NodeMetadata>() {
+
+         @Override
+         public boolean apply(NodeMetadata input) {
+            return input.getState() == NodeState.SUSPENDED;
+         }
+
+      }) : nodes;
+
+      client.resumeNodesMatching(withTag(tag));
+      testGet();
+   }
+
+   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
+   public void testListNodes() throws Exception {
+      for (ComputeMetadata node : client.listNodes()) {
+         assert node.getProviderId() != null;
+         assert node.getLocation() != null;
+         assertEquals(node.getType(), ComputeType.NODE);
+      }
+   }
+
+   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
+   public void testGetNodesWithDetails() throws Exception {
+      for (NodeMetadata node : client.listNodesDetailsMatching(all())) {
+         assert node.getProviderId() != null : node;
+         assert node.getLocation() != null : node;
+         assertEquals(node.getType(), ComputeType.NODE);
+         assert node instanceof NodeMetadata;
+         NodeMetadata nodeMetadata = (NodeMetadata) node;
+         assert nodeMetadata.getProviderId() != null : nodeMetadata;
+         // nullable
+         // assert nodeMetadata.getImage() != null : node;
+         // user specified name is not always supported
+         // assert nodeMetadata.getName() != null : nodeMetadata;
+         if (nodeMetadata.getState() == NodeState.RUNNING) {
+            assert nodeMetadata.getPublicAddresses() != null : nodeMetadata;
+            assert nodeMetadata.getPublicAddresses().size() > 0 || nodeMetadata.getPrivateAddresses().size() > 0 : nodeMetadata;
+            assertNotNull(nodeMetadata.getPrivateAddresses());
+         }
+      }
+   }
+
+   @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
+   public void testDestroyNodes() {
+      client.destroyNodesMatching(withTag(tag));
+      for (NodeMetadata node : filter(client.listNodesDetailsMatching(all()), withTag(tag))) {
+         assert node.getState() == NodeState.TERMINATED : node;
+         assertEquals(context.getCredentialStore().get("node#" + node.getId()), null);
+      }
+   }
+
+   private Set<? extends NodeMetadata> refreshNodes() {
+      return filter(client.listNodesDetailsMatching(all()), and(withTag(tag), not(TERMINATED)));
+   }
+
    @Test(enabled = true)
    public void testCreateAndRunAService() throws Exception {
 
@@ -419,34 +482,6 @@ public abstract class BaseComputeServiceLiveTest {
       TemplateOptions options = new TemplateOptions().withMetadata();
       Template t = client.templateBuilder().smallest().options(options).build();
       assert t.getOptions().isIncludeMetadata() : "The metadata option should be 'true' " + "for the created template";
-   }
-
-   public void testListNodes() throws Exception {
-      for (ComputeMetadata node : client.listNodes()) {
-         assert node.getProviderId() != null;
-         assert node.getLocation() != null;
-         assertEquals(node.getType(), ComputeType.NODE);
-      }
-   }
-
-   public void testGetNodesWithDetails() throws Exception {
-      for (NodeMetadata node : client.listNodesDetailsMatching(all())) {
-         assert node.getProviderId() != null : node;
-         assert node.getLocation() != null : node;
-         assertEquals(node.getType(), ComputeType.NODE);
-         assert node instanceof NodeMetadata;
-         NodeMetadata nodeMetadata = (NodeMetadata) node;
-         assert nodeMetadata.getProviderId() != null : nodeMetadata;
-         // nullable
-         // assert nodeMetadata.getImage() != null : node;
-         // user specified name is not always supported
-         // assert nodeMetadata.getName() != null : nodeMetadata;
-         if (nodeMetadata.getState() == NodeState.RUNNING) {
-            assert nodeMetadata.getPublicAddresses() != null : nodeMetadata;
-            assert nodeMetadata.getPublicAddresses().size() > 0 || nodeMetadata.getPrivateAddresses().size() > 0 : nodeMetadata;
-            assertNotNull(nodeMetadata.getPrivateAddresses());
-         }
-      }
    }
 
    public void testListImages() throws Exception {
@@ -489,7 +524,6 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true, dependsOnMethods = "testGet")
    public void testOptionToNotBlock() throws Exception {
       String tag = this.tag + "block";
       try {
@@ -572,7 +606,8 @@ public abstract class BaseComputeServiceLiveTest {
          ExecResponse hello = ssh.exec("echo hello");
          assertEquals(hello.getOutput().trim(), "hello");
          ExecResponse exec = ssh.exec("java -version");
-         assert exec.getError().indexOf("1.6") != -1 || exec.getOutput().indexOf("1.6") != -1 : exec;
+         assert exec.getError().indexOf("1.6") != -1 || exec.getOutput().indexOf("1.6") != -1 : exec + "\n"
+                  + ssh.exec("cat /tmp/bootstrap/stdout.log /tmp/bootstrap/stderr.log");
       } finally {
          if (ssh != null)
             ssh.disconnect();
@@ -582,11 +617,7 @@ public abstract class BaseComputeServiceLiveTest {
    @AfterTest
    protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       if (nodes != null) {
-         client.destroyNodesMatching(withTag(tag));
-         for (NodeMetadata node : filter(client.listNodesDetailsMatching(all()), withTag(tag))) {
-            assert node.getState() == NodeState.TERMINATED : node;
-            assertEquals(context.getCredentialStore().get("node#" + node.getId()), null);
-         }
+         testDestroyNodes();
       }
       context.close();
    }

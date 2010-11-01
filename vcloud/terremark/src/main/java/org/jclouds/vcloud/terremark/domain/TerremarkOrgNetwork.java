@@ -17,26 +17,30 @@
  * ====================================================================
  */
 
-package org.jclouds.compute.predicates;
+package org.jclouds.vcloud.terremark.domain;
 
-import javax.inject.Singleton;
-
-import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.domain.NodeState;
-
-import com.google.inject.Inject;
+import org.jclouds.vcloud.domain.ReferenceType;
+import org.jclouds.vcloud.domain.network.internal.VCloudExpressOrgNetworkAdapter;
+import org.jclouds.vcloud.terremark.domain.internal.TerremarkVCloudExpressNetwork;
 
 /**
  * 
- * Tests to see if a node is running.
- * 
  * @author Adrian Cole
  */
-@Singleton
-public class NodeRunning extends NodePresentAndInIntendedState {
+public class TerremarkOrgNetwork extends VCloudExpressOrgNetworkAdapter {
 
-   @Inject
-   public NodeRunning(ComputeService client) {
-      super(NodeState.RUNNING, client);
+   private final TerremarkVCloudExpressNetwork delegate;
+
+   public TerremarkOrgNetwork(TerremarkVCloudExpressNetwork in) {
+      super(in);
+      this.delegate = in;
+   }
+
+   public ReferenceType getNetworkExtension() {
+      return delegate.getNetworkExtension();
+   }
+
+   public ReferenceType getIps() {
+      return delegate.getIps();
    }
 }

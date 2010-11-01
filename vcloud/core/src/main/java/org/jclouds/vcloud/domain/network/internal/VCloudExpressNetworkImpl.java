@@ -42,15 +42,15 @@ public class VCloudExpressNetworkImpl extends ReferenceTypeImpl implements VClou
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 8464716396538298809L;
-   private final String description;
-   private final Set<String> dnsServers = Sets.newHashSet();
-   private final String gateway;
-   private final String netmask;
-   private final Set<FenceMode> fenceModes = Sets.newHashSet();
+   protected final String description;
+   protected final Set<String> dnsServers = Sets.newHashSet();
+   protected final String gateway;
+   protected final String netmask;
+   protected final Set<FenceMode> fenceModes = Sets.newHashSet();
    @Nullable
-   private final Boolean dhcp;
-   private final Set<PortForwardingRule> natRules = Sets.newHashSet();
-   private final Set<FirewallRule> firewallRules = Sets.newHashSet();
+   protected final Boolean dhcp;
+   protected final Set<PortForwardingRule> natRules = Sets.newHashSet();
+   protected final Set<FirewallRule> firewallRules = Sets.newHashSet();
 
    public VCloudExpressNetworkImpl(String name, String type, URI id, String description, Set<String> dnsServers,
             String gateway, String netmask, Set<FenceMode> fenceModes, Boolean dhcp, Set<PortForwardingRule> natRules,
@@ -196,10 +196,9 @@ public class VCloudExpressNetworkImpl extends ReferenceTypeImpl implements VClou
 
    @Override
    public String toString() {
-      return "NetworkImpl [id=" + getHref() + ", name=" + getName() + ", type=" + getType() + ", description="
-               + description + ", dhcp=" + dhcp + ", dnsServers=" + dnsServers + ", fenceModes=" + fenceModes
-               + ", firewallRules=" + firewallRules + ", gateway=" + gateway + ", natRules=" + natRules + ", netmask="
-               + netmask + "]";
+      return "[id=" + getHref() + ", name=" + getName() + ", type=" + getType() + ", description=" + description
+               + ", dhcp=" + dhcp + ", dnsServers=" + dnsServers + ", fenceModes=" + fenceModes + ", firewallRules="
+               + firewallRules + ", gateway=" + gateway + ", natRules=" + natRules + ", netmask=" + netmask + "]";
    }
 
 }
