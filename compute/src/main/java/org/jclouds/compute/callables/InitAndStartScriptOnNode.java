@@ -24,7 +24,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.Collections;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.compute.util.ComputeServiceUtils.SshCallable;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.InitBuilder;
@@ -33,6 +32,7 @@ import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Iterables;
 
 /**
@@ -77,8 +77,9 @@ public class InitAndStartScriptOnNode implements SshCallable<ExecResponse> {
 
    protected ExecResponse runCommand(String command) {
       ExecResponse returnVal;
-      logger.debug(">> running [%s] as %s@%s", command.replace(node.getCredentials().credential, "XXXXX"), node
-               .getCredentials().identity, Iterables.get(node.getPublicAddresses(), 0));
+      logger.debug(">> running [%s] as %s@%s", command.replace(node.getAdminPassword() != null ? node
+               .getAdminPassword() : "XXXXX", "XXXXX"), node.getCredentials().identity, Iterables.get(node
+               .getPublicAddresses(), 0));
       returnVal = ssh.exec(command);
       return returnVal;
    }
@@ -89,15 +90,15 @@ public class InitAndStartScriptOnNode implements SshCallable<ExecResponse> {
       this.ssh = checkNotNull(ssh, "ssh");
    }
 
-   protected String execScriptAsRoot(String action) {
+   @VisibleForTesting
+   public String execScriptAsRoot(String action) {
       String command;
       if (node.getCredentials().identity.equals("root")) {
          command = "./" + init.getInstanceName() + " " + action;
-      } else if (ComputeServiceUtils.isKeyAuth(node)) {
-         command = "sudo ./" + init.getInstanceName() + " " + action;
+      } else if (node.getAdminPassword() != null) {
+         command = String.format("echo '%s'|sudo -S ./%s %s", node.getAdminPassword(), init.getInstanceName(), action);
       } else {
-         command = String.format("echo '%s'|sudo -S ./%s %s", node.getCredentials().credential, init.getInstanceName(),
-                  action);
+         command = "sudo ./" + init.getInstanceName() + " " + action;
       }
       return command;
    }

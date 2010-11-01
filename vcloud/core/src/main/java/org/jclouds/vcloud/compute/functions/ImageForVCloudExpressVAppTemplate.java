@@ -22,6 +22,9 @@ package org.jclouds.vcloud.compute.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseOsFamilyOrNull;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.inject.Inject;
 
 import org.jclouds.compute.domain.Image;
@@ -44,7 +47,7 @@ public class ImageForVCloudExpressVAppTemplate implements Function<VCloudExpress
 
    @Inject
    protected ImageForVCloudExpressVAppTemplate(FindLocationForResource findLocationForResource,
-         PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider) {
+            PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider) {
       this.findLocationForResource = checkNotNull(findLocationForResource, "findLocationForResource");
       this.credentialsProvider = checkNotNull(credentialsProvider, "credentialsProvider");
    }
@@ -67,11 +70,17 @@ public class ImageForVCloudExpressVAppTemplate implements Function<VCloudExpress
       return builder.build();
    }
 
+   public static final Pattern OS_PATTERN = Pattern.compile("(([^ ]*) ([0-9.]+) ?.*)");
+
    protected OperatingSystem parseOs(VCloudExpressVAppTemplate from) {
       OperatingSystemBuilder builder = new OperatingSystemBuilder();
       builder.family(parseOsFamilyOrNull("vcloudexpress", checkNotNull(from, "vapp template").getName()));
       builder.description(from.getName());
       builder.is64Bit(from.getName().indexOf("64") != -1);
+      Matcher matcher = OS_PATTERN.matcher(from.getName());
+      if (matcher.find()) {
+         builder.version(matcher.group(3));
+      }
       return builder.build();
    }
 

@@ -68,7 +68,7 @@ public abstract class BaseHttpErrorHandlerTest {
 
       HttpCommand command = createMock(HttpCommand.class);
       HttpRequest request = new HttpRequest(method, uri);
-      HttpResponse response = new HttpResponse(statusCode, null, Payloads.newStringPayload(content));
+      HttpResponse response = new HttpResponse(statusCode, message, Payloads.newStringPayload(content));
 
       expect(command.getRequest()).andReturn(request).atLeastOnce();
       command.setException(classEq(expected));

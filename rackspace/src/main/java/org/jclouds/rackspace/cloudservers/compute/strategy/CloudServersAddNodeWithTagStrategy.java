@@ -46,7 +46,7 @@ public class CloudServersAddNodeWithTagStrategy implements AddNodeWithTagStrateg
 
    @Inject
    protected CloudServersAddNodeWithTagStrategy(CloudServersClient client, Map<String, Credentials> credentialStore,
-         Function<Server, NodeMetadata> serverToNodeMetadata) {
+            Function<Server, NodeMetadata> serverToNodeMetadata) {
       this.client = checkNotNull(client, "client");
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.serverToNodeMetadata = checkNotNull(serverToNodeMetadata, "serverToNodeMetadata");
@@ -54,9 +54,9 @@ public class CloudServersAddNodeWithTagStrategy implements AddNodeWithTagStrateg
 
    @Override
    public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
-      Server from = client.createServer(name, Integer.parseInt(template.getImage().getProviderId()),
-            Integer.parseInt(template.getHardware().getProviderId()));
-      credentialStore.put(from.getId() + "", new Credentials("root", from.getAdminPass()));
+      Server from = client.createServer(name, Integer.parseInt(template.getImage().getProviderId()), Integer
+               .parseInt(template.getHardware().getProviderId()));
+      credentialStore.put("node#" + from.getId(), new Credentials("root", from.getAdminPass()));
       return serverToNodeMetadata.apply(from);
    }
 

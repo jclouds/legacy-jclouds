@@ -47,10 +47,10 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -58,6 +58,8 @@ import javax.annotation.Nullable;
 import javax.annotation.Resource;
 
 import org.jclouds.PropertiesBuilder;
+import org.jclouds.crypto.Pems;
+import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContextBuilder;
@@ -246,15 +248,14 @@ public class Utils {
    }
 
    /**
-    * Encode the given string with the given encoding, if possible. If the
-    * encoding fails with {@link UnsupportedEncodingException}, log a warning
-    * and fall back to the system's default encoding.
+    * Encode the given string with the given encoding, if possible. If the encoding fails with
+    * {@link UnsupportedEncodingException}, log a warning and fall back to the system's default
+    * encoding.
     * 
     * @param str
     *           what to encode
     * @param charsetName
-    *           the name of a supported {@link java.nio.charset.Charset
-    *           </code>charset<code>}
+    *           the name of a supported {@link java.nio.charset.Charset </code>charset<code>}
     * @return properly encoded String.
     */
    public static byte[] encodeString(String str, String charsetName) {
@@ -268,10 +269,9 @@ public class Utils {
    }
 
    /**
-    * Encode the given string with the UTF-8 encoding, the sane default. In the
-    * very unlikely event the encoding fails with
-    * {@link UnsupportedEncodingException}, log a warning and fall back to the
-    * system's default encoding.
+    * Encode the given string with the UTF-8 encoding, the sane default. In the very unlikely event
+    * the encoding fails with {@link UnsupportedEncodingException}, log a warning and fall back to
+    * the system's default encoding.
     * 
     * @param str
     *           what to encode
@@ -322,8 +322,7 @@ public class Utils {
    }
 
    /**
-    * Will throw an exception if the argument is null or empty. Accepts a custom
-    * error message.
+    * Will throw an exception if the argument is null or empty. Accepts a custom error message.
     * 
     * @param nullableString
     *           string to verify. Can be null or empty.
@@ -335,8 +334,8 @@ public class Utils {
    }
 
    /**
-    * Gets a set of supported providers. Idea stolen from pallets
-    * (supported-clouds). Uses rest.properties to populate the set.
+    * Gets a set of supported providers. Idea stolen from pallets (supported-clouds). Uses
+    * rest.properties to populate the set.
     * 
     */
    public static Iterable<String> getSupportedProviders() {
@@ -344,8 +343,8 @@ public class Utils {
    }
 
    /**
-    * Gets a set of supported providers. Idea stolen from pallets
-    * (supported-clouds). Uses rest.properties to populate the set.
+    * Gets a set of supported providers. Idea stolen from pallets (supported-clouds). Uses
+    * rest.properties to populate the set.
     * 
     */
    @SuppressWarnings("unchecked")
@@ -468,4 +467,24 @@ public class Utils {
       }
       return modules;
    }
+
+   public static boolean isPrivateKeyCredential(Credentials credentials) {
+      return credentials != null
+            && credentials.credential != null
+            && (credentials.credential.startsWith(Pems.PRIVATE_PKCS1_MARKER) || credentials.credential
+                  .startsWith(Pems.PRIVATE_PKCS8_MARKER));
+   }
+
+   public static Credentials overrideCredentialsIfSupplied(Credentials defaultCredentials,
+         @Nullable Credentials overridingCredentials) {
+      if (overridingCredentials == null)
+         return defaultCredentials;
+      String identity = overridingCredentials.identity != null ? overridingCredentials.identity : checkNotNull(
+            defaultCredentials, "defaultCredentials").identity;
+      String credential = overridingCredentials.credential != null ? overridingCredentials.credential : checkNotNull(
+            defaultCredentials, "defaultCredentials").credential;
+
+      return new Credentials(identity, credential);
+   }
+
 }

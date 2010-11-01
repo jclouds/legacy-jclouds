@@ -34,6 +34,7 @@ import static org.jclouds.util.Utils.toStringAndClose;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -64,6 +65,8 @@ import org.testng.annotations.Optional;
 import org.testng.annotations.Parameters;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.io.InputSupplier;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -94,7 +97,7 @@ public abstract class BaseJettyTest {
 
       Handler server1Handler = new AbstractHandler() {
          public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch)
-               throws IOException, ServletException {
+                  throws IOException, ServletException {
             if (failIfNoContentLength(request, response)) {
                return;
             } else if (target.indexOf("sleep") > 0) {
@@ -138,8 +141,7 @@ public abstract class BaseJettyTest {
                response.getWriter().println("test");
             } else if (request.getMethod().equals("HEAD")) {
                /*
-                * NOTE: by HTML specification, HEAD response MUST NOT include a
-                * body
+                * NOTE: by HTML specification, HEAD response MUST NOT include a body
                 */
                response.setContentType("text/xml");
                response.setStatus(HttpServletResponse.SC_OK);
@@ -185,7 +187,7 @@ public abstract class BaseJettyTest {
             }
          } else {
             for (String header : new String[] { "Content-Disposition", HttpHeaders.CONTENT_LANGUAGE,
-                  HttpHeaders.CONTENT_ENCODING })
+                     HttpHeaders.CONTENT_ENCODING })
                if (request.getHeader(header) != null) {
                   response.addHeader("x-" + header, request.getHeader(header));
                }
@@ -206,7 +208,7 @@ public abstract class BaseJettyTest {
    protected void setupAndStartSSLServer(final int testPort) throws Exception {
       Handler server2Handler = new AbstractHandler() {
          public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch)
-               throws IOException, ServletException {
+                  throws IOException, ServletException {
             if (request.getMethod().equals("PUT")) {
                if (request.getContentLength() > 0) {
                   response.setStatus(HttpServletResponse.SC_OK);
@@ -220,8 +222,7 @@ public abstract class BaseJettyTest {
                }
             } else if (request.getMethod().equals("HEAD")) {
                /*
-                * NOTE: by HTML specification, HEAD response MUST NOT include a
-                * body
+                * NOTE: by HTML specification, HEAD response MUST NOT include a body
                 */
                response.setContentType("text/xml");
                response.setStatus(HttpServletResponse.SC_OK);
@@ -261,12 +262,12 @@ public abstract class BaseJettyTest {
    }
 
    public static RestContextBuilder<IntegrationTestClient, IntegrationTestAsyncClient> newBuilder(int testPort,
-         Properties properties, Module... connectionModules) {
+            Properties properties, Module... connectionModules) {
       properties.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       properties.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec("test",
-            "http://localhost:" + testPort, "1", "identity", null, IntegrationTestClient.class,
-            IntegrationTestAsyncClient.class, ImmutableSet.<Module> copyOf(connectionModules));
+               "http://localhost:" + testPort, "1", "identity", null, IntegrationTestClient.class,
+               IntegrationTestAsyncClient.class, ImmutableSet.<Module> copyOf(connectionModules));
       return createContextBuilder(contextSpec, properties);
    }
 
@@ -300,7 +301,7 @@ public abstract class BaseJettyTest {
    }
 
    protected boolean redirectEveryTwentyRequests(HttpServletRequest request, HttpServletResponse response)
-         throws IOException {
+            throws IOException {
       if (cycle.incrementAndGet() % 20 == 0) {
          response.sendRedirect("http://localhost:" + (testPort + 1) + "/");
          ((Request) request).setHandled(true);
@@ -309,8 +310,20 @@ public abstract class BaseJettyTest {
       return false;
    }
 
+   @SuppressWarnings("unchecked")
    protected boolean failIfNoContentLength(HttpServletRequest request, HttpServletResponse response) throws IOException {
-      if (request.getHeader(CONTENT_LENGTH) == null) {
+      Multimap<String, String> realHeaders = LinkedHashMultimap.create();
+      Enumeration headers = request.getHeaderNames();
+      while (headers.hasMoreElements()) {
+         String header = headers.nextElement().toString();
+         Enumeration values = request.getHeaders(header);
+         while (values.hasMoreElements()) {
+            realHeaders.put(header, values.nextElement().toString());
+         }
+      }
+      if (realHeaders.get(CONTENT_LENGTH) == null) {
+         response.getWriter().println("no content length!");
+         response.getWriter().println(realHeaders.toString());
          response.sendError(500);
          ((Request) request).setHandled(true);
          return true;

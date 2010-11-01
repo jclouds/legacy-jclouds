@@ -21,9 +21,11 @@ package org.jclouds.compute;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.internal.UtilsImpl;
 import org.jclouds.ssh.SshClient;
 
+import com.google.common.base.Function;
 import com.google.inject.ImplementedBy;
 
 /**
@@ -37,4 +39,9 @@ public interface Utils extends org.jclouds.rest.Utils {
 
    @Nullable
    SshClient.Factory sshFactory();
+
+   /**
+    * @return function that gets an ssh client for a node that is available via ssh.
+    */
+   Function<NodeMetadata, SshClient> sshForNode();
 }

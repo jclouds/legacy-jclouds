@@ -59,11 +59,11 @@ import org.jclouds.gogrid.predicates.ServerLatestJobCompleted;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
+import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.JschSshClient;
-import org.jclouds.ssh.jsch.predicates.InetSocketAddressConnect;
 import org.testng.SkipException;
 import org.testng.TestException;
 import org.testng.annotations.AfterTest;
@@ -82,7 +82,7 @@ import com.google.inject.Module;
  * 
  * @author Oleksiy Yarmula
  */
-@Test(enabled = false, groups = "live", testName = "gogrid.GoGridLiveTest")
+@Test(enabled = true, groups = "live", testName = "gogrid.GoGridLiveTest")
 public class GoGridLiveTestDisabled {
 
    private GoGridClient client;

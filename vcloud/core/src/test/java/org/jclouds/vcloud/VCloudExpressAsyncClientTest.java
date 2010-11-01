@@ -120,12 +120,10 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
                String.class, InstantiateVAppTemplateOptions[].class);
       HttpRequest request = processor.createRequest(method, URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1"), URI
-               .create("https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3"), "my-vapp",
-               processorCount(1).memory(512).disk(1024)
-                        .addNetworkConfig(
-                                 new NetworkConfig(null, URI
-                                          .create("https://vcloud.safesecureweb.com/network/1990"),
-                                          FenceMode.BRIDGED)));
+               .create("https://vcloud.safesecureweb.com/api/v0.8/vAppTemplate/3"), "my-vapp", processorCount(1)
+               .memory(512).disk(1024).addNetworkConfig(
+                        new NetworkConfig(null, URI.create("https://vcloud.safesecureweb.com/network/1990"),
+                                 FenceMode.BRIDGED)));
 
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
@@ -685,12 +683,18 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       }
 
       @Override
-      protected URI provideDefaultVDC(Org org) {
+      protected URI provideDefaultVDC(Org org, @org.jclouds.vcloud.endpoints.VDC String defaultVDC) {
          return URI.create("https://vcloud.safesecureweb.com/api/v0.8/vdc/1");
       }
 
       @Override
-      protected URI provideDefaultNetwork(URI vdc, CommonVCloudClient client, Injector injector) {
+      protected String provideDefaultVDCName(
+               @org.jclouds.vcloud.endpoints.VDC Supplier<Map<String, String>> vDCtoOrgSupplier) {
+         return "vdc";
+      }
+
+      @Override
+      protected URI provideDefaultNetwork(URI vdc, Injector injector) {
          return URI.create("https://vcloud.safesecureweb.com/network/1990");
       }
 

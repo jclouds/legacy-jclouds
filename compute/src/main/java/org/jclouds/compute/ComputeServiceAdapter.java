@@ -36,30 +36,32 @@ public interface ComputeServiceAdapter<N, H, I, L> {
    /**
     * {@link ComputeService#runNodesWithTag(String, int, Template)} generates the parameters passed
     * into this method such that each node in the set has a unique name.
-    * <p/>
-    * Your responsibility is to create a node with the underlying library and return after storing
-    * its credentials in the supplied map.
-    * <p/>
-    * Note that it is intentional to return the library native node object, as generic type
+    * 
+    * <h4>note</h4> It is intentional to return the library native node object, as generic type
     * {@code N}. If you are not using library-native objects (such as libvirt {@code Domain}) use
     * {@link JCloudsNativeComputeServiceAdapter} instead.
+    * 
+    * <h4>note</h4> Your responsibility is to create a node with the underlying library and return
+    * after storing its credentials in the supplied map corresponding to
+    * {@link ComputeServiceContext#getCredentialStore credentialStore}
     * 
     * @param tag
     *           used to aggregate nodes with identical configuration
     * @param name
     *           unique supplied name for the node, which has the tag encoded into it.
     * @param template
-    *           includes {@code imageId}, {@code locationId}, and {@code hardwareId} used to start
+    *           includes {@code imageId}, {@code locationId}, and {@code hardwareId} used to resume
     *           the instance.
     * @param credentialStore
-    *           once the node is started, its login user and password will be encoded based on the
-    *           node {@code id}
+    *           once the node is resumeed, its login user and password must be stored keyed on
+    *           {@code node#id}.
     * @return library-native representation of a node.
     * 
     * @see ComputeService#runNodesWithTag(String, int, Template)
+    * @see ComputeServiceContext#getCredentialStore
     */
    N runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
-         Map<String, Credentials> credentialStore);
+            Map<String, Credentials> credentialStore);
 
    /**
     * Hardware profiles describe available cpu, memory, and disk configurations that can be used to
@@ -91,6 +93,10 @@ public interface ComputeServiceAdapter<N, H, I, L> {
    void destroyNode(String id);
 
    void rebootNode(String id);
+
+   void resumeNode(String id);
+
+   void suspendNode(String id);
 
    Iterable<N> listNodes();
 

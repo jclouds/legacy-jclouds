@@ -41,6 +41,8 @@ import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
+import org.jclouds.compute.strategy.ResumeNodeStrategy;
+import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 
@@ -54,7 +56,7 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class AdaptingComputeServiceStrategies<N, H, I, L> implements AddNodeWithTagStrategy, DestroyNodeStrategy,
-      GetNodeMetadataStrategy, ListNodesStrategy, RebootNodeStrategy {
+         GetNodeMetadataStrategy, ListNodesStrategy, RebootNodeStrategy, ResumeNodeStrategy, SuspendNodeStrategy {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
@@ -65,7 +67,7 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements AddNodeWith
 
    @Inject
    public AdaptingComputeServiceStrategies(Map<String, Credentials> credentialStore,
-         ComputeServiceAdapter<N, H, I, L> client, Function<N, NodeMetadata> nodeMetadataAdapter) {
+            ComputeServiceAdapter<N, H, I, L> client, Function<N, NodeMetadata> nodeMetadataAdapter) {
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.client = checkNotNull(client, "client");
       this.nodeMetadataAdapter = checkNotNull(nodeMetadataAdapter, "nodeMetadataAdapter");
@@ -102,6 +104,34 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements AddNodeWith
    }
 
    @Override
+   public NodeMetadata resumeNode(String id) {
+
+      NodeMetadata node = getNode(id);
+      if (node == null || node.getState() == NodeState.TERMINATED || node.getState() == NodeState.RUNNING)
+         return node;
+
+      logger.debug(">> resuming node(%s)", id);
+      client.resumeNode(id);
+      logger.debug("<< resumed node(%s)", id);
+
+      return node;
+   }
+
+   @Override
+   public NodeMetadata suspendNode(String id) {
+
+      NodeMetadata node = getNode(id);
+      if (node == null || node.getState() == NodeState.TERMINATED || node.getState() == NodeState.SUSPENDED)
+         return node;
+
+      logger.debug(">> suspending node(%s)", id);
+      client.suspendNode(id);
+      logger.debug("<< suspended node(%s)", id);
+
+      return node;
+   }
+
+   @Override
    public NodeMetadata destroyNode(String id) {
 
       NodeMetadata node = getNode(id);
@@ -124,8 +154,8 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements AddNodeWith
       checkState(name != null && name.indexOf(tag) != -1, "name should have %s encoded into it", tag);
 
       logger.debug(">> instantiating node location(%s) name(%s) image(%s) hardware(%s)",
-            template.getLocation().getId(), name, template.getImage().getProviderId(), template.getHardware()
-                  .getProviderId());
+               template.getLocation().getId(), name, template.getImage().getProviderId(), template.getHardware()
+                        .getProviderId());
 
       N from = client.runNodeWithTagAndNameAndStoreCredentials(tag, name, template, credentialStore);
       NodeMetadata node = nodeMetadataAdapter.apply(from);

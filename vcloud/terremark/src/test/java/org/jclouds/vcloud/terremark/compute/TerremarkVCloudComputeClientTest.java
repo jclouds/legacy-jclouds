@@ -111,7 +111,7 @@ public class TerremarkVCloudComputeClientTest {
             new TerremarkInstantiateVAppTemplateOptions());
 
       assertEquals(response.getHref().toASCIIString(), "vapp");
-      assertEquals(credentialStore.get("vapp"), new Credentials("Administrator", "password"));
+      assertEquals(credentialStore.get("node#vapp"), new Credentials("Administrator", "password"));
 
       verify(vdc);
       verify(template);

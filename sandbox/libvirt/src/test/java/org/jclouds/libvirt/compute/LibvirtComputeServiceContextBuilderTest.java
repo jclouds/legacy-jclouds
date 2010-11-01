@@ -35,7 +35,7 @@ public class LibvirtComputeServiceContextBuilderTest {
             .createContext(new StandaloneComputeServiceContextSpec<Domain, Domain, Image, Datacenter>("libvirt",
                   "test:///default", "1", "identity", "credential", new LibvirtComputeServiceContextModule(),
                   ImmutableSet.<Module> of()));
-      System.err.println(context.getComputeService().listNodes());
+      //System.err.println(context.getComputeService().
       context.close();
    }
 

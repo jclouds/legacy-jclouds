@@ -1,0 +1,12 @@
+<Network xmlns="urn:tmrk:eCloudExtensions-2.5" xmlns:i="http://www.w3.org/2001/XMLSchema-instance">
+    <Id>XXXXX</Id>
+    <Href>https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/extensions/network/XXXXX</Href>
+    <Name>10.X.X.0/27</Name>
+    <RnatAddress>209.X.X.X</RnatAddress>
+    <Address>10.X.X.0</Address>
+    <BroadcastAddress>10.X.X.X</BroadcastAddress>
+    <GatewayAddress>10.X.X.1</GatewayAddress>
+    <NetworkType>DMZ</NetworkType>
+    <Vlan>279</Vlan>
+    <FriendlyName>10.X.X.0/27 (DMZ_279)</FriendlyName>
+</Network>

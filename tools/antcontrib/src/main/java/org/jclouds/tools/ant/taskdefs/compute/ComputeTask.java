@@ -20,7 +20,6 @@
 package org.jclouds.tools.ant.taskdefs.compute;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
-import static org.jclouds.compute.util.ComputeServiceUtils.isKeyAuth;
 import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.buildComputeMap;
 import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.createTemplateFromElement;
 import static org.jclouds.tools.ant.taskdefs.compute.ComputeTaskUtils.ipOrEmptyString;
@@ -45,6 +44,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.util.Utils;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Splitter;
@@ -212,7 +212,7 @@ public class ComputeTask extends Task {
          getProject().setProperty(nodeElement.getIdproperty(), createdNode.getProviderId());
       if (nodeElement.getHostproperty() != null)
          getProject().setProperty(nodeElement.getHostproperty(), ipOrEmptyString(createdNode.getPublicAddresses()));
-      if (nodeElement.getPasswordproperty() != null && !isKeyAuth(createdNode))
+      if (nodeElement.getPasswordproperty() != null && !Utils.isPrivateKeyCredential(createdNode.getCredentials()))
          getProject().setProperty(nodeElement.getPasswordproperty(), createdNode.getCredentials().credential);
       if (nodeElement.getUsernameproperty() != null)
          getProject().setProperty(nodeElement.getUsernameproperty(), createdNode.getCredentials().identity);

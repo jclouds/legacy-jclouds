@@ -68,7 +68,7 @@ public class CredentialsStoredInBlobStoreTest {
    public void testWeCanUseBlobStoreToStoreCredentialsAcrossContexts() throws RunNodesException, IOException {
 
       ComputeServiceContext computeContext = new ComputeServiceContextFactory().createContext("stub", "foo", "bar",
-            ImmutableSet.of(new CredentialStoreModule(credentialsMap)));
+               ImmutableSet.of(new CredentialStoreModule(credentialsMap)));
 
       Set<? extends NodeMetadata> nodes = computeContext.getComputeService().runNodesWithTag("foo", 10);
 
@@ -76,19 +76,19 @@ public class CredentialsStoredInBlobStoreTest {
       computeContext.close();
 
       // recreate the compute context with the same map and ensure it still works!
-      computeContext = new ComputeServiceContextFactory().createContext("stub", "foo", "bar",
-            Collections.singleton(new CredentialStoreModule(credentialsMap)));
+      computeContext = new ComputeServiceContextFactory().createContext("stub", "foo", "bar", Collections
+               .singleton(new CredentialStoreModule(credentialsMap)));
 
       verifyCredentialsFromNodesAreInContext(nodes, computeContext);
 
    }
 
    protected void verifyCredentialsFromNodesAreInContext(Set<? extends NodeMetadata> nodes,
-         ComputeServiceContext computeContext) throws IOException {
+            ComputeServiceContext computeContext) throws IOException {
       // verify each node's credential is in the map.
       assertEquals(computeContext.credentialStore().size(), 10);
       for (NodeMetadata node : nodes) {
-         assertEquals(computeContext.credentialStore().get(node.getId()), node.getCredentials());
+         assertEquals(computeContext.credentialStore().get("node#" + node.getId()), node.getCredentials());
       }
 
       // verify the credentials are in the backing store and of a known json format
@@ -96,7 +96,7 @@ public class CredentialsStoredInBlobStoreTest {
       for (Entry<String, InputStream> entry : credentialsMap.entrySet()) {
          Credentials credentials = computeContext.credentialStore().get(entry.getKey());
          assertEquals(Utils.toStringAndClose(entry.getValue()), String.format(
-               "{\"identity\":\"%s\",\"credential\":\"%s\"}", credentials.identity, credentials.credential));
+                  "{\"identity\":\"%s\",\"credential\":\"%s\"}", credentials.identity, credentials.credential));
       }
    }
 }

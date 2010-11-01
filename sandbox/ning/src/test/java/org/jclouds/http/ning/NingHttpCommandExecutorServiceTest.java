@@ -45,17 +45,9 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class NingHttpCommandExecutorServiceTest extends
-         BaseHttpCommandExecutorServiceIntegrationTest {
+public class NingHttpCommandExecutorServiceTest extends BaseHttpCommandExecutorServiceIntegrationTest {
    static {
       System.setProperty("http.conn-manager.timeout", 1000 + "");
-   }
-
-   @DataProvider(name = "gets")
-   @Override
-   // ning doesn't support spaces
-   public Object[][] createData() {
-      return new Object[][] { { "object" }, { "/path" }, { "unic₪de" }, { "qu?stion" } };
    }
 
    protected Module createConnectionModule() {
@@ -71,17 +63,9 @@ public class NingHttpCommandExecutorServiceTest extends
       props.setProperty(PROPERTY_USER_THREADS, 0 + "");
    }
 
-   // ning doesn't support spaces
-   @Test(invocationCount = 1, expectedExceptions = RuntimeException.class)
-   public void testSpaceInUri() throws MalformedURLException, ExecutionException,
-            InterruptedException, TimeoutException {
-      assertEquals(client.synch("sp ace").trim(), XML);
-   }
-
    // OOM
    @Test(enabled = false, invocationCount = 1, timeOut = 5000)
-   public void testGetBigFile() throws ExecutionException, InterruptedException, TimeoutException,
-            IOException {
+   public void testGetBigFile() throws ExecutionException, InterruptedException, TimeoutException, IOException {
    }
 
 }

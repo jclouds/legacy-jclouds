@@ -26,6 +26,8 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
+import org.jclouds.compute.strategy.ResumeNodeStrategy;
+import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.domain.PowerCommand;
 import org.jclouds.gogrid.domain.Server;
@@ -39,14 +41,14 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class GoGridRebootNodeStrategy implements RebootNodeStrategy {
+public class GoGridLifeCycleStrategy implements RebootNodeStrategy, ResumeNodeStrategy, SuspendNodeStrategy {
    private final GoGridClient client;
    private final RetryablePredicate<Server> serverLatestJobCompleted;
    private final RetryablePredicate<Server> serverLatestJobCompletedShort;
    private final GetNodeMetadataStrategy getNode;
 
    @Inject
-   protected GoGridRebootNodeStrategy(GoGridClient client, GetNodeMetadataStrategy getNode, Timeouts timeouts) {
+   protected GoGridLifeCycleStrategy(GoGridClient client, GetNodeMetadataStrategy getNode, Timeouts timeouts) {
       this.client = client;
       this.serverLatestJobCompleted = new RetryablePredicate<Server>(new ServerLatestJobCompleted(client
                .getJobServices()), timeouts.nodeRunning * 9l / 10l);
@@ -57,11 +59,30 @@ public class GoGridRebootNodeStrategy implements RebootNodeStrategy {
 
    @Override
    public NodeMetadata rebootNode(String id) {
+      executeCommandOnServer(PowerCommand.RESTART, id);
       Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(new Long(id)));
-      client.getServerServices().power(server.getName(), PowerCommand.RESTART);
-      serverLatestJobCompleted.apply(server);
       client.getServerServices().power(server.getName(), PowerCommand.START);
       serverLatestJobCompletedShort.apply(server);
       return getNode.getNode(id);
+   }
+
+   @Override
+   public NodeMetadata resumeNode(String id) {
+      executeCommandOnServer(PowerCommand.START, id);
+      return getNode.getNode(id);
+
+   }
+
+   @Override
+   public NodeMetadata suspendNode(String id) {
+      executeCommandOnServer(PowerCommand.STOP, id);
+      return getNode.getNode(id);
+
+   }
+
+   private boolean executeCommandOnServer(PowerCommand command, String id) {
+      Server server = Iterables.getOnlyElement(client.getServerServices().getServersById(new Long(id)));
+      client.getServerServices().power(server.getName(), command);
+      return serverLatestJobCompleted.apply(server);
    }
 }

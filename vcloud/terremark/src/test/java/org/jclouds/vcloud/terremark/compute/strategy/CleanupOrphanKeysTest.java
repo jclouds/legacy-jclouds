@@ -26,10 +26,12 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.jclouds.compute.predicates.NodePredicates.parentLocationId;
 
 import java.net.URI;
+import java.util.Map;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.strategy.ListNodesStrategy;
+import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
 import org.jclouds.vcloud.terremark.compute.functions.NodeMetadataToOrgAndName;
 import org.testng.annotations.Test;
@@ -67,6 +69,7 @@ public class CleanupOrphanKeysTest {
 
       // setup expectations
       expect(strategy.nodeToOrgAndName.apply(nodeMetadata)).andReturn(null).atLeastOnce();
+      expectCleanupCredentialStore(strategy, nodeMetadata);
 
       // replay mocks
       replay(nodeMetadata);
@@ -90,9 +93,10 @@ public class CleanupOrphanKeysTest {
       // setup expectations
       expect(strategy.nodeToOrgAndName.apply(nodeMetadata)).andReturn(orgTag).atLeastOnce();
       expect((Object) strategy.listNodes.listDetailsOnNodesMatching(parentLocationId(orgTag.getOrg().toASCIIString())))
-            .andReturn(ImmutableSet.of(nodeMetadata));
+               .andReturn(ImmutableSet.of(nodeMetadata));
       expect(nodeMetadata.getTag()).andReturn(orgTag.getName()).atLeastOnce();
       expect(nodeMetadata.getState()).andReturn(NodeState.RUNNING).atLeastOnce();
+      expectCleanupCredentialStore(strategy, nodeMetadata);
 
       // replay mocks
       replay(nodeMetadata);
@@ -116,10 +120,11 @@ public class CleanupOrphanKeysTest {
       // setup expectations
       expect(strategy.nodeToOrgAndName.apply(nodeMetadata)).andReturn(orgTag).atLeastOnce();
       expect((Object) strategy.listNodes.listDetailsOnNodesMatching(parentLocationId(orgTag.getOrg().toASCIIString())))
-            .andReturn(ImmutableSet.of(nodeMetadata));
+               .andReturn(ImmutableSet.of(nodeMetadata));
       expect(nodeMetadata.getTag()).andReturn(orgTag.getName()).atLeastOnce();
       expect(nodeMetadata.getState()).andReturn(NodeState.TERMINATED).atLeastOnce();
       strategy.deleteKeyPair.execute(orgTag);
+      expectCleanupCredentialStore(strategy, nodeMetadata);
 
       // replay mocks
       replay(nodeMetadata);
@@ -133,6 +138,12 @@ public class CleanupOrphanKeysTest {
       verifyStrategy(strategy);
    }
 
+   private void expectCleanupCredentialStore(CleanupOrphanKeys strategy, NodeMetadata nodeMetadata) {
+      expect("node#" + nodeMetadata.getId()).andReturn("1").times(2);
+      expect(strategy.credentialStore.remove("node#1")).andReturn(null);
+      expect(strategy.credentialStore.remove("node#1#adminPassword")).andReturn(null);
+   }
+
    public void testWhenNoneLeftWithTag() {
       // create mocks
       CleanupOrphanKeys strategy = setupStrategy();
@@ -143,8 +154,9 @@ public class CleanupOrphanKeysTest {
       // setup expectations
       expect(strategy.nodeToOrgAndName.apply(nodeMetadata)).andReturn(orgTag).atLeastOnce();
       expect((Object) strategy.listNodes.listDetailsOnNodesMatching(parentLocationId(orgTag.getOrg().toASCIIString())))
-            .andReturn(ImmutableSet.of());
+               .andReturn(ImmutableSet.of());
       strategy.deleteKeyPair.execute(orgTag);
+      expectCleanupCredentialStore(strategy, nodeMetadata);
 
       // replay mocks
       replay(nodeMetadata);
@@ -162,20 +174,22 @@ public class CleanupOrphanKeysTest {
       verify(strategy.nodeToOrgAndName);
       verify(strategy.deleteKeyPair);
       verify(strategy.listNodes);
-
+      verify(strategy.credentialStore);
    }
 
    private CleanupOrphanKeys setupStrategy() {
       NodeMetadataToOrgAndName nodeToOrgAndName = createMock(NodeMetadataToOrgAndName.class);
       DeleteKeyPair deleteKeyPair = createMock(DeleteKeyPair.class);
       ListNodesStrategy listNodes = createMock(ListNodesStrategy.class);
-      return new CleanupOrphanKeys(nodeToOrgAndName, deleteKeyPair, listNodes);
+      Map<String, Credentials> credentialStore = createMock(Map.class);
+      return new CleanupOrphanKeys(nodeToOrgAndName, deleteKeyPair, credentialStore, listNodes);
    }
 
    private void replayStrategy(CleanupOrphanKeys strategy) {
       replay(strategy.nodeToOrgAndName);
       replay(strategy.deleteKeyPair);
       replay(strategy.listNodes);
+      replay(strategy.credentialStore);
    }
 
 }

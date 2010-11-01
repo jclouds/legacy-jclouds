@@ -44,7 +44,7 @@ public class CloudServersImageToImageTest {
             new ImageBuilder()
                   .name("CentOS 5.2")
                   .operatingSystem(
-                        new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").is64Bit(true)
+                        new OperatingSystemBuilder().family(OsFamily.CENTOS).version("5.2").description("CentOS 5.2").is64Bit(true)
                               .build()).description("CentOS 5.2").defaultCredentials(new Credentials("root", null))
                   .ids("2").version("1286712000000").build());
    }

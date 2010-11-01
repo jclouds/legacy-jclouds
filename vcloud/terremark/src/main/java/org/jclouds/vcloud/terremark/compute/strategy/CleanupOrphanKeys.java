@@ -28,11 +28,14 @@ import static org.jclouds.compute.predicates.NodePredicates.TERMINATED;
 import static org.jclouds.compute.predicates.NodePredicates.parentLocationId;
 import static org.jclouds.compute.predicates.NodePredicates.withTag;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.strategy.ListNodesStrategy;
+import org.jclouds.domain.Credentials;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
 
 import com.google.common.base.Function;
@@ -47,20 +50,28 @@ public class CleanupOrphanKeys {
    final Function<NodeMetadata, OrgAndName> nodeToOrgAndName;
    final DeleteKeyPair deleteKeyPair;
    final ListNodesStrategy listNodes;
+   final Map<String, Credentials> credentialStore;
 
    @Inject
    CleanupOrphanKeys(Function<NodeMetadata, OrgAndName> nodeToOrgAndName, DeleteKeyPair deleteKeyPair,
-         ListNodesStrategy listNodes) {
+            Map<String, Credentials> credentialStore, ListNodesStrategy listNodes) {
       this.nodeToOrgAndName = nodeToOrgAndName;
       this.deleteKeyPair = deleteKeyPair;
       this.listNodes = listNodes;
+      this.credentialStore = credentialStore;
    }
 
    public void execute(Iterable<? extends NodeMetadata> deadOnes) {
+      // TODO refactor so that admin passwords are cached properly, probably as a list value in the
+      // credentialStore
+      for (NodeMetadata node : deadOnes){
+         credentialStore.remove("node#" + node.getId());
+         credentialStore.remove("node#" + node.getId() + "#adminPassword");
+      }
       Iterable<OrgAndName> orgTags = filter(transform(deadOnes, nodeToOrgAndName), notNull());
       for (OrgAndName orgTag : orgTags) {
          Iterable<? extends NodeMetadata> nodesInOrg = listNodes.listDetailsOnNodesMatching(parentLocationId(orgTag
-               .getOrg().toASCIIString()));
+                  .getOrg().toASCIIString()));
          Iterable<? extends NodeMetadata> nodesWithTag = filter(nodesInOrg, withTag(orgTag.getName()));
          if (size(nodesWithTag) == 0 || all(nodesWithTag, TERMINATED))
             deleteKeyPair.execute(orgTag);

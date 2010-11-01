@@ -117,7 +117,7 @@ public class RackspaceAuthenticationRestModule extends AbstractModule {
    @Provides
    @Singleton
    @CloudFiles
-   protected URI provideStorageUrl(AuthenticationResponse response) {
+   protected URI providestroageUrl(AuthenticationResponse response) {
       return response.getStorageUrl();
    }
 

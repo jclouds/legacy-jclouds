@@ -42,19 +42,29 @@ public class SlicehostImageToImageTest {
    Location provider = new LocationImpl(LocationScope.ZONE, "dallas", "description", null);
 
    @Test
-   public void testApplyWhereImageNotFound() throws UnknownHostException {
-      assertEquals(
-            convertImage(),
-            new ImageBuilder()
-                  .name("CentOS 5.2")
-                  .operatingSystem(
-                        new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").is64Bit(true)
-                              .build()).description("CentOS 5.2").defaultCredentials(new Credentials("root", null))
-                  .ids("2").build());
+   public void test() throws UnknownHostException {
+      assertEquals(convertImage(), new ImageBuilder().name("CentOS 5.2").operatingSystem(
+               new OperatingSystemBuilder().family(OsFamily.CENTOS).version("5.2").description("CentOS 5.2").is64Bit(
+                        true).build()).description("CentOS 5.2").defaultCredentials(new Credentials("root", null)).ids(
+               "2").build());
+   }
+
+   @Test
+   public void test32() throws UnknownHostException {
+      assertEquals(convertImage("/test_get_image32.xml"), new ImageBuilder().name("Ubuntu 10.10 (maverick) 32-bit")
+               .operatingSystem(
+                        new OperatingSystemBuilder().family(OsFamily.UBUNTU).version("10.10").description(
+                                 "Ubuntu 10.10 (maverick) 32-bit").build()).description(
+                        "Ubuntu 10.10 (maverick) 32-bit").defaultCredentials(new Credentials("root", null)).ids("70")
+               .build());
    }
 
    public static Image convertImage() {
-      org.jclouds.slicehost.domain.Image image = ImageHandlerTest.parseImage();
+      return convertImage("/test_get_image.xml");
+   }
+
+   public static Image convertImage(String resource) {
+      org.jclouds.slicehost.domain.Image image = ImageHandlerTest.parseImage(resource);
 
       SlicehostImageToImage parser = new SlicehostImageToImage(new SlicehostImageToOperatingSystem());
 

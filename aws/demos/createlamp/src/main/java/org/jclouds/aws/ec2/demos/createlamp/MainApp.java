@@ -37,12 +37,12 @@ import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
 import org.jclouds.net.IPSocket;
+import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.scriptbuilder.ScriptBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
-import org.jclouds.ssh.jsch.predicates.InetSocketAddressConnect;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;

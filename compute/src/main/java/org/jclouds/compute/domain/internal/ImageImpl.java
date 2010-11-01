@@ -43,15 +43,18 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
    private final OperatingSystem operatingSystem;
    private final String version;
    private final String description;
+   @Nullable
+   private final String adminPassword;
    private final Credentials defaultCredentials;
 
    public ImageImpl(String providerId, String name, String id, Location location, URI uri,
-         Map<String, String> userMetadata, OperatingSystem operatingSystem, String description,
-         @Nullable String version, @Nullable Credentials defaultCredentials) {
+            Map<String, String> userMetadata, OperatingSystem operatingSystem, String description,
+            @Nullable String version, @Nullable String adminPassword, @Nullable Credentials defaultCredentials) {
       super(ComputeType.IMAGE, providerId, name, id, location, uri, userMetadata);
       this.operatingSystem = checkNotNull(operatingSystem, "operatingSystem");
       this.version = version;
       this.description = checkNotNull(description, "description");
+      this.adminPassword = adminPassword;
       this.defaultCredentials = defaultCredentials;
    }
 
@@ -87,18 +90,27 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
       return defaultCredentials;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getAdminPassword() {
+      return adminPassword;
+   }
+
    @Override
    public String toString() {
       return "[id=" + getId() + ", name=" + getName() + ", operatingSystem=" + operatingSystem + ", description="
-            + description + ", version=" + version + ", location=" + getLocation() + ", loginUser="
-            + ((defaultCredentials != null) ? defaultCredentials.identity : null) + ", userMetadata="
-            + getUserMetadata() + "]";
+               + description + ", version=" + version + ", location=" + getLocation() + ", loginUser="
+               + ((defaultCredentials != null) ? defaultCredentials.identity : null) + ", userMetadata="
+               + getUserMetadata() + "]";
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
+      result = prime * result + ((adminPassword == null) ? 0 : adminPassword.hashCode());
       result = prime * result + ((defaultCredentials == null) ? 0 : defaultCredentials.hashCode());
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((operatingSystem == null) ? 0 : operatingSystem.hashCode());
@@ -115,6 +127,11 @@ public class ImageImpl extends ComputeMetadataImpl implements Image {
       if (getClass() != obj.getClass())
          return false;
       ImageImpl other = (ImageImpl) obj;
+      if (adminPassword == null) {
+         if (other.adminPassword != null)
+            return false;
+      } else if (!adminPassword.equals(other.adminPassword))
+         return false;
       if (defaultCredentials == null) {
          if (other.defaultCredentials != null)
             return false;

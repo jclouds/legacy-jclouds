@@ -41,13 +41,15 @@ public class ImagesHandlerTest extends BaseHandlerTest {
 
    ParseSax<Set<? extends Image>> createParser() {
       ParseSax<Set<? extends Image>> parser = (ParseSax<Set<? extends Image>>) factory.create(injector
-            .getInstance(ImagesHandler.class));
+               .getInstance(ImagesHandler.class));
       return parser;
    }
 
    public void test() {
       InputStream is = getClass().getResourceAsStream("/test_list_images.xml");
-      Set<? extends Image> expects = ImmutableSet.of(new Image(2, "CentOS 5.2"), new Image(3, "Gentoo 2008.0"),
+      Set<? extends Image> expects = ImmutableSet.of(
+
+      new Image(2, "CentOS 5.2"), new Image(3, "Gentoo 2008.0"),
 
       new Image(4, "Debian 5.0 (lenny)"),
 
@@ -63,8 +65,10 @@ public class ImagesHandlerTest extends BaseHandlerTest {
 
       new Image(11, "Ubuntu 8.10 (intrepid)"),
 
-      new Image(12, "Red Hat EL 5.3"),
+      new Image(70, "Ubuntu 10.10 (maverick) 32-bit"),
 
+      new Image(12, "Red Hat EL 5.3"),
+      
       new Image(13, "Fedora 11 (Leonidas)")
 
       );

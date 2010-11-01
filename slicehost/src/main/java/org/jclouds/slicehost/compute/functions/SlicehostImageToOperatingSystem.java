@@ -40,7 +40,7 @@ import com.google.common.base.Function;
 @Singleton
 public class SlicehostImageToOperatingSystem implements
       Function<org.jclouds.slicehost.domain.Image, OperatingSystem> {
-   public static final Pattern SLICEHOST_PATTERN = Pattern.compile("(([^ ]*) .*)");
+   public static final Pattern SLICEHOST_PATTERN = Pattern.compile("(([^ ]*) ([0-9.]+) ?.*)");
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -52,18 +52,20 @@ public class SlicehostImageToOperatingSystem implements
       String osArch = null;
       String osVersion = null;
       String osDescription = from.getName();
-      boolean is64Bit = true;
-      Matcher matcher = SLICEHOST_PATTERN.matcher(from.getName());
+      boolean is64Bit = !from.getName().endsWith("32-bit");
       if (from.getName().indexOf("Red Hat EL") != -1) {
          osFamily = OsFamily.RHEL;
       } else if (from.getName().indexOf("Oracle EL") != -1) {
          osFamily = OsFamily.OEL;
-      } else if (matcher.find()) {
+      }
+      Matcher matcher = SLICEHOST_PATTERN.matcher(from.getName());
+      if (matcher.find()) {
          try {
             osFamily = OsFamily.fromValue(matcher.group(2).toLowerCase());
          } catch (IllegalArgumentException e) {
             logger.debug("<< didn't match os(%s)", matcher.group(2));
          }
+         osVersion = matcher.group(3);
       }
       OperatingSystem os = new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
       return os;

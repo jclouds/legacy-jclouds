@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.rackspace.cloudservers.compute.strategy;
+package org.jclouds.slicehost.compute.strategy;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -25,29 +25,40 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
-import org.jclouds.rackspace.cloudservers.CloudServersClient;
-import org.jclouds.rackspace.cloudservers.domain.RebootType;
+import org.jclouds.compute.strategy.ResumeNodeStrategy;
+import org.jclouds.compute.strategy.SuspendNodeStrategy;
+import org.jclouds.slicehost.SlicehostClient;
 
 /**
+ * 
  * @author Adrian Cole
  */
 @Singleton
-public class CloudServersRebootNodeStrategy implements RebootNodeStrategy {
-   private final CloudServersClient client;
+public class SlicehostLifeCycleStrategy implements RebootNodeStrategy, SuspendNodeStrategy, ResumeNodeStrategy {
+   private final SlicehostClient client;
    private final GetNodeMetadataStrategy getNode;
 
    @Inject
-   protected CloudServersRebootNodeStrategy(CloudServersClient client, GetNodeMetadataStrategy getNode) {
+   protected SlicehostLifeCycleStrategy(SlicehostClient client, GetNodeMetadataStrategy getNode) {
       this.client = client;
       this.getNode = getNode;
    }
 
    @Override
    public NodeMetadata rebootNode(String id) {
-      int serverId = Integer.parseInt(id);
-      // if false server wasn't around in the first place
-      client.rebootServer(serverId, RebootType.HARD);
+      int sliceId = Integer.parseInt(id);
+      client.hardRebootSlice(sliceId);
       return getNode.getNode(id);
+   }
+
+   @Override
+   public NodeMetadata suspendNode(String id) {
+      throw new UnsupportedOperationException("suspend not supported");
+   }
+
+   @Override
+   public NodeMetadata resumeNode(String id) {
+      throw new UnsupportedOperationException("resume not supported");
    }
 
 }

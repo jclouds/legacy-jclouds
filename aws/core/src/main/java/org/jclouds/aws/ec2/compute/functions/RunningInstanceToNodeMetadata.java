@@ -91,7 +91,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       builder.id(instance.getRegion() + "/" + providerId);
       String tag = getTagForInstance(instance);
       builder.tag(tag);
-      builder.credentials(credentialStore.get(instance.getRegion() + "/" + providerId));
+      builder.credentials(credentialStore.get("node#" + instance.getRegion() + "/" + providerId));
       builder.state(instanceToNodeState.get(instance.getInstanceState()));
       builder.publicAddresses(nullSafeSet(instance.getIpAddress()));
       builder.privateAddresses(nullSafeSet(instance.getPrivateIpAddress()));

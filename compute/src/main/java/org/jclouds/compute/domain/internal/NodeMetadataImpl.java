@@ -47,8 +47,11 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    private static final long serialVersionUID = 7924307572338157887L;
 
    private final NodeState state;
+   private final int loginPort;
    private final Set<String> publicAddresses;
    private final Set<String> privateAddresses;
+   @Nullable
+   private final String adminPassword;
    @Nullable
    private final Credentials credentials;
    @Nullable
@@ -61,17 +64,20 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    private final OperatingSystem os;
 
    public NodeMetadataImpl(String providerId, String name, String id, Location location, URI uri,
-         Map<String, String> userMetadata, @Nullable String tag, @Nullable Hardware hardware, @Nullable String imageId,
-         @Nullable OperatingSystem os, NodeState state, Iterable<String> publicAddresses,
-         Iterable<String> privateAddresses, @Nullable Credentials credentials) {
+            Map<String, String> userMetadata, @Nullable String tag, @Nullable Hardware hardware,
+            @Nullable String imageId, @Nullable OperatingSystem os, NodeState state, int loginPort,
+            Iterable<String> publicAddresses, Iterable<String> privateAddresses, @Nullable String adminPassword,
+            @Nullable Credentials credentials) {
       super(ComputeType.NODE, providerId, name, id, location, uri, userMetadata);
       this.tag = tag;
       this.hardware = hardware;
       this.imageId = imageId;
       this.os = os;
       this.state = checkNotNull(state, "state");
+      this.loginPort = loginPort;
       this.publicAddresses = ImmutableSet.copyOf(checkNotNull(publicAddresses, "publicAddresses"));
       this.privateAddresses = ImmutableSet.copyOf(checkNotNull(privateAddresses, "privateAddresses"));
+      this.adminPassword = adminPassword;
       this.credentials = credentials;
    }
 
@@ -89,6 +95,14 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    @Override
    public Hardware getHardware() {
       return hardware;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getAdminPassword() {
+      return adminPassword;
    }
 
    /**
@@ -127,6 +141,14 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
     * {@inheritDoc}
     */
    @Override
+   public int getLoginPort() {
+      return this.loginPort;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public String getImageId() {
       return imageId;
    }
@@ -142,22 +164,25 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
    @Override
    public String toString() {
       return "[id=" + getId() + ", providerId=" + getProviderId() + ", tag=" + getTag() + ", name=" + getName()
-            + ", location=" + getLocation() + ", uri=" + getUri() + ", imageId=" + getImageId() + ", os="
-            + getOperatingSystem() + ", state=" + getState() + ", privateAddresses=" + privateAddresses
-            + ", publicAddresses=" + publicAddresses + ", hardware=" + getHardware() + ", loginUser="
-            + ((credentials != null) ? credentials.identity : null) + ", userMetadata=" + getUserMetadata() + "]";
+               + ", location=" + getLocation() + ", uri=" + getUri() + ", imageId=" + getImageId() + ", os="
+               + getOperatingSystem() + ", state=" + getState() + ", loginPort=" + getLoginPort()
+               + ", privateAddresses=" + privateAddresses + ", publicAddresses=" + publicAddresses + ", hardware="
+               + getHardware() + ", loginUser=" + ((credentials != null) ? credentials.identity : null)
+               + ", userMetadata=" + getUserMetadata() + "]";
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
+      result = prime * result + loginPort;
       result = prime * result + ((privateAddresses == null) ? 0 : privateAddresses.hashCode());
       result = prime * result + ((publicAddresses == null) ? 0 : publicAddresses.hashCode());
       result = prime * result + ((tag == null) ? 0 : tag.hashCode());
       result = prime * result + ((imageId == null) ? 0 : imageId.hashCode());
       result = prime * result + ((hardware == null) ? 0 : hardware.hashCode());
       result = prime * result + ((os == null) ? 0 : os.hashCode());
+      result = prime * result + ((adminPassword == null) ? 0 : adminPassword.hashCode());
       result = prime * result + ((credentials == null) ? 0 : credentials.hashCode());
       return result;
    }
@@ -171,6 +196,8 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
       if (getClass() != obj.getClass())
          return false;
       NodeMetadataImpl other = (NodeMetadataImpl) obj;
+      if (loginPort != other.loginPort)
+         return false;
       if (privateAddresses == null) {
          if (other.privateAddresses != null)
             return false;
@@ -200,6 +227,11 @@ public class NodeMetadataImpl extends ComputeMetadataImpl implements NodeMetadat
          if (other.os != null)
             return false;
       } else if (!os.equals(other.os))
+         return false;
+      if (adminPassword == null) {
+         if (other.adminPassword != null)
+            return false;
+      } else if (!adminPassword.equals(other.adminPassword))
          return false;
       if (credentials == null) {
          if (other.credentials != null)

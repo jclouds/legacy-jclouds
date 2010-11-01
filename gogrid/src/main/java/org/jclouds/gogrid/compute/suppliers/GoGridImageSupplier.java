@@ -20,6 +20,7 @@
 package org.jclouds.gogrid.compute.suppliers;
 
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
@@ -35,7 +36,6 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.domain.ServerImage;
-import org.jclouds.gogrid.util.GoGridUtils;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Supplier;
@@ -47,7 +47,8 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class GoGridImageSupplier implements Supplier<Set<? extends Image>> {
-   public static final Pattern GOGRID_OS_NAME_PATTERN = Pattern.compile("([a-zA-Z]*)(.*)");
+   public static final Pattern GOGRID_OS_PATTERN = Pattern.compile("([a-zA-Z]*).*");
+   public static final Pattern GOGRID_VERSION_PATTERN = Pattern.compile(".* ([0-9.]+) .*");
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
@@ -84,18 +85,29 @@ public class GoGridImageSupplier implements Supplier<Set<? extends Image>> {
       OsFamily osFamily = null;
       String osName = from.getOs().getName();
       String osArch = from.getArchitecture().getDescription();
-      String osVersion = null;// TODO
+      String osVersion = parseVersion(osName);
       String osDescription = from.getOs().getDescription();
       boolean is64Bit = (from.getOs().getName().indexOf("64") != -1 || from.getDescription().indexOf("64") != -1);
 
-      String matchedOs = GoGridUtils.parseStringByPatternAndGetNthMatchGroup(osName, GOGRID_OS_NAME_PATTERN, 1);
-      try {
-         osFamily = OsFamily.fromValue(matchedOs.toLowerCase());
-      } catch (IllegalArgumentException e) {
-         logger.debug("<< didn't match os(%s)", matchedOs);
+      Matcher matcher = GOGRID_OS_PATTERN.matcher(from.getName());
+      if (matcher.find()) {
+         try {
+            osFamily = OsFamily.fromValue(matcher.group(1).toLowerCase());
+         } catch (IllegalArgumentException e) {
+            logger.debug("<< didn't match os(%s)", from.getName());
+         }
       }
+
       // TODO determine DC images are in
       OperatingSystem os = new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
       return os;
+   }
+
+   static String parseVersion(String name) {
+      Matcher matcher = GOGRID_VERSION_PATTERN.matcher(name);
+      if (matcher.find()) {
+         return matcher.group(1);
+      }
+      return null;
    }
 }
