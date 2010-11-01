@@ -54,15 +54,15 @@ public class VCloudExpressOrgNetworkAdapterTest {
       Factory factory = injector.getInstance(ParseSax.Factory.class);
       VCloudExpressNetwork in = factory.create(injector.getInstance(VCloudExpressNetworkHandler.class)).parse(is);
       OrgNetwork result = new VCloudExpressOrgNetworkAdapter(in);
-      assertEquals(result.getName(), "10.114.34.128/26");
-      assertEquals(result.getHref(), URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/network/1708"));
+      assertEquals(result.getName(), "10.122.209.128/28");
+      assertEquals(result.getHref(), URI.create("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/network/40031"));
       assertEquals(result.getType(), "application/vnd.vmware.vcloud.network+xml");
       assertEquals(result.getOrg(), null);
       assertEquals(result.getDescription(), null);
       assertEquals(result.getTasks(), ImmutableList.of());
       assert result.getConfiguration() != null;
 
-      assertEquals(result.getConfiguration().getIpScope(), new IpScope(true, "10.114.34.129", "255.255.255.192", null,
+      assertEquals(result.getConfiguration().getIpScope(), new IpScope(true, "10.122.209.129", "255.255.255.240", null,
                null, null, ImmutableSet.<IpRange> of(), ImmutableSet.<String> of()));
 
       assertEquals(result.getConfiguration().getParentNetwork(), null);

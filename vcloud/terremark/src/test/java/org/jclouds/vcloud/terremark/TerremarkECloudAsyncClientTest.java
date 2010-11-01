@@ -74,6 +74,7 @@ import org.jclouds.vcloud.terremark.xml.KeyPairsHandler;
 import org.jclouds.vcloud.terremark.xml.NodeHandler;
 import org.jclouds.vcloud.terremark.xml.NodesHandler;
 import org.jclouds.vcloud.terremark.xml.PublicIpAddressesHandler;
+import org.jclouds.vcloud.terremark.xml.TerremarkOrgNetworkFromTerremarkVCloudExpressNetworkHandler;
 import org.jclouds.vcloud.terremark.xml.TerremarkVDCHandler;
 import org.jclouds.vcloud.xml.CatalogHandler;
 import org.jclouds.vcloud.xml.VCloudExpressVAppHandler;
@@ -96,6 +97,38 @@ import domain.VCloudVersionsAsyncClient;
  */
 @Test(groups = "unit", sequential = true, testName = "TerremarkECloudAsyncClientTest")
 public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkECloudAsyncClient> {
+   public void testNetwork() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TerremarkECloudAsyncClient.class.getMethod("getNetwork", URI.class);
+      HttpRequest request = processor.createRequest(method, URI
+               .create("https://vcloud.safesecureweb.com/api/v0.8/vdcItem/2"));
+
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/vdcItem/2 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.network+xml\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TerremarkOrgNetworkFromTerremarkVCloudExpressNetworkHandler.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
+   public void testFindNetworkInOrgVDCNamed() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TerremarkECloudAsyncClient.class.getMethod("findNetworkInOrgVDCNamed", String.class,
+               String.class, String.class);
+      HttpRequest request = processor.createRequest(method, "org", "vdc", "network");
+
+      assertRequestLineEquals(request, "GET https://vcloud.safesecureweb.com/api/v0.8/vdcItem/2 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.network+xml\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, TerremarkOrgNetworkFromTerremarkVCloudExpressNetworkHandler.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
    /**
     * ignore parameter of catalog id since this doesn't work
     */

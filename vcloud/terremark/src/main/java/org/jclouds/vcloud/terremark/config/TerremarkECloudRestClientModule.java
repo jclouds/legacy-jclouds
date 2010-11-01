@@ -19,6 +19,8 @@
 
 package org.jclouds.vcloud.terremark.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.net.URI;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -31,11 +33,12 @@ import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.domain.ReferenceType;
-import org.jclouds.vcloud.domain.network.OrgNetwork;
 import org.jclouds.vcloud.terremark.TerremarkECloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkECloudClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudAsyncClient;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
+import org.jclouds.vcloud.terremark.domain.TerremarkNetwork;
+import org.jclouds.vcloud.terremark.domain.TerremarkOrgNetwork;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
@@ -97,9 +100,14 @@ public class TerremarkECloudRestClientModule extends
 
             @Override
             public boolean apply(ReferenceType input) {
-               OrgNetwork network = injector.getInstance(TerremarkECloudClient.class).getNetwork(input.getHref());
-               // TODO: get extension data on this network and check NetworkType == DMZ
-               return network.getDescription() != null &&network.getDescription().toLowerCase().contains("dmz");
+               TerremarkOrgNetwork network = injector.getInstance(TerremarkECloudClient.class).getNetwork(
+                        input.getHref());
+               TerremarkNetwork terremarkNetwork = injector.getInstance(TerremarkECloudClient.class)
+                        .getTerremarkNetwork(
+                                 checkNotNull(checkNotNull(network, "network at: " + input).getNetworkExtension(),
+                                          "network extension for: " + input).getHref());
+               return checkNotNull(terremarkNetwork, "terremark network extension at: " + network.getNetworkExtension())
+                        .getNetworkType() == TerremarkNetwork.Type.DMZ;
             }
 
          }).getHref();

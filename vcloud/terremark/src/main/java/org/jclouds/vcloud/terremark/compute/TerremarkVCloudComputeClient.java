@@ -214,8 +214,12 @@ public class TerremarkVCloudComputeClient extends VCloudExpressComputeClientImpl
          Set<InternetService> services = client.getInternetServicesOnPublicIp(address.getId());
          if (services.size() == 0) {
             logger.debug(">> deleting PublicIpAddress(%s) %s", address.getId(), address.getAddress());
-            client.deletePublicIp(address.getId());
-            logger.debug("<< deleted PublicIpAddress(%s)", address.getId());
+            try {
+               client.deletePublicIp(address.getId());
+               logger.debug("<< deleted PublicIpAddress(%s)", address.getId());
+            } catch (UnsupportedOperationException e) {
+               logger.trace("cannot delete PublicIpAddress(%s) as it is unsupported", address.getId());
+            }
             continue IPADDRESS;
          }
       }

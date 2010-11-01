@@ -81,6 +81,9 @@ public class ParseTerremarkVCloudErrorFromHttpResponse implements HttpErrorHandl
                   }
                   exception = new ResourceNotFoundException(message, exception);
                   break;
+               case 405:
+                  exception = new UnsupportedOperationException(response.getMessage(), exception);
+                  break;
                case 501:
                   if (response.getMessage() != null && (response.getMessage().indexOf("NotImplemented") != -1))
                      exception = new UnsupportedOperationException(response.getMessage(), exception);
