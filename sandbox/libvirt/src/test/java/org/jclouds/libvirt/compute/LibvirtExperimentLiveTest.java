@@ -65,24 +65,28 @@ public class LibvirtExperimentLiveTest {
                      endpoint, apiversion, identity, credential, new LibvirtComputeServiceContextModule(), ImmutableSet
                            .<Module> of()));
          
+
+         /*
          System.out.println("images " + context.getComputeService().listImages());
          System.out.println("nodes " + context.getComputeService().listNodes());
          System.out.println("hardware profiles " + context.getComputeService().listHardwareProfiles()); 
+         */
          
+         /*
          Template defaultTemplate = context.getComputeService().templateBuilder()
          	.hardwareId("c7ff2039-a9f1-a659-7f91-e0f82f59d52e").imageId("1") //.locationId("")
          .build();
-         	
+         */	
+         
     /*
      * We will probably make a default template out of properties at some point
      * You can control the default template via overriding a method in standalonecomputeservicexontextmodule
      */
-         
-         
-//         context.getComputeService().templateOptions().;
-         context.getComputeService().runNodesWithTag("ttylinux", 1, defaultTemplate);
-        
-      } catch (RunNodesException e) {
+
+         context.getComputeService().runNodesWithTag("ubuntu", 1/*, defaultTemplate*/);
+
+	} catch (RunNodesException e) {
+		// TODO Auto-generated catch block
 		e.printStackTrace();
 	} finally {
          if (context != null)
