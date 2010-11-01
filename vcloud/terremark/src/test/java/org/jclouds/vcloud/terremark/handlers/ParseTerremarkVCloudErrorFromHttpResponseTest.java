@@ -71,49 +71,20 @@ public class ParseTerremarkVCloudErrorFromHttpResponseTest extends BaseHttpError
                "", "", AuthorizationException.class);
    }
 
-   //
-   // @Test
-   // public void testbecause_there_is_a_pending_task_runningSetsIllegalStateException() {
-   // assertCodeMakes("GET", URI
-   // .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"),
-   // 500, "because there is a pending task running",
-   // "because there is a pending task running", IllegalStateException.class);
-   // }
+   @Test
+   public void test501SetsNotImplementedMakesUnsupportedOperationException() {
+      assertCodeMakes("POST", URI
+               .create("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/vapp/49373/action/undeploy"),
+               501, "HTTP/1.1 501 NotImplemented", "", UnsupportedOperationException.class);
+   }
 
-   // case 401:
-   // exception = new AuthorizationException(command.getRequest(), content);
-   // break;
-   // case 403: // TODO temporary as terremark mistakenly uses this for vApp not found.
-   // case 404:
-   // if (!command.getRequest().getMethod().equals("DELETE")) {
-   // String path = command.getRequest().getEndpoint().getPath();
-   // Matcher matcher = RESOURCE_PATTERN.matcher(path);
-   // String message;
-   // if (matcher.find()) {
-   // message = String.format("%s %s not found", matcher.group(1), matcher.group(2));
-   // } else {
-   // message = path;
-   // }
-   // exception = new ResourceNotFoundException(message);
-   // }
-   // break;
-   // case 401:
-   // exception = new AuthorizationException(command.getRequest(), content);
-   // break;
-   // case 403: // TODO temporary as terremark mistakenly uses this for vApp not found.
-   // case 404:
-   // if (!command.getRequest().getMethod().equals("DELETE")) {
-   // String path = command.getRequest().getEndpoint().getPath();
-   // Matcher matcher = RESOURCE_PATTERN.matcher(path);
-   // String message;
-   // if (matcher.find()) {
-   // message = String.format("%s %s not found", matcher.group(1), matcher.group(2));
-   // } else {
-   // message = path;
-   // }
-   // exception = new ResourceNotFoundException(message);
-   // }
-   // break;
+   @Test
+   public void testbecause_there_is_a_pending_task_runningSetsIllegalStateException() {
+      assertCodeMakes("GET", URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"), 500,
+               "because there is a pending task running", "because there is a pending task running",
+               IllegalStateException.class);
+   }
+
    @Override
    protected Class<? extends HttpErrorHandler> getHandlerClass() {
       return ParseTerremarkVCloudErrorFromHttpResponse.class;

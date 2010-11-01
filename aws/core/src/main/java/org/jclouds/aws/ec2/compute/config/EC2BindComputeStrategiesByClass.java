@@ -24,6 +24,8 @@ import org.jclouds.aws.ec2.compute.strategy.EC2GetNodeMetadataStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2ListNodesStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2RebootNodeStrategy;
 import org.jclouds.aws.ec2.compute.strategy.EC2RunNodesAndAddToSetStrategy;
+import org.jclouds.aws.ec2.compute.strategy.EC2ResumeNodeStrategy;
+import org.jclouds.aws.ec2.compute.strategy.EC2SuspendNodeStrategy;
 import org.jclouds.compute.config.BindComputeStrategiesByClass;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
@@ -31,6 +33,8 @@ import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.ResumeNodeStrategy;
+import org.jclouds.compute.strategy.SuspendNodeStrategy;
 
 /**
  * @author Adrian Cole
@@ -74,6 +78,16 @@ public class EC2BindComputeStrategiesByClass extends BindComputeStrategiesByClas
    @Override
    protected Class<? extends RebootNodeStrategy> defineRebootNodeStrategy() {
       return EC2RebootNodeStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends ResumeNodeStrategy> defineStartNodeStrategy() {
+      return EC2ResumeNodeStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends SuspendNodeStrategy> defineStopNodeStrategy() {
+      return EC2SuspendNodeStrategy.class;
    }
 
 }

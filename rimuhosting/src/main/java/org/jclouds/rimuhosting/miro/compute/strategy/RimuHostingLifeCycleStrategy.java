@@ -25,6 +25,8 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
+import org.jclouds.compute.strategy.ResumeNodeStrategy;
+import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 
 /**
@@ -32,12 +34,12 @@ import org.jclouds.rimuhosting.miro.RimuHostingClient;
  * @author Adrian Cole
  */
 @Singleton
-public class RimuHostingRebootNodeStrategy implements RebootNodeStrategy {
+public class RimuHostingLifeCycleStrategy implements RebootNodeStrategy, SuspendNodeStrategy, ResumeNodeStrategy {
    private final RimuHostingClient client;
    private final GetNodeMetadataStrategy getNode;
 
    @Inject
-   protected RimuHostingRebootNodeStrategy(RimuHostingClient client, GetNodeMetadataStrategy getNode) {
+   protected RimuHostingLifeCycleStrategy(RimuHostingClient client, GetNodeMetadataStrategy getNode) {
       this.client = client;
       this.getNode = getNode;
    }
@@ -48,6 +50,16 @@ public class RimuHostingRebootNodeStrategy implements RebootNodeStrategy {
       // if false server wasn't around in the first place
       client.restartServer(serverId).getState();
       return getNode.getNode(id);
+   }
+
+   @Override
+   public NodeMetadata suspendNode(String id) {
+      throw new UnsupportedOperationException("suspend not supported");
+   }
+
+   @Override
+   public NodeMetadata resumeNode(String id) {
+      throw new UnsupportedOperationException("resume not supported");
    }
 
 }

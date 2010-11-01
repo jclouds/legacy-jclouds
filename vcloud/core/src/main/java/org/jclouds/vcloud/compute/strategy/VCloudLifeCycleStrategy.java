@@ -23,13 +23,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
 
+import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
-import org.jclouds.vcloud.VCloudExpressClient;
+import org.jclouds.compute.strategy.ResumeNodeStrategy;
+import org.jclouds.compute.strategy.SuspendNodeStrategy;
+import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.domain.Task;
 
 import com.google.common.base.Predicate;
@@ -38,13 +41,14 @@ import com.google.common.base.Predicate;
  * @author Adrian Cole
  */
 @Singleton
-public class VCloudExpressRebootNodeStrategy implements RebootNodeStrategy {
-   private final VCloudExpressClient client;
+public class VCloudLifeCycleStrategy implements RebootNodeStrategy, ResumeNodeStrategy, SuspendNodeStrategy {
+   @Resource
+   private final VCloudClient client;
    protected final Predicate<URI> taskTester;
    protected final GetNodeMetadataStrategy getNode;
 
    @Inject
-   protected VCloudExpressRebootNodeStrategy(VCloudExpressClient client, Predicate<URI> taskTester,
+   protected VCloudLifeCycleStrategy(VCloudClient client, Predicate<URI> taskTester,
             GetNodeMetadataStrategy getNode) {
       this.client = client;
       this.taskTester = taskTester;
@@ -54,8 +58,24 @@ public class VCloudExpressRebootNodeStrategy implements RebootNodeStrategy {
    @Override
    public NodeMetadata rebootNode(String in) {
       URI id = URI.create(checkNotNull(in, "node.id"));
-      Task task = client.resetVApp(id);
+      Task task = client.resetVAppOrVm(id);
+      return returnWhenTaskCompletes(in, task);
+   }
+
+   private NodeMetadata returnWhenTaskCompletes(String in, Task task) {
       taskTester.apply(task.getHref());
       return getNode.getNode(in);
+   }
+
+   @Override
+   public NodeMetadata resumeNode(String in) {
+      Task task = client.powerOnVAppOrVm(URI.create(checkNotNull(in, "node.id")));
+      return returnWhenTaskCompletes(in, task);
+   }
+
+   @Override
+   public NodeMetadata suspendNode(String in) {
+      Task task = client.powerOffVAppOrVm(URI.create(checkNotNull(in, "node.id")));
+      return returnWhenTaskCompletes(in, task);
    }
 }

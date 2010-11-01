@@ -23,7 +23,6 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.net.URI;
-import java.net.UnknownHostException;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
@@ -51,20 +50,20 @@ public class VCloudExpressNetworkHandlerTest {
 
    private Factory factory;
 
-   public void testTerremark() throws UnknownHostException {
+   public void testTerremark() {
       InputStream is = getClass().getResourceAsStream("/express/network-terremark.xml");
       injector = Guice.createInjector(new SaxParserModule());
       factory = injector.getInstance(ParseSax.Factory.class);
       VCloudExpressNetwork result = factory.create(injector.getInstance(VCloudExpressNetworkHandler.class)).parse(is);
-      assertEquals(result, new VCloudExpressNetworkImpl("10.114.34.128/26",
+      assertEquals(result, new VCloudExpressNetworkImpl("10.122.209.128/28",
                "application/vnd.vmware.vcloud.network+xml", URI
-                        .create("https://services.vcloudexpress.terremark.com/api/v0.8/network/1708"), null,
-               ImmutableSet.<String> of(), "10.114.34.129", "255.255.255.192", ImmutableSet
+                        .create("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/network/40031"), null,
+               ImmutableSet.<String> of(), "10.122.209.129", "255.255.255.240", ImmutableSet
                         .<FenceMode> of(FenceMode.ISOLATED), null, ImmutableSet.<PortForwardingRule> of(), ImmutableSet
                         .<FirewallRule> of()));
    }
 
-   public void testHosting() throws UnknownHostException {
+   public void testHosting() {
       InputStream is = getClass().getResourceAsStream("/express/network-hosting.xml");
       injector = Guice.createInjector(new SaxParserModule());
       factory = injector.getInstance(ParseSax.Factory.class);
@@ -76,7 +75,7 @@ public class VCloudExpressNetworkHandlerTest {
                .<FenceMode> of(), null, ImmutableSet.<PortForwardingRule> of(), ImmutableSet.<FirewallRule> of()));
    }
 
-   public void testBluelock() throws UnknownHostException {
+   public void testBluelock() {
       InputStream is = getClass().getResourceAsStream("/express/network-bluelock.xml");
       injector = Guice.createInjector(new SaxParserModule());
       factory = injector.getInstance(ParseSax.Factory.class);

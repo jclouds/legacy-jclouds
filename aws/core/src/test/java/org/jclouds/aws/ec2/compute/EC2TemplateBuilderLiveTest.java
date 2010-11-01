@@ -82,14 +82,14 @@ public class EC2TemplateBuilderLiveTest {
                   .<Module> of(new Log4JLoggingModule()), setupProperties());
 
          Template template = newContext.getComputeService().templateBuilder().hardwareId(InstanceType.M1_SMALL)
-                  .osVersionMatches("10.04").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU).build();
+                  .osVersionMatches("10.10").imageDescriptionMatches("ubuntu-images").osFamily(OsFamily.UBUNTU).build();
 
          System.out.println(template.getHardware());
          assert (template.getImage().getProviderId().startsWith("ami-")) : template;
-         assertEquals(template.getImage().getOperatingSystem().getVersion(), "10.04");
+         assertEquals(template.getImage().getOperatingSystem().getVersion(), "10.10");
          assertEquals(template.getImage().getOperatingSystem().is64Bit(), false);
          assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-         assertEquals(template.getImage().getVersion(), "20100921");
+         assertEquals(template.getImage().getVersion(), "20101027");
          assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
          assertEquals(template.getLocation().getId(), "us-east-1");
          assertEquals(getCores(template.getHardware()), 1.0d);
@@ -135,7 +135,7 @@ public class EC2TemplateBuilderLiveTest {
 
          Template defaultTemplate = newContext.getComputeService().templateBuilder().build();
          assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
-         assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "0.9.8-beta");
+         assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "0.9.9-beta");
          assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
          assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
          assertEquals(defaultTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");

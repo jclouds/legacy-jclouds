@@ -25,10 +25,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.Resource;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.domain.Credentials;
+import org.jclouds.logging.Logger;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 
 /**
@@ -36,15 +40,20 @@ import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
  */
 @Singleton
 public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials implements
-      PopulateDefaultLoginCredentialsForImageStrategy {
+         PopulateDefaultLoginCredentialsForImageStrategy {
 
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
+   
    public static final Pattern USER_PASSWORD_PATTERN = Pattern
-         .compile(".*[Uu]sername: ([a-z]+) ?.*\n[Pp]assword: ([^ \n\r]+) ?\r?\n.*");
+            .compile(".*[Uu]sername: ([a-z]+) ?.*\n[Pp]assword: ([^ \n\r]+) ?\r?\n.*");
 
    @Override
    public Credentials execute(Object resourceToAuthenticate) {
       checkNotNull(resourceToAuthenticate);
-      checkArgument(resourceToAuthenticate instanceof VCloudExpressVAppTemplate, "Resource must be an VAppTemplate (for Terremark)");
+      checkArgument(resourceToAuthenticate instanceof VCloudExpressVAppTemplate,
+               "Resource must be an VAppTemplate (for Terremark)");
       VCloudExpressVAppTemplate template = (VCloudExpressVAppTemplate) resourceToAuthenticate;
       String search = template.getDescription() != null ? template.getDescription() : template.getName();
       if (search.indexOf("Windows") >= 0) {
@@ -54,8 +63,9 @@ public class ParseVAppTemplateDescriptionToGetDefaultLoginCredentials implements
          if (matcher.find()) {
             return new Credentials(matcher.group(1), matcher.group(2));
          } else {
-            throw new RuntimeException("could not parse username/password for image: " + template.getHref() + "\n"
-                  + search);
+            logger.warn("could not parse username/password for image: " + template.getHref() + "\n"
+                     + search);
+            return null;
          }
       }
    }

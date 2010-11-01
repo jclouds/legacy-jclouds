@@ -48,7 +48,7 @@ public class RimuHostingAddNodeWithTagStrategy implements AddNodeWithTagStrategy
 
    @Inject
    protected RimuHostingAddNodeWithTagStrategy(RimuHostingClient client, Map<String, Credentials> credentialStore,
-         Function<Server, NodeMetadata> serverToNodeMetadata) {
+            Function<Server, NodeMetadata> serverToNodeMetadata) {
       this.client = client;
       this.credentialStore = credentialStore;
       this.serverToNodeMetadata = serverToNodeMetadata;
@@ -56,12 +56,11 @@ public class RimuHostingAddNodeWithTagStrategy implements AddNodeWithTagStrategy
 
    @Override
    public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
-      NewServerResponse serverResponse = client.createServer(name,
-            checkNotNull(template.getImage().getProviderId(), "imageId"),
-            checkNotNull(template.getHardware().getProviderId(), "hardwareId"));
+      NewServerResponse serverResponse = client.createServer(name, checkNotNull(template.getImage().getProviderId(),
+               "imageId"), checkNotNull(template.getHardware().getProviderId(), "hardwareId"));
       Server from = client.getServer(serverResponse.getServer().getId());
-      credentialStore.put(from.getId() + "", new Credentials("root", serverResponse.getNewInstanceRequest()
-            .getCreateOptions().getPassword()));
+      credentialStore.put("node#" + from.getId(), new Credentials("root", serverResponse.getNewInstanceRequest()
+               .getCreateOptions().getPassword()));
       return serverToNodeMetadata.apply(from);
    }
 

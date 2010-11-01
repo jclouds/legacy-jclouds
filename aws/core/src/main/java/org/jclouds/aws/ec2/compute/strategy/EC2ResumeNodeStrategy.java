@@ -17,35 +17,40 @@
  * ====================================================================
  */
 
-package org.jclouds.slicehost.compute.strategy;
+package org.jclouds.aws.ec2.compute.strategy;
+
+import static org.jclouds.aws.ec2.util.EC2Utils.parseHandle;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.aws.ec2.EC2Client;
+import org.jclouds.aws.ec2.services.InstanceClient;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.compute.strategy.RebootNodeStrategy;
-import org.jclouds.slicehost.SlicehostClient;
+import org.jclouds.compute.strategy.ResumeNodeStrategy;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class SlicehostRebootNodeStrategy implements RebootNodeStrategy {
-   private final SlicehostClient client;
+public class EC2ResumeNodeStrategy implements ResumeNodeStrategy {
+   private final InstanceClient client;
    private final GetNodeMetadataStrategy getNode;
 
    @Inject
-   protected SlicehostRebootNodeStrategy(SlicehostClient client, GetNodeMetadataStrategy getNode) {
-      this.client = client;
+   protected EC2ResumeNodeStrategy(EC2Client client, GetNodeMetadataStrategy getNode) {
+      this.client = client.getInstanceServices();
       this.getNode = getNode;
    }
 
    @Override
-   public NodeMetadata rebootNode(String id) {
-      int sliceId = Integer.parseInt(id);
-      client.hardRebootSlice(sliceId);
+   public NodeMetadata resumeNode(String id) {
+      String[] parts = parseHandle(id);
+      String region = parts[0];
+      String instanceId = parts[1];
+      client.startInstancesInRegion(region, instanceId);
       return getNode.getNode(id);
    }
 

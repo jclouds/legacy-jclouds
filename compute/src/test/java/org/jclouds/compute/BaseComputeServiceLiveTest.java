@@ -74,6 +74,7 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
@@ -82,7 +83,9 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 
@@ -236,37 +239,11 @@ public abstract class BaseComputeServiceLiveTest {
       assertEquals(toMatch.getImage(), template.getImage());
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
-   public void testCreateAndRunAService() throws Exception {
-
-      String tag = this.tag + "service";
-      try {
-         client.destroyNodesMatching(withTag(tag));
-      } catch (Exception e) {
-
-      }
-
-      template = client.templateBuilder().options(blockOnComplete(false).blockOnPort(8080, 600).inboundPorts(22, 8080))
-               .build();
-      // note this is a dependency on the template resolution
-      template.getOptions().runScript(
-               RunScriptData.createScriptInstallAndStartJBoss(keyPair.get("public"), template.getImage()
-                        .getOperatingSystem()));
-      try {
-         NodeMetadata node = getOnlyElement(client.runNodesWithTag(tag, 1, template));
-
-         checkHttpGet(node);
-      } finally {
-         client.destroyNodesMatching(withTag(tag));
-      }
-
-   }
-
    protected void checkHttpGet(NodeMetadata node) {
       ComputeTestUtils.checkHttpGet(context.utils().http(), node, 8080);
    }
 
-   @Test(enabled = true, dependsOnMethods = "testCreateAndRunAService")
+   @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testCreateTwoNodesWithRunScript() throws Exception {
       try {
          client.destroyNodesMatching(withTag(tag));
@@ -299,7 +276,7 @@ public abstract class BaseComputeServiceLiveTest {
       template = buildTemplate(client.templateBuilder());
 
       template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(keyPair.get("public"))
-               .runScript(newStringPayload(buildScript(template.getImage().getOperatingSystem())));
+               .runScript(buildScript(template.getImage().getOperatingSystem()));
    }
 
    protected void checkImageIdMatchesTemplate(NodeMetadata node) {
@@ -339,14 +316,14 @@ public abstract class BaseComputeServiceLiveTest {
    public void testCredentialsCache() throws Exception {
       initializeContextAndClient();
       for (NodeMetadata node : nodes)
-         assert (context.getCredentialStore().get(node.getId()) != null) : "credentials for " + node.getId();
+         assert (context.getCredentialStore().get("node#" + node.getId()) != null) : "credentials for " + node.getId();
    }
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String tag, OperatingSystem os,
             Credentials creds) throws RunScriptOnNodesException {
       try {
-         return client.runScriptOnNodesMatching(runningWithTag(tag), newStringPayload(buildScript(os)),
-                  overrideCredentialsWith(creds).nameTask("runScriptWithCreds"));
+         return client.runScriptOnNodesMatching(runningWithTag(tag), newStringPayload(buildScript(os).render(
+                  OsFamily.UNIX)), overrideCredentialsWith(creds).nameTask("runScriptWithCreds"));
       } catch (SshException e) {
          throw e;
       }
@@ -358,7 +335,7 @@ public abstract class BaseComputeServiceLiveTest {
          assertNotNull(node.getTag());
          assertEquals(node.getTag(), tag);
          assertEquals(node.getState(), NodeState.RUNNING);
-         Credentials fromStore = context.getCredentialStore().get(node.getId());
+         Credentials fromStore = context.getCredentialStore().get("node#" + node.getId());
          assertEquals(fromStore, node.getCredentials());
          assert node.getPublicAddresses().size() >= 1 || node.getPrivateAddresses().size() >= 1 : "no ips in" + node;
          assertNotNull(node.getCredentials());
@@ -413,13 +390,25 @@ public abstract class BaseComputeServiceLiveTest {
       testGet();
    }
 
-   @Test(enabled = true/* , dependsOnMethods = "testCompareSizes" */)
-   public void testTemplateOptions() throws Exception {
-      TemplateOptions options = new TemplateOptions().withMetadata();
-      Template t = client.templateBuilder().smallest().options(options).build();
-      assert t.getOptions().isIncludeMetadata() : "The metadata option should be 'true' " + "for the created template";
+   @Test(enabled = true, dependsOnMethods = "testReboot")
+   public void testSuspendResume() throws Exception {
+      client.suspendNodesMatching(withTag(tag));
+      Set<? extends NodeMetadata> stoppedNodes = refreshNodes();
+
+      assert Iterables.all(stoppedNodes, new Predicate<NodeMetadata>() {
+
+         @Override
+         public boolean apply(NodeMetadata input) {
+            return input.getState() == NodeState.SUSPENDED;
+         }
+
+      }) : nodes;
+
+      client.resumeNodesMatching(withTag(tag));
+      testGet();
    }
 
+   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
    public void testListNodes() throws Exception {
       for (ComputeMetadata node : client.listNodes()) {
          assert node.getProviderId() != null;
@@ -428,6 +417,7 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
+   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
    public void testGetNodesWithDetails() throws Exception {
       for (NodeMetadata node : client.listNodesDetailsMatching(all())) {
          assert node.getProviderId() != null : node;
@@ -446,6 +436,52 @@ public abstract class BaseComputeServiceLiveTest {
             assertNotNull(nodeMetadata.getPrivateAddresses());
          }
       }
+   }
+
+   @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
+   public void testDestroyNodes() {
+      client.destroyNodesMatching(withTag(tag));
+      for (NodeMetadata node : filter(client.listNodesDetailsMatching(all()), withTag(tag))) {
+         assert node.getState() == NodeState.TERMINATED : node;
+         assertEquals(context.getCredentialStore().get("node#" + node.getId()), null);
+      }
+   }
+
+   private Set<? extends NodeMetadata> refreshNodes() {
+      return filter(client.listNodesDetailsMatching(all()), and(withTag(tag), not(TERMINATED)));
+   }
+
+   @Test(enabled = true)
+   public void testCreateAndRunAService() throws Exception {
+
+      String tag = this.tag + "service";
+      try {
+         client.destroyNodesMatching(withTag(tag));
+      } catch (Exception e) {
+
+      }
+
+      template = client.templateBuilder().options(blockOnComplete(false).blockOnPort(8080, 600).inboundPorts(22, 8080))
+               .build();
+      // note this is a dependency on the template resolution
+      template.getOptions().runScript(
+               RunScriptData.createScriptInstallAndStartJBoss(keyPair.get("public"), template.getImage()
+                        .getOperatingSystem()));
+      try {
+         NodeMetadata node = getOnlyElement(client.runNodesWithTag(tag, 1, template));
+
+         checkHttpGet(node);
+      } finally {
+         client.destroyNodesMatching(withTag(tag));
+      }
+
+   }
+
+   @Test(enabled = true/* , dependsOnMethods = "testCompareSizes" */)
+   public void testTemplateOptions() throws Exception {
+      TemplateOptions options = new TemplateOptions().withMetadata();
+      Template t = client.templateBuilder().smallest().options(options).build();
+      assert t.getOptions().isIncludeMetadata() : "The metadata option should be 'true' " + "for the created template";
    }
 
    public void testListImages() throws Exception {
@@ -488,7 +524,6 @@ public abstract class BaseComputeServiceLiveTest {
       }
    }
 
-   @Test(enabled = true, dependsOnMethods = "testGet")
    public void testOptionToNotBlock() throws Exception {
       String tag = this.tag + "block";
       try {
@@ -571,7 +606,8 @@ public abstract class BaseComputeServiceLiveTest {
          ExecResponse hello = ssh.exec("echo hello");
          assertEquals(hello.getOutput().trim(), "hello");
          ExecResponse exec = ssh.exec("java -version");
-         assert exec.getError().indexOf("1.6") != -1 || exec.getOutput().indexOf("1.6") != -1 : exec;
+         assert exec.getError().indexOf("1.6") != -1 || exec.getOutput().indexOf("1.6") != -1 : exec + "\n"
+                  + ssh.exec("cat /tmp/bootstrap/stdout.log /tmp/bootstrap/stderr.log");
       } finally {
          if (ssh != null)
             ssh.disconnect();
@@ -581,11 +617,7 @@ public abstract class BaseComputeServiceLiveTest {
    @AfterTest
    protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       if (nodes != null) {
-         client.destroyNodesMatching(withTag(tag));
-         for (NodeMetadata node : filter(client.listNodesDetailsMatching(all()), withTag(tag))) {
-            assert node.getState() == NodeState.TERMINATED : node;
-            assertEquals(context.getCredentialStore().get(node.getId()), null);
-         }
+         testDestroyNodes();
       }
       context.close();
    }

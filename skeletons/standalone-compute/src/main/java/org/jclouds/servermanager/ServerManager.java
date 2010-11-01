@@ -96,4 +96,10 @@ public class ServerManager {
 
    public void rebootServer(int serverId) {
    }
+
+   public void stopServer(int serverId) {
+   }
+   
+   public void startServer(int serverId) {
+   }
 }

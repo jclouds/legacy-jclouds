@@ -45,7 +45,7 @@ public class RimuHostingComputeServiceContextModule extends BaseComputeServiceCo
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.hardwareId("MIRO1B").osFamily(UBUNTU).os64Bit(false).imageNameMatches(".*10\\.?04.*");
+      return template.hardwareId("MIRO1B").osFamily(UBUNTU).os64Bit(false).osVersionMatches("9.10");
    }
 
 }

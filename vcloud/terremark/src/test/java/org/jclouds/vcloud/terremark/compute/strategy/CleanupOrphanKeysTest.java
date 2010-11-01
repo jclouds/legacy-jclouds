@@ -139,9 +139,9 @@ public class CleanupOrphanKeysTest {
    }
 
    private void expectCleanupCredentialStore(CleanupOrphanKeys strategy, NodeMetadata nodeMetadata) {
-      expect(nodeMetadata.getId()).andReturn("1").times(2);
-      expect(strategy.credentialStore.remove("1")).andReturn(null);
-      expect(strategy.credentialStore.remove("1/adminPassword")).andReturn(null);
+      expect("node#" + nodeMetadata.getId()).andReturn("1").times(2);
+      expect(strategy.credentialStore.remove("node#1")).andReturn(null);
+      expect(strategy.credentialStore.remove("node#1#adminPassword")).andReturn(null);
    }
 
    public void testWhenNoneLeftWithTag() {

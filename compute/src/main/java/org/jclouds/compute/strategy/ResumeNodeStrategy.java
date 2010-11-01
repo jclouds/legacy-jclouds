@@ -17,30 +17,17 @@
  * ====================================================================
  */
 
-package org.jclouds.gogrid.util;
+package org.jclouds.compute.strategy;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.jclouds.compute.domain.NodeMetadata;
 
 /**
- * @author Oleksiy Yarmula
+ * Resumes a node from the state {@link org.jclouds.compute.domain.NodeState#SUSPENDED suspended}
+ * 
+ * @author Adrian Cole
  */
-public class GoGridUtils {
+public interface ResumeNodeStrategy {
 
-    /**
-     * Matches nth group or returns null.
-     *  
-     * @param stringToParse string that the pattern will be applied to
-     * @param pattern regular expression {@link java.util.regex.Pattern pattern}
-     * @param nthGroup number of the group to extract / return
-     * @return matched group or null
-     */
-    public static String parseStringByPatternAndGetNthMatchGroup(String stringToParse, Pattern pattern, int nthGroup) {
-        Matcher osVersionMatcher = pattern.matcher(stringToParse);
-        if (osVersionMatcher.find()) {
-            return osVersionMatcher.group(nthGroup);
-        }
-        return null;
-    }
+   NodeMetadata resumeNode(String id);
 
 }

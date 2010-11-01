@@ -66,7 +66,7 @@ public class SliceToNodeMetadataTest {
       Slice slice = SliceHandlerTest.parseSlice();
 
       SliceToNodeMetadata parser = new SliceToNodeMetadata(sliceStateToNodeState, ImmutableMap
-               .<String, Credentials> of("1", creds), Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
+               .<String, Credentials> of("node#1", creds), Suppliers.<Set<? extends Image>> ofInstance(images), Suppliers
                .ofInstance(provider), Suppliers.<Set<? extends Hardware>> ofInstance(hardwares));
 
       NodeMetadata metadata = parser.apply(slice);
@@ -112,9 +112,9 @@ public class SliceToNodeMetadataTest {
       assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
                ImmutableSet.of("174.143.212.229")).privateAddresses(ImmutableSet.of("10.176.164.199")).tag("jclouds")
                .imageId("2").operatingSystem(
-                        new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").is64Bit(true)
-                                 .build()).id("1").providerId("1").name("jclouds-foo").location(provider).userMetadata(
-                        ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+                        new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2")
+                                 .is64Bit(true).build()).id("1").providerId("1").name("jclouds-foo").location(provider)
+               .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
    }
 
    @Test
@@ -136,8 +136,8 @@ public class SliceToNodeMetadataTest {
                                  ImmutableList.of(new Processor(0.25, 1.0))).ram(256).volumes(
                                  ImmutableList.of(new VolumeBuilder().type(Volume.Type.LOCAL).size(1.0f).durable(true)
                                           .bootDevice(true).build())).build()).operatingSystem(
-                        new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").is64Bit(true)
-                                 .build()).id("1").providerId("1").name("jclouds-foo").location(provider).userMetadata(
-                        ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
+                        new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2")
+                                 .is64Bit(true).build()).id("1").providerId("1").name("jclouds-foo").location(provider)
+               .userMetadata(ImmutableMap.of("Server Label", "Web Head 1", "Image Version", "2.1")).build());
    }
 }

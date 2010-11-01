@@ -125,7 +125,7 @@ public class SliceToNodeMetadata implements Function<Slice, NodeMetadata> {
          }
 
       }));
-      builder.credentials(credentialStore.get(from.getId() + ""));
+      builder.credentials(credentialStore.get("node#" + from.getId()));
       return builder.build();
    }
 

@@ -26,7 +26,6 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newTreeSet;
 import static org.jclouds.compute.ComputeTestUtils.buildScript;
 import static org.jclouds.compute.ComputeTestUtils.setupKeyPair;
-import static org.jclouds.scriptbuilder.domain.Statements.exec;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -89,10 +88,10 @@ public class PlacementGroupClientLiveTest {
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-            + ".credential");
+               + ".credential");
       endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
       apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
-            + ".apiversion");
+               + ".apiversion");
    }
 
    protected Properties setupProperties() {
@@ -110,14 +109,14 @@ public class PlacementGroupClientLiveTest {
    public void setupClient() throws FileNotFoundException, IOException {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides);
+      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
+               .<Module> of(new Log4JLoggingModule()), overrides);
       keyPair = setupKeyPair();
 
       client = EC2Client.class.cast(context.getProviderSpecificContext().getApi());
 
       availableTester = new RetryablePredicate<PlacementGroup>(new PlacementGroupAvailable(client), 60, 1,
-            TimeUnit.SECONDS);
+               TimeUnit.SECONDS);
 
       deletedTester = new RetryablePredicate<PlacementGroup>(new PlacementGroupDeleted(client), 60, 1, TimeUnit.SECONDS);
    }
@@ -126,12 +125,12 @@ public class PlacementGroupClientLiveTest {
    void testDescribe() {
       for (String region : newArrayList(Region.US_EAST_1)) {
          SortedSet<PlacementGroup> allResults = newTreeSet(client.getPlacementGroupServices()
-               .describePlacementGroupsInRegion(region));
+                  .describePlacementGroupsInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
             PlacementGroup group = allResults.last();
             SortedSet<PlacementGroup> result = newTreeSet(client.getPlacementGroupServices()
-                  .describePlacementGroupsInRegion(region, group.getName()));
+                     .describePlacementGroupsInRegion(region, group.getName()));
             assertNotNull(result);
             PlacementGroup compare = result.last();
             assertEquals(compare, group);
@@ -160,7 +159,7 @@ public class PlacementGroupClientLiveTest {
    private void verifyPlacementGroup(String groupName) {
       assert availableTester.apply(new PlacementGroup(Region.US_EAST_1, groupName, "cluster", State.PENDING)) : group;
       Set<PlacementGroup> oneResult = client.getPlacementGroupServices().describePlacementGroupsInRegion(null,
-            groupName);
+               groupName);
       assertNotNull(oneResult);
       assertEquals(oneResult.size(), 1);
       group = oneResult.iterator().next();
@@ -195,7 +194,7 @@ public class PlacementGroupClientLiveTest {
       assertEquals(template.getImage().getId(), "us-east-1/ami-7ea24a17");
 
       template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(keyPair.get("public"))
-            .runScript(exec(buildScript(template.getImage().getOperatingSystem())));
+               .runScript(buildScript(template.getImage().getOperatingSystem()));
 
       String tag = PREFIX + "cccluster";
       context.getComputeService().destroyNodesMatching(NodePredicates.withTag(tag));
@@ -205,7 +204,7 @@ public class PlacementGroupClientLiveTest {
          NodeMetadata node = getOnlyElement(nodes);
 
          getOnlyElement(getOnlyElement(client.getInstanceServices().describeInstancesInRegion(null,
-               node.getProviderId())));
+                  node.getProviderId())));
 
       } catch (RunNodesException e) {
          System.err.println(e.getNodeErrors().keySet());

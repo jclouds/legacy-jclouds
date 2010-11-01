@@ -76,12 +76,12 @@ END_OF_SCRIPT
    # add desired commands from the user
    cat >> $INSTANCE_HOME/runScriptWithCreds.sh <<'END_OF_SCRIPT'
 cd $INSTANCE_HOME
+which curl || (apt-get install -f -y -qq --force-yes curl || (apt-get update && apt-get install -f -y -qq --force-yes curl))
+(which java && java -fullversion 2>&1|egrep -q 1.6 ) ||
+curl -X GET -s --retry 20  http://whirr.s3.amazonaws.com/0.2.0-incubating-SNAPSHOT/sun/java/install |(bash)
 echo nameserver 208.67.222.222 >> /etc/resolv.conf
-cp /etc/apt/sources.list /etc/apt/sources.list.old
-sed 's~us.archive.ubuntu.com~mirror.anl.gov/pub~g' /etc/apt/sources.list.old >/etc/apt/sources.list
-which curl || apt-get update -y -qq && apt-get install -f -y -qq --force-yes curl
-(which java && java -fullversion 2>&1|egrep -q 1.6 ) || apt-get install -f -y -qq --force-yes openjdk-6-jre
 rm -rf /var/cache/apt /usr/lib/vmware-tools
+echo "export PATH=\"\$JAVA_HOME/bin/:\$PATH\"" >> /root/.bashrc
 
 
 END_OF_SCRIPT

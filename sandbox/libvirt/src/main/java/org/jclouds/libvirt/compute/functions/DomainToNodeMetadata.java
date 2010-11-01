@@ -53,16 +53,16 @@ import com.google.common.collect.ImmutableMap;
 public class DomainToNodeMetadata implements Function<Domain, NodeMetadata> {
 
    public static final Map<DomainInfo.DomainState, NodeState> domainStateToNodeState = ImmutableMap
-         .<DomainInfo.DomainState, NodeState> builder()
-         .put(DomainInfo.DomainState.VIR_DOMAIN_RUNNING, NodeState.RUNNING)//
-         .put(DomainInfo.DomainState.VIR_DOMAIN_BLOCKED, NodeState.PENDING)//
-         .put(DomainInfo.DomainState.VIR_DOMAIN_PAUSED, NodeState.SUSPENDED)//
-         .put(DomainInfo.DomainState.VIR_DOMAIN_SHUTDOWN, NodeState.SUSPENDED)//
-         .put(DomainInfo.DomainState.VIR_DOMAIN_SHUTOFF, NodeState.SUSPENDED)//
-         .put(DomainInfo.DomainState.VIR_DOMAIN_CRASHED, NodeState.ERROR)//
+            .<DomainInfo.DomainState, NodeState> builder().put(DomainInfo.DomainState.VIR_DOMAIN_RUNNING,
+                     NodeState.RUNNING)//
+            .put(DomainInfo.DomainState.VIR_DOMAIN_BLOCKED, NodeState.PENDING)//
+            .put(DomainInfo.DomainState.VIR_DOMAIN_PAUSED, NodeState.SUSPENDED)//
+            .put(DomainInfo.DomainState.VIR_DOMAIN_SHUTDOWN, NodeState.SUSPENDED)//
+            .put(DomainInfo.DomainState.VIR_DOMAIN_SHUTOFF, NodeState.SUSPENDED)//
+            .put(DomainInfo.DomainState.VIR_DOMAIN_CRASHED, NodeState.ERROR)//
 
-         .put(DomainInfo.DomainState.VIR_DOMAIN_NOSTATE, NodeState.UNRECOGNIZED)//
-         .build();
+            .put(DomainInfo.DomainState.VIR_DOMAIN_NOSTATE, NodeState.UNRECOGNIZED)//
+            .build();
 
    private final Function<Domain, Hardware> findHardwareForDomain;
    private final FindLocationForDomain findLocationForDomain;
@@ -71,7 +71,7 @@ public class DomainToNodeMetadata implements Function<Domain, NodeMetadata> {
 
    @Inject
    DomainToNodeMetadata(Map<String, Credentials> credentialStore, Function<Domain, Hardware> findHardwareForDomain,
-         FindLocationForDomain findLocationForDomain, FindImageForDomain findImageForDomain) {
+            FindLocationForDomain findLocationForDomain, FindImageForDomain findImageForDomain) {
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
       this.findHardwareForDomain = checkNotNull(findHardwareForDomain, "findHardwareForDomain");
       this.findLocationForDomain = checkNotNull(findLocationForDomain, "findLocationForDomain");
@@ -96,7 +96,7 @@ public class DomainToNodeMetadata implements Function<Domain, NodeMetadata> {
          builder.state(domainStateToNodeState.get(from.getInfo().state));
          // builder.publicAddresses(ImmutableSet.<String> of(from.publicAddress));
          // builder.privateAddresses(ImmutableSet.<String> of(from.privateAddress));
-         builder.credentials(credentialStore.get(from.getUUIDString()));
+         builder.credentials(credentialStore.get("node#" + from.getUUIDString()));
 
       } catch (LibvirtException e) {
          // TODO Auto-generated catch block

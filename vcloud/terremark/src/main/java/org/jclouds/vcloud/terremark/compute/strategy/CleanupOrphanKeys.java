@@ -65,8 +65,8 @@ public class CleanupOrphanKeys {
       // TODO refactor so that admin passwords are cached properly, probably as a list value in the
       // credentialStore
       for (NodeMetadata node : deadOnes){
-         credentialStore.remove(node.getId());
-         credentialStore.remove(node.getId() + "/adminPassword");
+         credentialStore.remove("node#" + node.getId());
+         credentialStore.remove("node#" + node.getId() + "#adminPassword");
       }
       Iterable<OrgAndName> orgTags = filter(transform(deadOnes, nodeToOrgAndName), notNull());
       for (OrgAndName orgTag : orgTags) {

@@ -80,4 +80,15 @@ public class ServerManagerComputeServiceAdapter implements ComputeServiceAdapter
    public void rebootNode(String id) {
       client.rebootServer(Integer.parseInt(id));      
    }
+
+   @Override
+   public void resumeNode(String id) {
+      client.startServer(Integer.parseInt(id));      
+      
+   }
+
+   @Override
+   public void suspendNode(String id) {
+      client.stopServer(Integer.parseInt(id));      
+   }
 }

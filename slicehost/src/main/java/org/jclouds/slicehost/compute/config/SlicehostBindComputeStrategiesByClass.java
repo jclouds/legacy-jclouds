@@ -25,11 +25,13 @@ import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
+import org.jclouds.compute.strategy.ResumeNodeStrategy;
+import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.slicehost.compute.strategy.SlicehostAddNodeWithTagStrategy;
 import org.jclouds.slicehost.compute.strategy.SlicehostDestroyNodeStrategy;
 import org.jclouds.slicehost.compute.strategy.SlicehostGetNodeMetadataStrategy;
 import org.jclouds.slicehost.compute.strategy.SlicehostListNodesStrategy;
-import org.jclouds.slicehost.compute.strategy.SlicehostRebootNodeStrategy;
+import org.jclouds.slicehost.compute.strategy.SlicehostLifeCycleStrategy;
 
 /**
  * 
@@ -60,6 +62,16 @@ public class SlicehostBindComputeStrategiesByClass extends BindComputeStrategies
 
    @Override
    protected Class<? extends RebootNodeStrategy> defineRebootNodeStrategy() {
-      return SlicehostRebootNodeStrategy.class;
+      return SlicehostLifeCycleStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends ResumeNodeStrategy> defineStartNodeStrategy() {
+      return SlicehostLifeCycleStrategy.class;
+   }
+
+   @Override
+   protected Class<? extends SuspendNodeStrategy> defineStopNodeStrategy() {
+      return SlicehostLifeCycleStrategy.class;
    }
 }

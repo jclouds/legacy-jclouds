@@ -115,7 +115,7 @@ public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
       builder.state(serverToNodeState.get(from.getStatus()));
       builder.publicAddresses(from.getAddresses().getPublicAddresses());
       builder.privateAddresses(from.getAddresses().getPrivateAddresses());
-      builder.credentials(credentialStore.get(from.getId() + ""));
+      builder.credentials(credentialStore.get("node#" + from.getId()));
       return builder.build();
    }
 

@@ -79,12 +79,12 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
 
    @Inject
    EC2RunNodesAndAddToSetStrategy(
-         EC2Client client,
-         CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions,
-         @Named("PRESENT") Predicate<RunningInstance> instancePresent,
-         Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
-         Function<RunningInstance, Credentials> instanceToCredentials, Map<String, Credentials> credentialStore,
-         ComputeUtils utils) {
+            EC2Client client,
+            CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions,
+            @Named("PRESENT") Predicate<RunningInstance> instancePresent,
+            Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
+            Function<RunningInstance, Credentials> instanceToCredentials, Map<String, Credentials> credentialStore,
+            ComputeUtils utils) {
       this.client = client;
       this.instancePresent = instancePresent;
       this.createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions = createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions;
@@ -96,10 +96,10 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
 
    @Override
    public Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> goodNodes,
-         Map<NodeMetadata, Exception> badNodes) {
+            Map<NodeMetadata, Exception> badNodes) {
 
       Reservation<? extends RunningInstance> reservation = createKeyPairAndSecurityGroupsAsNeededThenRunInstances(tag,
-            count, template);
+               count, template);
 
       Iterable<String> ids = transform(reservation, instanceToId);
 
@@ -111,8 +111,8 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
          populateCredentials(reservation);
       }
 
-      return utils.runOptionsOnNodesAndAddToGoodSetOrPutExceptionIntoBadMap(template.getOptions(),
-            transform(reservation, runningInstanceToNodeMetadata), goodNodes, badNodes);
+      return utils.runOptionsOnNodesAndAddToGoodSetOrPutExceptionIntoBadMap(template.getOptions(), transform(
+               reservation, runningInstanceToNodeMetadata), goodNodes, badNodes);
    }
 
    protected void populateCredentials(Reservation<? extends RunningInstance> reservation) {
@@ -120,27 +120,27 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
       Credentials credentials = instanceToCredentials.apply(instance1);
       if (credentials != null)
          for (RunningInstance instance : reservation)
-            credentialStore.put(instance.getRegion() + "/" + instance.getId(), credentials);
+            credentialStore.put("node#" + instance.getRegion() + "/" + instance.getId(), credentials);
    }
 
    @VisibleForTesting
    Reservation<? extends RunningInstance> createKeyPairAndSecurityGroupsAsNeededThenRunInstances(String tag, int count,
-         Template template) {
+            Template template) {
       String region = getRegionFromLocationOrNull(template.getLocation());
       String zone = getZoneFromLocationOrNull(template.getLocation());
 
       RunInstancesOptions instanceOptions = createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.execute(region,
-            tag, template);
+               tag, template);
 
       if (EC2TemplateOptions.class.cast(template.getOptions()).isMonitoringEnabled())
          instanceOptions.enableMonitoring();
 
       if (logger.isDebugEnabled())
          logger.debug(">> running %d instance region(%s) zone(%s) ami(%s) params(%s)", count, region, zone, template
-               .getImage().getProviderId(), instanceOptions.buildFormParameters());
+                  .getImage().getProviderId(), instanceOptions.buildFormParameters());
 
       return client.getInstanceServices().runInstancesInRegion(region, zone, template.getImage().getProviderId(), 1,
-            count, instanceOptions);
+               count, instanceOptions);
    }
 
 }

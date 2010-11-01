@@ -46,7 +46,7 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class RimuHostingImageSupplier implements Supplier<Set<? extends Image>> {
-   public static final Pattern RIMU_PATTERN = Pattern.compile("([^0-9]*)(.*)");
+   public static final Pattern RIMU_PATTERN = Pattern.compile("([a-zA-Z]+) ?([0-9.]+) .*");
    private final RimuHostingClient sync;
 
    @Inject
@@ -77,23 +77,21 @@ public class RimuHostingImageSupplier implements Supplier<Set<? extends Image>> 
 
    protected OperatingSystem parseOs(final org.jclouds.rimuhosting.miro.domain.Image from) {
       OsFamily osFamily = null;
-      String osName = null;
+      String osName = from.getId();
       String osArch = null;
       String osVersion = null;
-      String osDescription = from.getId();
+      String osDescription = from.getDescription();
       boolean is64Bit = from.getId().indexOf("64") != -1;
 
-      osDescription = from.getId();
-
-      Matcher matcher = RIMU_PATTERN.matcher(from.getId());
+      Matcher matcher = RIMU_PATTERN.matcher(osDescription);
       if (matcher.find()) {
          try {
             osFamily = OsFamily.fromValue(matcher.group(1).toLowerCase());
+            osVersion = matcher.group(2).toLowerCase();
          } catch (IllegalArgumentException e) {
-            logger.debug("<< didn't match os(%s)", matcher.group(2));
+            logger.debug("<< didn't match os(%s)", osDescription);
          }
       }
-      OperatingSystem os = new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
-      return os;
+      return new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
    }
 }

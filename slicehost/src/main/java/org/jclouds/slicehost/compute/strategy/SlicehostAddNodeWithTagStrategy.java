@@ -57,7 +57,7 @@ public class SlicehostAddNodeWithTagStrategy implements AddNodeWithTagStrategy {
    public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
       Slice from = client.createSlice(name, Integer.parseInt(template.getImage().getProviderId()),
             Integer.parseInt(template.getHardware().getProviderId()));
-      credentialStore.put(from.getId() + "", new Credentials("root", from.getRootPassword()));
+      credentialStore.put("node#" + from.getId(), new Credentials("root", from.getRootPassword()));
       return sliceToNodeMetadata.apply(from);
    }
 }

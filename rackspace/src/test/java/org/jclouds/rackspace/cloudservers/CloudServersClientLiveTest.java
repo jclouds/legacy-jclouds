@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.Constants;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payload;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -407,7 +408,7 @@ public class CloudServersClientLiveTest {
       IPSocket socket = new IPSocket(Iterables.get(newDetails.getAddresses().getPublicAddresses(), 0), 22);
       socketTester.apply(socket);
 
-      SshClient client = sshFactory.create(socket, "root", pass);
+      SshClient client = sshFactory.create(socket, new Credentials("root", pass));
       try {
          client.connect();
          Payload etcPasswd = client.get("/etc/jclouds.txt");
@@ -422,7 +423,7 @@ public class CloudServersClientLiveTest {
    private ExecResponse exec(Server details, String pass, String command) throws IOException {
       IPSocket socket = new IPSocket(Iterables.get(details.getAddresses().getPublicAddresses(), 0), 22);
       socketTester.apply(socket);
-      SshClient client = sshFactory.create(socket, "root", pass);
+      SshClient client = sshFactory.create(socket, new Credentials("root", pass));
       try {
          client.connect();
          return client.exec(command);

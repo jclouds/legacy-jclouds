@@ -21,7 +21,6 @@ package org.jclouds.http.functions;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Throwables.propagate;
 import static com.google.common.io.Closeables.closeQuietly;
 
 import java.io.InputStream;
@@ -30,7 +29,6 @@ import java.io.StringReader;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
@@ -38,14 +36,15 @@ import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.base.Function;
 
 /**
- * This object will parse the body of an HttpResponse and return the result of
- * type <T> back to the caller.
+ * This object will parse the body of an HttpResponse and return the result of type <T> back to the
+ * caller.
  * 
  * @author Adrian Cole
  */
@@ -108,6 +107,7 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
    public T parse(InputSource from) {
       try {
          checkNotNull(from, "xml inputsource");
+         from.setEncoding("UTF-8");
          parser.setContentHandler(getHandler());
          // This method should accept documents with a BOM (Byte-order mark)
          parser.parse(from);
@@ -118,16 +118,25 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
    }
 
    private T addRequestDetailsToException(Exception e) {
+      String exceptionMessage = e.getMessage();
+      if (e instanceof SAXParseException) {
+         SAXParseException parseException = (SAXParseException) e;
+         String systemId = parseException.getSystemId();
+         if (systemId == null) {
+            systemId = "";
+         }
+         exceptionMessage = String.format("Error on line %d of document %s: %s", systemId, parseException
+                  .getLineNumber(), parseException.getMessage());
+      }
       if (request != null) {
          StringBuilder message = new StringBuilder();
          message.append("Error parsing input for ").append(request.getRequestLine()).append(": ");
-         message.append(e.getMessage());
+         message.append(exceptionMessage);
          logger.error(e, message.toString());
-         throw new HttpException(message.toString(), e);
+         throw new RuntimeException(message.toString(), e);
       } else {
-         propagate(e);
-         assert false : "should have propagated: " + e;
-         return null;
+         logger.error(e, exceptionMessage.toString());
+         throw new RuntimeException(exceptionMessage.toString(), e);
       }
    }
 
@@ -136,8 +145,7 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
    }
 
    /**
-    * Handler that produces a useable domain object accessible after parsing
-    * completes.
+    * Handler that produces a useable domain object accessible after parsing completes.
     * 
     * @author Adrian Cole
     */
