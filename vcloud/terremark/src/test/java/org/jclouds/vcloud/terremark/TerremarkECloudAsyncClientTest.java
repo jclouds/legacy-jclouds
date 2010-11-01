@@ -51,8 +51,8 @@ import org.jclouds.util.Utils;
 import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExtension.TestOrgCatalogItemSupplier;
 import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExtension.TestOrgCatalogSupplier;
-import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.jclouds.vcloud.domain.network.NetworkConfig;
@@ -604,7 +604,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
       }
 
       @Override
-      protected URI provideDefaultNetwork(URI vdc, CommonVCloudClient client, Injector injector) {
+      protected URI provideDefaultNetwork(URI vdc, Injector injector) {
          return URI.create("https://vcloud.safesecureweb.com/network/1990");
       }
    }

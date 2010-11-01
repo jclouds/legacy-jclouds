@@ -372,6 +372,21 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    }
 
    @Override
+   public void testGetNodesWithDetails() throws Exception {
+      super.testGetNodesWithDetails();
+   }
+
+   @Override
+   public void testListNodes() throws Exception {
+      super.testListNodes();
+   }
+
+   @Override
+   public void testDestroyNodes() {
+      super.testDestroyNodes();
+   }
+
+   @Override
    protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       super.cleanup();
    }

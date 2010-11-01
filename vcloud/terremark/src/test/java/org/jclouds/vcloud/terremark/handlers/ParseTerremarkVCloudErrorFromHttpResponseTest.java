@@ -72,6 +72,13 @@ public class ParseTerremarkVCloudErrorFromHttpResponseTest extends BaseHttpError
    }
 
    @Test
+   public void test501SetsNotImplementedMakesUnsupportedOperationException() {
+      assertCodeMakes("POST", URI
+               .create("https://services.enterprisecloud.terremark.com/api/v0.8b-ext2.5/vapp/49373/action/undeploy"),
+               501, "HTTP/1.1 501 NotImplemented", "", UnsupportedOperationException.class);
+   }
+
+   @Test
    public void testbecause_there_is_a_pending_task_runningSetsIllegalStateException() {
       assertCodeMakes("GET", URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/vdc/32"), 500,
                "because there is a pending task running", "because there is a pending task running",

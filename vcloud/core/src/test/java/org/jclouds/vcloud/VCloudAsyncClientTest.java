@@ -216,7 +216,6 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       checkFilters(request);
    }
 
-
    public void testCaptureVAppInVDC() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("captureVAppInVDC", URI.class, URI.class, String.class,
                CaptureVAppOptions[].class);
@@ -242,8 +241,8 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
                CaptureVAppOptions[].class);
       HttpRequest request = processor.createRequest(method, URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/vdc/1"), URI
-               .create("https://vcenterprise.bluelock.com/api/v1.0/vapp/201"), "my-template",
-               new CaptureVAppOptions().withDescription("The description of the new vApp Template"));
+               .create("https://vcenterprise.bluelock.com/api/v1.0/vapp/201"), "my-template", new CaptureVAppOptions()
+               .withDescription("The description of the new vApp Template"));
 
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vdc/1/action/captureVApp HTTP/1.1");
@@ -258,8 +257,6 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       checkFilters(request);
    }
 
-   
-   
    public void testlistOrgs() throws SecurityException, NoSuchMethodException, IOException {
       Method method = VCloudAsyncClient.class.getMethod("listOrgs");
       HttpRequest request = processor.createRequest(method);
@@ -857,12 +854,13 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       }
 
       @Override
-      protected String provideDefaultVDCName(@org.jclouds.vcloud.endpoints.VDC Supplier<Map<String, String>> vDCtoOrgSupplier) {
+      protected String provideDefaultVDCName(
+               @org.jclouds.vcloud.endpoints.VDC Supplier<Map<String, String>> vDCtoOrgSupplier) {
          return "vdc";
       }
-      
+
       @Override
-      protected URI provideDefaultNetwork(URI vdc, CommonVCloudClient client, Injector injector) {
+      protected URI provideDefaultNetwork(URI vdc, Injector injector) {
          return URI.create("https://vcenterprise.bluelock.com/api/v1.0/network/1990");
       }
 

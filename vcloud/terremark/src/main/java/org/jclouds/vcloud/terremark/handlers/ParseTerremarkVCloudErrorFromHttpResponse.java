@@ -54,10 +54,11 @@ public class ParseTerremarkVCloudErrorFromHttpResponse implements HttpErrorHandl
 
       try {
          String content = parseErrorFromContentOrNull(command, response);
-         if (response.getMessage() != null && ((response.getMessage().indexOf("because there is a pending task running") != -1)
-                  || (response.getMessage().indexOf("because it is already powered off") != -1)
-                  || (response.getMessage().indexOf("already exists") != -1)
-                  || (response.getMessage().indexOf("same name exists") != -1)))
+         if (response.getMessage() != null
+                  && ((response.getMessage().indexOf("because there is a pending task running") != -1)
+                           || (response.getMessage().indexOf("because it is already powered off") != -1)
+                           || (response.getMessage().indexOf("already exists") != -1) || (response.getMessage()
+                           .indexOf("same name exists") != -1)))
             exception = new IllegalStateException(response.getMessage(), exception);
          else
             switch (response.getStatusCode()) {
@@ -80,8 +81,9 @@ public class ParseTerremarkVCloudErrorFromHttpResponse implements HttpErrorHandl
                   }
                   exception = new ResourceNotFoundException(message, exception);
                   break;
-               default:
-                  exception = new HttpResponseException(command, response, content);
+               case 501:
+                  if (response.getMessage() != null && (response.getMessage().indexOf("NotImplemented") != -1))
+                     exception = new UnsupportedOperationException(response.getMessage(), exception);
             }
       } finally {
          releasePayload(response);

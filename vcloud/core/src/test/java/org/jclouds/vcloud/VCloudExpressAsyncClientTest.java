@@ -694,7 +694,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       }
 
       @Override
-      protected URI provideDefaultNetwork(URI vdc, CommonVCloudClient client, Injector injector) {
+      protected URI provideDefaultNetwork(URI vdc, Injector injector) {
          return URI.create("https://vcloud.safesecureweb.com/network/1990");
       }
 

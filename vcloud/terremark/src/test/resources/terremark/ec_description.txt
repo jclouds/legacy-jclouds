@@ -1,0 +1,6 @@
+username: ecloud
+password: TmrkCl0ud1s#1!
+
+This template consists of a base Ubuntu Server 10.04 installation. Additional software is available via apt. Updates are available via Software Updater.
+
+The hostname and base IP will be set as part of the server creation process based on user input.

@@ -174,7 +174,8 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Provides
    @org.jclouds.vcloud.endpoints.VDC
    @Singleton
-   protected String provideDefaultVDCName(@org.jclouds.vcloud.endpoints.VDC Supplier<Map<String, String>> vDCtoOrgSupplier) {
+   protected String provideDefaultVDCName(
+            @org.jclouds.vcloud.endpoints.VDC Supplier<Map<String, String>> vDCtoOrgSupplier) {
       Map<String, String> vDCtoOrg = vDCtoOrgSupplier.get();
       checkState(vDCtoOrg.keySet().size() > 0, "No vdcs present!");
       return get(vDCtoOrg.keySet(), 0);
@@ -408,12 +409,11 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
    @Provides
    @Network
    @Singleton
-   protected URI provideDefaultNetwork(@org.jclouds.vcloud.endpoints.VDC URI defaultVDC, CommonVCloudClient client,
-            Injector injector) {
+   protected URI provideDefaultNetwork(@org.jclouds.vcloud.endpoints.VDC URI defaultVDC, Injector injector) {
       if (authException.get() != null)
          throw authException.get();
       try {
-         org.jclouds.vcloud.domain.VDC vDC = client.getVDC(defaultVDC);
+         org.jclouds.vcloud.domain.VDC vDC = injector.getInstance(CommonVCloudClient.class).getVDC(defaultVDC);
          Map<String, ReferenceType> networks = vDC.getAvailableNetworks();
          checkState(networks.size() > 0, "No networks present in vDC: " + vDC.getName());
          if (networks.size() == 1)
@@ -425,23 +425,18 @@ public class CommonVCloudRestClientModule<S extends CommonVCloudClient, A extend
             checkState(network != null, String.format("network named %s not in %s", networkName, networks.keySet()));
             return network.getHref();
          } catch (ConfigurationException e) {
-            // TODO FIXME XXX: In Terremark Enterprise environment with multiple VDC's this does not
-            // work well.
-            // Each VDC will have differnt network subnets. So we cannot assume the default VDC's
-            // networks will
-            // work with non-default VDC's. So make PROPERTY_VCLOUD_DEFAULT_NETWORK optional. If
-            // this property
-            // is not set, they are expected to add NetworkConfig to the options when launching a
-            // server.
-            return null;
-            // throw new
-            // IllegalStateException(String.format("you must specify the property %s as one of %s",
-            // PROPERTY_VCLOUD_DEFAULT_NETWORK, networks.keySet()), e);
+            return findDefaultNetworkForVDC(vDC, networks, injector);
          }
       } catch (AuthorizationException e) {
          authException.set(e);
          throw e;
       }
+   }
+
+   protected URI findDefaultNetworkForVDC(org.jclouds.vcloud.domain.VDC vDC, Map<String, ReferenceType> networks,
+            Injector injector) {
+      logger.warn("default network for vdc %s not set", vDC.getName());
+      return Iterables.getLast(networks.values()).getHref();
    }
 
    @Provides
