@@ -83,47 +83,47 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
       // Domain from = client.createDomainInDC(template.getLocation().getId(), name,
       // Integer.parseInt(template.getImage().getProviderId()),
       // Integer.parseInt(template.getHardware().getProviderId()));
-      // store the credentials so that later functions can use them
+	   // store the credentials so that later functions can use them
       // credentialStore.put(from.id + "", new Credentials(from.loginUser, from.password));
 
-      String[] domains;
+      //String[] domains;
       try {
-         domains = client.listDefinedDomains();
-
+         //domains = client.listDefinedDomains();
+         String xmlDesc  = "";
          Domain domain = null;
-         String xmlDesc = "";
-         for (String domainName : domains) {
-            domain = client.domainLookupByName(domainName);
-            if (domainName.equals("ttylinux")) {
-               domain = client.domainLookupByName(domainName);
-               xmlDesc = domain.getXMLDesc(0);
-               System.out.println("domain: " + domain.getUUIDString());
-
-               XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(xmlDesc)));
-
-               Document doc = builder.getDocument();
-
-               XPathExpression expr = null;
+         //for (String domainName : domains) {
+         //   domain = client.domainLookupByName(domainName);
+         //   if (domainName.equals(tag)) {
+         String domainName = tag;
+         domain = client.domainLookupByName(domainName);
+         System.out.println("domain name " + domain.getName());
+         XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(domain.getXMLDesc(0))));
+         Document doc = builder.getDocument();
+         XPathExpression expr = null;
                NodeList nodes = null;
                String xpathString = "//devices/disk[@device='disk']/source/@file"; // +
                expr = XPathFactory.newInstance().newXPath().compile(xpathString);
                nodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
                String diskFileName = nodes.item(0).getNodeValue();
-
-               System.out.println("\n *** diskFileName " + diskFileName);
-
                StorageVol storageVol = client.storageVolLookupByPath(diskFileName);
-               System.out.println(storageVol.getXMLDesc(0));
 
                // cloning volume
                String poolName = "default";
                StoragePool storagePool = client.storagePoolLookupByName(poolName);
                StorageVol clonedVol = cloneVolume(storagePool, storageVol);
 
-               // System.out.println(generateClonedDomainXML(xmlDesc));
-               domain = client.domainDefineXML(generateClonedDomainXML(xmlDesc));
-            }
-         }
+               System.out.println(clonedVol.getXMLDesc(0));
+               // define Domain
+               String xmlFinal = generateClonedDomainXML(domain.getXMLDesc(0));
+               domain = client.domainDefineXML(xmlFinal);
+
+               domain.create();
+               
+        	   // store the credentials so that later functions can use them
+               credentialStore.put(domain.getUUIDString() + "", new Credentials("identity", "credential"));
+
+            //}
+         //}
          return domain;
       } catch (LibvirtException e) {
          return propogate(e);
@@ -142,25 +142,18 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
       // return ImmutableSet.of();
       // TODO
       // return client.listImages();
-
-      List<Image> images = Lists.newArrayList();
-      images.add(new Image(1, "ubuntu"));
-      return images;
-
+	   int i = 1;
+	   try {
+	   String[] domains = client.listDefinedDomains();
+	   List<Image> images = Lists.newArrayList();
+	   for (String domainName : domains) {
+		   images.add(new Image(i++, domainName));
+	   }
+	   return images;
+	   } catch (Exception e) {
+		   return propogate(e);
+	   }
    }
-
-   // @Override
-   // public Iterable<Domain> listNodes() {
-   // try {
-   // List<Domain> domains = Lists.newArrayList();
-   // for (int domain : client.listDomains()) {
-   // domains.add(client.domainLookupByID(domain));
-   // }
-   // return domains;
-   // } catch (LibvirtException e) {
-   // return propogate(e);
-   // }
-   // }
 
    @Override
    public Iterable<Domain> listNodes() {
@@ -219,20 +212,10 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
       }
    }
 
-   public void createDomain() throws LibvirtException {
-      Domain domain = client.domainDefineXML("<domain type='test' id='2'>" + "  <name>deftest</name>"
-               + "  <uuid>004b96e1-2d78-c30f-5aa5-f03c87d21e70</uuid>" + "  <memory>8388608</memory>"
-               + "  <vcpu>2</vcpu>" + "  <os><type arch='i686'>hvm</type></os>" + "  <on_reboot>restart</on_reboot>"
-               + "  <on_poweroff>destroy</on_poweroff>" + "  <on_crash>restart</on_crash>" + "</domain>");
-
-   }
-
    private static StorageVol cloneVolume(StoragePool storagePool, StorageVol from) throws LibvirtException,
             XPathExpressionException, ParserConfigurationException, SAXException, IOException, TransformerException {
       String fromXML = from.getXMLDesc(0);
       String clonedXML = generateClonedVolumeXML(fromXML);
-      System.out.println(clonedXML);
-      // return null;
       return storagePool.storageVolCreateXMLFrom(clonedXML, from, 0);
    }
 
