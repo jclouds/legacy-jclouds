@@ -21,11 +21,13 @@ package org.jclouds.libvirt.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Set;
+
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.StandaloneComputeServiceContextSpec;
-import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.libvirt.Datacenter;
 import org.jclouds.libvirt.Image;
 import org.jclouds.libvirt.compute.domain.LibvirtComputeServiceContextModule;
@@ -64,7 +66,8 @@ public class LibvirtExperimentLiveTest {
                .createContext(new StandaloneComputeServiceContextSpec<Domain, Domain, Image, Datacenter>("libvirt",
                      endpoint, apiversion, identity, credential, new LibvirtComputeServiceContextModule(), ImmutableSet
                            .<Module> of()));
-         
+
+         /*
 
          /*
          System.out.println("images " + context.getComputeService().listImages());
@@ -83,9 +86,16 @@ public class LibvirtExperimentLiveTest {
      * You can control the default template via overriding a method in standalonecomputeservicexontextmodule
      */
 
-         context.getComputeService().runNodesWithTag("ttylinux", 1/*, defaultTemplate*/);
-
-	} catch (RunNodesException e) {
+         Set<? extends NodeMetadata> nodeMetadataSet = context.getComputeService().runNodesWithTag("ttylinux", 1);
+         
+         for (NodeMetadata nodeMetadata : nodeMetadataSet) {
+        	 context.getComputeService().suspendNode(nodeMetadata.getId());
+        	 Thread.sleep(2000);
+        	 context.getComputeService().resumeNode(nodeMetadata.getId());
+        	 // TODO seems that destroy is intended to be a force shutoff, not a delete VM ...
+        	 //context.getComputeService().destroyNode(nodeMetadata.getId());
+         }
+	} catch (Exception e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	} finally {

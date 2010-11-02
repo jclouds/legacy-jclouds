@@ -44,6 +44,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 
 import com.jamesmurty.utils.XMLBuilder;
@@ -69,7 +70,6 @@ public class DomainToHardware implements Function<Domain, Hardware> {
 			builder.processors(processors);
 
 			builder.ram((int) from.getInfo().maxMem);
-			// TODO volumes
 			List<Volume> volumes = Lists.newArrayList();
 			XMLBuilder xmlBuilder = XMLBuilder.parse(new InputSource(new StringReader(from.getXMLDesc(0))));
 			Document doc = xmlBuilder.getDocument();
@@ -85,22 +85,22 @@ public class DomainToHardware implements Function<Domain, Hardware> {
 			}
 			builder.volumes((List<Volume>) volumes);
 		} catch (LibvirtException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			propagate(e);
 		} catch (XPathExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			propagate(e);
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			propagate(e);
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			propagate(e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			propagate(e);
 		}
 		return builder.build();
 	}
-
+	
+	protected <T> T propagate(Exception e) {
+		Throwables.propagate(e);
+		assert false;
+		return null;
+	}
 }
