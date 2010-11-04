@@ -87,16 +87,14 @@ public class LibvirtExperimentLiveTest {
      */
 
          Set<? extends NodeMetadata> nodeMetadataSet = context.getComputeService().runNodesWithTag("ttylinux", 1);
-         
          for (NodeMetadata nodeMetadata : nodeMetadataSet) {
         	 context.getComputeService().suspendNode(nodeMetadata.getId());
-        	 Thread.sleep(2000);
+        	 Thread.sleep(3000);
         	 context.getComputeService().resumeNode(nodeMetadata.getId());
         	 // TODO seems that destroy is intended to be a force shutoff, not a delete VM ...
         	 //context.getComputeService().destroyNode(nodeMetadata.getId());
          }
 	} catch (Exception e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	} finally {
          if (context != null)

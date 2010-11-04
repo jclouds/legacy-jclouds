@@ -77,7 +77,6 @@ public class DomainToHardware implements Function<Domain, Hardware> {
 			NodeList nodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
 			String diskFileName = nodes.item(0).getNodeValue();
 			for (int i = 0; i < nodes.getLength(); i++) {
-				System.out.println("disk " + diskFileName);
 				StorageVol storageVol = from.getConnect().storageVolLookupByPath(diskFileName);
 				String id = storageVol.getKey();
 				float size = new Long(storageVol.getInfo().capacity).floatValue();
