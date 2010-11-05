@@ -44,9 +44,9 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = false, sequential = true, testName = "terremark.TerremarkVCloudComputeServiceLiveTest")
-public class TerremarkECloudComputeServiceLiveTestDisabled extends BaseComputeServiceLiveTest {
-   public TerremarkECloudComputeServiceLiveTestDisabled() {
+@Test(groups = "live", enabled = true, sequential = true, testName = "terremark.TerremarkVCloudComputeServiceLiveTest")
+public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+   public TerremarkECloudComputeServiceLiveTest() {
       provider = "trmk-ecloud";
    }
 

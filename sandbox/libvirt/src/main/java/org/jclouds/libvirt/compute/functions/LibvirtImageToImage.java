@@ -52,7 +52,7 @@ public class LibvirtImageToImage implements Function<org.jclouds.libvirt.Image, 
       OsFamily family = null;
       try {
          family = OsFamily.fromValue(from.name);
-         builder.operatingSystem(new OperatingSystemBuilder().name(from.name).family(family).description("ubuntu").build());
+         builder.operatingSystem(new OperatingSystemBuilder().name(from.name).family(family).description(from.name).build());
       } catch (IllegalArgumentException e) {
          logger.debug("<< didn't match os(%s)", from);
       }
