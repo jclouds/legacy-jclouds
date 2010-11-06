@@ -28,6 +28,7 @@ import static org.easymock.classextension.EasyMock.verify;
 import java.net.URI;
 
 import org.easymock.IArgumentMatcher;
+import org.jclouds.azure.storage.AzureStorageResponseException;
 import org.jclouds.azure.storage.filters.SharedKeyLiteAuthentication;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpRequest;
@@ -53,6 +54,14 @@ public class ParseAzureErrorFromXmlContentTest {
                .create("https://jclouds.blob.core.windows.net/adriancole-azureblob-413790770?restype=container"), 411,
                "Length Required", "text/html; charset=us-ascii", "<HTML><HEAD><TITLE>Length Required</TITLE>\r\n",
                IllegalArgumentException.class);
+   }
+   
+   @Test
+   public void test412WithTextHtmlHttpResponseException() {
+      assertCodeMakes("GET", URI
+               .create("https://jclouds.blob.core.windows.net/adriancole-blobstore2?restype=container&comp=list&prefix=apps/apps/apps/&include=metadata"), 412,
+               "HTTP/1.1 412 The condition specified using HTTP conditional header(s) is not met.", "application/xml", "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:921efcad-84bc-4e0a-863d-24810d1096e1\nTime:2010-11-04T15:03:07.8694513Z</Message></Error>",
+               AzureStorageResponseException.class);
    }
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String contentType,

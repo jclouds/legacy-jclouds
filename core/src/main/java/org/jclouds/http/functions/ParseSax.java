@@ -26,12 +26,10 @@ import static com.google.common.io.Closeables.closeQuietly;
 import java.io.InputStream;
 import java.io.StringReader;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.logging.Logger;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.util.Utils;
@@ -41,6 +39,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.google.common.base.Function;
+import com.google.common.base.Throwables;
 
 /**
  * This object will parse the body of an HttpResponse and return the result of type <T> back to the
@@ -52,8 +51,6 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
 
    private final XMLReader parser;
    private final HandlerWithResult<T> handler;
-   @Resource
-   protected Logger logger = Logger.NULL;
    private HttpRequest request;
 
    public static interface Factory {
@@ -71,7 +68,7 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
          checkNotNull(from, "http response");
          checkNotNull(from.getPayload(), "payload in " + from);
       } catch (NullPointerException e) {
-         return addRequestDetailsToException(e);
+         return addDetailsAndPropagate(from, e);
       }
       if (from.getStatusCode() >= 300)
          return convertStreamToStringAndParse(from);
@@ -82,7 +79,7 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
       try {
          return parse(Utils.toStringAndClose(from.getPayload().getInput()));
       } catch (Exception e) {
-         return addRequestDetailsToException(e);
+         return addDetailsAndPropagate(from, e);
       }
    }
 
@@ -91,7 +88,7 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
          checkNotNull(from, "xml string");
          checkArgument(from.indexOf('<') >= 0, String.format("not an xml document [%s] ", from));
       } catch (RuntimeException e) {
-         return addRequestDetailsToException(e);
+         return addDetailsAndPropagate(null, e);
       }
       return parse(new InputSource(new StringReader(from)));
    }
@@ -113,31 +110,39 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
          parser.parse(from);
          return getHandler().getResult();
       } catch (Exception e) {
-         return addRequestDetailsToException(e);
+         return addDetailsAndPropagate(null, e);
       }
    }
 
-   private T addRequestDetailsToException(Exception e) {
-      String exceptionMessage = e.getMessage();
+   public T addDetailsAndPropagate(HttpResponse response, Exception e) {
+      StringBuilder message = new StringBuilder();
+      if (request != null) {
+         message.append("request: ").append(request.getRequestLine());
+      }
+      if (response != null) {
+         if (message.length() != 0)
+            message.append("; ");
+         message.append("response: ").append(response.getStatusLine());
+      }
       if (e instanceof SAXParseException) {
          SAXParseException parseException = (SAXParseException) e;
          String systemId = parseException.getSystemId();
          if (systemId == null) {
             systemId = "";
          }
-         exceptionMessage = String.format("Error on line %d of document %s: %s", systemId, parseException
-                  .getLineNumber(), parseException.getMessage());
+         if (message.length() != 0)
+            message.append("; ");
+         message.append(String.format("error at %d:%d in document %s", parseException.getColumnNumber(),
+               parseException.getLineNumber(), systemId));
       }
-      if (request != null) {
-         StringBuilder message = new StringBuilder();
-         message.append("Error parsing input for ").append(request.getRequestLine()).append(": ");
-         message.append(exceptionMessage);
-         logger.error(e, message.toString());
+      if (message.length() != 0) {
+         message.append("; cause: ").append(e.toString());
          throw new RuntimeException(message.toString(), e);
       } else {
-         logger.error(e, exceptionMessage.toString());
-         throw new RuntimeException(exceptionMessage.toString(), e);
+         Throwables.propagate(e);
+         return null;
       }
+
    }
 
    public HandlerWithResult<T> getHandler() {

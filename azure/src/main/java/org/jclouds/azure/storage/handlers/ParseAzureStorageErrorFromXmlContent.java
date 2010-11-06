@@ -89,7 +89,6 @@ public class ParseAzureStorageErrorFromXmlContent implements HttpErrorHandler {
                exception = new AuthorizationException(command.getRequest(), message);
                break;
             case 404:
-
                if (!command.getRequest().getMethod().equals("DELETE")) {
                   String path = command.getRequest().getEndpoint().getPath();
                   Matcher matcher = CONTAINER_PATH.matcher(path);

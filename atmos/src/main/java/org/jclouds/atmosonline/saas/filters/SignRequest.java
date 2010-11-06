@@ -148,7 +148,7 @@ public class SignRequest implements HttpRequestFilter {
       // TreeSet == Sort the headers alphabetically.
       Set<String> headers = new TreeSet<String>(request.getHeaders().keySet());
       for (String header : headers) {
-         if (header.startsWith("x-emc-")) {
+         if (header.startsWith("x-emc-") && !header.equals(AtmosStorageHeaders.SIGNATURE)) {
             // Convert all header names to lowercase.
             toSign.append(header.toLowerCase()).append(":");
             // For headers with values that span multiple lines, convert them into one line by
