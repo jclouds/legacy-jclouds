@@ -19,14 +19,11 @@
 
 package org.jclouds.slicehost.compute.config;
 
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
-
 import java.util.Set;
 
 import javax.inject.Singleton;
 
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -34,7 +31,6 @@ import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.rest.annotations.Provider;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.Injector;
 import com.google.inject.Provides;
 
 /**
@@ -49,11 +45,6 @@ public class SlicehostComputeServiceContextModule extends BaseComputeServiceCont
    Location getLocation(@Provider String providerName) {
       Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
       return new LocationImpl(LocationScope.ZONE, "DFW1", "Dallas, TX", provider);
-   }
-
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(UBUNTU).os64Bit(true);
    }
 
    @Provides

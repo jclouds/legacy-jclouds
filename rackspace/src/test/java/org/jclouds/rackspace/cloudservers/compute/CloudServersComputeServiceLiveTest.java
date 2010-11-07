@@ -52,7 +52,7 @@ public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTe
    public void testTemplateBuilder() {
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "9.10");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), "DFW1");
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
@@ -66,7 +66,7 @@ public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTe
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<CloudServersClient, CloudServersAsyncClient> tmContext = new ComputeServiceContextFactory()
-               .createContext(provider, identity, credential).getProviderSpecificContext();
+            .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
    @Override
@@ -82,4 +82,21 @@ public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTe
       super.testSuspendResume();
    }
 
+   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
+   @Override
+   public void testGetNodesWithDetails() throws Exception {
+      super.testGetNodesWithDetails();
+   }
+
+   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
+   @Override
+   public void testListNodes() throws Exception {
+      super.testListNodes();
+   }
+
+   @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
+   @Override
+   public void testDestroyNodes() {
+      super.testDestroyNodes();
+   }
 }

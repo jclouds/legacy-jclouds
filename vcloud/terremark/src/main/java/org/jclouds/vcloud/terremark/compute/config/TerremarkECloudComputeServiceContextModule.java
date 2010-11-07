@@ -29,7 +29,11 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  */
 public class TerremarkECloudComputeServiceContextModule extends TerremarkVCloudComputeServiceContextModule {
+
+   // as of 6-nov-2010 only centos has ssh key injection in the images.
+   // ssh key injection in ubuntu is targeted for dec-2010 or sooner
+   @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(CENTOS);
+      return template.osFamily(CENTOS).os64Bit(true);
    }
 }

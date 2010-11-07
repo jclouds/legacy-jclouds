@@ -120,8 +120,11 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
                new ImageBuilder().providerId("3").name(OsFamily.CENTOS.name()).id(parentId + "/3").location(zone)
                         .operatingSystem(
                                  new OperatingSystem(OsFamily.CENTOS, "centos 64", null, "X86_64", "centos 64", true))
-                        .description("stub centos 64").defaultCredentials(defaultCredentials).build() //
-
+                        .description("stub centos 64").defaultCredentials(defaultCredentials).build(), //
+               new ImageBuilder().providerId("4").name(OsFamily.UBUNTU.name()).id(parentId + "/4").location(zone)
+                        .operatingSystem(
+                                 new OperatingSystem(OsFamily.UBUNTU, "ubuntu 10.04 64", "10.04", "X86_64", "ubuntu 10.04 64", true))
+                        .description("stub ubuntu 10.04 64").defaultCredentials(defaultCredentials).build() //
                );
    }
 

@@ -99,7 +99,7 @@ public class TerremarkVCloudExpressTemplateBuilderLiveTest {
                   .<Module> of(new Log4JLoggingModule()), setupProperties());
 
          Template defaultTemplate = newContext.getComputeService().templateBuilder().build();
-         assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), null);
+         assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "9.10");
          assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
          assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
          assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);

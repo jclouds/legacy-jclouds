@@ -19,6 +19,8 @@
 
 package org.jclouds.vcloud.terremark.compute.config;
 
+import static org.jclouds.compute.domain.OsFamily.UBUNTU;
+
 import java.security.SecureRandom;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -30,6 +32,7 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.config.BindComputeStrategiesByClass;
 import org.jclouds.compute.config.BindComputeSuppliersByClass;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.vcloud.compute.VCloudExpressComputeClient;
@@ -46,6 +49,7 @@ import org.jclouds.vcloud.terremark.compute.strategy.ParseVAppTemplateDescriptio
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
@@ -69,6 +73,12 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudExpressCom
 
    }
 
+   // prefer jeos as the copy time is much shorter
+   @Override
+   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
+      return template.osFamily(UBUNTU).osDescriptionMatches(".*JeOS.*").os64Bit(true);
+   }
+
    @Override
    protected void configure() {
       super.configure();
@@ -79,7 +89,7 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudExpressCom
       bind(ComputeService.class).to(TerremarkVCloudComputeService.class);
       bind(VCloudExpressComputeClient.class).to(TerremarkVCloudComputeClient.class);
       bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(
-               ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
+            ParseVAppTemplateDescriptionToGetDefaultLoginCredentials.class);
       bind(SecureRandom.class).toInstance(new SecureRandom());
    }
 

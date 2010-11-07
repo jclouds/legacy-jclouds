@@ -22,7 +22,6 @@ package org.jclouds.aws.ec2.compute.config;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
 import static org.jclouds.compute.domain.OsFamily.CENTOS;
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import java.util.Map;
 
@@ -65,12 +64,12 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       String provider = injector.getInstance(Key.get(String.class, Provider.class));
-      if ("eucalyptus".equals(provider))
-         return template.osFamily(CENTOS);
-      else if ("nova".equals(provider))
-         return template.osFamily(UBUNTU);
-      else
+      if ("ec2".equals(provider))
          return template.osFamily(AMZN_LINUX).os64Bit(true);
+      else if ("nova".equals(provider))
+         return super.provideTemplate(injector, template);
+      else
+         return template.osFamily(CENTOS);
    }
 
    @Provides

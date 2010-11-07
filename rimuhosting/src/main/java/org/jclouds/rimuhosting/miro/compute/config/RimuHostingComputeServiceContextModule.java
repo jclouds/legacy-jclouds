@@ -19,9 +19,6 @@
 
 package org.jclouds.rimuhosting.miro.compute.config;
 
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
-
-
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.TemplateBuilder;
 
@@ -45,7 +42,7 @@ public class RimuHostingComputeServiceContextModule extends BaseComputeServiceCo
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.hardwareId("MIRO1B").osFamily(UBUNTU).os64Bit(false).osVersionMatches("9.10");
+      return super.provideTemplate(injector, template).hardwareId("MIRO1B");
    }
 
 }
