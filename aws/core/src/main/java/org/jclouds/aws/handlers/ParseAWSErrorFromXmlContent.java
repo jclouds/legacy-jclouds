@@ -66,14 +66,13 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
 
    public void handleError(HttpCommand command, HttpResponse response) {
       HttpRequest request = command.getRequest();
-      Exception exception = new HttpResponseException(command, response);
+      Exception exception = null;
       try {
          AWSError error = null;
          String message = null;
          if (response.getPayload() != null) {
             String contentType = response.getPayload().getContentMetadata().getContentType();
-            if (contentType != null
-                     && (contentType.indexOf("xml") != -1 || contentType.indexOf("unknown") != -1)) {
+            if (contentType != null && (contentType.indexOf("xml") != -1 || contentType.indexOf("unknown") != -1)) {
                error = utils.parseAWSErrorFromContent(request, response);
                if (error != null) {
                   message = error.getMessage();
@@ -86,36 +85,37 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                }
             }
          }
-         message = message != null ? message : String.format("%s -> %s", request.getRequestLine(), response
-                  .getStatusLine());
+         message = message != null ? message : String.format("%s -> %s", request.getRequestLine(),
+               response.getStatusLine());
+         if (exception == null)
+            exception = new HttpResponseException(command, response, message);
          switch (response.getStatusCode()) {
-            case 400:
-               if (error != null && error.getCode() != null
-                        && (error.getCode().endsWith(".NotFound") || error.getCode().endsWith(".Unknown")))
-                  exception = new ResourceNotFoundException(message, exception);
-               else if ((error != null && error.getCode() != null && (error.getCode().equals("IncorrectState") || error
-                        .getCode().endsWith(".Duplicate")))
-                        || (message != null && message.indexOf("already exists") != -1))
-                  exception = new IllegalStateException(message, exception);
-               else if (error != null && error.getCode() != null && error.getCode().equals("AuthFailure"))
-                  exception = new AuthorizationException(command.getRequest(), message);
-               else if (message != null && message.indexOf("Failed to bind the following fields") != -1)// Nova
-                  exception = new IllegalArgumentException(message, exception);
-               break;
-            case 401:
-            case 403:
+         case 400:
+            if (error != null && error.getCode() != null
+                  && (error.getCode().endsWith(".NotFound") || error.getCode().endsWith(".Unknown")))
+               exception = new ResourceNotFoundException(message, exception);
+            else if ((error != null && error.getCode() != null && (error.getCode().equals("IncorrectState") || error
+                  .getCode().endsWith(".Duplicate"))) || (message != null && message.indexOf("already exists") != -1))
+               exception = new IllegalStateException(message, exception);
+            else if (error != null && error.getCode() != null && error.getCode().equals("AuthFailure"))
                exception = new AuthorizationException(command.getRequest(), message);
-               break;
-            case 404:
-               if (!command.getRequest().getMethod().equals("DELETE")) {
-                  String container = request.getEndpoint().getHost();
-                  String key = request.getEndpoint().getPath();
-                  if (key == null || key.equals("/"))
-                     exception = new ContainerNotFoundException(container, message);
-                  else
-                     exception = new KeyNotFoundException(container, key, message);
-               }
-               break;
+            else if (message != null && message.indexOf("Failed to bind the following fields") != -1)// Nova
+               exception = new IllegalArgumentException(message, exception);
+            break;
+         case 401:
+         case 403:
+            exception = new AuthorizationException(command.getRequest(), message);
+            break;
+         case 404:
+            if (!command.getRequest().getMethod().equals("DELETE")) {
+               String container = request.getEndpoint().getHost();
+               String key = request.getEndpoint().getPath();
+               if (key == null || key.equals("/"))
+                  exception = new ContainerNotFoundException(container, message);
+               else
+                  exception = new KeyNotFoundException(container, key, message);
+            }
+            break;
          }
       } finally {
          releasePayload(response);
