@@ -116,6 +116,8 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                   exception = new KeyNotFoundException(container, key, message);
             }
             break;
+         case 409:
+            exception = new IllegalStateException(message, exception);
          }
       } finally {
          releasePayload(response);

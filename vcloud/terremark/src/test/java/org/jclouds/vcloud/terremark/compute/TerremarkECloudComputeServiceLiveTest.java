@@ -68,7 +68,7 @@ public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiv
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient> tmContext = new ComputeServiceContextFactory()
-               .createContext(provider, identity, credential).getProviderSpecificContext();
+            .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
    @Override
@@ -84,7 +84,7 @@ public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiv
    @Override
    protected void checkOsMatchesTemplate(NodeMetadata node) {
       if (node.getOperatingSystem() != null)
-         assertEquals(node.getOperatingSystem().getFamily(), OsFamily.UNRECOGNIZED);
+         assertEquals(node.getOperatingSystem().getFamily(), null);
    }
 
    @Override
@@ -94,7 +94,7 @@ public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiv
          // image.getLocationId() can be null, if it is a location-free image
          assertEquals(image.getType(), ComputeType.IMAGE);
          if (image.getOperatingSystem().getFamily() != OsFamily.WINDOWS
-                  && image.getOperatingSystem().getFamily() != OsFamily.SOLARIS) {
+               && image.getOperatingSystem().getFamily() != OsFamily.SOLARIS) {
             assert image.getDefaultCredentials() != null && image.getDefaultCredentials().identity != null : image;
             assert image.getDefaultCredentials().credential != null : image;
          }
@@ -110,7 +110,7 @@ public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiv
          NodeMetadata allData = client.getNodeMetadata(node.getId());
          System.out.println(allData.getHardware());
          RestContext<TerremarkVCloudClient, TerremarkVCloudClient> tmContext = new ComputeServiceContextFactory()
-                  .createContext(provider, identity, credential).getProviderSpecificContext();
+               .createContext(provider, identity, credential).getProviderSpecificContext();
          VCloudExpressVApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
          assertEquals(vApp.getName(), allData.getName());
       }

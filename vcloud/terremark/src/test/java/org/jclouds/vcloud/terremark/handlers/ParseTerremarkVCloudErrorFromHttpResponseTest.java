@@ -85,6 +85,13 @@ public class ParseTerremarkVCloudErrorFromHttpResponseTest extends BaseHttpError
                IllegalStateException.class);
    }
 
+   @Test
+   public void testKeyAlreadyExistsSetsIllegalStateException() {
+      assertCodeMakes("POST", URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/extensions/org/48/keys"), 400,
+               "Security key with name livetest exists.", "Security key with name livetest exists.",
+               IllegalStateException.class);
+   }
+   
    @Override
    protected Class<? extends HttpErrorHandler> getHandlerClass() {
       return ParseTerremarkVCloudErrorFromHttpResponse.class;
