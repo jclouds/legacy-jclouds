@@ -68,6 +68,12 @@ public class ParseAWSErrorFromXmlContentTest {
       assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
                "<Error><Code>IncorrectState</Code></Error>", IllegalStateException.class);
    }
+   
+   @Test
+   public void test409SetsIllegalStateException() {
+      assertCodeMakes("PUT", URI.create("https://adriancole-blobstore011.s3.amazonaws.com/"), 409, "",
+               "<Error><Code>OperationAborted</Code><Message>A conflicting conditional operation is currently in progress against this resource. Please try again.</Message><RequestId>F716E81C3D814E59</RequestId><HostId>SDprHxWzG/YXzanVnV7VTz/wP+6fRt1dS+q00kH1rz248YOOSddkFiTXF04XtqNO</HostId></Error>", IllegalStateException.class);
+   }
 
    @Test
    public void test400WithInvalidGroupDuplicateIllegalStateException() {
