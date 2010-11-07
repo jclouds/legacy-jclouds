@@ -162,10 +162,12 @@
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCSSH" />
     </category>
+    <!--
     <category name="jclouds.wire">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCWIRE" />
     </category>
+    -->
     <category name="jclouds.blobstore">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCBLOBSTORE" />

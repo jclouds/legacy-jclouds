@@ -46,6 +46,12 @@ public class EucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest 
    }
 
    @Override
+   @Test(enabled = false)
+   public void testExtendedOptionsAndLogin() throws Exception {
+      // euc does not support monitoring
+   }
+
+   @Override
    protected void assertDefaultWorks() {
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
