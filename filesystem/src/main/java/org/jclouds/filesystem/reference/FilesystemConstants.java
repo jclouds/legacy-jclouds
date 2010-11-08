@@ -27,6 +27,6 @@ package org.jclouds.filesystem.reference;
 public class FilesystemConstants {
 
     /** Specify the base directory where provider starts its file operations - must exists */
-    public static final String PROPERTY_BASEDIR = "FileSystemAsyncBlobStore-basedir";
-
+    public static final String PROPERTY_BASEDIR = "jclouds.filesystem.basedir";
+    
 }

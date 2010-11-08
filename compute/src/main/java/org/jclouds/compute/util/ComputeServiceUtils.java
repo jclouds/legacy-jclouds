@@ -38,7 +38,6 @@ import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
@@ -56,7 +55,7 @@ import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -131,33 +130,6 @@ public class ComputeServiceUtils {
       return total;
    }
 
-   public static final Map<org.jclouds.compute.domain.OsFamily, Map<String, String>> NAME_VERSION_MAP = ImmutableMap
-         .<org.jclouds.compute.domain.OsFamily, Map<String, String>> of(
-               org.jclouds.compute.domain.OsFamily.CENTOS,
-               ImmutableMap.<String, String> builder().put("5.3", "5.3").put("5.4", "5.4").put("5.5", "5.5").build(),
-               org.jclouds.compute.domain.OsFamily.RHEL,
-               ImmutableMap.<String, String> builder().put("5.3", "5.3").put("5.4", "5.4").put("5.5", "5.5").build(),
-               org.jclouds.compute.domain.OsFamily.UBUNTU,
-               ImmutableMap.<String, String> builder().put("hardy", "8.04").put("intrepid", "8.10")
-                     .put("jaunty", "9.04").put("karmic", "9.10").put("lucid", "10.04").put("maverick", "10.10")
-                     .put("natty", "11.04").build());
-
-   public static String parseVersionOrReturnEmptyString(org.jclouds.compute.domain.OsFamily family, final String in) {
-      if (NAME_VERSION_MAP.containsKey(family)) {
-         CONTAINS_SUBSTRING contains = new CONTAINS_SUBSTRING(in.replace('-', '.'));
-         try {
-            String key = find(NAME_VERSION_MAP.get(family).keySet(), contains);
-            return NAME_VERSION_MAP.get(family).get(key);
-         } catch (NoSuchElementException e) {
-            try {
-               return find(NAME_VERSION_MAP.get(family).values(), contains);
-            } catch (NoSuchElementException e1) {
-            }
-         }
-      }
-      return "";
-   }
-
    public static org.jclouds.compute.domain.OsFamily parseOsFamilyOrNull(String provider, String in) {
       org.jclouds.compute.domain.OsFamily myOs = null;
       for (org.jclouds.compute.domain.OsFamily os : org.jclouds.compute.domain.OsFamily.values()) {
@@ -201,19 +173,6 @@ public class ComputeServiceUtils {
       });
    }
 
-   private static final class CONTAINS_SUBSTRING implements Predicate<String> {
-      private final String in;
-
-      private CONTAINS_SUBSTRING(String in) {
-         this.in = in;
-      }
-
-      @Override
-      public boolean apply(String input) {
-         return in.indexOf(input) != -1;
-      }
-   }
-
    public static interface SshCallable<T> extends Callable<T> {
       NodeMetadata getNode();
 
@@ -247,6 +206,38 @@ public class ComputeServiceUtils {
    public static void checkNodeHasIps(NodeMetadata node) {
       checkState(size(concat(node.getPublicAddresses(), node.getPrivateAddresses())) > 0,
             "node does not have IP addresses configured: " + node);
+   }
+
+   public static String parseVersionOrReturnEmptyString(org.jclouds.compute.domain.OsFamily family, final String in,
+         Map<OsFamily, Map<String, String>> osVersionMap) {
+      if (osVersionMap.containsKey(family)) {
+         if (osVersionMap.get(family).containsKey(in))
+            return osVersionMap.get(family).get(in);
+         CONTAINS_SUBSTRING contains = new CONTAINS_SUBSTRING(in.replace('-', '.'));
+         try {
+            String key = Iterables.find(osVersionMap.get(family).keySet(), contains);
+            return osVersionMap.get(family).get(key);
+         } catch (NoSuchElementException e) {
+            try {
+               return Iterables.find(osVersionMap.get(family).values(), contains);
+            } catch (NoSuchElementException e1) {
+            }
+         }
+      }
+      return "";
+   }
+
+   static final class CONTAINS_SUBSTRING implements Predicate<String> {
+      private final String in;
+
+      CONTAINS_SUBSTRING(String in) {
+         this.in = in;
+      }
+
+      @Override
+      public boolean apply(String input) {
+         return in.indexOf(input) != -1;
+      }
    }
 
 }

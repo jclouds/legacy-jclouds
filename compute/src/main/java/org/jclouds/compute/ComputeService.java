@@ -137,7 +137,7 @@ public interface ComputeService {
     * default, equivalent to {@code templateBuilder().any().options(templateOptions)}.
     */
    Set<? extends NodeMetadata> runNodesWithTag(String tag, int count, TemplateOptions templateOptions)
-            throws RunNodesException;
+         throws RunNodesException;
 
    /**
     * Like {@link ComputeService#runNodesWithTag(String,int,TemplateOptions)}, except that the
@@ -148,12 +148,20 @@ public interface ComputeService {
    /**
     * resume the node from {@link org.jclouds.compute.domain.NodeState#SUSPENDED suspended} state,
     * given its id.
+    * 
+    * <h4>note</h4>
+    * 
+    * affected nodes may not resume with the same IP address(es)
     */
    void resumeNode(String id);
 
    /**
     * nodes matching the filter are treated as a logical set. Using the resume command, you can save
     * time by resumeing the nodes in parallel.
+    * 
+    * <h4>note</h4>
+    * 
+    * affected nodes may not resume with the same IP address(es)
     * 
     * @throws UnsupportedOperationException
     *            if the underlying provider doesn't support suspend/resume
@@ -164,6 +172,10 @@ public interface ComputeService {
     * suspend the node, given its id. This will result in
     * {@link org.jclouds.compute.domain.NodeState#SUSPENDED suspended} state.
     * 
+    * <h4>note</h4>
+    * 
+    * affected nodes may not resume with the same IP address(es)
+    * 
     * @throws UnsupportedOperationException
     *            if the underlying provider doesn't support suspend/resume
     */
@@ -173,6 +185,9 @@ public interface ComputeService {
     * nodes matching the filter are treated as a logical set. Using the suspend command, you can
     * save time by suspending the nodes in parallel.
     * 
+    * <h4>note</h4>
+    * 
+    * affected nodes may not resume with the same IP address(es)
     */
    void suspendNodesMatching(Predicate<NodeMetadata> filter);
 
@@ -224,7 +239,7 @@ public interface ComputeService {
     * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
     */
    Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, Payload runScript)
-            throws RunScriptOnNodesException;
+         throws RunScriptOnNodesException;
 
    /**
     * Run the script on all nodes with the specific tag.
@@ -243,6 +258,6 @@ public interface ComputeService {
     * @see org.jclouds.io.Payloads
     */
    Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
-            Payload runScript, RunScriptOptions options) throws RunScriptOnNodesException;
+         Payload runScript, RunScriptOptions options) throws RunScriptOnNodesException;
 
 }

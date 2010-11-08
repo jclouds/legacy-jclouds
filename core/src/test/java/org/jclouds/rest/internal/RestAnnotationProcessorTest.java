@@ -373,10 +373,22 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       @POST
       @Path("")
       public void post(HttpRequestOptions options);
-
+      
+      @POST
+      @Path("")
+      @Produces(MediaType.APPLICATION_OCTET_STREAM)
+      public void post();
    }
 
    public void testHttpRequestOptionsPayloadParam() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = TestPayloadParamVarargs.class.getMethod("post");
+      HttpRequest request = factory(TestQuery.class).createRequest(method);
+      assertRequestLineEquals(request, "POST http://localhost:9999?x-ms-version=2009-07-17 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "");
+      assertPayloadEquals(request, "", "application/octet-stream", false);
+   }
+   
+   public void testHttpRequestWithOnlyContentType() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPayloadParamVarargs.class.getMethod("post", HttpRequestOptions.class);
       verifyTestPostOptions(method);
    }

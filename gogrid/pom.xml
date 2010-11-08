@@ -40,7 +40,7 @@
     </scm>
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
-        <jclouds.compute.blacklist.nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist.nodes>
+        <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
         <test.gogrid.endpoint>https://api.gogrid.com/api</test.gogrid.endpoint>
         <test.gogrid.apiversion>1.5</test.gogrid.apiversion>
         <test.gogrid.identity>FIXME</test.gogrid.identity>
@@ -119,8 +119,8 @@
                                             <value>${test.gogrid.credential}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.compute.blacklist.nodes</name>
-                                            <value>${jclouds.compute.blacklist.nodes}</value>
+                                            <name>jclouds.compute.blacklist-nodes</name>
+                                            <value>${jclouds.compute.blacklist-nodes}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

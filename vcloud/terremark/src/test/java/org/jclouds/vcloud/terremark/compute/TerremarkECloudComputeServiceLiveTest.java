@@ -44,9 +44,9 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = false, sequential = true, testName = "terremark.TerremarkVCloudComputeServiceLiveTest")
-public class TerremarkECloudComputeServiceLiveTestDisabled extends BaseComputeServiceLiveTest {
-   public TerremarkECloudComputeServiceLiveTestDisabled() {
+@Test(groups = "live", enabled = true, sequential = true, testName = "terremark.TerremarkVCloudComputeServiceLiveTest")
+public class TerremarkECloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+   public TerremarkECloudComputeServiceLiveTest() {
       provider = "trmk-ecloud";
    }
 
@@ -59,8 +59,8 @@ public class TerremarkECloudComputeServiceLiveTestDisabled extends BaseComputeSe
    public void testTemplateBuilder() {
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "5.5");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
       assert defaultTemplate.getLocation().getDescription() != null;// different per org
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
@@ -68,7 +68,7 @@ public class TerremarkECloudComputeServiceLiveTestDisabled extends BaseComputeSe
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<TerremarkECloudClient, TerremarkECloudAsyncClient> tmContext = new ComputeServiceContextFactory()
-               .createContext(provider, identity, credential).getProviderSpecificContext();
+            .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
    @Override
@@ -84,7 +84,7 @@ public class TerremarkECloudComputeServiceLiveTestDisabled extends BaseComputeSe
    @Override
    protected void checkOsMatchesTemplate(NodeMetadata node) {
       if (node.getOperatingSystem() != null)
-         assertEquals(node.getOperatingSystem().getFamily(), OsFamily.UNRECOGNIZED);
+         assertEquals(node.getOperatingSystem().getFamily(), null);
    }
 
    @Override
@@ -94,7 +94,7 @@ public class TerremarkECloudComputeServiceLiveTestDisabled extends BaseComputeSe
          // image.getLocationId() can be null, if it is a location-free image
          assertEquals(image.getType(), ComputeType.IMAGE);
          if (image.getOperatingSystem().getFamily() != OsFamily.WINDOWS
-                  && image.getOperatingSystem().getFamily() != OsFamily.SOLARIS) {
+               && image.getOperatingSystem().getFamily() != OsFamily.SOLARIS) {
             assert image.getDefaultCredentials() != null && image.getDefaultCredentials().identity != null : image;
             assert image.getDefaultCredentials().credential != null : image;
          }
@@ -110,7 +110,7 @@ public class TerremarkECloudComputeServiceLiveTestDisabled extends BaseComputeSe
          NodeMetadata allData = client.getNodeMetadata(node.getId());
          System.out.println(allData.getHardware());
          RestContext<TerremarkVCloudClient, TerremarkVCloudClient> tmContext = new ComputeServiceContextFactory()
-                  .createContext(provider, identity, credential).getProviderSpecificContext();
+               .createContext(provider, identity, credential).getProviderSpecificContext();
          VCloudExpressVApp vApp = tmContext.getApi().findVAppInOrgVDCNamed(null, null, allData.getName());
          assertEquals(vApp.getName(), allData.getName());
       }

@@ -71,19 +71,21 @@ public class BucketToResourceMetadata implements Function<BucketMetadata, Storag
 
    private Location getLocation(BucketMetadata from) {
       try {
+         Set<? extends Location> locations = this.locations.get();
          final String region = client.getBucketLocation(from.getName());
+         assert region != null : String.format("could not get region for %s", from.getName());
          if (region != null) {
             try {
-               return Iterables.find(locations.get(), new Predicate<Location>() {
+               return Iterables.find(locations, new Predicate<Location>() {
 
                   @Override
                   public boolean apply(Location input) {
-                     return input.getId().equals(region.toString());
+                     return input.getId().equalsIgnoreCase(region.toString());
                   }
 
                });
             } catch (NoSuchElementException e) {
-               logger.error("could not get location for region %s in %s", region, locations.get());
+               logger.error("could not get location for region %s in %s", region, locations);
             }
          } else {
             logger.error("could not get region for %s", from.getName());

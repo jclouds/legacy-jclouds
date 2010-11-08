@@ -33,7 +33,7 @@ import static com.google.common.collect.Sets.difference;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.newTreeSet;
 import static java.util.Arrays.asList;
-import static javax.ws.rs.core.HttpHeaders.ACCEPT;
+import static javax.ws.rs.core.HttpHeaders.*;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.HttpHeaders.HOST;
 import static org.jclouds.http.HttpUtils.makeQueryLine;
@@ -128,6 +128,7 @@ import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.MapMaker;
@@ -470,6 +471,9 @@ public class RestAnnotationProcessor<T> {
          payload = new MultipartForm(BOUNDARY, parts);
       } else if (formParams.size() > 0) {
          payload = Payloads.newUrlEncodedFormPayload(formParams, skips);
+      } else if (headers.containsKey(CONTENT_TYPE)) {
+         payload = Payloads.newByteArrayPayload(new byte[]{});
+         payload.getContentMetadata().setContentType(Iterables.get(headers.get(CONTENT_TYPE),0));
       }
       if (payload != null) {
          request.setPayload(payload);

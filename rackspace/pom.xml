@@ -38,7 +38,7 @@
         <test.rackspace.credential>FIXME</test.rackspace.credential>
         <test.initializer>org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesTestInitializer</test.initializer>
         <!-- when instances are hung, open a ticket and add here -->
-        <jclouds.compute.blacklist.nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist.nodes>
+        <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
         <test.cloudfiles.endpoint>${test.rackspace.endpoint}</test.cloudfiles.endpoint>
         <test.cloudfiles.apiversion>${test.rackspace.apiversion}</test.cloudfiles.apiversion>
         <test.cloudfiles.identity>${test.rackspace.identity}</test.cloudfiles.identity>
@@ -151,8 +151,8 @@
                                             <value>${test.cloudservers.credential}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.compute.blacklist.nodes</name>
-                                            <value>${jclouds.compute.blacklist.nodes}</value>
+                                            <name>jclouds.compute.blacklist-nodes</name>
+                                            <value>${jclouds.compute.blacklist-nodes}</value>
                                         </property>
                                         <property>
                                             <name>test.initializer</name>

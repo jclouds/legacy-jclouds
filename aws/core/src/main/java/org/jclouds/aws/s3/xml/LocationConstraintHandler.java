@@ -50,8 +50,8 @@ public class LocationConstraintHandler extends ParseSax.HandlerWithResult<String
    public static String fromValue(String v) {
       if (v.equals(""))
          return Region.US_STANDARD;
-      if (v.equals("EU"))
-         return Region.EU_WEST_1;
+      if (v.equals(Region.EU))
+         return Region.EU;
       else if (v.equals(Region.US_WEST_1))
          return Region.US_WEST_1;
       else if (v.equals(Region.AP_SOUTHEAST_1))

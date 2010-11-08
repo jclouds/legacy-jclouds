@@ -35,9 +35,12 @@ import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.functions.CreateSshClientOncePortIsListeningOnNode;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
+import org.jclouds.json.Json;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.ssh.SshClient;
@@ -70,13 +73,20 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null)).in(Scopes.SINGLETON);
    }
 
+   @Provides
+   @Singleton
+   public Map<OsFamily, Map<String, String>> provideOsVersionMap(ComputeServiceConstants.ReferenceData data, Json json) {
+      return json.fromJson(data.osVersionMapJson, new TypeLiteral<Map<OsFamily, Map<String, String>>>() {
+      }.getType());
+   }
+
    /**
     * The default template if none is provided.
     */
    @Provides
    @Named("DEFAULT")
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(UBUNTU);
+      return template.osFamily(UBUNTU).osVersionMatches("10.04").os64Bit(true);
    }
 
    /**

@@ -17,21 +17,23 @@
  * ====================================================================
  */
 
-package org.jclouds.gogrid.compute.suppliers;
+package org.jclouds.vcloud.terremark.compute.config;
 
-import static org.testng.Assert.assertEquals;
+import static org.jclouds.compute.domain.OsFamily.CENTOS;
 
-import org.testng.annotations.Test;
+import org.jclouds.compute.domain.TemplateBuilder;
+
+import com.google.inject.Injector;
 
 /**
- * 
  * @author Adrian Cole
  */
-public class GoGridImageSupplierTest {
+public class TerremarkECloudComputeServiceContextModule extends TerremarkVCloudComputeServiceContextModule {
 
-   @Test
-   public void testParseVersion() {
-      assertEquals(GoGridImageSupplier.parseVersion("CentOS 5.3 (64-bit)"), "5.3");
+   // as of 6-nov-2010 only centos has ssh key injection in the images.
+   // ssh key injection in ubuntu is targeted for dec-2010 or sooner
+   @Override
+   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
+      return template.osFamily(CENTOS).os64Bit(true);
    }
-
 }

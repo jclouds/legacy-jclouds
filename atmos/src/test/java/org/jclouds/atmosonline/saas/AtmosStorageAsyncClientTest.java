@@ -140,7 +140,7 @@ public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyn
 
       assertRequestLineEquals(request, "POST https://accesspoint.atmosonline.com/rest/namespace/dir/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, HttpHeaders.ACCEPT + ": */*\n");
-      assertPayloadEquals(request, null, null, false);
+      assertPayloadEquals(request, "", "application/octet-stream", false);
 
       assertResponseParserClassEquals(method, request, ParseURIFromListOrLocationHeaderIf20x.class);
       assertSaxResponseParserClassEquals(method, null);

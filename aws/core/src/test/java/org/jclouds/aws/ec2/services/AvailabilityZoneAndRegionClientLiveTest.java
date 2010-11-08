@@ -27,10 +27,10 @@ import static org.testng.Assert.assertNotNull;
 
 import java.net.URI;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.Map.Entry;
 
 import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
@@ -41,13 +41,13 @@ import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.inject.Module;
 
 /**
@@ -66,13 +66,12 @@ public class AvailabilityZoneAndRegionClientLiveTest {
    protected String endpoint;
    protected String apiversion;
 
+   @BeforeClass
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
-      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
-      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
-               + ".apiversion");
+      credential = System.getProperty("test." + provider + ".credential");
+      endpoint = System.getProperty("test." + provider + ".endpoint");
+      apiversion = System.getProperty("test." + provider + ".apiversion");
    }
 
    protected Properties setupProperties() {
@@ -80,9 +79,12 @@ public class AvailabilityZoneAndRegionClientLiveTest {
       overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
-      overrides.setProperty(provider + ".endpoint", endpoint);
-      overrides.setProperty(provider + ".apiversion", apiversion);
+      if (credential != null)
+         overrides.setProperty(provider + ".credential", credential);
+      if (endpoint != null)
+         overrides.setProperty(provider + ".endpoint", endpoint);
+      if (apiversion != null)
+         overrides.setProperty(provider + ".apiversion", apiversion);
       return overrides;
    }
 
@@ -90,26 +92,25 @@ public class AvailabilityZoneAndRegionClientLiveTest {
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-               overrides).getProviderSpecificContext();
+      context = new ComputeServiceContextFactory().createContext(provider,
+            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
       client = context.getApi().getAvailabilityZoneAndRegionServices();
    }
 
    public void testDescribeAvailabilityZones() {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1,
-               Region.US_WEST_1, Region.AP_SOUTHEAST_1)) {
-         Set<AvailabilityZoneInfo> allResults = Sets.newLinkedHashSet(client
-                  .describeAvailabilityZonesInRegion(region));
+      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
+            Region.AP_SOUTHEAST_1)) {
+         Set<AvailabilityZoneInfo> allResults = client.describeAvailabilityZonesInRegion(region);
          assertNotNull(allResults);
          assert allResults.size() >= 2 : allResults.size();
          Iterator<AvailabilityZoneInfo> iterator = allResults.iterator();
          String id1 = iterator.next().getZone();
          String id2 = iterator.next().getZone();
-         Set<AvailabilityZoneInfo> twoResults = Sets.newLinkedHashSet(client
-                  .describeAvailabilityZonesInRegion(region, availabilityZones(id1, id2)));
+         Set<AvailabilityZoneInfo> twoResults = client.describeAvailabilityZonesInRegion(region,
+               availabilityZones(id1, id2));
          assertNotNull(twoResults);
          assertEquals(twoResults.size(), 2);
-         iterator = twoResults.iterator();
+         iterator = allResults.iterator();
          assertEquals(iterator.next().getZone(), id1);
          assertEquals(iterator.next().getZone(), id2);
       }

@@ -32,7 +32,7 @@
     <name>jclouds slicehost components</name>
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
-        <jclouds.compute.blacklist.nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist.nodes>
+        <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
         <test.slicehost.endpoint>https://api.slicehost.com</test.slicehost.endpoint>
         <test.slicehost.apiversion>1.4.1.1</test.slicehost.apiversion>
         <test.slicehost.identity>FIXME</test.slicehost.identity>
@@ -107,8 +107,8 @@
                                             <value>${test.slicehost.identity}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.compute.blacklist.nodes</name>
-                                            <value>${jclouds.compute.blacklist.nodes}</value>
+                                            <name>jclouds.compute.blacklist-nodes</name>
+                                            <value>${jclouds.compute.blacklist-nodes}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>
