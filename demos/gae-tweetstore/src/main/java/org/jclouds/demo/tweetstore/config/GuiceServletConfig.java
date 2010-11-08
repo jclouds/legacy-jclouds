@@ -79,7 +79,7 @@ public class GuiceServletConfig extends GuiceServletContextListener {
       // shared across all blobstores and used to retrieve tweets
       try {
          twitterClient = new TwitterFactory().getInstance(props.getProperty("twitter.identity"), props
-                  .getProperty("credential"));
+                  .getProperty("twitter.credential"));
       } catch (IllegalArgumentException e) {
          throw new IllegalArgumentException("properties for twitter not configured properly in " + props.toString(), e);
       }
