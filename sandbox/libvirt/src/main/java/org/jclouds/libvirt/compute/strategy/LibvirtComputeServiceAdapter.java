@@ -43,6 +43,7 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.libvirt.Datacenter;
 import org.jclouds.libvirt.Image;
 import org.libvirt.Connect;
@@ -83,16 +84,13 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
 	public Domain runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
 			Map<String, Credentials> credentialStore) {
 		try {
-			Domain domain = null;
 			String domainName = tag;
-			domain = client.domainLookupByName(domainName);
+			Domain domain = client.domainLookupByName(domainName);
 			XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(domain.getXMLDesc(0))));
 			Document doc = builder.getDocument();
-			XPathExpression expr = null;
-			NodeList nodes = null;
-			String xpathString = "//devices/disk[@device='disk']/source/@file"; // +
-			expr = XPathFactory.newInstance().newXPath().compile(xpathString);
-			nodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
+			String xpathString = "//devices/disk[@device='disk']/source/@file";
+			XPathExpression expr = XPathFactory.newInstance().newXPath().compile(xpathString);
+			NodeList nodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
 			String diskFileName = nodes.item(0).getNodeValue();
 			StorageVol storageVol = client.storageVolLookupByPath(diskFileName);
 			
@@ -208,9 +206,7 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
 	
 	private static StorageVol cloneVolume(StoragePool storagePool, StorageVol from) throws LibvirtException,
 	XPathExpressionException, ParserConfigurationException, SAXException, IOException, TransformerException {
-		String fromXML = from.getXMLDesc(0);
-		String clonedXML = generateClonedVolumeXML(fromXML);
-		return storagePool.storageVolCreateXMLFrom(clonedXML, from, 0);	
+		return storagePool.storageVolCreateXML(generateClonedVolumeXML(from.getXMLDesc(0)), 0);
 	}
 	
 	@Override

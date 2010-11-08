@@ -86,7 +86,7 @@ public class LibvirtExperimentLiveTest {
      * You can control the default template via overriding a method in standalonecomputeservicexontextmodule
      */
 
-         Set<? extends NodeMetadata> nodeMetadataSet = context.getComputeService().runNodesWithTag("ttylinux", 1);
+         Set<? extends NodeMetadata> nodeMetadataSet = context.getComputeService().runNodesWithTag("tty", 2);
          for (NodeMetadata nodeMetadata : nodeMetadataSet) {
         	 context.getComputeService().suspendNode(nodeMetadata.getId());
         	 Thread.sleep(3000);
