@@ -51,7 +51,7 @@ public class RimuHostingComputeServiceLiveTest extends BaseComputeServiceLiveTes
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), "DCDALLAS");
-      assertEquals(defaultTemplate.getHardware().getProviderId(), "MIRO1B");
+      assertEquals(defaultTemplate.getHardware().getProviderId(), "MIRO4B");
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 

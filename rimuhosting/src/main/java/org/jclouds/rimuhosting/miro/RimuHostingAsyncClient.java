@@ -39,6 +39,7 @@ import org.jclouds.rest.annotations.MatrixParams;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.annotations.Unwrap;
+import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rimuhosting.miro.binder.CreateServerOptions;
 import org.jclouds.rimuhosting.miro.binder.RimuHostingRebootJsonBinder;
 import org.jclouds.rimuhosting.miro.domain.Image;
@@ -66,6 +67,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://apidocs.rimuhosting.com" />
  */
 @RequestFilters(RimuHostingAuthentication.class)
+@VirtualHost
 public interface RimuHostingAsyncClient {
 
    /**
@@ -74,7 +76,6 @@ public interface RimuHostingAsyncClient {
    @GET
    @Path("/distributions")
    @ResponseParser(ParseImagesFromJsonResponse.class)
-   @Produces(MediaType.APPLICATION_JSON)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ParseRimuHostingException.class)
    ListenableFuture<Set<Image>> getImageList();
@@ -86,7 +87,6 @@ public interface RimuHostingAsyncClient {
    @Path("/orders")
    @ResponseParser(ParseServersFromJsonResponse.class)
    @MatrixParams(keys = "include_inactive", values = "N")
-   @Produces(MediaType.APPLICATION_JSON)
    @Consumes(MediaType.APPLICATION_JSON)
    @ExceptionParser(ParseRimuHostingException.class)
    ListenableFuture<Set<Server>> getServerList();

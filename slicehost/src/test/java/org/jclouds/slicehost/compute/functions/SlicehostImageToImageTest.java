@@ -23,16 +23,22 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.UnknownHostException;
 
+import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystemBuilder;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.json.Json;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.slicehost.xml.ImageHandlerTest;
 import org.testng.annotations.Test;
+
+import com.google.inject.Guice;
 
 /**
  * @author Adrian Cole
@@ -43,20 +49,27 @@ public class SlicehostImageToImageTest {
 
    @Test
    public void test() throws UnknownHostException {
-      assertEquals(convertImage(), new ImageBuilder().name("CentOS 5.2").operatingSystem(
-               new OperatingSystemBuilder().family(OsFamily.CENTOS).version("5.2").description("CentOS 5.2").is64Bit(
-                        true).build()).description("CentOS 5.2").defaultCredentials(new Credentials("root", null)).ids(
-               "2").build());
+      assertEquals(
+            convertImage(),
+            new ImageBuilder()
+                  .name("CentOS 5.2")
+                  .operatingSystem(
+                        new OperatingSystemBuilder().family(OsFamily.CENTOS).version("5.2").description("CentOS 5.2")
+                              .is64Bit(true).build()).description("CentOS 5.2")
+                  .defaultCredentials(new Credentials("root", null)).ids("2").build());
    }
 
    @Test
    public void test32() throws UnknownHostException {
-      assertEquals(convertImage("/test_get_image32.xml"), new ImageBuilder().name("Ubuntu 10.10 (maverick) 32-bit")
-               .operatingSystem(
-                        new OperatingSystemBuilder().family(OsFamily.UBUNTU).version("10.10").description(
-                                 "Ubuntu 10.10 (maverick) 32-bit").build()).description(
-                        "Ubuntu 10.10 (maverick) 32-bit").defaultCredentials(new Credentials("root", null)).ids("70")
-               .build());
+      assertEquals(
+            convertImage("/test_get_image32.xml"),
+            new ImageBuilder()
+                  .name("Ubuntu 10.10 (maverick) 32-bit")
+                  .operatingSystem(
+                        new OperatingSystemBuilder().family(OsFamily.UBUNTU).version("10.10")
+                              .description("Ubuntu 10.10 (maverick) 32-bit").build())
+                  .description("Ubuntu 10.10 (maverick) 32-bit").defaultCredentials(new Credentials("root", null))
+                  .ids("70").build());
    }
 
    public static Image convertImage() {
@@ -66,7 +79,10 @@ public class SlicehostImageToImageTest {
    public static Image convertImage(String resource) {
       org.jclouds.slicehost.domain.Image image = ImageHandlerTest.parseImage(resource);
 
-      SlicehostImageToImage parser = new SlicehostImageToImage(new SlicehostImageToOperatingSystem());
+      SlicehostImageToImage parser = new SlicehostImageToImage(new SlicehostImageToOperatingSystem(
+            new BaseComputeServiceContextModule() {
+            }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
+                  .getInstance(Json.class))));
 
       return parser.apply(image);
    }

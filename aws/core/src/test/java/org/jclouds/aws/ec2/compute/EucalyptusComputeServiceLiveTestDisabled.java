@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = false, sequential = true, testName = "ec2.EucalyptusComputeServiceLiveTest")
+@Test(groups = "live", enabled = true, sequential = true, testName = "ec2.EucalyptusComputeServiceLiveTest")
 public class EucalyptusComputeServiceLiveTestDisabled extends EC2ComputeServiceLiveTest {
 
    public EucalyptusComputeServiceLiveTestDisabled() {
@@ -57,7 +57,7 @@ public class EucalyptusComputeServiceLiveTestDisabled extends EC2ComputeServiceL
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
-      assertEquals(getCores(defaultTemplate.getHardware()), 2.0d);
+      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
 }

@@ -19,16 +19,19 @@
 
 package org.jclouds.rackspace.cloudservers.compute.functions;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
@@ -40,11 +43,20 @@ import com.google.common.base.Function;
 @Singleton
 public class CloudServersImageToOperatingSystem implements
       Function<org.jclouds.rackspace.cloudservers.domain.Image, OperatingSystem> {
-   public static final Pattern RACKSPACE_PATTERN = Pattern.compile("(([^ ]*) ([0-9.]+) ?.*)");
+   public static final Pattern DEFAULT_PATTERN = Pattern.compile("(([^ ]*) ([0-9.]+) ?.*)");
+   // Windows Server 2008 R2 x64
+   public static final Pattern WINDOWS_PATTERN = Pattern.compile("Windows (.*) (x[86][64])");
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
+   
+   private final Map<OsFamily, Map<String, String>> osVersionMap;
+
+   @Inject
+   public CloudServersImageToOperatingSystem(Map<OsFamily, Map<String, String>> osVersionMap) {
+      this.osVersionMap = osVersionMap;
+   }
 
    public OperatingSystem apply(final org.jclouds.rackspace.cloudservers.domain.Image from) {
       OsFamily osFamily = null;
@@ -53,21 +65,28 @@ public class CloudServersImageToOperatingSystem implements
       String osVersion = null;
       String osDescription = from.getName();
       boolean is64Bit = true;
-      Matcher matcher = RACKSPACE_PATTERN.matcher(from.getName());
       if (from.getName().indexOf("Red Hat EL") != -1) {
          osFamily = OsFamily.RHEL;
       } else if (from.getName().indexOf("Oracle EL") != -1) {
          osFamily = OsFamily.OEL;
-      }
-      if (matcher.find()) {
-         try {
-            osFamily = OsFamily.fromValue(matcher.group(2).toLowerCase());
-         } catch (IllegalArgumentException e) {
-            logger.debug("<< didn't match os(%s)", matcher.group(2));
+      } else if (from.getName().indexOf("Windows") != -1) {
+         osFamily = OsFamily.WINDOWS;
+         Matcher matcher = WINDOWS_PATTERN.matcher(from.getName());
+         if (matcher.find()) {
+            osVersion = ComputeServiceUtils.parseVersionOrReturnEmptyString(osFamily, matcher.group(1), osVersionMap);
+            is64Bit = matcher.group(2).equals("x64");
          }
-         osVersion = matcher.group(3);
+      } else {
+         Matcher matcher = DEFAULT_PATTERN.matcher(from.getName());
+         if (matcher.find()) {
+            try {
+               osFamily = OsFamily.fromValue(matcher.group(2).toLowerCase());
+            } catch (IllegalArgumentException e) {
+               logger.debug("<< didn't match os(%s)", matcher.group(2));
+            }
+            osVersion = ComputeServiceUtils.parseVersionOrReturnEmptyString(osFamily, matcher.group(3), osVersionMap);
+         }
       }
-      OperatingSystem os = new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
-      return os;
+      return new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
    }
 }

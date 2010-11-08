@@ -42,7 +42,7 @@ public class RimuHostingComputeServiceContextModule extends BaseComputeServiceCo
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return super.provideTemplate(injector, template).hardwareId("MIRO1B");
+      return super.provideTemplate(injector, template).hardwareId("MIRO4B");
    }
 
 }

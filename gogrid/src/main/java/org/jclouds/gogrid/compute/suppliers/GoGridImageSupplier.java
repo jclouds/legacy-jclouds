@@ -19,6 +19,7 @@
 
 package org.jclouds.gogrid.compute.suppliers;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,6 +35,7 @@ import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
+import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.domain.ServerImage;
 import org.jclouds.logging.Logger;
@@ -56,9 +58,12 @@ public class GoGridImageSupplier implements Supplier<Set<? extends Image>> {
 
    private final GoGridClient sync;
    private final PopulateDefaultLoginCredentialsForImageStrategy authenticator;
+   private final Map<OsFamily, Map<String, String>> osVersionMap;
 
    @Inject
-   GoGridImageSupplier(final GoGridClient sync, PopulateDefaultLoginCredentialsForImageStrategy authenticator) {
+   GoGridImageSupplier(GoGridClient sync, PopulateDefaultLoginCredentialsForImageStrategy authenticator,
+         Map<OsFamily, Map<String, String>> osVersionMap) {
+      this.osVersionMap = osVersionMap;
       this.sync = sync;
       this.authenticator = authenticator;
    }
@@ -85,29 +90,28 @@ public class GoGridImageSupplier implements Supplier<Set<? extends Image>> {
       OsFamily osFamily = null;
       String osName = from.getOs().getName();
       String osArch = from.getArchitecture().getDescription();
-      String osVersion = parseVersion(osName);
+      String osVersion = null;
       String osDescription = from.getOs().getDescription();
       boolean is64Bit = (from.getOs().getName().indexOf("64") != -1 || from.getDescription().indexOf("64") != -1);
 
-      Matcher matcher = GOGRID_OS_PATTERN.matcher(from.getName());
-      if (matcher.find()) {
-         try {
-            osFamily = OsFamily.fromValue(matcher.group(1).toLowerCase());
-         } catch (IllegalArgumentException e) {
-            logger.debug("<< didn't match os(%s)", from.getName());
+      if (osName.startsWith("Windows")) {
+         osFamily = OsFamily.WINDOWS;
+      } else {
+         Matcher matcher = GOGRID_OS_PATTERN.matcher(from.getName());
+         if (matcher.find()) {
+            try {
+               osFamily = OsFamily.fromValue(matcher.group(1).toLowerCase());
+            } catch (IllegalArgumentException e) {
+               logger.debug("<< didn't match os(%s)", from.getName());
+            }
          }
       }
-
-      // TODO determine DC images are in
-      OperatingSystem os = new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
-      return os;
-   }
-
-   static String parseVersion(String name) {
-      Matcher matcher = GOGRID_VERSION_PATTERN.matcher(name);
+      Matcher matcher = GOGRID_VERSION_PATTERN.matcher(osName);
       if (matcher.find()) {
-         return matcher.group(1);
+         osVersion = ComputeServiceUtils.parseVersionOrReturnEmptyString(osFamily, matcher.group(1), osVersionMap);
       }
-      return null;
+      // TODO determine DC images are in
+      return new OperatingSystem(osFamily, osName, osVersion, osArch, osDescription, is64Bit);
    }
+
 }

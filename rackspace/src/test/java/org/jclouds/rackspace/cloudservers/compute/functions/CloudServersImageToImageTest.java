@@ -23,13 +23,19 @@ import static org.testng.Assert.assertEquals;
 
 import java.net.UnknownHostException;
 
+import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystemBuilder;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
+import org.jclouds.json.Json;
+import org.jclouds.json.config.GsonModule;
 import org.jclouds.rackspace.cloudservers.functions.ParseImageFromJsonResponseTest;
 import org.testng.annotations.Test;
+
+import com.google.inject.Guice;
 
 /**
  * @author Adrian Cole
@@ -52,7 +58,9 @@ public class CloudServersImageToImageTest {
    public static Image convertImage() {
       org.jclouds.rackspace.cloudservers.domain.Image image = ParseImageFromJsonResponseTest.parseImage();
 
-      CloudServersImageToImage parser = new CloudServersImageToImage(new CloudServersImageToOperatingSystem());
+      CloudServersImageToImage parser = new CloudServersImageToImage(new CloudServersImageToOperatingSystem(new BaseComputeServiceContextModule() {
+      }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
+            .getInstance(Json.class))));
 
       return parser.apply(image);
    }

@@ -36,11 +36,11 @@ import com.google.common.base.Predicate;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "terremark.TerremarkVCloudExpressTemplateBuilderLiveTest")
-public class TerremarkVCloudExpressTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+@Test(groups = "live", testName = "terremark.TerremarkECloudTemplateBuilderLiveTest")
+public class TerremarkECloudTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
-   public TerremarkVCloudExpressTemplateBuilderLiveTest() {
-      provider = "trmk-vcloudexpress";
+   public TerremarkECloudTemplateBuilderLiveTest() {
+      provider = "trmk-ecloud";
    }
 
    @Override
@@ -49,8 +49,9 @@ public class TerremarkVCloudExpressTemplateBuilderLiveTest extends BaseTemplateB
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
-            return ((input.family == OsFamily.RHEL || input.family == OsFamily.CENTOS) || //
-                  (input.family == OsFamily.UBUNTU && !input.version.equals("9.10")) || //
+            return ((input.family == OsFamily.RHEL) || //
+                  (input.family == OsFamily.CENTOS && !input.version.equals("5.5")) || //
+                  (input.family == OsFamily.UBUNTU &&( !input.version.equals("10.04")&&!input.version.equals("8.04"))) || //
             (input.family == OsFamily.WINDOWS && (input.version.equals("2008 SP2") || input.version.equals("2008 R2"))));
          }
 
@@ -60,9 +61,9 @@ public class TerremarkVCloudExpressTemplateBuilderLiveTest extends BaseTemplateB
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "9.10");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "5.5");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
 
    }

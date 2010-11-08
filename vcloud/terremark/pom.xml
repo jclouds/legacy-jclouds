@@ -32,7 +32,7 @@
     <description>jclouds Core components to access terremark</description>
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
-        <jclouds.compute.blacklist.nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist.nodes>
+        <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
         <test.trmk-vcloudexpress.endpoint>https://services.vcloudexpress.terremark.com/api</test.trmk-vcloudexpress.endpoint>
         <test.trmk-vcloudexpress.apiversion>0.8a-ext1.6</test.trmk-vcloudexpress.apiversion>
         <test.trmk-vcloudexpress.identity>FIXME</test.trmk-vcloudexpress.identity>
@@ -114,8 +114,8 @@
                                             <value>${test.trmk-ecloud.credential}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.compute.blacklist.nodes</name>
-                                            <value>${jclouds.compute.blacklist.nodes}</value>
+                                            <name>jclouds.compute.blacklist-nodes</name>
+                                            <value>${jclouds.compute.blacklist-nodes}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>
