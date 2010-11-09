@@ -55,6 +55,7 @@ import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.util.ComputeServiceUtils.SshCallable;
 import org.jclouds.logging.Logger;
+import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.AuthorizeRSAPublicKey;
 import org.jclouds.scriptbuilder.domain.InstallRSAPrivateKey;
 import org.jclouds.scriptbuilder.domain.Statement;
@@ -144,8 +145,11 @@ public class ComputeUtils {
          bootstrap.add(options.getRunScript());
       if (options.getPrivateKey() != null)
          bootstrap.add(new InstallRSAPrivateKey(options.getPrivateKey()));
-      if (bootstrap.size() >= 1)
+      if (bootstrap.size() >= 1) {
+         if (options.getTaskName() == null && !(options.getRunScript() instanceof InitBuilder))
+            options.nameTask("bootstrap");
          runScriptOnNode(node, bootstrap.size() == 1 ? bootstrap.get(0) : new StatementList(bootstrap), options);
+      }
       return node;
    }
 
