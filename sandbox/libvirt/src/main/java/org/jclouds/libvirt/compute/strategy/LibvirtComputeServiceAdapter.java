@@ -97,14 +97,24 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
 			// cloning volume
 			String poolName = storageVol.storagePoolLookupByVolume().getName();
 			StoragePool storagePool = client.storagePoolLookupByName(poolName);
-			StorageVol clonedVol = cloneVolume(storagePool, storageVol);
-
+			StorageVol clonedVol = null; //cloneVolume(storagePool, storageVol);
+			boolean cloned = false;
+			int retry = 0;
+			while(!cloned && retry<10) {
+				try {
+					clonedVol = cloneVolume(storagePool, storageVol);
+					cloned = true;
+				} catch (LibvirtException e) {
+					retry++;
+					Thread.sleep(1000);
+				}	
+			}
 			// define Domain
 			String xmlFinal = generateClonedDomainXML(domain.getXMLDesc(0), clonedVol);
 			Domain newDomain = client.domainDefineXML(xmlFinal);
 			newDomain.create();
 			// store the credentials so that later functions can use them
-			credentialStore.put(domain.getUUIDString() + "", new Credentials("identity", "credential"));
+			credentialStore.put(domain.getUUIDString() + "", new Credentials("identity", "credential"));				
 			return newDomain;
 		} catch (LibvirtException e) {
 			return propogate(e);
@@ -163,9 +173,9 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
 	@Override
 	public void destroyNode(String id) {
 		try {
-			client.domainLookupByUUIDString(id).finalize();
+			client.domainLookupByUUIDString(id).destroy();
 
-			/* TODO
+			/*
 			XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(
 					client.domainLookupByUUIDString(id).getXMLDesc(0)
 			)));
@@ -175,7 +185,7 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
 			storageVol.delete(0);
 			
 			client.domainLookupByUUIDString(id).undefine();
-	*/
+			*/
 		} catch (LibvirtException e) {
 			propogate(e);
 		} catch (Exception e) {
@@ -206,7 +216,7 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
 	
 	private static StorageVol cloneVolume(StoragePool storagePool, StorageVol from) throws LibvirtException,
 	XPathExpressionException, ParserConfigurationException, SAXException, IOException, TransformerException {
-		return storagePool.storageVolCreateXML(generateClonedVolumeXML(from.getXMLDesc(0)), 0);
+		return storagePool.storageVolCreateXMLFrom(generateClonedVolumeXML(from.getXMLDesc(0)), from, 0);
 	}
 	
 	@Override
