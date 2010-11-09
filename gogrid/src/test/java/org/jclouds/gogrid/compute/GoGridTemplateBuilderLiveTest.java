@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vcloud.terremark.compute;
+package org.jclouds.gogrid.compute;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
@@ -36,11 +36,11 @@ import com.google.common.base.Predicate;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "terremark.TerremarkVCloudExpressTemplateBuilderLiveTest")
-public class TerremarkVCloudExpressTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+@Test(groups = "live", testName = "gogrid.GoGridTemplateBuilderLiveTest")
+public class GoGridTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
-   public TerremarkVCloudExpressTemplateBuilderLiveTest() {
-      provider = "trmk-vcloudexpress";
+   public GoGridTemplateBuilderLiveTest() {
+      provider = "gogrid";
    }
 
    @Override
@@ -49,9 +49,12 @@ public class TerremarkVCloudExpressTemplateBuilderLiveTest extends BaseTemplateB
 
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
-            return ((input.family == OsFamily.RHEL || input.family == OsFamily.CENTOS) || //
-                  (input.family == OsFamily.UBUNTU && !input.version.equals("9.10")) || //
-            (input.family == OsFamily.WINDOWS && (input.version.equals("2008 SP2") || input.version.equals("2008 R2"))));
+            return ((input.family == OsFamily.RHEL && !input.version.equals("5.4")) || //
+                  (input.family == OsFamily.CENTOS && input.version.matches("5.[54]")) || //
+                  (input.family == OsFamily.CENTOS && input.is64Bit && input.version.equals("5.4")) || //
+                  (input.family == OsFamily.UBUNTU) || //
+            (input.family == OsFamily.WINDOWS && input.version.equals("2008 SP2") || //
+            (input.family == OsFamily.WINDOWS && input.version.equals("2008 R2"))));
          }
 
       };
@@ -60,11 +63,10 @@ public class TerremarkVCloudExpressTemplateBuilderLiveTest extends BaseTemplateB
    @Test
    public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "9.10");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "5.3");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
-
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.CENTOS);
+      assertEquals(getCores(defaultTemplate.getHardware()), 0.5d);
    }
 
 }

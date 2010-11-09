@@ -57,8 +57,7 @@ public class ParseTerremarkVCloudErrorFromHttpResponse implements HttpErrorHandl
          if (response.getMessage() != null
                   && ((response.getMessage().indexOf("because there is a pending task running") != -1)
                            || (response.getMessage().indexOf("because it is already powered off") != -1)
-                           || (response.getMessage().indexOf("already exists") != -1) || (response.getMessage()
-                           .indexOf("same name exists") != -1)))
+                           || (response.getMessage().indexOf("exists") != -1)))
             exception = new IllegalStateException(response.getMessage(), exception);
          else
             switch (response.getStatusCode()) {

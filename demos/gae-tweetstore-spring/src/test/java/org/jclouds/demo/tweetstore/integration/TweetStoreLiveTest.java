@@ -27,9 +27,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -70,16 +70,17 @@ public class TweetStoreLiveTest {
    private String container;
 
    private static final String blobs = System.getProperty("jclouds.tweetstore.blobstores",
-            "cloudfiles,googlestorage,s3,azureblob");
+         "cloudfiles,googlestorage,s3,azureblob");
    private static final Iterable<String> blobstores = Splitter.on(',').split(blobs);
    private static final Properties props = new Properties();
 
    @BeforeTest
-   void clearAndCreateContainers() throws InterruptedException, ExecutionException, TimeoutException, IOException, TwitterException {
+   void clearAndCreateContainers() throws InterruptedException, ExecutionException, TimeoutException, IOException,
+         TwitterException {
       container = checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER));
 
-      props.setProperty(PROPERTY_TWEETSTORE_CONTAINER, checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER),
-               PROPERTY_TWEETSTORE_CONTAINER));
+      props.setProperty(PROPERTY_TWEETSTORE_CONTAINER,
+            checkNotNull(System.getProperty(PROPERTY_TWEETSTORE_CONTAINER), PROPERTY_TWEETSTORE_CONTAINER));
 
       props.setProperty(SpringServletConfig.PROPERTY_BLOBSTORE_CONTEXTS, Joiner.on(',').join(blobstores));
 
@@ -98,8 +99,8 @@ public class TweetStoreLiveTest {
          contexts.put(provider, factory.createContext(provider, wiring, props));
       }
 
-      Twitter client = new TwitterFactory().getInstance(props.getProperty("twitter.identity"), props
-               .getProperty("twitter.credential"));
+      Twitter client = new TwitterFactory().getInstance(props.getProperty("twitter.identity"),
+            props.getProperty("twitter.credential"));
       StoreTweetsController controller = new StoreTweetsController(contexts, container, client);
 
       ResponseList<Status> statuses = client.getMentions();
@@ -108,7 +109,7 @@ public class TweetStoreLiveTest {
       for (BlobStoreContext context : contexts.values()) {
          if (context.getBlobStore().containerExists(container)) {
             System.err.printf("deleting container %s at %s%n", container, context.getProviderSpecificContext()
-                     .getEndpoint());
+                  .getEndpoint());
             context.getBlobStore().deleteContainer(container);
             deleted = true;
          }
@@ -119,7 +120,7 @@ public class TweetStoreLiveTest {
       }
       for (BlobStoreContext context : contexts.values()) {
          System.err.printf("creating container %s at %s%n", container, context.getProviderSpecificContext()
-                  .getEndpoint());
+               .getEndpoint());
          context.getBlobStore().createContainerInLocation(null, container);
       }
       if (deleted) {
@@ -134,22 +135,23 @@ public class TweetStoreLiveTest {
    }
 
    private void addConfigurationForTwitter(Properties props) {
-      props.setProperty("twitter.identity", checkNotNull(System.getProperty("twitter.identity"), "twitter.identity"));
-      props.setProperty("twitter.credential", checkNotNull(System.getProperty("twitter.credential"),
-               "twitter.credential"));
+      props.setProperty("twitter.identity",
+            checkNotNull(System.getProperty("test.twitter.identity"), "test.twitter.identity"));
+      props.setProperty("twitter.credential",
+            checkNotNull(System.getProperty("test.twitter.credential"), "test.twitter.credential"));
    }
 
    private void addCredentialsForBlobStores(Properties props) {
       for (String provider : blobstores) {
-         props.setProperty(provider + ".identity", checkNotNull(System.getProperty(provider + ".identity"), provider
-                  + ".identity"));
-         props.setProperty(provider + ".credential", checkNotNull(System.getProperty(provider + ".credential"),
-                  provider + ".credential"));
+         props.setProperty(provider + ".identity",
+               checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity"));
+         props.setProperty(provider + ".credential",
+               checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider + ".credential"));
       }
    }
 
    @BeforeTest
-   @Parameters( { "warfile", "devappserver.address", "devappserver.port" })
+   @Parameters({ "warfile", "devappserver.address", "devappserver.port" })
    public void startDevAppServer(final String warfile, final String address, final String port) throws Exception {
       url = new URL(String.format("http://%s:%s", address, port));
       server = new GoogleDevServer();

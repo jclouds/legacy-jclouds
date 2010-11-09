@@ -41,5 +41,54 @@
                 </item>
             </blockDeviceMapping>
         </item>
+        <item>
+            <imageId>ami-710c2605</imageId>
+            <imageLocation>411009282317/RightImage Windows_2003_i386_v5.4.3</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>411009282317</imageOwnerId>
+            <isPublic>true</isPublic>
+            <architecture>i386</architecture>
+            <imageType>machine</imageType>
+            <platform>windows</platform>
+            <name>RightImage Windows_2003_i386_v5.4.3</name>
+            <description>Built by RightScale</description>
+            <rootDeviceType>ebs</rootDeviceType>
+            <rootDeviceName>/dev/sda1</rootDeviceName>
+            <blockDeviceMapping>
+                <item>
+                    <deviceName>/dev/sda1</deviceName>
+                    <ebs>
+                        <snapshotId>snap-9460affd</snapshotId>
+                        <volumeSize>35</volumeSize>
+                        <deleteOnTermination>true</deleteOnTermination>
+                    </ebs>
+                </item>
+            </blockDeviceMapping>
+            <virtualizationType>hvm</virtualizationType>
+        </item>
+        <item>
+            <imageId>ami-c6a882b2</imageId>
+            <imageLocation>411009282317/RightImage_Windows_2008_x64_v5.5.5</imageLocation>
+            <imageOwnerId>411009282317</imageOwnerId>
+            <isPublic>true</isPublic>
+            <architecture>x86_64</architecture>
+            <imageType>machine</imageType>
+            <platform>windows</platform>
+            <name>RightImage_Windows_2008_x64_v5.5.5</name>            
+            <description>Built by RightScale</description>
+            <rootDeviceType>ebs</rootDeviceType>
+            <rootDeviceName>/dev/sda1</rootDeviceName> 
+            <blockDeviceMapping>
+                <item>
+                    <deviceName>/dev/sda1</deviceName> 
+                    <ebs>
+                        <snapshotId>snap-68b26c01</snapshotId>                     
+                        <volumeSize>80</volumeSize> 
+                        <deleteOnTermination>true</deleteOnTermination>            
+                    </ebs>
+                </item>
+            </blockDeviceMapping>
+            <virtualizationType>hvm</virtualizationType>
+        </item>
     </imagesSet>
 </DescribeImagesResponse>

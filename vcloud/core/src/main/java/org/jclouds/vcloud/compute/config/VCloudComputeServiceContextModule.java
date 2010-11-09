@@ -20,6 +20,8 @@
 package org.jclouds.vcloud.compute.config;
 
 
+import static org.jclouds.compute.domain.OsFamily.UBUNTU;
+
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.BindComputeStrategiesByClass;
 import org.jclouds.compute.config.BindComputeSuppliersByClass;
@@ -44,6 +46,7 @@ import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.VApp;
 
 import com.google.common.base.Function;
+import com.google.inject.Injector;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
 
@@ -79,7 +82,13 @@ public class VCloudComputeServiceContextModule extends CommonVCloudComputeServic
       });
       bind(PopulateDefaultLoginCredentialsForImageStrategy.class).to(GetLoginCredentialsFromGuestConfiguration.class);
    }
-
+   
+   //CIM ostype does not include version info
+   @Override
+   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
+      return template.osFamily(UBUNTU).os64Bit(true);
+   }
+   
    @Override
    public BindComputeStrategiesByClass defineComputeStrategyModule() {
       return new VCloudBindComputeStrategiesByClass();

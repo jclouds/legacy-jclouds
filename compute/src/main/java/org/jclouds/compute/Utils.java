@@ -44,4 +44,5 @@ public interface Utils extends org.jclouds.rest.Utils {
     * @return function that gets an ssh client for a node that is available via ssh.
     */
    Function<NodeMetadata, SshClient> sshForNode();
+   
 }

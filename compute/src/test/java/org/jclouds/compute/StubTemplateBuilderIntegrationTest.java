@@ -17,21 +17,25 @@
  * ====================================================================
  */
 
-package org.jclouds.gogrid.compute.suppliers;
-
-import static org.testng.Assert.assertEquals;
+package org.jclouds.compute;
 
 import org.testng.annotations.Test;
 
 /**
  * 
+ * 
  * @author Adrian Cole
  */
-public class GoGridImageSupplierTest {
+@Test(groups = { "integration", "live" }, testName = "stub.StubTemplateBuilderIntegrationTest")
+public class StubTemplateBuilderIntegrationTest extends BaseTemplateBuilderLiveTest {
 
-   @Test
-   public void testParseVersion() {
-      assertEquals(GoGridImageSupplier.parseVersion("CentOS 5.3 (64-bit)"), "5.3");
+   public StubTemplateBuilderIntegrationTest() {
+      provider = "stub";
    }
 
+   @Override
+   protected void setupCredentials() {
+      identity = "stub";
+      credential = "stub";
+   }
 }

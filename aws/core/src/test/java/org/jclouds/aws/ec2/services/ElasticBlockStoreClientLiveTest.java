@@ -30,7 +30,6 @@ import java.util.SortedSet;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
@@ -44,6 +43,7 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -71,13 +71,12 @@ public class ElasticBlockStoreClientLiveTest {
    protected String endpoint;
    protected String apiversion;
 
+   @BeforeClass
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
-      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
-      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
-               + ".apiversion");
+      credential = System.getProperty("test." + provider + ".credential");
+      endpoint = System.getProperty("test." + provider + ".endpoint");
+      apiversion = System.getProperty("test." + provider + ".apiversion");
    }
 
    protected Properties setupProperties() {
@@ -85,9 +84,12 @@ public class ElasticBlockStoreClientLiveTest {
       overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
-      overrides.setProperty(provider + ".endpoint", endpoint);
-      overrides.setProperty(provider + ".apiversion", apiversion);
+      if (credential != null)
+         overrides.setProperty(provider + ".credential", credential);
+      if (endpoint != null)
+         overrides.setProperty(provider + ".endpoint", endpoint);
+      if (apiversion != null)
+         overrides.setProperty(provider + ".apiversion", apiversion);
       return overrides;
    }
 
@@ -95,15 +97,15 @@ public class ElasticBlockStoreClientLiveTest {
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-               overrides).getProviderSpecificContext();
+      context = new ComputeServiceContextFactory().createContext(provider,
+            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
       client = context.getApi().getElasticBlockStoreServices();
    }
 
    @Test
    void testDescribeVolumes() {
       for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-               Region.AP_SOUTHEAST_1)) {
+            Region.AP_SOUTHEAST_1)) {
          SortedSet<Volume> allResults = Sets.newTreeSet(client.describeVolumesInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
@@ -136,11 +138,11 @@ public class ElasticBlockStoreClientLiveTest {
    void testCreateSnapshotInRegion() {
       Snapshot snapshot = client.createSnapshotInRegion(null, volumeId);
       Predicate<Snapshot> snapshotted = new RetryablePredicate<Snapshot>(new SnapshotCompleted(client), 600, 10,
-               TimeUnit.SECONDS);
+            TimeUnit.SECONDS);
       assert snapshotted.apply(snapshot);
 
       Snapshot result = Iterables.getOnlyElement(client.describeSnapshotsInRegion(snapshot.getRegion(),
-               snapshotIds(snapshot.getId())));
+            snapshotIds(snapshot.getId())));
 
       assertEquals(result.getProgress(), 100);
       this.snapshot = result;
@@ -152,7 +154,7 @@ public class ElasticBlockStoreClientLiveTest {
       assertNotNull(volume);
 
       Predicate<Volume> availabile = new RetryablePredicate<Volume>(new VolumeAvailable(client), 600, 10,
-               TimeUnit.SECONDS);
+            TimeUnit.SECONDS);
       assert availabile.apply(volume);
 
       Volume result = Iterables.getOnlyElement(client.describeVolumesInRegion(snapshot.getRegion(), volume.getId()));
@@ -166,12 +168,12 @@ public class ElasticBlockStoreClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateSnapshotInRegion")
    void testCreateVolumeFromSnapshotInAvailabilityZoneWithSize() {
-      Volume volume = client.createVolumeFromSnapshotInAvailabilityZone(AvailabilityZone.US_EAST_1B, 2, snapshot
-               .getId());
+      Volume volume = client.createVolumeFromSnapshotInAvailabilityZone(AvailabilityZone.US_EAST_1B, 2,
+            snapshot.getId());
       assertNotNull(volume);
 
       Predicate<Volume> availabile = new RetryablePredicate<Volume>(new VolumeAvailable(client), 600, 10,
-               TimeUnit.SECONDS);
+            TimeUnit.SECONDS);
       assert availabile.apply(volume);
 
       Volume result = Iterables.getOnlyElement(client.describeVolumesInRegion(snapshot.getRegion(), volume.getId()));
@@ -197,13 +199,13 @@ public class ElasticBlockStoreClientLiveTest {
    @Test
    void testDescribeSnapshots() {
       for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-               Region.AP_SOUTHEAST_1)) {
+            Region.AP_SOUTHEAST_1)) {
          SortedSet<Snapshot> allResults = Sets.newTreeSet(client.describeSnapshotsInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
             Snapshot snapshot = allResults.last();
-            Snapshot result = Iterables.getOnlyElement(client.describeSnapshotsInRegion(region, snapshotIds(snapshot
-                     .getId())));
+            Snapshot result = Iterables.getOnlyElement(client.describeSnapshotsInRegion(region,
+                  snapshotIds(snapshot.getId())));
             assertNotNull(result);
             assertEquals(result, snapshot);
          }
@@ -246,12 +248,7 @@ public class ElasticBlockStoreClientLiveTest {
    @Test(dependsOnMethods = "testGetCreateVolumePermissionForSnapshot")
    void testDeleteSnapshotInRegion() {
       client.deleteSnapshotInRegion(snapshot.getRegion(), snapshot.getId());
-      try {
-         client.describeSnapshotsInRegion(snapshot.getRegion(), snapshotIds(snapshot.getId()));
-         assert false : "shoud have exception";
-      } catch (AWSResponseException e) {
-         assertEquals(e.getError().getCode(), "InvalidSnapshot.NotFound");
-      }
+      assert client.describeSnapshotsInRegion(snapshot.getRegion(), snapshotIds(snapshot.getId())).size() == 0;
    }
 
    @AfterTest

@@ -21,18 +21,23 @@ package org.jclouds.aws.ec2.compute.functions;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.aws.ec2.compute.strategy.EC2PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.xml.DescribeImagesResponseHandlerTest;
+import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystemBuilder;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.json.Json;
+import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicates;
@@ -42,6 +47,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
+import com.google.inject.Guice;
 
 /**
  * @author Adrian Cole
@@ -141,6 +147,10 @@ public class ImageParserTest {
       assertEquals(
             new Gson().toJson(Iterables.get(result, 1)),
             "{\"operatingSystem\":{\"family\":\"UBUNTU\",\"arch\":\"paravirtual\",\"version\":\"9.10\",\"description\":\"411009282317/RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"is64Bit\":true},\"version\":\"4.5.3_EBS_Alpha\",\"description\":\"RightImage_Ubuntu_9.10_x64_v4.5.3_EBS_Alpha\",\"defaultCredentials\":{\"identity\":\"root\"},\"id\":\"us-east-1/ami-c19db6b5\",\"type\":\"IMAGE\",\"providerId\":\"ami-c19db6b5\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\"},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\"}}");
+
+      assertEquals(
+            new Gson().toJson(Iterables.get(result, 2)),
+            "{\"operatingSystem\":{\"family\":\"WINDOWS\",\"arch\":\"hvm\",\"version\":\"2003\",\"description\":\"411009282317/RightImage Windows_2003_i386_v5.4.3\",\"is64Bit\":false},\"version\":\"5.4.3\",\"description\":\"Built by RightScale\",\"defaultCredentials\":{\"identity\":\"root\"},\"id\":\"us-east-1/ami-710c2605\",\"type\":\"IMAGE\",\"providerId\":\"ami-710c2605\",\"location\":{\"scope\":\"REGION\",\"id\":\"us-east-1\",\"description\":\"us-east-1\"},\"userMetadata\":{\"owner\":\"411009282317\",\"rootDeviceType\":\"ebs\"}}");
    }
 
    public void testParseEucalyptusImage() {
@@ -208,8 +218,13 @@ public class ImageParserTest {
    static Location defaultLocation = new LocationImpl(LocationScope.REGION, "us-east-1", "us-east-1", null);
 
    public static Set<org.jclouds.compute.domain.Image> convertImages(String resource) {
+
+      Map<OsFamily, Map<String, String>> map = new BaseComputeServiceContextModule() {
+      }.provideOsVersionMap(new ComputeServiceConstants.ReferenceData(), Guice.createInjector(new GsonModule())
+            .getInstance(Json.class));
+
       Set<Image> result = DescribeImagesResponseHandlerTest.parseImages(resource);
-      ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(),
+      ImageParser parser = new ImageParser(new EC2PopulateDefaultLoginCredentialsForImageStrategy(), map,
             Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet.<Location> of(defaultLocation)),
             Suppliers.ofInstance(defaultLocation), "ec2");
       return Sets.newLinkedHashSet(Iterables.filter(Iterables.transform(result, parser), Predicates.notNull()));

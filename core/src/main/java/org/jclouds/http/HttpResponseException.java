@@ -19,7 +19,12 @@
 
 package org.jclouds.http;
 
+import java.io.IOException;
+
 import javax.annotation.Nullable;
+
+import org.jclouds.io.payloads.StringPayload;
+import org.jclouds.util.Utils;
 
 /**
  * Represents an error obtained from an HttpResponse.
@@ -34,15 +39,14 @@ public class HttpResponseException extends RuntimeException {
    protected final HttpResponse response;
    private String content;
 
-   public HttpResponseException(String message, HttpCommand command,
-            @Nullable HttpResponse response, Throwable cause) {
+   public HttpResponseException(String message, HttpCommand command, @Nullable HttpResponse response, Throwable cause) {
       super(message, cause);
       this.command = command;
       this.response = response;
    }
 
-   public HttpResponseException(String message, HttpCommand command,
-            @Nullable HttpResponse response, String content, Throwable cause) {
+   public HttpResponseException(String message, HttpCommand command, @Nullable HttpResponse response, String content,
+         Throwable cause) {
       super(message, cause);
       this.command = command;
       this.response = response;
@@ -50,15 +54,13 @@ public class HttpResponseException extends RuntimeException {
    }
 
    public HttpResponseException(HttpCommand command, HttpResponse response, Throwable cause) {
-      this(String.format("command: %1$s failed with response: %2$s", command.getRequest()
-               .getRequestLine(), response.getStatusLine()), command, response, cause);
+      this(String.format("command: %1$s failed with response: %2$s", command.getRequest().getRequestLine(),
+            response.getStatusLine()), command, response, cause);
    }
 
-   public HttpResponseException(HttpCommand command, HttpResponse response, String content,
-            Throwable cause) {
-      this(String.format("command: %1$s failed with response: %2$s; content: [%3$s]", command
-               .getRequest().getRequestLine(), response.getStatusLine()), command, response,
-               content, cause);
+   public HttpResponseException(HttpCommand command, HttpResponse response, String content, Throwable cause) {
+      this(String.format("command: %1$s failed with response: %2$s; content: [%3$s]", command.getRequest()
+            .getRequestLine(), response.getStatusLine()), command, response, content, cause);
    }
 
    public HttpResponseException(String message, HttpCommand command, @Nullable HttpResponse response) {
@@ -67,8 +69,7 @@ public class HttpResponseException extends RuntimeException {
       this.response = response;
    }
 
-   public HttpResponseException(String message, HttpCommand command,
-            @Nullable HttpResponse response, String content) {
+   public HttpResponseException(String message, HttpCommand command, @Nullable HttpResponse response, String content) {
       super(message);
       this.command = command;
       this.response = response;
@@ -76,14 +77,29 @@ public class HttpResponseException extends RuntimeException {
    }
 
    public HttpResponseException(HttpCommand command, HttpResponse response) {
-      this(String.format("command: %1$s failed with response: %2$s", command.getRequest()
-               .getRequestLine(), response.getStatusLine()), command, response);
+      this(String.format("request: %s %sfailed with response: %s", command.getRequest().getRequestLine(),
+            requestPayloadIfStringOrFormIfNotReturnEmptyString(command.getRequest()), response.getStatusLine()),
+            command, response);
+   }
+
+   static String requestPayloadIfStringOrFormIfNotReturnEmptyString(HttpRequest request) {
+      if (request.getPayload() != null
+            && ("application/x-www-form-urlencoded".equals(request.getPayload().getContentMetadata().getContentType()) || request
+                  .getPayload() instanceof StringPayload)
+            && request.getPayload().getContentMetadata().getContentLength() != null
+            && request.getPayload().getContentMetadata().getContentLength() < 1024) {
+         try {
+            return String.format(" [%s] ", request.getPayload() instanceof StringPayload ? request.getPayload()
+                  .getRawContent() : Utils.toStringAndClose(request.getPayload().getInput()));
+         } catch (IOException e) {
+         }
+      }
+      return "";
    }
 
    public HttpResponseException(HttpCommand command, HttpResponse response, String content) {
-      this(String.format("command: %1$s failed with response: %2$s; content: [%3$s]", command
-               .getRequest().getRequestLine(), response.getStatusLine(), content), command,
-               response, content);
+      this(String.format("command: %s failed with response: %s; content: [%s]", command.getRequest().getRequestLine(),
+            response.getStatusLine(), content), command, response, content);
    }
 
    public HttpCommand getCommand() {

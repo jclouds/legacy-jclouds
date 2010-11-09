@@ -50,22 +50,33 @@ public class ParseAzureErrorFromXmlContentTest {
 
    @Test
    public void test411WithTextHtmlIllegalArgumentException() {
-      assertCodeMakes("PUT", URI
-               .create("https://jclouds.blob.core.windows.net/adriancole-azureblob-413790770?restype=container"), 411,
-               "Length Required", "text/html; charset=us-ascii", "<HTML><HEAD><TITLE>Length Required</TITLE>\r\n",
-               IllegalArgumentException.class);
+      assertCodeMakes("PUT",
+            URI.create("https://jclouds.blob.core.windows.net/adriancole-azureblob-413790770?restype=container"), 411,
+            "Length Required", "text/html; charset=us-ascii", "<HTML><HEAD><TITLE>Length Required</TITLE>\r\n",
+            IllegalArgumentException.class);
    }
-   
+
+   @Test
+   public void test304WithNoContentIllegalArgumentException() {
+      assertCodeMakes("GET", URI.create("https://jclouds.blob.core.windows.net/adriancole-blobstore0/apples"), 411,
+            "HTTP/1.1 304 The condition specified using HTTP conditional header(s) is not met.", "application/unknown",
+            "", IllegalArgumentException.class);
+   }
+
    @Test
    public void test412WithTextHtmlHttpResponseException() {
-      assertCodeMakes("GET", URI
-               .create("https://jclouds.blob.core.windows.net/adriancole-blobstore2?restype=container&comp=list&prefix=apps/apps/apps/&include=metadata"), 412,
-               "HTTP/1.1 412 The condition specified using HTTP conditional header(s) is not met.", "application/xml", "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:921efcad-84bc-4e0a-863d-24810d1096e1\nTime:2010-11-04T15:03:07.8694513Z</Message></Error>",
-               AzureStorageResponseException.class);
+      assertCodeMakes(
+            "GET",
+            URI.create("https://jclouds.blob.core.windows.net/adriancole-blobstore2?restype=container&comp=list&prefix=apps/apps/apps/&include=metadata"),
+            412,
+            "HTTP/1.1 412 The condition specified using HTTP conditional header(s) is not met.",
+            "application/xml",
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ConditionNotMet</Code><Message>The condition specified using HTTP conditional header(s) is not met.\nRequestId:921efcad-84bc-4e0a-863d-24810d1096e1\nTime:2010-11-04T15:03:07.8694513Z</Message></Error>",
+            AzureStorageResponseException.class);
    }
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String contentType,
-            String content, Class<? extends Exception> expected) {
+         String content, Class<? extends Exception> expected) {
 
       ParseAzureStorageErrorFromXmlContent function = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
 
@@ -79,7 +90,7 @@ public class ParseAzureErrorFromXmlContentTest {
       HttpCommand command = createMock(HttpCommand.class);
       HttpRequest request = new HttpRequest(method, uri);
       HttpResponse response = new HttpResponse(statusCode, message, Payloads.newInputStreamPayload(Utils
-               .toInputStream(content)));
+            .toInputStream(content)));
       response.getPayload().getContentMetadata().setContentType(contentType);
 
       expect(command.getRequest()).andReturn(request).atLeastOnce();

@@ -22,6 +22,7 @@ package org.jclouds.vcloud.compute.functions;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.compute.util.ComputeServiceUtils.parseOsFamilyOrNull;
 
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +32,9 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.ImageBuilder;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
+import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 
@@ -45,9 +48,13 @@ public class ImageForVCloudExpressVAppTemplate implements Function<VCloudExpress
    private final PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider;
    private ReferenceType parent;
 
+   private final Map<OsFamily, Map<String, String>> osVersionMap;
+
    @Inject
    protected ImageForVCloudExpressVAppTemplate(FindLocationForResource findLocationForResource,
-            PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider) {
+         PopulateDefaultLoginCredentialsForImageStrategy credentialsProvider,
+         Map<OsFamily, Map<String, String>> osVersionMap) {
+      this.osVersionMap = osVersionMap;
       this.findLocationForResource = checkNotNull(findLocationForResource, "findLocationForResource");
       this.credentialsProvider = checkNotNull(credentialsProvider, "credentialsProvider");
    }
@@ -74,12 +81,13 @@ public class ImageForVCloudExpressVAppTemplate implements Function<VCloudExpress
 
    protected OperatingSystem parseOs(VCloudExpressVAppTemplate from) {
       OperatingSystemBuilder builder = new OperatingSystemBuilder();
-      builder.family(parseOsFamilyOrNull("vcloudexpress", checkNotNull(from, "vapp template").getName()));
+      OsFamily osFamily = parseOsFamilyOrNull("vcloudexpress", checkNotNull(from, "vapp template").getName());
+      builder.family(osFamily);
       builder.description(from.getName());
       builder.is64Bit(from.getName().indexOf("64") != -1);
       Matcher matcher = OS_PATTERN.matcher(from.getName());
       if (matcher.find()) {
-         builder.version(matcher.group(3));
+         builder.version(ComputeServiceUtils.parseVersionOrReturnEmptyString(osFamily, matcher.group(3), osVersionMap));
       }
       return builder.build();
    }

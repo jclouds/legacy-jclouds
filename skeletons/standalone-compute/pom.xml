@@ -32,7 +32,7 @@
     <name>jclouds example components for a standalone compute provider</name>
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
-        <jclouds.compute.blacklist.nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist.nodes>
+        <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
         <test.servermanager.identity>FIXME</test.servermanager.identity>
         <test.servermanager.endpoint>https://servermanager.com</test.servermanager.endpoint>
         <test.servermanager.apiversion>1.0</test.servermanager.apiversion>
@@ -108,8 +108,8 @@
                                             <value>${test.servermanager.identity}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.compute.blacklist.nodes</name>
-                                            <value>${jclouds.compute.blacklist.nodes}</value>
+                                            <name>jclouds.compute.blacklist-nodes</name>
+                                            <value>${jclouds.compute.blacklist-nodes}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

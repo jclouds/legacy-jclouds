@@ -56,7 +56,9 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.predicates.RetryablePredicate;
+import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -85,13 +87,12 @@ public class PlacementGroupClientLiveTest {
    protected String endpoint;
    protected String apiversion;
 
+   @BeforeClass
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
-      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
-      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
-               + ".apiversion");
+      credential = System.getProperty("test." + provider + ".credential");
+      endpoint = System.getProperty("test." + provider + ".endpoint");
+      apiversion = System.getProperty("test." + provider + ".apiversion");
    }
 
    protected Properties setupProperties() {
@@ -99,9 +100,12 @@ public class PlacementGroupClientLiveTest {
       overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
-      overrides.setProperty(provider + ".endpoint", endpoint);
-      overrides.setProperty(provider + ".apiversion", apiversion);
+      if (credential != null)
+         overrides.setProperty(provider + ".credential", credential);
+      if (endpoint != null)
+         overrides.setProperty(provider + ".endpoint", endpoint);
+      if (apiversion != null)
+         overrides.setProperty(provider + ".apiversion", apiversion);
       return overrides;
    }
 
@@ -109,14 +113,14 @@ public class PlacementGroupClientLiveTest {
    public void setupClient() throws FileNotFoundException, IOException {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider, ImmutableSet
-               .<Module> of(new Log4JLoggingModule()), overrides);
+      context = new ComputeServiceContextFactory().createContext(provider,
+            ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), overrides);
       keyPair = setupKeyPair();
 
       client = EC2Client.class.cast(context.getProviderSpecificContext().getApi());
 
       availableTester = new RetryablePredicate<PlacementGroup>(new PlacementGroupAvailable(client), 60, 1,
-               TimeUnit.SECONDS);
+            TimeUnit.SECONDS);
 
       deletedTester = new RetryablePredicate<PlacementGroup>(new PlacementGroupDeleted(client), 60, 1, TimeUnit.SECONDS);
    }
@@ -125,12 +129,12 @@ public class PlacementGroupClientLiveTest {
    void testDescribe() {
       for (String region : newArrayList(Region.US_EAST_1)) {
          SortedSet<PlacementGroup> allResults = newTreeSet(client.getPlacementGroupServices()
-                  .describePlacementGroupsInRegion(region));
+               .describePlacementGroupsInRegion(region));
          assertNotNull(allResults);
          if (allResults.size() >= 1) {
             PlacementGroup group = allResults.last();
             SortedSet<PlacementGroup> result = newTreeSet(client.getPlacementGroupServices()
-                     .describePlacementGroupsInRegion(region, group.getName()));
+                  .describePlacementGroupsInRegion(region, group.getName()));
             assertNotNull(result);
             PlacementGroup compare = result.last();
             assertEquals(compare, group);
@@ -159,7 +163,7 @@ public class PlacementGroupClientLiveTest {
    private void verifyPlacementGroup(String groupName) {
       assert availableTester.apply(new PlacementGroup(Region.US_EAST_1, groupName, "cluster", State.PENDING)) : group;
       Set<PlacementGroup> oneResult = client.getPlacementGroupServices().describePlacementGroupsInRegion(null,
-               groupName);
+            groupName);
       assertNotNull(oneResult);
       assertEquals(oneResult.size(), 1);
       group = oneResult.iterator().next();
@@ -169,6 +173,7 @@ public class PlacementGroupClientLiveTest {
    }
 
    public void testStartCCInstance() throws Exception {
+
       Set<? extends Hardware> sizes = context.getComputeService().listHardwareProfiles();
       assert any(sizes, new Predicate<Hardware>() {
 
@@ -194,17 +199,19 @@ public class PlacementGroupClientLiveTest {
       assertEquals(template.getImage().getId(), "us-east-1/ami-7ea24a17");
 
       template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(keyPair.get("public"))
-               .runScript(buildScript(template.getImage().getOperatingSystem()));
+            .runScript(buildScript(template.getImage().getOperatingSystem()));
 
       String tag = PREFIX + "cccluster";
       context.getComputeService().destroyNodesMatching(NodePredicates.withTag(tag));
+      // TODO make this not lookup an explicit region
+      client.getPlacementGroupServices().deletePlacementGroupInRegion(null, "jclouds#" + tag + "#us-east-1");
 
       try {
          Set<? extends NodeMetadata> nodes = context.getComputeService().runNodesWithTag(tag, 1, template);
          NodeMetadata node = getOnlyElement(nodes);
 
          getOnlyElement(getOnlyElement(client.getInstanceServices().describeInstancesInRegion(null,
-                  node.getProviderId())));
+               node.getProviderId())));
 
       } catch (RunNodesException e) {
          System.err.println(e.getNodeErrors().keySet());

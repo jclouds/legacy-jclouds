@@ -42,6 +42,8 @@ public class Region {
     * consistency for PUTS of new objects in your Amazon S3 bucket and eventual
     * consistency for overwrite PUTS and DELETES.
     */
+   public static final String EU = "EU";
+
    public static final String EU_WEST_1 = "eu-west-1";
 
    /**
@@ -85,8 +87,8 @@ public class Region {
     */
    public static final String AP_SOUTHEAST_1 = "ap-southeast-1";
 
-   public static Set<String> ALL_S3 = ImmutableSet.of("EU", US_STANDARD,
-         US_EAST_1, US_WEST_1, AP_SOUTHEAST_1);
+   public static Set<String> ALL_S3 = ImmutableSet.of(EU, US_STANDARD,
+          US_WEST_1, AP_SOUTHEAST_1);
    public static Set<String> ALL_SQS = ImmutableSet.of(EU_WEST_1, US_STANDARD,
          US_EAST_1, US_WEST_1, AP_SOUTHEAST_1);
 }

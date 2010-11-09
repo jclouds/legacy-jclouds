@@ -77,7 +77,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public void testImagesResolveCorrectly() {
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getId(), defaultTemplate.getImage().getLocation().getId() + "/"
-               + defaultTemplate.getImage().getProviderId());
+            + defaultTemplate.getImage().getProviderId());
       Template byId = client.templateBuilder().imageId(defaultTemplate.getImage().getId()).build();
       assertEquals(byId.getImage(), defaultTemplate.getImage());
    }
@@ -98,13 +98,13 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsAndLogin() throws Exception {
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-               .getSecurityGroupServices();
+            .getSecurityGroupServices();
 
       KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-               .getKeyPairServices();
+            .getKeyPairServices();
 
       InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-               .getInstanceServices();
+            .getInstanceServices();
 
       String tag = this.tag + "optionsandlogin";
 
@@ -141,17 +141,17 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          checkMonitoringEnabled(before, instance);
 
          // make sure we made our dummy group and also let in the user's group
-         assertEquals(Sets.newTreeSet(instance.getGroupIds()), ImmutableSortedSet.<String> of("jclouds#" + tag + "#"
-                  + instance.getRegion(), tag));
+         assertEquals(Sets.newTreeSet(instance.getGroupIds()),
+               ImmutableSortedSet.<String> of("jclouds#" + tag + "#" + instance.getRegion(), tag));
 
          // make sure our dummy group has no rules
          SecurityGroup group = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
-                  "jclouds#" + tag + "#" + instance.getRegion()));
+               "jclouds#" + tag + "#" + instance.getRegion()));
          assert group.getIpPermissions().size() == 0 : group;
 
          // try to run a script with the original keyPair
-         runScriptWithCreds(tag, first.getOperatingSystem(), new Credentials(first.getCredentials().identity, result
-                  .getKeyMaterial()));
+         runScriptWithCreds(tag, first.getOperatingSystem(),
+               new Credentials(first.getCredentials().identity, result.getKeyMaterial()));
 
       } finally {
          client.destroyNodesMatching(NodePredicates.withTag(tag));
@@ -168,11 +168,11 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       assertEquals(instance.getMonitoringState(), MonitoringState.ENABLED);
 
       RestContext<CloudWatchClient, CloudWatchAsyncClient> monitoringContext = new RestContextFactory().createContext(
-               "cloudwatch", identity, credential, ImmutableSet.<Module> of(new Log4JLoggingModule()));
+            "cloudwatch", identity, credential, ImmutableSet.<Module> of(new Log4JLoggingModule()));
 
       try {
          Set<Datapoint> datapoints = monitoringContext.getApi().getMetricStatisticsInRegion(instance.getRegion(),
-                  "CPUUtilization", before, new Date(), 60, "Average");
+               "CPUUtilization", before, new Date(), 60, "Average");
          assert datapoints != null;
       } finally {
          monitoringContext.close();
@@ -182,13 +182,13 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    @Test(enabled = true, dependsOnMethods = "testCompareSizes")
    public void testExtendedOptionsNoKeyPair() throws Exception {
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-               .getSecurityGroupServices();
+            .getSecurityGroupServices();
 
       KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-               .getKeyPairServices();
+            .getKeyPairServices();
 
       InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-               .getInstanceServices();
+            .getInstanceServices();
 
       String tag = this.tag + "optionsnokey";
 
@@ -215,12 +215,12 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          assertEquals(instance.getKeyName(), null);
 
          // make sure we made our dummy group and also let in the user's group
-         assertEquals(instance.getGroupIds(), ImmutableSet.<String> of(tag, String.format("jclouds#%s#%s", tag,
-                  instance.getRegion())));
+         assertEquals(Sets.newTreeSet(instance.getGroupIds()),
+               ImmutableSortedSet.<String> of(tag, String.format("jclouds#%s#%s", tag, instance.getRegion())));
 
          // make sure our dummy group has no rules
-         SecurityGroup group = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null, String
-                  .format("jclouds#%s#%s", tag, instance.getRegion())));
+         SecurityGroup group = Iterables.getOnlyElement(securityGroupClient.describeSecurityGroupsInRegion(null,
+               String.format("jclouds#%s#%s", tag, instance.getRegion())));
          assert group.getIpPermissions().size() == 0 : group;
 
       } finally {
@@ -242,13 +242,13 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
          return;
       }
       SecurityGroupClient securityGroupClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-               .getSecurityGroupServices();
+            .getSecurityGroupServices();
 
       KeyPairClient keyPairClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-               .getKeyPairServices();
+            .getKeyPairServices();
 
       InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
-               .getInstanceServices();
+            .getInstanceServices();
 
       String tag = this.tag + "optionswithsubnetid";
 
@@ -295,12 +295,12 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    private RunningInstance getInstance(InstanceClient instanceClient, String id) {
       RunningInstance instance = Iterables.getOnlyElement(Iterables.getOnlyElement(instanceClient
-               .describeInstancesInRegion(null, id)));
+            .describeInstancesInRegion(null, id)));
       return instance;
    }
 
    private void cleanupExtendedStuff(SecurityGroupClient securityGroupClient, KeyPairClient keyPairClient, String tag)
-            throws InterruptedException {
+         throws InterruptedException {
       try {
          for (SecurityGroup group : securityGroupClient.describeSecurityGroupsInRegion(null))
             if (group.getName().startsWith("jclouds#" + tag) || group.getName().equals(tag)) {
