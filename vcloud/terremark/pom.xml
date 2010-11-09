@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-vcloud-project</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0-beta-8</version>
     </parent>
     <artifactId>jclouds-terremark</artifactId>
     <name>jclouds terremark Components Core</name>
