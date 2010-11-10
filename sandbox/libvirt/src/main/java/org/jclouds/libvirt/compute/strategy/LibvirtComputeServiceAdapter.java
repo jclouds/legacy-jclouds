@@ -174,18 +174,6 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
 	public void destroyNode(String id) {
 		try {
 			client.domainLookupByUUIDString(id).destroy();
-
-			/*
-			XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(
-					client.domainLookupByUUIDString(id).getXMLDesc(0)
-			)));
-			String diskFileName = builder.xpathFind("//devices/disk[@device='disk']/source").getElement().getAttribute("file");
-			System.out.println(" :P " +diskFileName);
-			StorageVol storageVol = client.storageVolLookupByPath(diskFileName);
-			storageVol.delete(0);
-			
-			client.domainLookupByUUIDString(id).undefine();
-			*/
 		} catch (LibvirtException e) {
 			propogate(e);
 		} catch (Exception e) {

@@ -25,15 +25,18 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.StandaloneComputeServiceContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.suppliers.DefaultLocationSupplier;
 import org.jclouds.domain.Location;
 import org.jclouds.libvirt.Datacenter;
 import org.jclouds.libvirt.Image;
+import org.jclouds.libvirt.compute.LibvirtComputeService;
 import org.jclouds.libvirt.compute.functions.DatacenterToLocation;
 import org.jclouds.libvirt.compute.functions.DomainToHardware;
 import org.jclouds.libvirt.compute.functions.DomainToNodeMetadata;
@@ -73,6 +76,8 @@ StandaloneComputeServiceContextModule<Domain, Domain, Image, Datacenter> {
 		}).to(DomainToHardware.class);
 		bind(new TypeLiteral<Function<Datacenter, Location>>() {
 		}).to(DatacenterToLocation.class);
+		
+		bind(ComputeService.class).to(LibvirtComputeService.class);
 	}
 
 	@Provides
