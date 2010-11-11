@@ -53,23 +53,17 @@ public class GoGridErrorHandler implements HttpErrorHandler {
       try {
          Exception exception = new HttpResponseException(command, response);
          Set<ErrorResponse> errors = parseErrorsFromContentOrNull(response);
+         if (errors != null)
+            exception = new GoGridResponseException(command, response, errors);
          switch (response.getStatusCode()) {
          case 400:
-            if (Iterables.get(errors, 0).getMessage()
-                  .indexOf("No object found") != -1) {
-               exception = new ResourceNotFoundException(Iterables.get(errors,
-                     0).getMessage(), exception);
+            if (Iterables.get(errors, 0).getMessage().indexOf("No object found") != -1) {
+               exception = new ResourceNotFoundException(Iterables.get(errors, 0).getMessage(), exception);
                break;
             }
          case 403:
-
-            exception = new AuthorizationException(command.getRequest(),
-                  errors != null ? errors.toString() : response.getStatusLine());
+            exception = new AuthorizationException(exception.getMessage(), exception);
             break;
-         default:
-            exception = errors != null ? new GoGridResponseException(command,
-                  response, errors) : new HttpResponseException(command,
-                  response);
          }
          command.setException(exception);
       } finally {

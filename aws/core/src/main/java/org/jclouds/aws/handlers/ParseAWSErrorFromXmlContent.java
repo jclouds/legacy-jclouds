@@ -66,7 +66,7 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
 
    public void handleError(HttpCommand command, HttpResponse response) {
       HttpRequest request = command.getRequest();
-      Exception exception = null;
+      Exception exception = new HttpResponseException(command, response);
       try {
          AWSError error = null;
          String message = null;
@@ -81,14 +81,13 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
             } else {
                try {
                   message = Utils.toStringAndClose(response.getPayload().getInput());
+                  exception = new HttpResponseException(command, response, message);
                } catch (IOException e) {
                }
             }
          }
          message = message != null ? message : String.format("%s -> %s", request.getRequestLine(),
                response.getStatusLine());
-         if (exception == null)
-            exception = new HttpResponseException(command, response, message);
          switch (response.getStatusCode()) {
          case 400:
             if (error != null && error.getCode() != null
@@ -98,13 +97,13 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                   .getCode().endsWith(".Duplicate"))) || (message != null && message.indexOf("already exists") != -1))
                exception = new IllegalStateException(message, exception);
             else if (error != null && error.getCode() != null && error.getCode().equals("AuthFailure"))
-               exception = new AuthorizationException(command.getRequest(), message);
+               exception = new AuthorizationException(exception.getMessage(), exception);
             else if (message != null && message.indexOf("Failed to bind the following fields") != -1)// Nova
                exception = new IllegalArgumentException(message, exception);
             break;
          case 401:
          case 403:
-            exception = new AuthorizationException(command.getRequest(), message);
+            exception = new AuthorizationException(exception.getMessage(), exception);
             break;
          case 404:
             if (!command.getRequest().getMethod().equals("DELETE")) {

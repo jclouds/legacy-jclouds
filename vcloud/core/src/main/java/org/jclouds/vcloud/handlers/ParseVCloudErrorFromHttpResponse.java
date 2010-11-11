@@ -79,6 +79,7 @@ public class ParseVCloudErrorFromHttpResponse implements HttpErrorHandler {
             } else {
                try {
                   message = Utils.toStringAndClose(response.getPayload().getInput());
+                  exception = message != null ? new HttpResponseException(command, response, message) : exception;
                } catch (IOException e) {
                }
             }
@@ -96,7 +97,7 @@ public class ParseVCloudErrorFromHttpResponse implements HttpErrorHandler {
                break;
             case 401:
             case 403:
-               exception = new AuthorizationException(command.getRequest(), message);
+               exception = new AuthorizationException(exception.getMessage(), exception);
                break;
             case 404:
                if (!command.getRequest().getMethod().equals("DELETE")) {
