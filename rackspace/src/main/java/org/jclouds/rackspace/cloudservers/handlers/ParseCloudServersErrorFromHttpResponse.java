@@ -52,9 +52,10 @@ public class ParseCloudServersErrorFromHttpResponse implements HttpErrorHandler 
       Exception exception = new HttpResponseException(command, response);
       try {
          String content = parseErrorFromContentOrNull(command, response);
+         exception = content != null ? new HttpResponseException(command, response, content) : exception;
          switch (response.getStatusCode()) {
             case 401:
-               exception = new AuthorizationException(command.getRequest(), content);
+               exception = new AuthorizationException(exception.getMessage(), exception);
                break;
             case 404:
                if (!command.getRequest().getMethod().equals("DELETE")) {

@@ -57,7 +57,7 @@ public class ParseCloudFilesErrorFromHttpResponse implements HttpErrorHandler {
          exception = content != null ? new HttpResponseException(command, response, content) : exception;
          switch (response.getStatusCode()) {
          case 401:
-            exception = new AuthorizationException(command.getRequest(), content, exception);
+            exception = new AuthorizationException(exception.getMessage(), exception);
             break;
          case 404:
             if (!command.getRequest().getMethod().equals("DELETE")) {

@@ -80,12 +80,14 @@ public class ParseAzureStorageErrorFromXmlContent implements HttpErrorHandler {
                } catch (RuntimeException e) {
                   try {
                      message = Utils.toStringAndClose(response.getPayload().getInput());
+                     exception = new HttpResponseException(command, response, message);
                   } catch (IOException e1) {
                   }
                }
             } else {
                try {
                   message = Utils.toStringAndClose(response.getPayload().getInput());
+                  exception = new HttpResponseException(command, response, message);
                } catch (IOException e) {
                }
             }
@@ -94,7 +96,7 @@ public class ParseAzureStorageErrorFromXmlContent implements HttpErrorHandler {
                response.getStatusLine());
          switch (response.getStatusCode()) {
          case 401:
-            exception = new AuthorizationException(command.getRequest(), message);
+            exception = new AuthorizationException(exception.getMessage(), exception);
             break;
          case 404:
             if (!command.getRequest().getMethod().equals("DELETE")) {

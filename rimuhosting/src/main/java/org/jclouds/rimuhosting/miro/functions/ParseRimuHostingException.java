@@ -64,8 +64,8 @@ public class ParseRimuHostingException implements Function<Exception, Object> {
             RimuHostingResponse firstResponse = Iterables.get(responseMap.values(), 0);
             String errorClass = firstResponse.getErrorInfo().getErrorClass();
             if (errorClass.equals("PermissionException"))
-               throw new AuthorizationException(responseException.getCommand().getRequest(),
-                        firstResponse.getErrorInfo().getErrorMessage());
+               throw new AuthorizationException(
+                        firstResponse.getErrorInfo().getErrorMessage(), responseException);
             throw new RuntimeException(firstResponse.getErrorInfo().getErrorMessage(), e);
          }
       }
