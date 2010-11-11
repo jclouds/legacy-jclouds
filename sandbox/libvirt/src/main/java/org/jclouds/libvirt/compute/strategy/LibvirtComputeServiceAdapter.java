@@ -20,6 +20,7 @@
 package org.jclouds.libvirt.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.libvirt.LibvirtConstants.PROPERTY_LIBVIRT_DOMAIN_DIR;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -63,6 +64,7 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+import com.google.inject.name.Named;
 import com.jamesmurty.utils.XMLBuilder;
 
 /**
@@ -76,8 +78,9 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
 	private final Connect client;
 
 	@Inject
-	public LibvirtComputeServiceAdapter(Connect client) {
+	public LibvirtComputeServiceAdapter(Connect client, @Named(PROPERTY_LIBVIRT_DOMAIN_DIR) String domainDir) {
 		this.client = checkNotNull(client, "client");
+		System.out.println(domainDir);
 	}
 
 	@Override

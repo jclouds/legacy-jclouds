@@ -19,6 +19,8 @@
 
 package org.jclouds.libvirt.compute;
 
+import static org.jclouds.libvirt.LibvirtConstants.PROPERTY_LIBVIRT_DOMAIN_DIR;
+
 import java.util.List;
 import java.util.Properties;
 
@@ -39,6 +41,9 @@ public class LibvirtComputeServiceContextBuilder extends StandaloneComputeServic
 
    public LibvirtComputeServiceContextBuilder(Properties props) {
       super(props);
+      
+      if (!properties.containsKey(PROPERTY_LIBVIRT_DOMAIN_DIR))
+          properties.setProperty(PROPERTY_LIBVIRT_DOMAIN_DIR, "/etc/libvirt/qemu");
    }
 
    @Override
