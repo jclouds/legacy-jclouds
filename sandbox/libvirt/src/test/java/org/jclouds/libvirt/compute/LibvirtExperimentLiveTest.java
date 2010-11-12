@@ -26,6 +26,8 @@ import java.util.Set;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.Template;
+import org.jclouds.libvirt.compute.LibvirtComputeServiceContextSpec;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -54,20 +56,21 @@ public class LibvirtExperimentLiveTest {
       ComputeServiceContext context = null;
       try {
          context = new ComputeServiceContextFactory().createContext(new LibvirtComputeServiceContextSpec(
-               "test:///default", "identity", "credential"));
+               "qemu:///system", "identity", "credential"));
+         
+         
          /*
-          * 
           * /* System.out.println("images " + context.getComputeService().listImages());
           * System.out.println("nodes " + context.getComputeService().listNodes());
           * System.out.println("hardware profiles " +
           * context.getComputeService().listHardwareProfiles());
           */
 
-         /*
-          * Template defaultTemplate = context.getComputeService().templateBuilder()
-          * .hardwareId("c7ff2039-a9f1-a659-7f91-e0f82f59d52e").imageId("1") //.locationId("")
-          * .build();
-          */
+         
+/*          Template defaultTemplate = context.getComputeService().templateBuilder()
+          .hardwareId("d106ae67-5a1b-8f91-b311-83c93bcb0a1f").imageId("1") //.locationId("")
+          .build();*/
+          
 
          /*
           * We will probably make a default template out of properties at some point You can control

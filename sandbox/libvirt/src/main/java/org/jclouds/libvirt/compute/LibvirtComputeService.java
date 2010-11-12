@@ -103,7 +103,7 @@ public class LibvirtComputeService extends BaseComputeService {
 	@Override
 	public void destroyNode(String id) {
 		super.destroyNode(id);
-		eliminateDomain(id);
+		//eliminateDomain(id);
 	}
 	
 	private void eliminateDomain(String id) {
