@@ -29,12 +29,13 @@ import static org.testng.Assert.assertNull;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.Constants;
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ConfiguresExecutorService;
-import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
@@ -47,6 +48,7 @@ import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
+import com.google.inject.name.Names;
 
 public abstract class BaseRestClientTest {
 
@@ -69,7 +71,8 @@ public abstract class BaseRestClientTest {
 
       @Override
       protected void configure() {
-         install(new ExecutorServiceModule(MoreExecutors.sameThreadExecutor(), MoreExecutors.sameThreadExecutor()));
+         bind(ExecutorService.class).annotatedWith(Names.named(Constants.PROPERTY_USER_THREADS)).toInstance(MoreExecutors.sameThreadExecutor());
+         bind(ExecutorService.class).annotatedWith(Names.named(Constants.PROPERTY_IO_WORKER_THREADS)).toInstance(MoreExecutors.sameThreadExecutor());
          bind(TransformingHttpCommandExecutorService.class).toInstance(mock);
       }
    }

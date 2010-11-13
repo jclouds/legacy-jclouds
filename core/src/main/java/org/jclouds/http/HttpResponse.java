@@ -19,9 +19,14 @@
 
 package org.jclouds.http;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.annotation.Nullable;
 
 import org.jclouds.io.Payload;
+
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * Represents a response produced from {@link HttpCommandExecutorService}
@@ -34,9 +39,14 @@ public class HttpResponse extends HttpMessage {
    private final String message;
 
    public HttpResponse(int statusCode, String message, @Nullable Payload payload) {
+      this(statusCode, message, payload, ImmutableMultimap.<String, String> of());
+   }
+
+   public HttpResponse(int statusCode, String message, @Nullable Payload payload, Multimap<String, String> headers) {
       super(payload);
       this.statusCode = statusCode;
       this.message = message;
+      this.headers.putAll(checkNotNull(headers));
    }
 
    public int getStatusCode() {
@@ -49,8 +59,8 @@ public class HttpResponse extends HttpMessage {
 
    @Override
    public String toString() {
-      return "[message=" + message + ", statusCode=" + statusCode + ", headers=" + headers
-               + ", payload=" + payload + "]";
+      return "[message=" + message + ", statusCode=" + statusCode + ", headers=" + headers + ", payload=" + payload
+            + "]";
    }
 
    public String getStatusLine() {
