@@ -27,26 +27,38 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
+import org.jclouds.compute.strategy.ResumeNodeStrategy;
+import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.ibmdev.IBMDeveloperCloudClient;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class IBMDeveloperCloudRebootNodeStrategy implements RebootNodeStrategy {
+public class IBMDeveloperCloudLifeCycleStrategy implements RebootNodeStrategy, SuspendNodeStrategy, ResumeNodeStrategy {
 
    private final IBMDeveloperCloudClient client;
    private final GetNodeMetadataStrategy getNode;
 
    @Inject
-   protected IBMDeveloperCloudRebootNodeStrategy(IBMDeveloperCloudClient client, GetNodeMetadataStrategy getNode) {
+   protected IBMDeveloperCloudLifeCycleStrategy(IBMDeveloperCloudClient client, GetNodeMetadataStrategy getNode) {
       this.client = checkNotNull(client, "client");
       this.getNode = checkNotNull(getNode, "getNode");
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata rebootNode(String id) {
       client.restartInstance(id);
-      return getNode.execute(id);
+      return getNode.getNode(id);
+   }
+
+   @Override
+   public NodeMetadata suspendNode(String id) {
+      throw new UnsupportedOperationException("suspend not supported");
+   }
+
+   @Override
+   public NodeMetadata resumeNode(String id) {
+      throw new UnsupportedOperationException("resume not supported");
    }
 }

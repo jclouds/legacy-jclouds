@@ -25,13 +25,13 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ibmdev.IBMDeveloperCloudComputeServiceContextModuleTest")
-public class IBMDeveloperCloudComputeServiceContextModuleTest {
+@Test(groups = "unit", testName = "ibmdev.IBMDeveloperCloudComputeServiceDependenciesModuleTest")
+public class IBMDeveloperCloudComputeServiceDependenciesModuleTest {
 
    public void testAllStatusCovered() {
 
       for (Instance.Status state : Instance.Status.values()) {
-         assert IBMDeveloperCloudComputeServiceContextModule.instanceStatusToNodeState.containsKey(state) : state;
+         assert IBMDeveloperCloudComputeServiceDependenciesModule.instanceStatusToNodeState.containsKey(state) : state;
       }
 
    }
