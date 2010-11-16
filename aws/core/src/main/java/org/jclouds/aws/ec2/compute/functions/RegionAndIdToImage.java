@@ -29,7 +29,6 @@ import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -55,11 +54,10 @@ public final class RegionAndIdToImage implements Function<RegionAndName, Image> 
    public Image apply(RegionAndName key) {
       try {
          org.jclouds.aws.ec2.domain.Image image = Iterables.getOnlyElement(sync.getAMIServices()
-                  .describeImagesInRegion(key.getRegion(), imageIds(key.getName())));
+               .describeImagesInRegion(key.getRegion(), imageIds(key.getName())));
          return parser.apply(image);
-      } catch (ResourceNotFoundException e) {
-         logger.warn(e, "no image found for %s/%s: %s", key.getRegion(), key.getName(), e
-                  .getMessage());
+      } catch (Exception e) {
+         logger.warn(e, "could not find image %s/%s: %s", key.getRegion(), key.getName(), e.getMessage());
          return null;
       }
    }
