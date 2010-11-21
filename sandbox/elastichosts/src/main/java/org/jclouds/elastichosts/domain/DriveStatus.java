@@ -29,7 +29,7 @@ public enum DriveStatus {
    ACTIVE, INACTIVE, COPYING, IMAGING, UNRECOGNIZED;
 
    public String value() {
-      return name().toString();
+      return name().toLowerCase();
    }
 
    @Override

@@ -29,7 +29,7 @@ public enum DriveType {
    DISK, CDROM, SHARED, UNRECOGNIZED;
 
    public String value() {
-      return name().toString();
+      return name().toLowerCase();
    }
 
    @Override
