@@ -43,16 +43,9 @@ public class BaseDrive {
       protected Set<String> readers = ImmutableSet.of();
       protected Set<String> tags = ImmutableSet.of();
       protected Map<String, String> userMetadata = ImmutableMap.of();
-      @Nullable
-      protected String encryptionCipher;
 
       public Builder claimType(ClaimType claimType) {
          this.claimType = claimType;
-         return this;
-      }
-
-      public Builder encryptionCipher(String encryptionCipher) {
-         this.encryptionCipher = encryptionCipher;
          return this;
       }
 
@@ -82,7 +75,7 @@ public class BaseDrive {
       }
 
       public BaseDrive build() {
-         return new BaseDrive(name, size, claimType, readers, tags, userMetadata, encryptionCipher);
+         return new BaseDrive(name, size, claimType, readers, tags, userMetadata);
       }
    }
 
@@ -92,18 +85,15 @@ public class BaseDrive {
    protected final Set<String> readers;
    protected final Set<String> tags;
    protected final Map<String, String> userMetadata;
-   @Nullable
-   protected final String encryptionCipher;
 
    public BaseDrive(String name, long size, @Nullable ClaimType claimType, Iterable<String> readers,
-         Iterable<String> tags, Map<String, String> userMetadata, @Nullable String encryptionCipher) {
+         Iterable<String> tags, Map<String, String> userMetadata) {
       this.name = checkNotNull(name, "name");
       this.size = size;
       this.claimType = checkNotNull(claimType, "set claimType to exclusive, not null");
       this.readers = ImmutableSet.copyOf(checkNotNull(readers, "readers"));
       this.tags = ImmutableSet.copyOf(checkNotNull(tags, "tags"));
       this.userMetadata = ImmutableMap.copyOf(checkNotNull(userMetadata, "userMetadata"));
-      this.encryptionCipher = encryptionCipher;
    }
 
    /**
@@ -114,15 +104,6 @@ public class BaseDrive {
    @Nullable
    public ClaimType getClaimType() {
       return claimType;
-   }
-
-   /**
-    * 
-    * @return either 'none' or 'aes-xts-plain' (the default)
-    */
-   @Nullable
-   public String getEncryptionCipher() {
-      return encryptionCipher;
    }
 
    /**
@@ -171,7 +152,6 @@ public class BaseDrive {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((claimType == null) ? 0 : claimType.hashCode());
-      result = prime * result + ((encryptionCipher == null) ? 0 : encryptionCipher.hashCode());
       result = prime * result + ((name == null) ? 0 : name.hashCode());
       result = prime * result + ((readers == null) ? 0 : readers.hashCode());
       result = prime * result + (int) (size ^ (size >>> 32));
@@ -190,11 +170,6 @@ public class BaseDrive {
          return false;
       BaseDrive other = (BaseDrive) obj;
       if (claimType != other.claimType)
-         return false;
-      if (encryptionCipher == null) {
-         if (other.encryptionCipher != null)
-            return false;
-      } else if (!encryptionCipher.equals(other.encryptionCipher))
          return false;
       if (name == null) {
          if (other.name != null)
@@ -224,7 +199,7 @@ public class BaseDrive {
    @Override
    public String toString() {
       return "[name=" + name + ", size=" + size + ", claimType=" + claimType + ", readers=" + readers + ", tags="
-            + tags + ", userMetadata=" + userMetadata + ", encryptionCipher=" + encryptionCipher + "]";
+            + tags + ", userMetadata=" + userMetadata + "]";
    }
 
 }

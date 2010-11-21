@@ -49,6 +49,8 @@ public class CreateDriveRequestToMap implements Function<CreateDriveRequest, Map
       builder.putAll(baseDriveToMap.apply(from));
       if (from.getAvoid().size() != 0)
          builder.put("avoid", Joiner.on(' ').join(from.getAvoid()));
+      if (from.getEncryptionCipher() != null)
+         builder.put("encryption:cipher", from.getEncryptionCipher());
       return builder.build();
    }
 }

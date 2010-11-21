@@ -53,8 +53,6 @@ public class BaseDriveToMap implements Function<BaseDrive, Map<String, String>> 
          builder.put("tags", Joiner.on(' ').join(from.getTags()));
       for (Entry<String, String> entry : from.getUserMetadata().entrySet())
          builder.put("user:" + entry.getKey(), entry.getValue());
-      if (from.getEncryptionCipher() != null)
-         builder.put("encryption:cipher", from.getEncryptionCipher());
       return builder.build();
    }
 }

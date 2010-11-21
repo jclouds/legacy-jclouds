@@ -5,5 +5,5 @@ readers ffffffff-ffff-ffff-ffff-ffffffffffff
 tags tag1 tag2
 user:foo bar
 user:baz raz
-encryption:cipher aes-xts-plain
 avoid avoid1
+encryption:cipher aes-xts-plain

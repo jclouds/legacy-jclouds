@@ -36,7 +36,11 @@ import com.google.common.collect.ImmutableSet;
  */
 public class CreateDriveRequest extends BaseDrive {
    public static class Builder extends BaseDrive.Builder {
+
       private Set<String> avoid = ImmutableSet.of();
+
+      @Nullable
+      private String encryptionCipher;
 
       public Builder avoid(Iterable<String> avoid) {
          this.avoid = ImmutableSet.copyOf(checkNotNull(avoid, "avoid"));
@@ -51,12 +55,9 @@ public class CreateDriveRequest extends BaseDrive {
          return Builder.class.cast(super.claimType(claimType));
       }
 
-      /**
-       * {@inheritDoc}
-       */
-      @Override
       public Builder encryptionCipher(String encryptionCipher) {
-         return Builder.class.cast(super.encryptionCipher(encryptionCipher));
+         this.encryptionCipher = encryptionCipher;
+         return this;
       }
 
       /**
@@ -105,11 +106,14 @@ public class CreateDriveRequest extends BaseDrive {
    }
 
    private final Set<String> avoid;
+   @Nullable
+   private final String encryptionCipher;
 
    public CreateDriveRequest(String name, long size, @Nullable ClaimType claimType, Iterable<String> readers,
          Iterable<String> tags, Map<String, String> userMetadata, @Nullable String encryptionCipher,
          Iterable<String> avoid) {
-      super(name, size, claimType, readers, tags, userMetadata, encryptionCipher);
+      super(name, size, claimType, readers, tags, userMetadata);
+      this.encryptionCipher = encryptionCipher;
       this.avoid = ImmutableSet.copyOf(checkNotNull(avoid, "avoid"));
    }
 
@@ -120,6 +124,53 @@ public class CreateDriveRequest extends BaseDrive {
     */
    public Set<String> getAvoid() {
       return avoid;
+   }
+
+   /**
+    * 
+    * @return either 'none' or 'aes-xts-plain' (the default)
+    */
+   @Nullable
+   public String getEncryptionCipher() {
+      return encryptionCipher;
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((avoid == null) ? 0 : avoid.hashCode());
+      result = prime * result + ((encryptionCipher == null) ? 0 : encryptionCipher.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (!super.equals(obj))
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      CreateDriveRequest other = (CreateDriveRequest) obj;
+      if (avoid == null) {
+         if (other.avoid != null)
+            return false;
+      } else if (!avoid.equals(other.avoid))
+         return false;
+      if (encryptionCipher == null) {
+         if (other.encryptionCipher != null)
+            return false;
+      } else if (!encryptionCipher.equals(other.encryptionCipher))
+         return false;
+      return true;
+   }
+
+   @Override
+   public String toString() {
+      return "[name=" + name + ", size=" + size + ", claimType=" + claimType + ", readers=" + readers + ", tags="
+            + tags + ", userMetadata=" + userMetadata + ", avoid=" + avoid + ", encryptionCipher=" + encryptionCipher
+            + "]";
    }
 
 }

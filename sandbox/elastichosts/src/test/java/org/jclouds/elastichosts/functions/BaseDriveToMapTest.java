@@ -51,13 +51,13 @@ public class BaseDriveToMapTest {
             .claimType(ClaimType.SHARED)//
             .readers(ImmutableSet.of("ffffffff-ffff-ffff-ffff-ffffffffffff"))//
             .tags(ImmutableSet.of("tag1", "tag2")).userMetadata(ImmutableMap.of("foo", "bar", "baz", "raz"))//
-            .encryptionCipher("aes-xts-plain").build();
+            .build();
       assertEquals(
             BASEDRIVE_TO_MAP.apply(one),
             ImmutableMap.builder().put("name", "Ubuntu 10.10 Server Edition Linux 64bit Preinstalled System")
                   .put("size", "8589934592").put("claim:type", "shared")
                   .put("readers", "ffffffff-ffff-ffff-ffff-ffffffffffff").put("tags", "tag1 tag2")
-                  .put("user:foo", "bar").put("user:baz", "raz").put("encryption:cipher", "aes-xts-plain").build()
+                  .put("user:foo", "bar").put("user:baz", "raz").build()
 
       );
 

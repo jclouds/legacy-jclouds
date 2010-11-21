@@ -42,6 +42,7 @@ public class DriveInfo extends BaseDrive {
       private Boolean autoexpanding;
       private Integer bits;
       private Set<String> claimed = ImmutableSet.of();
+      private String encryptionCipher;
       private String description;
       private String uuid;
       private Set<String> driveType = ImmutableSet.of();
@@ -166,12 +167,9 @@ public class DriveInfo extends BaseDrive {
          return Builder.class.cast(super.claimType(claimType));
       }
 
-      /**
-       * {@inheritDoc}
-       */
-      @Override
       public Builder encryptionCipher(String encryptionCipher) {
-         return Builder.class.cast(super.encryptionCipher(encryptionCipher));
+         this.encryptionCipher = encryptionCipher;
+         return this;
       }
 
       /**
@@ -239,6 +237,8 @@ public class DriveInfo extends BaseDrive {
    @Nullable
    private final Set<String> driveType;
    @Nullable
+   private final String encryptionCipher;
+   @Nullable
    private final String encryptionKey;
    @Nullable
    private final Boolean free;
@@ -268,7 +268,7 @@ public class DriveInfo extends BaseDrive {
          String encryptionKey, Boolean free, String imaging, String installNotes, String name, String os,
          Iterable<String> readers, Long readBytes, Long readRequests, Long size, Iterable<String> tags, DriveType type,
          URI url, Iterable<String> use, Map<String, String> userMetadata, Long writeBytes, Long writeRequests) {
-      super(name, size, claimType, readers, tags, userMetadata, encryptionCipher);
+      super(name, size, claimType, readers, tags, userMetadata);
       this.status = status;
       this.user = user;
       this.autoexpanding = autoexpanding;
@@ -277,6 +277,7 @@ public class DriveInfo extends BaseDrive {
       this.description = description;
       this.uuid = drive;
       this.driveType = ImmutableSet.copyOf(driveType);
+      this.encryptionCipher = encryptionCipher;
       this.encryptionKey = encryptionKey;
       this.free = free;
       this.imaging = imaging;
@@ -341,6 +342,15 @@ public class DriveInfo extends BaseDrive {
    // TODO
    public Set<String> getDriveType() {
       return driveType;
+   }
+
+   /**
+    * 
+    * @return either 'none' or 'aes-xts-plain' (the default)
+    */
+   @Nullable
+   public String getEncryptionCipher() {
+      return encryptionCipher;
    }
 
    // TODO
