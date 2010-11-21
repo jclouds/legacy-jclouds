@@ -17,14 +17,14 @@
  * ====================================================================
  */
 
-package org.jclouds.elastichosts;
+package org.jclouds.elastichosts.functions;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.elastichosts.handlers.NewlineDelimitedStringHandler;
+import org.jclouds.elastichosts.functions.SplitNewlines;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;
@@ -39,14 +39,14 @@ import com.google.inject.Guice;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class NewlineDelimitedStringHandlerTest {
+public class SplitNewlinesTest {
 
    static Function<HttpResponse, Set<String>> createParser() {
-      return Guice.createInjector().getInstance(NewlineDelimitedStringHandler.class);
+      return Guice.createInjector().getInstance(SplitNewlines.class);
    }
 
    public void test() {
-      InputStream is = NewlineDelimitedStringHandlerTest.class.getResourceAsStream("/uuids.txt");
+      InputStream is = SplitNewlinesTest.class.getResourceAsStream("/uuids.txt");
       Set<String> list = createParser().apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is)));
       assertEquals(list, ImmutableSortedSet.of("7e8ab721-81c9-4cb9-a651-4cafbfe1501c",
             "ea6a8fdb-dab3-4d06-86c2-41a5835e6ed9", "74744450-d338-4087-b3b8-59b505110a57"));

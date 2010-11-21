@@ -23,6 +23,8 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.elastichosts.domain.CreateDriveRequest;
+import org.jclouds.elastichosts.domain.DriveInfo;
 
 /**
  * Provides synchronous access to ElasticHosts.
@@ -35,17 +37,48 @@ import org.jclouds.concurrent.Timeout;
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ElasticHostsClient {
    /**
-    * list of drive uuids
+    * list of drive uuids in your account
     * 
     * @return or empty set if no drives are found
     */
    Set<String> listDrives();
-   
+
    /**
+    * list of drive uuids that are in the library
+    * 
+    * @return or empty set if no drives are found
+    */
+   Set<String> listStandardDrives();
+
+   /**
+    * Get all drives info
+    * 
+    * @return or empty set if no drives are found
+    */
+   Set<DriveInfo> listDriveInfo();
+
+   /**
+    * @param uuid
+    *           what to get
     * @return null, if not found
     */
-   String getDriveInfo(String uuid);
-   
-   void deleteDrive(String uuid);
+   DriveInfo getDriveInfo(String uuid);
+
+   /**
+    * create a new drive
+    * 
+    * @param createDrive
+    *           required parameters: name, size
+    * @return newly created drive
+    */
+   DriveInfo createDrive(CreateDriveRequest createDrive);
+
+   /**
+    * Destroy a drive
+    * 
+    * @param uuid
+    *           what to delete
+    */
+   void destroyDrive(String uuid);
 
 }

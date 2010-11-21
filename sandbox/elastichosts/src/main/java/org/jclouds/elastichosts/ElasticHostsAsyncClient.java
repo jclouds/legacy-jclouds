@@ -22,14 +22,20 @@ package org.jclouds.elastichosts;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.elastichosts.handlers.NewlineDelimitedStringHandler;
+import org.jclouds.elastichosts.binders.BindCreateDriveRequestToPlainTextString;
+import org.jclouds.elastichosts.domain.CreateDriveRequest;
+import org.jclouds.elastichosts.domain.DriveInfo;
+import org.jclouds.elastichosts.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
+import org.jclouds.elastichosts.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
+import org.jclouds.elastichosts.functions.SplitNewlines;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
@@ -49,31 +55,55 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(BasicAuthentication.class)
 @Consumes(MediaType.TEXT_PLAIN)
 public interface ElasticHostsAsyncClient {
-   /*
-    * TODO: define interface methods for ElasticHosts
-    */
 
    /**
     * @see ElasticHostsClient#listDrives()
     */
    @GET
    @Path("/drives/list")
-   @ResponseParser(NewlineDelimitedStringHandler.class)
+   @ResponseParser(SplitNewlines.class)
    ListenableFuture<Set<String>> listDrives();
 
    /**
-    * @see ElasticHostsClient#get(long)
+    * @see ElasticHostsClient#listStandardDrives()
+    */
+   @GET
+   @Path("/drives/standard/list")
+   @ResponseParser(SplitNewlines.class)
+   ListenableFuture<Set<String>> listStandardDrives();
+
+   /**
+    * @see ElasticHostsClient#listDriveInfo()
+    */
+   @GET
+   @Path("/drives/info")
+   @ResponseParser(ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet.class)
+   ListenableFuture<Set<DriveInfo>> listDriveInfo();
+
+   /**
+    * @see ElasticHostsClient#getDriveInfo
     */
    @GET
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/{uuid}/info")
-   ListenableFuture<String> getDriveInfo(@PathParam("uuid") String uuid);
+   ListenableFuture<DriveInfo> getDriveInfo(@PathParam("uuid") String uuid);
 
    /**
-    * @see ElasticHostsClient#delete
+    * @see ElasticHostsClient#createDrive
     */
-   @DELETE
-   @Path("/drives/{uuid}")
+   @POST
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
+   @Path("/drives/create")
+   ListenableFuture<DriveInfo> createDrive(
+         @BinderParam(BindCreateDriveRequestToPlainTextString.class) CreateDriveRequest createDrive);
+
+   /**
+    * @see ElasticHostsClient#deleteDrive
+    */
+   @POST
+   @Path("/drives/{uuid}/destroy")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   ListenableFuture<Void> deleteDrive(@PathParam("uuid") String uuid);
+   ListenableFuture<Void> destroyDrive(@PathParam("uuid") String uuid);
 }

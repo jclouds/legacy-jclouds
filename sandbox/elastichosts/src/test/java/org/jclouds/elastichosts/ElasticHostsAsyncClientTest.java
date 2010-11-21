@@ -25,11 +25,13 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
-import org.jclouds.elastichosts.handlers.NewlineDelimitedStringHandler;
+import org.jclouds.elastichosts.domain.CreateDriveRequest;
+import org.jclouds.elastichosts.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
+import org.jclouds.elastichosts.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
+import org.jclouds.elastichosts.functions.SplitNewlines;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -64,16 +66,47 @@ public class ElasticHostsAsyncClientTest extends RestClientTest<ElasticHostsAsyn
       assertRequestLineEquals(httpRequest, "GET https://api.elastichosts.com/drives/list HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
       // header
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
+      assertNonPayloadHeadersEqual(httpRequest,
+            "Accept: text/plain\nAuthorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // TODO: insert expected response class, which probably extends ParseJson
-      assertResponseParserClassEquals(method, httpRequest, NewlineDelimitedStringHandler.class);
+      assertResponseParserClassEquals(method, httpRequest, SplitNewlines.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpRequest);
 
+   }
+
+   public void testListStandardDrives() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticHostsAsyncClient.class.getMethod("listStandardDrives");
+      GeneratedHttpRequest<ElasticHostsAsyncClient> httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "GET https://api.elastichosts.com/drives/standard/list HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, SplitNewlines.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testListDriveInfo() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticHostsAsyncClient.class.getMethod("listDriveInfo");
+      GeneratedHttpRequest<ElasticHostsAsyncClient> httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "GET https://api.elastichosts.com/drives/info HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
    }
 
    public void testGetDriveInfo() throws SecurityException, NoSuchMethodException, IOException {
@@ -84,21 +117,36 @@ public class ElasticHostsAsyncClientTest extends RestClientTest<ElasticHostsAsyn
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
-      // TODO: insert expected response class, which probably extends ParseJson
-      assertResponseParserClassEquals(method, httpRequest, ReturnStringIf2xx.class);
+      assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToDriveInfo.class);
       assertSaxResponseParserClassEquals(method, null);
-      // note that get methods should convert 404's to null
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
    }
 
-   public void testDeleteDrive() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ElasticHostsAsyncClient.class.getMethod("deleteDrive", String.class);
+   public void testCreateDrive() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticHostsAsyncClient.class.getMethod("createDrive", CreateDriveRequest.class);
+      GeneratedHttpRequest<ElasticHostsAsyncClient> httpRequest = processor.createRequest(method,
+            new CreateDriveRequest.Builder().name("foo").size(10000l).build());
+
+      assertRequestLineEquals(httpRequest, "POST https://api.elastichosts.com/drives/create HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, "name foo\nsize 10000", "text/plain", false);
+
+      assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToDriveInfo.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testDestroyDrive() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticHostsAsyncClient.class.getMethod("destroyDrive", String.class);
       GeneratedHttpRequest<ElasticHostsAsyncClient> httpRequest = processor.createRequest(method, "uuid");
 
-      assertRequestLineEquals(httpRequest, "DELETE https://api.elastichosts.com/drives/uuid HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST https://api.elastichosts.com/drives/uuid/destroy HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, null, null, false);
 

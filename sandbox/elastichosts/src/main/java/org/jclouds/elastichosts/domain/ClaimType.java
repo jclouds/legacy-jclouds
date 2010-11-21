@@ -17,35 +17,41 @@
  * ====================================================================
  */
 
-package org.jclouds.elastichosts.handlers;
+package org.jclouds.elastichosts.domain;
 
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.ReturnStringIf2xx;
-
-import com.google.common.base.Function;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Sets;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * either 'exclusive' (the default) or 'shared' to allow multiple servers to access a drive
+ * simultaneously
  * 
  * @author Adrian Cole
  */
-@Singleton
-public class NewlineDelimitedStringHandler implements Function<HttpResponse, Set<String>> {
-   private final ReturnStringIf2xx returnStringIf200;
+public enum ClaimType {
+   /**
+    * 
+    */
+   EXCLUSIVE,
+   /**
+    * allow multiple servers to access a drive simultaneously
+    */
+   SHARED, UNRECOGNIZED;
 
-   @Inject
-   NewlineDelimitedStringHandler(ReturnStringIf2xx returnStringIf200) {
-      this.returnStringIf200 = returnStringIf200;
+   public String value() {
+      return name().toLowerCase();
    }
 
    @Override
-   public Set<String> apply(HttpResponse response) {
-      return Sets.newTreeSet(Splitter.on('\n').split(returnStringIf200.apply(response)));
+   public String toString() {
+      return value();
    }
+
+   public static ClaimType fromValue(String claim) {
+      try {
+         return valueOf(checkNotNull(claim, "claim").toUpperCase());
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
+   }
+
 }
