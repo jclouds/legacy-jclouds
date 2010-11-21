@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.elastichosts.domain.CreateDriveRequest;
+import org.jclouds.elastichosts.domain.DriveData;
 import org.jclouds.elastichosts.domain.DriveInfo;
 
 /**
@@ -72,6 +73,17 @@ public interface ElasticHostsClient {
     * @return newly created drive
     */
    DriveInfo createDrive(CreateDriveRequest createDrive);
+
+   /**
+    * set extra drive data
+    * 
+    * @param uuid
+    *           what drive to change
+    * @param driveData
+    *           what values to change
+    * @return new data
+    */
+   DriveInfo setDriveData(String uuid, DriveData driveData);
 
    /**
     * Destroy a drive

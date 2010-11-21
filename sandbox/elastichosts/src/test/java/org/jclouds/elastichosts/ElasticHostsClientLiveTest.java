@@ -29,7 +29,9 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.Constants;
+import org.jclouds.elastichosts.domain.ClaimType;
 import org.jclouds.elastichosts.domain.CreateDriveRequest;
+import org.jclouds.elastichosts.domain.DriveData;
 import org.jclouds.elastichosts.domain.DriveInfo;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
@@ -38,6 +40,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.inject.Module;
@@ -128,27 +131,45 @@ public class ElasticHostsClientLiveTest {
    }
 
    private String prefix = System.getProperty("user.name") + ".test";
+   private DriveInfo info;
 
    @Test
-   public void testCreateDestroy() throws Exception {
+   public void testCreate() throws Exception {
       try {
          findAndDestroyDrive();
       } catch (Exception e) {
 
       }
-      String uuid = null;
-      try {
 
-         DriveInfo info = client.createDrive(new CreateDriveRequest.Builder().name(prefix).size(1024 * 1024l).build());
-         assertNotNull(uuid = info.getUuid());
-         assertEquals(info.getName(), prefix);
-         assertEquals(info.getSize(), 1024 * 1024l);
-         assertEquals(info, client.getDriveInfo(info.getUuid()));
-      } finally {
-         findAndDestroyDrive();
-      }
-      if (uuid != null)
-         assertEquals(client.getDriveInfo(uuid), null);
+      info = client.createDrive(new CreateDriveRequest.Builder().name(prefix).size(1024 * 1024l).build());
+      assertNotNull(info.getUuid());
+      assertEquals(info.getName(), prefix);
+      assertEquals(info.getSize(), 1024 * 1024l);
+      assertEquals(info, client.getDriveInfo(info.getUuid()));
+
+   }
+
+   @Test(dependsOnMethods = "testCreate")
+   public void testSetDriveData() throws Exception {
+
+      DriveInfo info2 = client.setDriveData(
+            info.getUuid(),
+            new DriveData.Builder().claimType(ClaimType.SHARED).name("rediculous")
+                  .readers(ImmutableSet.of("ffffffff-ffff-ffff-ffff-ffffffffffff"))
+                  .tags(ImmutableSet.of("tag1", "tag2")).userMetadata(ImmutableMap.of("foo", "bar")).build());
+      assertNotNull(info2.getUuid(), info.getUuid());
+      assertEquals(info.getName(), "rediculous");
+      assertEquals(info.getClaimType(), ClaimType.SHARED);
+      assertEquals(info.getReaders(), ImmutableSet.of("ffffffff-ffff-ffff-ffff-ffffffffffff"));
+      assertEquals(info.getTags(), ImmutableSet.of("tag1", "tag2"));
+      assertEquals(info.getUserMetadata(), ImmutableMap.of("foo", "bar"));
+   }
+
+   @Test(dependsOnMethods = "testSetDriveData")
+   public void testDestroyDrive() throws Exception {
+
+      findAndDestroyDrive();
+      assertEquals(client.getDriveInfo(info.getUuid()), null);
 
    }
 

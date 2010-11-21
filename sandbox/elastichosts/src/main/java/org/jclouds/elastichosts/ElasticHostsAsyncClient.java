@@ -29,7 +29,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.elastichosts.binders.BindCreateDriveRequestToPlainTextString;
+import org.jclouds.elastichosts.binders.BindDriveDataToPlainTextString;
 import org.jclouds.elastichosts.domain.CreateDriveRequest;
+import org.jclouds.elastichosts.domain.DriveData;
 import org.jclouds.elastichosts.domain.DriveInfo;
 import org.jclouds.elastichosts.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
 import org.jclouds.elastichosts.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
@@ -98,6 +100,16 @@ public interface ElasticHostsAsyncClient {
    @Path("/drives/create")
    ListenableFuture<DriveInfo> createDrive(
          @BinderParam(BindCreateDriveRequestToPlainTextString.class) CreateDriveRequest createDrive);
+
+   /**
+    * @see ElasticHostsClient#setDriveData
+    */
+   @POST
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
+   @Path("/drives/{uuid}/set")
+   ListenableFuture<DriveInfo> setDriveData(@PathParam("uuid") String uuid,
+         @BinderParam(BindDriveDataToPlainTextString.class) DriveData createDrive);
 
    /**
     * @see ElasticHostsClient#deleteDrive

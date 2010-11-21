@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 
 import org.jclouds.elastichosts.domain.CreateDriveRequest;
+import org.jclouds.elastichosts.domain.DriveData;
 import org.jclouds.elastichosts.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
 import org.jclouds.elastichosts.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
 import org.jclouds.elastichosts.functions.SplitNewlines;
@@ -131,6 +132,23 @@ public class ElasticHostsAsyncClientTest extends RestClientTest<ElasticHostsAsyn
             new CreateDriveRequest.Builder().name("foo").size(10000l).build());
 
       assertRequestLineEquals(httpRequest, "POST https://api.elastichosts.com/drives/create HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, "name foo\nsize 10000", "text/plain", false);
+
+      assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToDriveInfo.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testSetDriveData() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticHostsAsyncClient.class.getMethod("setDriveData", String.class, DriveData.class);
+      GeneratedHttpRequest<ElasticHostsAsyncClient> httpRequest = processor.createRequest(method, "100",
+            new DriveData.Builder().name("foo").size(10000l).build());
+
+      assertRequestLineEquals(httpRequest, "POST https://api.elastichosts.com/drives/100/set HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
       assertPayloadEquals(httpRequest, "name foo\nsize 10000", "text/plain", false);
 
