@@ -26,17 +26,23 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.elastichosts.binders.BindCreateDriveRequestToPlainTextString;
 import org.jclouds.elastichosts.binders.BindDriveDataToPlainTextString;
+import org.jclouds.elastichosts.binders.BindReadDriveOptionsToPath;
 import org.jclouds.elastichosts.domain.CreateDriveRequest;
 import org.jclouds.elastichosts.domain.DriveData;
 import org.jclouds.elastichosts.domain.DriveInfo;
+import org.jclouds.elastichosts.domain.ImageConversionType;
 import org.jclouds.elastichosts.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
 import org.jclouds.elastichosts.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
+import org.jclouds.elastichosts.functions.ReturnPayload;
 import org.jclouds.elastichosts.functions.SplitNewlines;
+import org.jclouds.elastichosts.options.ReadDriveOptions;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.io.Payload;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -112,10 +118,66 @@ public interface ElasticHostsAsyncClient {
          @BinderParam(BindDriveDataToPlainTextString.class) DriveData createDrive);
 
    /**
-    * @see ElasticHostsClient#deleteDrive
+    * @see ElasticHostsClient#destroyDrive
     */
    @POST
    @Path("/drives/{uuid}/destroy")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> destroyDrive(@PathParam("uuid") String uuid);
+
+   /**
+    * @see ElasticHostsClient#imageDrive(String,String)
+    */
+   @POST
+   @Path("/drives/{destination}/image/{source}")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> imageDrive(@PathParam("source") String source, @PathParam("destination") String destination);
+
+   /**
+    * @see ElasticHostsClient#imageDrive(String,String,ImageConversionType)
+    */
+   @POST
+   @Path("/drives/{destination}/image/{source}/{conversion}")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> imageDrive(@PathParam("source") String source, @PathParam("destination") String destination,
+         @PathParam("conversion") ImageConversionType conversionType);
+
+   /**
+    * @see ElasticHostsClient#readDrive(String)
+    */
+   @GET
+   @Consumes(MediaType.APPLICATION_OCTET_STREAM)
+   @Path("/drives/{uuid}/read")
+   @ResponseParser(ReturnPayload.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Payload> readDrive(@PathParam("uuid") String uuid);
+
+   /**
+    * @see ElasticHostsClient#readDrive(String,ReadDriveOptions)
+    */
+   @POST
+   @Consumes(MediaType.APPLICATION_OCTET_STREAM)
+   @Path("/drives/{uuid}/read")
+   @ResponseParser(ReturnPayload.class)
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   ListenableFuture<Payload> readDrive(@PathParam("uuid") String uuid,
+         @BinderParam(BindReadDriveOptionsToPath.class) ReadDriveOptions options);
+
+   /**
+    * @see ElasticHostsClient#writeDrive(String, Payload)
+    */
+   @POST
+   @Produces(MediaType.APPLICATION_OCTET_STREAM)
+   @Path("/drives/{uuid}/write")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> writeDrive(@PathParam("uuid") String uuid, Payload content);
+
+   /**
+    * @see ElasticHostsClient#writeDrive(String, Payload, long)
+    */
+   @POST
+   @Produces(MediaType.APPLICATION_OCTET_STREAM)
+   @Path("/drives/{uuid}/write/{offset}")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> writeDrive(@PathParam("uuid") String uuid, Payload content, @PathParam("offset") long offset);
 }

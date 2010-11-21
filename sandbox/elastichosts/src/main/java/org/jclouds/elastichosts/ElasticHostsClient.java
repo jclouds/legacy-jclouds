@@ -26,6 +26,9 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.elastichosts.domain.CreateDriveRequest;
 import org.jclouds.elastichosts.domain.DriveData;
 import org.jclouds.elastichosts.domain.DriveInfo;
+import org.jclouds.elastichosts.domain.ImageConversionType;
+import org.jclouds.elastichosts.options.ReadDriveOptions;
+import org.jclouds.io.Payload;
 
 /**
  * Provides synchronous access to ElasticHosts.
@@ -92,5 +95,62 @@ public interface ElasticHostsClient {
     *           what to delete
     */
    void destroyDrive(String uuid);
+
+   /**
+    * Image a drive from another drive. The actual imaging process is asynchronous, with progress
+    * reported via drive info.
+    * 
+    * @param source
+    *           drive to copy from
+    * @param destination
+    *           drive to copy to
+    */
+   void imageDrive(String source, String destination);
+
+   /**
+    * @see #imageDrive(String, String)
+    * @param conversionType
+    *           Supports 'gzip' or 'gunzip' conversions.
+    */
+   void imageDrive(String source, String destination, ImageConversionType conversionType);
+
+   /**
+    * Read binary data from a drive
+    * 
+    * @param uuid
+    *           drive to read
+    * @return binary content of the drive.
+    */
+   Payload readDrive(String uuid);
+
+   /**
+    * @see #readDrive(String)
+    * @param options
+    *           controls offset and size of the request
+    */
+   Payload readDrive(String uuid, ReadDriveOptions options);
+
+   /**
+    * Write binary data to a drive
+    * 
+    * @param uuid
+    *           drive to write
+    * @param content
+    *           what to write.
+    *           <ul>
+    *           <li>Binary data (Content-Type: application/octet-stream)</li>
+    *           <li>Supports raw data or Content-Encoding: gzip</li>
+    *           <li>Does not support Transfer-Encoding: chunked</li>
+    *           </ul>
+    */
+   void writeDrive(String uuid, Payload content);
+
+   /**
+    * @see ElasticHostsClient#writeDrive(String, Payload)
+    * @param offset
+    *           the byte offset in the target drive at which to start writing, not an offset in the
+    *           input stream.
+    */
+   void writeDrive(String uuid, Payload content, long offset);
 
 }

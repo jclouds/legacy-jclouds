@@ -149,6 +149,15 @@ public class ElasticHostsClientLiveTest {
 
    }
 
+   public void testWeCanReadAndWriteToDrive() {
+      // TODO put a bunch of bytes and then read them back.
+   }
+
+   public void testWeCopyADriveContentsViaGzip() {
+      // TODO gzip source to destination, then gunzip back to source and assert equiv
+
+   }
+
    @Test(dependsOnMethods = "testCreate")
    public void testSetDriveData() throws Exception {
 

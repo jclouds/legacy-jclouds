@@ -25,14 +25,21 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import javax.ws.rs.core.MediaType;
+
 import org.jclouds.elastichosts.domain.CreateDriveRequest;
 import org.jclouds.elastichosts.domain.DriveData;
+import org.jclouds.elastichosts.domain.ImageConversionType;
 import org.jclouds.elastichosts.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
 import org.jclouds.elastichosts.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
+import org.jclouds.elastichosts.functions.ReturnPayload;
 import org.jclouds.elastichosts.functions.SplitNewlines;
+import org.jclouds.elastichosts.options.ReadDriveOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -160,6 +167,40 @@ public class ElasticHostsAsyncClientTest extends RestClientTest<ElasticHostsAsyn
 
    }
 
+   public void testImageDrive() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticHostsAsyncClient.class.getMethod("imageDrive", String.class, String.class);
+      GeneratedHttpRequest<ElasticHostsAsyncClient> httpRequest = processor.createRequest(method, "100", "200");
+
+      assertRequestLineEquals(httpRequest, "POST https://api.elastichosts.com/drives/200/image/100 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testImageDriveWithConversion() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticHostsAsyncClient.class.getMethod("imageDrive", String.class, String.class,
+            ImageConversionType.class);
+      GeneratedHttpRequest<ElasticHostsAsyncClient> httpRequest = processor.createRequest(method, "100", "200",
+            ImageConversionType.GUNZIP);
+
+      assertRequestLineEquals(httpRequest, "POST https://api.elastichosts.com/drives/200/image/100/gunzip HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
+
    public void testDestroyDrive() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticHostsAsyncClient.class.getMethod("destroyDrive", String.class);
       GeneratedHttpRequest<ElasticHostsAsyncClient> httpRequest = processor.createRequest(method, "uuid");
@@ -176,6 +217,68 @@ public class ElasticHostsAsyncClientTest extends RestClientTest<ElasticHostsAsyn
 
    }
 
+   public void testReadDrive() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticHostsAsyncClient.class.getMethod("readDrive", String.class);
+      GeneratedHttpRequest<ElasticHostsAsyncClient> httpRequest = processor.createRequest(method, "100");
+
+      assertRequestLineEquals(httpRequest, "GET https://api.elastichosts.com/drives/100/read HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/octet-stream\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ReturnPayload.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testReadDriveOptions() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticHostsAsyncClient.class.getMethod("readDrive", String.class, ReadDriveOptions.class);
+      GeneratedHttpRequest<ElasticHostsAsyncClient> httpRequest = processor.createRequest(method, "100",
+            new ReadDriveOptions().offset(1024).size(2048));
+
+      assertRequestLineEquals(httpRequest, "POST https://api.elastichosts.com/drives/100/read/1024/2048 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/octet-stream\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ReturnPayload.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testWriteDrive() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticHostsAsyncClient.class.getMethod("writeDrive", String.class, Payload.class);
+      GeneratedHttpRequest<ElasticHostsAsyncClient> httpRequest = processor.createRequest(method, "100",
+            Payloads.newStringPayload("foo"));
+
+      assertRequestLineEquals(httpRequest, "POST https://api.elastichosts.com/drives/100/write HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, "", MediaType.APPLICATION_OCTET_STREAM, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testWriteDriveOffset() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticHostsAsyncClient.class.getMethod("writeDrive", String.class, Payload.class, long.class);
+      GeneratedHttpRequest<ElasticHostsAsyncClient> httpRequest = processor.createRequest(method, "100",
+            Payloads.newStringPayload("foo"), 2048);
+
+      assertRequestLineEquals(httpRequest, "POST https://api.elastichosts.com/drives/100/write/2048 HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, "", MediaType.APPLICATION_OCTET_STREAM, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+   }
    @Override
    protected void checkFilters(HttpRequest request) {
       assertEquals(request.getFilters().size(), 1);
