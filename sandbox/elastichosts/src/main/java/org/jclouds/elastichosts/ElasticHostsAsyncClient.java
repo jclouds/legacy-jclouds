@@ -81,6 +81,22 @@ public interface ElasticHostsAsyncClient {
    ListenableFuture<Set<String>> listStandardDrives();
 
    /**
+    * @see ElasticHostsClient#listStandardCds()
+    */
+   @GET
+   @Path("/drives/standard/cd/list")
+   @ResponseParser(SplitNewlines.class)
+   ListenableFuture<Set<String>> listStandardCds();
+
+   /**
+    * @see ElasticHostsClient#listStandardImages()
+    */
+   @GET
+   @Path("/drives/standard/img/list")
+   @ResponseParser(SplitNewlines.class)
+   ListenableFuture<Set<String>> listStandardImages();
+
+   /**
     * @see ElasticHostsClient#listDriveInfo()
     */
    @GET

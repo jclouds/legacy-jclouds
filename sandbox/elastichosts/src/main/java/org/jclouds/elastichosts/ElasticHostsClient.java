@@ -55,6 +55,20 @@ public interface ElasticHostsClient {
    Set<String> listStandardDrives();
 
    /**
+    * list of cd uuids that are in the library
+    * 
+    * @return or empty set if no cds are found
+    */
+   Set<String> listStandardCds();
+
+   /**
+    * list of image uuids that are in the library
+    * 
+    * @return or empty set if no images are found
+    */
+   Set<String> listStandardImages();
+
+   /**
     * Get all drives info
     * 
     * @return or empty set if no drives are found

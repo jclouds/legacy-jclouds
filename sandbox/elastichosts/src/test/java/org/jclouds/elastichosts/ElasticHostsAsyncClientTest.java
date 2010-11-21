@@ -102,6 +102,36 @@ public class ElasticHostsAsyncClientTest extends RestClientTest<ElasticHostsAsyn
       checkFilters(httpRequest);
    }
 
+   public void testListStandardCds() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticHostsAsyncClient.class.getMethod("listStandardCds");
+      GeneratedHttpRequest<ElasticHostsAsyncClient> httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "GET https://api.elastichosts.com/drives/standard/cd/list HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, SplitNewlines.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testListStandardImages() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticHostsAsyncClient.class.getMethod("listStandardImages");
+      GeneratedHttpRequest<ElasticHostsAsyncClient> httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "GET https://api.elastichosts.com/drives/standard/img/list HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, SplitNewlines.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+   }
+
    public void testListDriveInfo() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticHostsAsyncClient.class.getMethod("listDriveInfo");
       GeneratedHttpRequest<ElasticHostsAsyncClient> httpRequest = processor.createRequest(method);
@@ -279,6 +309,7 @@ public class ElasticHostsAsyncClientTest extends RestClientTest<ElasticHostsAsyn
 
       checkFilters(httpRequest);
    }
+
    @Override
    protected void checkFilters(HttpRequest request) {
       assertEquals(request.getFilters().size(), 1);

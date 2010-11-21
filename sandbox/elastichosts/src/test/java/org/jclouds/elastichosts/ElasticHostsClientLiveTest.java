@@ -25,6 +25,7 @@ import static org.jclouds.rest.RestContextFactory.createContext;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.util.Properties;
 import java.util.Set;
 
@@ -33,8 +34,10 @@ import org.jclouds.elastichosts.domain.ClaimType;
 import org.jclouds.elastichosts.domain.CreateDriveRequest;
 import org.jclouds.elastichosts.domain.DriveData;
 import org.jclouds.elastichosts.domain.DriveInfo;
+import org.jclouds.io.Payloads;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
+import org.jclouds.util.Utils;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -121,6 +124,18 @@ public class ElasticHostsClientLiveTest {
    }
 
    @Test
+   public void testListStandardCds() throws Exception {
+      Set<String> drives = client.listStandardCds();
+      assertNotNull(drives);
+   }
+
+   @Test
+   public void testListStandardImages() throws Exception {
+      Set<String> drives = client.listStandardImages();
+      assertNotNull(drives);
+   }
+
+   @Test
    public void testGetDrive() throws Exception {
       for (String driveUUID : client.listDrives()) {
          assertNotNull(client.getDriveInfo(driveUUID));
@@ -132,11 +147,12 @@ public class ElasticHostsClientLiveTest {
 
    private String prefix = System.getProperty("user.name") + ".test";
    private DriveInfo info;
+   private DriveInfo info2;
 
    @Test
    public void testCreate() throws Exception {
       try {
-         findAndDestroyDrive();
+         findAndDestroyDrive(prefix);
       } catch (Exception e) {
 
       }
@@ -149,12 +165,25 @@ public class ElasticHostsClientLiveTest {
 
    }
 
-   public void testWeCanReadAndWriteToDrive() {
-      // TODO put a bunch of bytes and then read them back.
+   @Test(dependsOnMethods = "testCreate")
+   public void testWeCanReadAndWriteToDrive() throws IOException {
+      client.writeDrive(info.getUuid(), Payloads.newStringPayload("foo"));
+      assertEquals(Utils.toStringAndClose(client.readDrive(info.getUuid()).getInput()), "foo");
    }
 
-   public void testWeCopyADriveContentsViaGzip() {
-      // TODO gzip source to destination, then gunzip back to source and assert equiv
+   @Test(dependsOnMethods = "testWeCanReadAndWriteToDrive")
+   public void testWeCopyADriveContentsViaGzip() throws IOException {
+      try {
+         findAndDestroyDrive(prefix + "2");
+      } catch (Exception e) {
+
+      }
+      info2 = client.createDrive(new CreateDriveRequest.Builder().name(prefix + "2").size(1024 * 1024l).build());
+      client.imageDrive(info.getUuid(), info2.getUuid());
+
+      // TODO block until complete
+      System.err.println("state " + client.getDriveInfo(info2.getUuid()));
+      assertEquals(Utils.toStringAndClose(client.readDrive(info2.getUuid()).getInput()), "foo");
 
    }
 
@@ -166,6 +195,7 @@ public class ElasticHostsClientLiveTest {
             new DriveData.Builder().claimType(ClaimType.SHARED).name("rediculous")
                   .readers(ImmutableSet.of("ffffffff-ffff-ffff-ffff-ffffffffffff"))
                   .tags(ImmutableSet.of("tag1", "tag2")).userMetadata(ImmutableMap.of("foo", "bar")).build());
+
       assertNotNull(info2.getUuid(), info.getUuid());
       assertEquals(info.getName(), "rediculous");
       assertEquals(info.getClaimType(), ClaimType.SHARED);
@@ -177,12 +207,12 @@ public class ElasticHostsClientLiveTest {
    @Test(dependsOnMethods = "testSetDriveData")
    public void testDestroyDrive() throws Exception {
 
-      findAndDestroyDrive();
+      findAndDestroyDrive(prefix);
       assertEquals(client.getDriveInfo(info.getUuid()), null);
 
    }
 
-   protected void findAndDestroyDrive() {
+   protected void findAndDestroyDrive(final String prefix) {
       DriveInfo drive = Iterables.find(client.listDriveInfo(), new Predicate<DriveInfo>() {
 
          @Override
