@@ -68,44 +68,53 @@ public class ParseAzureStorageErrorFromXmlContent implements HttpErrorHandler {
       try {
          if (response.getPayload() != null) {
             String contentType = response.getPayload().getContentMetadata().getContentType();
-            if (contentType != null && (contentType.indexOf("xml") != -1 || contentType.indexOf("unknown") != -1)) {
-               AzureStorageError error = utils.parseAzureStorageErrorFromContent(command, response, response
+            if (contentType != null && (contentType.indexOf("xml") != -1 || contentType.indexOf("unknown") != -1)
+                  && !new Long(0).equals(response.getPayload().getContentMetadata().getContentLength())) {
+               try {
+                  AzureStorageError error = utils.parseAzureStorageErrorFromContent(command, response, response
                         .getPayload().getInput());
-               if (error != null) {
-                  message = error.getMessage();
-                  exception = new AzureStorageResponseException(command, response, error);
+                  if (error != null) {
+                     message = error.getMessage();
+                     exception = new AzureStorageResponseException(command, response, error);
+                  }
+               } catch (RuntimeException e) {
+                  try {
+                     message = Utils.toStringAndClose(response.getPayload().getInput());
+                     exception = new HttpResponseException(command, response, message);
+                  } catch (IOException e1) {
+                  }
                }
             } else {
                try {
                   message = Utils.toStringAndClose(response.getPayload().getInput());
+                  exception = new HttpResponseException(command, response, message);
                } catch (IOException e) {
                }
             }
          }
          message = message != null ? message : String.format("%s -> %s", command.getRequest().getRequestLine(),
-                  response.getStatusLine());
+               response.getStatusLine());
          switch (response.getStatusCode()) {
-            case 401:
-               exception = new AuthorizationException(command.getRequest(), message);
-               break;
-            case 404:
-
-               if (!command.getRequest().getMethod().equals("DELETE")) {
-                  String path = command.getRequest().getEndpoint().getPath();
-                  Matcher matcher = CONTAINER_PATH.matcher(path);
+         case 401:
+            exception = new AuthorizationException(exception.getMessage(), exception);
+            break;
+         case 404:
+            if (!command.getRequest().getMethod().equals("DELETE")) {
+               String path = command.getRequest().getEndpoint().getPath();
+               Matcher matcher = CONTAINER_PATH.matcher(path);
+               if (matcher.find()) {
+                  exception = new ContainerNotFoundException(matcher.group(1), message);
+               } else {
+                  matcher = CONTAINER_KEY_PATH.matcher(path);
                   if (matcher.find()) {
-                     exception = new ContainerNotFoundException(matcher.group(1), message);
-                  } else {
-                     matcher = CONTAINER_KEY_PATH.matcher(path);
-                     if (matcher.find()) {
-                        exception = new KeyNotFoundException(matcher.group(1), matcher.group(2), message);
-                     }
+                     exception = new KeyNotFoundException(matcher.group(1), matcher.group(2), message);
                   }
                }
-               break;
-            case 411:
-               exception = new IllegalArgumentException(message);
-               break;
+            }
+            break;
+         case 411:
+            exception = new IllegalArgumentException(message);
+            break;
          }
       } finally {
          releasePayload(response);

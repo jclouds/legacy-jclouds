@@ -19,22 +19,26 @@
 
 Overview:
  
-jclouds is an open source framework that helps you get started in the cloud
+jclouds is an open source library that helps you get started in the cloud
 and reuse your java and clojure development skills. Our api allows you to 
-freedom to use portable abstractions or cloud-specific features.
+freedom to use portable abstractions or cloud-specific features.  We have
+two abstractions at the moment: compute and blobstore.  compute helps you
+bootstrap machines in the cloud.  blobstore helps you manage key-value
+data.
  
-our current version is 1.0-beta-7
+our current version is 1.0-beta-8
 our dev version is 1.0-SNAPSHOT
  
-our compute api supports: ec2, gogrid, rackspace, rimuhosting, vcloud, trmk-ecloud, 
-                          trmk-vcloudexpress, eucalyptus, bluelock-vclouddirector,
-                          bluelock-vcloudexpress, slicehost, stub (in-memory)
+our compute api supports: ec2, gogrid, cloudservers (rackspace), rimuhosting, vcloud,
+                          trmk-ecloud, trmk-vcloudexpress, eucalyptus,
+                          bluelock-vclouddirector, slicehost, stub (in-memory)
 
   * note * the pom dependency org.jclouds/jclouds-allcompute gives you access to
            to all of these providers
 
-our blobstore api supports: s3, rackspace, azure, atmos online, att synaptic,
-                          walrus, googlestorage, transient (in-memory), filesystem (on-disk)
+our blobstore api supports: s3, cloudfiles (rackspace), azurestorage, atmosonline,
+                            synaptic, peer1-storage, walrus, googlestorage, 
+                            transient (in-memory), filesystem (on-disk)
  
   * note * the pom dependency org.jclouds/jclouds-allblobstore gives you access to
            to all of these providers
@@ -98,13 +102,13 @@ Compute Example (Clojure):
     (run-nodes "mycluster" 2))
  
 Downloads:
-  * distribution zip: http://jclouds.googlecode.com/files/jclouds-1.0-beta-7.zip
+  * distribution zip: http://jclouds.googlecode.com/files/jclouds-1.0-beta-8.zip
   * maven repo: http://jclouds.googlecode.com/svn/repo 
   * snapshot repo: http://jclouds.rimuhosting.com/maven2/snapshots
  
 Links:
   * project page: http://code.google.com/p/jclouds/
-  * javadocs (1.0-beta-7): http://jclouds.rimuhosting.com/apidocs/
+  * javadocs (1.0-beta-8): http://jclouds.rimuhosting.com/apidocs/
   * javadocs (1.0-SNAPSHOT): http://jclouds.rimuhosting.com/apidocs-SNAPSHOT/
   * community: http://code.google.com/p/jclouds/wiki/AppsThatUseJClouds
   * user group: http://groups.google.com/group/jclouds

@@ -35,10 +35,14 @@ import com.google.common.collect.Sets;
  */
 public class BaseEC2RequestOptions extends BaseHttpRequestOptions {
 
+   @Override
+   public String toString() {
+      return "[formParameters=" + formParameters + "]";
+   }
+
    protected void indexFormValuesWithPrefix(String prefix, String... values) {
       for (int i = 0; i < values.length; i++) {
-         formParameters.put(prefix + "." + (i + 1), checkNotNull(values[i], prefix.toLowerCase()
-                  + "s[" + i + "]"));
+         formParameters.put(prefix + "." + (i + 1), checkNotNull(values[i], prefix.toLowerCase() + "s[" + i + "]"));
       }
    }
 

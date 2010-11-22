@@ -89,8 +89,8 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       Set<Module> modules = ImmutableSet.<Module> of(googleModule);
       // shared across all blobstores and used to retrieve tweets
       try {
-         twitterClient = new TwitterFactory().getInstance(props.getProperty("twitter.identity"), props
-                  .getProperty("credential"));
+         twitterClient = new TwitterFactory().getInstance(props.getProperty("twitter.identity"),
+               props.getProperty("twitter.credential"));
       } catch (IllegalArgumentException e) {
          throw new IllegalArgumentException("properties for twitter not configured properly in " + props.toString(), e);
       }
@@ -100,7 +100,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
       // instantiate and store references to all blobstores by provider name
       providerTypeToBlobStoreMap = Maps.newHashMap();
       for (String hint : Splitter.on(',').split(
-               checkNotNull(props.getProperty(PROPERTY_BLOBSTORE_CONTEXTS), PROPERTY_BLOBSTORE_CONTEXTS))) {
+            checkNotNull(props.getProperty(PROPERTY_BLOBSTORE_CONTEXTS), PROPERTY_BLOBSTORE_CONTEXTS))) {
          providerTypeToBlobStoreMap.put(hint, blobStoreContextFactory.createContext(hint, modules, props));
       }
 
@@ -111,7 +111,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
          queue.add(url("/store/do").header("context", name).method(Method.GET));
       }
       logger.trace("Members initialized. Twitter: '%s', container: '%s', provider types: '%s'", twitterClient,
-               container, providerTypeToBlobStoreMap.keySet());
+            container, providerTypeToBlobStoreMap.keySet());
    }
 
    private Properties loadJCloudsProperties() {
@@ -139,7 +139,7 @@ public class SpringServletConfig extends LoggingConfig implements ServletConfigA
    @Bean
    public AddTweetsController addTweetsController() {
       AddTweetsController controller = new AddTweetsController(providerTypeToBlobStoreMap,
-               serviceToStoredTweetStatuses());
+            serviceToStoredTweetStatuses());
       injectServletConfig(controller);
       return controller;
    }

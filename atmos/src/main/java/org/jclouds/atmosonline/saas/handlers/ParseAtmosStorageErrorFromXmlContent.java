@@ -64,44 +64,51 @@ public class ParseAtmosStorageErrorFromXmlContent implements HttpErrorHandler {
    }
 
    public static final Pattern DIRECTORY_PATH = Pattern.compile("^/rest/namespace/?([^/]+)/$");
-   public static final Pattern DIRECTORY_KEY_PATH = Pattern
-            .compile("^/rest/namespace/?([^/]+)/(.*)");
+   public static final Pattern DIRECTORY_KEY_PATH = Pattern.compile("^/rest/namespace/?([^/]+)/(.*)");
 
    public void handleError(HttpCommand command, HttpResponse response) {
       Exception exception = new HttpResponseException(command, response);
       try {
-         AtmosStorageError error = parseErrorFromContentOrNull(command, response);
+         AtmosStorageError error = null;
+         if (response.getPayload() != null) {
+            try {
+               String content = Utils.toStringAndClose(response.getPayload().getInput());
+               if (content != null && content.indexOf('<') >= 0) {
+                  error = utils.parseAtmosStorageErrorFromContent(command, response, Utils.toInputStream(content));
+               } else {
+                  exception = content != null ? new HttpResponseException(command, response, content) : exception;
+               }
+            } catch (IOException e) {
+               logger.warn(e, "exception reading error from response", response);
+            }
+         }
          if (error != null && error.getCode() == 1016) {
             File file = new File(command.getRequest().getEndpoint().getPath());
-            exception = new KeyAlreadyExistsException(file.getParentFile().getAbsolutePath(), file
-                     .getName());
+            exception = new KeyAlreadyExistsException(file.getParentFile().getAbsolutePath(), file.getName());
          } else {
             switch (response.getStatusCode()) {
-               case 401:
-                  exception = new AuthorizationException(command.getRequest(),
-                           error != null ? error.getMessage() : response.getStatusLine());
-                  break;
-               case 404:
-                  if (!command.getRequest().getMethod().equals("DELETE")) {
-                     String message = error != null ? error.getMessage() : String.format(
-                              "%s -> %s", command.getRequest().getRequestLine(), response
-                                       .getStatusLine());
-                     String path = command.getRequest().getEndpoint().getPath();
-                     Matcher matcher = DIRECTORY_PATH.matcher(path);
+            case 401:
+               exception = new AuthorizationException(exception.getMessage(), exception);
+               break;
+            case 404:
+               if (!command.getRequest().getMethod().equals("DELETE")) {
+                  String message = error != null ? error.getMessage() : String.format("%s -> %s", command.getRequest()
+                        .getRequestLine(), response.getStatusLine());
+                  String path = command.getRequest().getEndpoint().getPath();
+                  Matcher matcher = DIRECTORY_PATH.matcher(path);
+                  if (matcher.find()) {
+                     exception = new ContainerNotFoundException(matcher.group(1), message);
+                  } else {
+                     matcher = DIRECTORY_KEY_PATH.matcher(path);
                      if (matcher.find()) {
-                        exception = new ContainerNotFoundException(matcher.group(1), message);
-                     } else {
-                        matcher = DIRECTORY_KEY_PATH.matcher(path);
-                        if (matcher.find()) {
-                           exception = new KeyNotFoundException(matcher.group(1), matcher.group(2),
-                                    message);
-                        }
+                        exception = new KeyNotFoundException(matcher.group(1), matcher.group(2), message);
                      }
                   }
-                  break;
-               default:
-                  exception = error != null ? new AtmosStorageResponseException(command, response,
-                           error) : new HttpResponseException(command, response);
+               }
+               break;
+            default:
+               exception = error != null ? new AtmosStorageResponseException(command, response, error)
+                     : new HttpResponseException(command, response);
 
             }
          }
@@ -111,17 +118,4 @@ public class ParseAtmosStorageErrorFromXmlContent implements HttpErrorHandler {
       }
    }
 
-   AtmosStorageError parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
-      if (response.getPayload() != null) {
-         try {
-            String content = Utils.toStringAndClose(response.getPayload().getInput());
-            if (content != null && content.indexOf('<') >= 0)
-               return utils.parseAtmosStorageErrorFromContent(command, response, Utils
-                        .toInputStream(content));
-         } catch (IOException e) {
-            logger.warn(e, "exception reading error from response", response);
-         }
-      }
-      return null;
-   }
 }

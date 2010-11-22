@@ -93,7 +93,7 @@ public class ComputeAndBlobStoreTogetherHappilyLiveTest extends BlobStoreAndComp
       Statement installOpenJDK = execHttpResponse(signedRequestOfInstallScript);
 
       // if we want to, we can mix and match batched and ad-hoc commands, such as extracting maven
-      String mavenVersion = "3.0-beta-3";
+      String mavenVersion = "3.0";
       Statement extractMavenIntoUsrLocal = extractTargzIntoDirectory(
             URI.create("http://mirrors.ibiblio.org/pub/mirrors/apache//maven/binaries/apache-maven-" + mavenVersion
                   + "-bin.tar.gz"), "/usr/local");

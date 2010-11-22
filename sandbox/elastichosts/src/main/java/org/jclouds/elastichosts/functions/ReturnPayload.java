@@ -17,21 +17,22 @@
  * ====================================================================
  */
 
-package org.jclouds.gogrid.compute.suppliers;
+package org.jclouds.elastichosts.functions;
 
-import static org.testng.Assert.assertEquals;
+import javax.inject.Singleton;
 
-import org.testng.annotations.Test;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.io.Payload;
+
+import com.google.common.base.Function;
 
 /**
- * 
  * @author Adrian Cole
  */
-public class GoGridImageSupplierTest {
+@Singleton
+public class ReturnPayload implements Function<HttpResponse, Payload> {
 
-   @Test
-   public void testParseVersion() {
-      assertEquals(GoGridImageSupplier.parseVersion("CentOS 5.3 (64-bit)"), "5.3");
+   public Payload apply(HttpResponse from) {
+      return from.getPayload();
    }
-
 }

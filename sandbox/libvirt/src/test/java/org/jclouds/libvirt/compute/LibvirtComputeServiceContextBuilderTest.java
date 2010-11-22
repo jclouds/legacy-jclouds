@@ -6,15 +6,7 @@ import java.util.Properties;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.StandaloneComputeServiceContextSpec;
-import org.jclouds.libvirt.Datacenter;
-import org.jclouds.libvirt.Image;
-import org.jclouds.libvirt.compute.domain.LibvirtComputeServiceContextModule;
-import org.libvirt.Domain;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * 
@@ -32,11 +24,8 @@ public class LibvirtComputeServiceContextBuilderTest {
    @Test
    public void testCanBuildWithComputeService() {
       ComputeServiceContext context = new ComputeServiceContextFactory()
-            .createContext(new StandaloneComputeServiceContextSpec<Domain, Domain, Image, Datacenter>("libvirt",
-                  "test:///default", "1", "identity", "credential", new LibvirtComputeServiceContextModule(),
-                  ImmutableSet.<Module> of()));
-      //System.err.println(context.getComputeService().
+            .createContext(new LibvirtComputeServiceContextSpec("test:///default", "identity", "credential"));
+      // System.err.println(context.getComputeService().
       context.close();
    }
-
 }

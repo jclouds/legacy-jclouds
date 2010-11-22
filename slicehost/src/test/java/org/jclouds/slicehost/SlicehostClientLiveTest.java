@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.Constants;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -77,7 +78,7 @@ public class SlicehostClientLiveTest {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
       apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
-               + ".apiversion");
+            + ".apiversion");
    }
 
    protected Properties setupProperties() {
@@ -96,8 +97,7 @@ public class SlicehostClientLiveTest {
       Properties overrides = setupProperties();
 
       Injector injector = new RestContextFactory().createContextBuilder(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), overrides)
-               .buildInjector();
+            ImmutableSet.<Module> of(new Log4JLoggingModule(), new JschSshClientModule()), overrides).buildInjector();
 
       client = injector.getInstance(SlicehostClient.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
@@ -252,7 +252,7 @@ public class SlicehostClientLiveTest {
    private void blockUntilSliceActive(int sliceId) throws InterruptedException {
       Slice currentDetails = null;
       for (currentDetails = client.getSlice(sliceId); currentDetails.getStatus() != Slice.Status.ACTIVE; currentDetails = client
-               .getSlice(sliceId)) {
+            .getSlice(sliceId)) {
          System.out.printf("blocking on status active%n%s%n", currentDetails);
          Thread.sleep(5 * 1000);
       }
@@ -286,7 +286,7 @@ public class SlicehostClientLiveTest {
       IPSocket socket = new IPSocket(ip, 22);
       socketTester.apply(socket);
 
-      SshClient client = sshFactory.create(socket, "root", pass);
+      SshClient client = sshFactory.create(socket, new Credentials("root", pass));
       try {
          client.connect();
          client.put("/etc/jclouds.txt", Payloads.newStringPayload("slicehost"));

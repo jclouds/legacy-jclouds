@@ -19,13 +19,8 @@
 
 package org.jclouds.rackspace.cloudservers.compute.config;
 
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
-
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
-
-import com.google.inject.Injector;
 
 /**
  * Configures the {@link CloudServersComputeServiceContext}; requires {@link BaseComputeService}
@@ -43,8 +38,4 @@ public class CloudServersComputeServiceContextModule extends BaseComputeServiceC
       super.configure();
    }
 
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(UBUNTU).imageNameMatches(".*10\\.?04.*");
-   }
 }

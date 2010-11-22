@@ -417,6 +417,38 @@ public class FilesystemStorageStrategyImplTest {
     }
 
 
+    public void testGetFileForBlobKey_AbsolutePath()
+    throws IOException {
+        String absoluteBasePath = (new File(getAbsoluteDirectory(), "basedir")).getAbsolutePath() + FS;
+        String absoluteContainerPath = absoluteBasePath + CONTAINER_NAME + FS;
+
+        //create storageStrategy with an absolute path
+        FilesystemStorageStrategy storageStrategyAbsolute = new FilesystemStorageStrategyImpl(
+                new Blob.Factory() {
+                    @Override
+                    public Blob create(MutableBlobMetadata metadata) {
+                        return new BlobImpl(metadata != null ? metadata : new MutableBlobMetadataImpl());
+                    }
+                },
+                absoluteBasePath,
+                new FilesystemContainerNameValidatorImpl(),
+                new FilesystemBlobKeyValidatorImpl());
+        TestUtils.cleanDirectoryContent(absoluteContainerPath);
+
+        String blobKey;
+        File fileForPayload;
+
+        blobKey = TestUtils.createRandomBlobKey("getFileForBlobKey-", ".img");
+        fileForPayload = storageStrategyAbsolute.getFileForBlobKey(CONTAINER_NAME, blobKey);
+        assertNotNull(fileForPayload, "Result File object is null");
+        assertEquals(fileForPayload.getAbsolutePath(), absoluteContainerPath + blobKey, "Wrong file path");
+
+        blobKey = TestUtils.createRandomBlobKey("asd" + FS + "vmad" + FS + "andsnf" + FS + "getFileForBlobKey-", ".img");
+        fileForPayload = storageStrategyAbsolute.getFileForBlobKey(CONTAINER_NAME, blobKey);
+        assertEquals(fileForPayload.getAbsolutePath(), absoluteContainerPath + blobKey, "Wrong file path");
+    }
+
+
     public void testBlobExists() throws IOException {
         String[] sourceBlobKeys = new String[]{
             TestUtils.createRandomBlobKey("blobExists-", ".jpg"),
@@ -529,6 +561,17 @@ public class FilesystemStorageStrategyImplTest {
 
     //---------------------------------------------------------- Private methods
 
+
+    /**
+     * Calculates an absolute directory path that depends on operative system
+     * @return
+     */
+    private String getAbsoluteDirectory() throws IOException {
+        File tempFile = File.createTempFile("prefix", "suffix");
+        String tempAbsolutePath = tempFile.getParent();
+
+        return tempAbsolutePath;
+    }
 
 
 }

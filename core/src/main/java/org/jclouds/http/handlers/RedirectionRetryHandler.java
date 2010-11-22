@@ -19,8 +19,8 @@
 
 package org.jclouds.http.handlers;
 
-import static org.jclouds.http.HttpUtils.changePathTo;
-import static org.jclouds.http.HttpUtils.changeSchemeHostAndPortTo;
+import static java.util.Collections.singletonList;
+import static javax.ws.rs.core.HttpHeaders.HOST;
 import static org.jclouds.http.HttpUtils.closeClientButKeepContentStream;
 
 import java.net.URI;
@@ -58,8 +58,7 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
    protected final Provider<UriBuilder> uriBuilderProvider;
 
    @Inject
-   protected RedirectionRetryHandler(Provider<UriBuilder> uriBuilderProvider,
-            BackoffLimitedRetryHandler backoffHandler) {
+   protected RedirectionRetryHandler(Provider<UriBuilder> uriBuilderProvider, BackoffLimitedRetryHandler backoffHandler) {
       this.backoffHandler = backoffHandler;
       this.uriBuilderProvider = uriBuilderProvider;
    }
@@ -67,21 +66,32 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       closeClientButKeepContentStream(response);
       String hostHeader = response.getFirstHeaderOrNull(HttpHeaders.LOCATION);
-      if (hostHeader != null && command.incrementRedirectCount() < retryCountLimit) {
-         URI redirectionUrl = uriBuilderProvider.get().uri(URI.create(hostHeader)).build();
-         if (redirectionUrl.getScheme().equals(command.getRequest().getEndpoint().getScheme())
-                  && redirectionUrl.getHost().equals(command.getRequest().getEndpoint().getHost())
-                  && redirectionUrl.getPort() == command.getRequest().getEndpoint().getPort()) {
-            if (!redirectionUrl.getPath().equals(command.getRequest().getEndpoint().getPath())) {
-               changePathTo(command.getRequest(), redirectionUrl.getPath(), uriBuilderProvider
-                        .get());
-            } else {
-               return backoffHandler.shouldRetryRequest(command, response);
-            }
-         } else {
-            changeSchemeHostAndPortTo(command.getRequest(), redirectionUrl.getScheme(),
-                     redirectionUrl.getHost(), redirectionUrl.getPort(), uriBuilderProvider.get());
+      if (command.incrementRedirectCount() < retryCountLimit && hostHeader != null) {
+         URI redirectionUrl = URI.create(hostHeader);
+
+         // if you are sent the same uri, assume there's a transient problem and retry.
+         if (redirectionUrl.equals(command.getRequest().getEndpoint()))
+            return backoffHandler.shouldRetryRequest(command, response);
+
+         UriBuilder builder = uriBuilderProvider.get().uri(command.getRequest().getEndpoint());
+         assert redirectionUrl.getPath() != null : "no path in redirect header from: " + response;
+         builder.replacePath(redirectionUrl.getPath());
+
+         if (redirectionUrl.getScheme() != null)
+            builder.scheme(redirectionUrl.getScheme());
+
+         if (redirectionUrl.getHost() != null) {
+            builder.host(redirectionUrl.getHost());
+            if (command.getRequest().getFirstHeaderOrNull(HOST) != null)
+               command.getRequest().getHeaders().replaceValues(HOST, singletonList(redirectionUrl.getHost()));
          }
+         if (redirectionUrl.getPort() != command.getRequest().getEndpoint().getPort())
+            builder.port(redirectionUrl.getPort());
+
+         if (redirectionUrl.getQuery() != null)
+            builder.replaceQuery(redirectionUrl.getQuery());
+
+         command.getRequest().setEndpoint(builder.build());
          return true;
       } else {
          return false;

@@ -34,7 +34,7 @@
 
     <properties>
         <!-- when instances are hung, open a ticket and add their names here -->
-        <jclouds.compute.blacklist.nodes></jclouds.compute.blacklist.nodes>
+        <jclouds.compute.blacklist-nodes></jclouds.compute.blacklist-nodes>
         <test.bluelock-vcdirector.endpoint>https://vcenterprise.bluelock.com/api</test.bluelock-vcdirector.endpoint>
         <test.bluelock-vcdirector.apiversion>1.0</test.bluelock-vcdirector.apiversion>
         <test.bluelock-vcdirector.identity>FIXME</test.bluelock-vcdirector.identity>
@@ -95,8 +95,8 @@
                                             <value>${test.bluelock-vcdirector.credential}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.compute.blacklist.nodes</name>
-                                            <value>${jclouds.compute.blacklist.nodes}</value>
+                                            <name>jclouds.compute.blacklist-nodes</name>
+                                            <value>${jclouds.compute.blacklist-nodes}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

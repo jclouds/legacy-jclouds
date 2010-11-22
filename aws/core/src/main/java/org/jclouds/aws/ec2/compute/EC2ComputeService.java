@@ -24,8 +24,8 @@ import static org.jclouds.aws.ec2.util.EC2Utils.parseHandle;
 import static org.jclouds.util.Utils.checkNotEmpty;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
@@ -55,12 +55,13 @@ import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
-import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
+import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
+import org.jclouds.http.HttpResponseException;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
@@ -80,23 +81,23 @@ public class EC2ComputeService extends BaseComputeService {
 
    @Inject
    protected EC2ComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
-            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
-            @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-            GetNodeMetadataStrategy getNodeMetadataStrategy, RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
-            RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
-            ResumeNodeStrategy startNodeStrategy, SuspendNodeStrategy stopNodeStrategy,
-            Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
-            @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
-            @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
-            @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended, ComputeUtils utils, Timeouts timeouts,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
-            Map<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Map<RegionAndName, String> securityGroupMap,
-            @Named("PLACEMENT") Map<RegionAndName, String> placementGroupMap,
-            @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted) {
+         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
+         @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
+         GetNodeMetadataStrategy getNodeMetadataStrategy, RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
+         RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
+         ResumeNodeStrategy startNodeStrategy, SuspendNodeStrategy stopNodeStrategy,
+         Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
+         @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
+         @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
+         @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended, ComputeUtils utils, Timeouts timeouts,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
+         Map<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Map<RegionAndName, String> securityGroupMap,
+         @Named("PLACEMENT") Map<RegionAndName, String> placementGroupMap,
+         @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
-               runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy,
-               stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated,
-               nodeSuspended, utils, timeouts, executor);
+            runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy, stopNodeStrategy,
+            templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated, nodeSuspended, utils,
+            timeouts, executor);
       this.ec2Client = ec2Client;
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;
@@ -108,21 +109,28 @@ public class EC2ComputeService extends BaseComputeService {
    void deletePlacementGroup(String region, String tag) {
       checkNotEmpty(tag, "tag");
       String group = String.format("jclouds#%s#%s", tag, region);
-      if (ec2Client.getPlacementGroupServices().describePlacementGroupsInRegion(region, group).size() > 0) {
-         logger.debug(">> deleting placementGroup(%s)", group);
-         try {
-            ec2Client.getPlacementGroupServices().deletePlacementGroupInRegion(region, group);
-            checkState(placementGroupDeleted.apply(new PlacementGroup(region, group, "cluster", State.PENDING)), String
-                     .format("placementGroup region(%s) name(%s) failed to delete", region, group));
-            placementGroupMap.remove(new RegionAndName(region, tag));
-            logger.debug("<< deleted placementGroup(%s)", group);
-         } catch (AWSResponseException e) {
-            if (e.getError().getCode().equals("InvalidPlacementGroup.InUse")) {
-               logger.debug("<< inUse placementGroup(%s)", group);
-            } else {
-               throw e;
+      try {
+         if (ec2Client.getPlacementGroupServices().describePlacementGroupsInRegion(region, group).size() > 0) {
+            logger.debug(">> deleting placementGroup(%s)", group);
+            try {
+               ec2Client.getPlacementGroupServices().deletePlacementGroupInRegion(region, group);
+               checkState(placementGroupDeleted.apply(new PlacementGroup(region, group, "cluster", State.PENDING)),
+                     String.format("placementGroup region(%s) name(%s) failed to delete", region, group));
+               placementGroupMap.remove(new RegionAndName(region, tag));
+               logger.debug("<< deleted placementGroup(%s)", group);
+            } catch (AWSResponseException e) {
+               if (e.getError().getCode().equals("InvalidPlacementGroup.InUse")) {
+                  logger.debug("<< inUse placementGroup(%s)", group);
+               } else {
+                  throw e;
+               }
             }
          }
+      } catch (HttpResponseException e) {
+         // Eucalyptus does not support placement groups yet.
+         if (!(e.getResponse().getStatusCode() == 400 && context.getProviderSpecificContext().getProvider()
+               .equals("eucalyptus")))
+            throw e;
       }
    }
 

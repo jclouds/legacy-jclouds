@@ -1,0 +1,9 @@
+name Ubuntu 10.10 Server Edition Linux 64bit Preinstalled System
+size 8589934592
+claim:type shared
+readers ffffffff-ffff-ffff-ffff-ffffffffffff
+tags tag1 tag2
+user:foo bar
+user:baz raz
+avoid avoid1
+encryption:cipher aes-xts-plain

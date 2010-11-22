@@ -37,7 +37,7 @@ public class RimuHostingPropertiesBuilder extends PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_API_VERSION, "TODO");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://rimuhosting.com/r");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://api.rimuhosting.com/r");
       properties.setProperty(PROPERTY_RIMUHOSTING_DEFAULT_DC, "DCDALLAS");
       return properties;
    }

@@ -90,8 +90,8 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       super.testCatalog();
    }
 
-   protected String expectedOs = "Ubuntu Linux (32-bit)";
-   protected String itemName = "Ubuntu JeOS 9.10 (32-bit)";
+   protected String expectedOs = "Ubuntu Linux (64-bit)";
+   protected String itemName = "Ubuntu JeOS 9.10 (64-bit)";
 
    protected TerremarkVCloudClient tmClient;
    protected Factory sshFactory;
@@ -154,8 +154,8 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       long hardDisk = 4194304;
 
       // long hardDisk = 4194304 / 4 * 10;
-      // String catalogOs = "CentOS 5.3 (32-bit)";
-      // String expectedOs = "Red Hat Enterprise Linux 5 (32-bit)";
+      // String catalogOs = "CentOS 5.3 (64-bit)";
+      // String expectedOs = "Red Hat Enterprise Linux 5 (64-bit)";
 
       // lookup the datacenter you are deploying into
       vdc = tmClient.findVDCInOrgNamed(null, null);

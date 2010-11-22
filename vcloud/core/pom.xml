@@ -32,7 +32,7 @@
     <description>jclouds Core components to access vcloud</description>
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
-        <jclouds.compute.blacklist.nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist.nodes>
+        <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
         <test.vcloud.endpoint>https://66.45.200.97/api</test.vcloud.endpoint>
         <test.vcloud.apiversion>1.0</test.vcloud.apiversion>
         <test.vcloud.identity>FIXME</test.vcloud.identity>
@@ -91,8 +91,8 @@
                                             <value>${test.vcloud.credential}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.compute.blacklist.nodes</name>
-                                            <value>${jclouds.compute.blacklist.nodes}</value>
+                                            <name>jclouds.compute.blacklist-nodes</name>
+                                            <value>${jclouds.compute.blacklist-nodes}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

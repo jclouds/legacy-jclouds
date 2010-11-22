@@ -19,6 +19,7 @@
 
 package org.jclouds.ibmdev.compute;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.BaseComputeServiceLiveTest;
@@ -52,7 +53,7 @@ public class IBMDeveloperCloudComputeServiceLiveTestDisabled extends BaseCompute
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.SUSE);
       assertEquals(defaultTemplate.getLocation().getId(), "1");
-      assertEquals(defaultTemplate.getSize().getCores(), 2.0d);
+      assertEquals(getCores(defaultTemplate.getHardware()), 2.0d);
    }
 
    @Override

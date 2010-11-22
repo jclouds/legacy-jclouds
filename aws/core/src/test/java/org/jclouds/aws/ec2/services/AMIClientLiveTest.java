@@ -36,12 +36,13 @@ import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.domain.Image;
-import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.aws.ec2.domain.Image.ImageType;
+import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -74,13 +75,12 @@ public class AMIClientLiveTest {
    protected String endpoint;
    protected String apiversion;
 
+   @BeforeClass
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
-      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
-      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
-               + ".apiversion");
+      credential = System.getProperty("test." + provider + ".credential");
+      endpoint = System.getProperty("test." + provider + ".endpoint");
+      apiversion = System.getProperty("test." + provider + ".apiversion");
    }
 
    protected Properties setupProperties() {
@@ -88,9 +88,12 @@ public class AMIClientLiveTest {
       overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
       overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       overrides.setProperty(provider + ".identity", identity);
-      overrides.setProperty(provider + ".credential", credential);
-      overrides.setProperty(provider + ".endpoint", endpoint);
-      overrides.setProperty(provider + ".apiversion", apiversion);
+      if (credential != null)
+         overrides.setProperty(provider + ".credential", credential);
+      if (endpoint != null)
+         overrides.setProperty(provider + ".endpoint", endpoint);
+      if (apiversion != null)
+         overrides.setProperty(provider + ".apiversion", apiversion);
       return overrides;
    }
 

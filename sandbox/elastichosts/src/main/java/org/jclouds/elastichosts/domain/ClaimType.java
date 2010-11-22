@@ -17,36 +17,41 @@
  * ====================================================================
  */
 
-package org.jclouds.ibmdev.compute.strategy;
+package org.jclouds.elastichosts.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
-import org.jclouds.compute.strategy.RebootNodeStrategy;
-import org.jclouds.ibmdev.IBMDeveloperCloudClient;
-
 /**
+ * either 'exclusive' (the default) or 'shared' to allow multiple servers to access a drive
+ * simultaneously
+ * 
  * @author Adrian Cole
  */
-@Singleton
-public class IBMDeveloperCloudRebootNodeStrategy implements RebootNodeStrategy {
+public enum ClaimType {
+   /**
+    * 
+    */
+   EXCLUSIVE,
+   /**
+    * allow multiple servers to access a drive simultaneously
+    */
+   SHARED, UNRECOGNIZED;
 
-   private final IBMDeveloperCloudClient client;
-   private final GetNodeMetadataStrategy getNode;
-
-   @Inject
-   protected IBMDeveloperCloudRebootNodeStrategy(IBMDeveloperCloudClient client, GetNodeMetadataStrategy getNode) {
-      this.client = checkNotNull(client, "client");
-      this.getNode = checkNotNull(getNode, "getNode");
+   public String value() {
+      return name().toLowerCase();
    }
 
    @Override
-   public NodeMetadata execute(String id) {
-      client.restartInstance(id);
-      return getNode.execute(id);
+   public String toString() {
+      return value();
    }
+
+   public static ClaimType fromValue(String claim) {
+      try {
+         return valueOf(checkNotNull(claim, "claim").toUpperCase());
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
+   }
+
 }

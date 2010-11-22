@@ -48,10 +48,10 @@ public class RimuHostingComputeServiceLiveTest extends BaseComputeServiceLiveTes
    public void testTemplateBuilder() {
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), false);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "9.10");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getLocation().getId(), "DCDALLAS");
-      assertEquals(defaultTemplate.getHardware().getProviderId(), "MIRO1B");
+      assertEquals(defaultTemplate.getHardware().getProviderId(), "MIRO4B");
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 

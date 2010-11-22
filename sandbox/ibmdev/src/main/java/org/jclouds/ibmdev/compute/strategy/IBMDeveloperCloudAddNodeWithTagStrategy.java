@@ -29,8 +29,6 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
 import org.jclouds.ibmdev.IBMDeveloperCloudClient;
-import org.jclouds.ibmdev.compute.domain.IBMImage;
-import org.jclouds.ibmdev.compute.domain.IBMSize;
 import org.jclouds.ibmdev.domain.Instance;
 
 import com.google.common.base.Function;
@@ -46,16 +44,15 @@ public class IBMDeveloperCloudAddNodeWithTagStrategy implements AddNodeWithTagSt
 
    @Inject
    protected IBMDeveloperCloudAddNodeWithTagStrategy(IBMDeveloperCloudClient client,
-            Function<Instance, NodeMetadata> instanceToNodeMetadata) {
+         Function<Instance, NodeMetadata> instanceToNodeMetadata) {
       this.client = checkNotNull(client, "client");
       this.instanceToNodeMetadata = checkNotNull(instanceToNodeMetadata, "instanceToNodeMetadata");
    }
 
    @Override
-   public NodeMetadata execute(String tag, String name, Template template) {
-      Instance instance = client.createInstanceInLocation(template.getLocation().getId(), name, IBMImage.class.cast(
-               template.getImage()).getRawImage().getId(), IBMSize.class.cast(template.getSize()).getInstanceType()
-               .getId(), authorizePublicKey(tag));
+   public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
+      Instance instance = client.createInstanceInLocation(template.getLocation().getId(), name, template.getImage()
+            .getProviderId(), template.getHardware().getProviderId(), authorizePublicKey(tag));
       return instanceToNodeMetadata.apply(client.getInstance(instance.getId()));
    }
 }

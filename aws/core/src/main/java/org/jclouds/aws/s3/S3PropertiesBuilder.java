@@ -60,20 +60,15 @@ public class S3PropertiesBuilder extends PropertiesBuilder {
    }
 
    protected Properties addEndpoints(Properties properties) {
-      properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(Region.US_STANDARD,
-               Region.US_EAST_1, Region.US_WEST_1, "EU", Region.AP_SOUTHEAST_1));
-      properties.setProperty(PROPERTY_DEFAULT_REGIONS, Joiner.on(',').join(Region.US_STANDARD,
-               Region.US_EAST_1));
+      properties.setProperty(PROPERTY_REGIONS,
+            Joiner.on(',').join(Region.US_STANDARD, Region.US_WEST_1, "EU", Region.AP_SOUTHEAST_1));
+      properties.setProperty(PROPERTY_DEFAULT_REGIONS, Region.US_STANDARD);
       properties.setProperty(PROPERTY_ENDPOINT, "https://s3.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + Region.US_STANDARD,
-               "https://s3.amazonaws.com");
-      properties
-               .setProperty(PROPERTY_ENDPOINT + "." + Region.US_EAST_1, "https://s3.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + Region.US_WEST_1,
-               "https://s3-us-west-1.amazonaws.com");
+      properties.setProperty(PROPERTY_ENDPOINT + "." + Region.US_STANDARD, "https://s3.amazonaws.com");
+      properties.setProperty(PROPERTY_ENDPOINT + "." + Region.US_WEST_1, "https://s3-us-west-1.amazonaws.com");
       properties.setProperty(PROPERTY_ENDPOINT + "." + "EU", "https://s3-eu-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + Region.AP_SOUTHEAST_1,
-               "https://s3-ap-southeast-1.amazonaws.com");
+      properties
+            .setProperty(PROPERTY_ENDPOINT + "." + Region.AP_SOUTHEAST_1, "https://s3-ap-southeast-1.amazonaws.com");
       return properties;
    }
 
@@ -92,8 +87,8 @@ public class S3PropertiesBuilder extends PropertiesBuilder {
 
    protected void setMetaPrefix() {
       if (properties.getProperty(PROPERTY_USER_METADATA_PREFIX) == null) {
-         properties.setProperty(PROPERTY_USER_METADATA_PREFIX, String.format("x-%s-meta-",
-                  properties.getProperty(PROPERTY_HEADER_TAG)));
+         properties.setProperty(PROPERTY_USER_METADATA_PREFIX,
+               String.format("x-%s-meta-", properties.getProperty(PROPERTY_HEADER_TAG)));
       }
    }
 

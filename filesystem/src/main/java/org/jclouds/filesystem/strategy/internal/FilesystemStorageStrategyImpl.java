@@ -335,12 +335,12 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
      * @return the resulting string
      */
     protected String buildPathStartingFromBaseDir(String...pathTokens) {
-        String normalizedToken = removeFileSeparatorFromBorders(normalize(baseDirectory));
+        String normalizedToken = removeFileSeparatorFromBorders(normalize(baseDirectory), true);
         StringBuilder completePath = new StringBuilder(normalizedToken);
         if(pathTokens!=null && pathTokens.length>0) {
             for(int i=0; i<pathTokens.length; i++) {
                 if(pathTokens[i]!=null) {
-                    normalizedToken = removeFileSeparatorFromBorders(normalize(pathTokens[i]));
+                    normalizedToken = removeFileSeparatorFromBorders(normalize(pathTokens[i]), false);
                     completePath.append(File.separator).append(normalizedToken);
                 }
             }
@@ -367,16 +367,19 @@ public class FilesystemStorageStrategyImpl implements FilesystemStorageStrategy 
      * Remove leading and trailing {@link File.separator} character from the
      * string.
      * @param pathToBeCleaned
+     * @param remove only trailing separator char from path
      * @return
      */
-    private String removeFileSeparatorFromBorders(String pathToBeCleaned) {
+    private String removeFileSeparatorFromBorders(String pathToBeCleaned, boolean onlyTrailing) {
         if (null == pathToBeCleaned || pathToBeCleaned.equals("")) return pathToBeCleaned;
 
         int beginIndex = 0;
         int endIndex = pathToBeCleaned.length();
 
         //search for separator chars
-        if (pathToBeCleaned.substring(0, 1).equals(File.separator)) beginIndex = 1;
+        if (!onlyTrailing) {
+            if (pathToBeCleaned.substring(0, 1).equals(File.separator)) beginIndex = 1;
+        }
         if (pathToBeCleaned.substring(pathToBeCleaned.length() - 1).equals(File.separator)) endIndex--;
 
         return pathToBeCleaned.substring(beginIndex, endIndex);

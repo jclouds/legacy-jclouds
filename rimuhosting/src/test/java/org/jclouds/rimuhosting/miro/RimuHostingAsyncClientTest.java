@@ -51,13 +51,13 @@ public class RimuHostingAsyncClientTest extends RestClientTest<RimuHostingAsyncC
       Method method = RimuHostingAsyncClient.class.getMethod("createServer", String.class, String.class, String.class,
             CreateServerOptions[].class);
       GeneratedHttpRequest<RimuHostingAsyncClient> httpRequest = processor.createRequest(method, "test.ivan.api.com",
-            "lenny", "MIRO1B");
+            "lenny", "MIRO4B");
 
-      assertRequestLineEquals(httpRequest, "POST https://rimuhosting.com/r/orders/new-vps HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
+      assertRequestLineEquals(httpRequest, "POST https://api.rimuhosting.com/r/orders/new-vps HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\nHost: api.rimuhosting.com\n");
       assertPayloadEquals(
             httpRequest,
-            "{\"request\":{\"instantiation_options\":{\"distro\":\"lenny\",\"domain_name\":\"test.ivan.api.com\"},\"pricing_plan_code\":\"MIRO1B\",\"meta_data\":[]}}",
+            "{\"request\":{\"instantiation_options\":{\"distro\":\"lenny\",\"domain_name\":\"test.ivan.api.com\"},\"pricing_plan_code\":\"MIRO4B\",\"meta_data\":[]}}",
             "application/json", false);
       assertResponseParserClassEquals(method, httpRequest, UnwrapOnlyJsonValue.class);
       assertSaxResponseParserClassEquals(method, null);

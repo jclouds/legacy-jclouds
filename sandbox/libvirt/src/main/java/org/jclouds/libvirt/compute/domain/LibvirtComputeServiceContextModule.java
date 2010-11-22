@@ -19,21 +19,28 @@
 
 package org.jclouds.libvirt.compute.domain;
 
+import static com.google.common.collect.Maps.newLinkedHashMap;
+import static org.jclouds.libvirt.LibvirtConstants.PROPERTY_LIBVIRT_DOMAIN_DIR;
+
 import java.net.URI;
+import java.util.Map;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.StandaloneComputeServiceContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.compute.suppliers.DefaultLocationSupplier;
 import org.jclouds.domain.Location;
 import org.jclouds.libvirt.Datacenter;
 import org.jclouds.libvirt.Image;
+import org.jclouds.libvirt.compute.LibvirtComputeService;
 import org.jclouds.libvirt.compute.functions.DatacenterToLocation;
 import org.jclouds.libvirt.compute.functions.DomainToHardware;
 import org.jclouds.libvirt.compute.functions.DomainToNodeMetadata;
@@ -45,6 +52,7 @@ import org.libvirt.Domain;
 import org.libvirt.LibvirtException;
 
 import com.google.common.base.Function;
+import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -73,6 +81,8 @@ StandaloneComputeServiceContextModule<Domain, Domain, Image, Datacenter> {
 		}).to(DomainToHardware.class);
 		bind(new TypeLiteral<Function<Datacenter, Location>>() {
 		}).to(DatacenterToLocation.class);
+		
+		bind(ComputeService.class).to(LibvirtComputeService.class);
 	}
 
 	@Provides
@@ -85,7 +95,9 @@ StandaloneComputeServiceContextModule<Domain, Domain, Image, Datacenter> {
 
 	@Override
 	protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-		String domainDir =  injector.getInstance(Key.get(String.class, Names.named("jclouds.libvirt.domain-dir")));
+		//String domainDir =  injector.getInstance(Key.get(String.class, Names.named(PROPERTY_LIBVIRT_DOMAIN_DIR)));
+		String domainDir = "";
+		System.out.println("++++ domain dir: " + domainDir);
 		String hardwareId = searchForHardwareIdInDomainDir(domainDir);
 		String image = searchForImageIdInDomainDir(domainDir);
 		return template.hardwareId(hardwareId).imageId(image) ;
@@ -100,4 +112,16 @@ StandaloneComputeServiceContextModule<Domain, Domain, Image, Datacenter> {
 		// TODO
 		return "c7ff2039-a9f1-a659-7f91-e0f82f59d52e";
 	}
+
+	/*
+	 *       Map<String, URI> regions = newLinkedHashMap();
+      for (String region : Splitter.on(',').split(regionString)) {
+         regions.put(
+               region,
+               URI.create(injector.getInstance(Key.get(String.class,
+                     Names.named(Constants.PROPERTY_ENDPOINT + "." + region)))));
+      }
+      return regions;
+	 */
+	
 }

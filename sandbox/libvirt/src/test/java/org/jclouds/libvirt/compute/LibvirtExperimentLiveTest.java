@@ -21,20 +21,13 @@ package org.jclouds.libvirt.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Set;
+
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.RunNodesException;
-import org.jclouds.compute.StandaloneComputeServiceContextSpec;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.libvirt.Datacenter;
-import org.jclouds.libvirt.Image;
-import org.jclouds.libvirt.compute.domain.LibvirtComputeServiceContextModule;
-import org.libvirt.Domain;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
 
 /**
  * 
@@ -60,35 +53,38 @@ public class LibvirtExperimentLiveTest {
    public void testAndExperiment() {
       ComputeServiceContext context = null;
       try {
-         context = new ComputeServiceContextFactory()
-               .createContext(new StandaloneComputeServiceContextSpec<Domain, Domain, Image, Datacenter>("libvirt",
-                     endpoint, apiversion, identity, credential, new LibvirtComputeServiceContextModule(), ImmutableSet
-                           .<Module> of()));
-         
+         context = new ComputeServiceContextFactory().createContext(new LibvirtComputeServiceContextSpec(
+               "test:///default", "identity", "credential"));
+         /*
+          * 
+          * /* System.out.println("images " + context.getComputeService().listImages());
+          * System.out.println("nodes " + context.getComputeService().listNodes());
+          * System.out.println("hardware profiles " +
+          * context.getComputeService().listHardwareProfiles());
+          */
 
          /*
-         System.out.println("images " + context.getComputeService().listImages());
-         System.out.println("nodes " + context.getComputeService().listNodes());
-         System.out.println("hardware profiles " + context.getComputeService().listHardwareProfiles()); 
-         */
-         
+          * Template defaultTemplate = context.getComputeService().templateBuilder()
+          * .hardwareId("c7ff2039-a9f1-a659-7f91-e0f82f59d52e").imageId("1") //.locationId("")
+          * .build();
+          */
+
          /*
-         Template defaultTemplate = context.getComputeService().templateBuilder()
-         	.hardwareId("c7ff2039-a9f1-a659-7f91-e0f82f59d52e").imageId("1") //.locationId("")
-         .build();
-         */	
-         
-    /*
-     * We will probably make a default template out of properties at some point
-     * You can control the default template via overriding a method in standalonecomputeservicexontextmodule
-     */
+          * We will probably make a default template out of properties at some point You can control
+          * the default template via overriding a method in standalonecomputeservicexontextmodule
+          */
 
-         context.getComputeService().runNodesWithTag("ttylinux", 1/*, defaultTemplate*/);
-
-	} catch (RunNodesException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	} finally {
+         Set<? extends NodeMetadata> nodeMetadataSet = context.getComputeService().runNodesWithTag("tty", 1);
+         for (NodeMetadata nodeMetadata : nodeMetadataSet) {
+            /*
+             * context.getComputeService().suspendNode(nodeMetadata.getId());
+             * context.getComputeService().resumeNode(nodeMetadata.getId());
+             */
+            context.getComputeService().destroyNode(nodeMetadata.getId());
+         }
+      } catch (Exception e) {
+         e.printStackTrace();
+      } finally {
          if (context != null)
             context.close();
       }

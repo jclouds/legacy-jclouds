@@ -50,7 +50,7 @@ import org.jclouds.ibmdev.xml.LocationHandler;
 import org.jclouds.ibmdev.xml.LocationsHandler;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
@@ -660,7 +660,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
    }
 
    @Override
-   public ContextSpec<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> createContextSpec() {
+   public RestContextSpec<IBMDeveloperCloudClient, IBMDeveloperCloudAsyncClient> createContextSpec() {
       return new RestContextFactory().createContextSpec("ibmdev", "identity", "credential", new Properties());
    }
 }

@@ -71,4 +71,15 @@ public class VCloudComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       }
    }
 
+   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
+   @Override
+   public void testGetNodesWithDetails() throws Exception {
+      super.testGetNodesWithDetails();
+   }
+
+   @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
+   @Override
+   public void testDestroyNodes() {
+      super.testDestroyNodes();
+   }
 }
