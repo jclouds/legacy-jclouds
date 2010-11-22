@@ -178,12 +178,16 @@ public class ElasticHostsClientLiveTest {
       } catch (Exception e) {
 
       }
-      info2 = client.createDrive(new CreateDriveRequest.Builder().name(prefix + "2").size(1024 * 1024l).build());
-      client.imageDrive(info.getUuid(), info2.getUuid());
+      try {
+         info2 = client.createDrive(new CreateDriveRequest.Builder().name(prefix + "2").size(1024 * 1024l).build());
+         client.imageDrive(info.getUuid(), info2.getUuid());
 
-      // TODO block until complete
-      System.err.println("state " + client.getDriveInfo(info2.getUuid()));
-      assertEquals(Utils.toStringAndClose(client.readDrive(info2.getUuid()).getInput()), "foo");
+         // TODO block until complete
+         System.err.println("state " + client.getDriveInfo(info2.getUuid()));
+         assertEquals(Utils.toStringAndClose(client.readDrive(info2.getUuid()).getInput()), "foo");
+      } finally {
+         findAndDestroyDrive(prefix + "2");
+      }
 
    }
 
