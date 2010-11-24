@@ -24,11 +24,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.binders.BindToJsonPayload;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.internal.Nullable;
 
 /**
  * 
