@@ -19,10 +19,11 @@
 
 package org.jclouds.atmosonline.saas.domain;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.io.PayloadEnclosing;
 
 import com.google.common.collect.Multimap;
-import com.google.inject.internal.Nullable;
 
 /**
  * Amazon Atmos is designed to store objects. Objects are stored in buckets and consist of a
