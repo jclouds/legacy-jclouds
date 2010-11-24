@@ -71,7 +71,7 @@ public class ParseCredentialsFromJsonResponseTest {
       ParseCredentialsFromJsonResponse parser = i.getInstance(ParseCredentialsFromJsonResponse.class);
       Credentials creds = parser.apply(response);
       assertEquals(creds.identity, "root");
-      assertEquals(creds.credential, "dig44sos");
+      assertEquals(creds.credential, "zot40ced");
 
    }
 
