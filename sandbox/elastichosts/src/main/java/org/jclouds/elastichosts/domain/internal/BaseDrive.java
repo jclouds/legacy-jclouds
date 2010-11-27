@@ -27,30 +27,22 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 import org.jclouds.elastichosts.domain.ClaimType;
+import org.jclouds.elastichosts.domain.Item;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.internal.util.ImmutableMap;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class BaseDrive {
-   public static class Builder {
-      protected String name;
+public class BaseDrive extends Item {
+   public static class Builder extends Item.Builder {
       protected long size;
       protected ClaimType claimType = ClaimType.EXCLUSIVE;
       protected Set<String> readers = ImmutableSet.of();
-      protected Set<String> tags = ImmutableSet.of();
-      protected Map<String, String> userMetadata = ImmutableMap.of();
 
       public Builder claimType(ClaimType claimType) {
          this.claimType = claimType;
-         return this;
-      }
-
-      public Builder name(String name) {
-         this.name = name;
          return this;
       }
 
@@ -64,36 +56,84 @@ public class BaseDrive {
          return this;
       }
 
-      public Builder tags(Iterable<String> tags) {
-         this.tags = ImmutableSet.copyOf(checkNotNull(tags, "tags"));
-         return this;
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder uuid(String uuid) {
+         return Builder.class.cast(super.uuid(uuid));
       }
 
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder name(String name) {
+         return Builder.class.cast(super.name(name));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder tags(Iterable<String> tags) {
+         return Builder.class.cast(super.tags(tags));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
       public Builder userMetadata(Map<String, String> userMetadata) {
-         this.userMetadata = ImmutableMap.copyOf(checkNotNull(userMetadata, "userMetadata"));
-         return this;
+         return Builder.class.cast(super.userMetadata(userMetadata));
       }
 
       public BaseDrive build() {
-         return new BaseDrive(name, size, claimType, readers, tags, userMetadata);
+         return new BaseDrive(uuid, name, size, claimType, readers, tags, userMetadata);
+      }
+
+      @Override
+      public int hashCode() {
+         final int prime = 31;
+         int result = super.hashCode();
+         result = prime * result + ((claimType == null) ? 0 : claimType.hashCode());
+         result = prime * result + ((readers == null) ? 0 : readers.hashCode());
+         result = prime * result + (int) (size ^ (size >>> 32));
+         return result;
+      }
+
+      @Override
+      public boolean equals(Object obj) {
+         if (this == obj)
+            return true;
+         if (!super.equals(obj))
+            return false;
+         if (getClass() != obj.getClass())
+            return false;
+         Builder other = (Builder) obj;
+         if (claimType != other.claimType)
+            return false;
+         if (readers == null) {
+            if (other.readers != null)
+               return false;
+         } else if (!readers.equals(other.readers))
+            return false;
+         if (size != other.size)
+            return false;
+         return true;
       }
    }
 
-   protected final String name;
    protected final long size;
    protected final ClaimType claimType;
    protected final Set<String> readers;
-   protected final Set<String> tags;
-   protected final Map<String, String> userMetadata;
 
-   public BaseDrive(String name, long size, @Nullable ClaimType claimType, Iterable<String> readers,
-         Iterable<String> tags, Map<String, String> userMetadata) {
-      this.name = checkNotNull(name, "name");
+   public BaseDrive(@Nullable String uuid, String name, long size, @Nullable ClaimType claimType,
+         Iterable<String> readers, Iterable<String> tags, Map<String, String> userMetadata) {
+      super(uuid, name, tags, userMetadata);
       this.size = size;
       this.claimType = checkNotNull(claimType, "set claimType to exclusive, not null");
       this.readers = ImmutableSet.copyOf(checkNotNull(readers, "readers"));
-      this.tags = ImmutableSet.copyOf(checkNotNull(tags, "tags"));
-      this.userMetadata = ImmutableMap.copyOf(checkNotNull(userMetadata, "userMetadata"));
    }
 
    /**
@@ -104,14 +144,6 @@ public class BaseDrive {
    @Nullable
    public ClaimType getClaimType() {
       return claimType;
-   }
-
-   /**
-    * 
-    * @return Drive name
-    */
-   public String getName() {
-      return name;
    }
 
    /**
@@ -129,22 +161,6 @@ public class BaseDrive {
     */
    public long getSize() {
       return size;
-   }
-
-   /**
-    * 
-    * @return list of tags
-    */
-   public Set<String> getTags() {
-      return tags;
-   }
-
-   /**
-    * 
-    * @return user-defined KEY VALUE pairs
-    */
-   public Map<String, String> getUserMetadata() {
-      return userMetadata;
    }
 
    @Override
@@ -198,8 +214,8 @@ public class BaseDrive {
 
    @Override
    public String toString() {
-      return "[name=" + name + ", size=" + size + ", claimType=" + claimType + ", readers=" + readers + ", tags="
-            + tags + ", userMetadata=" + userMetadata + "]";
+      return "[uuid=" + uuid + ", name=" + name + ", tags=" + tags + ", userMetadata=" + userMetadata + ", size="
+            + size + ", claimType=" + claimType + ", readers=" + readers + "]";
    }
 
 }

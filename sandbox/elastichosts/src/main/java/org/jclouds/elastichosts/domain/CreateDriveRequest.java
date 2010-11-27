@@ -112,7 +112,7 @@ public class CreateDriveRequest extends BaseDrive {
    public CreateDriveRequest(String name, long size, @Nullable ClaimType claimType, Iterable<String> readers,
          Iterable<String> tags, Map<String, String> userMetadata, @Nullable String encryptionCipher,
          Iterable<String> avoid) {
-      super(name, size, claimType, readers, tags, userMetadata);
+      super(null, name, size, claimType, readers, tags, userMetadata);
       this.encryptionCipher = encryptionCipher;
       this.avoid = ImmutableSet.copyOf(checkNotNull(avoid, "avoid"));
    }

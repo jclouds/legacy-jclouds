@@ -44,7 +44,6 @@ public class DriveInfo extends BaseDrive {
       private Set<String> claimed = ImmutableSet.of();
       private String encryptionCipher;
       private String description;
-      private String uuid;
       private Set<String> driveType = ImmutableSet.of();
       private String encryptionKey;
       private Boolean free;
@@ -86,11 +85,6 @@ public class DriveInfo extends BaseDrive {
 
       public Builder description(String description) {
          this.description = description;
-         return this;
-      }
-
-      public Builder uuid(String uuid) {
-         this.uuid = uuid;
          return this;
       }
 
@@ -176,14 +170,6 @@ public class DriveInfo extends BaseDrive {
        * {@inheritDoc}
        */
       @Override
-      public Builder name(String name) {
-         return Builder.class.cast(super.name(name));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
       public Builder readers(Iterable<String> readers) {
          return Builder.class.cast(super.readers(readers));
       }
@@ -194,6 +180,22 @@ public class DriveInfo extends BaseDrive {
       @Override
       public Builder size(long size) {
          return Builder.class.cast(super.size(size));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder uuid(String uuid) {
+         return Builder.class.cast(super.uuid(uuid));
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public Builder name(String name) {
+         return Builder.class.cast(super.name(name));
       }
 
       /**
@@ -233,8 +235,6 @@ public class DriveInfo extends BaseDrive {
    @Nullable
    private final String description;
    @Nullable
-   private final String uuid;
-   @Nullable
    private final Set<String> driveType;
    @Nullable
    private final String encryptionCipher;
@@ -264,18 +264,17 @@ public class DriveInfo extends BaseDrive {
    private final Long writeRequests;
 
    public DriveInfo(DriveStatus status, String user, Boolean autoexpanding, Integer bits, Iterable<String> claimed,
-         ClaimType claimType, String description, String drive, Iterable<String> driveType, String encryptionCipher,
+         ClaimType claimType, String description, String uuid, Iterable<String> driveType, String encryptionCipher,
          String encryptionKey, Boolean free, String imaging, String installNotes, String name, String os,
          Iterable<String> readers, Long readBytes, Long readRequests, Long size, Iterable<String> tags, DriveType type,
          URI url, Iterable<String> use, Map<String, String> userMetadata, Long writeBytes, Long writeRequests) {
-      super(name, size, claimType, readers, tags, userMetadata);
+      super(uuid, name, size, claimType, readers, tags, userMetadata);
       this.status = status;
       this.user = user;
       this.autoexpanding = autoexpanding;
       this.bits = bits;
       this.claimed = ImmutableSet.copyOf(claimed);
       this.description = description;
-      this.uuid = drive;
       this.driveType = ImmutableSet.copyOf(driveType);
       this.encryptionCipher = encryptionCipher;
       this.encryptionKey = encryptionKey;
@@ -326,17 +325,9 @@ public class DriveInfo extends BaseDrive {
       return claimed;
    }
 
-   // TODO
+   // TODO undocumented
    public String getDescription() {
       return description;
-   }
-
-   /**
-    * 
-    * @return uuid of the drive.
-    */
-   public String getUuid() {
-      return uuid;
    }
 
    // TODO

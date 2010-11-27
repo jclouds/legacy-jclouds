@@ -21,6 +21,7 @@ package org.jclouds.elastichosts.functions;
 
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.elastichosts.domain.DriveInfo;
@@ -35,7 +36,12 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class KeyValuesDelimitedByBlankLinesToDriveInfo implements Function<HttpResponse, DriveInfo> {
-   ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet setParser;
+   private final ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet setParser;
+
+   @Inject
+   public KeyValuesDelimitedByBlankLinesToDriveInfo(ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet setParser) {
+      this.setParser = setParser;
+   }
 
    @Override
    public DriveInfo apply(HttpResponse response) {

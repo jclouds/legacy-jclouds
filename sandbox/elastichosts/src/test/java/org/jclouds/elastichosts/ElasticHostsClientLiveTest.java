@@ -157,10 +157,10 @@ public class ElasticHostsClientLiveTest {
 
       }
 
-      info = client.createDrive(new CreateDriveRequest.Builder().name(prefix).size(1024 * 1024l).build());
+      info = client.createDrive(new CreateDriveRequest.Builder().name(prefix).size(4 * 1024 * 1024l).build());
       assertNotNull(info.getUuid());
       assertEquals(info.getName(), prefix);
-      assertEquals(info.getSize(), 1024 * 1024l);
+      assertEquals(info.getSize(), 4 * 1024 * 1024l);
       assertEquals(info, client.getDriveInfo(info.getUuid()));
 
    }
@@ -179,7 +179,7 @@ public class ElasticHostsClientLiveTest {
 
       }
       try {
-         info2 = client.createDrive(new CreateDriveRequest.Builder().name(prefix + "2").size(1024 * 1024l).build());
+         info2 = client.createDrive(new CreateDriveRequest.Builder().name(prefix + "2").size(4 * 1024 * 1024l).build());
          client.imageDrive(info.getUuid(), info2.getUuid());
 
          // TODO block until complete

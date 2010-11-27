@@ -82,12 +82,12 @@ public class DriveData extends BaseDrive {
       }
 
       public DriveData build() {
-         return new DriveData(name, size, claimType, readers, tags, userMetadata);
+         return new DriveData(uuid, name, size, claimType, readers, tags, userMetadata);
       }
    }
 
-   public DriveData(String name, long size, @Nullable ClaimType claimType, Iterable<String> readers,
+   public DriveData(@Nullable String uuid, String name, long size, @Nullable ClaimType claimType, Iterable<String> readers,
          Iterable<String> tags, Map<String, String> userMetadata) {
-      super(name, size, claimType, readers, tags, userMetadata);
+      super(uuid, name, size, claimType, readers, tags, userMetadata);
    }
 }
