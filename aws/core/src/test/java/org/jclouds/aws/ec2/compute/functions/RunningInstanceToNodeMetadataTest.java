@@ -51,6 +51,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.collect.MapMaker;
+
+import javax.annotation.Nullable;
 
 /**
  * @author Adrian Cole
@@ -140,15 +143,44 @@ public class RunningInstanceToNodeMetadataTest {
                "i-9slweygo").location(provider).build());
    }
 
+   @Test
+   public void testHandleMissingAMIs() {
+
+      // Handle the case when the installed AMI no longer can be found in AWS.
+
+      // Create a null-returning function to simulate that the AMI can't be found.
+      Function<RegionAndName, Image> nullReturningFunction = new Function<RegionAndName, Image>() {
+
+         @Override
+         public Image apply(@Nullable RegionAndName from) {
+            return null;
+         }
+      };
+      Map<RegionAndName, Image> instanceToImage = new MapMaker().makeComputingMap(nullReturningFunction);
+
+      RunningInstanceToNodeMetadata parser = createNodeParser(ImmutableSet.of(m1_small().build()), ImmutableSet
+              .of(provider), ImmutableMap
+              .<String, Credentials>of(), EC2ComputeServiceDependenciesModule.instanceToNodeState, instanceToImage);
+
+      RunningInstance server = firstInstanceFromResource("/ec2/describe_instances_nova.xml");
+
+      assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.TERMINATED).privateAddresses(
+              ImmutableSet.of("10.128.207.5")).tag("NOTAG-i-9slweygo").imageId("us-east-1/ami-25CB1213").id(
+              "us-east-1/i-9slweygo").providerId("i-9slweygo").hardware(m1_small().build()).location(
+              provider).build());
+   }
+
+
    protected RunningInstance firstInstanceFromResource(String resource) {
       RunningInstance server = Iterables.get(Iterables.get(DescribeInstancesResponseHandlerTest
-               .parseRunningInstances(resource), 0), 0);
+              .parseRunningInstances(resource), 0), 0);
       return server;
    }
 
    protected RunningInstanceToNodeMetadata createNodeParser(final ImmutableSet<Hardware> hardware,
-            final ImmutableSet<Location> locations, Set<org.jclouds.compute.domain.Image> images,
-            Map<String, Credentials> credentialStore) {
+                                                            final ImmutableSet<Location> locations,
+                                                            Set<org.jclouds.compute.domain.Image> images,
+                                                            Map<String, Credentials> credentialStore) {
       Map<InstanceState, NodeState> instanceToNodeState = EC2ComputeServiceDependenciesModule.instanceToNodeState;
 
       Map<RegionAndName, Image> instanceToImage = Maps.uniqueIndex(images, new Function<Image, RegionAndName>() {
@@ -159,6 +191,13 @@ public class RunningInstanceToNodeMetadataTest {
          }
 
       });
+
+      return createNodeParser(hardware, locations, credentialStore, instanceToNodeState, instanceToImage);
+   }
+
+   private RunningInstanceToNodeMetadata createNodeParser(final ImmutableSet<Hardware> hardware, final
+   ImmutableSet<Location> locations, Map<String, Credentials> credentialStore, Map<InstanceState, NodeState>
+           instanceToNodeState, Map<RegionAndName, Image> instanceToImage) {
       Supplier<Set<? extends Location>> locationSupplier = new Supplier<Set<? extends Location>>() {
 
          @Override
