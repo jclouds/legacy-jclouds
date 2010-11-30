@@ -17,38 +17,25 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.s3.blobstore.functions;
-
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
+package org.jclouds.aws.s3.blobstore.config;
 
 import org.jclouds.aws.s3.domain.BucketMetadata;
-import org.jclouds.blobstore.domain.MutableStorageMetadata;
-import org.jclouds.blobstore.domain.StorageMetadata;
-import org.jclouds.blobstore.domain.StorageType;
-import org.jclouds.blobstore.domain.internal.MutableStorageMetadataImpl;
 import org.jclouds.domain.Location;
 
 import com.google.common.base.Function;
+import com.google.common.base.Functions;
+import com.google.inject.TypeLiteral;
 
 /**
+ * 
  * @author Adrian Cole
  */
-@Singleton
-public class BucketToResourceMetadata implements Function<BucketMetadata, StorageMetadata> {
-   private final Function<BucketMetadata, Location> locationOfBucket;
+public class ScaleUpCloudBlobStoreContextModule extends S3BlobStoreContextModule {
 
-   @Inject
-   BucketToResourceMetadata(Function<BucketMetadata, Location> locationOfBucket) {
-      this.locationOfBucket = locationOfBucket;
-   }
-
-   public StorageMetadata apply(BucketMetadata from) {
-      MutableStorageMetadata to = new MutableStorageMetadataImpl();
-      to.setName(from.getName());
-      to.setType(StorageType.CONTAINER);
-      to.setLocation(locationOfBucket.apply(from));
-      return to;
+   @SuppressWarnings("rawtypes")
+   @Override
+   protected void bindBucketLocationStrategy() {
+      bind(new TypeLiteral<Function<BucketMetadata, Location>>() {
+      }).toInstance((Function)Functions.constant(null));
    }
 }
