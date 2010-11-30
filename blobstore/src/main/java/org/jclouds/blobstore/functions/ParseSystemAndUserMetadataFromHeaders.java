@@ -87,8 +87,11 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
    @VisibleForTesting
    void parseLastModifiedOrThrowException(HttpResponse from, MutableBlobMetadata metadata) throws HttpException {
       String lastModified = from.getFirstHeaderOrNull(HttpHeaders.LAST_MODIFIED);
-      if (lastModified == null)
-         throw new HttpException(HttpHeaders.LAST_MODIFIED + " header not present in response: " + from.getStatusLine());
+      if (lastModified == null) {
+         // scaleup-storage uses the wrong case for the last modified header
+         if ((lastModified = from.getFirstHeaderOrNull("Last-modified")) == null)
+            throw new HttpException(HttpHeaders.LAST_MODIFIED + " header not present in response: " + from.getStatusLine());
+      }
       // Eucalyptus 1.6 returns iso8601 dates
       if (apiVersion.indexOf("Walrus-1.6") != -1) {
          metadata.setLastModified(dateParser.iso8601DateParse(lastModified.replace("+0000", "Z")));
