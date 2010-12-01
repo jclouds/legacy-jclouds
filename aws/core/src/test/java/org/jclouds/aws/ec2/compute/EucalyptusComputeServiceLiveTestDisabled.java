@@ -43,7 +43,7 @@ public class EucalyptusComputeServiceLiveTestDisabled extends EC2ComputeServiceL
    @Override
    public void setServiceDefaults() {
       // security groups must be <30 characters
-      tag = "euc";
+      tag = "eu";
    }
 
    @Override
