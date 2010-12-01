@@ -28,11 +28,11 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.elastichosts.domain.CreateDriveRequest;
-import org.jclouds.elastichosts.functions.CreateDriveRequestToMap;
 import org.jclouds.elastichosts.functions.ListOfMapsToListOfKeyValuesDelimitedByBlankLines;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -41,11 +41,11 @@ import com.google.common.collect.ImmutableSet;
  */
 @Singleton
 public class BindCreateDriveRequestToPlainTextString implements Binder {
-   private final CreateDriveRequestToMap createDriveRequestToMap;
+   private final Function<CreateDriveRequest, Map<String, String>>  createDriveRequestToMap;
    private final ListOfMapsToListOfKeyValuesDelimitedByBlankLines listOfMapsToListOfKeyValuesDelimitedByBlankLines;
 
    @Inject
-   public BindCreateDriveRequestToPlainTextString(CreateDriveRequestToMap createDriveRequestToMap,
+   public BindCreateDriveRequestToPlainTextString(Function<CreateDriveRequest, Map<String, String>>  createDriveRequestToMap,
          ListOfMapsToListOfKeyValuesDelimitedByBlankLines listOfMapsToListOfKeyValuesDelimitedByBlankLines) {
       this.createDriveRequestToMap = createDriveRequestToMap;
       this.listOfMapsToListOfKeyValuesDelimitedByBlankLines = listOfMapsToListOfKeyValuesDelimitedByBlankLines;

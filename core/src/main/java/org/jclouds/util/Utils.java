@@ -21,7 +21,9 @@ package org.jclouds.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Predicates.equalTo;
 import static com.google.common.base.Predicates.instanceOf;
+import static com.google.common.base.Predicates.not;
 import static com.google.common.base.Predicates.notNull;
 import static com.google.common.base.Splitter.on;
 import static com.google.common.base.Throwables.getCausalChain;
@@ -32,6 +34,7 @@ import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Maps.filterKeys;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static com.google.common.io.Closeables.closeQuietly;
 import static org.jclouds.util.Patterns.CHAR_TO_PATTERN;
@@ -70,6 +73,8 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.io.OutputSupplier;
@@ -83,6 +88,32 @@ import com.google.inject.spi.Message;
  * @author Adrian Cole
  */
 public class Utils {
+
+   /**
+    * If the supplied map contains the key {@code k1}, its value will be assigned to the key
+    * {@code k2}. Note that this doesn't modify the input map.
+    * 
+    * @param <V>
+    *           type of value the map holds
+    * @param in
+    *           the map you wish to make a copy of
+    * @param k1
+    *           old key
+    * @param k2
+    *           new key
+    * @return copy of the map with the value of the key re-routed, or the original, if it {@code k1}
+    *         wasn't present.
+    */
+   public static <V> Map<String, V> renameKey(Map<String, V> in, String k1, String k2) {
+      if (in.containsKey(k1)) {
+         Builder<String, V> builder = ImmutableMap.builder();
+         builder.putAll(filterKeys(in, not(equalTo(k1))));
+         V tags = in.get(k1);
+         builder.put(k2, tags);
+         in = builder.build();
+      }
+      return in;
+   }
 
    public static <K, V> Supplier<Map<K, V>> composeMapSupplier(Iterable<Supplier<Map<K, V>>> suppliers) {
       return new ListMapSupplier<K, V>(suppliers);

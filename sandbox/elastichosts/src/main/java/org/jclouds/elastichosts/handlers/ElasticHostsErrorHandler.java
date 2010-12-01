@@ -61,7 +61,10 @@ public class ElasticHostsErrorHandler implements HttpErrorHandler {
                response.getStatusLine());
          switch (response.getStatusCode()) {
          case 400:
-            exception = new IllegalArgumentException(message, exception);
+            if (message != null && message.indexOf("could not be found") != -1)
+               exception = new ResourceNotFoundException(message, exception);
+            else
+               exception = new IllegalArgumentException(message, exception);
             break;
          case 401:
             exception = new AuthorizationException(message, exception);

@@ -17,39 +17,45 @@
  * ====================================================================
  */
 
-package org.jclouds.elastichosts.functions;
-
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Sets.newTreeSet;
+package org.jclouds.cloudsigma.functions;
 
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.cloudsigma.domain.DriveInfo;
+import org.jclouds.elastichosts.functions.ListOfKeyValuesDelimitedByBlankLinesToListOfMaps;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 
 import com.google.common.base.Function;
-import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class SplitNewlines implements Function<HttpResponse, Set<String>> {
+public class ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet implements Function<HttpResponse, Set<DriveInfo>> {
    private final ReturnStringIf2xx returnStringIf200;
+   private final ListOfKeyValuesDelimitedByBlankLinesToListOfMaps mapConverter;
+   private final MapToDriveInfo mapToDrive;
 
    @Inject
-   SplitNewlines(ReturnStringIf2xx returnStringIf200) {
+   ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet(ReturnStringIf2xx returnStringIf200,
+         ListOfKeyValuesDelimitedByBlankLinesToListOfMaps mapConverter, MapToDriveInfo mapToDrive) {
       this.returnStringIf200 = returnStringIf200;
+      this.mapConverter = mapConverter;
+      this.mapToDrive = mapToDrive;
    }
 
    @Override
-   public Set<String> apply(HttpResponse response) {
-      return newTreeSet(filter(Splitter.on('\n').split(returnStringIf200.apply(response)), not(equalTo(""))));
+   public Set<DriveInfo> apply(HttpResponse response) {
+      String text = returnStringIf200.apply(response);
+      if (text == null || text.trim().equals(""))
+         return ImmutableSet.<DriveInfo> of();
+      return ImmutableSet.copyOf(Iterables.transform(mapConverter.apply(text), mapToDrive));
    }
 }

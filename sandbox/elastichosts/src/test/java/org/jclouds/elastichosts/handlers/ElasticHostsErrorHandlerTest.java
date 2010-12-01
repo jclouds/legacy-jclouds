@@ -53,6 +53,12 @@ public class ElasticHostsErrorHandlerTest {
    }
 
    @Test
+   public void test400MakesResourceNotFoundExceptionOnMessageNotFound() {
+      assertCodeMakes("GET", URI.create("https://elastichosts.com/foo"), 400, "", "errors:system Drive 8f9b42b1-26de-49ad-a3fd-d4fa06524339 could not be found. Please re-validate your entry.",
+            ResourceNotFoundException.class);
+   }
+
+   @Test
    public void test401MakesAuthorizationException() {
       assertCodeMakes("GET", URI.create("https://elastichosts.com/foo"), 401, "", "Unauthorized",
             AuthorizationException.class);

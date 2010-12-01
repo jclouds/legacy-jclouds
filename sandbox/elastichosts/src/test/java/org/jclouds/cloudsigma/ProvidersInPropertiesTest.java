@@ -17,29 +17,31 @@
  * ====================================================================
  */
 
-package org.jclouds.elastichosts;
+package org.jclouds.cloudsigma;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import org.jclouds.util.Utils;
+import org.testng.annotations.Test;
 
-import java.util.Properties;
-
-import org.jclouds.PropertiesBuilder;
+import com.google.common.collect.Iterables;
 
 /**
- * Builds properties used in ElasticHosts Clients
  * 
  * @author Adrian Cole
+ * 
  */
-public class ElasticHostsPropertiesBuilder extends PropertiesBuilder {
-   @Override
-   protected Properties defaultProperties() {
-      Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_API_VERSION, "1.0");
-      return properties;
-   }
+@Test(groups = "unit")
+public class ProvidersInPropertiesTest {
 
-   public ElasticHostsPropertiesBuilder(Properties properties) {
-      super(properties);
+   @Test
+   public void testSupportedProviders() {
+      Iterable<String> providers = Utils.getSupportedProviders();
+      assert Iterables.contains(providers, "cloudsigma") : providers;
    }
+//
+//   @Test
+//   public void testSupportedComputeServiceProviders() {
+//      Iterable<String> providers = ComputeServiceUtils.getSupportedProviders();
+//      assert Iterables.contains(providers, "cloudsigma") : providers;
+//   }
 
 }

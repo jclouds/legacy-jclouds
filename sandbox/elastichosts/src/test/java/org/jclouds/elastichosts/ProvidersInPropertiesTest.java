@@ -17,32 +17,31 @@
  * ====================================================================
  */
 
-package org.jclouds.elastichosts.domain;
+package org.jclouds.elastichosts;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.jclouds.util.Utils;
+import org.testng.annotations.Test;
+
+import com.google.common.collect.Iterables;
 
 /**
  * 
  * @author Adrian Cole
+ * 
  */
-public enum DriveType {
-   DISK, CDROM, SHARED, UNRECOGNIZED;
+@Test(groups = "unit")
+public class ProvidersInPropertiesTest {
 
-   public String value() {
-      return name().toLowerCase();
+   @Test
+   public void testSupportedProviders() {
+      Iterable<String> providers = Utils.getSupportedProviders();
+      assert Iterables.contains(providers, "elastichosts") : providers;
    }
-
-   @Override
-   public String toString() {
-      return value();
-   }
-
-   public static DriveType fromValue(String type) {
-      try {
-         return valueOf(checkNotNull(type, "type").toUpperCase());
-      } catch (IllegalArgumentException e) {
-         return UNRECOGNIZED;
-      }
-   }
+//
+//   @Test
+//   public void testSupportedComputeServiceProviders() {
+//      Iterable<String> providers = ComputeServiceUtils.getSupportedProviders();
+//      assert Iterables.contains(providers, "cloudsigma") : providers;
+//   }
 
 }

@@ -23,6 +23,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.testng.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.domain.Credentials;
@@ -42,6 +43,15 @@ import com.google.inject.spi.Message;
  */
 @Test(groups = "unit", testName = "jclouds.UtilsTest")
 public class UtilsTest {
+   public void testRenameKeyWhenNotFound() {
+      Map<String, String> nothing = ImmutableMap.of();
+      assertEquals(Utils.renameKey(nothing, "foo", "bar"), nothing);
+   }
+
+   public void testRenameKeyWhenFound() {
+      Map<String, String> nothing = ImmutableMap.of("foo", "bar");
+      assertEquals(Utils.renameKey(nothing, "foo", "bar"), ImmutableMap.of("bar", "bar"));
+   }
 
    public void testOverridingCredentialsWhenOverridingIsNull() {
       Credentials defaultCredentials = new Credentials("foo", "bar");
@@ -69,7 +79,7 @@ public class UtilsTest {
       assertEquals(Utils.overrideCredentialsIfSupplied(defaultCredentials, overridingCredentials), new Credentials(
             "foo", "bar"));
    }
-   
+
    public void testGetCause() {
       AuthorizationException aex = createMock(AuthorizationException.class);
       Message message = new Message(ImmutableList.of(), "test", aex);

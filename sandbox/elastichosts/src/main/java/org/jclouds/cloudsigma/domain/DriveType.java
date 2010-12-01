@@ -17,29 +17,32 @@
  * ====================================================================
  */
 
-package org.jclouds.elastichosts;
+package org.jclouds.cloudsigma.domain;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-
-import java.util.Properties;
-
-import org.jclouds.PropertiesBuilder;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Builds properties used in ElasticHosts Clients
  * 
  * @author Adrian Cole
  */
-public class ElasticHostsPropertiesBuilder extends PropertiesBuilder {
-   @Override
-   protected Properties defaultProperties() {
-      Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_API_VERSION, "1.0");
-      return properties;
+public enum DriveType {
+   DISK, CDROM, SHARED, UNRECOGNIZED;
+
+   public String value() {
+      return name().toLowerCase();
    }
 
-   public ElasticHostsPropertiesBuilder(Properties properties) {
-      super(properties);
+   @Override
+   public String toString() {
+      return value();
+   }
+
+   public static DriveType fromValue(String type) {
+      try {
+         return valueOf(checkNotNull(type, "type").toUpperCase());
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 
 }

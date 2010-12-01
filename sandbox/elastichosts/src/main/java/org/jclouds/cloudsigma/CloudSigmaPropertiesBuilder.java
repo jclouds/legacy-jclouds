@@ -17,28 +17,30 @@
  * ====================================================================
  */
 
-package org.jclouds.elastichosts;
+package org.jclouds.cloudsigma;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
 
 /**
- * Builds properties used in ElasticHosts Clients
+ * Builds properties used in CloudSigma Clients
  * 
  * @author Adrian Cole
  */
-public class ElasticHostsPropertiesBuilder extends PropertiesBuilder {
+public class CloudSigmaPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_ENDPOINT, "https://api.cloudsigma.com");
       properties.setProperty(PROPERTY_API_VERSION, "1.0");
       return properties;
    }
 
-   public ElasticHostsPropertiesBuilder(Properties properties) {
+   public CloudSigmaPropertiesBuilder(Properties properties) {
       super(properties);
    }
 

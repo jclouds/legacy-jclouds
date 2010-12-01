@@ -23,18 +23,25 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.elastichosts.domain.ClaimType;
 import org.jclouds.elastichosts.domain.CreateDriveRequest;
+import org.jclouds.elastichosts.domain.DriveData;
+import org.jclouds.elastichosts.functions.CreateDriveRequestToMap;
+import org.jclouds.elastichosts.functions.DriveDataToMap;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -43,8 +50,17 @@ import com.google.inject.Guice;
 @Test(groups = { "unit" })
 public class BindCreateDriveRequestToPlainTextStringTest {
 
-   private static final BindCreateDriveRequestToPlainTextString FN = Guice.createInjector().getInstance(
-         BindCreateDriveRequestToPlainTextString.class);
+   private static final BindCreateDriveRequestToPlainTextString FN = Guice.createInjector(new AbstractModule() {
+
+      @Override
+      protected void configure() {
+         bind(new TypeLiteral<Function<CreateDriveRequest, Map<String, String>>>() {
+         }).to(CreateDriveRequestToMap.class);
+         bind(new TypeLiteral<Function<DriveData, Map<String, String>>>() {
+         }).to(DriveDataToMap.class);
+      }
+
+   }).getInstance(BindCreateDriveRequestToPlainTextString.class);
 
    public void testSimple() {
       HttpRequest request = new HttpRequest("POST", URI.create("https://host/drives/create"));

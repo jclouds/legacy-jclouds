@@ -17,29 +17,29 @@
  * ====================================================================
  */
 
-package org.jclouds.elastichosts;
+package org.jclouds.cloudsigma;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-
+import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.PropertiesBuilder;
+import org.jclouds.cloudsigma.config.CloudSigmaRestClientModule;
+import org.jclouds.rest.RestContextBuilder;
+
+import com.google.inject.Module;
 
 /**
- * Builds properties used in ElasticHosts Clients
  * 
  * @author Adrian Cole
  */
-public class ElasticHostsPropertiesBuilder extends PropertiesBuilder {
-   @Override
-   protected Properties defaultProperties() {
-      Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_API_VERSION, "1.0");
-      return properties;
+public class CloudSigmaContextBuilder extends
+         RestContextBuilder<CloudSigmaClient, CloudSigmaAsyncClient> {
+
+   public CloudSigmaContextBuilder(Properties props) {
+      super(CloudSigmaClient.class, CloudSigmaAsyncClient.class, props);
    }
 
-   public ElasticHostsPropertiesBuilder(Properties properties) {
-      super(properties);
+   protected void addClientModule(List<Module> modules) {
+      modules.add(new CloudSigmaRestClientModule());
    }
 
 }

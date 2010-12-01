@@ -17,16 +17,16 @@
  * ====================================================================
  */
 
-package org.jclouds.elastichosts.config;
+package org.jclouds.cloudsigma.config;
 
 import java.util.Map;
 
-import org.jclouds.elastichosts.ElasticHostsAsyncClient;
-import org.jclouds.elastichosts.ElasticHostsClient;
+import org.jclouds.cloudsigma.CloudSigmaAsyncClient;
+import org.jclouds.cloudsigma.CloudSigmaClient;
+import org.jclouds.cloudsigma.functions.CreateDriveRequestToMap;
+import org.jclouds.cloudsigma.functions.DriveDataToMap;
 import org.jclouds.elastichosts.domain.CreateDriveRequest;
 import org.jclouds.elastichosts.domain.DriveData;
-import org.jclouds.elastichosts.functions.CreateDriveRequestToMap;
-import org.jclouds.elastichosts.functions.DriveDataToMap;
 import org.jclouds.elastichosts.handlers.ElasticHostsErrorHandler;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
@@ -40,16 +40,23 @@ import com.google.common.base.Function;
 import com.google.inject.TypeLiteral;
 
 /**
- * Configures the ElasticHosts connection.
+ * Configures the CloudSigma connection.
  * 
  * @author Adrian Cole
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class ElasticHostsRestClientModule extends RestClientModule<ElasticHostsClient, ElasticHostsAsyncClient> {
+public class CloudSigmaRestClientModule extends RestClientModule<CloudSigmaClient, CloudSigmaAsyncClient> {
 
-   public ElasticHostsRestClientModule() {
-      super(ElasticHostsClient.class, ElasticHostsAsyncClient.class);
+   public CloudSigmaRestClientModule() {
+      super(CloudSigmaClient.class, CloudSigmaAsyncClient.class);
+   }
+
+   @Override
+   protected void bindErrorHandlers() {
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ElasticHostsErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ElasticHostsErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ElasticHostsErrorHandler.class);
    }
 
    @Override
@@ -59,13 +66,6 @@ public class ElasticHostsRestClientModule extends RestClientModule<ElasticHostsC
       }).to(CreateDriveRequestToMap.class);
       bind(new TypeLiteral<Function<DriveData, Map<String, String>>>() {
       }).to(DriveDataToMap.class);
-   }
-
-   @Override
-   protected void bindErrorHandlers() {
-      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ElasticHostsErrorHandler.class);
-      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ElasticHostsErrorHandler.class);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ElasticHostsErrorHandler.class);
    }
 
    @Override

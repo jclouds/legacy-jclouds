@@ -17,16 +17,19 @@
  * ====================================================================
  */
 
-package org.jclouds.elastichosts.functions;
+package org.jclouds.cloudsigma.functions;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Map;
 
+import org.jclouds.cloudsigma.domain.DriveInfo;
+import org.jclouds.cloudsigma.domain.DriveType;
 import org.jclouds.elastichosts.domain.ClaimType;
-import org.jclouds.elastichosts.domain.DriveInfo;
 import org.jclouds.elastichosts.domain.DriveStatus;
+import org.jclouds.elastichosts.functions.ListOfKeyValuesDelimitedByBlankLinesToListOfMaps;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
@@ -41,11 +44,18 @@ import com.google.common.collect.ImmutableSet;
 public class MapToDriveInfoTest {
    public static DriveInfo ONE = new DriveInfo.Builder()
          .status(DriveStatus.ACTIVE)
+         .tags(ImmutableSet.of("networking", "security", "gateway"))
          .name("Ubuntu 10.10 Server Edition Linux 64bit Preinstalled System")
+         .bits(64)
+         .url(URI.create("http://www.ubuntu.com"))
          .readBytes(4096l)
          .user("58ca3c1f-7629-4771-9b71-863f40153ba4")
          .encryptionCipher("aes-xts-plain")
+         .encryptionKey("ba6c2a4897072e9f25920ed73bd522e9c10d89f30a215158cccf8d0f654ac643")
+         .description("The Ubuntu Linux distribution brings the spirit of Ubuntu to the software world.")
          .uuid("b8171d28-755a-4271-b891-7998871a160e")
+         .installNotes("first line\n\n")
+         .os("linux")
          .writeBytes(8589938688l)
          .claimType(ClaimType.SHARED)
          .claimed(
@@ -55,13 +65,17 @@ public class MapToDriveInfoTest {
                      "0002c6df-a1d2-4d1d-96f0-f95405a28183:guest:386f1cc7-affc-49c1-82a5-2f8e412170e4:ide:0:0",
                      "00031836-a624-4b22-bc7d-41ff8977087b:guest:17b076be-430d-4a76-9df3-b9896fec82a5:ide:0:0",
                      "000663ee-9fb6-4461-90f6-01327a4aff07:guest:f83b519f-feab-42cf-859c-f61495681ada:ide:0:1"))//
-         .readers(ImmutableSet.of("ffffffff-ffff-ffff-ffff-ffffffffffff"))//
+         .driveType(ImmutableSet.of("installcd", "livecd"))//
+         .autoexpanding(false).readers(ImmutableSet.of("ffffffff-ffff-ffff-ffff-ffffffffffff"))//
          .readRequests(1l)//
+         .free(true)//
+         .type(DriveType.DISK)//
          .writeRequests(2097153l)//
          .size(8589934592l)//
          .userMetadata(ImmutableMap.of("foo", "bar", "baz", "raz")).build();
 
-   private static final MapToDriveInfo MAP_TO_DRIVE = new MapToDriveInfo();
+   private static final MapToDriveInfo MAP_TO_DRIVE = new MapToDriveInfo(
+         new org.jclouds.elastichosts.functions.MapToDriveInfo());
 
    public void testEmptyMapReturnsNull() {
       assertEquals(MAP_TO_DRIVE.apply(ImmutableMap.<String, String> of()), null);
@@ -75,7 +89,7 @@ public class MapToDriveInfoTest {
    public void testComplete() throws IOException {
 
       Map<String, String> input = new ListOfKeyValuesDelimitedByBlankLinesToListOfMaps().apply(
-            Utils.toStringAndClose(MapToDriveInfoTest.class.getResourceAsStream("/drive.txt"))).get(0);
+            Utils.toStringAndClose(MapToDriveInfoTest.class.getResourceAsStream("/cloudsigma/drive.txt"))).get(0);
 
       assertEquals(MAP_TO_DRIVE.apply(input), ONE);
 

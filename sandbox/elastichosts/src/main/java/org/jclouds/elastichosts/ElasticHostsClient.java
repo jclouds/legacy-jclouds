@@ -19,13 +19,9 @@
 
 package org.jclouds.elastichosts;
 
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.elastichosts.domain.CreateDriveRequest;
-import org.jclouds.elastichosts.domain.DriveData;
-import org.jclouds.elastichosts.domain.DriveInfo;
 import org.jclouds.elastichosts.domain.ImageConversionType;
 import org.jclouds.elastichosts.options.ReadDriveOptions;
 import org.jclouds.io.Payload;
@@ -38,77 +34,8 @@ import org.jclouds.io.Payload;
  * @see <a href="TODO: insert URL of ElasticHosts documentation" />
  * @author Adrian Cole
  */
-@Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
-public interface ElasticHostsClient {
-   /**
-    * list of drive uuids in your account
-    * 
-    * @return or empty set if no drives are found
-    */
-   Set<String> listDrives();
-
-   /**
-    * list of drive uuids that are in the library
-    * 
-    * @return or empty set if no drives are found
-    */
-   Set<String> listStandardDrives();
-
-   /**
-    * list of cd uuids that are in the library
-    * 
-    * @return or empty set if no cds are found
-    */
-   Set<String> listStandardCds();
-
-   /**
-    * list of image uuids that are in the library
-    * 
-    * @return or empty set if no images are found
-    */
-   Set<String> listStandardImages();
-
-   /**
-    * Get all drives info
-    * 
-    * @return or empty set if no drives are found
-    */
-   Set<DriveInfo> listDriveInfo();
-
-   /**
-    * @param uuid
-    *           what to get
-    * @return null, if not found
-    */
-   DriveInfo getDriveInfo(String uuid);
-
-   /**
-    * create a new drive
-    * 
-    * @param createDrive
-    *           required parameters: name, size
-    * @return newly created drive
-    */
-   DriveInfo createDrive(CreateDriveRequest createDrive);
-
-   /**
-    * set extra drive data
-    * 
-    * @param uuid
-    *           what drive to change
-    * @param driveData
-    *           what values to change
-    * @return new data
-    */
-   DriveInfo setDriveData(String uuid, DriveData driveData);
-
-   /**
-    * Destroy a drive
-    * 
-    * @param uuid
-    *           what to delete
-    */
-   void destroyDrive(String uuid);
+@Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
+public interface ElasticHostsClient extends CommonElasticHostsClient {
 
    /**
     * Image a drive from another drive. The actual imaging process is asynchronous, with progress

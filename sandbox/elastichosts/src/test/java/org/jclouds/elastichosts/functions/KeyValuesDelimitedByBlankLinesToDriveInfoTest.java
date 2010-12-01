@@ -19,37 +19,32 @@
 
 package org.jclouds.elastichosts.functions;
 
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Sets.newTreeSet;
-
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import static org.testng.Assert.assertEquals;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.ReturnStringIf2xx;
+import org.jclouds.io.Payloads;
+import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
-import com.google.common.base.Splitter;
+import com.google.inject.Guice;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Singleton
-public class SplitNewlines implements Function<HttpResponse, Set<String>> {
-   private final ReturnStringIf2xx returnStringIf200;
+@Test(groups = { "unit" })
+public class KeyValuesDelimitedByBlankLinesToDriveInfoTest {
 
-   @Inject
-   SplitNewlines(ReturnStringIf2xx returnStringIf200) {
-      this.returnStringIf200 = returnStringIf200;
+   private static final KeyValuesDelimitedByBlankLinesToDriveInfo FN = Guice.createInjector().getInstance(
+         KeyValuesDelimitedByBlankLinesToDriveInfo.class);
+
+   public void testNone() {
+      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newStringPayload(""))), null);
+      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newStringPayload("\n\n"))), null);
+      assertEquals(FN.apply(new HttpResponse(200, "", null)), null);
    }
 
-   @Override
-   public Set<String> apply(HttpResponse response) {
-      return newTreeSet(filter(Splitter.on('\n').split(returnStringIf200.apply(response)), not(equalTo(""))));
+   public void testOne() {
+      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newInputStreamPayload(MapToDriveInfoTest.class
+            .getResourceAsStream("/drive.txt")))), MapToDriveInfoTest.ONE);
    }
 }

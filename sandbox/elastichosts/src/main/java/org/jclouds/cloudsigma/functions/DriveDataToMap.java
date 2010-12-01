@@ -17,39 +17,43 @@
  * ====================================================================
  */
 
-package org.jclouds.elastichosts.functions;
+package org.jclouds.cloudsigma.functions;
 
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Sets.newTreeSet;
+import static org.jclouds.util.Utils.renameKey;
 
-import java.util.Set;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.ReturnStringIf2xx;
+import org.jclouds.elastichosts.domain.DriveData;
 
 import com.google.common.base.Function;
-import com.google.common.base.Splitter;
+import com.google.common.collect.Maps;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class SplitNewlines implements Function<HttpResponse, Set<String>> {
-   private final ReturnStringIf2xx returnStringIf200;
+public class DriveDataToMap implements Function<DriveData, Map<String, String>> {
+   private final org.jclouds.elastichosts.functions.DriveDataToMap baseDriveToMap;
 
    @Inject
-   SplitNewlines(ReturnStringIf2xx returnStringIf200) {
-      this.returnStringIf200 = returnStringIf200;
+   public DriveDataToMap(org.jclouds.elastichosts.functions.DriveDataToMap baseDriveToMap) {
+      this.baseDriveToMap = baseDriveToMap;
    }
 
    @Override
-   public Set<String> apply(HttpResponse response) {
-      return newTreeSet(filter(Splitter.on('\n').split(returnStringIf200.apply(response)), not(equalTo(""))));
+   public Map<String, String> apply(DriveData from) {
+      return Maps.transformEntries(renameKey(baseDriveToMap.apply(from), "tags", "use"),
+            new Maps.EntryTransformer<String, String, String>() {
+
+               @Override
+               public String transformEntry(String arg0, String arg1) {
+                  return "use".equals(arg0) ? arg1.replace(' ', ',') : arg1;
+               }
+
+            });
    }
 }

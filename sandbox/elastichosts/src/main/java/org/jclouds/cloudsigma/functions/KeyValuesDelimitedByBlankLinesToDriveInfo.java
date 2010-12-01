@@ -17,39 +17,37 @@
  * ====================================================================
  */
 
-package org.jclouds.elastichosts.functions;
-
-import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Predicates.not;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Sets.newTreeSet;
+package org.jclouds.cloudsigma.functions;
 
 import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.cloudsigma.domain.DriveInfo;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.functions.ReturnStringIf2xx;
 
 import com.google.common.base.Function;
-import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class SplitNewlines implements Function<HttpResponse, Set<String>> {
-   private final ReturnStringIf2xx returnStringIf200;
+public class KeyValuesDelimitedByBlankLinesToDriveInfo implements Function<HttpResponse, DriveInfo> {
+   private final ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet setParser;
 
    @Inject
-   SplitNewlines(ReturnStringIf2xx returnStringIf200) {
-      this.returnStringIf200 = returnStringIf200;
+   public KeyValuesDelimitedByBlankLinesToDriveInfo(ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet setParser) {
+      this.setParser = setParser;
    }
 
    @Override
-   public Set<String> apply(HttpResponse response) {
-      return newTreeSet(filter(Splitter.on('\n').split(returnStringIf200.apply(response)), not(equalTo(""))));
+   public DriveInfo apply(HttpResponse response) {
+      Set<DriveInfo> drives = setParser.apply(response);
+      if (drives.size() == 0)
+         return null;
+      return Iterables.get(drives, 0);
    }
 }
