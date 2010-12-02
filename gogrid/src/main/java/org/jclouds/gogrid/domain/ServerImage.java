@@ -89,6 +89,8 @@ public class ServerImage implements Comparable<ServerImage> {
    }
 
    public String getDescription() {
+      if (description == null)
+         return "";
       return description;
    }
 
