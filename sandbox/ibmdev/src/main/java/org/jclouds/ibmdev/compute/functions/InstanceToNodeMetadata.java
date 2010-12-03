@@ -32,16 +32,16 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.ibmdev.domain.Instance;
 import org.jclouds.logging.Logger;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -51,6 +51,21 @@ import com.google.common.collect.ImmutableSet;
 @Singleton
 public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> {
 
+   @VisibleForTesting
+   public static final Map<Instance.Status, NodeState> instanceStatusToNodeState = ImmutableMap
+         .<Instance.Status, NodeState> builder().put(Instance.Status.ACTIVE, NodeState.RUNNING)//
+         .put(Instance.Status.STOPPED, NodeState.SUSPENDED)//
+         .put(Instance.Status.REMOVED, NodeState.TERMINATED)//
+         .put(Instance.Status.DEPROVISIONING, NodeState.PENDING)//
+         .put(Instance.Status.FAILED, NodeState.ERROR)//
+         .put(Instance.Status.NEW, NodeState.PENDING)//
+         .put(Instance.Status.PROVISIONING, NodeState.PENDING)//
+         .put(Instance.Status.REJECTED, NodeState.ERROR)//
+         .put(Instance.Status.RESTARTING, NodeState.PENDING)//
+         .put(Instance.Status.STARTING, NodeState.PENDING)//
+         .put(Instance.Status.STOPPING, NodeState.PENDING)//
+         .put(Instance.Status.DEPROVISION_PENDING, NodeState.PENDING)//
+         .put(Instance.Status.UNKNOWN, NodeState.UNRECOGNIZED).build();
    @Resource
    protected Logger logger = Logger.NULL;
    private final Map<Instance.Status, NodeState> instanceStateToNodeState;
@@ -60,8 +75,8 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
 
    @Inject
    InstanceToNodeMetadata(Map<Instance.Status, NodeState> instanceStateToNodeState,
-            Supplier<Map<String, ? extends Image>> images, @Named("CREDENTIALS") Map<String, String> credentialsMap,
-            Supplier<Map<String, ? extends Location>> locations) {
+         Supplier<Map<String, ? extends Image>> images, @Named("CREDENTIALS") Map<String, String> credentialsMap,
+         Supplier<Map<String, ? extends Location>> locations) {
       this.instanceStateToNodeState = checkNotNull(instanceStateToNodeState, "instanceStateToNodeState");
       this.images = checkNotNull(images, "images");
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
@@ -70,14 +85,15 @@ public class InstanceToNodeMetadata implements Function<Instance, NodeMetadata> 
 
    @Override
    public NodeMetadata apply(Instance from) {
+      //TODO hardware
       String tag = parseTagFromName(from.getName());
       Set<String> ipSet = from.getIp() != null ? ImmutableSet.of(from.getIp()) : ImmutableSet.<String> of();
-      NodeState state = instanceStateToNodeState.get(from.getStatus());
       Image image = images.get().get(from.getImageId());
       String key = tag != null ? credentialsMap.get(tag) : null;
-      return new NodeMetadataImpl(from.getId() + "", from.getName(), from.getId() + "", locations.get().get(
-               image.getLocation()), null, ImmutableMap.<String, String> of(), tag, from.getImageId(),
-               image != null ? image.getOperatingSystem() : null, state, ipSet, ImmutableList.<String> of(),
-               ImmutableMap.<String, String> of(), new Credentials(image.getDefaultCredentials().identity, key));
+      return new NodeMetadataBuilder().ids(from.getId() + "").name(from.getName())
+            .location(locations.get().get(image.getLocation())).tag(tag).imageId(from.getImageId())
+            .state(instanceStateToNodeState.get(from.getStatus()))
+            .operatingSystem(image != null ? image.getOperatingSystem() : null).publicAddresses(ipSet)
+            .credentials(new Credentials(image.getDefaultCredentials().identity, key)).build();
    }
 }

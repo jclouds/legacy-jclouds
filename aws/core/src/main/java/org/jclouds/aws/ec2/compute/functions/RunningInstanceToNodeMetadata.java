@@ -101,9 +101,20 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       builder.imageId(instance.getRegion() + "/" + instance.getImageId());
 
       // extract the operating system from the image
-      Image image = instanceToImage.get(new RegionAndName(instance.getRegion(), instance.getImageId()));
-      if (image != null)
-         builder.operatingSystem(image.getOperatingSystem());
+      RegionAndName regionAndName = new RegionAndName(instance.getRegion(), instance.getImageId());
+      try {
+         Image image = instanceToImage.get(regionAndName);
+          if (image != null)
+              builder.operatingSystem(image.getOperatingSystem());
+      }
+      catch (NullPointerException e) {
+          // The instanceToImage Map may throw NullPointerException (actually subclass NullOutputException) if the
+          // computing Function returns a null value.
+          //
+          // See the following for more information:
+          // MapMaker.makeComputingMap()
+          // RegionAndIdToImage.apply()
+      }
 
       return builder.build();
    }

@@ -44,8 +44,8 @@ public class IBMDeveloperCloudDestroyNodeStrategy implements DestroyNodeStrategy
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata destroyNode(String id) {
       client.deleteInstance(id);
-      return getNode.execute(id);
+      return getNode.getNode(id);
    }
 }

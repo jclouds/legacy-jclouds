@@ -70,6 +70,7 @@
   (is (= 1 (count (list-container "container" :max-results 1))))
   (create-directory "container" "dir")
   (is (upload-blob "container" "dir/blob2" "blob2"))
+  (is (= 3 (count-blobs  "container")))
   (is (= 3 (count (list-container "container"))))
   (is (= 4 (count (list-container "container" :recursive true))))
   (is (= 3 (count (list-container "container" :with-details true))))

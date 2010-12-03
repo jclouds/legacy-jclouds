@@ -19,33 +19,6 @@
 
 package org.jclouds.http.ning;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Throwables.propagate;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
-import javax.inject.Singleton;
-import javax.ws.rs.core.HttpHeaders;
-
-import org.jclouds.crypto.CryptoStreams;
-import org.jclouds.http.HttpCommand;
-import org.jclouds.http.HttpCommandExecutorService;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
-import org.jclouds.http.handlers.DelegatingErrorHandler;
-import org.jclouds.http.handlers.DelegatingRetryHandler;
-import org.jclouds.http.internal.BaseHttpCommandExecutorService;
-import org.jclouds.io.Payload;
-import org.jclouds.io.Payloads;
-
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.LinkedHashMultimap;
@@ -59,7 +32,31 @@ import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Request;
 import com.ning.http.client.RequestBuilder;
 import com.ning.http.client.Response;
-import com.ning.http.client.Request.EntityWriter;
+import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.http.HttpCommand;
+import org.jclouds.http.HttpCommandExecutorService;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.HttpUtils;
+import org.jclouds.http.handlers.DelegatingErrorHandler;
+import org.jclouds.http.handlers.DelegatingRetryHandler;
+import org.jclouds.http.internal.BaseHttpCommandExecutorService;
+import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
+import org.jclouds.io.payloads.FilePayload;
+
+import javax.inject.Singleton;
+import javax.ws.rs.core.HttpHeaders;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Throwables.propagate;
 
 /**
  * Todo Write me
@@ -128,21 +125,7 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
    @Singleton
    public static class ConvertToNingRequest implements Function<HttpRequest, Request> {
 
-      private static class PayloadEntityWriter implements EntityWriter {
-         private final Payload payload;
-
-         public PayloadEntityWriter(Payload payload) {
-            this.payload = payload;
-         }
-
-         @Override
-         public void writeEntity(OutputStream out) throws IOException {
-            payload.writeTo(out);
-
-         }
-      }
-
-      public Request apply(HttpRequest request) {
+       public Request apply(HttpRequest request) {
 
          for (HttpRequestFilter filter : request.getFilters()) {
             filter.filter(request);
@@ -188,9 +171,13 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
          return builder.build();
       }
 
-      void setPayload(RequestBuilder requestBuilder, Payload payload) {
-         requestBuilder.setBody(new PayloadEntityWriter(payload));
-      }
+       void setPayload(RequestBuilder requestBuilder, Payload payload) {
+           if (payload instanceof FilePayload) {
+               requestBuilder.setBody(((FilePayload) payload).getRawContent());
+           } else {
+               requestBuilder.setBody(payload.getInput());
+           }
+       }
    }
 
    @Singleton

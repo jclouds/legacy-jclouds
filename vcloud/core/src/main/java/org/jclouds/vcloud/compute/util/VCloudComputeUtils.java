@@ -37,7 +37,7 @@ import org.jclouds.vcloud.domain.ovf.ResourceType;
 import org.jclouds.vcloud.domain.ovf.VCloudNetworkAdapter;
 
 import com.google.common.collect.Iterables;
-import com.google.inject.internal.util.Sets;
+import com.google.common.collect.Sets;
 
 /**
  * 

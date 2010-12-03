@@ -17,22 +17,32 @@
  * ====================================================================
  */
 
-package org.jclouds.ibmdev.compute.config;
+package org.jclouds.elasticstack.domain;
 
-import org.jclouds.ibmdev.domain.Instance;
-import org.testng.annotations.Test;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ibmdev.IBMDeveloperCloudComputeServiceContextModuleTest")
-public class IBMDeveloperCloudComputeServiceContextModuleTest {
+public enum DriveStatus {
+   ACTIVE, INACTIVE, COPYING, IMAGING, UNRECOGNIZED;
 
-   public void testAllStatusCovered() {
-
-      for (Instance.Status state : Instance.Status.values()) {
-         assert IBMDeveloperCloudComputeServiceContextModule.instanceStatusToNodeState.containsKey(state) : state;
-      }
-
+   public String value() {
+      return name().toLowerCase();
    }
+
+   @Override
+   public String toString() {
+      return value();
+   }
+
+   public static DriveStatus fromValue(String status) {
+      try {
+         return valueOf(checkNotNull(status, "status").toUpperCase());
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
+   }
+
 }

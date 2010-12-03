@@ -200,7 +200,7 @@ public abstract class BaseComputeServiceLiveTest {
    // starting this one alphabetically before create2nodes..
    @Test(enabled = true, dependsOnMethods = { "testCompareSizes" })
    public void testAScriptExecutionAfterBootWithBasicTemplate() throws Exception {
-      String tag = this.tag + "run";
+      String tag = this.tag + "r";
       try {
          client.destroyNodesMatching(withTag(tag));
       } catch (Exception e) {
@@ -460,7 +460,7 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true)
    public void testCreateAndRunAService() throws Exception {
 
-      String tag = this.tag + "service";
+      String tag = this.tag + "s";
       try {
          client.destroyNodesMatching(withTag(tag));
       } catch (Exception e) {

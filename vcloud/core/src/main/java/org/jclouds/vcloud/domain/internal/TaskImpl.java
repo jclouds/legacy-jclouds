@@ -24,13 +24,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.Date;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.domain.VCloudError;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.TaskStatus;
-
-import com.google.inject.internal.Nullable;
+import org.jclouds.vcloud.domain.VCloudError;
 
 /**
  * 

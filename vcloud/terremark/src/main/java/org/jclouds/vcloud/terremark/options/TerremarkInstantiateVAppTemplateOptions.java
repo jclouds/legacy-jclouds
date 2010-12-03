@@ -24,7 +24,7 @@ import java.util.Map;
 import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 
-import com.google.inject.internal.util.Maps;
+import com.google.common.collect.Maps;
 
 /**
  * 

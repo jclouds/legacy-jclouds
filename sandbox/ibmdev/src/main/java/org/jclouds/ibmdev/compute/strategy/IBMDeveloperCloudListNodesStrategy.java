@@ -43,13 +43,13 @@ public class IBMDeveloperCloudListNodesStrategy implements ListNodesStrategy {
 
    @Inject
    protected IBMDeveloperCloudListNodesStrategy(IBMDeveloperCloudClient client,
-            Function<Instance, NodeMetadata> instanceToNodeMetadata) {
+         Function<Instance, NodeMetadata> instanceToNodeMetadata) {
       this.client = client;
       this.instanceToNodeMetadata = instanceToNodeMetadata;
    }
 
    @Override
-   public Iterable<? extends ComputeMetadata> list() {
+   public Iterable<? extends ComputeMetadata> listNodes() {
       return listDetailsOnNodesMatching(NodePredicates.all());
    }
 

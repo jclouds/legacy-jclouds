@@ -47,7 +47,7 @@ public class IBMDeveloperCloudGetNodeMetadataStrategy implements GetNodeMetadata
    }
 
    @Override
-   public NodeMetadata execute(String id) {
+   public NodeMetadata getNode(String id) {
       Instance instance = client.getInstance(checkNotNull(id, "id"));
       return instance == null ? null : instanceToNodeMetadata.apply(instance);
    }

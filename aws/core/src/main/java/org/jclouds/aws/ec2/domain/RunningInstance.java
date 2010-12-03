@@ -25,12 +25,13 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.aws.ec2.domain.Attachment.Status;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.inject.internal.Nullable;
 
 /**
  * 

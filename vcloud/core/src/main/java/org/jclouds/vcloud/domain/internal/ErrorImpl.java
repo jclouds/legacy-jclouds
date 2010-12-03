@@ -21,9 +21,9 @@ package org.jclouds.vcloud.domain.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.jclouds.vcloud.domain.VCloudError;
+import javax.annotation.Nullable;
 
-import com.google.inject.internal.Nullable;
+import org.jclouds.vcloud.domain.VCloudError;
 
 /**
  * 

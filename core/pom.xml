@@ -81,7 +81,7 @@
         <dependency>
             <groupId>com.google.code.guice</groupId>
             <artifactId>guice</artifactId>
-            <version>2.1-r1201</version>
+            <version>3.0-snapshot-20101120</version>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
@@ -106,7 +106,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>r06</version>
+            <version>r07</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>

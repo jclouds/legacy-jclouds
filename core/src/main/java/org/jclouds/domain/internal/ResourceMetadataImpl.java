@@ -25,11 +25,12 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.domain.Location;
 import org.jclouds.domain.ResourceMetadata;
 
 import com.google.common.collect.Maps;
-import com.google.inject.internal.Nullable;
 
 /**
  * Idpayload of the object

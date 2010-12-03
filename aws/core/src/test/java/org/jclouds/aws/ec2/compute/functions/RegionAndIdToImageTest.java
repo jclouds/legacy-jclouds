@@ -27,6 +27,7 @@ import static org.easymock.classextension.EasyMock.verify;
 import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.imageIds;
 import static org.testng.Assert.assertEquals;
 
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.jclouds.aws.ec2.EC2Client;
@@ -44,7 +45,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit", testName = "ec2.RegionAndIdToImageTest")
 public class RegionAndIdToImageTest {
 
-   @SuppressWarnings({ "unchecked"})
+   @SuppressWarnings({ "unchecked" })
    @Test
    public void testApply() {
 
@@ -54,10 +55,10 @@ public class RegionAndIdToImageTest {
       org.jclouds.aws.ec2.domain.Image ec2Image = createMock(org.jclouds.aws.ec2.domain.Image.class);
       Image image = createNiceMock(Image.class);
       Set<? extends org.jclouds.aws.ec2.domain.Image> images = ImmutableSet
-               .<org.jclouds.aws.ec2.domain.Image> of(ec2Image);
+            .<org.jclouds.aws.ec2.domain.Image> of(ec2Image);
 
       expect(caller.getAMIServices()).andReturn(client).atLeastOnce();
-      expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn((Set)images);
+      expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn((Set) images);
       expect(parser.apply(ec2Image)).andReturn(image);
 
       replay(caller);
@@ -76,7 +77,7 @@ public class RegionAndIdToImageTest {
 
    }
 
-   @SuppressWarnings({ "unchecked"})
+   @SuppressWarnings({ "unchecked" })
    @Test
    public void testApplyNotFound() {
 
@@ -86,11 +87,43 @@ public class RegionAndIdToImageTest {
       org.jclouds.aws.ec2.domain.Image ec2Image = createMock(org.jclouds.aws.ec2.domain.Image.class);
       Image image = createNiceMock(Image.class);
       Set<? extends org.jclouds.aws.ec2.domain.Image> images = ImmutableSet
-               .<org.jclouds.aws.ec2.domain.Image> of(ec2Image);
+            .<org.jclouds.aws.ec2.domain.Image> of(ec2Image);
 
       expect(caller.getAMIServices()).andReturn(client).atLeastOnce();
-      expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn((Set)images);
+      expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn((Set) images);
       expect(parser.apply(ec2Image)).andThrow(new ResourceNotFoundException());
+
+      replay(caller);
+      replay(image);
+      replay(parser);
+      replay(client);
+
+      RegionAndIdToImage function = new RegionAndIdToImage(parser, caller);
+
+      assertEquals(function.apply(new RegionAndName("region", "ami")), null);
+
+      verify(caller);
+      verify(image);
+      verify(parser);
+      verify(client);
+
+   }
+
+   @SuppressWarnings({ "unchecked" })
+   @Test
+   public void testApplyNoSuchElementException() {
+
+      ImageParser parser = createMock(ImageParser.class);
+      EC2Client caller = createMock(EC2Client.class);
+      AMIClient client = createMock(AMIClient.class);
+      org.jclouds.aws.ec2.domain.Image ec2Image = createMock(org.jclouds.aws.ec2.domain.Image.class);
+      Image image = createNiceMock(Image.class);
+      Set<? extends org.jclouds.aws.ec2.domain.Image> images = ImmutableSet
+            .<org.jclouds.aws.ec2.domain.Image> of(ec2Image);
+
+      expect(caller.getAMIServices()).andReturn(client).atLeastOnce();
+      expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn((Set) images);
+      expect(parser.apply(ec2Image)).andThrow(new NoSuchElementException());
 
       replay(caller);
       replay(image);

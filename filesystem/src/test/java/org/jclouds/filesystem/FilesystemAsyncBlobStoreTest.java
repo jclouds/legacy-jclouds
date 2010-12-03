@@ -185,16 +185,8 @@ public class FilesystemAsyncBlobStoreTest {
     /**
      * Test of list method, of class FilesystemAsyncBlobStore.
      */
-    public void testList_NoOptionSingleContainer() throws IOException {
-
-        // Testing list for a not existing container
-        try {
-            blobStore.list(CONTAINER_NAME);
-            fail("Found a not existing container");
-        } catch(ContainerNotFoundException e) {
-
-        }
-
+    public void testList_NoOptionSingleContainer()
+    throws IOException {
         blobStore.createContainerInLocation(null, CONTAINER_NAME);
         // Testing list for an empty container
         checkForContainerContent(CONTAINER_NAME, null);
@@ -267,6 +259,29 @@ public class FilesystemAsyncBlobStoreTest {
         checkForContainerContent(CONTAINER_NAME2, blobNamesCreatedInContainer2);
     }
 
+
+    public void testList_Subdirectory()
+    throws IOException {
+        blobStore.createContainerInLocation(null, CONTAINER_NAME);
+        // Testing list for an empty container
+        checkForContainerContent(CONTAINER_NAME, null);
+
+        //creates blobs in first container
+        Set<String> blobsExpected = TestUtils.createBlobsInContainer(
+                CONTAINER_NAME,
+                new String[] {
+                    "bbb" + File.separator + "ccc" + File.separator + "ddd" + File.separator + "1234.jpg",
+                    "4rrr.jpg",
+                    "rrr" + File.separator + "sss" + File.separator + "788.jpg",
+                    "rrr" + File.separator + "wert.kpg" }
+                );
+
+        //remove not expected values
+        blobsExpected.remove("bbb" + File.separator + "ccc" + File.separator + "ddd" + File.separator + "1234.jpg");
+        blobsExpected.remove("4rrr.jpg");
+
+        checkForContainerContent(CONTAINER_NAME, "rrr", blobsExpected);
+    }
 
     /**
      * TODO
@@ -809,12 +824,17 @@ public class FilesystemAsyncBlobStoreTest {
      * @param expectedBlobKeys
      */
     private void checkForContainerContent(final String containerName, Set<String> expectedBlobKeys) {
+        checkForContainerContent(containerName, null, expectedBlobKeys);
+    }
+
+    private void checkForContainerContent(final String containerName, String inDirectory, Set<String> expectedBlobKeys) {
         ListContainerOptions options = ListContainerOptions.Builder.recursive();
+        if (null != inDirectory && !"".equals(inDirectory)) options.inDirectory(inDirectory);
 
         PageSet<? extends StorageMetadata> blobsRetrieved = blobStore.list(containerName, options);
 
         //nothing expected
-        if (null == expectedBlobKeys) {
+        if (null == expectedBlobKeys || 0 == expectedBlobKeys.size()) {
             assertTrue(blobsRetrieved.isEmpty(), "Wrong blob number retrieved in the containter [" + containerName + "]");
             return;
         }

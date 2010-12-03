@@ -58,8 +58,8 @@
 
   <!-- Setup maven so that we can get latest version of jclouds, jclouds, and jruby -->
   <artifact:dependencies pathId="jclouds.classpath">
-    <dependency groupid="org.codehaus.cargo" artifactId="cargo-ant" version="1.0.3"/>
-    <dependency groupid="org.codehaus.cargo" artifactId="cargo-core-container-tomcat" version="1.0.3"/>
+    <dependency groupid="org.codehaus.cargo" artifactId="cargo-ant" version="1.0.5"/>
+    <dependency groupid="org.codehaus.cargo" artifactId="cargo-core-container-tomcat" version="1.0.5"/>
     <dependency groupId="org.jclouds" artifactId="jclouds-${driver}" version="${jclouds.version}"/>
     <dependency groupId="org.jclouds" artifactId="jclouds-antcontrib" version="${jclouds.version}"/>
     <remoteRepository refid="jclouds.repository"/>

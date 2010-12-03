@@ -19,7 +19,13 @@
 
 package org.jclouds.aws.s3.functions;
 
+import static com.google.common.base.Throwables.getCausalChain;
+import static com.google.common.collect.Iterables.filter;
+import static com.google.common.collect.Iterables.get;
+import static com.google.common.collect.Iterables.size;
 import static org.jclouds.util.Utils.propagateOrNull;
+
+import java.util.List;
 
 import javax.inject.Singleton;
 
@@ -35,11 +41,12 @@ import com.google.common.base.Function;
 public class ReturnFalseIfBucketAlreadyOwnedByYou implements Function<Exception, Boolean> {
 
    public Boolean apply(Exception from) {
-      if (from instanceof AWSResponseException) {
-         AWSResponseException responseException = (AWSResponseException) from;
-         if ("BucketAlreadyOwnedByYou".equals(responseException.getError().getCode())) {
+      List<Throwable> throwables = getCausalChain(from);
+
+      Iterable<AWSResponseException> matchingAWSResponseException = filter(throwables, AWSResponseException.class);
+      if (size(matchingAWSResponseException) >= 1 && get(matchingAWSResponseException, 0).getError() != null) {
+         if (get(matchingAWSResponseException, 0).getError().getCode().equals("BucketAlreadyOwnedByYou"))
             return false;
-         }
       }
       return Boolean.class.cast(propagateOrNull(from));
    }

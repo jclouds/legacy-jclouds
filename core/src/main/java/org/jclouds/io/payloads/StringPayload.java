@@ -19,18 +19,27 @@
 
 package org.jclouds.io.payloads;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import org.jclouds.util.Utils;
+import com.google.common.base.Charsets;
 
 /**
+ * This implementation converts the String to a byte array using UTF-8 encoding. If you wish to use
+ * a different encoding, please use {@link ByteArrayPayload}.
+ * 
  * @author Adrian Cole
  */
 public class StringPayload extends BasePayload<String> {
 
+   private final byte[] bytes;
+
+   // it is possible to discover length by walking the string and updating current length based on
+   // character code. However, this is process intense, and assumes an encoding type of UTF-8
    public StringPayload(String content) {
       super(content);
-      getContentMetadata().setContentLength((long) content.length());
+      this.bytes = content.getBytes(Charsets.UTF_8);
+      getContentMetadata().setContentLength(new Long(bytes.length));
    }
 
    /**
@@ -38,7 +47,7 @@ public class StringPayload extends BasePayload<String> {
     */
    @Override
    public InputStream getInput() {
-      return Utils.toInputStream(content);
+      return new ByteArrayInputStream(bytes);
    }
 
 }

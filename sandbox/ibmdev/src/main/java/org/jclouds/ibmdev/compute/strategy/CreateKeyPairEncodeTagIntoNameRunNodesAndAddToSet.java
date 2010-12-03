@@ -21,7 +21,6 @@ package org.jclouds.ibmdev.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -39,8 +38,6 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.ibmdev.IBMDeveloperCloudClient;
-import org.jclouds.io.Payload;
-import org.jclouds.util.Utils;
 
 /**
  * @author Adrian Cole
@@ -52,9 +49,9 @@ public class CreateKeyPairEncodeTagIntoNameRunNodesAndAddToSet extends EncodeTag
 
    @Inject
    protected CreateKeyPairEncodeTagIntoNameRunNodesAndAddToSet(AddNodeWithTagStrategy addNodeWithTagStrategy,
-            ListNodesStrategy listNodesStrategy, @Named("NAMING_CONVENTION") String nodeNamingConvention,
-            ComputeUtils utils, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
-            IBMDeveloperCloudClient client, @Named("CREDENTIALS") Map<String, String> credentialsMap) {
+         ListNodesStrategy listNodesStrategy, @Named("NAMING_CONVENTION") String nodeNamingConvention,
+         ComputeUtils utils, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+         IBMDeveloperCloudClient client, @Named("CREDENTIALS") Map<String, String> credentialsMap) {
       super(addNodeWithTagStrategy, listNodesStrategy, nodeNamingConvention, utils, executor);
       this.client = checkNotNull(client, "client");
       this.credentialsMap = checkNotNull(credentialsMap, "credentialsMap");
@@ -62,15 +59,9 @@ public class CreateKeyPairEncodeTagIntoNameRunNodesAndAddToSet extends EncodeTag
 
    @Override
    public Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> nodes,
-            Map<NodeMetadata, Exception> badNodes) {
-      Payload key = template.getOptions().getPublicKey();
-      if (key != null) {
-         String keyAsText;
-         try {
-            keyAsText = Utils.toStringAndClose(key.getInput());
-         } catch (IOException e1) {
-            throw new RuntimeException(e1);
-         }
+         Map<NodeMetadata, Exception> badNodes) {
+      String keyAsText = template.getOptions().getPublicKey();
+      if (keyAsText != null) {
          template.getOptions().dontAuthorizePublicKey();
          try {
             client.addPublicKey(tag, keyAsText);

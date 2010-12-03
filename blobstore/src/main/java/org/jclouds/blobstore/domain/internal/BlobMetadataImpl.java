@@ -26,13 +26,13 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.domain.Location;
 import org.jclouds.io.ContentMetadata;
-
-import com.google.inject.internal.Nullable;
 
 /**
  * System and user Metadata for the {@link Blob}.

@@ -299,7 +299,7 @@ Options can also be specified for extension modules
   ([container-name]
      (count-blobs container-name *blobstore*))
   ([container-name blobstore]
-     (.countBlob blobstore container-name)))
+     (.countBlobs blobstore container-name)))
 
 (defn blobs
   "List the blobs in a container:
