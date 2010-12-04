@@ -300,7 +300,7 @@ public class ElasticStackAsyncClientTest extends RestClientTest<ElasticStackAsyn
 
       assertRequestLineEquals(httpRequest, "POST https://api.elasticstack.com/drives/100/write HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
-      assertPayloadEquals(httpRequest, "", MediaType.APPLICATION_OCTET_STREAM, false);
+      assertPayloadEquals(httpRequest, "foo", MediaType.APPLICATION_OCTET_STREAM, false);
 
       assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -316,7 +316,7 @@ public class ElasticStackAsyncClientTest extends RestClientTest<ElasticStackAsyn
 
       assertRequestLineEquals(httpRequest, "POST https://api.elasticstack.com/drives/100/write/2048 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
-      assertPayloadEquals(httpRequest, "", MediaType.APPLICATION_OCTET_STREAM, false);
+      assertPayloadEquals(httpRequest, "foo", MediaType.APPLICATION_OCTET_STREAM, false);
 
       assertResponseParserClassEquals(method, httpRequest, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);

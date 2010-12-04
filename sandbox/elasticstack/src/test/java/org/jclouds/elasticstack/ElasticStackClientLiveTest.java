@@ -76,7 +76,8 @@ public class ElasticStackClientLiveTest extends
 
          // TODO block until complete
          System.err.println("state " + client.getDriveInfo(info2.getUuid()));
-         assertEquals(Utils.toStringAndClose(client.readDrive(info2.getUuid()).getInput()), "foo");
+         assertEquals(Utils.toStringAndClose(client.readDrive(info2.getUuid(),
+               ReadDriveOptions.Builder.offset(0).size(3)).getInput()), "foo");
       } finally {
          client.destroyDrive(info2.getUuid());
       }
