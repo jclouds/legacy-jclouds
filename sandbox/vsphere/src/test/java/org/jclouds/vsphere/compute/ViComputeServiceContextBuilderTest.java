@@ -26,7 +26,7 @@ public class ViComputeServiceContextBuilderTest {
    @Test
    public void testCanBuildWithComputeService() {
       ComputeServiceContext context = new ComputeServiceContextFactory()
-            .createContext(new ViComputeServiceContextSpec("https://10.38.102.196/sdk", "Administrator", "41.U17Sh"));
+            .createContext(new ViComputeServiceContextSpec("https://localhost/sdk", "Administrator", "password"));
       context.getComputeService().listNodes();
       context.close();
    }
