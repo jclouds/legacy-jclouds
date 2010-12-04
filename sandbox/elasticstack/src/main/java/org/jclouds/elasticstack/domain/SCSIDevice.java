@@ -26,12 +26,26 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @author Adrian Cole
  */
 public class SCSIDevice extends Device {
+   public static class Builder extends Device.Builder {
+      private final int unit;
 
-   private final char bus = 0;
-   private final char unit;
+      public Builder(int unit) {
+         this.unit = unit;
+      }
 
-   public SCSIDevice(String driveUuid, MediaType mediaType, char unit) {
-      super(driveUuid, mediaType);
+      @Override
+      public Device build() {
+         return new SCSIDevice(uuid, mediaType, unit, readBytes, readRequests, writeBytes, writeRequests);
+      }
+
+   }
+
+   private final int bus = 0;
+   private final int unit;
+
+   public SCSIDevice(String driveUuid, MediaType mediaType, int unit, long readBytes, long readRequests,
+         long writeBytes, long writeRequests) {
+      super(driveUuid, mediaType, readBytes, readRequests, writeBytes, writeRequests);
       checkArgument(unit >= 0 && unit < 8, "unit must be between 0 and 7");
       this.unit = unit;
    }
@@ -61,11 +75,11 @@ public class SCSIDevice extends Device {
       return true;
    }
 
-   public char getBus() {
+   public int getBus() {
       return bus;
    }
 
-   public char getUnit() {
+   public int getUnit() {
       return unit;
    }
 

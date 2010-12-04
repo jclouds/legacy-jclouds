@@ -19,14 +19,20 @@
 
 package org.jclouds.cloudsigma.config;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jclouds.cloudsigma.CloudSigmaAsyncClient;
 import org.jclouds.cloudsigma.CloudSigmaClient;
 import org.jclouds.cloudsigma.functions.CreateDriveRequestToMap;
 import org.jclouds.cloudsigma.functions.DriveDataToMap;
 import org.jclouds.elasticstack.domain.CreateDriveRequest;
+import org.jclouds.elasticstack.domain.Device;
 import org.jclouds.elasticstack.domain.DriveData;
+import org.jclouds.elasticstack.domain.NIC;
+import org.jclouds.elasticstack.functions.MapToDevices;
+import org.jclouds.elasticstack.functions.MapToNICs;
 import org.jclouds.elasticstack.handlers.ElasticStackErrorHandler;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
@@ -66,6 +72,10 @@ public class CloudSigmaRestClientModule extends RestClientModule<CloudSigmaClien
       }).to(CreateDriveRequestToMap.class);
       bind(new TypeLiteral<Function<DriveData, Map<String, String>>>() {
       }).to(DriveDataToMap.class);
+      bind(new TypeLiteral<Function<Map<String, String>, List<NIC>>>() {
+      }).to(MapToNICs.class);
+      bind(new TypeLiteral<Function<Map<String, String>, Set<Device>>>() {
+      }).to(MapToDevices.class);
    }
 
    @Override

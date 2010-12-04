@@ -26,11 +26,25 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @author Adrian Cole
  */
 public class BlockDevice extends Device {
+   public static class Builder extends Device.Builder {
+      private final int index;
 
-   private final char index;
+      public Builder(int index) {
+         this.index = index;
+      }
 
-   public BlockDevice(String driveUuid, MediaType mediaType, char index) {
-      super(driveUuid, mediaType);
+      @Override
+      public Device build() {
+         return new BlockDevice(uuid, mediaType, index, readBytes, readRequests, writeBytes, writeRequests);
+      }
+
+   }
+
+   private final int index;
+
+   public BlockDevice(String driveUuid, MediaType mediaType, int index, long readBytes, long readRequests,
+         long writeBytes, long writeRequests) {
+      super(driveUuid, mediaType, readBytes, readRequests, writeBytes, writeRequests);
       checkArgument(index >= 0 && index < 8, "index must be between 0 and 7");
       this.index = index;
    }
@@ -62,7 +76,7 @@ public class BlockDevice extends Device {
       return String.format("block:%d", index);
    }
 
-   public char getIndex() {
+   public int getIndex() {
       return index;
    }
 

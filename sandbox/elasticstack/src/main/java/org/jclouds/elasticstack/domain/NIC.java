@@ -21,23 +21,66 @@ package org.jclouds.elasticstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Set;
+
 import javax.annotation.Nullable;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class NIC {
+   public static class Builder {
+      private String dhcp;
+      private Model model;
+      private String vlan;
+      private String mac;
+      private Set<String> block = ImmutableSet.of();
+
+      public Builder dhcp(String dhcp) {
+         this.dhcp = dhcp;
+         return this;
+      }
+
+      public Builder model(Model model) {
+         this.model = model;
+         return this;
+      }
+
+      public Builder vlan(String vlan) {
+         this.vlan = vlan;
+         return this;
+      }
+
+      public Builder mac(String mac) {
+         this.mac = mac;
+         return this;
+      }
+
+      public Builder block(Iterable<String> block) {
+         this.block = ImmutableSet.copyOf(checkNotNull(block, "block"));
+         return this;
+      }
+
+      public NIC build() {
+         return new NIC(dhcp, model, vlan, mac, block);
+      }
+   }
+
    private final String dhcp;
    private final Model model;
    private final String vlan;
    private final String mac;
+   private final Set<String> block;
 
-   public NIC(@Nullable String dhcp, Model model, @Nullable String vlan, @Nullable String mac) {
+   public NIC(@Nullable String dhcp, Model model, @Nullable String vlan, @Nullable String mac, Iterable<String> block) {
       this.dhcp = dhcp;
       this.model = checkNotNull(model, "model");
       this.vlan = vlan;
       this.mac = mac;
+      this.block = ImmutableSet.copyOf(checkNotNull(block, "block"));
    }
 
    /**
@@ -75,10 +118,16 @@ public class NIC {
       return mac;
    }
 
+   // TODO undocumented
+   public Set<String> getBlock() {
+      return block;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
+      result = prime * result + ((block == null) ? 0 : block.hashCode());
       result = prime * result + ((dhcp == null) ? 0 : dhcp.hashCode());
       result = prime * result + ((mac == null) ? 0 : mac.hashCode());
       result = prime * result + ((model == null) ? 0 : model.hashCode());
@@ -95,6 +144,11 @@ public class NIC {
       if (getClass() != obj.getClass())
          return false;
       NIC other = (NIC) obj;
+      if (block == null) {
+         if (other.block != null)
+            return false;
+      } else if (!block.equals(other.block))
+         return false;
       if (dhcp == null) {
          if (other.dhcp != null)
             return false;
@@ -117,6 +171,6 @@ public class NIC {
 
    @Override
    public String toString() {
-      return "[dhcp=" + dhcp + ", model=" + model + ", vlan=" + vlan + ", mac=" + mac + "]";
+      return "[dhcp=" + dhcp + ", model=" + model + ", vlan=" + vlan + ", mac=" + mac + ", block=" + block + "]";
    }
 }

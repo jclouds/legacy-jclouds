@@ -21,6 +21,7 @@ package org.jclouds.elasticstack.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,31 +35,15 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-public class Server extends Item {
-   //
-   // user UUID
-   // status active|stopped
-   // cpu CPU
-   // smp SMP
-   // mem MEM
-   // bootDeviceIds UUID
-   // description DESCRIPTION
-   // ide:0:0 UUID
-   // ide:0:1 UUID
-   // ide:1:0 UUID
-   // ide:1:1 UUID
-   // nic:0:model NIC_0_MODEL
-   // nic:0:dhcp NIC_0_DHCP
-   // nic:1:model NIC_1_MODEL
-   // nic:1:vlan NIC_1_VLAN
-   // vnc:ip VNC_IP
-   // vnc:password VNC_PASS
+public class ServerInfo extends Item {
 
    public static class Builder extends Item.Builder {
       protected int cpu;
       protected Integer smp;
+      protected ServerStatus status;
       protected int mem;
       protected boolean persistent;
+      protected Date started;
       protected Set<? extends Device> devices = ImmutableSet.of();
       protected Set<String> bootDeviceIds = ImmutableSet.of();
       protected List<NIC> nics = ImmutableList.of();
@@ -66,6 +51,15 @@ public class Server extends Item {
       protected VNC vnc;
       // TODO undocumented
       protected String description;
+      protected long txPackets;
+      protected long tx;
+      protected long rxPackets;
+      protected long rx;
+
+      public Builder status(ServerStatus status) {
+         this.status = status;
+         return this;
+      }
 
       public Builder cpu(int cpu) {
          this.cpu = cpu;
@@ -84,6 +78,11 @@ public class Server extends Item {
 
       public Builder persistent(boolean persistent) {
          this.persistent = persistent;
+         return this;
+      }
+
+      public Builder started(Date started) {
+         this.started = started;
          return this;
       }
 
@@ -114,6 +113,26 @@ public class Server extends Item {
 
       public Builder description(String description) {
          this.description = description;
+         return this;
+      }
+
+      public Builder txPackets(long txPackets) {
+         this.txPackets = txPackets;
+         return this;
+      }
+
+      public Builder tx(long tx) {
+         this.tx = tx;
+         return this;
+      }
+
+      public Builder rxPackets(long rxPackets) {
+         this.rxPackets = rxPackets;
+         return this;
+      }
+
+      public Builder rx(long rx) {
+         this.rx = rx;
          return this;
       }
 
@@ -149,16 +168,19 @@ public class Server extends Item {
          return Builder.class.cast(super.userMetadata(userMetadata));
       }
 
-      public Server build() {
-         return new Server(uuid, name, cpu, smp, mem, persistent, devices, tags, bootDeviceIds, userMetadata, nics,
-               user, vnc, description);
+      public ServerInfo build() {
+         return new ServerInfo(uuid, name, cpu, smp, mem, status, persistent, started, devices, tags, bootDeviceIds,
+               userMetadata, nics, user, vnc, description, tx, txPackets, rx, rxPackets);
       }
    }
 
    protected final int cpu;
    protected final Integer smp;
    protected final int mem;
+   protected final ServerStatus status;
    protected final boolean persistent;
+   @Nullable
+   protected final Date started;
    protected final Set<? extends Device> devices;
    protected final Set<String> bootDeviceIds;
    @Nullable
@@ -167,21 +189,32 @@ public class Server extends Item {
    protected final VNC vnc;
    @Nullable
    private final String description;
+   protected final long txPackets;
+   protected final long tx;
+   protected final long rxPackets;
+   protected final long rx;
 
-   public Server(@Nullable String uuid, String name, int cpu, @Nullable Integer smp, int mem, boolean persistent,
-         Iterable<? extends Device> devices, Iterable<String> bootDeviceIds, Iterable<String> tags,
-         Map<String, String> userMetadata, Iterable<NIC> nics, @Nullable String user, VNC vnc, String description) {
+   public ServerInfo(@Nullable String uuid, String name, int cpu, @Nullable Integer smp, int mem, ServerStatus status,
+         boolean persistent, @Nullable Date started, Iterable<? extends Device> devices,
+         Iterable<String> bootDeviceIds, Iterable<String> tags, Map<String, String> userMetadata, Iterable<NIC> nics,
+         @Nullable String user, VNC vnc, String description, long tx, long txPackets, long rx, long rxPackets) {
       super(uuid, name, tags, userMetadata);
       this.cpu = cpu;
       this.smp = smp;
       this.mem = mem;
+      this.status = status;
       this.persistent = persistent;
+      this.started = started;
       this.devices = ImmutableSet.copyOf(checkNotNull(devices, "devices"));
       this.bootDeviceIds = ImmutableSet.copyOf(checkNotNull(bootDeviceIds, "bootDeviceIds"));
       this.nics = ImmutableList.copyOf(checkNotNull(nics, "nics"));
       this.user = user;
       this.vnc = checkNotNull(vnc, "vnc");
       this.description = description;
+      this.txPackets = txPackets;
+      this.tx = tx;
+      this.rxPackets = rxPackets;
+      this.rx = rx;
    }
 
    /**
@@ -206,6 +239,14 @@ public class Server extends Item {
     */
    public int getMem() {
       return mem;
+   }
+
+   /**
+    * 
+    * @return active | stopped | paused | dumped | dead
+    */
+   public ServerStatus getStatus() {
+      return status;
    }
 
    /**
@@ -239,6 +280,31 @@ public class Server extends Item {
    }
 
    // TODO undocumented
+   public Date getStarted() {
+      return started;
+   }
+
+   // TODO undocumented
+   public long getTxPackets() {
+      return txPackets;
+   }
+
+   // TODO undocumented
+   public long getTx() {
+      return tx;
+   }
+
+   // TODO undocumented
+   public long getRxPackets() {
+      return rxPackets;
+   }
+
+   // TODO undocumented
+   public long getRx() {
+      return rx;
+   }
+
+   // TODO undocumented
    /**
     * 
     * @return owner of the server.
@@ -267,7 +333,13 @@ public class Server extends Item {
       result = prime * result + mem;
       result = prime * result + ((nics == null) ? 0 : nics.hashCode());
       result = prime * result + (persistent ? 1231 : 1237);
+      result = prime * result + (int) (rx ^ (rx >>> 32));
+      result = prime * result + (int) (rxPackets ^ (rxPackets >>> 32));
       result = prime * result + ((smp == null) ? 0 : smp.hashCode());
+      result = prime * result + ((started == null) ? 0 : started.hashCode());
+      result = prime * result + ((status == null) ? 0 : status.hashCode());
+      result = prime * result + (int) (tx ^ (tx >>> 32));
+      result = prime * result + (int) (txPackets ^ (txPackets >>> 32));
       result = prime * result + ((user == null) ? 0 : user.hashCode());
       result = prime * result + ((vnc == null) ? 0 : vnc.hashCode());
       return result;
@@ -281,7 +353,7 @@ public class Server extends Item {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      Server other = (Server) obj;
+      ServerInfo other = (ServerInfo) obj;
       if (bootDeviceIds == null) {
          if (other.bootDeviceIds != null)
             return false;
@@ -308,10 +380,25 @@ public class Server extends Item {
          return false;
       if (persistent != other.persistent)
          return false;
+      if (rx != other.rx)
+         return false;
+      if (rxPackets != other.rxPackets)
+         return false;
       if (smp == null) {
          if (other.smp != null)
             return false;
       } else if (!smp.equals(other.smp))
+         return false;
+      if (started == null) {
+         if (other.started != null)
+            return false;
+      } else if (!started.equals(other.started))
+         return false;
+      if (status != other.status)
+         return false;
+      if (tx != other.tx)
+         return false;
+      if (txPackets != other.txPackets)
          return false;
       if (user == null) {
          if (other.user != null)
@@ -328,10 +415,11 @@ public class Server extends Item {
 
    @Override
    public String toString() {
-      return "[uuid=" + uuid + ", name=" + name + ", tags=" + tags + ", userMetadata=" + userMetadata + ", cpu=" + cpu
-            + ", smp=" + smp + ", mem=" + mem + ", persistent=" + persistent + ", devices=" + devices
-            + ", bootDeviceIds=" + bootDeviceIds + ", user=" + user + ", nics=" + nics + ", vnc=" + vnc
-            + ", description=" + description + "]";
+      return "[uuid=" + uuid + ", name=" + name + ", tags=" + tags + ", userMetadata=" + userMetadata
+            + ", cpu=" + cpu + ", smp=" + smp + ", mem=" + mem + ", status=" + status + ", persistent=" + persistent
+            + ", started=" + started + ", devices=" + devices + ", bootDeviceIds=" + bootDeviceIds + ", user=" + user
+            + ", nics=" + nics + ", vnc=" + vnc + ", description=" + description + ", txPackets=" + txPackets + ", tx="
+            + tx + ", rxPackets=" + rxPackets + ", rx=" + rx + "]";
    }
 
 }

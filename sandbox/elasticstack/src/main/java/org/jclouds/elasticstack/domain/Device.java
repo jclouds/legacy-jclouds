@@ -26,12 +26,62 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Adrian Cole
  */
 public abstract class Device {
+   public static abstract class Builder {
+      protected String uuid;
+      protected MediaType mediaType = MediaType.DISK;
+      protected long readBytes;
+      protected long readRequests;
+      protected long writeBytes;
+      protected long writeRequests;
+
+      public Builder mediaType(MediaType mediaType) {
+         this.mediaType = mediaType;
+         return this;
+      }
+
+      public Builder readBytes(long readBytes) {
+         this.readBytes = readBytes;
+         return this;
+      }
+
+      public Builder readRequests(long readRequests) {
+         this.readRequests = readRequests;
+         return this;
+      }
+
+      public Builder writeBytes(long writeBytes) {
+         this.writeBytes = writeBytes;
+         return this;
+      }
+
+      public Builder writeRequests(long writeRequests) {
+         this.writeRequests = writeRequests;
+         return this;
+      }
+
+      public Builder uuid(String uuid) {
+         this.uuid = uuid;
+         return this;
+      }
+
+      public abstract Device build();
+   }
+
    protected final String driveUuid;
    protected final MediaType mediaType;
+   protected final long readBytes;
+   protected final long readRequests;
+   protected final long writeBytes;
+   protected final long writeRequests;
 
-   public Device(String driveUuid, MediaType mediaType) {
+   public Device(String driveUuid, MediaType mediaType, long readBytes, long readRequests, long writeBytes,
+         long writeRequests) {
       this.driveUuid = checkNotNull(driveUuid, "driveUuid");
       this.mediaType = checkNotNull(mediaType, "mediaType");
+      this.readBytes = readBytes;
+      this.readRequests = readRequests;
+      this.writeBytes = writeBytes;
+      this.writeRequests = writeRequests;
    }
 
    /**
@@ -56,12 +106,48 @@ public abstract class Device {
       return mediaType;
    }
 
+   /**
+    * 
+    * @return Cumulative i/o byte/request count for each drive
+    */
+   public long getReadBytes() {
+      return readBytes;
+   }
+
+   /**
+    * 
+    * @return Cumulative i/o byte/request count for each drive
+    */
+   public long getReadRequests() {
+      return readRequests;
+   }
+
+   /**
+    * 
+    * @return Cumulative i/o byte/request count for each drive
+    */
+   public long getWriteBytes() {
+      return writeBytes;
+   }
+
+   /**
+    * 
+    * @return Cumulative i/o byte/request count for each drive
+    */
+   public long getWriteRequests() {
+      return writeRequests;
+   }
+
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
       result = prime * result + ((driveUuid == null) ? 0 : driveUuid.hashCode());
       result = prime * result + ((mediaType == null) ? 0 : mediaType.hashCode());
+      result = prime * result + (int) (readBytes ^ (readBytes >>> 32));
+      result = prime * result + (int) (readRequests ^ (readRequests >>> 32));
+      result = prime * result + (int) (writeBytes ^ (writeBytes >>> 32));
+      result = prime * result + (int) (writeRequests ^ (writeRequests >>> 32));
       return result;
    }
 
@@ -81,11 +167,20 @@ public abstract class Device {
          return false;
       if (mediaType != other.mediaType)
          return false;
+      if (readBytes != other.readBytes)
+         return false;
+      if (readRequests != other.readRequests)
+         return false;
+      if (writeBytes != other.writeBytes)
+         return false;
+      if (writeRequests != other.writeRequests)
+         return false;
       return true;
    }
 
    @Override
    public String toString() {
-      return "[driveUuid=" + driveUuid + ", mediaType=" + mediaType + "]";
+      return "[driveUuid=" + driveUuid + ", mediaType=" + mediaType + ", readBytes=" + readBytes + ", readRequests="
+            + readRequests + ", writeBytes=" + writeBytes + ", writeRequests=" + writeRequests + "]";
    }
 }

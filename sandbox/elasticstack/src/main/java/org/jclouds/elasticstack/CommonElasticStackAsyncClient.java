@@ -33,8 +33,11 @@ import org.jclouds.elasticstack.binders.BindDriveDataToPlainTextString;
 import org.jclouds.elasticstack.domain.CreateDriveRequest;
 import org.jclouds.elasticstack.domain.DriveData;
 import org.jclouds.elasticstack.domain.DriveInfo;
+import org.jclouds.elasticstack.domain.ServerInfo;
 import org.jclouds.elasticstack.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
+import org.jclouds.elasticstack.functions.KeyValuesDelimitedByBlankLinesToServerInfo;
 import org.jclouds.elasticstack.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
+import org.jclouds.elasticstack.functions.ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet;
 import org.jclouds.elasticstack.functions.SplitNewlines;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.BinderParam;
@@ -57,6 +60,31 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(BasicAuthentication.class)
 @Consumes(MediaType.TEXT_PLAIN)
 public interface CommonElasticStackAsyncClient {
+
+   /**
+    * @see ElasticStackClient#listServers()
+    */
+   @GET
+   @Path("/servers/list")
+   @ResponseParser(SplitNewlines.class)
+   ListenableFuture<Set<String>> listServers();
+
+   /**
+    * @see ElasticStackClient#listServerInfo()
+    */
+   @GET
+   @Path("/servers/info")
+   @ResponseParser(ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet.class)
+   ListenableFuture<Set<? extends ServerInfo>> listServerInfo();
+
+   /**
+    * @see ElasticStackClient#getServerInfo
+    */
+   @GET
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
+   @Path("/servers/{uuid}/info")
+   ListenableFuture<? extends ServerInfo> getServerInfo(@PathParam("uuid") String uuid);
 
    /**
     * @see ElasticStackClient#listDrives()

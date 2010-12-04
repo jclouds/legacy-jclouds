@@ -31,7 +31,9 @@ import org.jclouds.elasticstack.domain.CreateDriveRequest;
 import org.jclouds.elasticstack.domain.DriveData;
 import org.jclouds.elasticstack.domain.ImageConversionType;
 import org.jclouds.elasticstack.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
+import org.jclouds.elasticstack.functions.KeyValuesDelimitedByBlankLinesToServerInfo;
 import org.jclouds.elasticstack.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
+import org.jclouds.elasticstack.functions.ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet;
 import org.jclouds.elasticstack.functions.ReturnPayload;
 import org.jclouds.elasticstack.functions.SplitNewlines;
 import org.jclouds.elasticstack.options.ReadDriveOptions;
@@ -60,6 +62,63 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit", testName = "elasticstack.ElasticStackAsyncClientTest")
 public class ElasticStackAsyncClientTest extends RestClientTest<ElasticStackAsyncClient> {
+   public void testListServers() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticStackAsyncClient.class.getMethod("listServers");
+      GeneratedHttpRequest<ElasticStackAsyncClient> httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "GET https://api.elasticstack.com/servers/list HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      // now make sure request filters apply by replaying
+      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+
+      assertRequestLineEquals(httpRequest, "GET https://api.elasticstack.com/servers/list HTTP/1.1");
+      // for example, using basic authentication, we should get "only one"
+      // header
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\nAuthorization: Basic Zm9vOmJhcg==\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      // TODO: insert expected response class, which probably extends ParseJson
+      assertResponseParserClassEquals(method, httpRequest, SplitNewlines.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+
+   }
+
+   public void testListServerInfo() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticStackAsyncClient.class.getMethod("listServerInfo");
+      GeneratedHttpRequest<ElasticStackAsyncClient> httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "GET https://api.elasticstack.com/servers/info HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, null);
+
+      checkFilters(httpRequest);
+   }
+
+   public void testGetServerInfo() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = ElasticStackAsyncClient.class.getMethod("getServerInfo", String.class);
+      GeneratedHttpRequest<ElasticStackAsyncClient> httpRequest = processor.createRequest(method, "uuid");
+
+      assertRequestLineEquals(httpRequest, "GET https://api.elasticstack.com/servers/uuid/info HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToServerInfo.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
 
    public void testListDrives() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ElasticStackAsyncClient.class.getMethod("listDrives");
@@ -76,8 +135,7 @@ public class ElasticStackAsyncClientTest extends RestClientTest<ElasticStackAsyn
       assertRequestLineEquals(httpRequest, "GET https://api.elasticstack.com/drives/list HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
       // header
-      assertNonPayloadHeadersEqual(httpRequest,
-            "Accept: text/plain\nAuthorization: Basic Zm9vOmJhcg==\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\nAuthorization: Basic Zm9vOmJhcg==\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // TODO: insert expected response class, which probably extends ParseJson

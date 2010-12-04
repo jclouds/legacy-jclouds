@@ -26,12 +26,28 @@ import static com.google.common.base.Preconditions.checkArgument;
  * @author Adrian Cole
  */
 public class IDEDevice extends Device {
+   public static class Builder extends Device.Builder {
+      private final int bus;
+      private final int unit;
 
-   private final char bus;
-   private final char unit;
+      public Builder(int bus, int unit) {
+         this.bus = bus;
+         this.unit = unit;
+      }
 
-   public IDEDevice(String driveUuid, MediaType mediaType, char bus, char unit) {
-      super(driveUuid, mediaType);
+      @Override
+      public Device build() {
+         return new IDEDevice(uuid, mediaType, bus, unit, readBytes, readRequests, writeBytes, writeRequests);
+      }
+
+   }
+
+   private final int bus;
+   private final int unit;
+
+   public IDEDevice(String driveUuid, MediaType mediaType, int bus, int unit, long readBytes, long readRequests,
+         long writeBytes, long writeRequests) {
+      super(driveUuid, mediaType, readBytes, readRequests, writeBytes, writeRequests);
       checkArgument(bus == 0 || bus == 1, "bus must be 0 or 1");
       checkArgument(unit == 0 || unit == 1, "unit must be 0 or 1");
       this.bus = bus;
@@ -68,11 +84,11 @@ public class IDEDevice extends Device {
       return String.format("ide:%d:%d", bus, unit);
    }
 
-   public char getBus() {
+   public int getBus() {
       return bus;
    }
 
-   public char getUnit() {
+   public int getUnit() {
       return unit;
    }
 

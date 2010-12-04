@@ -32,6 +32,7 @@ import org.jclouds.elasticstack.domain.CreateDriveRequest;
 import org.jclouds.elasticstack.domain.DriveData;
 import org.jclouds.elasticstack.domain.DriveInfo;
 import org.jclouds.elasticstack.domain.DriveStatus;
+import org.jclouds.elasticstack.domain.ServerInfo;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
@@ -95,6 +96,26 @@ public abstract class CommonElasticStackClientLiveTest<S extends CommonElasticSt
    void tearDown() {
       if (context != null)
          context.close();
+   }
+
+   @Test
+   public void testListServers() throws Exception {
+      Set<String> servers = client.listServers();
+      assertNotNull(servers);
+   }
+
+   @Test
+   public void testListServerInfo() throws Exception {
+      Set<? extends ServerInfo> servers = client.listServerInfo();
+      assertNotNull(servers);
+   }
+
+   @Test
+   public void testGetServer() throws Exception {
+      for (String serverUUID : client.listServers()) {
+         assert !"".equals(serverUUID);
+         assertNotNull(client.getServerInfo(serverUUID));
+      }
    }
 
    @Test

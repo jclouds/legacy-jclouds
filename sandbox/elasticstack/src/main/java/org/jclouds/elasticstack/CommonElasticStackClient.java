@@ -26,6 +26,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.elasticstack.domain.CreateDriveRequest;
 import org.jclouds.elasticstack.domain.DriveData;
 import org.jclouds.elasticstack.domain.DriveInfo;
+import org.jclouds.elasticstack.domain.ServerInfo;
 
 /**
  * Provides synchronous access to elasticstack.
@@ -37,6 +38,27 @@ import org.jclouds.elasticstack.domain.DriveInfo;
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface CommonElasticStackClient {
+   /**
+    * list of server uuids in your account
+    * 
+    * @return or empty set if no servers are found
+    */
+   Set<String> listServers();
+
+   /**
+    * Get all servers info
+    * 
+    * @return or empty set if no servers are found
+    */
+   Set<? extends ServerInfo> listServerInfo();
+
+   /**
+    * @param uuid
+    *           what to get
+    * @return null, if not found
+    */
+   ServerInfo getServerInfo(String uuid);
+
    /**
     * list of drive uuids in your account
     * 
@@ -85,6 +107,5 @@ public interface CommonElasticStackClient {
     *           what to delete
     */
    void destroyDrive(String uuid);
-
 
 }
