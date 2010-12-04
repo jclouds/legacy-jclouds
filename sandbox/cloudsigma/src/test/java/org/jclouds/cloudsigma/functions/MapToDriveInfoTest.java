@@ -89,7 +89,7 @@ public class MapToDriveInfoTest {
    public void testComplete() throws IOException {
 
       Map<String, String> input = new ListOfKeyValuesDelimitedByBlankLinesToListOfMaps().apply(
-            Utils.toStringAndClose(MapToDriveInfoTest.class.getResourceAsStream("/cloudsigma/drive.txt"))).get(0);
+            Utils.toStringAndClose(MapToDriveInfoTest.class.getResourceAsStream("/drive.txt"))).get(0);
 
       assertEquals(MAP_TO_DRIVE.apply(input), ONE);
 

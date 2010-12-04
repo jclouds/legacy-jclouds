@@ -34,12 +34,6 @@
     <artifactId>jclouds-elasticstack</artifactId>
     <name>jclouds elasticstack core</name>
     <description>jclouds components to access elasticstack</description>
-
-    <scm>
-        <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk/elasticstack</connection>
-        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk/elasticstack</developerConnection>
-        <url>http://jclouds.googlecode.com/svn/trunk/elasticstack</url>
-    </scm>
     
     <!-- bootstrapping: need to fetch the project POM -->
     <repositories>
@@ -59,7 +53,7 @@
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
-        <test.elasticstack.endpoint>https://api.cloudsigma.com</test.elasticstack.endpoint>
+        <test.elasticstack.endpoint>https://api.lon-p.elastichosts.com</test.elasticstack.endpoint>
         <test.elasticstack.apiversion>1.0</test.elasticstack.apiversion>
         <test.elasticstack.identity>FIXME</test.elasticstack.identity>
         <test.elasticstack.credential>FIXME</test.elasticstack.credential>
