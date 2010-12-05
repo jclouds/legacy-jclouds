@@ -105,6 +105,12 @@ public class UtilsTest {
       ProvisionException pex = new ProvisionException(ImmutableSet.of(message));
       assertEquals(Utils.getFirstThrowableOfType(pex, AuthorizationException.class), null);
    }
+   
+   public void testGetFirstThrowableOfTypeWhenCauseIsNull() {
+      Message message = new Message(ImmutableList.of(), "test", null);
+      ProvisionException pex = new ProvisionException(ImmutableSet.of(message));
+      assertEquals(Utils.getFirstThrowableOfType(pex, AuthorizationException.class), null);
+   }
 
    public void testReplaceTokens() throws UnsupportedEncodingException {
       assertEquals(Utils.replaceTokens("hello {where}", ImmutableMap.of("where", "world")), "hello world");

@@ -195,10 +195,12 @@ public class Utils {
 
    public static <T extends Throwable> T getFirstThrowableOfType(ProvisionException e, Class<T> clazz) {
       for (Message message : e.getErrorMessages()) {
-         T cause = getFirstThrowableOfType(message.getCause(), clazz);
-         if (cause instanceof ProvisionException)
-            return getFirstThrowableOfType(ProvisionException.class.cast(cause), clazz);
-         return cause;
+         if (message.getCause() != null) {
+            T cause = getFirstThrowableOfType(message.getCause(), clazz);
+            if (cause instanceof ProvisionException)
+               return getFirstThrowableOfType(ProvisionException.class.cast(cause), clazz);
+            return cause;
+         }
       }
       return null;
    }

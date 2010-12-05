@@ -17,40 +17,35 @@
  * ====================================================================
  */
 
-package org.jclouds.vsphere;
+package org.jclouds.vi.compute;
 
-import com.google.common.base.Objects;
+import static org.jclouds.vi.ViConstants.PROPERTY_LIBVIRT_DOMAIN_DIR;
+
+import java.util.List;
+import java.util.Properties;
+
+import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
+import org.jclouds.vi.compute.config.ViComputeServiceContextModule;
+
+import com.google.inject.Module;
+import com.vmware.vim25.mo.ServiceInstance;
 
 /**
- * This would be replaced with the real java object related to the underlying image
  * 
  * @author Adrian Cole
  */
-public class Image {
+public class ViComputeServiceContextBuilder extends StandaloneComputeServiceContextBuilder<ServiceInstance> {
 
-   public int id;
-   public String name;
+   public ViComputeServiceContextBuilder(Properties props) {
+      super(ServiceInstance.class, props);
 
-   public Image(int id, String name) {
-      this.id = id;
-      this.name = name;
+      if (!properties.containsKey(PROPERTY_LIBVIRT_DOMAIN_DIR))
+         properties.setProperty(PROPERTY_LIBVIRT_DOMAIN_DIR, "/etc/libvirt/qemu");
    }
 
    @Override
-   public int hashCode() {
-      return Objects.hashCode(id, name);
-   }
-
-   @Override
-   public boolean equals(Object that) {
-      if (that == null)
-         return false;
-      return Objects.equal(this.toString(), that.toString());
-   }
-
-   @Override
-   public String toString() {
-      return Objects.toStringHelper(this).add("id", id).add("name", name).toString();
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new ViComputeServiceContextModule());
    }
 
 }

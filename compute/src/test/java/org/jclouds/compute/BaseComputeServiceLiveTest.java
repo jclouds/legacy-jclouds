@@ -74,6 +74,7 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
@@ -161,9 +162,13 @@ public abstract class BaseComputeServiceLiveTest {
       if (context != null)
          context.close();
       Properties props = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider,
+      context = new ComputeServiceContextFactory(getRestProperties()).createContext(provider,
             ImmutableSet.of(new Log4JLoggingModule(), getSshModule()), props);
       client = context.getComputeService();
+   }
+
+   protected Properties getRestProperties() {
+      return RestContextFactory.getPropertiesFromResource("/rest.properties");
    }
 
    abstract protected Module getSshModule();

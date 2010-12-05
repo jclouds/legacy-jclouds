@@ -28,6 +28,7 @@ import org.jclouds.servermanager.Datacenter;
 import org.jclouds.servermanager.Hardware;
 import org.jclouds.servermanager.Image;
 import org.jclouds.servermanager.Server;
+import org.jclouds.servermanager.ServerManager;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -59,9 +60,9 @@ public class ServerManagerExperimentLiveTest {
       ComputeServiceContext context = null;
       try {
          context = new ComputeServiceContextFactory()
-               .createContext(new StandaloneComputeServiceContextSpec<Server, Hardware, Image, Datacenter>(
-                     "servermanager", endpoint, apiversion, identity, credential,
-                     ServerManagerComputeServiceContextBuilder.createContextModule(), ImmutableSet.<Module> of()));
+               .createContext(new StandaloneComputeServiceContextSpec<ServerManager, Server, Hardware, Image, Datacenter>(
+                     "servermanager", endpoint, apiversion, identity, credential, ServerManager.class,
+                     ServerManagerComputeServiceContextBuilder.class, ImmutableSet.<Module> of()));
 
          context.getComputeService().listNodes();
 

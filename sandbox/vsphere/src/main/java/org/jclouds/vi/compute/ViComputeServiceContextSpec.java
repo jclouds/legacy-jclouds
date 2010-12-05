@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vsphere.compute;
+package org.jclouds.vi.compute;
 
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.compute.ComputeService;

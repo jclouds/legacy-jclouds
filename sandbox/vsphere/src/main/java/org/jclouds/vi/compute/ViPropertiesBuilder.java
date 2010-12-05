@@ -17,11 +17,11 @@
  * ====================================================================
  */
 
-package org.jclouds.vsphere.compute;
+package org.jclouds.vi.compute;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.vsphere.ViConstants.PROPERTY_LIBVIRT_DOMAIN_DIR;
+import static org.jclouds.vi.ViConstants.PROPERTY_LIBVIRT_DOMAIN_DIR;
 import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_NODE_SUSPENDED;
 
 import java.util.Properties;

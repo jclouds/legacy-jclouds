@@ -17,29 +17,26 @@
  * ====================================================================
  */
 
-package org.jclouds.servermanager.compute;
+package org.jclouds.vi.compute.functions;
 
-import java.util.List;
-import java.util.Properties;
+import javax.inject.Singleton;
 
-import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
-import org.jclouds.servermanager.ServerManager;
-import org.jclouds.servermanager.compute.config.ServerManagerComputeServiceContextModule;
+import org.jclouds.domain.Location;
+import org.jclouds.domain.LocationScope;
+import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.vi.Datacenter;
 
-import com.google.inject.Module;
+import com.google.common.base.Function;
 
 /**
- * 
  * @author Adrian Cole
  */
-public class ServerManagerComputeServiceContextBuilder extends StandaloneComputeServiceContextBuilder<ServerManager> {
-
-   public ServerManagerComputeServiceContextBuilder(Properties props) {
-      super(ServerManager.class, props);
-   }
+@Singleton
+public class DatacenterToLocation implements Function<Datacenter, Location> {
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new ServerManagerComputeServiceContextModule());
+   public Location apply(Datacenter from) {
+      return new LocationImpl(LocationScope.ZONE, from.id + "", from.name, null);
    }
+
 }

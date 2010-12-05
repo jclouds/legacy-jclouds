@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vsphere.compute;
+package org.jclouds.vi.compute;
 
 import java.io.StringReader;
 import java.util.Map;

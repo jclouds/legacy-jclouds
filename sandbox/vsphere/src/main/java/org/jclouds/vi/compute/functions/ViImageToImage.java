@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vsphere.compute.functions;
+package org.jclouds.vi.compute.functions;
 
 import javax.annotation.Resource;
 import javax.inject.Named;
@@ -36,13 +36,13 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class ViImageToImage implements Function<org.jclouds.vsphere.Image, Image> {
+public class ViImageToImage implements Function<org.jclouds.vi.Image, Image> {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
    @Override
-   public Image apply(org.jclouds.vsphere.Image from) {
+   public Image apply(org.jclouds.vi.Image from) {
 
       ImageBuilder builder = new ImageBuilder();
       builder.ids(from.id + "");

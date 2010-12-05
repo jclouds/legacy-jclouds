@@ -17,26 +17,40 @@
  * ====================================================================
  */
 
-package org.jclouds.vsphere.compute.functions;
+package org.jclouds.vi;
 
-import javax.inject.Singleton;
-
-import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.vsphere.Datacenter;
-
-import com.google.common.base.Function;
+import com.google.common.base.Objects;
 
 /**
+ * This would be replaced with the real java object related to the underlying data center
+ * 
  * @author Adrian Cole
  */
-@Singleton
-public class DatacenterToLocation implements Function<Datacenter, Location> {
+public class Datacenter {
+
+   public int id;
+   public String name;
+
+   public Datacenter(int id, String name) {
+      this.id = id;
+      this.name = name;
+   }
 
    @Override
-   public Location apply(Datacenter from) {
-      return new LocationImpl(LocationScope.ZONE, from.id + "", from.name, null);
+   public int hashCode() {
+      return Objects.hashCode(id, name);
+   }
+
+   @Override
+   public boolean equals(Object that) {
+      if (that == null)
+         return false;
+      return Objects.equal(this.toString(), that.toString());
+   }
+
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).add("id", id).add("name", name).toString();
    }
 
 }

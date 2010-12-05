@@ -17,10 +17,10 @@
  * ====================================================================
  */
 
-package org.jclouds.vsphere.compute.strategy;
+package org.jclouds.vi.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vsphere.ViConstants.PROPERTY_LIBVIRT_DOMAIN_DIR;
+import static org.jclouds.vi.ViConstants.PROPERTY_LIBVIRT_DOMAIN_DIR;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -33,8 +33,8 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
-import org.jclouds.vsphere.Datacenter;
-import org.jclouds.vsphere.Image;
+import org.jclouds.vi.Datacenter;
+import org.jclouds.vi.Image;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;

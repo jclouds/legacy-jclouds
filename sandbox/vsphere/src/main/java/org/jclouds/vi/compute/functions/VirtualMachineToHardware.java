@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vsphere.compute.functions;
+package org.jclouds.vi.compute.functions;
 
 import java.io.IOException;
 import java.io.StringReader;

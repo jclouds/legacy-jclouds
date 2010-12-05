@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vsphere.compute;
+package org.jclouds.vi.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -27,7 +27,7 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
-import org.jclouds.vsphere.compute.ViComputeServiceContextSpec;
+import org.jclouds.vi.compute.ViComputeServiceContextSpec;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 

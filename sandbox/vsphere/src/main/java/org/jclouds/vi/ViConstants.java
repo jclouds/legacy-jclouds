@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.vsphere;
+package org.jclouds.vi;
 
 /**
  * Configuration properties and constants used in libvirt local connections.

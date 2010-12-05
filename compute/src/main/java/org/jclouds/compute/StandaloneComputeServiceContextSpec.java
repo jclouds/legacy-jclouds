@@ -20,24 +20,34 @@
 package org.jclouds.compute;
 
 import org.jclouds.PropertiesBuilder;
-import org.jclouds.compute.config.StandaloneComputeServiceContextModule;
 import org.jclouds.rest.RestContextSpec;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.inject.Module;
 
 /**
  * @author Adrian Cole
  */
-public class StandaloneComputeServiceContextSpec<N, H, I, L> extends RestContextSpec<ComputeService, ComputeService> {
+public class StandaloneComputeServiceContextSpec<D, N, H, I, L> extends RestContextSpec<D, D> {
+   public StandaloneComputeServiceContextSpec(String provider, String endpoint, String apiVersion, String identity,
+         String credential, Class<D> driverClass,
+         Class<? extends StandaloneComputeServiceContextBuilder<D>> contextBuilderClass) {
+      this(provider, endpoint, apiVersion, identity, credential, driverClass, contextBuilderClass, ImmutableSet
+            .<Module> of());
+   }
+
+   public StandaloneComputeServiceContextSpec(String provider, String endpoint, String apiVersion, String identity,
+         String credential, Class<D> driverClass,
+         Class<? extends StandaloneComputeServiceContextBuilder<D>> contextBuilderClass, Iterable<Module> modules) {
+      this(provider, endpoint, apiVersion, identity, credential, driverClass, PropertiesBuilder.class,
+            contextBuilderClass, modules);
+   }
 
    @SuppressWarnings({ "unchecked", "rawtypes" })
    public StandaloneComputeServiceContextSpec(String provider, String endpoint, String apiVersion, String identity,
-         String credential, StandaloneComputeServiceContextModule<N, H, I, L> contextModule, Iterable<Module> modules) {
-      super(provider, endpoint, apiVersion, identity, credential, ComputeService.class, ComputeService.class,
-            PropertiesBuilder.class, (Class) StandaloneComputeServiceContextBuilder.class, Iterables.concat(
-                  ImmutableSet.of(contextModule), modules));
+         String credential, Class<D> driverClass, Class<? extends PropertiesBuilder> propertiesBuilderClass,
+         Class<? extends StandaloneComputeServiceContextBuilder<D>> contextBuilderClass, Iterable<Module> modules) {
+      super(provider, endpoint, apiVersion, identity, credential, driverClass, driverClass,
+            (Class) propertiesBuilderClass, (Class) contextBuilderClass, modules);
    }
-
 }
