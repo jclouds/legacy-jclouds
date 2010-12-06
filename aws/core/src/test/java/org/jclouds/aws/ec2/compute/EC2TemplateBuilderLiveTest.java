@@ -75,7 +75,7 @@ public class EC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       assertEquals(template.getImage().getOperatingSystem().getVersion(), "10.10");
       assertEquals(template.getImage().getOperatingSystem().is64Bit(), false);
       assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(template.getImage().getVersion(), "20101106");
+      assertEquals(template.getImage().getVersion(), "20101204");
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
       assertEquals(template.getLocation().getId(), "us-east-1");
       assertEquals(getCores(template.getHardware()), 1.0d);
@@ -107,7 +107,7 @@ public class EC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
       Template defaultTemplate = context.getComputeService().templateBuilder().build();
       assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "0.9.9-beta");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "2010.11.1-beta");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.AMZN_LINUX);
       assertEquals(defaultTemplate.getImage().getUserMetadata().get("rootDeviceType"), "ebs");
