@@ -23,14 +23,13 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.elasticstack.domain.internal.BaseDrive;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class DriveData extends BaseDrive {
-   public static class Builder extends BaseDrive.Builder {
+public class DriveData extends Drive {
+   public static class Builder extends Drive.Builder {
 
       /**
        * {@inheritDoc}

@@ -21,18 +21,22 @@ package org.jclouds.elasticstack.config;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.jclouds.elasticstack.ElasticStackAsyncClient;
 import org.jclouds.elasticstack.ElasticStackClient;
-import org.jclouds.elasticstack.domain.CreateDriveRequest;
 import org.jclouds.elasticstack.domain.Device;
+import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.DriveData;
+import org.jclouds.elasticstack.domain.DriveMetrics;
 import org.jclouds.elasticstack.domain.NIC;
+import org.jclouds.elasticstack.domain.ServerMetrics;
 import org.jclouds.elasticstack.functions.CreateDriveRequestToMap;
 import org.jclouds.elasticstack.functions.DriveDataToMap;
 import org.jclouds.elasticstack.functions.MapToDevices;
+import org.jclouds.elasticstack.functions.MapToDevices.DeviceToId;
+import org.jclouds.elasticstack.functions.MapToDriveMetrics;
 import org.jclouds.elasticstack.functions.MapToNICs;
+import org.jclouds.elasticstack.functions.MapToServerMetrics;
 import org.jclouds.elasticstack.handlers.ElasticStackErrorHandler;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
@@ -61,14 +65,20 @@ public class ElasticStackRestClientModule extends RestClientModule<ElasticStackC
    @Override
    protected void configure() {
       super.configure();
-      bind(new TypeLiteral<Function<CreateDriveRequest, Map<String, String>>>() {
+      bind(new TypeLiteral<Function<Drive, Map<String, String>>>() {
       }).to(CreateDriveRequestToMap.class);
       bind(new TypeLiteral<Function<DriveData, Map<String, String>>>() {
       }).to(DriveDataToMap.class);
       bind(new TypeLiteral<Function<Map<String, String>, List<NIC>>>() {
       }).to(MapToNICs.class);
-      bind(new TypeLiteral<Function<Map<String, String>, Set<Device>>>() {
+      bind(new TypeLiteral<Function<Map<String, String>, Map<String, ? extends Device>>>() {
       }).to(MapToDevices.class);
+      bind(new TypeLiteral<Function<Map<String, String>, Map<String, ? extends DriveMetrics>>>() {
+      }).to(MapToDriveMetrics.class);
+      bind(new TypeLiteral<Function<Map<String, String>, ServerMetrics>>() {
+      }).to(MapToServerMetrics.class);
+      bind(new TypeLiteral<Function<Device, String>>() {
+      }).to(DeviceToId.class);
    }
 
    @Override

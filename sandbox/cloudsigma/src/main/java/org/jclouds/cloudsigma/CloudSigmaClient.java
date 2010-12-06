@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.cloudsigma.domain.DriveInfo;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.elasticstack.CommonElasticStackClient;
-import org.jclouds.elasticstack.domain.CreateDriveRequest;
+import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.DriveData;
 
 /**
@@ -76,7 +76,7 @@ public interface CloudSigmaClient extends CommonElasticStackClient {
     * {@inheritDoc}
     */
    @Override
-   DriveInfo createDrive(CreateDriveRequest createDrive);
+   DriveInfo createDrive(Drive createDrive);
 
    /**
     * {@inheritDoc}

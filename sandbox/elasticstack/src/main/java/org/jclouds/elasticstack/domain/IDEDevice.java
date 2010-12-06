@@ -37,7 +37,7 @@ public class IDEDevice extends Device {
 
       @Override
       public Device build() {
-         return new IDEDevice(uuid, mediaType, bus, unit, readBytes, readRequests, writeBytes, writeRequests);
+         return new IDEDevice(uuid, mediaType, bus, unit);
       }
 
    }
@@ -45,9 +45,8 @@ public class IDEDevice extends Device {
    private final int bus;
    private final int unit;
 
-   public IDEDevice(String driveUuid, MediaType mediaType, int bus, int unit, long readBytes, long readRequests,
-         long writeBytes, long writeRequests) {
-      super(driveUuid, mediaType, readBytes, readRequests, writeBytes, writeRequests);
+   public IDEDevice(String driveUuid, MediaType mediaType, int bus, int unit) {
+      super(driveUuid, mediaType);
       checkArgument(bus == 0 || bus == 1, "bus must be 0 or 1");
       checkArgument(unit == 0 || unit == 1, "unit must be 0 or 1");
       this.bus = bus;

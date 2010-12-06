@@ -26,7 +26,6 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.elasticstack.domain.internal.BaseDrive;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -34,8 +33,8 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-public class DriveInfo extends BaseDrive {
-   public static class Builder extends BaseDrive.Builder {
+public class DriveInfo extends Drive {
+   public static class Builder extends Drive.Builder {
 
       protected DriveStatus status;
       protected String user;
@@ -44,10 +43,7 @@ public class DriveInfo extends BaseDrive {
       protected String encryptionCipher;
       @Nullable
       protected String imaging;
-      protected long readBytes;
-      protected long readRequests;
-      protected long writeBytes;
-      protected long writeRequests;
+      protected DriveMetrics metrics;
 
       public Builder status(DriveStatus status) {
          this.status = status;
@@ -69,23 +65,8 @@ public class DriveInfo extends BaseDrive {
          return this;
       }
 
-      public Builder readBytes(long readBytes) {
-         this.readBytes = readBytes;
-         return this;
-      }
-
-      public Builder readRequests(long readRequests) {
-         this.readRequests = readRequests;
-         return this;
-      }
-
-      public Builder writeBytes(long writeBytes) {
-         this.writeBytes = writeBytes;
-         return this;
-      }
-
-      public Builder writeRequests(long writeRequests) {
-         this.writeRequests = writeRequests;
+      public Builder metrics(DriveMetrics metrics) {
+         this.metrics = metrics;
          return this;
       }
 
@@ -155,9 +136,7 @@ public class DriveInfo extends BaseDrive {
                .claimType(driveInfo.getClaimType()).readers(driveInfo.getReaders()).tags(driveInfo.getTags())
                .userMetadata(driveInfo.getUserMetadata()).status(driveInfo.getStatus()).user(driveInfo.getUser())
                .claimed(driveInfo.getClaimed()).encryptionCipher(driveInfo.getEncryptionCipher())
-               .imaging(driveInfo.getImaging()).readBytes(driveInfo.getReadBytes())
-               .readRequests(driveInfo.getReadRequests()).writeBytes(driveInfo.getWriteBytes())
-               .writeRequests(driveInfo.getWriteRequests());
+               .imaging(driveInfo.getImaging()).metrics(driveInfo.getMetrics());
       }
 
       /**
@@ -166,7 +145,7 @@ public class DriveInfo extends BaseDrive {
       @Override
       public DriveInfo build() {
          return new DriveInfo(uuid, name, size, claimType, readers, tags, userMetadata, status, user, claimed,
-               encryptionCipher, imaging, readBytes, readRequests, writeBytes, writeRequests);
+               encryptionCipher, imaging, metrics);
       }
 
    }
@@ -178,24 +157,18 @@ public class DriveInfo extends BaseDrive {
    protected final String encryptionCipher;
    @Nullable
    protected final String imaging;
-   protected final long readBytes;
-   protected final long readRequests;
-   protected final long writeBytes;
-   protected final long writeRequests;
+   protected final DriveMetrics metrics;
 
    public DriveInfo(String uuid, String name, long size, ClaimType claimType, Iterable<String> readers,
          Iterable<String> tags, Map<String, String> userMetadata, DriveStatus status, String user, Set<String> claimed,
-         String encryptionCipher, String imaging, long readBytes, long readRequests, long writeBytes, long writeRequests) {
+         String encryptionCipher, String imaging, DriveMetrics metrics) {
       super(uuid, name, size, claimType, readers, tags, userMetadata);
       this.status = status;
       this.user = user;
-      this.claimed = ImmutableSet.copyOf(claimed);
+      this.claimed = ImmutableSet.copyOf(checkNotNull(claimed, "claimed"));
       this.encryptionCipher = encryptionCipher;
       this.imaging = imaging;
-      this.readBytes = readBytes;
-      this.readRequests = readRequests;
-      this.writeBytes = writeBytes;
-      this.writeRequests = writeRequests;
+      this.metrics = checkNotNull(metrics, "metrics");
    }
 
    /**
@@ -242,34 +215,10 @@ public class DriveInfo extends BaseDrive {
 
    /**
     * 
-    * @return Cumulative i/o byte/request count for each drive
+    * @return i/o and request metrics for read and write ops
     */
-   public long getReadBytes() {
-      return readBytes;
-   }
-
-   /**
-    * 
-    * @return Cumulative i/o byte/request count for each drive
-    */
-   public long getReadRequests() {
-      return readRequests;
-   }
-
-   /**
-    * 
-    * @return Cumulative i/o byte/request count for each drive
-    */
-   public long getWriteBytes() {
-      return writeBytes;
-   }
-
-   /**
-    * 
-    * @return Cumulative i/o byte/request count for each drive
-    */
-   public long getWriteRequests() {
-      return writeRequests;
+   public DriveMetrics getMetrics() {
+      return metrics;
    }
 
    @Override
@@ -277,14 +226,11 @@ public class DriveInfo extends BaseDrive {
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((claimed == null) ? 0 : claimed.hashCode());
+      result = prime * result + ((metrics == null) ? 0 : metrics.hashCode());
       result = prime * result + ((encryptionCipher == null) ? 0 : encryptionCipher.hashCode());
       result = prime * result + ((imaging == null) ? 0 : imaging.hashCode());
-      result = prime * result + (int) (readBytes ^ (readBytes >>> 32));
-      result = prime * result + (int) (readRequests ^ (readRequests >>> 32));
       result = prime * result + ((status == null) ? 0 : status.hashCode());
       result = prime * result + ((user == null) ? 0 : user.hashCode());
-      result = prime * result + (int) (writeBytes ^ (writeBytes >>> 32));
-      result = prime * result + (int) (writeRequests ^ (writeRequests >>> 32));
       return result;
    }
 
@@ -302,6 +248,11 @@ public class DriveInfo extends BaseDrive {
             return false;
       } else if (!claimed.equals(other.claimed))
          return false;
+      if (metrics == null) {
+         if (other.metrics != null)
+            return false;
+      } else if (!metrics.equals(other.metrics))
+         return false;
       if (encryptionCipher == null) {
          if (other.encryptionCipher != null)
             return false;
@@ -312,20 +263,12 @@ public class DriveInfo extends BaseDrive {
             return false;
       } else if (!imaging.equals(other.imaging))
          return false;
-      if (readBytes != other.readBytes)
-         return false;
-      if (readRequests != other.readRequests)
-         return false;
       if (status != other.status)
          return false;
       if (user == null) {
          if (other.user != null)
             return false;
       } else if (!user.equals(other.user))
-         return false;
-      if (writeBytes != other.writeBytes)
-         return false;
-      if (writeRequests != other.writeRequests)
          return false;
       return true;
    }
@@ -335,8 +278,7 @@ public class DriveInfo extends BaseDrive {
       return "[size=" + size + ", claimType=" + claimType + ", readers=" + readers + ", uuid=" + uuid + ", name="
             + name + ", tags=" + tags + ", userMetadata=" + userMetadata + ", status=" + status + ", user=" + user
             + ", claimed=" + claimed + ", encryptionCipher=" + encryptionCipher + ", imaging=" + imaging
-            + ", readBytes=" + readBytes + ", readRequests=" + readRequests + ", writeBytes=" + writeBytes
-            + ", writeRequests=" + writeRequests + "]";
+            + ", metrics=" + metrics + "]";
    }
 
 }

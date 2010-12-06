@@ -28,6 +28,7 @@ import java.util.Properties;
 import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
 import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
 import org.jclouds.elasticstack.domain.CreateDriveRequest;
+import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.DriveData;
 import org.jclouds.elasticstack.functions.SplitNewlines;
 import org.jclouds.http.HttpRequest;
@@ -128,7 +129,7 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
    }
 
    public void testCreateDrive() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = CloudSigmaAsyncClient.class.getMethod("createDrive", CreateDriveRequest.class);
+      Method method = CloudSigmaAsyncClient.class.getMethod("createDrive", Drive.class);
       GeneratedHttpRequest<CloudSigmaAsyncClient> httpRequest = processor.createRequest(method,
             new CreateDriveRequest.Builder().name("foo").tags(ImmutableList.of("production", "candy")).size(10000l).build());
 

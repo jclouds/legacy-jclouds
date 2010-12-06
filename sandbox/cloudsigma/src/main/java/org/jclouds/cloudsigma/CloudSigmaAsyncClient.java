@@ -33,9 +33,9 @@ import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToDriveInf
 import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
 import org.jclouds.elasticstack.CommonElasticStackAsyncClient;
 import org.jclouds.elasticstack.ElasticStackClient;
-import org.jclouds.elasticstack.binders.BindCreateDriveRequestToPlainTextString;
 import org.jclouds.elasticstack.binders.BindDriveDataToPlainTextString;
-import org.jclouds.elasticstack.domain.CreateDriveRequest;
+import org.jclouds.elasticstack.binders.BindDriveToPlainTextString;
+import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.DriveData;
 import org.jclouds.elasticstack.functions.SplitNewlines;
 import org.jclouds.http.filters.BasicAuthentication;
@@ -110,8 +110,7 @@ public interface CloudSigmaAsyncClient extends CommonElasticStackAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/create")
-   ListenableFuture<? extends DriveInfo> createDrive(
-         @BinderParam(BindCreateDriveRequestToPlainTextString.class) CreateDriveRequest createDrive);
+   ListenableFuture<? extends DriveInfo> createDrive(@BinderParam(BindDriveToPlainTextString.class) Drive createDrive);
 
    /**
     * @see ElasticStackClient#setDriveData

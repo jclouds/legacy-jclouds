@@ -25,13 +25,16 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
+import org.jclouds.elasticstack.domain.DriveMetrics;
 import org.jclouds.elasticstack.domain.IDEDevice;
 import org.jclouds.elasticstack.domain.MediaType;
 import org.jclouds.elasticstack.domain.Model;
 import org.jclouds.elasticstack.domain.NIC;
 import org.jclouds.elasticstack.domain.ServerInfo;
+import org.jclouds.elasticstack.domain.ServerMetrics;
 import org.jclouds.elasticstack.domain.ServerStatus;
 import org.jclouds.elasticstack.domain.VNC;
+import org.jclouds.elasticstack.functions.MapToDevices.DeviceToId;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
@@ -64,10 +67,20 @@ public class MapToServerInfoTest {
                      ImmutableList.of("tcp/43594", "tcp/5902", "udp/5060", "tcp/5900", "tcp/5901", "tcp/21", "tcp/22",
                            "tcp/23", "tcp/25", "tcp/110", "tcp/143", "tcp/43595")).build()))
          .devices(
-               ImmutableSet.of(new IDEDevice.Builder((int) 0, (int) 0).uuid("4af85ed3-0caa-4736-8a26-a33d7de0a122")
-                     .readRequests(11154).readBytes(45686784).writeRequests(3698).writeBytes(15147008).build()
+               ImmutableMap.of("ide:0:0",
+                     new IDEDevice.Builder((int) 0, (int) 0).uuid("4af85ed3-0caa-4736-8a26-a33d7de0a122").build()
 
-               )).tx(2550).txPackets(31).rx(455530).rxPackets(7583).build();
+               ))
+         .metrics(
+               new ServerMetrics.Builder()
+                     .tx(2550)
+                     .txPackets(31)
+                     .rx(455530)
+                     .rxPackets(7583)
+                     .driveMetrics(
+                           ImmutableMap.of("ide:0:0", new DriveMetrics.Builder().readRequests(11154)
+                                 .readBytes(45686784).writeRequests(3698).writeBytes(15147008).build())).build())
+         .build();
 
    public static ServerInfo TWO = new ServerInfo.Builder()
          .status(ServerStatus.STOPPED)
@@ -81,12 +94,16 @@ public class MapToServerInfoTest {
          .vnc(new VNC("auto", "HWbjvrg2", false))
          .nics(ImmutableSet.of(new NIC.Builder().model(Model.E1000).dhcp("auto").build()))
          .devices(
-               ImmutableSet.of(new IDEDevice.Builder((int) 0, (int) 0).uuid("853bb98a-4fff-4c2f-a265-97c363f19ea5")
-                     .mediaType(MediaType.CDROM).build()
+               ImmutableMap.of(
+                     "ide:0:0",
+                     new IDEDevice.Builder((int) 0, (int) 0).uuid("853bb98a-4fff-4c2f-a265-97c363f19ea5")
+                           .mediaType(MediaType.CDROM).build()))
+         .metrics(
+               new ServerMetrics.Builder().driveMetrics(ImmutableMap.of("ide:0:0", new DriveMetrics.Builder().build()))
+                     .build()).build();
 
-               )).build();
-
-   private static final MapToServerInfo MAP_TO_DRIVE = new MapToServerInfo(new MapToDevices(), new MapToNICs());
+   private static final MapToServerInfo MAP_TO_DRIVE = new MapToServerInfo(new MapToDevices(new DeviceToId()),
+         new MapToServerMetrics(new MapToDriveMetrics()), new MapToNICs());
 
    public void testEmptyMapReturnsNull() {
       assertEquals(MAP_TO_DRIVE.apply(ImmutableMap.<String, String> of()), null);
@@ -94,7 +111,7 @@ public class MapToServerInfoTest {
 
    public void testBasics() {
       ServerInfo expects = new ServerInfo.Builder().name("foo").uuid("hello").vnc(new VNC("auto", null, false))
-            .cpu(1000).mem(2048).build();
+            .cpu(1000).mem(2048).metrics(new ServerMetrics.Builder().build()).build();
       assertEquals(MAP_TO_DRIVE.apply(ImmutableMap.of("name", "foo", "server", "hello", "vnc:ip", "auto", "cpu",
             "1000", "mem", "2048")), expects);
    }

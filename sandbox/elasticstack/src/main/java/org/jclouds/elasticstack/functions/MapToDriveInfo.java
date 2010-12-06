@@ -26,6 +26,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.elasticstack.domain.ClaimType;
 import org.jclouds.elasticstack.domain.DriveInfo;
+import org.jclouds.elasticstack.domain.DriveMetrics;
 import org.jclouds.elasticstack.domain.DriveStatus;
 
 import com.google.common.base.Function;
@@ -48,17 +49,10 @@ public class MapToDriveInfo implements Function<Map<String, String>, DriveInfo> 
          builder.tags(Splitter.on(' ').split(from.get("tags")));
       if (from.containsKey("status"))
          builder.status(DriveStatus.fromValue(from.get("status")));
-      if (from.containsKey("read:bytes"))
-         builder.readBytes(new Long(from.get("read:bytes")));
-      if (from.containsKey("read:requests"))
-         builder.readRequests(new Long(from.get("read:requests")));
+      builder.metrics(buildMetrics(from));
       builder.user(from.get("user"));
       builder.encryptionCipher(from.get("encryption:cipher"));
       builder.uuid(from.get("drive"));
-      if (from.containsKey("write:bytes"))
-         builder.writeBytes(new Long(from.get("write:bytes")));
-      if (from.containsKey("write:requests"))
-         builder.writeRequests(new Long(from.get("write:requests")));
       if (from.containsKey("claim:type"))
          builder.claimType(ClaimType.fromValue(from.get("claim:type")));
       if (from.containsKey("claimed"))
@@ -74,5 +68,18 @@ public class MapToDriveInfo implements Function<Map<String, String>, DriveInfo> 
       }
       builder.userMetadata(metadata);
       return builder.build();
+   }
+
+   protected DriveMetrics buildMetrics(Map<String, String> from) {
+      DriveMetrics.Builder metricsBuilder = new DriveMetrics.Builder();
+      if (from.containsKey("read:bytes"))
+         metricsBuilder.readBytes(new Long(from.get("read:bytes")));
+      if (from.containsKey("read:requests"))
+         metricsBuilder.readRequests(new Long(from.get("read:requests")));
+      if (from.containsKey("write:bytes"))
+         metricsBuilder.writeBytes(new Long(from.get("write:bytes")));
+      if (from.containsKey("write:requests"))
+         metricsBuilder.writeRequests(new Long(from.get("write:requests")));
+      return metricsBuilder.build();
    }
 }

@@ -23,8 +23,8 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
+import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.ClaimType;
-import org.jclouds.elasticstack.domain.internal.BaseDrive;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -40,12 +40,12 @@ public class BaseDriveToMapTest {
    private static final BaseDriveToMap BASEDRIVE_TO_MAP = new BaseDriveToMap();
 
    public void testBasics() {
-      assertEquals(BASEDRIVE_TO_MAP.apply(new BaseDrive.Builder().name("foo").size(100l).build()),
+      assertEquals(BASEDRIVE_TO_MAP.apply(new Drive.Builder().name("foo").size(100l).build()),
             ImmutableMap.of("name", "foo", "size", "100"));
    }
 
    public void testComplete() throws IOException {
-      BaseDrive one = new BaseDrive.Builder().name("Ubuntu 10.10 Server Edition Linux 64bit Preinstalled System")
+      Drive one = new Drive.Builder().name("Ubuntu 10.10 Server Edition Linux 64bit Preinstalled System")
       //
             .size(8589934592l)//
             .claimType(ClaimType.SHARED)//

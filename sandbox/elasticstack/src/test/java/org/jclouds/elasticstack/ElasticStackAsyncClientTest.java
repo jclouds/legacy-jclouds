@@ -28,6 +28,7 @@ import java.util.Properties;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.elasticstack.domain.CreateDriveRequest;
+import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.DriveData;
 import org.jclouds.elasticstack.domain.ImageConversionType;
 import org.jclouds.elasticstack.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
@@ -179,7 +180,7 @@ public class ElasticStackAsyncClientTest extends RestClientTest<ElasticStackAsyn
    }
 
    public void testCreateDrive() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ElasticStackAsyncClient.class.getMethod("createDrive", CreateDriveRequest.class);
+      Method method = ElasticStackAsyncClient.class.getMethod("createDrive", Drive.class);
       GeneratedHttpRequest<ElasticStackAsyncClient> httpRequest = processor.createRequest(method,
             new CreateDriveRequest.Builder().name("foo").size(10000l).build());
 

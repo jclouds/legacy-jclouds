@@ -26,8 +26,8 @@ import java.util.Map.Entry;
 
 import javax.inject.Singleton;
 
+import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.ClaimType;
-import org.jclouds.elasticstack.domain.internal.BaseDrive;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -38,9 +38,9 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  */
 @Singleton
-public class BaseDriveToMap implements Function<BaseDrive, Map<String, String>> {
+public class BaseDriveToMap implements Function<Drive, Map<String, String>> {
    @Override
-   public Map<String, String> apply(BaseDrive from) {
+   public Map<String, String> apply(Drive from) {
       checkNotNull(from, "drive");
       ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
       builder.put("name", from.getName());

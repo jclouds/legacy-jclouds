@@ -23,10 +23,12 @@ import static org.testng.Assert.assertEquals;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.jclouds.elasticstack.domain.Device;
+import org.jclouds.elasticstack.domain.DriveMetrics;
 import org.jclouds.elasticstack.domain.NIC;
+import org.jclouds.elasticstack.domain.ServerMetrics;
+import org.jclouds.elasticstack.functions.MapToDevices.DeviceToId;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;
@@ -49,8 +51,14 @@ public class KeyValuesDelimitedByBlankLinesToServerInfoTest {
       protected void configure() {
          bind(new TypeLiteral<Function<Map<String, String>, List<NIC>>>() {
          }).to(MapToNICs.class);
-         bind(new TypeLiteral<Function<Map<String, String>, Set<Device>>>() {
+         bind(new TypeLiteral<Function<Map<String, String>, Map<String, ? extends Device>>>() {
          }).to(MapToDevices.class);
+         bind(new TypeLiteral<Function<Map<String, String>, Map<String, ? extends DriveMetrics>>>() {
+         }).to(MapToDriveMetrics.class);
+         bind(new TypeLiteral<Function<Map<String, String>, ServerMetrics>>() {
+         }).to(MapToServerMetrics.class);
+         bind(new TypeLiteral<Function<Device, String>>() {
+         }).to(DeviceToId.class);
       }
 
    }).getInstance(KeyValuesDelimitedByBlankLinesToServerInfo.class);

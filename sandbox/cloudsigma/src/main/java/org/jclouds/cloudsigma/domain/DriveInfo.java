@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.elasticstack.domain.ClaimType;
+import org.jclouds.elasticstack.domain.DriveMetrics;
 import org.jclouds.elasticstack.domain.DriveStatus;
 
 import com.google.common.collect.ImmutableSet;
@@ -133,32 +134,9 @@ public class DriveInfo extends org.jclouds.elasticstack.domain.DriveInfo {
        * {@inheritDoc}
        */
       @Override
-      public Builder readBytes(long readBytes) {
-         return Builder.class.cast(super.readBytes(readBytes));
-      }
+      public Builder metrics(DriveMetrics metrics) {
+         return Builder.class.cast(super.metrics(metrics));
 
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder readRequests(long readRequests) {
-         return Builder.class.cast(super.readRequests(readRequests));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder writeBytes(long writeBytes) {
-         return Builder.class.cast(super.writeBytes(writeBytes));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder writeRequests(long writeRequests) {
-         return Builder.class.cast(super.writeRequests(writeRequests));
       }
 
       /**
@@ -230,9 +208,7 @@ public class DriveInfo extends org.jclouds.elasticstack.domain.DriveInfo {
                .claimType(driveInfo.getClaimType()).readers(driveInfo.getReaders()).tags(driveInfo.getTags())
                .userMetadata(driveInfo.getUserMetadata()).status(driveInfo.getStatus()).user(driveInfo.getUser())
                .claimed(driveInfo.getClaimed()).encryptionCipher(driveInfo.getEncryptionCipher())
-               .imaging(driveInfo.getImaging()).readBytes(driveInfo.getReadBytes())
-               .readRequests(driveInfo.getReadRequests()).writeBytes(driveInfo.getWriteBytes())
-               .writeRequests(driveInfo.getWriteRequests());
+               .imaging(driveInfo.getImaging()).metrics(driveInfo.getMetrics());
       }
 
       /**
@@ -241,8 +217,8 @@ public class DriveInfo extends org.jclouds.elasticstack.domain.DriveInfo {
       @Override
       public DriveInfo build() {
          return new DriveInfo(uuid, name, size, claimType, readers, tags, userMetadata, status, user, claimed,
-               encryptionCipher, imaging, readBytes, readRequests, writeBytes, writeRequests, autoexpanding, bits,
-               description, driveType, encryptionKey, free, installNotes, os, type, url);
+               encryptionCipher, imaging, metrics, autoexpanding, bits, description, driveType, encryptionKey, free,
+               installNotes, os, type, url);
       }
    }
 
@@ -259,11 +235,11 @@ public class DriveInfo extends org.jclouds.elasticstack.domain.DriveInfo {
 
    public DriveInfo(String uuid, String name, long size, ClaimType claimType, Iterable<String> readers,
          Iterable<String> tags, Map<String, String> userMetadata, DriveStatus status, String user, Set<String> claimed,
-         String encryptionCipher, String imaging, long readBytes, long readRequests, long writeBytes,
-         long writeRequests, Boolean autoexpanding, Integer bits, String description, Iterable<String> driveType,
-         String encryptionKey, Boolean free, String installNotes, String os, DriveType type, URI url) {
+         String encryptionCipher, String imaging, DriveMetrics metrics, Boolean autoexpanding, Integer bits,
+         String description, Iterable<String> driveType, String encryptionKey, Boolean free, String installNotes,
+         String os, DriveType type, URI url) {
       super(uuid, name, size, claimType, readers, tags, userMetadata, status, user, claimed, encryptionCipher, imaging,
-            readBytes, readRequests, writeBytes, writeRequests);
+            metrics);
       this.autoexpanding = autoexpanding;
       this.bits = bits;
       this.description = description;

@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.elasticstack.domain.CreateDriveRequest;
+import org.jclouds.elasticstack.domain.Drive;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -35,7 +36,7 @@ import com.google.common.collect.ImmutableMap;
  * @author Adrian Cole
  */
 @Singleton
-public class CreateDriveRequestToMap implements Function<CreateDriveRequest, Map<String, String>> {
+public class CreateDriveRequestToMap implements Function<Drive, Map<String, String>> {
    private final BaseDriveToMap baseDriveToMap;
 
    @Inject
@@ -44,13 +45,16 @@ public class CreateDriveRequestToMap implements Function<CreateDriveRequest, Map
    }
 
    @Override
-   public Map<String, String> apply(CreateDriveRequest from) {
+   public Map<String, String> apply(Drive from) {
       ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
       builder.putAll(baseDriveToMap.apply(from));
-      if (from.getAvoid().size() != 0)
-         builder.put("avoid", Joiner.on(' ').join(from.getAvoid()));
-      if (from.getEncryptionCipher() != null)
-         builder.put("encryption:cipher", from.getEncryptionCipher());
+      if (from instanceof CreateDriveRequest) {
+         CreateDriveRequest create = CreateDriveRequest.class.cast(from);
+         if (create.getAvoid().size() != 0)
+            builder.put("avoid", Joiner.on(' ').join(create.getAvoid()));
+         if (create.getEncryptionCipher() != null)
+            builder.put("encryption:cipher", create.getEncryptionCipher());
+      }
       return builder.build();
    }
 }

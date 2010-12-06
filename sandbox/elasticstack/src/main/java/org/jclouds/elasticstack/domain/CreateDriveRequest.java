@@ -26,7 +26,6 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.elasticstack.domain.internal.BaseDrive;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -34,8 +33,8 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-public class CreateDriveRequest extends BaseDrive {
-   public static class Builder extends BaseDrive.Builder {
+public class CreateDriveRequest extends Drive {
+   public static class Builder extends Drive.Builder {
 
       private Set<String> avoid = ImmutableSet.of();
 

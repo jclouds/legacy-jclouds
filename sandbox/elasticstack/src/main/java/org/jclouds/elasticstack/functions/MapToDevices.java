@@ -20,8 +20,8 @@
 package org.jclouds.elasticstack.functions;
 
 import java.util.Map;
-import java.util.Set;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.elasticstack.domain.BlockDevice;
@@ -33,21 +33,36 @@ import org.jclouds.elasticstack.domain.SCSIDevice;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Maps;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class MapToDevices implements Function<Map<String, String>, Set<Device>> {
+public class MapToDevices implements Function<Map<String, String>, Map<String, ? extends Device>> {
+   @Singleton
+   public static class DeviceToId implements Function<Device, String> {
+      @Override
+      public String apply(Device input) {
+         return input.getId();
+      }
+   }
 
-   public Set<Device> apply(Map<String, String> from) {
+   private final Function<Device, String> deviceToId;
+
+   @Inject
+   public MapToDevices(Function<Device, String> deviceToId) {
+      this.deviceToId = deviceToId;
+   }
+
+   public Map<String, ? extends Device> apply(Map<String, String> from) {
       Builder<Device> devices = ImmutableSet.builder();
       addIDEDevices(from, devices);
       addSCSIDevices(from, devices);
       addBlockDevices(from, devices);
-      Set<Device> devicess = devices.build();
-      return devicess;
+
+      return Maps.uniqueIndex(devices.build(), deviceToId);
    }
 
    protected void addBlockDevices(Map<String, String> from, Builder<Device> devices) {
@@ -80,14 +95,6 @@ public class MapToDevices implements Function<Map<String, String>, Set<Device>> 
 
    protected Device.Builder populateBuilder(Device.Builder deviceBuilder, String key, Map<String, String> from) {
       deviceBuilder.uuid(from.get(key));
-      if (from.containsKey(key + ":read:bytes"))
-         deviceBuilder.readBytes(new Long(from.get(key + ":read:bytes")));
-      if (from.containsKey(key + ":read:requests"))
-         deviceBuilder.readRequests(new Long(from.get(key + ":read:requests")));
-      if (from.containsKey(key + ":write:bytes"))
-         deviceBuilder.writeBytes(new Long(from.get(key + ":write:bytes")));
-      if (from.containsKey(key + ":write:requests"))
-         deviceBuilder.writeRequests(new Long(from.get(key + ":write:requests")));
       if (from.containsKey(key + ":media"))
          deviceBuilder.mediaType(MediaType.fromValue(from.get(key + ":media")));
       return deviceBuilder;

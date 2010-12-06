@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.elasticstack.domain.CreateDriveRequest;
+import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.DriveData;
 import org.jclouds.elasticstack.domain.DriveInfo;
 import org.jclouds.elasticstack.domain.ServerInfo;
@@ -87,7 +87,7 @@ public interface CommonElasticStackClient {
     *           required parameters: name, size
     * @return newly created drive
     */
-   DriveInfo createDrive(CreateDriveRequest createDrive);
+   DriveInfo createDrive(Drive createDrive);
 
    /**
     * set extra drive data

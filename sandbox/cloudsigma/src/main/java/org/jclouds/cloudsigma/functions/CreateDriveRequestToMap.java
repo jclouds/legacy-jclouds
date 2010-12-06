@@ -26,7 +26,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.elasticstack.domain.CreateDriveRequest;
+import org.jclouds.elasticstack.domain.Drive;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
@@ -36,7 +36,7 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 @Singleton
-public class CreateDriveRequestToMap implements Function<CreateDriveRequest, Map<String, String>> {
+public class CreateDriveRequestToMap implements Function<Drive, Map<String, String>> {
    private final org.jclouds.elasticstack.functions.CreateDriveRequestToMap baseDriveToMap;
 
    @Inject
@@ -45,7 +45,7 @@ public class CreateDriveRequestToMap implements Function<CreateDriveRequest, Map
    }
 
    @Override
-   public Map<String, String> apply(CreateDriveRequest from) {
+   public Map<String, String> apply(Drive from) {
       return Maps.transformEntries(renameKey(baseDriveToMap.apply(from), "tags", "use"),
             new Maps.EntryTransformer<String, String, String>() {
 

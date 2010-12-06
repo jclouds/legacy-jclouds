@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.jclouds.elasticstack.domain.ClaimType;
 import org.jclouds.elasticstack.domain.DriveInfo;
+import org.jclouds.elasticstack.domain.DriveMetrics;
 import org.jclouds.elasticstack.domain.DriveStatus;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
@@ -42,11 +43,12 @@ public class MapToDriveInfoTest {
    public static DriveInfo ONE = new DriveInfo.Builder()
          .status(DriveStatus.ACTIVE)
          .name("Ubuntu 10.10 Server Edition Linux 64bit Preinstalled System")
-         .readBytes(4096l)
+         .metrics(
+               new DriveMetrics.Builder().readBytes(4096l).writeBytes(8589938688l).writeRequests(2097153l)
+                     .readRequests(1l).build())
          .user("58ca3c1f-7629-4771-9b71-863f40153ba4")
          .encryptionCipher("aes-xts-plain")
          .uuid("b8171d28-755a-4271-b891-7998871a160e")
-         .writeBytes(8589938688l)
          .claimType(ClaimType.SHARED)
          .claimed(
                ImmutableSet.of(
@@ -56,8 +58,6 @@ public class MapToDriveInfoTest {
                      "00031836-a624-4b22-bc7d-41ff8977087b:guest:17b076be-430d-4a76-9df3-b9896fec82a5:ide:0:0",
                      "000663ee-9fb6-4461-90f6-01327a4aff07:guest:f83b519f-feab-42cf-859c-f61495681ada:ide:0:1"))//
          .readers(ImmutableSet.of("ffffffff-ffff-ffff-ffff-ffffffffffff"))//
-         .readRequests(1l)//
-         .writeRequests(2097153l)//
          .size(8589934592l)//
          .userMetadata(ImmutableMap.of("foo", "bar", "baz", "raz")).build();
 
@@ -68,7 +68,8 @@ public class MapToDriveInfoTest {
    }
 
    public void testBasics() {
-      DriveInfo expects = new DriveInfo.Builder().name("foo").size(100l).build();
+      DriveInfo expects = new DriveInfo.Builder().name("foo").size(100l).metrics(new DriveMetrics.Builder().build())
+            .build();
       assertEquals(MAP_TO_DRIVE.apply(ImmutableMap.of("name", "foo", "size", "100")), expects);
    }
 

@@ -35,7 +35,7 @@ public class SCSIDevice extends Device {
 
       @Override
       public Device build() {
-         return new SCSIDevice(uuid, mediaType, unit, readBytes, readRequests, writeBytes, writeRequests);
+         return new SCSIDevice(uuid, mediaType, unit);
       }
 
    }
@@ -43,9 +43,8 @@ public class SCSIDevice extends Device {
    private final int bus = 0;
    private final int unit;
 
-   public SCSIDevice(String driveUuid, MediaType mediaType, int unit, long readBytes, long readRequests,
-         long writeBytes, long writeRequests) {
-      super(driveUuid, mediaType, readBytes, readRequests, writeBytes, writeRequests);
+   public SCSIDevice(String driveUuid, MediaType mediaType, int unit) {
+      super(driveUuid, mediaType);
       checkArgument(unit >= 0 && unit < 8, "unit must be between 0 and 7");
       this.unit = unit;
    }

@@ -35,16 +35,15 @@ public class BlockDevice extends Device {
 
       @Override
       public Device build() {
-         return new BlockDevice(uuid, mediaType, index, readBytes, readRequests, writeBytes, writeRequests);
+         return new BlockDevice(uuid, mediaType, index);
       }
 
    }
 
    private final int index;
 
-   public BlockDevice(String driveUuid, MediaType mediaType, int index, long readBytes, long readRequests,
-         long writeBytes, long writeRequests) {
-      super(driveUuid, mediaType, readBytes, readRequests, writeBytes, writeRequests);
+   public BlockDevice(String driveUuid, MediaType mediaType, int index) {
+      super(driveUuid, mediaType);
       checkArgument(index >= 0 && index < 8, "index must be between 0 and 7");
       this.index = index;
    }

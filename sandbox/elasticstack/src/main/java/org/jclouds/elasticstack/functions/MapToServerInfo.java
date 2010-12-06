@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -31,6 +30,7 @@ import javax.inject.Singleton;
 import org.jclouds.elasticstack.domain.Device;
 import org.jclouds.elasticstack.domain.NIC;
 import org.jclouds.elasticstack.domain.ServerInfo;
+import org.jclouds.elasticstack.domain.ServerMetrics;
 import org.jclouds.elasticstack.domain.ServerStatus;
 import org.jclouds.elasticstack.domain.VNC;
 
@@ -44,13 +44,15 @@ import com.google.common.collect.Maps;
  */
 @Singleton
 public class MapToServerInfo implements Function<Map<String, String>, ServerInfo> {
-   private final Function<Map<String, String>, Set<Device>> mapToDevices;
+   private final Function<Map<String, String>, Map<String, ? extends Device>> mapToDevices;
+   private final Function<Map<String, String>, ServerMetrics> mapToMetrics;
    private final Function<Map<String, String>, List<NIC>> mapToNICs;
 
    @Inject
-   public MapToServerInfo(Function<Map<String, String>, Set<Device>> mapToDevices,
-         Function<Map<String, String>, List<NIC>> mapToNICs) {
+   public MapToServerInfo(Function<Map<String, String>, Map<String, ? extends Device>> mapToDevices,
+         Function<Map<String, String>, ServerMetrics> mapToMetrics, Function<Map<String, String>, List<NIC>> mapToNICs) {
       this.mapToDevices = mapToDevices;
+      this.mapToMetrics = mapToMetrics;
       this.mapToNICs = mapToNICs;
    }
 
@@ -66,10 +68,6 @@ public class MapToServerInfo implements Function<Map<String, String>, ServerInfo
          builder.tags(Splitter.on(' ').split(from.get("tags")));
       if (from.containsKey("status"))
          builder.status(ServerStatus.fromValue(from.get("status")));
-      if (from.containsKey("tx:packets"))
-         builder.txPackets(new Long(from.get("tx:packets")));
-      if (from.containsKey("tx"))
-         builder.tx(new Long(from.get("tx")));
       if (from.containsKey("smp") && !"auto".equals(from.get("smp")))
          builder.smp(new Integer(from.get("smp")));
       builder.cpu(Integer.parseInt(from.get("cpu")));
@@ -80,10 +78,6 @@ public class MapToServerInfo implements Function<Map<String, String>, ServerInfo
       builder.uuid(from.get("server"));
       builder.vnc(new VNC(from.get("vnc:ip"), from.get("vnc:password"), from.containsKey("vnc:tls")
             && Boolean.valueOf(from.get("vnc:tls"))));
-      if (from.containsKey("rx:packets"))
-         builder.rxPackets(new Long(from.get("rx:packets")));
-      if (from.containsKey("rx"))
-         builder.rx(new Long(from.get("rx")));
       if (from.containsKey("boot"))
          builder.bootDeviceIds(Splitter.on(' ').split(from.get("boot")));
 
@@ -93,9 +87,9 @@ public class MapToServerInfo implements Function<Map<String, String>, ServerInfo
             metadata.put(entry.getKey().substring(entry.getKey().indexOf(':') + 1), entry.getValue());
       }
       builder.userMetadata(metadata);
-
       builder.nics(mapToNICs.apply(from));
       builder.devices(mapToDevices.apply(from));
+      builder.metrics(mapToMetrics.apply(from));
       return builder.build();
    }
 }

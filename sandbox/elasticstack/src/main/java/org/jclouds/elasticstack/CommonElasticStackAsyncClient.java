@@ -28,9 +28,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.elasticstack.binders.BindCreateDriveRequestToPlainTextString;
 import org.jclouds.elasticstack.binders.BindDriveDataToPlainTextString;
-import org.jclouds.elasticstack.domain.CreateDriveRequest;
+import org.jclouds.elasticstack.binders.BindDriveToPlainTextString;
+import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.DriveData;
 import org.jclouds.elasticstack.domain.DriveInfo;
 import org.jclouds.elasticstack.domain.ServerInfo;
@@ -119,7 +119,7 @@ public interface CommonElasticStackAsyncClient {
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/create")
    ListenableFuture<? extends DriveInfo> createDrive(
-         @BinderParam(BindCreateDriveRequestToPlainTextString.class) CreateDriveRequest createDrive);
+         @BinderParam(BindDriveToPlainTextString.class) Drive createDrive);
 
    /**
     * @see ElasticStackClient#setDriveData
@@ -129,7 +129,7 @@ public interface CommonElasticStackAsyncClient {
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/{uuid}/set")
    ListenableFuture<? extends DriveInfo> setDriveData(@PathParam("uuid") String uuid,
-         @BinderParam(BindDriveDataToPlainTextString.class) DriveData createDrive);
+         @BinderParam(BindDriveDataToPlainTextString.class) DriveData setDrive);
 
    /**
     * @see ElasticStackClient#destroyDrive

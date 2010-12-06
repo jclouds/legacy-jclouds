@@ -28,7 +28,7 @@ import java.util.Map;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.elasticstack.domain.ClaimType;
-import org.jclouds.elasticstack.domain.CreateDriveRequest;
+import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.DriveData;
 import org.jclouds.elasticstack.functions.CreateDriveRequestToMap;
 import org.jclouds.elasticstack.functions.DriveDataToMap;
@@ -54,7 +54,7 @@ public class BindDriveDataToPlainTextStringTest {
 
       @Override
       protected void configure() {
-         bind(new TypeLiteral<Function<CreateDriveRequest, Map<String, String>>>() {
+         bind(new TypeLiteral<Function<Drive, Map<String, String>>>() {
          }).to(CreateDriveRequestToMap.class);
          bind(new TypeLiteral<Function<DriveData, Map<String, String>>>() {
          }).to(DriveDataToMap.class);
