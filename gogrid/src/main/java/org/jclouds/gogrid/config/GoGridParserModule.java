@@ -19,8 +19,6 @@
 
 package org.jclouds.gogrid.config;
 
-import static org.jclouds.Constants.PROPERTY_GSON_ADAPTERS;
-
 import java.lang.reflect.Type;
 import java.util.Map;
 
@@ -54,7 +52,6 @@ public class GoGridParserModule extends AbstractModule {
 
    @Provides
    @Singleton
-   @com.google.inject.name.Named(PROPERTY_GSON_ADAPTERS)
    public Map<Type, Object> provideCustomAdapterBindings() {
       Map<Type, Object> bindings = Maps.newHashMap();
       bindings.put(ObjectType.class, new CustomDeserializers.ObjectTypeAdapter());

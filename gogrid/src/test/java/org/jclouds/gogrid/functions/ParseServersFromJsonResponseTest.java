@@ -29,7 +29,6 @@ import java.util.SortedSet;
 
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.gogrid.config.GoGridParserModule;
 import org.jclouds.gogrid.domain.BillingToken;
 import org.jclouds.gogrid.domain.Customer;
@@ -94,7 +93,6 @@ public class ParseServersFromJsonResponseTest {
       @Provides
       @Singleton
       @SuppressWarnings( { "unused", "unchecked" })
-      @com.google.inject.name.Named(Constants.PROPERTY_GSON_ADAPTERS)
       public Map<Class, Object> provideCustomAdapterBindings() {
          Map<Class, Object> bindings = Maps.newHashMap();
          bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());

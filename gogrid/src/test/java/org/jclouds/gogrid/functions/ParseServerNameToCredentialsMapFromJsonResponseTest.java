@@ -28,7 +28,6 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.config.DateSecondsAdapter;
 import org.jclouds.gogrid.domain.IpState;
@@ -73,7 +72,6 @@ public class ParseServerNameToCredentialsMapFromJsonResponseTest {
       @Provides
       @Singleton
       @SuppressWarnings("unused")
-      @com.google.inject.name.Named(Constants.PROPERTY_GSON_ADAPTERS)
       public Map<Type, Object> provideCustomAdapterBindings() {
          Map<Type, Object> bindings = Maps.newHashMap();
          bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());

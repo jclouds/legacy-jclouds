@@ -32,6 +32,7 @@ import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -41,15 +42,15 @@ import com.google.inject.TypeLiteral;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "jclouds.JsonBallTest")
-public class JsonBallTest {
-   private ParseJson<Map<String, JsonBall>> handler;
+@Test(groups = "unit", testName = "jclouds.ObjectTest")
+public class JsonObjectTest {
+   private ParseJson<Map<String, Object>> handler;
    private Json mapper;
 
    @BeforeTest
    protected void setUpInjector() throws IOException {
       Injector injector = Guice.createInjector(new GsonModule());
-      handler = injector.getInstance(Key.get(new TypeLiteral<ParseJson<Map<String, JsonBall>>>() {
+      handler = injector.getInstance(Key.get(new TypeLiteral<ParseJson<Map<String, Object>>>() {
       }));
       mapper = injector.getInstance(Json.class);
 
@@ -58,7 +59,7 @@ public class JsonBallTest {
    public void testHash() {
       String json = "{\"tomcat6\":{\"ssl_port\":8433}}";
 
-      Map<String, JsonBall> map = ImmutableMap.<String, JsonBall> of("tomcat6", new JsonBall("{\"ssl_port\":8433}"));
+      Map<String, Object> map = ImmutableMap.<String, Object> of("tomcat6", ImmutableMap.of("ssl_port", 8433));
 
       assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(json))), map);
       assertEquals(mapper.toJson(map), json);
@@ -68,7 +69,7 @@ public class JsonBallTest {
    public void testList() {
       String json = "{\"list\":[8431,8433]}";
 
-      Map<String, JsonBall> map = ImmutableMap.<String, JsonBall> of("list", new JsonBall("[8431,8433]"));
+      Map<String, Object> map = ImmutableMap.<String, Object> of("list", ImmutableList.of(8431, 8433));
 
       assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(json))), map);
       assertEquals(mapper.toJson(map), json);
@@ -78,7 +79,7 @@ public class JsonBallTest {
    public void testString() {
       String json = "{\"name\":\"fooy\"}";
 
-      Map<String, JsonBall> map = ImmutableMap.<String, JsonBall> of("name", new JsonBall("fooy"));
+      Map<String, Object> map = ImmutableMap.<String, Object> of("name", "fooy");
 
       assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(json))), map);
       assertEquals(mapper.toJson(map), json);
@@ -88,7 +89,7 @@ public class JsonBallTest {
    public void testNumber() {
       String json = "{\"number\":1}";
 
-      Map<String, JsonBall> map = ImmutableMap.<String, JsonBall> of("number", new JsonBall("1"));
+      Map<String, Object> map = ImmutableMap.<String, Object> of("number", 1);
 
       assertEquals(handler.apply(new HttpResponse(200, "ok", Payloads.newStringPayload(json))), map);
       assertEquals(mapper.toJson(map), json);

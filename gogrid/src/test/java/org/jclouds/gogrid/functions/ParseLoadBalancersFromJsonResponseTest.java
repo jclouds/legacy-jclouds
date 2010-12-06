@@ -29,7 +29,6 @@ import java.util.SortedSet;
 
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.gogrid.config.DateSecondsAdapter;
 import org.jclouds.gogrid.domain.Ip;
 import org.jclouds.gogrid.domain.IpPortPair;
@@ -87,7 +86,6 @@ public class ParseLoadBalancersFromJsonResponseTest {
       @Provides
       @Singleton
       @SuppressWarnings( { "unused" })
-      @com.google.inject.name.Named(Constants.PROPERTY_GSON_ADAPTERS)
       public Map<Type, Object> provideCustomAdapterBindings() {
          Map<Type, Object> bindings = Maps.newHashMap();
          bindings.put(LoadBalancerOs.class, new CustomDeserializers.LoadBalancerOsAdapter());
