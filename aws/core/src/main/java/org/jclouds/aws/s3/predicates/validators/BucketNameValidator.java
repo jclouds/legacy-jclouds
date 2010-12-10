@@ -69,10 +69,11 @@ public class BucketNameValidator extends DnsNameValidator {
    }
 
    /**
-    * Amazon also permits periods in the dns name
+    * Amazon also permits periods in the dns name.
+    * It also permits underscores, although they aren't recommended.
     */
    @Override
    protected CharMatcher getAcceptableRange() {
-      return super.getAcceptableRange().or(is('.'));
+      return super.getAcceptableRange().or(is('.')).or(is('_'));
    }
 }
