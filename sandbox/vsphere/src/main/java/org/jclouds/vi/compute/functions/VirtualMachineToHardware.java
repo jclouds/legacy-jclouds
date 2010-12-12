@@ -19,31 +19,23 @@
 
 package org.jclouds.vi.compute.functions;
 
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.List;
 
 import javax.inject.Singleton;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.internal.VolumeImpl;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
-import com.jamesmurty.utils.XMLBuilder;
+import com.vmware.vim25.VirtualDevice;
+import com.vmware.vim25.VirtualDeviceBackingInfo;
+import com.vmware.vim25.VirtualDisk;
+import com.vmware.vim25.VirtualDiskFlatVer2BackingInfo;
 import com.vmware.vim25.mo.VirtualMachine;
 
 /**
@@ -67,26 +59,21 @@ public class VirtualMachineToHardware implements Function<VirtualMachine, Hardwa
 
 			builder.ram((int) from.getConfig().getHardware().getMemoryMB());
 			List<Volume> volumes = Lists.newArrayList();
-			
-			/*
-			XMLBuilder xmlBuilder = XMLBuilder.parse(new InputSource(new StringReader(from.getXMLDesc(0))));
-			Document doc = xmlBuilder.getDocument();
-			XPathExpression expr = XPathFactory.newInstance().newXPath().compile("//devices/disk[@device='disk']/source/@file");
-			NodeList nodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
-			String diskFileName = nodes.item(0).getNodeValue();
-			for (int i = 0; i < nodes.getLength(); i++) {
-				StorageVol storageVol = from.getConnect().storageVolLookupByPath(diskFileName);
-				String id = storageVol.getKey();
-				float size = new Long(storageVol.getInfo().capacity).floatValue();
-				volumes.add(new VolumeImpl(id, Volume.Type.LOCAL, size, null, true, false));
+			// look for volumes
+			VirtualDevice[] devices = from.getConfig().getHardware().getDevice();
+			for (VirtualDevice virtualDevice : devices) {
+				if(virtualDevice.getDeviceInfo().getLabel().contains("Hard disk")) {
+					if(virtualDevice instanceof VirtualDisk) {
+						VirtualDisk disk = (VirtualDisk) virtualDevice;
+						VirtualDeviceBackingInfo backingInfo = disk.getBacking();
+						if(backingInfo instanceof VirtualDiskFlatVer2BackingInfo) {
+							VirtualDiskFlatVer2BackingInfo diskFlatVer2BackingInfo = (VirtualDiskFlatVer2BackingInfo) backingInfo;
+							volumes.add(new VolumeImpl(diskFlatVer2BackingInfo.getUuid(), Volume.Type.LOCAL, new Float(disk.getCapacityInKB() + ""), diskFlatVer2BackingInfo.getFileName(), true, false));
+						}
+					}
+				}
 			}
-			*/
-			
-			// TODO
 			builder.volumes((List<Volume>) volumes);
-			Float size = new Float(21345);
-			String id = "dglffdbdflmb";
-			volumes.add(new VolumeImpl(id, Volume.Type.LOCAL, size, null, true, false));
 		return builder.build();
 	}
 	

@@ -51,6 +51,7 @@ public class ViImageToImage implements Function<org.jclouds.vi.Image, Image> {
 
       OsFamily family = null;
       try {
+    	  // TODO 
          family = OsFamily.fromValue(from.name);
          builder.operatingSystem(new OperatingSystemBuilder().name(from.name).family(family).description(from.name).build());
       } catch (IllegalArgumentException e) {

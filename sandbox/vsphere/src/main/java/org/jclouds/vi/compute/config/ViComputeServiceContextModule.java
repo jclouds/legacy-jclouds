@@ -19,8 +19,6 @@
 
 package org.jclouds.vi.compute.config;
 
-import static org.jclouds.vi.ViConstants.PROPERTY_LIBVIRT_DOMAIN_DIR;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -45,7 +43,6 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.suppliers.DefaultLocationSupplier;
 import org.jclouds.domain.Location;
 import org.jclouds.rest.annotations.Provider;
-import org.jclouds.vi.Datacenter;
 import org.jclouds.vi.Image;
 import org.jclouds.vi.compute.functions.DatacenterToLocation;
 import org.jclouds.vi.compute.functions.ViImageToImage;
@@ -61,11 +58,10 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.io.Files;
 import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
 import com.jamesmurty.utils.XMLBuilder;
+import com.vmware.vim25.mo.Datacenter;
 import com.vmware.vim25.mo.ServiceInstance;
 import com.vmware.vim25.mo.VirtualMachine;
 
@@ -97,16 +93,14 @@ public class ViComputeServiceContextModule extends
    protected ServiceInstance createConnection(@Provider URI endpoint,
          @Named(Constants.PROPERTY_IDENTITY) String identity, @Named(Constants.PROPERTY_CREDENTIAL) String credential)
          throws RemoteException, MalformedURLException {
-      System.out.println(endpoint);
-      System.out.println(identity);
-      System.out.println(credential);
       return new ServiceInstance(endpoint.toURL(), identity, credential, true);
    }
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      String domainDir = injector.getInstance(Key.get(String.class, Names.named(PROPERTY_LIBVIRT_DOMAIN_DIR)));
-      String hardwareId = searchForHardwareIdInDomainDir(domainDir);
+      //String domainDir = injector.getInstance(Key.get(String.class, Names.named(PROPERTY_LIBVIRT_DOMAIN_DIR)));
+	   String domainDir = "";
+	   String hardwareId = searchForHardwareIdInDomainDir(domainDir);
       String image = searchForImageIdInDomainDir(domainDir);
       return template.hardwareId(hardwareId).imageId(image);
    }

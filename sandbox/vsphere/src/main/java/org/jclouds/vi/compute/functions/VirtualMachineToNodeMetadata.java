@@ -59,18 +59,18 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
             .put(VirtualMachinePowerState.poweredOff, NodeState.TERMINATED)//
             .build();
 
-   private final Function<VirtualMachine, Hardware> findHardwareForDomain;
-   private final FindLocationForDomain findLocationForDomain;
-   private final FindImageForDomain findImageForDomain;
+   private final Function<VirtualMachine, Hardware> findHardwareForVirtualMachine;
+   private final FindLocationForVirtualMachine findLocationForVirtualMachine;
+   private final FindImageForVirtualMachine findImageForVirtualMachine;
    private final Map<String, Credentials> credentialStore;
 
    @Inject
-   VirtualMachineToNodeMetadata(Map<String, Credentials> credentialStore, Function<VirtualMachine, Hardware> findHardwareForDomain,
-            FindLocationForDomain findLocationForDomain, FindImageForDomain findImageForDomain) {
+   VirtualMachineToNodeMetadata(Map<String, Credentials> credentialStore, Function<VirtualMachine, Hardware> findHardwareForVirtualMachine,
+		   FindLocationForVirtualMachine findLocationForVirtualMachine, FindImageForVirtualMachine findImageForVirtualMachine) {
       this.credentialStore = checkNotNull(credentialStore, "credentialStore");
-      this.findHardwareForDomain = checkNotNull(findHardwareForDomain, "findHardwareForDomain");
-      this.findLocationForDomain = checkNotNull(findLocationForDomain, "findLocationForDomain");
-      this.findImageForDomain = checkNotNull(findImageForDomain, "findImageForDomain");
+      this.findHardwareForVirtualMachine = checkNotNull(findHardwareForVirtualMachine, "findHardwareForVirtualMachine");
+      this.findLocationForVirtualMachine = checkNotNull(findLocationForVirtualMachine, "findLocationForVirtualMachine");
+      this.findImageForVirtualMachine = checkNotNull(findImageForVirtualMachine, "findImageForVirtualMachine");
    }
 
    @Override
@@ -79,19 +79,23 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
       // convert the result object to a jclouds NodeMetadata
       NodeMetadataBuilder builder = new NodeMetadataBuilder();
       try {
-         builder.id(from.getMOR().get_value() + "");
+         builder.id(from.getConfig().getInstanceUuid());
          builder.providerId(from.getConfig().getLocationId() + "");
          builder.name(from.getName());
-         builder.location(findLocationForDomain.apply(from));
+         builder.location(findLocationForVirtualMachine.apply(from));
          builder.tag(parseTagFromName(from.getName()));
 
-         builder.operatingSystem(new OperatingSystemBuilder().description(from.getConfig().getGuestFullName()).build());
-         builder.hardware(findHardwareForDomain.apply(from));
+         builder.operatingSystem(new OperatingSystemBuilder()
+         	.name(from.getConfig().getGuestFullName())
+         	.description(from.getConfig().getGuestFullName())
+         	.is64Bit(from.getConfig().getGuestId().contains("64"))
+         	.build());
+         builder.hardware(findHardwareForVirtualMachine.apply(from));
 
          builder.state(domainStateToNodeState.get(from.getRuntime().getPowerState()));
          // builder.publicAddresses(ImmutableSet.<String> of(from.publicAddress));
          // builder.privateAddresses(ImmutableSet.<String> of(from.privateAddress));
-         builder.credentials(credentialStore.get("node#" + from.getMOR().get_value()));
+         builder.credentials(credentialStore.get("node#" + from.getName()));
 
       } catch (Exception e) {
          // TODO Auto-generated catch block
@@ -101,10 +105,10 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
    }
 
    @Singleton
-   public static class FindImageForDomain extends FindResourceInSet<VirtualMachine, Image> {
+   public static class FindImageForVirtualMachine extends FindResourceInSet<VirtualMachine, Image> {
 
       @Inject
-      public FindImageForDomain(@Memoized Supplier<Set<? extends Image>> hardware) {
+      public FindImageForVirtualMachine(@Memoized Supplier<Set<? extends Image>> hardware) {
          super(hardware);
       }
 
@@ -117,10 +121,10 @@ public class VirtualMachineToNodeMetadata implements Function<VirtualMachine, No
    }
 
    @Singleton
-   public static class FindLocationForDomain extends FindResourceInSet<VirtualMachine, Location> {
+   public static class FindLocationForVirtualMachine extends FindResourceInSet<VirtualMachine, Location> {
 
       @Inject
-      public FindLocationForDomain(@Memoized Supplier<Set<? extends Location>> hardware) {
+      public FindLocationForVirtualMachine(@Memoized Supplier<Set<? extends Location>> hardware) {
          super(hardware);
       }
 

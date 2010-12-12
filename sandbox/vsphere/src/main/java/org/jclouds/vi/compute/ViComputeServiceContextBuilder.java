@@ -19,8 +19,6 @@
 
 package org.jclouds.vi.compute;
 
-import static org.jclouds.vi.ViConstants.PROPERTY_LIBVIRT_DOMAIN_DIR;
-
 import java.util.List;
 import java.util.Properties;
 
@@ -38,9 +36,6 @@ public class ViComputeServiceContextBuilder extends StandaloneComputeServiceCont
 
    public ViComputeServiceContextBuilder(Properties props) {
       super(ServiceInstance.class, props);
-
-      if (!properties.containsKey(PROPERTY_LIBVIRT_DOMAIN_DIR))
-         properties.setProperty(PROPERTY_LIBVIRT_DOMAIN_DIR, "/etc/libvirt/qemu");
    }
 
    @Override

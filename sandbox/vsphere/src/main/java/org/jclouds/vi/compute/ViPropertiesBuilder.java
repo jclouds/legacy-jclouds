@@ -29,7 +29,7 @@ import java.util.Properties;
 import org.jclouds.PropertiesBuilder;
 
 /**
- * Builds properties used in Libvirt Clients
+ * Builds properties used in vi Clients
  * 
  * @author Andrea Turli
  */
@@ -37,7 +37,7 @@ public class ViPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_LIBVIRT_DOMAIN_DIR, "/etc/libvirt/qemu");
+//      properties.setProperty(PROPERTY_LIBVIRT_DOMAIN_DIR, "/etc/libvirt/qemu");
 
       properties.setProperty(PROPERTY_TIMEOUT_NODE_SUSPENDED, 120 * 1000 + "");
       // auth fail sometimes happens in EC2, as the rc.local script that injects the

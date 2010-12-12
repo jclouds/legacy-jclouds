@@ -20,6 +20,7 @@ import com.vmware.vim25.mo.ServiceInstance;
  */
 @Test(groups = "live", enabled = true, sequential = true, testName = "vi.ViComputeServiceLiveTest")
 public class ViComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+	
    public ViComputeServiceLiveTest() {
       provider = "vi";
    }
@@ -50,7 +51,7 @@ public class ViComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
-      RestContext<ServiceInstance, ServiceInstance> goGridContext = new ComputeServiceContextFactory().createContext(
+      RestContext<ServiceInstance, ServiceInstance> viContext = new ComputeServiceContextFactory().createContext(
             provider, identity, credential).getProviderSpecificContext();
    }
 }
