@@ -116,7 +116,7 @@ public class EC2ComputeService extends BaseComputeService {
                ec2Client.getPlacementGroupServices().deletePlacementGroupInRegion(region, group);
                checkState(placementGroupDeleted.apply(new PlacementGroup(region, group, "cluster", State.PENDING)),
                      String.format("placementGroup region(%s) name(%s) failed to delete", region, group));
-               placementGroupMap.remove(new RegionAndName(region, tag));
+               placementGroupMap.remove(new RegionAndName(region, group));
                logger.debug("<< deleted placementGroup(%s)", group);
             } catch (AWSResponseException e) {
                if (e.getError().getCode().equals("InvalidPlacementGroup.InUse")) {
@@ -142,7 +142,7 @@ public class EC2ComputeService extends BaseComputeService {
          logger.debug(">> deleting securityGroup(%s)", group);
          ec2Client.getSecurityGroupServices().deleteSecurityGroupInRegion(region, group);
          // TODO: test this clear happens
-         securityGroupMap.remove(new RegionNameAndIngressRules(region, tag, null, false));
+         securityGroupMap.remove(new RegionNameAndIngressRules(region, group, null, false));
          logger.debug("<< deleted securityGroup(%s)", group);
       }
    }

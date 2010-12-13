@@ -35,11 +35,10 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class StandaloneComputeServiceContextBuilder extends
-      ComputeServiceContextBuilder<ComputeService, ComputeService> {
+public class StandaloneComputeServiceContextBuilder<D> extends ComputeServiceContextBuilder<D, D> {
 
-   public StandaloneComputeServiceContextBuilder(Properties props) {
-      super(ComputeService.class, ComputeService.class, props);
+   public StandaloneComputeServiceContextBuilder(Class<D> driverClass, Properties props) {
+      super(driverClass, driverClass, props);
       if (properties.size() == 0)
          properties.putAll(new PropertiesBuilder().build());
       if (!properties.containsKey("jclouds.provider"))
@@ -54,7 +53,7 @@ public class StandaloneComputeServiceContextBuilder extends
 
    @Override
    protected void addClientModule(List<Module> modules) {
-      modules.add(new StandaloneComputeServiceClientModule<ComputeService>(ComputeService.class));
+      modules.add(new StandaloneComputeServiceClientModule<D>(syncClientType));
    }
 
 }

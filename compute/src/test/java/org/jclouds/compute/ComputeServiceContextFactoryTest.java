@@ -19,10 +19,12 @@
 
 package org.jclouds.compute;
 
+import java.util.concurrent.ConcurrentMap;
+
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.stub.config.StubComputeServiceContextModule;
+import org.jclouds.compute.stub.StubComputeServiceContextBuilder;
 import org.jclouds.domain.Location;
 import org.testng.annotations.Test;
 
@@ -39,10 +41,11 @@ public class ComputeServiceContextFactoryTest {
 
    @Test
    public void testStandalone() {
+      @SuppressWarnings("rawtypes")
       ComputeServiceContext context = new ComputeServiceContextFactory()
-            .createContext(new StandaloneComputeServiceContextSpec<NodeMetadata, Hardware, Image, Location>("stub",
-                  "stub", "1", "identity", "credential", new StubComputeServiceContextModule(), ImmutableSet
-                        .<Module> of()));
+            .createContext(new StandaloneComputeServiceContextSpec<ConcurrentMap, NodeMetadata, Hardware, Image, Location>(
+                  "stub", "stub", "1", "identity", "credential", ConcurrentMap.class,
+                  StubComputeServiceContextBuilder.class, ImmutableSet.<Module> of()));
 
       context.getComputeService().listNodes();
    }

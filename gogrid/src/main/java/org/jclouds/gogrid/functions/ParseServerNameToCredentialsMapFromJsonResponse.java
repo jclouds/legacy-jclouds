@@ -99,7 +99,8 @@ public class ParseServerNameToCredentialsMapFromJsonResponse implements
 
       @Override
       public int compareTo(Password o) {
-         return server.getName().compareTo(o.getServer().getName());
+          if (null == o.getServer() || null == server) return -1;
+	return server.getName().compareTo(o.getServer().getName());
       }
    }
 
@@ -107,6 +108,7 @@ public class ParseServerNameToCredentialsMapFromJsonResponse implements
    public Map<String, Credentials> apply(HttpResponse arg0) {
       Map<String, Credentials> serverNameToCredentials = Maps.newHashMap();
       for (Password password : json.apply(arg0).getList()) {
+          if( null != password.getServer())
          serverNameToCredentials.put(password.getServer().getName(),
                new Credentials(password.getUserName(), password.getPassword()));
       }

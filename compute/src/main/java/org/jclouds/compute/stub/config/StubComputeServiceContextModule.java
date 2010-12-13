@@ -19,8 +19,15 @@
 
 package org.jclouds.compute.stub.config;
 
+import java.util.concurrent.ConcurrentMap;
+
+import javax.inject.Singleton;
+
 import org.jclouds.compute.config.JCloudsNativeStandaloneComputeServiceContextModule;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.concurrent.SingleThreaded;
+
+import com.google.inject.Provides;
 
 /**
  * 
@@ -33,6 +40,14 @@ public class StubComputeServiceContextModule extends JCloudsNativeStandaloneComp
       super(StubComputeServiceAdapter.class);
    }
 
+   // Ensure that a plain class is able to be bound as getProviderSpecificContext.getApi()
+   @SuppressWarnings("rawtypes")
+   @Provides
+   @Singleton
+   ConcurrentMap provideApi(ConcurrentMap<String, NodeMetadata> in) {
+      return in;
+   }
+   
    @Override
    protected void configure() {
       install(new StubComputeServiceDependenciesModule());

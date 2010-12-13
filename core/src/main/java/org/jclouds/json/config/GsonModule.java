@@ -19,7 +19,6 @@
 
 package org.jclouds.json.config;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
@@ -28,18 +27,18 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
 import org.jclouds.domain.JsonBall;
 import org.jclouds.json.Json;
+import org.jclouds.json.internal.EnumTypeAdapterThatReturnsFromValue;
 import org.jclouds.json.internal.GsonWrapper;
 
 import com.google.common.collect.Maps;
 import com.google.common.primitives.Bytes;
 import com.google.gson.Gson;
-import com.google.gson.JcloudsCompactFormatter;
-import com.google.gson.JcloudsGsonBuilder;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JcloudsGsonPackageAccessor;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -48,11 +47,11 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.google.gson.MapTypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.AbstractModule;
 import com.google.inject.ImplementedBy;
 import com.google.inject.Provides;
-import com.google.inject.name.Named;
 
 /**
  * Contains logic for parsing objects from Strings.
@@ -61,13 +60,16 @@ import com.google.inject.name.Named;
  */
 public class GsonModule extends AbstractModule {
 
+   @SuppressWarnings("rawtypes")
    @Provides
    @Singleton
-   Gson provideGson(JsonBallAdapter jsonObjectAdapter, DateAdapter adapter, ByteListAdapter byteListAdapter,
+   Gson provideGson(JsonBallAdapter jsonAdapter, DateAdapter adapter, ByteListAdapter byteListAdapter,
          ByteArrayAdapter byteArrayAdapter, JsonAdapterBindings bindings) throws ClassNotFoundException, Exception {
-      JcloudsGsonBuilder builder = new JcloudsGsonBuilder();
-
-      builder.registerTypeAdapter(JsonBall.class, jsonObjectAdapter);
+      GsonBuilder builder = new GsonBuilder();
+      JcloudsGsonPackageAccessor.registerTypeHierarchyAdapter(builder, Enum.class,
+            new EnumTypeAdapterThatReturnsFromValue());
+      JcloudsGsonPackageAccessor.registerTypeHierarchyAdapter(builder, Map.class, new MapTypeAdapter());
+      builder.registerTypeAdapter(JsonBall.class, jsonAdapter);
       builder.registerTypeAdapter(Date.class, adapter);
       builder.registerTypeAdapter(new TypeToken<List<Byte>>() {
       }.getType(), byteListAdapter);
@@ -75,14 +77,26 @@ public class GsonModule extends AbstractModule {
       for (Map.Entry<Type, Object> binding : bindings.getBindings().entrySet()) {
          builder.registerTypeAdapter(binding.getKey(), binding.getValue());
       }
-      JcloudsCompactFormatter formatter = new JcloudsCompactFormatter();
+      return builder.create();
+   }
 
-      Gson gson = builder.create();
-      // allow us to print json literals
-      Field statFinField = Gson.class.getDeclaredField("formatter");
-      statFinField.setAccessible(true);
-      statFinField.set(gson, formatter);
-      return gson;
+   @ImplementedBy(JsonBallAdapterImpl.class)
+   public static interface JsonBallAdapter extends JsonSerializer<JsonBall>, JsonDeserializer<JsonBall> {
+
+   }
+
+   @Singleton
+   public static class JsonBallAdapterImpl implements JsonBallAdapter {
+
+      public JsonElement serialize(JsonBall src, Type typeOfSrc, JsonSerializationContext context) {
+         return new JsonLiteral(src);
+      }
+
+      public JsonBall deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
+            throws JsonParseException {
+         return new JsonBall(json.toString());
+      }
+
    }
 
    @ImplementedBy(CDateAdapter.class)
@@ -178,25 +192,6 @@ public class GsonModule extends AbstractModule {
 
    }
 
-   @ImplementedBy(JsonBallAdapterImpl.class)
-   public static interface JsonBallAdapter extends JsonSerializer<JsonBall>, JsonDeserializer<JsonBall> {
-
-   }
-
-   @Singleton
-   public static class JsonBallAdapterImpl implements JsonBallAdapter {
-
-      public JsonElement serialize(JsonBall src, Type typeOfSrc, JsonSerializationContext context) {
-         return new JsonLiteral(src);
-      }
-
-      public JsonBall deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-            throws JsonParseException {
-         return new JsonBall(json.toString());
-      }
-
-   }
-
    @Singleton
    public static class LongDateAdapter implements DateAdapter {
 
@@ -219,7 +214,7 @@ public class GsonModule extends AbstractModule {
       private final Map<Type, Object> bindings = Maps.newHashMap();
 
       @com.google.inject.Inject(optional = true)
-      public void setBindings(@Named(Constants.PROPERTY_GSON_ADAPTERS) Map<Type, Object> bindings) {
+      public void setBindings(Map<Type, Object> bindings) {
          this.bindings.putAll(bindings);
       }
 

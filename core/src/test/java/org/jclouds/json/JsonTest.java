@@ -21,11 +21,17 @@ package org.jclouds.json;
 
 import static org.testng.Assert.assertEquals;
 
+import java.util.Map;
+
 import org.jclouds.json.config.GsonModule;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.google.gson.JsonParseException;
 import com.google.inject.Guice;
+import com.google.inject.TypeLiteral;
 
 @Test
 public class JsonTest {
@@ -37,6 +43,41 @@ public class JsonTest {
       }
 
       private Test enumValue;
+   }
+
+   public void testMapStringObjectWithAllValidValuesOneDeep() {
+      Map<String, Object> map = Maps.newHashMap();
+      map.put("string", "string");
+      map.put("number", 1);
+      map.put("boolean", true);
+      map.put("map", ImmutableMap.of("key", "value"));
+      map.put("list", ImmutableList.of("key", "value"));
+      assertEquals(json.toJson(map),
+            "{\"string\":\"string\",\"map\":{\"key\":\"value\"},\"list\":[\"key\",\"value\"],\"boolean\":true,\"number\":1}");
+      Map<String, Object> map2 = json.fromJson(json.toJson(map), new TypeLiteral<Map<String, Object>>() {
+      }.getType());
+      assertEquals(map2, map);
+      assertEquals(json.toJson(map2), json.toJson(map));
+   }
+
+   public void testMapStringObjectWithNumericalKeysConvertToStrings() {
+      Map<String, Object> map = ImmutableMap.<String, Object> of("map", ImmutableMap.of(1, "value"));
+      assertEquals(json.toJson(map), "{\"map\":{\"1\":\"value\"}}");
+      Map<String, Object> map2 = json.fromJson(json.toJson(map), new TypeLiteral<Map<String, Object>>() {
+      }.getType());
+      // note conversion.. ensures valid
+      assertEquals(map2, ImmutableMap.<String, Object> of("map", ImmutableMap.of("1", "value")));
+      assertEquals(json.toJson(map2), json.toJson(map));
+   }
+
+   public void testMapStringObjectWithBooleanKeysConvertToStrings() {
+      Map<String, Object> map = ImmutableMap.<String, Object> of("map", ImmutableMap.of(true, "value"));
+      assertEquals(json.toJson(map), "{\"map\":{\"true\":\"value\"}}");
+      Map<String, Object> map2 = json.fromJson(json.toJson(map), new TypeLiteral<Map<String, Object>>() {
+      }.getType());
+      // note conversion.. ensures valid
+      assertEquals(map2, ImmutableMap.<String, Object> of("map", ImmutableMap.of("true", "value")));
+      assertEquals(json.toJson(map2), json.toJson(map));
    }
 
    public void testDeserializeEnum() {

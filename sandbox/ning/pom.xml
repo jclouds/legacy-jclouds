@@ -42,13 +42,7 @@
         <dependency>
             <groupId>com.ning</groupId>
             <artifactId>async-http-client</artifactId>
-            <version>1.3.1</version>
-            <exclusions>
-                <exclusion>  <!-- we use guava -->
-                    <groupId>com.google.collections</groupId>
-                    <artifactId>google-collections</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>1.4.0</version>
         </dependency>
         <dependency>
             <groupId>org.mortbay.jetty</groupId>

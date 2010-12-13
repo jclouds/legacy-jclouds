@@ -1,0 +1,15 @@
+status active
+name Ubuntu 10.10 Server Edition Linux 64bit Preinstalled System
+read:bytes 4096
+user 58ca3c1f-7629-4771-9b71-863f40153ba4
+encryption:cipher aes-xts-plain
+drive b8171d28-755a-4271-b891-7998871a160e
+write:bytes 8589938688
+claim:type shared
+claimed 00109617-2c6b-424b-9cfa-5b572c17bafe:guest:692cd1c7-a863-4a22-8170-fc6e6feb68af:ide:0:0 00031836-a624-4b22-bc7d-41ff8977087b:guest:a1414360-7c24-4730-8c97-180bf7775a71:ide:0:0 0002c6df-a1d2-4d1d-96f0-f95405a28183:guest:386f1cc7-affc-49c1-82a5-2f8e412170e4:ide:0:0 00031836-a624-4b22-bc7d-41ff8977087b:guest:17b076be-430d-4a76-9df3-b9896fec82a5:ide:0:0 000663ee-9fb6-4461-90f6-01327a4aff07:guest:f83b519f-feab-42cf-859c-f61495681ada:ide:0:1
+readers ffffffff-ffff-ffff-ffff-ffffffffffff
+read:requests 1
+write:requests 2097153
+size 8589934592
+user:foo bar
+user:baz raz

@@ -19,10 +19,12 @@
 
 package org.jclouds.blobstore.domain;
 
+import javax.annotation.Nullable;
+
+import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadEnclosing;
 
 import com.google.common.collect.Multimap;
-import com.google.inject.internal.Nullable;
 
 /**
  * Value type for an HTTP Blob service. Blobs are stored in containers and consist of a

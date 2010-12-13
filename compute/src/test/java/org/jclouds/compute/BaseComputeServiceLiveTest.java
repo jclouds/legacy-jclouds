@@ -74,6 +74,7 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.RestContextFactory;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
@@ -161,9 +162,13 @@ public abstract class BaseComputeServiceLiveTest {
       if (context != null)
          context.close();
       Properties props = setupProperties();
-      context = new ComputeServiceContextFactory().createContext(provider,
+      context = new ComputeServiceContextFactory(getRestProperties()).createContext(provider,
             ImmutableSet.of(new Log4JLoggingModule(), getSshModule()), props);
       client = context.getComputeService();
+   }
+
+   protected Properties getRestProperties() {
+      return RestContextFactory.getPropertiesFromResource("/rest.properties");
    }
 
    abstract protected Module getSshModule();
@@ -200,7 +205,7 @@ public abstract class BaseComputeServiceLiveTest {
    // starting this one alphabetically before create2nodes..
    @Test(enabled = true, dependsOnMethods = { "testCompareSizes" })
    public void testAScriptExecutionAfterBootWithBasicTemplate() throws Exception {
-      String tag = this.tag + "run";
+      String tag = this.tag + "r";
       try {
          client.destroyNodesMatching(withTag(tag));
       } catch (Exception e) {
@@ -460,7 +465,7 @@ public abstract class BaseComputeServiceLiveTest {
    @Test(enabled = true)
    public void testCreateAndRunAService() throws Exception {
 
-      String tag = this.tag + "service";
+      String tag = this.tag + "s";
       try {
          client.destroyNodesMatching(withTag(tag));
       } catch (Exception e) {

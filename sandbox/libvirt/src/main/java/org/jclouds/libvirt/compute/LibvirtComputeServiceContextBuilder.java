@@ -25,11 +25,8 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
-import org.jclouds.compute.config.StandaloneComputeServiceContextModule;
-import org.jclouds.libvirt.Datacenter;
-import org.jclouds.libvirt.Image;
 import org.jclouds.libvirt.compute.domain.LibvirtComputeServiceContextModule;
-import org.libvirt.Domain;
+import org.libvirt.Connect;
 
 import com.google.inject.Module;
 
@@ -37,22 +34,17 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-public class LibvirtComputeServiceContextBuilder extends StandaloneComputeServiceContextBuilder {
+public class LibvirtComputeServiceContextBuilder extends StandaloneComputeServiceContextBuilder<Connect> {
 
    public LibvirtComputeServiceContextBuilder(Properties props) {
-      super(props);
-      
+      super(Connect.class, props);
+
       if (!properties.containsKey(PROPERTY_LIBVIRT_DOMAIN_DIR))
-          properties.setProperty(PROPERTY_LIBVIRT_DOMAIN_DIR, "/etc/libvirt/qemu");
+         properties.setProperty(PROPERTY_LIBVIRT_DOMAIN_DIR, "/etc/libvirt/qemu");
    }
 
    @Override
    protected void addContextModule(List<Module> modules) {
-      modules.add(createContextModule());
+      modules.add(new LibvirtComputeServiceContextModule());
    }
-
-   public  StandaloneComputeServiceContextModule<Domain, Domain, Image, Datacenter> createContextModule() {
-      return new LibvirtComputeServiceContextModule();
-   }
-
 }

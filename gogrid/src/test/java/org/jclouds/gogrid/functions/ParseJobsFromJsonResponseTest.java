@@ -30,7 +30,6 @@ import java.util.SortedSet;
 
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.gogrid.config.DateSecondsAdapter;
 import org.jclouds.gogrid.domain.Job;
 import org.jclouds.gogrid.domain.JobProperties;
@@ -88,7 +87,6 @@ public class ParseJobsFromJsonResponseTest {
       @SuppressWarnings("unused")
       @Provides
       @Singleton
-      @com.google.inject.name.Named(Constants.PROPERTY_GSON_ADAPTERS)
       public Map<Type, Object> provideCustomAdapterBindings() {
          Map<Type, Object> bindings = Maps.newHashMap();
          bindings.put(ObjectType.class, new CustomDeserializers.ObjectTypeAdapter());

@@ -100,7 +100,7 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
 			// cloning volume
 			String poolName = storageVol.storagePoolLookupByVolume().getName();
 			StoragePool storagePool = client.storagePoolLookupByName(poolName);
-			StorageVol clonedVol = null; //cloneVolume(storagePool, storageVol);
+			StorageVol clonedVol = null;
 			boolean cloned = false;
 			int retry = 0;
 			while(!cloned && retry<10) {
@@ -166,17 +166,30 @@ public class LibvirtComputeServiceAdapter implements ComputeServiceAdapter<Domai
 
 	@Override
 	public Domain getNode(String id) {
+		Domain d = null;
 		try {
-			return client.domainLookupByUUIDString(id);
+			d = client.domainLookupByUUIDString(id);
 		} catch (LibvirtException e) {
-			return propogate(e);
+			if (e.getMessage().indexOf("Domain not found: no domain with matching uuid") != -1)
+				return null;
+			propogate(e);
 		}
+		return d;
 	}
 
 	@Override
 	public void destroyNode(String id) {
 		try {
 			client.domainLookupByUUIDString(id).destroy();
+
+				XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(
+						client.domainLookupByUUIDString(id).getXMLDesc(0)
+				)));
+				String diskFileName = builder.xpathFind("//devices/disk[@device='disk']/source").getElement().getAttribute("file");
+				StorageVol storageVol = client.storageVolLookupByPath(diskFileName);
+				storageVol.delete(0);
+				client.domainLookupByUUIDString(id).undefine();
+
 		} catch (LibvirtException e) {
 			propogate(e);
 		} catch (Exception e) {

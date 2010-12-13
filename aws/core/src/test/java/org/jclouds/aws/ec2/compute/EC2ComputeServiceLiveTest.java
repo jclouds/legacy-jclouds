@@ -106,7 +106,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
             .getInstanceServices();
 
-      String tag = this.tag + "optionsandlogin";
+      String tag = this.tag + "o";
 
       TemplateOptions options = client.templateOptions();
 
@@ -190,7 +190,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
             .getInstanceServices();
 
-      String tag = this.tag + "optionsnokey";
+      String tag = this.tag + "k";
 
       TemplateOptions options = client.templateOptions();
 
@@ -250,7 +250,7 @@ public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
       InstanceClient instanceClient = EC2Client.class.cast(context.getProviderSpecificContext().getApi())
             .getInstanceServices();
 
-      String tag = this.tag + "optionswithsubnetid";
+      String tag = this.tag + "g";
 
       TemplateOptions options = client.templateOptions();
 

@@ -21,7 +21,7 @@ package org.jclouds.aws.ec2.domain;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.inject.internal.Nullable;
+import javax.annotation.Nullable;
 
 /**
  * 

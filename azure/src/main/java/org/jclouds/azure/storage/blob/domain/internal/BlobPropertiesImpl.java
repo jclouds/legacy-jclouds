@@ -26,6 +26,8 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Map;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.azure.storage.blob.domain.BlobProperties;
 import org.jclouds.azure.storage.blob.domain.BlobType;
 import org.jclouds.azure.storage.blob.domain.LeaseStatus;
@@ -33,7 +35,6 @@ import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.payloads.BaseImmutableContentMetadata;
 
 import com.google.common.collect.Maps;
-import com.google.inject.internal.Nullable;
 
 /**
  * Allows you to manipulate metadata.

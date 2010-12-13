@@ -62,10 +62,4 @@ public class NingHttpCommandExecutorServiceTest extends BaseHttpCommandExecutorS
       props.setProperty(PROPERTY_IO_WORKER_THREADS, 3 + "");
       props.setProperty(PROPERTY_USER_THREADS, 0 + "");
    }
-
-   // OOM
-   @Test(enabled = false, invocationCount = 1, timeOut = 5000)
-   public void testGetBigFile() throws ExecutionException, InterruptedException, TimeoutException, IOException {
-   }
-
 }

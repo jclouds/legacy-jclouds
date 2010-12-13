@@ -28,7 +28,6 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.gogrid.config.DateSecondsAdapter;
 import org.jclouds.gogrid.domain.IpState;
@@ -71,7 +70,7 @@ public class ParseCredentialsFromJsonResponseTest {
       ParseCredentialsFromJsonResponse parser = i.getInstance(ParseCredentialsFromJsonResponse.class);
       Credentials creds = parser.apply(response);
       assertEquals(creds.identity, "root");
-      assertEquals(creds.credential, "dig44sos");
+      assertEquals(creds.credential, "zot40ced");
 
    }
 
@@ -85,7 +84,6 @@ public class ParseCredentialsFromJsonResponseTest {
       @Provides
       @Singleton
       @SuppressWarnings("unused")
-      @com.google.inject.name.Named(Constants.PROPERTY_GSON_ADAPTERS)
       public Map<Type, Object> provideCustomAdapterBindings() {
          Map<Type, Object> bindings = Maps.newHashMap();
          bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());
