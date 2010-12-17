@@ -75,7 +75,7 @@ public class EC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       assertEquals(template.getImage().getOperatingSystem().getVersion(), "10.10");
       assertEquals(template.getImage().getOperatingSystem().is64Bit(), false);
       assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(template.getImage().getVersion(), "20101204");
+      assertEquals(template.getImage().getVersion(), "20101215");
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
       assertEquals(template.getLocation().getId(), "us-east-1");
       assertEquals(getCores(template.getHardware()), 1.0d);
