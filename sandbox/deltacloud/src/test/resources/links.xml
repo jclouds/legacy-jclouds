@@ -1,0 +1,7 @@
+<api driver='ec2' version='1.0'>
+  <link href='http://fancycloudprovider.com/api/hardware_profiles' rel='hardware_profiles' />
+  <link href='http://fancycloudprovider.com/api/instance_states' rel='instance_states' />
+  <link href='http://fancycloudprovider.com/api/realms' rel='realms' />
+  <link href='http://fancycloudprovider.com/api/images' rel='images' />
+  <link href='http://fancycloudprovider.com/api/instances' rel='instances' />
+</api>
