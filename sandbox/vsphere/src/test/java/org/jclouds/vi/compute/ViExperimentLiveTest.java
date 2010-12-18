@@ -25,9 +25,11 @@ import java.util.Set;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.vi.compute.ViComputeServiceContextSpec;
+import org.jclouds.domain.Location;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -57,37 +59,38 @@ public class ViExperimentLiveTest {
       try {
          context = new ComputeServiceContextFactory().createContext(new ViComputeServiceContextSpec(
                endpoint, identity, credential));
-         context.getComputeService().listNodes();
          
-         
-         /*
-          * /* System.out.println("images " + context.getComputeService().listImages());
-          * System.out.println("nodes " + context.getComputeService().listNodes());
-          * System.out.println("hardware profiles " +
-          * context.getComputeService().listHardwareProfiles());
-          */
+//         Set<? extends Location> locations = context.getComputeService().listAssignableLocations();
+//         
+//         Set<? extends ComputeMetadata> nodes = context.getComputeService().listNodes();
 
-         
-/*          Template defaultTemplate = context.getComputeService().templateBuilder()
-          .hardwareId("d106ae67-5a1b-8f91-b311-83c93bcb0a1f").imageId("1") //.locationId("")
-          .build();*/
-          
+         // TODO
+//         Set<? extends Hardware> hardwares = context.getComputeService().listHardwareProfiles();
+//
+//         Set<? extends Image> images = context.getComputeService().listImages();
+
+         NodeMetadata node = context.getComputeService().getNodeMetadata("provaVM");
+         System.out.println(node);
 
          /*
           * We will probably make a default template out of properties at some point You can control
           * the default template via overriding a method in standalonecomputeservicexontextmodule
           */
-
-         Set<? extends NodeMetadata> nodeMetadataSet = context.getComputeService().runNodesWithTag("tty", 1);
+         
+         /*          Template defaultTemplate = context.getComputeService().templateBuilder()
+         .hardwareId("d106ae67-5a1b-8f91-b311-83c93bcb0a1f").imageId("1") //.locationId("")
+         .build();
+         Set<? extends NodeMetadata> nodeMetadataSet = context.getComputeService().runNodesWithTag("MyServer", 1);
          for (NodeMetadata nodeMetadata : nodeMetadataSet) {
-            /*
-             * context.getComputeService().suspendNode(nodeMetadata.getId());
-             * context.getComputeService().resumeNode(nodeMetadata.getId());
-             */
+            
+//              context.getComputeService().suspendNode(nodeMetadata.getId());
+//              context.getComputeService().resumeNode(nodeMetadata.getId());
+             
             context.getComputeService().destroyNode(nodeMetadata.getId());
          }
       } catch (Exception e) {
          e.printStackTrace();
+         */
       } finally {
          if (context != null)
             context.close();

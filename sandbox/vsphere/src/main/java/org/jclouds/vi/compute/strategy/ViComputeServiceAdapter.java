@@ -20,7 +20,6 @@
 package org.jclouds.vi.compute.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.vi.ViConstants.PROPERTY_LIBVIRT_DOMAIN_DIR;
 
 import java.rmi.RemoteException;
 import java.util.List;
@@ -33,14 +32,14 @@ import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
-import org.jclouds.vi.Datacenter;
 import org.jclouds.vi.Image;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
-import com.google.inject.name.Named;
 import com.vmware.vim25.InvalidProperty;
 import com.vmware.vim25.RuntimeFault;
+import com.vmware.vim25.mo.Datacenter;
+import com.vmware.vim25.mo.Folder;
 import com.vmware.vim25.mo.InventoryNavigator;
 import com.vmware.vim25.mo.ManagedEntity;
 import com.vmware.vim25.mo.ServiceInstance;
@@ -116,25 +115,25 @@ public class ViComputeServiceAdapter implements ComputeServiceAdapter<VirtualMac
 
 	@Override
 	public Iterable<VirtualMachine> listHardwareProfiles() {
-		return listNodes();
+		// TODO
+		return null;
 	}
 
 	@Override
 	public Iterable<Image> listImages() {
-		/*
-		int i = 1;
+		List<Image> images = Lists.newArrayList();
 		try {
-			String[] domains = client.listDefinedDomains();
-			List<Image> images = Lists.newArrayList();
-			for (String domainName : domains) {
-				images.add(new Image(i++, domainName));
+			
+			ManagedEntity[] entities = new InventoryNavigator(
+					client.getRootFolder()).searchManagedEntities("VirtualMachine");
+			for (ManagedEntity entity : entities) {
+				VirtualMachine vm = (VirtualMachine) entity;
+				images.add(new Image(vm.getConfig().getGuestId(), vm.getConfig().getGuestFullName()));
 			}
 			return images;
 		} catch (Exception e) {
 			return propogate(e);
 		}
-		*/
-		return null;
 	}
 
 	@Override
@@ -143,8 +142,8 @@ public class ViComputeServiceAdapter implements ComputeServiceAdapter<VirtualMac
 			ManagedEntity[] vmEntities = new InventoryNavigator(client.getRootFolder()).searchManagedEntities("VirtualMachine");
 			List<VirtualMachine> vms = Lists.newArrayList();
 			for (ManagedEntity entity : vmEntities) {
-				System.out.println(entity.getName());
-				vms.add((VirtualMachine) entity);
+				VirtualMachine vm = (VirtualMachine) entity;
+				vms.add(vm);
 			}
 			return vms;
 		} catch (InvalidProperty e) {
@@ -164,7 +163,7 @@ public class ViComputeServiceAdapter implements ComputeServiceAdapter<VirtualMac
 			datacenterEntities = new InventoryNavigator(client.getRootFolder()).searchManagedEntities("Datacenter");
 			List<Datacenter> datacenters = Lists.newArrayList();
 			for (int i = 0; i< datacenterEntities.length; i++) {
-				datacenters.add(new Datacenter(i, datacenterEntities[i].getName()));
+				datacenters.add((Datacenter) datacenterEntities[i]);
 			}
 			return datacenters;
 		} catch (InvalidProperty e) {
@@ -178,18 +177,20 @@ public class ViComputeServiceAdapter implements ComputeServiceAdapter<VirtualMac
 	}
 
 	@Override
-	public VirtualMachine getNode(String id) {
-		VirtualMachine vm = null;
-		/*
+	public VirtualMachine getNode(String vmName) {
+		
+		Folder rootFolder = client.getRootFolder();
+
 		try {
-			d = client.domainLookupByUUIDString(id);
-		} catch (LibvirtException e) {
-			if (e.getMessage().indexOf("Domain not found: no domain with matching uuid") != -1)
-				return null;
-			propogate(e);
+			return (VirtualMachine) new InventoryNavigator(
+					rootFolder).searchManagedEntity("VirtualMachine", vmName);
+		} catch (InvalidProperty e) {
+			return propogate(e);
+		} catch (RuntimeFault e) {
+			return propogate(e);
+		} catch (RemoteException e) {
+			return propogate(e);
 		}
-		*/
-		return vm;
 	}
 
 	@Override
