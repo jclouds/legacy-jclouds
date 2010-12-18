@@ -19,6 +19,7 @@
 
 package org.jclouds.rackspace.cloudservers;
 
+import java.net.URI;
 import java.util.Date;
 
 import org.jclouds.http.RequiresHttp;
@@ -39,8 +40,8 @@ public class TestRackspaceAuthenticationRestClientModule extends RackspaceAuthen
 
    @Override
    protected AuthenticationResponse provideAuthenticationResponse(Supplier<AuthenticationResponse> supplier) {
-      return new AuthenticationResponseImpl("authToken", "http://CDNManagementUrl", "http://serverManagementUrl",
-               "http://storageUrl");
+      return new AuthenticationResponseImpl("authToken", URI.create("http://CDNManagementUrl"),
+            URI.create("http://serverManagementUrl"), URI.create("http://storageUrl"));
    }
 
    @Override

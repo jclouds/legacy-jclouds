@@ -46,9 +46,9 @@ import org.jclouds.util.Utils;
 public class ParseCloudFilesErrorFromHttpResponse implements HttpErrorHandler {
    @Resource
    protected Logger logger = Logger.NULL;
-   public static final String MOSSO_PREFIX = "^/v1[^/]*/MossoCloudFS_[^/]+/";
-   public static final Pattern CONTAINER_PATH = Pattern.compile(MOSSO_PREFIX + "([^/]+)$");
-   public static final Pattern CONTAINER_KEY_PATH = Pattern.compile(MOSSO_PREFIX + "([^/]+)/(.*)");
+   public static final String PREFIX = "^/v[0-9][^/]*/[a-zA-Z]+_[^/]+/";
+   public static final Pattern CONTAINER_PATH = Pattern.compile(PREFIX + "([^/]+)$");
+   public static final Pattern CONTAINER_KEY_PATH = Pattern.compile(PREFIX + "([^/]+)/(.*)");
 
    public void handleError(HttpCommand command, HttpResponse response) {
       Exception exception = new HttpResponseException(command, response);
