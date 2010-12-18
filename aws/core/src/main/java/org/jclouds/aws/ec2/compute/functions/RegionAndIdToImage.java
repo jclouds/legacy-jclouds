@@ -21,6 +21,8 @@ package org.jclouds.aws.ec2.compute.functions;
 
 import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.imageIds;
 
+import java.util.NoSuchElementException;
+
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -29,6 +31,7 @@ import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.ResourceNotFoundException;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -56,9 +59,19 @@ public final class RegionAndIdToImage implements Function<RegionAndName, Image> 
          org.jclouds.aws.ec2.domain.Image image = Iterables.getOnlyElement(sync.getAMIServices()
                .describeImagesInRegion(key.getRegion(), imageIds(key.getName())));
          return parser.apply(image);
+      } catch (NoSuchElementException e) {
+         logger.debug(message(key, e));
+         return null;
+      } catch (ResourceNotFoundException e) {
+         logger.debug(message(key, e));
+         return null;
       } catch (Exception e) {
-         logger.warn(e, "could not find image %s/%s: %s", key.getRegion(), key.getName(), e.getMessage());
+         logger.warn(e, message(key, e));
          return null;
       }
+   }
+
+   public static String message(RegionAndName key, Exception e) {
+      return String.format("could not find image %s/%s: %s", key.getRegion(), key.getName(), e.getMessage());
    }
 }
