@@ -124,4 +124,39 @@ public class MapToServerInfoTest {
       assertEquals(MAP_TO_DRIVE.apply(input), ONE);
 
    }
+
+   public static ServerInfo NEW = new ServerInfo.Builder()
+         .persistent(true)
+         .uuid("bd98615a-6f74-4d63-ad1e-b13338b9356a")
+         .cpu(1000)
+         .bootDeviceIds(ImmutableSet.of("ide:0:0"))
+         .smp(1)
+         .mem(512)
+         .status(ServerStatus.ACTIVE)
+         .started(new Date(1292695612))
+         .user("2f6244eb-50bc-4403-847e-f03cc3706a1f")
+         .name("adriancole.test")
+         .vnc(new VNC("83.222.249.221", "XXXXXXXX", false))
+         .nics(ImmutableSet.of(new NIC.Builder()
+               .model(Model.E1000)
+               .block(
+                     ImmutableList.of("tcp/43594", "tcp/5902", "udp/5060", "tcp/5900", "tcp/5901", "tcp/21", "tcp/22",
+                           "tcp/23", "tcp/25", "tcp/110", "tcp/143", "tcp/43595")).build()))
+         .devices(
+               ImmutableMap.of("ide:0:0",
+                     new IDEDevice.Builder((int) 0, (int) 0).uuid("403c9a86-0aab-4e47-aa95-e9768021c4c1").build()
+
+               ))
+         .metrics(
+               new ServerMetrics.Builder().driveMetrics(ImmutableMap.of("ide:0:0", new DriveMetrics.Builder().build()))
+                     .build()).build();
+
+   public void testNew() throws IOException {
+
+      Map<String, String> input = new ListOfKeyValuesDelimitedByBlankLinesToListOfMaps().apply(
+            Utils.toStringAndClose(MapToServerInfoTest.class.getResourceAsStream("/new_server.txt"))).get(0);
+
+      assertEquals(MAP_TO_DRIVE.apply(input), NEW);
+
+   }
 }

@@ -38,50 +38,42 @@ import org.testng.annotations.Test;
 @Test(groups = "live", testName = "elasticstack.ElasticStackClientLiveTest")
 public class ElasticStackClientLiveTest extends
       CommonElasticStackClientLiveTest<ElasticStackClient, ElasticStackAsyncClient> {
-   private DriveInfo info2;
+   private DriveInfo drive2;
+   private DriveInfo drive3;
 
-   @Override
-   public void testGetDrive() throws Exception {
-      super.testGetDrive();
-   }
-
-   @Override
-   public void testCreate() throws Exception {
-      super.testCreate();
-   }
-
-   @Override
-   public void testSetDriveData() throws Exception {
-      super.testSetDriveData();
-   }
-
-   @Override
-   public void testDestroyDrive() throws Exception {
-      super.testDestroyDrive();
-   }
-
-   @Test(dependsOnMethods = "testCreate")
    public void testWeCanReadAndWriteToDrive() throws IOException {
-      client.writeDrive(info.getUuid(), Payloads.newStringPayload("foo"));
-      assertEquals(Utils.toStringAndClose(client.readDrive(info.getUuid(), ReadDriveOptions.Builder.offset(0).size(3))
-            .getInput()), "foo");
+      drive2 = client.createDrive(new CreateDriveRequest.Builder().name(prefix + "2").size(1 * 1024 * 1024l).build());
+      client.writeDrive(drive2.getUuid(), Payloads.newStringPayload("foo"));
+      assertEquals(Utils.toStringAndClose(client
+            .readDrive(drive2.getUuid(), ReadDriveOptions.Builder.offset(0).size(3)).getInput()), "foo");
    }
 
    @Test(dependsOnMethods = "testWeCanReadAndWriteToDrive")
    public void testWeCopyADriveContentsViaGzip() throws IOException {
-
       try {
-         info2 = client.createDrive(new CreateDriveRequest.Builder().name(prefix + "2").size(4 * 1024 * 1024l).build());
-         client.imageDrive(info.getUuid(), info2.getUuid());
-
-         // TODO block until complete
-         System.err.println("state " + client.getDriveInfo(info2.getUuid()));
-         assertEquals(Utils.toStringAndClose(client.readDrive(info2.getUuid(),
+         drive3 = client
+               .createDrive(new CreateDriveRequest.Builder().name(prefix + "3").size(1 * 1024 * 1024l).build());
+         System.err.println("before image; drive 2" + client.getDriveInfo(drive2.getUuid()));
+         System.err.println("before image; drive 3" + client.getDriveInfo(drive3.getUuid()));
+         client.imageDrive(drive2.getUuid(), drive3.getUuid());
+         assert driveNotClaimed.apply(drive3) : client.getDriveInfo(drive3.getUuid());
+         assert driveNotClaimed.apply(drive2) : client.getDriveInfo(drive2.getUuid());
+         System.err.println("after image; drive 2" + client.getDriveInfo(drive2.getUuid()));
+         System.err.println("after image; drive 3" + client.getDriveInfo(drive3.getUuid()));
+         assertEquals(Utils.toStringAndClose(client.readDrive(drive3.getUuid(),
                ReadDriveOptions.Builder.offset(0).size(3)).getInput()), "foo");
       } finally {
-         client.destroyDrive(info2.getUuid());
+         client.destroyDrive(drive2.getUuid());
+         client.destroyDrive(drive3.getUuid());
       }
+   }
 
+   @Override
+   protected void prepareDrive() {
+      System.err.println("before prepare" + client.getDriveInfo(drive.getUuid()));
+      client.imageDrive("e6111e4c-67af-4438-b1bc-189747d5a8e5", drive.getUuid());
+      assert driveNotClaimed.apply(drive) : client.getDriveInfo(drive.getUuid());
+      System.err.println("after prepare" + client.getDriveInfo(drive.getUuid()));
    }
 
 }

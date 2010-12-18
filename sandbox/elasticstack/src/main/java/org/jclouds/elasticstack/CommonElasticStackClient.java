@@ -26,6 +26,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.DriveData;
 import org.jclouds.elasticstack.domain.DriveInfo;
+import org.jclouds.elasticstack.domain.Server;
 import org.jclouds.elasticstack.domain.ServerInfo;
 
 /**
@@ -58,6 +59,79 @@ public interface CommonElasticStackClient {
     * @return null, if not found
     */
    ServerInfo getServerInfo(String uuid);
+
+   /**
+    * create a new server
+    * 
+    * @param server
+    * @return newly created server
+    */
+   ServerInfo createServer(Server server);
+
+   /**
+    * create and start a new server
+    * 
+    * @param server
+    * @return newly created server
+    */
+   ServerInfo createAndStartServer(Server server);
+
+   /**
+    * set server configuration
+    * 
+    * @param uuid
+    *           what server to change
+    * @param serverData
+    *           what values to change
+    * @return new data
+    */
+   ServerInfo setServerConfiguration(String uuid, Server server);
+
+   /**
+    * Destroy a server
+    * 
+    * @param uuid
+    *           what to destroy
+    */
+   void destroyServer(String uuid);
+
+   /**
+    * Start a server
+    * 
+    * @param uuid
+    *           what to start
+    */
+   void startServer(String uuid);
+
+   /**
+    * Stop a server
+    * <p/>
+    * Kills the server immediately, equivalent to a power failure. Server reverts to a stopped
+    * status if it is persistent and is automatically destroyed otherwise.
+    * 
+    * @param uuid
+    *           what to stop
+    */
+   void stopServer(String uuid);
+
+   /**
+    * Shutdown a server
+    * <p/>
+    * Sends the server an ACPI power-down event. Server reverts to a stopped status if it is
+    * persistent and is automatically destroyed otherwise.
+    * 
+    * @param uuid
+    *           what to shutdown
+    */
+   void shutdownServer(String uuid);
+
+   /**
+    * Reset a server
+    * 
+    * @param uuid
+    *           what to reset
+    */
+   void resetServer(String uuid);
 
    /**
     * list of drive uuids in your account

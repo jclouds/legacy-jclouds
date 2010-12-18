@@ -30,9 +30,11 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.elasticstack.binders.BindDriveDataToPlainTextString;
 import org.jclouds.elasticstack.binders.BindDriveToPlainTextString;
+import org.jclouds.elasticstack.binders.BindServerToPlainTextString;
 import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.DriveData;
 import org.jclouds.elasticstack.domain.DriveInfo;
+import org.jclouds.elasticstack.domain.Server;
 import org.jclouds.elasticstack.domain.ServerInfo;
 import org.jclouds.elasticstack.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
 import org.jclouds.elasticstack.functions.KeyValuesDelimitedByBlankLinesToServerInfo;
@@ -87,6 +89,72 @@ public interface CommonElasticStackAsyncClient {
    ListenableFuture<? extends ServerInfo> getServerInfo(@PathParam("uuid") String uuid);
 
    /**
+    * @see ElasticStackClient#createAndStartServer
+    */
+   @POST
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
+   @Path("/servers/create")
+   ListenableFuture<? extends ServerInfo> createAndStartServer(
+         @BinderParam(BindServerToPlainTextString.class) Server createServer);
+
+   /**
+    * @see ElasticStackClient#createServer
+    */
+   @POST
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
+   @Path("/servers/create/stopped")
+   ListenableFuture<? extends ServerInfo> createServer(
+         @BinderParam(BindServerToPlainTextString.class) Server createServer);
+
+   /**
+    * @see ElasticStackClient#setServer
+    */
+   @POST
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
+   @Path("/servers/{uuid}/set")
+   ListenableFuture<? extends ServerInfo> setServerConfiguration(@PathParam("uuid") String uuid,
+         @BinderParam(BindServerToPlainTextString.class) Server setServer);
+
+   /**
+    * @see ElasticStackClient#destroyServer
+    */
+   @POST
+   @Path("/servers/{uuid}/destroy")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> destroyServer(@PathParam("uuid") String uuid);
+
+   /**
+    * @see ElasticStackClient#startServer
+    */
+   @POST
+   @Path("/servers/{uuid}/start")
+   ListenableFuture<Void> startServer(@PathParam("uuid") String uuid);
+
+   /**
+    * @see ElasticStackClient#stopServer
+    */
+   @POST
+   @Path("/servers/{uuid}/stop")
+   ListenableFuture<Void> stopServer(@PathParam("uuid") String uuid);
+
+   /**
+    * @see ElasticStackClient#shutdownServer
+    */
+   @POST
+   @Path("/servers/{uuid}/shutdown")
+   ListenableFuture<Void> shutdownServer(@PathParam("uuid") String uuid);
+
+   /**
+    * @see ElasticStackClient#resetServer
+    */
+   @POST
+   @Path("/servers/{uuid}/reset")
+   ListenableFuture<Void> resetServer(@PathParam("uuid") String uuid);
+
+   /**
     * @see ElasticStackClient#listDrives()
     */
    @GET
@@ -118,8 +186,7 @@ public interface CommonElasticStackAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/create")
-   ListenableFuture<? extends DriveInfo> createDrive(
-         @BinderParam(BindDriveToPlainTextString.class) Drive createDrive);
+   ListenableFuture<? extends DriveInfo> createDrive(@BinderParam(BindDriveToPlainTextString.class) Drive createDrive);
 
    /**
     * @see ElasticStackClient#setDriveData

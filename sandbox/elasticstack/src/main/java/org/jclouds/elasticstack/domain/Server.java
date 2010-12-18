@@ -127,7 +127,7 @@ public class Server extends Item {
       }
 
       public Server build() {
-         return new Server(uuid, name, cpu, smp, mem, persistent, devices, tags, bootDeviceIds, userMetadata, nics,
+         return new Server(uuid, name, cpu, smp, mem, persistent, devices, bootDeviceIds, tags, userMetadata, nics,
                vnc, description);
       }
    }

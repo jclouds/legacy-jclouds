@@ -67,6 +67,12 @@ public class CloudSigmaClientLiveTest extends CommonElasticStackClientLiveTest<C
    @Override
    protected void checkCreatedDrive() {
       super.checkCreatedDrive();
-      assertEquals(DriveInfo.class.cast(info).getType(), null);
+      assertEquals(DriveInfo.class.cast(drive).getType(), null);
+   }
+
+   @Override
+   protected void prepareDrive() {
+      // TODO Auto-generated method stub
+      
    }
 }

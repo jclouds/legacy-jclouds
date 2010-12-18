@@ -29,10 +29,12 @@ import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.DriveData;
 import org.jclouds.elasticstack.domain.DriveMetrics;
 import org.jclouds.elasticstack.domain.NIC;
+import org.jclouds.elasticstack.domain.Server;
 import org.jclouds.elasticstack.domain.ServerMetrics;
 import org.jclouds.elasticstack.functions.CreateDriveRequestToMap;
 import org.jclouds.elasticstack.functions.DriveDataToMap;
 import org.jclouds.elasticstack.functions.MapToDevices;
+import org.jclouds.elasticstack.functions.ServerToMap;
 import org.jclouds.elasticstack.functions.MapToDevices.DeviceToId;
 import org.jclouds.elasticstack.functions.MapToDriveMetrics;
 import org.jclouds.elasticstack.functions.MapToNICs;
@@ -79,6 +81,10 @@ public class ElasticStackRestClientModule extends RestClientModule<ElasticStackC
       }).to(MapToServerMetrics.class);
       bind(new TypeLiteral<Function<Device, String>>() {
       }).to(DeviceToId.class);
+      bind(new TypeLiteral<Function<Server, Map<String, String>>>() {
+      }).to(ServerToMap.class);
+      bind(new TypeLiteral<Function<Server, Map<String, String>>>() {
+      }).to(ServerToMap.class);
    }
 
    @Override

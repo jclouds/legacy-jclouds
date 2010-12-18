@@ -161,7 +161,7 @@ public class ServerInfo extends Server {
       }
 
       public ServerInfo build() {
-         return new ServerInfo(uuid, name, cpu, smp, mem, persistent, devices, tags, bootDeviceIds, userMetadata, nics,
+         return new ServerInfo(uuid, name, cpu, smp, mem, persistent, devices, bootDeviceIds, tags, userMetadata, nics,
                vnc, description, status, started, user, metrics);
       }
    }

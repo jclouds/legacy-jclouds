@@ -73,4 +73,9 @@ public class KeyValuesDelimitedByBlankLinesToServerInfoTest {
       assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newInputStreamPayload(MapToServerInfoTest.class
             .getResourceAsStream("/servers.txt")))), MapToServerInfoTest.ONE);
    }
+   
+   public void testNew() {
+      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newInputStreamPayload(MapToServerInfoTest.class
+            .getResourceAsStream("/new_server.txt")))), MapToServerInfoTest.ONE);
+   }
 }
