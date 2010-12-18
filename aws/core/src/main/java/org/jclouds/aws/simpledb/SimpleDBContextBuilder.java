@@ -41,6 +41,7 @@ import com.google.inject.Module;
  * {@link JavaUrlHttpCommandExecutorServiceModule http transports} will be installed.
  * 
  * @author Adrian Cole
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @see SimpleDBContext
  */
 public class SimpleDBContextBuilder extends RestContextBuilder<SimpleDBClient, SimpleDBAsyncClient> {

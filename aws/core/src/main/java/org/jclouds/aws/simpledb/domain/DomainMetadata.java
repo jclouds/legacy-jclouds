@@ -27,6 +27,7 @@ import java.util.Date;
  *      "http://docs.amazonwebservices.com/AmazonSimpleDB/2009-04-15/DeveloperGuide/index.html?SDB_API_CreateDomain.html"
  *      />
  * @author Adrian Cole
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class DomainMetadata {
    private final String region;

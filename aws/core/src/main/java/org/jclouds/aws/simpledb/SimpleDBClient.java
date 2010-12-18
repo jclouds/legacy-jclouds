@@ -19,19 +19,28 @@
 
 package org.jclouds.aws.simpledb;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
+import javax.ws.rs.FormParam;
 
+import org.jclouds.aws.functions.RegionToEndpoint;
+import org.jclouds.aws.simpledb.domain.Item;
+import org.jclouds.aws.simpledb.domain.AttributePair;
 import org.jclouds.aws.simpledb.domain.ListDomainsResponse;
 import org.jclouds.aws.simpledb.options.ListDomainsOptions;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.rest.annotations.EndpointParam;
+
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * Provides access to SimpleDB via their REST API.
  * <p/>
  * 
  * @author Adrian Cole
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface SimpleDBClient {
@@ -103,5 +112,6 @@ public interface SimpleDBClient {
     *      />
     */
    void deleteDomainInRegion(String region, String domainName);
-
+   void putAttributes(String region, String domain, String itemName, Item attributes);
+   Map<String, Item> select(String region, String selectionExpression);
 }

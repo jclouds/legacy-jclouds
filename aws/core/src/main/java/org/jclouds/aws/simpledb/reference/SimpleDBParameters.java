@@ -25,6 +25,7 @@ package org.jclouds.aws.simpledb.reference;
  * @see <a href="http://docs.amazonwebservices.com/AWSSimpleDomainService/2009-02-01/APIReference/Query_QueryParams.html"
  *      />
  * @author Adrian Cole
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public interface SimpleDBParameters {
 

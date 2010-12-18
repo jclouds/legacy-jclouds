@@ -22,6 +22,8 @@ package org.jclouds.aws.simpledb;
 import static org.jclouds.aws.simpledb.reference.SimpleDBParameters.ACTION;
 import static org.jclouds.aws.simpledb.reference.SimpleDBParameters.VERSION;
 
+import java.util.Map;
+
 import javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
@@ -29,9 +31,14 @@ import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.aws.functions.RegionToEndpoint;
+import org.jclouds.aws.simpledb.binders.BindAttributesToIndexedFormParams;
+import org.jclouds.aws.simpledb.domain.Item;
+import org.jclouds.aws.simpledb.domain.AttributePair;
 import org.jclouds.aws.simpledb.domain.ListDomainsResponse;
 import org.jclouds.aws.simpledb.options.ListDomainsOptions;
+import org.jclouds.aws.simpledb.xml.ItemsHandler;
 import org.jclouds.aws.simpledb.xml.ListDomainsResponseHandler;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -45,6 +52,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * <p/>
  * 
  * @author Adrian Cole
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 @RequestFilters(FormSigner.class)
 @FormParams(keys = VERSION, values = SimpleDBAsyncClient.VERSION)
@@ -79,5 +87,29 @@ public interface SimpleDBAsyncClient {
    @FormParams(keys = ACTION, values = "DeleteDomain")
    ListenableFuture<Void> deleteDomainInRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
          @FormParam("DomainName") String domainName);
+
+
+   /**
+    * @see SimpleDBClient#putAttributes
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "PutAttributes")
+   ListenableFuture<Void> putAttributes(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+		 @FormParam("DomainName") String domainName,
+		 @FormParam("ItemName") String itemName,
+         @BinderParam(BindAttributesToIndexedFormParams.class) Item attributes);
+
+   /**
+    * @see SimpleDBClient#putAttributes
+    */
+   @POST
+   @Path("/")
+   @FormParams(keys = ACTION, values = "Select")
+   @XMLResponseParser(ItemsHandler.class)
+   ListenableFuture<? extends Map<String, Item>> select(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+		 @FormParam("SelectExpression") String selectExpression);
+
+   
 
 }
