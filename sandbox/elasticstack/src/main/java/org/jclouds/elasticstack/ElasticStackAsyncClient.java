@@ -20,20 +20,16 @@
 package org.jclouds.elasticstack;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.elasticstack.binders.BindReadDriveOptionsToPath;
 import org.jclouds.elasticstack.domain.ImageConversionType;
 import org.jclouds.elasticstack.functions.ReturnPayload;
-import org.jclouds.elasticstack.options.ReadDriveOptions;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.io.Payload;
-import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
@@ -72,25 +68,15 @@ public interface ElasticStackAsyncClient extends CommonElasticStackAsyncClient {
          @PathParam("conversion") ImageConversionType conversionType);
 
    /**
-    * @see ElasticStackClient#readDrive(String)
-    */
-   @GET
-   @Consumes(MediaType.APPLICATION_OCTET_STREAM)
-   @Path("/drives/{uuid}/read")
-   @ResponseParser(ReturnPayload.class)
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Payload> readDrive(@PathParam("uuid") String uuid);
-
-   /**
-    * @see ElasticStackClient#readDrive(String,ReadDriveOptions)
+    * @see ElasticStackClient#readDrive
     */
    @POST
    @Consumes(MediaType.APPLICATION_OCTET_STREAM)
-   @Path("/drives/{uuid}/read")
+   @Path("/drives/{uuid}/read/{offset}/{size}")
    @ResponseParser(ReturnPayload.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   ListenableFuture<Payload> readDrive(@PathParam("uuid") String uuid,
-         @BinderParam(BindReadDriveOptionsToPath.class) ReadDriveOptions options);
+   ListenableFuture<Payload> readDrive(@PathParam("uuid") String uuid, @PathParam("offset") long offset,
+         @PathParam("size") long size);
 
    /**
     * @see ElasticStackClient#writeDrive(String, Payload)

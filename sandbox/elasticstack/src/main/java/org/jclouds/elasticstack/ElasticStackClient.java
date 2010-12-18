@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.elasticstack.domain.ImageConversionType;
-import org.jclouds.elasticstack.options.ReadDriveOptions;
 import org.jclouds.io.Payload;
 
 /**
@@ -60,16 +59,13 @@ public interface ElasticStackClient extends CommonElasticStackClient {
     * 
     * @param uuid
     *           drive to read
+    * @param offset
+    *           start at the specified offset in bytes
+    * @param size
+    *           the specified size in bytes; must be <=4096k
     * @return binary content of the drive.
     */
-   Payload readDrive(String uuid);
-
-   /**
-    * @see #readDrive(String)
-    * @param options
-    *           controls offset and size of the request
-    */
-   Payload readDrive(String uuid, ReadDriveOptions options);
+   Payload readDrive(String uuid, long offset, long size);
 
    /**
     * Write binary data to a drive

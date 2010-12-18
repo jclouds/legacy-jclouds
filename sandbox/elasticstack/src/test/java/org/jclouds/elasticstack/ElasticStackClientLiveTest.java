@@ -25,7 +25,6 @@ import java.io.IOException;
 
 import org.jclouds.elasticstack.domain.CreateDriveRequest;
 import org.jclouds.elasticstack.domain.DriveInfo;
-import org.jclouds.elasticstack.options.ReadDriveOptions;
 import org.jclouds.io.Payloads;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
@@ -44,8 +43,7 @@ public class ElasticStackClientLiveTest extends
    public void testWeCanReadAndWriteToDrive() throws IOException {
       drive2 = client.createDrive(new CreateDriveRequest.Builder().name(prefix + "2").size(1 * 1024 * 1024l).build());
       client.writeDrive(drive2.getUuid(), Payloads.newStringPayload("foo"));
-      assertEquals(Utils.toStringAndClose(client
-            .readDrive(drive2.getUuid(), ReadDriveOptions.Builder.offset(0).size(3)).getInput()), "foo");
+      assertEquals(Utils.toStringAndClose(client.readDrive(drive2.getUuid(), 0, 3).getInput()), "foo");
    }
 
    @Test(dependsOnMethods = "testWeCanReadAndWriteToDrive")
@@ -60,8 +58,7 @@ public class ElasticStackClientLiveTest extends
          assert driveNotClaimed.apply(drive2) : client.getDriveInfo(drive2.getUuid());
          System.err.println("after image; drive 2" + client.getDriveInfo(drive2.getUuid()));
          System.err.println("after image; drive 3" + client.getDriveInfo(drive3.getUuid()));
-         assertEquals(Utils.toStringAndClose(client.readDrive(drive3.getUuid(),
-               ReadDriveOptions.Builder.offset(0).size(3)).getInput()), "foo");
+         assertEquals(Utils.toStringAndClose(client.readDrive(drive3.getUuid(), 0, 3).getInput()), "foo");
       } finally {
          client.destroyDrive(drive2.getUuid());
          client.destroyDrive(drive3.getUuid());

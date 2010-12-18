@@ -39,7 +39,6 @@ import org.jclouds.elasticstack.functions.ListOfKeyValuesDelimitedByBlankLinesTo
 import org.jclouds.elasticstack.functions.ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet;
 import org.jclouds.elasticstack.functions.ReturnPayload;
 import org.jclouds.elasticstack.functions.SplitNewlines;
-import org.jclouds.elasticstack.options.ReadDriveOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -398,24 +397,8 @@ public class ElasticStackAsyncClientTest extends RestClientTest<ElasticStackAsyn
    }
 
    public void testReadDrive() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ElasticStackAsyncClient.class.getMethod("readDrive", String.class);
-      GeneratedHttpRequest<ElasticStackAsyncClient> httpRequest = processor.createRequest(method, "100");
-
-      assertRequestLineEquals(httpRequest, "GET https://api.elasticstack.com/drives/100/read HTTP/1.1");
-      assertNonPayloadHeadersEqual(httpRequest, "Accept: application/octet-stream\n");
-      assertPayloadEquals(httpRequest, null, null, false);
-
-      assertResponseParserClassEquals(method, httpRequest, ReturnPayload.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
-
-      checkFilters(httpRequest);
-   }
-
-   public void testReadDriveOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = ElasticStackAsyncClient.class.getMethod("readDrive", String.class, ReadDriveOptions.class);
-      GeneratedHttpRequest<ElasticStackAsyncClient> httpRequest = processor.createRequest(method, "100",
-            new ReadDriveOptions().offset(1024).size(2048));
+      Method method = ElasticStackAsyncClient.class.getMethod("readDrive", String.class, long.class, long.class);
+      GeneratedHttpRequest<ElasticStackAsyncClient> httpRequest = processor.createRequest(method, "100", 1024, 2048);
 
       assertRequestLineEquals(httpRequest, "POST https://api.elasticstack.com/drives/100/read/1024/2048 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/octet-stream\n");
