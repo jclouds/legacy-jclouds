@@ -19,7 +19,9 @@
 
 package org.jclouds.elasticstack;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.elasticstack.reference.ElasticStackConstants.PROPERTY_VNC_PASSWORD;
 
 import java.util.Properties;
 
@@ -35,7 +37,16 @@ public class ElasticStackPropertiesBuilder extends PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_API_VERSION, "1.0");
+      properties.setProperty(PROPERTY_API_VERSION, "IL9vs34d");
       return properties;
+   }
+
+   @Override
+   public Properties build() {
+      Properties props = super.build();
+      checkArgument(props.getProperty(PROPERTY_VNC_PASSWORD).length() <= 8,
+            "vnc passwords should be less that 8 characters!");
+      return props;
    }
 
    public ElasticStackPropertiesBuilder(Properties properties) {

@@ -30,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.jclouds.Constants;
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.domain.Credentials;
 import org.jclouds.elasticstack.domain.ClaimType;
 import org.jclouds.elasticstack.domain.CreateDriveRequest;
@@ -48,7 +49,6 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
@@ -84,7 +84,7 @@ public abstract class CommonElasticStackClientLiveTest<S extends CommonElasticSt
    protected String credential;
    protected String endpoint;
    protected String apiversion;
-   protected RetryablePredicate<DriveInfo> driveNotClaimed;
+   protected Predicate<DriveInfo> driveNotClaimed;
 
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
@@ -111,8 +111,8 @@ public abstract class CommonElasticStackClientLiveTest<S extends CommonElasticSt
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-            overrides);
+      context = new ComputeServiceContextFactory().createContext(provider,
+            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
 
       client = context.getApi();
       driveNotClaimed = new RetryablePredicate<DriveInfo>(Predicates.not(new DriveClaimed(client)), maxDriveImageTime,
@@ -319,6 +319,9 @@ public abstract class CommonElasticStackClientLiveTest<S extends CommonElasticSt
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");
          assertEquals(hello.getOutput().trim(), "hello");
+         System.err.println(ssh.exec("df -k").getOutput());
+         System.err.println(ssh.exec("mount").getOutput());
+         System.err.println(ssh.exec("uname -a").getOutput());
       } finally {
          if (ssh != null)
             ssh.disconnect();

@@ -47,7 +47,6 @@ import com.google.common.base.Objects;
  * 
  * @author Adrian Cole
  */
-
 public class ParseAuthenticationResponseFromHeaders implements Function<HttpResponse, AuthenticationResponse>,
       InvocationContext {
 

@@ -22,8 +22,9 @@ package org.jclouds.elasticstack;
 import java.util.List;
 import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContextBuilder;
+import org.jclouds.elasticstack.compute.config.ElasticStackComputeServiceContextModule;
 import org.jclouds.elasticstack.config.ElasticStackRestClientModule;
-import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Module;
 
@@ -32,10 +33,14 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 public class ElasticStackContextBuilder extends
-         RestContextBuilder<ElasticStackClient, ElasticStackAsyncClient> {
+      ComputeServiceContextBuilder<ElasticStackClient, ElasticStackAsyncClient> {
 
    public ElasticStackContextBuilder(Properties props) {
       super(ElasticStackClient.class, ElasticStackAsyncClient.class, props);
+   }
+   @Override
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new ElasticStackComputeServiceContextModule());
    }
 
    protected void addClientModule(List<Module> modules) {

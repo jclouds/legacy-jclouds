@@ -70,14 +70,13 @@ public class ElasticStackClientLiveTest extends
 
    @Override
    protected Credentials getSshCredentials(Server server) {
-      // according to paul from elastichosts, this account should be present
       return new Credentials("toor", server.getVnc().getPassword());
    }
 
    @Override
    protected void prepareDrive() {
       System.err.println("before prepare" + client.getDriveInfo(drive.getUuid()));
-      client.imageDrive("e6111e4c-67af-4438-b1bc-189747d5a8e5", drive.getUuid(), ImageConversionType.GUNZIP);
+      client.imageDrive("38df0986-4d85-4b76-b502-3878ffc80161", drive.getUuid(), ImageConversionType.GUNZIP);
       assert driveNotClaimed.apply(drive) : client.getDriveInfo(drive.getUuid());
       System.err.println("after prepare" + client.getDriveInfo(drive.getUuid()));
    }

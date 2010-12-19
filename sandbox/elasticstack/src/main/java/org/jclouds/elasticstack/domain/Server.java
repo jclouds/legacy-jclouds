@@ -144,7 +144,7 @@ public class Server extends Item {
    protected final int mem;
    protected final boolean persistent;
    @Nullable
-   protected final Map<String, ? extends Device> devices;
+   protected final Map<String, Device> devices;
    protected final Set<String> bootDeviceIds;
    protected final List<NIC> nics;
    protected final VNC vnc;
@@ -203,7 +203,7 @@ public class Server extends Item {
     * 
     * @return devices present, mapped by id
     */
-   public Map<String, ? extends Device> getDevices() {
+   public Map<String, Device> getDevices() {
       return devices;
    }
 

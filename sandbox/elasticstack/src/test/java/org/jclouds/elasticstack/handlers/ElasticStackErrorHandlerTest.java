@@ -53,8 +53,19 @@ public class ElasticStackErrorHandlerTest {
    }
 
    @Test
+   public void test400MakesResourceNotFoundExceptionOnInfo() {
+      assertCodeMakes("GET", URI.create("https://elasticstack.com/foo/info"), 400, "", "",
+            ResourceNotFoundException.class);
+   }
+
+   @Test
    public void test400MakesResourceNotFoundExceptionOnMessageNotFound() {
-      assertCodeMakes("GET", URI.create("https://elasticstack.com/foo"), 400, "", "errors:system Drive 8f9b42b1-26de-49ad-a3fd-d4fa06524339 could not be found. Please re-validate your entry.",
+      assertCodeMakes(
+            "GET",
+            URI.create("https://elasticstack.com/foo"),
+            400,
+            "",
+            "errors:system Drive 8f9b42b1-26de-49ad-a3fd-d4fa06524339 could not be found. Please re-validate your entry.",
             ResourceNotFoundException.class);
    }
 
