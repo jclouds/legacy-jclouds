@@ -50,7 +50,7 @@ public class MapToDriveInfo implements Function<Map<String, String>, DriveInfo> 
          return null;
       DriveInfo.Builder builder = DriveInfo.Builder.fromDriveInfo(mapToDriveInfo.apply(from));
       if (from.containsKey("use"))
-         builder.tags(Splitter.on(',').split(from.get("use")));
+         builder.tags(Splitter.on(' ').split(from.get("use")));
       if (from.containsKey("bits"))
          builder.bits(new Integer(from.get("bits")));
       if (from.containsKey("url"))

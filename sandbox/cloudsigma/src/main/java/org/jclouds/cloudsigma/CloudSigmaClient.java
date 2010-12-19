@@ -23,6 +23,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.cloudsigma.domain.DriveInfo;
+import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.elasticstack.CommonElasticStackClient;
 import org.jclouds.elasticstack.domain.Drive;
@@ -59,6 +60,19 @@ public interface CloudSigmaClient extends CommonElasticStackClient {
     * @return or empty set if no images are found
     */
    Set<String> listStandardImages();
+
+   /**
+    * Clone an existing drive. By default, the size is the same as the source
+    * 
+    * @param sourceUuid
+    *           source to clone
+    * @param newName
+    *           name of the resulting drive
+    * @param options
+    *           options to control size
+    * @return new drive
+    */
+   DriveInfo cloneDrive(String sourceUuid, String newName, CloneDriveOptions... options);
 
    /**
     * {@inheritDoc}

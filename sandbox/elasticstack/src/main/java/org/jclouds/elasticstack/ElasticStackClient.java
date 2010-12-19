@@ -23,6 +23,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.elasticstack.domain.ImageConversionType;
+import org.jclouds.elasticstack.domain.Server;
+import org.jclouds.elasticstack.domain.ServerInfo;
 import org.jclouds.io.Payload;
 
 /**
@@ -35,6 +37,14 @@ import org.jclouds.io.Payload;
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface ElasticStackClient extends CommonElasticStackClient {
+
+   /**
+    * create and start a new server
+    * 
+    * @param server
+    * @return newly created server
+    */
+   ServerInfo createAndStartServer(Server server);
 
    /**
     * Image a drive from another drive. The actual imaging process is asynchronous, with progress

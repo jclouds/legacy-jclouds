@@ -19,32 +19,35 @@
 
 package org.jclouds.cloudsigma.functions;
 
-import static org.jclouds.util.Utils.renameKey;
-
-import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.elasticstack.domain.DriveData;
+import org.jclouds.elasticstack.domain.ServerInfo;
+import org.jclouds.http.HttpResponse;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class DriveDataToMap implements Function<DriveData, Map<String, String>> {
-   private final org.jclouds.elasticstack.functions.DriveDataToMap baseDriveToMap;
+public class KeyValuesDelimitedByBlankLinesToServerInfo implements Function<HttpResponse, ServerInfo> {
+   private final ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet setParser;
 
    @Inject
-   public DriveDataToMap(org.jclouds.elasticstack.functions.DriveDataToMap baseDriveToMap) {
-      this.baseDriveToMap = baseDriveToMap;
+   public KeyValuesDelimitedByBlankLinesToServerInfo(ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet setParser) {
+      this.setParser = setParser;
    }
 
    @Override
-   public Map<String, String> apply(DriveData from) {
-      return renameKey(baseDriveToMap.apply(from), "tags", "use");
+   public ServerInfo apply(HttpResponse response) {
+      Set<ServerInfo> drives = setParser.apply(response);
+      if (drives.size() == 0)
+         return null;
+      return Iterables.get(drives, 0);
    }
 }

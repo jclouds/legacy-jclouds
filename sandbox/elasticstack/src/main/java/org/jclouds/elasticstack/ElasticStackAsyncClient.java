@@ -26,10 +26,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.elasticstack.binders.BindServerToPlainTextString;
 import org.jclouds.elasticstack.domain.ImageConversionType;
+import org.jclouds.elasticstack.domain.Server;
+import org.jclouds.elasticstack.domain.ServerInfo;
+import org.jclouds.elasticstack.functions.KeyValuesDelimitedByBlankLinesToServerInfo;
 import org.jclouds.elasticstack.functions.ReturnPayload;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.io.Payload;
+import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
@@ -49,6 +54,16 @@ import com.google.common.util.concurrent.ListenableFuture;
 @RequestFilters(BasicAuthentication.class)
 @Consumes(MediaType.TEXT_PLAIN)
 public interface ElasticStackAsyncClient extends CommonElasticStackAsyncClient {
+
+   /**
+    * @see ElasticStackClient#createAndStartServer
+    */
+   @POST
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
+   @Path("/servers/create")
+   ListenableFuture<? extends ServerInfo> createAndStartServer(
+         @BinderParam(BindServerToPlainTextString.class) Server createServer);
 
    /**
     * @see ElasticStackClient#imageDrive(String,String)

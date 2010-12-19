@@ -37,6 +37,7 @@ public class NIC {
       private Model model;
       private String vlan;
       private String mac;
+      // TODO elasticstack specific
       private Set<String> block = ImmutableSet.of();
 
       public Builder dhcp(String dhcp) {

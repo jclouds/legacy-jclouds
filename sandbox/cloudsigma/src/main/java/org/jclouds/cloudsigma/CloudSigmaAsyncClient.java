@@ -28,19 +28,28 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
+import org.jclouds.cloudsigma.binders.BindCloneDriveOptionsToPlainTextString;
 import org.jclouds.cloudsigma.domain.DriveInfo;
 import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
+import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToServerInfo;
 import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
+import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet;
+import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.elasticstack.CommonElasticStackAsyncClient;
 import org.jclouds.elasticstack.ElasticStackClient;
 import org.jclouds.elasticstack.binders.BindDriveDataToPlainTextString;
 import org.jclouds.elasticstack.binders.BindDriveToPlainTextString;
+import org.jclouds.elasticstack.binders.BindServerToPlainTextString;
 import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.DriveData;
+import org.jclouds.elasticstack.domain.Server;
+import org.jclouds.elasticstack.domain.ServerInfo;
 import org.jclouds.elasticstack.functions.SplitNewlines;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.MapBinder;
+import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
@@ -84,7 +93,17 @@ public interface CloudSigmaAsyncClient extends CommonElasticStackAsyncClient {
    ListenableFuture<Set<String>> listStandardImages();
 
    /**
-    * @see ElasticStackClient#listDriveInfo()
+    * @see CloudSigmaClient#cloneDrive
+    */
+   @POST
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
+   @Path("/drives/{uuid}/clone")
+   @MapBinder(BindCloneDriveOptionsToPlainTextString.class)
+   ListenableFuture<? extends DriveInfo> cloneDrive(@PathParam("uuid") String sourceUuid,
+         @MapPayloadParam("name") String newName, CloneDriveOptions... options);
+
+   /**
+    * {@inheritDoc}
     */
    @Override
    @GET
@@ -93,7 +112,7 @@ public interface CloudSigmaAsyncClient extends CommonElasticStackAsyncClient {
    ListenableFuture<Set<? extends org.jclouds.elasticstack.domain.DriveInfo>> listDriveInfo();
 
    /**
-    * @see ElasticStackClient#getDriveInfo
+    * {@inheritDoc}
     */
    @Override
    @GET
@@ -103,7 +122,7 @@ public interface CloudSigmaAsyncClient extends CommonElasticStackAsyncClient {
    ListenableFuture<? extends DriveInfo> getDriveInfo(@PathParam("uuid") String uuid);
 
    /**
-    * @see ElasticStackClient#createDrive
+    * {@inheritDoc}
     */
    @Override
    @POST
@@ -113,12 +132,53 @@ public interface CloudSigmaAsyncClient extends CommonElasticStackAsyncClient {
    ListenableFuture<? extends DriveInfo> createDrive(@BinderParam(BindDriveToPlainTextString.class) Drive createDrive);
 
    /**
-    * @see ElasticStackClient#setDriveData
+    * {@inheritDoc}
     */
+   @Override
    @POST
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/{uuid}/set")
    ListenableFuture<? extends DriveInfo> setDriveData(@PathParam("uuid") String uuid,
          @BinderParam(BindDriveDataToPlainTextString.class) DriveData createDrive);
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   @POST
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
+   @Path("/servers/create")
+   ListenableFuture<? extends ServerInfo> createServer(
+         @BinderParam(BindServerToPlainTextString.class) Server createServer);
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   @GET
+   @Path("/servers/info")
+   @ResponseParser(ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet.class)
+   ListenableFuture<Set<? extends ServerInfo>> listServerInfo();
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   @GET
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
+   @Path("/servers/{uuid}/info")
+   ListenableFuture<? extends ServerInfo> getServerInfo(@PathParam("uuid") String uuid);
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   @POST
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
+   @Path("/servers/{uuid}/set")
+   ListenableFuture<? extends ServerInfo> setServerConfiguration(@PathParam("uuid") String uuid,
+         @BinderParam(BindServerToPlainTextString.class) Server setServer);
 }

@@ -26,8 +26,13 @@ import java.util.Set;
 
 import org.jclouds.cloudsigma.domain.DriveInfo;
 import org.jclouds.cloudsigma.domain.DriveType;
+import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.elasticstack.CommonElasticStackClientLiveTest;
+import org.jclouds.elasticstack.domain.ServerInfo;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Tests behavior of {@code CloudSigmaClient}
@@ -39,6 +44,8 @@ public class CloudSigmaClientLiveTest extends CommonElasticStackClientLiveTest<C
 
    public CloudSigmaClientLiveTest() {
       provider = "cloudsigma";
+      driveSize = 8 * 1024 * 1024 * 1024l;
+      maxDriveImageTime = 300;
    }
 
    @Test
@@ -58,6 +65,7 @@ public class CloudSigmaClientLiveTest extends CommonElasticStackClientLiveTest<C
       Set<String> drives = client.listStandardImages();
       assertNotNull(drives);
    }
+
    @Override
    protected void checkDriveMatchesGet(org.jclouds.elasticstack.domain.DriveInfo newInfo) {
       super.checkDriveMatchesGet(newInfo);
@@ -72,7 +80,17 @@ public class CloudSigmaClientLiveTest extends CommonElasticStackClientLiveTest<C
 
    @Override
    protected void prepareDrive() {
-      // TODO Auto-generated method stub
-      
+      client.destroyDrive(drive.getUuid());
+      drive = client.cloneDrive("0b060e09-d98b-44cc-95a4-7e3a22ba1b53", drive.getName(),
+            new CloneDriveOptions().size(driveSize));
+      assert driveNotClaimed.apply(drive) : client.getDriveInfo(drive.getUuid());
+      System.err.println("after prepare" + client.getDriveInfo(drive.getUuid()));
+   }
+
+   @Override
+   protected void checkTagsAndMetadata(ServerInfo server2) {
+      // bug where tags aren't updated
+      assertEquals(server2.getTags(), ImmutableSet.<String> of());
+      assertEquals(server2.getUserMetadata(), ImmutableMap.<String, String> of());
    }
 }

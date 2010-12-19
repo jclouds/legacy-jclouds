@@ -89,16 +89,6 @@ public interface CommonElasticStackAsyncClient {
    ListenableFuture<? extends ServerInfo> getServerInfo(@PathParam("uuid") String uuid);
 
    /**
-    * @see ElasticStackClient#createAndStartServer
-    */
-   @POST
-   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
-   @Path("/servers/create")
-   ListenableFuture<? extends ServerInfo> createAndStartServer(
-         @BinderParam(BindServerToPlainTextString.class) Server createServer);
-
-   /**
     * @see ElasticStackClient#createServer
     */
    @POST
@@ -109,7 +99,7 @@ public interface CommonElasticStackAsyncClient {
          @BinderParam(BindServerToPlainTextString.class) Server createServer);
 
    /**
-    * @see ElasticStackClient#setServer
+    * @see ElasticStackClient#setServerConfiguration
     */
    @POST
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)

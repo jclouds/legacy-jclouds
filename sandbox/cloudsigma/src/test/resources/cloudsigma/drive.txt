@@ -1,5 +1,5 @@
 status active
-use networking,security,gateway
+use networking security gateway
 name Ubuntu 10.10 Server Edition Linux 64bit Preinstalled System
 bits 64
 url http://www.ubuntu.com

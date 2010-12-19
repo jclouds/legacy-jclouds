@@ -69,14 +69,6 @@ public interface CommonElasticStackClient {
    ServerInfo createServer(Server server);
 
    /**
-    * create and start a new server
-    * 
-    * @param server
-    * @return newly created server
-    */
-   ServerInfo createAndStartServer(Server server);
-
-   /**
     * set server configuration
     * 
     * @param uuid

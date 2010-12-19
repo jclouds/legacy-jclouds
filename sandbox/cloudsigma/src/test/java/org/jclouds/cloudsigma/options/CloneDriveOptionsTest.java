@@ -17,34 +17,43 @@
  * ====================================================================
  */
 
-package org.jclouds.cloudsigma.functions;
+package org.jclouds.cloudsigma.options;
 
+import static org.jclouds.cloudsigma.options.CloneDriveOptions.Builder.size;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 
-import org.jclouds.http.HttpResponse;
-import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;
 
-import com.google.inject.Guice;
-
 /**
+ * Tests possible uses of CloneDriveOptions and CloneDriveOptions.Builder.*
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "unit" })
-public class KeyValuesDelimitedByBlankLinesToDriveInfoTest {
+@Test(groups = "unit")
+public class CloneDriveOptionsTest {
 
-   private static final KeyValuesDelimitedByBlankLinesToDriveInfo FN = Guice.createInjector().getInstance(
-         KeyValuesDelimitedByBlankLinesToDriveInfo.class);
-
-   public void testNone() {
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newStringPayload(""))), null);
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newStringPayload("\n\n"))), null);
-      assertEquals(FN.apply(new HttpResponse(200, "", null)), null);
+   @Test
+   public void testNullSize() {
+      CloneDriveOptions options = new CloneDriveOptions();
+      assertNull(options.getOptions().get("size"));
    }
 
-   public void testOne() {
-      assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newInputStreamPayload(MapToDriveInfoTest.class
-            .getResourceAsStream("/cloudsigma/drive.txt")))), MapToDriveInfoTest.ONE);
+   @Test
+   public void testSize() {
+      CloneDriveOptions options = new CloneDriveOptions().size(1024);
+      assertEquals(options.getOptions().get("size"), "1024");
    }
+
+   @Test
+   public void testSizeStatic() {
+      CloneDriveOptions options = size(1024);
+      assertEquals(options.getOptions().get("size"), "1024");
+   }
+
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testSizeNegative() {
+      size(-1);
+   }
+
 }

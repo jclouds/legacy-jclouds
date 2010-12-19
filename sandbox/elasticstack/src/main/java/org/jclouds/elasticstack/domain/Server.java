@@ -46,7 +46,7 @@ public class Server extends Item {
       protected Set<String> bootDeviceIds = ImmutableSet.of();
       protected List<NIC> nics = ImmutableList.of();
       protected VNC vnc;
-      // TODO undocumented
+      // TODO cloudsigma specific
       protected String description;
 
       public Builder cpu(int cpu) {

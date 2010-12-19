@@ -26,11 +26,13 @@ import org.jclouds.cloudsigma.CloudSigmaAsyncClient;
 import org.jclouds.cloudsigma.CloudSigmaClient;
 import org.jclouds.cloudsigma.functions.CreateDriveRequestToMap;
 import org.jclouds.cloudsigma.functions.DriveDataToMap;
+import org.jclouds.cloudsigma.functions.ServerToMap;
 import org.jclouds.elasticstack.domain.Device;
 import org.jclouds.elasticstack.domain.Drive;
 import org.jclouds.elasticstack.domain.DriveData;
 import org.jclouds.elasticstack.domain.DriveMetrics;
 import org.jclouds.elasticstack.domain.NIC;
+import org.jclouds.elasticstack.domain.Server;
 import org.jclouds.elasticstack.domain.ServerMetrics;
 import org.jclouds.elasticstack.functions.MapToDevices;
 import org.jclouds.elasticstack.functions.MapToDevices.DeviceToId;
@@ -86,6 +88,8 @@ public class CloudSigmaRestClientModule extends RestClientModule<CloudSigmaClien
       }).to(MapToServerMetrics.class);
       bind(new TypeLiteral<Function<Device, String>>() {
       }).to(DeviceToId.class);
+      bind(new TypeLiteral<Function<Server, Map<String, String>>>() {
+      }).to(ServerToMap.class);
    }
 
    @Override

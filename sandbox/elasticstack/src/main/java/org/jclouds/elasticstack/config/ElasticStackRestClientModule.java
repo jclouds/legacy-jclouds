@@ -83,8 +83,6 @@ public class ElasticStackRestClientModule extends RestClientModule<ElasticStackC
       }).to(DeviceToId.class);
       bind(new TypeLiteral<Function<Server, Map<String, String>>>() {
       }).to(ServerToMap.class);
-      bind(new TypeLiteral<Function<Server, Map<String, String>>>() {
-      }).to(ServerToMap.class);
    }
 
    @Override
