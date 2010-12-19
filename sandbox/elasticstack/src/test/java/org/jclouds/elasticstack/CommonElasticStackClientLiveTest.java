@@ -26,6 +26,7 @@ import static org.testng.Assert.assertNotNull;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 import org.jclouds.Constants;
 import org.jclouds.elasticstack.domain.ClaimType;
@@ -39,17 +40,19 @@ import org.jclouds.elasticstack.domain.NIC;
 import org.jclouds.elasticstack.domain.Server;
 import org.jclouds.elasticstack.domain.ServerInfo;
 import org.jclouds.elasticstack.domain.ServerStatus;
-import org.jclouds.elasticstack.domain.VNC;
 import org.jclouds.elasticstack.predicates.DriveClaimed;
+import org.jclouds.elasticstack.util.Servers;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.net.IPSocket;
+import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.AfterGroups;
-import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -68,6 +71,7 @@ public abstract class CommonElasticStackClientLiveTest<S extends CommonElasticSt
    protected static final String VNC_PASSWORD = "XXXXXXXX";
    protected S client;
    protected RestContext<S, A> context;
+   protected Predicate<IPSocket> socketTester;
 
    protected String provider = "elasticstack";
    protected String identity;
@@ -105,14 +109,9 @@ public abstract class CommonElasticStackClientLiveTest<S extends CommonElasticSt
             overrides);
 
       client = context.getApi();
-      driveNotClaimed = new RetryablePredicate<DriveInfo>(Predicates.not(new DriveClaimed(client)), 30, 1,
+      driveNotClaimed = new RetryablePredicate<DriveInfo>(Predicates.not(new DriveClaimed(client)), 120, 1,
             TimeUnit.SECONDS);
-   }
-
-   @AfterGroups(groups = "live")
-   void tearDown() {
-      if (context != null)
-         context.close();
+      socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 120, 1, TimeUnit.SECONDS);
    }
 
    @Test
@@ -211,13 +210,12 @@ public abstract class CommonElasticStackClientLiveTest<S extends CommonElasticSt
 
    @Test(dependsOnMethods = "testSetDriveData")
    public void testCreateAndStartServer() throws Exception {
+      Logger.getAnonymousLogger().info("preparing drive");
       prepareDrive();
-      Server serverRequest = new Server.Builder().name(prefix).cpu(1000).mem(512).persistent(true)
-            .devices(ImmutableMap.of("ide:0:0", new IDEDevice.Builder(0, 0).uuid(drive.getUuid()).build()))
-            .bootDeviceIds(ImmutableSet.of("ide:0:0")).nics(ImmutableSet.of(new NIC.Builder().model(Model.E1000).
 
-            build())).vnc(new VNC(null, VNC_PASSWORD, false)).build();
+      Server serverRequest = Servers.small(prefix, drive.getUuid(), VNC_PASSWORD).build();
 
+      Logger.getAnonymousLogger().info("starting server");
       server = client.createAndStartServer(serverRequest);
       checkCreatedServer();
 
@@ -240,6 +238,7 @@ public abstract class CommonElasticStackClientLiveTest<S extends CommonElasticSt
             ImmutableMap.of("ide:0:0", new IDEDevice.Builder(0, 0).uuid(drive.getUuid()).build()));
       assertEquals(server.getBootDeviceIds(), ImmutableSet.of("ide:0:0"));
       assertEquals(server.getNics(), ImmutableSet.of(new NIC.Builder()
+            .dhcp(server.getVnc().getIp())
             .model(Model.E1000)
             .block(
                   ImmutableList.of("tcp/43594", "tcp/5902", "udp/5060", "tcp/5900", "tcp/5901", "tcp/21", "tcp/22",
@@ -247,25 +246,15 @@ public abstract class CommonElasticStackClientLiveTest<S extends CommonElasticSt
       assertEquals(server.getStatus(), ServerStatus.ACTIVE);
    }
 
-   // TODO
-   // @Test(dependsOnMethods = "testCreateAndStartServer")
-   // public void testSetServerConfiguration() throws Exception {
-   //
-   // ServerInfo server2 = client.setServerConfiguration(server.getUuid(), new
-   // Server.Builder().name("rediculous")
-   // .tags(ImmutableSet.of("networking", "security",
-   // "gateway")).userMetadata(ImmutableMap.of("foo", "bar"))
-   // .build());
-   //
-   // assertNotNull(server2.getUuid(), server.getUuid());
-   // assertEquals(server2.getName(), "rediculous");
-   // assertEquals(server2.getTags(), ImmutableSet.of("networking", "security", "gateway"));
-   // assertEquals(server2.getUserMetadata(), ImmutableMap.of("foo", "bar"));
-   // server = server2;
-   // }
-   // @Test(dependsOnMethods = "testSetServerConfiguration")
-
    @Test(dependsOnMethods = "testCreateAndStartServer")
+   public void testConnectivity() throws Exception {
+      Logger.getAnonymousLogger().info("awaiting vnc");
+      assert socketTester.apply(new IPSocket(server.getVnc().getIp(), 5900)) : server;
+      Logger.getAnonymousLogger().info("awaiting ssh");
+      assert socketTester.apply(new IPSocket(server.getNics().get(0).getDhcp(), 22)) : server;
+   }
+
+   @Test(dependsOnMethods = "testConnectivity")
    public void testLifeCycle() throws Exception {
       client.stopServer(server.getUuid());
       assertEquals(client.getServerInfo(server.getUuid()).getStatus(), ServerStatus.STOPPED);
@@ -276,12 +265,32 @@ public abstract class CommonElasticStackClientLiveTest<S extends CommonElasticSt
       client.resetServer(server.getUuid());
       assertEquals(client.getServerInfo(server.getUuid()).getStatus(), ServerStatus.ACTIVE);
 
-      // for some reason shutdown doesn't immediately occur
       client.shutdownServer(server.getUuid());
-      assertEquals(client.getServerInfo(server.getUuid()).getStatus(), ServerStatus.ACTIVE);
+      // behavior on shutdown depends on how your server OS is set up to respond to an ACPI power
+      // button signal
+      assert (client.getServerInfo(server.getUuid()).getStatus() == ServerStatus.ACTIVE || client.getServerInfo(
+            server.getUuid()).getStatus() == ServerStatus.STOPPED);
    }
 
    @Test(dependsOnMethods = "testLifeCycle")
+   public void testSetServerConfiguration() throws Exception {
+      client.stopServer(server.getUuid());
+      assertEquals(client.getServerInfo(server.getUuid()).getStatus(), ServerStatus.STOPPED);
+
+      ServerInfo server2 = client.setServerConfiguration(
+            server.getUuid(),
+            Server.Builder.fromServer(server).name("rediculous")
+                  .tags(ImmutableSet.of("networking", "security", "gateway"))
+                  .userMetadata(ImmutableMap.of("foo", "bar")).build());
+
+      assertNotNull(server2.getUuid(), server.getUuid());
+      assertEquals(server2.getName(), "rediculous");
+      assertEquals(server2.getTags(), ImmutableSet.of("networking", "security", "gateway"));
+      assertEquals(server2.getUserMetadata(), ImmutableMap.of("foo", "bar"));
+      server = server2;
+   }
+
+   @Test(dependsOnMethods = "testSetServerConfiguration")
    public void testDestroyServer() throws Exception {
       client.destroyServer(server.getUuid());
       assertEquals(client.getServerInfo(server.getUuid()), null);
@@ -293,8 +302,8 @@ public abstract class CommonElasticStackClientLiveTest<S extends CommonElasticSt
       assertEquals(client.getDriveInfo(drive.getUuid()), null);
    }
 
-   @AfterTest
-   public void cleanUp() {
+   @AfterGroups(groups = "live")
+   protected void tearDown() {
       try {
          client.destroyServer(server.getUuid());
       } catch (Exception e) {
@@ -305,5 +314,7 @@ public abstract class CommonElasticStackClientLiveTest<S extends CommonElasticSt
       } catch (Exception e) {
 
       }
+      if (context != null)
+         context.close();
    }
 }

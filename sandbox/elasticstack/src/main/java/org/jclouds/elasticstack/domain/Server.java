@@ -130,6 +130,13 @@ public class Server extends Item {
          return new Server(uuid, name, cpu, smp, mem, persistent, devices, bootDeviceIds, tags, userMetadata, nics,
                vnc, description);
       }
+
+      public static Builder fromServer(Server in) {
+         return new Builder().uuid(in.getUuid()).name(in.getName()).cpu(in.getCpu()).mem(in.getMem())
+               .persistent(in.isPersistent()).description(in.getDescription()).devices(in.getDevices())
+               .bootDeviceIds(in.getBootDeviceIds()).tags(in.getTags()).userMetadata(in.getUserMetadata())
+               .nics(in.getNics()).vnc(in.getVnc());
+      }
    }
 
    protected final int cpu;

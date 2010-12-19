@@ -119,6 +119,8 @@ public interface CommonElasticStackClient {
     * <p/>
     * Sends the server an ACPI power-down event. Server reverts to a stopped status if it is
     * persistent and is automatically destroyed otherwise.
+    * <h4>note</h4> behaviour on shutdown depends on how your server OS is set up to respond to an
+    * ACPI power button signal.
     * 
     * @param uuid
     *           what to shutdown

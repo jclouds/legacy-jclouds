@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.jclouds.elasticstack.domain.CreateDriveRequest;
 import org.jclouds.elasticstack.domain.DriveInfo;
+import org.jclouds.elasticstack.domain.ImageConversionType;
 import org.jclouds.io.Payloads;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
@@ -68,7 +69,7 @@ public class ElasticStackClientLiveTest extends
    @Override
    protected void prepareDrive() {
       System.err.println("before prepare" + client.getDriveInfo(drive.getUuid()));
-      client.imageDrive("e6111e4c-67af-4438-b1bc-189747d5a8e5", drive.getUuid());
+      client.imageDrive("e6111e4c-67af-4438-b1bc-189747d5a8e5", drive.getUuid(), ImageConversionType.GUNZIP);
       assert driveNotClaimed.apply(drive) : client.getDriveInfo(drive.getUuid());
       System.err.println("after prepare" + client.getDriveInfo(drive.getUuid()));
    }
