@@ -27,7 +27,6 @@ import java.util.Set;
 
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.domain.Hardware;
@@ -49,20 +48,30 @@ import com.google.common.base.Supplier;
 import com.google.inject.Provides;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
+import com.google.inject.util.Types;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class StandaloneComputeServiceContextModule<N, H, I, L> extends BaseComputeServiceContextModule {
+public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseComputeServiceContextModule {
 
+   private Class<A> asyncClientType;
+   private Class<S> syncClientType;
+
+   public ComputeServiceAdapterContextModule(Class<S> syncClientType, Class<A> asyncClientType) {
+      this.syncClientType = syncClientType;
+      this.asyncClientType = asyncClientType;
+   }
+
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
    protected void configure() {
       super.configure();
       bindDefaultLocation();
       bind(new TypeLiteral<ComputeServiceContext>() {
-      }).to(new TypeLiteral<ComputeServiceContextImpl<ComputeService, ComputeService>>() {
-      }).in(Scopes.SINGLETON);
+      }).to((TypeLiteral) TypeLiteral.get(Types.newParameterizedType(ComputeServiceContextImpl.class, syncClientType,
+            asyncClientType))).in(Scopes.SINGLETON);
    }
 
    public class TransformingSetSupplier<F, T> implements Supplier<Set<? extends T>> {
@@ -84,7 +93,7 @@ public class StandaloneComputeServiceContextModule<N, H, I, L> extends BaseCompu
    @Provides
    @Singleton
    protected Supplier<Set<? extends Hardware>> provideHardware(final ComputeServiceAdapter<N, H, I, L> adapter,
-            Function<H, Hardware> transformer) {
+         Function<H, Hardware> transformer) {
       return new TransformingSetSupplier<H, Hardware>(new Supplier<Iterable<H>>() {
 
          @Override
@@ -98,7 +107,7 @@ public class StandaloneComputeServiceContextModule<N, H, I, L> extends BaseCompu
    @Provides
    @Singleton
    protected Supplier<Set<? extends Image>> provideImages(final ComputeServiceAdapter<N, H, I, L> adapter,
-            Function<I, Image> transformer) {
+         Function<I, Image> transformer) {
       return new TransformingSetSupplier<I, Image>(new Supplier<Iterable<I>>() {
 
          @Override
@@ -117,7 +126,7 @@ public class StandaloneComputeServiceContextModule<N, H, I, L> extends BaseCompu
    @Provides
    @Singleton
    protected Supplier<Set<? extends Location>> provideLocations(final ComputeServiceAdapter<N, H, I, L> adapter,
-            Function<L, Location> transformer) {
+         Function<L, Location> transformer) {
       return new TransformingSetSupplier<L, Location>(new Supplier<Iterable<L>>() {
 
          @Override
@@ -169,19 +178,4 @@ public class StandaloneComputeServiceContextModule<N, H, I, L> extends BaseCompu
    protected SuspendNodeStrategy defineStopNodeStrategy(AdaptingComputeServiceStrategies<N, H, I, L> in) {
       return in;
    }
-
-   // enum singleton pattern
-   public static enum IdentityFunction implements Function<Object, Object> {
-      INSTANCE;
-
-      public Object apply(Object o) {
-         return o;
-      }
-
-      @Override
-      public String toString() {
-         return "identity";
-      }
-   }
-
 }

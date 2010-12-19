@@ -36,7 +36,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceAdapter;
-import org.jclouds.compute.config.StandaloneComputeServiceContextModule;
+import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -69,8 +69,14 @@ import com.vmware.vim25.mo.VirtualMachine;
  * 
  * @author Adrian Cole
  */
-public class ViComputeServiceContextModule extends
-      StandaloneComputeServiceContextModule<VirtualMachine, VirtualMachine, Image, Datacenter> {
+public class ViComputeServiceContextModule
+      extends
+      ComputeServiceAdapterContextModule<ServiceInstance, ServiceInstance, VirtualMachine, VirtualMachine, Image, Datacenter> {
+  
+   public ViComputeServiceContextModule() {
+      super(ServiceInstance.class, ServiceInstance.class);
+   }
+
    @Override
    protected void configure() {
       super.configure();
@@ -98,9 +104,10 @@ public class ViComputeServiceContextModule extends
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      //String domainDir = injector.getInstance(Key.get(String.class, Names.named(PROPERTY_LIBVIRT_DOMAIN_DIR)));
-	   String domainDir = "";
-	   String hardwareId = searchForHardwareIdInDomainDir(domainDir);
+      // String domainDir = injector.getInstance(Key.get(String.class,
+      // Names.named(PROPERTY_LIBVIRT_DOMAIN_DIR)));
+      String domainDir = "";
+      String hardwareId = searchForHardwareIdInDomainDir(domainDir);
       String image = searchForImageIdInDomainDir(domainDir);
       return template.hardwareId(hardwareId).imageId(image);
    }

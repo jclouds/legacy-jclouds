@@ -32,12 +32,13 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class JCloudsNativeStandaloneComputeServiceContextModule extends
-      StandaloneComputeServiceContextModule<NodeMetadata, Hardware, Image, Location> {
-   private final Class<? extends ComputeServiceAdapter<NodeMetadata, Hardware, Image, Location>> adapter;
+public class JCloudsNativeComputeServiceAdapterContextModule<S, A> extends
+      ComputeServiceAdapterContextModule<S, A, NodeMetadata, Hardware, Image, Location> {
+   protected final Class<? extends ComputeServiceAdapter<NodeMetadata, Hardware, Image, Location>> adapter;
 
-   public JCloudsNativeStandaloneComputeServiceContextModule(
+   public JCloudsNativeComputeServiceAdapterContextModule(Class<S> syncClientType, Class<A> asyncClientType,
          Class<? extends ComputeServiceAdapter<NodeMetadata, Hardware, Image, Location>> adapter) {
+      super(syncClientType, asyncClientType);
       this.adapter = adapter;
    }
 
@@ -52,14 +53,28 @@ public class JCloudsNativeStandaloneComputeServiceContextModule extends
       }).to(adapter);
       bind(IdentityFunction.class).toInstance(IdentityFunction.INSTANCE);
       bind(new TypeLiteral<Function<NodeMetadata, NodeMetadata>>() {
-      }).to((Class) StandaloneComputeServiceContextModule.IdentityFunction.class);
+      }).to((Class) IdentityFunction.class);
       bind(new TypeLiteral<Function<Image, Image>>() {
-      }).to((Class) StandaloneComputeServiceContextModule.IdentityFunction.class);
+      }).to((Class) IdentityFunction.class);
       bind(new TypeLiteral<Function<Hardware, Hardware>>() {
-      }).to((Class) StandaloneComputeServiceContextModule.IdentityFunction.class);
+      }).to((Class) IdentityFunction.class);
       bind(new TypeLiteral<Function<Location, Location>>() {
-      }).to((Class) StandaloneComputeServiceContextModule.IdentityFunction.class);
+      }).to((Class) IdentityFunction.class);
       super.configure();
+   }
+
+   // enum singleton pattern
+   public static enum IdentityFunction implements Function<Object, Object> {
+      INSTANCE;
+
+      public Object apply(Object o) {
+         return o;
+      }
+
+      @Override
+      public String toString() {
+         return "identity";
+      }
    }
 
 }

@@ -34,7 +34,9 @@
 
 (defn compute-module
   []
-  (org.jclouds.compute.config.JCloudsNativeStandaloneComputeServiceContextModule 
+  (org.jclouds.compute.config.JCloudsNativeComputeServiceAdapterContextModule 
+    (class ComputeService)
+    (class ComputeService)
     (defrecord ClojureComputeServiceAdapter []
           org.jclouds.compute.JCloudsNativeComputeServiceAdapter
           (^NodeMetadata runNodeWithTagAndNameAndStoreCredentials [this ^String tag ^String name ^Template template ^Map credentialStore]

@@ -25,7 +25,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.Credentials;
 
 /**
- * A means of specifying the interface between the {@link ComputeServices} and a concrete compute
+ * A means of specifying the interface between the {@link ComputeService ComputeServices} and a concrete compute
  * cloud implementation, jclouds or otherwise.
  * 
  * @author Adrian Cole
