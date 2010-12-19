@@ -23,12 +23,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.jclouds.Constants;
+import org.jclouds.domain.Credentials;
 import org.jclouds.elasticstack.domain.ClaimType;
 import org.jclouds.elasticstack.domain.CreateDriveRequest;
 import org.jclouds.elasticstack.domain.DriveData;
@@ -47,6 +49,9 @@ import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
+import org.jclouds.ssh.ExecResponse;
+import org.jclouds.ssh.SshClient;
+import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -56,6 +61,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
+import com.google.inject.Guice;
 import com.google.inject.Module;
 
 /**
@@ -251,6 +257,7 @@ public abstract class CommonElasticStackClientLiveTest<S extends CommonElasticSt
       assert socketTester.apply(new IPSocket(server.getVnc().getIp(), 5900)) : server;
       Logger.getAnonymousLogger().info("awaiting ssh");
       assert socketTester.apply(new IPSocket(server.getNics().get(0).getDhcp(), 22)) : server;
+      doConnectViaSsh(server, getSshCredentials(server));
    }
 
    @Test(dependsOnMethods = "testConnectivity")
@@ -304,6 +311,21 @@ public abstract class CommonElasticStackClientLiveTest<S extends CommonElasticSt
       client.destroyDrive(drive.getUuid());
       assertEquals(client.getDriveInfo(drive.getUuid()), null);
    }
+
+   protected void doConnectViaSsh(Server server, Credentials creds) throws IOException {
+      SshClient ssh = Guice.createInjector(new JschSshClientModule()).getInstance(SshClient.Factory.class)
+            .create(new IPSocket(server.getVnc().getIp(), 22), creds);
+      try {
+         ssh.connect();
+         ExecResponse hello = ssh.exec("echo hello");
+         assertEquals(hello.getOutput().trim(), "hello");
+      } finally {
+         if (ssh != null)
+            ssh.disconnect();
+      }
+   }
+
+   protected abstract Credentials getSshCredentials(Server server);
 
    @AfterGroups(groups = "live")
    protected void tearDown() {

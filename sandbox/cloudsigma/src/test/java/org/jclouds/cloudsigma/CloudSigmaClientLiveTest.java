@@ -27,7 +27,9 @@ import java.util.Set;
 import org.jclouds.cloudsigma.domain.DriveInfo;
 import org.jclouds.cloudsigma.domain.DriveType;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
+import org.jclouds.domain.Credentials;
 import org.jclouds.elasticstack.CommonElasticStackClientLiveTest;
+import org.jclouds.elasticstack.domain.Server;
 import org.jclouds.elasticstack.domain.ServerInfo;
 import org.testng.annotations.Test;
 
@@ -76,6 +78,11 @@ public class CloudSigmaClientLiveTest extends CommonElasticStackClientLiveTest<C
    protected void checkCreatedDrive() {
       super.checkCreatedDrive();
       assertEquals(DriveInfo.class.cast(drive).getType(), null);
+   }
+
+   @Override
+   protected Credentials getSshCredentials(Server server) {
+      return new Credentials("cloudsigma", "cloudsigma");
    }
 
    @Override

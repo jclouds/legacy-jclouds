@@ -23,9 +23,11 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.elasticstack.domain.CreateDriveRequest;
 import org.jclouds.elasticstack.domain.DriveInfo;
 import org.jclouds.elasticstack.domain.ImageConversionType;
+import org.jclouds.elasticstack.domain.Server;
 import org.jclouds.io.Payloads;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
@@ -64,6 +66,12 @@ public class ElasticStackClientLiveTest extends
          client.destroyDrive(drive2.getUuid());
          client.destroyDrive(drive3.getUuid());
       }
+   }
+
+   @Override
+   protected Credentials getSshCredentials(Server server) {
+      // according to paul from elastichosts, this account should be present
+      return new Credentials("toor", server.getVnc().getPassword());
    }
 
    @Override
