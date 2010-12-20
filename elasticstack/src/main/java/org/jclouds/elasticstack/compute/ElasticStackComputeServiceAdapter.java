@@ -3,25 +3,25 @@ package org.jclouds.elasticstack.compute;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Predicates.notNull;
 import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.concurrent.FutureIterables.transformParallel;
 import static org.jclouds.elasticstack.util.Servers.small;
 
 import java.net.URI;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.Constants;
 import org.jclouds.compute.ComputeService;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.ImageBuilder;
-import org.jclouds.compute.domain.OperatingSystemBuilder;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.Volume;
@@ -31,6 +31,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.elasticstack.ElasticStackAsyncClient;
 import org.jclouds.elasticstack.ElasticStackClient;
 import org.jclouds.elasticstack.domain.Device;
 import org.jclouds.elasticstack.domain.Drive;
@@ -45,9 +46,7 @@ import org.jclouds.rest.annotations.Provider;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
@@ -57,31 +56,37 @@ import com.google.common.collect.ImmutableSet.Builder;
  * 
  */
 @Singleton
-public class ElasticStackComputeServiceAdapter implements ComputeServiceAdapter<ServerInfo, Hardware, Image, Location> {
+public class ElasticStackComputeServiceAdapter implements
+      ComputeServiceAdapter<ServerInfo, Hardware, DriveInfo, Location> {
    private final ElasticStackClient client;
+   private final ElasticStackAsyncClient aclient;
    private final Predicate<DriveInfo> driveNotClaimed;
-   private final Supplier<Location> locationSupplier;
-   private final List<WellKnownImage> preinstalledImages;
+   private final Map<String, WellKnownImage> preinstalledImages;
+   private final Map<String, DriveInfo> cache;
    private final String providerName;
    private final URI providerURI;
    private final String defaultVncPassword;
+   private final ExecutorService executor;
 
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
    @Inject
-   public ElasticStackComputeServiceAdapter(ElasticStackClient client, Predicate<DriveInfo> driveNotClaimed,
-         Supplier<Location> locationSupplier, @Provider String providerName, @Provider URI providerURI,
-         List<WellKnownImage> preinstalledImages,
-         @Named(ElasticStackConstants.PROPERTY_VNC_PASSWORD) String defaultVncPassword) {
+   public ElasticStackComputeServiceAdapter(ElasticStackClient client, ElasticStackAsyncClient aclient,
+         Predicate<DriveInfo> driveNotClaimed, @Provider String providerName, @Provider URI providerURI,
+         Map<String, WellKnownImage> preinstalledImages, Map<String, DriveInfo> cache,
+         @Named(ElasticStackConstants.PROPERTY_VNC_PASSWORD) String defaultVncPassword,
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor) {
       this.client = checkNotNull(client, "client");
+      this.aclient = checkNotNull(aclient, "aclient");
       this.driveNotClaimed = checkNotNull(driveNotClaimed, "driveNotClaimed");
-      this.locationSupplier = checkNotNull(locationSupplier, "locationSupplier");
       this.providerName = checkNotNull(providerName, "providerName");
       this.providerURI = checkNotNull(providerURI, "providerURI");
       this.preinstalledImages = checkNotNull(preinstalledImages, "preinstalledImages");
+      this.cache = checkNotNull(cache, "cache");
       this.defaultVncPassword = checkNotNull(defaultVncPassword, "defaultVncPassword");
+      this.executor = checkNotNull(executor, "executor");
    }
 
    @Override
@@ -125,6 +130,11 @@ public class ElasticStackComputeServiceAdapter implements ComputeServiceAdapter<
                   return (toParse != null && new Float(toParse) <= size);
                }
 
+               @Override
+               public String toString() {
+                  return "sizeLessThanOrEqual(" + size + ")";
+               }
+
             }).ids(id).ram(ram).processors(ImmutableList.of(new Processor(1, cpu)))
                   .volumes(ImmutableList.<Volume> of(new VolumeImpl(size, true, true))).build());
          }
@@ -135,37 +145,20 @@ public class ElasticStackComputeServiceAdapter implements ComputeServiceAdapter<
     * look up the current standard images and do not error out, if they are not found.
     */
    @Override
-   public Iterable<Image> listImages() {
-      return filter(transform(preinstalledImages, new Function<WellKnownImage, Image>() {
+   public Iterable<DriveInfo> listImages() {
+      Iterable<DriveInfo> drives = transformParallel(preinstalledImages.keySet(),
+            new Function<String, Future<DriveInfo>>() {
 
-         @Override
-         public Image apply(WellKnownImage input) {
-            DriveInfo drive = null;
-            try {
-               drive = client.getDriveInfo(input.getUuid());
-            } catch (Exception e) {
-               logger.warn(e, "could not find image: %s", input);
-            }
-            if (drive == null) {
-               logger.warn("could not find image: %s", input);
-               return null;
-            }
-            return new ImageBuilder()
-                  .ids(drive.getUuid())
-                  .userMetadata(
-                        ImmutableMap.<String, String> builder().putAll(drive.getUserMetadata())
-                              .put("size", input.getSize() + "").build())
-                  .defaultCredentials(new Credentials("toor", null))
-                  .location(locationSupplier.get())
-                  .name(input.getDescription())
-                  .description(drive.getName())
-                  .operatingSystem(
-                        new OperatingSystemBuilder().family(input.getOsFamily()).version(input.getOsVersion())
-                              .name(input.getDescription()).description(drive.getName()).is64Bit(true).build())
-                  .version("").build();
-         }
+               @Override
+               public Future<DriveInfo> apply(String input) {
+                  return aclient.getDriveInfo(input);
+               }
 
-      }), notNull());
+            }, executor, null, logger, "drives");
+      Iterable<DriveInfo> returnVal = filter(drives, notNull());
+      for (DriveInfo drive : returnVal)
+         cache.put(drive.getUuid(), drive);
+      return returnVal;
    }
 
    @SuppressWarnings("unchecked")

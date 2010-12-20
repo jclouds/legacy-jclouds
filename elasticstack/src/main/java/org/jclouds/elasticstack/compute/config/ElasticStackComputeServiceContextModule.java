@@ -44,6 +44,7 @@ import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata.DeviceToVolume;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata.FindImageForId;
 import org.jclouds.elasticstack.compute.functions.ServerInfoToNodeMetadata.GetImageIdFromServer;
+import org.jclouds.elasticstack.compute.functions.WellKnownImageToImage;
 import org.jclouds.elasticstack.domain.Device;
 import org.jclouds.elasticstack.domain.DriveInfo;
 import org.jclouds.elasticstack.domain.Server;
@@ -59,6 +60,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
 import com.google.common.collect.MapMaker;
+import com.google.common.collect.Maps;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
 
@@ -68,7 +70,7 @@ import com.google.inject.TypeLiteral;
  */
 public class ElasticStackComputeServiceContextModule
       extends
-      ComputeServiceAdapterContextModule<ElasticStackClient, ElasticStackAsyncClient, ServerInfo, Hardware, Image, Location> {
+      ComputeServiceAdapterContextModule<ElasticStackClient, ElasticStackAsyncClient, ServerInfo, Hardware, DriveInfo, Location> {
 
    public ElasticStackComputeServiceContextModule() {
       super(ElasticStackClient.class, ElasticStackAsyncClient.class);
@@ -78,7 +80,7 @@ public class ElasticStackComputeServiceContextModule
    @Override
    protected void configure() {
       super.configure();
-      bind(new TypeLiteral<ComputeServiceAdapter<ServerInfo, Hardware, Image, Location>>() {
+      bind(new TypeLiteral<ComputeServiceAdapter<ServerInfo, Hardware, DriveInfo, Location>>() {
       }).to(ElasticStackComputeServiceAdapter.class);
       bind(IdentityFunction.class).toInstance(IdentityFunction.INSTANCE);
       bind(new TypeLiteral<Supplier<Location>>() {
@@ -97,12 +99,14 @@ public class ElasticStackComputeServiceContextModule
       }).to(GetImageIdFromServer.class);
       bind(new TypeLiteral<Function<String, Image>>() {
       }).to(FindImageForId.class);
+      bind(new TypeLiteral<Function<DriveInfo, Image>>() {
+      }).to(WellKnownImageToImage.class);
    }
 
    @Provides
    @Singleton
    protected Map<String, DriveInfo> cache(GetDrive getDrive) {
-      return new MapMaker().expiration(30, TimeUnit.SECONDS).makeComputingMap(getDrive);
+      return new MapMaker().makeComputingMap(getDrive);
    }
 
    @Singleton
@@ -122,10 +126,19 @@ public class ElasticStackComputeServiceContextModule
 
    @Singleton
    @Provides
-   protected List<WellKnownImage> provideImages(Json json) throws IOException {
-      return json.fromJson(Utils.toStringAndClose(getClass().getResourceAsStream("/preinstalled_images.json")),
+   protected Map<String, WellKnownImage> provideImages(Json json) throws IOException {
+      List<WellKnownImage> wellKnowns = json.fromJson(
+            Utils.toStringAndClose(getClass().getResourceAsStream("/preinstalled_images.json")),
             new TypeLiteral<List<WellKnownImage>>() {
             }.getType());
+      return Maps.uniqueIndex(wellKnowns, new Function<WellKnownImage, String>() {
+
+         @Override
+         public String apply(WellKnownImage input) {
+            return input.getUuid();
+         }
+
+      });
    }
 
    @Provides

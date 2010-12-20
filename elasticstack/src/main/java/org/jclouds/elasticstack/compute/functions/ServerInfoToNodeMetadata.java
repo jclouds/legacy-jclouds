@@ -132,6 +132,13 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
       }
    }
 
+   /**
+    * When we create the boot drive of the server, by convention we set the name to the image it
+    * came from.
+    * 
+    * @author Adrian Cole
+    * 
+    */
    @Singleton
    public static class GetImageIdFromServer implements Function<Server, String> {
       private final Map<String, DriveInfo> cache;
@@ -148,7 +155,7 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
          Device bootDevice = from.getDevices().get(bootDeviceId);
          if (bootDevice != null) {
             try {
-               imageId = cache.get(bootDevice.getDriveUuid()).getUuid();
+               imageId = cache.get(bootDevice.getDriveUuid()).getName();
             } catch (NullPointerException e) {
 
             }

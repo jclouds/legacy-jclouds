@@ -81,7 +81,7 @@ public interface ElasticStackAsyncClient {
    @GET
    @Path("/servers/info")
    @ResponseParser(ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet.class)
-   ListenableFuture<Set<? extends ServerInfo>> listServerInfo();
+   ListenableFuture<Set<ServerInfo>> listServerInfo();
 
    /**
     * @see ElasticStackClient#getServerInfo
@@ -90,7 +90,7 @@ public interface ElasticStackAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
    @Path("/servers/{uuid}/info")
-   ListenableFuture<? extends ServerInfo> getServerInfo(@PathParam("uuid") String uuid);
+   ListenableFuture<ServerInfo> getServerInfo(@PathParam("uuid") String uuid);
 
    /**
     * @see ElasticStackClient#createServer
@@ -99,7 +99,7 @@ public interface ElasticStackAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
    @Path("/servers/create/stopped")
-   ListenableFuture<? extends ServerInfo> createServer(
+   ListenableFuture<ServerInfo> createServer(
          @BinderParam(BindServerToPlainTextString.class) Server createServer);
 
    /**
@@ -109,7 +109,7 @@ public interface ElasticStackAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
    @Path("/servers/{uuid}/set")
-   ListenableFuture<? extends ServerInfo> setServerConfiguration(@PathParam("uuid") String uuid,
+   ListenableFuture<ServerInfo> setServerConfiguration(@PathParam("uuid") String uuid,
          @BinderParam(BindServerToPlainTextString.class) Server setServer);
 
    /**
@@ -162,7 +162,7 @@ public interface ElasticStackAsyncClient {
    @GET
    @Path("/drives/info")
    @ResponseParser(ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet.class)
-   ListenableFuture<Set<? extends DriveInfo>> listDriveInfo();
+   ListenableFuture<Set<DriveInfo>> listDriveInfo();
 
    /**
     * @see ElasticStackClient#getDriveInfo
@@ -171,7 +171,7 @@ public interface ElasticStackAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/{uuid}/info")
-   ListenableFuture<? extends DriveInfo> getDriveInfo(@PathParam("uuid") String uuid);
+   ListenableFuture<DriveInfo> getDriveInfo(@PathParam("uuid") String uuid);
 
    /**
     * @see ElasticStackClient#createDrive
@@ -180,7 +180,7 @@ public interface ElasticStackAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/create")
-   ListenableFuture<? extends DriveInfo> createDrive(@BinderParam(BindDriveToPlainTextString.class) Drive createDrive);
+   ListenableFuture<DriveInfo> createDrive(@BinderParam(BindDriveToPlainTextString.class) Drive createDrive);
 
    /**
     * @see ElasticStackClient#setDriveData
@@ -189,7 +189,7 @@ public interface ElasticStackAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/{uuid}/set")
-   ListenableFuture<? extends DriveInfo> setDriveData(@PathParam("uuid") String uuid,
+   ListenableFuture<DriveInfo> setDriveData(@PathParam("uuid") String uuid,
          @BinderParam(BindDriveDataToPlainTextString.class) DriveData setDrive);
 
    /**
@@ -207,7 +207,7 @@ public interface ElasticStackAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
    @Path("/servers/create")
-   ListenableFuture<? extends ServerInfo> createAndStartServer(
+   ListenableFuture<ServerInfo> createAndStartServer(
          @BinderParam(BindServerToPlainTextString.class) Server createServer);
 
    /**
