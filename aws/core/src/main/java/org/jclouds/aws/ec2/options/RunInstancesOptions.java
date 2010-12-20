@@ -121,8 +121,9 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
     * Unencoded data
     */
    public RunInstancesOptions withUserData(byte[] unencodedData) {
-      checkArgument(checkNotNull(unencodedData, "unencodedData").length <= 16 * 1024,
-               "userData cannot be larger than 16kb");
+      int length = checkNotNull(unencodedData, "unencodedData").length;
+      checkArgument(length > 0, "userData cannot be empty");
+      checkArgument(length <= 16 * 1024, "userData cannot be larger than 16kb");
       formParameters.put("UserData", Base64.encodeBytes(unencodedData));
       return this;
    }
