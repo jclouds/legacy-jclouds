@@ -17,14 +17,24 @@
  * ====================================================================
  */
 
-package org.jclouds.compute;
+package org.jclouds.compute.domain.os;
 
 import org.jclouds.compute.domain.OsFamily;
 
+/**
+ * 
+ * @author Adrian Cole
+ * 
+ */
 public class OsFamilyVersion64Bit {
-   public final OsFamily family;
-   public final String version;
-   public final boolean is64Bit;
+   public OsFamily family;
+   public String version;
+   public boolean is64Bit;
+
+   // for serialization
+   OsFamilyVersion64Bit() {
+
+   }
 
    public OsFamilyVersion64Bit(OsFamily family, String version, boolean is64Bit) {
       this.family = family;

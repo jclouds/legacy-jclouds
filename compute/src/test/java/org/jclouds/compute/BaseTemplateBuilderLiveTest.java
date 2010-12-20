@@ -36,6 +36,7 @@ import org.jclouds.Constants;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;

@@ -30,9 +30,9 @@ import org.jclouds.aws.ec2.reference.EC2Constants;
 import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.Test;
 
