@@ -36,7 +36,6 @@ import com.google.common.base.Joiner;
  * Builds properties used in SimpleDB Clients
  * 
  * @author Adrian Cole
- * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 public class SimpleDBPropertiesBuilder extends PropertiesBuilder {
    @Override
@@ -47,15 +46,15 @@ public class SimpleDBPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_API_VERSION, SimpleDBAsyncClient.VERSION);
       properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(Region.US_EAST_1,
                Region.US_WEST_1, Region.EU_WEST_1, Region.AP_SOUTHEAST_1));
-      properties.setProperty(PROPERTY_ENDPOINT, "http://sdb.amazonaws.com");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://sdb.amazonaws.com");
       properties.setProperty(PROPERTY_ENDPOINT + "." + Region.US_EAST_1,
-               "http://sdb.amazonaws.com");
+               "https://sdb.amazonaws.com");
       properties.setProperty(PROPERTY_ENDPOINT + "." + Region.US_WEST_1,
-               "http://sdb.us-west-1.amazonaws.com");
+               "https://sdb.us-west-1.amazonaws.com");
       properties.setProperty(PROPERTY_ENDPOINT + "." + Region.EU_WEST_1,
-               "http://sdb.eu-west-1.amazonaws.com");
+               "https://sdb.eu-west-1.amazonaws.com");
       properties.setProperty(PROPERTY_ENDPOINT + "." + Region.AP_SOUTHEAST_1,
-               "http://sdb.ap-southeast-1.amazonaws.com");
+               "https://sdb.ap-southeast-1.amazonaws.com");
       return properties;
    }
 
