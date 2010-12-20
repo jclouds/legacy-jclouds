@@ -25,7 +25,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.cloudsigma.domain.DriveInfo;
-import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToListOfMaps;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 

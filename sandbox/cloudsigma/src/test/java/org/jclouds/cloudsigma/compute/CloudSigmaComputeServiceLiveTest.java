@@ -16,35 +16,24 @@
  * limitations under the License.
  * ====================================================================
  */
+package org.jclouds.cloudsigma.compute;
 
-package org.jclouds.cloudsigma;
-
-import java.util.List;
-import java.util.Properties;
-
-import org.jclouds.cloudsigma.compute.config.CloudSigmaComputeServiceContextModule;
-import org.jclouds.cloudsigma.config.CloudSigmaRestClientModule;
-import org.jclouds.compute.ComputeServiceContextBuilder;
-
-import com.google.inject.Module;
+import org.jclouds.compute.BaseComputeServiceLiveTest;
+import org.jclouds.ssh.jsch.config.JschSshClientModule;
+import org.testng.annotations.Test;
 
 /**
- * 
  * @author Adrian Cole
  */
-public class CloudSigmaContextBuilder extends ComputeServiceContextBuilder<CloudSigmaClient, CloudSigmaAsyncClient> {
-
-   public CloudSigmaContextBuilder(Properties props) {
-      super(CloudSigmaClient.class, CloudSigmaAsyncClient.class, props);
+@Test(groups = "live")
+public class CloudSigmaComputeServiceLiveTest extends BaseComputeServiceLiveTest {
+   public CloudSigmaComputeServiceLiveTest() {
+      provider = "cloudsigma";
    }
 
    @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new CloudSigmaComputeServiceContextModule());
-   }
-
-   protected void addClientModule(List<Module> modules) {
-      modules.add(new CloudSigmaRestClientModule());
+   protected JschSshClientModule getSshModule() {
+      return new JschSshClientModule();
    }
 
 }

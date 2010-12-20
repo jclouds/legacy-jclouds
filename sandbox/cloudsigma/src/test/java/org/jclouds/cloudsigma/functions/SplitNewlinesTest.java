@@ -24,7 +24,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.cloudsigma.functions.SplitNewlines;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
 import org.testng.annotations.Test;

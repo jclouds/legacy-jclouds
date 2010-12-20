@@ -29,20 +29,20 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.cloudsigma.binders.BindCloneDriveOptionsToPlainTextString;
-import org.jclouds.cloudsigma.domain.DriveInfo;
-import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
-import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToServerInfo;
-import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
-import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet;
-import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.cloudsigma.binders.BindDriveDataToPlainTextString;
 import org.jclouds.cloudsigma.binders.BindDriveToPlainTextString;
 import org.jclouds.cloudsigma.binders.BindServerToPlainTextString;
 import org.jclouds.cloudsigma.domain.Drive;
 import org.jclouds.cloudsigma.domain.DriveData;
+import org.jclouds.cloudsigma.domain.DriveInfo;
 import org.jclouds.cloudsigma.domain.Server;
 import org.jclouds.cloudsigma.domain.ServerInfo;
+import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
+import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToServerInfo;
+import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
+import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet;
 import org.jclouds.cloudsigma.functions.SplitNewlines;
+import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -98,7 +98,7 @@ public interface CloudSigmaAsyncClient {
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/{uuid}/clone")
    @MapBinder(BindCloneDriveOptionsToPlainTextString.class)
-   ListenableFuture<? extends DriveInfo> cloneDrive(@PathParam("uuid") String sourceUuid,
+   ListenableFuture<DriveInfo> cloneDrive(@PathParam("uuid") String sourceUuid,
          @MapPayloadParam("name") String newName, CloneDriveOptions... options);
 
    /**
@@ -107,7 +107,7 @@ public interface CloudSigmaAsyncClient {
    @GET
    @Path("/drives/info")
    @ResponseParser(ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet.class)
-   ListenableFuture<Set<? extends org.jclouds.cloudsigma.domain.DriveInfo>> listDriveInfo();
+   ListenableFuture<Set<org.jclouds.cloudsigma.domain.DriveInfo>> listDriveInfo();
 
    /**
     * @see CloudSigmaClient#getDriveInfo
@@ -116,7 +116,7 @@ public interface CloudSigmaAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/{uuid}/info")
-   ListenableFuture<? extends DriveInfo> getDriveInfo(@PathParam("uuid") String uuid);
+   ListenableFuture<DriveInfo> getDriveInfo(@PathParam("uuid") String uuid);
 
    /**
     * @see CloudSigmaClient#createDrive
@@ -125,7 +125,7 @@ public interface CloudSigmaAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/create")
-   ListenableFuture<? extends DriveInfo> createDrive(@BinderParam(BindDriveToPlainTextString.class) Drive createDrive);
+   ListenableFuture<DriveInfo> createDrive(@BinderParam(BindDriveToPlainTextString.class) Drive createDrive);
 
    /**
     * @see CloudSigmaClient#setDriveData
@@ -133,7 +133,7 @@ public interface CloudSigmaAsyncClient {
    @POST
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/{uuid}/set")
-   ListenableFuture<? extends DriveInfo> setDriveData(@PathParam("uuid") String uuid,
+   ListenableFuture<DriveInfo> setDriveData(@PathParam("uuid") String uuid,
          @BinderParam(BindDriveDataToPlainTextString.class) DriveData createDrive);
 
    /**
@@ -143,7 +143,7 @@ public interface CloudSigmaAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
    @Path("/servers/create")
-   ListenableFuture<? extends ServerInfo> createServer(
+   ListenableFuture<ServerInfo> createServer(
          @BinderParam(BindServerToPlainTextString.class) Server createServer);
 
    /**
@@ -152,7 +152,7 @@ public interface CloudSigmaAsyncClient {
    @GET
    @Path("/servers/info")
    @ResponseParser(ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet.class)
-   ListenableFuture<Set<? extends ServerInfo>> listServerInfo();
+   ListenableFuture<Set<ServerInfo>> listServerInfo();
 
    /**
     * @see CloudSigmaClient#getServerInfo
@@ -161,7 +161,7 @@ public interface CloudSigmaAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
    @Path("/servers/{uuid}/info")
-   ListenableFuture<? extends ServerInfo> getServerInfo(@PathParam("uuid") String uuid);
+   ListenableFuture<ServerInfo> getServerInfo(@PathParam("uuid") String uuid);
 
    /**
     * @see CloudSigmaClient#setServerConfiguration
@@ -170,7 +170,7 @@ public interface CloudSigmaAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
    @Path("/servers/{uuid}/set")
-   ListenableFuture<? extends ServerInfo> setServerConfiguration(@PathParam("uuid") String uuid,
+   ListenableFuture<ServerInfo> setServerConfiguration(@PathParam("uuid") String uuid,
          @BinderParam(BindServerToPlainTextString.class) Server setServer);
 
    /**

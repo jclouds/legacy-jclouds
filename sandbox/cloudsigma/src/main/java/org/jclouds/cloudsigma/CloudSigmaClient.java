@@ -22,13 +22,13 @@ package org.jclouds.cloudsigma;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.jclouds.cloudsigma.domain.DriveInfo;
-import org.jclouds.cloudsigma.options.CloneDriveOptions;
-import org.jclouds.concurrent.Timeout;
 import org.jclouds.cloudsigma.domain.Drive;
 import org.jclouds.cloudsigma.domain.DriveData;
+import org.jclouds.cloudsigma.domain.DriveInfo;
 import org.jclouds.cloudsigma.domain.Server;
 import org.jclouds.cloudsigma.domain.ServerInfo;
+import org.jclouds.cloudsigma.options.CloneDriveOptions;
+import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides synchronous access to CloudSigma.

@@ -44,13 +44,13 @@ import org.jclouds.cloudsigma.domain.ServerStatus;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.cloudsigma.predicates.DriveClaimed;
 import org.jclouds.cloudsigma.util.Servers;
+import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
@@ -112,11 +112,8 @@ public class CloudSigmaClientLiveTest {
    public void setupClient() {
       setupCredentials();
       Properties overrides = setupProperties();
-      // context = new ComputeServiceContextFactory().createContext(provider,
-      // ImmutableSet.<Module> of(new Log4JLoggingModule()),
-      // overrides).getProviderSpecificContext();
-      context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-            overrides);
+      context = new ComputeServiceContextFactory().createContext(provider,
+            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
 
       client = context.getApi();
       driveNotClaimed = new RetryablePredicate<DriveInfo>(Predicates.not(new DriveClaimed(client)), maxDriveImageTime,
@@ -159,9 +156,13 @@ public class CloudSigmaClientLiveTest {
 
    @Test
    public void testGetDrive() throws Exception {
-      for (String driveUUID : client.listDrives()) {
+      for (String driveUUID : client.listStandardDrives()) {
          assert !"".equals(driveUUID);
-         assertNotNull(client.getDriveInfo(driveUUID));
+         DriveInfo drive = client.getDriveInfo(driveUUID);
+         assertNotNull(drive);
+         assert !drive.getType().equals(DriveType.UNRECOGNIZED) : drive;
+         if (drive.getType() == DriveType.DISK && drive.getDriveType().contains("preinstalled"))
+            System.out.println(drive.getName());
       }
    }
 

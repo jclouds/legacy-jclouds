@@ -30,8 +30,8 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.cloudsigma.CloudSigmaAsyncClient;
-import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.cloudsigma.functions.ListOfMapsToListOfKeyValuesDelimitedByBlankLines;
+import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.internal.GeneratedHttpRequest;

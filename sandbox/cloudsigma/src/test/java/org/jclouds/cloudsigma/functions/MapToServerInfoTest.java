@@ -34,12 +34,7 @@ import org.jclouds.cloudsigma.domain.ServerInfo;
 import org.jclouds.cloudsigma.domain.ServerMetrics;
 import org.jclouds.cloudsigma.domain.ServerStatus;
 import org.jclouds.cloudsigma.domain.VNC;
-import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToListOfMaps;
-import org.jclouds.cloudsigma.functions.MapToDevices;
 import org.jclouds.cloudsigma.functions.MapToDevices.DeviceToId;
-import org.jclouds.cloudsigma.functions.MapToDriveMetrics;
-import org.jclouds.cloudsigma.functions.MapToNICs;
-import org.jclouds.cloudsigma.functions.MapToServerMetrics;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
