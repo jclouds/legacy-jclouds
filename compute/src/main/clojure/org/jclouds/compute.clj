@@ -23,7 +23,7 @@
 Current supported services are:
    [ec2, rimuhosting, cloudservers, trmk-ecloud, trmk-vcloudexpress, vcloud,
     bluelock, eucalyptus, slicehost, elastichosts-lon-p, elastichosts-sat-p,
-    elastichosts, elastichosts-lon-b, stub]
+    elastichosts, elastichosts-lon-b, cloudsigma, stub]
 
 Here's an example of getting some compute configuration from rackspace:
 

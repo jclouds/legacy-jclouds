@@ -30,7 +30,7 @@ our current version is 1.0-beta-8
 our dev version is 1.0-SNAPSHOT
  
 our compute api supports: ec2, gogrid, cloudservers (rackspace), rimuhosting, vcloud,
-                          trmk-ecloud, trmk-vcloudexpress, eucalyptus,
+                          trmk-ecloud, trmk-vcloudexpress, eucalyptus, cloudsigma,
                           elasticstack, bluelock-vclouddirector, slicehost,
                           elastichosts-lon-p (Peer 1), elastichosts-sat-p (Peer 1),
                           elastichosts-lon-b (BlueSquare), stub (in-memory)
