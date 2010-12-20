@@ -30,7 +30,7 @@ import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -123,7 +123,7 @@ public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClien
    }
 
    @Override
-   public ContextSpec<BoxDotNetClient, BoxDotNetAsyncClient> createContextSpec() {
+   public RestContextSpec<BoxDotNetClient, BoxDotNetAsyncClient> createContextSpec() {
       return contextSpec("boxdotnet", "https://www.box.net/api/1.0/rest", "1.0", "identity", "credential",
             BoxDotNetClient.class, BoxDotNetAsyncClient.class);
    }
