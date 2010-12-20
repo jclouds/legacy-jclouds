@@ -26,7 +26,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.elasticstack.domain.DriveData;
+import org.jclouds.cloudsigma.domain.DriveData;
 
 import com.google.common.base.Function;
 
@@ -36,15 +36,15 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class DriveDataToMap implements Function<DriveData, Map<String, String>> {
-   private final org.jclouds.elasticstack.functions.DriveDataToMap baseDriveToMap;
+   private final BaseDriveToMap baseDriveToMap;
 
    @Inject
-   public DriveDataToMap(org.jclouds.elasticstack.functions.DriveDataToMap baseDriveToMap) {
+   public DriveDataToMap(BaseDriveToMap baseDriveToMap) {
       this.baseDriveToMap = baseDriveToMap;
    }
 
    @Override
    public Map<String, String> apply(DriveData from) {
-      return renameKey(baseDriveToMap.apply(from), "tags", "use");
+      return renameKey(baseDriveToMap.apply(from), "use", "use");
    }
 }

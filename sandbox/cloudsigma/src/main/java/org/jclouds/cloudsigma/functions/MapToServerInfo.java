@@ -27,12 +27,12 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.elasticstack.domain.Device;
-import org.jclouds.elasticstack.domain.NIC;
-import org.jclouds.elasticstack.domain.ServerInfo;
-import org.jclouds.elasticstack.domain.ServerMetrics;
-import org.jclouds.elasticstack.domain.ServerStatus;
-import org.jclouds.elasticstack.domain.VNC;
+import org.jclouds.cloudsigma.domain.Device;
+import org.jclouds.cloudsigma.domain.NIC;
+import org.jclouds.cloudsigma.domain.ServerInfo;
+import org.jclouds.cloudsigma.domain.ServerMetrics;
+import org.jclouds.cloudsigma.domain.ServerStatus;
+import org.jclouds.cloudsigma.domain.VNC;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -65,7 +65,7 @@ public class MapToServerInfo implements Function<Map<String, String>, ServerInfo
       builder.description(from.get("description"));
       builder.persistent(Boolean.parseBoolean(from.get("persistent")));
       if (from.containsKey("use"))
-         builder.tags(Splitter.on(' ').split(from.get("use")));
+         builder.use(Splitter.on(' ').split(from.get("use")));
       if (from.containsKey("status"))
          builder.status(ServerStatus.fromValue(from.get("status")));
       if (from.containsKey("smp") && !"auto".equals(from.get("smp")))
@@ -86,7 +86,6 @@ public class MapToServerInfo implements Function<Map<String, String>, ServerInfo
          if (entry.getKey().startsWith("user:"))
             metadata.put(entry.getKey().substring(entry.getKey().indexOf(':') + 1), entry.getValue());
       }
-      builder.userMetadata(metadata);
       builder.nics(mapToNICs.apply(from));
       builder.devices(mapToDevices.apply(from));
       builder.metrics(mapToMetrics.apply(from));

@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.elasticstack.domain.ServerInfo;
+import org.jclouds.cloudsigma.domain.ServerInfo;
 import org.jclouds.http.HttpResponse;
 
 import com.google.common.base.Function;

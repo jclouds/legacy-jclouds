@@ -45,6 +45,6 @@ public class KeyValuesDelimitedByBlankLinesToDriveInfoTest {
 
    public void testOne() {
       assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newInputStreamPayload(MapToDriveInfoTest.class
-            .getResourceAsStream("/cloudsigma/drive.txt")))), MapToDriveInfoTest.ONE);
+            .getResourceAsStream("/drive.txt")))), MapToDriveInfoTest.ONE);
    }
 }

@@ -19,16 +19,13 @@
 
 package org.jclouds.cloudsigma.functions;
 
-import static org.jclouds.util.Utils.renameKey;
-
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.elasticstack.domain.Drive;
-
 import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 /**
@@ -36,23 +33,26 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 @Singleton
-public class CreateDriveRequestToMap implements Function<Drive, Map<String, String>> {
-   private final org.jclouds.elasticstack.functions.CreateDriveRequestToMap baseDriveToMap;
-
-   @Inject
-   public CreateDriveRequestToMap(org.jclouds.elasticstack.functions.CreateDriveRequestToMap baseDriveToMap) {
-      this.baseDriveToMap = baseDriveToMap;
-   }
+public class ListOfMapsToListOfKeyValuesDelimitedByBlankLines implements
+      Function<Iterable<Map<String, String>>, String> {
 
    @Override
-   public Map<String, String> apply(Drive from) {
-      return Maps.transformEntries(renameKey(baseDriveToMap.apply(from), "tags", "use"),
-            new Maps.EntryTransformer<String, String, String>() {
+   public String apply(Iterable<Map<String, String>> from) {
+      return Joiner.on("\n\n").join(Iterables.transform(from, new Function<Map<String, String>, String>() {
 
-               @Override
-               public String transformEntry(String arg0, String arg1) {
-                  return "use".equals(arg0) ? arg1.replace(' ', ',') : arg1;
-               }
+         @Override
+         public String apply(Map<String, String> from) {
+            return Joiner.on('\n').withKeyValueSeparator(" ")
+                  .join(Maps.transformValues(from, new Function<String, String>() {
 
-            });   }
+                     @Override
+                     public String apply(String from) {
+                        return from.replace("\n", "\\n");
+                     }
+
+                  }));
+         }
+
+      }));
+   }
 }

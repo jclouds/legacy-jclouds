@@ -30,12 +30,12 @@ import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToServerIn
 import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
 import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
-import org.jclouds.elasticstack.binders.BindServerToPlainTextStringTest;
-import org.jclouds.elasticstack.domain.CreateDriveRequest;
-import org.jclouds.elasticstack.domain.Drive;
-import org.jclouds.elasticstack.domain.DriveData;
-import org.jclouds.elasticstack.domain.Server;
-import org.jclouds.elasticstack.functions.SplitNewlines;
+import org.jclouds.cloudsigma.binders.BindServerToPlainTextStringTest;
+import org.jclouds.cloudsigma.domain.CreateDriveRequest;
+import org.jclouds.cloudsigma.domain.Drive;
+import org.jclouds.cloudsigma.domain.DriveData;
+import org.jclouds.cloudsigma.domain.Server;
+import org.jclouds.cloudsigma.functions.SplitNewlines;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
@@ -140,12 +140,12 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
    public void testCreateDrive() throws SecurityException, NoSuchMethodException, IOException {
       Method method = CloudSigmaAsyncClient.class.getMethod("createDrive", Drive.class);
       GeneratedHttpRequest<CloudSigmaAsyncClient> httpRequest = processor.createRequest(method,
-            new CreateDriveRequest.Builder().name("foo").tags(ImmutableList.of("production", "candy")).size(10000l)
+            new CreateDriveRequest.Builder().name("foo").use(ImmutableList.of("production", "candy")).size(10000l)
                   .build());
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/drives/create HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
-      assertPayloadEquals(httpRequest, "name foo\nsize 10000\nuse production,candy", "text/plain", false);
+      assertPayloadEquals(httpRequest, "name foo\nsize 10000\nuse production candy", "text/plain", false);
 
       assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToDriveInfo.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -193,7 +193,7 @@ public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncCli
    public void testSetDriveData() throws SecurityException, NoSuchMethodException, IOException {
       Method method = CloudSigmaAsyncClient.class.getMethod("setDriveData", String.class, DriveData.class);
       GeneratedHttpRequest<CloudSigmaAsyncClient> httpRequest = processor.createRequest(method, "100",
-            new DriveData.Builder().name("foo").size(10000l).tags(ImmutableList.of("production", "candy")).build());
+            new DriveData.Builder().name("foo").size(10000l).use(ImmutableList.of("production", "candy")).build());
 
       assertRequestLineEquals(httpRequest, "POST https://api.cloudsigma.com/drives/100/set HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");

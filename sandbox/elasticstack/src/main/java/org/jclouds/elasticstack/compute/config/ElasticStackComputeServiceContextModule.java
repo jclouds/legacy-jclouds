@@ -37,7 +37,6 @@ import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.suppliers.DefaultLocationSupplier;
 import org.jclouds.domain.Location;
-import org.jclouds.elasticstack.CommonElasticStackClient;
 import org.jclouds.elasticstack.ElasticStackAsyncClient;
 import org.jclouds.elasticstack.ElasticStackClient;
 import org.jclouds.elasticstack.compute.ElasticStackComputeServiceAdapter;
@@ -127,12 +126,6 @@ public class ElasticStackComputeServiceContextModule
       return json.fromJson(Utils.toStringAndClose(getClass().getResourceAsStream("/preinstalled_images.json")),
             new TypeLiteral<List<WellKnownImage>>() {
             }.getType());
-   }
-
-   @Provides
-   @Singleton
-   protected CommonElasticStackClient convert(ElasticStackClient in) {
-      return in;
    }
 
    @Provides

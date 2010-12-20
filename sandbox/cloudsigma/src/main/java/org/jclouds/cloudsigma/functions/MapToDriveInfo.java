@@ -21,15 +21,19 @@ package org.jclouds.cloudsigma.functions;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.jclouds.cloudsigma.domain.ClaimType;
 import org.jclouds.cloudsigma.domain.DriveInfo;
+import org.jclouds.cloudsigma.domain.DriveMetrics;
+import org.jclouds.cloudsigma.domain.DriveStatus;
 import org.jclouds.cloudsigma.domain.DriveType;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Maps;
 
 /**
  * 
@@ -37,20 +41,38 @@ import com.google.common.base.Splitter;
  */
 @Singleton
 public class MapToDriveInfo implements Function<Map<String, String>, DriveInfo> {
-   private final org.jclouds.elasticstack.functions.MapToDriveInfo mapToDriveInfo;
-
-   @Inject
-   public MapToDriveInfo(org.jclouds.elasticstack.functions.MapToDriveInfo mapToDriveInfo) {
-      this.mapToDriveInfo = mapToDriveInfo;
-   }
 
    @Override
    public DriveInfo apply(Map<String, String> from) {
       if (from.size() == 0)
          return null;
-      DriveInfo.Builder builder = DriveInfo.Builder.fromDriveInfo(mapToDriveInfo.apply(from));
+      if (from.size() == 0)
+         return null;
+      DriveInfo.Builder builder = new DriveInfo.Builder();
+      builder.name(from.get("name"));
       if (from.containsKey("use"))
-         builder.tags(Splitter.on(' ').split(from.get("use")));
+         builder.use(Splitter.on(' ').split(from.get("use")));
+      if (from.containsKey("status"))
+         builder.status(DriveStatus.fromValue(from.get("status")));
+      builder.metrics(buildMetrics(from));
+      builder.user(from.get("user"));
+      builder.encryptionCipher(from.get("encryption:cipher"));
+      builder.uuid(from.get("drive"));
+      if (from.containsKey("claim:type"))
+         builder.claimType(ClaimType.fromValue(from.get("claim:type")));
+      if (from.containsKey("claimed"))
+         builder.claimed(Splitter.on(' ').split(from.get("claimed")));
+      if (from.containsKey("readers"))
+         builder.readers(Splitter.on(' ').split(from.get("readers")));
+      if (from.containsKey("size"))
+         builder.size(new Long(from.get("size")));
+      Map<String, String> metadata = Maps.newLinkedHashMap();
+      for (Entry<String, String> entry : from.entrySet()) {
+         if (entry.getKey().startsWith("user:"))
+            metadata.put(entry.getKey().substring(entry.getKey().indexOf(':') + 1), entry.getValue());
+      }
+      if (from.containsKey("use"))
+         builder.use(Splitter.on(' ').split(from.get("use")));
       if (from.containsKey("bits"))
          builder.bits(new Integer(from.get("bits")));
       if (from.containsKey("url"))
@@ -68,5 +90,18 @@ public class MapToDriveInfo implements Function<Map<String, String>, DriveInfo> 
       if (from.containsKey("type"))
          builder.type(DriveType.fromValue(from.get("type")));
       return builder.build();
+   }
+
+   protected DriveMetrics buildMetrics(Map<String, String> from) {
+      DriveMetrics.Builder metricsBuilder = new DriveMetrics.Builder();
+      if (from.containsKey("read:bytes"))
+         metricsBuilder.readBytes(new Long(from.get("read:bytes")));
+      if (from.containsKey("read:requests"))
+         metricsBuilder.readRequests(new Long(from.get("read:requests")));
+      if (from.containsKey("write:bytes"))
+         metricsBuilder.writeBytes(new Long(from.get("write:bytes")));
+      if (from.containsKey("write:requests"))
+         metricsBuilder.writeRequests(new Long(from.get("write:requests")));
+      return metricsBuilder.build();
    }
 }

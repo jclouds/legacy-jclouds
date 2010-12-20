@@ -124,14 +124,6 @@ public class ServerInfo extends Server {
        * {@inheritDoc}
        */
       @Override
-      public Builder description(String description) {
-         return Builder.class.cast(super.description(description));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
       public Builder uuid(String uuid) {
          return Builder.class.cast(super.uuid(uuid));
       }
@@ -162,7 +154,7 @@ public class ServerInfo extends Server {
 
       public ServerInfo build() {
          return new ServerInfo(uuid, name, cpu, smp, mem, persistent, devices, bootDeviceIds, tags, userMetadata, nics,
-               vnc, description, status, started, user, metrics);
+               vnc, status, started, user, metrics);
       }
    }
 
@@ -175,9 +167,9 @@ public class ServerInfo extends Server {
 
    public ServerInfo(String uuid, String name, int cpu, Integer smp, int mem, boolean persistent,
          Map<String, ? extends Device> devices, Iterable<String> bootDeviceIds, Iterable<String> tags,
-         Map<String, String> userMetadata, Iterable<NIC> nics, VNC vnc, String description, ServerStatus status,
-         Date started, String user, @Nullable ServerMetrics metrics) {
-      super(uuid, name, cpu, smp, mem, persistent, devices, bootDeviceIds, tags, userMetadata, nics, vnc, description);
+         Map<String, String> userMetadata, Iterable<NIC> nics, VNC vnc, ServerStatus status, Date started, String user,
+         @Nullable ServerMetrics metrics) {
+      super(uuid, name, cpu, smp, mem, persistent, devices, bootDeviceIds, tags, userMetadata, nics, vnc);
       this.status = status;
       this.started = started;
       this.user = user;

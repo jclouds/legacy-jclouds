@@ -25,12 +25,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 
+import org.jclouds.cloudsigma.domain.ClaimType;
 import org.jclouds.cloudsigma.domain.DriveInfo;
+import org.jclouds.cloudsigma.domain.DriveMetrics;
+import org.jclouds.cloudsigma.domain.DriveStatus;
 import org.jclouds.cloudsigma.domain.DriveType;
-import org.jclouds.elasticstack.domain.ClaimType;
-import org.jclouds.elasticstack.domain.DriveMetrics;
-import org.jclouds.elasticstack.domain.DriveStatus;
-import org.jclouds.elasticstack.functions.ListOfKeyValuesDelimitedByBlankLinesToListOfMaps;
 import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
@@ -45,7 +44,7 @@ import com.google.common.collect.ImmutableSet;
 public class MapToDriveInfoTest {
    public static DriveInfo ONE = new DriveInfo.Builder()
          .status(DriveStatus.ACTIVE)
-         .tags(ImmutableSet.of("networking", "security", "gateway"))
+         .use(ImmutableSet.of("networking", "security", "gateway"))
          .name("Ubuntu 10.10 Server Edition Linux 64bit Preinstalled System")
          .bits(64)
          .url(URI.create("http://www.ubuntu.com"))
@@ -72,10 +71,9 @@ public class MapToDriveInfoTest {
          .free(true)//
          .type(DriveType.DISK)//
          .size(8589934592l)//
-         .userMetadata(ImmutableMap.of("foo", "bar", "baz", "raz")).build();
+         .build();
 
-   private static final MapToDriveInfo MAP_TO_DRIVE = new MapToDriveInfo(
-         new org.jclouds.elasticstack.functions.MapToDriveInfo());
+   private static final MapToDriveInfo MAP_TO_DRIVE = new MapToDriveInfo();
 
    public void testEmptyMapReturnsNull() {
       assertEquals(MAP_TO_DRIVE.apply(ImmutableMap.<String, String> of()), null);
@@ -90,7 +88,7 @@ public class MapToDriveInfoTest {
    public void testComplete() throws IOException {
 
       Map<String, String> input = new ListOfKeyValuesDelimitedByBlankLinesToListOfMaps().apply(
-            Utils.toStringAndClose(MapToDriveInfoTest.class.getResourceAsStream("/cloudsigma/drive.txt"))).get(0);
+            Utils.toStringAndClose(MapToDriveInfoTest.class.getResourceAsStream("/drive.txt"))).get(0);
 
       assertEquals(MAP_TO_DRIVE.apply(input), ONE);
 

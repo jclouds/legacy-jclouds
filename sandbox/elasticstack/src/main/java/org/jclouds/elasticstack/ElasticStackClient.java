@@ -19,9 +19,13 @@
 
 package org.jclouds.elasticstack;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.elasticstack.domain.Drive;
+import org.jclouds.elasticstack.domain.DriveData;
+import org.jclouds.elasticstack.domain.DriveInfo;
 import org.jclouds.elasticstack.domain.ImageConversionType;
 import org.jclouds.elasticstack.domain.Server;
 import org.jclouds.elasticstack.domain.ServerInfo;
@@ -36,7 +40,143 @@ import org.jclouds.io.Payload;
  * @author Adrian Cole
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
-public interface ElasticStackClient extends CommonElasticStackClient {
+public interface ElasticStackClient {
+   /**
+    * list of server uuids in your account
+    * 
+    * @return or empty set if no servers are found
+    */
+   Set<String> listServers();
+
+   /**
+    * Get all servers info
+    * 
+    * @return or empty set if no servers are found
+    */
+   Set<? extends ServerInfo> listServerInfo();
+
+   /**
+    * @param uuid
+    *           what to get
+    * @return null, if not found
+    */
+   ServerInfo getServerInfo(String uuid);
+
+   /**
+    * create a new server
+    * 
+    * @param server
+    * @return newly created server
+    */
+   ServerInfo createServer(Server server);
+
+   /**
+    * set server configuration
+    * 
+    * @param uuid
+    *           what server to change
+    * @param serverData
+    *           what values to change
+    * @return new data
+    */
+   ServerInfo setServerConfiguration(String uuid, Server server);
+
+   /**
+    * Destroy a server
+    * 
+    * @param uuid
+    *           what to destroy
+    */
+   void destroyServer(String uuid);
+
+   /**
+    * Start a server
+    * 
+    * @param uuid
+    *           what to start
+    */
+   void startServer(String uuid);
+
+   /**
+    * Stop a server
+    * <p/>
+    * Kills the server immediately, equivalent to a power failure. Server reverts to a stopped
+    * status if it is persistent and is automatically destroyed otherwise.
+    * 
+    * @param uuid
+    *           what to stop
+    */
+   void stopServer(String uuid);
+
+   /**
+    * Shutdown a server
+    * <p/>
+    * Sends the server an ACPI power-down event. Server reverts to a stopped status if it is
+    * persistent and is automatically destroyed otherwise.
+    * <h4>note</h4> behaviour on shutdown depends on how your server OS is set up to respond to an
+    * ACPI power button signal.
+    * 
+    * @param uuid
+    *           what to shutdown
+    */
+   void shutdownServer(String uuid);
+
+   /**
+    * Reset a server
+    * 
+    * @param uuid
+    *           what to reset
+    */
+   void resetServer(String uuid);
+
+   /**
+    * list of drive uuids in your account
+    * 
+    * @return or empty set if no drives are found
+    */
+   Set<String> listDrives();
+
+   /**
+    * Get all drives info
+    * 
+    * @return or empty set if no drives are found
+    */
+   Set<? extends DriveInfo> listDriveInfo();
+
+   /**
+    * @param uuid
+    *           what to get
+    * @return null, if not found
+    */
+   DriveInfo getDriveInfo(String uuid);
+
+   /**
+    * create a new drive
+    * 
+    * @param createDrive
+    *           required parameters: name, size
+    * @return newly created drive
+    */
+   DriveInfo createDrive(Drive createDrive);
+
+   /**
+    * set extra drive data
+    * 
+    * @param uuid
+    *           what drive to change
+    * @param driveData
+    *           what values to change
+    * @return new data
+    */
+   DriveInfo setDriveData(String uuid, DriveData driveData);
+
+   /**
+    * Destroy a drive
+    * 
+    * @param uuid
+    *           what to delete
+    */
+   void destroyDrive(String uuid);
 
    /**
     * create and start a new server

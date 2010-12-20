@@ -24,22 +24,22 @@ import java.util.Map;
 
 import org.jclouds.cloudsigma.CloudSigmaAsyncClient;
 import org.jclouds.cloudsigma.CloudSigmaClient;
-import org.jclouds.cloudsigma.functions.CreateDriveRequestToMap;
+import org.jclouds.cloudsigma.domain.Device;
+import org.jclouds.cloudsigma.domain.Drive;
+import org.jclouds.cloudsigma.domain.DriveData;
+import org.jclouds.cloudsigma.domain.DriveMetrics;
+import org.jclouds.cloudsigma.domain.NIC;
+import org.jclouds.cloudsigma.domain.Server;
+import org.jclouds.cloudsigma.domain.ServerMetrics;
+import org.jclouds.cloudsigma.functions.BaseDriveToMap;
 import org.jclouds.cloudsigma.functions.DriveDataToMap;
+import org.jclouds.cloudsigma.functions.MapToDevices;
+import org.jclouds.cloudsigma.functions.MapToDevices.DeviceToId;
+import org.jclouds.cloudsigma.functions.MapToDriveMetrics;
+import org.jclouds.cloudsigma.functions.MapToNICs;
+import org.jclouds.cloudsigma.functions.MapToServerMetrics;
 import org.jclouds.cloudsigma.functions.ServerToMap;
-import org.jclouds.elasticstack.domain.Device;
-import org.jclouds.elasticstack.domain.Drive;
-import org.jclouds.elasticstack.domain.DriveData;
-import org.jclouds.elasticstack.domain.DriveMetrics;
-import org.jclouds.elasticstack.domain.NIC;
-import org.jclouds.elasticstack.domain.Server;
-import org.jclouds.elasticstack.domain.ServerMetrics;
-import org.jclouds.elasticstack.functions.MapToDevices;
-import org.jclouds.elasticstack.functions.MapToDevices.DeviceToId;
-import org.jclouds.elasticstack.functions.MapToDriveMetrics;
-import org.jclouds.elasticstack.functions.MapToNICs;
-import org.jclouds.elasticstack.functions.MapToServerMetrics;
-import org.jclouds.elasticstack.handlers.ElasticStackErrorHandler;
+import org.jclouds.cloudsigma.handlers.CloudSigmaErrorHandler;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
@@ -66,16 +66,16 @@ public class CloudSigmaRestClientModule extends RestClientModule<CloudSigmaClien
 
    @Override
    protected void bindErrorHandlers() {
-      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ElasticStackErrorHandler.class);
-      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ElasticStackErrorHandler.class);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ElasticStackErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(CloudSigmaErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(CloudSigmaErrorHandler.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(CloudSigmaErrorHandler.class);
    }
 
    @Override
    protected void configure() {
       super.configure();
       bind(new TypeLiteral<Function<Drive, Map<String, String>>>() {
-      }).to(CreateDriveRequestToMap.class);
+      }).to(BaseDriveToMap.class);
       bind(new TypeLiteral<Function<DriveData, Map<String, String>>>() {
       }).to(DriveDataToMap.class);
       bind(new TypeLiteral<Function<Map<String, String>, List<NIC>>>() {

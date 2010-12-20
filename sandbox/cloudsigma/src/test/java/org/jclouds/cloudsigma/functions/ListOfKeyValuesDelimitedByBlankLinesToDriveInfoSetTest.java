@@ -47,6 +47,6 @@ public class ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSetTest {
 
    public void testOne() {
       assertEquals(FN.apply(new HttpResponse(200, "", Payloads.newInputStreamPayload(MapToDriveInfoTest.class
-            .getResourceAsStream("/cloudsigma/drive.txt")))), ImmutableSet.<DriveInfo> of(MapToDriveInfoTest.ONE));
+            .getResourceAsStream("/drive.txt")))), ImmutableSet.<DriveInfo> of(MapToDriveInfoTest.ONE));
    }
 }

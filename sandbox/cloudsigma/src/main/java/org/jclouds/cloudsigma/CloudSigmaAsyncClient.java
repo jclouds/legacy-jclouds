@@ -35,16 +35,14 @@ import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToServerIn
 import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
 import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
-import org.jclouds.elasticstack.CommonElasticStackAsyncClient;
-import org.jclouds.elasticstack.ElasticStackClient;
-import org.jclouds.elasticstack.binders.BindDriveDataToPlainTextString;
-import org.jclouds.elasticstack.binders.BindDriveToPlainTextString;
-import org.jclouds.elasticstack.binders.BindServerToPlainTextString;
-import org.jclouds.elasticstack.domain.Drive;
-import org.jclouds.elasticstack.domain.DriveData;
-import org.jclouds.elasticstack.domain.Server;
-import org.jclouds.elasticstack.domain.ServerInfo;
-import org.jclouds.elasticstack.functions.SplitNewlines;
+import org.jclouds.cloudsigma.binders.BindDriveDataToPlainTextString;
+import org.jclouds.cloudsigma.binders.BindDriveToPlainTextString;
+import org.jclouds.cloudsigma.binders.BindServerToPlainTextString;
+import org.jclouds.cloudsigma.domain.Drive;
+import org.jclouds.cloudsigma.domain.DriveData;
+import org.jclouds.cloudsigma.domain.Server;
+import org.jclouds.cloudsigma.domain.ServerInfo;
+import org.jclouds.cloudsigma.functions.SplitNewlines;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -53,6 +51,7 @@ import org.jclouds.rest.annotations.MapPayloadParam;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.ResponseParser;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -60,16 +59,16 @@ import com.google.common.util.concurrent.ListenableFuture;
  * Provides asynchronous access to CloudSigma via their REST API.
  * <p/>
  * 
- * @see ElasticStackClient
+ * @see CloudSigmaClient
  * @see <a href="TODO: insert URL of provider documentation" />
  * @author Adrian Cole
  */
 @RequestFilters(BasicAuthentication.class)
 @Consumes(MediaType.TEXT_PLAIN)
-public interface CloudSigmaAsyncClient extends CommonElasticStackAsyncClient {
+public interface CloudSigmaAsyncClient {
 
    /**
-    * @see ElasticStackClient#listStandardDrives()
+    * @see CloudSigmaClient#listStandardDrives
     */
    @GET
    @Path("/drives/standard/list")
@@ -77,7 +76,7 @@ public interface CloudSigmaAsyncClient extends CommonElasticStackAsyncClient {
    ListenableFuture<Set<String>> listStandardDrives();
 
    /**
-    * @see ElasticStackClient#listStandardCds()
+    * @see CloudSigmaClient#listStandardCds
     */
    @GET
    @Path("/drives/standard/cd/list")
@@ -85,7 +84,7 @@ public interface CloudSigmaAsyncClient extends CommonElasticStackAsyncClient {
    ListenableFuture<Set<String>> listStandardCds();
 
    /**
-    * @see ElasticStackClient#listStandardImages()
+    * @see CloudSigmaClient#listStandardImages
     */
    @GET
    @Path("/drives/standard/img/list")
@@ -103,18 +102,16 @@ public interface CloudSigmaAsyncClient extends CommonElasticStackAsyncClient {
          @MapPayloadParam("name") String newName, CloneDriveOptions... options);
 
    /**
-    * {@inheritDoc}
+    * @see CloudSigmaClient#listDriveInfo
     */
-   @Override
    @GET
    @Path("/drives/info")
    @ResponseParser(ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet.class)
-   ListenableFuture<Set<? extends org.jclouds.elasticstack.domain.DriveInfo>> listDriveInfo();
+   ListenableFuture<Set<? extends org.jclouds.cloudsigma.domain.DriveInfo>> listDriveInfo();
 
    /**
-    * {@inheritDoc}
+    * @see CloudSigmaClient#getDriveInfo
     */
-   @Override
    @GET
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
@@ -122,9 +119,8 @@ public interface CloudSigmaAsyncClient extends CommonElasticStackAsyncClient {
    ListenableFuture<? extends DriveInfo> getDriveInfo(@PathParam("uuid") String uuid);
 
    /**
-    * {@inheritDoc}
+    * @see CloudSigmaClient#createDrive
     */
-   @Override
    @POST
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
@@ -132,9 +128,8 @@ public interface CloudSigmaAsyncClient extends CommonElasticStackAsyncClient {
    ListenableFuture<? extends DriveInfo> createDrive(@BinderParam(BindDriveToPlainTextString.class) Drive createDrive);
 
    /**
-    * {@inheritDoc}
+    * @see CloudSigmaClient#setDriveData
     */
-   @Override
    @POST
    @ResponseParser(KeyValuesDelimitedByBlankLinesToDriveInfo.class)
    @Path("/drives/{uuid}/set")
@@ -142,9 +137,8 @@ public interface CloudSigmaAsyncClient extends CommonElasticStackAsyncClient {
          @BinderParam(BindDriveDataToPlainTextString.class) DriveData createDrive);
 
    /**
-    * {@inheritDoc}
+    * @see CloudSigmaClient#createServer
     */
-   @Override
    @POST
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
@@ -153,18 +147,16 @@ public interface CloudSigmaAsyncClient extends CommonElasticStackAsyncClient {
          @BinderParam(BindServerToPlainTextString.class) Server createServer);
 
    /**
-    * {@inheritDoc}
+    * @see CloudSigmaClient#listServerInfo
     */
-   @Override
    @GET
    @Path("/servers/info")
    @ResponseParser(ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet.class)
    ListenableFuture<Set<? extends ServerInfo>> listServerInfo();
 
    /**
-    * {@inheritDoc}
+    * @see CloudSigmaClient#getServerInfo
     */
-   @Override
    @GET
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
@@ -172,13 +164,72 @@ public interface CloudSigmaAsyncClient extends CommonElasticStackAsyncClient {
    ListenableFuture<? extends ServerInfo> getServerInfo(@PathParam("uuid") String uuid);
 
    /**
-    * {@inheritDoc}
+    * @see CloudSigmaClient#setServerConfiguration
     */
-   @Override
    @POST
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
    @Path("/servers/{uuid}/set")
    ListenableFuture<? extends ServerInfo> setServerConfiguration(@PathParam("uuid") String uuid,
          @BinderParam(BindServerToPlainTextString.class) Server setServer);
+
+   /**
+    * @see CloudSigmaClient#listServers
+    */
+   @GET
+   @Path("/servers/list")
+   @ResponseParser(SplitNewlines.class)
+   ListenableFuture<Set<String>> listServers();
+
+   /**
+    * @see CloudSigmaClient#destroyServer
+    */
+   @POST
+   @Path("/servers/{uuid}/destroy")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> destroyServer(@PathParam("uuid") String uuid);
+
+   /**
+    * @see CloudSigmaClient#startServer
+    */
+   @POST
+   @Path("/servers/{uuid}/start")
+   ListenableFuture<Void> startServer(@PathParam("uuid") String uuid);
+
+   /**
+    * @see CloudSigmaClient#stopServer
+    */
+   @POST
+   @Path("/servers/{uuid}/stop")
+   ListenableFuture<Void> stopServer(@PathParam("uuid") String uuid);
+
+   /**
+    * @see CloudSigmaClient#shutdownServer
+    */
+   @POST
+   @Path("/servers/{uuid}/shutdown")
+   ListenableFuture<Void> shutdownServer(@PathParam("uuid") String uuid);
+
+   /**
+    * @see CloudSigmaClient#resetServer
+    */
+   @POST
+   @Path("/servers/{uuid}/reset")
+   ListenableFuture<Void> resetServer(@PathParam("uuid") String uuid);
+
+   /**
+    * @see CloudSigmaClient#listDrives
+    */
+   @GET
+   @Path("/drives/list")
+   @ResponseParser(SplitNewlines.class)
+   ListenableFuture<Set<String>> listDrives();
+
+   /**
+    * @see CloudSigmaClient#destroyDrive
+    */
+   @POST
+   @Path("/drives/{uuid}/destroy")
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   ListenableFuture<Void> destroyDrive(@PathParam("uuid") String uuid);
 }

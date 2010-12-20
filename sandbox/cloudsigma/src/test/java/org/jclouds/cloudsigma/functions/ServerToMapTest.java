@@ -21,11 +21,11 @@ package org.jclouds.cloudsigma.functions;
 
 import static org.testng.Assert.assertEquals;
 
-import org.jclouds.elasticstack.domain.IDEDevice;
-import org.jclouds.elasticstack.domain.Model;
-import org.jclouds.elasticstack.domain.NIC;
-import org.jclouds.elasticstack.domain.Server;
-import org.jclouds.elasticstack.domain.VNC;
+import org.jclouds.cloudsigma.domain.IDEDevice;
+import org.jclouds.cloudsigma.domain.Model;
+import org.jclouds.cloudsigma.domain.NIC;
+import org.jclouds.cloudsigma.domain.Server;
+import org.jclouds.cloudsigma.domain.VNC;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;

@@ -26,9 +26,9 @@ import java.util.Map.Entry;
 
 import javax.inject.Singleton;
 
-import org.jclouds.elasticstack.domain.Device;
-import org.jclouds.elasticstack.domain.NIC;
-import org.jclouds.elasticstack.domain.Server;
+import org.jclouds.cloudsigma.domain.Device;
+import org.jclouds.cloudsigma.domain.NIC;
+import org.jclouds.cloudsigma.domain.Server;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -74,10 +74,8 @@ public class ServerToMap implements Function<Server, Map<String, String>> {
          builder.put("vnc:password", from.getVnc().getPassword());
       if (from.getVnc().isTls())
          builder.put("vnc:tls", "on");
-      if (from.getTags().size() != 0)
-         builder.put("use", Joiner.on(' ').join(from.getTags()));
-      for (Entry<String, String> entry : from.getUserMetadata().entrySet())
-         builder.put("user:" + entry.getKey(), entry.getValue());
+      if (from.getUse().size() != 0)
+         builder.put("use", Joiner.on(' ').join(from.getUse()));
       return builder.build();
    }
 }

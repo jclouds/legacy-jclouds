@@ -24,8 +24,8 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.elasticstack.domain.ServerInfo;
-import org.jclouds.elasticstack.functions.ListOfKeyValuesDelimitedByBlankLinesToListOfMaps;
+import org.jclouds.cloudsigma.domain.ServerInfo;
+import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToListOfMaps;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 

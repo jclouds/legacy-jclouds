@@ -22,12 +22,9 @@ package org.jclouds.cloudsigma.domain;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.Set;
 
-import org.jclouds.elasticstack.domain.ClaimType;
-import org.jclouds.elasticstack.domain.DriveMetrics;
-import org.jclouds.elasticstack.domain.DriveStatus;
+import javax.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -35,8 +32,17 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-public class DriveInfo extends org.jclouds.elasticstack.domain.DriveInfo {
-   public static class Builder extends org.jclouds.elasticstack.domain.DriveInfo.Builder {
+public class DriveInfo extends Drive {
+   public static class Builder extends Drive.Builder {
+
+      protected DriveStatus status;
+      protected String user;
+      protected Set<String> claimed = ImmutableSet.of();
+      @Nullable
+      protected String encryptionCipher;
+      @Nullable
+      protected String imaging;
+      protected DriveMetrics metrics;
       private Boolean autoexpanding;
       private Integer bits;
       private String description;
@@ -47,6 +53,36 @@ public class DriveInfo extends org.jclouds.elasticstack.domain.DriveInfo {
       private String os;
       private DriveType type;
       private URI url;
+
+      public Builder status(DriveStatus status) {
+         this.status = status;
+         return this;
+      }
+
+      public Builder user(String user) {
+         this.user = user;
+         return this;
+      }
+
+      public Builder claimed(Iterable<String> claimed) {
+         this.claimed = ImmutableSet.copyOf(checkNotNull(claimed, "claimed"));
+         return this;
+      }
+
+      public Builder imaging(String imaging) {
+         this.imaging = imaging;
+         return this;
+      }
+
+      public Builder metrics(DriveMetrics metrics) {
+         this.metrics = metrics;
+         return this;
+      }
+
+      public Builder encryptionCipher(String encryptionCipher) {
+         this.encryptionCipher = encryptionCipher;
+         return this;
+      }
 
       public Builder autoexpanding(Boolean autoexpanding) {
          this.autoexpanding = autoexpanding;
@@ -102,55 +138,6 @@ public class DriveInfo extends org.jclouds.elasticstack.domain.DriveInfo {
        * {@inheritDoc}
        */
       @Override
-      public Builder status(DriveStatus status) {
-         return Builder.class.cast(super.status(status));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder user(String user) {
-         return Builder.class.cast(super.user(user));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder claimed(Iterable<String> claimed) {
-         return Builder.class.cast(super.claimed(claimed));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder imaging(String imaging) {
-         return Builder.class.cast(super.imaging(imaging));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder metrics(DriveMetrics metrics) {
-         return Builder.class.cast(super.metrics(metrics));
-
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder encryptionCipher(String encryptionCipher) {
-         return Builder.class.cast(super.encryptionCipher(encryptionCipher));
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
       public Builder claimType(ClaimType claimType) {
          return Builder.class.cast(super.claimType(claimType));
       }
@@ -191,24 +178,17 @@ public class DriveInfo extends org.jclouds.elasticstack.domain.DriveInfo {
        * {@inheritDoc}
        */
       @Override
-      public Builder tags(Iterable<String> tags) {
-         return Builder.class.cast(super.tags(tags));
+      public Builder use(Iterable<String> use) {
+         return Builder.class.cast(super.use(use));
       }
 
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public Builder userMetadata(Map<String, String> userMetadata) {
-         return Builder.class.cast(super.userMetadata(userMetadata));
-      }
-
-      public static Builder fromDriveInfo(org.jclouds.elasticstack.domain.DriveInfo driveInfo) {
-         return new Builder().uuid(driveInfo.getUuid()).name(driveInfo.getName()).size(driveInfo.getSize())
-               .claimType(driveInfo.getClaimType()).readers(driveInfo.getReaders()).tags(driveInfo.getTags())
-               .userMetadata(driveInfo.getUserMetadata()).status(driveInfo.getStatus()).user(driveInfo.getUser())
-               .claimed(driveInfo.getClaimed()).encryptionCipher(driveInfo.getEncryptionCipher())
-               .imaging(driveInfo.getImaging()).metrics(driveInfo.getMetrics());
+      public static Builder fromDriveInfo(DriveInfo in) {
+         return new Builder().uuid(in.getUuid()).name(in.getName()).size(in.getSize()).claimType(in.getClaimType())
+               .readers(in.getReaders()).use(in.getUse()).status(in.getStatus()).user(in.getUser())
+               .claimed(in.getClaimed()).encryptionCipher(in.getEncryptionCipher()).imaging(in.getImaging())
+               .metrics(in.getMetrics()).autoexpanding(in.getAutoexpanding()).bits(in.getBits())
+               .description(in.getDescription()).encryptionKey(in.getEncryptionKey()).free(in.getFree())
+               .installNotes(in.getInstallNotes()).type(in.getType()).url(in.getUrl());
       }
 
       /**
@@ -216,12 +196,21 @@ public class DriveInfo extends org.jclouds.elasticstack.domain.DriveInfo {
        */
       @Override
       public DriveInfo build() {
-         return new DriveInfo(uuid, name, size, claimType, readers, tags, userMetadata, status, user, claimed,
-               encryptionCipher, imaging, metrics, autoexpanding, bits, description, driveType, encryptionKey, free,
-               installNotes, os, type, url);
+         return new DriveInfo(uuid, name, size, claimType, readers, use, status, user, claimed, encryptionCipher,
+               imaging, metrics, autoexpanding, bits, description, driveType, encryptionKey, free, installNotes, os,
+               type, url);
       }
+
    }
 
+   protected final DriveStatus status;
+   protected final String user;
+   protected final Set<String> claimed;
+   @Nullable
+   protected final String encryptionCipher;
+   @Nullable
+   protected final String imaging;
+   protected final DriveMetrics metrics;
    private final Boolean autoexpanding;
    private final Integer bits;
    private final String description;
@@ -234,12 +223,17 @@ public class DriveInfo extends org.jclouds.elasticstack.domain.DriveInfo {
    private final URI url;
 
    public DriveInfo(String uuid, String name, long size, ClaimType claimType, Iterable<String> readers,
-         Iterable<String> tags, Map<String, String> userMetadata, DriveStatus status, String user, Set<String> claimed,
-         String encryptionCipher, String imaging, DriveMetrics metrics, Boolean autoexpanding, Integer bits,
-         String description, Iterable<String> driveType, String encryptionKey, Boolean free, String installNotes,
-         String os, DriveType type, URI url) {
-      super(uuid, name, size, claimType, readers, tags, userMetadata, status, user, claimed, encryptionCipher, imaging,
-            metrics);
+         Iterable<String> use, DriveStatus status, String user, Set<String> claimed, String encryptionCipher,
+         String imaging, DriveMetrics metrics, Boolean autoexpanding, Integer bits, String description,
+         Iterable<String> driveType, String encryptionKey, Boolean free, String installNotes, String os,
+         DriveType type, URI url) {
+      super(uuid, name, size, claimType, readers, use);
+      this.status = status;
+      this.user = user;
+      this.claimed = ImmutableSet.copyOf(checkNotNull(claimed, "claimed"));
+      this.encryptionCipher = encryptionCipher;
+      this.imaging = imaging;
+      this.metrics = checkNotNull(metrics, "metrics");
       this.autoexpanding = autoexpanding;
       this.bits = bits;
       this.description = description;
@@ -252,80 +246,54 @@ public class DriveInfo extends org.jclouds.elasticstack.domain.DriveInfo {
       this.url = url;
    }
 
-   @Override
-   public int hashCode() {
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ((autoexpanding == null) ? 0 : autoexpanding.hashCode());
-      result = prime * result + ((bits == null) ? 0 : bits.hashCode());
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
-      result = prime * result + ((driveType == null) ? 0 : driveType.hashCode());
-      result = prime * result + ((encryptionKey == null) ? 0 : encryptionKey.hashCode());
-      result = prime * result + ((free == null) ? 0 : free.hashCode());
-      result = prime * result + ((installNotes == null) ? 0 : installNotes.hashCode());
-      result = prime * result + ((os == null) ? 0 : os.hashCode());
-      result = prime * result + ((type == null) ? 0 : type.hashCode());
-      result = prime * result + ((url == null) ? 0 : url.hashCode());
-      return result;
+   /**
+    * 
+    * @return current status of the drive
+    */
+   public DriveStatus getStatus() {
+      return status;
    }
 
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj)
-         return true;
-      if (!super.equals(obj))
-         return false;
-      if (getClass() != obj.getClass())
-         return false;
-      DriveInfo other = (DriveInfo) obj;
-      if (autoexpanding == null) {
-         if (other.autoexpanding != null)
-            return false;
-      } else if (!autoexpanding.equals(other.autoexpanding))
-         return false;
-      if (bits == null) {
-         if (other.bits != null)
-            return false;
-      } else if (!bits.equals(other.bits))
-         return false;
-      if (description == null) {
-         if (other.description != null)
-            return false;
-      } else if (!description.equals(other.description))
-         return false;
-      if (driveType == null) {
-         if (other.driveType != null)
-            return false;
-      } else if (!driveType.equals(other.driveType))
-         return false;
-      if (encryptionKey == null) {
-         if (other.encryptionKey != null)
-            return false;
-      } else if (!encryptionKey.equals(other.encryptionKey))
-         return false;
-      if (free == null) {
-         if (other.free != null)
-            return false;
-      } else if (!free.equals(other.free))
-         return false;
-      if (installNotes == null) {
-         if (other.installNotes != null)
-            return false;
-      } else if (!installNotes.equals(other.installNotes))
-         return false;
-      if (os == null) {
-         if (other.os != null)
-            return false;
-      } else if (!os.equals(other.os))
-         return false;
-      if (type != other.type)
-         return false;
-      if (url == null) {
-         if (other.url != null)
-            return false;
-      } else if (!url.equals(other.url))
-         return false;
-      return true;
+   /**
+    * 
+    * @return owner of the drive
+    */
+   public String getUser() {
+      return user;
+   }
+
+   /**
+    * 
+    * @return if drive is in use by a server, values are the server uuids
+    */
+   public Set<String> getClaimed() {
+      return claimed;
+   }
+
+   /**
+    * 
+    * @return either 'none' or 'aes-xts-plain' (the default)
+    */
+   @Nullable
+   public String getEncryptionCipher() {
+      return encryptionCipher;
+   }
+
+   /**
+    * 
+    * @return percentage completed of drive imaging if this is underway, or 'queued' if waiting for
+    *         another imaging operation to complete first
+    */
+   public String getImaging() {
+      return imaging;
+   }
+
+   /**
+    * 
+    * @return i/o and request metrics for read and write ops
+    */
+   public DriveMetrics getMetrics() {
+      return metrics;
    }
 
    // TODO
@@ -373,19 +341,124 @@ public class DriveInfo extends org.jclouds.elasticstack.domain.DriveInfo {
       return type;
    }
 
-   // TODO
+   public URI getUrl() {
+      return url;
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((autoexpanding == null) ? 0 : autoexpanding.hashCode());
+      result = prime * result + ((bits == null) ? 0 : bits.hashCode());
+      result = prime * result + ((claimed == null) ? 0 : claimed.hashCode());
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + ((driveType == null) ? 0 : driveType.hashCode());
+      result = prime * result + ((encryptionCipher == null) ? 0 : encryptionCipher.hashCode());
+      result = prime * result + ((encryptionKey == null) ? 0 : encryptionKey.hashCode());
+      result = prime * result + ((free == null) ? 0 : free.hashCode());
+      result = prime * result + ((imaging == null) ? 0 : imaging.hashCode());
+      result = prime * result + ((installNotes == null) ? 0 : installNotes.hashCode());
+      result = prime * result + ((metrics == null) ? 0 : metrics.hashCode());
+      result = prime * result + ((os == null) ? 0 : os.hashCode());
+      result = prime * result + ((status == null) ? 0 : status.hashCode());
+      result = prime * result + ((type == null) ? 0 : type.hashCode());
+      result = prime * result + ((url == null) ? 0 : url.hashCode());
+      result = prime * result + ((user == null) ? 0 : user.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (!super.equals(obj))
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      DriveInfo other = (DriveInfo) obj;
+      if (autoexpanding == null) {
+         if (other.autoexpanding != null)
+            return false;
+      } else if (!autoexpanding.equals(other.autoexpanding))
+         return false;
+      if (bits == null) {
+         if (other.bits != null)
+            return false;
+      } else if (!bits.equals(other.bits))
+         return false;
+      if (claimed == null) {
+         if (other.claimed != null)
+            return false;
+      } else if (!claimed.equals(other.claimed))
+         return false;
+      if (description == null) {
+         if (other.description != null)
+            return false;
+      } else if (!description.equals(other.description))
+         return false;
+      if (driveType == null) {
+         if (other.driveType != null)
+            return false;
+      } else if (!driveType.equals(other.driveType))
+         return false;
+      if (encryptionCipher == null) {
+         if (other.encryptionCipher != null)
+            return false;
+      } else if (!encryptionCipher.equals(other.encryptionCipher))
+         return false;
+      if (encryptionKey == null) {
+         if (other.encryptionKey != null)
+            return false;
+      } else if (!encryptionKey.equals(other.encryptionKey))
+         return false;
+      if (free == null) {
+         if (other.free != null)
+            return false;
+      } else if (!free.equals(other.free))
+         return false;
+      if (imaging == null) {
+         if (other.imaging != null)
+            return false;
+      } else if (!imaging.equals(other.imaging))
+         return false;
+      if (installNotes == null) {
+         if (other.installNotes != null)
+            return false;
+      } else if (!installNotes.equals(other.installNotes))
+         return false;
+      if (metrics == null) {
+         if (other.metrics != null)
+            return false;
+      } else if (!metrics.equals(other.metrics))
+         return false;
+      if (os == null) {
+         if (other.os != null)
+            return false;
+      } else if (!os.equals(other.os))
+         return false;
+      if (status != other.status)
+         return false;
+      if (type != other.type)
+         return false;
+      if (url == null) {
+         if (other.url != null)
+            return false;
+      } else if (!url.equals(other.url))
+         return false;
+      if (user == null) {
+         if (other.user != null)
+            return false;
+      } else if (!user.equals(other.user))
+         return false;
+      return true;
+   }
 
    @Override
    public String toString() {
       return "[size=" + size + ", claimType=" + claimType + ", readers=" + readers + ", uuid=" + uuid + ", name="
-            + name + ", tags=" + tags + ", userMetadata=" + userMetadata + ", autoexpanding=" + autoexpanding
-            + ", bits=" + bits + ", description=" + description + ", driveType=" + driveType + ", encryptionKey="
-            + encryptionKey + ", free=" + free + ", installNotes=" + installNotes + ", os=" + os + ", type=" + type
-            + ", url=" + url + "]";
-   }
-
-   public URI getUrl() {
-      return url;
+            + name + ", use=" + use + ", status=" + status + ", user=" + user + ", claimed=" + claimed
+            + ", encryptionCipher=" + encryptionCipher + ", imaging=" + imaging + ", metrics=" + metrics + "]";
    }
 
 }

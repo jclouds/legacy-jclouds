@@ -62,7 +62,6 @@ public class MapToServerInfo implements Function<Map<String, String>, ServerInfo
          return null;
       ServerInfo.Builder builder = new ServerInfo.Builder();
       builder.name(from.get("name"));
-      builder.description(from.get("description"));
       builder.persistent(Boolean.parseBoolean(from.get("persistent")));
       if (from.containsKey("tags"))
          builder.tags(Splitter.on(' ').split(from.get("tags")));

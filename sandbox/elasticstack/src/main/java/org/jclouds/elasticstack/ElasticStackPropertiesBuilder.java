@@ -37,7 +37,7 @@ public class ElasticStackPropertiesBuilder extends PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_API_VERSION, "1.0");
-      properties.setProperty(PROPERTY_API_VERSION, "IL9vs34d");
+      properties.setProperty(PROPERTY_VNC_PASSWORD, "IL9vs34d");
       return properties;
    }
 

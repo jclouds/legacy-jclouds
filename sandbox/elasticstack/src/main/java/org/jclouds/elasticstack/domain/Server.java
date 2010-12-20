@@ -46,8 +46,6 @@ public class Server extends Item {
       protected Set<String> bootDeviceIds = ImmutableSet.of();
       protected List<NIC> nics = ImmutableList.of();
       protected VNC vnc;
-      // TODO cloudsigma specific
-      protected String description;
 
       public Builder cpu(int cpu) {
          this.cpu = cpu;
@@ -89,11 +87,6 @@ public class Server extends Item {
          return this;
       }
 
-      public Builder description(String description) {
-         this.description = description;
-         return this;
-      }
-
       /**
        * {@inheritDoc}
        */
@@ -127,15 +120,13 @@ public class Server extends Item {
       }
 
       public Server build() {
-         return new Server(uuid, name, cpu, smp, mem, persistent, devices, bootDeviceIds, tags, userMetadata, nics,
-               vnc, description);
+         return new Server(uuid, name, cpu, smp, mem, persistent, devices, bootDeviceIds, tags, userMetadata, nics, vnc);
       }
 
       public static Builder fromServer(Server in) {
          return new Builder().uuid(in.getUuid()).name(in.getName()).cpu(in.getCpu()).mem(in.getMem())
-               .persistent(in.isPersistent()).description(in.getDescription()).devices(in.getDevices())
-               .bootDeviceIds(in.getBootDeviceIds()).tags(in.getTags()).userMetadata(in.getUserMetadata())
-               .nics(in.getNics()).vnc(in.getVnc());
+               .persistent(in.isPersistent()).devices(in.getDevices()).bootDeviceIds(in.getBootDeviceIds())
+               .tags(in.getTags()).userMetadata(in.getUserMetadata()).nics(in.getNics()).vnc(in.getVnc());
       }
    }
 
@@ -148,12 +139,10 @@ public class Server extends Item {
    protected final Set<String> bootDeviceIds;
    protected final List<NIC> nics;
    protected final VNC vnc;
-   @Nullable
-   private final String description;
 
    public Server(@Nullable String uuid, String name, int cpu, @Nullable Integer smp, int mem, boolean persistent,
          Map<String, ? extends Device> devices, Iterable<String> bootDeviceIds, Iterable<String> tags,
-         Map<String, String> userMetadata, Iterable<NIC> nics, VNC vnc, String description) {
+         Map<String, String> userMetadata, Iterable<NIC> nics, VNC vnc) {
       super(uuid, name, tags, userMetadata);
       this.cpu = cpu;
       this.smp = smp;
@@ -163,7 +152,6 @@ public class Server extends Item {
       this.bootDeviceIds = ImmutableSet.copyOf(checkNotNull(bootDeviceIds, "bootDeviceIds"));
       this.nics = ImmutableList.copyOf(checkNotNull(nics, "nics"));
       this.vnc = checkNotNull(vnc, "vnc");
-      this.description = description;
    }
 
    /**
@@ -224,18 +212,12 @@ public class Server extends Item {
       return vnc;
    }
 
-   // TODO undocumented
-   public String getDescription() {
-      return description;
-   }
-
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((bootDeviceIds == null) ? 0 : bootDeviceIds.hashCode());
       result = prime * result + cpu;
-      result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((devices == null) ? 0 : devices.hashCode());
       result = prime * result + mem;
       result = prime * result + ((nics == null) ? 0 : nics.hashCode());
@@ -260,11 +242,6 @@ public class Server extends Item {
       } else if (!bootDeviceIds.equals(other.bootDeviceIds))
          return false;
       if (cpu != other.cpu)
-         return false;
-      if (description == null) {
-         if (other.description != null)
-            return false;
-      } else if (!description.equals(other.description))
          return false;
       if (devices == null) {
          if (other.devices != null)
@@ -297,8 +274,7 @@ public class Server extends Item {
    public String toString() {
       return "[uuid=" + uuid + ", name=" + name + ", tags=" + tags + ", userMetadata=" + userMetadata + ", cpu=" + cpu
             + ", smp=" + smp + ", mem=" + mem + ", persistent=" + persistent + ", devices=" + devices
-            + ", bootDeviceIds=" + bootDeviceIds + ", nics=" + nics + ", vnc=" + vnc + ", description=" + description
-            + "]";
+            + ", bootDeviceIds=" + bootDeviceIds + ", nics=" + nics + ", vnc=" + vnc + "]";
    }
 
 }
