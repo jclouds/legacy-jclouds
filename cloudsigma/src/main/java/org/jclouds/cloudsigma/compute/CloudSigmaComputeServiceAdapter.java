@@ -144,7 +144,7 @@ public class CloudSigmaComputeServiceAdapter implements
       Builder<Hardware> hardware = ImmutableSet.<Hardware> builder();
       for (double cpu : new double[] { 1000, 5000, 10000, 20000 })
          for (int ram : new int[] { 512, 1024, 4 * 1024, 16 * 1024, 32 * 1024 }) {
-            final float size = (float) ram * 10 / 1024;
+            final float size = (float) cpu / 100;
             String id = String.format("cpu=%f,ram=%s,disk=%f", cpu, ram, size);
             hardware.add(new HardwareBuilder().supportsImage(new Predicate<Image>() {
 
