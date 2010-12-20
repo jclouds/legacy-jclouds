@@ -31,7 +31,9 @@ our dev version is 1.0-SNAPSHOT
  
 our compute api supports: ec2, gogrid, cloudservers (rackspace), rimuhosting, vcloud,
                           trmk-ecloud, trmk-vcloudexpress, eucalyptus,
-                          bluelock-vclouddirector, slicehost, stub (in-memory)
+                          elasticstack, bluelock-vclouddirector, slicehost,
+                          elastichosts-lon-p (Peer 1), elastichosts-sat-p (Peer 1),
+                          elastichosts-lon-b (BlueSquare), stub (in-memory)
 
   * note * the pom dependency org.jclouds/jclouds-allcompute gives you access to
            to all of these providers
