@@ -22,7 +22,7 @@ package org.jclouds.deltacloud.xml;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.deltacloud.reference.DeltacloudCollection;
+import org.jclouds.deltacloud.collections.DeltacloudCollection;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.Utils;
 import org.xml.sax.Attributes;

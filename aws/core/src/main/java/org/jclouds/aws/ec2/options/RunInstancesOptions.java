@@ -41,7 +41,8 @@ import org.jclouds.encryption.internal.Base64;
  * 
  * @author Adrian Cole
  * @see <a
- *      href="http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-form-RunInstances.html"
+ *      href=
+ *      "http://docs.amazonwebservices.com/AWSEC2/latest/APIReference/index.html?ApiReference-form-RunInstances.html"
  *      />
  */
 public class RunInstancesOptions extends BaseEC2RequestOptions {
@@ -103,18 +104,6 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
 
    String getPlacementGroup() {
       return getFirstFormOrNull("Placement.GroupName");
-   }
-
-   /**
-    * Specifies additional information to make available to the instance(s).
-    */
-   public RunInstancesOptions withAdditionalInfo(String info) {
-      formParameters.put("AdditionalInfo", checkNotNull(info, "info"));
-      return this;
-   }
-
-   String getAdditionalInfo() {
-      return getFirstFormOrNull("AdditionalInfo");
    }
 
    /**
@@ -243,14 +232,6 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
       public static RunInstancesOptions inPlacementGroup(String placementGroup) {
          RunInstancesOptions options = new RunInstancesOptions();
          return options.inPlacementGroup(placementGroup);
-      }
-
-      /**
-       * @see RunInstancesOptions#withAdditionalInfo(String)
-       */
-      public static RunInstancesOptions withAdditionalInfo(String additionalInfo) {
-         RunInstancesOptions options = new RunInstancesOptions();
-         return options.withAdditionalInfo(additionalInfo);
       }
 
       /**

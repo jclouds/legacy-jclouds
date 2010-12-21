@@ -20,14 +20,18 @@
 package org.jclouds.deltacloud;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.jclouds.Constants;
-import org.jclouds.deltacloud.reference.DeltacloudCollection;
+import org.jclouds.deltacloud.collections.DeltacloudCollection;
+import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
@@ -98,6 +102,17 @@ public class DeltacloudClientLiveTest {
       assertNotNull(links);
       for (DeltacloudCollection link : DeltacloudCollection.values())
          assert (links.get(link) != null) : link;
+   }
+
+   public void testListAndGetImages() throws Exception {
+      Set<? extends Image> response = client.listImages();
+      assert null != response;
+      long imageCount = response.size();
+      assertTrue(imageCount >= 0);
+      for (Image image : response) {
+         Image newDetails = client.getImage(image.getHref());
+         assertEquals(image, newDetails);
+      }
    }
 
    @Test

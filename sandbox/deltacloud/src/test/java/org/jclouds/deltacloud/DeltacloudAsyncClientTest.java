@@ -24,22 +24,34 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Map;
 import java.util.Properties;
 
+import org.jclouds.deltacloud.collections.DeltacloudCollection;
+import org.jclouds.deltacloud.config.DeltacloudRestClientModule;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
+import org.jclouds.deltacloud.xml.ImageHandler;
+import org.jclouds.deltacloud.xml.ImagesHandler;
 import org.jclouds.deltacloud.xml.LinksHandler;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ReturnStringIf2xx;
+import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
+import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
+import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Iterables;
+import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -75,13 +87,42 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
 
    }
 
-   public void testCreateInstance() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = DeltacloudAsyncClient.class.getMethod("createInstance", URI.class, String.class,
-            CreateInstanceOptions[].class);
-      GeneratedHttpRequest<DeltacloudAsyncClient> httpRequest = processor.createRequest(method,
-            URI.create("http://localhost:3001/api/instances"), "imageId-1");
+   public void testListImages() throws IOException, SecurityException, NoSuchMethodException {
+      Method method = DeltacloudAsyncClient.class.getMethod("listImages");
+      HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(httpRequest, "POST http://localhost:3001/api HTTP/1.1");
+      assertRequestLineEquals(request, "GET http://localhost:3001/api/images HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/xml\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, ImagesHandler.class);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
+   public void testGetImage() throws IOException, SecurityException, NoSuchMethodException {
+      Method method = DeltacloudAsyncClient.class.getMethod("getImage", URI.class);
+      HttpRequest request = processor.createRequest(method, URI.create("https://delta/image1"));
+
+      assertRequestLineEquals(request, "GET https://delta/image1 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/xml\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, ImageHandler.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
+   public void testCreateInstance() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = DeltacloudAsyncClient.class.getMethod("createInstance", String.class,
+            CreateInstanceOptions[].class);
+      GeneratedHttpRequest<DeltacloudAsyncClient> httpRequest = processor.createRequest(method, "imageId-1");
+
+      assertRequestLineEquals(httpRequest, "POST http://localhost:3001/api/instances HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/xml\n");
       assertPayloadEquals(httpRequest, "image_id=imageId-1", "application/x-www-form-urlencoded", false);
 
@@ -94,12 +135,12 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
    }
 
    public void testCreateInstanceWithOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = DeltacloudAsyncClient.class.getMethod("createInstance", URI.class, String.class,
+      Method method = DeltacloudAsyncClient.class.getMethod("createInstance", String.class,
             CreateInstanceOptions[].class);
-      GeneratedHttpRequest<DeltacloudAsyncClient> httpRequest = processor.createRequest(method,
-            URI.create("http://localhost:3001/api/instances"), "imageId-1", CreateInstanceOptions.Builder.named("foo"));
+      GeneratedHttpRequest<DeltacloudAsyncClient> httpRequest = processor.createRequest(method, "imageId-1",
+            CreateInstanceOptions.Builder.named("foo"));
 
-      assertRequestLineEquals(httpRequest, "POST http://localhost:3001/api HTTP/1.1");
+      assertRequestLineEquals(httpRequest, "POST http://localhost:3001/api/instances HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/xml\n");
       assertPayloadEquals(httpRequest, "image_id=imageId-1&name=foo", "application/x-www-form-urlencoded", false);
 
@@ -121,6 +162,32 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
    protected TypeLiteral<RestAnnotationProcessor<DeltacloudAsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<DeltacloudAsyncClient>>() {
       };
+   }
+
+   @Override
+   protected Module createModule() {
+      return new DeltacloudRestClientModuleExtension();
+   }
+
+   @RequiresHttp
+   @ConfiguresRestClient
+   public static class DeltacloudRestClientModuleExtension extends DeltacloudRestClientModule {
+
+      @Override
+      protected Supplier<Map<DeltacloudCollection, URI>> provideCollections(long seconds, DeltacloudClient client) {
+         return Suppliers.ofInstance(null);
+      }
+
+      @Override
+      protected URI provideImageCollection(Supplier<Map<DeltacloudCollection, URI>> collectionSupplier) {
+         return URI.create("http://localhost:3001/api/images");
+      }
+
+      @Override
+      protected URI provideInstanceCollection(Supplier<Map<DeltacloudCollection, URI>> collectionSupplier) {
+         return URI.create("http://localhost:3001/api/instances");
+      }
+
    }
 
    @Override

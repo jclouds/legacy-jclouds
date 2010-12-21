@@ -89,10 +89,6 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
 
       RunInstancesOptions instanceOptions = asType(template.getHardware().getId());
 
-      // Eucalyptus currently doesn't support additional info
-      if (!"eucalyptus".equals(getProvider()))
-         instanceOptions.withAdditionalInfo(tag);
-
       String keyPairName = createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, template.getOptions());
 
       String placementGroupName = template.getHardware().getId().startsWith("cc") ? createNewPlacementGroupUnlessUserSpecifiedOtherwise(

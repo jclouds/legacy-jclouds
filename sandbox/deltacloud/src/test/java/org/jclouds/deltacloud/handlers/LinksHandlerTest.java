@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 
-import org.jclouds.deltacloud.reference.DeltacloudCollection;
+import org.jclouds.deltacloud.collections.DeltacloudCollection;
 import org.jclouds.deltacloud.xml.LinksHandler;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;

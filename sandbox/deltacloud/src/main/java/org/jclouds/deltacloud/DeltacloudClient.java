@@ -21,11 +21,13 @@ package org.jclouds.deltacloud;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.deltacloud.collections.DeltacloudCollection;
+import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
-import org.jclouds.deltacloud.reference.DeltacloudCollection;
 
 /**
  * Provides synchronous access to deltacloud.
@@ -46,6 +48,20 @@ public interface DeltacloudClient {
    Map<DeltacloudCollection, URI> getCollections();
 
    /**
+    * The images collection will return a set of all images available to the current user.
+    * 
+    * @return images viewable to the user or empty set
+    */
+   Set<? extends Image> listImages();
+
+   /**
+    * 
+    * @param imageHref
+    * @return image or null, if not found
+    */
+   Image getImage(URI imageHref);
+
+   /**
     * Create a new Instance
     * 
     * <h4>Note</h4>
@@ -54,13 +70,11 @@ public interface DeltacloudClient {
     * reasonable defaults. The architecture of the selected hardware profile must match the
     * architecture of the specified image.
     * 
-    * @param instanceCollection
-    *           which endpoint to create the instance in
     * @param imageId
     *           The identifier (not URL) of the image from which to base the instance
     * @param options
     *           includes realm, hardware profile, etc.
     * @return newly-created instance including a URL to retrieve the instance in the future.
     */
-   String createInstance(URI instanceCollection, String imageId, CreateInstanceOptions... options);
+   String createInstance(String imageId, CreateInstanceOptions... options);
 }

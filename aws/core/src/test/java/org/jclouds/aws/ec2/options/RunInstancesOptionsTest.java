@@ -21,7 +21,6 @@ package org.jclouds.aws.ec2.options;
 
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.asType;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.enableMonitoring;
-import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withAdditionalInfo;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withDeviceName;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withKernelId;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withKeyName;
@@ -100,27 +99,9 @@ public class RunInstancesOptionsTest {
    }
 
    @Test
-   public void testWithAdditionalInfo() {
-      RunInstancesOptions options = new RunInstancesOptions();
-      options.withAdditionalInfo("test");
-      assertEquals(options.buildFormParameters().get("AdditionalInfo"), Collections.singletonList("test"));
-   }
-
-   @Test
    public void testNullWithAdditionalInfo() {
       RunInstancesOptions options = new RunInstancesOptions();
       assertEquals(options.buildFormParameters().get("AdditionalInfo"), Collections.EMPTY_LIST);
-   }
-
-   @Test
-   public void testWithAdditionalInfoStatic() {
-      RunInstancesOptions options = withAdditionalInfo("test");
-      assertEquals(options.buildFormParameters().get("AdditionalInfo"), Collections.singletonList("test"));
-   }
-
-   @Test(expectedExceptions = NullPointerException.class)
-   public void testWithAdditionalInfoNPE() {
-      withAdditionalInfo(null);
    }
 
    @Test

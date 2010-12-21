@@ -1,4 +1,4 @@
-package org.jclouds.deltacloud.reference;
+package org.jclouds.deltacloud.collections;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -9,7 +9,13 @@ import com.google.common.base.CaseFormat;
  * @author Adrian Cole
  */
 public enum DeltacloudCollection {
-   HARDWARE_PROFILES, INSTANCE_STATES, REALMS, IMAGES, INSTANCES, UNRECOGNIZED;
+   HARDWARE_PROFILES, INSTANCE_STATES, REALMS,
+
+   @Images
+   IMAGES,
+
+   @Instances
+   INSTANCES, UNRECOGNIZED;
 
    public String value() {
       return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.LOWER_UNDERSCORE, name()));
