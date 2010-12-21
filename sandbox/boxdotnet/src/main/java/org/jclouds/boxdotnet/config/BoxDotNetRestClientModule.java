@@ -23,10 +23,12 @@ import org.jclouds.boxdotnet.BoxDotNetAsyncClient;
 import org.jclouds.boxdotnet.BoxDotNetClient;
 import org.jclouds.boxdotnet.handlers.BoxDotNetErrorHandler;
 import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
@@ -53,7 +55,7 @@ public class BoxDotNetRestClientModule extends
 
    @Override
    protected void bindRetryHandlers() {
-      // TODO
+      bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(BackoffLimitedRetryHandler.class);
    }
 
 }
