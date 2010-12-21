@@ -25,9 +25,9 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 
 import org.jclouds.compute.BaseTemplateBuilderLiveTest;
-import org.jclouds.compute.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;

@@ -66,6 +66,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContextBuilder;
+import org.xml.sax.Attributes;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -88,6 +89,16 @@ import com.google.inject.spi.Message;
  * @author Adrian Cole
  */
 public class Utils {
+   public static Map<String, String> cleanseAttributes(Attributes in) {
+      Map<String, String> attrs = Maps.newLinkedHashMap();
+      for (int i = 0; i < in.getLength(); i++) {
+         String name = in.getQName(i);
+         if (name.indexOf(':') != -1)
+            name = name.substring(name.indexOf(':') + 1);
+         attrs.put(name, in.getValue(i));
+      }
+      return attrs;
+   }
 
    /**
     * If the supplied map contains the key {@code k1}, its value will be assigned to the key

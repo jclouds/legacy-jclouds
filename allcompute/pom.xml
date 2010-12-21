@@ -69,5 +69,15 @@
             <artifactId>jclouds-slicehost</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-elasticstack</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-cloudsigma</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

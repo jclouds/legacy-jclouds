@@ -140,11 +140,18 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(
-            request,
-            "Version=2010-06-15&Action=AuthorizeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000",
-            "application/x-www-form-urlencoded", false);
-
+      try {
+         assertPayloadEquals(
+               request,
+               "Version=2010-06-15&Action=AuthorizeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000",
+               "application/x-www-form-urlencoded", false);
+      } catch (AssertionError e) {
+         // mvn 3.0 osx 10.6.5 somehow sorts differently
+         assertPayloadEquals(
+               request,
+               "Version=2010-06-15&Action=AuthorizeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&ToPort=7000&FromPort=6000",
+               "application/x-www-form-urlencoded", false);
+      }
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);
@@ -179,11 +186,18 @@ public class SecurityGroupAsyncClientTest extends BaseEC2AsyncClientTest<Securit
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");
-      assertPayloadEquals(
-            request,
-            "Version=2010-06-15&Action=RevokeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000",
-            "application/x-www-form-urlencoded", false);
-
+      try {
+         assertPayloadEquals(
+               request,
+               "Version=2010-06-15&Action=RevokeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&FromPort=6000&ToPort=7000",
+               "application/x-www-form-urlencoded", false);
+      } catch (AssertionError e) {
+         // mvn 3.0 osx 10.6.5 somehow sorts differently
+         assertPayloadEquals(
+               request,
+               "Version=2010-06-15&Action=RevokeSecurityGroupIngress&CidrIp=0.0.0.0%2F0&IpProtocol=tcp&GroupName=group&ToPort=7000&FromPort=6000",
+               "application/x-www-form-urlencoded", false);
+      }
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
       assertExceptionParserClassEquals(method, null);

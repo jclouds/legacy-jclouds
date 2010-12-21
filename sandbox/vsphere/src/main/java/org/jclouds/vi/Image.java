@@ -28,10 +28,10 @@ import com.google.common.base.Objects;
  */
 public class Image {
 
-   public int id;
+   public String id;
    public String name;
 
-   public Image(int id, String name) {
+   public Image(String id, String name) {
       this.id = id;
       this.name = name;
    }

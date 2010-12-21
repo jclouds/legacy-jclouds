@@ -19,6 +19,9 @@
 
 package org.jclouds.compute.suppliers;
 
+import static com.google.common.collect.Iterables.find;
+import static com.google.common.collect.Iterables.getOnlyElement;
+
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -30,7 +33,6 @@ import org.jclouds.domain.LocationScope;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -48,7 +50,9 @@ public class DefaultLocationSupplier implements Supplier<Location> {
 
    @Override
    public Location get() {
-      return Iterables.find(locations.get(), new Predicate<Location>() {
+      if (locations.get().size() == 1)
+         return getOnlyElement(locations.get());
+      return find(locations.get(), new Predicate<Location>() {
 
          @Override
          public boolean apply(Location input) {

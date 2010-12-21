@@ -21,7 +21,6 @@ package org.jclouds.aws.ec2.options;
 
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.asType;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.enableMonitoring;
-import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withAdditionalInfo;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withDeviceName;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withKernelId;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withKeyName;
@@ -79,8 +78,7 @@ public class RunInstancesOptionsTest {
    public void testWithSecurityGroup() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.withSecurityGroup("test");
-      assertEquals(options.buildFormParameters().get("SecurityGroup.1"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("SecurityGroup.1"), Collections.singletonList("test"));
    }
 
    @Test
@@ -92,8 +90,7 @@ public class RunInstancesOptionsTest {
    @Test
    public void testWithSecurityGroupStatic() {
       RunInstancesOptions options = withSecurityGroup("test");
-      assertEquals(options.buildFormParameters().get("SecurityGroup.1"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("SecurityGroup.1"), Collections.singletonList("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -102,29 +99,9 @@ public class RunInstancesOptionsTest {
    }
 
    @Test
-   public void testWithAdditionalInfo() {
-      RunInstancesOptions options = new RunInstancesOptions();
-      options.withAdditionalInfo("test");
-      assertEquals(options.buildFormParameters().get("AdditionalInfo"), Collections
-               .singletonList("test"));
-   }
-
-   @Test
    public void testNullWithAdditionalInfo() {
       RunInstancesOptions options = new RunInstancesOptions();
       assertEquals(options.buildFormParameters().get("AdditionalInfo"), Collections.EMPTY_LIST);
-   }
-
-   @Test
-   public void testWithAdditionalInfoStatic() {
-      RunInstancesOptions options = withAdditionalInfo("test");
-      assertEquals(options.buildFormParameters().get("AdditionalInfo"), Collections
-               .singletonList("test"));
-   }
-
-   @Test(expectedExceptions = NullPointerException.class)
-   public void testWithAdditionalInfoNPE() {
-      withAdditionalInfo(null);
    }
 
    @Test
@@ -151,12 +128,16 @@ public class RunInstancesOptionsTest {
       withUserData(null);
    }
 
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testWithUserDataEmpty() {
+      withUserData("".getBytes());
+   }
+
    @Test
    public void testWithInstanceType() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.asType(InstanceType.C1_XLARGE);
-      assertEquals(options.buildFormParameters().get("InstanceType"), Collections
-               .singletonList("c1.xlarge"));
+      assertEquals(options.buildFormParameters().get("InstanceType"), Collections.singletonList("c1.xlarge"));
    }
 
    @Test
@@ -168,8 +149,7 @@ public class RunInstancesOptionsTest {
    @Test
    public void testWithInstanceTypeStatic() {
       RunInstancesOptions options = asType(InstanceType.C1_XLARGE);
-      assertEquals(options.buildFormParameters().get("InstanceType"), Collections
-               .singletonList("c1.xlarge"));
+      assertEquals(options.buildFormParameters().get("InstanceType"), Collections.singletonList("c1.xlarge"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -205,22 +185,21 @@ public class RunInstancesOptionsTest {
    public void testWithDeviceName() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.withDeviceName("test");
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.DeviceName"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.DeviceName"),
+            Collections.singletonList("test"));
    }
 
    @Test
    public void testNullWithDeviceName() {
       RunInstancesOptions options = new RunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.DeviceName"),
-               Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.DeviceName"), Collections.EMPTY_LIST);
    }
 
    @Test
    public void testWithDeviceNameStatic() {
       RunInstancesOptions options = withDeviceName("test");
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.DeviceName"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.DeviceName"),
+            Collections.singletonList("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -232,8 +211,7 @@ public class RunInstancesOptionsTest {
    public void testWithMonitoringEnabled() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.enableMonitoring();
-      assertEquals(options.buildFormParameters().get("Monitoring.Enabled"), Collections
-               .singletonList("true"));
+      assertEquals(options.buildFormParameters().get("Monitoring.Enabled"), Collections.singletonList("true"));
    }
 
    @Test
@@ -245,8 +223,7 @@ public class RunInstancesOptionsTest {
    @Test
    public void testWithMonitoringEnabledStatic() {
       RunInstancesOptions options = enableMonitoring();
-      assertEquals(options.buildFormParameters().get("Monitoring.Enabled"), Collections
-               .singletonList("true"));
+      assertEquals(options.buildFormParameters().get("Monitoring.Enabled"), Collections.singletonList("true"));
    }
 
    @Test
@@ -277,8 +254,7 @@ public class RunInstancesOptionsTest {
    public void testWithRamdisk() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.withRamdisk("test");
-      assertEquals(options.buildFormParameters().get("RamdiskId"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("RamdiskId"), Collections.singletonList("test"));
    }
 
    @Test
@@ -290,8 +266,7 @@ public class RunInstancesOptionsTest {
    @Test
    public void testWithRamdiskStatic() {
       RunInstancesOptions options = withRamdisk("test");
-      assertEquals(options.buildFormParameters().get("RamdiskId"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("RamdiskId"), Collections.singletonList("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)
@@ -303,22 +278,21 @@ public class RunInstancesOptionsTest {
    public void testWithVirtualName() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.withVirtualName("test");
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"),
+            Collections.singletonList("test"));
    }
 
    @Test
    public void testNullWithVirtualName() {
       RunInstancesOptions options = new RunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"),
-               Collections.EMPTY_LIST);
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"), Collections.EMPTY_LIST);
    }
 
    @Test
    public void testWithVirtualNameStatic() {
       RunInstancesOptions options = withVirtualName("test");
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"), Collections
-               .singletonList("test"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"),
+            Collections.singletonList("test"));
    }
 
    @Test(expectedExceptions = NullPointerException.class)

@@ -53,6 +53,12 @@ public class EucalyptusComputeServiceLiveTestDisabled extends EC2ComputeServiceL
    }
 
    @Override
+   @Test(enabled = false)
+   public void testExtendedOptionsNoKeyPair() throws Exception {
+      // euc does not support multiple security groups
+   }
+
+   @Override
    protected void assertDefaultWorks() {
       Template defaultTemplate = client.templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);

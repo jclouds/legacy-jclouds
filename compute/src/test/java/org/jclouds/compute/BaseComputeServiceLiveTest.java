@@ -474,6 +474,7 @@ public abstract class BaseComputeServiceLiveTest {
 
       template = client.templateBuilder().options(blockOnComplete(false).blockOnPort(8080, 600).inboundPorts(22, 8080))
             .build();
+      
       // note this is a dependency on the template resolution
       template.getOptions().runScript(
             RunScriptData.createScriptInstallAndStartJBoss(keyPair.get("public"), template.getImage()

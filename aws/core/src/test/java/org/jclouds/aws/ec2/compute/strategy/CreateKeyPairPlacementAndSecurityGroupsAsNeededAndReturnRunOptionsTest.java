@@ -56,7 +56,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit", testName = "ec2.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest")
 public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
 
-   public void testExecuteWithDefaultOptions() throws SecurityException, NoSuchMethodException {
+   public void testExecuteWithDefaultOptionsEC2() throws SecurityException, NoSuchMethodException {
       // setup constants
       String region = Region.AP_SOUTHEAST_1;
       String tag = "tag";
@@ -69,6 +69,8 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions strategy = createMock(
             CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions.class,
             new Method[] {
+                  CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions.class
+                        .getDeclaredMethod("getProvider"),
                   CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions.class.getDeclaredMethod(
                         "createNewKeyPairUnlessUserSpecifiedOtherwise", String.class, String.class,
                         TemplateOptions.class),
@@ -100,8 +102,8 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       assertEquals(runOptions.buildQueryParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(
             runOptions.buildFormParameters().entries(),
-            ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "AdditionalInfo", tag,
-                  "SecurityGroup.1", generatedGroup, "KeyName", systemGeneratedKeyPairName).entries());
+            ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "SecurityGroup.1",
+                  generatedGroup, "KeyName", systemGeneratedKeyPairName).entries());
       assertEquals(runOptions.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(runOptions.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
       assertEquals(runOptions.buildStringPayload(), null);
@@ -158,9 +160,9 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       assertEquals(runOptions.buildQueryParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(
             runOptions.buildFormParameters().entries(),
-            ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "AdditionalInfo", tag,
-                  "SecurityGroup.1", generatedGroup, "KeyName", systemGeneratedKeyPairName, "Placement.GroupName",
-                  generatedGroup).entries());
+            ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "SecurityGroup.1",
+                  generatedGroup, "KeyName", systemGeneratedKeyPairName, "Placement.GroupName", generatedGroup)
+                  .entries());
       assertEquals(runOptions.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(runOptions.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
       assertEquals(runOptions.buildStringPayload(), null);
@@ -217,9 +219,9 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       assertEquals(runOptions.buildQueryParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(
             runOptions.buildFormParameters().entries(),
-            ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "AdditionalInfo", tag,
-                  "SecurityGroup.1", generatedGroup, "KeyName", systemGeneratedKeyPairName, "Placement.GroupName",
-                  generatedGroup).entries());
+            ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "SecurityGroup.1",
+                  generatedGroup, "KeyName", systemGeneratedKeyPairName, "Placement.GroupName", generatedGroup)
+                  .entries());
       assertEquals(runOptions.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(runOptions.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
       assertEquals(runOptions.buildStringPayload(), null);
@@ -271,8 +273,8 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       assertEquals(runOptions.buildQueryParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(
             runOptions.buildFormParameters().entries(),
-            ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "AdditionalInfo", tag,
-                  "SubnetId", "1", "KeyName", systemGeneratedKeyPairName).entries());
+            ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "SubnetId", "1", "KeyName",
+                  systemGeneratedKeyPairName).entries());
       assertEquals(runOptions.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(runOptions.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
       assertEquals(runOptions.buildStringPayload(), null);
@@ -291,7 +293,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       String systemGeneratedKeyPairName = "systemGeneratedKeyPair";
       String generatedGroup = "group";
       Set<String> generatedGroups = ImmutableSet.of(generatedGroup);
-      
+
       // create mocks
       CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions strategy = createMock(
             CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions.class,
@@ -327,8 +329,8 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       assertEquals(runOptions.buildQueryParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(
             runOptions.buildFormParameters().entries(),
-            ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "AdditionalInfo", tag,
-                  "SecurityGroup.1", "group", "KeyName", systemGeneratedKeyPairName, "UserData", Base64.encodeBytes("hello".getBytes())).entries());
+            ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "SecurityGroup.1", "group",
+                  "KeyName", systemGeneratedKeyPairName, "UserData", Base64.encodeBytes("hello".getBytes())).entries());
       assertEquals(runOptions.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(runOptions.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
       assertEquals(runOptions.buildStringPayload(), null);
@@ -681,8 +683,12 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       verify(strategy.createPlacementGroupIfNeeded);
    }
 
-   @SuppressWarnings("unchecked")
    private CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions setupStrategy() {
+      return setupStrategy("ec2");
+   }
+
+   @SuppressWarnings("unchecked")
+   private CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions setupStrategy(String provider) {
       Map<RegionAndName, KeyPair> credentialsMap = createMock(Map.class);
       Map<RegionAndName, String> securityGroupMap = createMock(Map.class);
       Map<RegionAndName, String> placementGroupMap = createMock(Map.class);
@@ -690,8 +696,9 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       CreateSecurityGroupIfNeeded createSecurityGroupIfNeeded = createMock(CreateSecurityGroupIfNeeded.class);
       CreatePlacementGroupIfNeeded createPlacementGroupIfNeeded = createMock(CreatePlacementGroupIfNeeded.class);
 
-      return new CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions(credentialsMap, securityGroupMap,
-            placementGroupMap, createUniqueKeyPair, createSecurityGroupIfNeeded, createPlacementGroupIfNeeded);
+      return new CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions(provider, credentialsMap,
+            securityGroupMap, placementGroupMap, createUniqueKeyPair, createSecurityGroupIfNeeded,
+            createPlacementGroupIfNeeded);
    }
 
    private void replayStrategy(CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions strategy) {

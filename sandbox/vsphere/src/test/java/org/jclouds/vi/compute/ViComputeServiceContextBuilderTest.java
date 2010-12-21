@@ -33,11 +33,10 @@ public class ViComputeServiceContextBuilderTest {
       Properties restProperties = new Properties();
       restProperties.setProperty("vi.contextbuilder", ViComputeServiceContextBuilder.class.getName());
       restProperties.setProperty("vi.propertiesbuilder", ViPropertiesBuilder.class.getName());
-      restProperties.setProperty("vi.endpoint", "https://localhost/sdk");
+      restProperties.setProperty("vi.endpoint",  "https://localhost/sdk");
 
       ComputeServiceContext context = new ComputeServiceContextFactory(restProperties).createContext("vi",
             "identity", "credential");
-
       context.close();
    }
 

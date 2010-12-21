@@ -39,6 +39,7 @@ import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
+import org.jclouds.rest.annotations.Provider;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
@@ -49,6 +50,8 @@ import com.google.common.collect.Sets;
  */
 @Singleton
 public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions {
+   @VisibleForTesting
+   final String provider;
    @VisibleForTesting
    final Map<RegionAndName, KeyPair> credentialsMap;
    @VisibleForTesting
@@ -63,11 +66,12 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
    final CreatePlacementGroupIfNeeded createPlacementGroupIfNeeded;
 
    @Inject
-   CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions(Map<RegionAndName, KeyPair> credentialsMap,
-         @Named("SECURITY") Map<RegionAndName, String> securityGroupMap,
+   CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions(@Provider String provider,
+         Map<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Map<RegionAndName, String> securityGroupMap,
          @Named("PLACEMENT") Map<RegionAndName, String> placementGroupMap, CreateUniqueKeyPair createUniqueKeyPair,
          CreateSecurityGroupIfNeeded createSecurityGroupIfNeeded,
          CreatePlacementGroupIfNeeded createPlacementGroupIfNeeded) {
+      this.provider = provider;
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;
       this.placementGroupMap = placementGroupMap;
@@ -76,9 +80,14 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
       this.createPlacementGroupIfNeeded = createPlacementGroupIfNeeded;
    }
 
+   // this method only exists so that we can mock
+   String getProvider() {
+      return provider;
+   }
+
    public RunInstancesOptions execute(String region, String tag, Template template) {
 
-      RunInstancesOptions instanceOptions = asType(template.getHardware().getId()).withAdditionalInfo(tag);
+      RunInstancesOptions instanceOptions = asType(template.getHardware().getId());
 
       String keyPairName = createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, template.getOptions());
 

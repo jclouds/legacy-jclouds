@@ -19,7 +19,6 @@
 
 package org.jclouds.vi.compute;
 
-import java.io.StringReader;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -49,12 +48,10 @@ import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
-import org.xml.sax.InputSource;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
-import com.jamesmurty.utils.XMLBuilder;
 import com.vmware.vim25.mo.ServiceInstance;
 
 /**

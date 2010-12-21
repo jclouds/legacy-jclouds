@@ -30,7 +30,7 @@ public interface MutableContentMetadata extends ContentMetadata {
 
    void setContentMD5(@Nullable byte[] md5);
 
-   void setContentType(@Nullable String md5);
+   void setContentType(@Nullable String contentType);
 
    /**
     * Set Content Disposition of the payload

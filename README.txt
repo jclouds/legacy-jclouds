@@ -30,8 +30,10 @@ our current version is 1.0-beta-8
 our dev version is 1.0-SNAPSHOT
  
 our compute api supports: ec2, gogrid, cloudservers (rackspace), rimuhosting, vcloud,
-                          trmk-ecloud, trmk-vcloudexpress, eucalyptus,
-                          bluelock-vclouddirector, slicehost, stub (in-memory)
+                          trmk-ecloud, trmk-vcloudexpress, eucalyptus, cloudsigma,
+                          elasticstack, bluelock-vclouddirector, slicehost,
+                          elastichosts-lon-p (Peer 1), elastichosts-sat-p (Peer 1),
+                          elastichosts-lon-b (BlueSquare), stub (in-memory)
 
   * note * the pom dependency org.jclouds/jclouds-allcompute gives you access to
            to all of these providers
@@ -103,8 +105,8 @@ Compute Example (Clojure):
  
 Downloads:
   * distribution zip: http://jclouds.googlecode.com/files/jclouds-1.0-beta-8.zip
-  * maven repo: http://jclouds.googlecode.com/svn/repo 
-  * snapshot repo: http://jclouds.rimuhosting.com/maven2/snapshots
+  * maven repo: https://oss.sonatype.org/content/repositories/releases
+  * snapshot repo: https://oss.sonatype.org/content/repositories/snapshots
  
 Links:
   * project page: http://code.google.com/p/jclouds/

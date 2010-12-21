@@ -30,9 +30,9 @@ import org.jclouds.aws.ec2.reference.EC2Constants;
 import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.OsFamilyVersion64Bit;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.Test;
 
@@ -75,7 +75,7 @@ public class EC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
       assertEquals(template.getImage().getOperatingSystem().getVersion(), "10.10");
       assertEquals(template.getImage().getOperatingSystem().is64Bit(), false);
       assertEquals(template.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(template.getImage().getVersion(), "20101204");
+      assertEquals(template.getImage().getVersion(), "20101215");
       assertEquals(template.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
       assertEquals(template.getLocation().getId(), "us-east-1");
       assertEquals(getCores(template.getHardware()), 1.0d);

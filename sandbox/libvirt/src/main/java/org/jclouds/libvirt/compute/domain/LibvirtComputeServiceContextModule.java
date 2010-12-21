@@ -36,7 +36,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceAdapter;
-import org.jclouds.compute.config.StandaloneComputeServiceContextModule;
+import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
@@ -73,78 +73,78 @@ import com.jamesmurty.utils.XMLBuilder;
  * @author Adrian Cole
  */
 public class LibvirtComputeServiceContextModule extends
-StandaloneComputeServiceContextModule<Domain, Domain, Image, Datacenter> {
-	@Override
-	protected void configure() {
-		super.configure();
-		bind(new TypeLiteral<ComputeServiceAdapter<Domain, Domain, Image, Datacenter>>() {
-		}).to(LibvirtComputeServiceAdapter.class);
-		bind(new TypeLiteral<Supplier<Location>>() {
-		}).to(DefaultLocationSupplier.class);
-		bind(new TypeLiteral<Function<Domain, NodeMetadata>>() {
-		}).to(DomainToNodeMetadata.class);
-		bind(new TypeLiteral<Function<Image, org.jclouds.compute.domain.Image>>() {
-		}).to(LibvirtImageToImage.class);
-		bind(new TypeLiteral<Function<Domain, Hardware>>() {
-		}).to(DomainToHardware.class);
-		bind(new TypeLiteral<Function<Datacenter, Location>>() {
-		}).to(DatacenterToLocation.class);
-		
-		//bind(ComputeService.class).to(LibvirtComputeService.class);
-	}
+      ComputeServiceAdapterContextModule<Connect, Connect, Domain, Domain, Image, Datacenter> {
+  
+   public LibvirtComputeServiceContextModule() {
+      super(Connect.class, Connect.class);
+   }
 
-	@Provides
-	@Singleton
-	protected Connect createConnection(@Provider URI endpoint, @Named(Constants.PROPERTY_IDENTITY) String identity,
-			@Named(Constants.PROPERTY_CREDENTIAL) String credential) throws LibvirtException {
-		// ConnectAuth connectAuth = null;
-		return new Connect(endpoint.toASCIIString());
-	}
+   @Override
+   protected void configure() {
+      super.configure();
+      bind(new TypeLiteral<ComputeServiceAdapter<Domain, Domain, Image, Datacenter>>() {
+      }).to(LibvirtComputeServiceAdapter.class);
+      bind(new TypeLiteral<Supplier<Location>>() {
+      }).to(DefaultLocationSupplier.class);
+      bind(new TypeLiteral<Function<Domain, NodeMetadata>>() {
+      }).to(DomainToNodeMetadata.class);
+      bind(new TypeLiteral<Function<Image, org.jclouds.compute.domain.Image>>() {
+      }).to(LibvirtImageToImage.class);
+      bind(new TypeLiteral<Function<Domain, Hardware>>() {
+      }).to(DomainToHardware.class);
+      bind(new TypeLiteral<Function<Datacenter, Location>>() {
+      }).to(DatacenterToLocation.class);
 
-	@Override
-	protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-		String domainDir =  injector.getInstance(Key.get(String.class, Names.named(PROPERTY_LIBVIRT_DOMAIN_DIR)));
-		String hardwareId = searchForHardwareIdInDomainDir(domainDir);
-		String image = searchForImageIdInDomainDir(domainDir);
-		return template.hardwareId(hardwareId).imageId(image) ;
-	}
+      // bind(ComputeService.class).to(LibvirtComputeService.class);
+   }
 
+   @Provides
+   @Singleton
+   protected Connect createConnection(@Provider URI endpoint, @Named(Constants.PROPERTY_IDENTITY) String identity,
+         @Named(Constants.PROPERTY_CREDENTIAL) String credential) throws LibvirtException {
+      // ConnectAuth connectAuth = null;
+      return new Connect(endpoint.toASCIIString());
+   }
 
-	private String searchForImageIdInDomainDir(String domainDir) {
-		// TODO
-		return "1";
-	}
-	
-	@SuppressWarnings("unchecked")
-	private String searchForHardwareIdInDomainDir(String domainDir) {
+   @Override
+   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
+      String domainDir = injector.getInstance(Key.get(String.class, Names.named(PROPERTY_LIBVIRT_DOMAIN_DIR)));
+      String hardwareId = searchForHardwareIdInDomainDir(domainDir);
+      String image = searchForImageIdInDomainDir(domainDir);
+      return template.hardwareId(hardwareId).imageId(image);
+   }
 
-		Collection<File> xmlDomains = FileUtils.listFiles( new File(domainDir), new WildcardFileFilter("*.xml"), null);
-		String uuid = "";
-		try {
-			String fromXML = Files.toString(Iterables.get(xmlDomains, 0), Charsets.UTF_8);
-			XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(fromXML)));
-			uuid =  builder.xpathFind("/domain/uuid").getElement().getTextContent();	
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (XPathExpressionException e) {
-			e.printStackTrace();
-		}
-		return uuid;
-	}
+   private String searchForImageIdInDomainDir(String domainDir) {
+      // TODO
+      return "1";
+   }
 
-	/*
-	 *       Map<String, URI> regions = newLinkedHashMap();
-      for (String region : Splitter.on(',').split(regionString)) {
-         regions.put(
-               region,
-               URI.create(injector.getInstance(Key.get(String.class,
-                     Names.named(Constants.PROPERTY_ENDPOINT + "." + region)))));
+   @SuppressWarnings("unchecked")
+   private String searchForHardwareIdInDomainDir(String domainDir) {
+
+      Collection<File> xmlDomains = FileUtils.listFiles(new File(domainDir), new WildcardFileFilter("*.xml"), null);
+      String uuid = "";
+      try {
+         String fromXML = Files.toString(Iterables.get(xmlDomains, 0), Charsets.UTF_8);
+         XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(fromXML)));
+         uuid = builder.xpathFind("/domain/uuid").getElement().getTextContent();
+      } catch (IOException e) {
+         e.printStackTrace();
+      } catch (ParserConfigurationException e) {
+         e.printStackTrace();
+      } catch (SAXException e) {
+         e.printStackTrace();
+      } catch (XPathExpressionException e) {
+         e.printStackTrace();
       }
-      return regions;
-	 */
-	
+      return uuid;
+   }
+
+   /*
+    * Map<String, URI> regions = newLinkedHashMap(); for (String region :
+    * Splitter.on(',').split(regionString)) { regions.put( region,
+    * URI.create(injector.getInstance(Key.get(String.class, Names.named(Constants.PROPERTY_ENDPOINT
+    * + "." + region))))); } return regions;
+    */
+
 }

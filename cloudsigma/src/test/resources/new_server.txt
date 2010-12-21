@@ -1,0 +1,24 @@
+ide:0:0:write:requests 0
+boot ide:0:0
+vnc:password XXXXXXXX
+ide:0:0 403c9a86-0aab-4e47-aa95-e9768021c4c1
+ide:0:0:read:requests 0
+ide:0:0:read:bytes 0
+vnc:ip 83.222.249.221
+tx:packets 0
+tx 0
+rx 0
+smp 1
+mem 512
+nic:0:model e1000
+status active
+started 1292695612
+rx:packets 0
+user 2f6244eb-50bc-4403-847e-f03cc3706a1f
+ide:0:0:media disk
+name adriancole.test
+persistent true
+nic:0:block tcp/43594 tcp/5902 udp/5060 tcp/5900 tcp/5901 tcp/21 tcp/22 tcp/23 tcp/25 tcp/110 tcp/143 tcp/43595
+server bd98615a-6f74-4d63-ad1e-b13338b9356a
+ide:0:0:write:bytes 0
+cpu 1000

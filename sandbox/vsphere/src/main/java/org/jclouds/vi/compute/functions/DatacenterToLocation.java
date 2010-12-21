@@ -24,9 +24,9 @@ import javax.inject.Singleton;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
-import org.jclouds.vi.Datacenter;
 
 import com.google.common.base.Function;
+import com.vmware.vim25.mo.Datacenter;
 
 /**
  * @author Adrian Cole
@@ -36,7 +36,7 @@ public class DatacenterToLocation implements Function<Datacenter, Location> {
 
    @Override
    public Location apply(Datacenter from) {
-      return new LocationImpl(LocationScope.ZONE, from.id + "", from.name, null);
+      return new LocationImpl(LocationScope.ZONE, from.getName() + "", from.getName(), null);
    }
 
 }

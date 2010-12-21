@@ -20,7 +20,7 @@
 package org.jclouds.servermanager.compute.config;
 
 import org.jclouds.compute.ComputeServiceAdapter;
-import org.jclouds.compute.config.StandaloneComputeServiceContextModule;
+import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.suppliers.DefaultLocationSupplier;
 import org.jclouds.domain.Location;
@@ -28,6 +28,7 @@ import org.jclouds.servermanager.Datacenter;
 import org.jclouds.servermanager.Hardware;
 import org.jclouds.servermanager.Image;
 import org.jclouds.servermanager.Server;
+import org.jclouds.servermanager.ServerManager;
 import org.jclouds.servermanager.compute.functions.DatacenterToLocation;
 import org.jclouds.servermanager.compute.functions.ServerManagerHardwareToHardware;
 import org.jclouds.servermanager.compute.functions.ServerManagerImageToImage;
@@ -43,7 +44,12 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class ServerManagerComputeServiceContextModule extends
-      StandaloneComputeServiceContextModule<Server, Hardware, Image, Datacenter> {
+      ComputeServiceAdapterContextModule<ServerManager, ServerManager, Server, Hardware, Image, Datacenter> {
+
+   public ServerManagerComputeServiceContextModule() {
+      super(ServerManager.class, ServerManager.class);
+   }
+
    @Override
    protected void configure() {
       super.configure();
