@@ -20,6 +20,7 @@
 package org.jclouds.util;
 
 import static org.easymock.classextension.EasyMock.createMock;
+import static org.easymock.classextension.EasyMock.createNiceMock;
 import static org.testng.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
@@ -27,7 +28,10 @@ import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.domain.Credentials;
+import org.jclouds.http.HttpCommand;
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -105,7 +109,7 @@ public class UtilsTest {
       ProvisionException pex = new ProvisionException(ImmutableSet.of(message));
       assertEquals(Utils.getFirstThrowableOfType(pex, AuthorizationException.class), null);
    }
-   
+
    public void testGetFirstThrowableOfTypeWhenCauseIsNull() {
       Message message = new Message(ImmutableList.of(), "test", null);
       ProvisionException pex = new ProvisionException(ImmutableSet.of(message));
@@ -130,6 +134,71 @@ public class UtilsTest {
    public void testSupportedProviders() {
       Iterable<String> providers = Utils.getSupportedProviders();
       assertEquals(Sets.newLinkedHashSet(providers), ImmutableSet.<String> of());
+   }
+
+   static class TestException extends Exception {
+
+      /**
+       * 
+       */
+      private static final long serialVersionUID = 1L;
+
+   }
+
+   @Test
+   public void testReturnExceptionThatsInList() throws Exception {
+      Exception e = new TestException();
+      assertEquals(
+            Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] { TestException.class }, e),
+            e);
+      assertEquals(Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(
+            new Class[] { TestException.class }, new RuntimeException(e)), e);
+   }
+
+   @Test(expectedExceptions = TestException.class)
+   public void testThrowExceptionNotInList() throws Exception {
+      Exception e = new TestException();
+      Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, e);
+   }
+
+   @Test(expectedExceptions = IllegalStateException.class)
+   public void testPropagateStandardExceptionIllegalStateException() throws Exception {
+      Exception e = new IllegalStateException();
+      assertEquals(
+            Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e)),
+            e);
+   }
+
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testPropagateStandardExceptionIllegalArgumentException() throws Exception {
+      Exception e = new IllegalArgumentException();
+      assertEquals(
+            Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e)),
+            e);
+   }
+
+   @Test(expectedExceptions = AuthorizationException.class)
+   public void testPropagateStandardExceptionAuthorizationException() throws Exception {
+      Exception e = new AuthorizationException();
+      assertEquals(
+            Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e)),
+            e);
+   }
+
+   @Test(expectedExceptions = ResourceNotFoundException.class)
+   public void testPropagateStandardExceptionResourceNotFoundException() throws Exception {
+      Exception e = new ResourceNotFoundException();
+      assertEquals(
+            Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e)),
+            e);
+   }
+
+   @Test(expectedExceptions = HttpResponseException.class)
+   public void testPropagateStandardExceptionHttpResponseException() throws Exception {
+      Exception e = new HttpResponseException("goo", createNiceMock(HttpCommand.class), null);
+      assertEquals(
+            Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e)),
+            e);
    }
 
 }

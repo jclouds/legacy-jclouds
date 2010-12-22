@@ -38,7 +38,7 @@ public interface TransformingHttpCommandExecutorService {
     * @param <T>
     *           type that is required from the value.
     * @param command
-    *           what to execute
+    *           holds the state of the request, including metadata such as redirect counts
     * @param responseTransformer
     *           how to transform the response from the above command
     * @return value of the intended response.

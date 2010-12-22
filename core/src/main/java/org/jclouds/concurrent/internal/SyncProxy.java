@@ -35,14 +35,10 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.internal.ClassMethodArgs;
-import org.jclouds.rest.AuthorizationException;
-import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.annotations.Delegate;
 import org.jclouds.util.Utils;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -135,30 +131,13 @@ public class SyncProxy implements InvocationHandler {
             return ((ListenableFuture<?>) methodMap.get(method).invoke(delegate, args)).get(timeoutMap.get(method),
                   TimeUnit.NANOSECONDS);
          } catch (ProvisionException e) {
-            throw throwTypedExceptionOrCause(method.getExceptionTypes(), e);
+            throw Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(method.getExceptionTypes(), e);
          } catch (ExecutionException e) {
-            throw throwTypedExceptionOrCause(method.getExceptionTypes(), e);
+            throw Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(method.getExceptionTypes(), e);
          } catch (Exception e) {
-            throw throwTypedExceptionOrCause(method.getExceptionTypes(), e);
+            throw Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(method.getExceptionTypes(), e);
          }
       }
-   }
-
-   // Note this needs to be kept up-to-date with all top-level exceptions jclouds works against
-   @SuppressWarnings("unchecked")
-   public static Exception throwTypedExceptionOrCause(Class[] exceptionTypes, Exception exception) throws Exception {
-      for (Class type : exceptionTypes) {
-         Throwable throwable = Utils.getFirstThrowableOfType(exception, type);
-         if (throwable != null) {
-            return (Exception) throwable;
-         }
-      }
-      Throwables.propagateIfInstanceOf(exception, IllegalStateException.class);
-      Throwables.propagateIfInstanceOf(exception, AuthorizationException.class);
-      Throwables.propagateIfInstanceOf(exception, ResourceNotFoundException.class);
-      Throwables.propagateIfInstanceOf(exception, HttpResponseException.class);
-      Throwables.throwCause(exception, true);
-      return exception;
    }
 
    @Override

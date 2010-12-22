@@ -63,8 +63,10 @@ import javax.annotation.Resource;
 import org.jclouds.PropertiesBuilder;
 import org.jclouds.crypto.Pems;
 import org.jclouds.domain.Credentials;
+import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
+import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.rest.RestContextBuilder;
 import org.xml.sax.Attributes;
 
@@ -73,6 +75,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -529,6 +532,25 @@ public class Utils {
             defaultCredentials, "defaultCredentials").credential;
 
       return new Credentials(identity, credential);
+   }
+
+   // Note this needs to be kept up-to-date with all top-level exceptions jclouds works against
+   @SuppressWarnings({ "unchecked", "rawtypes" })
+   public static Exception returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(Class[] exceptionTypes,
+         Exception exception) throws Exception {
+      for (Class type : exceptionTypes) {
+         Throwable throwable = getFirstThrowableOfType(exception, type);
+         if (throwable != null) {
+            return (Exception) throwable;
+         }
+      }
+      Throwables.propagateIfInstanceOf(exception, IllegalStateException.class);
+      Throwables.propagateIfInstanceOf(exception, IllegalArgumentException.class);
+      Throwables.propagateIfInstanceOf(exception, AuthorizationException.class);
+      Throwables.propagateIfInstanceOf(exception, ResourceNotFoundException.class);
+      Throwables.propagateIfInstanceOf(exception, HttpResponseException.class);
+      Throwables.throwCause(exception, true);
+      return exception;
    }
 
 }
