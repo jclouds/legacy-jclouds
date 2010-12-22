@@ -19,162 +19,68 @@
 
 package org.jclouds.aws.ec2.compute;
 
-import static java.lang.String.format;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
-import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.c1_medium;
-import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.c1_xlarge;
-import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.cc1_4xlarge;
-import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.m1_large;
-import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.m1_small;
-import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.m1_xlarge;
-import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.m2_2xlarge;
-import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.m2_4xlarge;
-import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.m2_xlarge;
-import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.t1_micro;
-import static org.testng.Assert.assertEquals;
+import static org.easymock.classextension.EasyMock.verify;
 
-import java.util.Set;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import javax.inject.Provider;
 
-import org.jclouds.compute.domain.ComputeMetadata;
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.ImageBuilder;
-import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.domain.internal.TemplateBuilderImpl;
-import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.domain.Credentials;
-import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.aws.ec2.EC2Client;
+import org.jclouds.aws.ec2.services.PlacementGroupClient;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
+import org.jclouds.compute.strategy.DestroyNodeStrategy;
+import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
+import org.jclouds.compute.strategy.ListNodesStrategy;
+import org.jclouds.compute.strategy.RebootNodeStrategy;
+import org.jclouds.compute.strategy.ResumeNodeStrategy;
+import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.SuspendNodeStrategy;
+import org.jclouds.compute.util.ComputeUtils;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableSet;
 
 /**
- * Tests compute service specifically to EC2.
- * 
- * These tests are designed to verify the local functionality of jclouds, rather than the
- * interaction with Amazon Web Services.
- * 
- * @see EC2ComputeServiceLiveTest
- * 
- * @author Oleksiy Yarmula
+ * @author Adrian Cole
  */
+@Test(groups = "unit")
 public class EC2ComputeServiceTest {
-   private static final Location location = new LocationImpl(LocationScope.REGION, "us-east-1", "us east", null);
 
-   public static final Hardware CC1_4XLARGE = cc1_4xlarge().location(location).supportsImageIds("us-east-1/cc-image")
-            .build();
+   @SuppressWarnings({ "unchecked" })
+   public void testUnsupportedOperationOkForPlacementGroups() {
+      EC2Client client = createMock(EC2Client.class);
+      EC2ComputeService service = new EC2ComputeService(createMock(ComputeServiceContext.class), createMock(Map.class),
+            createMock(Supplier.class), createMock(Supplier.class), createMock(Supplier.class),
+            createMock(ListNodesStrategy.class), createMock(GetNodeMetadataStrategy.class),
+            createMock(RunNodesAndAddToSetStrategy.class), createMock(RebootNodeStrategy.class),
+            createMock(DestroyNodeStrategy.class), createMock(ResumeNodeStrategy.class),
+            createMock(SuspendNodeStrategy.class), createMock(Provider.class), createMock(Provider.class),
+            createMock(Predicate.class), createMock(Predicate.class), createMock(Predicate.class),
+            createMock(ComputeUtils.class), createMock(Timeouts.class), createMock(ExecutorService.class), client,
+            createMock(Map.class), createMock(Map.class), createMock(Map.class), createMock(Predicate.class));
 
-   /**
-    * Verifies that {@link TemplateBuilderImpl} would choose the correct size of the instance, based
-    * on {@link org.jclouds.compute.domain.Hardware} from {@link EC2Hardware}.
-    * 
-    * Expected size: m2.xlarge
-    */
-   @Test
-   public void testTemplateChoiceForInstanceByhardwareId() throws Exception {
-      Template template = newTemplateBuilder().os64Bit(true).hardwareId("m2.xlarge").locationId("us-east-1").build();
+      PlacementGroupClient placementClient = createMock(PlacementGroupClient.class);
 
-      assert template != null : "The returned template was null, but it should have a value.";
-      // assert m2_xlarge().build().equals(template.getHardware()) : format(
-      // "Incorrect image determined by the template. Expected: %s. Found: %s.", "m2.xlarge",
-      // String.valueOf(template.getHardware()));
-      assertEquals(m2_xlarge().build(), template.getHardware());
+      // setup expectations
+      expect(client.getPlacementGroupServices()).andReturn(placementClient).atLeastOnce();
+      expect(placementClient.describePlacementGroupsInRegion("us-west-1", "jclouds#tag#us-west-1")).andThrow(
+            new UnsupportedOperationException());
+
+      // replay mocks
+      replay(client);
+      replay(placementClient);
+      // run
+      service.deletePlacementGroup("us-west-1", "tag");
+
+      // verify mocks
+      verify(client);
+      verify(placementClient);
+
    }
-
-   @Test
-   public void testTemplateChoiceForInstanceByCChardwareId() throws Exception {
-      Template template = newTemplateBuilder().fastest().build();
-
-      assert template != null : "The returned template was null, but it should have a value.";
-      assert CC1_4XLARGE.equals(template.getHardware()) : format(
-               "Incorrect image determined by the template. Expected: %s. Found: %s.", CC1_4XLARGE.getId(), String
-                        .valueOf(template.getHardware()));
-   }
-
-   /**
-    * Verifies that {@link TemplateBuilderImpl} would choose the correct size of the instance, based
-    * on physical attributes (# of cores, ram, etc).
-    * 
-    * Expected size: m2.xlarge
-    */
-   @Test
-   public void testTemplateChoiceForInstanceByAttributes() throws Exception {
-      Template template = newTemplateBuilder().os64Bit(true).minRam(17510).minCores(6.5).smallest().locationId(
-               "us-east-1").build();
-
-      assert template != null : "The returned template was null, but it should have a value.";
-      assert CC1_4XLARGE.equals(template.getHardware()) : format(
-               "Incorrect image determined by the template. Expected: %s. Found: %s.", CC1_4XLARGE, String
-                        .valueOf(template.getHardware()));
-   }
-
-   /**
-    * Negative test version of {@link #testTemplateChoiceForInstanceByAttributes}.
-    * 
-    * Verifies that {@link TemplateBuilderImpl} would not choose the insufficient size of the
-    * instance, based on physical attributes (# of cores, ram, etc).
-    * 
-    * Expected size: anything but m2.xlarge
-    */
-   @Test
-   public void testNegativeTemplateChoiceForInstanceByAttributes() throws Exception {
-      Template template = newTemplateBuilder().os64Bit(true).minRam(17510).minCores(6.7).smallest().locationId(
-               "us-east-1").build();
-
-      assert template != null : "The returned template was null, but it should have a value.";
-      assert !m2_xlarge().build().equals(template.getHardware()) : format(
-               "Incorrect image determined by the template. Expected: not %s. Found: %s.", "m2.xlarge", String
-                        .valueOf(template.getHardware()));
-   }
-
-   @SuppressWarnings("unchecked")
-   private TemplateBuilder newTemplateBuilder() {
-
-      Provider<TemplateOptions> optionsProvider = createMock(Provider.class);
-      Provider<TemplateBuilder> templateBuilderProvider = createMock(Provider.class);
-      TemplateOptions defaultOptions = createMock(TemplateOptions.class);
-
-      expect(optionsProvider.get()).andReturn(defaultOptions);
-
-      Image image = new ImageBuilder().providerId("cc-image").name("image").id("us-east-1/cc-image").location(location)
-               .operatingSystem(new OperatingSystem(OsFamily.UBUNTU, null, "1.0", null, "ubuntu", true)).description(
-                        "description").version("1.0").defaultCredentials(new Credentials("root", null)).build();
-      replay(optionsProvider);
-      replay(templateBuilderProvider);
-      Supplier<Set<? extends Location>> locations = Suppliers.<Set<? extends Location>> ofInstance(ImmutableSet
-               .<Location> of(location));
-      Supplier<Set<? extends Image>> images = Suppliers.<Set<? extends Image>> ofInstance(ImmutableSet
-               .<Image> of(image));
-      Supplier<Set<? extends Hardware>> sizes = Suppliers.<Set<? extends Hardware>> ofInstance(ImmutableSet
-               .<Hardware> of(t1_micro().build(), c1_medium().build(), c1_xlarge().build(), m1_large().build(),
-                        m1_small().build(), m1_xlarge().build(), m2_xlarge().build(), m2_2xlarge().build(),
-                        m2_4xlarge().build(), CC1_4XLARGE));
-
-      return new TemplateBuilderImpl(locations, images, sizes, Suppliers.ofInstance(location), optionsProvider,
-               templateBuilderProvider) {
-
-      };
-   }
-
-   Function<ComputeMetadata, String> indexer() {
-      return new Function<ComputeMetadata, String>() {
-         @Override
-         public String apply(ComputeMetadata from) {
-            return from.getProviderId();
-         }
-      };
-   }
-
 }

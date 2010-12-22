@@ -126,6 +126,7 @@ public class EC2ComputeService extends BaseComputeService {
                }
             }
          }
+      } catch (UnsupportedOperationException e) {
       } catch (HttpResponseException e) {
          // Eucalyptus does not support placement groups yet.
          if (!(e.getResponse().getStatusCode() == 400 && context.getProviderSpecificContext().getProvider()
