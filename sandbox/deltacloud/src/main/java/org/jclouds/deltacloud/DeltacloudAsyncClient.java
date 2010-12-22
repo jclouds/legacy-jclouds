@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -34,9 +35,12 @@ import org.jclouds.deltacloud.collections.DeltacloudCollection;
 import org.jclouds.deltacloud.collections.Images;
 import org.jclouds.deltacloud.collections.Instances;
 import org.jclouds.deltacloud.domain.Image;
+import org.jclouds.deltacloud.domain.Instance;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.deltacloud.xml.ImageHandler;
 import org.jclouds.deltacloud.xml.ImagesHandler;
+import org.jclouds.deltacloud.xml.InstanceHandler;
+import org.jclouds.deltacloud.xml.InstancesHandler;
 import org.jclouds.deltacloud.xml.LinksHandler;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.Endpoint;
@@ -46,6 +50,7 @@ import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -89,11 +94,46 @@ public interface DeltacloudAsyncClient {
    ListenableFuture<Image> getImage(@EndpointParam URI imageHref);
 
    /**
+    * @see DeltacloudClient#listInstances
+    */
+   @GET
+   @Endpoint(Instances.class)
+   @Path("")
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @XMLResponseParser(InstancesHandler.class)
+   ListenableFuture<? extends Set<Instance>> listInstances();
+
+   /**
+    * @see DeltacloudClient#getInstance
+    */
+   @GET
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("")
+   @XMLResponseParser(InstanceHandler.class)
+   ListenableFuture<Instance> getInstance(@EndpointParam URI instanceHref);
+
+   /**
     * @see DeltacloudClient#createInstance
     */
    @POST
    @Endpoint(Instances.class)
    @Path("")
-   ListenableFuture<String> createInstance(@FormParam("image_id") String imageId, CreateInstanceOptions... options);
+   @XMLResponseParser(InstanceHandler.class)
+   ListenableFuture<Instance> createInstance(@FormParam("image_id") String imageId, CreateInstanceOptions... options);
+
+   /**
+    * @see DeltacloudClient#performInstanceAction
+    */
+   @POST
+   @Path("")
+   ListenableFuture<Void> performAction(@EndpointParam URI actionRef);
+
+   /**
+    * @see DeltacloudClient#deleteResource
+    */
+   @DELETE
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Path("")
+   ListenableFuture<Void> deleteResource(@EndpointParam URI resourceHref);
 
 }

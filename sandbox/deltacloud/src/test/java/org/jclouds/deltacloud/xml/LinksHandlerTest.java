@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.deltacloud.handlers;
+package org.jclouds.deltacloud.xml;
 
 import static org.testng.Assert.assertEquals;
 
@@ -26,7 +26,6 @@ import java.net.URI;
 import java.util.Map;
 
 import org.jclouds.deltacloud.collections.DeltacloudCollection;
-import org.jclouds.deltacloud.xml.LinksHandler;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
 
@@ -42,16 +41,17 @@ public class LinksHandlerTest extends BaseHandlerTest {
 
    public void test() {
       InputStream is = getClass().getResourceAsStream("/links.xml");
-
-      Map<DeltacloudCollection, URI> result = factory.create(injector.getInstance(LinksHandler.class)).parse(is);
-      assertEquals(result, ImmutableMap.of(//
+      Map<DeltacloudCollection, URI> expects = ImmutableMap.of(//
             DeltacloudCollection.HARDWARE_PROFILES, URI.create("http://fancycloudprovider.com/api/hardware_profiles"),//
             DeltacloudCollection.INSTANCE_STATES, URI.create("http://fancycloudprovider.com/api/instance_states"),//
             DeltacloudCollection.REALMS, URI.create("http://fancycloudprovider.com/api/realms"),//
             DeltacloudCollection.IMAGES, URI.create("http://fancycloudprovider.com/api/images"),//
             DeltacloudCollection.INSTANCES, URI.create("http://fancycloudprovider.com/api/instances")
 
-      ));
+      );
+      // not sure why this isn't always automatically called from surefire.
+      setUpInjector();
+      assertEquals(factory.create(injector.getInstance(LinksHandler.class)).parse(is), expects);
 
    }
 

@@ -27,7 +27,9 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.deltacloud.collections.DeltacloudCollection;
 import org.jclouds.deltacloud.domain.Image;
+import org.jclouds.deltacloud.domain.Instance;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
+import org.jclouds.rest.annotations.EndpointParam;
 
 /**
  * Provides synchronous access to deltacloud.
@@ -62,6 +64,20 @@ public interface DeltacloudClient {
    Image getImage(URI imageHref);
 
    /**
+    * The instances collection will return a set of all instances available to the current user.
+    * 
+    * @return instances viewable to the user or empty set
+    */
+   Set<? extends Instance> listInstances();
+
+   /**
+    * 
+    * @param instanceHref
+    * @return instance or null, if not found
+    */
+   Instance getInstance(URI instanceHref);
+
+   /**
     * Create a new Instance
     * 
     * <h4>Note</h4>
@@ -76,5 +92,21 @@ public interface DeltacloudClient {
     *           includes realm, hardware profile, etc.
     * @return newly-created instance including a URL to retrieve the instance in the future.
     */
-   String createInstance(String imageId, CreateInstanceOptions... options);
+   Instance createInstance(String imageId, CreateInstanceOptions... options);
+
+   /**
+    * perform a specific action.
+    * 
+    * @param actionRef
+    *           reference from {@link Instance#getActions()}
+    */
+   void performAction(@EndpointParam URI actionRef);
+
+   /**
+    * delete a resource, such as {@link Instance}
+    * 
+    * @param resourceHref
+    *           reference from {@link Instance#getHref()}
+    */
+   void deleteResource(@EndpointParam URI resourceHref);
 }
