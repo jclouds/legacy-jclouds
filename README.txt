@@ -105,7 +105,7 @@ Compute Example (Clojure):
  
 Downloads:
   * distribution zip: http://jclouds.googlecode.com/files/jclouds-1.0-beta-8.zip
-  * maven repo: https://oss.sonatype.org/content/repositories/releases
+  * maven repo: http://repo2.maven.org/maven2 (maven central - the default repository)
   * snapshot repo: https://oss.sonatype.org/content/repositories/snapshots
  
 Links:
