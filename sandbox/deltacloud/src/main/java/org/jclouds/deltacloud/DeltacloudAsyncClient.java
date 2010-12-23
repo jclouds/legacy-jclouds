@@ -34,14 +34,18 @@ import javax.ws.rs.core.MediaType;
 import org.jclouds.deltacloud.collections.DeltacloudCollection;
 import org.jclouds.deltacloud.collections.Images;
 import org.jclouds.deltacloud.collections.Instances;
+import org.jclouds.deltacloud.collections.Realms;
 import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.deltacloud.domain.Instance;
+import org.jclouds.deltacloud.domain.Realm;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.deltacloud.xml.ImageHandler;
 import org.jclouds.deltacloud.xml.ImagesHandler;
 import org.jclouds.deltacloud.xml.InstanceHandler;
 import org.jclouds.deltacloud.xml.InstancesHandler;
 import org.jclouds.deltacloud.xml.LinksHandler;
+import org.jclouds.deltacloud.xml.RealmHandler;
+import org.jclouds.deltacloud.xml.RealmsHandler;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -73,6 +77,25 @@ public interface DeltacloudAsyncClient {
    @Path("")
    @XMLResponseParser(LinksHandler.class)
    ListenableFuture<Map<DeltacloudCollection, URI>> getCollections();
+
+   /**
+    * @see DeltacloudClient#listRealms
+    */
+   @GET
+   @Endpoint(Realms.class)
+   @Path("")
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
+   @XMLResponseParser(RealmsHandler.class)
+   ListenableFuture<? extends Set<Realm>> listRealms();
+
+   /**
+    * @see DeltacloudClient#getRealm
+    */
+   @GET
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @Path("")
+   @XMLResponseParser(RealmHandler.class)
+   ListenableFuture<Realm> getRealm(@EndpointParam URI realmHref);
 
    /**
     * @see DeltacloudClient#listImages

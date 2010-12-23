@@ -33,6 +33,7 @@ import org.jclouds.deltacloud.DeltacloudClient;
 import org.jclouds.deltacloud.collections.DeltacloudCollection;
 import org.jclouds.deltacloud.collections.Images;
 import org.jclouds.deltacloud.collections.Instances;
+import org.jclouds.deltacloud.collections.Realms;
 import org.jclouds.deltacloud.handlers.DeltacloudErrorHandler;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
@@ -105,5 +106,15 @@ public class DeltacloudRestClientModule extends RestClientModule<DeltacloudClien
    @Instances
    protected URI provideInstanceCollection(Supplier<Map<DeltacloudCollection, URI>> collectionSupplier) {
       return collectionSupplier.get().get(DeltacloudCollection.INSTANCES);
+   }
+
+   /**
+    * since the supplier is memoized, and there are no objects created here, this doesn't need to be
+    * singleton.
+    */
+   @Provides
+   @Realms
+   protected URI provideRealmCollection(Supplier<Map<DeltacloudCollection, URI>> collectionSupplier) {
+      return collectionSupplier.get().get(DeltacloudCollection.REALMS);
    }
 }

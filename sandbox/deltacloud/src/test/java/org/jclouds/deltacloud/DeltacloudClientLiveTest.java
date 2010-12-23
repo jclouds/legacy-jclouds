@@ -37,6 +37,7 @@ import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.deltacloud.domain.Instance;
 import org.jclouds.deltacloud.domain.InstanceAction;
 import org.jclouds.deltacloud.domain.InstanceState;
+import org.jclouds.deltacloud.domain.Realm;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -115,6 +116,17 @@ public class DeltacloudClientLiveTest {
       assertNotNull(links);
       for (DeltacloudCollection link : DeltacloudCollection.values())
          assert (links.get(link) != null) : link;
+   }
+
+   public void testListAndGetRealms() throws Exception {
+      Set<? extends Realm> response = client.listRealms();
+      assert null != response;
+      long realmCount = response.size();
+      assertTrue(realmCount >= 0);
+      for (Realm realm : response) {
+         Realm newDetails = client.getRealm(realm.getHref());
+         assertEquals(realm, newDetails);
+      }
    }
 
    public void testListAndGetImages() throws Exception {

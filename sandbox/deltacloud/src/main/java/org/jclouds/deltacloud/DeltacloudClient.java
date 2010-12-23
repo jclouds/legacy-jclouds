@@ -28,6 +28,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.deltacloud.collections.DeltacloudCollection;
 import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.deltacloud.domain.Instance;
+import org.jclouds.deltacloud.domain.Realm;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.rest.annotations.EndpointParam;
 
@@ -48,6 +49,20 @@ public interface DeltacloudClient {
     * @return named links to available collections, or empty map, if no resources are found
     */
    Map<DeltacloudCollection, URI> getCollections();
+
+   /**
+    * The realms collection will return a set of all realms available to the current user.
+    * 
+    * @return realms viewable to the user or empty set
+    */
+   Set<? extends Realm> listRealms();
+
+   /**
+    * 
+    * @param realmHref
+    * @return realm or null, if not found
+    */
+   Realm getRealm(URI realmHref);
 
    /**
     * The images collection will return a set of all images available to the current user.
