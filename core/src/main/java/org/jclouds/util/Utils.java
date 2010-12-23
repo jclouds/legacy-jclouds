@@ -544,11 +544,14 @@ public class Utils {
             return (Exception) throwable;
          }
       }
-      Throwables.propagateIfInstanceOf(exception, IllegalStateException.class);
-      Throwables.propagateIfInstanceOf(exception, IllegalArgumentException.class);
-      Throwables.propagateIfInstanceOf(exception, AuthorizationException.class);
-      Throwables.propagateIfInstanceOf(exception, ResourceNotFoundException.class);
-      Throwables.propagateIfInstanceOf(exception, HttpResponseException.class);
+      for (Class<Exception> propagatableExceptionType : new Class[] { IllegalStateException.class,
+            UnsupportedOperationException.class, IllegalArgumentException.class, AuthorizationException.class,
+            ResourceNotFoundException.class, HttpResponseException.class }) {
+         Throwable throwable = getFirstThrowableOfType(exception, propagatableExceptionType);
+         if (throwable != null) {
+            throw (Exception) throwable;
+         }
+      }
       Throwables.throwCause(exception, true);
       return exception;
    }

@@ -164,41 +164,73 @@ public class UtilsTest {
    @Test(expectedExceptions = IllegalStateException.class)
    public void testPropagateStandardExceptionIllegalStateException() throws Exception {
       Exception e = new IllegalStateException();
-      assertEquals(
-            Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e)),
-            e);
+      Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
    }
 
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testPropagateStandardExceptionIllegalArgumentException() throws Exception {
       Exception e = new IllegalArgumentException();
-      assertEquals(
-            Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e)),
-            e);
+      Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
+   }
+
+   @Test(expectedExceptions = UnsupportedOperationException.class)
+   public void testPropagateStandardExceptionUnsupportedOperationException() throws Exception {
+      Exception e = new UnsupportedOperationException();
+      Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
    }
 
    @Test(expectedExceptions = AuthorizationException.class)
    public void testPropagateStandardExceptionAuthorizationException() throws Exception {
       Exception e = new AuthorizationException();
-      assertEquals(
-            Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e)),
-            e);
+      Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
    }
 
    @Test(expectedExceptions = ResourceNotFoundException.class)
    public void testPropagateStandardExceptionResourceNotFoundException() throws Exception {
       Exception e = new ResourceNotFoundException();
-      assertEquals(
-            Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e)),
-            e);
+      Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
+   }
+
+   @Test(expectedExceptions = IllegalStateException.class)
+   public void testPropagateStandardExceptionIllegalStateExceptionNestedInHttpResponseException() throws Exception {
+      Exception e = new IllegalStateException();
+      Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new HttpResponseException(
+            "goo", createNiceMock(HttpCommand.class), null, e));
+   }
+
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testPropagateStandardExceptionIllegalArgumentExceptionNestedInHttpResponseException() throws Exception {
+      Exception e = new IllegalArgumentException();
+      Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new HttpResponseException(
+            "goo", createNiceMock(HttpCommand.class), null, e));
+   }
+
+   @Test(expectedExceptions = UnsupportedOperationException.class)
+   public void testPropagateStandardExceptionUnsupportedOperationExceptionNestedInHttpResponseException()
+         throws Exception {
+      Exception e = new UnsupportedOperationException();
+      Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new HttpResponseException(
+            "goo", createNiceMock(HttpCommand.class), null, e));
+   }
+
+   @Test(expectedExceptions = AuthorizationException.class)
+   public void testPropagateStandardExceptionAuthorizationExceptionNestedInHttpResponseException() throws Exception {
+      Exception e = new AuthorizationException();
+      Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new HttpResponseException(
+            "goo", createNiceMock(HttpCommand.class), null, e));
+   }
+
+   @Test(expectedExceptions = ResourceNotFoundException.class)
+   public void testPropagateStandardExceptionResourceNotFoundExceptionNestedInHttpResponseException() throws Exception {
+      Exception e = new ResourceNotFoundException();
+      Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new HttpResponseException(
+            "goo", createNiceMock(HttpCommand.class), null, e));
    }
 
    @Test(expectedExceptions = HttpResponseException.class)
    public void testPropagateStandardExceptionHttpResponseException() throws Exception {
       Exception e = new HttpResponseException("goo", createNiceMock(HttpCommand.class), null);
-      assertEquals(
-            Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e)),
-            e);
+      Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(new Class[] {}, new RuntimeException(e));
    }
 
 }

@@ -29,6 +29,7 @@ import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.RunNodesException;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
@@ -90,9 +91,10 @@ public class TestCanRecreateTagLiveTest {
       context.getComputeService().destroyNodesMatching(NodePredicates.withTag(tag));
 
       try {
-         context.getComputeService().runNodesWithTag(tag, 1);
+         Template template = context.getComputeService().templateBuilder().locationId("us-west-1").build();
+         context.getComputeService().runNodesWithTag(tag, 1, template);
          context.getComputeService().destroyNodesMatching(NodePredicates.withTag(tag));
-         context.getComputeService().runNodesWithTag(tag, 1);
+         context.getComputeService().runNodesWithTag(tag, 1, template);
       } catch (RunNodesException e) {
          System.err.println(e.getNodeErrors().keySet());
          Throwables.propagate(e);

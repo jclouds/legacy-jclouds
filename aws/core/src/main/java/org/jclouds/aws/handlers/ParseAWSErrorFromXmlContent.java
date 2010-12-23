@@ -76,7 +76,7 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                error = utils.parseAWSErrorFromContent(request, response);
                if (error != null) {
                   message = error.getMessage();
-                  exception = new AWSResponseException(command, response, error);
+
                }
             } else {
                try {
