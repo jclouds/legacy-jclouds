@@ -49,8 +49,8 @@ public class JCloudsPerformanceLiveTest extends BaseJCloudsPerformanceLiveTest {
    @BeforeClass(groups = { "integration", "live" })
    public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
       exec = Executors.newCachedThreadPool();
-      String accesskeyid = System.getProperty("jclouds.test.identity");
-      String secretkey = System.getProperty("jclouds.test.credential");
+      String accesskeyid = System.getProperty("test.s3.identity");
+      String secretkey = System.getProperty("test.s3.credential");
       Properties overrides = new Properties();
       overrides.setProperty(PROPERTY_MAX_CONNECTIONS_PER_CONTEXT, 50 + "");
       overrides.setProperty(PROPERTY_MAX_CONNECTIONS_PER_HOST, 30 + "");

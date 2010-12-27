@@ -24,10 +24,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.jets3t.service.S3Service;
-import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.impl.rest.httpclient.RestS3Service;
 import org.jets3t.service.security.AWSCredentials;
 import org.testng.ITestContext;
@@ -45,16 +45,12 @@ import com.google.appengine.repackaged.com.google.common.base.Throwables;
 public class Jets3tPerformanceLiveTest extends BasePerformanceLiveTest {
    private S3Service jetClient;
 
-   @BeforeClass(groups = { "live" }, dependsOnMethods = "setUpResourcesOnThisThread")
-   protected void createLiveS3Context(ITestContext testContext) throws S3ServiceException {
-      if (testContext.getAttribute("jclouds.test.identity") != null) {
-         AWSCredentials credentials = new AWSCredentials((String) testContext
-                  .getAttribute("jclouds.test.identity"), (String) testContext
-                  .getAttribute("jclouds.test.credential"));
-         jetClient = new RestS3Service(credentials);
-      } else {
-         throw new RuntimeException("not configured properly");
-      }
+   @BeforeClass(groups = { "integration", "live" })
+   public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
+      super.setUpResourcesOnThisThread(testContext);
+      exec = Executors.newCachedThreadPool();
+      jetClient = new RestS3Service(new AWSCredentials(System.getProperty("test.s3.identity"),
+            System.getProperty("test.s3.credential")));
    }
 
    @Override
@@ -118,8 +114,7 @@ public class Jets3tPerformanceLiveTest extends BasePerformanceLiveTest {
 
    @SuppressWarnings("unchecked")
    @Override
-   protected Future<?> putInputStream(final String bucket, String key, InputStream data,
-            String contentType) {
+   protected Future<?> putInputStream(final String bucket, String key, InputStream data, String contentType) {
       final org.jets3t.service.model.S3Object object = new org.jets3t.service.model.S3Object(key);
       object.setContentType(contentType);
       object.setDataInputStream(data);

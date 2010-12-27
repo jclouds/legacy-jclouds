@@ -34,9 +34,9 @@
 			extraction of appengine-java-sdk
 		-->
 		<appengine.home>YOUR_APPENGINE_HOME</appengine.home>
-		<jclouds.test.loopcount>100</jclouds.test.loopcount>
-		<jclouds.test.identity>${test.aws.identity}</jclouds.test.identity>
-		<jclouds.test.credential>${test.aws.credential}</jclouds.test.credential>
+		<test.s3.loopcount>100</test.s3.loopcount>
+		<test.s3.identity>${test.aws.identity}</test.s3.identity>
+		<test.s3.credential>${test.aws.credential}</test.s3.credential>
 		<test.initializer>org.jclouds.aws.s3.blobstore.integration.S3TestInitializer</test.initializer>
 	</properties>
 
@@ -143,20 +143,20 @@
 							<threadCount>1</threadCount>
 							<systemProperties>
 								<property>
-									<name>jclouds.test.identity</name>
-									<value>${jclouds.test.identity}</value>
+									<name>test.s3.identity</name>
+									<value>${test.s3.identity}</value>
 								</property>
 								<property>
-									<name>jclouds.test.credential</name>
-									<value>${jclouds.test.credential}</value>
+									<name>test.s3.credential</name>
+									<value>${test.s3.credential}</value>
 								</property>
 								<property>
 									<name>test.initializer</name>
 									<value>${test.initializer}</value>
 								</property>
 								<property>
-									<name>jclouds.test.loopcount</name>
-									<value>${jclouds.test.loopcount}</value>
+									<name>test.s3.loopcount</name>
+									<value>${test.s3.loopcount}</value>
 								</property>
 							</systemProperties>
 						</configuration>
