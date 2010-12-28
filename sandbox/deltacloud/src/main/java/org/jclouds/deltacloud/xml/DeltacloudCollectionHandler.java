@@ -7,7 +7,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * http://www.apache.links/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,35 +21,50 @@ package org.jclouds.deltacloud.xml;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Set;
 
-import org.jclouds.deltacloud.collections.DeltacloudCollection;
+import org.jclouds.deltacloud.domain.DeltacloudCollection;
+import org.jclouds.deltacloud.domain.DeltacloudCollection.Feature;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 /**
  * @author Adrian Cole
  */
-public class LinksHandler extends ParseSax.HandlerWithResult<Map<DeltacloudCollection, URI>> {
+public class DeltacloudCollectionHandler extends ParseSax.HandlerWithResult<DeltacloudCollection> {
+   private URI href;
+   private String rel;
+   private Set<Feature> features = Sets.newLinkedHashSet();
 
-   private Map<DeltacloudCollection, URI> links = Maps.newLinkedHashMap();
+   private DeltacloudCollection realm;
 
-   public Map<DeltacloudCollection, URI> getResult() {
-      return links;
+   public DeltacloudCollection getResult() {
+      return realm;
    }
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = Utils.cleanseAttributes(attrs);
-      if (qName.equals("link")) {
-         String rel = attributes.get("rel");
-         if (rel != null) {
-            DeltacloudCollection link = DeltacloudCollection.fromValue(rel);
-            links.put(link, URI.create(attributes.get("href")));
-         }
+      if (qName.equalsIgnoreCase("link")) {
+         this.href = URI.create(attributes.get("href"));
+         this.rel = attributes.get("rel");
+      } else if (qName.equalsIgnoreCase("feature")) {
+         features.add(new Feature(attributes.get("name")));
       }
    }
+
+   @Override
+   public void endElement(String uri, String localName, String qName) throws SAXException {
+      if (qName.equalsIgnoreCase("link")) {
+         this.realm = new DeltacloudCollection(href, rel, features);
+         this.href = null;
+         this.rel = null;
+         this.features = Sets.newLinkedHashSet();
+      }
+   }
+
 }

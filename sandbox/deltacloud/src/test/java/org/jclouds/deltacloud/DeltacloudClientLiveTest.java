@@ -25,14 +25,14 @@ import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import org.jclouds.Constants;
-import org.jclouds.deltacloud.collections.DeltacloudCollection;
+import org.jclouds.deltacloud.domain.DeltacloudCollection;
+import org.jclouds.deltacloud.domain.HardwareProfile;
 import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.deltacloud.domain.Instance;
 import org.jclouds.deltacloud.domain.InstanceAction;
@@ -112,10 +112,8 @@ public class DeltacloudClientLiveTest {
 
    @Test
    public void testGetLinksContainsAll() throws Exception {
-      Map<DeltacloudCollection, URI> links = client.getCollections();
+      Set<? extends DeltacloudCollection> links = client.getCollections();
       assertNotNull(links);
-      for (DeltacloudCollection link : DeltacloudCollection.values())
-         assert (links.get(link) != null) : link;
    }
 
    public void testListAndGetRealms() throws Exception {
@@ -137,6 +135,17 @@ public class DeltacloudClientLiveTest {
       for (Image image : response) {
          Image newDetails = client.getImage(image.getHref());
          assertEquals(image, newDetails);
+      }
+   }
+
+   public void testListAndGetHardwareProfiles() throws Exception {
+      Set<? extends HardwareProfile> response = client.listHardwareProfiles();
+      assert null != response;
+      long profileCount = response.size();
+      assertTrue(profileCount >= 0);
+      for (HardwareProfile profile : response) {
+         HardwareProfile newDetails = client.getHardwareProfile(profile.getHref());
+         assertEquals(profile, newDetails);
       }
    }
 

@@ -24,17 +24,19 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
-import org.jclouds.deltacloud.collections.DeltacloudCollection;
 import org.jclouds.deltacloud.config.DeltacloudRestClientModule;
+import org.jclouds.deltacloud.domain.DeltacloudCollection;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
+import org.jclouds.deltacloud.xml.DeltacloudCollectionsHandler;
+import org.jclouds.deltacloud.xml.HardwareProfileHandler;
+import org.jclouds.deltacloud.xml.HardwareProfilesHandler;
 import org.jclouds.deltacloud.xml.ImageHandler;
 import org.jclouds.deltacloud.xml.ImagesHandler;
 import org.jclouds.deltacloud.xml.InstanceHandler;
 import org.jclouds.deltacloud.xml.InstancesHandler;
-import org.jclouds.deltacloud.xml.LinksHandler;
 import org.jclouds.deltacloud.xml.RealmHandler;
 import org.jclouds.deltacloud.xml.RealmsHandler;
 import org.jclouds.http.HttpRequest;
@@ -86,7 +88,7 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
       assertPayloadEquals(httpRequest, null, null, false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseSax.class);
-      assertSaxResponseParserClassEquals(method, LinksHandler.class);
+      assertSaxResponseParserClassEquals(method, DeltacloudCollectionsHandler.class);
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpRequest);
@@ -148,6 +150,36 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, ImageHandler.class);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
+   public void testListHardwareProfiles() throws IOException, SecurityException, NoSuchMethodException {
+      Method method = DeltacloudAsyncClient.class.getMethod("listHardwareProfiles");
+      HttpRequest request = processor.createRequest(method);
+
+      assertRequestLineEquals(request, "GET http://localhost:3001/api/profiles HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/xml\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, HardwareProfilesHandler.class);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
+
+      checkFilters(request);
+   }
+
+   public void testGetHardwareProfile() throws IOException, SecurityException, NoSuchMethodException {
+      Method method = DeltacloudAsyncClient.class.getMethod("getHardwareProfile", URI.class);
+      HttpRequest request = processor.createRequest(method, URI.create("https://delta/profile1"));
+
+      assertRequestLineEquals(request, "GET https://delta/profile1 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/xml\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, HardwareProfileHandler.class);
       assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
 
       checkFilters(request);
@@ -270,22 +302,27 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
    public static class DeltacloudRestClientModuleExtension extends DeltacloudRestClientModule {
 
       @Override
-      protected Supplier<Map<DeltacloudCollection, URI>> provideCollections(long seconds, DeltacloudClient client) {
+      protected Supplier<Set<? extends DeltacloudCollection>> provideCollections(long seconds, DeltacloudClient client) {
          return Suppliers.ofInstance(null);
       }
 
       @Override
-      protected URI provideImageCollection(Supplier<Map<DeltacloudCollection, URI>> collectionSupplier) {
+      protected URI provideImageCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
          return URI.create("http://localhost:3001/api/images");
       }
 
       @Override
-      protected URI provideInstanceCollection(Supplier<Map<DeltacloudCollection, URI>> collectionSupplier) {
+      protected URI provideHardwareProfileCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+         return URI.create("http://localhost:3001/api/profiles");
+      }
+
+      @Override
+      protected URI provideInstanceCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
          return URI.create("http://localhost:3001/api/instances");
       }
 
       @Override
-      protected URI provideRealmCollection(Supplier<Map<DeltacloudCollection, URI>> collectionSupplier) {
+      protected URI provideRealmCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
          return URI.create("http://localhost:3001/api/realms");
       }
 

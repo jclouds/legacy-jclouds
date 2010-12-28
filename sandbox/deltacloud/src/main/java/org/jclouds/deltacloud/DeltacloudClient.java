@@ -20,12 +20,12 @@
 package org.jclouds.deltacloud;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.deltacloud.collections.DeltacloudCollection;
+import org.jclouds.deltacloud.domain.DeltacloudCollection;
+import org.jclouds.deltacloud.domain.HardwareProfile;
 import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.deltacloud.domain.Instance;
 import org.jclouds.deltacloud.domain.Realm;
@@ -46,9 +46,9 @@ public interface DeltacloudClient {
     * The result of this entry-point is a set of entry-points into other collections, such as
     * images, instances, hardware profiles and realms, among others.
     * 
-    * @return named links to available collections, or empty map, if no resources are found
+    * @return named links to available collections, or empty set, if no collections are found
     */
-   Map<DeltacloudCollection, URI> getCollections();
+   Set<? extends DeltacloudCollection> getCollections();
 
    /**
     * The realms collection will return a set of all realms available to the current user.
@@ -77,6 +77,21 @@ public interface DeltacloudClient {
     * @return image or null, if not found
     */
    Image getImage(URI imageHref);
+
+   /**
+    * The hardware profiles collection will return a set of all hardware profiles available to the
+    * current user.
+    * 
+    * @return hardware profiles viewable to the user or empty set
+    */
+   Set<? extends HardwareProfile> listHardwareProfiles();
+
+   /**
+    * 
+    * @param profileHref
+    * @return hardware profile or null, if not found
+    */
+   HardwareProfile getHardwareProfile(URI profileHref);
 
    /**
     * The instances collection will return a set of all instances available to the current user.
