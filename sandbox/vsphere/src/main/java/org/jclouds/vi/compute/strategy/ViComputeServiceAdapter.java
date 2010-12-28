@@ -36,13 +36,35 @@ import org.jclouds.vi.Image;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
+import com.vmware.vim25.CustomizationAdapterMapping;
+import com.vmware.vim25.CustomizationDhcpIpGenerator;
+import com.vmware.vim25.CustomizationFixedName;
+import com.vmware.vim25.CustomizationGlobalIPSettings;
+import com.vmware.vim25.CustomizationGuiUnattended;
+import com.vmware.vim25.CustomizationIPSettings;
+import com.vmware.vim25.CustomizationIdentification;
+import com.vmware.vim25.CustomizationIdentitySettings;
+import com.vmware.vim25.CustomizationLicenseDataMode;
+import com.vmware.vim25.CustomizationLicenseFilePrintData;
+import com.vmware.vim25.CustomizationPassword;
+import com.vmware.vim25.CustomizationSpec;
+import com.vmware.vim25.CustomizationSysprep;
+import com.vmware.vim25.CustomizationUserData;
+import com.vmware.vim25.CustomizationWinOptions;
 import com.vmware.vim25.InvalidProperty;
 import com.vmware.vim25.RuntimeFault;
+import com.vmware.vim25.VirtualMachineCloneSpec;
+import com.vmware.vim25.VirtualMachineRelocateSpec;
 import com.vmware.vim25.mo.Datacenter;
+import com.vmware.vim25.mo.Datastore;
 import com.vmware.vim25.mo.Folder;
+import com.vmware.vim25.mo.HostDatastoreBrowser;
+import com.vmware.vim25.mo.HostSystem;
 import com.vmware.vim25.mo.InventoryNavigator;
 import com.vmware.vim25.mo.ManagedEntity;
+import com.vmware.vim25.mo.ResourcePool;
 import com.vmware.vim25.mo.ServiceInstance;
+import com.vmware.vim25.mo.Task;
 import com.vmware.vim25.mo.VirtualMachine;
 
 /**
@@ -54,6 +76,10 @@ import com.vmware.vim25.mo.VirtualMachine;
 public class ViComputeServiceAdapter implements ComputeServiceAdapter<VirtualMachine, VirtualMachine, Image, Datacenter> {
 
 	private final ServiceInstance client;
+	private String resourcePoolName = "";
+	private String vmwareHostName = "";
+	private String datastoreName = "";
+	private String vmClonedName = "MyWinClone";
 
 	@Inject
 	public ViComputeServiceAdapter(ServiceInstance client) {
@@ -64,59 +90,159 @@ public class ViComputeServiceAdapter implements ComputeServiceAdapter<VirtualMac
 	public VirtualMachine runNodeWithTagAndNameAndStoreCredentials(String tag,
 			String name, Template template,
 			Map<String, Credentials> credentialStore) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	/*
-	@Override
-	public Domain runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
-			Map<String, Credentials> credentialStore) {
 		try {
-			String domainName = tag;
-			Domain domain = client.domainLookupByName(domainName);
-			XMLBuilder builder = XMLBuilder.parse(new InputSource(new StringReader(domain.getXMLDesc(0))));
-			Document doc = builder.getDocument();
-			String xpathString = "//devices/disk[@device='disk']/source/@file";
-			XPathExpression expr = XPathFactory.newInstance().newXPath().compile(xpathString);
-			NodeList nodes = (NodeList) expr.evaluate(doc, XPathConstants.NODESET);
-			String diskFileName = nodes.item(0).getNodeValue();
-			StorageVol storageVol = client.storageVolLookupByPath(diskFileName);
-			
-			// cloning volume
-			String poolName = storageVol.storagePoolLookupByVolume().getName();
-			StoragePool storagePool = client.storagePoolLookupByName(poolName);
-			StorageVol clonedVol = null;
-			boolean cloned = false;
-			int retry = 0;
-			while(!cloned && retry<10) {
-				try {
-					clonedVol = cloneVolume(storagePool, storageVol);
-					cloned = true;
-				} catch (LibvirtException e) {
-					retry++;
-					Thread.sleep(1000);
-				}	
+			Folder rootFolder = client.getRootFolder();
+
+			VirtualMachine from = (VirtualMachine) new InventoryNavigator(
+					rootFolder).searchManagedEntity("VirtualMachine", tag);
+
+			if (from == null) {
+				client.getServerConnection().logout();
+				return null; 
 			}
-			// define Domain
-			String xmlFinal = generateClonedDomainXML(domain.getXMLDesc(0), clonedVol);
-			Domain newDomain = client.domainDefineXML(xmlFinal);
-			newDomain.create();
-			// store the credentials so that later functions can use them
-			credentialStore.put(domain.getUUIDString() + "", new Credentials("identity", "credential"));				
-			return newDomain;
-		} catch (LibvirtException e) {
+			
+			VirtualMachineCloneSpec cloneSpec = new VirtualMachineCloneSpec();
+			VirtualMachineRelocateSpec virtualMachineRelocateSpec = new VirtualMachineRelocateSpec();
+			if (!vmwareHostName.equals("") && !datastoreName.equals("") && !resourcePoolName.equals("")) {
+
+				ResourcePool rp = (ResourcePool) new InventoryNavigator(rootFolder)
+						.searchManagedEntity("ResourcePool", resourcePoolName);
+				
+				if(rp == null)
+					throw new Exception("The resourcePool specified '" + resourcePoolName + "' doesn't exist");
+				virtualMachineRelocateSpec.setPool(rp.getMOR());
+	
+	
+				Datastore ds = (Datastore) new InventoryNavigator(rootFolder)
+					.searchManagedEntity("Datastore", datastoreName);
+				
+				HostSystem host = null;
+				host = (HostSystem) new InventoryNavigator(rootFolder)
+						.searchManagedEntity("HostSystem", vmwareHostName);
+	
+				HostDatastoreBrowser hdb = host.getDatastoreBrowser();
+	
+				if(ds == null)
+					throw new Exception("Cannot relocate this cloned machine to the specified datastore '" + datastoreName + "'");
+				Datastore dsFound = null;
+				Datastore[] dsArray = hdb.getDatastores();
+				for (Datastore d : dsArray) {
+					if(d.getName().equalsIgnoreCase(ds.getName()))
+						dsFound = d;
+				}
+				if(dsFound == null)
+					throw new Exception("Cannot relocate this cloned machine to the specified datastore '" + datastoreName + "'");
+				virtualMachineRelocateSpec.setDatastore(dsFound.getMOR());
+			}
+			
+			CustomizationSpec custSpec = new CustomizationSpec();
+		
+            CustomizationAdapterMapping cam = new CustomizationAdapterMapping();
+            CustomizationIPSettings cip = new CustomizationIPSettings();
+            cip.setIp(new CustomizationDhcpIpGenerator());
+            cam.setAdapter(cip);
+            
+
+			// IP customization
+//			CustomizationAdapterMapping[] custAdapMapList = new CustomizationAdapterMapping[1];
+//			CustomizationAdapterMapping custAdapMap = new CustomizationAdapterMapping();
+//          CustomizationIPSettings custIPSettings = new CustomizationIPSettings();
+//			CustomizationFixedIp custFixedIp = new CustomizationFixedIp();
+//			custFixedIp.setIpAddress(ipAddress);
+//			custIPSettings.setIp(custFixedIp);
+//			custAdapMap.setAdapter(custIPSettings);
+//			custAdapMapList[0] = custAdapMap;
+//			custSpec.setNicSettingMap(custAdapMapList);
+			
+            CustomizationGlobalIPSettings custGlobalIPSetting = new CustomizationGlobalIPSettings();
+			
+
+			CustomizationIdentitySettings custIdentitySet = new CustomizationIdentitySettings();
+
+			// sysprep customization
+			CustomizationSysprep custSysprep = new CustomizationSysprep();
+
+			CustomizationGuiUnattended guiUnattended = new CustomizationGuiUnattended();
+			guiUnattended.setAutoLogon(false);
+			guiUnattended.setAutoLogonCount(0);
+			guiUnattended.setTimeZone(190);
+			
+
+			// user data
+			CustomizationPassword custPasswd = new CustomizationPassword();
+			custPasswd.setPlainText(true);
+			custPasswd.setValue("password");
+
+			CustomizationIdentification custIdentification = new CustomizationIdentification();
+			custIdentification.setDomainAdmin("Administrator");
+			custIdentification.setDomainAdminPassword(custPasswd);
+			custIdentification.setJoinWorkgroup("WORKGROUP");
+
+			CustomizationUserData custUserData = new CustomizationUserData();
+			CustomizationFixedName custFixedName = new CustomizationFixedName();
+			custFixedName.setName("mycomputer");
+			custUserData.setComputerName(custFixedName);
+			custUserData.setFullName("sjain");
+			custUserData.setOrgName("vmware");
+			custUserData.setProductId("PDRXT-M9X8G-898BR-4K427-J2FFY");
+			
+			///////
+			CustomizationWinOptions customizationWinOptions = new CustomizationWinOptions();
+			customizationWinOptions.setChangeSID(true);
+			customizationWinOptions.setDeleteAccounts(false);
+			
+			CustomizationLicenseFilePrintData custLPD = new CustomizationLicenseFilePrintData();
+	        custLPD.setAutoMode(CustomizationLicenseDataMode.perServer);
+	        
+	        custSysprep.setLicenseFilePrintData(custLPD);
+
+			custSysprep.setUserData(custUserData);
+			custSysprep.setGuiUnattended(guiUnattended);
+			custSysprep.setIdentification(custIdentification);
+			
+			custSpec.setIdentity(custSysprep);
+			custSpec.setNicSettingMap(new CustomizationAdapterMapping[] {cam});
+			custSpec.setGlobalIPSettings(custGlobalIPSetting);
+			custSpec.setOptions(customizationWinOptions);
+			
+
+			
+			cloneSpec.setCustomization(custSpec);
+           
+			 //location properties
+			 cloneSpec.setLocation(virtualMachineRelocateSpec);
+			cloneSpec.setPowerOn(false);
+			cloneSpec.setTemplate(false);
+
+			Task task = from.cloneVM_Task((Folder) from.getParent(), vmClonedName,
+					cloneSpec);
+
+			String result = task.waitForTask();
+			return (VirtualMachine) new InventoryNavigator(
+					rootFolder).searchManagedEntity("VirtualMachine", vmClonedName);
+		} catch (RemoteException e) {
 			return propogate(e);
 		} catch (Exception e) {
 			return propogate(e);
 		}
+	
 	}
-	*/
 
 	@Override
 	public Iterable<VirtualMachine> listHardwareProfiles() {
 		// TODO
-		return null;
+		List<VirtualMachine> hardwareProfiles = Lists.newArrayList();
+		try {
+			
+			ManagedEntity[] entities = new InventoryNavigator(
+					client.getRootFolder()).searchManagedEntities("VirtualMachine");
+			for (ManagedEntity entity : entities) {
+				hardwareProfiles.add((VirtualMachine) entity);
+			}
+			return hardwareProfiles;
+		} catch (Exception e) {
+			return propogate(e);
+		}		
 	}
 
 	@Override
