@@ -33,6 +33,7 @@ import org.jclouds.deltacloud.DeltacloudAsyncClient;
 import org.jclouds.deltacloud.DeltacloudClient;
 import org.jclouds.deltacloud.collections.HardwareProfiles;
 import org.jclouds.deltacloud.collections.Images;
+import org.jclouds.deltacloud.collections.InstanceStates;
 import org.jclouds.deltacloud.collections.Instances;
 import org.jclouds.deltacloud.collections.Realms;
 import org.jclouds.deltacloud.domain.DeltacloudCollection;
@@ -134,5 +135,11 @@ public class DeltacloudRestClientModule extends RestClientModule<DeltacloudClien
    @Realms
    protected URI provideRealmCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
       return findCollectionWithRel(collectionSupplier.get(), "realms").getHref();
+   }
+
+   @Provides
+   @InstanceStates
+   protected URI provideInstanceStateCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+      return findCollectionWithRel(collectionSupplier.get(), "instance_states").getHref();
    }
 }

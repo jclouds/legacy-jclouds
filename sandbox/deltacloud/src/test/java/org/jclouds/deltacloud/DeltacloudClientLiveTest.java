@@ -38,6 +38,7 @@ import org.jclouds.deltacloud.domain.Instance;
 import org.jclouds.deltacloud.domain.InstanceAction;
 import org.jclouds.deltacloud.domain.InstanceState;
 import org.jclouds.deltacloud.domain.Realm;
+import org.jclouds.deltacloud.domain.Transition;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -56,6 +57,7 @@ import org.testng.annotations.Test;
 import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
 import com.google.inject.Guice;
 import com.google.inject.Module;
@@ -114,6 +116,28 @@ public class DeltacloudClientLiveTest {
    public void testGetLinksContainsAll() throws Exception {
       Set<? extends DeltacloudCollection> links = client.getCollections();
       assertNotNull(links);
+   }
+
+   @Test
+   public void testGetInstanceStatesCanGoFromStartToFinish() throws Exception {
+      Multimap<InstanceState, ? extends Transition> states = client.getInstanceStates();
+      assertNotNull(states);
+      Iterable<Transition> fromStart = findChainToFinish(InstanceState.START, states);
+      assert Iterables.size(fromStart) > 0 : fromStart;
+   }
+
+   Iterable<Transition> findChainToFinish(InstanceState currentState,
+         Multimap<InstanceState, ? extends Transition> states) {
+      for (Transition transition : states.get(currentState)) {
+         if (currentState.ordinal() >= transition.getTo().ordinal())
+            continue;
+         if (transition.getTo() == InstanceState.FINISH)
+            return ImmutableSet.<Transition> of(transition);
+         Iterable<Transition> transitions = findChainToFinish(transition.getTo(), states);
+         if (Iterables.size(transitions) > 0)
+            return Iterables.concat(ImmutableSet.of(transition), transitions);
+      }
+      return ImmutableSet.<Transition> of();
    }
 
    public void testListAndGetRealms() throws Exception {

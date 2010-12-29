@@ -30,11 +30,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public enum InstanceAction {
 
+   CREATE,
+
    REBOOT,
 
    START,
 
    STOP,
+
+   DESTROY,
 
    UNRECOGNIZED;
 

@@ -26,10 +26,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Adrian Cole
  */
 public class TransitionOnAction implements Transition {
-   private final String action;
+   private final InstanceAction action;
    private final InstanceState to;
 
-   public TransitionOnAction(String action, InstanceState to) {
+   public TransitionOnAction(InstanceAction action, InstanceState to) {
       this.to = checkNotNull(to, "to");
       this.action = checkNotNull(action, "action");
    }
@@ -38,7 +38,7 @@ public class TransitionOnAction implements Transition {
       return to;
    }
 
-   public String getAction() {
+   public InstanceAction getAction() {
       return action;
    }
 

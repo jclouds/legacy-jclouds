@@ -36,6 +36,7 @@ import org.jclouds.deltacloud.xml.HardwareProfilesHandler;
 import org.jclouds.deltacloud.xml.ImageHandler;
 import org.jclouds.deltacloud.xml.ImagesHandler;
 import org.jclouds.deltacloud.xml.InstanceHandler;
+import org.jclouds.deltacloud.xml.InstanceStatesHandler;
 import org.jclouds.deltacloud.xml.InstancesHandler;
 import org.jclouds.deltacloud.xml.RealmHandler;
 import org.jclouds.deltacloud.xml.RealmsHandler;
@@ -49,6 +50,7 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
+import org.jclouds.rest.functions.ReturnEmptyMultimapOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
@@ -89,10 +91,25 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
 
       assertResponseParserClassEquals(method, httpRequest, ParseSax.class);
       assertSaxResponseParserClassEquals(method, DeltacloudCollectionsHandler.class);
-      assertExceptionParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnEmptySetOnNotFoundOr404.class);
 
       checkFilters(httpRequest);
 
+   }
+
+   public void testGetInstanceStates() throws IOException, SecurityException, NoSuchMethodException {
+      Method method = DeltacloudAsyncClient.class.getMethod("getInstanceStates");
+      HttpRequest request = processor.createRequest(method);
+
+      assertRequestLineEquals(request, "GET http://localhost:3001/api/instance_states HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Accept: application/xml\n");
+      assertPayloadEquals(request, null, null, false);
+
+      assertResponseParserClassEquals(method, request, ParseSax.class);
+      assertSaxResponseParserClassEquals(method, InstanceStatesHandler.class);
+      assertExceptionParserClassEquals(method, ReturnEmptyMultimapOnNotFoundOr404.class);
+
+      checkFilters(request);
    }
 
    public void testListRealms() throws IOException, SecurityException, NoSuchMethodException {
@@ -326,6 +343,10 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
          return URI.create("http://localhost:3001/api/realms");
       }
 
+      @Override
+      protected URI provideInstanceStateCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+         return URI.create("http://localhost:3001/api/instance_states");
+      }
    }
 
    @Override

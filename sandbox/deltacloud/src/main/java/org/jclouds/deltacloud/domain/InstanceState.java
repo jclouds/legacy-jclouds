@@ -29,21 +29,26 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * 
  */
 public enum InstanceState {
-
+   /**
+    * initial state, before instance is created.
+    */
+   START,
    /**
     * the instance is in the process of being launched
     */
    PENDING,
-
+   /**
+    * the instance launched (although the boot process might not be completed)
+    */
+   RUNNING,
    /**
     * the instance is stopped
     */
    STOPPED,
    /**
-    * the instance launched (although the boot process might not be completed)
+    * the instance is terminated
     */
-   RUNNING, 
-   
+   FINISH,
    /**
     * state returned as something besides the above.
     */

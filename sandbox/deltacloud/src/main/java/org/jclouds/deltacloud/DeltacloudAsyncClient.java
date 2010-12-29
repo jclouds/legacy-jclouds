@@ -32,13 +32,16 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.deltacloud.collections.HardwareProfiles;
 import org.jclouds.deltacloud.collections.Images;
+import org.jclouds.deltacloud.collections.InstanceStates;
 import org.jclouds.deltacloud.collections.Instances;
 import org.jclouds.deltacloud.collections.Realms;
 import org.jclouds.deltacloud.domain.DeltacloudCollection;
 import org.jclouds.deltacloud.domain.HardwareProfile;
 import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.deltacloud.domain.Instance;
+import org.jclouds.deltacloud.domain.InstanceState;
 import org.jclouds.deltacloud.domain.Realm;
+import org.jclouds.deltacloud.domain.Transition;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.deltacloud.xml.DeltacloudCollectionsHandler;
 import org.jclouds.deltacloud.xml.HardwareProfileHandler;
@@ -46,6 +49,7 @@ import org.jclouds.deltacloud.xml.HardwareProfilesHandler;
 import org.jclouds.deltacloud.xml.ImageHandler;
 import org.jclouds.deltacloud.xml.ImagesHandler;
 import org.jclouds.deltacloud.xml.InstanceHandler;
+import org.jclouds.deltacloud.xml.InstanceStatesHandler;
 import org.jclouds.deltacloud.xml.InstancesHandler;
 import org.jclouds.deltacloud.xml.RealmHandler;
 import org.jclouds.deltacloud.xml.RealmsHandler;
@@ -55,10 +59,12 @@ import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.RequestFilters;
 import org.jclouds.rest.annotations.XMLResponseParser;
+import org.jclouds.rest.functions.ReturnEmptyMultimapOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
+import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
@@ -78,8 +84,19 @@ public interface DeltacloudAsyncClient {
     */
    @GET
    @Path("")
+   @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @XMLResponseParser(DeltacloudCollectionsHandler.class)
    ListenableFuture<? extends Set<? extends DeltacloudCollection>> getCollections();
+
+   /**
+    * @see DeltacloudClient#getInstanceStates
+    */
+   @GET
+   @Endpoint(InstanceStates.class)
+   @Path("")
+   @ExceptionParser(ReturnEmptyMultimapOnNotFoundOr404.class)
+   @XMLResponseParser(InstanceStatesHandler.class)
+   ListenableFuture<? extends Multimap<InstanceState, ? extends Transition>> getInstanceStates();
 
    /**
     * @see DeltacloudClient#listRealms

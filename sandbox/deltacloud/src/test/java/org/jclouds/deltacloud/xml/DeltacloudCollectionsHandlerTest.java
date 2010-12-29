@@ -26,7 +26,7 @@ import java.net.URI;
 import java.util.Set;
 
 import org.jclouds.deltacloud.domain.DeltacloudCollection;
-import org.jclouds.deltacloud.domain.DeltacloudCollection.Feature;
+import org.jclouds.deltacloud.domain.Feature;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
 

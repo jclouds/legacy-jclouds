@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.deltacloud.domain.DeltacloudCollection;
-import org.jclouds.deltacloud.domain.DeltacloudCollection.Feature;
+import org.jclouds.deltacloud.domain.Feature;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.util.Utils;
 import org.xml.sax.Attributes;

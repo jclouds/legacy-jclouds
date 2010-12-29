@@ -28,9 +28,13 @@ import org.jclouds.deltacloud.domain.DeltacloudCollection;
 import org.jclouds.deltacloud.domain.HardwareProfile;
 import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.deltacloud.domain.Instance;
+import org.jclouds.deltacloud.domain.InstanceState;
 import org.jclouds.deltacloud.domain.Realm;
+import org.jclouds.deltacloud.domain.Transition;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.rest.annotations.EndpointParam;
+
+import com.google.common.collect.Multimap;
 
 /**
  * Provides synchronous access to deltacloud.
@@ -49,6 +53,12 @@ public interface DeltacloudClient {
     * @return named links to available collections, or empty set, if no collections are found
     */
    Set<? extends DeltacloudCollection> getCollections();
+
+   /**
+    * 
+    * @return The possible states of an instance, and how to traverse between them
+    */
+   Multimap<InstanceState, ? extends Transition> getInstanceStates();
 
    /**
     * The realms collection will return a set of all realms available to the current user.

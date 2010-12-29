@@ -21,6 +21,7 @@ package org.jclouds.deltacloud.xml;
 
 import java.util.Map;
 
+import org.jclouds.deltacloud.domain.InstanceAction;
 import org.jclouds.deltacloud.domain.InstanceState;
 import org.jclouds.deltacloud.domain.Transition;
 import org.jclouds.deltacloud.domain.TransitionAutomatically;
@@ -56,8 +57,8 @@ public class InstanceStatesHandler extends ParseSax.HandlerWithResult<Multimap<I
          else
             states.put(
                   state,
-                  new TransitionOnAction(attributes.get("action"), InstanceState.valueOf(attributes.get("to")
-                        .toUpperCase())));
+                  new TransitionOnAction(InstanceAction.fromValue(attributes.get("action")), InstanceState
+                        .valueOf(attributes.get("to").toUpperCase())));
 
       }
    }
