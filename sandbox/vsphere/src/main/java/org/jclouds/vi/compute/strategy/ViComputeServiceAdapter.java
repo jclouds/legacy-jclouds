@@ -68,7 +68,7 @@ import com.vmware.vim25.mo.Task;
 import com.vmware.vim25.mo.VirtualMachine;
 
 /**
- * defines the connection between the {@link Libvirt} implementation and the jclouds
+ * defines the connection between the {@link VI} implementation and the jclouds
  * {@link ComputeService}
  * 
  */

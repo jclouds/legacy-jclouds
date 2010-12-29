@@ -25,10 +25,10 @@ import java.util.Set;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Template;
+import org.jclouds.domain.Location;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -59,19 +59,22 @@ public class ViExperimentLiveTest {
          context = new ComputeServiceContextFactory().createContext(new ViComputeServiceContextSpec(
                endpoint, identity, credential));
          
-//         Set<? extends Location> locations = context.getComputeService().listAssignableLocations();
-//         
+         Set<? extends Location> locations = context.getComputeService().listAssignableLocations();
+         for (Location location : locations) {
+			System.out.println("location id: " + location.getId() + " - desc: " + location.getDescription());
+		}
+         
 //         Set<? extends ComputeMetadata> nodes = context.getComputeService().listNodes();
 //
-//         Set<? extends Hardware> hardwares = context.getComputeService().listHardwareProfiles();
-//         for (Hardware hardware : hardwares) {
-//			System.out.println("hardware id: " + hardware.getId());
-//		}
+         Set<? extends Hardware> hardwares = context.getComputeService().listHardwareProfiles();
+         for (Hardware hardware : hardwares) {
+			System.out.println("hardware id: " + hardware.getId() + " - name: " + hardware.getName());
+		}
 //         
-//         Set<? extends Image> images = context.getComputeService().listImages();
-//         for (Image image : images) {
-//			System.out.println("id: " + image.getId() + " - name:" + image.getName());
-//		}
+         Set<? extends Image> images = context.getComputeService().listImages();
+         for (Image image : images) {
+			System.out.println("id: " + image.getId() + " - name:" + image.getName());
+		}
 //
 //         NodeMetadata node = context.getComputeService().getNodeMetadata("MyWinServer");
 //         System.out.println(node);
@@ -84,7 +87,7 @@ public class ViExperimentLiveTest {
          Template defaultTemplate = context.getComputeService().templateBuilder()
          .hardwareId("vm-1221").imageId("winNetEnterprise64Guest") //.locationId("")
          .build();
-         */
+         
          Set<? extends NodeMetadata> nodeMetadataSet = context.getComputeService().runNodesWithTag("MyWinServer", 1);
          for (NodeMetadata nodeMetadata : nodeMetadataSet) {
             
@@ -93,6 +96,7 @@ public class ViExperimentLiveTest {
              
             //context.getComputeService().destroyNode(nodeMetadata.getId());
          }
+         */
       } catch (Exception e) {
          e.printStackTrace();
          
