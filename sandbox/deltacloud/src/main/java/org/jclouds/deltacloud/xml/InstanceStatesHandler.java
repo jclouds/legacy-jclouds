@@ -27,7 +27,7 @@ import org.jclouds.deltacloud.domain.Transition;
 import org.jclouds.deltacloud.domain.TransitionAutomatically;
 import org.jclouds.deltacloud.domain.TransitionOnAction;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.Utils;
+import org.jclouds.util.SaxUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -48,7 +48,7 @@ public class InstanceStatesHandler extends ParseSax.HandlerWithResult<Multimap<I
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-      Map<String, String> attributes = Utils.cleanseAttributes(attrs);
+      Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
       if (qName.equals("state")) {
          state = InstanceState.valueOf(attributes.get("name").toUpperCase());
       } else if (qName.equals("transition")) {

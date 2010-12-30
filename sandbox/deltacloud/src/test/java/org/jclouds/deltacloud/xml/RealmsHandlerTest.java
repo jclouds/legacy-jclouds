@@ -37,7 +37,8 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "RealmsHandlerTest")
 public class RealmsHandlerTest extends BaseHandlerTest {
 
    @Test
@@ -47,8 +48,6 @@ public class RealmsHandlerTest extends BaseHandlerTest {
             new Realm(URI.create("http://fancycloudprovider.com/api/realms/us"), "us", "United States", null,
                   RealmState.AVAILABLE), new Realm(URI.create("http://fancycloudprovider.com/api/realms/eu"), "eu",
                   "Europe", null, RealmState.AVAILABLE));
-      // not sure why this isn't always automatically called from surefire.
-      setUpInjector();
       assertEquals(factory.create(injector.getInstance(RealmsHandler.class)).parse(is), expects);
    }
 }

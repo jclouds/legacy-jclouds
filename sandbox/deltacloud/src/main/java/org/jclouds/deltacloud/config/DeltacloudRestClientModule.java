@@ -38,7 +38,9 @@ import org.jclouds.deltacloud.collections.Instances;
 import org.jclouds.deltacloud.collections.Realms;
 import org.jclouds.deltacloud.domain.DeltacloudCollection;
 import org.jclouds.deltacloud.handlers.DeltacloudErrorHandler;
+import org.jclouds.deltacloud.handlers.DeltacloudRedirectionRetryHandler;
 import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
@@ -75,7 +77,7 @@ public class DeltacloudRestClientModule extends RestClientModule<DeltacloudClien
 
    @Override
    protected void bindRetryHandlers() {
-      // TODO
+      bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(DeltacloudRedirectionRetryHandler.class);
    }
 
    protected AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();

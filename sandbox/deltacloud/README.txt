@@ -7,3 +7,5 @@ To install deltacloud, do the following:
 To run a local deltacloud server, do the following:
   * jruby
     * jruby -S deltacloudd -i mock 
+
+jclouds binding to deltacloud requires a minimum server version of 0.1.0.

@@ -32,7 +32,7 @@ import org.jclouds.deltacloud.domain.InstanceState;
 import org.jclouds.deltacloud.domain.Realm;
 import org.jclouds.deltacloud.domain.Transition;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
-import org.jclouds.rest.annotations.EndpointParam;
+import org.jclouds.http.HttpRequest;
 
 import com.google.common.collect.Multimap;
 
@@ -137,16 +137,9 @@ public interface DeltacloudClient {
    /**
     * perform a specific action.
     * 
-    * @param actionRef
+    * @param action
     *           reference from {@link Instance#getActions()}
     */
-   void performAction(@EndpointParam URI actionRef);
+   void performAction(HttpRequest action);
 
-   /**
-    * delete a resource, such as {@link Instance}
-    * 
-    * @param resourceHref
-    *           reference from {@link Instance#getHref()}
-    */
-   void deleteResource(@EndpointParam URI resourceHref);
 }

@@ -26,7 +26,7 @@ import java.util.Set;
 import org.jclouds.deltacloud.domain.DeltacloudCollection;
 import org.jclouds.deltacloud.domain.Feature;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.Utils;
+import org.jclouds.util.SaxUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -48,7 +48,7 @@ public class DeltacloudCollectionHandler extends ParseSax.HandlerWithResult<Delt
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-      Map<String, String> attributes = Utils.cleanseAttributes(attrs);
+      Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
       if (qName.equalsIgnoreCase("link")) {
          this.href = URI.create(attributes.get("href"));
          this.rel = attributes.get("rel");

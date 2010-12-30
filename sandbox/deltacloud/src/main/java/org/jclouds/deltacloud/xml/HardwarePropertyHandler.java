@@ -33,7 +33,7 @@ import org.jclouds.deltacloud.domain.HardwareProperty;
 import org.jclouds.deltacloud.domain.HardwareProperty.Kind;
 import org.jclouds.deltacloud.domain.RangeHardwareProperty;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.Utils;
+import org.jclouds.util.SaxUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -95,7 +95,7 @@ public class HardwarePropertyHandler extends ParseSax.HandlerWithResult<Hardware
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-      Map<String, String> attributes = Utils.cleanseAttributes(attrs);
+      Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
       if (qName.equals("property")) {
          this.kind = Kind.fromValue(attributes.get("kind"));
          this.name = attributes.get("name");

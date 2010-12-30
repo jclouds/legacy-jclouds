@@ -23,11 +23,15 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.jclouds.deltacloud.domain.Instance;
 import org.jclouds.deltacloud.domain.InstanceAction;
 import org.jclouds.deltacloud.domain.InstanceState;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.Utils;
+import org.jclouds.logging.Logger;
+import org.jclouds.util.SaxUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -40,6 +44,9 @@ import com.google.common.collect.Sets;
 public class InstanceHandler extends ParseSax.HandlerWithResult<Instance> {
    private StringBuilder currentText = new StringBuilder();
 
+   @Resource
+   protected Logger logger = Logger.NULL;
+
    private URI href;
    private String id;
    private String ownerId;
@@ -48,7 +55,7 @@ public class InstanceHandler extends ParseSax.HandlerWithResult<Instance> {
    private URI hardwareProfile;
    private URI realm;
    private InstanceState state;
-   private Map<InstanceAction, URI> actions = Maps.newLinkedHashMap();
+   private Map<InstanceAction, HttpRequest> actions = Maps.newLinkedHashMap();
    private Set<String> publicAddresses = Sets.newLinkedHashSet();
    private Set<String> privateAddresses = Sets.newLinkedHashSet();
 
@@ -63,7 +70,7 @@ public class InstanceHandler extends ParseSax.HandlerWithResult<Instance> {
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-      Map<String, String> attributes = Utils.cleanseAttributes(attrs);
+      Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
       if (qName.equals("public_addresses")) {
          inPublicAddresses = true;
       } else if (qName.equals("private_addresses")) {
@@ -75,12 +82,16 @@ public class InstanceHandler extends ParseSax.HandlerWithResult<Instance> {
          }
          this.id = attributes.get("id");
       } else if (qName.equals("link")) {
-         String rel = attributes.get("rel");
-         if (rel != null) {
-            InstanceAction action = InstanceAction.fromValue(rel);
+         try {
+            InstanceAction action = InstanceAction.fromValue(attributes.get("rel"));
             if (action != InstanceAction.UNRECOGNIZED) {
-               actions.put(action, URI.create(attributes.get("href")));
+               HttpRequest request = new HttpRequest(attributes.get("method").toUpperCase(), URI.create(attributes
+                     .get("href")));
+               actions.put(action, request);
             }
+         } catch (RuntimeException e) {
+            if (logger.isDebugEnabled())
+               logger.warn(e, "error parsing into action: %s, %s", qName, attributes);
          }
       } else if (attributes.containsKey("href")) {
          URI href = URI.create(attributes.get("href"));

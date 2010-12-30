@@ -37,7 +37,8 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "DeltacloudCollectionsHandlerTest")
 public class DeltacloudCollectionsHandlerTest extends BaseHandlerTest {
 
    public void test() {
@@ -56,9 +57,6 @@ public class DeltacloudCollectionsHandlerTest extends BaseHandlerTest {
                   URI.create("http://localhost:3001/api/buckets"), "buckets")
 
       );
-      // not sure why this isn"t always automatically called from surefire.
-      setUpInjector();
       assertEquals(factory.create(injector.getInstance(DeltacloudCollectionsHandler.class)).parse(is), expects);
-
    }
 }

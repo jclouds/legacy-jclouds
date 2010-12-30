@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.jclouds.deltacloud.config.DeltacloudRestClientModule;
 import org.jclouds.deltacloud.domain.DeltacloudCollection;
+import org.jclouds.deltacloud.functions.ReturnVoidOnRedirectedDelete;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.deltacloud.xml.DeltacloudCollectionsHandler;
 import org.jclouds.deltacloud.xml.HardwareProfileHandler;
@@ -49,11 +50,9 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
-import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnEmptyMultimapOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
@@ -65,23 +64,24 @@ import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests annotation parsing of {@code DeltacloudAsyncClient}
+ * Tests behavior of {@code DeltacloudAsyncClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "deltacloud.DeltacloudAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "DeltacloudAsyncClientTest")
 public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncClient> {
    public void testGetCollections() throws SecurityException, NoSuchMethodException, IOException {
       Method method = DeltacloudAsyncClient.class.getMethod("getCollections");
-      GeneratedHttpRequest<DeltacloudAsyncClient> httpRequest = processor.createRequest(method);
+      HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:3001/api HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/xml\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // now make sure request filters apply by replaying
-      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET http://localhost:3001/api HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
@@ -268,8 +268,9 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
    }
 
    public void testPerformAction() throws IOException, SecurityException, NoSuchMethodException {
-      Method method = DeltacloudAsyncClient.class.getMethod("performAction", URI.class);
-      HttpRequest request = processor.createRequest(method, URI.create("https://delta/instance1/reboot"));
+      Method method = DeltacloudAsyncClient.class.getMethod("performAction", HttpRequest.class);
+      HttpRequest request = processor.createRequest(method,
+            HttpRequest.builder().method("POST").endpoint(URI.create("https://delta/instance1/reboot")).build());
 
       assertRequestLineEquals(request, "POST https://delta/instance1/reboot HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/xml\n");
@@ -277,22 +278,7 @@ public class DeltacloudAsyncClientTest extends RestClientTest<DeltacloudAsyncCli
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, MapHttp4xxCodesToExceptions.class);
-
-      checkFilters(request);
-   }
-
-   public void testDeleteResource() throws IOException, SecurityException, NoSuchMethodException {
-      Method method = DeltacloudAsyncClient.class.getMethod("deleteResource", URI.class);
-      HttpRequest request = processor.createRequest(method, URI.create("https://delta/instance1"));
-
-      assertRequestLineEquals(request, "DELETE https://delta/instance1 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Accept: application/xml\n");
-      assertPayloadEquals(request, null, null, false);
-
-      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
-      assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnVoidOnNotFoundOr404.class);
+      assertExceptionParserClassEquals(method, ReturnVoidOnRedirectedDelete.class);
 
       checkFilters(request);
    }

@@ -24,7 +24,6 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -41,6 +40,7 @@ import org.jclouds.deltacloud.domain.Realm;
 import org.jclouds.deltacloud.domain.Transition;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.domain.Credentials;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
@@ -55,6 +55,7 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
@@ -122,18 +123,24 @@ public class DeltacloudClientLiveTest {
    public void testGetInstanceStatesCanGoFromStartToFinish() throws Exception {
       Multimap<InstanceState, ? extends Transition> states = client.getInstanceStates();
       assertNotNull(states);
-      Iterable<Transition> fromStart = findChainToFinish(InstanceState.START, states);
-      assert Iterables.size(fromStart) > 0 : fromStart;
+      Iterable<Transition> toFinishFromStart = findChainTo(InstanceState.FINISH, InstanceState.START, states);
+      assert Iterables.size(toFinishFromStart) > 0 : toFinishFromStart;
+      Iterable<Transition> toRunningFromStart = findChainTo(InstanceState.RUNNING, InstanceState.START, states);
+      assert Iterables.size(toRunningFromStart) > 0 : toRunningFromStart;
+      Iterable<Transition> toFinishFromRunning = findChainTo(InstanceState.FINISH, InstanceState.RUNNING, states);
+      assert Iterables.size(toFinishFromRunning) > 0 : toFinishFromRunning;
+      assertEquals(ImmutableList.copyOf(Iterables.concat(toRunningFromStart, toFinishFromRunning)),
+            ImmutableList.copyOf(toFinishFromStart));
    }
 
-   Iterable<Transition> findChainToFinish(InstanceState currentState,
+   Iterable<Transition> findChainTo(InstanceState desired, InstanceState currentState,
          Multimap<InstanceState, ? extends Transition> states) {
       for (Transition transition : states.get(currentState)) {
          if (currentState.ordinal() >= transition.getTo().ordinal())
             continue;
-         if (transition.getTo() == InstanceState.FINISH)
+         if (transition.getTo() == desired)
             return ImmutableSet.<Transition> of(transition);
-         Iterable<Transition> transitions = findChainToFinish(transition.getTo(), states);
+         Iterable<Transition> transitions = findChainTo(desired, transition.getTo(), states);
          if (Iterables.size(transitions) > 0)
             return Iterables.concat(ImmutableSet.of(transition), transitions);
       }
@@ -223,7 +230,7 @@ public class DeltacloudClientLiveTest {
       return null;
    }
 
-   public URI refreshInstanceAndGetAction(InstanceAction action) {
+   public HttpRequest refreshInstanceAndGetAction(InstanceAction action) {
       return client.getInstance(instance.getHref()).getActions().get(action);
    }
 
@@ -243,12 +250,12 @@ public class DeltacloudClientLiveTest {
    @Test(dependsOnMethods = "testLifeCycle")
    public void testDestroyInstance() throws Exception {
       try {
-         client.deleteResource(instance.getHref());
-      } catch (IllegalArgumentException e) {
          client.performAction(refreshInstanceAndGetAction(InstanceAction.STOP));
-         client.deleteResource(instance.getHref());
-         assertEquals(client.getInstance(instance.getHref()), null);
+         assertEquals(client.getInstance(instance.getHref()).getState(), InstanceState.STOPPED);
+      } catch (IllegalArgumentException e) {
       }
+      client.performAction(refreshInstanceAndGetAction(InstanceAction.DESTROY));
+      assertEquals(client.getInstance(instance.getHref()), null);
    }
 
    protected void doConnectViaSsh(Instance instance, Credentials creds) throws IOException {
@@ -270,7 +277,7 @@ public class DeltacloudClientLiveTest {
    @AfterGroups(groups = "live")
    protected void tearDown() {
       try {
-         client.deleteResource(instance.getHref());
+         // client.deleteResource(instance.getHref());
       } catch (Exception e) {
          // no need to check null or anything as we swallow all
       }

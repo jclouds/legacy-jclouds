@@ -23,11 +23,9 @@ import java.net.URI;
 import java.util.Set;
 
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.deltacloud.collections.HardwareProfiles;
@@ -42,6 +40,7 @@ import org.jclouds.deltacloud.domain.Instance;
 import org.jclouds.deltacloud.domain.InstanceState;
 import org.jclouds.deltacloud.domain.Realm;
 import org.jclouds.deltacloud.domain.Transition;
+import org.jclouds.deltacloud.functions.ReturnVoidOnRedirectedDelete;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.deltacloud.xml.DeltacloudCollectionsHandler;
 import org.jclouds.deltacloud.xml.HardwareProfileHandler;
@@ -53,6 +52,7 @@ import org.jclouds.deltacloud.xml.InstanceStatesHandler;
 import org.jclouds.deltacloud.xml.InstancesHandler;
 import org.jclouds.deltacloud.xml.RealmHandler;
 import org.jclouds.deltacloud.xml.RealmsHandler;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.EndpointParam;
@@ -62,7 +62,6 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptyMultimapOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
-import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -83,7 +82,6 @@ public interface DeltacloudAsyncClient {
     * @see DeltacloudClient#getCollections
     */
    @GET
-   @Path("")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @XMLResponseParser(DeltacloudCollectionsHandler.class)
    ListenableFuture<? extends Set<? extends DeltacloudCollection>> getCollections();
@@ -93,7 +91,6 @@ public interface DeltacloudAsyncClient {
     */
    @GET
    @Endpoint(InstanceStates.class)
-   @Path("")
    @ExceptionParser(ReturnEmptyMultimapOnNotFoundOr404.class)
    @XMLResponseParser(InstanceStatesHandler.class)
    ListenableFuture<? extends Multimap<InstanceState, ? extends Transition>> getInstanceStates();
@@ -103,7 +100,6 @@ public interface DeltacloudAsyncClient {
     */
    @GET
    @Endpoint(Realms.class)
-   @Path("")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @XMLResponseParser(RealmsHandler.class)
    ListenableFuture<? extends Set<? extends Realm>> listRealms();
@@ -113,7 +109,6 @@ public interface DeltacloudAsyncClient {
     */
    @GET
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Path("")
    @XMLResponseParser(RealmHandler.class)
    ListenableFuture<Realm> getRealm(@EndpointParam URI realmHref);
 
@@ -122,7 +117,6 @@ public interface DeltacloudAsyncClient {
     */
    @GET
    @Endpoint(Images.class)
-   @Path("")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @XMLResponseParser(ImagesHandler.class)
    ListenableFuture<? extends Set<? extends Image>> listImages();
@@ -132,7 +126,6 @@ public interface DeltacloudAsyncClient {
     */
    @GET
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Path("")
    @XMLResponseParser(ImageHandler.class)
    ListenableFuture<Image> getImage(@EndpointParam URI imageHref);
 
@@ -141,7 +134,6 @@ public interface DeltacloudAsyncClient {
     */
    @GET
    @Endpoint(HardwareProfiles.class)
-   @Path("")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @XMLResponseParser(HardwareProfilesHandler.class)
    ListenableFuture<? extends Set<? extends HardwareProfile>> listHardwareProfiles();
@@ -151,7 +143,6 @@ public interface DeltacloudAsyncClient {
     */
    @GET
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Path("")
    @XMLResponseParser(HardwareProfileHandler.class)
    ListenableFuture<HardwareProfile> getHardwareProfile(@EndpointParam URI profileHref);
 
@@ -160,7 +151,6 @@ public interface DeltacloudAsyncClient {
     */
    @GET
    @Endpoint(Instances.class)
-   @Path("")
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    @XMLResponseParser(InstancesHandler.class)
    ListenableFuture<? extends Set<? extends Instance>> listInstances();
@@ -170,7 +160,6 @@ public interface DeltacloudAsyncClient {
     */
    @GET
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
-   @Path("")
    @XMLResponseParser(InstanceHandler.class)
    ListenableFuture<Instance> getInstance(@EndpointParam URI instanceHref);
 
@@ -179,23 +168,13 @@ public interface DeltacloudAsyncClient {
     */
    @POST
    @Endpoint(Instances.class)
-   @Path("")
    @XMLResponseParser(InstanceHandler.class)
    ListenableFuture<Instance> createInstance(@FormParam("image_id") String imageId, CreateInstanceOptions... options);
 
    /**
     * @see DeltacloudClient#performInstanceAction
     */
-   @POST
-   @Path("")
-   ListenableFuture<Void> performAction(@EndpointParam URI actionRef);
-
-   /**
-    * @see DeltacloudClient#deleteResource
-    */
-   @DELETE
-   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
-   @Path("")
-   ListenableFuture<Void> deleteResource(@EndpointParam URI resourceHref);
+   @ExceptionParser(ReturnVoidOnRedirectedDelete.class)
+   ListenableFuture<Void> performAction(HttpRequest action);
 
 }

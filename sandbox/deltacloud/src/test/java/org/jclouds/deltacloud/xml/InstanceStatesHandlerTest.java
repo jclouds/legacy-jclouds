@@ -39,7 +39,8 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "InstanceStatesHandlerTest")
 public class InstanceStatesHandlerTest extends BaseHandlerTest {
 
    public void test() {
@@ -52,9 +53,6 @@ public class InstanceStatesHandlerTest extends BaseHandlerTest {
                   new TransitionOnAction(InstanceAction.STOP, InstanceState.STOPPED))
             .putAll(InstanceState.STOPPED, new TransitionOnAction(InstanceAction.START, InstanceState.RUNNING),
                   new TransitionOnAction(InstanceAction.DESTROY, InstanceState.FINISH)).build();
-
-      // not sure why this isn"t always automatically called from surefire.
-      setUpInjector();
       assertEquals(factory.create(injector.getInstance(InstanceStatesHandler.class)).parse(is).entries(),
             expects.entries());
 

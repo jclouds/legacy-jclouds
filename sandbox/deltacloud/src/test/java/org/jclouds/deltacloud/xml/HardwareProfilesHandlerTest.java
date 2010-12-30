@@ -41,7 +41,8 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "HardwareProfilesHandlerTest")
 public class HardwareProfilesHandlerTest extends BaseHandlerTest {
 
    @Test
@@ -74,11 +75,6 @@ public class HardwareProfilesHandlerTest extends BaseHandlerTest {
                         new FixedHardwareProperty("architecture", "label", "x86_64"))),
             new HardwareProfile(URI.create("http://localhost:3001/api/hardware_profiles/opaque"), "opaque", "opaque",
                   ImmutableSet.<HardwareProperty> of()));
-      System.out.println(factory);
-      System.out.println(injector);
-
-      // not sure why this isn't always automatically called from surefire.
-      setUpInjector();
       assertEquals(factory.create(injector.getInstance(HardwareProfilesHandler.class)).parse(is), expects);
    }
 }
