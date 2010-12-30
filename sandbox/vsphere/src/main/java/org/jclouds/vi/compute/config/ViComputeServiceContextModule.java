@@ -106,10 +106,10 @@ public class ViComputeServiceContextModule
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       // String domainDir = injector.getInstance(Key.get(String.class,
       // Names.named(PROPERTY_LIBVIRT_DOMAIN_DIR)));
-      String domainDir = "";
-      String hardwareId = searchForHardwareIdInDomainDir(domainDir);
-      String image = searchForImageIdInDomainDir(domainDir);
-      return template.hardwareId(hardwareId).imageId(image);
+//      String domainDir = "";
+//      String hardwareId = searchForHardwareIdInDomainDir(domainDir);
+//      String image = searchForImageIdInDomainDir(domainDir);
+      return template.hardwareId("vm-1221").imageId("winNetEnterprise64Guest");
    }
 
    private String searchForImageIdInDomainDir(String domainDir) {
