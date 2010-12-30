@@ -17,25 +17,29 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.ec2.binders;
+package org.jclouds.util;
 
-import static org.jclouds.aws.ec2.util.EC2Utils.indexStringArrayToFormValuesWithPrefix;
+import static org.testng.Assert.assertEquals;
 
-import javax.inject.Singleton;
+import org.testng.annotations.Test;
 
-import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.Binder;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Ordering;
 
 /**
- * Binds the String [] to query parameters named with GroupName.index
- * 
  * @author Adrian Cole
  */
-@Singleton
-public class BindGroupNameToIndexedFormParams implements Binder {
+@Test(groups = "unit")
+public class Lists2Test {
 
-   public void bindToRequest(HttpRequest request, Object input) {
-      indexStringArrayToFormValuesWithPrefix(request, "GroupName", input);
+   public void testMultiMax() {
+      Iterable<String> values = ImmutableList.of("1", "2", "2", "3", "3");
+      assertEquals(Lists2.multiMax(Ordering.natural(), values), ImmutableList.of("3", "3"));
+   }
+
+   public void testMultiMax1() {
+      Iterable<String> values = ImmutableList.of("1", "2", "2", "3");
+      assertEquals(Lists2.multiMax(Ordering.natural(), values), ImmutableList.of("3"));
    }
 
 }

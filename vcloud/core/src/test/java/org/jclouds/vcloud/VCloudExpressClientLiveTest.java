@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "vcloud.VCloudClientLiveTest")
+@Test(groups = "live", sequential = true)
 public abstract class VCloudExpressClientLiveTest extends
          CommonVCloudClientLiveTest<VCloudExpressClient, VCloudExpressAsyncClient> {
 

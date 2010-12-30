@@ -31,7 +31,6 @@ import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -52,16 +51,20 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimaps;
 
 /**
  * Signs the S3 request.
@@ -75,7 +78,7 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
    private final String[] firstHeadersToSign = new String[] { HttpHeaders.DATE };
 
    public static Set<String> SPECIAL_QUERIES = ImmutableSet.of("acl", "torrent", "logging", "location",
-            "requestPayment");
+         "requestPayment");
    private final SignatureWire signatureWire;
    private final String accessKey;
    private final String secretKey;
@@ -94,10 +97,10 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
 
    @Inject
    public RequestAuthorizeSignature(SignatureWire signatureWire, @Named(PROPERTY_AUTH_TAG) String authTag,
-            @Named(PROPERTY_S3_VIRTUAL_HOST_BUCKETS) boolean isVhostStyle,
-            @Named(PROPERTY_S3_SERVICE_PATH) String servicePath, @Named(PROPERTY_HEADER_TAG) String headerTag,
-            @Named(PROPERTY_IDENTITY) String accessKey, @Named(PROPERTY_CREDENTIAL) String secretKey,
-            @TimeStamp Provider<String> timeStampProvider, Crypto crypto, HttpUtils utils) {
+         @Named(PROPERTY_S3_VIRTUAL_HOST_BUCKETS) boolean isVhostStyle,
+         @Named(PROPERTY_S3_SERVICE_PATH) String servicePath, @Named(PROPERTY_HEADER_TAG) String headerTag,
+         @Named(PROPERTY_IDENTITY) String accessKey, @Named(PROPERTY_CREDENTIAL) String secretKey,
+         @TimeStamp Provider<String> timeStampProvider, Crypto crypto, HttpUtils utils) {
       this.isVhostStyle = isVhostStyle;
       this.servicePath = servicePath;
       this.headerTag = headerTag;
@@ -110,11 +113,26 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       this.utils = utils;
    }
 
-   public void filter(HttpRequest request) throws HttpException {
-      replaceDateHeader(request);
-      String toSign = createStringToSign(request);
-      calculateAndReplaceAuthHeader(request, toSign);
+   public HttpRequest filter(HttpRequest request) throws HttpException {
+      request = replaceDateHeader(request);
+      String signature = calculateSignature(createStringToSign(request));
+      request = replaceAuthorizationHeader(request, signature);
       utils.logRequest(signatureLog, request, "<<");
+      return request;
+   }
+
+   HttpRequest replaceAuthorizationHeader(HttpRequest request, String signature) {
+      request = ModifyRequest.replaceHeader(request, HttpHeaders.AUTHORIZATION, authTag + " " + accessKey + ":"
+            + signature);
+      return request;
+   }
+
+   HttpRequest replaceDateHeader(HttpRequest request) {
+      Builder<String, String> builder = ImmutableMap.builder();
+      String date = timeStampProvider.get();
+      builder.put(HttpHeaders.DATE, date);
+      request = ModifyRequest.replaceHeaders(request, Multimaps.forMap(builder.build()));
+      return request;
    }
 
    public String createStringToSign(HttpRequest request) {
@@ -133,19 +151,18 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       return buffer.toString();
    }
 
-   void calculateAndReplaceAuthHeader(HttpRequest request, String toSign) throws HttpException {
+   String calculateSignature(String toSign) throws HttpException {
       String signature = sign(toSign);
       if (signatureWire.enabled())
-         signatureWire.input(Utils.toInputStream(signature));
-      request.getHeaders().replaceValues(HttpHeaders.AUTHORIZATION,
-               Collections.singletonList(authTag + " " + accessKey + ":" + signature));
+         signatureWire.input(Strings2.toInputStream(signature));
+      return signature;
    }
 
    public String sign(String toSign) {
       String signature;
       try {
-         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(toSign), crypto.hmacSHA1(secretKey
-                  .getBytes())));
+         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(toSign),
+               crypto.hmacSHA1(secretKey.getBytes())));
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }
@@ -156,17 +173,13 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
       toSign.append(request.getMethod()).append("\n");
    }
 
-   void replaceDateHeader(HttpRequest request) {
-      request.getHeaders().replaceValues(HttpHeaders.DATE, Collections.singletonList(timeStampProvider.get()));
-   }
-
    void appendAmzHeaders(HttpRequest request, StringBuilder toSign) {
       Set<String> headers = new TreeSet<String>(request.getHeaders().keySet());
       for (String header : headers) {
          if (header.startsWith("x-" + headerTag + "-")) {
             toSign.append(header.toLowerCase()).append(":");
             for (String value : request.getHeaders().get(header)) {
-               toSign.append(Utils.replaceAll(value, NEWLINE_PATTERN, "")).append(",");
+               toSign.append(Strings2.replaceAll(value, NEWLINE_PATTERN, "")).append(",");
             }
             toSign.deleteCharAt(toSign.lastIndexOf(","));
             toSign.append("\n");
@@ -176,11 +189,11 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
 
    void appendPayloadMetadata(HttpRequest request, StringBuilder buffer) {
       buffer.append(
-               utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
-                        .getContentMD5())).append("\n");
+            utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
+                  .getContentMD5())).append("\n");
       buffer.append(
-               utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
-                        .getContentType())).append("\n");
+            utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
+                  .getContentType())).append("\n");
    }
 
    void appendHttpHeaders(HttpRequest request, StringBuilder toSign) {
@@ -197,12 +210,12 @@ public class RequestAuthorizeSignature implements HttpRequestFilter, RequestSign
 
       for (int i = 0; i < request.getJavaMethod().getParameterAnnotations().length; i++) {
          if (Iterables.any(Arrays.asList(request.getJavaMethod().getParameterAnnotations()[i]),
-                  new Predicate<Annotation>() {
-                     public boolean apply(Annotation input) {
-                        return input.annotationType().equals(Bucket.class);
-                     }
-                  })) {
-            bucketName = (String) request.getArgs()[i];
+               new Predicate<Annotation>() {
+                  public boolean apply(Annotation input) {
+                     return input.annotationType().equals(Bucket.class);
+                  }
+               })) {
+            bucketName = (String) request.getArgs().get(i);
             break;
          }
       }

@@ -31,11 +31,12 @@ import org.testng.annotations.Test;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code EC2Client}
+ * Tests behavior of {@code EC2AsyncClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.EC2ClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "EC2AsyncClientTest")
 public class EC2AsyncClientTest extends BaseEC2AsyncClientTest<EC2AsyncClient> {
 
    private EC2AsyncClient asyncClient;

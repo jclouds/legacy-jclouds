@@ -30,7 +30,7 @@ import com.google.common.base.Predicate;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "rimuhosting.RimuHostingTemplateBuilderLiveTest")
+@Test(groups = "live")
 public class RimuHostingTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    public RimuHostingTemplateBuilderLiveTest() {

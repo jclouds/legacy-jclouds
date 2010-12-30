@@ -46,7 +46,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Lili Nadar
  */
-@Test(groups = "live", sequential = true, testName = "ec2.EC2LoadBalancerServiceLiveTest")
+@Test(groups = "live", sequential = true)
 public class EC2LoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveTest {
 
    private RestContext<ELBClient, ELBAsyncClient> elbContext;

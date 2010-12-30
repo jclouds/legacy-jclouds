@@ -55,7 +55,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "gogrid.ServerToNodeMetadataTest")
+@Test(groups = "unit")
 public class ServerToNodeMetadataTest {
 
    @SuppressWarnings("unchecked")

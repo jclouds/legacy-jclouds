@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  * @author James Murty
  * @author Adrian Cole
  */
-@Test(groups = { "live" }, testName = "cloudfiles.CloudFilesContainerLiveTest")
+@Test(groups = { "live" })
 public class CloudFilesContainerLiveTest extends BaseContainerLiveTest {
 
 }

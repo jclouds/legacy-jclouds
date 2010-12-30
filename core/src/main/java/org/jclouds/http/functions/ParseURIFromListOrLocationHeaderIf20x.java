@@ -35,7 +35,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.rest.InvocationContext;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
 
@@ -45,7 +45,7 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 public class ParseURIFromListOrLocationHeaderIf20x implements Function<HttpResponse, URI>,
-         InvocationContext {
+      InvocationContext<ParseURIFromListOrLocationHeaderIf20x> {
    private final Provider<UriBuilder> uriBuilderProvider;
 
    @Inject
@@ -62,7 +62,7 @@ public class ParseURIFromListOrLocationHeaderIf20x implements Function<HttpRespo
          try {
             if (from.getPayload().getInput() == null)
                throw new HttpResponseException("no content", null, from);
-            String toParse = Utils.toStringAndClose(from.getPayload().getInput());
+            String toParse = Strings2.toStringAndClose(from.getPayload().getInput());
             return URI.create(toParse.trim());
          } catch (IOException e) {
             throw new HttpResponseException("couldn't parse uri from content", null, from, e);
@@ -81,8 +81,7 @@ public class ParseURIFromListOrLocationHeaderIf20x implements Function<HttpRespo
             checkState(request != null, "request should have been initialized");
             if (!location.startsWith("/"))
                location = "/" + location;
-            UriBuilder builder = uriBuilderProvider.get().uri(
-                     URI.create("http://localhost" + location));
+            UriBuilder builder = uriBuilderProvider.get().uri(URI.create("http://localhost" + location));
             builder.host(request.getEndpoint().getHost());
             builder.port(request.getEndpoint().getPort());
             builder.scheme(request.getEndpoint().getScheme());

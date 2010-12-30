@@ -53,7 +53,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest")
+@Test(groups = "unit")
 public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
 
    public void testExecuteWithDefaultOptionsEC2() throws SecurityException, NoSuchMethodException {

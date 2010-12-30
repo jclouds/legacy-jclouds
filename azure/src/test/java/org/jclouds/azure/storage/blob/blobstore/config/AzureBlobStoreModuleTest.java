@@ -37,7 +37,7 @@ import com.google.inject.Module;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "azureblob.AzureBlobStoreModuleTest")
+@Test(groups = "unit")
 public class AzureBlobStoreModuleTest {
 
    Injector createInjector() {

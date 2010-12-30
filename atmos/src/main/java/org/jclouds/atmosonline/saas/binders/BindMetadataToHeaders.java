@@ -20,28 +20,36 @@
 package org.jclouds.atmosonline.saas.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
-import org.jclouds.crypto.Crypto;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 
+/**
+ * @author Adrian Cole
+ */
 @Singleton
 public class BindMetadataToHeaders implements Binder {
    private final BindUserMetadataToHeaders metaBinder;
 
    @Inject
-   protected BindMetadataToHeaders(BindUserMetadataToHeaders metaBinder, Crypto crypto) {
+   protected BindMetadataToHeaders(BindUserMetadataToHeaders metaBinder) {
       this.metaBinder = metaBinder;
    }
 
-   public void bindToRequest(HttpRequest request, Object payload) {
-      AtmosObject object = (AtmosObject) payload;
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof AtmosObject, "this binder is only valid for AtmosObject!");
+      checkNotNull(request, "request");
+
+      AtmosObject object = AtmosObject.class.cast(input);
+      checkNotNull(object.getPayload(), "object payload");
       checkArgument(object.getPayload().getContentMetadata().getContentLength() != null,
-               "contentLength must be set, streaming not supported");
-      metaBinder.bindToRequest(request, object.getUserMetadata());
+            "contentLength must be set, streaming not supported");
+      return metaBinder.bindToRequest(request, object.getUserMetadata());
    }
 }

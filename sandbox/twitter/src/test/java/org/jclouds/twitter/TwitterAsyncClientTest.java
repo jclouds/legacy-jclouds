@@ -33,7 +33,6 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.twitter.config.TwitterRestClientModule;
 import org.testng.annotations.Test;
@@ -51,15 +50,15 @@ import com.google.inject.TypeLiteral;
 public class TwitterAsyncClientTest extends RestClientTest<TwitterAsyncClient> {
    public void testGetMyMentions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TwitterAsyncClient.class.getMethod("getMyMentions");
-      GeneratedHttpRequest<TwitterAsyncClient> httpRequest = processor.createRequest(method);
+      HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest, "GET http://api.twitter.com/statuses/mentions.json HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // now make sure request filters apply by replaying
-      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET http://api.twitter.com/statuses/mentions.json HTTP/1.1");
       // for example, using basic authentication, we should get "only one"

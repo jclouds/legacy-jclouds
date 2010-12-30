@@ -19,8 +19,6 @@
 
 package org.jclouds.io.payloads;
 
-import static org.jclouds.http.HttpUtils.makeQueryLine;
-
 import java.io.InputStream;
 import java.util.Comparator;
 import java.util.Map;
@@ -28,7 +26,8 @@ import java.util.Map;
 import javax.annotation.Nullable;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.util.Utils;
+import org.jclouds.http.utils.ModifyRequest;
+import org.jclouds.util.Strings2;
 
 import com.google.common.collect.Multimap;
 
@@ -42,7 +41,7 @@ public class UrlEncodedFormPayload extends BasePayload<String> {
 
    public UrlEncodedFormPayload(Multimap<String, String> formParams,
             @Nullable Comparator<Map.Entry<String, String>> sorter, char... skips) {
-      super(makeQueryLine(formParams, sorter, skips));
+      super(ModifyRequest.makeQueryLine(formParams, sorter, skips));
       getContentMetadata().setContentLength((long) content.length());
       getContentMetadata().setContentType(MediaType.APPLICATION_FORM_URLENCODED);
    }
@@ -52,7 +51,7 @@ public class UrlEncodedFormPayload extends BasePayload<String> {
     */
    @Override
    public InputStream getInput() {
-      return Utils.toInputStream(content);
+      return Strings2.toInputStream(content);
    }
 
 }

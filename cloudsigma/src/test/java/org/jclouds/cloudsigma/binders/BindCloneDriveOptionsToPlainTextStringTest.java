@@ -25,6 +25,7 @@ import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.io.MutableContentMetadata;
@@ -32,6 +33,7 @@ import org.jclouds.io.Payload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Guice;
 
@@ -46,15 +48,17 @@ public class BindCloneDriveOptionsToPlainTextStringTest {
          BindCloneDriveOptionsToPlainTextString.class);
 
    public void testDefault() throws IOException {
-      assertInputAndArgsCreatesPayload(ImmutableMap.of("name", "newdrive"), new Object[] {}, "name newdrive");
+      assertInputAndArgsCreatesPayload(ImmutableMap.of("name", "newdrive"), ImmutableList.<Object> of(),
+            "name newdrive");
    }
 
    public void testWithSize() throws IOException {
       assertInputAndArgsCreatesPayload(ImmutableMap.of("name", "newdrive"),
-            new Object[] { new CloneDriveOptions().size(1024) }, "name newdrive\nsize 1024");
+            ImmutableList.<Object> of(new CloneDriveOptions().size(1024)), "name newdrive\nsize 1024");
    }
 
-   protected void assertInputAndArgsCreatesPayload(ImmutableMap<String, String> inputMap, Object[] args, String expected) {
+   protected void assertInputAndArgsCreatesPayload(ImmutableMap<String, String> inputMap, List<Object> args,
+         String expected) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getArgs()).andReturn(args).atLeastOnce();
       request.setPayload(expected);

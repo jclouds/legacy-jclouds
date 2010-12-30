@@ -35,7 +35,7 @@ import java.util.Properties;
 import javax.inject.Singleton;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.VCloudPropertiesBuilder;
 import org.jclouds.vcloud.domain.VAppTemplate;
@@ -46,6 +46,7 @@ import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
@@ -59,7 +60,7 @@ import com.google.inject.name.Names;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.BindInstantiateVAppTemplateParamsToXmlPayloadTest")
+@Test(groups = "unit")
 public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
    Injector createInjector(URI vAppTemplate, VAppTemplate value) {
       final VCloudClient client = createMock(VCloudClient.class);
@@ -91,10 +92,10 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       VAppTemplate template = createMock(VAppTemplate.class);
       VCloudNetworkSection net = createMock(VCloudNetworkSection.class);
 
-      String expected = Utils.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml"));
+      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml"));
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(new Object[] {}).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object>of()).atLeastOnce();
       request.setPayload(expected);
 
       expect(template.getNetworkSection()).andReturn(net).atLeastOnce();
@@ -127,10 +128,10 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       URI templateUri = URI.create("https://vcenterprise.bluelock.com/api/v1.0/vAppTemplate/3");
       VAppTemplate template = null;
 
-      String expected = Utils.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml"));
+      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml"));
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(new Object[] {}).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object>of()).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
@@ -154,10 +155,10 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
       options.processorCount(1).memory(512).disk(1024);
 
-      String expected = Utils.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml"));
+      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams.xml"));
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(new Object[] { options }).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object>of( options)).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
@@ -180,11 +181,11 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       InstantiateVAppTemplateOptions options = addNetworkConfig(new NetworkConfig("aloha", URI
                .create("https://vcenterprise.bluelock.com/api/v1.0/network/1991"), FenceMode.NAT_ROUTED));
 
-      String expected = Utils.toStringAndClose(getClass().getResourceAsStream("/instantiationparams-network.xml"));
+      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/instantiationparams-network.xml"));
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(new Object[] { options }).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object>of( options)).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
@@ -206,12 +207,12 @@ public class BindInstantiateVAppTemplateParamsToXmlPayloadTest {
       VCloudNetworkSection net = createMock(VCloudNetworkSection.class);
       InstantiateVAppTemplateOptions options = customizeOnInstantiate(true);
 
-      String expected = Utils
+      String expected = Strings2
                .toStringAndClose(getClass().getResourceAsStream("/instantiationparams-customization.xml"));
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(new Object[] { options }).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object>of( options)).atLeastOnce();
       request.setPayload(expected);
 
       expect(template.getNetworkSection()).andReturn(net).atLeastOnce();

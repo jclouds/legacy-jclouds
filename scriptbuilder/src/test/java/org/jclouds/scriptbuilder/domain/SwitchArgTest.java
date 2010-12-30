@@ -33,7 +33,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "scriptbuilder.SwitchArgTest")
+@Test(groups = "unit")
 public class SwitchArgTest {
 
    public void testSwitchArgUNIX() {

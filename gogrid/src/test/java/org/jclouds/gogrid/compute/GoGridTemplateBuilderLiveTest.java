@@ -36,7 +36,7 @@ import com.google.common.base.Predicate;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "gogrid.GoGridTemplateBuilderLiveTest")
+@Test(groups = "live")
 public class GoGridTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    public GoGridTemplateBuilderLiveTest() {

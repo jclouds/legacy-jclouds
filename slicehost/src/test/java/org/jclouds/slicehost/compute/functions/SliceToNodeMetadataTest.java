@@ -53,7 +53,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "slicehost.SliceToNodeMetadataTest")
+@Test(groups = "unit")
 public class SliceToNodeMetadataTest {
    Location provider = new LocationImpl(LocationScope.ZONE, "dallas", "description", null);
 

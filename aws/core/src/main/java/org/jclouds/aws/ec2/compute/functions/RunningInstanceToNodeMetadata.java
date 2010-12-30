@@ -20,13 +20,12 @@
 package org.jclouds.aws.ec2.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.util.Utils.nullSafeSet;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -49,6 +48,7 @@ import org.jclouds.compute.domain.internal.VolumeImpl;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.NullSafeCollections;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
@@ -93,8 +93,8 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
       builder.tag(tag);
       builder.credentials(credentialStore.get("node#" + instance.getRegion() + "/" + providerId));
       builder.state(instanceToNodeState.get(instance.getInstanceState()));
-      builder.publicAddresses(nullSafeSet(instance.getIpAddress()));
-      builder.privateAddresses(nullSafeSet(instance.getPrivateIpAddress()));
+      builder.publicAddresses(NullSafeCollections.nullSafeSet(instance.getIpAddress()));
+      builder.privateAddresses(NullSafeCollections.nullSafeSet(instance.getPrivateIpAddress()));
       builder.hardware(parseHardware(instance));
       Location location = getLocationForAvailabilityZoneOrRegion(instance);
       builder.location(location);

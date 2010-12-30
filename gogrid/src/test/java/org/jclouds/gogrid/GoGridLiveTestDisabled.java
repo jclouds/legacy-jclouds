@@ -82,7 +82,7 @@ import com.google.inject.Module;
  * 
  * @author Oleksiy Yarmula
  */
-@Test(enabled = true, groups = "live", testName = "gogrid.GoGridLiveTest")
+@Test(enabled = true, groups = "live")
 public class GoGridLiveTestDisabled {
 
    private GoGridClient client;

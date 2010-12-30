@@ -20,18 +20,20 @@
 package org.jclouds.blobstore.binders;
 
 import static org.jclouds.io.payloads.MultipartForm.BOUNDARY;
-import static org.jclouds.util.Utils.toStringAndClose;
 import static org.testng.Assert.assertEquals;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.Blob.Factory;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.RestContextFactory;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 /**
@@ -47,7 +49,7 @@ public class BindBlobToMultipartFormTest {
 
    static {
       blobProvider = new RestContextFactory().createContextBuilder("transient", "identity", "credential")
-               .buildInjector().getInstance(Blob.Factory.class);
+            .buildInjector().getInstance(Blob.Factory.class);
       StringBuilder builder = new StringBuilder("--");
       addData(BOUNDARY, "hello", builder);
       builder.append("--").append(BOUNDARY).append("--").append("\r\n");
@@ -67,11 +69,11 @@ public class BindBlobToMultipartFormTest {
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost:8001"));
       binder.bindToRequest(request, TEST_BLOB);
 
-      assertEquals(toStringAndClose(request.getPayload().getInput()), EXPECTS);
+      assertEquals(Strings2.toStringAndClose(request.getPayload().getInput()), EXPECTS);
       assertEquals(request.getPayload().getContentMetadata().getContentLength(), new Long(113));
 
       assertEquals(request.getPayload().getContentMetadata().getContentType(), "multipart/form-data; boundary="
-               + BOUNDARY);
+            + BOUNDARY);
    }
 
    private static void addData(String boundary, String data, StringBuilder builder) {
@@ -82,4 +84,17 @@ public class BindBlobToMultipartFormTest {
       builder.append(data).append("\r\n");
    }
 
+   @Test(expectedExceptions = IllegalArgumentException.class)
+   public void testMustBeBlob() {
+      BindBlobToMultipartForm binder = new BindBlobToMultipartForm();
+      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"));
+      binder.bindToRequest(request, new File("foo"));
+   }
+
+   @Test(expectedExceptions = { NullPointerException.class, IllegalStateException.class })
+   public void testNullIsBad() {
+      BindBlobToMultipartForm binder = new BindBlobToMultipartForm();
+      HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
+      binder.bindToRequest(request, null);
+   }
 }

@@ -21,9 +21,10 @@ package org.jclouds.http.functions;
 
 import static com.google.common.base.Predicates.equalTo;
 import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
-import static org.jclouds.util.Utils.propagateOrNull;
+import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import javax.inject.Singleton;
+
 
 import com.google.common.base.Function;
 

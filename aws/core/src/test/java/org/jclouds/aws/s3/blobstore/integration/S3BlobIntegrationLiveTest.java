@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
  * @author James Murty
  * @author Adrian Cole
  */
-@Test(groups = { "live" }, testName = "s3.S3BlobIntegrationTest")
+@Test(groups = { "live" })
 public class S3BlobIntegrationLiveTest extends BaseBlobIntegrationTest {
 
    @Override

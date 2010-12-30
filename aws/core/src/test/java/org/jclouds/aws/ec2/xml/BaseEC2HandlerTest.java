@@ -29,6 +29,7 @@ import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.AbstractModule;
@@ -39,12 +40,9 @@ import com.google.inject.Provides;
  * 
  * @author Adrian Cole
  */
+@Test(groups = "unit")
 public class BaseEC2HandlerTest extends BaseHandlerTest {
    protected String defaultRegion = Region.US_EAST_1;
-
-   public BaseEC2HandlerTest() {
-      super();
-   }
 
    @BeforeTest
    @Override
@@ -68,8 +66,7 @@ public class BaseEC2HandlerTest extends BaseHandlerTest {
          @Singleton
          @Provides
          Map<String, String> provideAvailabilityZoneRegionMap() {
-            return ImmutableMap.<String, String> of(AvailabilityZone.US_EAST_1A,
-                     Region.US_EAST_1);
+            return ImmutableMap.<String, String> of(AvailabilityZone.US_EAST_1A, Region.US_EAST_1);
          }
       });
       factory = injector.getInstance(ParseSax.Factory.class);

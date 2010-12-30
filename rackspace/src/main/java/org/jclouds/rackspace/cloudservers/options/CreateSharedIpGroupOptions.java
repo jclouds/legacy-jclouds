@@ -53,14 +53,14 @@ public class CreateSharedIpGroupOptions extends BindToJsonPayload {
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       SharedIpGroupRequest createRequest = new SharedIpGroupRequest(checkNotNull(postParams
                .get("name")), serverId);
-      super.bindToRequest(request, ImmutableMap.of("sharedIpGroup", createRequest));
+      return super.bindToRequest(request, ImmutableMap.of("sharedIpGroup", createRequest));
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Object toBind) {
+   public <R extends HttpRequest> R bindToRequest(R request, Object toBind) {
       throw new IllegalStateException("CreateSharedIpGroup is a POST operation");
    }
 

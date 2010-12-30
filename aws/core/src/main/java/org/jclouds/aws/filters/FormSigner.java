@@ -28,8 +28,6 @@ import static org.jclouds.aws.ec2.reference.EC2Parameters.SIGNATURE_METHOD;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.SIGNATURE_VERSION;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.TIMESTAMP;
 import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
-import static org.jclouds.http.HttpUtils.makeQueryLine;
-import static org.jclouds.http.HttpUtils.parseQueryToMap;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -52,10 +50,11 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RequestSigner;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
@@ -73,7 +72,7 @@ import com.google.common.collect.Multimap;
 public class FormSigner implements HttpRequestFilter, RequestSigner {
 
    public static String[] mandatoryParametersForSignature = new String[] { ACTION, SIGNATURE_METHOD, SIGNATURE_VERSION,
-            VERSION };
+         VERSION };
    private final SignatureWire signatureWire;
    private final String accessKey;
    private final String secretKey;
@@ -87,8 +86,8 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
 
    @Inject
    public FormSigner(SignatureWire signatureWire, @Named(Constants.PROPERTY_IDENTITY) String accessKey,
-            @Named(Constants.PROPERTY_CREDENTIAL) String secretKey, @TimeStamp Provider<String> dateService,
-            Crypto crypto, HttpUtils utils) {
+         @Named(Constants.PROPERTY_CREDENTIAL) String secretKey, @TimeStamp Provider<String> dateService,
+         Crypto crypto, HttpUtils utils) {
       this.signatureWire = signatureWire;
       this.accessKey = accessKey;
       this.secretKey = secretKey;
@@ -97,16 +96,18 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
       this.utils = utils;
    }
 
-   public void filter(HttpRequest request) throws HttpException {
+   public HttpRequest filter(HttpRequest request) throws HttpException {
       checkNotNull(request.getFirstHeaderOrNull(HttpHeaders.HOST), "request is not ready to sign; host not present");
-      Multimap<String, String> decodedParams = parseQueryToMap(request.getPayload().getRawContent().toString());
+      Multimap<String, String> decodedParams = ModifyRequest.parseQueryToMap(request.getPayload().getRawContent()
+            .toString());
       addSigningParams(decodedParams);
       validateParams(decodedParams);
       String stringToSign = createStringToSign(request, decodedParams);
       String signature = sign(stringToSign);
       addSignature(decodedParams, signature);
-      setPayload(request, decodedParams);
+      request = setPayload(request, decodedParams);
       utils.logRequest(signatureLog, request, "<<");
+      return request;
    }
 
    String[] sortForSigning(String queryLine) {
@@ -124,8 +125,8 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
       return parts;
    }
 
-   void setPayload(HttpRequest request, Multimap<String, String> decodedParams) {
-      request.setPayload(makeQueryLine(decodedParams, new Comparator<Map.Entry<String, String>>() {
+   HttpRequest setPayload(HttpRequest request, Multimap<String, String> decodedParams) {
+      request.setPayload(ModifyRequest.makeQueryLine(decodedParams, new Comparator<Map.Entry<String, String>>() {
          public int compare(Entry<String, String> o1, Entry<String, String> o2) {
             if (o1.getKey().startsWith("Action") || o2.getKey().startsWith("AWSAccessKeyId"))
                return -1;
@@ -135,6 +136,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
          }
       }));
       request.getPayload().getContentMetadata().setContentType("application/x-www-form-urlencoded");
+      return request;
    }
 
    @VisibleForTesting
@@ -153,10 +155,10 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    public String sign(String stringToSign) {
       String signature;
       try {
-         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(stringToSign), crypto
-                  .hmacSHA256(secretKey.getBytes())));
+         signature = CryptoStreams.base64(CryptoStreams.mac(InputSuppliers.of(stringToSign),
+               crypto.hmacSHA256(secretKey.getBytes())));
          if (signatureWire.enabled())
-            signatureWire.input(Utils.toInputStream(signature));
+            signatureWire.input(Strings2.toInputStream(signature));
       } catch (Exception e) {
          throw new HttpException("error signing request", e);
       }
@@ -182,7 +184,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
 
    @VisibleForTesting
    String buildCanonicalizedString(Multimap<String, String> decodedParams) {
-      return makeQueryLine(decodedParams, new Comparator<Map.Entry<String, String>>() {
+      return ModifyRequest.makeQueryLine(decodedParams, new Comparator<Map.Entry<String, String>>() {
          public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
             if (o1.getKey().startsWith("AWSAccessKeyId"))
                return -1;
@@ -201,7 +203,7 @@ public class FormSigner implements HttpRequestFilter, RequestSigner {
    }
 
    public String createStringToSign(HttpRequest input) {
-      return createStringToSign(input, parseQueryToMap(input.getPayload().getRawContent().toString()));
+      return createStringToSign(input, ModifyRequest.parseQueryToMap(input.getPayload().getRawContent().toString()));
    }
 
 }

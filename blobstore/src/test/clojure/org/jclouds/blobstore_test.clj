@@ -22,7 +22,7 @@
   (:use [clojure.test])
   (:import [org.jclouds.blobstore BlobStoreContextFactory]
            [java.io ByteArrayOutputStream]
-           [org.jclouds.util Utils]))
+           [org.jclouds.util Strings2]))
 
 (defn clean-stub-fixture
   "This should allow basic tests to easily be run with another service."
@@ -80,7 +80,7 @@
   (is (create-container "blob"))
   (is (upload-blob "blob" "blob1" "blob1"))
   (is (upload-blob "blob" "blob2" "blob2"))
-  (is (= "blob2" (Utils/toStringAndClose (get-blob-stream "blob" "blob2")))))
+  (is (= "blob2" (Strings2/toStringAndClose (get-blob-stream "blob" "blob2")))))
 
 (deftest download-blob-test
   (let [name "test"

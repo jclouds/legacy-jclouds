@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "cloudfiles.CloudFilesBlobMapIntegrationTest")
+@Test(groups = "live")
 public class CloudFilesBlobMapIntegrationLiveTest extends BaseBlobMapIntegrationTest {
 
 }

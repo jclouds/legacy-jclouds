@@ -32,6 +32,7 @@ import javax.ws.rs.POST;
 
 import org.jclouds.concurrent.MoreExecutors;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.Logger;
 import org.jclouds.logging.Logger.LoggerFactory;
@@ -39,7 +40,6 @@ import org.jclouds.nirvanix.sdn.SDNPropertiesBuilder;
 import org.jclouds.nirvanix.sdn.config.SDNAuthRestClientModule;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.config.RestModule;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -62,28 +62,27 @@ public class InsertUserContextIntoPathTest {
 
    private static interface TestService {
       @POST
-      public void foo(@EndpointParam URI endpoint);
+         public void foo(@EndpointParam URI endpoint);
    }
 
    public void testRequestInvalid() {
-      GeneratedHttpRequest<TestService> request = factory.createRequest(method, URI.create("https://host/path"));
-      filter.filter(request);
-      filter.filter(request);
+      HttpRequest request = factory.createRequest(method, URI.create("https://host/path"));
+      request = filter.filter(request);
+      request = filter.filter(request);
       assertEquals(request.getEndpoint().getPath(), "/token/appname/username/path");
       assertEquals(request.getEndpoint().getHost(), "host");
    }
 
    public void testRequestNoSession() {
-      GeneratedHttpRequest<TestService> request = factory.createRequest(method, URI.create("https://host/path"));
-      filter.filter(request);
+      HttpRequest request = factory.createRequest(method, URI.create("https://host/path"));
+      request = filter.filter(request);
       assertEquals(request.getEndpoint().getPath(), "/token/appname/username/path");
       assertEquals(request.getEndpoint().getHost(), "host");
    }
 
    public void testRequestAlreadyHasSession() {
-      GeneratedHttpRequest<TestService> request = factory.createRequest(method, URI
-               .create("https://host/token/appname/username/path"));
-      filter.filter(request);
+      HttpRequest request = factory.createRequest(method, URI.create("https://host/token/appname/username/path"));
+      request = filter.filter(request);
       assertEquals(request.getEndpoint().getPath(), "/token/appname/username/path");
       assertEquals(request.getEndpoint().getHost(), "host");
    }
@@ -91,25 +90,24 @@ public class InsertUserContextIntoPathTest {
    @BeforeClass
    protected void createFilter() throws SecurityException, NoSuchMethodException {
       injector = Guice.createInjector(new RestModule(), new ExecutorServiceModule(MoreExecutors.sameThreadExecutor(),
-               MoreExecutors.sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule(),
-               new AbstractModule() {
+            MoreExecutors.sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule(), new AbstractModule() {
 
-                  protected void configure() {
-                     install(new SDNAuthRestClientModule());
-                     bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-                        public Logger getLogger(String category) {
-                           return Logger.NULL;
-                        }
-                     });
-                     AddSessionTokenToRequest sessionManager = createMock(AddSessionTokenToRequest.class);
-                     expect(sessionManager.getSessionToken()).andReturn("token").anyTimes();
-                     replay(sessionManager);
-                     bind(AddSessionTokenToRequest.class).toInstance(sessionManager);
-                     Names.bindProperties(this.binder(), new SDNPropertiesBuilder(new Properties()).credentials(
-                              "appkey/appname/username", "password").build());
-                  }
+         protected void configure() {
+            install(new SDNAuthRestClientModule());
+            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+               public Logger getLogger(String category) {
+                  return Logger.NULL;
+               }
+            });
+            AddSessionTokenToRequest sessionManager = createMock(AddSessionTokenToRequest.class);
+            expect(sessionManager.getSessionToken()).andReturn("token").anyTimes();
+            replay(sessionManager);
+            bind(AddSessionTokenToRequest.class).toInstance(sessionManager);
+            Names.bindProperties(this.binder(),
+                  new SDNPropertiesBuilder(new Properties()).credentials("appkey/appname/username", "password").build());
+         }
 
-               });
+      });
       filter = injector.getInstance(InsertUserContextIntoPath.class);
       factory = injector.getInstance(Key.get(new TypeLiteral<RestAnnotationProcessor<TestService>>() {
       }));

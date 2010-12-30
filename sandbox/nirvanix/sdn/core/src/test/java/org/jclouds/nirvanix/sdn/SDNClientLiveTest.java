@@ -83,7 +83,7 @@ public class SDNClientLiveTest {
       blob.setPayload("value");
       Payloads.calculateMD5(blob);
 
-      byte[] md5 = blob.getMetadata().getContentMD5();
+      byte[] md5 = blob.getMetadata().getContentMetadata().getContentMD5();
       connection.upload(uploadInfo.getHost(), uploadInfo.getToken(), containerName, blob);
 
       Map<String, String> metadata = connection.getMetadata(containerName + "/test.txt");

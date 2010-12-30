@@ -51,7 +51,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "sqs.SQSClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class SQSClientLiveTest {
 
    private SQSClient client;

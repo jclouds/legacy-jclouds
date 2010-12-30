@@ -55,7 +55,7 @@ public class HttpCommandMock implements HttpCommand {
    }
 
    @Override
-   public HttpRequest getRequest() {
+   public HttpRequest getCurrentRequest() {
       return new HttpRequest("GET", URI.create("http://localhost"));
    }
 
@@ -66,5 +66,10 @@ public class HttpCommandMock implements HttpCommand {
    @Override
    public Exception getException() {
       return null;
+   }
+
+   @Override
+   public void setCurrentRequest(HttpRequest request) {
+      
    }
 }

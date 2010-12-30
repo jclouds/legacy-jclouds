@@ -42,7 +42,7 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  * 
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "perftest.JCloudsPerformanceLiveTest", groups = { "live" })
+@Test(sequential = true, timeOut = 2 * 60 * 1000, groups = { "live" })
 public class JCloudsPerformanceLiveTest extends BaseJCloudsPerformanceLiveTest {
 
    @Override

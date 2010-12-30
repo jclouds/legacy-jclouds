@@ -38,11 +38,12 @@ import org.testng.annotations.Test;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code JaxrsAnnotationProcessor}
+ * Tests behavior of {@code RackspaceAuthAsyncClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "rackspace.RackspaceAuthentication")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "RackspaceAuthAsyncClientTest")
 public class RackspaceAuthAsyncClientTest extends RestClientTest<RackspaceAuthAsyncClient> {
 
    public void testAuthenticate() throws SecurityException, NoSuchMethodException, IOException {

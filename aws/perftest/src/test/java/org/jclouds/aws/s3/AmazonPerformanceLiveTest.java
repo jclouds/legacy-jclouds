@@ -42,7 +42,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
  * 
  * @author Adrian Cole
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "perftest.AmazonPerformanceLiveTest", groups = { "live" })
+@Test(sequential = true, timeOut = 2 * 60 * 1000, groups = { "live" })
 public class AmazonPerformanceLiveTest extends BasePerformanceLiveTest {
    private AmazonS3 s3;
 

@@ -39,7 +39,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.ElasticIPAddressAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "ElasticIPAddressAsyncClientTest")
 public class ElasticIPAddressAsyncClientTest extends BaseEC2AsyncClientTest<ElasticIPAddressAsyncClient> {
 
    public void testDisassociateAddress() throws SecurityException, NoSuchMethodException, IOException {

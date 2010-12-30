@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "cloudfiles.CloudFilesInputStreamMapIntegrationTest")
+@Test(groups = "live")
 public class CloudFilesInputStreamMapIntegrationLiveTest extends BaseInputStreamMapIntegrationTest {
 
 }

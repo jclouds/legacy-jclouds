@@ -54,7 +54,8 @@ import com.google.inject.name.Names;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VCloudExpressVAppHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "VCloudExpressVAppHandlerTest")
 public class VCloudExpressVAppHandlerTest extends BaseHandlerTest {
    @BeforeTest
    @Override

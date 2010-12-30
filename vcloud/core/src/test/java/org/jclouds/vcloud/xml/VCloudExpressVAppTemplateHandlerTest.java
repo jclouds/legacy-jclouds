@@ -40,7 +40,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VAppTemplateHandlerTest")
+@Test(groups = "unit")
 public class VCloudExpressVAppTemplateHandlerTest {
 
    private Injector injector;

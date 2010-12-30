@@ -32,7 +32,7 @@ import java.util.Properties;
 import javax.inject.Singleton;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.domain.network.NetworkConfig;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.terremark.TerremarkVCloudPropertiesBuilder;
@@ -40,6 +40,7 @@ import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOpti
 import org.testng.annotations.Test;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -54,16 +55,14 @@ import com.google.inject.name.Names;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.TerremarkBindInstantiateVAppTemplateParamsToXmlPayloadTest")
+@Test(groups = "unit")
 public class TerremarkBindInstantiateVAppTemplateParamsToXmlPayloadTest {
    Injector injector = Guice.createInjector(new AbstractModule() {
 
       @Override
       protected void configure() {
          Properties props = new Properties();
-         Names
-                  .bindProperties(binder(), checkNotNull(new TerremarkVCloudPropertiesBuilder(props).build(),
-                           "properties"));
+         Names.bindProperties(binder(), checkNotNull(new TerremarkVCloudPropertiesBuilder(props).build(), "properties"));
       }
 
       @SuppressWarnings("unused")
@@ -77,22 +76,22 @@ public class TerremarkBindInstantiateVAppTemplateParamsToXmlPayloadTest {
 
    public void testAllOptions() throws IOException {
 
-      String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
-               "/terremark/InstantiateVAppTemplateParams-options-test.xml"));
+      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream(
+            "/terremark/InstantiateVAppTemplateParams-options-test.xml"));
       Multimap<String, String> headers = Multimaps.synchronizedMultimap(HashMultimap.<String, String> create());
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
       expect(request.getArgs()).andReturn(
-               new Object[] { TerremarkInstantiateVAppTemplateOptions.Builder.processorCount(2).memory(512).inGroup(
-                        "group").withPassword("password").inRow("row").addNetworkConfig(
-                        new NetworkConfig(URI.create("http://network"))) }).atLeastOnce();
+            ImmutableList.<Object> of(TerremarkInstantiateVAppTemplateOptions.Builder.processorCount(2).memory(512)
+                  .inGroup("group").withPassword("password").inRow("row")
+                  .addNetworkConfig(new NetworkConfig(URI.create("http://network"))))).atLeastOnce();
       expect(request.getFirstHeaderOrNull("Content-Type")).andReturn("application/unknown").atLeastOnce();
       expect(request.getHeaders()).andReturn(headers).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
       TerremarkBindInstantiateVAppTemplateParamsToXmlPayload binder = injector
-               .getInstance(TerremarkBindInstantiateVAppTemplateParamsToXmlPayload.class);
+            .getInstance(TerremarkBindInstantiateVAppTemplateParamsToXmlPayload.class);
 
       Map<String, String> map = Maps.newHashMap();
       map.put("name", "name");

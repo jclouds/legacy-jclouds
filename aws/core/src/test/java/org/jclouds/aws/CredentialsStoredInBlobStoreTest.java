@@ -36,7 +36,7 @@ import org.jclouds.compute.RunNodesException;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Credentials;
 import org.jclouds.rest.config.CredentialStoreModule;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -95,7 +95,7 @@ public class CredentialsStoredInBlobStoreTest {
       assertEquals(credentialsMap.size(), 10);
       for (Entry<String, InputStream> entry : credentialsMap.entrySet()) {
          Credentials credentials = computeContext.credentialStore().get(entry.getKey());
-         assertEquals(Utils.toStringAndClose(entry.getValue()), String.format(
+         assertEquals(Strings2.toStringAndClose(entry.getValue()), String.format(
                   "{\"identity\":\"%s\",\"credential\":\"%s\"}", credentials.identity, credentials.credential));
       }
    }

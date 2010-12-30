@@ -29,7 +29,12 @@ import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.testng.annotations.Test;
 
-public class BlobMetadataToRelativePathResourceMetadataTest {
+/**
+ * 
+ * @author Adrian Cole
+ */
+@Test(groups = "unit")
+public class ResourceMetadataToRelativePathResourceMetadataTest {
 
    private ResourceMetadataToRelativePathResourceMetadata parser = new ResourceMetadataToRelativePathResourceMetadata();
 

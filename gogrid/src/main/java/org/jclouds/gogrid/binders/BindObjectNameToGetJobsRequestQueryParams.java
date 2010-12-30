@@ -22,13 +22,13 @@ package org.jclouds.gogrid.binders;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.OBJECT_KEY;
-import static org.jclouds.http.HttpUtils.addQueryParamTo;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 /**
@@ -50,12 +50,12 @@ public class BindObjectNameToGetJobsRequestQueryParams implements Binder {
     * href="http://wiki.gogrid.com/wiki/index.php/API:grid.job.list/>.
     */
    @Override
-   public void bindToRequest(HttpRequest request, Object input) {
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input is null") instanceof String,
-               "this binder is only valid for String arguments");
+            "this binder is only valid for String arguments");
 
       String serverName = (String) input;
-      addQueryParamTo(request, OBJECT_KEY, serverName, builder.get());
+      return ModifyRequest.addQueryParam(request, OBJECT_KEY, serverName, builder.get());
    }
 
 }

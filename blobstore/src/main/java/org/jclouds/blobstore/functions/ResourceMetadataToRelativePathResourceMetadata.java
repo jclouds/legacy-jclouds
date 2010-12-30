@@ -19,6 +19,8 @@
 
 package org.jclouds.blobstore.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.StorageMetadata;
@@ -28,17 +30,21 @@ import org.jclouds.blobstore.reference.BlobStoreConstants;
 
 import com.google.common.base.Function;
 
+/**
+ * @author Adrian Cole
+ */
 @Singleton
 public class ResourceMetadataToRelativePathResourceMetadata implements Function<StorageMetadata, StorageMetadata> {
 
    public StorageMetadata apply(StorageMetadata md) {
-      String name = md.getName();
+      checkNotNull(md, "metadata");
+      String name = checkNotNull(md.getName(), "metadata.name");
       for (String suffix : BlobStoreConstants.DIRECTORY_SUFFIXES) {
          if (name.endsWith(suffix))
             name = name.substring(0, name.length() - suffix.length());
       }
       return new StorageMetadataImpl(StorageType.RELATIVE_PATH, md.getProviderId(), name, md.getLocation(),
-               md.getUri(), md.getETag(), md.getLastModified(), md.getUserMetadata());
+            md.getUri(), md.getETag(), md.getLastModified(), md.getUserMetadata());
    }
 
 }

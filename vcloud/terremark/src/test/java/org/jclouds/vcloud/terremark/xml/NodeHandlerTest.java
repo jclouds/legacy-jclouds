@@ -30,11 +30,12 @@ import org.jclouds.vcloud.terremark.domain.Node;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code NodeServiceHandler}
+ * Tests behavior of {@code NodeHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.NodeServiceHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "NodeHandlerTest")
 public class NodeHandlerTest extends BaseHandlerTest {
 
    public void test1() throws UnknownHostException {

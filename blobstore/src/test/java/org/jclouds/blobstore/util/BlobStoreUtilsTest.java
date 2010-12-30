@@ -24,7 +24,7 @@ import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
 import static org.jclouds.blobstore.util.BlobStoreUtils.createParentIfNeededAsync;
-import static org.jclouds.blobstore.util.BlobStoreUtils.getKeyFor;
+import static org.jclouds.blobstore.util.BlobStoreUtils.getNameFor;
 import static org.jclouds.blobstore.util.BlobStoreUtils.parseContainerFromPath;
 import static org.jclouds.blobstore.util.BlobStoreUtils.parsePrefixFromPath;
 import static org.testng.Assert.assertEquals;
@@ -34,11 +34,11 @@ import java.net.URI;
 import org.jclouds.blobstore.AsyncBlobStore;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.MutableBlobMetadata;
-import org.jclouds.http.HttpResponse;
+import org.jclouds.rest.Providers;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Utils;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 /**
@@ -46,7 +46,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "blobstore.BlobStoreUtilsTest")
+@Test(groups = "unit")
 public class BlobStoreUtilsTest {
 
    @Test
@@ -54,10 +54,10 @@ public class BlobStoreUtilsTest {
       Iterable<String> providers = BlobStoreUtils.getSupportedProviders();
       assert Iterables.contains(providers, "transient") : providers;
    }
-   
+
    @Test
    public void testSupportedProviders() {
-      Iterable<String> providers = Utils.getSupportedProviders();
+      Iterable<String> providers = Providers.getSupportedProviders();
       assert Iterables.contains(providers, "transient") : providers;
    }
 
@@ -127,34 +127,27 @@ public class BlobStoreUtilsTest {
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
 
-      HttpResponse from = createMock(HttpResponse.class);
       expect(request.getEndpoint()).andReturn(
-               URI.create("https://jclouds.blob.core.windows.net/adriancole-blobstore0/five"));
-      expect(request.getArgs()).andReturn(new Object[] { "adriancole-blobstore0", "five" })
-               .atLeastOnce();
+            URI.create("https://jclouds.blob.core.windows.net/adriancole-blobstore0/five"));
+      expect(request.getArgs()).andReturn(ImmutableList.<Object> of("adriancole-blobstore0", "five")).atLeastOnce();
 
       replay(request);
-      replay(from);
 
-      assertEquals(getKeyFor(request, from), "five");
+      assertEquals(getNameFor(request), "five");
    }
 
    public void testGetKeyForAtmos() {
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
 
-      HttpResponse from = createMock(HttpResponse.class);
       expect(request.getEndpoint())
-               .andReturn(
-                        URI
-                                 .create("https://storage4.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22/adriancole-blobstore0/four"));
-      expect(request.getArgs()).andReturn(new Object[] { "adriancole-blobstore0/four" })
-               .atLeastOnce();
+            .andReturn(
+                  URI.create("https://storage4.clouddrive.com/v1/MossoCloudFS_dc1f419c-5059-4c87-a389-3f2e33a77b22/adriancole-blobstore0/four"));
+      expect(request.getArgs()).andReturn(ImmutableList.<Object> of("adriancole-blobstore0/four")).atLeastOnce();
 
       replay(request);
-      replay(from);
 
-      assertEquals(getKeyFor(request, from), "four");
+      assertEquals(getNameFor(request), "four");
    }
 
    public void testGetContainer() {

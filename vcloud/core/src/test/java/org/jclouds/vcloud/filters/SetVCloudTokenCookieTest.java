@@ -51,7 +51,7 @@ public class SetVCloudTokenCookieTest {
    @Test
    public void testApply() {
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
-      filter.filter(request);
+      request = filter.filter(request);
       assertEquals(request.getHeaders().size(), 1);
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.COOKIE), "vcloud-token=token");
 

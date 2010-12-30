@@ -35,7 +35,7 @@ import com.google.common.collect.ImmutableList;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "rackspace.ListOptionsTest")
+@Test(groups = "unit")
 public class BaseListOptionsTest {
 
    public void testChangesSince() {

@@ -36,7 +36,7 @@ import com.google.common.io.Resources;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "scriptbuilder.CreateRunScriptTest")
+@Test(groups = "unit")
 public class CreateRunScriptTest {
    Statement statement = createRunScript(
             "yahooprod",

@@ -46,7 +46,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "simpledb.SimpleDBClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class SimpleDBClientLiveTest {
 
    private SimpleDBClient client;

@@ -31,7 +31,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.base.Throwables;
 import com.google.common.io.Closeables;
@@ -57,11 +57,11 @@ public class CloudSigmaErrorHandler implements HttpErrorHandler {
       Exception exception = message != null ? new HttpResponseException(command, response, message)
             : new HttpResponseException(command, response);
       try {
-         message = message != null ? message : String.format("%s -> %s", command.getRequest().getRequestLine(),
+         message = message != null ? message : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(),
                response.getStatusLine());
          switch (response.getStatusCode()) {
          case 400:
-            if ((command.getRequest().getEndpoint().getPath().endsWith("/info"))
+            if ((command.getCurrentRequest().getEndpoint().getPath().endsWith("/info"))
                   || (message != null && message.indexOf("could not be found") != -1))
                exception = new ResourceNotFoundException(message, exception);
             else
@@ -71,7 +71,7 @@ public class CloudSigmaErrorHandler implements HttpErrorHandler {
             exception = new AuthorizationException(message, exception);
             break;
          case 404:
-            if (!command.getRequest().getMethod().equals("DELETE")) {
+            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
                exception = new ResourceNotFoundException(message, exception);
             }
             break;
@@ -93,7 +93,7 @@ public class CloudSigmaErrorHandler implements HttpErrorHandler {
       if (response.getPayload() == null)
          return null;
       try {
-         return Utils.toStringAndClose(response.getPayload().getInput());
+         return Strings2.toStringAndClose(response.getPayload().getInput());
       } catch (IOException e) {
          throw new RuntimeException(e);
       } finally {

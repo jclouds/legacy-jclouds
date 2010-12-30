@@ -32,7 +32,8 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.AllocateAddressResponseHandlerTest")
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "AllocateAddressResponseHandlerTest")
 public class AllocateAddressResponseHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() throws UnknownHostException {
 

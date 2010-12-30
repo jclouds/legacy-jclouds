@@ -47,7 +47,7 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "s3.CopyObjectOptionsTest")
+@Test(groups = "unit")
 public class CopyObjectOptionsTest {
 
    private String etag;

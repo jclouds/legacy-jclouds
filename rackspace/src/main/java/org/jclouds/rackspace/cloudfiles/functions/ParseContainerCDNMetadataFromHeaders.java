@@ -38,7 +38,7 @@ import com.google.common.base.Function;
  * @author James Murty
  */
 public class ParseContainerCDNMetadataFromHeaders implements
-         Function<HttpResponse, ContainerCDNMetadata>, InvocationContext {
+         Function<HttpResponse, ContainerCDNMetadata>, InvocationContext<ParseContainerCDNMetadataFromHeaders> {
 
    private HttpRequest request;
 

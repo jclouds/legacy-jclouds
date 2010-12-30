@@ -28,7 +28,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.nirvanix.sdn.SDNAuthenticationLiveTest.SDNAuthClient;
 import org.jclouds.nirvanix.sdn.functions.ParseSessionTokenFromJsonResponse;
 import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
@@ -68,7 +68,7 @@ public class SDNAuthAsyncClientTest extends RestClientTest<SDNAuthAsyncClient> {
    }
 
    @Override
-   public ContextSpec<SDNAuthClient, SDNAuthAsyncClient> createContextSpec() {
+   public RestContextSpec<SDNAuthClient, SDNAuthAsyncClient> createContextSpec() {
       return contextSpec("test", "http://localhost:8080", "1", "identity", "credential", SDNAuthClient.class,
             SDNAuthAsyncClient.class);
    }

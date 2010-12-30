@@ -26,7 +26,6 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCoresAndSpeed;
 import static org.jclouds.compute.util.ComputeServiceUtils.getSpace;
-import static org.jclouds.util.Utils.multiMax;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,6 +49,7 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Lists2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
@@ -617,7 +617,7 @@ public class TemplateBuilderImpl implements TemplateBuilder {
          Iterable<? extends Image> matchingImages = filter(supportedImages, imagePredicate);
          if (logger.isTraceEnabled())
             logger.trace("<<   matched images(%s)", matchingImages);
-         List<? extends Image> maxImages = multiMax(DEFAULT_IMAGE_ORDERING, matchingImages);
+         List<? extends Image> maxImages = Lists2.multiMax(DEFAULT_IMAGE_ORDERING, matchingImages);
          if (logger.isTraceEnabled())
             logger.trace("<<   best images(%s)", maxImages);
          return maxImages.get(maxImages.size() - 1);

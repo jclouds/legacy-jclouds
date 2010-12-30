@@ -41,7 +41,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.CatalogItemHandlerTest")
+@Test(groups = "unit")
 public class CatalogItemHandlerTest {
 
    public void testApplyInputStream() {

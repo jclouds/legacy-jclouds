@@ -47,7 +47,7 @@ import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.ObjectInfo;
 import org.jclouds.rackspace.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.rackspace.cloudfiles.options.ListContainerOptions;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -59,7 +59,7 @@ import com.google.common.collect.Maps;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "cloudfiles.CloudFilesClientLiveTest")
+@Test(groups = "live")
 public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
 
    public CloudFilesClient getApi() {
@@ -327,7 +327,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
          assert getApi().getObject(containerName, "non-existent-object") == null;
          // Test GET of object (including updated metadata)
          CFObject getBlob = getApi().getObject(containerName, object.getInfo().getName());
-         assertEquals(Utils.toStringAndClose(getBlob.getPayload().getInput()), data);
+         assertEquals(Strings2.toStringAndClose(getBlob.getPayload().getInput()), data);
          // TODO assertEquals(getBlob.getName(),
          // object.getMetadata().getName());
          assertEquals(getBlob.getInfo().getBytes(), new Long(data.length()));
@@ -372,7 +372,7 @@ public class CloudFilesClientLiveTest extends BaseBlobStoreIntegrationTest {
                   GetOptions.Builder.ifETagMatches(newEtag));
          assertEquals(getBlob.getInfo().getHash(), CryptoStreams.hex(newEtag));
          getBlob = getApi().getObject(containerName, object.getInfo().getName(), GetOptions.Builder.startAt(8));
-         assertEquals(Utils.toStringAndClose(getBlob.getPayload().getInput()), data.substring(8));
+         assertEquals(Strings2.toStringAndClose(getBlob.getPayload().getInput()), data.substring(8));
 
       } finally {
          returnContainer(containerName);

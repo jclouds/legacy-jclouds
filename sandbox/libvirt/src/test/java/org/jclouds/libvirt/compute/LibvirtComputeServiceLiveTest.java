@@ -17,7 +17,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "libvirt.LibvirtComputeServiceLiveTest")
+@Test(groups = "live", enabled = true, sequential = true)
 public class LibvirtComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public LibvirtComputeServiceLiveTest() {
       provider = "libvirt";

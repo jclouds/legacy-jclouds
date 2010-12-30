@@ -32,7 +32,7 @@ import org.jclouds.cloudsigma.compute.functions.ParseOsFamilyVersion64BitFromIma
 import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
 import org.jclouds.json.Json;
 import org.jclouds.json.internal.GsonWrapper;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -51,7 +51,7 @@ public class ParseOsFamilyVersion64BitFromImageNameTest {
    @DataProvider(name = "data")
    public Object[][] createData() throws IOException {
       InputStream is = ParseOsFamilyVersion64BitFromImageNameTest.class.getResourceAsStream("/osmatches.json");
-      Map<String, OsFamilyVersion64Bit> values = json.fromJson(Utils.toStringAndClose(is),
+      Map<String, OsFamilyVersion64Bit> values = json.fromJson(Strings2.toStringAndClose(is),
             new TypeLiteral<Map<String, OsFamilyVersion64Bit>>() {
             }.getType());
 

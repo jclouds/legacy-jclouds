@@ -44,7 +44,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.OrgHandlerTest")
+@Test(groups = "unit")
 public class OrgHandlerTest {
 
    public void testApplyInputStream() {

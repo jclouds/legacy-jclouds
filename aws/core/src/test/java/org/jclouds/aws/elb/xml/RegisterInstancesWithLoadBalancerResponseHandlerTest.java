@@ -30,11 +30,12 @@ import org.testng.annotations.Test;
 import com.google.common.collect.Sets;
 
 /**
- * Tests behavior of {@code DescribeLoadBalancersResponseHandler}
+ * Tests behavior of {@code RegisterInstancesWithLoadBalancerResponseHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.RegisterInstancesWithLoadBalancerResponseHandlerTest")
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "RegisterInstancesWithLoadBalancerResponseHandlerTest")
 public class RegisterInstancesWithLoadBalancerResponseHandlerTest extends BaseEC2HandlerTest {
 
    public void testParse() {

@@ -43,7 +43,7 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudservers.ParseSharedIpGroupFromJsonResponseTest")
+@Test(groups = "unit")
 public class ParseSharedIpGroupFromJsonResponseTest {
 
    Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());

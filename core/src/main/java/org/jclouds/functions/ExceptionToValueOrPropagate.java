@@ -19,11 +19,13 @@
 
 package org.jclouds.functions;
 
-import static org.jclouds.util.Utils.propagateOrNull;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
 
 import javax.annotation.Nullable;
+
+import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
@@ -39,18 +41,19 @@ public class ExceptionToValueOrPropagate<E extends Exception, T> implements Func
    private final T value;
 
    public ExceptionToValueOrPropagate(Class<E> matchingClass, @Nullable T value) {
-      this.matchingClass = matchingClass;
+      this.matchingClass = checkNotNull(matchingClass, "matchingClass");
       this.value = value;
    }
 
    @SuppressWarnings("unchecked")
    @Override
    public T apply(Exception from) {
+      checkNotNull(from, "exception");
       List<Throwable> throwables = Throwables.getCausalChain(from);
       Iterable<E> matchingThrowables = Iterables.filter(throwables, matchingClass);
       if (Iterables.size(matchingThrowables) >= 1)
          return value;
-      return (T) propagateOrNull(from);
+      return (T) Throwables2.propagateOrNull(from);
    }
 
 }

@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.io.ByteStreams.copy;
 import static org.jclouds.http.HttpUtils.checkRequestHasContentLengthOrChunkedEncoding;
 import static org.jclouds.http.HttpUtils.wirePayloadIfEnabled;
-import static org.jclouds.util.Utils.getFirstThrowableOfType;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -48,6 +47,7 @@ import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Throwables2;
 
 import com.google.common.io.NullOutputStream;
 
@@ -73,9 +73,9 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
 
    @Inject
    protected BaseHttpCommandExecutorService(HttpUtils utils,
-            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
-            DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
-            DelegatingErrorHandler errorHandler, HttpWire wire) {
+         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
+         DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
+         DelegatingErrorHandler errorHandler, HttpWire wire) {
       this.utils = checkNotNull(utils, "utils");
       this.retryHandler = checkNotNull(retryHandler, "retryHandler");
       this.ioRetryHandler = checkNotNull(ioRetryHandler, "ioRetryHandler");
@@ -121,11 +121,11 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
 
    }
 
+   @Override
    public Future<HttpResponse> submit(HttpCommand command) {
-      HttpRequest request = command.getRequest();
+      HttpRequest request = command.getCurrentRequest();
       checkRequestHasContentLengthOrChunkedEncoding(request,
-               "if the request has a payload, it must be set to chunked encoding or specify a content length: "
-                        + request);
+            "if the request has a payload, it must be set to chunked encoding or specify a content length: " + request);
       return ioWorkerExecutor.submit(new HttpResponseCallable(command));
    }
 
@@ -140,14 +140,14 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
 
          HttpResponse response = null;
          for (;;) {
-            HttpRequest request = command.getRequest();
+            HttpRequest request = command.getCurrentRequest();
             Q nativeRequest = null;
             try {
                for (HttpRequestFilter filter : request.getFilters()) {
-                  filter.filter(request);
+                  request = filter.filter(request);
                }
                checkRequestHasContentLengthOrChunkedEncoding(request,
-                        "After filtering, the request has niether chunked encoding nor content length: " + request);
+                     "After filtering, the request has niether chunked encoding nor content length: " + request);
                logger.debug("Sending request %s: %s", request.hashCode(), request.getRequestLine());
                wirePayloadIfEnabled(wire, request);
                nativeRequest = convert(request);
@@ -168,12 +168,12 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
                   break;
                }
             } catch (Exception e) {
-               IOException ioe = getFirstThrowableOfType(e, IOException.class);
+               IOException ioe = Throwables2.getFirstThrowableOfType(e, IOException.class);
                if (ioe != null && ioRetryHandler.shouldRetryRequest(command, ioe)) {
                   continue;
                } else {
                   command.setException(new HttpResponseException(e.getMessage() + " connecting to "
-                           + command.getRequest().getRequestLine(), command, null, e));
+                        + command.getCurrentRequest().getRequestLine(), command, null, e));
                   break;
                }
             } finally {

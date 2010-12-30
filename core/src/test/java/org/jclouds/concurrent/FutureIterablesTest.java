@@ -41,7 +41,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(enabled = false, groups = "performance", sequential = true, testName = "concurrent.FutureIterablesTest")
+@Test(enabled = false, groups = "performance", sequential = true)
 public class FutureIterablesTest {
    @Test(enabled = false)
    public void testMakeListenableDoesntSerializeFutures() throws InterruptedException, ExecutionException {

@@ -45,7 +45,7 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudfiles.ParseContainerCDNMetadataListFromJsonResponseTest")
+@Test(groups = "unit")
 public class ParseContainerCDNMetadataListFromJsonResponseTest {
    Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
 

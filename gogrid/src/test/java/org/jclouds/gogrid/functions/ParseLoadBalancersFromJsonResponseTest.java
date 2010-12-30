@@ -55,7 +55,7 @@ import com.google.inject.Provides;
 /**
  * @author Oleksiy Yarmula
  */
-@Test(groups = "unit", testName = "gogrid.ParseLoadBalancersFromJsonResponseTest")
+@Test(groups = "unit")
 public class ParseLoadBalancersFromJsonResponseTest {
 
    @Test

@@ -44,7 +44,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true, testName = "concurrent.ListenableFutureExceptionParserTest")
+@Test(groups = "unit", sequential = true)
 public class SyncProxyTest {
 
    @Test

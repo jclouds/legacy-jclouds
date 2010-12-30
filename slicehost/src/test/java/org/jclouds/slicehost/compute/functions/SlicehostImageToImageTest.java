@@ -43,7 +43,7 @@ import com.google.inject.Guice;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "slicehost.SlicehostImageToImageTest")
+@Test(groups = "unit")
 public class SlicehostImageToImageTest {
    Location provider = new LocationImpl(LocationScope.ZONE, "dallas", "description", null);
 

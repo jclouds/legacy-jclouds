@@ -59,7 +59,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(enabled = false, groups = "performance", sequential = true, testName = "concurrent.ConcurrentUtilsTest")
+@Test(enabled = false, groups = "performance", sequential = true)
 public class FuturesComposePerformanceTest {
    ExecutorService callableExecutor = newCachedThreadPool();
 

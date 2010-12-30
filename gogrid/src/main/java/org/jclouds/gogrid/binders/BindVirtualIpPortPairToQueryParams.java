@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.VIRTUAL_IP_KEY;
-import static org.jclouds.http.HttpUtils.addQueryParamTo;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -31,6 +30,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.gogrid.domain.IpPortPair;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 /**
@@ -49,7 +49,7 @@ public class BindVirtualIpPortPairToQueryParams implements Binder {
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Object input) {
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input is null") instanceof IpPortPair,
                "this binder is only valid for a IpPortPair argument");
 
@@ -59,8 +59,8 @@ public class BindVirtualIpPortPairToQueryParams implements Binder {
       checkNotNull(ipPortPair.getIp().getIp(), "There must be an IP address defined in Ip object");
       checkState(ipPortPair.getPort() > 0, "The port number must be a positive integer");
 
-      addQueryParamTo(request, VIRTUAL_IP_KEY + "ip", ipPortPair.getIp().getIp(), builder.get());
-      addQueryParamTo(request, VIRTUAL_IP_KEY + "port", String.valueOf(ipPortPair.getPort()),
+      request = ModifyRequest.addQueryParam(request, VIRTUAL_IP_KEY + "ip", ipPortPair.getIp().getIp(), builder.get());
+      return ModifyRequest.addQueryParam(request, VIRTUAL_IP_KEY + "port", String.valueOf(ipPortPair.getPort()),
                builder.get());
    }
 }

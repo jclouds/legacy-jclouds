@@ -48,7 +48,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "ec2.ElasticIPAddressClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class ElasticIPAddressClientLiveTest {
 
    private ElasticIPAddressClient client;

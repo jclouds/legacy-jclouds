@@ -23,7 +23,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.REAL_IP_LIST_KEY;
-import static org.jclouds.http.HttpUtils.addQueryParamTo;
 
 import java.util.List;
 
@@ -33,6 +32,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.gogrid.domain.IpPortPair;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 /**
@@ -52,7 +52,7 @@ public class BindRealIpPortPairsToQueryParams implements Binder {
 
    @SuppressWarnings( { "unchecked" })
    @Override
-   public void bindToRequest(HttpRequest request, Object input) {
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input is null") instanceof List,
                "this binder is only valid for a List argument");
 
@@ -65,11 +65,12 @@ public class BindRealIpPortPairsToQueryParams implements Binder {
                   "There must be an IP address defined in Ip object");
          checkState(ipPortPair.getPort() > 0, "The port number must be a positive integer");
 
-         addQueryParamTo(request, REAL_IP_LIST_KEY + i + ".ip", ipPortPair.getIp().getIp(), builder
+         request = ModifyRequest.addQueryParam(request, REAL_IP_LIST_KEY + i + ".ip", ipPortPair.getIp().getIp(), builder
                   .get());
-         addQueryParamTo(request, REAL_IP_LIST_KEY + i + ".port", String.valueOf(ipPortPair
+         request = ModifyRequest.addQueryParam(request, REAL_IP_LIST_KEY + i + ".port", String.valueOf(ipPortPair
                   .getPort()), builder.get());
          i++;
       }
+      return request;
    }
 }

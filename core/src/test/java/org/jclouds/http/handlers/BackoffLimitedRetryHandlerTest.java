@@ -55,7 +55,7 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.sun.jersey.api.uri.UriBuilderImpl;
 
-@Test(groups = "unit", testName = "core.BackoffLimitedRetryHandler")
+@Test(groups = "unit")
 public class BackoffLimitedRetryHandlerTest {
 
    BackoffLimitedRetryHandler handler = new BackoffLimitedRetryHandler();

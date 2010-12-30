@@ -19,7 +19,7 @@
 
 package org.jclouds.cloudsigma.functions;
 
-import static org.jclouds.util.Utils.renameKey;
+import static org.jclouds.util.Maps2.renameKey;
 
 import java.util.Map;
 

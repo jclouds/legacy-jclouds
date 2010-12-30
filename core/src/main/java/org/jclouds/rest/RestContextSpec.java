@@ -63,7 +63,7 @@ public class RestContextSpec<S, A> {
       this.modules = ImmutableList.copyOf(modules);
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    public RestContextSpec(String provider, String endpoint, String apiVersion, String identity, String credential,
          Class<S> sync, Class<A> async) {
       this(provider, endpoint, apiVersion, identity, credential, sync, async, PropertiesBuilder.class,

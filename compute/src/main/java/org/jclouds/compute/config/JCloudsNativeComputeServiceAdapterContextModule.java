@@ -19,11 +19,13 @@
 
 package org.jclouds.compute.config;
 
+
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Location;
+import org.jclouds.functions.IdentityFunction;
 
 import com.google.common.base.Function;
 import com.google.inject.TypeLiteral;
@@ -61,20 +63,6 @@ public class JCloudsNativeComputeServiceAdapterContextModule<S, A> extends
       bind(new TypeLiteral<Function<Location, Location>>() {
       }).to((Class) IdentityFunction.class);
       super.configure();
-   }
-
-   // enum singleton pattern
-   public static enum IdentityFunction implements Function<Object, Object> {
-      INSTANCE;
-
-      public Object apply(Object o) {
-         return o;
-      }
-
-      @Override
-      public String toString() {
-         return "identity";
-      }
    }
 
 }

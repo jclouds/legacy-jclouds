@@ -39,25 +39,21 @@ import com.google.inject.Guice;
  */
 @Test(groups = "unit", testName = "pcs2.BindFileInfoToXmlPayloadTest")
 public class BindFileInfoToXmlPayloadTest {
-   PCSFile.Factory factory = Guice.createInjector(new PCSObjectModule()).getInstance(
-            PCSFile.Factory.class);
+   PCSFile.Factory factory = Guice.createInjector(new PCSObjectModule()).getInstance(PCSFile.Factory.class);
 
    public void test() {
       BindFileInfoToXmlPayload binder = new BindFileInfoToXmlPayload();
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
       PCSFile file = factory.create(null);
       file.getMetadata().setName("foo");
-      binder.bindToRequest(request, file);
+      request = binder.bindToRequest(request, file);
+      assertEquals(request.getPayload().getRawContent(),
+            "<file><name>foo</name><mime_type>application/octet-stream</mime_type><public>false</public></file>");
       assertEquals(
-               request.getPayload().getRawContent(),
-               "<file><name>foo</name><mime_type>application/octet-stream</mime_type><public>false</public></file>");
-      assertEquals(
-               request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH),
-               "<file><name>foo</name><mime_type>application/octet-stream</mime_type><public>false</public></file>"
-                        .getBytes().length
-                        + "");
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE),
-               "application/vnd.csp.file-info+xml");
+            request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH),
+            "<file><name>foo</name><mime_type>application/octet-stream</mime_type><public>false</public></file>"
+                  .getBytes().length + "");
+      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), "application/vnd.csp.file-info+xml");
 
    }
 
@@ -67,17 +63,14 @@ public class BindFileInfoToXmlPayloadTest {
 
       PCSFile file = factory.create(null);
       file.getMetadata().setName("subdir/foo");
-      binder.bindToRequest(request, file);
+      request = binder.bindToRequest(request, file);
+      assertEquals(request.getPayload().getRawContent(),
+            "<file><name>foo</name><mime_type>application/octet-stream</mime_type><public>false</public></file>");
       assertEquals(
-               request.getPayload().getRawContent(),
-               "<file><name>foo</name><mime_type>application/octet-stream</mime_type><public>false</public></file>");
-      assertEquals(
-               request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH),
-               "<file><name>foo</name><mime_type>application/octet-stream</mime_type><public>false</public></file>"
-                        .getBytes().length
-                        + "");
-      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE),
-               "application/vnd.csp.file-info+xml");
+            request.getFirstHeaderOrNull(HttpHeaders.CONTENT_LENGTH),
+            "<file><name>foo</name><mime_type>application/octet-stream</mime_type><public>false</public></file>"
+                  .getBytes().length + "");
+      assertEquals(request.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE), "application/vnd.csp.file-info+xml");
 
    }
 }

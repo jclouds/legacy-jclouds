@@ -19,6 +19,8 @@
 
 package org.jclouds.http;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Collection;
 
 import javax.annotation.Nullable;
@@ -26,9 +28,8 @@ import javax.annotation.Nullable;
 import org.jclouds.http.internal.PayloadEnclosingImpl;
 import org.jclouds.io.Payload;
 
-import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 
 /**
  * Represents a request that can be executed within {@link HttpCommandExecutorService}
@@ -36,23 +37,43 @@ import com.google.common.collect.Multimaps;
  * @author Adrian Cole
  */
 public class HttpMessage extends PayloadEnclosingImpl {
+   public static Builder<? extends HttpMessage> builder() {
+      return new Builder<HttpMessage>();
+   }
 
-   /**
-    * synchronized as there is no concurrent version. Headers may change in flight due to redirects.
-    */
-   protected Multimap<String, String> headers = Multimaps.synchronizedMultimap(LinkedHashMultimap
-            .<String, String> create());
+   public static class Builder<T extends HttpMessage> {
+      protected Payload payload;
+      protected Multimap<String, String> headers = ImmutableMultimap.of();
+
+      public Builder<T> payload(Payload payload) {
+         this.payload = payload;
+         return this;
+      }
+
+      public Builder<T> headers(Multimap<String, String> headers) {
+         this.headers = ImmutableMultimap.copyOf(checkNotNull(headers, "headers"));
+         return this;
+      }
+
+      @SuppressWarnings("unchecked")
+      public T build() {
+         return (T) new HttpMessage(payload, headers);
+      }
+
+      public static <X extends HttpMessage> Builder<X> from(X input) {
+         return new Builder<X>().payload(input.getPayload()).headers(input.getHeaders());
+      }
+   }
+
+   protected final Multimap<String, String> headers;
+
+   public HttpMessage(@Nullable Payload payload, Multimap<String, String> headers) {
+      super(payload);
+      this.headers = ImmutableMultimap.copyOf(checkNotNull(headers, "headers"));
+   }
 
    public Multimap<String, String> getHeaders() {
       return headers;
-   }
-
-   public HttpMessage() {
-      this(null);
-   }
-
-   public HttpMessage(@Nullable Payload payload) {
-      super(payload);
    }
 
    /**
@@ -63,6 +84,10 @@ public class HttpMessage extends PayloadEnclosingImpl {
       if (values.size() == 0)
          values = headers.get(string.toLowerCase());
       return (values.size() >= 1) ? values.iterator().next() : null;
+   }
+
+   public Builder<? extends HttpMessage> toBuilder() {
+      return Builder.from(this);
    }
 
    @Override

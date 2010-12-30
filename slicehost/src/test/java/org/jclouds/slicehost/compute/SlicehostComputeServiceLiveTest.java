@@ -38,7 +38,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "slicehost.SlicehostComputeServiceLiveTest")
+@Test(groups = "live", enabled = true, sequential = true)
 public class SlicehostComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public SlicehostComputeServiceLiveTest() {
       provider = "slicehost";

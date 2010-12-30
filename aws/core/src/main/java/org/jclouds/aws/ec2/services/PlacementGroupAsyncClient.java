@@ -30,7 +30,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.ec2.EC2AsyncClient;
-import org.jclouds.aws.ec2.binders.BindGroupNameToIndexedFormParams;
+import org.jclouds.aws.ec2.binders.BindGroupNamesToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.xml.DescribePlacementGroupsResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
@@ -97,6 +97,6 @@ public interface PlacementGroupAsyncClient {
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<PlacementGroup>> describePlacementGroupsInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
-            @BinderParam(BindGroupNameToIndexedFormParams.class) String... placementGroupIds);
+            @BinderParam(BindGroupNamesToIndexedFormParams.class) String... placementGroupIds);
 
 }

@@ -19,10 +19,10 @@
 
 package org.jclouds.blobstore.binders;
 
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.Blob;
@@ -35,20 +35,17 @@ import org.jclouds.rest.Binder;
  */
 @Singleton
 public class BindUserMetadataToHeadersWithPrefix implements Binder {
-   private final String metadataPrefix;
+   private final BindMapToHeadersWithPrefix metadataPrefixer;
 
    @Inject
-   public BindUserMetadataToHeadersWithPrefix(
-            @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
-      this.metadataPrefix = metadataPrefix;
+   public BindUserMetadataToHeadersWithPrefix(BindMapToHeadersWithPrefix metadataPrefixer) {
+      this.metadataPrefixer = checkNotNull(metadataPrefixer, "metadataPrefixer");
    }
 
-   public void bindToRequest(HttpRequest request, Object payload) {
-      Blob object = (Blob) payload;
-
-      for (String key : object.getMetadata().getUserMetadata().keySet()) {
-         request.getHeaders().put(key.startsWith(metadataPrefix) ? key : metadataPrefix + key,
-                  object.getMetadata().getUserMetadata().get(key));
-      }
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof Blob, "this binder is only valid for Blobs!");
+      checkNotNull(request, "request");
+      return metadataPrefixer.bindToRequest(request, Blob.class.cast(input).getMetadata().getUserMetadata());
    }
 }

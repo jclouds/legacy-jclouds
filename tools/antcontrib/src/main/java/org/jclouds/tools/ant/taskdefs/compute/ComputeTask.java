@@ -44,7 +44,7 @@ import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.domain.Location;
 import org.jclouds.http.HttpUtils;
-import org.jclouds.util.Utils;
+import org.jclouds.util.CredentialUtils;
 
 import com.google.common.base.CaseFormat;
 import com.google.common.base.Splitter;
@@ -212,7 +212,7 @@ public class ComputeTask extends Task {
          getProject().setProperty(nodeElement.getIdproperty(), createdNode.getProviderId());
       if (nodeElement.getHostproperty() != null)
          getProject().setProperty(nodeElement.getHostproperty(), ipOrEmptyString(createdNode.getPublicAddresses()));
-      if (nodeElement.getPasswordproperty() != null && !Utils.isPrivateKeyCredential(createdNode.getCredentials()))
+      if (nodeElement.getPasswordproperty() != null && !CredentialUtils.isPrivateKeyCredential(createdNode.getCredentials()))
          getProject().setProperty(nodeElement.getPasswordproperty(), createdNode.getCredentials().credential);
       if (nodeElement.getUsernameproperty() != null)
          getProject().setProperty(nodeElement.getUsernameproperty(), createdNode.getCredentials().identity);

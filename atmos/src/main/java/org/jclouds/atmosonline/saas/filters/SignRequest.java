@@ -25,7 +25,6 @@ import static org.jclouds.Constants.PROPERTY_IDENTITY;
 import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
 import static org.jclouds.util.Patterns.TWO_SPACE_PATTERN;
 
-import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -45,11 +44,15 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Multimaps;
 
 /**
  * Signs the EMC Atmos Online Storage request.
@@ -77,8 +80,8 @@ public class SignRequest implements HttpRequestFilter {
 
    @Inject
    public SignRequest(SignatureWire signatureWire, @Named(PROPERTY_IDENTITY) String uid,
-            @Named(PROPERTY_CREDENTIAL) String encodedKey, @TimeStamp Provider<String> timeStampProvider,
-            Crypto crypto, HttpUtils utils) {
+         @Named(PROPERTY_CREDENTIAL) String encodedKey, @TimeStamp Provider<String> timeStampProvider, Crypto crypto,
+         HttpUtils utils) {
       this.signatureWire = signatureWire;
       this.uid = uid;
       this.key = CryptoStreams.base64(encodedKey);
@@ -87,16 +90,19 @@ public class SignRequest implements HttpRequestFilter {
       this.utils = utils;
    }
 
-   public void filter(HttpRequest request) throws HttpException {
-      String toSign = replaceUIDHeader(request).removeOldSignature(request).replaceDateHeader(request)
-               .createStringToSign(request);
-      calculateAndReplaceAuthHeader(request, toSign);
+   @Override
+   public HttpRequest filter(HttpRequest request) throws HttpException {
+      Builder<String, String> builder = ImmutableMap.builder();
+      builder.put(AtmosStorageHeaders.UID, uid);
+      String date = timeStampProvider.get();
+      builder.put(HttpHeaders.DATE, date);
+      if (request.getHeaders().containsKey(AtmosStorageHeaders.DATE))
+         builder.put(AtmosStorageHeaders.DATE, date);
+      request = ModifyRequest.replaceHeaders(request, Multimaps.forMap(builder.build()));
+      String signature = calculateSignature(createStringToSign(request));
+      request = ModifyRequest.replaceHeader(request, AtmosStorageHeaders.SIGNATURE, signature);
       utils.logRequest(signatureLog, request, "<<");
-   }
-
-   private SignRequest removeOldSignature(HttpRequest request) {
-      request.getHeaders().removeAll(AtmosStorageHeaders.SIGNATURE);
-      return this;
+      return request;
    }
 
    public String createStringToSign(HttpRequest request) {
@@ -113,11 +119,11 @@ public class SignRequest implements HttpRequestFilter {
       return buffer.toString();
    }
 
-   private void calculateAndReplaceAuthHeader(HttpRequest request, String toSign) throws HttpException {
+   private String calculateSignature(String toSign) {
       String signature = signString(toSign);
       if (signatureWire.enabled())
-         signatureWire.input(Utils.toInputStream(signature));
-      request.getHeaders().replaceValues(AtmosStorageHeaders.SIGNATURE, Collections.singletonList(signature));
+         signatureWire.input(Strings2.toInputStream(signature));
+      return signature;
    }
 
    public String signString(String toSign) {
@@ -134,16 +140,6 @@ public class SignRequest implements HttpRequestFilter {
       toSign.append(request.getMethod()).append("\n");
    }
 
-   SignRequest replaceUIDHeader(HttpRequest request) {
-      request.getHeaders().replaceValues(AtmosStorageHeaders.UID, Collections.singletonList(uid));
-      return this;
-   }
-
-   SignRequest replaceDateHeader(HttpRequest request) {
-      request.getHeaders().replaceValues(HttpHeaders.DATE, Collections.singletonList(timeStampProvider.get()));
-      return this;
-   }
-
    private void appendCanonicalizedHeaders(HttpRequest request, StringBuilder toSign) {
       // TreeSet == Sort the headers alphabetically.
       Set<String> headers = new TreeSet<String>(request.getHeaders().keySet());
@@ -155,8 +151,8 @@ public class SignRequest implements HttpRequestFilter {
             // replacing any
             // newline characters and extra embedded white spaces in the value.
             for (String value : request.getHeaders().get(header)) {
-               value = Utils.replaceAll(value, TWO_SPACE_PATTERN, " ");
-               value = Utils.replaceAll(value, NEWLINE_PATTERN, "");
+               value = Strings2.replaceAll(value, TWO_SPACE_PATTERN, " ");
+               value = Strings2.replaceAll(value, NEWLINE_PATTERN, "");
                toSign.append(value).append(' ');
             }
             toSign.deleteCharAt(toSign.lastIndexOf(" "));
@@ -171,8 +167,9 @@ public class SignRequest implements HttpRequestFilter {
    }
 
    private void appendPayloadMetadata(HttpRequest request, StringBuilder buffer) {
-      buffer.append(utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata().getContentType()))
-               .append("\n");
+      buffer.append(
+            utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
+                  .getContentType())).append("\n");
    }
 
    @VisibleForTesting

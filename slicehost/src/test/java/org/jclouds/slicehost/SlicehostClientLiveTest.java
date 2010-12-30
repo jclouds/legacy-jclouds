@@ -61,7 +61,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "slicehost.SlicehostClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class SlicehostClientLiveTest {
 
    protected SlicehostClient client;

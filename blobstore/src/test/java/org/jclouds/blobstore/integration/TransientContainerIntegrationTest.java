@@ -37,7 +37,7 @@ import com.google.common.collect.Iterables;
  * @author James Murty
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" }, testName = "blobstore.TransientContainerIntegrationTest")
+@Test(groups = { "integration", "live" })
 public class TransientContainerIntegrationTest extends BaseContainerIntegrationTest {
 
    @Test(groups = { "integration", "live" })

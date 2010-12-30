@@ -31,7 +31,6 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.jclouds.rest.annotations.EndpointParam;
@@ -71,7 +70,6 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
     * @see TerremarkVCloudExpressClient#addInternetServiceToVDC
     */
    @POST
-   @Path("")
    @Produces(INTERNETSERVICE_XML)
    @Consumes(INTERNETSERVICE_XML)
    @XMLResponseParser(InternetServiceHandler.class)
@@ -85,7 +83,6 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
     * @see TerremarkVCloudExpressClient#findKeyPairInOrgNamed
     */
    @GET
-   @Path("")
    @XMLResponseParser(KeyPairByNameHandler.class)
    @Consumes(KEYSLIST_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -96,7 +93,6 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
     * @see TerremarkVCloudExpressClient#listKeyPairsInOrgNamed
     */
    @GET
-   @Path("")
    @Consumes(KEYSLIST_XML)
    @XMLResponseParser(KeyPairsHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -107,7 +103,6 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
     * @see TerremarkVCloudExpressClient#listKeyPairs
     */
    @GET
-   @Path("")
    @Consumes(KEYSLIST_XML)
    @XMLResponseParser(KeyPairsHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -117,7 +112,6 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
     * @see TerremarkVCloudExpressClient#generateKeyPairInOrg
     */
    @POST
-   @Path("")
    @Produces(KEYSLIST_XML)
    @Consumes(KEYSLIST_XML)
    @XMLResponseParser(KeyPairHandler.class)
@@ -130,7 +124,6 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
     * @see TerremarkVCloudExpressClient#getKeyPair
     */
    @GET
-   @Path("")
    @XMLResponseParser(KeyPairHandler.class)
    @Consumes(APPLICATION_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -155,7 +148,6 @@ public interface TerremarkVCloudExpressAsyncClient extends TerremarkVCloudAsyncC
     * @see TerremarkVCloudExpressClient#deleteKeyPair
     */
    @DELETE
-   @Path("")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteKeyPair(@EndpointParam URI keyId);
 

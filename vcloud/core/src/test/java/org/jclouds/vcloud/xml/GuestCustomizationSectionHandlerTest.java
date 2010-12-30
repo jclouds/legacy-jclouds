@@ -36,7 +36,8 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.GuestCustomizationSectionHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "GuestCustomizationSectionHandlerTest")
 public class GuestCustomizationSectionHandlerTest extends BaseHandlerTest {
 
    public void testDefault() throws UnknownHostException {

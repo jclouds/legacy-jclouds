@@ -36,7 +36,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.mortbay.jetty.HttpHeaders;
 import org.testng.annotations.Test;
 
@@ -115,7 +115,7 @@ public class ParseURIFromListOrLocationHeaderIf20xTest {
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getFirstHeaderOrNull(HttpHeaders.CONTENT_TYPE)).andReturn("text/uri-list");
       expect(response.getPayload()).andReturn(payload).atLeastOnce();
-      expect(payload.getInput()).andReturn(Utils.toInputStream("http://locahost")).atLeastOnce();
+      expect(payload.getInput()).andReturn(Strings2.toInputStream("http://locahost")).atLeastOnce();
       payload.release();
 
       replay(payload);

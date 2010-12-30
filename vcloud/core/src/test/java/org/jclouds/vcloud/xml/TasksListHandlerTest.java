@@ -42,7 +42,8 @@ import com.google.common.collect.ImmutableSortedSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.TasksListHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "TasksListHandlerTest")
 public class TasksListHandlerTest extends BaseHandlerTest {
 
    private DateService dateService;

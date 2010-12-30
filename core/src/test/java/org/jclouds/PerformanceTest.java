@@ -28,14 +28,16 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.jclouds.date.DateServiceTest;
+import org.jclouds.date.DateService;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
+@Test(groups="performance")
 public abstract class PerformanceTest {
    protected static int LOOP_COUNT = 1000;
    protected static int THREAD_COUNT = 1000;
@@ -63,7 +65,7 @@ public abstract class PerformanceTest {
     * This code is heavily based on Listing 5.11 in "Java Concurrency in Practice" by Brian Goetz et
     * al, Addison-Wesley Professional.
     * 
-    * @see {@link DateServiceTest} for example usage.
+    * @see {@link DateService} for example usage.
     * 
     * @param performanceTestName
     * @param tasks

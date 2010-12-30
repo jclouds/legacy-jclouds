@@ -41,14 +41,14 @@ import com.google.common.collect.ImmutableMap;
 public class BindRebootTypeToJsonPayload extends BindToJsonPayload {
 
    @Override
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       throw new IllegalStateException("Reboot doesn't take map parameters");
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Object toBind) {
+   public <R extends HttpRequest> R bindToRequest(R request, Object toBind) {
       checkArgument(toBind instanceof RebootType, "this binder is only valid for RebootTypes!");
-      super.bindToRequest(request, ImmutableMap.of("reboot", ImmutableMap.of("type", checkNotNull(
+      return super.bindToRequest(request, ImmutableMap.of("reboot", ImmutableMap.of("type", checkNotNull(
                toBind, "type"))));
    }
 }

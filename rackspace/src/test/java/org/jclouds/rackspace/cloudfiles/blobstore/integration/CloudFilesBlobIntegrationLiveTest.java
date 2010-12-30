@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
  * @author James Murty
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "cloudfiles.CloudFilesBlobIntegrationTest")
+@Test(groups = "live")
 public class CloudFilesBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
 
    @Override

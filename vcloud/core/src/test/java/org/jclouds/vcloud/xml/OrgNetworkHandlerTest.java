@@ -46,7 +46,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.OrgNetworkHandlerTest")
+@Test(groups = "unit")
 public class OrgNetworkHandlerTest {
    public void testIsolated() {
       InputStream is = getClass().getResourceAsStream("/orgnetwork-isolated.xml");

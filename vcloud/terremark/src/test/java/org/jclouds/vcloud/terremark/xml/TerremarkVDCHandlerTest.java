@@ -43,7 +43,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.TerremarkVDCHandlerTest")
+@Test(groups = "unit")
 public class TerremarkVDCHandlerTest {
 
    public void testApplyInputStream() {

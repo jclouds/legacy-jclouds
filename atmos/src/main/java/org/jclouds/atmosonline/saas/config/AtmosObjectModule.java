@@ -19,19 +19,12 @@
 
 package org.jclouds.atmosonline.saas.config;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
 import org.jclouds.atmosonline.saas.domain.MutableContentMetadata;
-import org.jclouds.atmosonline.saas.domain.SystemMetadata;
-import org.jclouds.atmosonline.saas.domain.UserMetadata;
-import org.jclouds.atmosonline.saas.domain.internal.AtmosObjectImpl;
 import org.jclouds.blobstore.config.BlobStoreObjectModule;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import com.google.inject.Scopes;
 
 /**
  * Configures the domain object mappings needed for all Atmos implementations
@@ -48,27 +41,6 @@ public class AtmosObjectModule extends AbstractModule {
    protected void configure() {
       // for converters
       install(new BlobStoreObjectModule());
-      bind(AtmosObject.Factory.class).to(AtmosObjectFactory.class).in(Scopes.SINGLETON);
-   }
-
-   private static class AtmosObjectFactory implements AtmosObject.Factory {
-
-      @Inject
-      Provider<MutableContentMetadata> metadataProvider;
-
-      public AtmosObject create(MutableContentMetadata contentMetadata) {
-         return new AtmosObjectImpl(contentMetadata != null ? contentMetadata : metadataProvider
-                  .get());
-      }
-
-      public AtmosObject create(SystemMetadata systemMetadata, UserMetadata userMetadata) {
-         return new AtmosObjectImpl(metadataProvider.get(), systemMetadata, userMetadata);
-      }
-
-      public AtmosObject create(MutableContentMetadata contentMetadata,
-               SystemMetadata systemMetadata, UserMetadata userMetadata) {
-         return new AtmosObjectImpl(contentMetadata, systemMetadata, userMetadata);
-      }
    }
 
    @Provides

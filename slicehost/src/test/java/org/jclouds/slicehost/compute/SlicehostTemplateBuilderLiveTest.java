@@ -36,7 +36,7 @@ import com.google.common.base.Predicate;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "slicehost.SlicehostTemplateBuilderLiveTest")
+@Test(groups = "live")
 public class SlicehostTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    public SlicehostTemplateBuilderLiveTest() {

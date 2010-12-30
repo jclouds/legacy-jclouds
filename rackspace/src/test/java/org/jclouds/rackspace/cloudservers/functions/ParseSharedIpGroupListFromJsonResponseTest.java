@@ -40,11 +40,11 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code ParseSharedIpGroupListFromJsonResponseTest}
+ * Tests behavior of {@code ParseSharedIpGroupListFromJsonResponse}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudSharedIpGroups.ParseSharedIpGroupListFromJsonResponseTest")
+@Test(groups = "unit")
 public class ParseSharedIpGroupListFromJsonResponseTest {
 
    Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());

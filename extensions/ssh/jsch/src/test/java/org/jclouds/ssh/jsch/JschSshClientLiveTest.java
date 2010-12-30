@@ -33,7 +33,7 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -45,7 +45,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "ssh.JschSshClientLiveTest")
+@Test(groups = "live")
 public class JschSshClientLiveTest {
    protected static final String sshHost = System.getProperty("test.ssh.host", "localhost");
    protected static final String sshPort = System.getProperty("test.ssh.port", "22");
@@ -112,7 +112,7 @@ public class JschSshClientLiveTest {
          SshClient connection;
          if (sshKeyFile != null && !sshKeyFile.trim().equals("")) {
             connection = factory.create(new IPSocket(sshHost, port),
-                  new Credentials(sshUser, Utils.toStringAndClose(new FileInputStream(sshKeyFile))));
+                  new Credentials(sshUser, Strings2.toStringAndClose(new FileInputStream(sshKeyFile))));
          } else {
             connection = factory.create(new IPSocket(sshHost, port), new Credentials(sshUser, sshPass));
          }
@@ -127,13 +127,13 @@ public class JschSshClientLiveTest {
       SshClient client = setupClient();
       client.put(temp.getAbsolutePath(), Payloads.newStringPayload("rabbit"));
       Payload input = setupClient().get(temp.getAbsolutePath());
-      String contents = Utils.toStringAndClose(input.getInput());
+      String contents = Strings2.toStringAndClose(input.getInput());
       assertEquals(contents, "rabbit");
    }
 
    public void testGetEtcPassword() throws IOException {
       Payload input = setupClient().get("/etc/passwd");
-      String contents = Utils.toStringAndClose(input.getInput());
+      String contents = Strings2.toStringAndClose(input.getInput());
       assert contents.indexOf("root") >= 0 : "no root in " + contents;
    }
 

@@ -107,7 +107,7 @@ public class BackoffLimitedRetryHandler implements HttpRetryHandler, IOException
          return false;
       } else if (command.getFailureCount() > retryCountLimit) {
          logger.warn("Cannot retry after server error, command has exceeded retry limit %1$d: %2$s", retryCountLimit,
-                  command);
+               command);
          return false;
       } else {
          imposeBackoffExponentialDelay(command.getFailureCount(), "server error: " + command.toString());

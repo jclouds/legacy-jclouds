@@ -22,13 +22,13 @@ package org.jclouds.gogrid.binders;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.NAME_KEY;
-import static org.jclouds.http.HttpUtils.addQueryParamTo;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.collect.ImmutableList;
@@ -58,10 +58,10 @@ public class BindNamesToQueryParams implements Binder {
     *           array of String params
     */
    @Override
-   public void bindToRequest(HttpRequest request, Object input) {
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input is null") instanceof String[],
                "this binder is only valid for String[] arguments");
       String[] names = (String[]) input;
-      addQueryParamTo(request, NAME_KEY, ImmutableList.copyOf(names), builder.get());
+      return ModifyRequest.addQueryParam(request, NAME_KEY, ImmutableList.copyOf(names), builder.get());
    }
 }

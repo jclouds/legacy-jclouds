@@ -46,7 +46,6 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
-import org.jclouds.vcloud.VCloudClient;
 import org.jclouds.vcloud.filters.SetVCloudTokenCookie;
 import org.jclouds.vcloud.functions.OrgNameVDCNameResourceEntityNameToEndpoint;
 import org.jclouds.vcloud.terremark.binders.BindCreateKeyToXmlPayload;
@@ -85,7 +84,6 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     * @see TerremarkVCloudExpressClient#getAllInternetServices
     */
    @GET
-   @Path("")
    @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServicesHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -97,7 +95,6 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     * @see TerremarkVCloudExpressClient#activatePublicIpInVDC
     */
    @POST
-   @Path("")
    @Consumes(PUBLICIP_XML)
    @XMLResponseParser(PublicIpAddressesHandler.class)
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
@@ -133,7 +130,6 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     * @see TerremarkVCloudExpressClient#getInternetService
     */
    @GET
-   @Path("")
    @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServiceHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -144,7 +140,6 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     * @see TerremarkVCloudExpressClient#findKeyPairInOrgNamed
     */
    @GET
-   @Path("")
    @XMLResponseParser(KeyPairByNameHandler.class)
    @Consumes(KEYSLIST_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -155,7 +150,6 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     * @see TerremarkVCloudExpressClient#listKeyPairsInOrgNamed
     */
    @GET
-   @Path("")
    @Consumes(KEYSLIST_XML)
    @XMLResponseParser(KeyPairsHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -166,7 +160,6 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     * @see TerremarkECloudClient#listKeyPairs
     */
    @GET
-   @Path("")
    @Consumes(KEYSLIST_XML)
    @XMLResponseParser(KeyPairsHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -176,7 +169,6 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     * @see TerremarkECloudClient#generateKeyPairInOrg
     */
    @POST
-   @Path("")
    @Produces(KEYSLIST_XML)
    @Consumes(KEYSLIST_XML)
    @XMLResponseParser(KeyPairHandler.class)
@@ -189,7 +181,6 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     * @see TerremarkECloudClient#getKeyPair
     */
    @GET
-   @Path("")
    @XMLResponseParser(KeyPairHandler.class)
    @Consumes(APPLICATION_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -214,7 +205,6 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     * @see TerremarkECloudClient#deleteKeyPair
     */
    @DELETE
-   @Path("")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteKeyPair(@EndpointParam URI keyId);
 
@@ -223,7 +213,6 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     */
    @Override
    @GET
-   @Path("")
    @Consumes(NETWORK_XML)
    @XMLResponseParser(TerremarkOrgNetworkFromTerremarkVCloudExpressNetworkHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -237,7 +226,6 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     */
    @Override
    @GET
-   @Path("")
    @Consumes(NETWORK_XML)
    @XMLResponseParser(TerremarkOrgNetworkFromTerremarkVCloudExpressNetworkHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -247,7 +235,6 @@ public interface TerremarkECloudAsyncClient extends TerremarkVCloudAsyncClient {
     * @see TerremarkECloudClient#getTerremarkNetwork
     */
    @GET
-   @Path("")
    @XMLResponseParser(TerremarkNetworkHandler.class)
    @Consumes(APPLICATION_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)

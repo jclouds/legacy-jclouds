@@ -20,6 +20,7 @@
 package org.jclouds.rackspace.cloudfiles.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -27,35 +28,41 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.blobstore.binders.BindUserMetadataToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rackspace.cloudfiles.blobstore.functions.ObjectToBlob;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rest.Binder;
 
 @Singleton
-public class BindCFObjectToPayload implements Binder {
+public class BindCFObjectMetadataToRequest implements Binder {
 
    private final BindUserMetadataToHeadersWithPrefix mdBinder;
    private final ObjectToBlob object2Blob;
 
    @Inject
-   public BindCFObjectToPayload(ObjectToBlob object2Blob, BindUserMetadataToHeadersWithPrefix mdBinder) {
+   public BindCFObjectMetadataToRequest(ObjectToBlob object2Blob, BindUserMetadataToHeadersWithPrefix mdBinder) {
       this.mdBinder = mdBinder;
       this.object2Blob = object2Blob;
    }
 
-   public void bindToRequest(HttpRequest request, Object payload) {
-      CFObject object = (CFObject) payload;
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof CFObject, "this binder is only valid for CFObject!");
+      checkNotNull(request, "request");
+
+      CFObject object = (CFObject) input;
       if (object.getPayload().getContentMetadata().getContentType() == null)
          object.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_OCTET_STREAM);
 
       if (object.getPayload().getContentMetadata().getContentLength() != null
-               && object.getPayload().getContentMetadata().getContentLength() >= 0) {
+            && object.getPayload().getContentMetadata().getContentLength() >= 0) {
          checkArgument(object.getPayload().getContentMetadata().getContentLength() <= 5l * 1024 * 1024 * 1024,
-                  "maximum size for put object is 5GB");
+               "maximum size for put object is 5GB");
       } else {
          // Enable "chunked"/"streamed" data, where the size needn't be known in advance.
-         request.getHeaders().put("Transfer-Encoding", "chunked");
+         request = ModifyRequest.replaceHeader(request, "Transfer-Encoding", "chunked");
       }
-      mdBinder.bindToRequest(request, object2Blob.apply(object));
+      request = mdBinder.bindToRequest(request, object2Blob.apply(object));
+      return request;
    }
 }

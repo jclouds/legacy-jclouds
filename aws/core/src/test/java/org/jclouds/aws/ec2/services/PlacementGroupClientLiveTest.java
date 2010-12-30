@@ -72,7 +72,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "ec2.PlacementGroupClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class PlacementGroupClientLiveTest {
 
    private EC2Client client;

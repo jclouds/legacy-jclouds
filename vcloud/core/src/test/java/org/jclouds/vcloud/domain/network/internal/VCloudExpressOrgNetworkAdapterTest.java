@@ -45,7 +45,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VCloudExpressOrgNetworkAdapterTest")
+@Test(groups = "unit")
 public class VCloudExpressOrgNetworkAdapterTest {
 
    public void testTerremark() {

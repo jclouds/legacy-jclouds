@@ -20,7 +20,7 @@
 package org.jclouds.azure.storage;
 
 import org.jclouds.blobstore.util.BlobStoreUtils;
-import org.jclouds.util.Utils;
+import org.jclouds.rest.Providers;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -35,7 +35,7 @@ public class ProvidersInPropertiesTest {
 
    @Test
    public void testSupportedProviders() {
-      Iterable<String> providers = Utils.getSupportedProviders();
+      Iterable<String> providers = Providers.getSupportedProviders();
       assert Iterables.contains(providers, "azurequeue") : providers;
       assert Iterables.contains(providers, "azureblob") : providers;
    }

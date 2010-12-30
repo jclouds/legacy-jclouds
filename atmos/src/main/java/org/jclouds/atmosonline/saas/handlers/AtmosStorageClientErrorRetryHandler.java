@@ -60,7 +60,7 @@ public class AtmosStorageClientErrorRetryHandler implements HttpRetryHandler {
    public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
       if (command.getFailureCount() > retryCountLimit)
          return false;
-      if (response.getStatusCode() == 404 && command.getRequest().getMethod().equals("DELETE")) {
+      if (response.getStatusCode() == 404 && command.getCurrentRequest().getMethod().equals("DELETE")) {
          command.incrementFailureCount();
          return true;
       } else if (response.getStatusCode() == 409 || response.getStatusCode() == 400) {

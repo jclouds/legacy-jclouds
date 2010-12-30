@@ -61,7 +61,8 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true, testName = "sqs.ListQueuesResponseHandlerrTest")
+// NOTE:without testName, this will fail w/NPE during surefire
+@Test(groups = "performance", sequential = true, timeOut = 2 * 60 * 1000, testName = "ListQueuesResponseHandlerTest")
 public class ListQueuesResponseHandlerTest extends PerformanceTest {
 
    private Injector injector;

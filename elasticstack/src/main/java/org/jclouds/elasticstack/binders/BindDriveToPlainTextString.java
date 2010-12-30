@@ -50,12 +50,13 @@ public class BindDriveToPlainTextString implements Binder {
       this.createDriveRequestToMap = createDriveRequestToMap;
       this.listOfMapsToListOfKeyValuesDelimitedByBlankLines = listOfMapsToListOfKeyValuesDelimitedByBlankLines;
    }
-
-   public void bindToRequest(HttpRequest request, Object payload) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
       checkArgument(payload instanceof Drive, "this binder is only valid for Drive!");
       Drive create = Drive.class.cast(payload);
       Map<String, String> map = createDriveRequestToMap.apply(create);
       request.setPayload(listOfMapsToListOfKeyValuesDelimitedByBlankLines.apply(ImmutableSet.of(map)));
       request.getPayload().getContentMetadata().setContentType(MediaType.TEXT_PLAIN);
+      return request;
    }
 }

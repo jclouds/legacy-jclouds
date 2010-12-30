@@ -20,7 +20,6 @@
 package org.jclouds.vcloud.terremark.binders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.util.Utils.replaceTokens;
 import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NS;
 
 import java.util.Map;
@@ -33,7 +32,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.util.Patterns;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -53,24 +52,24 @@ public class BindAddInternetServiceToXmlPayload implements MapBinder {
    @Named(PROPERTY_TERREMARK_EXTENSION_NS)
    private String ns;
 
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
 
       String name = checkNotNull(postParams.get("name"), "name parameter not present");
       String protocol = checkNotNull(postParams.get("protocol"), "protocol parameter not present");
       String port = checkNotNull(postParams.get("port"), "port parameter not present");
       String enabled = checkNotNull(postParams.get("enabled"), "enabled parameter not present");
       String description = postParams.get("description");
-      String payload = replaceTokens(xmlTemplate, ImmutableMap.of("name", name, "protocol",
-               protocol, "port", port, "enabled", enabled, "ns", ns));
-      payload = Utils.replaceAll(payload, Patterns.TOKEN_TO_PATTERN.get("description"),
-               description == null ? "" : String.format("\n    <Description>%s</Description>",
-                        description));
-      stringBinder.bindToRequest(request, payload);
+      String payload = Strings2.replaceTokens(xmlTemplate,
+            ImmutableMap.of("name", name, "protocol", protocol, "port", port, "enabled", enabled, "ns", ns));
+      payload = Strings2.replaceAll(payload, Patterns.TOKEN_TO_PATTERN.get("description"), description == null ? ""
+            : String.format("\n    <Description>%s</Description>", description));
+      return stringBinder.bindToRequest(request, payload);
    }
 
-   public void bindToRequest(HttpRequest request, Object input) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       throw new IllegalStateException("CreateInternetService needs parameters");
-
    }
 
 }

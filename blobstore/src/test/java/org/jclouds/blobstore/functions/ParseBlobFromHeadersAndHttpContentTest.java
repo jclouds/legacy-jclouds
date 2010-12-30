@@ -39,6 +39,7 @@ import org.jclouds.io.Payloads;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.Guice;
 
 /**
@@ -48,18 +49,14 @@ public class ParseBlobFromHeadersAndHttpContentTest {
 
    @BeforeTest
    void setUp() {
-
-      blobProvider = Guice.createInjector(new BlobStoreObjectModule()).getInstance(
-               Blob.Factory.class);
+      blobProvider = Guice.createInjector(new BlobStoreObjectModule()).getInstance(Blob.Factory.class);
    }
 
    @Test(expectedExceptions = NullPointerException.class)
    public void testCall() throws HttpException {
       ParseSystemAndUserMetadataFromHeaders metadataParser = createMock(ParseSystemAndUserMetadataFromHeaders.class);
-      ParseBlobFromHeadersAndHttpContent callable = new ParseBlobFromHeadersAndHttpContent(
-               metadataParser, blobProvider);
-      HttpResponse response = new HttpResponse(200, null, null);
-      response.getHeaders().put("Content-Range", null);
+      ParseBlobFromHeadersAndHttpContent callable = new ParseBlobFromHeadersAndHttpContent(metadataParser, blobProvider);
+      HttpResponse response = new HttpResponse(200, null, null, ImmutableMultimap.of("Content-Range", (String) null));
       callable.apply(response);
    }
 
@@ -75,13 +72,12 @@ public class ParseBlobFromHeadersAndHttpContentTest {
    @Test
    public void testParseContentLengthWhenContentRangeSet() throws HttpException {
       ParseSystemAndUserMetadataFromHeaders metadataParser = createMock(ParseSystemAndUserMetadataFromHeaders.class);
-      ParseBlobFromHeadersAndHttpContent callable = new ParseBlobFromHeadersAndHttpContent(
-               metadataParser, blobProvider);
+      ParseBlobFromHeadersAndHttpContent callable = new ParseBlobFromHeadersAndHttpContent(metadataParser, blobProvider);
 
-      HttpResponse response = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
+      HttpResponse response = new HttpResponse(200, "ok", Payloads.newStringPayload(""), ImmutableMultimap.of(
+            "Content-Range", "0-10485759/20232760"));
       response.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_JSON);
       response.getPayload().getContentMetadata().setContentLength(10485760l);
-      response.getHeaders().put("Content-Range", "0-10485759/20232760");
 
       MutableBlobMetadata meta = blobMetadataProvider.get();
       expect(metadataParser.apply(response)).andReturn(meta);
@@ -89,8 +85,7 @@ public class ParseBlobFromHeadersAndHttpContentTest {
 
       Blob object = callable.apply(response);
       assertEquals(object.getPayload().getContentMetadata().getContentLength(), new Long(10485760));
-      assertEquals(object.getAllHeaders().get("Content-Range"), Collections
-               .singletonList("0-10485759/20232760"));
+      assertEquals(object.getAllHeaders().get("Content-Range"), Collections.singletonList("0-10485759/20232760"));
 
    }
 

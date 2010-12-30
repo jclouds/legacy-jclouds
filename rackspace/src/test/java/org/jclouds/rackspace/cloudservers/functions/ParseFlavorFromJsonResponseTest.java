@@ -42,7 +42,7 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudservers.ParseFlavorFromJsonResponseTest")
+@Test(groups = "unit")
 public class ParseFlavorFromJsonResponseTest {
    public void test() {
       Flavor response = parseFlavor();

@@ -21,17 +21,17 @@ package org.jclouds.slicehost.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.Constants;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.utils.ModifyRequest;
 
 /**
  * 
@@ -47,8 +47,8 @@ public class SlicehostBasic implements HttpRequestFilter {
    }
 
    @Override
-   public void filter(HttpRequest request) throws HttpException {
-      request.getHeaders().replaceValues("Authorization",
-               Collections.singleton(String.format("Basic %s", CryptoStreams.base64(apikey.getBytes()))));
+   public HttpRequest filter(HttpRequest request) throws HttpException {
+      return ModifyRequest.replaceHeader(request, HttpHeaders.AUTHORIZATION,
+            String.format("Basic %s", CryptoStreams.base64(apikey.getBytes())));
    }
 }

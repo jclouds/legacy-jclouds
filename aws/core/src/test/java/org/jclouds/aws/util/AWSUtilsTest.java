@@ -34,12 +34,13 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.config.NullLoggingModule;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.BaseRestClientTest.MockModule;
+import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Injector;
 
@@ -48,7 +49,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(sequential = true, groups = { "unit" }, testName = "aws.AWSUtilsTest")
+@Test(sequential = true, groups = { "unit" })
 public class AWSUtilsTest {
    AWSUtils utils = null;
    private HttpCommand command;
@@ -57,12 +58,12 @@ public class AWSUtilsTest {
    protected void setUpInjector() throws IOException {
 
       Injector injector = new RestContextFactory().createContextBuilder("s3", "foo", "bar",
-               ImmutableSet.of(new MockModule(), new NullLoggingModule()), new Properties()).buildInjector();
+            ImmutableSet.of(new MockModule(), new NullLoggingModule()), new Properties()).buildInjector();
 
       utils = injector.getInstance(AWSUtils.class);
 
       command = createMock(HttpCommand.class);
-      expect(command.getRequest()).andReturn(createMock(HttpRequest.class)).atLeastOnce();
+      expect(command.getCurrentRequest()).andReturn(createMock(HttpRequest.class)).atLeastOnce();
       replay(command);
    }
 
@@ -72,17 +73,16 @@ public class AWSUtilsTest {
    }
 
    HttpResponse response(InputStream content) {
-      HttpResponse response = new HttpResponse(400, "boa", Payloads.newInputStreamPayload(content));
+      HttpResponse response = new HttpResponse(400, "boa", Payloads.newInputStreamPayload(content),
+            ImmutableMultimap.<String, String> of("x-amz-request-id", "requestid", "x-amz-id-2", "requesttoken"));
       response.getPayload().getContentMetadata().setContentType("text/xml");
-      response.getHeaders().put("x-amz-request-id", "requestid");
-      response.getHeaders().put("x-amz-id-2", "requesttoken");
       return response;
    }
 
    @Test
    public void testParseAWSErrorFromContentHttpCommandHttpResponseInputStream() {
-      AWSError error = utils.parseAWSErrorFromContent(command.getRequest(), response(getClass().getResourceAsStream(
-               "/error.xml")));
+      AWSError error = utils.parseAWSErrorFromContent(command.getCurrentRequest(), response(getClass()
+            .getResourceAsStream("/error.xml")));
       assertEquals(error.getCode(), "NoSuchKey");
       assertEquals(error.getMessage(), "The resource you requested does not exist");
       assertEquals(error.getRequestToken(), "requesttoken");

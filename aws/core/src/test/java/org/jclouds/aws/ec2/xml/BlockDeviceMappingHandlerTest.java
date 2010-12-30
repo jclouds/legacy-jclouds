@@ -37,7 +37,8 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.BlockDeviceMappingHandlerTest")
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "BlockDeviceMappingHandlerTest")
 public class BlockDeviceMappingHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
 

@@ -44,14 +44,15 @@ import com.google.common.base.Function;
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/latest/RESTObjectGET.html" />
  * @author Adrian Cole
  */
-public class ParseObjectMetadataFromHeaders implements Function<HttpResponse, MutableObjectMetadata>, InvocationContext {
+public class ParseObjectMetadataFromHeaders implements Function<HttpResponse, MutableObjectMetadata>,
+      InvocationContext<ParseObjectMetadataFromHeaders> {
    private final ParseSystemAndUserMetadataFromHeaders blobMetadataParser;
    private final BlobToObjectMetadata blobToObjectMetadata;
    private final String userMdPrefix;
 
    @Inject
    public ParseObjectMetadataFromHeaders(ParseSystemAndUserMetadataFromHeaders blobMetadataParser,
-            BlobToObjectMetadata blobToObjectMetadata, @Named(PROPERTY_USER_METADATA_PREFIX) String userMdPrefix) {
+         BlobToObjectMetadata blobToObjectMetadata, @Named(PROPERTY_USER_METADATA_PREFIX) String userMdPrefix) {
       this.blobMetadataParser = blobMetadataParser;
       this.blobToObjectMetadata = blobToObjectMetadata;
       this.userMdPrefix = userMdPrefix;

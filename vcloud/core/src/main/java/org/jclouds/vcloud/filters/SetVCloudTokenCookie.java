@@ -19,15 +19,15 @@
 
 package org.jclouds.vcloud.filters;
 
-import java.util.Collections;
-
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
+import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.vcloud.VCloudToken;
 
 /**
@@ -45,9 +45,9 @@ public class SetVCloudTokenCookie implements HttpRequestFilter {
       this.vcloudTokenProvider = authTokenProvider;
    }
 
-   public void filter(HttpRequest request) throws HttpException {
-      request.getHeaders().replaceValues("Cookie",
-               Collections.singletonList("vcloud-token=" + vcloudTokenProvider.get()));
+   @Override
+   public HttpRequest filter(HttpRequest request) throws HttpException {
+      return ModifyRequest.replaceHeader(request, HttpHeaders.COOKIE, "vcloud-token=" + vcloudTokenProvider.get());
    }
 
 }

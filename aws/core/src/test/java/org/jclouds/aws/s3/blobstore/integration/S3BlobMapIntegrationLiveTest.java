@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = { "live" }, testName = "s3.S3BlobMapIntegrationTest")
+@Test(groups = { "live" })
 public class S3BlobMapIntegrationLiveTest extends BaseBlobMapIntegrationTest {
 
 }

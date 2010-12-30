@@ -57,7 +57,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "sqs.SQSAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "SQSAsyncClientTest")
 public class SQSAsyncClientTest extends RestClientTest<SQSAsyncClient> {
 
    @RequiresHttp

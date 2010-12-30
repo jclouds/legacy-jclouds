@@ -44,7 +44,7 @@ import com.google.inject.Module;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "sqs.SQSRestClientModuleTest")
+@Test(groups = "unit")
 public class SQSRestClientModuleTest {
 
    Injector createInjector() {

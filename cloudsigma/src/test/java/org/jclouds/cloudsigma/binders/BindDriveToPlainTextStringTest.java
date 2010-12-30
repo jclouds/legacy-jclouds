@@ -34,7 +34,7 @@ import org.jclouds.cloudsigma.domain.DriveData;
 import org.jclouds.cloudsigma.functions.BaseDriveToMap;
 import org.jclouds.cloudsigma.functions.DriveDataToMap;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -83,7 +83,7 @@ public class BindDriveToPlainTextStringTest {
       FN.bindToRequest(request, input);
       assertEquals(request.getPayload().getContentMetadata().getContentType(), MediaType.TEXT_PLAIN);
       assertEquals(request.getPayload().getRawContent(),
-            Utils.toStringAndClose(BindDriveToPlainTextStringTest.class
+            Strings2.toStringAndClose(BindDriveToPlainTextStringTest.class
                   .getResourceAsStream("/create_drive.txt")));
 
    }

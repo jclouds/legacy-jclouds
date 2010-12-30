@@ -52,7 +52,7 @@ import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.http.options.GetOptions;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Assertions;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -160,7 +160,7 @@ public class S3BlobStore extends BaseBlobStore {
     */
    public void clearAndDeleteContainer(final String container) {
       try {
-         if (!Utils.eventuallyTrue(new Supplier<Boolean>() {
+         if (!Assertions.eventuallyTrue(new Supplier<Boolean>() {
             public Boolean get() {
                clearContainer(container);
                return sync.deleteBucketIfEmpty(container);

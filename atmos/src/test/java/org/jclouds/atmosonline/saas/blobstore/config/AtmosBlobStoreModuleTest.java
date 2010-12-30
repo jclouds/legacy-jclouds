@@ -37,7 +37,7 @@ import com.google.inject.Module;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "emcsaas.AtmosBlobStoreModuleTest")
+@Test(groups = "unit")
 public class AtmosBlobStoreModuleTest {
 
    Injector createInjector() {

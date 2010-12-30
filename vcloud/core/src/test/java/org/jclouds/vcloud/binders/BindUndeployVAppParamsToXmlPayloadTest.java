@@ -45,7 +45,7 @@ import com.google.inject.name.Names;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.BindUndeployVAppParamsToXmlPayloadTest")
+@Test(groups = "unit")
 public class BindUndeployVAppParamsToXmlPayloadTest {
    Injector injector = Guice.createInjector(new AbstractModule() {
 

@@ -53,7 +53,7 @@ public class BlobStoreContextImpl<S, A> implements BlobStoreContext {
    @Inject
    public BlobStoreContextImpl(BlobMap.Factory blobMapFactory, Utils utils, ConsistencyModel consistencyModel,
             InputStreamMap.Factory inputStreamMapFactory, AsyncBlobStore ablobStore, BlobStore blobStore,
-            RestContext providerSpecificContext, BlobRequestSigner blobRequestSigner) {
+         @SuppressWarnings("rawtypes") RestContext providerSpecificContext, BlobRequestSigner blobRequestSigner) {
       // unravel guice and avoid passing in a million type args by not injecting generic types for
       // rest context
       this.providerSpecificContext = checkNotNull(providerSpecificContext, "providerSpecificContext");

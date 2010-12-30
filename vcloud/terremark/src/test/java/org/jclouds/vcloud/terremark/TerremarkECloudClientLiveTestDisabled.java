@@ -21,6 +21,7 @@ package org.jclouds.vcloud.terremark;
 
 import static org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions.Builder.processorCount;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.vcloud.terremark.options.TerremarkInstantiateVAppTemplateOptions;
@@ -32,7 +33,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = false, sequential = true, testName = "vcloud.TerremarkECloudClientLiveTest")
+@Test(groups = "live", enabled = false, sequential = true)
 public class TerremarkECloudClientLiveTestDisabled extends TerremarkClientLiveTest {
    @BeforeClass
    void setProvider() {
@@ -47,7 +48,7 @@ public class TerremarkECloudClientLiveTestDisabled extends TerremarkClientLiveTe
 
    @Override
    protected SshClient getConnectionFor(IPSocket socket) {
-      return sshFactory.create(socket, "ecloud", "$Ep455l0ud!2");
+      return sshFactory.create(socket, new Credentials("ecloud", "$Ep455l0ud!2"));
    }
 
 }

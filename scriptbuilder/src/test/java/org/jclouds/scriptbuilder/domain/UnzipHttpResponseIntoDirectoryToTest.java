@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableMultimap;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "scriptbuilder.UnzipHttpResponseIntoDirectoryToTest")
+@Test(groups = "unit")
 public class UnzipHttpResponseIntoDirectoryToTest {
 
    UnzipHttpResponseIntoDirectory jboss = new UnzipHttpResponseIntoDirectory(

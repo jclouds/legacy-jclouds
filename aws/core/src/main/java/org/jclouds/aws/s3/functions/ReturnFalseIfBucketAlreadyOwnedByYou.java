@@ -23,7 +23,7 @@ import static com.google.common.base.Throwables.getCausalChain;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.get;
 import static com.google.common.collect.Iterables.size;
-import static org.jclouds.util.Utils.propagateOrNull;
+import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import java.util.List;
 

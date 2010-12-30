@@ -42,7 +42,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 /**
  * This will parse and set an appropriate exception on the command object.
@@ -72,9 +72,9 @@ public class ParseAtmosStorageErrorFromXmlContent implements HttpErrorHandler {
          AtmosStorageError error = null;
          if (response.getPayload() != null) {
             try {
-               String content = Utils.toStringAndClose(response.getPayload().getInput());
+               String content = Strings2.toStringAndClose(response.getPayload().getInput());
                if (content != null && content.indexOf('<') >= 0) {
-                  error = utils.parseAtmosStorageErrorFromContent(command, response, Utils.toInputStream(content));
+                  error = utils.parseAtmosStorageErrorFromContent(command, response, Strings2.toInputStream(content));
                } else {
                   exception = content != null ? new HttpResponseException(command, response, content) : exception;
                }
@@ -83,7 +83,7 @@ public class ParseAtmosStorageErrorFromXmlContent implements HttpErrorHandler {
             }
          }
          if (error != null && error.getCode() == 1016) {
-            File file = new File(command.getRequest().getEndpoint().getPath());
+            File file = new File(command.getCurrentRequest().getEndpoint().getPath());
             exception = new KeyAlreadyExistsException(file.getParentFile().getAbsolutePath(), file.getName());
          } else {
             switch (response.getStatusCode()) {
@@ -91,10 +91,10 @@ public class ParseAtmosStorageErrorFromXmlContent implements HttpErrorHandler {
                exception = new AuthorizationException(exception.getMessage(), exception);
                break;
             case 404:
-               if (!command.getRequest().getMethod().equals("DELETE")) {
-                  String message = error != null ? error.getMessage() : String.format("%s -> %s", command.getRequest()
+               if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
+                  String message = error != null ? error.getMessage() : String.format("%s -> %s", command.getCurrentRequest()
                         .getRequestLine(), response.getStatusLine());
-                  String path = command.getRequest().getEndpoint().getPath();
+                  String path = command.getCurrentRequest().getEndpoint().getPath();
                   Matcher matcher = DIRECTORY_PATH.matcher(path);
                   if (matcher.find()) {
                      exception = new ContainerNotFoundException(matcher.group(1), message);

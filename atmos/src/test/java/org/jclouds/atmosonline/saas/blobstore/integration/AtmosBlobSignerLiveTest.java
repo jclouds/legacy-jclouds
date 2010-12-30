@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "live" }, testName = "emcsaas.AtmosBlobSignerLiveTest")
+@Test(groups = { "live" })
 public class AtmosBlobSignerLiveTest extends BaseBlobSignerLiveTest {
 
 }

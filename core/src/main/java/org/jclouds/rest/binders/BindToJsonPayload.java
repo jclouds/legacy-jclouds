@@ -41,15 +41,18 @@ public class BindToJsonPayload implements MapBinder {
    @Inject
    protected Json jsonBinder;
 
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
-      bindToRequest(request, (Object) postParams);
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+      return bindToRequest(request, (Object) postParams);
    }
 
-   public void bindToRequest(HttpRequest request, Object toBind) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
       checkState(jsonBinder != null, "Program error: json should have been injected at this point");
-      String json = jsonBinder.toJson(toBind);
+      String json = jsonBinder.toJson(payload);
       request.setPayload(json);
       request.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_JSON);
+      return request;
    }
 
 }

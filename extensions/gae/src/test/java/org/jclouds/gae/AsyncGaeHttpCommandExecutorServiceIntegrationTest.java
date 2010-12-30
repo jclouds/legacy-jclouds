@@ -44,7 +44,7 @@ import org.jclouds.http.BaseHttpCommandExecutorServiceIntegrationTest;
 import org.jclouds.http.HttpCommandExecutorService;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -73,7 +73,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    }
 
    protected boolean redirectEveryTwentyRequests(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
+         throws IOException {
       return false;
    }
 
@@ -124,7 +124,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
          @Override
          public void consume(Object in) {
             try {
-               Utils.toStringAndClose(((ListenableFuture<InputStream>) in).get());
+               Strings2.toStringAndClose(((ListenableFuture<InputStream>) in).get());
             } catch (InterruptedException e) {
                Throwables.propagate(e);
             } catch (ExecutionException e) {
@@ -157,7 +157,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
       @Override
       public String toString() {
          return "[count=" + count + ", createFutures=" + createFutures + ", futuresConsumed=" + futuresConsumed
-                  + ", futuresReady=" + futuresReady + ", who=" + who + "]";
+               + ", futuresReady=" + futuresReady + ", who=" + who + "]";
       }
 
    }
@@ -173,7 +173,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
       results.createFutures = System.currentTimeMillis() - start;
       start = System.currentTimeMillis();
       Map<String, Exception> exceptions = awaitCompletion(responses, MoreExecutors.sameThreadExecutor(), null, logger,
-               who);
+            who);
       results.futuresReady = System.currentTimeMillis() - start;
       assert exceptions.size() == 0 : exceptions;
       start = System.currentTimeMillis();
@@ -186,7 +186,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    @Override
    @Test(enabled = true, invocationCount = 5, timeOut = 3000)
    public void testKillRobotSlowly() throws MalformedURLException, ExecutionException, InterruptedException,
-            TimeoutException {
+         TimeoutException {
       setupApiProxy();
       super.testKillRobotSlowly();
    }
@@ -194,7 +194,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    @Override
    @Test(enabled = true, invocationCount = 5, timeOut = 3000)
    public void testPostAsInputStream() throws MalformedURLException, ExecutionException, InterruptedException,
-            TimeoutException {
+         TimeoutException {
       setupApiProxy();
       super.testPostAsInputStream();
    }
@@ -210,7 +210,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    @Override
    @Test(enabled = true, invocationCount = 5, timeOut = 3000)
    public void testPostBinder() throws MalformedURLException, ExecutionException, InterruptedException,
-            TimeoutException {
+         TimeoutException {
       setupApiProxy();
       super.testPostBinder();
    }
@@ -223,7 +223,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    @Override
    @Test(enabled = true, invocationCount = 5, timeOut = 3000)
    public void testGetAndParseSax() throws MalformedURLException, ExecutionException, InterruptedException,
-            TimeoutException {
+         TimeoutException {
       setupApiProxy();
       super.testGetAndParseSax();
    }
@@ -238,7 +238,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    @Override
    @Test(enabled = true, invocationCount = 5, timeOut = 3000, dataProvider = "gets")
    public void testGetStringSynch(String path) throws MalformedURLException, ExecutionException, InterruptedException,
-            TimeoutException {
+         TimeoutException {
       setupApiProxy();
       super.testGetStringSynch(path);
    }
@@ -247,7 +247,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    @Override
    @Test(enabled = true, expectedExceptions = UndeclaredThrowableException.class)
    public void testGetStringRedirect() throws MalformedURLException, ExecutionException, InterruptedException,
-            TimeoutException {
+         TimeoutException {
       setupApiProxy();
       super.testGetStringRedirect();
    }
@@ -255,7 +255,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    @Override
    @Test(enabled = true, invocationCount = 5, timeOut = 3000)
    public void testGetException() throws MalformedURLException, ExecutionException, InterruptedException,
-            TimeoutException {
+         TimeoutException {
       setupApiProxy();
       super.testGetException();
    }
@@ -263,7 +263,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    @Override
    @Test(enabled = true, invocationCount = 5, timeOut = 3000)
    public void testGetStringPermanentRedirect() throws MalformedURLException, ExecutionException, InterruptedException,
-            TimeoutException {
+         TimeoutException {
       setupApiProxy();
       super.testGetStringPermanentRedirect();
    }
@@ -271,7 +271,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    @Override
    @Test(enabled = true, invocationCount = 5, timeOut = 3000)
    public void testGetSynchException() throws MalformedURLException, ExecutionException, InterruptedException,
-            TimeoutException {
+         TimeoutException {
       setupApiProxy();
       super.testGetSynchException();
    }
@@ -291,9 +291,17 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    }
 
    @Override
+   @Test(enabled = true, invocationCount = 5, timeOut = 3000)
+   public void testGetStringViaRequest() throws ExecutionException, InterruptedException,
+         TimeoutException, IOException {
+      setupApiProxy();
+      super.testGetStringViaRequest();
+   }
+
+   @Override
    @Test(enabled = true, expectedExceptions = UndeclaredThrowableException.class)
    public void testPutRedirect() throws MalformedURLException, ExecutionException, InterruptedException,
-            TimeoutException {
+         TimeoutException {
       setupApiProxy();
       super.testPutRedirect();
    }
@@ -301,7 +309,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    @Override
    @Test(enabled = true, invocationCount = 5, timeOut = 3000)
    public void testGetStringWithHeader() throws MalformedURLException, ExecutionException, InterruptedException,
-            TimeoutException {
+         TimeoutException {
       setupApiProxy();
       super.testGetStringWithHeader();
    }
@@ -316,7 +324,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    @Override
    @Test(enabled = true, invocationCount = 5, timeOut = 3000)
    public void testRequestFilter() throws MalformedURLException, ExecutionException, InterruptedException,
-            TimeoutException {
+         TimeoutException {
       setupApiProxy();
       super.testRequestFilter();
    }
@@ -347,7 +355,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    @Override
    @Test(enabled = true)
    public void testGetBigFile() throws MalformedURLException, ExecutionException, InterruptedException,
-            TimeoutException {
+         TimeoutException {
       // disabled since test data is too big
    }
 
@@ -380,7 +388,7 @@ public class AsyncGaeHttpCommandExecutorServiceIntegrationTest extends BaseHttpC
    @Override
    @Test(enabled = true, expectedExceptions = IllegalArgumentException.class)
    public void testAlternateMethod() throws MalformedURLException, ExecutionException, InterruptedException,
-            TimeoutException {
+         TimeoutException {
       setupApiProxy();
       super.testAlternateMethod();
    }

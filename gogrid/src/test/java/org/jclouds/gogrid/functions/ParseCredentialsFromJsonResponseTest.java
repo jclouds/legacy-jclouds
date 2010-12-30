@@ -48,7 +48,7 @@ import com.google.inject.Provides;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "gogrid.ParseCredentialsFromJsonResponseTest")
+@Test(groups = "unit")
 public class ParseCredentialsFromJsonResponseTest {
 
    @Test(expectedExceptions = IllegalStateException.class)

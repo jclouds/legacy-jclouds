@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudservers.CreateImageBinderTest")
+@Test(groups = "unit")
 public class ServerTest {
    public void testStatusDoesntAffectEquals() {
       Server server1 = new Server(1, "hello");

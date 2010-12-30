@@ -78,11 +78,11 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
       this.stringBinder = stringBinder;
    }
 
-   @SuppressWarnings("unchecked")
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
                "this binder is only valid for GeneratedHttpRequests!");
-      GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
+      GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
 
       VCloudExpressVApp vApp = checkNotNull(findVAppInArgsOrNull(gRequest), "vApp");
@@ -90,7 +90,7 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
       VAppConfiguration configuration = checkNotNull(findConfigInArgsOrNull(gRequest), "config");
 
       try {
-         stringBinder.bindToRequest(request, generateXml(vApp, configuration));
+         return stringBinder.bindToRequest(request, generateXml(vApp, configuration));
       } catch (ParserConfigurationException e) {
          throw new RuntimeException(e);
       } catch (FactoryConfigurationError e) {
@@ -199,8 +199,8 @@ public class BindVAppConfigurationToXmlPayload implements MapBinder, Function<Ob
       }
       return null;
    }
-
-   public void bindToRequest(HttpRequest request, Object input) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       throw new IllegalStateException("BindVAppConfigurationToXmlPayload needs parameters");
    }
 

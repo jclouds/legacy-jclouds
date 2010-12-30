@@ -48,7 +48,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.DescribeImagesResponseHandlerTest")
+@Test(groups = "unit")
 public class DescribeImagesResponseHandlerTest {
 
    public void testUNIX() {

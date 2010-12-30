@@ -33,9 +33,9 @@ import org.jclouds.rest.Binder;
  */
 @Singleton
 public class BindELBInstanceIdsToIndexedFormParams implements Binder {
-
-   public void bindToRequest(HttpRequest request, Object input) {
-      indexStringArrayToFormValuesWithStringFormat(request, "Instances.member.%s.InstanceId", input);
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      return indexStringArrayToFormValuesWithStringFormat(request, "Instances.member.%s.InstanceId", input);
    }
 
 }

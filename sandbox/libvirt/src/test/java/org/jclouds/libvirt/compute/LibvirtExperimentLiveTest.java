@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "libvirt.LibvirtExperimentLiveTest")
+@Test(groups = "live")
 public class LibvirtExperimentLiveTest {
    protected String provider = "libvirt";
    protected String identity;

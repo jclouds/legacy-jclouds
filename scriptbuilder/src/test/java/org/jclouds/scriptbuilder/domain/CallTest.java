@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "scriptbuilder.CallTest")
+@Test(groups = "unit")
 public class CallTest {
 
    public void testCallNoArgsUNIX() {

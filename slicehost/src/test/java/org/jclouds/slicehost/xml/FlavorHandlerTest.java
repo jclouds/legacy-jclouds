@@ -36,7 +36,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "slicehost.FlavorHandler")
+@Test(groups = "unit")
 public class FlavorHandlerTest {
 
    static ParseSax<Flavor> createParser() {

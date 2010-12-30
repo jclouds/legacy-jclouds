@@ -33,7 +33,6 @@ import static org.jclouds.io.Payloads.newInputStreamPayload;
 import static org.jclouds.io.Payloads.newStringPayload;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
-import static org.jclouds.util.Utils.toInputStream;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
@@ -134,6 +133,7 @@ import org.jclouds.rest.binders.BindMapToMatrixParams;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.config.RestClientModule;
+import org.jclouds.util.Strings2;
 import org.mortbay.jetty.HttpHeaders;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -157,11 +157,12 @@ import com.google.inject.Module;
 import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
- * Tests behavior of {@code RestAnnotationProcessorTest}
+ * Tests behavior of {@code RestAnnotationProcessor}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "jclouds.RestAnnotationProcessorTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "RestAnnotationProcessorTest")
 public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    @RequiresHttp
@@ -245,7 +246,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
          @Override
          public boolean matches(Object arg) {
-            return ((HttpCommand) arg).getRequest().getRequestLine().equals(requestLine);
+            return ((HttpCommand) arg).getCurrentRequest().getRequestLine().equals(requestLine);
          }
 
       });
@@ -368,21 +369,17 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public interface TestPayloadParamVarargs {
       @POST
-      @Path("")
-      public void varargs(HttpRequestOptions... options);
+         public void varargs(HttpRequestOptions... options);
 
       @POST
-      @Path("")
-      public void post(HttpRequestOptions options);
+         public void post(HttpRequestOptions options);
 
       @POST
-      @Path("")
-      @Produces(MediaType.APPLICATION_OCTET_STREAM)
+         @Produces(MediaType.APPLICATION_OCTET_STREAM)
       public void post();
 
       @POST
-      @Path("")
-      @Produces(MediaType.APPLICATION_OCTET_STREAM)
+         @Produces(MediaType.APPLICATION_OCTET_STREAM)
       public void post(Payload payload);
    }
 
@@ -448,8 +445,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public class TestCustomMethod {
       @FOO
-      @Path("")
-      public void foo() {
+         public void foo() {
       }
    }
 
@@ -467,8 +463,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public class TestOverridden implements Parent {
       @POST
-      @Path("")
-      public void foo() {
+         public void foo() {
       }
    }
 
@@ -484,13 +479,11 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
       @POST
       @Endpoint(Localhost2.class)
-      @Path("")
-      public void foo() {
+         public void foo() {
       }
 
       @POST
-      @Path("")
-      public void foo(@EndpointParam URI endpoint) {
+         public void foo(@EndpointParam URI endpoint) {
       }
    }
 
@@ -515,12 +508,10 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public interface TestPost {
       @POST
-      @Path("")
-      void post(@Nullable @BinderParam(BindToStringPayload.class) String content);
+         void post(@Nullable @BinderParam(BindToStringPayload.class) String content);
 
       @POST
-      @Path("")
-      public void postAsJson(@BinderParam(BindToJsonPayload.class) String content);
+         public void postAsJson(@BinderParam(BindToJsonPayload.class) String content);
 
       @POST
       @Path("/{foo}")
@@ -568,11 +559,14 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testCreatePostWithPathRequest() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TestPost.class.getMethod("postWithPath", String.class, MapBinder.class);
       HttpRequest request = factory(TestPost.class).createRequest(method, "data", new org.jclouds.rest.MapBinder() {
-         public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+         @Override
+         public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
             request.setPayload(postParams.get("fooble"));
+            return request;
          }
 
-         public void bindToRequest(HttpRequest request, Object toBind) {
+         @Override
+         public <R extends HttpRequest> R bindToRequest(R request, Object toBind) {
             throw new RuntimeException("this shouldn't be used in POST");
          }
       });
@@ -600,25 +594,20 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    static interface TestMultipartForm {
       @POST
-      @Path("")
-      void withStringPart(@PartParam(name = "fooble") String path);
+         void withStringPart(@PartParam(name = "fooble") String path);
 
       @POST
-      @Path("")
-      void withParamStringPart(@FormParam("name") String name, @PartParam(name = "file") String path);
+         void withParamStringPart(@FormParam("name") String name, @PartParam(name = "file") String path);
 
       @POST
-      @Path("")
-      void withParamFilePart(@FormParam("name") String name, @PartParam(name = "file") File path);
+         void withParamFilePart(@FormParam("name") String name, @PartParam(name = "file") File path);
 
       @POST
-      @Path("")
-      void withParamFileBinaryPart(@FormParam("name") String name,
+         void withParamFileBinaryPart(@FormParam("name") String name,
             @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM) File path);
 
       @POST
-      @Path("")
-      void withParamByteArrayBinaryPart(
+         void withParamByteArrayBinaryPart(
             @FormParam("name") String name,
             @PartParam(name = "file", contentType = MediaType.APPLICATION_OCTET_STREAM, filename = "{name}.tar.gz") byte[] content);
    }
@@ -945,29 +934,31 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    static class TestRequestFilter1 implements HttpRequestFilter {
-      public void filter(HttpRequest request) throws HttpException {
+      public HttpRequest filter(HttpRequest request) throws HttpException {
+         return request;
       }
    }
 
    static class TestRequestFilter2 implements HttpRequestFilter {
-      public void filter(HttpRequest request) throws HttpException {
+      public HttpRequest filter(HttpRequest request) throws HttpException {
+         return request;
       }
    }
 
    @RequestFilters(TestRequestFilter1.class)
-   static class TestRequestFilter {
+   static interface TestRequestFilter {
       @GET
-      @Path("")
-      @RequestFilters(TestRequestFilter2.class)
-      public void get() {
-      }
+         @RequestFilters(TestRequestFilter2.class)
+      public void get();
 
       @GET
-      @Path("")
+         @OverrideRequestFilters
+      @RequestFilters(TestRequestFilter2.class)
+      public void getOverride();
+
       @OverrideRequestFilters
       @RequestFilters(TestRequestFilter2.class)
-      public void getOverride() {
-      }
+      public void getOverride(HttpRequest request);
    }
 
    @Test
@@ -982,6 +973,14 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testRequestFilterOverride() throws SecurityException, NoSuchMethodException {
       Method method = TestRequestFilter.class.getMethod("getOverride");
       HttpRequest request = factory(TestRequestFilter.class).createRequest(method, new Object[] {});
+      assertEquals(request.getFilters().size(), 1);
+      assertEquals(request.getFilters().get(0).getClass(), TestRequestFilter2.class);
+   }
+
+   public void testRequestFilterOverrideOnRequest() throws SecurityException, NoSuchMethodException {
+      Method method = TestRequestFilter.class.getMethod("getOverride", HttpRequest.class);
+      HttpRequest request = factory(TestRequestFilter.class).createRequest(method,
+            HttpRequest.builder().method("GET").endpoint(URI.create("http://localhost")).build());
       assertEquals(request.getFilters().size(), 1);
       assertEquals(request.getFilters().get(0).getClass(), TestRequestFilter2.class);
    }
@@ -1428,47 +1427,37 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public interface TestTransformers {
       @GET
-      @Path("")
-      int noTransformer();
+         int noTransformer();
 
       @GET
-      @Path("")
-      @ResponseParser(ReturnStringIf2xx.class)
+         @ResponseParser(ReturnStringIf2xx.class)
       void oneTransformer();
 
       @GET
-      @Path("")
-      @ResponseParser(ReturnStringIf200Context.class)
+         @ResponseParser(ReturnStringIf200Context.class)
       void oneTransformerWithContext();
 
       @GET
-      @Path("")
-      InputStream inputStream();
+         InputStream inputStream();
 
       @GET
-      @Path("")
-      ListenableFuture<InputStream> futureInputStream();
+         ListenableFuture<InputStream> futureInputStream();
 
       @GET
-      @Path("")
-      URI uri();
+         URI uri();
 
       @GET
-      @Path("")
-      ListenableFuture<URI> futureUri();
+         ListenableFuture<URI> futureUri();
 
       @PUT
-      @Path("")
-      ListenableFuture<Void> put(Payload payload);
+         ListenableFuture<Void> put(Payload payload);
 
       @PUT
-      @Path("")
-      @Headers(keys = "Transfer-Encoding", values = "chunked")
+         @Headers(keys = "Transfer-Encoding", values = "chunked")
       ListenableFuture<Void> putXfer(Payload payload);
 
       @PUT
-      @Path("")
-      ListenableFuture<Void> put(PayloadEnclosing payload);
+         ListenableFuture<Void> put(PayloadEnclosing payload);
    }
 
    public void testPutPayloadEnclosing() throws SecurityException, NoSuchMethodException, IOException {
@@ -1494,7 +1483,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void testPutInputStreamPayloadEnclosingGenerateMD5() throws SecurityException, NoSuchMethodException,
          IOException {
       Method method = TestTransformers.class.getMethod("put", PayloadEnclosing.class);
-      PayloadEnclosing payloadEnclosing = new PayloadEnclosingImpl(newInputStreamPayload(toInputStream("whoops")));
+      PayloadEnclosing payloadEnclosing = new PayloadEnclosingImpl(
+            newInputStreamPayload(Strings2.toInputStream("whoops")));
 
       calculateMD5(payloadEnclosing, crypto.md5());
       HttpRequest request = factory(TestQuery.class).createRequest(method, payloadEnclosing);
@@ -1562,7 +1552,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    public void testPutInputStreamPayload() throws SecurityException, NoSuchMethodException, IOException {
-      Payload payload = newInputStreamPayload(toInputStream("whoops"));
+      Payload payload = newInputStreamPayload(Strings2.toInputStream("whoops"));
       payload.getContentMetadata().setContentLength((long) "whoops".length());
       Method method = TestTransformers.class.getMethod("put", Payload.class);
       HttpRequest request = factory(TestQuery.class).createRequest(method, payload);
@@ -1613,7 +1603,8 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       assertEquals(transformer, ParseURIFromListOrLocationHeaderIf20x.class);
    }
 
-   public static class ReturnStringIf200Context extends ReturnStringIf2xx implements InvocationContext {
+   public static class ReturnStringIf200Context extends ReturnStringIf2xx implements
+         InvocationContext<ReturnStringIf200Context> {
 
       public HttpRequest request;
 
@@ -1634,8 +1625,9 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    public void oneTransformerWithContext() throws SecurityException, NoSuchMethodException {
       RestAnnotationProcessor<TestTransformers> processor = factory(TestTransformers.class);
       Method method = TestTransformers.class.getMethod("oneTransformerWithContext");
-      GeneratedHttpRequest<TestTransformers> request = new GeneratedHttpRequest<TestTransformers>("GET",
-            URI.create("http://localhost"), TestTransformers.class, method);
+      GeneratedHttpRequest<TestTransformers> request = GeneratedHttpRequest.<TestTransformers> builder().method("GET")
+            .endpoint(URI.create("http://localhost")).declaring(TestTransformers.class).javaMethod(method)
+            .args(new Object[] {}).build();
       Function<HttpResponse, ?> transformer = processor.createResponseParser(method, request);
       assertEquals(transformer.getClass(), ReturnStringIf200Context.class);
       assertEquals(((ReturnStringIf200Context) transformer).request, request);
@@ -1975,8 +1967,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    public interface TestPayload {
       @PUT
-      @Path("")
-      public void put(@BinderParam(BindToStringPayload.class) String content);
+         public void put(@BinderParam(BindToStringPayload.class) String content);
 
       @PUT
       @Path("/{foo}")
@@ -1984,8 +1975,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
             @BinderParam(BindToStringPayload.class) String content);
 
       @PUT
-      @Path("")
-      public void twoEntities(@BinderParam(BindToStringPayload.class) String payload1,
+         public void twoEntities(@BinderParam(BindToStringPayload.class) String payload1,
             @BinderParam(BindToStringPayload.class) String payload2);
    }
 

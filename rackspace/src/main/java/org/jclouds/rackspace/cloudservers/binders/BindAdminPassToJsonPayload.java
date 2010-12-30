@@ -40,14 +40,14 @@ import com.google.common.collect.ImmutableMap;
 public class BindAdminPassToJsonPayload extends BindToJsonPayload {
 
    @Override
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       throw new IllegalStateException("Change Admin Pass is a PUT operation");
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Object toBind) {
+   public <R extends HttpRequest> R bindToRequest(R request, Object toBind) {
       checkArgument(toBind instanceof String, "this binder is only valid for Strings!");
-      super.bindToRequest(request, ImmutableMap.of("server", ImmutableMap.of("adminPass",
-               checkNotNull(toBind, "adminPass"))));
+      return super.bindToRequest(request,
+            ImmutableMap.of("server", ImmutableMap.of("adminPass", checkNotNull(toBind, "adminPass"))));
    }
 }

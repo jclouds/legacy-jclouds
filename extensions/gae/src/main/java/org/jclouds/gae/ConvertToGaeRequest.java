@@ -42,7 +42,6 @@ import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.repackaged.com.google.common.base.Throwables;
 import com.google.common.base.Function;
-import com.google.common.collect.LinkedHashMultimap;
 
 /**
  * 
@@ -98,9 +97,9 @@ public class ConvertToGaeRequest implements Function<HttpRequest, HTTPRequest> {
          } finally {
             closeQuietly(input);
          }
-         LinkedHashMultimap<String, String> map = LinkedHashMultimap.create();
-         HttpUtils.addContentHeadersFromMetadata(request.getPayload().getContentMetadata(), map);
-         for (Entry<String, String> header : map.entries()) {
+
+         for (Entry<String, String> header : HttpUtils.getContentHeadersFromMetadata(
+               request.getPayload().getContentMetadata()).entries()) {
             gaeRequest.setHeader(new HTTPHeader(header.getKey(), header.getValue()));
          }
       } else {

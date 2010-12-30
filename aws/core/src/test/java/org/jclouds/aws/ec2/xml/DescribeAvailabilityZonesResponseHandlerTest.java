@@ -41,7 +41,8 @@ import com.google.inject.Guice;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.DescribeAvailabilityZonesResponseHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "DescribeAvailabilityZonesResponseHandlerTest")
 public class DescribeAvailabilityZonesResponseHandlerTest extends BaseHandlerTest {
 
    @BeforeTest

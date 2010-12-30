@@ -34,6 +34,8 @@ import org.jclouds.rackspace.cloudfiles.domain.MutableObjectInfoWithMetadata;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -44,7 +46,7 @@ import com.google.inject.name.Names;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudfiles.ParseObjectInfoFromHeadersTest")
+@Test(groups = "unit")
 public class ParseObjectInfoFromHeadersTest {
 
    Injector i = Guice.createInjector(new AbstractModule() {
@@ -60,17 +62,16 @@ public class ParseObjectInfoFromHeadersTest {
    public void testEtagCaseIssue() {
       ParseObjectInfoFromHeaders parser = i.getInstance(ParseObjectInfoFromHeaders.class);
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(new String[] { "container", "key" }).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object> of("container", "key")).atLeastOnce();
 
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/test")).atLeastOnce();
       replay(request);
       parser.setContext(request);
-      HttpResponse response = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
-      response.getPayload().getContentMetadata().setContentType("text/plain");
-      response.getHeaders().put("Last-Modified", "Fri, 12 Jun 2007 13:40:18 GMT");
-      response.getHeaders().put("Content-Length", "0");
+      HttpResponse response = new HttpResponse(200, "ok", Payloads.newStringPayload(""),
+            ImmutableMultimap.<String, String> of("Last-Modified", "Fri, 12 Jun 2007 13:40:18 GMT", "Content-Length",
+                  "0", "Etag", "feb1"));
 
-      response.getHeaders().put("Etag", "feb1");
+      response.getPayload().getContentMetadata().setContentType("text/plain");
       MutableObjectInfoWithMetadata md = parser.apply(response);
       assertNotNull(md.getHash());
    }

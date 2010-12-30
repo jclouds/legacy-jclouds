@@ -33,18 +33,18 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "s3.BindNoBucketLoggingToXmlPayloadTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "BindNoBucketLoggingToXmlPayloadTest")
 public class BindNoBucketLoggingToXmlPayloadTest extends BaseS3AsyncClientTest {
 
    public void testApplyInputStream() throws IOException {
 
       HttpRequest request = new HttpRequest("GET", URI.create("http://test"));
-      BindNoBucketLoggingToXmlPayload binder = injector
-               .getInstance(BindNoBucketLoggingToXmlPayload.class);
+      BindNoBucketLoggingToXmlPayload binder = injector.getInstance(BindNoBucketLoggingToXmlPayload.class);
 
-      binder.bindToRequest(request, "bucket");
+      request = binder.bindToRequest(request, "bucket");
       assertEquals(request.getPayload().getRawContent(),
-               "<BucketLoggingStatus xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"/>");
+            "<BucketLoggingStatus xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"/>");
 
    }
 }

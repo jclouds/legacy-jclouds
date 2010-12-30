@@ -28,18 +28,23 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.TypeLiteral;
 
-@Test(groups = "unit", testName = "aws.FormSignerTest")
+/**
+ * Tests behavior of {@code FormSigner}
+ * 
+ * @author Adrian Cole
+ */
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "FormSignerTest")
 public class FormSignerTest extends BaseEC2AsyncClientTest<String> {
 
    @Test
    void testBuildCanonicalizedString() {
       assertEquals(
-               filter.buildCanonicalizedString(new ImmutableMultimap.Builder<String, String>().put(
-                        "AWSAccessKeyId", "foo").put("Action", "DescribeImages").put("Expires",
-                        "2008-02-10T12:00:00Z").put("ImageId.1", "ami-2bb65342").put(
-                        "SignatureMethod", "HmacSHA256").put("SignatureVersion", "2").put(
-                        "Version", "2010-06-15").build()),
-               "AWSAccessKeyId=foo&Action=DescribeImages&Expires=2008-02-10T12%3A00%3A00Z&ImageId.1=ami-2bb65342&SignatureMethod=HmacSHA256&SignatureVersion=2&Version=2010-06-15");
+            filter.buildCanonicalizedString(new ImmutableMultimap.Builder<String, String>()
+                  .put("AWSAccessKeyId", "foo").put("Action", "DescribeImages").put("Expires", "2008-02-10T12:00:00Z")
+                  .put("ImageId.1", "ami-2bb65342").put("SignatureMethod", "HmacSHA256").put("SignatureVersion", "2")
+                  .put("Version", "2010-06-15").build()),
+            "AWSAccessKeyId=foo&Action=DescribeImages&Expires=2008-02-10T12%3A00%3A00Z&ImageId.1=ami-2bb65342&SignatureMethod=HmacSHA256&SignatureVersion=2&Version=2010-06-15");
    }
 
    @Override

@@ -19,43 +19,50 @@
 
 package org.jclouds.blobstore.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.IOException;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
-import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.crypto.Crypto;
+import org.jclouds.http.HttpMessage;
+import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.io.Payloads;
 
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
+@Singleton
 public class ObjectMD5 implements Function<Object, byte[]> {
 
-   protected final Blob.Factory blobFactory;
    protected final Crypto crypto;
 
    @Inject
-   ObjectMD5(Crypto crypto, Blob.Factory blobFactory) {
-      this.blobFactory = blobFactory;
-      this.crypto = crypto;
+   ObjectMD5(Crypto crypto) {
+      this.crypto = checkNotNull(crypto, "crypto");
    }
 
    public byte[] apply(Object from) {
-      Blob object;
-      if (from instanceof Blob) {
-         object = (Blob) from;
+      checkNotNull(from, "thing to md5");
+      PayloadEnclosing payloadEnclosing;
+      if (from instanceof PayloadEnclosing) {
+         payloadEnclosing = (PayloadEnclosing) from;
       } else {
-         object = blobFactory.create(null);
-         object.setPayload(Payloads.newPayload(from));
+         payloadEnclosing = HttpMessage.builder().payload(Payloads.newPayload(from)).build();
       }
-      if (object.getMetadata().getContentMetadata().getContentMD5() == null)
+      if (payloadEnclosing.getPayload().getContentMetadata().getContentMD5() == null)
          try {
-            Payloads.calculateMD5(object, crypto.md5());
+            Payloads.calculateMD5(payloadEnclosing, crypto.md5());
          } catch (IOException e) {
             Throwables.propagate(e);
          }
-      return object.getPayload().getContentMetadata().getContentMD5();
+      return payloadEnclosing.getPayload().getContentMetadata().getContentMD5();
    }
 
 }

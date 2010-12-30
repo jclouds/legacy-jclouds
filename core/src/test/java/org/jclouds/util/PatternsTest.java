@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "jclouds.PatternsTest")
+@Test(groups = "unit")
 public class PatternsTest {
 
    public void testJSON_STRING_PATTERN1() {

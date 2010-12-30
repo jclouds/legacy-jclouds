@@ -66,25 +66,24 @@ public class AddSessionTokenToRequestTest {
    public Object[][] dataProvider() throws SecurityException, NoSuchMethodException {
 
       RestAnnotationProcessor<TestService> factory = injector.getInstance(Key
-               .get(new TypeLiteral<RestAnnotationProcessor<TestService>>() {
-               }));
+            .get(new TypeLiteral<RestAnnotationProcessor<TestService>>() {
+            }));
 
       Method method = TestService.class.getMethod("foo", URI.class);
       return new Object[][] { { factory.createRequest(method, new Object[] { URI.create("https://host:443") }) },
-               { factory.createRequest(method, new Object[] { URI.create("https://host/path") }) },
-               { factory.createRequest(method, new Object[] { URI.create("https://host/?query") })
+            { factory.createRequest(method, new Object[] { URI.create("https://host/path") }) },
+            { factory.createRequest(method, new Object[] { URI.create("https://host/?query") })
 
-               } };
+            } };
    }
 
    @Test(dataProvider = "dataProvider")
    public void testRequests(HttpRequest request) {
       String token = filter.getSessionToken();
-
       String query = request.getEndpoint().getQuery();
-      filter.filter(request);
+      request = filter.filter(request);
       assertEquals(request.getEndpoint().getQuery(), query == null ? "sessionToken=" + token : query + "&sessionToken="
-               + token);
+            + token);
    }
 
    @Test
@@ -102,27 +101,26 @@ public class AddSessionTokenToRequestTest {
    @BeforeClass
    protected void createFilter() {
       injector = Guice.createInjector(new RestModule(), new ExecutorServiceModule(MoreExecutors.sameThreadExecutor(),
-               MoreExecutors.sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule(),
-               new AbstractModule() {
+            MoreExecutors.sameThreadExecutor()), new JavaUrlHttpCommandExecutorServiceModule(), new AbstractModule() {
 
-                  protected void configure() {
-                     bind(DateService.class);
-                     Names.bindProperties(this.binder(), new SDNPropertiesBuilder(new Properties()).credentials(
-                              "appkey/appname/username", "password").build());
-                     bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
-                        public Logger getLogger(String category) {
-                           return Logger.NULL;
-                        }
-                     });
-                  }
+         protected void configure() {
+            bind(DateService.class);
+            Names.bindProperties(this.binder(),
+                  new SDNPropertiesBuilder(new Properties()).credentials("appkey/appname/username", "password").build());
+            bind(Logger.LoggerFactory.class).toInstance(new LoggerFactory() {
+               public Logger getLogger(String category) {
+                  return Logger.NULL;
+               }
+            });
+         }
 
-                  @SuppressWarnings("unused")
-                  @SessionToken
-                  @Provides
-                  String authTokenProvider() {
-                     return System.currentTimeMillis() + "";
-                  }
-               });
+         @SuppressWarnings("unused")
+         @SessionToken
+         @Provides
+         String authTokenProvider() {
+            return System.currentTimeMillis() + "";
+         }
+      });
       filter = injector.getInstance(AddSessionTokenToRequest.class);
    }
 

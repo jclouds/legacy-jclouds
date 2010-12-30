@@ -32,7 +32,7 @@ import com.google.common.collect.ImmutableMultimap;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "azurestorage.CreateContainerOptionsTest")
+@Test(groups = "unit")
 public class CreateContainerOptionsTest {
 
    public void testPublicAcl() {

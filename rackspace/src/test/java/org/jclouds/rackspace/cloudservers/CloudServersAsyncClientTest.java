@@ -68,11 +68,12 @@ import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code CloudServersClient}
+ * Tests behavior of {@code CloudServersAsyncClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudservers.CloudServersClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "CloudServersAsyncClientTest")
 public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyncClient> {
    private static final Class<? extends ListOptions[]> listOptionsVarargsClass = new ListOptions[] {}.getClass();
    private static final Class<? extends CreateServerOptions[]> createServerOptionsVarargsClass = new CreateServerOptions[] {}

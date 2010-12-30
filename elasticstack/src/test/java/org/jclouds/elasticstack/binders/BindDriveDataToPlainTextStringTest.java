@@ -33,7 +33,7 @@ import org.jclouds.elasticstack.domain.DriveData;
 import org.jclouds.elasticstack.functions.CreateDriveRequestToMap;
 import org.jclouds.elasticstack.functions.DriveDataToMap;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -82,7 +82,7 @@ public class BindDriveDataToPlainTextStringTest {
       FN.bindToRequest(request, input);
       assertEquals(request.getPayload().getContentMetadata().getContentType(), MediaType.TEXT_PLAIN);
       assertEquals(request.getPayload().getRawContent(),
-            Utils.toStringAndClose(BindDriveDataToPlainTextStringTest.class.getResourceAsStream("/drive_data.txt")));
+            Strings2.toStringAndClose(BindDriveDataToPlainTextStringTest.class.getResourceAsStream("/drive_data.txt")));
 
    }
 }

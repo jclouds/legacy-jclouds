@@ -48,7 +48,8 @@ public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
    @SuppressWarnings({ "unchecked" })
    @Inject
    public ComputeServiceContextImpl(ComputeService computeService, Map<String, Credentials> credentialStore,
-         Utils utils, @Nullable LoadBalancerService loadBalancerService, RestContext providerSpecificContext) {
+         Utils utils, @Nullable LoadBalancerService loadBalancerService,
+         @SuppressWarnings("rawtypes") RestContext providerSpecificContext) {
       this.credentialStore = credentialStore;
       this.utils = utils;
       this.providerSpecificContext = providerSpecificContext;

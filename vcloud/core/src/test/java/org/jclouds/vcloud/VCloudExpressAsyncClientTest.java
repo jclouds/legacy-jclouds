@@ -47,7 +47,7 @@ import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.config.VCloudExpressRestClientModule;
 import org.jclouds.vcloud.domain.Org;
 import org.jclouds.vcloud.domain.ReferenceType;
@@ -90,7 +90,8 @@ import domain.VCloudVersionsAsyncClient;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VCloudExpressAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "VCloudExpressAsyncClientTest")
 public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAsyncClient> {
 
    public void testInstantiateVAppTemplateInVDCURI() throws SecurityException, NoSuchMethodException, IOException {
@@ -103,7 +104,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass()
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass()
                .getResourceAsStream("/express/newvapp-hosting.xml")),
                "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
 
@@ -128,7 +129,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/express/newvapp-hostingcpumemdisk.xml")),
                "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
 
@@ -160,7 +161,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
 
       assertRequestLineEquals(request, "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/cloneVApp HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/express/cloneVApp-default.xml")), "application/vnd.vmware.vcloud.cloneVAppParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -180,7 +181,7 @@ public class VCloudExpressAsyncClientTest extends RestClientTest<VCloudExpressAs
 
       assertRequestLineEquals(request, "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/cloneVApp HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream("/express/cloneVApp.xml")),
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/express/cloneVApp.xml")),
                "application/vnd.vmware.vcloud.cloneVAppParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);

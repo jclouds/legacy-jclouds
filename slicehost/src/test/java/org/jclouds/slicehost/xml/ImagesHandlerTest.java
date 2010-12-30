@@ -36,7 +36,8 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "slicehost.ImagesHandler")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "ImagesHandlerTest")
 public class ImagesHandlerTest extends BaseHandlerTest {
 
    ParseSax<Set<? extends Image>> createParser() {

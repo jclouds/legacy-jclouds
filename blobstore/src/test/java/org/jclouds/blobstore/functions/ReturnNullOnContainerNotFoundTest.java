@@ -17,25 +17,33 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.ec2.binders;
+package org.jclouds.blobstore.functions;
 
-import static org.jclouds.aws.ec2.util.EC2Utils.indexStringArrayToFormValuesWithPrefix;
+import static org.testng.Assert.assertEquals;
 
-import javax.inject.Singleton;
-
-import org.jclouds.http.HttpRequest;
-import org.jclouds.rest.Binder;
+import org.jclouds.blobstore.ContainerNotFoundException;
+import org.testng.annotations.Test;
 
 /**
- * Binds the String [] to query parameters named with KeyName.index
  * 
  * @author Adrian Cole
  */
-@Singleton
-public class BindKeyNameToIndexedFormParams implements Binder {
+@Test(groups = "unit")
+public class ReturnNullOnContainerNotFoundTest {
+   ReturnNullOnContainerNotFound fn = new ReturnNullOnContainerNotFound();
 
-   public void bindToRequest(HttpRequest request, Object input) {
-      indexStringArrayToFormValuesWithPrefix(request, "KeyName", input);
+   @Test
+   public void testFoundIsNull() throws SecurityException, NoSuchMethodException {
+      assertEquals(fn.apply(new ContainerNotFoundException()), null);
    }
 
+   @Test(expectedExceptions = RuntimeException.class)
+   public void testPropagates() throws SecurityException, NoSuchMethodException {
+      fn.apply(new RuntimeException());
+   }
+
+   @Test(expectedExceptions = NullPointerException.class)
+   public void testNullIsBad() {
+      fn.apply(null);
+   }
 }

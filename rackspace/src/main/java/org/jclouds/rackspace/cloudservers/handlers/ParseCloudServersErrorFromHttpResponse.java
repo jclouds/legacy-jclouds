@@ -34,7 +34,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 /**
  * This will parse and set an appropriate exception on the command object.
@@ -58,8 +58,8 @@ public class ParseCloudServersErrorFromHttpResponse implements HttpErrorHandler 
                exception = new AuthorizationException(exception.getMessage(), exception);
                break;
             case 404:
-               if (!command.getRequest().getMethod().equals("DELETE")) {
-                  String path = command.getRequest().getEndpoint().getPath();
+               if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
+                  String path = command.getCurrentRequest().getEndpoint().getPath();
                   Matcher matcher = RESOURCE_PATTERN.matcher(path);
                   String message;
                   if (matcher.find()) {
@@ -86,7 +86,7 @@ public class ParseCloudServersErrorFromHttpResponse implements HttpErrorHandler 
    String parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
       if (response.getPayload() != null) {
          try {
-            return Utils.toStringAndClose(response.getPayload().getInput());
+            return Strings2.toStringAndClose(response.getPayload().getInput());
          } catch (IOException e) {
             logger.warn(e, "exception reading error from response", response);
          }

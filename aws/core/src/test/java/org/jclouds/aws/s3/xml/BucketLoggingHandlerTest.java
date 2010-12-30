@@ -23,10 +23,10 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
-import org.jclouds.aws.s3.domain.BucketLogging;
 import org.jclouds.aws.s3.domain.AccessControlList.EmailAddressGrantee;
 import org.jclouds.aws.s3.domain.AccessControlList.Grant;
 import org.jclouds.aws.s3.domain.AccessControlList.Permission;
+import org.jclouds.aws.s3.domain.BucketLogging;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
 
@@ -37,14 +37,14 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.BucketLoggingHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "BucketLoggingHandlerTest")
 public class BucketLoggingHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
       InputStream is = getClass().getResourceAsStream("/s3/bucket_logging.xml");
 
-      BucketLogging expected = new BucketLogging("mylogs", "access_log-", ImmutableSet
-               .<Grant> of(new Grant(new EmailAddressGrantee("adrian@jclouds.org"),
-                        Permission.FULL_CONTROL)));
+      BucketLogging expected = new BucketLogging("mylogs", "access_log-", ImmutableSet.<Grant> of(new Grant(
+            new EmailAddressGrantee("adrian@jclouds.org"), Permission.FULL_CONTROL)));
       BucketLoggingHandler handler = injector.getInstance(BucketLoggingHandler.class);
       BucketLogging result = factory.create(handler).parse(is);
 

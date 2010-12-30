@@ -36,7 +36,6 @@ import java.util.concurrent.TimeoutException;
 import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
 
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
@@ -48,13 +47,14 @@ import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.mezeo.pcs2.domain.ResourceInfo;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.inject.Module;
+import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * Tests behavior of {@code PCSDiscovery}
@@ -194,7 +194,7 @@ public class PCSClientLiveTest {
       }
       // Test GET of object (including updated metadata)
       InputStream file = connection.downloadFile(objectURI);
-      assertEquals(Utils.toStringAndClose(file), data);
+      assertEquals(Strings2.toStringAndClose(file), data);
       validateFileInfoAndNameIsInMetadata(container, objectURI, "object", new Long(data.length()));
 
       try {
@@ -226,7 +226,7 @@ public class PCSClientLiveTest {
       validateFileInfoAndNameIsInMetadata(container, objectURI, name, new Long(data.length()));
 
       file = connection.downloadFile(objectURI);
-      assertEquals(Utils.toStringAndClose(file), data);
+      assertEquals(Strings2.toStringAndClose(file), data);
 
       // change data in an existing file
       data = "Here is my datum";
@@ -235,7 +235,7 @@ public class PCSClientLiveTest {
       validateFileInfoAndNameIsInMetadata(container, objectURI, name, new Long(data.length()));
 
       file = connection.downloadFile(objectURI);
-      assertEquals(Utils.toStringAndClose(file), data);
+      assertEquals(Strings2.toStringAndClose(file), data);
 
       connection.deleteFile(objectURI);
       connection.deleteContainer(container);

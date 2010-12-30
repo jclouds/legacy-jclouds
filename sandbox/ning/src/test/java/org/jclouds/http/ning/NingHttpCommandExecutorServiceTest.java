@@ -25,18 +25,11 @@ import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_CONTEXT;
 import static org.jclouds.Constants.PROPERTY_MAX_CONNECTIONS_PER_HOST;
 import static org.jclouds.Constants.PROPERTY_SO_TIMEOUT;
 import static org.jclouds.Constants.PROPERTY_USER_THREADS;
-import static org.testng.Assert.assertEquals;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.Properties;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import org.jclouds.http.BaseHttpCommandExecutorServiceIntegrationTest;
 import org.jclouds.http.ning.config.NingHttpCommandExecutorServiceModule;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
 
 import com.google.inject.Module;
 

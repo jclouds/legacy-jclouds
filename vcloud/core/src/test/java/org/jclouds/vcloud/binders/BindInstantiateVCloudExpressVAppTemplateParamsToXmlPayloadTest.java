@@ -33,13 +33,14 @@ import java.util.Properties;
 import javax.inject.Singleton;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.VCloudExpressPropertiesBuilder;
 import org.jclouds.vcloud.domain.network.FenceMode;
 import org.jclouds.vcloud.endpoints.Network;
 import org.jclouds.vcloud.options.InstantiateVAppTemplateOptions;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -52,7 +53,7 @@ import com.google.inject.name.Names;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.BindInstantiateVAppTemplateParamsToXmlPayloadTest")
+@Test(groups = "unit")
 public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayloadTest {
    Injector injector = Guice.createInjector(new AbstractModule() {
 
@@ -72,10 +73,10 @@ public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayloadTest {
    });
 
    public void testDefault() throws IOException {
-      String expected = Utils.toStringAndClose(getClass().getResourceAsStream("/express/newvapp-hosting.xml"));
+      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/express/newvapp-hosting.xml"));
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(new Object[] {}).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object>of()).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
@@ -94,11 +95,11 @@ public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayloadTest {
       InstantiateVAppTemplateOptions options = new InstantiateVAppTemplateOptions();
       options.processorCount(1).memory(512).disk(1024);
 
-      String expected = Utils
+      String expected = Strings2
                .toStringAndClose(getClass().getResourceAsStream("/express/newvapp-hostingcpumemdisk.xml"));
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(new Object[] { options }).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object>of( options)).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
@@ -116,12 +117,12 @@ public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayloadTest {
    }
 
    public void testWithNetworkNameDhcpFenceMode() throws IOException {
-      String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
+      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/express/newvapp-hostingnetworknamedhcpfencemode.xml"));
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(new Object[] {}).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object>of()).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 

@@ -39,7 +39,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "boxdotnet.BoxDotNetClientLiveTest")
+@Test(groups = "live")
 public class BoxDotNetClientLiveTest {
 
    private BoxDotNetClient connection;

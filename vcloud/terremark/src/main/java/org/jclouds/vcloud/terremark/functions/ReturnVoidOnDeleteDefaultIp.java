@@ -19,7 +19,7 @@
 
 package org.jclouds.vcloud.terremark.functions;
 
-import static org.jclouds.util.Utils.propagateOrNull;
+import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import java.util.regex.Pattern;
 

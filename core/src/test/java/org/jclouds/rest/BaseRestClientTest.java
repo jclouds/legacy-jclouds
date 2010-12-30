@@ -22,7 +22,6 @@ package org.jclouds.rest;
 import static com.google.common.base.Throwables.propagate;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.jclouds.http.HttpUtils.sortAndConcatHeadersIntoString;
-import static org.jclouds.util.Utils.toStringAndClose;
 import static org.mortbay.jetty.HttpHeaders.TRANSFER_ENCODING;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
@@ -45,11 +44,18 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.util.Strings2;
+import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
+@Test(groups = "unit")
 public abstract class BaseRestClientTest {
 
    protected Injector injector;
@@ -71,8 +77,10 @@ public abstract class BaseRestClientTest {
 
       @Override
       protected void configure() {
-         bind(ExecutorService.class).annotatedWith(Names.named(Constants.PROPERTY_USER_THREADS)).toInstance(MoreExecutors.sameThreadExecutor());
-         bind(ExecutorService.class).annotatedWith(Names.named(Constants.PROPERTY_IO_WORKER_THREADS)).toInstance(MoreExecutors.sameThreadExecutor());
+         bind(ExecutorService.class).annotatedWith(Names.named(Constants.PROPERTY_USER_THREADS)).toInstance(
+               MoreExecutors.sameThreadExecutor());
+         bind(ExecutorService.class).annotatedWith(Names.named(Constants.PROPERTY_IO_WORKER_THREADS)).toInstance(
+               MoreExecutors.sameThreadExecutor());
          bind(TransformingHttpCommandExecutorService.class).toInstance(mock);
       }
    }
@@ -88,7 +96,7 @@ public abstract class BaseRestClientTest {
       } else {
          String payload = null;
          try {
-            payload = toStringAndClose(request.getPayload().getInput());
+            payload = Strings2.toStringAndClose(request.getPayload().getInput());
          } catch (IOException e) {
             propagate(e);
          }
@@ -110,8 +118,7 @@ public abstract class BaseRestClientTest {
          assertEquals(md.getContentLength(), length);
       } else {
          assertEquals(request.getFirstHeaderOrNull(TRANSFER_ENCODING), "chunked");
-         assert md.getContentLength() == null
-               || md.getContentLength().equals(length);
+         assert md.getContentLength() == null || md.getContentLength().equals(length);
       }
       assertEquals(md.getContentType(), contentType);
       assertEquals(md.getContentDisposition(), contentDispositon);
@@ -131,11 +138,15 @@ public abstract class BaseRestClientTest {
 
    protected void assertExceptionParserClassEquals(Method method, @Nullable Class<?> parserClass) {
       if (parserClass == null)
-         assertEquals(RestAnnotationProcessor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(injector,
-               method).getClass(), MapHttp4xxCodesToExceptions.class);
+         assertEquals(
+               RestAnnotationProcessor
+                     .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(injector, method).getClass(),
+               MapHttp4xxCodesToExceptions.class);
       else
-         assertEquals(RestAnnotationProcessor.createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(injector,
-               method).getClass(), parserClass);
+         assertEquals(
+               RestAnnotationProcessor
+                     .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(injector, method).getClass(),
+               parserClass);
    }
 
    protected void assertSaxResponseParserClassEquals(Method method, @Nullable Class<?> parserClass) {

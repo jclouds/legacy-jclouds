@@ -39,7 +39,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 
-@Test(sequential = true, testName = "perftest.JCloudsApacheHCPerformanceLiveTest", groups = { "live" })
+@Test(sequential = true, groups = { "live" })
 public class JCloudsApacheHCPerformanceLiveTest extends BaseJCloudsPerformanceLiveTest {
 
    @Override

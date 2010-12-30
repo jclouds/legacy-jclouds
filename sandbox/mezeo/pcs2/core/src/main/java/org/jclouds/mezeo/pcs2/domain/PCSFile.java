@@ -19,10 +19,11 @@
 
 package org.jclouds.mezeo.pcs2.domain;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.io.PayloadEnclosing;
 
 import com.google.common.collect.Multimap;
-import com.google.inject.internal.Nullable;
 
 /**
  * 

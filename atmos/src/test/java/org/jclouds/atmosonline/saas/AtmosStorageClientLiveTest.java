@@ -40,7 +40,8 @@ import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.InputStreamPayload;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Assertions;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
@@ -53,7 +54,7 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "emcsaas.AtmosStorageClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class AtmosStorageClientLiveTest extends BaseBlobStoreIntegrationTest {
 
    public AtmosStorageClient getApi() {
@@ -187,7 +188,7 @@ public class AtmosStorageClientLiveTest extends BaseBlobStoreIntegrationTest {
    }
 
    Object makeData(String in, boolean stream) {
-      return stream ? Utils.toInputStream(in) : in;
+      return stream ? Strings2.toInputStream(in) : in;
    }
 
    private void createOrReplaceObject(String name, Object data, String metadataValue) throws Exception {
@@ -239,14 +240,14 @@ public class AtmosStorageClientLiveTest extends BaseBlobStoreIntegrationTest {
    private static void verifyHeadObject(AtmosStorageClient connection, String path, String metadataValue)
             throws InterruptedException, ExecutionException, TimeoutException, IOException {
       AtmosObject getBlob = connection.headFile(path);
-      assertEquals(Utils.toStringAndClose(getBlob.getPayload().getInput()), "");
+      assertEquals(Strings2.toStringAndClose(getBlob.getPayload().getInput()), "");
       verifyMetadata(metadataValue, getBlob);
    }
 
    private static void verifyObject(AtmosStorageClient connection, String path, String compare, String metadataValue)
             throws InterruptedException, ExecutionException, TimeoutException, IOException {
       AtmosObject getBlob = connection.readFile(path);
-      assertEquals(Utils.toStringAndClose(getBlob.getPayload().getInput()), compare);
+      assertEquals(Strings2.toStringAndClose(getBlob.getPayload().getInput()), compare);
       verifyMetadata(metadataValue, getBlob);
    }
 
@@ -269,7 +270,7 @@ public class AtmosStorageClientLiveTest extends BaseBlobStoreIntegrationTest {
       assert md.getUserID() != null;
 
       try {
-         Utils.toStringAndClose(URI.create(
+         Strings2.toStringAndClose(URI.create(
                   "http://accesspoint.emccis.com/rest/objects/" + getBlob.getSystemMetadata().getObjectID()).toURL()
                   .openStream());
          assert false : "shouldn't have worked, since it is private";
@@ -325,7 +326,7 @@ public class AtmosStorageClientLiveTest extends BaseBlobStoreIntegrationTest {
          getApi().deletePath(path);
       } catch (KeyNotFoundException ex) {
       }
-      assert Utils.eventuallyTrue(new Supplier<Boolean>() {
+      assert Assertions.eventuallyTrue(new Supplier<Boolean>() {
          public Boolean get() {
             return !getApi().pathExists(path);
          }

@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
 /**
  * @author Oleksiy Yarmula
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "gogrid.GoGridComputeServiceLiveTest")
+@Test(groups = "live", enabled = true, sequential = true)
 public class GoGridComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public GoGridComputeServiceLiveTest() {
       provider = "gogrid";

@@ -35,7 +35,8 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.ResourceAllocationHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "ResourceAllocationHandlerTest")
 public class ResourceAllocationHandlerTest extends BaseHandlerTest {
 
    @BeforeTest

@@ -35,7 +35,7 @@ import com.google.common.collect.Multimap;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "s3.PutBucketOptionsTest")
+@Test(groups = "unit")
 public class PutBucketOptionsTest {
 
    @Test

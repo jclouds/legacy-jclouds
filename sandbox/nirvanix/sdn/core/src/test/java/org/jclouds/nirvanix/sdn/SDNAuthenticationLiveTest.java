@@ -32,7 +32,7 @@ import org.jclouds.concurrent.Timeout;
 import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -74,7 +74,7 @@ public class SDNAuthenticationLiveTest {
       identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
       credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
-      ContextSpec<SDNAuthClient, SDNAuthAsyncClient> contextSpec = contextSpec("test", endpoint, "1", identity,
+      RestContextSpec<SDNAuthClient, SDNAuthAsyncClient> contextSpec = contextSpec("test", endpoint, "1", identity,
                credential, SDNAuthClient.class, SDNAuthAsyncClient.class);
 
       context = createContextBuilder(

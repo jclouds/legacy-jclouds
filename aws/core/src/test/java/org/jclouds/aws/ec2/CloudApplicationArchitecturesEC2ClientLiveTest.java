@@ -37,6 +37,7 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.Constants;
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.ec2.domain.BlockDeviceMapping;
+import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.domain.IpProtocol;
@@ -44,10 +45,10 @@ import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
-import org.jclouds.aws.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.aws.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.aws.ec2.predicates.InstanceHasIpAddress;
 import org.jclouds.aws.ec2.predicates.InstanceStateRunning;
+import org.jclouds.domain.Credentials;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
@@ -78,7 +79,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = false, sequential = true, testName = "ec2.CloudApplicationArchitecturesEC2ClientLiveTest")
+@Test(groups = "live", enabled = false, sequential = true)
 public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
    private EC2Client client;
@@ -102,10 +103,10 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
+            + ".credential");
       endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
       apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
-               + ".apiversion");
+            + ".apiversion");
    }
 
    protected Properties setupProperties() {
@@ -124,11 +125,11 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       Injector injector = new RestContextFactory().createContextBuilder(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).buildInjector();
+            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).buildInjector();
       client = injector.getInstance(EC2Client.class);
       sshFactory = injector.getInstance(SshClient.Factory.class);
       runningTester = new RetryablePredicate<RunningInstance>(new InstanceStateRunning(client), 180, 5,
-               TimeUnit.SECONDS);
+            TimeUnit.SECONDS);
       hasIpTester = new RetryablePredicate<RunningInstance>(new InstanceHasIpAddress(client), 180, 5, TimeUnit.SECONDS);
       SocketOpen socketOpen = injector.getInstance(SocketOpen.class);
       socketTester = new RetryablePredicate<IPSocket>(socketOpen, 180, 1, TimeUnit.SECONDS);
@@ -146,7 +147,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       client.getSecurityGroupServices().createSecurityGroupInRegion(null, securityGroupName, securityGroupName);
       for (int port : new int[] { 80, 443, 22 }) {
          client.getSecurityGroupServices().authorizeSecurityGroupIngressInRegion(null, securityGroupName,
-                  IpProtocol.TCP, port, port, "0.0.0.0/0");
+               IpProtocol.TCP, port, port, "0.0.0.0/0");
       }
    }
 
@@ -170,9 +171,9 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    @Test(enabled = false, dependsOnMethods = { "testCreateKeyPair", "testCreateSecurityGroupIngressCidr" })
    public void testCreateRunningInstance() throws Exception {
       String script = new ScriptBuilder() // lamp install script
-               .addStatement(exec("runurl run.alestic.com/apt/upgrade"))//
-               .addStatement(exec("runurl run.alestic.com/install/lamp"))//
-               .render(OsFamily.UNIX);
+            .addStatement(exec("runurl run.alestic.com/apt/upgrade"))//
+            .addStatement(exec("runurl run.alestic.com/install/lamp"))//
+            .render(OsFamily.UNIX);
 
       RunningInstance instance = null;
       while (instance == null) {
@@ -180,25 +181,25 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
             System.out.printf("%d: running instance%n", System.currentTimeMillis());
             Reservation<? extends RunningInstance> reservation = client.getInstanceServices().runInstancesInRegion(
-                     null, null, // allow
-                     // ec2
-                     // to
-                     // chose
-                     // an
-                     // availability
-                     // zone
-                     "ami-ccf615a5", // alestic ami allows auto-invoke of
-                     // user data scripts
-                     1, // minimum instances
-                     1, // maximum instances
-                     asType(InstanceType.M1_SMALL) // smallest instance size
-                              .withKeyName(keyPair.getKeyName()) // key I
-                              // created
-                              // above
-                              .withSecurityGroup(securityGroupName) // group I
-                              // created
-                              // above
-                              .withUserData(script.getBytes())); // script to
+                  null, null, // allow
+                  // ec2
+                  // to
+                  // chose
+                  // an
+                  // availability
+                  // zone
+                  "ami-ccf615a5", // alestic ami allows auto-invoke of
+                  // user data scripts
+                  1, // minimum instances
+                  1, // maximum instances
+                  asType(InstanceType.M1_SMALL) // smallest instance size
+                        .withKeyName(keyPair.getKeyName()) // key I
+                        // created
+                        // above
+                        .withSecurityGroup(securityGroupName) // group I
+                        // created
+                        // above
+                        .withUserData(script.getBytes())); // script to
             // run as root
 
             instance = Iterables.getOnlyElement(reservation);
@@ -232,14 +233,14 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
 
       assert client.getInstanceServices().getKernelForInstanceInRegion(null, instanceId).startsWith("aki-");
 
-      assertEquals(InstanceType.M1_SMALL, client.getInstanceServices().getInstanceTypeForInstanceInRegion(null,
-               instanceId));
+      assertEquals(InstanceType.M1_SMALL,
+            client.getInstanceServices().getInstanceTypeForInstanceInRegion(null, instanceId));
 
       assertEquals(InstanceInitiatedShutdownBehavior.TERMINATE, client.getInstanceServices()
-               .getInstanceInitiatedShutdownBehaviorForInstanceInRegion(null, instanceId));
+            .getInstanceInitiatedShutdownBehaviorForInstanceInRegion(null, instanceId));
 
       assertEquals(ImmutableMap.<String, EbsBlockDevice> of(), client.getInstanceServices()
-               .getBlockDeviceMappingForInstanceInRegion(null, instanceId));
+            .getBlockDeviceMappingForInstanceInRegion(null, instanceId));
    }
 
    private void setApiTerminationDisabledForInstanceInRegion() {
@@ -310,7 +311,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    private void setInstanceInitiatedShutdownBehaviorForInstanceInRegion() {
       try {
          client.getInstanceServices().setInstanceInitiatedShutdownBehaviorForInstanceInRegion(null, instanceId,
-                  InstanceInitiatedShutdownBehavior.STOP);
+               InstanceInitiatedShutdownBehavior.STOP);
          assert false : "shouldn't be allowed, as instance needs to be ebs based-ami";
       } catch (AWSResponseException e) {
          assertEquals("UnsupportedInstanceAttribute", e.getError().getCode());
@@ -325,8 +326,8 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       Thread.sleep(1000);
       instance = getInstance(instanceId);
       blockUntilWeCanSshIntoInstance(instance);
-      SshClient ssh = sshFactory.create(new IPSocket(instance.getIpAddress(), 22), "root", keyPair.getKeyMaterial()
-               .getBytes());
+      SshClient ssh = sshFactory.create(new IPSocket(instance.getIpAddress(), 22),
+            new Credentials("root", keyPair.getKeyMaterial()));
       try {
          ssh.connect();
          ExecResponse uptime = ssh.exec("uptime");
@@ -343,7 +344,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       assertNotNull(address);
 
       PublicIpInstanceIdPair compare = Iterables.getLast(client.getElasticIPAddressServices()
-               .describeAddressesInRegion(null, address));
+            .describeAddressesInRegion(null, address));
 
       assertEquals(compare.getPublicIp(), address);
       assert compare.getInstanceId() == null;
@@ -356,7 +357,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       assertEquals(compare.getInstanceId(), instanceId);
 
       Reservation<? extends RunningInstance> reservation = Iterables.getOnlyElement(client.getInstanceServices()
-               .describeInstancesInRegion(null, instanceId));
+            .describeInstancesInRegion(null, instanceId));
 
       assertNotNull(Iterables.getOnlyElement(reservation).getIpAddress());
       assertFalse(Iterables.getOnlyElement(reservation).getIpAddress().equals(address));
@@ -382,7 +383,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
       instance = getInstance(instance.getId());
 
       System.out
-               .printf("%d: %s awaiting instance to have ip assigned %n", System.currentTimeMillis(), instance.getId());
+            .printf("%d: %s awaiting instance to have ip assigned %n", System.currentTimeMillis(), instance.getId());
       assert hasIpTester.apply(instance);
 
       System.out.printf("%d: %s awaiting ssh service to start%n", System.currentTimeMillis(), instance.getIpAddress());
@@ -401,7 +402,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    private RunningInstance getInstance(String instanceId) {
       // search my identity for the instance I just created
       Set<? extends Reservation<? extends RunningInstance>> reservations = client.getInstanceServices()
-               .describeInstancesInRegion(null, instanceId); // last parameter
+            .describeInstancesInRegion(null, instanceId); // last parameter
       // (ids) narrows the
       // search
 
@@ -430,7 +431,7 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    }
 
    private void doCheckKey(String address) {
-      SshClient ssh = sshFactory.create(new IPSocket(address, 22), "root", keyPair.getKeyMaterial().getBytes());
+      SshClient ssh = sshFactory.create(new IPSocket(address, 22), new Credentials("root", keyPair.getKeyMaterial()));
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");

@@ -17,32 +17,29 @@
  * ====================================================================
  */
 
-package org.jclouds.atmosonline.saas.domain.internal;
+package org.jclouds.util;
 
-import java.util.HashSet;
-
-import org.jclouds.atmosonline.saas.domain.BoundedSet;
-
-import com.google.common.collect.Iterables;
+import com.google.common.base.Supplier;
 
 /**
  * 
  * @author Adrian Cole
- * 
  */
-public class BoundedHashSet<T> extends HashSet<T> implements BoundedSet<T> {
+public class Assertions {
 
-   /** The serialVersionUID */
-   private static final long serialVersionUID = -7133632087734650835L;
-   protected final String token;
-
-   public BoundedHashSet(Iterable<T> contents, String token) {
-      Iterables.addAll(this, contents);
-      this.token = token;
+   public static boolean eventuallyTrue(Supplier<Boolean> assertion, long inconsistencyMillis)
+         throws InterruptedException {
+   
+      for (int i = 0; i < 30; i++) {
+         if (!assertion.get()) {
+            Thread.sleep(inconsistencyMillis / 30);
+            continue;
+         }
+         return true;
+      }
+      return false;
    }
 
-   public String getToken() {
-      return token;
-   }
 
+  
 }

@@ -53,7 +53,7 @@ public class BindNamesToQueryParamsTest {
 
       });
 
-      binder.bindToRequest(request, input);
+      request = binder.bindToRequest(request, input);
 
       assertEquals(request.getRequestLine(), "GET http://momma/?name=hello&name=world HTTP/1.1");
    }

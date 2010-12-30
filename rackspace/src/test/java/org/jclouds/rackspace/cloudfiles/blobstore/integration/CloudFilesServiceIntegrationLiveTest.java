@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "cloudfiles.CloudFilesServiceIntegrationTest")
+@Test(groups = "live")
 public class CloudFilesServiceIntegrationLiveTest extends BaseServiceIntegrationTest {
 
 }

@@ -49,7 +49,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "simpledb.SimpleDBAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "SimpleDBAsyncClientTest")
 public class SimpleDBAsyncClientTest extends RestClientTest<SimpleDBAsyncClient> {
 
    @RequiresHttp

@@ -38,7 +38,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.KeyPairAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "KeyPairAsyncClientTest")
 public class KeyPairAsyncClientTest extends BaseEC2AsyncClientTest<KeyPairAsyncClient> {
 
    public void testDeleteKeyPair() throws SecurityException, NoSuchMethodException, IOException {

@@ -35,7 +35,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.OvfEnvelopeHandlerTest")
+@Test(groups = "unit")
 public class OvfEnvelopeHandlerTest {
    public void testVCloud1_0() {
       InputStream is = getClass().getResourceAsStream("/ovf.xml");

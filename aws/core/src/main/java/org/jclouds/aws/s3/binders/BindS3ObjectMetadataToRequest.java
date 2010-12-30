@@ -20,6 +20,7 @@
 package org.jclouds.aws.s3.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -29,6 +30,7 @@ import org.jclouds.aws.s3.blobstore.functions.ObjectToBlob;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.blobstore.binders.BindUserMetadataToHeadersWithPrefix;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 /**
@@ -36,27 +38,33 @@ import org.jclouds.rest.Binder;
  * @author Adrian Cole
  */
 @Singleton
-public class BindS3ObjectToPayload implements Binder {
+public class BindS3ObjectMetadataToRequest implements Binder {
    private final BindUserMetadataToHeadersWithPrefix blobBinder;
    private final ObjectToBlob object2Blob;
 
    @Inject
-   public BindS3ObjectToPayload(ObjectToBlob object2Blob, BindUserMetadataToHeadersWithPrefix blobBinder) {
-      this.blobBinder = blobBinder;
-      this.object2Blob = object2Blob;
+   public BindS3ObjectMetadataToRequest(ObjectToBlob object2Blob, BindUserMetadataToHeadersWithPrefix blobBinder) {
+      this.blobBinder = checkNotNull(blobBinder, "blobBinder");
+      this.object2Blob = checkNotNull(object2Blob, "object2Blob");
    }
 
-   public void bindToRequest(HttpRequest request, Object payload) {
-      S3Object s3Object = (S3Object) payload;
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof S3Object, "this binder is only valid for S3Object!");
+      checkNotNull(request, "request");
+
+      S3Object s3Object = S3Object.class.cast(input);
+      checkArgument(s3Object.getMetadata().getKey() != null, "s3Object.getMetadata().getKey() must be set!");
       checkArgument(s3Object.getPayload().getContentMetadata().getContentLength() != null,
-               "contentLength must be set, streaming not supported");
+            "contentLength must be set, streaming not supported");
       checkArgument(s3Object.getPayload().getContentMetadata().getContentLength() <= 5l * 1024 * 1024 * 1024,
-               "maximum size for put object is 5GB");
-      blobBinder.bindToRequest(request, object2Blob.apply(s3Object));
+            "maximum size for put object is 5GB");
+      request = blobBinder.bindToRequest(request, object2Blob.apply(s3Object));
 
       if (s3Object.getMetadata().getCacheControl() != null) {
-         request.getHeaders().put(HttpHeaders.CACHE_CONTROL, s3Object.getMetadata().getCacheControl());
+         request = ModifyRequest.replaceHeader(request, HttpHeaders.CACHE_CONTROL, s3Object.getMetadata()
+               .getCacheControl());
       }
-
+      return request;
    }
 }

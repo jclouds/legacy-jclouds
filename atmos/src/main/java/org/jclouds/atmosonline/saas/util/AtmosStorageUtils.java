@@ -36,7 +36,7 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Assertions;
 
 import com.google.common.base.Supplier;
 
@@ -61,7 +61,7 @@ public class AtmosStorageUtils {
             InputStream content) throws HttpException {
       AtmosStorageError error = (AtmosStorageError) factory.create(errorHandlerProvider.get()).parse(content);
       if (error.getCode() == 1032) {
-         error.setStringSigned(signer.createStringToSign(command.getRequest()));
+         error.setStringSigned(signer.createStringToSign(command.getCurrentRequest()));
       }
       return error;
 
@@ -77,7 +77,7 @@ public class AtmosStorageUtils {
 
    public static void deleteAndEnsureGone(final AtmosStorageClient sync, final String path) {
       try {
-         if (!Utils.eventuallyTrue(new Supplier<Boolean>() {
+         if (!Assertions.eventuallyTrue(new Supplier<Boolean>() {
             public Boolean get() {
                sync.deletePath(path);
                return !sync.pathExists(path);

@@ -37,16 +37,17 @@ import org.jclouds.rackspace.config.RackspaceParserModule;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
 /**
- * Tests behavior of {@code ParseObjectInfoListFromJsonResponseTest}
+ * Tests behavior of {@code ParseObjectInfoListFromJsonResponse}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudfiles.ParseObjectInfoListFromJsonResponseTest")
+@Test(groups = "unit")
 public class ParseObjectInfoListFromJsonResponseTest {
 
    Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
@@ -70,8 +71,8 @@ public class ParseObjectInfoListFromJsonResponseTest {
       expects.add(two);
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       ListContainerOptions options = new ListContainerOptions();
-      expect(request.getArgs()).andReturn(new Object[] { "containter", new ListContainerOptions[] { options } })
-               .atLeastOnce();
+      expect(request.getArgs()).andReturn(
+            ImmutableList.<Object> of("containter", new ListContainerOptions[] { options })).atLeastOnce();
       replay(request);
       ParseObjectInfoListFromJsonResponse parser = i.getInstance(ParseObjectInfoListFromJsonResponse.class);
       parser.setContext(request);

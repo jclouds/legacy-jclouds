@@ -43,11 +43,11 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code ParseServerFromJsonResponseTest}
+ * Tests behavior of {@code ParseServerFromJsonResponse}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudservers.ParseServerFromJsonResponseTest")
+@Test(groups = "unit")
 public class ParseServerFromJsonResponseTest {
 
    public void testApplyInputStreamDetails() throws UnknownHostException {

@@ -44,7 +44,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "terremark.TerremarkVCloudExpressNetworkHandlerTest")
+@Test(groups = "unit")
 public class TerremarkVCloudExpressNetworkHandlerTest {
 
    private Injector injector;

@@ -25,10 +25,16 @@ import org.jclouds.aws.domain.AWSError;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
-@Test(groups = "unit", testName = "s3.ErrorHandlerTest")
+/**
+ * Tests behavior of {@code ErrorHandler}
+ * 
+ * @author Adrian Cole
+ */
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "ErrorHandlerTest")
 public class ErrorHandlerTest extends BaseHandlerTest {
    public static final String errorFromAmazonIfYouDontRemoveTransferEncodingHeader = "<Error><Code>NotImplemented</Code><Message>A header you provided implies functionality that is not implemented</Message><Header>Transfer-Encoding</Header><RequestId>7C59925D75D15561</RequestId><HostId>fbskVU51OZJg2yZS/wNIxoE2PmCf0ZqFd0iH6Vrzw0uKG3KmokswBytL/Bfp/GWb</HostId></Error>";
 
@@ -40,7 +46,7 @@ public class ErrorHandlerTest extends BaseHandlerTest {
    @Test
    public void testErrorFromAmazonIfYouDontRemoveTransferEncodingHeader() throws HttpException {
       ParseSax<AWSError> parser = createParser();
-      AWSError error = parser.parse(Utils.toInputStream(errorFromAmazonIfYouDontRemoveTransferEncodingHeader));
+      AWSError error = parser.parse(Strings2.toInputStream(errorFromAmazonIfYouDontRemoveTransferEncodingHeader));
       assertEquals(error.getCode(), "NotImplemented");
       assertEquals(error.getMessage(), "A header you provided implies functionality that is not implemented");
       assertEquals(error.getDetails().get("Header"), "Transfer-Encoding");
@@ -51,7 +57,7 @@ public class ErrorHandlerTest extends BaseHandlerTest {
    public void testErrorFromEucalyptusWhenGroupAlreadyExists() throws HttpException {
       ParseSax<AWSError> parser = createParser();
       AWSError error = parser
-               .parse(Utils
+               .parse(Strings2
                         .toInputStream("<?xml version=\"1.0\"?><Response><Errors><Error><Code>Groups</Code><Message>\nError adding network group: group named jclouds#eucrun#Eucalyptus already exists\nError adding network group: group named jclouds#eucrun#Eucalyptus already exists</Message></Error></Errors><RequestID>e0133975-3bc5-456d-9753-1d61b27e07e9</RequestID></Response>"));
       assertEquals(error.getCode(), "Groups");
       assertEquals(

@@ -37,19 +37,19 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class BindUserGroupsToIndexedFormParams implements Binder {
-
-   public void bindToRequest(HttpRequest request, Object input) {
-      checkArgument(checkNotNull(input, "input") instanceof Iterable<?>,
-               "this binder is only valid for Iterable<?>: " + input.getClass());
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof Iterable<?>, "this binder is only valid for Iterable<?>: "
+            + input.getClass());
       checkValidUserGroup(input);
-      indexIterableToFormValuesWithPrefix(request, "UserGroup", input);
+      return indexIterableToFormValuesWithPrefix(request, "UserGroup", input);
    }
 
    private void checkValidUserGroup(Object input) {
       Iterable<?> values = (Iterable<?>) input;
       long size = Iterables.size(values);
       checkArgument(size == 0 || (size == 1 && Iterables.getOnlyElement(values).equals("all")),
-               "only supported UserGroup is 'all'");
+            "only supported UserGroup is 'all'");
    }
 
 }

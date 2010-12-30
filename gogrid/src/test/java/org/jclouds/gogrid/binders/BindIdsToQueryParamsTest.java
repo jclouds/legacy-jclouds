@@ -52,7 +52,7 @@ public class BindIdsToQueryParamsTest {
 
       });
 
-      binder.bindToRequest(request, new Long[] { 123L, 456L });
+      request = binder.bindToRequest(request, new Long[] { 123L, 456L });
 
       assertEquals(request.getRequestLine(), "GET http://momma/?id=123&id=456 HTTP/1.1");
    }
@@ -70,7 +70,7 @@ public class BindIdsToQueryParamsTest {
 
       });
 
-      binder.bindToRequest(request, new long[] { 123L, 456L });
+      request = binder.bindToRequest(request, new long[] { 123L, 456L });
 
       assertEquals(request.getRequestLine(), "GET http://momma/?id=123&id=456 HTTP/1.1");
    }

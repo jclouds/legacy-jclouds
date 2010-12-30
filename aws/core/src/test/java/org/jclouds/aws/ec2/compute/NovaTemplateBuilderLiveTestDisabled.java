@@ -42,7 +42,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(enabled = false, groups = "live", testName = "ec2.NebulaTemplateBuilderLiveTest")
+@Test(enabled = false, groups = "live")
 public class NovaTemplateBuilderLiveTestDisabled {
    protected String provider = "nova";
    protected String identity;

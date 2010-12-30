@@ -36,15 +36,15 @@ import org.jclouds.rest.Binder;
  */
 @Singleton
 public class BindPayerToXmlPayload implements Binder {
-
-   public void bindToRequest(HttpRequest request, Object toBind) {
-      checkArgument(checkNotNull(toBind, "toBind") instanceof Payer,
-               "this binder is only valid for Payer!");
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object toBind) {
+      checkArgument(checkNotNull(toBind, "toBind") instanceof Payer, "this binder is only valid for Payer!");
       String text = String
-               .format(
-                        "<RequestPaymentConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Payer>%s</Payer></RequestPaymentConfiguration>",
-                        ((Payer) toBind).value());
+            .format(
+                  "<RequestPaymentConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Payer>%s</Payer></RequestPaymentConfiguration>",
+                  ((Payer) toBind).value());
       request.setPayload(text);
       request.getPayload().getContentMetadata().setContentType(MediaType.TEXT_XML);
+      return request;
    }
 }

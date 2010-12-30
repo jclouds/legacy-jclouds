@@ -112,7 +112,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     */
    @Override
    @GET
-   @Path("")
    @Consumes(CATALOGITEM_XML)
    @XMLResponseParser(TerremarkCatalogItemHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -126,7 +125,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     */
    @Override
    @GET
-   @Path("")
    @Consumes(CATALOGITEM_XML)
    @XMLResponseParser(TerremarkCatalogItemHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -134,7 +132,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
 
    @Override
    @GET
-   @Path("")
    @XMLResponseParser(TerremarkOrgHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(ORG_XML)
@@ -145,7 +142,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     */
    @Override
    @GET
-   @Path("")
    @XMLResponseParser(TerremarkOrgHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @Consumes(ORG_XML)
@@ -156,7 +152,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     * Terremark does not have multiple catalogs, so we ignore this parameter.
     */
    @GET
-   @Path("")
    @Override
    @XMLResponseParser(CatalogHandler.class)
    @Consumes(CATALOG_XML)
@@ -168,7 +163,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     */
    @Override
    @GET
-   @Path("")
    @XMLResponseParser(TerremarkVDCHandler.class)
    @Consumes(VDC_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -178,7 +172,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     * @see VCloudExpressClient#findVDCInOrgNamed
     */
    @GET
-   @Path("")
    @Override
    @XMLResponseParser(TerremarkVDCHandler.class)
    @Consumes(VDC_XML)
@@ -206,7 +199,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     * @see TerremarkVCloudExpressClient#getAllInternetServicesInVDC
     */
    @GET
-   @Path("")
    @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServicesHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -230,7 +222,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     * @see TerremarkVCloudExpressClient#deletePublicIp
     */
    @DELETE
-   @Path("")
    @ExceptionParser(ReturnVoidOnDeleteDefaultIp.class)
    ListenableFuture<Void> deletePublicIp(@EndpointParam URI ipId);
 
@@ -248,7 +239,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     * @see TerremarkVCloudExpressClient#getPublicIp
     */
    @GET
-   @Path("")
    @Consumes(PUBLICIP_XML)
    @XMLResponseParser(InternetServicesHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -258,7 +248,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     * @see TerremarkVCloudExpressClient#getPublicIpsAssociatedWithVDC
     */
    @GET
-   @Path("")
    @Consumes(PUBLICIPSLIST_XML)
    @XMLResponseParser(PublicIpAddressesHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
@@ -269,7 +258,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     * @see TerremarkVCloudExpressClient#deleteInternetService
     */
    @DELETE
-   @Path("")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteInternetService(@EndpointParam URI internetServiceId);
 
@@ -277,7 +265,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     * @see TerremarkVCloudExpressClient#getInternetService
     */
    @GET
-   @Path("")
    @Consumes(INTERNETSERVICESLIST_XML)
    @XMLResponseParser(InternetServiceHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -310,7 +297,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     * @see TerremarkVCloudExpressClient#getNode
     */
    @GET
-   @Path("")
    @XMLResponseParser(NodeHandler.class)
    @Consumes(NODESERVICE_XML)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -320,7 +306,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     * @see TerremarkVCloudExpressClient#configureNode
     */
    @PUT
-   @Path("")
    @Produces(NODESERVICE_XML)
    @Consumes(NODESERVICE_XML)
    @XMLResponseParser(NodeHandler.class)
@@ -332,7 +317,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     * @see TerremarkVCloudExpressClient#deleteNode
     */
    @DELETE
-   @Path("")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteNode(@EndpointParam URI nodeId);
 
@@ -340,7 +324,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     * @see TerremarkVCloudExpressClient#configureVApp
     */
    @PUT
-   @Path("")
    @Produces(VAPP_XML)
    @Consumes(VAPP_XML)
    @MapBinder(BindVAppConfigurationToXmlPayload.class)
@@ -353,7 +336,6 @@ public interface TerremarkVCloudAsyncClient extends VCloudExpressAsyncClient {
     * @see TerremarkVCloudClient#getCustomizationOptions
     */
    @GET
-   @Path("")
    @XMLResponseParser(CustomizationParametersHandler.class)
    @Consumes(CATALOGITEMCUSTOMIZATIONPARAMETERS_XML)
    ListenableFuture<? extends CustomizationParameters> getCustomizationOptions(@EndpointParam URI customization);

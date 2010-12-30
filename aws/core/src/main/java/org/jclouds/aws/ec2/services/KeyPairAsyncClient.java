@@ -30,7 +30,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.ec2.EC2AsyncClient;
-import org.jclouds.aws.ec2.binders.BindKeyNameToIndexedFormParams;
+import org.jclouds.aws.ec2.binders.BindKeyNamesToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.xml.DescribeKeyPairsResponseHandler;
 import org.jclouds.aws.ec2.xml.KeyPairResponseHandler;
@@ -79,7 +79,7 @@ public interface KeyPairAsyncClient {
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<KeyPair>> describeKeyPairsInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
-            @BinderParam(BindKeyNameToIndexedFormParams.class) String... keyPairNames);
+            @BinderParam(BindKeyNamesToIndexedFormParams.class) String... keyPairNames);
 
    /**
     * @see KeyPairClient#deleteKeyPairInRegion

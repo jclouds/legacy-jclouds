@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "rimuhosting.RimuHostingComputeServiceContextModuleTest")
+@Test(groups = "unit")
 public class RimuHostingComputeServiceContextModuleTest {
 
    public void testAllStatusCovered() {

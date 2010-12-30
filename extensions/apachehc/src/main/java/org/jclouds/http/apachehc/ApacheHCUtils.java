@@ -131,7 +131,7 @@ public class ApacheHCUtils {
          apacheRequest.setEntity(nStringEntity);
       } else if (payload instanceof FilePayload) {
          apacheRequest.setEntity(new FileEntity((File) payload.getRawContent(), payload.getContentMetadata()
-                  .getContentType()));
+               .getContentType()));
       } else if (payload instanceof ByteArrayPayload) {
          ByteArrayEntity Entity = new ByteArrayEntity((byte[]) payload.getRawContent());
          Entity.setContentType(payload.getContentMetadata().getContentType());

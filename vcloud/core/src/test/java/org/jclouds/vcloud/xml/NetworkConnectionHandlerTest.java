@@ -30,11 +30,12 @@ import org.jclouds.vcloud.domain.network.IpAddressAllocationMode;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code NetworkConnectionSectionHandler}
+ * Tests behavior of {@code NetworkConnectionHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.NetworkConnectionSectionHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "NetworkConnectionHandlerTest")
 public class NetworkConnectionHandlerTest extends BaseHandlerTest {
 
    public void testDefault() throws UnknownHostException {

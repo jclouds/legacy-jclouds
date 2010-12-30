@@ -22,9 +22,10 @@ package org.jclouds.rackspace.cloudfiles.functions;
 import static com.google.common.base.Predicates.in;
 import static com.google.common.collect.ImmutableSet.of;
 import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
-import static org.jclouds.util.Utils.propagateOrNull;
+import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import javax.inject.Singleton;
+
 
 import com.google.common.base.Function;
 

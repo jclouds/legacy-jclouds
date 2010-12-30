@@ -18,7 +18,7 @@ import com.vmware.vim25.mo.ServiceInstance;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "vi.ViComputeServiceLiveTest")
+@Test(groups = "live", enabled = true, sequential = true)
 public class ViComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 	
    public ViComputeServiceLiveTest() {

@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "vcloud.BlueLockVCloudDirectorGuestCustomizationLiveTest")
+@Test(groups = "live", enabled = true, sequential = true)
 public class BlueLockVCloudDirectorGuestCustomizationLiveTest extends VCloudGuestCustomizationLiveTest {
 
    public BlueLockVCloudDirectorGuestCustomizationLiveTest() {

@@ -50,7 +50,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
@@ -65,7 +65,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "azureblob.AzureBlobClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class AzureBlobClientLiveTest {
 
    protected AzureBlobClient client;
@@ -295,7 +295,7 @@ public class AzureBlobClientLiveTest {
 
       // Test GET of object (including updated metadata)
       AzureBlob getBlob = client.getBlob(privateContainer, object.getProperties().getName());
-      assertEquals(Utils.toStringAndClose(getBlob.getPayload().getInput()), data);
+      assertEquals(Strings2.toStringAndClose(getBlob.getPayload().getInput()), data);
       // TODO assertEquals(getBlob.getName(), object.getProperties().getName());
       assertEquals(getBlob.getPayload().getContentMetadata().getContentLength(), new Long(data.length()));
       assertEquals(getBlob.getProperties().getContentMetadata().getContentType(), "text/plain");

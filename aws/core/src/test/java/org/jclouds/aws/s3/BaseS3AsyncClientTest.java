@@ -32,9 +32,15 @@ import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import com.google.inject.TypeLiteral;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
+@Test(groups = "unit")
 public abstract class BaseS3AsyncClientTest extends RestClientTest<S3AsyncClient> {
 
    protected BlobToObject blobToS3Object;

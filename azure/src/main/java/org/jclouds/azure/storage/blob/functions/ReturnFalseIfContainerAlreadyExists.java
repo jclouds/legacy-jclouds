@@ -19,7 +19,7 @@
 
 package org.jclouds.azure.storage.blob.functions;
 
-import static org.jclouds.util.Utils.propagateOrNull;
+import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import org.jclouds.azure.storage.AzureStorageResponseException;
 

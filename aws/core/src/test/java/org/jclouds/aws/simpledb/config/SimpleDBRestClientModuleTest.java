@@ -44,7 +44,7 @@ import com.google.inject.Module;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "simpledb.SimpleDBRestClientModuleTest")
+@Test(groups = "unit")
 public class SimpleDBRestClientModuleTest {
 
    Injector createInjector() {

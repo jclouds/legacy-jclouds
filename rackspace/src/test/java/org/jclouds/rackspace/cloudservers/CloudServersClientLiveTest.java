@@ -59,7 +59,7 @@ import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -77,7 +77,7 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 // disabled [Web Hosting #129069
-@Test(groups = "live", sequential = true, testName = "cloudservers.CloudServersClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class CloudServersClientLiveTest {
 
    protected CloudServersClient client;
@@ -412,7 +412,7 @@ public class CloudServersClientLiveTest {
       try {
          client.connect();
          Payload etcPasswd = client.get("/etc/jclouds.txt");
-         String etcPasswdContents = Utils.toStringAndClose(etcPasswd.getInput());
+         String etcPasswdContents = Strings2.toStringAndClose(etcPasswd.getInput());
          assertEquals("rackspace", etcPasswdContents.trim());
       } finally {
          if (client != null)

@@ -19,6 +19,8 @@
 
 package org.jclouds.http;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
@@ -39,63 +41,107 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 public class TransformingHttpCommandImpl<T> implements TransformingHttpCommand<T> {
 
-   private final TransformingHttpCommandExecutorService executorService;
-   private final Function<HttpResponse, T> transformer;
+   protected final TransformingHttpCommandExecutorService executorService;
+   protected final Function<HttpResponse, T> transformer;
 
-   private HttpRequest request;
-   private volatile int failureCount;
+   protected volatile HttpRequest request;
+   protected volatile int failureCount;
+   protected volatile int redirectCount;
+   protected volatile Exception exception;
 
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private volatile int redirectCount;
-   protected volatile Exception exception;
-
    @Inject
-   public TransformingHttpCommandImpl(TransformingHttpCommandExecutorService executorService,
-            HttpRequest request, Function<HttpResponse, T> transformer) {
-      this.request = request;
-      this.executorService = executorService;
-      this.transformer = transformer;
+   public TransformingHttpCommandImpl(TransformingHttpCommandExecutorService executorService, HttpRequest request,
+         Function<HttpResponse, T> transformer) {
+      this.request = checkNotNull(request, "request");
+      this.executorService = checkNotNull(executorService, "executorService");
+      this.transformer = checkNotNull(transformer, "transformer");
       this.failureCount = 0;
+      this.redirectCount = 0;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public ListenableFuture<T> execute() throws ExecutionException {
       if (exception != null)
          throw new ExecutionException(exception);
       return executorService.submit(this, transformer);
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public int getFailureCount() {
       return failureCount;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public int incrementFailureCount() {
       return ++failureCount;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public void setException(Exception exception) {
       this.exception = exception;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public Exception getException() {
       return exception;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public int incrementRedirectCount() {
       return ++redirectCount;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public int getRedirectCount() {
       return redirectCount;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public boolean isReplayable() {
       return (request.getPayload() == null) ? true : request.getPayload().isRepeatable();
    }
 
-   public HttpRequest getRequest() {
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public HttpRequest getCurrentRequest() {
       return request;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setCurrentRequest(HttpRequest request) {
+      this.request = request;
    }
 
    @Override

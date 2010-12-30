@@ -35,11 +35,11 @@ import org.jclouds.rest.Binder;
  */
 @Singleton
 public class BindPublicIpsToIndexedFormParams implements Binder {
-
-   public void bindToRequest(HttpRequest request, Object input) {
-      checkArgument(checkNotNull(input, "input") instanceof String[],
-               "this binder is only valid for String[] : " + input.getClass());
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof String[], "this binder is only valid for String[] : "
+            + input.getClass());
       String[] addressStrings = (String[]) input;
-      indexStringArrayToFormValuesWithPrefix(request, "PublicIp", addressStrings);
+      return indexStringArrayToFormValuesWithPrefix(request, "PublicIp", addressStrings);
    }
 }

@@ -33,7 +33,7 @@ import org.jclouds.aws.s3.domain.internal.ListBucketResponseImpl;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;
@@ -101,7 +101,7 @@ public class ListBucketHandler extends ParseSax.HandlerWithResult<ListBucketResp
          currentLastModified = dateParser.iso8601DateParse(currentText.toString().trim());
       } else if (qName.equals("ETag")) {
          currentETag = currentText.toString().trim();
-         currentMD5 = CryptoStreams.hex(Utils.replaceAll(currentETag, '"', ""));
+         currentMD5 = CryptoStreams.hex(Strings2.replaceAll(currentETag, '"', ""));
       } else if (qName.equals("Size")) {
          currentSize = new Long(currentText.toString().trim());
       } else if (qName.equals("Owner")) {

@@ -19,21 +19,54 @@
 
 package org.jclouds.io.payloads;
 
+import static com.google.common.collect.Iterables.any;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
+import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
+
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.io.MutableContentMetadata;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Multimap;
 
 /**
  * @author Adrian Cole
  */
 public class BaseMutableContentMetadata implements MutableContentMetadata, Serializable {
+   @Override
+   public void setPropertiesFromHttpHeaders(Multimap<String, String> headers) {
+      boolean chunked = any(headers.entries(), new Predicate<Entry<String, String>>() {
+         @Override
+         public boolean apply(Entry<String, String> input) {
+            return "Transfer-Encoding".equalsIgnoreCase(input.getKey()) && "chunked".equalsIgnoreCase(input.getValue());
+         }
+      });
+      for (Entry<String, String> header : headers.entries()) {
+         if (!chunked && CONTENT_LENGTH.equalsIgnoreCase(header.getKey())) {
+            setContentLength(new Long(header.getValue()));
+         } else if ("Content-MD5".equalsIgnoreCase(header.getKey())) {
+            setContentMD5(CryptoStreams.base64(header.getValue()));
+         } else if (CONTENT_TYPE.equalsIgnoreCase(header.getKey())) {
+            setContentType(header.getValue());
+         } else if ("Content-Disposition".equalsIgnoreCase(header.getKey())) {
+            setContentDisposition(header.getValue());
+         } else if ("Content-Encoding".equalsIgnoreCase(header.getKey())) {
+            setContentEncoding(header.getValue());
+         } else if ("Content-Language".equalsIgnoreCase(header.getKey())) {
+            setContentLanguage(header.getValue());
+         }
+      }
+   }
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 4572381435863125873L;
-   
+
    protected String contentType = "application/unknown";
    protected Long contentLength;
    protected byte[] contentMD5;
@@ -154,8 +187,8 @@ public class BaseMutableContentMetadata implements MutableContentMetadata, Seria
    @Override
    public String toString() {
       return "[contentType=" + contentType + ", contentLength=" + contentLength + ", contentDisposition="
-               + contentDisposition + ", contentEncoding=" + contentEncoding + ", contentLanguage=" + contentLanguage
-               + ", contentMD5=" + Arrays.toString(contentMD5) + "]";
+            + contentDisposition + ", contentEncoding=" + contentEncoding + ", contentLanguage=" + contentLanguage
+            + ", contentMD5=" + Arrays.toString(contentMD5) + "]";
    }
 
    @Override

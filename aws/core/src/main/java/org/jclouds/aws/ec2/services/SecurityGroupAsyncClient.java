@@ -30,7 +30,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.ec2.EC2AsyncClient;
-import org.jclouds.aws.ec2.binders.BindGroupNameToIndexedFormParams;
+import org.jclouds.aws.ec2.binders.BindGroupNamesToIndexedFormParams;
 import org.jclouds.aws.ec2.binders.BindUserIdGroupPairToSourceSecurityGroupFormParams;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.SecurityGroup;
@@ -91,7 +91,7 @@ public interface SecurityGroupAsyncClient {
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<SecurityGroup>> describeSecurityGroupsInRegion(
             @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
-            @BinderParam(BindGroupNameToIndexedFormParams.class) String... securityGroupNames);
+            @BinderParam(BindGroupNamesToIndexedFormParams.class) String... securityGroupNames);
 
    /**
     * @see SecurityGroupClient#authorizeSecurityGroupIngressInRegion(@Nullable Region,

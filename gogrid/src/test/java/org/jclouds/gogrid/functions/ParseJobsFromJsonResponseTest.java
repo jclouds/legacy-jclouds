@@ -52,7 +52,7 @@ import com.google.inject.Provides;
 /**
  * @author Oleksiy Yarmula
  */
-@Test(groups = "unit", testName = "gogrid.ParseJobsFromJsonResponseTest")
+@Test(groups = "unit")
 public class ParseJobsFromJsonResponseTest {
 
    @Test

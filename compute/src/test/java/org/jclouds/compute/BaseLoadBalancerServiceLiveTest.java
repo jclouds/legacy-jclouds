@@ -56,7 +56,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "compute.BaseLoadBalancerServiceTest")
+@Test(groups = "live", sequential = true)
 public abstract class BaseLoadBalancerServiceLiveTest {
    @BeforeClass
    abstract public void setServiceDefaults();

@@ -19,6 +19,33 @@
 
 package org.jclouds.http.ning;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Throwables.propagate;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
+import javax.inject.Singleton;
+import javax.ws.rs.core.HttpHeaders;
+
+import org.jclouds.crypto.CryptoStreams;
+import org.jclouds.http.HttpCommand;
+import org.jclouds.http.HttpCommandExecutorService;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.HttpResponse;
+import org.jclouds.http.handlers.DelegatingErrorHandler;
+import org.jclouds.http.handlers.DelegatingRetryHandler;
+import org.jclouds.http.internal.BaseHttpCommandExecutorService;
+import org.jclouds.io.Payload;
+import org.jclouds.io.Payloads;
+import org.jclouds.io.payloads.FilePayload;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
+
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.LinkedHashMultimap;
@@ -32,31 +59,6 @@ import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Request;
 import com.ning.http.client.RequestBuilder;
 import com.ning.http.client.Response;
-import org.jclouds.crypto.CryptoStreams;
-import org.jclouds.http.HttpCommand;
-import org.jclouds.http.HttpCommandExecutorService;
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
-import org.jclouds.http.handlers.DelegatingErrorHandler;
-import org.jclouds.http.handlers.DelegatingRetryHandler;
-import org.jclouds.http.internal.BaseHttpCommandExecutorService;
-import org.jclouds.io.Payload;
-import org.jclouds.io.Payloads;
-import org.jclouds.io.payloads.FilePayload;
-
-import javax.inject.Singleton;
-import javax.ws.rs.core.HttpHeaders;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Throwables.propagate;
 
 /**
  * Todo Write me
@@ -76,8 +78,8 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
 
    @Inject
    public NingHttpCommandExecutorService(AsyncHttpClient client, ConvertToNingRequest convertToNingRequest,
-            ConvertToJCloudsResponse convertToJCloudsResponse, DelegatingRetryHandler retryHandler,
-            DelegatingErrorHandler errorHandler) {
+         ConvertToJCloudsResponse convertToJCloudsResponse, DelegatingRetryHandler retryHandler,
+         DelegatingErrorHandler errorHandler) {
       this.client = client;
       this.convertToNingRequest = convertToNingRequest;
       this.convertToJCloudsResponse = convertToJCloudsResponse;
@@ -89,7 +91,7 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
    public ListenableFuture<HttpResponse> submit(HttpCommand command) {
       try {
          for (;;) {
-            Future<Response> responseF = client.executeRequest(convertToNingRequest.apply(command.getRequest()));
+            Future<Response> responseF = client.executeRequest(convertToNingRequest.apply(command.getCurrentRequest()));
             final HttpResponse httpResponse = convertToJCloudsResponse.apply(responseF.get());
             int statusCode = httpResponse.getStatusCode();
             if (statusCode >= 300) {
@@ -125,7 +127,7 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
    @Singleton
    public static class ConvertToNingRequest implements Function<HttpRequest, Request> {
 
-       public Request apply(HttpRequest request) {
+      public Request apply(HttpRequest request) {
 
          for (HttpRequestFilter filter : request.getFilters()) {
             filter.filter(request);
@@ -138,22 +140,22 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
             boolean chunked = "chunked".equals(request.getFirstHeaderOrNull("Transfer-Encoding"));
 
             if (request.getPayload().getContentMetadata().getContentMD5() != null)
-               builder.addHeader("Content-MD5", CryptoStreams.base64(request.getPayload().getContentMetadata()
-                        .getContentMD5()));
+               builder.addHeader("Content-MD5",
+                     CryptoStreams.base64(request.getPayload().getContentMetadata().getContentMD5()));
             if (request.getPayload().getContentMetadata().getContentType() != null)
                builder.addHeader(HttpHeaders.CONTENT_TYPE, request.getPayload().getContentMetadata().getContentType());
             if (request.getPayload().getContentMetadata().getContentLanguage() != null)
                builder.addHeader(HttpHeaders.CONTENT_LANGUAGE, request.getPayload().getContentMetadata()
-                        .getContentLanguage());
+                     .getContentLanguage());
             if (request.getPayload().getContentMetadata().getContentEncoding() != null)
                builder.addHeader(HttpHeaders.CONTENT_ENCODING, request.getPayload().getContentMetadata()
-                        .getContentEncoding());
+                     .getContentEncoding());
             if (request.getPayload().getContentMetadata().getContentDisposition() != null)
                builder.addHeader("Content-Disposition", request.getPayload().getContentMetadata()
-                        .getContentDisposition());
+                     .getContentDisposition());
             if (!chunked) {
                Long length = checkNotNull(request.getPayload().getContentMetadata().getContentLength(),
-                        "payload.getContentLength");
+                     "payload.getContentLength");
                builder.addHeader(HttpHeaders.CONTENT_LENGTH, length.toString());
             }
             setPayload(builder, payload);
@@ -171,23 +173,17 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
          return builder.build();
       }
 
-       void setPayload(RequestBuilder requestBuilder, Payload payload) {
-           if (payload instanceof FilePayload) {
-               requestBuilder.setBody(((FilePayload) payload).getRawContent());
-           } else {
-               requestBuilder.setBody(payload.getInput());
-           }
-       }
+      void setPayload(RequestBuilder requestBuilder, Payload payload) {
+         if (payload instanceof FilePayload) {
+            requestBuilder.setBody(((FilePayload) payload).getRawContent());
+         } else {
+            requestBuilder.setBody(payload.getInput());
+         }
+      }
    }
 
    @Singleton
    public static class ConvertToJCloudsResponse implements Function<Response, HttpResponse> {
-      private final HttpUtils utils;
-
-      @Inject
-      ConvertToJCloudsResponse(HttpUtils utils) {
-         this.utils = utils;
-      }
 
       public HttpResponse apply(Response nativeResponse) {
 
@@ -201,14 +197,14 @@ public class NingHttpCommandExecutorService implements HttpCommandExecutorServic
          }
 
          Payload payload = in != null ? Payloads.newInputStreamPayload(in) : null;
-         HttpResponse response = new HttpResponse(nativeResponse.getStatusCode(), nativeResponse.getStatusText(),
-                  payload);
          Multimap<String, String> headers = LinkedHashMultimap.create();
          for (Entry<String, List<String>> header : nativeResponse.getHeaders()) {
             headers.putAll(header.getKey(), header.getValue());
          }
-         utils.setPayloadPropertiesFromHeaders(headers, response);
-         return response;
+         if (payload != null)
+            payload.getContentMetadata().setPropertiesFromHttpHeaders(headers);
+         return new HttpResponse(nativeResponse.getStatusCode(), nativeResponse.getStatusText(), payload,
+               RestAnnotationProcessor.filterOutContentHeaders(headers));
       }
    }
 }

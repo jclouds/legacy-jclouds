@@ -40,7 +40,7 @@ import com.google.common.collect.ImmutableList;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudservers.FlavorToHardwareTest")
+@Test(groups = "unit")
 public class FlavorToHardwareTest {
    Location provider = new LocationImpl(LocationScope.ZONE, "dallas", "description", null);
 

@@ -33,6 +33,7 @@ import org.jclouds.rackspace.RackspaceAuthAsyncClient.AuthenticationResponse;
 import org.jclouds.rackspace.functions.ParseAuthenticationResponseFromHeaders;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableMultimap;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -44,7 +45,7 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudfiles.ParseAuthenticationResponseFromHeadersTest")
+@Test(groups = "unit")
 public class ParseAuthenticationResponseFromHeadersTest {
 
    Injector i = Guice.createInjector(new AbstractModule() {
@@ -63,10 +64,8 @@ public class ParseAuthenticationResponseFromHeadersTest {
       HttpRequest request = new HttpRequest("GET", URI.create("http://realhost:11000/v1.0"));
       parser.setContext(request);
 
-      HttpResponse response = new HttpResponse(204, "No Content", null);
-      response.getHeaders().put("X-Auth-Token", "token");
-      response.getHeaders().put("X-Storage-Token", "token");
-      response.getHeaders().put("X-Storage-Url", "http://127.0.0.1:8080/v1/token");
+      HttpResponse response = new HttpResponse(204, "No Content", null, ImmutableMultimap.<String, String> of(
+            "X-Auth-Token", "token", "X-Storage-Token", "token", "X-Storage-Url", "http://127.0.0.1:8080/v1/token"));
 
       AuthenticationResponse md = parser.apply(response);
       assertEquals(

@@ -41,7 +41,7 @@ import com.google.appengine.repackaged.com.google.common.base.Throwables;
  * 
  * @author Adrian Cole
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "perftest.Jets3tPerformanceLiveTest", groups = { "live" })
+@Test(sequential = true, timeOut = 2 * 60 * 1000, groups = { "live" })
 public class Jets3tPerformanceLiveTest extends BasePerformanceLiveTest {
    private S3Service jetClient;
 

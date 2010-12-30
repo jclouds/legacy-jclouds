@@ -19,7 +19,7 @@
 
 package org.jclouds.atmosonline.saas.xml;
 
-import java.util.SortedSet;
+import java.util.Set;
 
 import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
 import org.jclouds.atmosonline.saas.domain.FileType;
@@ -34,17 +34,16 @@ import com.google.common.collect.Sets;
  * @see <a href="https://community.emc.com/community/labs/atmos_online" />
  * @author Adrian Cole
  */
-public class ListDirectoryResponseHandler extends
-         ParseSax.HandlerWithResult<SortedSet<DirectoryEntry>> {
+public class ListDirectoryResponseHandler extends ParseSax.HandlerWithResult<Set<DirectoryEntry>> {
 
-   private SortedSet<DirectoryEntry> entries = Sets.newTreeSet();
+   private Set<DirectoryEntry> entries = Sets.newLinkedHashSet();
    private String currentObjectId;
    private FileType currentType;
    private String currentName;
 
    private StringBuilder currentText = new StringBuilder();
 
-   public SortedSet<DirectoryEntry> getResult() {
+   public Set<DirectoryEntry> getResult() {
       return entries;
    }
 

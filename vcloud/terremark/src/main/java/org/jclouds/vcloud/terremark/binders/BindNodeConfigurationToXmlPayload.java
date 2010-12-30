@@ -70,16 +70,17 @@ public class BindNodeConfigurationToXmlPayload implements MapBinder {
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       try {
-         stringBinder.bindToRequest(request, generateXml(postParams));
+         return stringBinder.bindToRequest(request, generateXml(postParams));
       } catch (Exception e) {
          Throwables.propagate(e);
       }
+      return request;
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Object input) {
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       throw new IllegalArgumentException("this is a map binder");
    }
 }

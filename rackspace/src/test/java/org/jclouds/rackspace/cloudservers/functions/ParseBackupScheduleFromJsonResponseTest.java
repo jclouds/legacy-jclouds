@@ -44,7 +44,7 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudservers.ParseBackupScheduleFromJsonResponseTest")
+@Test(groups = "unit")
 public class ParseBackupScheduleFromJsonResponseTest {
    Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
 

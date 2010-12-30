@@ -31,7 +31,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.mezeo.pcs2.PCSCloudAsyncClient.Response;
 import org.jclouds.mezeo.pcs2.xml.CloudXlinkHandler;
 import org.jclouds.rest.RestClientTest;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -67,7 +67,7 @@ public class PCSCloudTest extends RestClientTest<PCSCloudAsyncClient> {
    }
 
    @Override
-   public ContextSpec<PCSCloudClient, PCSCloudAsyncClient> createContextSpec() {
+   public RestContextSpec<PCSCloudClient, PCSCloudAsyncClient> createContextSpec() {
       return contextSpec("test", "http://localhost:8080", "1", "identity", "credential",
                PCSCloudClient.class, PCSCloudAsyncClient.class);
    }

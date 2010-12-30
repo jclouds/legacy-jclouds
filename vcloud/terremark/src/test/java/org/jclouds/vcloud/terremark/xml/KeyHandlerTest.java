@@ -29,7 +29,8 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.KeyHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "KeyHandlerTest")
 public class KeyHandlerTest extends BaseHandlerTest {
 
    public void test1() throws UnknownHostException {

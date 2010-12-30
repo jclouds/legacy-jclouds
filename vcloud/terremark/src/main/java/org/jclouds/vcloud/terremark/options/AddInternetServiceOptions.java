@@ -38,13 +38,13 @@ public class AddInternetServiceOptions extends BindAddInternetServiceToXmlPayloa
    String description = null;
    @VisibleForTesting
    String enabled = "true";
-
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       Map<String, String> copy = Maps.newHashMap();
       copy.putAll(postParams);
       copy.put("description", description);
       copy.put("enabled", enabled);
-      super.bindToRequest(request, copy);
+      return super.bindToRequest(request, copy);
    }
 
    public AddInternetServiceOptions disabled() {
