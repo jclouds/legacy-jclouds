@@ -2,6 +2,8 @@ jclouds binding to deltacloud requires a minimum server version of 0.1.0.
 
 To install deltacloud, do the following:
   * OS/X and jruby
+    # use homebrew or equiv to install jruby
+      * brew install jruby
     # install and configure openssl to avoid "certificate verify failed" errors
       # install and link openssl
         * brew install openssl
@@ -18,8 +20,6 @@ To install deltacloud, do the following:
       # test
         * jruby -ropen-uri -e 'p open("https://encrypted.google.com")'
           * should see something like #<StringIO:0x5330cb4b>
-    # use homebrew or equiv to install jruby
-      * brew install jruby
     # install specific version of rack that doesn't conflict with deltacloud
       * jruby -S gem --version 1.1.0 install rack
     # install deltacloud core
