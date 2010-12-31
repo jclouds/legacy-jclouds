@@ -1,5 +1,8 @@
 jclouds binding to deltacloud requires a minimum server version of 0.1.0.
 
+The identity and credential specified in jclouds will pass through deltacloud to 
+the backend, such as gogrid.
+
 To install deltacloud, do the following:
   * OS/X and jruby
     # use homebrew or equiv to install jruby
@@ -31,6 +34,16 @@ To run a local deltacloud server, do the following:
     # export SSL_CERT_FILE=$HOME/certs/cacert.pem
     # jruby -S deltacloudd -i mock 
 
-The identity and credential specified in jclouds will passthrough deltacloud to 
-the backend, such as gogrid.
+Here are some notes about specific cloud providers
+  * terremark
+    # install fog gem
+      * jruby -S gem install fog
+  * rackspace
+    # install cloudfiles gem
+      * jruby -S gem install cloudfiles
+  * ec2
+    # install amazon-ec2 gem
+      * jruby -S gem install amazon-ec2
+
+
 
