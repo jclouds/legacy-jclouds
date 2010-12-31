@@ -38,11 +38,12 @@ public interface TransformingHttpCommandExecutorService {
     * @param <T>
     *           type that is required from the value.
     * @param command
-    *           what to execute
+    *           holds the state of the request, including metadata such as redirect counts
     * @param responseTransformer
     *           how to transform the response from the above command
     * @return value of the intended response.
     */
-   public <T> ListenableFuture<T> submit(HttpCommand command, Function<HttpResponse, T> responseTransformer);
+   public <T, R extends HttpRequest> ListenableFuture<T> submit(HttpCommand command,
+         Function<HttpResponse, T> responseTransformer);
 
 }

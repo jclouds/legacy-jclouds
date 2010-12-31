@@ -31,7 +31,7 @@ import org.jclouds.gogrid.domain.LoadBalancerType;
 import org.jclouds.gogrid.functions.ParseLoadBalancerFromJsonResponse;
 import org.jclouds.gogrid.functions.ParseLoadBalancerListFromJsonResponse;
 import org.jclouds.gogrid.options.AddLoadBalancerOptions;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -39,14 +39,18 @@ import com.google.common.collect.Iterables;
 import com.google.inject.TypeLiteral;
 
 /**
+ * Tests behavior of {@code GridLoadBalancerAsyncClient}
+ * 
  * @author Oleksiy Yarmula
  */
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "GridLoadBalancerAsyncClientTest")
 public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<GridLoadBalancerAsyncClient> {
 
    @Test
    public void testGetLoadBalancerList() throws NoSuchMethodException, IOException {
       Method method = GridLoadBalancerAsyncClient.class.getMethod("getLoadBalancerList");
-      GeneratedHttpRequest<GridLoadBalancerAsyncClient> httpRequest = processor.createRequest(method);
+      HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/list?v=1.5 HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
@@ -57,7 +61,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpRequest);
-      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/list?v=1.5&"
             + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
@@ -69,7 +73,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
    public void testAddLoadBalancer() throws NoSuchMethodException, IOException {
       Method method = GridLoadBalancerAsyncClient.class.getMethod("addLoadBalancer", String.class, IpPortPair.class,
             List.class, AddLoadBalancerOptions[].class);
-      GeneratedHttpRequest<GridLoadBalancerAsyncClient> httpRequest = processor.createRequest(method, "BalanceIt",
+      HttpRequest httpRequest = processor.createRequest(method, "BalanceIt",
             new IpPortPair(new Ip("127.0.0.1"), 80), Arrays.asList(new IpPortPair(new Ip("127.0.0.1"), 8080),
                   new IpPortPair(new Ip("127.0.0.1"), 9090)), new AddLoadBalancerOptions.Builder().create(
                   LoadBalancerType.LEAST_CONNECTED, LoadBalancerPersistenceType.SSL_STICKY));
@@ -87,7 +91,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpRequest);
-      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
             + "add?v=1.5&name=BalanceIt&loadbalancer.type=Least%20Connect&"
@@ -102,7 +106,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
    @Test
    public void testEditLoadBalancer() throws NoSuchMethodException, IOException {
       Method method = GridLoadBalancerAsyncClient.class.getMethod("editLoadBalancer", long.class, List.class);
-      GeneratedHttpRequest<GridLoadBalancerAsyncClient> httpRequest = processor.createRequest(method, 1l, Arrays
+      HttpRequest httpRequest = processor.createRequest(method, 1l, Arrays
             .asList(new IpPortPair(new Ip("127.0.0.1"), 8080), new IpPortPair(new Ip("127.0.0.1"), 9090)));
 
       assertRequestLineEquals(
@@ -116,7 +120,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpRequest);
-      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(
             httpRequest,
@@ -128,7 +132,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
    @Test
    public void testEditLoadBalancerNamed() throws NoSuchMethodException, IOException {
       Method method = GridLoadBalancerAsyncClient.class.getMethod("editLoadBalancerNamed", String.class, List.class);
-      GeneratedHttpRequest<GridLoadBalancerAsyncClient> httpRequest = processor.createRequest(method, "BalanceIt",
+      HttpRequest httpRequest = processor.createRequest(method, "BalanceIt",
             Arrays.asList(new IpPortPair(new Ip("127.0.0.1"), 8080), new IpPortPair(new Ip("127.0.0.1"), 9090)));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
@@ -142,7 +146,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpRequest);
-      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(
             httpRequest,
@@ -154,7 +158,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
    @Test
    public void testGetLoadBalancersByName() throws NoSuchMethodException, IOException {
       Method method = GridLoadBalancerAsyncClient.class.getMethod("getLoadBalancersByName", String[].class);
-      GeneratedHttpRequest<GridLoadBalancerAsyncClient> httpRequest = processor.createRequest(method,
+      HttpRequest httpRequest = processor.createRequest(method,
             "My Load Balancer", "My Load Balancer 2");
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
@@ -167,7 +171,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpRequest);
-      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
             + "get?v=1.5&name=My%20Load%20Balancer&name=My%20Load%20Balancer%202&"
@@ -179,7 +183,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
    @Test
    public void testDeleteLoadBalancerById() throws NoSuchMethodException, IOException {
       Method method = GridLoadBalancerAsyncClient.class.getMethod("deleteById", Long.class);
-      GeneratedHttpRequest<GridLoadBalancerAsyncClient> httpRequest = processor.createRequest(method, 55L);
+      HttpRequest httpRequest = processor.createRequest(method, 55L);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/"
             + "delete?v=1.5&id=55 HTTP/1.1");
@@ -191,7 +195,7 @@ public class GridLoadBalancerAsyncClientTest extends BaseGoGridAsyncClientTest<G
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpRequest);
-      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/loadbalancer/" + "delete?v=1.5&id=55&"
             + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");

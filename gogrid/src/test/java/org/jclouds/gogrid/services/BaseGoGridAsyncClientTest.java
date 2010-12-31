@@ -32,6 +32,7 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
+import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
 import com.google.inject.Module;
@@ -40,6 +41,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
+@Test(groups = "unit")
 public abstract class BaseGoGridAsyncClientTest<T> extends RestClientTest<T> {
    @Override
    protected void checkFilters(HttpRequest request) {

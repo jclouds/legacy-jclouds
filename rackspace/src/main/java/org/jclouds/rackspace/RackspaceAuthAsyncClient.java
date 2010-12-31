@@ -57,7 +57,6 @@ public interface RackspaceAuthAsyncClient {
    }
 
    @GET
-   @Path("")
    @ResponseParser(ParseAuthenticationResponseFromHeaders.class)
    ListenableFuture<AuthenticationResponse> authenticate(@HeaderParam(RackspaceHeaders.AUTH_USER) String user,
             @HeaderParam(RackspaceHeaders.AUTH_KEY) String key);

@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "bluelock.BlueLockVCloudDirectorClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class BlueLockVCloudDirectorClientLiveTest extends VCloudClientLiveTest {
    public BlueLockVCloudDirectorClientLiveTest() {
       provider = "bluelock-vcdirector";

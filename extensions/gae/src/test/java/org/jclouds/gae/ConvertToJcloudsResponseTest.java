@@ -37,8 +37,7 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.crypto.Crypto;
 import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -69,7 +68,7 @@ public class ConvertToJcloudsResponseTest {
    @BeforeTest
    void setupClient() throws MalformedURLException {
       endPoint = URI.create("http://localhost:80/foo");
-      req = new ConvertToJcloudsResponse(new HttpUtils(0, 0, 0, 0));
+      req = new ConvertToJcloudsResponse();
    }
 
    @Test
@@ -103,7 +102,7 @@ public class ConvertToJcloudsResponseTest {
       replay(gaeResponse);
       HttpResponse response = req.apply(gaeResponse);
       assertEquals(response.getStatusCode(), 200);
-      assertEquals(Utils.toStringAndClose(response.getPayload().getInput()), "hello");
+      assertEquals(Strings2.toStringAndClose(response.getPayload().getInput()), "hello");
       assertEquals(response.getHeaders().size(), 0);
       assertEquals(response.getPayload().getContentMetadata().getContentType(), "text/xml");
    }

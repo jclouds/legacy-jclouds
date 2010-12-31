@@ -39,15 +39,15 @@ public class RebuildServerOptions extends BindToJsonPayload {
    Integer imageId;
 
    @Override
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       Map<String, Integer> image = Maps.newHashMap();
       if (imageId != null)
          image.put("imageId", imageId);
-      super.bindToRequest(request, ImmutableMap.of("rebuild", image));
+      return super.bindToRequest(request, ImmutableMap.of("rebuild", image));
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Object toBind) {
+   public <R extends HttpRequest> R bindToRequest(R request, Object toBind) {
       throw new IllegalStateException("RebuildServer is a POST operation");
    }
 

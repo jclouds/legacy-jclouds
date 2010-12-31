@@ -38,7 +38,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.PlacementGroupAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "PlacementGroupAsyncClientTest")
 public class PlacementGroupAsyncClientTest extends BaseEC2AsyncClientTest<PlacementGroupAsyncClient> {
 
    public void testDeletePlacementGroup() throws SecurityException, NoSuchMethodException, IOException {

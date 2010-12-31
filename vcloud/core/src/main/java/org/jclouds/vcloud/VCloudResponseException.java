@@ -37,14 +37,14 @@ public class VCloudResponseException extends HttpResponseException {
    private org.jclouds.vcloud.domain.VCloudError error;
 
    public VCloudResponseException(HttpCommand command, HttpResponse response, VCloudError error) {
-      super(String.format("request %s failed with code %s, error: %s", command.getRequest().getRequestLine(), response
+      super(String.format("request %s failed with code %s, error: %s", command.getCurrentRequest().getRequestLine(), response
                .getStatusCode(), error.toString()), command, response);
       this.setError(error);
 
    }
 
    public VCloudResponseException(HttpCommand command, HttpResponse response, VCloudError error, Throwable cause) {
-      super(String.format("request %1$s failed with error: %2$s", command.getRequest().getRequestLine(), error
+      super(String.format("request %1$s failed with error: %2$s", command.getCurrentRequest().getRequestLine(), error
                .toString()), command, response, cause);
       this.setError(error);
 

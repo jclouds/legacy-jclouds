@@ -47,13 +47,13 @@ import com.google.common.collect.Sets;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-
 /**
  * Tests behavior of {@code DescribeInstancesResponseHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.DescribeInstancesResponseHandlerTest")
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "DescribeInstancesResponseHandlerTest")
 public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
 
    private DateService dateService;

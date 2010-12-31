@@ -47,7 +47,7 @@ import com.google.inject.Module;
  * 
  * @author Lili Nader
  */
-@Test(groups = "live", sequential = true, testName = "ec2.ELBClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class ELBClientLiveTest {
 
    private ELBClient client;

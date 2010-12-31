@@ -20,8 +20,6 @@
 package org.jclouds.blobstore.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.util.Utils.getSupportedProvidersOfType;
-import static org.jclouds.util.Utils.toStringAndClose;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,36 +34,40 @@ import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.StorageMetadata;
+import org.jclouds.blobstore.functions.BlobName;
 import org.jclouds.functions.ExceptionToValueOrPropagate;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
+import org.jclouds.rest.Providers;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.util.Strings2;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class BlobStoreUtils {
-   public static <T> HttpRequest cleanRequest(GeneratedHttpRequest<T> returnVal) {
+   public static <T> HttpRequest cleanRequest(HttpRequest returnVal) {
+      checkNotNull(returnVal, "http request");
       for (HttpRequestFilter filter : returnVal.getFilters())
-         filter.filter(returnVal);
-      HttpRequest toReturn = new HttpRequest(returnVal.getMethod(), returnVal.getEndpoint(), ImmutableMultimap
-               .copyOf(returnVal.getHeaders()));
+         returnVal = filter.filter(returnVal);
+      HttpRequest toReturn = new HttpRequest(returnVal.getMethod(), returnVal.getEndpoint(),
+            ImmutableMultimap.copyOf(returnVal.getHeaders()));
       if (returnVal.getPayload() != null)
          toReturn.setPayload(returnVal.getPayload());
       return toReturn;
    }
 
-   @SuppressWarnings("unchecked")
-   public static final ExceptionToValueOrPropagate keyNotFoundToNullOrPropagate = new ExceptionToValueOrPropagate(
-            KeyNotFoundException.class, null);
-   @SuppressWarnings("unchecked")
-   public static final ExceptionToValueOrPropagate containerNotFoundToNullOrPropagate = new ExceptionToValueOrPropagate(
-            ContainerNotFoundException.class, null);
+   public static final ExceptionToValueOrPropagate<KeyNotFoundException, ?> keyNotFoundToNullOrPropagate = new ExceptionToValueOrPropagate<KeyNotFoundException, Object>(
+         KeyNotFoundException.class, null);
+
+   public static final ExceptionToValueOrPropagate<ContainerNotFoundException, ?> containerNotFoundToNullOrPropagate = new ExceptionToValueOrPropagate<ContainerNotFoundException, Object>(
+         ContainerNotFoundException.class, null);
 
    @SuppressWarnings("unchecked")
    public static <T> T keyNotFoundToNullOrPropagate(Exception e) {
@@ -78,7 +80,7 @@ public class BlobStoreUtils {
    }
 
    public static Blob newBlob(BlobStore blobStore, StorageMetadata blobMeta) {
-      Blob blob = blobStore.newBlob(blobMeta.getName());
+      Blob blob = checkNotNull(blobStore, "blobStore").newBlob(checkNotNull(blobMeta, "blobMeta").getName());
       if (blobMeta instanceof BlobMetadata) {
          HttpUtils.copy(((BlobMetadata) blobMeta).getContentMetadata(), blob.getMetadata().getContentMetadata());
       }
@@ -92,7 +94,7 @@ public class BlobStoreUtils {
    }
 
    public static String parseContainerFromPath(String path) {
-      String container = path;
+      String container = checkNotNull(path, "path");
       if (path.indexOf('/') != -1)
          container = path.substring(0, path.indexOf('/'));
       return container;
@@ -100,26 +102,25 @@ public class BlobStoreUtils {
 
    public static String parsePrefixFromPath(String path) {
       String prefix = null;
-      if (path.indexOf('/') != -1)
+      if (checkNotNull(path, "path").indexOf('/') != -1)
          prefix = path.substring(path.indexOf('/') + 1);
       return "".equals(prefix) ? null : prefix;
    }
 
    public static String parseDirectoryFromPath(String path) {
-      return path.substring(0, path.lastIndexOf('/'));
+      return checkNotNull(path, "path").substring(0, path.lastIndexOf('/'));
    }
 
    private static Pattern keyFromContainer = Pattern.compile("/?[^/]+/(.*)");
 
-   public static String getKeyFor(GeneratedHttpRequest<?> request, HttpResponse from) {
+   public static String getNameFor(GeneratedHttpRequest<?> request) {
       checkNotNull(request, "request");
-      checkNotNull(from, "from");
       // assume first params are container and key
-      if (request.getArgs().length >= 2 && request.getArgs()[0] instanceof String
-               && request.getArgs()[1] instanceof String) {
-         return request.getArgs()[1].toString();
-      } else if (request.getArgs().length >= 1 && request.getArgs()[0] instanceof String) {
-         Matcher matcher = keyFromContainer.matcher(request.getArgs()[0].toString());
+      if (request.getArgs().size() >= 2 && request.getArgs().get(0) instanceof String
+            && request.getArgs().get(1) instanceof String) {
+         return request.getArgs().get(1).toString();
+      } else if (request.getArgs().size() >= 1 && request.getArgs().get(0) instanceof String) {
+         Matcher matcher = keyFromContainer.matcher(request.getArgs().get(0).toString());
          if (matcher.find())
             return matcher.group(1);
       }
@@ -138,20 +139,28 @@ public class BlobStoreUtils {
          return null;
       Object o = blob.getPayload().getInput();
       if (o instanceof InputStream) {
-         return toStringAndClose((InputStream) o);
+         return Strings2.toStringAndClose((InputStream) o);
       } else {
          throw new IllegalArgumentException("Object type not supported: " + o.getClass().getName());
       }
    }
 
-   public static void createParentIfNeededAsync(AsyncBlobStore asyncBlobStore, String container, Blob blob) {
-      String name = blob.getMetadata().getName();
+   private static final BlobName blobName = new BlobName();
+
+   public static ListenableFuture<Void> createParentIfNeededAsync(AsyncBlobStore asyncBlobStore, String container,
+         Blob blob) {
+      checkNotNull(asyncBlobStore, "asyncBlobStore");
+      checkNotNull(container, "container");
+
+      String name = blobName.apply(blob);
       if (name.indexOf('/') > 0) {
-         asyncBlobStore.createDirectory(container, parseDirectoryFromPath(name));
+         return asyncBlobStore.createDirectory(container, parseDirectoryFromPath(name));
+      } else {
+         return Futures.immediateFuture(null);
       }
    }
 
    public static Iterable<String> getSupportedProviders() {
-      return getSupportedProvidersOfType(BlobStoreContextBuilder.class);
+      return Providers.getSupportedProvidersOfType(BlobStoreContextBuilder.class);
    }
 }

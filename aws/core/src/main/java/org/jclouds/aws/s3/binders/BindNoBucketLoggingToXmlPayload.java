@@ -38,10 +38,12 @@ public class BindNoBucketLoggingToXmlPayload implements Binder {
       this.bindAsHostPrefixIfConfigured = bindAsHostPrefixIfConfigured;
    }
 
-   public void bindToRequest(HttpRequest request, Object payload) {
-      bindAsHostPrefixIfConfigured.bindToRequest(request, payload);
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
+      request = bindAsHostPrefixIfConfigured.bindToRequest(request, payload);
       String stringPayload = "<BucketLoggingStatus xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"/>";
       request.setPayload(stringPayload);
+      return request;
    }
 
 }

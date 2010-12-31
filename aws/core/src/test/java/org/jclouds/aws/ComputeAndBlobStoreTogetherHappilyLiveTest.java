@@ -47,7 +47,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "jclouds.ComputeAndBlobStoreTogetherHappilyLiveTest")
+@Test(groups = "live")
 public class ComputeAndBlobStoreTogetherHappilyLiveTest extends BlobStoreAndComputeServiceLiveTest {
    @BeforeClass
    protected void setupCredentials() {

@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableList;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "azurestorage.ListOptionsTest")
+@Test(groups = "unit")
 public class ListOptionsTest {
    public void testIncludeMetadata() {
       ListOptions options = new ListOptions().includeMetadata();

@@ -48,8 +48,8 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
-public class ParseContainerPropertiesFromHeaders implements
-         Function<HttpResponse, ContainerProperties>, InvocationContext {
+public class ParseContainerPropertiesFromHeaders implements Function<HttpResponse, ContainerProperties>,
+      InvocationContext<ParseContainerPropertiesFromHeaders> {
 
    private final DateService dateParser;
    private final String metadataPrefix;
@@ -57,14 +57,14 @@ public class ParseContainerPropertiesFromHeaders implements
 
    @Inject
    public ParseContainerPropertiesFromHeaders(DateService dateParser,
-            @Named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
+         @Named(BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
       this.dateParser = dateParser;
       this.metadataPrefix = metadataPrefix;
    }
 
    public ContainerProperties apply(HttpResponse from) {
       MutableContainerPropertiesWithMetadata to = new MutableContainerPropertiesWithMetadataImpl();
-      to.setName(request.getArgs()[0].toString());
+      to.setName(request.getArgs().get(0).toString());
       addUserMetadataTo(from, to);
       parseLastModifiedOrThrowException(from, to);
       addETagTo(from, to);
@@ -76,23 +76,20 @@ public class ParseContainerPropertiesFromHeaders implements
    void addUserMetadataTo(HttpResponse from, MutableContainerPropertiesWithMetadata metadata) {
       for (Entry<String, String> header : from.getHeaders().entries()) {
          if (header.getKey() != null && header.getKey().startsWith(metadataPrefix))
-            metadata.getMetadata().put(
-                     (header.getKey().substring(metadataPrefix.length())).toLowerCase(),
-                     header.getValue());
+            metadata.getMetadata().put((header.getKey().substring(metadataPrefix.length())).toLowerCase(),
+                  header.getValue());
       }
    }
 
    @VisibleForTesting
-   void parseLastModifiedOrThrowException(HttpResponse from,
-            MutableContainerPropertiesWithMetadata metadata) throws HttpException {
+   void parseLastModifiedOrThrowException(HttpResponse from, MutableContainerPropertiesWithMetadata metadata)
+         throws HttpException {
       String lastModified = from.getFirstHeaderOrNull(HttpHeaders.LAST_MODIFIED);
       if (lastModified == null)
-         throw new HttpException(HttpHeaders.LAST_MODIFIED + " header not present in response: "
-                  + from);
+         throw new HttpException(HttpHeaders.LAST_MODIFIED + " header not present in response: " + from);
       metadata.setLastModified(dateParser.rfc822DateParse(lastModified));
       if (metadata.getLastModified() == null)
-         throw new HttpException("could not parse: " + HttpHeaders.LAST_MODIFIED + ": "
-                  + lastModified);
+         throw new HttpException("could not parse: " + HttpHeaders.LAST_MODIFIED + ": " + lastModified);
    }
 
    @VisibleForTesting
@@ -105,8 +102,7 @@ public class ParseContainerPropertiesFromHeaders implements
 
    @Override
    public ParseContainerPropertiesFromHeaders setContext(HttpRequest request) {
-      checkArgument(request instanceof GeneratedHttpRequest<?>,
-               "note this handler requires a GeneratedHttpRequest");
+      checkArgument(request instanceof GeneratedHttpRequest<?>, "note this handler requires a GeneratedHttpRequest");
       this.request = (GeneratedHttpRequest<?>) request;
       return this;
    }

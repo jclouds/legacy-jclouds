@@ -26,7 +26,6 @@ import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.POST;
-import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import org.jclouds.concurrent.Timeout;
@@ -45,21 +44,19 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.util.Types;
 
-@Test(groups = "unit", testName = "rest.InputParamValidator")
+@Test(groups = "unit")
 public class InputParamValidatorTest {
 
    @Timeout(duration = 1000, timeUnit = TimeUnit.SECONDS)
    @SkipEncoding('/')
    class InputParamValidatorForm {
       @POST
-      @Path("")
-      @ParamValidators( { AllLowerCaseValidator.class })
+         @ParamValidators( { AllLowerCaseValidator.class })
       public void allParamsValidated(@PathParam("param1") String param1, @PathParam("param2") String param2) {
       }
 
       @POST
-      @Path("")
-      public void oneParamValidated(@PathParam("param1") String param1,
+         public void oneParamValidated(@PathParam("param1") String param1,
                @ParamValidators( { AllLowerCaseValidator.class }) @PathParam("param2") String param2) {
       }
    }

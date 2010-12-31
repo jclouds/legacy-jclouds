@@ -63,7 +63,7 @@ public class RestClientModule<S, A> extends AbstractModule {
             .<Class<?>, Class<?>> of(syncClientType, asyncClientType));
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Override
    protected void configure() {
       // Ensures the restcontext can be looked up without generic types.

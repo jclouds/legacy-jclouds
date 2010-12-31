@@ -19,8 +19,6 @@
 
 package org.jclouds.nirvanix.sdn.filters;
 
-import static org.jclouds.http.HttpUtils.addQueryParamTo;
-
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -32,6 +30,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.nirvanix.sdn.SessionToken;
 import org.jclouds.nirvanix.sdn.reference.SDNQueryParams;
 
@@ -81,15 +80,15 @@ public class AddSessionTokenToRequest implements HttpRequestFilter {
    }
 
    @Inject
-   public AddSessionTokenToRequest(@SessionToken Provider<String> authTokenProvider,
-            Provider<UriBuilder> builder) {
+   public AddSessionTokenToRequest(@SessionToken Provider<String> authTokenProvider, Provider<UriBuilder> builder) {
       this.builder = builder;
       this.authTokenProvider = authTokenProvider;
       authToken = new AtomicReference<String>();
    }
 
-   public void filter(HttpRequest request) throws HttpException {
-      addQueryParamTo(request, SDNQueryParams.SESSIONTOKEN, getSessionToken(), builder.get());
+   @Override
+   public HttpRequest filter(HttpRequest request) throws HttpException {
+      return ModifyRequest.addQueryParam(request, SDNQueryParams.SESSIONTOKEN, getSessionToken(), builder.get());
    }
 
 }

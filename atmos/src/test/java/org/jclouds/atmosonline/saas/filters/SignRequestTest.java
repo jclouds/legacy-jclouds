@@ -36,57 +36,75 @@ import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.logging.config.NullLoggingModule;
+import org.jclouds.rest.BaseRestClientTest.MockModule;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.BaseRestClientTest.MockModule;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
-@Test(groups = "unit", testName = "emcsaas.SignRequestTest")
+/**
+ * 
+ * @author Adrian Cole
+ */
+@Test(groups = "unit")
 public class SignRequestTest {
 
+   private static final String EXPECTED_SIGNATURE = "WHJo1MFevMnK4jCthJ974L3YHoo=";
+   private static final String UID = "6039ac182f194e15b9261d73ce044939/user1";
+   private static final String DEFAULT_DATE = "Thu, 05 Jun 2008 16:38:19 GMT";
    private static final String KEY = "LJLuryj6zs8ste6Y3jTGQp71xq0=";
 
    private SignRequest filter;
 
    @Test
    void testCreateStringToSign() throws IOException {
-      String expects = Utils.toStringAndClose(getClass().getResourceAsStream("/hashstring.txt"));
-      HttpRequest request = newRequest();
-      String toSign = filter.replaceDateHeader(request).createStringToSign(request);
+      String expects = Strings2.toStringAndClose(getClass().getResourceAsStream("/hashstring.txt"));
+      HttpRequest request = newRequest(preconstructedHeaders().build());
+      String toSign = filter.createStringToSign(request);
       assertEquals(toSign, expects);
    }
 
    @Test
-   void testUid() throws IOException, NoSuchAlgorithmException, InvalidKeyException {
-      HttpRequest request = newRequest();
-      filter.replaceUIDHeader(request);
-      assertEquals(request.getFirstHeaderOrNull(AtmosStorageHeaders.UID), "user");
+   void testSignString() throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+      HttpRequest request = newRequest(preconstructedHeaders().build());
+      String toSign = filter.createStringToSign(request);
+      String signature = filter.signString(toSign);
+      assertEquals(signature, EXPECTED_SIGNATURE);
    }
 
    @Test
-   void testSignString() throws IOException, NoSuchAlgorithmException, InvalidKeyException {
-      String expects = "WHJo1MFevMnK4jCthJ974L3YHoo=";
+   void testFilter() throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+      HttpRequest request = newRequest(inputHeaders().build());
+      request = filter.filter(request);
+      assertEquals(request.getFirstHeaderOrNull(AtmosStorageHeaders.SIGNATURE), EXPECTED_SIGNATURE);
+   }
 
-      HttpRequest request = newRequest();
-      String toSign = filter.replaceDateHeader(request).createStringToSign(request);
-      String signature = filter.signString(toSign);
-      assertEquals(signature, expects);
+   @Test
+   void testFilterReplacesOldValues() throws IOException, NoSuchAlgorithmException, InvalidKeyException {
+      HttpRequest request = newRequest(inputHeaders().put(AtmosStorageHeaders.SIGNATURE, "foo")
+            .put(HttpHeaders.DATE, "foo").put(AtmosStorageHeaders.DATE, "foo").put(AtmosStorageHeaders.UID, "foo")
+            .build());
+      request = filter.filter(request);
+      assertEquals(request.getFirstHeaderOrNull(AtmosStorageHeaders.SIGNATURE), EXPECTED_SIGNATURE);
    }
 
    @BeforeClass
    protected void createFilter() {
-      Injector injector = new RestContextFactory().createContextBuilder(
-               "atmosonline",
-               "user",
-               KEY,
-               ImmutableSet.<Module> of(new MockModule(), new TestAtmosStorageRestClientModule(),
+      Injector injector = new RestContextFactory()
+            .createContextBuilder(
+                  "atmosonline",
+                  UID,
+                  KEY,
+                  ImmutableSet.<Module> of(new MockModule(), new TestAtmosStorageRestClientModule(),
                         new NullLoggingModule()), new Properties()).buildInjector();
 
       filter = injector.getInstance(SignRequest.class);
@@ -96,6 +114,7 @@ public class SignRequestTest {
    @RequiresHttp
    @ConfiguresRestClient
    private static final class TestAtmosStorageRestClientModule extends AtmosStorageRestClientModule {
+
       @Override
       protected void configure() {
          super.configure();
@@ -103,24 +122,34 @@ public class SignRequestTest {
 
       @Override
       protected String provideTimeStamp(@TimeStamp Supplier<String> cache) {
-         return "Thu, 05 Jun 2008 16:38:19 GMT";
+         return DEFAULT_DATE;
       }
    }
 
-   public HttpRequest newRequest() {
-      HttpRequest request = new HttpRequest("POST", URI.create("http://localhost/rest/objects"));
+   public HttpRequest newRequest(Multimap<String, String> headers) {
+      HttpRequest request = new HttpRequest("POST", URI.create("http://localhost/rest/objects"), headers);
       request.setPayload("");
       request.getPayload().getContentMetadata().setContentLength(4286l);
       request.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_OCTET_STREAM);
-
-      request.getHeaders().put(AtmosStorageHeaders.LISTABLE_META, "part4/part7/part8=quick");
-      request.getHeaders().put(AtmosStorageHeaders.META, "part1=buy");
-      request.getHeaders().put(HttpHeaders.ACCEPT, "*/*");
-      request.getHeaders().put(AtmosStorageHeaders.USER_ACL, "john=FULL_CONTROL,mary=WRITE");
-      request.getHeaders().put(AtmosStorageHeaders.DATE, "Thu, 05 Jun 2008 16:38:19 GMT");
-      request.getHeaders().put(AtmosStorageHeaders.GROUP_ACL, "other=NONE");
-      request.getHeaders().put(HttpHeaders.HOST, "10.5.115.118");
-      request.getHeaders().put(AtmosStorageHeaders.UID, "6039ac182f194e15b9261d73ce044939/user1");
       return request;
+   }
+
+   protected Builder<String, String> preconstructedHeaders() {
+      Builder<String, String> builder = inputHeaders();
+      builder.put(HttpHeaders.DATE, DEFAULT_DATE);
+      builder.put(AtmosStorageHeaders.UID, UID);
+      return builder;
+   }
+
+   protected Builder<String, String> inputHeaders() {
+      Builder<String, String> builder = ImmutableMultimap.builder();
+      builder.put(AtmosStorageHeaders.LISTABLE_META, "part4/part7/part8=quick");
+      builder.put(AtmosStorageHeaders.META, "part1=buy");
+      builder.put(HttpHeaders.ACCEPT, "*/*");
+      builder.put(AtmosStorageHeaders.USER_ACL, "john=FULL_CONTROL,mary=WRITE");
+      builder.put(AtmosStorageHeaders.GROUP_ACL, "other=NONE");
+      builder.put(AtmosStorageHeaders.DATE, DEFAULT_DATE);
+      builder.put(HttpHeaders.HOST, "10.5.115.118");
+      return builder;
    }
 }

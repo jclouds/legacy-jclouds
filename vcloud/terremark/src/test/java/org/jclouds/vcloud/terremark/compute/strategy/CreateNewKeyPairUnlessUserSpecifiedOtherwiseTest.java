@@ -40,7 +40,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "terremark.CreateNewKeyPairUnlessUserSpecifiedOtherwiseTest")
+@Test(groups = "unit")
 public class CreateNewKeyPairUnlessUserSpecifiedOtherwiseTest {
 
    public void testExecuteWithDefaultOptionsAlreadyHasKey() throws SecurityException, NoSuchMethodException {

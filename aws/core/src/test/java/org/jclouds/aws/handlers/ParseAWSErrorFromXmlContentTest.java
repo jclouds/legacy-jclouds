@@ -37,7 +37,7 @@ import org.jclouds.io.Payloads;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RequestSigner;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -54,70 +54,81 @@ public class ParseAWSErrorFromXmlContentTest {
    @Test
    public void test400WithNotFoundSetsResourceNotFoundException() {
       assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
-               "<Error><Code>Monster.NotFound</Code></Error>", ResourceNotFoundException.class);
+            "<Error><Code>Monster.NotFound</Code></Error>", ResourceNotFoundException.class);
+   }
+
+   @Test
+   public void test400WithUnsupportedCodeMakesUnsupportedOperationException() {
+      assertCodeMakes("POST", URI.create("https://ec2.us-west-1.amazonaws.com/"), 400, "",
+            "<Error><Code>UnsupportedOperation</Code></Error>", UnsupportedOperationException.class);
    }
 
    @Test
    public void test400WithUnknownSetsResourceNotFoundException() {
       assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
-               "<Error><Code>InvalidPlacementGroup.Unknown</Code></Error>", ResourceNotFoundException.class);
+            "<Error><Code>InvalidPlacementGroup.Unknown</Code></Error>", ResourceNotFoundException.class);
    }
 
    @Test
    public void test400WithIncorrectStateSetsIllegalStateException() {
       assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
-               "<Error><Code>IncorrectState</Code></Error>", IllegalStateException.class);
+            "<Error><Code>IncorrectState</Code></Error>", IllegalStateException.class);
    }
-   
+
    @Test
    public void test409SetsIllegalStateException() {
-      assertCodeMakes("PUT", URI.create("https://adriancole-blobstore011.s3.amazonaws.com/"), 409, "",
-               "<Error><Code>OperationAborted</Code><Message>A conflicting conditional operation is currently in progress against this resource. Please try again.</Message><RequestId>F716E81C3D814E59</RequestId><HostId>SDprHxWzG/YXzanVnV7VTz/wP+6fRt1dS+q00kH1rz248YOOSddkFiTXF04XtqNO</HostId></Error>", IllegalStateException.class);
+      assertCodeMakes(
+            "PUT",
+            URI.create("https://adriancole-blobstore011.s3.amazonaws.com/"),
+            409,
+            "",
+            "<Error><Code>OperationAborted</Code><Message>A conflicting conditional operation is currently in progress against this resource. Please try again.</Message><RequestId>F716E81C3D814E59</RequestId><HostId>SDprHxWzG/YXzanVnV7VTz/wP+6fRt1dS+q00kH1rz248YOOSddkFiTXF04XtqNO</HostId></Error>",
+            IllegalStateException.class);
    }
 
    @Test
    public void test400WithInvalidGroupDuplicateIllegalStateException() {
-      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400,"Bad Request", "application/unknown",
-               "<Error><Code>InvalidGroup.Duplicate</Code></Error>", IllegalStateException.class);
+      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "Bad Request", "application/unknown",
+            "<Error><Code>InvalidGroup.Duplicate</Code></Error>", IllegalStateException.class);
    }
-   
+
    @Test
    public void test400WithInvalidKeyPairGroupDuplicateIllegalStateException() {
-      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400,"Bad Request", "application/unknown",
-               "<Error><Code>InvalidKeyPair.Duplicate</Code></Error>", IllegalStateException.class);
+      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "Bad Request", "application/unknown",
+            "<Error><Code>InvalidKeyPair.Duplicate</Code></Error>", IllegalStateException.class);
    }
-   
+
    @Test
    public void test400WithTextPlainIllegalArgumentException() {
       assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "Bad Request", "text/plain",
-               "Failure: 400 Bad Request\nFailed to bind the following fields\nMonitoring.Enabled = true\n\n\n",
-               IllegalArgumentException.class);
+            "Failure: 400 Bad Request\nFailed to bind the following fields\nMonitoring.Enabled = true\n\n\n",
+            IllegalArgumentException.class);
    }
 
    @Test
    public void test400WithGroupAlreadyExistsEucalyptusIllegalStateException() {
       assertCodeMakes(
-               "GET",
-               URI.create("https://amazonaws.com/foo"),
-               400,
-               "",
-               "<?xml version=\"1.0\"?><Response><Errors><Error><Code>Groups</Code><Message>\nError adding network group: group named jclouds#eucrun#Eucalyptus already exists\nError adding network group: group named jclouds#eucrun#Eucalyptus already exists</Message></Error></Errors><RequestID>e0133975-3bc5-456d-9753-1d61b27e07e9</RequestID></Response>",
-               IllegalStateException.class);
+            "GET",
+            URI.create("https://amazonaws.com/foo"),
+            400,
+            "",
+            "<?xml version=\"1.0\"?><Response><Errors><Error><Code>Groups</Code><Message>\nError adding network group: group named jclouds#eucrun#Eucalyptus already exists\nError adding network group: group named jclouds#eucrun#Eucalyptus already exists</Message></Error></Errors><RequestID>e0133975-3bc5-456d-9753-1d61b27e07e9</RequestID></Response>",
+            IllegalStateException.class);
    }
 
    @Test
    public void test400WithAuthFailureSetsAuthorizationException() {
       assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
-               "<Error><Code>AuthFailure</Code></Error>", AuthorizationException.class);
+            "<Error><Code>AuthFailure</Code></Error>", AuthorizationException.class);
    }
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String content,
-            Class<? extends Exception> expected) {
+         Class<? extends Exception> expected) {
       assertCodeMakes(method, uri, statusCode, message, "text/xml", content, expected);
    }
 
    private void assertCodeMakes(String method, URI uri, int statusCode, String message, String contentType,
-            String content, Class<? extends Exception> expected) {
+         String content, Class<? extends Exception> expected) {
 
       ParseAWSErrorFromXmlContent function = Guice.createInjector(new SaxParserModule(), new AbstractModule() {
 
@@ -131,11 +142,11 @@ public class ParseAWSErrorFromXmlContentTest {
 
       HttpCommand command = createMock(HttpCommand.class);
       HttpRequest request = new HttpRequest(method, uri);
-      HttpResponse response = new HttpResponse(statusCode, message, Payloads.newInputStreamPayload(Utils
-               .toInputStream(content)));
+      HttpResponse response = new HttpResponse(statusCode, message, Payloads.newInputStreamPayload(Strings2
+            .toInputStream(content)));
       response.getPayload().getContentMetadata().setContentType(contentType);
 
-      expect(command.getRequest()).andReturn(request).atLeastOnce();
+      expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();
       command.setException(classEq(expected));
 
       replay(command);

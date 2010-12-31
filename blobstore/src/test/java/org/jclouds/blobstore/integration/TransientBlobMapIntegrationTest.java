@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 
-@Test(groups = { "integration", "live" }, testName = "blobstore.TransientBlobMapIntegrationTest")
+@Test(groups = { "integration", "live" })
 public class TransientBlobMapIntegrationTest extends BaseBlobMapIntegrationTest {
 
 }

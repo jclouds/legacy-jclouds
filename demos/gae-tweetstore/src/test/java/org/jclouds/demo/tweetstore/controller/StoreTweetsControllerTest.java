@@ -23,7 +23,7 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
-import static org.jclouds.util.Utils.toStringAndClose;
+import static org.jclouds.util.Strings2.toStringAndClose;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -50,7 +50,7 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "tweetstore.StoreTweetsControllerTest")
+@Test(groups = "unit")
 public class StoreTweetsControllerTest {
 
    Twitter createTwitter() {

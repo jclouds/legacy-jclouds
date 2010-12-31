@@ -38,7 +38,7 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
  * @author Adrian Cole
  */
 
-@Test(groups = "unit", testName = "rackspace.AddTimestampQueryTest")
+@Test(groups = "unit")
 public class AddTimestampQueryTest {
 
    @Test
@@ -64,10 +64,9 @@ public class AddTimestampQueryTest {
 
       });
 
-      filter.filter(request);
+      request = filter.filter(request);
 
-      assertEquals(request.getRequestLine(), String.format("GET http://momma/?now=%s HTTP/1.1",
-               date.getTime()));
+      assertEquals(request.getRequestLine(), String.format("GET http://momma/?now=%s HTTP/1.1", date.getTime()));
 
    }
 

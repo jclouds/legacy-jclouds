@@ -25,6 +25,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
 
+import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.TransformingHttpCommand;
@@ -63,11 +64,12 @@ public class RestModule extends AbstractModule {
    protected void configure() {
       install(new SaxParserModule());
       install(new GsonModule());
+      bind(IdentityFunction.class).toInstance(IdentityFunction.INSTANCE);
       bind(UriBuilder.class).to(UriBuilderImpl.class);
       bind(AsyncRestClientProxy.Factory.class).to(Factory.class).in(Scopes.SINGLETON);
       BinderUtils.bindAsyncClient(binder(), HttpAsyncClient.class);
-      BinderUtils.bindClient(binder(), HttpClient.class, HttpAsyncClient.class, ImmutableMap.<Class<?>, Class<?>> of(
-            HttpClient.class, HttpAsyncClient.class));
+      BinderUtils.bindClient(binder(), HttpClient.class, HttpAsyncClient.class,
+            ImmutableMap.<Class<?>, Class<?>> of(HttpClient.class, HttpAsyncClient.class));
    }
 
    @Provides
@@ -87,7 +89,7 @@ public class RestModule extends AbstractModule {
          this.factory = factory;
       }
 
-      @SuppressWarnings("unchecked")
+      @SuppressWarnings({ "unchecked", "rawtypes" })
       @Override
       public Object apply(final ClassMethodArgs from) {
          Class clazz = from.getAsyncClass();
@@ -110,8 +112,10 @@ public class RestModule extends AbstractModule {
       @Inject
       private TransformingHttpCommandExecutorService executorService;
 
-      @SuppressWarnings("unchecked")
-      public TransformingHttpCommand<?> create(HttpRequest request, Function<HttpResponse, ?> transformer) {
+      @SuppressWarnings({ "unchecked", "rawtypes" })
+      @Override
+      public TransformingHttpCommand<?> create(HttpRequest request,
+            Function<HttpResponse, ?> transformer) {
          return new TransformingHttpCommandImpl(executorService, request, transformer);
       }
 

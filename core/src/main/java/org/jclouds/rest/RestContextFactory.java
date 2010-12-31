@@ -25,12 +25,7 @@ import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Iterables.transform;
 import static java.util.Collections.EMPTY_LIST;
-import static org.jclouds.util.Utils.initContextBuilder;
-import static org.jclouds.util.Utils.modulesForProviderInProperties;
-import static org.jclouds.util.Utils.propagateAuthorizationOrOriginalException;
-import static org.jclouds.util.Utils.resolveContextBuilderClass;
-import static org.jclouds.util.Utils.resolvePropertiesBuilderClass;
-import static org.jclouds.util.Utils.toStringAndClose;
+import static org.jclouds.util.Throwables2.propagateAuthorizationOrOriginalException;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,6 +35,8 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.jclouds.PropertiesBuilder;
+import org.jclouds.util.Modules2;
+import org.jclouds.util.Strings2;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
@@ -85,7 +82,7 @@ public class RestContextFactory {
       return new RestContextSpec<S, A>(provider, endpoint, apiVersion, identity, credential, sync, async);
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    public static <S, A> RestContextSpec<S, A> contextSpec(String provider, String endpoint, String apiVersion,
          String identity, String credential, Class<S> sync, Class<A> async, Iterable<Module> modules) {
       return new RestContextSpec<S, A>(provider, endpoint, apiVersion, identity, credential, sync, async,
@@ -293,15 +290,15 @@ public class RestContextFactory {
             loadCredentialOrDefault(props, "jclouds.credential", credential));
       String syncClassName = props.getProperty(providerName + ".sync", null);
       String asyncClassName = props.getProperty(providerName + ".async", null);
-      Iterable<Module> modules = concat(modulesForProviderInProperties(providerName, props), wiring);
+      Iterable<Module> modules = concat(Modules2.modulesForProviderInProperties(providerName, props), wiring);
 
       Class<RestContextBuilder<S, A>> contextBuilderClass;
       Class<PropertiesBuilder> propertiesBuilderClass;
       Class<S> sync;
       Class<A> async;
       try {
-         contextBuilderClass = resolveContextBuilderClass(providerName, props);
-         propertiesBuilderClass = resolvePropertiesBuilderClass(providerName, props);
+         contextBuilderClass = Providers.resolveContextBuilderClass(providerName, props);
+         propertiesBuilderClass = Providers.resolvePropertiesBuilderClass(providerName, props);
          sync = (Class<S>) (syncClassName != null ? Class.forName(syncClassName) : null);
          async = (Class<A>) (syncClassName != null ? Class.forName(asyncClassName) : null);
       } catch (Exception e) {
@@ -319,7 +316,7 @@ public class RestContextFactory {
          return properties.getProperty(property);
       else if (properties.containsKey(property + ".resource"))
          try {
-            return toStringAndClose(RestContextFactory.class.getResourceAsStream(properties.getProperty(property
+            return Strings2.toStringAndClose(RestContextFactory.class.getResourceAsStream(properties.getProperty(property
                   + ".resource")));
          } catch (IOException e) {
             throw new RuntimeException("error reading resource: " + properties.getProperty(property + ".resource"));
@@ -363,7 +360,7 @@ public class RestContextFactory {
          if (contextSpec.endpoint != null)
             builder.endpoint(contextSpec.endpoint);
 
-         RestContextBuilder<S, A> contextBuilder = initContextBuilder(contextSpec.contextBuilderClass,
+         RestContextBuilder<S, A> contextBuilder = Providers.initContextBuilder(contextSpec.contextBuilderClass,
                contextSpec.sync, contextSpec.async, builder.build());
 
          contextBuilder.withModules(concat(modules, contextSpec.modules));

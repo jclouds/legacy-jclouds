@@ -43,7 +43,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Function;
 import com.google.common.util.concurrent.Futures;
@@ -73,7 +73,7 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
    @SuppressWarnings("unchecked")
    @Inject
    public AsyncRestClientProxy(Injector injector, Factory factory, RestAnnotationProcessor<T> util,
-            TypeLiteral<T> typeLiteral, @Named("async") ConcurrentMap<ClassMethodArgs, Object> delegateMap) {
+         TypeLiteral<T> typeLiteral, @Named("async") ConcurrentMap<ClassMethodArgs, Object> delegateMap) {
       this.injector = injector;
       this.annotationProcessor = util;
       this.declaring = (Class<T>) typeLiteral.getRawType();
@@ -93,57 +93,56 @@ public class AsyncRestClientProxy<T> implements InvocationHandler {
       } else if (method.isAnnotationPresent(Delegate.class)) {
          return delegateMap.get(new ClassMethodArgs(method.getReturnType(), method, args));
       } else if (annotationProcessor.getDelegateOrNull(method) != null
-               && ListenableFuture.class.isAssignableFrom(method.getReturnType())) {
+            && ListenableFuture.class.isAssignableFrom(method.getReturnType())) {
          return createListenableFuture(method, args);
       } else {
          throw new RuntimeException("method is intended solely to set constants: " + method);
       }
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    private ListenableFuture<?> createListenableFuture(Method method, Object[] args) throws ExecutionException {
       method = annotationProcessor.getDelegateOrNull(method);
       logger.trace("Converting %s.%s", declaring.getSimpleName(), method.getName());
       Function<Exception, ?> exceptionParser = annotationProcessor
-               .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method);
+            .createExceptionParserOrThrowResourceNotFoundOn404IfNoAnnotation(method);
       // in case there is an exception creating the request, we should at least
       // pass in args
       if (exceptionParser instanceof InvocationContext) {
-         ((InvocationContext) exceptionParser).setContext(null);
+         ((InvocationContext) exceptionParser).setContext((HttpRequest) null);
       }
-      HttpRequest request = RestAnnotationProcessor.findHttpRequestInArgs(args);
-      if (request == null) {
-         try {
-            request = annotationProcessor.createRequest(method, args);
-            if (exceptionParser instanceof InvocationContext && request instanceof GeneratedHttpRequest) {
-               ((InvocationContext) exceptionParser).setContext((GeneratedHttpRequest<T>) request);
-            }
-         } catch (RuntimeException e) {
-            AuthorizationException aex = Utils.getFirstThrowableOfType(e, AuthorizationException.class);
-            if (aex != null)
-               e = aex;
-            if (exceptionParser != null) {
-               try {
-                  return Futures.immediateFuture(exceptionParser.apply(e));
-               } catch (Exception ex) {
-                  return Futures.immediateFailedFuture(ex);
-               }
-            }
-            return Futures.immediateFailedFuture(e);
+      ListenableFuture<?> result;
+      try {
+         GeneratedHttpRequest<T> request = annotationProcessor.createRequest(method, args);
+         if (exceptionParser instanceof InvocationContext) {
+            ((InvocationContext) exceptionParser).setContext(request);
          }
-      }
-      logger.trace("Converted %s.%s to %s", declaring.getSimpleName(), method.getName(), request.getRequestLine());
+         logger.trace("Converted %s.%s to %s", declaring.getSimpleName(), method.getName(), request.getRequestLine());
 
-      Function<HttpResponse, ?> transformer = annotationProcessor.createResponseParser(method, request);
-      logger.trace("Response from %s.%s is parsed by %s", declaring.getSimpleName(), method.getName(), transformer
+         Function<HttpResponse, ?> transformer = annotationProcessor.createResponseParser(method, request);
+         logger.trace("Response from %s.%s is parsed by %s", declaring.getSimpleName(), method.getName(), transformer
                .getClass().getSimpleName());
 
-      logger.debug("Invoking %s.%s", declaring.getSimpleName(), method.getName());
-      ListenableFuture<?> result = commandFactory.create(request, transformer).execute();
+         logger.debug("Invoking %s.%s", declaring.getSimpleName(), method.getName());
+         result = commandFactory.create(request, transformer).execute();
+
+      } catch (RuntimeException e) {
+         AuthorizationException aex = Throwables2.getFirstThrowableOfType(e, AuthorizationException.class);
+         if (aex != null)
+            e = aex;
+         if (exceptionParser != null) {
+            try {
+               return Futures.immediateFuture(exceptionParser.apply(e));
+            } catch (Exception ex) {
+               return Futures.immediateFailedFuture(ex);
+            }
+         }
+         return Futures.immediateFailedFuture(e);
+      }
 
       if (exceptionParser != null) {
          logger.trace("Exceptions from %s.%s are parsed by %s", declaring.getSimpleName(), method.getName(),
-                  exceptionParser.getClass().getSimpleName());
+               exceptionParser.getClass().getSimpleName());
          result = new ExceptionParsingListenableFuture(result, exceptionParser);
       }
       return result;

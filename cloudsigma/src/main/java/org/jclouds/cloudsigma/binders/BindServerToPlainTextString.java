@@ -50,12 +50,13 @@ public class BindServerToPlainTextString implements Binder {
       this.createServerRequestToMap = createServerRequestToMap;
       this.listOfMapsToListOfKeyValuesDelimitedByBlankLines = listOfMapsToListOfKeyValuesDelimitedByBlankLines;
    }
-
-   public void bindToRequest(HttpRequest request, Object payload) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
       checkArgument(payload instanceof Server, "this binder is only valid for Server!");
       Server create = Server.class.cast(payload);
       Map<String, String> map = createServerRequestToMap.apply(create);
       request.setPayload(listOfMapsToListOfKeyValuesDelimitedByBlankLines.apply(ImmutableSet.of(map)));
       request.getPayload().getContentMetadata().setContentType(MediaType.TEXT_PLAIN);
+      return request;
    }
 }

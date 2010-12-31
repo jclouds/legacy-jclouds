@@ -38,7 +38,7 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
-public class AddMetadataItemIntoMap implements Function<HttpResponse, Void>, InvocationContext {
+public class AddMetadataItemIntoMap implements Function<HttpResponse, Void>, InvocationContext<AddMetadataItemIntoMap> {
    ReturnStringIf2xx returnIf200;
    private GeneratedHttpRequest<?> request;
 
@@ -48,9 +48,7 @@ public class AddMetadataItemIntoMap implements Function<HttpResponse, Void>, Inv
    }
 
    @SuppressWarnings("unchecked")
-   public Void apply(HttpResponse from)
-
-   {
+   public Void apply(HttpResponse from) {
       checkState(request.getArgs() != null, "args should be initialized at this point");
       Map<String, String> map = null;
       String key = null;
@@ -69,8 +67,7 @@ public class AddMetadataItemIntoMap implements Function<HttpResponse, Void>, Inv
 
    @Override
    public AddMetadataItemIntoMap setContext(HttpRequest request) {
-      checkArgument(request instanceof GeneratedHttpRequest<?>,
-               "note this handler requires a GeneratedHttpRequest");
+      checkArgument(request instanceof GeneratedHttpRequest<?>, "note this handler requires a GeneratedHttpRequest");
       this.request = (GeneratedHttpRequest<?>) request;
       return this;
    }

@@ -33,7 +33,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
 import com.google.inject.TypeLiteral;
@@ -84,7 +84,7 @@ public class ParseJson<T> implements Function<HttpResponse, T> {
    @SuppressWarnings("unchecked")
    public <V> V apply(InputStream stream, Type type) throws IOException {
       try {
-         return (V) json.fromJson(Utils.toStringAndClose(stream), type);
+         return (V) json.fromJson(Strings2.toStringAndClose(stream), type);
       } finally {
          if (stream != null)
             stream.close();

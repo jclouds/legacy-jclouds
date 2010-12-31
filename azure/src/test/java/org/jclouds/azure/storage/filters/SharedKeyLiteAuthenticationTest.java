@@ -43,7 +43,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "azurestorage.SharedKeyLiteAuthenticationTest")
+@Test(groups = "unit")
 public class SharedKeyLiteAuthenticationTest {
 
    private static final String KEY = Base64.encodeBytes("bar".getBytes());
@@ -54,16 +54,12 @@ public class SharedKeyLiteAuthenticationTest {
    @DataProvider(parallel = true)
    public Object[][] dataProvider() {
       return new Object[][] {
-               { new HttpRequest(
-                        HttpMethod.PUT,
-                        URI
-                                 .create("http://"
-                                          + ACCOUNT
-                                          + ".blob.core.windows.net/movies/MOV1.avi?comp=block&blockid=BlockId1&timeout=60")) },
-               { new HttpRequest(HttpMethod.PUT, URI.create("http://" + ACCOUNT
-                        + ".blob.core.windows.net/movies/MOV1.avi?comp=blocklist&timeout=120")) },
-               { new HttpRequest(HttpMethod.GET, URI.create("http://" + ACCOUNT
-                        + ".blob.core.windows.net/movies/MOV1.avi")) } };
+            { new HttpRequest(HttpMethod.PUT, URI.create("http://" + ACCOUNT
+                  + ".blob.core.windows.net/movies/MOV1.avi?comp=block&blockid=BlockId1&timeout=60")) },
+            { new HttpRequest(HttpMethod.PUT, URI.create("http://" + ACCOUNT
+                  + ".blob.core.windows.net/movies/MOV1.avi?comp=blocklist&timeout=120")) },
+            { new HttpRequest(HttpMethod.GET,
+                  URI.create("http://" + ACCOUNT + ".blob.core.windows.net/movies/MOV1.avi")) } };
    }
 
    /**
@@ -73,18 +69,18 @@ public class SharedKeyLiteAuthenticationTest {
     */
    @Test(threadPoolSize = 3, dataProvider = "dataProvider", timeOut = 3000)
    void testIdempotent(HttpRequest request) {
-      filter.filter(request);
+      request = filter.filter(request);
       String signature = request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION);
       String date = request.getFirstHeaderOrNull(HttpHeaders.DATE);
       int iterations = 1;
       while (request.getFirstHeaderOrNull(HttpHeaders.DATE).equals(date)) {
          date = request.getFirstHeaderOrNull(HttpHeaders.DATE);
-         filter.filter(request);
          iterations++;
          assertEquals(signature, request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION));
+         request = filter.filter(request);
       }
-      System.out.printf("%s: %d iterations before the timestamp updated %n", Thread.currentThread()
-               .getName(), iterations);
+      System.out.printf("%s: %d iterations before the timestamp updated %n", Thread.currentThread().getName(),
+            iterations);
    }
 
    @Test
@@ -98,8 +94,7 @@ public class SharedKeyLiteAuthenticationTest {
 
    @Test
    void testAclQueryStringResTypeNotSignificant() {
-      URI host = URI.create("http://" + ACCOUNT
-               + ".blob.core.windows.net/mycontainer?restype=container");
+      URI host = URI.create("http://" + ACCOUNT + ".blob.core.windows.net/mycontainer?restype=container");
       HttpRequest request = new HttpRequest(HttpMethod.GET, host);
       StringBuilder builder = new StringBuilder();
       filter.appendUriPath(request, builder);
@@ -117,10 +112,8 @@ public class SharedKeyLiteAuthenticationTest {
 
    @Test
    void testAclQueryStringRelativeWithExtraJunk() {
-      URI host = URI
-               .create("http://"
-                        + ACCOUNT
-                        + ".blob.core.windows.net/mycontainer?comp=list&marker=marker&maxresults=1&prefix=prefix");
+      URI host = URI.create("http://" + ACCOUNT
+            + ".blob.core.windows.net/mycontainer?comp=list&marker=marker&maxresults=1&prefix=prefix");
       HttpRequest request = new HttpRequest(HttpMethod.GET, host);
       StringBuilder builder = new StringBuilder();
       filter.appendUriPath(request, builder);
@@ -129,13 +122,14 @@ public class SharedKeyLiteAuthenticationTest {
 
    /**
     * before class, as we need to ensure that the filter is threadsafe.
-    * @throws IOException 
+    * 
+    * @throws IOException
     * 
     */
    @BeforeClass
    protected void createFilter() throws IOException {
       injector = new RestContextFactory().createContextBuilder("azurequeue", ACCOUNT, KEY,
-               ImmutableSet.<Module> of(new Log4JLoggingModule())).buildInjector();
+            ImmutableSet.<Module> of(new Log4JLoggingModule())).buildInjector();
       filter = injector.getInstance(SharedKeyLiteAuthentication.class);
    }
 

@@ -20,14 +20,21 @@
 package org.jclouds.deltacloud;
 
 import java.net.URI;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
-import org.jclouds.deltacloud.collections.DeltacloudCollection;
+import org.jclouds.deltacloud.domain.DeltacloudCollection;
+import org.jclouds.deltacloud.domain.HardwareProfile;
 import org.jclouds.deltacloud.domain.Image;
+import org.jclouds.deltacloud.domain.Instance;
+import org.jclouds.deltacloud.domain.InstanceState;
+import org.jclouds.deltacloud.domain.Realm;
+import org.jclouds.deltacloud.domain.Transition;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
+import org.jclouds.http.HttpRequest;
+
+import com.google.common.collect.Multimap;
 
 /**
  * Provides synchronous access to deltacloud.
@@ -43,9 +50,29 @@ public interface DeltacloudClient {
     * The result of this entry-point is a set of entry-points into other collections, such as
     * images, instances, hardware profiles and realms, among others.
     * 
-    * @return named links to available collections, or empty map, if no resources are found
+    * @return named links to available collections, or empty set, if no collections are found
     */
-   Map<DeltacloudCollection, URI> getCollections();
+   Set<? extends DeltacloudCollection> getCollections();
+
+   /**
+    * 
+    * @return The possible states of an instance, and how to traverse between them
+    */
+   Multimap<InstanceState, ? extends Transition> getInstanceStates();
+
+   /**
+    * The realms collection will return a set of all realms available to the current user.
+    * 
+    * @return realms viewable to the user or empty set
+    */
+   Set<? extends Realm> listRealms();
+
+   /**
+    * 
+    * @param realmHref
+    * @return realm or null, if not found
+    */
+   Realm getRealm(URI realmHref);
 
    /**
     * The images collection will return a set of all images available to the current user.
@@ -62,6 +89,35 @@ public interface DeltacloudClient {
    Image getImage(URI imageHref);
 
    /**
+    * The hardware profiles collection will return a set of all hardware profiles available to the
+    * current user.
+    * 
+    * @return hardware profiles viewable to the user or empty set
+    */
+   Set<? extends HardwareProfile> listHardwareProfiles();
+
+   /**
+    * 
+    * @param profileHref
+    * @return hardware profile or null, if not found
+    */
+   HardwareProfile getHardwareProfile(URI profileHref);
+
+   /**
+    * The instances collection will return a set of all instances available to the current user.
+    * 
+    * @return instances viewable to the user or empty set
+    */
+   Set<? extends Instance> listInstances();
+
+   /**
+    * 
+    * @param instanceHref
+    * @return instance or null, if not found
+    */
+   Instance getInstance(URI instanceHref);
+
+   /**
     * Create a new Instance
     * 
     * <h4>Note</h4>
@@ -76,5 +132,14 @@ public interface DeltacloudClient {
     *           includes realm, hardware profile, etc.
     * @return newly-created instance including a URL to retrieve the instance in the future.
     */
-   String createInstance(String imageId, CreateInstanceOptions... options);
+   Instance createInstance(String imageId, CreateInstanceOptions... options);
+
+   /**
+    * perform a specific action.
+    * 
+    * @param action
+    *           reference from {@link Instance#getActions()}
+    */
+   void performAction(HttpRequest action);
+
 }

@@ -30,7 +30,7 @@ import org.jclouds.aws.s3.domain.AccessControlList.Grant;
 import org.jclouds.aws.s3.domain.AccessControlList.Permission;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.BaseHandlerTest;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
@@ -40,7 +40,8 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "s3.BindBucketLoggingToXmlPayloadTest")
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "BindBucketLoggingToXmlPayloadTest")
 public class BindBucketLoggingToXmlPayloadTest  extends BaseHandlerTest {
 
    public void testApplyInputStream() throws IOException {
@@ -49,7 +50,7 @@ public class BindBucketLoggingToXmlPayloadTest  extends BaseHandlerTest {
                .<Grant> of(new Grant(new EmailAddressGrantee("adrian@jclouds.org"),
                         Permission.FULL_CONTROL)));
      
-      String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
+      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/s3/bucket_logging.xml"));
       
       HttpRequest request = new HttpRequest("GET", URI.create("http://test"));

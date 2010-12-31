@@ -31,11 +31,12 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.VCloudExpressPropertiesBuilder;
 import org.jclouds.vcloud.options.CloneVAppOptions;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -47,7 +48,7 @@ import com.google.inject.name.Names;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.BindCloneVAppParamsToXmlPayloadTest")
+@Test(groups = "unit")
 public class VCloudExpressBindCloneVAppParamsToXmlPayloadTest {
    Injector injector = Guice.createInjector(new AbstractModule() {
 
@@ -59,13 +60,13 @@ public class VCloudExpressBindCloneVAppParamsToXmlPayloadTest {
    });
 
    public void testWithDescriptionDeployOn() throws IOException {
-      String expected = Utils.toStringAndClose(getClass().getResourceAsStream("/express/cloneVApp.xml"));
+      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/express/cloneVApp.xml"));
 
       CloneVAppOptions options = new CloneVAppOptions().deploy().powerOn().withDescription(
                "The description of the new vApp");
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(new Object[] { options }).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object>of( options)).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 
@@ -79,11 +80,11 @@ public class VCloudExpressBindCloneVAppParamsToXmlPayloadTest {
    }
 
    public void testDefault() throws IOException {
-      String expected = Utils.toStringAndClose(getClass().getResourceAsStream("/express/cloneVApp-default.xml"));
+      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream("/express/cloneVApp-default.xml"));
 
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
       expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(new Object[] {}).atLeastOnce();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object>of()).atLeastOnce();
       request.setPayload(expected);
       replay(request);
 

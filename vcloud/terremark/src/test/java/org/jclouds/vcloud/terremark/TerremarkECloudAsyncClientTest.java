@@ -47,7 +47,7 @@ import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExtension.TestOrgCatalogItemSupplier;
 import org.jclouds.vcloud.VCloudExpressAsyncClientTest.VCloudRestClientModuleExtension.TestOrgCatalogSupplier;
@@ -95,7 +95,8 @@ import domain.VCloudVersionsAsyncClient;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true, testName = "TerremarkECloudAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "TerremarkECloudAsyncClientTest")
 public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkECloudAsyncClient> {
    public void testNetwork() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TerremarkECloudAsyncClient.class.getMethod("getNetwork", URI.class);
@@ -172,7 +173,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/terremark/InstantiateVAppTemplateParams-test.xml")),
                "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
 
@@ -196,7 +197,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
       assertRequestLineEquals(request,
                "POST https://vcloud.safesecureweb.com/api/v0.8/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/terremark/InstantiateVAppTemplateParams-options-test.xml")),
                "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
 
@@ -277,7 +278,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
 
       assertRequestLineEquals(request, "POST https://vcloud/extensions/publicIp/12/internetServices HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.ecloud.internetService+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/terremark/CreateInternetService-test2.xml")), "application/vnd.tmrk.ecloud.internetService+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -295,7 +296,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
 
       assertRequestLineEquals(request, "POST https://vcloud/extensions/publicIp/12/internetServices HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.ecloud.internetService+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/terremark/CreateInternetService-options-test.xml")),
                "application/vnd.tmrk.ecloud.internetService+xml", false);
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -313,7 +314,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
 
       assertRequestLineEquals(request, "POST https://vcloud/extensions/internetService/12/nodeServices HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.vCloud.nodeService+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/terremark/CreateNodeService-test2.xml")), "application/vnd.tmrk.vCloud.nodeService+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -332,7 +333,7 @@ public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkEClo
       assertRequestLineEquals(request, "POST https://vcloud/extensions/internetService/12/nodeServices HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.tmrk.vCloud.nodeService+xml\n");
 
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/terremark/CreateNodeService-options-test.xml")), "application/vnd.tmrk.vCloud.nodeService+xml", false);
       assertResponseParserClassEquals(method, request, ParseSax.class);
       assertSaxResponseParserClassEquals(method, NodeHandler.class);

@@ -19,26 +19,31 @@
 
 package org.jclouds.atmosonline.saas.functions;
 
-import static org.jclouds.util.Utils.propagateOrNull;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import java.net.URI;
+
+import javax.annotation.Nullable;
 
 import org.jclouds.blobstore.KeyAlreadyExistsException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.InvocationContext;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class ReturnEndpointIfAlreadyExists implements Function<Exception, URI>, InvocationContext {
+public class ReturnEndpointIfAlreadyExists implements Function<Exception, URI>,
+      InvocationContext<ReturnEndpointIfAlreadyExists> {
 
    private URI endpoint;
 
    public URI apply(Exception from) {
-      if (from instanceof KeyAlreadyExistsException) {
+      if (checkNotNull(from, "exception") instanceof KeyAlreadyExistsException) {
          return endpoint;
       }
       return URI.class.cast(propagateOrNull(from));
@@ -46,7 +51,12 @@ public class ReturnEndpointIfAlreadyExists implements Function<Exception, URI>, 
 
    @Override
    public ReturnEndpointIfAlreadyExists setContext(HttpRequest request) {
-      this.endpoint = request == null ? null : request.getEndpoint();
+      return setEndpoint(request == null ? null : request.getEndpoint());
+   }
+
+   @VisibleForTesting
+   ReturnEndpointIfAlreadyExists setEndpoint(@Nullable URI endpoint) {
+      this.endpoint = endpoint;
       return this;
    }
 

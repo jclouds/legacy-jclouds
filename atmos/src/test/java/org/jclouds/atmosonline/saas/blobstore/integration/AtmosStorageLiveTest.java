@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "live" }, testName = "emcsaas.AtmosStorageLiveTest")
+@Test(groups = { "live" })
 public class AtmosStorageLiveTest extends BaseBlobLiveTest {
    protected void checkMD5(String container, String name, byte[] md5) {
       // atmos does not support content-md5 yet

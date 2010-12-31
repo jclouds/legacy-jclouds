@@ -34,10 +34,10 @@
 			extraction of appengine-java-sdk
 		-->
 		<appengine.home>YOUR_APPENGINE_HOME</appengine.home>
-		<jclouds.test.loopcount>100</jclouds.test.loopcount>
-		<jclouds.test.identity>${jclouds.aws.accesskeyid}</jclouds.test.identity>
-		<jclouds.test.credential>${jclouds.aws.secretaccesskey}</jclouds.test.credential>
-		<jclouds.test.initializer>org.jclouds.aws.s3.blobstore.integration.S3TestInitializer</jclouds.test.initializer>
+		<test.s3.loopcount>100</test.s3.loopcount>
+		<test.s3.identity>${test.aws.identity}</test.s3.identity>
+		<test.s3.credential>${test.aws.credential}</test.s3.credential>
+		<test.initializer>org.jclouds.aws.s3.blobstore.integration.S3TestInitializer</test.initializer>
 	</properties>
 
 	<dependencies>
@@ -54,12 +54,12 @@
 		<dependency>
 			<groupId>com.amazonaws</groupId>
 			<artifactId>aws-java-sdk</artifactId>
-			<version>1.0.007</version>
+			<version>1.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.java.dev.jets3t</groupId>
 			<artifactId>jets3t</artifactId>
-			<version>0.7.4</version>
+			<version>0.8.0</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
@@ -143,20 +143,20 @@
 							<threadCount>1</threadCount>
 							<systemProperties>
 								<property>
-									<name>jclouds.test.identity</name>
-									<value>${jclouds.test.identity}</value>
+									<name>test.s3.identity</name>
+									<value>${test.s3.identity}</value>
 								</property>
 								<property>
-									<name>jclouds.test.credential</name>
-									<value>${jclouds.test.credential}</value>
+									<name>test.s3.credential</name>
+									<value>${test.s3.credential}</value>
 								</property>
 								<property>
-									<name>jclouds.test.initializer</name>
-									<value>${jclouds.test.initializer}</value>
+									<name>test.initializer</name>
+									<value>${test.initializer}</value>
 								</property>
 								<property>
-									<name>jclouds.test.loopcount</name>
-									<value>${jclouds.test.loopcount}</value>
+									<name>test.s3.loopcount</name>
+									<value>${test.s3.loopcount}</value>
 								</property>
 							</systemProperties>
 						</configuration>

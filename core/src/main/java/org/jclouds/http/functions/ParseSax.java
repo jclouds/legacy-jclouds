@@ -32,7 +32,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.InvocationContext;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
@@ -47,7 +47,7 @@ import com.google.common.base.Throwables;
  * 
  * @author Adrian Cole
  */
-public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext {
+public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext<ParseSax<T>> {
 
    private final XMLReader parser;
    private final HandlerWithResult<T> handler;
@@ -77,7 +77,7 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
 
    private T convertStreamToStringAndParse(HttpResponse from) {
       try {
-         return parse(Utils.toStringAndClose(from.getPayload().getInput()));
+         return parse(Strings2.toStringAndClose(from.getPayload().getInput()));
       } catch (Exception e) {
          return addDetailsAndPropagate(from, e);
       }
@@ -154,7 +154,8 @@ public class ParseSax<T> implements Function<HttpResponse, T>, InvocationContext
     * 
     * @author Adrian Cole
     */
-   public abstract static class HandlerWithResult<T> extends DefaultHandler implements InvocationContext {
+   public abstract static class HandlerWithResult<T> extends DefaultHandler implements
+         InvocationContext<HandlerWithResult<T>> {
       private HttpRequest request;
 
       protected HttpRequest getRequest() {

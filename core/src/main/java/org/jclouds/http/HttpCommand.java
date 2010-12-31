@@ -63,7 +63,12 @@ public interface HttpCommand {
    /**
     * The request associated with this command.
     */
-   HttpRequest getRequest();
+   HttpRequest getCurrentRequest();
+
+   /**
+    * The request associated with this command.
+    */
+   void setCurrentRequest(HttpRequest request);
 
    /**
     * Used to prevent a command from being re-executed, or having its response parsed.

@@ -34,7 +34,7 @@ import com.google.common.io.Resources;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "scriptbuilder.AppendFileTest")
+@Test(groups = "unit")
 public class AppendFileTest {
    Statement statement = appendFile("{root}etc{fs}chef{fs}client.rb", ImmutableList.of("log_level :info",
             "log_location STDOUT", String.format("chef_server_url \"%s\"", "http://localhost:4000")));

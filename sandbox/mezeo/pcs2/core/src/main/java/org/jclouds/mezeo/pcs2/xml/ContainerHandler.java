@@ -36,7 +36,7 @@ import org.jclouds.mezeo.pcs2.domain.ResourceInfo;
 import org.jclouds.mezeo.pcs2.domain.internal.ContainerInfoImpl;
 import org.jclouds.mezeo.pcs2.domain.internal.ContainerListImpl;
 import org.jclouds.mezeo.pcs2.domain.internal.FileInfoImpl;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -174,7 +174,7 @@ public class ContainerHandler extends ParseSax.HandlerWithResult<ContainerList> 
       } else if (qName.equals("metadata-item")) {
          int index = attributes.getIndex("xlink:href");
          if (index != -1) {
-            String key = Utils.replaceAll(attributes.getValue(index), METADATA_PATTERN, "");
+            String key = Strings2.replaceAll(attributes.getValue(index), METADATA_PATTERN, "");
             metadataItems.put(key.toLowerCase(), URI.create(attributes.getValue(index)));
          }
       }

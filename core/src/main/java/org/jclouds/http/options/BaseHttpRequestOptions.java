@@ -32,10 +32,10 @@ import com.google.common.collect.Multimap;
  */
 public class BaseHttpRequestOptions implements HttpRequestOptions {
 
-   protected Multimap<String, String> matrixParameters = LinkedHashMultimap.create();
-   protected Multimap<String, String> formParameters = LinkedHashMultimap.create();
-   protected Multimap<String, String> queryParameters = LinkedHashMultimap.create();
-   protected Multimap<String, String> headers = LinkedHashMultimap.create();
+   protected final Multimap<String, String> matrixParameters = LinkedHashMultimap.create();
+   protected final Multimap<String, String> formParameters = LinkedHashMultimap.create();
+   protected final Multimap<String, String> queryParameters = LinkedHashMultimap.create();
+   protected final Multimap<String, String> headers = LinkedHashMultimap.create();
    protected String payload;
    protected String pathSuffix;
 

@@ -19,13 +19,12 @@
 
 package org.jclouds.gae;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpResponse;
-import org.jclouds.http.HttpUtils;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPResponse;
@@ -39,17 +38,11 @@ import com.google.common.collect.Multimap;
  */
 @Singleton
 public class ConvertToJcloudsResponse implements Function<HTTPResponse, HttpResponse> {
-   private final HttpUtils utils;
-
-   @Inject
-   ConvertToJcloudsResponse(HttpUtils utils) {
-      this.utils = utils;
-   }
 
    @Override
    public HttpResponse apply(HTTPResponse gaeResponse) {
-      Payload payload = gaeResponse.getContent() != null ? Payloads.newByteArrayPayload(gaeResponse
-               .getContent()) : null;
+      Payload payload = gaeResponse.getContent() != null ? Payloads.newByteArrayPayload(gaeResponse.getContent())
+            : null;
       Multimap<String, String> headers = LinkedHashMultimap.create();
       String message = null;
       for (HTTPHeader header : gaeResponse.getHeaders()) {
@@ -58,8 +51,10 @@ public class ConvertToJcloudsResponse implements Function<HTTPResponse, HttpResp
          else
             headers.put(header.getName(), header.getValue());
       }
-      HttpResponse response = new HttpResponse(gaeResponse.getResponseCode(), message, payload);
-      utils.setPayloadPropertiesFromHeaders(headers, response);
-      return response;
+
+      if (payload != null)
+         payload.getContentMetadata().setPropertiesFromHttpHeaders(headers);
+      return new HttpResponse(gaeResponse.getResponseCode(), message, payload,
+            RestAnnotationProcessor.filterOutContentHeaders(headers));
    }
 }

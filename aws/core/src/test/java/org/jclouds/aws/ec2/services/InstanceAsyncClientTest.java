@@ -53,7 +53,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.InstanceAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "InstanceAsyncClientTest")
 public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyncClient> {
    public void testDescribeInstances() throws SecurityException, NoSuchMethodException, IOException {
       Method method = InstanceAsyncClient.class.getMethod("describeInstancesInRegion", String.class, String[].class);

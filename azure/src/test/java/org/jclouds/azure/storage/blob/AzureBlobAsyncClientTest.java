@@ -61,7 +61,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "azureblob.AzureBlobAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "AzureBlobAsyncClientTest")
 public class AzureBlobAsyncClientTest extends RestClientTest<AzureBlobAsyncClient> {
 
    public void testListContainers() throws SecurityException, NoSuchMethodException, IOException {

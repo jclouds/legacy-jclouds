@@ -30,11 +30,12 @@ import org.testng.annotations.Test;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code GoGridClient}
+ * Tests behavior of {@code GoGridAsyncClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.GoGridClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "GoGridAsyncClientTest")
 public class GoGridAsyncClientTest extends BaseGoGridAsyncClientTest<GoGridAsyncClient> {
 
    private GoGridAsyncClient asyncClient;

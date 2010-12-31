@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "ec2.EucalyptusComputeServiceLiveTest")
+@Test(groups = "live", enabled = true, sequential = true)
 public class EucalyptusComputeServiceLiveTestDisabled extends EC2ComputeServiceLiveTest {
 
    public EucalyptusComputeServiceLiveTestDisabled() {

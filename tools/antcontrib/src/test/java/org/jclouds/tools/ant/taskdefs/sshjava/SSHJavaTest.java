@@ -47,7 +47,7 @@ import com.google.common.io.Resources;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "jclouds.SSHJavaTest")
+@Test(groups = "unit")
 public class SSHJavaTest {
    public static final Entry<String, String> LAST_ENV = Iterables.getLast(System.getenv()
             .entrySet());

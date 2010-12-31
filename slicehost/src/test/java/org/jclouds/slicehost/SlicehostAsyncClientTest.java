@@ -46,11 +46,12 @@ import org.testng.annotations.Test;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code SlicehostClient}
+ * Tests behavior of {@code SlicehostAsyncClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "slicehost.SlicehostClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "SlicehostAsyncClientTest")
 public class SlicehostAsyncClientTest extends RestClientTest<SlicehostAsyncClient> {
 
    public void testCreateSlice() throws IOException, SecurityException, NoSuchMethodException {

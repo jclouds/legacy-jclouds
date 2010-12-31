@@ -61,7 +61,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "ec2.EC2ComputeServiceLiveTest")
+@Test(groups = "live", sequential = true)
 public class EC2ComputeServiceLiveTest extends BaseComputeServiceLiveTest {
 
    public EC2ComputeServiceLiveTest() {

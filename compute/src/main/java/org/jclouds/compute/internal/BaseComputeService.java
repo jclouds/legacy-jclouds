@@ -85,7 +85,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.ExecResponse;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -458,7 +458,7 @@ public class BaseComputeService implements ComputeService {
             @Override
             public Void call() throws Exception {
                try {
-                  ExecResponse response = utils.runScriptOnNode(node, Statements.exec(Utils.toStringAndClose(runScript
+                  ExecResponse response = utils.runScriptOnNode(node, Statements.exec(Strings2.toStringAndClose(runScript
                            .getInput())), options);
                   if (response != null)
                      execs.put(node, response);

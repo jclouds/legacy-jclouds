@@ -40,11 +40,12 @@ import org.testng.annotations.Test;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests annotation parsing of {@code RimuHostingAsyncClient}
+ * Tests behavior of {@code RimuHostingAsyncClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "rimuhosting.RimuHostingAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "RimuHostingAsyncClientTest")
 public class RimuHostingAsyncClientTest extends RestClientTest<RimuHostingAsyncClient> {
 
    public void testCreateServer() throws SecurityException, NoSuchMethodException, IOException {

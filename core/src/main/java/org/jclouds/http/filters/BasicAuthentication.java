@@ -24,7 +24,6 @@ import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
 import static org.jclouds.Constants.PROPERTY_IDENTITY;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,8 +35,7 @@ import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
-
-import com.google.common.collect.ImmutableSet;
+import org.jclouds.http.utils.ModifyRequest;
 
 /**
  * Uses Basic Authentication to sign the request.
@@ -49,17 +47,18 @@ import com.google.common.collect.ImmutableSet;
 @Singleton
 public class BasicAuthentication implements HttpRequestFilter {
 
-   private final Set<String> credentialList;
+   private final String header;
 
    @Inject
    public BasicAuthentication(@Named(PROPERTY_IDENTITY) String user, @Named(PROPERTY_CREDENTIAL) String password,
          Crypto crypto) throws UnsupportedEncodingException {
-      this.credentialList = ImmutableSet.of("Basic "
+      this.header = "Basic "
             + CryptoStreams.base64(String.format("%s:%s", checkNotNull(user, "user"),
-                  checkNotNull(password, "password")).getBytes("UTF-8")));
+                  checkNotNull(password, "password")).getBytes("UTF-8"));
    }
 
-   public void filter(HttpRequest request) throws HttpException {
-      request.getHeaders().replaceValues(HttpHeaders.AUTHORIZATION, credentialList);
+   @Override
+   public HttpRequest filter(HttpRequest request) throws HttpException {
+      return ModifyRequest.replaceHeader(request, HttpHeaders.AUTHORIZATION, header);
    }
 }

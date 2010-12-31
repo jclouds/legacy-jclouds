@@ -37,16 +37,16 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "s3.BindAsHostPrefixIfConfiguredTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "BindAsHostPrefixIfConfiguredTest")
 public class BindAsHostPrefixIfConfiguredTest extends BaseS3AsyncClientTest {
 
    public void testBucket() throws IOException {
 
       HttpRequest request = new HttpRequest("GET", URI.create("http://euc/services/Walrus"));
-      BindAsHostPrefixIfConfigured binder = injector
-               .getInstance(BindAsHostPrefixIfConfigured.class);
+      BindAsHostPrefixIfConfigured binder = injector.getInstance(BindAsHostPrefixIfConfigured.class);
 
-      binder.bindToRequest(request, "bucket");
+      request = binder.bindToRequest(request, "bucket");
       assertEquals(request.getRequestLine(), "GET http://euc/services/Walrus/bucket HTTP/1.1");
 
    }
@@ -55,20 +55,17 @@ public class BindAsHostPrefixIfConfiguredTest extends BaseS3AsyncClientTest {
    public void testObject(String key) throws InterruptedException {
 
       HttpRequest request = new HttpRequest("GET", URI.create("http://euc/services/Walrus/object"));
-      BindAsHostPrefixIfConfigured binder = injector
-               .getInstance(BindAsHostPrefixIfConfigured.class);
+      BindAsHostPrefixIfConfigured binder = injector.getInstance(BindAsHostPrefixIfConfigured.class);
 
-      binder.bindToRequest(request, "bucket");
-      assertEquals(request.getRequestLine(),
-               "GET http://euc/services/Walrus/bucket/object HTTP/1.1");
+      request = binder.bindToRequest(request, "bucket");
+      assertEquals(request.getRequestLine(), "GET http://euc/services/Walrus/bucket/object HTTP/1.1");
 
    }
 
    @DataProvider(name = "objects")
    public Object[][] createData() {
-      return new Object[][] { { "normal" }, { "sp ace" }, { "qu?stion" }, { "unic₪de" },
-               { "path/foo" }, { "colon:" }, { "asteri*k" }, { "quote\"" }, { "{great<r}" },
-               { "lesst>en" }, { "p|pe" } };
+      return new Object[][] { { "normal" }, { "sp ace" }, { "qu?stion" }, { "unic₪de" }, { "path/foo" },
+            { "colon:" }, { "asteri*k" }, { "quote\"" }, { "{great<r}" }, { "lesst>en" }, { "p|pe" } };
    }
 
    @Override

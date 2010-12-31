@@ -27,7 +27,7 @@ import org.jclouds.blobstore.domain.MutableBlobMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 import org.jclouds.blobstore.domain.internal.MutableBlobMetadataImpl;
 import org.jclouds.mezeo.pcs2.domain.FileInfo;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
 
@@ -38,19 +38,20 @@ import com.google.common.base.Function;
 public class FileInfoToBlobMetadata implements Function<FileInfo, MutableBlobMetadata> {
    public static final Pattern OBJECTS_PATTERN = Pattern.compile(".*objects/");
 
+   @Override
    public MutableBlobMetadata apply(FileInfo from) {
       MutableBlobMetadata to = new MutableBlobMetadataImpl();
       if (from.getUrl() != null) {
-         to.setId(Utils.replaceAll(from.getUrl().getPath(), OBJECTS_PATTERN, ""));
+         to.setId(Strings2.replaceAll(from.getUrl().getPath(), OBJECTS_PATTERN, ""));
       }
       to.setUri(from.getUrl());
       to.setName(from.getName());
       if (from.getMimeType() != null)
-         to.setContentType(from.getMimeType());
+         to.getContentMetadata().setContentType(from.getMimeType());
       if (from.getModified() != null)
          to.setLastModified(from.getModified());
       if (from.getBytes() != null)
-         to.setSize(from.getBytes());
+         to.getContentMetadata().setContentLength(from.getBytes());
       to.setType(StorageType.BLOB);
       return to;
    }

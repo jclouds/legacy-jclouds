@@ -54,7 +54,7 @@ public class BindCloneDriveOptionsToPlainTextString implements MapBinder {
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
             "this binder is only valid for GeneratedHttpRequests!");
       @SuppressWarnings("unchecked")
@@ -68,7 +68,7 @@ public class BindCloneDriveOptionsToPlainTextString implements MapBinder {
 
       request.setPayload(listOfMapsToListOfKeyValuesDelimitedByBlankLines.apply(ImmutableSet.of(postParams)));
       request.getPayload().getContentMetadata().setContentType(MediaType.TEXT_PLAIN);
-
+      return request;
    }
 
    static CloneDriveOptions findOptionsInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
@@ -84,7 +84,7 @@ public class BindCloneDriveOptionsToPlainTextString implements MapBinder {
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Object input) {
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       throw new UnsupportedOperationException();
    }
 

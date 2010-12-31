@@ -40,7 +40,7 @@ import com.google.common.collect.ImmutableList;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "blobstore.GetOptionsTest")
+@Test(groups = "unit")
 public class GetOptionsTest {
 
    private String etag;

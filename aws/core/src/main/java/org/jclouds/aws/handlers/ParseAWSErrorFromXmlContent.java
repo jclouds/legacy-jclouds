@@ -27,7 +27,6 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.AWSResponseException;
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.blobstore.ContainerNotFoundException;
@@ -40,7 +39,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
 
@@ -65,7 +64,7 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
    }
 
    public void handleError(HttpCommand command, HttpResponse response) {
-      HttpRequest request = command.getRequest();
+      HttpRequest request = command.getCurrentRequest();
       Exception exception = new HttpResponseException(command, response);
       try {
          AWSError error = null;
@@ -76,11 +75,11 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                error = utils.parseAWSErrorFromContent(request, response);
                if (error != null) {
                   message = error.getMessage();
-                  exception = new AWSResponseException(command, response, error);
+
                }
             } else {
                try {
-                  message = Utils.toStringAndClose(response.getPayload().getInput());
+                  message = Strings2.toStringAndClose(response.getPayload().getInput());
                   exception = new HttpResponseException(command, response, message);
                } catch (IOException e) {
                }
@@ -90,6 +89,9 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                response.getStatusLine());
          switch (response.getStatusCode()) {
          case 400:
+            if (error != null && error.getCode() != null
+                  && (error.getCode().equals("UnsupportedOperation")))
+               exception = new UnsupportedOperationException(message, exception);
             if (error != null && error.getCode() != null
                   && (error.getCode().endsWith(".NotFound") || error.getCode().endsWith(".Unknown")))
                exception = new ResourceNotFoundException(message, exception);
@@ -106,7 +108,7 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
             exception = new AuthorizationException(exception.getMessage(), exception);
             break;
          case 404:
-            if (!command.getRequest().getMethod().equals("DELETE")) {
+            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
                String container = request.getEndpoint().getHost();
                String key = request.getEndpoint().getPath();
                if (key == null || key.equals("/"))

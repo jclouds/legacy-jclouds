@@ -48,7 +48,7 @@ import com.google.inject.Module;
  * 
  * @author Ivan Meredith
  */
-@Test(groups = "live", testName = "rimuhosting.RimuHostingClientLiveTest")
+@Test(groups = "live")
 public class RimuHostingClientLiveTest {
 
    private RimuHostingClient connection;

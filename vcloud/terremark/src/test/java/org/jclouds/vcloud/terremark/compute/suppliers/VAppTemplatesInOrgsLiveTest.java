@@ -49,7 +49,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "terremark.VAppTemplatesInOrgsLiveTest")
+@Test(groups = "live", sequential = true)
 public class VAppTemplatesInOrgsLiveTest {
 
    private TerremarkVCloudClient tmClient;

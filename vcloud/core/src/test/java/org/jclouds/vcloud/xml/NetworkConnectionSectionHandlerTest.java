@@ -41,7 +41,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.NetworkConnectionSectionHandlerTest")
+@Test(groups = "unit")
 public class NetworkConnectionSectionHandlerTest {
    public void testVCloud1_0() {
       InputStream is = getClass().getResourceAsStream("/networkconnectionsection.xml");

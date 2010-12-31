@@ -40,7 +40,7 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 public class ParseObjectInfoFromHeaders implements Function<HttpResponse, MutableObjectInfoWithMetadata>,
-         InvocationContext {
+         InvocationContext<ParseObjectInfoFromHeaders> {
    private final ParseSystemAndUserMetadataFromHeaders blobMetadataParser;
    private final ResourceToObjectInfo blobToObjectInfo;
 

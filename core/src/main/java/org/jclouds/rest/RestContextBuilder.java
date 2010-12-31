@@ -177,7 +177,7 @@ public class RestContextBuilder<S, A> {
    protected void addContextModule(List<Module> modules) {
       modules.add(new AbstractModule() {
 
-         @SuppressWarnings("unchecked")
+         @SuppressWarnings({ "unchecked", "rawtypes" })
          @Override
          protected void configure() {
             bind(
@@ -186,6 +186,11 @@ public class RestContextBuilder<S, A> {
                   TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class, syncClientType, asyncClientType)))
                   .in(Scopes.SINGLETON);
 
+         }
+
+         public String toString() {
+            return String.format("configure rest context %s->%s", syncClientType.getSimpleName(),
+                  asyncClientType.getSimpleName());
          }
 
       });

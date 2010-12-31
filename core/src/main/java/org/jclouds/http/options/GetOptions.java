@@ -110,12 +110,10 @@ public class GetOptions extends BaseHttpRequestOptions {
     * Not compatible with {@link #ifETagMatches(String)} or {@link #ifUnmodifiedSince(Date)}
     */
    public GetOptions ifModifiedSince(Date ifModifiedSince) {
-      checkArgument(getIfMatch() == null,
-               "ifETagMatches() is not compatible with ifModifiedSince()");
-      checkArgument(getIfUnmodifiedSince() == null,
-               "ifUnmodifiedSince() is not compatible with ifModifiedSince()");
-      this.headers.put(HttpHeaders.IF_MODIFIED_SINCE, dateService.rfc822DateFormat(checkNotNull(
-               ifModifiedSince, "ifModifiedSince")));
+      checkArgument(getIfMatch() == null, "ifETagMatches() is not compatible with ifModifiedSince()");
+      checkArgument(getIfUnmodifiedSince() == null, "ifUnmodifiedSince() is not compatible with ifModifiedSince()");
+      this.headers.put(HttpHeaders.IF_MODIFIED_SINCE,
+            dateService.rfc822DateFormat(checkNotNull(ifModifiedSince, "ifModifiedSince")));
       return this;
    }
 
@@ -137,12 +135,10 @@ public class GetOptions extends BaseHttpRequestOptions {
     * Not compatible with {@link #ifETagDoesntMatch(String)} or {@link #ifModifiedSince(Date)}
     */
    public GetOptions ifUnmodifiedSince(Date ifUnmodifiedSince) {
-      checkArgument(getIfNoneMatch() == null,
-               "ifETagDoesntMatch() is not compatible with ifUnmodifiedSince()");
-      checkArgument(getIfModifiedSince() == null,
-               "ifModifiedSince() is not compatible with ifUnmodifiedSince()");
-      this.headers.put(HttpHeaders.IF_UNMODIFIED_SINCE, dateService.rfc822DateFormat(checkNotNull(
-               ifUnmodifiedSince, "ifUnmodifiedSince")));
+      checkArgument(getIfNoneMatch() == null, "ifETagDoesntMatch() is not compatible with ifUnmodifiedSince()");
+      checkArgument(getIfModifiedSince() == null, "ifModifiedSince() is not compatible with ifUnmodifiedSince()");
+      this.headers.put(HttpHeaders.IF_UNMODIFIED_SINCE,
+            dateService.rfc822DateFormat(checkNotNull(ifUnmodifiedSince, "ifUnmodifiedSince")));
       return this;
    }
 
@@ -170,10 +166,8 @@ public class GetOptions extends BaseHttpRequestOptions {
     *            if there was a problem converting this into an S3 eTag string
     */
    public GetOptions ifETagMatches(String eTag) {
-      checkArgument(getIfNoneMatch() == null,
-               "ifETagDoesntMatch() is not compatible with ifETagMatches()");
-      checkArgument(getIfModifiedSince() == null,
-               "ifModifiedSince() is not compatible with ifETagMatches()");
+      checkArgument(getIfNoneMatch() == null, "ifETagDoesntMatch() is not compatible with ifETagMatches()");
+      checkArgument(getIfModifiedSince() == null, "ifModifiedSince() is not compatible with ifETagMatches()");
       this.headers.put(HttpHeaders.IF_MATCH, String.format("\"%1$s\"", checkNotNull(eTag, "eTag")));
       return this;
    }
@@ -201,20 +195,17 @@ public class GetOptions extends BaseHttpRequestOptions {
     *            if there was a problem converting this into an S3 eTag string
     */
    public GetOptions ifETagDoesntMatch(String eTag) {
-      checkArgument(getIfMatch() == null,
-               "ifETagMatches() is not compatible with ifETagDoesntMatch()");
-      checkArgument(getIfUnmodifiedSince() == null,
-               "ifUnmodifiedSince() is not compatible with ifETagDoesntMatch()");
-      this.headers.put(HttpHeaders.IF_NONE_MATCH, String.format("\"%1$s\"", checkNotNull(eTag,
-               "ifETagDoesntMatch")));
+      checkArgument(getIfMatch() == null, "ifETagMatches() is not compatible with ifETagDoesntMatch()");
+      checkArgument(getIfUnmodifiedSince() == null, "ifUnmodifiedSince() is not compatible with ifETagDoesntMatch()");
+      this.headers.put(HttpHeaders.IF_NONE_MATCH, String.format("\"%1$s\"", checkNotNull(eTag, "ifETagDoesntMatch")));
       return this;
    }
 
    /**
     * For use in the request header: If-None-Match
     * <p />
-    * Return the object only if its payload tag (ETag) is different from the one specified, otherwise
-    * return a 304 (not modified).
+    * Return the object only if its payload tag (ETag) is different from the one specified,
+    * otherwise return a 304 (not modified).
     * 
     * @see #ifETagDoesntMatch(String)
     */
@@ -285,4 +276,37 @@ public class GetOptions extends BaseHttpRequestOptions {
       }
 
    }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((ranges == null) ? 0 : ranges.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (!super.equals(obj))
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      GetOptions other = (GetOptions) obj;
+      if (ranges == null) {
+         if (other.ranges != null)
+            return false;
+      } else if (!ranges.equals(other.ranges))
+         return false;
+      return true;
+   }
+
+   @Override
+   public String toString() {
+      return "[matrixParameters=" + matrixParameters + ", formParameters=" + formParameters + ", queryParameters="
+            + queryParameters + ", headers=" + headers + ", payload=" + payload + ", pathSuffix=" + pathSuffix
+            + ", ranges=" + ranges + "]";
+   }
+
 }

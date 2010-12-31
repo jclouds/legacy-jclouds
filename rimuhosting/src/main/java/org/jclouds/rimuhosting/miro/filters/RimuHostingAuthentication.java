@@ -21,9 +21,6 @@ package org.jclouds.rimuhosting.miro.filters;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -33,6 +30,7 @@ import org.jclouds.Constants;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.utils.ModifyRequest;
 
 /**
  * RimuHosting Authentication is a Authorization Header.
@@ -43,16 +41,15 @@ import org.jclouds.http.HttpRequestFilter;
  */
 @Singleton
 public class RimuHostingAuthentication implements HttpRequestFilter {
-   private List<String> credentialList;
+   private final String header;
 
    @Inject
    public RimuHostingAuthentication(@Named(Constants.PROPERTY_IDENTITY) String apikey) {
-      this.credentialList = Collections.singletonList(String.format("rimuhosting apikey=%s",
-               checkNotNull(apikey, "apikey")));
+      this.header = String.format("rimuhosting apikey=%s", checkNotNull(apikey, "apikey"));
    }
 
    @Override
-   public void filter(HttpRequest request) throws HttpException {
-      request.getHeaders().replaceValues(HttpHeaders.AUTHORIZATION, credentialList);
+   public HttpRequest filter(HttpRequest request) throws HttpException {
+      return ModifyRequest.replaceHeader(request, HttpHeaders.AUTHORIZATION, header);
    }
 }

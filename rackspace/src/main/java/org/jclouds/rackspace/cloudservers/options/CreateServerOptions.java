@@ -92,7 +92,7 @@ public class CreateServerOptions extends BindToJsonPayload {
    private String publicIp;
 
    @Override
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       ServerRequest server = new ServerRequest(checkNotNull(postParams.get("name"),
                "name parameter not present"), Integer.parseInt(checkNotNull(postParams
                .get("imageId"), "imageId parameter not present")), Integer.parseInt(checkNotNull(
@@ -108,7 +108,7 @@ public class CreateServerOptions extends BindToJsonPayload {
          server.addresses.getPublicAddresses().add(publicIp);
          server.addresses.setPrivateAddresses(null);
       }
-      bindToRequest(request, ImmutableMap.of("server", server));
+      return bindToRequest(request, ImmutableMap.of("server", server));
    }
 
    /**

@@ -51,7 +51,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "azurequeue.AzureQueueClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class AzureQueueClientLiveTest {
 
    protected AzureQueueClient connection;

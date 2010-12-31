@@ -20,8 +20,6 @@
 package org.jclouds.rest.config;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.util.Utils.toInputStream;
-import static org.jclouds.util.Utils.toStringAndClose;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +36,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.json.Json;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.ConfiguresCredentialStore;
+import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -95,7 +94,7 @@ public class CredentialStoreModule extends AbstractModule {
 
       @Override
       public InputStream apply(Credentials from) {
-         return toInputStream(json.toJson(checkNotNull(from)));
+         return Strings2.toInputStream(json.toJson(checkNotNull(from)));
       }
    }
 
@@ -161,7 +160,7 @@ public class CredentialStoreModule extends AbstractModule {
       @Override
       public Credentials apply(InputStream from) {
          try {
-            PrivateCredentials credentials = json.fromJson(toStringAndClose(checkNotNull(from)),
+            PrivateCredentials credentials = json.fromJson(Strings2.toStringAndClose(checkNotNull(from)),
                   PrivateCredentials.class);
             return new Credentials(credentials.identity, credentials.credential);
          } catch (Exception e) {

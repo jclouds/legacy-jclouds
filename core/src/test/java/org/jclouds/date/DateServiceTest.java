@@ -45,7 +45,8 @@ import com.google.inject.Injector;
  * @author Adrian Cole
  * @author James Murty
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "core.DateTest")
+// NOTE:without testName, this will fail w/NPE during surefire
+@Test(groups = "performance", sequential = true, timeOut = 2 * 60 * 1000, testName = "DateServiceTest")
 public class DateServiceTest extends PerformanceTest {
    protected DateService dateService;
 
@@ -67,8 +68,8 @@ public class DateServiceTest extends PerformanceTest {
 
       public final Date date;
 
-      TestData(String iso8601, String iso8601DateStringTz, String iso8601Seconds, String rfc822,
-               String cDateString, Date dateTime) {
+      TestData(String iso8601, String iso8601DateStringTz, String iso8601Seconds, String rfc822, String cDateString,
+            Date dateTime) {
          this.iso8601DateString = iso8601;
          this.iso8601DateStringTz = iso8601DateStringTz;
          this.iso8601SecondsDateString = iso8601Seconds;
@@ -81,24 +82,18 @@ public class DateServiceTest extends PerformanceTest {
    public DateServiceTest() {
       // Constant time test values, each TestData item must contain matching times!
       testData = new TestData[] {
-               new TestData("2009-03-12T02:00:07.000Z", "2009-03-12T02:00:07-04:00",
-                        "2009-03-12T02:00:07Z", "Thu, 12 Mar 2009 02:00:07 GMT",
-                        "Thu Mar 12 02:00:07 +0000 2009", new Date(1236823207000l)),
-               new TestData("2009-03-12T02:00:07.000Z", "2009-03-12T02:00:07+04:00",
-                        "2009-03-12T02:00:07Z", "Thu, 12 Mar 2009 02:00:07 GMT",
-                        "Thu Mar 12 02:00:07 +0000 2009", new Date(1236823207000l)),
-               new TestData("2009-03-14T04:00:07.000Z", "2009-03-14T04:00:07Z+04:00",
-                        "2009-03-14T04:00:07Z", "Sat, 14 Mar 2009 04:00:07 GMT",
-                        "Thu Mar 14 04:00:07 +0000 2009", new Date(1237003207000l)),
-               new TestData("2009-03-16T06:00:07.000Z", "2009-03-16T06:00:07Z+04:00",
-                        "2009-03-16T06:00:07Z", "Mon, 16 Mar 2009 06:00:07 GMT",
-                        "Thu Mar 16 06:00:07 +0000 2009", new Date(1237183207000l)),
-               new TestData("2009-03-18T08:00:07.000Z", "2009-03-18T08:00:07Z+04:00",
-                        "2009-03-18T08:00:07Z", "Wed, 18 Mar 2009 08:00:07 GMT",
-                        "Thu Mar 18 08:00:07 +0000 2009", new Date(1237363207000l)),
-               new TestData("2009-03-20T10:00:07.000Z", "2009-03-20T10:00:07Z+04:00",
-                        "2009-03-20T10:00:07Z", "Fri, 20 Mar 2009 10:00:07 GMT",
-                        "Thu Mar 20 10:00:07 +0000 2009", new Date(1237543207000l)) };
+            new TestData("2009-03-12T02:00:07.000Z", "2009-03-12T02:00:07-04:00", "2009-03-12T02:00:07Z",
+                  "Thu, 12 Mar 2009 02:00:07 GMT", "Thu Mar 12 02:00:07 +0000 2009", new Date(1236823207000l)),
+            new TestData("2009-03-12T02:00:07.000Z", "2009-03-12T02:00:07+04:00", "2009-03-12T02:00:07Z",
+                  "Thu, 12 Mar 2009 02:00:07 GMT", "Thu Mar 12 02:00:07 +0000 2009", new Date(1236823207000l)),
+            new TestData("2009-03-14T04:00:07.000Z", "2009-03-14T04:00:07Z+04:00", "2009-03-14T04:00:07Z",
+                  "Sat, 14 Mar 2009 04:00:07 GMT", "Thu Mar 14 04:00:07 +0000 2009", new Date(1237003207000l)),
+            new TestData("2009-03-16T06:00:07.000Z", "2009-03-16T06:00:07Z+04:00", "2009-03-16T06:00:07Z",
+                  "Mon, 16 Mar 2009 06:00:07 GMT", "Thu Mar 16 06:00:07 +0000 2009", new Date(1237183207000l)),
+            new TestData("2009-03-18T08:00:07.000Z", "2009-03-18T08:00:07Z+04:00", "2009-03-18T08:00:07Z",
+                  "Wed, 18 Mar 2009 08:00:07 GMT", "Thu Mar 18 08:00:07 +0000 2009", new Date(1237363207000l)),
+            new TestData("2009-03-20T10:00:07.000Z", "2009-03-20T10:00:07Z+04:00", "2009-03-20T10:00:07Z",
+                  "Fri, 20 Mar 2009 10:00:07 GMT", "Thu Mar 20 10:00:07 +0000 2009", new Date(1237543207000l)) };
    }
 
    @Test
@@ -106,6 +101,7 @@ public class DateServiceTest extends PerformanceTest {
       Date dsDate = dateService.iso8601DateParse(testData[0].iso8601DateString);
       assertEquals(dsDate, testData[0].date);
    }
+
    @Test
    public void testIso8601DateParseTz() throws ExecutionException, InterruptedException {
       Date dsDate = dateService.iso8601SecondsDateParse(testData[0].iso8601DateStringTz);

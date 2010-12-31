@@ -68,8 +68,8 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
    @Override
    protected Future<?> putByteArray(String bucket, String key, byte[] data, String contentType) {
       S3Object object = newObject(key);
-      object.getMetadata().setContentType(contentType);
       object.setPayload(data);
+      object.getPayload().getContentMetadata().setContentType(contentType);
       return getApi().putObject(bucket, object);
    }
 
@@ -78,8 +78,8 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
    @Override
    protected Future<?> putFile(String bucket, String key, File data, String contentType) {
       S3Object object = newObject(key);
-      object.getMetadata().setContentType(contentType);
       object.setPayload(data);
+      object.getPayload().getContentMetadata().setContentType(contentType);
       return getApi().putObject(bucket, object);
    }
 
@@ -94,19 +94,19 @@ public abstract class BaseJCloudsPerformanceLiveTest extends BasePerformanceLive
       S3Object object = newObject(key);
       object.setPayload(data);
       try {
-         object.getPayload().setContentLength(new Long(data.available()));
+         object.getPayload().getContentMetadata().setContentLength(new Long(data.available()));
       } catch (IOException e) {
          Throwables.propagate(e);
       }
-      object.getPayload().setContentType(contentType);
+      object.getPayload().getContentMetadata().setContentType(contentType);
       return getApi().putObject(bucket, object);
    }
 
    @Override
    protected Future<?> putString(String bucket, String key, String data, String contentType) {
       S3Object object = newObject(key);
-      object.getMetadata().setContentType(contentType);
       object.setPayload(data);
+      object.getPayload().getContentMetadata().setContentType(contentType);
       return getApi().putObject(bucket, object);
    }
 }

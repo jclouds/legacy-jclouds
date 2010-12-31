@@ -58,8 +58,8 @@ public class BindGuestCustomizationSectionToXmlPayload extends BindToStringPaylo
       this.ns = ns;
       this.schema = schema;
    }
-
-   public void bindToRequest(HttpRequest request, Object payload) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
       checkArgument(checkNotNull(payload, "GuestCustomizationSection") instanceof GuestCustomizationSection,
                "this binder is only valid for GuestCustomizationSection!");
       GuestCustomizationSection guest = GuestCustomizationSection.class.cast(payload);
@@ -104,12 +104,12 @@ public class BindGuestCustomizationSectionToXmlPayload extends BindToStringPaylo
 
          Properties outputProperties = new Properties();
          outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
-         super.bindToRequest(request, guestCustomizationSection.asString(outputProperties));
+         request =  super.bindToRequest(request, guestCustomizationSection.asString(outputProperties));
          request.getPayload().getContentMetadata().setContentType(guest.getType());
       } catch (Exception e) {
          Throwables.propagate(e);
       }
-
+      return request;
    }
 
 }

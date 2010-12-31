@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "live" }, testName = "s3.S3BlobSignerLiveTest")
+@Test(groups = { "live" })
 public class S3BlobSignerLiveTest extends BaseBlobSignerLiveTest {
 
 }

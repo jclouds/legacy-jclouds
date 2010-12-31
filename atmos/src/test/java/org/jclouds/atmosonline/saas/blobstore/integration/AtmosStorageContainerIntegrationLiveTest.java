@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "emcsaas.AtmosStorageContainerIntegrationTest")
+@Test(groups = "live")
 public class AtmosStorageContainerIntegrationLiveTest extends BaseContainerIntegrationTest {
 
    @Override

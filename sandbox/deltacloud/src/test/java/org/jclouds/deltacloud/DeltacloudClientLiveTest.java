@@ -19,110 +19,128 @@
 
 package org.jclouds.deltacloud;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
-import java.net.URI;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.io.IOException;
+import java.util.logging.Logger;
 
-import org.jclouds.Constants;
-import org.jclouds.deltacloud.collections.DeltacloudCollection;
-import org.jclouds.deltacloud.domain.Image;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
+import org.jclouds.deltacloud.domain.Instance;
+import org.jclouds.deltacloud.domain.InstanceAction;
+import org.jclouds.deltacloud.domain.InstanceState;
+import org.jclouds.deltacloud.options.CreateInstanceOptions;
+import org.jclouds.domain.Credentials;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.net.IPSocket;
+import org.jclouds.ssh.ExecResponse;
+import org.jclouds.ssh.SshClient;
+import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import com.google.common.collect.Iterables;
+import com.google.gson.Gson;
+import com.google.inject.Guice;
 
 /**
  * Tests behavior of {@code DeltacloudClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
-public class DeltacloudClientLiveTest {
+@Test(groups = "live", sequential = true, testName = "DeltacloudClientLiveTest")
+public class DeltacloudClientLiveTest extends ReadOnlyDeltacloudClientLiveTest {
 
-   protected DeltacloudClient client;
-   protected RestContext<DeltacloudClient, DeltacloudAsyncClient> context;
+   protected String prefix = System.getProperty("user.name") + ".test";
+   protected Instance instance;
 
-   protected String provider = "deltacloud";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
+   public void testCreateInstance() throws Exception {
+      Logger.getAnonymousLogger().info("starting instance");
+      instance = client.createInstance(Iterables.get(client.listImages(), 0).getId(),
+            CreateInstanceOptions.Builder.named(prefix));
+      instance = client.getInstance(instance.getHref());
+      checkStartedInstance();
 
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = System.getProperty("test." + provider + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
+      Instance newInfo = client.getInstance(instance.getHref());
+      checkInstanceMatchesGet(newInfo);
+
    }
 
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      if (credential != null)
-         overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
-      return overrides;
+   protected void checkInstanceMatchesGet(Instance newInfo) {
+      assertEquals(newInfo.getHref(), instance.getHref());
    }
 
-   @BeforeGroups(groups = "live")
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-            overrides);
-
-      client = context.getApi();
+   protected void checkStartedInstance() {
+      System.out.println(new Gson().toJson(instance));
+      assertEquals(instance.getName(), prefix);
+      assertEquals(instance.getState(), InstanceState.RUNNING);
    }
 
-   @AfterGroups(groups = "live")
-   void tearDown() {
-      if (context != null)
-         context.close();
+   @Test(dependsOnMethods = "testCreateInstance")
+   public void testConnectivity() throws Exception {
+      Logger.getAnonymousLogger().info("awaiting ssh");
+      // TODO
+      // assert socketTester.apply(new IPSocket(Iterables.get(instance.getPublicAddresses(), 0),
+      // 22)) : instance;
+      // doConnectViaSsh(instance, getSshCredentials(instance));
    }
 
-   @Test
-   public void testGetLinksContainsAll() throws Exception {
-      Map<DeltacloudCollection, URI> links = client.getCollections();
-      assertNotNull(links);
-      for (DeltacloudCollection link : DeltacloudCollection.values())
-         assert (links.get(link) != null) : link;
+   private Credentials getSshCredentials(Instance instance2) {
+      // TODO
+      return null;
    }
 
-   public void testListAndGetImages() throws Exception {
-      Set<? extends Image> response = client.listImages();
-      assert null != response;
-      long imageCount = response.size();
-      assertTrue(imageCount >= 0);
-      for (Image image : response) {
-         Image newDetails = client.getImage(image.getHref());
-         assertEquals(image, newDetails);
+   public HttpRequest refreshInstanceAndGetAction(InstanceAction action) {
+      return client.getInstance(instance.getHref()).getActions().get(action);
+   }
+
+   @Test(dependsOnMethods = "testConnectivity")
+   public void testLifeCycle() throws Exception {
+      client.performAction(refreshInstanceAndGetAction(InstanceAction.STOP));
+      assertEquals(client.getInstance(instance.getHref()).getState(), InstanceState.STOPPED);
+
+      client.performAction(refreshInstanceAndGetAction(InstanceAction.START));
+      assertEquals(client.getInstance(instance.getHref()).getState(), InstanceState.RUNNING);
+
+      client.performAction(refreshInstanceAndGetAction(InstanceAction.REBOOT));
+      assertEquals(client.getInstance(instance.getHref()).getState(), InstanceState.RUNNING);
+
+   }
+
+   @Test(dependsOnMethods = "testLifeCycle")
+   public void testDestroyInstance() throws Exception {
+      try {
+         client.performAction(refreshInstanceAndGetAction(InstanceAction.STOP));
+         assertEquals(client.getInstance(instance.getHref()).getState(), InstanceState.STOPPED);
+      } catch (IllegalArgumentException e) {
+      }
+      client.performAction(refreshInstanceAndGetAction(InstanceAction.DESTROY));
+      assertEquals(client.getInstance(instance.getHref()), null);
+   }
+
+   protected void doConnectViaSsh(Instance instance, Credentials creds) throws IOException {
+      SshClient ssh = Guice.createInjector(new JschSshClientModule()).getInstance(SshClient.Factory.class)
+            .create(new IPSocket(Iterables.get(instance.getPublicAddresses(), 0), 22), creds);
+      try {
+         ssh.connect();
+         ExecResponse hello = ssh.exec("echo hello");
+         assertEquals(hello.getOutput().trim(), "hello");
+         System.err.println(ssh.exec("df -k").getOutput());
+         System.err.println(ssh.exec("mount").getOutput());
+         System.err.println(ssh.exec("uname -a").getOutput());
+      } finally {
+         if (ssh != null)
+            ssh.disconnect();
       }
    }
 
-   @Test
-   public void testCreateInstance() throws Exception {
-      // TODO
-   }
-
-   @Test
-   public void testCreateInstanceWithOptions() throws Exception {
-      // TODO
+   @AfterGroups(groups = "live")
+   @Override
+   protected void tearDown() {
+      try {
+         testDestroyInstance();
+      } catch (Exception e) {
+         // no need to check null or anything as we swallow all
+      }
+      super.tearDown();
    }
 
 }

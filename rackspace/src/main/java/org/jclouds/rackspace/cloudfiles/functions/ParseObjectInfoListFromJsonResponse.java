@@ -51,7 +51,7 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<ObjectInfo>> implements InvocationContext {
+public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<ObjectInfo>> implements InvocationContext<ParseObjectInfoListFromJsonResponse> {
 
    private GeneratedHttpRequest<?> request;
 
@@ -64,10 +64,10 @@ public class ParseObjectInfoListFromJsonResponse extends ParseJson<PageSet<Objec
    public PageSet<ObjectInfo> apply(InputStream stream) {
       checkState(request != null, "request should be initialized at this point");
       checkState(request.getArgs() != null, "request.getArgs() should be initialized at this point");
-      checkArgument(request.getArgs()[0] instanceof String, "arg[0] must be a container name");
-      checkArgument(request.getArgs()[1] instanceof ListContainerOptions[],
+      checkArgument(request.getArgs().get(0) instanceof String, "arg[0] must be a container name");
+      checkArgument(request.getArgs().get(1) instanceof ListContainerOptions[],
             "arg[1] must be an array of ListContainerOptions");
-      ListContainerOptions[] optionsList = (ListContainerOptions[]) request.getArgs()[1];
+      ListContainerOptions[] optionsList = (ListContainerOptions[]) request.getArgs().get(1);
       ListContainerOptions options = optionsList.length > 0 ? optionsList[0] : ListContainerOptions.NONE;
       Type listType = new TypeToken<SortedSet<ObjectInfoImpl>>() {
       }.getType();

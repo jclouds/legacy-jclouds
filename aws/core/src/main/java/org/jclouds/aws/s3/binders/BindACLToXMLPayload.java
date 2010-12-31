@@ -44,8 +44,8 @@ import com.jamesmurty.utils.XMLBuilder;
  */
 @Singleton
 public class BindACLToXMLPayload implements Binder {
-
-   public void bindToRequest(HttpRequest request, Object payload) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
       AccessControlList from = (AccessControlList) payload;
       Properties outputProperties = new Properties();
       outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
@@ -57,12 +57,13 @@ public class BindACLToXMLPayload implements Binder {
          Throwables.propagateIfPossible(e);
          throw new RuntimeException("error transforming acl: " + from, e);
       }
+      return request;
    }
 
    protected XMLBuilder generateBuilder(AccessControlList acl) throws ParserConfigurationException,
-            FactoryConfigurationError {
+         FactoryConfigurationError {
       XMLBuilder rootBuilder = XMLBuilder.create("AccessControlPolicy").attr("xmlns",
-               S3Constants.S3_REST_API_XML_NAMESPACE);
+            S3Constants.S3_REST_API_XML_NAMESPACE);
       if (acl.getOwner() != null) {
          XMLBuilder ownerBuilder = rootBuilder.elem("Owner");
          ownerBuilder.elem("ID").text(acl.getOwner().getId()).up();
@@ -74,21 +75,19 @@ public class BindACLToXMLPayload implements Binder {
       for (Grant grant : acl.getGrants()) {
          XMLBuilder grantBuilder = grantsBuilder.elem("Grant");
          XMLBuilder granteeBuilder = grantBuilder.elem("Grantee").attr("xmlns:xsi",
-                  "http://www.w3.org/2001/XMLSchema-instance");
+               "http://www.w3.org/2001/XMLSchema-instance");
 
          if (grant.getGrantee() instanceof GroupGrantee) {
-            granteeBuilder.attr("xsi:type", "Group").elem("URI").text(
-                     grant.getGrantee().getIdentifier());
+            granteeBuilder.attr("xsi:type", "Group").elem("URI").text(grant.getGrantee().getIdentifier());
          } else if (grant.getGrantee() instanceof CanonicalUserGrantee) {
             CanonicalUserGrantee grantee = (CanonicalUserGrantee) grant.getGrantee();
-            granteeBuilder.attr("xsi:type", "CanonicalUser").elem("ID").text(
-                     grantee.getIdentifier()).up();
+            granteeBuilder.attr("xsi:type", "CanonicalUser").elem("ID").text(grantee.getIdentifier()).up();
             if (grantee.getDisplayName() != null) {
                granteeBuilder.elem("DisplayName").text(grantee.getDisplayName());
             }
          } else if (grant.getGrantee() instanceof EmailAddressGrantee) {
-            granteeBuilder.attr("xsi:type", "AmazonCustomerByEmail").elem("EmailAddress").text(
-                     grant.getGrantee().getIdentifier());
+            granteeBuilder.attr("xsi:type", "AmazonCustomerByEmail").elem("EmailAddress")
+                  .text(grant.getGrantee().getIdentifier());
          }
          grantBuilder.elem("Permission").text(grant.getPermission().toString());
       }

@@ -58,18 +58,17 @@ public class BindCloneVAppParamsToXmlPayload implements MapBinder {
 
    @Inject
    public BindCloneVAppParamsToXmlPayload(BindToStringPayload stringBinder,
-            @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns,
-            @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema) {
+         @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns, @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema) {
       this.ns = ns;
       this.schema = schema;
       this.stringBinder = stringBinder;
    }
 
-   @SuppressWarnings("unchecked")
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
-               "this binder is only valid for GeneratedHttpRequests!");
-      GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
+            "this binder is only valid for GeneratedHttpRequests!");
+      GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
       String newName = checkNotNull(postParams.remove("newName"), "newName");
       String vApp = checkNotNull(postParams.remove("vApp"), "vApp");
@@ -79,7 +78,7 @@ public class BindCloneVAppParamsToXmlPayload implements MapBinder {
          options = new CloneVAppOptions();
       }
       try {
-         stringBinder.bindToRequest(request, generateXml(newName, vApp, options));
+         return stringBinder.bindToRequest(request, generateXml(newName, vApp, options));
       } catch (ParserConfigurationException e) {
          throw new RuntimeException(e);
       } catch (FactoryConfigurationError e) {
@@ -91,7 +90,7 @@ public class BindCloneVAppParamsToXmlPayload implements MapBinder {
    }
 
    protected String generateXml(String newName, String vApp, CloneVAppOptions options)
-            throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
+         throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
       XMLBuilder rootBuilder = buildRoot(newName, options.isDeploy(), options.isPowerOn());
       if (options.getDescription() != null)
          rootBuilder.e("Description").text(options.getDescription());
@@ -101,12 +100,11 @@ public class BindCloneVAppParamsToXmlPayload implements MapBinder {
       return rootBuilder.asString(outputProperties);
    }
 
-   protected XMLBuilder buildRoot(String name, boolean deploy, boolean powerOn)
-            throws ParserConfigurationException, FactoryConfigurationError {
-      XMLBuilder rootBuilder = XMLBuilder.create("CloneVAppParams").a("name", name).a("deploy",
-               deploy+"").a("powerOn", powerOn+"").a("xmlns", ns).a("xmlns:xsi",
-               "http://www.w3.org/2001/XMLSchema-instance").a("xsi:schemaLocation",
-               ns + " " + schema);
+   protected XMLBuilder buildRoot(String name, boolean deploy, boolean powerOn) throws ParserConfigurationException,
+         FactoryConfigurationError {
+      XMLBuilder rootBuilder = XMLBuilder.create("CloneVAppParams").a("name", name).a("deploy", deploy + "")
+            .a("powerOn", powerOn + "").a("xmlns", ns).a("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
+            .a("xsi:schemaLocation", ns + " " + schema);
       return rootBuilder;
    }
 
@@ -122,7 +120,8 @@ public class BindCloneVAppParamsToXmlPayload implements MapBinder {
       return null;
    }
 
-   public void bindToRequest(HttpRequest request, Object input) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       throw new IllegalStateException("CloneVAppParams is needs parameters");
    }
 

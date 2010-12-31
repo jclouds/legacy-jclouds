@@ -43,7 +43,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "tweetstore.AddTweetsControllerTest")
+@Test(groups = "unit")
 public class AddTweetsControllerTest {
 
    Map<String, BlobStoreContext> createServices(String container) throws InterruptedException,

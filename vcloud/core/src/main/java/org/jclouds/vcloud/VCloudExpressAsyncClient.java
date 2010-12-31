@@ -76,7 +76,6 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
     * @see VCloudClient#getVAppTemplate
     */
    @GET
-   @Path("")
    @Consumes(VAPPTEMPLATE_XML)
    @XMLResponseParser(VCloudExpressVAppTemplateHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -86,7 +85,6 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
     * @see VCloudClient#findVAppTemplateInOrgCatalogNamed
     */
    @GET
-   @Path("")
    @Consumes(VAPPTEMPLATE_XML)
    @XMLResponseParser(VCloudExpressVAppTemplateHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -100,7 +98,6 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
     */
    @Override
    @GET
-   @Path("")
    @Consumes(NETWORK_XML)
    @XMLResponseParser(OrgNetworkFromVCloudExpressNetworkHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -114,7 +111,6 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
     */
    @Override
    @GET
-   @Path("")
    @Consumes(NETWORK_XML)
    @XMLResponseParser(OrgNetworkFromVCloudExpressNetworkHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -151,7 +147,6 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
     * @see VCloudClient#findVAppInOrgVDCNamed
     */
    @GET
-   @Path("")
    @Consumes(VAPP_XML)
    @XMLResponseParser(VCloudExpressVAppHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -164,7 +159,6 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
     * @see VCloudClient#getVApp
     */
    @GET
-   @Path("")
    @Consumes(VAPP_XML)
    @XMLResponseParser(VCloudExpressVAppHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -235,7 +229,6 @@ public interface VCloudExpressAsyncClient extends CommonVCloudAsyncClient {
     * @see CommonVCloudClient#deleteVApp
     */
    @DELETE
-   @Path("")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> deleteVApp(@EndpointParam URI vAppId);
 

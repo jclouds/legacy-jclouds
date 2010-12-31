@@ -47,7 +47,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "rest.RestContextFactoryTest")
+@Test(groups = "unit")
 public class RestContextFactoryTest {
 
    private static final String provider = "test";
@@ -98,6 +98,7 @@ public class RestContextFactoryTest {
 
    @SuppressWarnings("unchecked")
    public void testBuilderPropertiesWithContextBuilder() {
+      @SuppressWarnings("rawtypes")
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
             (Class) IntegrationTestContextBuilder.class, Collections.EMPTY_LIST);
@@ -118,6 +119,7 @@ public class RestContextFactoryTest {
 
    @SuppressWarnings("unchecked")
    public void testBuilderPropertiesWithModule() {
+      @SuppressWarnings("rawtypes")
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
             (Class) IntegrationTestContextBuilder.class, Collections.<Module> singleton(new A()));
@@ -138,6 +140,7 @@ public class RestContextFactoryTest {
 
    @SuppressWarnings("unchecked")
    public void testBuilderPropertiesWithModules() {
+      @SuppressWarnings("rawtypes")
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", null, (Class) null, (Class) null, PropertiesBuilder.class,
             (Class) IntegrationTestContextBuilder.class, Arrays.<Module> asList(new A(), new B()));
@@ -238,7 +241,7 @@ public class RestContextFactoryTest {
    @SuppressWarnings("unchecked")
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testBuilderPropertiesWithWrongConfig() {
-      @SuppressWarnings("unused")
+      @SuppressWarnings({ "unused", "rawtypes" })
       RestContextSpec<IntegrationTestClient, IntegrationTestAsyncClient> contextSpec = contextSpec(provider,
             "http://localhost", "1", "dummy", null, (Class) null, (Class) null,
             (Class) IntegrationTestContextBuilder.class, (Class) PropertiesBuilder.class, Collections.EMPTY_LIST);

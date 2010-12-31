@@ -29,7 +29,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.EC2UtilsTest")
+@Test(groups = "unit")
 public class EC2UtilsTest {
 
    public void testGetLoadBalancerNameAndRegionFromDnsName() {

@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableList;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "emcsaas.ListOptionsTest")
+@Test(groups = "unit")
 public class ListOptionsTest {
 
    public void testToken() {

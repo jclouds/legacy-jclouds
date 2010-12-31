@@ -48,7 +48,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "vcloud.TerremarkVCloudClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class InternetServiceLiveTest {
    TerremarkVCloudExpressClient tmClient;
 

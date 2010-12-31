@@ -31,54 +31,55 @@ import org.jclouds.atmosonline.saas.reference.AtmosStorageHeaders;
 import org.jclouds.http.HttpResponse;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
 public class ParseUserMetadataFromHeaders implements Function<HttpResponse, UserMetadata> {
-   private final Set<String> sysKeys = ImmutableSet.of("atime", "ctime", "gid", "itime", "mtime",
-            "nlink", "policyname", "size", "uid");
+   private static final Set<String> sysKeys = ImmutableSet.of("atime", "ctime", "gid", "itime", "mtime", "nlink",
+         "policyname", "size", "uid", "content-md5", "objectid", "objname", "type");
+   private static final Predicate<String> filter = new Predicate<String>() {
+
+      @Override
+      public boolean apply(String arg0) {
+         return !sysKeys.contains(arg0);
+      }
+
+   };
 
    public UserMetadata apply(HttpResponse from) {
-      UserMetadata md = new UserMetadata();
-      Map<String, String> metaMap = getMetaMap(checkNotNull(from
-               .getFirstHeaderOrNull(AtmosStorageHeaders.META), AtmosStorageHeaders.META));
+      checkNotNull(from, "http response");
 
-      Set<String> keys = Sets.difference(metaMap.keySet(), sysKeys);
-      for (String key : keys) {
-         md.getMetadata().put(key, metaMap.get(key));
-      }
-      if (from.getFirstHeaderOrNull(AtmosStorageHeaders.LISTABLE_META) != null)
-         md.getListableMetadata().putAll(
-                  getMetaMap(from.getFirstHeaderOrNull(AtmosStorageHeaders.LISTABLE_META)));
+      Map<String, String> meta = Maps.filterKeys(
+            getMetaMap(checkNotNull(from.getFirstHeaderOrNull(AtmosStorageHeaders.META), AtmosStorageHeaders.META)),
+            filter);
 
-      if (from.getFirstHeaderOrNull(AtmosStorageHeaders.TAGS) != null)
-         md.getTags().addAll(getTags(from.getFirstHeaderOrNull(AtmosStorageHeaders.TAGS)));
-      if (from.getFirstHeaderOrNull(AtmosStorageHeaders.LISTABLE_TAGS) != null)
-         md.getTags().addAll(getTags(from.getFirstHeaderOrNull(AtmosStorageHeaders.LISTABLE_TAGS)));
-      return md;
+      Map<String, String> listableMeta = (from.getFirstHeaderOrNull(AtmosStorageHeaders.LISTABLE_META) != null) ? getMetaMap(from
+            .getFirstHeaderOrNull(AtmosStorageHeaders.LISTABLE_META)) : ImmutableMap.<String, String> of();
+
+      Iterable<String> tags = (from.getFirstHeaderOrNull(AtmosStorageHeaders.TAGS) != null) ? Splitter.on(", ").split(
+            from.getFirstHeaderOrNull(AtmosStorageHeaders.TAGS)) : ImmutableSet.<String> of();
+
+      Iterable<String> listableTags = (from.getFirstHeaderOrNull(AtmosStorageHeaders.LISTABLE_TAGS) != null) ? Splitter
+            .on(", ").split(from.getFirstHeaderOrNull(AtmosStorageHeaders.LISTABLE_TAGS)) : ImmutableSet.<String> of();
+
+      return new UserMetadata(meta, listableMeta, tags, listableTags);
    }
 
-   private Set<String> getTags(String meta) {
-      Set<String> tags = Sets.newTreeSet();
-      String[] metas = meta.split(", ");
-      for (String entry : metas) {
-         tags.add(entry);
-      }
-      return tags;
-   }
-
+   // TODO: change to guava
    private Map<String, String> getMetaMap(String meta) {
-      Map<String, String> metaMap = Maps.newHashMap();
-      String[] metas = meta.split(", ");
-      for (String entry : metas) {
+      Builder<String, String> metaMap = ImmutableMap.<String, String> builder();
+      for (String entry : Splitter.on(", ").split(meta)) {
          String[] entrySplit = entry.split("=");
          metaMap.put(entrySplit[0], entrySplit[1]);
       }
-      return metaMap;
+      return metaMap.build();
    }
 }

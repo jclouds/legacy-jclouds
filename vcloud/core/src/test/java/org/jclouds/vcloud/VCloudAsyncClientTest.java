@@ -50,7 +50,7 @@ import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.config.VCloudRestClientModule;
 import org.jclouds.vcloud.domain.AllocationModel;
 import org.jclouds.vcloud.domain.GuestCustomizationSection;
@@ -101,7 +101,8 @@ import domain.VCloudVersionsAsyncClient;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VCloudAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "VCloudAsyncClientTest")
 public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
 
    public void testGetThumbnailOfVm() throws SecurityException, NoSuchMethodException, IOException {
@@ -132,7 +133,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       assertRequestLineEquals(request,
                "PUT http://vcloud.example.com/api/v1.0/vApp/vm-12/guestCustomizationSection HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/guestCustomizationSection.xml")), "application/vnd.vmware.vcloud.guestCustomizationSection+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -155,7 +156,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vdc/1/action/instantiateVAppTemplate HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream(
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/instantiationparams-network.xml")), "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml",
                false);
 
@@ -188,7 +189,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vdc/1/action/cloneVApp HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream("/cloneVApp-default.xml")),
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/cloneVApp-default.xml")),
                "application/vnd.vmware.vcloud.cloneVAppParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -209,7 +210,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vdc/1/action/cloneVApp HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream("/cloneVApp.xml")),
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/cloneVApp.xml")),
                "application/vnd.vmware.vcloud.cloneVAppParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -229,7 +230,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vdc/1/action/captureVApp HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vAppTemplate+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream("/captureVApp-default.xml")),
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/captureVApp-default.xml")),
                "application/vnd.vmware.vcloud.captureVAppParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -250,7 +251,7 @@ public class VCloudAsyncClientTest extends RestClientTest<VCloudAsyncClient> {
       assertRequestLineEquals(request,
                "POST https://vcenterprise.bluelock.com/api/v1.0/vdc/1/action/captureVApp HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vAppTemplate+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream("/captureVApp.xml")),
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/captureVApp.xml")),
                "application/vnd.vmware.vcloud.captureVAppParams+xml", false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);

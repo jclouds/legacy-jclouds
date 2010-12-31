@@ -30,11 +30,21 @@ public interface HttpRetryHandler {
       public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
          return true;
       }
+
+      @Override
+      public String toString() {
+         return "ALWAYS_RETRY";
+      }
    };
 
    public static final HttpRetryHandler NEVER_RETRY = new HttpRetryHandler() {
       public boolean shouldRetryRequest(HttpCommand command, HttpResponse response) {
          return false;
+      }
+
+      @Override
+      public String toString() {
+         return "NEVER_RETRY";
       }
    };
 

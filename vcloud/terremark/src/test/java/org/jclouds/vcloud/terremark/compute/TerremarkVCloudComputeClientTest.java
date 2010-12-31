@@ -51,7 +51,7 @@ import com.google.common.io.ByteStreams;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "terremark.TerremarkVCloudComputeClientTest")
+@Test(groups = "unit")
 public class TerremarkVCloudComputeClientTest {
    @SuppressWarnings("unchecked")
    @Test

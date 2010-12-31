@@ -31,7 +31,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payload;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -88,7 +88,7 @@ public class ReturnStringIf200Test {
 
       expect(response.getStatusCode()).andReturn(200).atLeastOnce();
       expect(response.getPayload()).andReturn(payload).atLeastOnce();
-      expect(payload.getInput()).andReturn(Utils.toInputStream("hello"));
+      expect(payload.getInput()).andReturn(Strings2.toInputStream("hello"));
       payload.release();
 
       replay(payload);

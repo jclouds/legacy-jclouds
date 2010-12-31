@@ -27,5 +27,5 @@ import org.jclouds.http.HttpRequest;
  * @author Adrian Cole
  */
 public interface Binder {
-   public void bindToRequest(HttpRequest request, Object input);
+   <R extends HttpRequest> R bindToRequest(R request, Object input);
 }

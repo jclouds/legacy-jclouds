@@ -45,7 +45,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "rest.RestContextBuilderTest")
+@Test(groups = "unit")
 public class RestContextBuilderTest {
 
    @ConfiguresHttpCommandExecutorService

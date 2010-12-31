@@ -46,7 +46,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VirtualSystemHandlerTest")
+@Test(groups = "unit")
 public class VirtualSystemHandlerTest {
 
    public void testVCloud1_0() {

@@ -35,7 +35,8 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.MonitoringStateHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "MonitoringStateHandlerTest")
 public class MonitoringStateHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
 

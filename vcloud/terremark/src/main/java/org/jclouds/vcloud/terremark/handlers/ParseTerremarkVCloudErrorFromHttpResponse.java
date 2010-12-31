@@ -35,7 +35,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 /**
  * This will parse and set an appropriate exception on the command object.
@@ -72,7 +72,7 @@ public class ParseTerremarkVCloudErrorFromHttpResponse implements HttpErrorHandl
                case 403: // TODO temporary as terremark mistakenly uses this for vApp
                   // not found.
                case 404:
-                  String path = command.getRequest().getEndpoint().getPath();
+                  String path = command.getCurrentRequest().getEndpoint().getPath();
                   Matcher matcher = RESOURCE_PATTERN.matcher(path);
                   String message;
                   if (matcher.find()) {
@@ -98,7 +98,7 @@ public class ParseTerremarkVCloudErrorFromHttpResponse implements HttpErrorHandl
    String parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
       if (response.getPayload() != null) {
          try {
-            return Utils.toStringAndClose(response.getPayload().getInput());
+            return Strings2.toStringAndClose(response.getPayload().getInput());
          } catch (IOException e) {
             logger.warn(e, "exception reading error from response", response);
          }

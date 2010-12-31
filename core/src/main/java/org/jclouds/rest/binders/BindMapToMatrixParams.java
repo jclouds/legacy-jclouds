@@ -21,7 +21,6 @@ package org.jclouds.rest.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.http.HttpUtils.replaceMatrixParam;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,6 +30,7 @@ import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 /**
@@ -46,14 +46,15 @@ public class BindMapToMatrixParams implements Binder {
       this.builder = builder;
    }
 
-   @SuppressWarnings("unchecked")
-   public void bindToRequest(HttpRequest request, Object input) {
+   @SuppressWarnings("unchecked")   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof Map,
                "this binder is only valid for Maps!");
       Map<String, String> map = (Map<String, String>) input;
       for (Entry<String, String> entry : map.entrySet()) {
-         replaceMatrixParam(request, entry.getKey(), entry.getValue(), builder.get());
+         request = ModifyRequest.replaceMatrixParam(request, entry.getKey(), entry.getValue(), builder.get());
       }
+      return request;
    }
 
 }

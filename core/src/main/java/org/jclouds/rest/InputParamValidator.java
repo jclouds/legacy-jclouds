@@ -132,7 +132,7 @@ public class InputParamValidator {
 
     @SuppressWarnings("unchecked")
     private void runPredicatesAgainstArgs(List<Validator<?>> predicates, Object... args) {
-        for (Validator validator : predicates) {
+        for (@SuppressWarnings("rawtypes") Validator validator : predicates) {
             Iterables.all(Arrays.asList(args), validator);
         }
     }

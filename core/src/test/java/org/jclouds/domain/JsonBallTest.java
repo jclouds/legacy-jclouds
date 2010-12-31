@@ -41,7 +41,7 @@ import com.google.inject.TypeLiteral;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "jclouds.JsonBallTest")
+@Test(groups = "unit")
 public class JsonBallTest {
    private ParseJson<Map<String, JsonBall>> handler;
    private Json mapper;

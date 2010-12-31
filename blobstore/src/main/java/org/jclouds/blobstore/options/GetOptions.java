@@ -79,10 +79,8 @@ public class GetOptions {
     * Not compatible with {@link #ifETagMatches(String)} or {@link #ifUnmodifiedSince(Date)}
     */
    public GetOptions ifModifiedSince(Date ifModifiedSince) {
-      checkArgument(getIfMatch() == null,
-               "ifETagMatches() is not compatible with ifModifiedSince()");
-      checkArgument(getIfUnmodifiedSince() == null,
-               "ifUnmodifiedSince() is not compatible with ifModifiedSince()");
+      checkArgument(getIfMatch() == null, "ifETagMatches() is not compatible with ifModifiedSince()");
+      checkArgument(getIfUnmodifiedSince() == null, "ifUnmodifiedSince() is not compatible with ifModifiedSince()");
       this.ifModifiedSince = checkNotNull(ifModifiedSince, "ifModifiedSince");
       return this;
    }
@@ -105,10 +103,8 @@ public class GetOptions {
     * Not compatible with {@link #ifETagDoesntMatch(String)} or {@link #ifModifiedSince(Date)}
     */
    public GetOptions ifUnmodifiedSince(Date ifUnmodifiedSince) {
-      checkArgument(getIfNoneMatch() == null,
-               "ifETagDoesntMatch() is not compatible with ifUnmodifiedSince()");
-      checkArgument(getIfModifiedSince() == null,
-               "ifModifiedSince() is not compatible with ifUnmodifiedSince()");
+      checkArgument(getIfNoneMatch() == null, "ifETagDoesntMatch() is not compatible with ifUnmodifiedSince()");
+      checkArgument(getIfModifiedSince() == null, "ifModifiedSince() is not compatible with ifUnmodifiedSince()");
       this.ifUnmodifiedSince = checkNotNull(ifUnmodifiedSince, "ifUnmodifiedSince");
       return this;
    }
@@ -135,10 +131,8 @@ public class GetOptions {
     *           hash representing the payload
     */
    public GetOptions ifETagMatches(String eTag) {
-      checkArgument(getIfNoneMatch() == null,
-               "ifETagDoesntMatch() is not compatible with ifETagMatches()");
-      checkArgument(getIfModifiedSince() == null,
-               "ifModifiedSince() is not compatible with ifETagMatches()");
+      checkArgument(getIfNoneMatch() == null, "ifETagDoesntMatch() is not compatible with ifETagMatches()");
+      checkArgument(getIfModifiedSince() == null, "ifModifiedSince() is not compatible with ifETagMatches()");
       this.ifMatch = checkNotNull(eTag, "eTag");
       return this;
    }
@@ -164,10 +158,8 @@ public class GetOptions {
     *           hash representing the payload
     */
    public GetOptions ifETagDoesntMatch(String eTag) {
-      checkArgument(getIfMatch() == null,
-               "ifETagMatches() is not compatible with ifETagDoesntMatch()");
-      checkArgument(getIfUnmodifiedSince() == null,
-               "ifUnmodifiedSince() is not compatible with ifETagDoesntMatch()");
+      checkArgument(getIfMatch() == null, "ifETagMatches() is not compatible with ifETagDoesntMatch()");
+      checkArgument(getIfUnmodifiedSince() == null, "ifUnmodifiedSince() is not compatible with ifETagDoesntMatch()");
       this.ifNoneMatch = checkNotNull(eTag, "eTag");
       return this;
    }
@@ -231,4 +223,60 @@ public class GetOptions {
       }
 
    }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((ifMatch == null) ? 0 : ifMatch.hashCode());
+      result = prime * result + ((ifModifiedSince == null) ? 0 : ifModifiedSince.hashCode());
+      result = prime * result + ((ifNoneMatch == null) ? 0 : ifNoneMatch.hashCode());
+      result = prime * result + ((ifUnmodifiedSince == null) ? 0 : ifUnmodifiedSince.hashCode());
+      result = prime * result + ((ranges == null) ? 0 : ranges.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      GetOptions other = (GetOptions) obj;
+      if (ifMatch == null) {
+         if (other.ifMatch != null)
+            return false;
+      } else if (!ifMatch.equals(other.ifMatch))
+         return false;
+      if (ifModifiedSince == null) {
+         if (other.ifModifiedSince != null)
+            return false;
+      } else if (!ifModifiedSince.equals(other.ifModifiedSince))
+         return false;
+      if (ifNoneMatch == null) {
+         if (other.ifNoneMatch != null)
+            return false;
+      } else if (!ifNoneMatch.equals(other.ifNoneMatch))
+         return false;
+      if (ifUnmodifiedSince == null) {
+         if (other.ifUnmodifiedSince != null)
+            return false;
+      } else if (!ifUnmodifiedSince.equals(other.ifUnmodifiedSince))
+         return false;
+      if (ranges == null) {
+         if (other.ranges != null)
+            return false;
+      } else if (!ranges.equals(other.ranges))
+         return false;
+      return true;
+   }
+
+   @Override
+   public String toString() {
+      return "[ranges=" + ranges + ", ifModifiedSince=" + ifModifiedSince + ", ifUnmodifiedSince="
+            + ifUnmodifiedSince + ", ifMatch=" + ifMatch + ", ifNoneMatch=" + ifNoneMatch + "]";
+   }
+
 }

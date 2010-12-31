@@ -36,7 +36,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "http.BasicAuthenticationTest")
+@Test(groups = "unit")
 public class BasicAuthenticationTest {
 
    private static final String USER = "Aladdin";
@@ -45,7 +45,7 @@ public class BasicAuthenticationTest {
    public void testAuth() throws UnsupportedEncodingException, NoSuchAlgorithmException, CertificateException {
       BasicAuthentication filter = new BasicAuthentication(USER, PASSWORD, new JCECrypto(null));
       HttpRequest request = new HttpRequest("GET", URI.create("http://localhost"));
-      filter.filter(request);
+      request = filter.filter(request);
       assertEquals(request.getFirstHeaderOrNull(HttpHeaders.AUTHORIZATION), "Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ==");
    }
 

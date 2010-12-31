@@ -19,6 +19,9 @@
 
 package org.jclouds.blobstore.binders;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.Blob;
@@ -35,12 +38,16 @@ import org.jclouds.rest.Binder;
 @Singleton
 public class BindBlobToMultipartForm implements Binder {
 
-   public void bindToRequest(HttpRequest request, Object payload) {
-      Blob blob = (Blob) payload;
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof Blob, "this binder is only valid for Blobs!");
+      checkNotNull(request, "request");
+      Blob blob = Blob.class.cast(input);
 
       Part part = Part.create(blob.getMetadata().getName(), blob.getPayload(),
-               new PartOptions().contentType(blob.getMetadata().getContentMetadata().getContentType()));
+            new PartOptions().contentType(blob.getMetadata().getContentMetadata().getContentType()));
 
       request.setPayload(new MultipartForm(part));
+      return request;
    }
 }

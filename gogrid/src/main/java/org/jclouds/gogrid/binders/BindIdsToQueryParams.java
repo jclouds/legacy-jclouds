@@ -21,7 +21,6 @@ package org.jclouds.gogrid.binders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.gogrid.reference.GoGridQueryParams.ID_KEY;
-import static org.jclouds.http.HttpUtils.addQueryParamTo;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -29,6 +28,7 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.collect.ImmutableList;
@@ -59,18 +59,18 @@ public class BindIdsToQueryParams implements Binder {
     *           array of String params
     */
    @Override
-   public void bindToRequest(HttpRequest request, Object input) {
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
 
       if (checkNotNull(input, "input is null") instanceof Long[]) {
          Long[] names = (Long[]) input;
-         addQueryParamTo(request, ID_KEY, ImmutableList.copyOf(names), builder.get());
+         request = ModifyRequest.addQueryParam(request, ID_KEY, ImmutableList.copyOf(names), builder.get());
       } else if (input instanceof long[]) {
          long[] names = (long[]) input;
-         addQueryParamTo(request, ID_KEY, Longs.asList(names), builder.get());
+         request = ModifyRequest.addQueryParam(request, ID_KEY, Longs.asList(names), builder.get());
       } else {
          throw new IllegalArgumentException("this binder is only valid for Long[] arguments: "
                   + input.getClass());
       }
-
+      return request;
    }
 }

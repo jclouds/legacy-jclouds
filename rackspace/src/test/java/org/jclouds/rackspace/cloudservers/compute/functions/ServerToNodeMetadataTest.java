@@ -54,7 +54,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudservers.ServerToNodeMetadataTest")
+@Test(groups = "unit")
 public class ServerToNodeMetadataTest {
    Location provider = new LocationImpl(LocationScope.ZONE, "dallas", "description", null);
 

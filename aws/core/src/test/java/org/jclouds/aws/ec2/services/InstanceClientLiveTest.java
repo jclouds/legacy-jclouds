@@ -47,7 +47,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "ec2.InstanceClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class InstanceClientLiveTest {
    public static final String PREFIX = System.getProperty("user.name") + "-ec2";
 

@@ -71,7 +71,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "cloudsigma.CloudSigmaClientLiveTest")
+@Test(groups = "live")
 public class CloudSigmaClientLiveTest {
    protected long driveSize = 8 * 1024 * 1024 * 1024l;
    protected int maxDriveImageTime = 300;

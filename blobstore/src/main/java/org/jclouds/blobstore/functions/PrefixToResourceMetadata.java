@@ -19,6 +19,8 @@
 
 package org.jclouds.blobstore.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.inject.Singleton;
 
 import org.jclouds.blobstore.domain.MutableStorageMetadata;
@@ -35,6 +37,7 @@ import com.google.common.base.Function;
 public class PrefixToResourceMetadata implements Function<String, StorageMetadata> {
 
    public StorageMetadata apply(String from) {
+      checkNotNull(from, "prefix");
       MutableStorageMetadata returnVal = new MutableStorageMetadataImpl();
       returnVal.setType(StorageType.RELATIVE_PATH);
       returnVal.setName(from);

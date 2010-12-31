@@ -48,7 +48,7 @@ import com.google.inject.Provides;
 /**
  * @author Oleksiy Yarmula
  */
-@Test(groups = "unit", testName = "gogrid.ParseServerNameToCredentialsMapFromJsonResponseTest")
+@Test(groups = "unit")
 public class ParseServerNameToCredentialsMapFromJsonResponseTest {
 
    @Test

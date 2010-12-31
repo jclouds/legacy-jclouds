@@ -35,35 +35,37 @@ import com.google.common.collect.Multimap;
  */
 @Timeout(duration = 40, timeUnit = TimeUnit.SECONDS)
 public interface IntegrationTestClient {
-	String rowdy(String path);
+   String rowdy(String path);
 
-	boolean exists(String path);
+   boolean exists(String path);
 
-	String synch(String id);
+   String synch(String id);
 
-	String download(String id);
+   String download(String id);
 
-	String downloadException(String id, HttpRequestOptions options);
+   HttpResponse invoke(HttpRequest request);
 
-	String synchException(String id, String header);
+   String downloadException(String id, HttpRequestOptions options);
 
-	String upload(String id, String toPut);
+   String synchException(String id, String header);
 
-	String post(String id, String toPut);
+   String upload(String id, String toPut);
 
-	String postAsInputStream(String id, String toPut);
+   String post(String id, String toPut);
+
+   String postAsInputStream(String id, String toPut);
 
    Multimap<String, String> postPayloadAndReturnHeaders(String id, Payload payload);
 
-	String postJson(String id, String toPut);
+   String postJson(String id, String toPut);
 
-	String action(String id, String action, Map<String, String> options);
+   String action(String id, String action, Map<String, String> options);
 
-	String downloadFilter(String id, String header);
+   String downloadFilter(String id, String header);
 
-	String download(String id, String header);
+   String download(String id, String header);
 
-	String downloadAndParse(String id);
+   String downloadAndParse(String id);
 
-	StringBuffer newStringBuffer();
+   StringBuffer newStringBuffer();
 }

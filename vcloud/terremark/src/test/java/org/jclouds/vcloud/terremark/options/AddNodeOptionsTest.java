@@ -34,7 +34,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.AddNodeOptionsTest")
+@Test(groups = "unit")
 public class AddNodeOptionsTest {
 
    Injector injector = Guice.createInjector(new SaxParserModule());

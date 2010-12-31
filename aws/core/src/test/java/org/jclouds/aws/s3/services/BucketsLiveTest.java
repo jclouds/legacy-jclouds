@@ -52,7 +52,7 @@ import org.jclouds.aws.s3.domain.Payer;
 import org.jclouds.aws.s3.domain.S3Object;
 import org.jclouds.aws.s3.internal.StubS3AsyncClient;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
@@ -64,7 +64,7 @@ import com.google.common.collect.Iterables;
  * @author James Murty
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" }, testName = "s3.S3ClientLiveTest")
+@Test(groups = { "integration", "live" })
 public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
    public S3Client getApi() {
       return (S3Client) context.getProviderSpecificContext().getApi();
@@ -166,7 +166,7 @@ public class BucketsLiveTest extends BaseBlobStoreIntegrationTest {
       String bucketName = getContainerName();
       try {
          URL url = new URL(String.format("https://%s.s3.amazonaws.com", bucketName));
-         Utils.toStringAndClose(url.openStream());
+         Strings2.toStringAndClose(url.openStream());
       } finally {
          returnContainer(bucketName);
       }

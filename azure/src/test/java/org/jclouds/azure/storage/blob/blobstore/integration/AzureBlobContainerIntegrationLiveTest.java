@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  * @author James Murty
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "azureblob.AzureBlobContainerIntegrationTest")
+@Test(groups = "live")
 public class AzureBlobContainerIntegrationLiveTest extends BaseContainerIntegrationTest {
 
 }

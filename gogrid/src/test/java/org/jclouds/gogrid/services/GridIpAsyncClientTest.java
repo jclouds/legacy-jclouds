@@ -25,7 +25,7 @@ import java.lang.reflect.Method;
 import org.jclouds.gogrid.domain.IpType;
 import org.jclouds.gogrid.functions.ParseIpListFromJsonResponse;
 import org.jclouds.gogrid.options.GetIpListOptions;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -33,14 +33,18 @@ import com.google.common.collect.Iterables;
 import com.google.inject.TypeLiteral;
 
 /**
+ * Tests behavior of {@code GridIpAsyncClient}
+ * 
  * @author Oleksiy Yarmula
  */
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "GridIpAsyncClientTest")
 public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsyncClient> {
 
    @Test
    public void testGetIpListWithOptions() throws NoSuchMethodException, IOException {
       Method method = GridIpAsyncClient.class.getMethod("getIpList", GetIpListOptions[].class);
-      GeneratedHttpRequest<GridIpAsyncClient> httpRequest = processor.createRequest(method, new GetIpListOptions()
+      HttpRequest httpRequest = processor.createRequest(method, new GetIpListOptions()
             .onlyUnassigned().onlyWithType(IpType.PUBLIC));
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/ip/list?v=1.5&ip.state=Unassigned&"
@@ -53,7 +57,7 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpRequest);
-      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/ip/list?v=1.5&ip.state=Unassigned&"
             + "ip.type=Public&sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");
@@ -64,7 +68,7 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
    @Test
    public void testGetAssignedIpList() throws NoSuchMethodException, IOException {
       Method method = GridIpAsyncClient.class.getMethod("getAssignedIpList");
-      GeneratedHttpRequest<GridIpAsyncClient> httpRequest = processor.createRequest(method);
+      HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
             "GET https://api.gogrid.com/api/grid/ip/list?v=1.5&ip.state=Assigned HTTP/1.1");
@@ -76,7 +80,7 @@ public class GridIpAsyncClientTest extends BaseGoGridAsyncClientTest<GridIpAsync
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(httpRequest);
-      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://api.gogrid.com/api/grid/ip/list?v=1.5&ip.state=Assigned&"
             + "sig=3f446f171455fbb5574aecff4997b273&api_key=foo " + "HTTP/1.1");

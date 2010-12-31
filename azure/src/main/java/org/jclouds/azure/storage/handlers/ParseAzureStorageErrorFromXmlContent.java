@@ -39,7 +39,7 @@ import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 /**
  * This will parse and set an appropriate exception on the command object.
@@ -79,28 +79,28 @@ public class ParseAzureStorageErrorFromXmlContent implements HttpErrorHandler {
                   }
                } catch (RuntimeException e) {
                   try {
-                     message = Utils.toStringAndClose(response.getPayload().getInput());
+                     message = Strings2.toStringAndClose(response.getPayload().getInput());
                      exception = new HttpResponseException(command, response, message);
                   } catch (IOException e1) {
                   }
                }
             } else {
                try {
-                  message = Utils.toStringAndClose(response.getPayload().getInput());
+                  message = Strings2.toStringAndClose(response.getPayload().getInput());
                   exception = new HttpResponseException(command, response, message);
                } catch (IOException e) {
                }
             }
          }
-         message = message != null ? message : String.format("%s -> %s", command.getRequest().getRequestLine(),
+         message = message != null ? message : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(),
                response.getStatusLine());
          switch (response.getStatusCode()) {
          case 401:
             exception = new AuthorizationException(exception.getMessage(), exception);
             break;
          case 404:
-            if (!command.getRequest().getMethod().equals("DELETE")) {
-               String path = command.getRequest().getEndpoint().getPath();
+            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
+               String path = command.getCurrentRequest().getEndpoint().getPath();
                Matcher matcher = CONTAINER_PATH.matcher(path);
                if (matcher.find()) {
                   exception = new ContainerNotFoundException(matcher.group(1), message);

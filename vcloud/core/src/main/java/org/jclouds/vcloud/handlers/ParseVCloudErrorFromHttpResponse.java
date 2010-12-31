@@ -37,7 +37,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.VCloudResponseException;
 import org.jclouds.vcloud.domain.VCloudError;
@@ -63,7 +63,7 @@ public class ParseVCloudErrorFromHttpResponse implements HttpErrorHandler {
    }
 
    public void handleError(HttpCommand command, HttpResponse response) {
-      HttpRequest request = command.getRequest();
+      HttpRequest request = command.getCurrentRequest();
       Exception exception = new HttpResponseException(command, response);
       try {
          VCloudError error = null;
@@ -78,7 +78,7 @@ public class ParseVCloudErrorFromHttpResponse implements HttpErrorHandler {
                }
             } else {
                try {
-                  message = Utils.toStringAndClose(response.getPayload().getInput());
+                  message = Strings2.toStringAndClose(response.getPayload().getInput());
                   exception = message != null ? new HttpResponseException(command, response, message) : exception;
                } catch (IOException e) {
                }
@@ -100,8 +100,8 @@ public class ParseVCloudErrorFromHttpResponse implements HttpErrorHandler {
                exception = new AuthorizationException(exception.getMessage(), exception);
                break;
             case 404:
-               if (!command.getRequest().getMethod().equals("DELETE")) {
-                  String path = command.getRequest().getEndpoint().getPath();
+               if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
+                  String path = command.getCurrentRequest().getEndpoint().getPath();
                   Matcher matcher = RESOURCE_PATTERN.matcher(path);
                   if (matcher.find()) {
                      message = String.format("%s %s not found", matcher.group(1), matcher.group(2));

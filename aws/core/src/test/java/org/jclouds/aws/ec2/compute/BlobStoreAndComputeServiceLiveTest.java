@@ -99,8 +99,7 @@ public class BlobStoreAndComputeServiceLiveTest {
       for (NodeMetadata node : nodes) {
          IPSocket socket = new IPSocket(get(node.getPublicAddresses(), 0), 22);
 
-         SshClient ssh = computeContext.utils().sshFactory()
-               .create(socket, node.getCredentials().identity, node.getCredentials().credential.getBytes());
+         SshClient ssh = computeContext.utils().sshFactory().create(socket, node.getCredentials());
          try {
             ssh.connect();
             ExecResponse exec = ssh.exec(cmd);

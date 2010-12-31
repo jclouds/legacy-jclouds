@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "compute.CredentialsTest")
+@Test(groups = "unit")
 public class CredentialsTest {
 
    public void testAzure() {

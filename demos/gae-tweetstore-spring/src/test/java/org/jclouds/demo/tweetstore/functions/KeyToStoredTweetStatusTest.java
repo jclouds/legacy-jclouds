@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "tweetstore.KeyToStoredTweetStatusTest")
+@Test(groups = "unit")
 public class KeyToStoredTweetStatusTest {
 
    BlobMap createMap() throws InterruptedException, ExecutionException {

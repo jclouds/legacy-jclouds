@@ -94,7 +94,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" }, sequential = true, testName = "compute.ComputeServiceLiveTest")
+@Test(groups = { "integration", "live" }, sequential = true)
 public abstract class BaseComputeServiceLiveTest {
 
    public void setServiceDefaults() {

@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.compute.EC2ComputeServiceTest;
+import org.jclouds.aws.ec2.compute.EC2TemplateBuilderTest;
 import org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.compute.domain.RegionNameAndIngressRules;
@@ -53,7 +53,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest")
+@Test(groups = "unit")
 public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsTest {
 
    public void testExecuteWithDefaultOptionsEC2() throws SecurityException, NoSuchMethodException {
@@ -118,7 +118,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup constants
       String region = Region.US_EAST_1;
       String tag = "tag";
-      Hardware size = EC2ComputeServiceTest.CC1_4XLARGE;
+      Hardware size = EC2TemplateBuilderTest.CC1_4XLARGE;
       String systemGeneratedKeyPairName = "systemGeneratedKeyPair";
       String generatedGroup = "group";
       Set<String> generatedGroups = ImmutableSet.of(generatedGroup);
@@ -177,7 +177,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup constants
       String region = Region.US_EAST_1;
       String tag = "tag";
-      Hardware size = EC2ComputeServiceTest.CC1_4XLARGE;
+      Hardware size = EC2TemplateBuilderTest.CC1_4XLARGE;
       String systemGeneratedKeyPairName = "systemGeneratedKeyPair";
       String generatedGroup = "group";
       Set<String> generatedGroups = ImmutableSet.of(generatedGroup);

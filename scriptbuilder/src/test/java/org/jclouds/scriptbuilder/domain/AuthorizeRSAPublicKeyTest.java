@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "scriptbuilder.AuthorizeRSAPublicKeyTest")
+@Test(groups = "unit")
 public class AuthorizeRSAPublicKeyTest {
 
    AuthorizeRSAPublicKey auth = new AuthorizeRSAPublicKey("ssh-dss AAAAB");

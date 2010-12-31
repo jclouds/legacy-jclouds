@@ -32,11 +32,12 @@ import org.jclouds.vcloud.xml.ovf.VCloudOperatingSystemHandler;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code VCloudOperatingSystemHandler}
+ * Tests behavior of {@code VCloudOperatingSystemSectionHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VCloudOperatingSystemHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "VCloudOperatingSystemSectionHandlerTest")
 public class VCloudOperatingSystemSectionHandlerTest extends BaseHandlerTest {
 
    public void testDefault() throws UnknownHostException {

@@ -47,14 +47,14 @@ public class BindAsHostPrefix implements Binder {
       this.uriBuilderProvider = uriBuilderProvider;
    }
 
-   public void bindToRequest(HttpRequest request, Object payload) {
+   @Override
+   @SuppressWarnings("unchecked")
+   public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
       checkNotNull(payload, "hostprefix");
-      checkArgument(isValid(request.getEndpoint().getHost()), "this is only valid for hostnames: "
-               + request);
+      checkArgument(isValid(request.getEndpoint().getHost()), "this is only valid for hostnames: " + request);
       UriBuilder builder = uriBuilderProvider.get().uri(request.getEndpoint());
-      InternetDomainName name = InternetDomainName.from(request.getEndpoint().getHost()).child(
-               payload.toString());
+      InternetDomainName name = InternetDomainName.from(request.getEndpoint().getHost()).child(payload.toString());
       builder.host(name.name());
-      request.setEndpoint(builder.build());
+      return (R) request.toBuilder().endpoint(builder.build()).build();
    }
 }

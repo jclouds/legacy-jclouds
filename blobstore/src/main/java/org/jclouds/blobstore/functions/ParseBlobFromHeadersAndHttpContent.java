@@ -19,6 +19,8 @@
 
 package org.jclouds.blobstore.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.inject.Inject;
 
 import org.jclouds.blobstore.domain.Blob;
@@ -36,23 +38,24 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 public class ParseBlobFromHeadersAndHttpContent implements Function<HttpResponse, Blob>,
-         InvocationContext {
+      InvocationContext<ParseBlobFromHeadersAndHttpContent> {
    private final ParseSystemAndUserMetadataFromHeaders metadataParser;
    private final Blob.Factory blobFactory;
 
    @Inject
    public ParseBlobFromHeadersAndHttpContent(ParseSystemAndUserMetadataFromHeaders metadataParser,
-            Blob.Factory blobFactory) {
-      this.metadataParser = metadataParser;
-      this.blobFactory = blobFactory;
+         Blob.Factory blobFactory) {
+      this.metadataParser = checkNotNull(metadataParser, "metadataParser");
+      this.blobFactory = checkNotNull(blobFactory, "blobFactory");
    }
 
    public Blob apply(HttpResponse from) {
+      checkNotNull(from, "request");
       MutableBlobMetadata metadata = metadataParser.apply(from);
-      Blob object = blobFactory.create(metadata);
-      object.getAllHeaders().putAll(from.getHeaders());
-      object.setPayload(from.getPayload());
-      return object;
+      Blob blob = blobFactory.create(metadata);
+      blob.getAllHeaders().putAll(from.getHeaders());
+      blob.setPayload(from.getPayload());
+      return blob;
    }
 
    @Override

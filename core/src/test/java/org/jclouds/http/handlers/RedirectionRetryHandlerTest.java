@@ -23,7 +23,6 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.classextension.EasyMock.createMock;
 import static org.easymock.classextension.EasyMock.replay;
 import static org.easymock.classextension.EasyMock.verify;
-import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
 
@@ -44,7 +43,7 @@ import com.google.inject.Guice;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "http.RedirectionRetryHandlerTest")
+@Test(groups = "unit")
 public class RedirectionRetryHandlerTest {
 
    @Test
@@ -157,7 +156,8 @@ public class RedirectionRetryHandlerTest {
       HttpCommand command = createMock(HttpCommand.class);
 
       expect(command.incrementRedirectCount()).andReturn(0);
-      expect(command.getRequest()).andReturn(request).atLeastOnce();
+      expect(command.getCurrentRequest()).andReturn(request);
+      command.setCurrentRequest(expected);
 
       replay(command);
 
@@ -165,7 +165,6 @@ public class RedirectionRetryHandlerTest {
             RedirectionRetryHandler.class);
 
       assert retry.shouldRetryRequest(command, response);
-      assertEquals(command.getRequest(), expected);
       verify(command);
    }
 }

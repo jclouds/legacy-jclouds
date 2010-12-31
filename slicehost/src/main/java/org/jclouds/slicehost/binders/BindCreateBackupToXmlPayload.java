@@ -45,7 +45,8 @@ public class BindCreateBackupToXmlPayload implements MapBinder {
       this.binder = binder;
    }
 
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       String sliceId = checkNotNull(postParams.get("slice_id"), "slice_id");
       String name = checkNotNull(postParams.get("name"), "name");
       StringBuilder builder = new StringBuilder();
@@ -53,12 +54,13 @@ public class BindCreateBackupToXmlPayload implements MapBinder {
       builder.append("<slice-id type=\"integer\">").append(sliceId).append("</slice-id>");
       builder.append("<name>").append(name).append("</name>");
       builder.append("</backup>");
-      binder.bindToRequest(request, builder.toString());
+      request = binder.bindToRequest(request, builder.toString());
       request.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_XML);
+      return request;
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Object input) {
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       throw new UnsupportedOperationException("should use map params");
    }
 }

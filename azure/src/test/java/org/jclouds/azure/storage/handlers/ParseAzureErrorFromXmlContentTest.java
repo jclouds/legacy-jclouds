@@ -35,7 +35,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.io.Payloads;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.inject.AbstractModule;
@@ -89,11 +89,11 @@ public class ParseAzureErrorFromXmlContentTest {
 
       HttpCommand command = createMock(HttpCommand.class);
       HttpRequest request = new HttpRequest(method, uri);
-      HttpResponse response = new HttpResponse(statusCode, message, Payloads.newInputStreamPayload(Utils
+      HttpResponse response = new HttpResponse(statusCode, message, Payloads.newInputStreamPayload(Strings2
             .toInputStream(content)));
       response.getPayload().getContentMetadata().setContentType(contentType);
 
-      expect(command.getRequest()).andReturn(request).atLeastOnce();
+      expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();
       command.setException(classEq(expected));
 
       replay(command);

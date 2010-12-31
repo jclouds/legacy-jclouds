@@ -29,12 +29,12 @@ import javax.inject.Provider;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.UriBuilder;
 
-import org.jboss.resteasy.specimpl.UriBuilderImpl;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
  * Tests behavior of {@code BindMetadataToQueryParams}
@@ -47,14 +47,14 @@ public class BindMetadataToQueryParamsTest {
    @Test(expectedExceptions = IllegalArgumentException.class)
    public void testMustBeMap() {
       BindMetadataToQueryParams binder = new BindMetadataToQueryParams(null);
-      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"), new char[]{ '/', ':' });
+      HttpRequest request = new HttpRequest(HttpMethod.POST, URI.create("http://localhost"), new char[] { '/', ':' });
       binder.bindToRequest(request, new File("foo"));
    }
 
    @Test
    public void testCorrect() throws SecurityException, NoSuchMethodException {
 
-      HttpRequest request = new HttpRequest("GET", URI.create("http://momma/"), new char[]{ '/', ':' });
+      HttpRequest request = new HttpRequest("GET", URI.create("http://momma/"), new char[] { '/', ':' });
 
       BindMetadataToQueryParams binder = new BindMetadataToQueryParams(new Provider<UriBuilder>() {
 
@@ -65,7 +65,7 @@ public class BindMetadataToQueryParamsTest {
 
       });
 
-      binder.bindToRequest(request, ImmutableMap.of("imageName", "foo", "serverId", "2"));
+      request = binder.bindToRequest(request, ImmutableMap.of("imageName", "foo", "serverId", "2"));
 
       assertEquals(request.getRequestLine(), "GET http://momma/?metadata=imagename:foo&metadata=serverid:2 HTTP/1.1");
 

@@ -30,7 +30,7 @@ import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerMetadata;
 import org.jclouds.rackspace.config.RackspaceParserModule;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -44,13 +44,13 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudfiles.ParseContainerListFromJsonResponse")
+@Test(groups = "unit")
 public class ParseContainerListFromJsonResponseTest {
    Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
 
    @Test
    public void testApplyInputStream() {
-      InputStream is = Utils
+      InputStream is = Strings2
             .toInputStream("[ {\"name\":\"test_container_1\",\"count\":2,\"bytes\":78}, {\"name\":\"test_container_2\",\"count\":1,\"bytes\":17} ]   ");
 
       List<ContainerMetadata> expects = ImmutableList.of(new ContainerMetadata("test_container_1", 2, 78),

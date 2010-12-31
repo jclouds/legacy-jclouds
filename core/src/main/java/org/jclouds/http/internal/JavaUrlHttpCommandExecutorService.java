@@ -62,6 +62,7 @@ import org.jclouds.io.MutableContentMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Throwables;
@@ -85,11 +86,11 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
 
    @Inject
    public JavaUrlHttpCommandExecutorService(HttpUtils utils,
-            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
-            DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
-            DelegatingErrorHandler errorHandler, HttpWire wire, @Named("untrusted") HostnameVerifier verifier,
-            @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider) throws SecurityException,
-            NoSuchFieldException {
+         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
+         DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
+         DelegatingErrorHandler errorHandler, HttpWire wire, @Named("untrusted") HostnameVerifier verifier,
+         @Named("untrusted") Supplier<SSLContext> untrustedSSLContextProvider) throws SecurityException,
+         NoSuchFieldException {
       super(utils, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       if (utils.getMaxConnections() > 0)
          System.setProperty("http.maxConnections", String.valueOf(checkNotNull(utils, "utils").getMaxConnections()));
@@ -116,16 +117,15 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
          closeQuietly(in);
          in = null;
       }
-
-      Payload payload = in != null ? Payloads.newInputStreamPayload(in) : null;
-      HttpResponse response = new HttpResponse(connection.getResponseCode(), connection.getResponseMessage(), payload);
       Multimap<String, String> headers = LinkedHashMultimap.create();
       for (String header : connection.getHeaderFields().keySet()) {
          headers.putAll(header, connection.getHeaderFields().get(header));
       }
-      utils.setPayloadPropertiesFromHeaders(headers, response);
-
-      return response;
+      Payload payload = in != null ? Payloads.newInputStreamPayload(in) : null;
+      if (payload != null)
+         payload.getContentMetadata().setPropertiesFromHttpHeaders(headers);
+      return new HttpResponse(connection.getResponseCode(), connection.getResponseMessage(), payload,
+            RestAnnotationProcessor.filterOutContentHeaders(headers));
    }
 
    private InputStream bufferAndCloseStream(InputStream inputStream) throws IOException {
@@ -189,7 +189,7 @@ public class JavaUrlHttpCommandExecutorService extends BaseHttpCommandExecutorSe
          }
       }
 
-      for (String header : request.getHeaders().keySet()) {
+      for (String header : request.getHeaders().keys()) {
          for (String value : request.getHeaders().get(header)) {
             connection.setRequestProperty(header, value);
          }

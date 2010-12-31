@@ -28,10 +28,16 @@ import org.jclouds.aws.s3.domain.AccessControlList.Permission;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
-@Test(groups = "unit", testName = "s3.AccessControlListHandlerTest")
+/**
+ * Tests behavior of {@code AccessControlListHandler}
+ * 
+ * @author Adrian Cole
+ */
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "AccessControlListHandlerTest")
 public class AccessControlListHandlerTest extends BaseHandlerTest {
    public static final String aclOwnerOnly = "<AccessControlPolicy xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Owner><ID>1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c</ID><DisplayName>jamesmurty</DisplayName></Owner><AccessControlList><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c</ID><DisplayName>jamesmurty</DisplayName></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>";
    public static final String aclExtreme = "<AccessControlPolicy xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Owner><ID>1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c</ID><DisplayName>jamesmurty</DisplayName></Owner><AccessControlList><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"Group\"><URI>http://acs.amazonaws.com/groups/global/AuthenticatedUsers</URI></Grantee><Permission>WRITE</Permission></Grant><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"Group\"><URI>http://acs.amazonaws.com/groups/global/AuthenticatedUsers</URI></Grantee><Permission>READ_ACP</Permission></Grant><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c</ID><DisplayName>jamesmurty</DisplayName></Grantee><Permission>WRITE</Permission></Grant><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"Group\"><URI>http://acs.amazonaws.com/groups/global/AuthenticatedUsers</URI></Grantee><Permission>WRITE_ACP</Permission></Grant><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"Group\"><URI>http://acs.amazonaws.com/groups/global/AllUsers</URI></Grantee><Permission>READ</Permission></Grant><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"Group\"><URI>http://acs.amazonaws.com/groups/global/AuthenticatedUsers</URI></Grantee><Permission>READ</Permission></Grant><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"Group\"><URI>http://acs.amazonaws.com/groups/s3/LogDelivery</URI></Grantee><Permission>WRITE</Permission></Grant><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c</ID><DisplayName>jamesmurty</DisplayName></Grantee><Permission>READ</Permission></Grant><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c</ID><DisplayName>jamesmurty</DisplayName></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>";
@@ -45,7 +51,7 @@ public class AccessControlListHandlerTest extends BaseHandlerTest {
    @Test
    public void testAccessControlListOwnerOnly() throws HttpException {
       String ownerId = "1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c";
-      AccessControlList acl = createParser().parse(Utils.toInputStream(aclOwnerOnly));
+      AccessControlList acl = createParser().parse(Strings2.toInputStream(aclOwnerOnly));
       assertEquals(acl.getOwner().getId(), ownerId);
       assertEquals(acl.getOwner().getDisplayName(), "jamesmurty");
       assertEquals(acl.getPermissions(ownerId).size(), 1);
@@ -59,7 +65,7 @@ public class AccessControlListHandlerTest extends BaseHandlerTest {
    @Test
    public void testAccessControlListExtreme() throws HttpException {
       String ownerId = "1a405254c932b52e5b5caaa88186bc431a1bacb9ece631f835daddaf0c47677c";
-      AccessControlList acl = createParser().parse(Utils.toInputStream(aclExtreme));
+      AccessControlList acl = createParser().parse(Strings2.toInputStream(aclExtreme));
       assertEquals(acl.getOwner().getId(), ownerId);
       assertEquals(acl.getOwner().getDisplayName(), "jamesmurty");
       assertEquals(acl.getPermissions(ownerId).size(), 3);

@@ -23,10 +23,8 @@ import java.lang.reflect.Type;
 import java.net.URI;
 import java.util.Map;
 
-import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.json.config.GsonModule.DateAdapter;
 import org.jclouds.json.config.GsonModule.LongDateAdapter;
@@ -58,7 +56,6 @@ public class IBMDeveloperCloudParserModule extends AbstractModule {
 
    @Provides
    @Singleton
-   @Named(Constants.PROPERTY_GSON_ADAPTERS)
    public Map<Type, Object> provideCustomAdapterBindings(CurlyBraceCapableURIAdapter adapter) {
       return ImmutableMap.<Type, Object> of(URI.class, adapter);
    }

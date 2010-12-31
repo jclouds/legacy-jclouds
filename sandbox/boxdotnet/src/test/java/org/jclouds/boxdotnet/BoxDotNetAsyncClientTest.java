@@ -45,26 +45,25 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "boxdotnet.BoxDotNetAsyncClientTest")
+@Test(groups = "unit")
 public class BoxDotNetAsyncClientTest extends RestClientTest<BoxDotNetAsyncClient> {
 
    public void testList() throws SecurityException, NoSuchMethodException, IOException {
       Method method = BoxDotNetAsyncClient.class.getMethod("list");
-      GeneratedHttpRequest<BoxDotNetAsyncClient> httpRequest = processor.createRequest(method);
+      HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest, "GET https://www.box.net/api/1.0/rest/items HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // now make sure request filters apply by replaying
-      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest, "GET https://www.box.net/api/1.0/rest/items HTTP/1.1");
       // for example, using basic authentication, we should get "only one"
       // header
-      assertNonPayloadHeadersEqual(httpRequest,
-            "Authorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
+      assertNonPayloadHeadersEqual(httpRequest, "Authorization: Basic aWRlbnRpdHk6Y3JlZGVudGlhbA==\n");
       assertPayloadEquals(httpRequest, null, null, false);
 
       // TODO: insert expected response class, which probably extends ParseJson

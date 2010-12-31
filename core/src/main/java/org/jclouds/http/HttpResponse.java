@@ -11,7 +11,7 @@
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * WIHttpResponseHOUHttpResponse WARRANHttpResponseIES OR CONDIHttpResponseIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
  * ====================================================================
@@ -34,6 +34,44 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 public class HttpResponse extends HttpMessage {
+   public static Builder builder() {
+      return new Builder();
+   }
+
+   public static class Builder extends HttpMessage.Builder<HttpResponse> {
+      private int statusCode;
+      private String message;
+
+      public Builder message(String message) {
+         this.message = checkNotNull(message, "message");
+         return this;
+      }
+
+      public Builder statusCode(int statusCode) {
+         this.statusCode = statusCode;
+         return this;
+      }
+
+      @Override
+      public Builder payload(Payload payload) {
+         return (Builder) super.payload(payload);
+      }
+
+      @Override
+      public Builder headers(Multimap<String, String> headers) {
+         return (Builder) super.headers(headers);
+      }
+
+      public HttpResponse build() {
+         return new HttpResponse(statusCode, message, payload, headers);
+      }
+
+      public static Builder from(HttpResponse input) {
+         return new Builder().message(input.getMessage()).statusCode(input.getStatusCode()).payload(input.getPayload())
+               .headers(input.getHeaders());
+      }
+
+   }
 
    private final int statusCode;
    private final String message;
@@ -43,10 +81,9 @@ public class HttpResponse extends HttpMessage {
    }
 
    public HttpResponse(int statusCode, String message, @Nullable Payload payload, Multimap<String, String> headers) {
-      super(payload);
+      super(payload, headers);
       this.statusCode = statusCode;
       this.message = message;
-      this.headers.putAll(checkNotNull(headers));
    }
 
    public int getStatusCode() {
@@ -65,6 +102,11 @@ public class HttpResponse extends HttpMessage {
 
    public String getStatusLine() {
       return String.format("HTTP/1.1 %d %s", getStatusCode(), getMessage());
+   }
+
+   @Override
+   public Builder toBuilder() {
+      return Builder.from(this);
    }
 
    @Override

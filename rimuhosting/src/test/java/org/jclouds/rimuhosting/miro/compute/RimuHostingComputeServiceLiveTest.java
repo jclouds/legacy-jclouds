@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 /**
  * @author Ivan Meredith
  */
-@Test(groups = "live", sequential = true, testName = "rimuhosting.RimuHostingNodeServiceLiveTest")
+@Test(groups = "live", sequential = true)
 public class RimuHostingComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public RimuHostingComputeServiceLiveTest() {
       provider = "rimuhosting";

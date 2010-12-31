@@ -42,7 +42,7 @@ import com.google.inject.TypeLiteral;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "jclouds.ObjectTest")
+@Test(groups = "unit")
 public class JsonObjectTest {
    private ParseJson<Map<String, Object>> handler;
    private Json mapper;

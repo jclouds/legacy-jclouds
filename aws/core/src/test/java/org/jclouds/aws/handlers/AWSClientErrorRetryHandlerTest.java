@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "s3.AWSClientErrorRetryHandlerTest")
+@Test(groups = "unit")
 public class AWSClientErrorRetryHandlerTest {
    @Test
    public void test401DoesNotRetry() {

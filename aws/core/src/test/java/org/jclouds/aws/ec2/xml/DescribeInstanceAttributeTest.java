@@ -29,11 +29,12 @@ import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
 
 /**
- * Tests behavior of {@code InstanceInitiatedShutdownBehaviorHandler}, {@code InstanceTypeHandler}
+ * Tests behavior of {@code DescribeInstanceAttribute}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.DescribeInstanceAttributeTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "DescribeInstanceAttributeTest")
 public class DescribeInstanceAttributeTest extends BaseHandlerTest {
 
    public void testInstanceInitiatedShutdownBehaviorHandler() {

@@ -463,16 +463,22 @@ public class FilesystemAsyncBlobStore extends BaseAsyncBlobStore {
             return 0;
          }
 
-         public HttpRequest getRequest() {
-            return new HttpRequest("GET", URI.create("http://stub"));
-         }
-
          public int incrementFailureCount() {
             return 0;
          }
 
          public void setException(Exception exception) {
 
+         }
+
+         @Override
+         public HttpRequest getCurrentRequest() {
+            return new HttpRequest("GET", URI.create("http://stub"));
+         }
+
+         @Override
+         public void setCurrentRequest(HttpRequest request) {
+            
          }
 
       }, response);

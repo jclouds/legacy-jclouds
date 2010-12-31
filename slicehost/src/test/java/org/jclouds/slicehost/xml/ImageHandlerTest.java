@@ -36,7 +36,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "slicehost.ImageHandler")
+@Test(groups = "unit")
 public class ImageHandlerTest {
 
    static ParseSax<Image> createParser() {

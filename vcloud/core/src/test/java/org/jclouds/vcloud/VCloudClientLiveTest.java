@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "vcloud.VCloudClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class VCloudClientLiveTest extends CommonVCloudClientLiveTest<VCloudClient, VCloudAsyncClient> {
 
    @Test

@@ -42,16 +42,16 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * 
- * 
  * @author Adrian Cole
  */
+@Test(groups = "unit")
 public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
    @RequiresHttp
    @ConfiguresRestClient
@@ -66,8 +66,8 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
       @Override
       protected Map<String, URI> provideRegions(Injector client) {
          return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI.create("https://ec2.eu-west-1.amazonaws.com"),
-               Region.US_EAST_1, URI.create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1, URI
-                     .create("https://ec2.us-west-1.amazonaws.com"));
+               Region.US_EAST_1, URI.create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1,
+               URI.create("https://ec2.us-west-1.amazonaws.com"));
       }
 
       @Override

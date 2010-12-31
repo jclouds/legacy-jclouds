@@ -31,8 +31,8 @@ import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.vcloud.domain.Catalog;
 import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.Task;
 import org.jclouds.vcloud.domain.VDC;
 import org.jclouds.vcloud.domain.network.OrgNetwork;
@@ -47,7 +47,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "vcloud.VCloudClientLiveTest")
+@Test(groups = "live", sequential = true)
 public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A extends CommonVCloudAsyncClient> {
 
    protected S connection;
@@ -132,7 +132,7 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
          for (ReferenceType resource : response.values()) {
             if (resource.getType().equals(VCloudMediaType.CATALOGITEM_XML)) {
                CatalogItem item = connection.findCatalogItemInOrgCatalogNamed(org.getName(), response.getName(),
-                        resource.getName());
+                     resource.getName());
                verifyCatalogItem(item);
             }
          }
@@ -183,10 +183,9 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
       credential = checkNotNull(System.getProperty("test." + provider + ".credential"), "test." + provider
-               + ".credential");
-      endpoint = checkNotNull(System.getProperty("test." + provider + ".endpoint"), "test." + provider + ".endpoint");
-      apiversion = checkNotNull(System.getProperty("test." + provider + ".apiversion"), "test." + provider
-               + ".apiversion");
+            + ".identity");
+      endpoint = System.getProperty("test." + provider + ".endpoint");
+      apiversion = System.getProperty("test." + provider + ".apiversion");
    }
 
    protected Properties setupProperties() {
@@ -195,8 +194,10 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
       overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
       overrides.setProperty(provider + ".identity", identity);
       overrides.setProperty(provider + ".credential", credential);
-      overrides.setProperty(provider + ".endpoint", endpoint);
-      overrides.setProperty(provider + ".apiversion", apiversion);
+      if (endpoint != null)
+         overrides.setProperty(provider + ".endpoint", endpoint);
+      if (apiversion != null)
+         overrides.setProperty(provider + ".apiversion", apiversion);
       return overrides;
    }
 
@@ -205,7 +206,7 @@ public abstract class CommonVCloudClientLiveTest<S extends CommonVCloudClient, A
       setupCredentials();
       Properties overrides = setupProperties();
       context = new ComputeServiceContextFactory().createContext(provider,
-               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
+            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
 
       connection = context.getApi();
    }

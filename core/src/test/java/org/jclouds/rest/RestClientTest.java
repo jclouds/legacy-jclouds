@@ -29,6 +29,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.logging.config.NullLoggingModule;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Binder;
@@ -36,6 +37,11 @@ import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
+@Test(groups = "unit")
 public abstract class RestClientTest<T> extends BaseRestClientTest {
 
    protected RestAnnotationProcessor<T> processor;
@@ -61,8 +67,8 @@ public abstract class RestClientTest<T> extends BaseRestClientTest {
    protected void setupFactory() throws IOException {
       RestContextSpec<?, ?> contextSpec = createContextSpec();
       injector = createContextBuilder(contextSpec,
-               ImmutableSet.of(new MockModule(), new NullLoggingModule(), createModule()),
-               getProperties()).buildInjector();
+            ImmutableSet.of(new MockModule(), new NullLoggingModule(), createModule()), getProperties())
+            .buildInjector();
       parserFactory = injector.getInstance(ParseSax.Factory.class);
       processor = injector.getInstance(Key.get(createTypeLiteral()));
    }

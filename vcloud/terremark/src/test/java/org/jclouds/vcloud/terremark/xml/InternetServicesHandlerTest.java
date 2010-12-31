@@ -39,7 +39,8 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.InternetServicesHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "InternetServicesHandlerTest")
 public class InternetServicesHandlerTest extends BaseHandlerTest {
 
    public void test2() throws UnknownHostException {

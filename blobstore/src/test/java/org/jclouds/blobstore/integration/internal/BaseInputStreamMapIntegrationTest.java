@@ -37,7 +37,7 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.InputStreamMap;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Sets;
@@ -62,7 +62,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
          assertEquals(values.size(), 5);
          Set<String> valuesAsString = new HashSet<String>();
          for (InputStream stream : values) {
-            valuesAsString.add(Utils.toStringAndClose(stream));
+            valuesAsString.add(Strings2.toStringAndClose(stream));
          }
          valuesAsString.removeAll(fiveStrings.values());
          assert valuesAsString.size() == 0 : valuesAsString.size() + ": " + values + ": "
@@ -106,7 +106,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
          Map<String, InputStream> map = createMap(context, containerName);
          putStringWithMD5(map, "one", "two");
          InputStream old = map.remove("one");
-         assertEquals(Utils.toStringAndClose(old), "two");
+         assertEquals(Strings2.toStringAndClose(old), "two");
          assertConsistencyAwareKeySize(map, 0);
          old = map.remove("one");
          assert old == null;
@@ -130,12 +130,12 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
          Set<Entry<String, InputStream>> entries = map.entrySet();
          assertEquals(entries.size(), 5);
          for (Entry<String, InputStream> entry : entries) {
-            assertEquals(fiveStrings.get(entry.getKey()), Utils.toStringAndClose(entry.getValue()));
-            entry.setValue(Utils.toInputStream(""));
+            assertEquals(fiveStrings.get(entry.getKey()), Strings2.toStringAndClose(entry.getValue()));
+            entry.setValue(Strings2.toInputStream(""));
          }
          assertConsistencyAwareMapSize(map, 5);
          for (InputStream value : map.values()) {
-            assertEquals(Utils.toStringAndClose(value), "");
+            assertEquals(Strings2.toStringAndClose(value), "");
          }
       } finally {
          returnContainer(containerName);
@@ -272,15 +272,15 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    void getOneReturnsAppleAndOldValueIsNull(Map<String, InputStream> map, InputStream old)
             throws IOException, InterruptedException {
       assert old == null;
-      assertEquals(Utils.toStringAndClose(map.get("one")), String
+      assertEquals(Strings2.toStringAndClose(map.get("one")), String
                .format(XML_STRING_FORMAT, "apple"));
       assertConsistencyAwareMapSize(map, 1);
    }
 
    void getOneReturnsBearAndOldValueIsApple(Map<String, InputStream> map, InputStream oldValue)
             throws IOException, InterruptedException {
-      assertEquals(Utils.toStringAndClose(map.get("one")), String.format(XML_STRING_FORMAT, "bear"));
-      assertEquals(Utils.toStringAndClose(oldValue), String.format(XML_STRING_FORMAT, "apple"));
+      assertEquals(Strings2.toStringAndClose(map.get("one")), String.format(XML_STRING_FORMAT, "bear"));
+      assertEquals(Strings2.toStringAndClose(oldValue), String.format(XML_STRING_FORMAT, "apple"));
       assertConsistencyAwareMapSize(map, 1);
    }
 

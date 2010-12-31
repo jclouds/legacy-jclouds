@@ -19,6 +19,7 @@
 
 package org.jclouds.atmosonline.saas.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.http.HttpUtils.attemptToParseSizeAndRangeFromHeaders;
 
 import javax.inject.Inject;
@@ -44,11 +45,11 @@ public class ParseObjectFromHeadersAndHttpContent implements Function<HttpRespon
    private final AtmosObject.Factory objectProvider;
 
    @Inject
-   public ParseObjectFromHeadersAndHttpContent(ParseSystemMetadataFromHeaders metadataParser,
-            ParseUserMetadataFromHeaders userMetadataParser, AtmosObject.Factory objectProvider) {
-      this.systemMetadataParser = metadataParser;
-      this.userMetadataParser = userMetadataParser;
-      this.objectProvider = objectProvider;
+   public ParseObjectFromHeadersAndHttpContent(ParseSystemMetadataFromHeaders systemMetadataParser,
+         ParseUserMetadataFromHeaders userMetadataParser, AtmosObject.Factory objectProvider) {
+      this.systemMetadataParser = checkNotNull(systemMetadataParser, "systemMetadataParser");
+      this.userMetadataParser = checkNotNull(userMetadataParser, "userMetadataParser");
+      this.objectProvider = checkNotNull(objectProvider, "objectProvider");
    }
 
    /**
@@ -60,8 +61,9 @@ public class ParseObjectFromHeadersAndHttpContent implements Function<HttpRespon
     * @throws org.jclouds.http.HttpException
     */
    public AtmosObject apply(HttpResponse from) {
-      AtmosObject object = objectProvider.create(systemMetadataParser.apply(from),
-               userMetadataParser.apply(from));
+      checkNotNull(from, "http response");
+      AtmosObject object = objectProvider.create(systemMetadataParser.apply(from), userMetadataParser.apply(from));
+      object.getContentMetadata().setName(object.getSystemMetadata().getObjectName());
       object.getAllHeaders().putAll(from.getHeaders());
       object.setPayload(from.getPayload());
       object.getContentMetadata().setContentLength(attemptToParseSizeAndRangeFromHeaders(from));

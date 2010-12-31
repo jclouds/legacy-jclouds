@@ -20,21 +20,26 @@
 package org.jclouds.boxdotnet;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.rest.RestContextFactory.contextSpec;
-import static org.jclouds.rest.RestContextFactory.createContext;
 import static org.testng.Assert.assertNotNull;
 
+import java.util.Properties;
+
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.RestContextFactory;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code BoxDotNetClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "boxdotnet.BoxDotNetClientLiveTest")
+@Test(groups = "live")
 public class BoxDotNetClientLiveTest {
 
    private BoxDotNetClient connection;
@@ -45,8 +50,12 @@ public class BoxDotNetClientLiveTest {
       String identity = checkNotNull(System.getProperty("jclouds.test.identity"), "jclouds.test.identity");
       String credential = checkNotNull(System.getProperty("jclouds.test.credential"), "jclouds.test.credential");
 
-      context = createContext(contextSpec("boxdotnet", "https://www.box.net/api/1.0/rest", "1.0",
-               identity, credential, BoxDotNetClient.class, BoxDotNetAsyncClient.class));
+      Properties restProperties = new Properties();
+      restProperties.setProperty("boxdotnet.contextbuilder", "org.jclouds.boxdotnet.BoxDotNetContextBuilder");
+      restProperties.setProperty("boxdotnet.propertiesbuilder", "org.jclouds.boxdotnet.BoxDotNetPropertiesBuilder");
+
+      context = new RestContextFactory(restProperties).createContext("boxdotnet", identity, credential,
+            ImmutableSet.<Module> of(new Log4JLoggingModule()));
 
       connection = context.getApi();
    }

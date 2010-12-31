@@ -34,7 +34,8 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.PermissionHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "PermissionHandlerTest")
 public class PermissionHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
 

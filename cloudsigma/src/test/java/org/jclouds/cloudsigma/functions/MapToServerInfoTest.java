@@ -35,7 +35,7 @@ import org.jclouds.cloudsigma.domain.ServerMetrics;
 import org.jclouds.cloudsigma.domain.ServerStatus;
 import org.jclouds.cloudsigma.domain.VNC;
 import org.jclouds.cloudsigma.functions.MapToDevices.DeviceToId;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -119,7 +119,7 @@ public class MapToServerInfoTest {
    public void testComplete() throws IOException {
 
       Map<String, String> input = new ListOfKeyValuesDelimitedByBlankLinesToListOfMaps().apply(
-            Utils.toStringAndClose(MapToServerInfoTest.class.getResourceAsStream("/servers.txt"))).get(0);
+            Strings2.toStringAndClose(MapToServerInfoTest.class.getResourceAsStream("/servers.txt"))).get(0);
 
       assertEquals(MAP_TO_DRIVE.apply(input), ONE);
 
@@ -154,7 +154,7 @@ public class MapToServerInfoTest {
    public void testNew() throws IOException {
 
       Map<String, String> input = new ListOfKeyValuesDelimitedByBlankLinesToListOfMaps().apply(
-            Utils.toStringAndClose(MapToServerInfoTest.class.getResourceAsStream("/new_server.txt"))).get(0);
+            Strings2.toStringAndClose(MapToServerInfoTest.class.getResourceAsStream("/new_server.txt"))).get(0);
 
       assertEquals(MAP_TO_DRIVE.apply(input), NEW);
 

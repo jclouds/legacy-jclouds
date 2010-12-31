@@ -39,7 +39,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudservers.BindCreateImageToJsonPayloadTest")
+@Test(groups = "unit")
 public class BindCreateImageToJsonPayloadTest {
 
    Injector injector = Guice.createInjector(new GsonModule());

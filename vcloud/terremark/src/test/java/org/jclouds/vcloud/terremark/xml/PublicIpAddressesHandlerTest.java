@@ -37,7 +37,8 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "terremark.PublicIpAddressesHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "PublicIpAddressesHandlerTest")
 public class PublicIpAddressesHandlerTest extends BaseHandlerTest {
 
    public void test1() throws UnknownHostException {

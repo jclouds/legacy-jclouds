@@ -51,15 +51,15 @@ public class BindCreateImageToJsonPayload extends BindToJsonPayload {
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       CreateImageRequest createRequest = new CreateImageRequest(Integer
                .parseInt(checkNotNull(postParams.get("serverId"))), checkNotNull(postParams
                .get("imageName")));
-      super.bindToRequest(request, ImmutableMap.of("image", createRequest));
+      return super.bindToRequest(request, ImmutableMap.of("image", createRequest));
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Object toBind) {
+   public <R extends HttpRequest> R bindToRequest(R request, Object toBind) {
       throw new IllegalArgumentException("image is needs parameters");
    }
 }

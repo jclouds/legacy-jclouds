@@ -40,11 +40,11 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code ParseFlavorListFromJsonResponseTest}
+ * Tests behavior of {@code ParseFlavorListFromJsonResponse}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudFlavors.ParseFlavorListFromJsonResponseTest")
+@Test(groups = "unit")
 public class ParseFlavorListFromJsonResponseTest {
 
    Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());

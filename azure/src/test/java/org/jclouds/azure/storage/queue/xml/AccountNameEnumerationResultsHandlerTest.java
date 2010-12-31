@@ -33,11 +33,12 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableSortedSet;
 
 /**
- * Tests behavior of {@code ParseFlavorListFromGsonResponseTest}
+ * Tests behavior of {@code AccountNameEnumerationResultsHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "azurequeue.AccountNameEnumerationResultsHandlerTest")
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "queue.AccountNameEnumerationResultsHandlerTest")
 public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
 
    public void testApplyInputStream() {

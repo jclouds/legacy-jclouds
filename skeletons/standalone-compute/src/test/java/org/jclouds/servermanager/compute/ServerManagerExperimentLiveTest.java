@@ -39,7 +39,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "servermanager.ServerManagerExperimentLiveTest")
+@Test(groups = "live")
 public class ServerManagerExperimentLiveTest {
    protected String provider = "servermanager";
    protected String identity;

@@ -33,9 +33,9 @@ import org.jclouds.rest.Binder;
  */
 @Singleton
 public class BindAvailabilityZonesToIndexedFormParams implements Binder {
-
-   public void bindToRequest(HttpRequest request, Object input) {
-      indexStringArrayToFormValuesWithStringFormat(request, "AvailabilityZones.member.%s", input);
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      return indexStringArrayToFormValuesWithStringFormat(request, "AvailabilityZones.member.%s", input);
    }
 
 }

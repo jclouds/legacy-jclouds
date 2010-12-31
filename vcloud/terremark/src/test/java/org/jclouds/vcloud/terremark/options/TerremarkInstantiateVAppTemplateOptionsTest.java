@@ -44,7 +44,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.TerremarkInstantiateVAppTemplateOptionsTest")
+@Test(groups = "unit")
 public class TerremarkInstantiateVAppTemplateOptionsTest {
 
    Injector injector = Guice.createInjector(new SaxParserModule());

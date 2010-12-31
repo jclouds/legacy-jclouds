@@ -40,7 +40,7 @@ import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -55,7 +55,8 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "performance" }, testName = "s3.S3ParserTest")
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "performance", sequential = true, timeOut = 2 * 60 * 1000, testName = "S3ParserTest")
 public class S3ParserTest extends PerformanceTest {
    Injector injector = null;
    ParseSax.Factory factory;
@@ -83,7 +84,7 @@ public class S3ParserTest extends PerformanceTest {
 
    private Set<BucketMetadata> runParseListAllMyBuckets() throws HttpException {
       return factory.create(injector.getInstance(ListAllMyBucketsHandler.class)).parse(
-               Utils.toInputStream(listAllMyBucketsResultOn200));
+               Strings2.toInputStream(listAllMyBucketsResultOn200));
    }
 
    @Test
@@ -140,14 +141,14 @@ public class S3ParserTest extends PerformanceTest {
 
    private ListBucketResponse runParseListContainerResult() throws HttpException {
       return (ListBucketResponse) factory.create(injector.getInstance(ListBucketHandler.class)).parse(
-               Utils.toInputStream(listContainerResult));
+               Strings2.toInputStream(listContainerResult));
    }
 
    public static final String successfulCopyObject200 = "<CopyObjectResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><LastModified>2009-03-19T13:23:27.000Z</LastModified><ETag>\"92836a3ea45a6984d1b4d23a747d46bb\"</ETag></CopyObjectResult>";
 
    private ObjectMetadata runParseCopyObjectResult() throws HttpException {
       return (ObjectMetadata) factory.create(injector.getInstance(CopyObjectHandler.class)).parse(
-               Utils.toInputStream(successfulCopyObject200));
+               Strings2.toInputStream(successfulCopyObject200));
    }
 
    public void testCanParseCopyObjectResult() throws HttpException, UnsupportedEncodingException {

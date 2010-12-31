@@ -46,7 +46,8 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "performance", sequential = true, testName = "jclouds.CryptoTest")
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "performance", sequential = true, timeOut = 2 * 60 * 1000, testName = "CryptoTest")
 public class CryptoTest extends PerformanceTest {
 
    protected Crypto crypto;

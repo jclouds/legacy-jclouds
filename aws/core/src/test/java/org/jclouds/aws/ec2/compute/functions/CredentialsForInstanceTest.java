@@ -19,60 +19,14 @@
 
 package org.jclouds.aws.ec2.compute.functions;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
-import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.m1_small;
-import static org.jclouds.aws.ec2.compute.domain.EC2HardwareBuilder.m2_4xlarge;
-import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.imageIds;
-import static org.testng.Assert.assertEquals;
-
-import java.net.UnknownHostException;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
-
-import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.EC2Client;
-import org.jclouds.aws.ec2.compute.domain.RegionAndName;
-import org.jclouds.aws.ec2.domain.Attachment;
-import org.jclouds.aws.ec2.domain.AvailabilityZone;
-import org.jclouds.aws.ec2.domain.Image;
-import org.jclouds.aws.ec2.domain.InstanceState;
-import org.jclouds.aws.ec2.domain.InstanceType;
-import org.jclouds.aws.ec2.domain.KeyPair;
-import org.jclouds.aws.ec2.domain.RootDeviceType;
-import org.jclouds.aws.ec2.domain.RunningInstance;
-import org.jclouds.aws.ec2.domain.RunningInstance.EbsBlockDevice;
-import org.jclouds.aws.ec2.services.AMIClient;
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.domain.Processor;
-import org.jclouds.compute.domain.Volume;
-import org.jclouds.compute.domain.internal.VolumeImpl;
-import org.jclouds.compute.strategy.PopulateDefaultLoginCredentialsForImageStrategy;
 import org.jclouds.date.DateService;
 import org.jclouds.date.internal.SimpleDateFormatDateService;
-import org.jclouds.domain.Credentials;
-import org.jclouds.domain.Location;
-import org.jclouds.domain.LocationScope;
-import org.jclouds.domain.internal.LocationImpl;
 import org.testng.annotations.Test;
-
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.CredentialsForInstanceTest")
+@Test(groups = "unit")
 public class CredentialsForInstanceTest {
 
    DateService dateService = new SimpleDateFormatDateService();

@@ -57,10 +57,10 @@ public class BindParamsToXmlPayload implements MapBinder {
       this.ns = ns;
       this.stringBinder = stringBinder;
    }
-
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       try {
-         stringBinder.bindToRequest(request, generateXml(postParams));
+         return stringBinder.bindToRequest(request, generateXml(postParams));
       } catch (Exception e) {
          throw new RuntimeException(e);
       }
@@ -78,7 +78,7 @@ public class BindParamsToXmlPayload implements MapBinder {
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Object input) {
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       throw new IllegalArgumentException("incorrect usage");
    }
 }

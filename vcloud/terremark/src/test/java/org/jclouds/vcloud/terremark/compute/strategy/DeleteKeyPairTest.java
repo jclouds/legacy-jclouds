@@ -38,7 +38,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "terremark.DeleteKeyPairTest")
+@Test(groups = "unit")
 public class DeleteKeyPairTest {
 
    public void testWhenNoKeyPairsInOrg() {

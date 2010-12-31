@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "slicehost.SlicehostComputeServiceContextModuleTest")
+@Test(groups = "unit")
 public class SlicehostComputeServiceContextModuleTest {
 
    public void testAllStatusCovered() {

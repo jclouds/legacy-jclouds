@@ -45,7 +45,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.AvailabilityZoneAndRegionAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "AvailabilityZoneAndRegionAsyncClientTest")
 public class AvailabilityZoneAndRegionAsyncClientTest extends
          BaseEC2AsyncClientTest<AvailabilityZoneAndRegionAsyncClient> {
 

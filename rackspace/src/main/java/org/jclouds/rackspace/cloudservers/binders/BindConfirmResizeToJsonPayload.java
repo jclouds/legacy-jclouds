@@ -31,8 +31,9 @@ import org.jclouds.rest.Binder;
  */
 @Singleton
 public class BindConfirmResizeToJsonPayload implements Binder {
-
-   public void bindToRequest(HttpRequest request, Object toBind) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object toBind) {
       request.setPayload("{\"confirmResize\":null}");
+      return request;
    }
 }

@@ -32,7 +32,7 @@ import com.google.common.base.Charsets;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true, testName = "jclouds.CryptoStreamsTest")
+@Test(groups = "unit", sequential = true)
 public class CryptoStreamsTest {
 
    @Test

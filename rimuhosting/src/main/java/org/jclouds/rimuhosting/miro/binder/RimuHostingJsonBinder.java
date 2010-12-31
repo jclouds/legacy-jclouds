@@ -33,13 +33,15 @@ import org.jclouds.rest.binders.BindToJsonPayload;
  * @author Ivan Meredith
  */
 public class RimuHostingJsonBinder extends BindToJsonPayload {
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
-      bindToRequest(request, (Object) postParams);
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
+      return bindToRequest(request, (Object) postParams);
    }
 
-   public void bindToRequest(HttpRequest request, Object toBind) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object toBind) {
       Map<String, Object> test = new HashMap<String, Object>();
       test.put("request", toBind);
-      super.bindToRequest(request, test);
+      return super.bindToRequest(request, test);
    }
 }

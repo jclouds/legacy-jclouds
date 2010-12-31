@@ -34,7 +34,8 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.SystemHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "SystemHandlerTest")
 public class SystemHandlerTest extends BaseHandlerTest {
 
    public void testApplyInputStream() {

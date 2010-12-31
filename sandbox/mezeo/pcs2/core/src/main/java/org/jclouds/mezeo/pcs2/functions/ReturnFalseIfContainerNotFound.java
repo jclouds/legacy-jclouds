@@ -19,7 +19,7 @@
 
 package org.jclouds.mezeo.pcs2.functions;
 
-import static org.jclouds.util.Utils.propagateOrNull;
+import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import javax.inject.Singleton;
 
@@ -34,6 +34,7 @@ import com.google.common.base.Function;
 @Singleton
 public class ReturnFalseIfContainerNotFound implements Function<Exception, Boolean> {
 
+   @Override
    public Boolean apply(Exception from) {
       if (from instanceof ContainerNotFoundException) {
          return false;

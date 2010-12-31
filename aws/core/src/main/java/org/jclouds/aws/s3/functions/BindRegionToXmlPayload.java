@@ -55,20 +55,20 @@ public class BindRegionToXmlPayload extends BindToStringPayload {
 
    @Inject
    BindRegionToXmlPayload(@Named(PROPERTY_DEFAULT_REGIONS) String defaultRegions,
-            @Named(PROPERTY_REGIONS) String regions) {
+         @Named(PROPERTY_REGIONS) String regions) {
       this.defaultRegions = Splitter.on(',').split(defaultRegions);
       this.regions = Splitter.on(',').split(regions);
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Object input) {
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       input = input == null ? Iterables.get(defaultRegions, 0) : input;
       checkArgument(input instanceof String, "this binder is only valid for Region!");
       String constraint = (String) input;
       String value = null;
       if (Iterables.contains(defaultRegions, constraint)) {
          // nothing to bind as this is default.
-         return;
+         return request;
       } else if (Iterables.contains(regions, constraint)) {
          value = constraint;
       } else {
@@ -79,10 +79,12 @@ public class BindRegionToXmlPayload extends BindToStringPayload {
             value = constraint;
          }
       }
-      String payload = String.format(
-               "<CreateBucketConfiguration><LocationConstraint>%s</LocationConstraint></CreateBucketConfiguration>",
-               value);
-      super.bindToRequest(request, payload);
+      String payload = String
+            .format(
+                  "<CreateBucketConfiguration><LocationConstraint>%s</LocationConstraint></CreateBucketConfiguration>",
+                  value);
+      request = super.bindToRequest(request, payload);
       request.getPayload().getContentMetadata().setContentType(MediaType.TEXT_XML);
+      return request;
    }
 }

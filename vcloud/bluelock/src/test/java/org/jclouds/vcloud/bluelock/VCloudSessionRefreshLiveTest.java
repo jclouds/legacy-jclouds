@@ -43,7 +43,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "vcloud.VCloudSessionRefreshLiveTest")
+@Test(groups = "live", sequential = true)
 public class VCloudSessionRefreshLiveTest {
 
    private final static int timeOut = 40;

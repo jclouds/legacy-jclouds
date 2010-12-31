@@ -20,18 +20,19 @@
 package org.jclouds.aws.ec2.binders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.http.HttpUtils.addFormParamTo;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.crypto.Crypto;
 import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMultimap.Builder;
 
 /**
  * 
@@ -42,15 +43,18 @@ public class BindS3UploadPolicyAndSignature implements Binder {
    private final FormSigner signer;
 
    @Inject
-   BindS3UploadPolicyAndSignature(FormSigner signer, Crypto crypto) {
+   BindS3UploadPolicyAndSignature(FormSigner signer) {
       this.signer = signer;
    }
 
-   public void bindToRequest(HttpRequest request, Object input) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       String encodedJson = CryptoStreams.base64(checkNotNull(input, "json").toString().getBytes(Charsets.UTF_8));
-      addFormParamTo(request, "Storage.S3.UploadPolicy", encodedJson);
+      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      builder.put("Storage.S3.UploadPolicy", encodedJson);
       String signature = signer.sign(encodedJson);
-      addFormParamTo(request, "Storage.S3.UploadPolicySignature", signature);
+      builder.put("Storage.S3.UploadPolicySignature", signature);
+      return ModifyRequest.putFormParams(request, builder.build());
    }
 
 }

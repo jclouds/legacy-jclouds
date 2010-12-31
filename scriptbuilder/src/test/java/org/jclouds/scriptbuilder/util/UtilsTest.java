@@ -32,7 +32,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "scriptbuilder.UtilsTest")
+@Test(groups = "unit")
 public class UtilsTest {
 
    public void testReplaceTokens() throws UnsupportedEncodingException {

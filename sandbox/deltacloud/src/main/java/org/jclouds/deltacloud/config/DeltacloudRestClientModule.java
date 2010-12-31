@@ -22,7 +22,8 @@ package org.jclouds.deltacloud.config;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 
 import java.net.URI;
-import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
@@ -30,11 +31,16 @@ import javax.inject.Singleton;
 
 import org.jclouds.deltacloud.DeltacloudAsyncClient;
 import org.jclouds.deltacloud.DeltacloudClient;
-import org.jclouds.deltacloud.collections.DeltacloudCollection;
+import org.jclouds.deltacloud.collections.HardwareProfiles;
 import org.jclouds.deltacloud.collections.Images;
+import org.jclouds.deltacloud.collections.InstanceStates;
 import org.jclouds.deltacloud.collections.Instances;
+import org.jclouds.deltacloud.collections.Realms;
+import org.jclouds.deltacloud.domain.DeltacloudCollection;
 import org.jclouds.deltacloud.handlers.DeltacloudErrorHandler;
+import org.jclouds.deltacloud.handlers.DeltacloudRedirectionRetryHandler;
 import org.jclouds.http.HttpErrorHandler;
+import org.jclouds.http.HttpRetryHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
@@ -44,7 +50,9 @@ import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
+import com.google.common.collect.Iterables;
 import com.google.inject.Provides;
 
 /**
@@ -69,19 +77,19 @@ public class DeltacloudRestClientModule extends RestClientModule<DeltacloudClien
 
    @Override
    protected void bindRetryHandlers() {
-      // TODO
+      bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(DeltacloudRedirectionRetryHandler.class);
    }
 
    protected AtomicReference<AuthorizationException> authException = new AtomicReference<AuthorizationException>();
 
    @Provides
    @Singleton
-   protected Supplier<Map<DeltacloudCollection, URI>> provideCollections(
+   protected Supplier<Set<? extends DeltacloudCollection>> provideCollections(
          @Named(PROPERTY_SESSION_INTERVAL) long seconds, final DeltacloudClient client) {
-      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<DeltacloudCollection, URI>>(authException,
-            seconds, new Supplier<Map<DeltacloudCollection, URI>>() {
+      return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends DeltacloudCollection>>(
+            authException, seconds, new Supplier<Set<? extends DeltacloudCollection>>() {
                @Override
-               public Map<DeltacloudCollection, URI> get() {
+               public Set<? extends DeltacloudCollection> get() {
                   return client.getCollections();
                }
             });
@@ -93,17 +101,47 @@ public class DeltacloudRestClientModule extends RestClientModule<DeltacloudClien
     */
    @Provides
    @Images
-   protected URI provideImageCollection(Supplier<Map<DeltacloudCollection, URI>> collectionSupplier) {
-      return collectionSupplier.get().get(DeltacloudCollection.IMAGES);
+   protected URI provideImageCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+      return findCollectionWithRel(collectionSupplier.get(), "images").getHref();
    }
 
-   /**
-    * since the supplier is memoized, and there are no objects created here, this doesn't need to be
-    * singleton.
-    */
+   public static DeltacloudCollection findCollectionWithRel(Iterable<? extends DeltacloudCollection> iterable,
+         final String rel) {
+      try {
+         return Iterables.find(iterable, new Predicate<DeltacloudCollection>() {
+
+            @Override
+            public boolean apply(DeltacloudCollection arg0) {
+               return arg0.getRel().equals(rel);
+            }
+
+         });
+      } catch (NoSuchElementException e) {
+         throw new NoSuchElementException("could not find rel " + rel + " in collections " + iterable);
+      }
+   }
+
+   @Provides
+   @HardwareProfiles
+   protected URI provideHardwareProfileCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+      return findCollectionWithRel(collectionSupplier.get(), "hardware_profiles").getHref();
+   }
+
    @Provides
    @Instances
-   protected URI provideInstanceCollection(Supplier<Map<DeltacloudCollection, URI>> collectionSupplier) {
-      return collectionSupplier.get().get(DeltacloudCollection.INSTANCES);
+   protected URI provideInstanceCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+      return findCollectionWithRel(collectionSupplier.get(), "instances").getHref();
+   }
+
+   @Provides
+   @Realms
+   protected URI provideRealmCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+      return findCollectionWithRel(collectionSupplier.get(), "realms").getHref();
+   }
+
+   @Provides
+   @InstanceStates
+   protected URI provideInstanceStateCollection(Supplier<Set<? extends DeltacloudCollection>> collectionSupplier) {
+      return findCollectionWithRel(collectionSupplier.get(), "instance_states").getHref();
    }
 }

@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 
-@Test(groups = "unit", testName = "s3.BlobToHttpGetOptionsTest")
+@Test(groups = "unit")
 public class BlobToHttpGetOptionsTest {
 
    @Test

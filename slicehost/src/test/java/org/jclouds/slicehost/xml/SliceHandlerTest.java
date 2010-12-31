@@ -38,7 +38,8 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "slicehost.SliceHandler")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "SliceHandlerTest")
 public class SliceHandlerTest extends BaseHandlerTest {
 
    static ParseSax<Slice> createParser() {

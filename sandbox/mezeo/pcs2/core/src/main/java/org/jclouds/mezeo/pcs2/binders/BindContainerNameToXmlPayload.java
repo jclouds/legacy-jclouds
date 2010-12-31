@@ -31,9 +31,10 @@ import org.jclouds.rest.Binder;
  */
 @Singleton
 public class BindContainerNameToXmlPayload implements Binder {
-
-   public void bindToRequest(HttpRequest request, Object toBind) {
-      String container = String.format("<container><name>%s</name></container>", toBind);
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      String container = String.format("<container><name>%s</name></container>", input);
       request.setPayload(container);
+      return request;
    }
 }

@@ -38,7 +38,8 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.OrgListHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "OrgListHandlerTest")
 public class OrgListHandlerTest extends BaseHandlerTest {
 
    public void testApplyInputStream() {

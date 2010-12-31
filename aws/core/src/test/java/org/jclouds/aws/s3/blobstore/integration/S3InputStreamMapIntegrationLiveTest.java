@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" }, testName = "s3.S3InputStreamMapIntegrationTest")
+@Test(groups = { "integration", "live" })
 public class S3InputStreamMapIntegrationLiveTest extends BaseInputStreamMapIntegrationTest {
 
 }

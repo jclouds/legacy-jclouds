@@ -58,7 +58,7 @@ import com.google.inject.Provides;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "gogrid.ParseServersFromJsonResponseTest")
+@Test(groups = "unit")
 public class ParseServersFromJsonResponseTest {
 
    @Test
@@ -92,7 +92,7 @@ public class ParseServersFromJsonResponseTest {
 
       @Provides
       @Singleton
-      @SuppressWarnings( { "unused", "unchecked" })
+      @SuppressWarnings( { "unused", "rawtypes" })
       public Map<Class, Object> provideCustomAdapterBindings() {
          Map<Class, Object> bindings = Maps.newHashMap();
          bindings.put(IpState.class, new CustomDeserializers.IpStateAdapter());

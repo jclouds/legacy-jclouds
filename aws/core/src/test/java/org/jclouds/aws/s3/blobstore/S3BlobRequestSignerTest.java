@@ -45,7 +45,13 @@ import com.google.common.base.Supplier;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
-@Test(groups = "unit", testName = "s3.S3BlobRequestSignerTest")
+/**
+ * Tests behavior of {@code S3BlobRequestSigner}
+ * 
+ * @author Adrian Cole
+ */
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "S3BlobRequestSignerTest")
 public class S3BlobRequestSignerTest extends RestClientTest<S3AsyncClient> {
 
    private BlobRequestSigner signer;

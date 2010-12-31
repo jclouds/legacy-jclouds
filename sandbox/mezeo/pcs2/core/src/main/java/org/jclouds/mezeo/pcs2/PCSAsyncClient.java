@@ -97,8 +97,7 @@ public interface PCSAsyncClient {
    @Path("/contents")
    @Endpoint(RootContainer.class)
    @Produces("application/vnd.csp.container-info+xml")
-   ListenableFuture<URI> createContainer(
-            @BinderParam(BindContainerNameToXmlPayload.class) String container);
+   ListenableFuture<URI> createContainer(@BinderParam(BindContainerNameToXmlPayload.class) String container);
 
    /**
     * @see PCSAsyncClient#createContainer
@@ -106,7 +105,7 @@ public interface PCSAsyncClient {
    @POST
    @Path("/contents")
    ListenableFuture<URI> createContainer(@EndpointParam URI parent,
-            @BinderParam(BindContainerNameToXmlPayload.class) String container);
+         @BinderParam(BindContainerNameToXmlPayload.class) String container);
 
    /**
     * @see PCSAsyncClient#deleteContainer
@@ -121,7 +120,7 @@ public interface PCSAsyncClient {
    @POST
    @Path("/contents")
    ListenableFuture<URI> uploadFile(@EndpointParam URI container,
-            @BinderParam(BindPCSFileToMultipartForm.class) PCSFile object);
+         @BinderParam(BindPCSFileToMultipartForm.class) PCSFile object);
 
    /**
     * @see PCSAsyncClient#createFile
@@ -129,15 +128,14 @@ public interface PCSAsyncClient {
    @POST
    @Path("/contents")
    ListenableFuture<URI> createFile(@EndpointParam URI container,
-            @BinderParam(BindFileInfoToXmlPayload.class) PCSFile object);
+         @BinderParam(BindFileInfoToXmlPayload.class) PCSFile object);
 
    /**
     * @see PCSAsyncClient#uploadBlock
     */
    @PUT
    @Path("/content")
-   ListenableFuture<Void> uploadBlock(@EndpointParam URI file, PCSFile object,
-            PutBlockOptions... options);
+   ListenableFuture<Void> uploadBlock(@EndpointParam URI file, PCSFile object, PutBlockOptions... options);
 
    /**
     * @see PCSAsyncClient#deleteFile
@@ -168,8 +166,8 @@ public interface PCSAsyncClient {
     */
    @PUT
    @Path("/metadata/{key}")
-   ListenableFuture<Void> putMetadataItem(@EndpointParam URI resource,
-            @PathParam("key") String key, @BinderParam(BindToStringPayload.class) String value);
+   ListenableFuture<Void> putMetadataItem(@EndpointParam URI resource, @PathParam("key") String key,
+         @BinderParam(BindToStringPayload.class) String value);
 
    /**
     * @see PCSAsyncClient#addMetadataItemToMap
@@ -177,6 +175,6 @@ public interface PCSAsyncClient {
    @GET
    @ResponseParser(AddMetadataItemIntoMap.class)
    @Path("/metadata/{key}")
-   ListenableFuture<Void> addMetadataItemToMap(@EndpointParam URI resource,
-            @PathParam("key") String key, Map<String, String> map);
+   ListenableFuture<Void> addMetadataItemToMap(@EndpointParam URI resource, @PathParam("key") String key,
+         Map<String, String> map);
 }

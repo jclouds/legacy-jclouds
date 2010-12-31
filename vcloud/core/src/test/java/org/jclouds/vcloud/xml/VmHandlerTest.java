@@ -44,7 +44,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VmHandlerTest")
+@Test(groups = "unit")
 public class VmHandlerTest {
    public void testVCloud1_0() {
       InputStream is = getClass().getResourceAsStream("/vm-rhel-off-static.xml");

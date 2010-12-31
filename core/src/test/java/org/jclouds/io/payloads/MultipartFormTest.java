@@ -33,7 +33,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.jclouds.io.Payloads;
 import org.jclouds.io.payloads.Part.PartOptions;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 /**
@@ -55,7 +55,7 @@ public class MultipartFormTest {
 
       MultipartForm multipartForm = new MultipartForm(boundary, newPart("hello"));
 
-      assertEquals(Utils.toStringAndClose(multipartForm.getInput()), expects);
+      assertEquals(Strings2.toStringAndClose(multipartForm.getInput()), expects);
       assertEquals(multipartForm.getContentMetadata().getContentLength(), new Long(199));
    }
 
@@ -120,11 +120,11 @@ public class MultipartFormTest {
 
       MultipartForm multipartForm = new MultipartForm(boundary, newPart("hello"), newPart("goodbye"));
 
-      assertEquals(Utils.toStringAndClose(multipartForm.getInput()), expects);
+      assertEquals(Strings2.toStringAndClose(multipartForm.getInput()), expects);
 
       // test repeatable
       assert multipartForm.isRepeatable();
-      assertEquals(Utils.toStringAndClose(multipartForm.getInput()), expects);
+      assertEquals(Strings2.toStringAndClose(multipartForm.getInput()), expects);
       assertEquals(multipartForm.getContentMetadata().getContentLength(), new Long(352));
    }
 

@@ -32,7 +32,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "scriptbuilder.ShellTokenTest")
+@Test(groups = "unit")
 public class ShellTokenTest {
 
    public void testTokenValueMapUNIX() {

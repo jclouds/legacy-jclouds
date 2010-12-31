@@ -47,7 +47,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VDCHandlerTest")
+@Test(groups = "unit")
 public class VDCHandlerTest {
    public void testVCloud1_0() {
       InputStream is = getClass().getResourceAsStream("/vdc.xml");

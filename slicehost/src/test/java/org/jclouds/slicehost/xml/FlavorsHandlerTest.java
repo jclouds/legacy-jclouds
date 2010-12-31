@@ -36,7 +36,8 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "slicehost.FlavorsHandler")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "FlavorsHandlerTest")
 public class FlavorsHandlerTest extends BaseHandlerTest {
 
    ParseSax<Set<? extends Flavor>> createParser() {

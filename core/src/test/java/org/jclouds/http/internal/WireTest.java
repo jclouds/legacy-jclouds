@@ -25,14 +25,14 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true, testName = "core.WireTest")
+@Test(groups = "unit", sequential = true)
 public class WireTest {
 
    class BufferLogger implements Logger {
@@ -103,7 +103,7 @@ public class WireTest {
    public void testInputInputStream() throws Exception {
       HttpWire wire = setUp();
       InputStream in = wire.input(new ByteArrayInputStream("foo".getBytes()));
-      String compare = Utils.toStringAndClose(in);
+      String compare = Strings2.toStringAndClose(in);
       Thread.sleep(100);
       assertEquals(compare, "foo");
       assertEquals(((BufferLogger) wire.getWireLog()).buff.toString(), "<< \"foo\"");
@@ -112,7 +112,7 @@ public class WireTest {
    public void testInputInputStreamSynch() throws Exception {
       HttpWire wire = setUpSynch();
       InputStream in = wire.input(new ByteArrayInputStream("foo".getBytes()));
-      String compare = Utils.toStringAndClose(in);
+      String compare = Strings2.toStringAndClose(in);
       assertEquals(compare, "foo");
       assertEquals(((BufferLogger) wire.getWireLog()).buff.toString(), "<< \"foo\"");
    }
@@ -120,7 +120,7 @@ public class WireTest {
    public void testOutputInputStream() throws Exception {
       HttpWire wire = setUp();
       InputStream in = wire.output(new ByteArrayInputStream("foo".getBytes()));
-      String compare = Utils.toStringAndClose(in);
+      String compare = Strings2.toStringAndClose(in);
       Thread.sleep(100);
       assertEquals(compare, "foo");
       assertEquals(((BufferLogger) wire.getWireLog()).buff.toString(), ">> \"foo\"");

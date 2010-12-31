@@ -54,7 +54,7 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
@@ -72,7 +72,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "elasticstack.ElasticStackClientLiveTest")
+@Test(groups = "live")
 public class ElasticStackClientLiveTest {
 
    protected long driveSize = 1 * 1024 * 1024 * 1024l;
@@ -351,7 +351,7 @@ public class ElasticStackClientLiveTest {
    public void testWeCanReadAndWriteToDrive() throws IOException {
       drive2 = client.createDrive(new CreateDriveRequest.Builder().name(prefix + "2").size(1 * 1024 * 1024l).build());
       client.writeDrive(drive2.getUuid(), Payloads.newStringPayload("foo"));
-      assertEquals(Utils.toStringAndClose(client.readDrive(drive2.getUuid(), 0, 3).getInput()), "foo");
+      assertEquals(Strings2.toStringAndClose(client.readDrive(drive2.getUuid(), 0, 3).getInput()), "foo");
    }
 
    @Test(dependsOnMethods = "testWeCanReadAndWriteToDrive")
@@ -366,7 +366,7 @@ public class ElasticStackClientLiveTest {
          assert driveNotClaimed.apply(drive2) : client.getDriveInfo(drive2.getUuid());
          System.err.println("after image; drive 2" + client.getDriveInfo(drive2.getUuid()));
          System.err.println("after image; drive 3" + client.getDriveInfo(drive3.getUuid()));
-         assertEquals(Utils.toStringAndClose(client.readDrive(drive3.getUuid(), 0, 3).getInput()), "foo");
+         assertEquals(Strings2.toStringAndClose(client.readDrive(drive3.getUuid(), 0, 3).getInput()), "foo");
       } finally {
          client.destroyDrive(drive2.getUuid());
          client.destroyDrive(drive3.getUuid());

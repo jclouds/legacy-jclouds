@@ -42,7 +42,7 @@ public class TransformingHttpCommandExecutorServiceImpl implements TransformingH
 
    @Inject
    public TransformingHttpCommandExecutorServiceImpl(HttpCommandExecutorService client,
-            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads) {
+         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService userThreads) {
       this.client = client;
       this.userThreads = userThreads;
    }
@@ -50,7 +50,8 @@ public class TransformingHttpCommandExecutorServiceImpl implements TransformingH
    /**
     * {@inheritDoc}
     */
-   public <T> ListenableFuture<T> submit(HttpCommand command, Function<HttpResponse, T> responseTransformer) {
+   public <T, R extends HttpRequest> ListenableFuture<T> submit(HttpCommand command,
+         Function<HttpResponse, T> responseTransformer) {
       return Futures.compose(client.submit(command), responseTransformer, userThreads);
    }
 

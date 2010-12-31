@@ -39,7 +39,7 @@ import org.jclouds.aws.s3.binders.BindAsHostPrefixIfConfigured;
 import org.jclouds.aws.s3.binders.BindBucketLoggingToXmlPayload;
 import org.jclouds.aws.s3.binders.BindNoBucketLoggingToXmlPayload;
 import org.jclouds.aws.s3.binders.BindPayerToXmlPayload;
-import org.jclouds.aws.s3.binders.BindS3ObjectToPayload;
+import org.jclouds.aws.s3.binders.BindS3ObjectMetadataToRequest;
 import org.jclouds.aws.s3.domain.AccessControlList;
 import org.jclouds.aws.s3.domain.BucketLogging;
 import org.jclouds.aws.s3.domain.BucketMetadata;
@@ -162,7 +162,7 @@ public interface S3AsyncClient {
    @ResponseParser(ParseETagHeader.class)
    ListenableFuture<String> putObject(
             @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators( { BucketNameValidator.class }) String bucketName,
-            @PathParam("key") @ParamParser(ObjectKey.class) @BinderParam(BindS3ObjectToPayload.class) S3Object object,
+            @PathParam("key") @ParamParser(ObjectKey.class) @BinderParam(BindS3ObjectMetadataToRequest.class) S3Object object,
             PutObjectOptions... options);
 
    /**

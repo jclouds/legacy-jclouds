@@ -29,6 +29,6 @@ import org.jclouds.http.HttpRequest;
  * @see PathParam
  * @author Adrian Cole
  */
-public interface InvocationContext {
-   Object setContext(HttpRequest request);
+public interface InvocationContext<I extends InvocationContext<I>> {
+   I setContext(HttpRequest request);
 }

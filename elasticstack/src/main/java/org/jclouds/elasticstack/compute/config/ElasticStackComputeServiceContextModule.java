@@ -29,7 +29,6 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
-import org.jclouds.compute.config.JCloudsNativeComputeServiceAdapterContextModule.IdentityFunction;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -51,9 +50,10 @@ import org.jclouds.elasticstack.domain.Server;
 import org.jclouds.elasticstack.domain.ServerInfo;
 import org.jclouds.elasticstack.domain.WellKnownImage;
 import org.jclouds.elasticstack.predicates.DriveClaimed;
+import org.jclouds.functions.IdentityFunction;
 import org.jclouds.json.Json;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -128,7 +128,7 @@ public class ElasticStackComputeServiceContextModule
    @Provides
    protected Map<String, WellKnownImage> provideImages(Json json) throws IOException {
       List<WellKnownImage> wellKnowns = json.fromJson(
-            Utils.toStringAndClose(getClass().getResourceAsStream("/preinstalled_images.json")),
+            Strings2.toStringAndClose(getClass().getResourceAsStream("/preinstalled_images.json")),
             new TypeLiteral<List<WellKnownImage>>() {
             }.getType());
       return Maps.uniqueIndex(wellKnowns, new Function<WellKnownImage, String>() {

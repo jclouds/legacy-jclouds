@@ -46,7 +46,7 @@ import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
@@ -59,7 +59,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "stub.StubComputeServiceIntegrationTest")
+@Test(groups = "live")
 public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTest {
 
    private static final ExecResponse EXEC_GOOD = new ExecResponse("", "", 0);
@@ -115,7 +115,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
                   new SshException("Auth fail"));
             client2.connect();
             try {
-               runScript(client2, "runScriptWithCreds", Utils.toStringAndClose(StubComputeServiceIntegrationTest.class
+               runScript(client2, "runScriptWithCreds", Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
                      .getResourceAsStream("/runscript.sh")), 2);
             } catch (IOException e) {
                Throwables.propagate(e);
@@ -168,7 +168,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             client.connect();
 
             try {
-               runScript(client, "jboss", Utils.toStringAndClose(StubComputeServiceIntegrationTest.class
+               runScript(client, "jboss", Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
                      .getResourceAsStream("/initscript_with_jboss.sh")), nodeId);
             } catch (IOException e) {
                Throwables.propagate(e);
@@ -182,7 +182,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             client.connect();
 
             try {
-               runScript(client, scriptName, Utils.toStringAndClose(StubComputeServiceIntegrationTest.class
+               runScript(client, scriptName, Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
                      .getResourceAsStream("/initscript_with_java.sh")), nodeId);
             } catch (IOException e) {
                Throwables.propagate(e);
@@ -254,7 +254,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             return actual == null;
          }
          try {
-            String real = Utils.toStringAndClose(((Payload) actual).getInput());
+            String real = Strings2.toStringAndClose(((Payload) actual).getInput());
             assertEquals(real, expected);
             return true;
          } catch (IOException e) {

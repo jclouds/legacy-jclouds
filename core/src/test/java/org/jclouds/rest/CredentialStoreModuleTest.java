@@ -19,7 +19,6 @@
 
 package org.jclouds.rest;
 
-import static org.jclouds.util.Utils.toStringAndClose;
 import static org.testng.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
@@ -34,6 +33,7 @@ import org.jclouds.json.Json;
 import org.jclouds.json.config.GsonModule;
 import org.jclouds.rest.config.CredentialStoreModule;
 import org.jclouds.rest.config.CredentialStoreModule.CopyInputStreamInputSupplierMap;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -47,7 +47,7 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true, testName = "rest.CredentialStoreModuleTest")
+@Test(groups = "unit", sequential = true)
 public class CredentialStoreModuleTest {
    Json json = createInjector().getInstance(Json.class);
 
@@ -157,7 +157,7 @@ public class CredentialStoreModuleTest {
 
    protected void checkToJson(Map<String, InputStream> map, String key, String identity, String credential)
          throws IOException {
-      assertEquals(toStringAndClose(map.get(key)), json.toJson(new Credentials(identity, credential)));
+      assertEquals(Strings2.toStringAndClose(map.get(key)), json.toJson(new Credentials(identity, credential)));
    }
 
    protected void put(Map<String, InputStream> map, Map<String, Credentials> store, String key, String identity,

@@ -38,7 +38,7 @@ import org.jclouds.blobstore.BlobStoreContextFactory;
 import org.jclouds.demo.tweetstore.config.SpringServletConfig;
 import org.jclouds.demo.tweetstore.controller.StoreTweetsController;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -61,7 +61,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "functionalTests")
+@Test(groups = "live", sequential = true)
 public class TweetStoreLiveTest {
 
    GoogleDevServer server;
@@ -161,7 +161,7 @@ public class TweetStoreLiveTest {
    @Test
    public void shouldPass() throws InterruptedException, IOException {
       InputStream i = url.openStream();
-      String string = Utils.toStringAndClose(i);
+      String string = Strings2.toStringAndClose(i);
       assert string.indexOf("Welcome") >= 0 : string;
    }
 
@@ -180,7 +180,7 @@ public class TweetStoreLiveTest {
          connection.addRequestProperty("X-AppEngine-QueueName", "twitter");
          connection.addRequestProperty("context", context);
          InputStream i = connection.getInputStream();
-         String string = Utils.toStringAndClose(i);
+         String string = Strings2.toStringAndClose(i);
          assert string.indexOf("Done!") >= 0 : string;
          connection.disconnect();
       }
@@ -196,7 +196,7 @@ public class TweetStoreLiveTest {
    public void testSerial() throws InterruptedException, IOException {
       URL gurl = new URL(url, "/tweets/get");
       InputStream i = gurl.openStream();
-      String string = Utils.toStringAndClose(i);
+      String string = Strings2.toStringAndClose(i);
       assert string.indexOf("Tweets in Clouds") >= 0 : string;
    }
 
@@ -204,7 +204,7 @@ public class TweetStoreLiveTest {
    public void testParallel() throws InterruptedException, IOException {
       URL gurl = new URL(url, "/tweets/get");
       InputStream i = gurl.openStream();
-      String string = Utils.toStringAndClose(i);
+      String string = Strings2.toStringAndClose(i);
       assert string.indexOf("Tweets in Clouds") >= 0 : string;
    }
 }

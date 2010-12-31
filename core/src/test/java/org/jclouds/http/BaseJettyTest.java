@@ -29,7 +29,6 @@ import static com.google.common.io.Closeables.closeQuietly;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_LENGTH;
 import static org.jclouds.rest.RestContextFactory.contextSpec;
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
-import static org.jclouds.util.Utils.toStringAndClose;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -53,6 +52,7 @@ import org.jclouds.io.InputSuppliers;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextBuilder;
 import org.jclouds.rest.RestContextSpec;
+import org.jclouds.util.Strings2;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Request;
@@ -118,7 +118,7 @@ public abstract class BaseJettyTest {
             } else if (request.getMethod().equals("PUT")) {
                if (request.getContentLength() > 0) {
                   response.setStatus(HttpServletResponse.SC_OK);
-                  response.getWriter().println(toStringAndClose(request.getInputStream()) + "PUT");
+                  response.getWriter().println(Strings2.toStringAndClose(request.getInputStream()) + "PUT");
                } else {
                   response.sendError(500, "no content");
                }
@@ -194,7 +194,7 @@ public abstract class BaseJettyTest {
             response.setStatus(HttpServletResponse.SC_OK);
             String responseString = "POST";
             if (request.getContentLength() < 10240) {
-               responseString = toStringAndClose(request.getInputStream()) + "POST";
+               responseString = Strings2.toStringAndClose(request.getInputStream()) + "POST";
             } else {
                closeQuietly(request.getInputStream());
             }
@@ -212,7 +212,7 @@ public abstract class BaseJettyTest {
             if (request.getMethod().equals("PUT")) {
                if (request.getContentLength() > 0) {
                   response.setStatus(HttpServletResponse.SC_OK);
-                  response.getWriter().println(toStringAndClose(request.getInputStream()) + "PUTREDIRECT");
+                  response.getWriter().println(Strings2.toStringAndClose(request.getInputStream()) + "PUTREDIRECT");
                }
             } else if (request.getMethod().equals("POST")) {
                if (request.getContentLength() > 0) {
@@ -310,12 +310,13 @@ public abstract class BaseJettyTest {
       return false;
    }
 
-   @SuppressWarnings("unchecked")
    protected boolean failIfNoContentLength(HttpServletRequest request, HttpServletResponse response) throws IOException {
       Multimap<String, String> realHeaders = LinkedHashMultimap.create();
+      @SuppressWarnings("rawtypes")
       Enumeration headers = request.getHeaderNames();
       while (headers.hasMoreElements()) {
          String header = headers.nextElement().toString();
+         @SuppressWarnings("rawtypes")
          Enumeration values = request.getHeaders(header);
          while (values.hasMoreElements()) {
             realHeaders.put(header, values.nextElement().toString());

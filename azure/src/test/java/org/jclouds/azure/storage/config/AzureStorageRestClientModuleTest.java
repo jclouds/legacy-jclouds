@@ -43,7 +43,7 @@ import com.google.inject.Module;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "azure.RestAzureStorageClientModuleTest")
+@Test(groups = "unit")
 public class AzureStorageRestClientModuleTest {
 
    Injector createInjector() throws IOException {
@@ -54,6 +54,7 @@ public class AzureStorageRestClientModuleTest {
    @SuppressWarnings("unchecked")
    @Test
    void testUpdatesOnlyOncePerSecond() throws NoSuchMethodException, InterruptedException {
+      @SuppressWarnings("rawtypes")
       AzureStorageRestClientModule module = new AzureBlobRestClientModule();
 
       Supplier<String> map = module.provideTimeStampCache(1, new SimpleDateFormatDateService());

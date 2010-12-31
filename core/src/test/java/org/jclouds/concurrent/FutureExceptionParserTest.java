@@ -19,7 +19,7 @@
 
 package org.jclouds.concurrent;
 
-import static org.jclouds.util.Utils.propagateOrNull;
+import static org.jclouds.util.Throwables2.propagateOrNull;
 import static org.testng.Assert.assertEquals;
 
 import java.util.concurrent.Callable;
@@ -41,7 +41,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "concurrent.FutureExceptionParserTest")
+@Test(groups = "unit")
 public class FutureExceptionParserTest {
    ExecutorService executorService = MoreExecutors.sameThreadExecutor();
 
@@ -69,7 +69,7 @@ public class FutureExceptionParserTest {
       assertEquals(future.get(1, TimeUnit.SECONDS), "foo");
    }
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    private Future<?> createFuture(final Exception exception) {
       ListenableFuture<?> future = Futures.makeListenable(executorService.submit(new Callable<String>() {
 

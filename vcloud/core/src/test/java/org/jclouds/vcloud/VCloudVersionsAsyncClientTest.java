@@ -42,11 +42,12 @@ import com.google.inject.TypeLiteral;
 import domain.VCloudVersionsAsyncClient;
 
 /**
- * Tests behavior of {@code VCloudVersions}
+ * Tests behavior of {@code VCloudVersionsAsyncClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VCloudVersionsTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "VCloudVersionsAsyncClientTest")
 public class VCloudVersionsAsyncClientTest extends RestClientTest<VCloudVersionsAsyncClient> {
 
    public void testVersions() throws SecurityException, NoSuchMethodException, IOException {

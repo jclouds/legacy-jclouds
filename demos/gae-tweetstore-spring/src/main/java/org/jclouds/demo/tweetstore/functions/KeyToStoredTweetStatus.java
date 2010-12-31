@@ -19,7 +19,7 @@
 
 package org.jclouds.demo.tweetstore.functions;
 
-import static org.jclouds.util.Utils.toStringAndClose;
+import static org.jclouds.util.Strings2.toStringAndClose;
 
 import javax.annotation.Resource;
 

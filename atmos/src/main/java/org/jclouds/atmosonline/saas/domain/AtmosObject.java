@@ -21,28 +21,25 @@ package org.jclouds.atmosonline.saas.domain;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.atmosonline.saas.domain.internal.AtmosObjectImpl.AtmosObjectFactory;
 import org.jclouds.io.PayloadEnclosing;
 
 import com.google.common.collect.Multimap;
+import com.google.inject.ImplementedBy;
 
 /**
- * Amazon Atmos is designed to store objects. Objects are stored in buckets and consist of a
- * {@link ObjectMetadataAtmosObject#getInput() value}, a {@link ObjectMetadata#getKey key},
- * {@link ObjectMetadata#getUserMetadata() metadata}, and an access control policy.
  * 
  * @author Adrian Cole
- * @see <a
- *      href="http://docs.amazonwebservices.com/AmazonAtmos/2006-03-01/index.html?UsingObjects.html"
- *      />
  */
 public interface AtmosObject extends PayloadEnclosing, Comparable<AtmosObject> {
+   @ImplementedBy(AtmosObjectFactory.class)
    public interface Factory {
       AtmosObject create(@Nullable MutableContentMetadata contentMetadata);
 
       AtmosObject create(SystemMetadata systemMetadata, UserMetadata userMetadata);
 
       AtmosObject create(MutableContentMetadata contentMetadata, SystemMetadata systemMetadata,
-               UserMetadata userMetadata);
+            UserMetadata userMetadata);
 
    }
 

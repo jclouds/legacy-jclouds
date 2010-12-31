@@ -38,14 +38,14 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class ParseBlobFromHeadersAndHttpContent implements Function<HttpResponse, AzureBlob>,
-         InvocationContext {
+      InvocationContext<ParseBlobFromHeadersAndHttpContent> {
 
    private final ParseBlobPropertiesFromHeaders metadataParser;
    private final AzureBlob.Factory blobFactory;
 
    @Inject
    public ParseBlobFromHeadersAndHttpContent(ParseBlobPropertiesFromHeaders metadataParser,
-            AzureBlob.Factory blobFactory) {
+         AzureBlob.Factory blobFactory) {
       this.metadataParser = metadataParser;
       this.blobFactory = blobFactory;
    }

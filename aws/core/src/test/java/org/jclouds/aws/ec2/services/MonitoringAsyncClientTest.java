@@ -36,7 +36,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.MonitoringAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "MonitoringAsyncClientTest")
 public class MonitoringAsyncClientTest extends BaseEC2AsyncClientTest<MonitoringAsyncClient> {
 
    public void testUnmonitorInstances() throws SecurityException, NoSuchMethodException, IOException {

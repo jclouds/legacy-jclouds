@@ -72,8 +72,8 @@ public class ParseSlicehostErrorFromHttpResponse implements HttpErrorHandler {
             break;
          case 403:
          case 404:
-            if (!command.getRequest().getMethod().equals("DELETE")) {
-               String path = command.getRequest().getEndpoint().getPath();
+            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
+               String path = command.getCurrentRequest().getEndpoint().getPath();
                Matcher matcher = RESOURCE_PATTERN.matcher(path);
                String message;
                if (matcher.find()) {

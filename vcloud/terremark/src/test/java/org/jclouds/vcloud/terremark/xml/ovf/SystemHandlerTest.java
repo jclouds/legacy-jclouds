@@ -32,11 +32,12 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableSet;
 
 /**
- * Tests behavior of {@code VirtualSystemHandler}
+ * Tests behavior of {@code SystemHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VirtualSystemHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "SystemHandlerTest")
 public class SystemHandlerTest extends BaseHandlerTest {
 
    @BeforeTest

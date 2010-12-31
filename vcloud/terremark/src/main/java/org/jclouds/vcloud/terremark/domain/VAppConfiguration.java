@@ -20,9 +20,10 @@
 package org.jclouds.vcloud.terremark.domain;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.jclouds.util.Utils.checkNotEmpty;
 
 import java.util.List;
+
+import org.jclouds.util.Preconditions2;
 
 import com.google.common.collect.Lists;
 
@@ -43,7 +44,7 @@ public class VAppConfiguration {
     * 
     */
    public VAppConfiguration changeNameTo(String name) {
-      checkNotEmpty(name, "name must be specified");
+      Preconditions2.checkNotEmpty(name, "name must be specified");
       this.name = name;
       return this;
    }

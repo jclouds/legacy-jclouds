@@ -45,7 +45,7 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(enabled = false, sequential = true, testName = "perftest.JCloudsGaePerformanceLiveTest", groups = { "disabled" })
+@Test(enabled = false, sequential = true, groups = { "disabled" })
 public class JCloudsGaePerformanceLiveTest extends BaseJCloudsPerformanceLiveTest {
 
    @Override

@@ -37,7 +37,8 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudwatch.GetMetricStatisticsResponseHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "GetMetricStatisticsResponseHandlerTest")
 public class GetMetricStatisticsResponseHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
       DateService dateService = injector.getInstance(DateService.class);

@@ -41,7 +41,13 @@ import org.testng.annotations.Test;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
-@Test(groups = "unit", testName = "cloudfiles.CloudFilesBlobRequestSignerTest")
+/**
+ * Tests behavior of {@code CloudFilesBlobRequestSigner}
+ * 
+ * @author Adrian Cole
+ */
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "CloudFilesBlobRequestSignerTest")
 public class CloudFilesBlobRequestSignerTest extends RestClientTest<CloudFilesAsyncClient> {
 
    private BlobRequestSigner signer;

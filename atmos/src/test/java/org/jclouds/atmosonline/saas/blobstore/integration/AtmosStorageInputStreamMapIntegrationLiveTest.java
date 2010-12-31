@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "emcsaas.AtmosStorageInputStreamMapIntegrationTest")
+@Test(groups = "live")
 public class AtmosStorageInputStreamMapIntegrationLiveTest extends BaseInputStreamMapIntegrationTest {
 
    @Override

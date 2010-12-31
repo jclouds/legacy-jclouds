@@ -138,7 +138,6 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
       return result;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public boolean equals(Object obj) {
       if (this == obj)
@@ -147,7 +146,7 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      RestContextImpl other = (RestContextImpl) obj;
+      RestContextImpl<?, ?> other = (RestContextImpl<?, ?>) obj;
       if (apiVersion == null) {
          if (other.apiVersion != null)
             return false;

@@ -21,7 +21,9 @@ package org.jclouds.atmosonline.saas.domain;
 
 import java.util.Set;
 
-import org.jclouds.atmosonline.saas.domain.internal.BoundedHashSet;
+import javax.annotation.Nullable;
+
+import org.jclouds.atmosonline.saas.domain.internal.BoundedLinkedHashSet;
 
 import com.google.inject.ImplementedBy;
 
@@ -30,9 +32,10 @@ import com.google.inject.ImplementedBy;
  * @author Adrian Cole
  * 
  */
-@ImplementedBy(BoundedHashSet.class)
+@ImplementedBy(BoundedLinkedHashSet.class)
 public interface BoundedSet<T> extends Set<T> {
 
+   @Nullable
    String getToken();
 
 }

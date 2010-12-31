@@ -35,7 +35,7 @@ import com.google.common.collect.ImmutableMap;
  * 
  * @author Adrian Cole
  */
-@Test(sequential = true, groups = { "unit" }, testName = "aws.AWSRestClientModuleTest")
+@Test(sequential = true, groups = { "unit" })
 public class AWSRestClientModuleTest {
 
    @Test

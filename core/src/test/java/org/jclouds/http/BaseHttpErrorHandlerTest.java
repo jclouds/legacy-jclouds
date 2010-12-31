@@ -70,7 +70,7 @@ public abstract class BaseHttpErrorHandlerTest {
       HttpRequest request = new HttpRequest(method, uri);
       HttpResponse response = new HttpResponse(statusCode, message, Payloads.newStringPayload(content));
 
-      expect(command.getRequest()).andReturn(request).atLeastOnce();
+      expect(command.getCurrentRequest()).andReturn(request).atLeastOnce();
       command.setException(classEq(expected));
 
       replay(command);

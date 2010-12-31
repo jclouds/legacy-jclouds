@@ -33,7 +33,8 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "azurestorage.ErrorHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "ErrorHandlerTest")
 public class ErrorHandlerTest extends BaseHandlerTest {
 
    ParseSax<AzureStorageError> createParser() {
