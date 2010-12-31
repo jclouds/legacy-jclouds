@@ -15,9 +15,11 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 
 /**
+ * 
  * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
-public class BindAttributesToIndexedFormParams implements Binder {
+public class BindAttributesToIndexedFormParams implements Binder 
+{
 
    private final String attributeName = "Attribute.%d.Name";
    private final String attributeValue = "Attribute.%d.Value";
@@ -40,11 +42,6 @@ public class BindAttributesToIndexedFormParams implements Binder {
                 // not null by contract
 
                 String value = attr.getValue();
-
-//                    System.out.println(format(attributeName, amazonOneBasedIndex)+ "" + attr.getKey());
-//                    System.out.println(format(attributeValue, amazonOneBasedIndex)+ "" + value);
-//                    System.out.println(format(attributeReplace, amazonOneBasedIndex) +""+ String
-//                            .valueOf(attr.isReplace()) );
 
                 if (value != null) {
                     addFormParamTo(request, format(attributeName, amazonOneBasedIndex), attr.getKey() );
