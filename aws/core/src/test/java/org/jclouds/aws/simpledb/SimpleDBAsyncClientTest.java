@@ -23,6 +23,7 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.Properties;
 
 import org.jclouds.aws.domain.Region;
@@ -96,11 +97,31 @@ public class SimpleDBAsyncClientTest extends RestClientTest<SimpleDBAsyncClient>
    }
 
    public void testAllRegions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SimpleDBAsyncClient.class.getMethod("createDomainInRegion", String.class, String.class);
+      Method method = SimpleDBAsyncClient.class.getMethod("putAttributes", String.class, String.class);
       for (String region : Region.ALL_SIMPLEDB) {
          processor.createRequest(method, region, "domainName");
       }
    }
+   
+   public void testPutAttributes() throws SecurityException, NoSuchMethodException, IOException {
+	      Method method = SimpleDBAsyncClient.class.getMethod("putAttributes", String.class, String.class, Map.class);
+	      HttpRequest request = processor.createRequest(method, null, "domainName");
+
+	      assertRequestLineEquals(request, "POST https://sdb.amazonaws.com/ HTTP/1.1");
+	      assertNonPayloadHeadersEqual(request, "Host: sdb.amazonaws.com\n");
+	      assertPayloadEquals(request, "Version=2009-04-15&Action=PutAttributes&DomainName=domainName&ItemName=itemName" +
+	      		"&Attribute.1.Name=name" +
+	      		"&Attribute.1.Value=fuzzy" +
+	      		"&Attribute.1.Replace=true",
+	            "application/x-www-form-urlencoded", false);
+
+	      assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
+	      assertSaxResponseParserClassEquals(method, null);
+	      assertExceptionParserClassEquals(method, null);
+
+	      checkFilters(request);
+	   }
+
 
    @Override
    protected void checkFilters(HttpRequest request) {

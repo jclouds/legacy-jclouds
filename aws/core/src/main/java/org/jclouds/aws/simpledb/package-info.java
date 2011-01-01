@@ -21,5 +21,6 @@
  *
  * @see <a href="http://docs.amazonwebservices.com/AmazonSimpleDB/2009-04-15/DeveloperGuide/index.html"/>
  * @author Adrian Cole
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 package org.jclouds.aws.simpledb;

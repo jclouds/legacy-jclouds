@@ -29,6 +29,7 @@ import org.jclouds.rest.ConfiguresRestClient;
  * Configures the SimpleDB connection.
  * 
  * @author Adrian Cole
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  */
 @RequiresHttp
 @ConfiguresRestClient

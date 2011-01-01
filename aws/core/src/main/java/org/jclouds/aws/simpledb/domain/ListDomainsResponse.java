@@ -24,6 +24,7 @@ import java.util.Set;
 /**
  * 
  * @author Adrian Cole
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @see <a href="http://docs.amazonwebservices.com/AmazonS3/2006-03-01/index.html" />
  */
 public interface ListDomainsResponse extends Set<String> {

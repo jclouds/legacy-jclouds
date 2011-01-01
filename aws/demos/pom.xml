@@ -37,6 +37,7 @@
        <module>createlamp</module>
        <module>speedtest-sqs</module>
        <module>createandlistbuckets</module>
+       <module>simpledb</module>
 
     </modules>
     <dependencies>

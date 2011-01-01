@@ -34,6 +34,7 @@ import com.google.common.collect.Sets;
  * ListDomainsResponse
  * 
  * @author Adrian Cole
+ * @author Luís A. Bastião Silva <bastiao@ua.pt>
  * @see <a href=
  *      "http://docs.amazonwebservices.com/AmazonSimpleDB/2009-04-15/DeveloperGuide/SDB_API_ListDomains.htm l"
  *      />
