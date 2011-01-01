@@ -40,12 +40,6 @@ public interface ComputeServiceContext {
 
    ComputeService getComputeService();
 
-   /**
-    * 
-    * @return null, if the cloud does not support load balancer services
-    */
-   LoadBalancerService getLoadBalancerService();
-
    <S, A> RestContext<S, A> getProviderSpecificContext();
 
    /**

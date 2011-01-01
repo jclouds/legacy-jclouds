@@ -17,44 +17,34 @@
  * ====================================================================
  */
 
-package org.jclouds.compute.internal;
+package org.jclouds.loadbalancer.internal;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeService;
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.Utils;
-import org.jclouds.domain.Credentials;
+import org.jclouds.loadbalancer.LoadBalancerService;
+import org.jclouds.loadbalancer.LoadBalancerServiceContext;
 import org.jclouds.rest.RestContext;
+import org.jclouds.rest.Utils;
 
 /**
  * @author Adrian Cole
  */
 @Singleton
-public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
-   private final ComputeService computeService;
+public class LoadBalancerServiceContextImpl<S, A> implements LoadBalancerServiceContext {
+   private final LoadBalancerService loadBalancerService;
    private final RestContext<S, A> providerSpecificContext;
    private final Utils utils;
-   private final Map<String, Credentials> credentialStore;
 
    @SuppressWarnings({ "unchecked" })
    @Inject
-   public ComputeServiceContextImpl(ComputeService computeService, Map<String, Credentials> credentialStore,
-         Utils utils,
+   public LoadBalancerServiceContextImpl(LoadBalancerService loadBalancerService, Utils utils,
          @SuppressWarnings("rawtypes") RestContext providerSpecificContext) {
-      this.credentialStore = credentialStore;
       this.utils = utils;
       this.providerSpecificContext = providerSpecificContext;
-      this.computeService = checkNotNull(computeService, "computeService");
-   }
-
-   public ComputeService getComputeService() {
-      return computeService;
+      this.loadBalancerService = checkNotNull(loadBalancerService, "loadBalancerService");
    }
 
    @SuppressWarnings({ "unchecked", "hiding" })
@@ -67,7 +57,12 @@ public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
    public void close() {
       providerSpecificContext.close();
    }
-   
+
+   @Override
+   public LoadBalancerService getLoadBalancerService() {
+      return loadBalancerService;
+   }
+
    @Override
    public Utils getUtils() {
       return utils();
@@ -92,13 +87,4 @@ public class ComputeServiceContextImpl<S, A> implements ComputeServiceContext {
       return providerSpecificContext.equals(obj);
    }
 
-   @Override
-   public Map<String, Credentials> getCredentialStore() {
-      return credentialStore;
-   }
-
-   @Override
-   public Map<String, Credentials> credentialStore() {
-      return credentialStore;
-   }
 }

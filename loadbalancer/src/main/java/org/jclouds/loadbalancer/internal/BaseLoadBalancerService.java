@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.compute.internal;
+package org.jclouds.loadbalancer.internal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -28,22 +28,18 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.predicates.NodePredicates;
-import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.strategy.DestroyLoadBalancerStrategy;
-import org.jclouds.compute.strategy.LoadBalanceNodesStrategy;
 import org.jclouds.domain.Location;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
+import org.jclouds.loadbalancer.LoadBalancerService;
+import org.jclouds.loadbalancer.LoadBalancerServiceContext;
+import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
+import org.jclouds.loadbalancer.reference.LoadBalancerConstants;
+import org.jclouds.loadbalancer.strategy.DestroyLoadBalancerStrategy;
+import org.jclouds.loadbalancer.strategy.LoadBalanceNodesStrategy;
 import org.jclouds.logging.Logger;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 
 /**
@@ -54,26 +50,21 @@ import com.google.inject.Inject;
 @Singleton
 public class BaseLoadBalancerService implements LoadBalancerService {
 
-   @Inject(optional = true)
-   @Named("jclouds.lb.max_retries")
-   @VisibleForTesting
-   int dnsRetries = 5;
-
    @Resource
-   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   @Named(LoadBalancerConstants.LOADBALANCER_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   protected final ComputeServiceContext context;
+   protected final LoadBalancerServiceContext context;
    protected final LoadBalanceNodesStrategy loadBalancerStrategy;
    protected final DestroyLoadBalancerStrategy destroyLoadBalancerStrategy;
    // protected final ListLoadBalancersStrategy listLoadBalancersStrategy;
    protected final BackoffLimitedRetryHandler backoffLimitedRetryHandler;
 
    @Inject
-   protected BaseLoadBalancerService(ComputeServiceContext context, LoadBalanceNodesStrategy loadBalancerStrategy,
-            DestroyLoadBalancerStrategy destroyLoadBalancerStrategy,
-            // ListLoadBalancersStrategy listLoadBalancersStrategy,
-            BackoffLimitedRetryHandler backoffLimitedRetryHandler) {
+   protected BaseLoadBalancerService(LoadBalancerServiceContext context, LoadBalanceNodesStrategy loadBalancerStrategy,
+         DestroyLoadBalancerStrategy destroyLoadBalancerStrategy,
+         // ListLoadBalancersStrategy listLoadBalancersStrategy,
+         BackoffLimitedRetryHandler backoffLimitedRetryHandler) {
       this.context = checkNotNull(context, "context");
       this.loadBalancerStrategy = checkNotNull(loadBalancerStrategy, "loadBalancerStrategy");
       this.destroyLoadBalancerStrategy = checkNotNull(destroyLoadBalancerStrategy, "destroyLoadBalancerStrategy");
@@ -86,34 +77,24 @@ public class BaseLoadBalancerService implements LoadBalancerService {
     * {@inheritDoc}
     */
    @Override
-   public ComputeServiceContext getContext() {
+   public LoadBalancerServiceContext getContext() {
       return context;
    }
 
    @Override
-   public Set<String> loadBalanceNodesMatching(Predicate<NodeMetadata> filter, String loadBalancerName,
-            String protocol, int loadBalancerPort, int instancePort) {
+   public LoadBalancerMetadata createLoadBalancerInLocation(Location location, String loadBalancerName,
+         String protocol, int loadBalancerPort, int instancePort, Iterable<? extends NodeMetadata> nodes) {
       checkNotNull(loadBalancerName, "loadBalancerName");
       checkNotNull(protocol, "protocol");
       checkArgument(protocol.toUpperCase().equals("HTTP") || protocol.toUpperCase().equals("TCP"),
-               "Acceptable values for protocol are HTTP or TCP");
-
-      Set<String> ids = Sets.newHashSet();
-      Location location = null;
-      for (NodeMetadata node : Iterables.filter(context.getComputeService().listNodesDetailsMatching(
-               NodePredicates.all()), filter)) {
-         ids.add(node.getProviderId());
-         location = node.getLocation();
-      }
-      Set<String> dnsNames = Sets.newHashSet();
+            "Acceptable values for protocol are HTTP or TCP");
 
       logger.debug(">> creating load balancer (%s)", loadBalancerName);
-      String dnsName = loadBalancerStrategy.execute(location, loadBalancerName, protocol, loadBalancerPort,
-                  instancePort, ids);
-      dnsNames.add(dnsName);
-      logger.debug("<< created load balancer (%s) DNS (%s)", loadBalancerName, dnsName);
+      LoadBalancerMetadata lb = loadBalancerStrategy.execute(location, loadBalancerName, protocol, loadBalancerPort,
+            instancePort, nodes);
+      logger.debug("<< created load balancer (%s)", loadBalancerName, lb);
 
-      return dnsNames;
+      return lb;
    }
 
    /**

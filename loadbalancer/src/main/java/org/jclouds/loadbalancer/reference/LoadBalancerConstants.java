@@ -17,20 +17,14 @@
  * ====================================================================
  */
 
-package org.jclouds.compute.strategy;
-
-import java.util.Set;
-
-import org.jclouds.domain.Location;
+package org.jclouds.loadbalancer.reference;
 
 /**
- * Creates a load balancer for nodes listed
  * 
- * @author Lili Nader
+ * @author Adrian Cole
  */
-public interface LoadBalanceNodesStrategy {
+public interface LoadBalancerConstants {
 
-   String execute(Location loaction, String name, String protocol, int loadBalancerPort,
-            int instancePort, Set<String> instanceIds);
+   public static final String LOADBALANCER_LOGGER = "jclouds.loadbalancer";
 
 }

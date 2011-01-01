@@ -97,10 +97,6 @@ import com.google.inject.Module;
 @Test(groups = { "integration", "live" }, sequential = true)
 public abstract class BaseComputeServiceLiveTest {
 
-   public void setServiceDefaults() {
-
-   }
-
    protected String tag;
 
    protected RetryablePredicate<IPSocket> socketTester;
@@ -111,27 +107,11 @@ public abstract class BaseComputeServiceLiveTest {
    protected Template template;
    protected Map<String, String> keyPair;
 
-   protected void buildSocketTester() {
-      SocketOpen socketOpen = Guice.createInjector(getSshModule()).getInstance(SocketOpen.class);
-      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
-   }
-
-   protected void setupKeyPairForTest() throws FileNotFoundException, IOException {
-      keyPair = ComputeTestUtils.setupKeyPair();
-   }
-
    protected String provider;
    protected String identity;
    protected String credential;
    protected String endpoint;
    protected String apiversion;
-
-   protected void setupCredentials() {
-      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
-      credential = System.getProperty("test." + provider + ".credential");
-      endpoint = System.getProperty("test." + provider + ".endpoint");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
-   }
 
    protected Properties setupProperties() {
       Properties overrides = new Properties();
@@ -158,6 +138,21 @@ public abstract class BaseComputeServiceLiveTest {
       buildSocketTester();
    }
 
+   public void setServiceDefaults() {
+
+   }
+
+   protected void setupCredentials() {
+      identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
+      credential = System.getProperty("test." + provider + ".credential");
+      endpoint = System.getProperty("test." + provider + ".endpoint");
+      apiversion = System.getProperty("test." + provider + ".apiversion");
+   }
+
+   protected void setupKeyPairForTest() throws FileNotFoundException, IOException {
+      keyPair = ComputeTestUtils.setupKeyPair();
+   }
+
    private void initializeContextAndClient() throws IOException {
       if (context != null)
          context.close();
@@ -169,6 +164,11 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected Properties getRestProperties() {
       return RestContextFactory.getPropertiesFromResource("/rest.properties");
+   }
+
+   protected void buildSocketTester() {
+      SocketOpen socketOpen = Guice.createInjector(getSshModule()).getInstance(SocketOpen.class);
+      socketTester = new RetryablePredicate<IPSocket>(socketOpen, 60, 1, TimeUnit.SECONDS);
    }
 
    abstract protected Module getSshModule();
@@ -474,7 +474,7 @@ public abstract class BaseComputeServiceLiveTest {
 
       template = client.templateBuilder().options(blockOnComplete(false).blockOnPort(8080, 600).inboundPorts(22, 8080))
             .build();
-      
+
       // note this is a dependency on the template resolution
       template.getOptions().runScript(
             RunScriptData.createScriptInstallAndStartJBoss(keyPair.get("public"), template.getImage()

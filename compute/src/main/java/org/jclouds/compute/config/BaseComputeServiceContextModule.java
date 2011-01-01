@@ -30,7 +30,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
-import org.jclouds.compute.LoadBalancerService;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -52,9 +51,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
-import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
-import com.google.inject.util.Providers;
 
 /**
  * 
@@ -64,13 +61,8 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Override
    protected void configure() {
       install(new ComputeServiceTimeoutsModule());
-      bindLoadBalancerService();
       bind(new TypeLiteral<Function<NodeMetadata, SshClient>>() {
       }).to(CreateSshClientOncePortIsListeningOnNode.class);
-   }
-
-   protected void bindLoadBalancerService() {
-      bind(LoadBalancerService.class).toProvider(Providers.<LoadBalancerService> of(null)).in(Scopes.SINGLETON);
    }
 
    @Provides

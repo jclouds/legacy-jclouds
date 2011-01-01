@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.ec2.compute;
+package org.jclouds.aws.elb.loadbalancer;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -29,32 +29,25 @@ import org.jclouds.aws.domain.Region;
 import org.jclouds.aws.elb.ELBAsyncClient;
 import org.jclouds.aws.elb.ELBClient;
 import org.jclouds.aws.elb.domain.LoadBalancer;
-import org.jclouds.compute.BaseLoadBalancerServiceLiveTest;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.loadbalancer.BaseLoadBalancerServiceLiveTest;
 import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
-import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
-
-import com.google.common.collect.ImmutableSet;
 
 /**
  * 
  * @author Lili Nadar
  */
 @Test(groups = "live", sequential = true)
-public class EC2LoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveTest {
-
-   private RestContext<ELBClient, ELBAsyncClient> elbContext;
+public class ELBLoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveTest {
 
    @BeforeClass
    @Override
    public void setServiceDefaults() {
-      provider = "ec2";
+      provider = "elb";
+      computeProvider = "ec2";
    }
 
    @Override
@@ -62,20 +55,9 @@ public class EC2LoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveT
       return new JschSshClientModule();
    }
 
-   @BeforeGroups(groups = { "live" })
-   public void setupELBClient()  {
-      elbContext = new RestContextFactory().createContext("elb", identity, credential,
-               ImmutableSet.of(new Log4JLoggingModule()));
-   }
-
-   @AfterGroups(groups = { "live" })
-   public void tearDownELBClient() {
-      if (elbContext != null)
-         elbContext.close();
-   }
-
    @Override
    protected void validateNodesInLoadBalancer() {
+      RestContext<ELBClient, ELBAsyncClient> elbContext = context.getProviderSpecificContext();
       // TODO create a LoadBalancer object and an appropriate list method so that this
       // does not have to be EC2 specific code
       ELBClient elbClient = elbContext.getApi();
@@ -86,10 +68,9 @@ public class EC2LoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveT
       }
       Set<LoadBalancer> elbs = elbClient.describeLoadBalancersInRegion(Region.US_EAST_1);
       assertNotNull(elbs);
-      for(LoadBalancer elb:elbs)
-      {
-          if(elb.getName().equals(tag))
-              assertEquals(elb.getInstanceIds(), instanceIds);
+      for (LoadBalancer elb : elbs) {
+         if (elb.getName().equals(tag))
+            assertEquals(elb.getInstanceIds(), instanceIds);
       }
    }
 }

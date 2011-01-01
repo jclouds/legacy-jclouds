@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.ec2.compute.strategy;
+package org.jclouds.aws.elb.loadbalancer.strategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,47 +31,60 @@ import javax.inject.Singleton;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.aws.ec2.util.EC2Utils.GetRegionFromLocation;
 import org.jclouds.aws.elb.ELBClient;
-import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.strategy.LoadBalanceNodesStrategy;
+import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Location;
+import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
+import org.jclouds.loadbalancer.domain.LoadBalancerType;
+import org.jclouds.loadbalancer.domain.internal.LoadBalancerMetadataImpl;
+import org.jclouds.loadbalancer.reference.LoadBalancerConstants;
+import org.jclouds.loadbalancer.strategy.LoadBalanceNodesStrategy;
 import org.jclouds.logging.Logger;
+
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class EC2LoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
+public class ELBLoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
    @Resource
-   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   @Named(LoadBalancerConstants.LOADBALANCER_LOGGER)
    protected Logger logger = Logger.NULL;
    protected final ELBClient elbClient;
    protected final GetRegionFromLocation getRegionFromLocation;
 
    @Inject
-   protected EC2LoadBalanceNodesStrategy(ELBClient elbClient,
-            GetRegionFromLocation getRegionFromLocation) {
+   protected ELBLoadBalanceNodesStrategy(ELBClient elbClient, GetRegionFromLocation getRegionFromLocation) {
       this.elbClient = elbClient;
       this.getRegionFromLocation = getRegionFromLocation;
    }
 
    @Override
-   public String execute(Location location, String name, String protocol, int loadBalancerPort,
-            int instancePort, Set<String> instanceIds) {
+   public LoadBalancerMetadata execute(Location location, String name, String protocol, int loadBalancerPort,
+         int instancePort, Iterable<? extends NodeMetadata> nodes) {
       String region = getRegionFromLocation.apply(location);
       String dnsName = new String();
-      
-      dnsName = elbClient.createLoadBalancerInRegion(region, name, protocol, loadBalancerPort,
-               instancePort, EC2Utils.getAvailabilityZonesForRegion(region));
 
-      List<String> instanceIdlist = new ArrayList<String>(instanceIds);
-      String[] instanceIdArray = new String[instanceIdlist.size()];
-      for (int i = 0; i < instanceIdlist.size(); i++) {
-         instanceIdArray[i] = instanceIdlist.get(i);
-      }
+      dnsName = elbClient.createLoadBalancerInRegion(region, name, protocol, loadBalancerPort, instancePort,
+            EC2Utils.getAvailabilityZonesForRegion(region));
 
-      Set<String> registeredInstanceIds = elbClient.registerInstancesWithLoadBalancerInRegion(
-               region, name, instanceIdArray);
+      List<String> instanceIds = Lists.newArrayList(Iterables.transform(nodes, new Function<NodeMetadata, String>() {
+
+         @Override
+         public String apply(NodeMetadata from) {
+            return from.getProviderId();
+         }
+      }));
+
+      String[] instanceIdArray = instanceIds.toArray(new String[] {});
+
+      Set<String> registeredInstanceIds = elbClient.registerInstancesWithLoadBalancerInRegion(region, name,
+            instanceIdArray);
 
       // deregister instances
       boolean changed = registeredInstanceIds.removeAll(instanceIds);
@@ -85,6 +98,7 @@ public class EC2LoadBalanceNodesStrategy implements LoadBalanceNodesStrategy {
             elbClient.deregisterInstancesWithLoadBalancerInRegion(region, name, instanceIdArray);
       }
 
-      return dnsName;
+      return new LoadBalancerMetadataImpl(LoadBalancerType.LB, dnsName, name, dnsName, location, null,
+            ImmutableMap.<String, String> of(), ImmutableSet.of(dnsName));
    }
 }

@@ -17,31 +17,18 @@
  * ====================================================================
  */
 
-package org.jclouds.gogrid.compute.config;
+package org.jclouds.loadbalancer.strategy;
 
-import static org.jclouds.compute.domain.OsFamily.CENTOS;
-
-import org.jclouds.compute.config.BaseComputeServiceContextModule;
-import org.jclouds.compute.domain.TemplateBuilder;
-
-import com.google.inject.Injector;
+import com.google.common.annotations.Beta;
 
 /**
- * @author Oleksiy Yarmula
+ * 
+ * 
  * @author Adrian Cole
  */
-public class GoGridComputeServiceContextModule extends BaseComputeServiceContextModule {
+@Beta
+public interface DestroyLoadBalancerStrategy {
 
-   @Override
-   protected void configure() {
-      install(new GoGridComputeServiceDependenciesModule());
-      install(new GoGridBindComputeStrategiesByClass());
-      install(new GoGridBindComputeSuppliersByClass());
-      super.configure();
-   }
+   boolean execute(String loadBalancer);
 
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(CENTOS).imageNameMatches(".*w/ None.*");
-   }
 }

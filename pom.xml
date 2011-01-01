@@ -36,6 +36,7 @@
         <module>archetypes</module>
         <module>core</module>
         <module>compute</module>
+        <module>loadbalancer</module>
         <module>blobstore</module>
         <module>skeletons</module>
         <module>filesystem</module>

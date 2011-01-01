@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.ec2.compute.strategy;
+package org.jclouds.aws.elb.loadbalancer.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -30,8 +30,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.aws.elb.ELBClient;
-import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.strategy.DestroyLoadBalancerStrategy;
+import org.jclouds.loadbalancer.reference.LoadBalancerConstants;
+import org.jclouds.loadbalancer.strategy.DestroyLoadBalancerStrategy;
 import org.jclouds.logging.Logger;
 
 /**
@@ -39,15 +39,15 @@ import org.jclouds.logging.Logger;
  * @author Adrian Cole
  */
 @Singleton
-public class EC2DestroyLoadBalancerStrategy implements DestroyLoadBalancerStrategy {
+public class ELBDestroyLoadBalancerStrategy implements DestroyLoadBalancerStrategy {
    @Resource
-   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   @Named(LoadBalancerConstants.LOADBALANCER_LOGGER)
    protected Logger logger = Logger.NULL;
 
    private final ELBClient elbClient;
 
    @Inject
-   protected EC2DestroyLoadBalancerStrategy(ELBClient elbClient) {
+   protected ELBDestroyLoadBalancerStrategy(ELBClient elbClient) {
       this.elbClient = checkNotNull(elbClient, "elbClient");
    }
 

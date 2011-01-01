@@ -17,34 +17,23 @@
  * ====================================================================
  */
 
-package org.jclouds.compute;
-
-import java.util.Set;
+package org.jclouds.loadbalancer.strategy;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.internal.BaseLoadBalancerService;
+import org.jclouds.domain.Location;
+import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Predicate;
-import com.google.inject.ImplementedBy;
 
 /**
- * Provides portable access to load balancer services.
+ * Creates a load balancer for nodes listed
  * 
- * @author Lili Nadar
+ * @author Lili Nader
  */
-@Beta
-@ImplementedBy(BaseLoadBalancerService.class)
-public interface LoadBalancerService {
-
+public interface LoadBalanceNodesStrategy {
    /**
-    * @return a reference to the context that created this LoadBalancerService.
-    */
-   ComputeServiceContext getContext();
-
-   /**
-    * @param filter
-    *           Predicate-based filter to define which nodes to loadbalance
+    * @param location
+    *           null if default
     * @param loadBalancerName
     *           Load balancer name
     * @param protocol
@@ -58,18 +47,14 @@ public interface LoadBalancerService {
     *           The InstancePort data type is simple type of type: integer. It is the TCP port on
     *           which the server on the instance is listening. Valid instance ports are one (1)
     *           through 65535. This property cannot be modified for the life of the LoadBalancer.
+    * @param nodes
+    *           nodes to loadbalance
     * 
-    * @return DNS Name of the load balancer; note we don't use String, as it is incompatible
-    *         with google appengine.
+    * @return newly created loadbalancer
+    * @see org.jclouds.compute.ComputeService
     */
    @Beta
-   Set<String> loadBalanceNodesMatching(Predicate<NodeMetadata> filter, String loadBalancerName,
-            String protocol, int loadBalancerPort, int instancePort);
-
-   @Beta
-   void destroyLoadBalancer(String handle);
-   
-   @Beta
-   Set<String> listLoadBalancers();
+   LoadBalancerMetadata execute(Location location, String name, String protocol, int loadBalancerPort,
+         int instancePort, Iterable<? extends NodeMetadata> nodes);
 
 }

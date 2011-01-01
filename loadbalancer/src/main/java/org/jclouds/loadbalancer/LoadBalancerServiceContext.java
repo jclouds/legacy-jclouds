@@ -17,18 +17,36 @@
  * ====================================================================
  */
 
-package org.jclouds.compute.strategy;
+package org.jclouds.loadbalancer;
 
-import com.google.common.annotations.Beta;
+import org.jclouds.loadbalancer.internal.LoadBalancerServiceContextImpl;
+import org.jclouds.rest.RestContext;
+import org.jclouds.rest.Utils;
+
+import com.google.inject.ImplementedBy;
 
 /**
+ * Represents a cloud that has LoadBalancer functionality.
  * 
  * 
  * @author Adrian Cole
+ * 
  */
-@Beta
-public interface DestroyLoadBalancerStrategy {
+@ImplementedBy(LoadBalancerServiceContextImpl.class)
+public interface LoadBalancerServiceContext {
 
-   boolean execute(String loadBalancer);
+   LoadBalancerService getLoadBalancerService();
 
+
+   <S, A> RestContext<S, A> getProviderSpecificContext();
+
+
+   Utils getUtils();
+
+   /**
+    * @see #getUtils
+    */
+   Utils utils();
+
+   void close();
 }

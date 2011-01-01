@@ -17,31 +17,14 @@
  * ====================================================================
  */
 
-package org.jclouds.gogrid.compute.config;
-
-import static org.jclouds.compute.domain.OsFamily.CENTOS;
-
-import org.jclouds.compute.config.BaseComputeServiceContextModule;
-import org.jclouds.compute.domain.TemplateBuilder;
-
-import com.google.inject.Injector;
+package org.jclouds.loadbalancer.domain;
 
 /**
- * @author Oleksiy Yarmula
+ * 
  * @author Adrian Cole
  */
-public class GoGridComputeServiceContextModule extends BaseComputeServiceContextModule {
+public enum LoadBalancerType {
 
-   @Override
-   protected void configure() {
-      install(new GoGridComputeServiceDependenciesModule());
-      install(new GoGridBindComputeStrategiesByClass());
-      install(new GoGridBindComputeSuppliersByClass());
-      super.configure();
-   }
+   GSLB, LB;
 
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(CENTOS).imageNameMatches(".*w/ None.*");
-   }
 }

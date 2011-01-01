@@ -23,9 +23,10 @@ import java.util.List;
 import java.util.Properties;
 
 import org.jclouds.aws.elb.config.ELBRestClientModule;
+import org.jclouds.aws.elb.loadbalancer.config.ELBLoadBalancerContextModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.loadbalancer.LoadBalancerServiceContextBuilder;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.rest.RestContextBuilder;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -43,7 +44,12 @@ import com.google.inject.Module;
  * @author Adrian Cole
  * @see ELBContext
  */
-public class ELBContextBuilder extends RestContextBuilder<ELBClient, ELBAsyncClient> {
+public class ELBContextBuilder extends LoadBalancerServiceContextBuilder<ELBClient, ELBAsyncClient> {
+
+   @Override
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new ELBLoadBalancerContextModule());
+   }
 
    public ELBContextBuilder(Properties props) {
       super(ELBClient.class, ELBAsyncClient.class, props);

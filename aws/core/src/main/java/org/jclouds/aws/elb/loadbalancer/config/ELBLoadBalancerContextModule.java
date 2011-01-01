@@ -17,31 +17,30 @@
  * ====================================================================
  */
 
-package org.jclouds.gogrid.compute.config;
+package org.jclouds.aws.elb.loadbalancer.config;
 
-import static org.jclouds.compute.domain.OsFamily.CENTOS;
+import org.jclouds.aws.elb.loadbalancer.strategy.ELBDestroyLoadBalancerStrategy;
+import org.jclouds.aws.elb.loadbalancer.strategy.ELBLoadBalanceNodesStrategy;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.loadbalancer.strategy.DestroyLoadBalancerStrategy;
+import org.jclouds.loadbalancer.strategy.LoadBalanceNodesStrategy;
+import org.jclouds.rest.ConfiguresRestClient;
 
-import org.jclouds.compute.config.BaseComputeServiceContextModule;
-import org.jclouds.compute.domain.TemplateBuilder;
-
-import com.google.inject.Injector;
+import com.google.inject.AbstractModule;
 
 /**
- * @author Oleksiy Yarmula
+ * Configures the ELB connection.
+ * 
  * @author Adrian Cole
  */
-public class GoGridComputeServiceContextModule extends BaseComputeServiceContextModule {
+@RequiresHttp
+@ConfiguresRestClient
+public class ELBLoadBalancerContextModule extends AbstractModule {
+
 
    @Override
    protected void configure() {
-      install(new GoGridComputeServiceDependenciesModule());
-      install(new GoGridBindComputeStrategiesByClass());
-      install(new GoGridBindComputeSuppliersByClass());
-      super.configure();
-   }
-
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(CENTOS).imageNameMatches(".*w/ None.*");
+      bind(LoadBalanceNodesStrategy.class).to(ELBLoadBalanceNodesStrategy.class);
+      bind(DestroyLoadBalancerStrategy.class).to(ELBDestroyLoadBalancerStrategy.class);
    }
 }
