@@ -53,6 +53,8 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "SimpleDBAsyncClientTest")
 public class SimpleDBAsyncClientTest extends RestClientTest<SimpleDBAsyncClient> {
 
+   protected String provider = "simpledb";
+
    @RequiresHttp
    @ConfiguresRestClient
    private static final class TestSimpleDBRestClientModule extends SimpleDBRestClientModule {
@@ -133,7 +135,7 @@ public class SimpleDBAsyncClientTest extends RestClientTest<SimpleDBAsyncClient>
 
    @Override
    public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("simpledb", "identity", "credential", new Properties());
+      return new RestContextFactory().createContextSpec(provider, "identity", "credential", new Properties());
    }
 
 }

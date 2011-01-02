@@ -27,16 +27,17 @@ import java.net.URI;
 import java.util.Map;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.location.Provider;
 import org.jclouds.location.Region;
 
 import com.google.common.base.Function;
-import com.google.inject.Inject;
 
 /**
- * If a mapping of regions to endpoints exists, return a corresponding
+ * If a mapping of regions to endpoints exists, return a uri corresponding to the name of the region
+ * (passed argument). Otherwise, return the default location.
  * 
  * @author Adrian Cole
  */
@@ -44,25 +45,25 @@ import com.google.inject.Inject;
 public class RegionToEndpointOrProviderIfNull implements Function<Object, URI> {
    private final URI defaultUri;
    private final String defaultProvider;
-
-   @Inject(optional = true)
-   @Region
-   Map<String, URI> regionToEndpoint;
+   private final Map<String, URI> regionToEndpoint;
 
    @Inject
-   public RegionToEndpointOrProviderIfNull(@Provider URI defaultUri, @Provider String defaultProvider) {
+   public RegionToEndpointOrProviderIfNull(@Provider URI defaultUri, @Provider String defaultProvider,
+         @Nullable @Region Map<String, URI> regionToEndpoint) {
       this.defaultUri = checkNotNull(defaultUri, "defaultUri");
       this.defaultProvider = checkNotNull(defaultProvider, "defaultProvider");
+      this.regionToEndpoint = regionToEndpoint;
    }
 
    @Override
    public URI apply(@Nullable Object from) {
       checkState(from == null || from.equals(defaultProvider) || regionToEndpoint != null, "requested location " + from
             + ", but only the default location " + defaultProvider + " is configured");
-      checkArgument(from == null || from.equals(defaultProvider) || regionToEndpoint.containsKey(from),
-            "requested location " + from + ", which is not in the configured locations: " + regionToEndpoint.keySet());
+      checkArgument(
+            from == null || from.equals(defaultProvider)
+                  || (regionToEndpoint != null && regionToEndpoint.containsKey(from)),
+            "requested location %s, which is not in the configured locations: %s", from, regionToEndpoint);
 
       return from == null || from.equals(defaultProvider) ? defaultUri : regionToEndpoint.get(from);
    }
-
 }

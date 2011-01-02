@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import javax.annotation.Nullable;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
@@ -50,6 +51,7 @@ import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
+import com.google.inject.ConfigurationException;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Provides;
@@ -75,16 +77,23 @@ public class AWSRestClientModule<S, A> extends RestClientModule<S, A> {
    @Provides
    @Singleton
    @Region
+   @Nullable
    protected Map<String, URI> provideRegions(Injector injector) {
-      String regionString = injector.getInstance(Key.get(String.class, Names.named(PROPERTY_REGIONS)));
-      Map<String, URI> regions = newLinkedHashMap();
-      for (String region : Splitter.on(',').split(regionString)) {
-         regions.put(
-               region,
-               URI.create(injector.getInstance(Key.get(String.class,
-                     Names.named(Constants.PROPERTY_ENDPOINT + "." + region)))));
+      try {
+         String regionString = injector.getInstance(Key.get(String.class, Names.named(PROPERTY_REGIONS)));
+         Map<String, URI> regions = newLinkedHashMap();
+         for (String region : Splitter.on(',').split(regionString)) {
+            regions.put(
+                  region,
+                  URI.create(injector.getInstance(Key.get(String.class,
+                        Names.named(Constants.PROPERTY_ENDPOINT + "." + region)))));
+         }
+         return regions;
+      } catch (ConfigurationException e) {
+         // this happens if regions property isn't set
+         // services not run by AWS may not have regions, so this is ok.
+         return null;
       }
-      return regions;
    }
 
    @Provides

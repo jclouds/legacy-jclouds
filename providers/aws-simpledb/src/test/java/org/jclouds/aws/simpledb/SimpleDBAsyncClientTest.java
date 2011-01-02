@@ -23,10 +23,7 @@ import static org.jclouds.aws.simpledb.SimpleDBPropertiesBuilder.DEFAULT_REGIONS
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Properties;
 
-import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextSpec;
 import org.jclouds.simpledb.SimpleDBAsyncClient;
 import org.testng.annotations.Test;
 
@@ -39,7 +36,9 @@ import org.testng.annotations.Test;
 @Test(groups = "unit", testName = "aws.SimpleDBAsyncClientTest")
 public class SimpleDBAsyncClientTest extends org.jclouds.simpledb.SimpleDBAsyncClientTest {
 
-
+   public SimpleDBAsyncClientTest() {
+      this.provider = "aws-simpledb";
+   }
 
    // TODO fix this test as it has the wrong arg count
    @Test(enabled = false)
@@ -48,11 +47,6 @@ public class SimpleDBAsyncClientTest extends org.jclouds.simpledb.SimpleDBAsyncC
       for (String region : DEFAULT_REGIONS) {
          processor.createRequest(method, region, "domainName");
       }
-   }
-
-   @Override
-   public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("aws-simpledb", "identity", "credential", new Properties());
    }
 
 }
