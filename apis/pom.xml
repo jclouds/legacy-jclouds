@@ -33,5 +33,6 @@
     <packaging>pom</packaging>
     <name>jclouds apis project</name>
     <modules>
+       <module>filesystem</module>
     </modules>
 </project>

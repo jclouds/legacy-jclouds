@@ -24,24 +24,24 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4.0.0.xsd" >
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.jclouds</groupId>
-        <artifactId>jclouds-project</artifactId>
+        <groupId>org.jclouds.api</groupId>
+        <artifactId>jclouds-apis-project</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../project/pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>jclouds-filesystem</artifactId>
+    <artifactId>filesystem</artifactId>
     <name>jcloud filesystem core</name>
     <description>jclouds components to access filesystem</description>
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-blobstore</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
@@ -53,14 +53,14 @@
             <version>1.4</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-blobstore</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-log4j</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

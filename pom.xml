@@ -41,7 +41,6 @@
         <module>providers</module>
         <module>blobstore</module>
         <module>skeletons</module>
-        <module>filesystem</module>
         <module>extensions</module>
         <module>tools</module>
         <module>scriptbuilder</module>
