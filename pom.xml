@@ -53,7 +53,6 @@
         <module>vcloud</module>
         <module>gogrid</module>
         <module>elasticstack</module>
-        <module>cloudsigma</module>
         <module>allcompute</module>
         <module>allblobstore</module>
         <module>all</module>

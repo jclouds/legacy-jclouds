@@ -75,8 +75,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-cloudsigma</artifactId>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>cloudsigma</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

@@ -33,5 +33,6 @@
     <packaging>pom</packaging>
     <name>jclouds providers project</name>
     <modules>
+        <module>cloudsigma</module>
     </modules>
 </project>
