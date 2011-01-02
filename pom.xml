@@ -48,7 +48,6 @@
         <module>azure</module>
         <module>atmos</module>
         <module>rackspace</module>
-        <module>slicehost</module>
         <module>vcloud</module>
         <module>elasticstack</module>
         <module>allcompute</module>

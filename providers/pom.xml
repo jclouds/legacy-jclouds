@@ -34,6 +34,7 @@
     <name>jclouds providers project</name>
     <modules>
         <module>gogrid</module>
+        <module>slicehost</module>
         <module>cloudsigma</module>
     </modules>
 </project>

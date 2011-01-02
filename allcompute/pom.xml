@@ -60,8 +60,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-slicehost</artifactId>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>slicehost</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
