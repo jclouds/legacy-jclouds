@@ -35,7 +35,7 @@ import org.jclouds.aws.ec2.domain.PublicIpInstanceIdPair;
 import org.jclouds.aws.ec2.xml.AllocateAddressResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeAddressesResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.aws.functions.RegionToEndpoint;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -66,7 +66,7 @@ public interface ElasticIPAddressAsyncClient {
    @XMLResponseParser(AllocateAddressResponseHandler.class)
    @FormParams(keys = ACTION, values = "AllocateAddress")
    ListenableFuture<String> allocateAddressInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
    /**
     * @see BaseEC2Client#associateAddressInRegion
@@ -75,7 +75,7 @@ public interface ElasticIPAddressAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "AssociateAddress")
    ListenableFuture<Void> associateAddressInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("PublicIp") String publicIp, @FormParam("InstanceId") String instanceId);
 
    /**
@@ -85,7 +85,7 @@ public interface ElasticIPAddressAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DisassociateAddress")
    ListenableFuture<Void> disassociateAddressInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("PublicIp") String publicIp);
 
    /**
@@ -95,7 +95,7 @@ public interface ElasticIPAddressAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "ReleaseAddress")
    ListenableFuture<Void> releaseAddressInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("PublicIp") String publicIp);
 
    /**
@@ -107,7 +107,7 @@ public interface ElasticIPAddressAsyncClient {
    @XMLResponseParser(DescribeAddressesResponseHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<PublicIpInstanceIdPair>> describeAddressesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @BinderParam(BindPublicIpsToIndexedFormParams.class) String... publicIps);
 
 }

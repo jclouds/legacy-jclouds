@@ -26,9 +26,9 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.ws.rs.core.UriBuilder;
 
-import org.jclouds.aws.Region;
 import org.jclouds.aws.sqs.domain.Queue;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.location.Region;
 
 import com.google.common.collect.ImmutableBiMap;
 

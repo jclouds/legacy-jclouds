@@ -37,7 +37,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.domain.Reservation;
 import org.jclouds.aws.ec2.domain.RunningInstance;
@@ -46,6 +45,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.predicates.NodePredicates;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.ListNodesStrategy;
+import org.jclouds.location.Region;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;

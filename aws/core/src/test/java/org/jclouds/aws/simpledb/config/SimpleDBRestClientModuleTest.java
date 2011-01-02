@@ -61,7 +61,7 @@ public class SimpleDBRestClientModuleTest {
    @Test
    void testRegions() {
       Map<String, URI> regionMap = createInjector().getInstance(
-               new Key<Map<String, URI>>(org.jclouds.aws.Region.class) {
+               new Key<Map<String, URI>>(org.jclouds.location.Region.class) {
                });
       assertEquals(regionMap, ImmutableMap.<String, URI> of(Region.US_EAST_1, URI
                .create("https://sdb.amazonaws.com"), Region.US_WEST_1, URI

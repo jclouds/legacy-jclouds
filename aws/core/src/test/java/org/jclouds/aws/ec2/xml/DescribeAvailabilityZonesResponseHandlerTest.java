@@ -51,7 +51,7 @@ public class DescribeAvailabilityZonesResponseHandlerTest extends BaseHandlerTes
 
          @Override
          protected void configure() {
-            bindConstant().annotatedWith(org.jclouds.aws.Region.class).to("SHOULDNTSEETHISASXMLHASREGIONDATA");
+            bindConstant().annotatedWith(org.jclouds.location.Region.class).to("SHOULDNTSEETHISASXMLHASREGIONDATA");
             super.configure();
          }
 

@@ -40,8 +40,8 @@ import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.compute.strategy.impl.AdaptingComputeServiceStrategies;
-import org.jclouds.compute.suppliers.DefaultLocationSupplier;
 import org.jclouds.domain.Location;
+import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -120,7 +120,7 @@ public class ComputeServiceAdapterContextModule<S, A, N, H, I, L> extends BaseCo
 
    protected void bindDefaultLocation() {
       bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(DefaultLocationSupplier.class);
+      }).to(OnlyLocationOrFirstZone.class);
    }
 
    @Provides

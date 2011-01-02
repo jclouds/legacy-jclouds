@@ -41,8 +41,8 @@ import org.jclouds.elasticstack.domain.Server;
 import org.jclouds.elasticstack.domain.ServerInfo;
 import org.jclouds.elasticstack.domain.WellKnownImage;
 import org.jclouds.elasticstack.reference.ElasticStackConstants;
+import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.annotations.Provider;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;

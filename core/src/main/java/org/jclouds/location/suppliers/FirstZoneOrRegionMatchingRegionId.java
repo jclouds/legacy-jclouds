@@ -17,7 +17,9 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.suppliers;
+package org.jclouds.location.suppliers;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -25,10 +27,10 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.Region;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
+import org.jclouds.location.Region;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
@@ -38,38 +40,38 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class DefaultLocationSupplier implements Supplier<Location> {
+public class FirstZoneOrRegionMatchingRegionId implements Supplier<Location> {
    private final String region;
-   private final Supplier<Set<? extends Location>> set;
+   private final Supplier<Set<? extends Location>> locationsSupplier;
 
    @Inject
-   DefaultLocationSupplier(@Region final String region, @Memoized Supplier<Set<? extends Location>> set) {
-      this.region = region;
-      this.set = set;
+   FirstZoneOrRegionMatchingRegionId(@Region String region, @Memoized Supplier<Set<? extends Location>> locationsSupplier) {
+      this.region =  checkNotNull(region, "region");
+      this.locationsSupplier =  checkNotNull(locationsSupplier, "locationsSupplier");
    }
 
    @Override
    @Singleton
    public Location get() {
       try {
-         Location toReturn = Iterables.find(set.get(), new Predicate<Location>() {
+         Location toReturn = Iterables.find(locationsSupplier.get(), new Predicate<Location>() {
 
             @Override
             public boolean apply(Location input) {
                switch (input.getScope()) {
-                  case ZONE:
-                     return input.getParent().getId().equals(region);
-                  case REGION:
-                     return input.getId().equals(region);
-                  default:
-                     return false;
+               case ZONE:
+                  return input.getParent().getId().equals(region);
+               case REGION:
+                  return input.getId().equals(region);
+               default:
+                  return false;
                }
             }
 
          });
          return toReturn.getScope() == LocationScope.REGION ? toReturn : toReturn.getParent();
       } catch (NoSuchElementException e) {
-         throw new IllegalStateException(String.format("region: %s not found in %s", region, set));
+         throw new IllegalStateException(String.format("region: %s not found in %s", region, locationsSupplier));
       }
    }
 }

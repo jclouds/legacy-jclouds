@@ -32,8 +32,8 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.gogrid.GoGridClient;
 import org.jclouds.gogrid.domain.Option;
+import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.annotations.Provider;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.Sets;

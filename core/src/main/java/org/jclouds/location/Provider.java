@@ -17,24 +17,27 @@
  * ====================================================================
  */
 
-package org.jclouds.aws;
+package org.jclouds.location;
 
-import java.lang.annotation.ElementType;
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import javax.inject.Qualifier;
 
 /**
- * Related to a EC2 resource.
+ * Designates that this Resource qualifies an object to a provider of a rest service.
  * 
  * @author Adrian Cole
- * 
  */
-@Retention(value = RetentionPolicy.RUNTIME)
-@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Target( { ANNOTATION_TYPE, FIELD, METHOD, PARAMETER })
+@Retention(RUNTIME)
 @Qualifier
-public @interface Region {
+public @interface Provider {
 
 }

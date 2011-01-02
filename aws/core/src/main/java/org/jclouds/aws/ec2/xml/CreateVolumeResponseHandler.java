@@ -28,13 +28,13 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.domain.Volume;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.location.Region;
 import org.jclouds.logging.Logger;
 import org.xml.sax.Attributes;
 

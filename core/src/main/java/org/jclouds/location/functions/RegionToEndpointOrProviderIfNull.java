@@ -17,35 +17,40 @@
  * ====================================================================
  */
 
-package org.jclouds.compute.suppliers;
+package org.jclouds.location.functions;
 
-import java.util.Set;
+import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.net.URI;
+import java.util.Map;
+
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.domain.Location;
+import org.jclouds.location.Provider;
+import org.jclouds.location.Region;
 
-import com.google.common.base.Supplier;
+import com.google.common.base.Function;
 
 /**
  * 
  * @author Adrian Cole
- * 
- *         By default allows you to use a static set of locations bound to Set<? extends Location>
  */
 @Singleton
-public class LocationSupplier implements Supplier<Set<? extends Location>> {
-   private final Set<? extends Location> locations;
+public class RegionToEndpointOrProviderIfNull implements Function<Object, URI> {
+   private final URI defaultUri;
+   private final Map<String, URI> regionToEndpoint;
 
    @Inject
-   LocationSupplier(Set<? extends Location> locations) {
-      this.locations = locations;
+   public RegionToEndpointOrProviderIfNull(@Provider URI defaultUri, @Region Map<String, URI> regionToEndpoint) {
+      this.defaultUri = checkNotNull(defaultUri, "defaultUri");
+      this.regionToEndpoint = checkNotNull(regionToEndpoint, "regionToEndpoint");
    }
 
    @Override
-   public Set<? extends Location> get() {
-      return locations;
+   public URI apply(@Nullable Object from) {
+      return from == null ? defaultUri : regionToEndpoint.get(from);
    }
 
 }

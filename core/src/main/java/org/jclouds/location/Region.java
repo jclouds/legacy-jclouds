@@ -17,36 +17,24 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.functions;
+package org.jclouds.location;
 
-import java.net.URI;
-import java.util.Map;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.jclouds.aws.Region;
-import org.jclouds.rest.annotations.Provider;
-
-import com.google.common.base.Function;
+import javax.inject.Qualifier;
 
 /**
+ * Related to a Region-scoped resource.
  * 
  * @author Adrian Cole
+ * 
  */
-@Singleton
-public class RegionToEndpoint implements Function<Object, URI> {
-   private final Map<String, URI> regionToEndpoint;
-   private final URI defaultUri;
-
-   @Inject
-   public RegionToEndpoint(@Region Map<String, URI> regionToEndpoint, @Provider URI defaultUri) {
-      this.regionToEndpoint = regionToEndpoint;
-      this.defaultUri = defaultUri;
-   }
-
-   public URI apply(Object from) {
-      return from == null ? defaultUri : regionToEndpoint.get(from);
-   }
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Qualifier
+public @interface Region {
 
 }

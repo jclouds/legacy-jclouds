@@ -88,7 +88,7 @@ public class ListQueuesResponseHandlerTest extends PerformanceTest {
          @SuppressWarnings("unused")
          @Provides
          @Singleton
-         @org.jclouds.aws.Region
+         @org.jclouds.location.Region
          Map<String, URI> provideRegions() {
             return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI
                      .create("https://eu-west-1.queue.amazonaws.com"));

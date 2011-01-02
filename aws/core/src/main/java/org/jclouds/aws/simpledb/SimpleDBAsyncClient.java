@@ -30,7 +30,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.aws.functions.RegionToEndpoint;
 import org.jclouds.aws.simpledb.binders.BindAttributesToIndexedFormParams;
 import org.jclouds.aws.simpledb.domain.Item;
 import org.jclouds.aws.simpledb.domain.AttributePair;
@@ -38,6 +37,7 @@ import org.jclouds.aws.simpledb.domain.ListDomainsResponse;
 import org.jclouds.aws.simpledb.options.ListDomainsOptions;
 import org.jclouds.aws.simpledb.xml.ItemsHandler;
 import org.jclouds.aws.simpledb.xml.ListDomainsResponseHandler;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
@@ -68,7 +68,7 @@ public interface SimpleDBAsyncClient {
    @FormParams(keys = ACTION, values = "ListDomains")
    @XMLResponseParser(ListDomainsResponseHandler.class)
    ListenableFuture<? extends ListDomainsResponse> listDomainsInRegion(
-         @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region, ListDomainsOptions... options);
+         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region, ListDomainsOptions... options);
 
    /**
     * @see SimpleDBClient#createDomainInRegion
@@ -76,7 +76,7 @@ public interface SimpleDBAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "CreateDomain")
-   ListenableFuture<Void> createDomainInRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+   ListenableFuture<Void> createDomainInRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
          @FormParam("DomainName") String domainName);
 
    /**
@@ -85,7 +85,7 @@ public interface SimpleDBAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteDomain")
-   ListenableFuture<Void> deleteDomainInRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+   ListenableFuture<Void> deleteDomainInRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
          @FormParam("DomainName") String domainName);
 
 
@@ -95,7 +95,7 @@ public interface SimpleDBAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "PutAttributes")
-   ListenableFuture<Void> putAttributes(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+   ListenableFuture<Void> putAttributes(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
 		 @FormParam("DomainName") String domainName,
 		 @FormParam("ItemName") String itemName,
          @BinderParam(BindAttributesToIndexedFormParams.class) Item attributes);
@@ -107,7 +107,7 @@ public interface SimpleDBAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "Select")
    @XMLResponseParser(ItemsHandler.class)
-   ListenableFuture<? extends Map<String, Item>> select(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+   ListenableFuture<? extends Map<String, Item>> select(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
 		 @FormParam("SelectExpression") String selectExpression);
 
    

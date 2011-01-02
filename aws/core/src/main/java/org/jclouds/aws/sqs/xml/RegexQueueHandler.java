@@ -25,11 +25,11 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.Region;
 import org.jclouds.aws.sqs.domain.Queue;
 import org.jclouds.aws.sqs.xml.internal.BaseRegexQueueHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ReturnStringIf2xx;
+import org.jclouds.location.Region;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;

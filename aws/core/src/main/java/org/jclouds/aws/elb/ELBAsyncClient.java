@@ -36,7 +36,7 @@ import org.jclouds.aws.elb.xml.CreateLoadBalancerResponseHandler;
 import org.jclouds.aws.elb.xml.DescribeLoadBalancersResponseHandler;
 import org.jclouds.aws.elb.xml.RegisterInstancesWithLoadBalancerResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.aws.functions.RegionToEndpoint;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
@@ -66,7 +66,7 @@ public interface ELBAsyncClient {
    @XMLResponseParser(CreateLoadBalancerResponseHandler.class)
    @FormParams(keys = ACTION, values = "CreateLoadBalancer")
    ListenableFuture<String> createLoadBalancerInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("LoadBalancerName") String name,
             @FormParam("Listeners.member.1.Protocol") String protocol,
             @FormParam("Listeners.member.1.LoadBalancerPort") int loadBalancerPort,
@@ -80,7 +80,7 @@ public interface ELBAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteLoadBalancer")
    ListenableFuture<Void> deleteLoadBalancerInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("LoadBalancerName") String name);
 
    /**
@@ -91,7 +91,7 @@ public interface ELBAsyncClient {
    @XMLResponseParser(RegisterInstancesWithLoadBalancerResponseHandler.class)
    @FormParams(keys = ACTION, values = "RegisterInstancesWithLoadBalancer")
    ListenableFuture<? extends Set<String>> registerInstancesWithLoadBalancerInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("LoadBalancerName") String name,
             @BinderParam(BindELBInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
@@ -102,7 +102,7 @@ public interface ELBAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DeregisterInstancesFromLoadBalancer")
    ListenableFuture<Void> deregisterInstancesWithLoadBalancerInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("LoadBalancerName") String name,
             @BinderParam(BindELBInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
@@ -114,6 +114,6 @@ public interface ELBAsyncClient {
    @XMLResponseParser(DescribeLoadBalancersResponseHandler.class)
    @FormParams(keys = ACTION, values = "DescribeLoadBalancers")
    ListenableFuture<? extends Set<LoadBalancer>> describeLoadBalancersInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region);
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region);
 
 }

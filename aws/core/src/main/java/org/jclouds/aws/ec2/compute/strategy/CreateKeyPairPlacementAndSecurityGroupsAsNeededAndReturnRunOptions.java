@@ -39,7 +39,7 @@ import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
-import org.jclouds.rest.annotations.Provider;
+import org.jclouds.location.Provider;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;

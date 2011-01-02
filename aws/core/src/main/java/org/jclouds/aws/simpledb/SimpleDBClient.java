@@ -25,12 +25,12 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 import javax.ws.rs.FormParam;
 
-import org.jclouds.aws.functions.RegionToEndpoint;
 import org.jclouds.aws.simpledb.domain.Item;
 import org.jclouds.aws.simpledb.domain.AttributePair;
 import org.jclouds.aws.simpledb.domain.ListDomainsResponse;
 import org.jclouds.aws.simpledb.options.ListDomainsOptions;
 import org.jclouds.concurrent.Timeout;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.EndpointParam;
 
 import com.google.common.util.concurrent.ListenableFuture;

@@ -24,7 +24,6 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.compute.functions.ImageParserTest;
 import org.jclouds.aws.ec2.domain.Image;
 import org.jclouds.aws.ec2.domain.Image.Architecture;
@@ -34,6 +33,7 @@ import org.jclouds.aws.ec2.domain.Image.ImageType;
 import org.jclouds.aws.ec2.domain.RootDeviceType;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
+import org.jclouds.location.Region;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;

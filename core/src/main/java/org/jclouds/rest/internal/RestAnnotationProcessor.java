@@ -403,7 +403,7 @@ public class RestAnnotationProcessor<T> {
          }
       } catch (IllegalStateException e) {
          logger.trace("looking up default endpoint for %s", cma);
-         endpoint = injector.getInstance(Key.get(URI.class, org.jclouds.rest.annotations.Provider.class));
+         endpoint = injector.getInstance(Key.get(URI.class, org.jclouds.location.Provider.class));
          logger.trace("using default endpoint %s for %s", endpoint, cma);
       }
       GeneratedHttpRequest.Builder<T> requestBuilder;

@@ -58,8 +58,8 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.annotations.Provider;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;

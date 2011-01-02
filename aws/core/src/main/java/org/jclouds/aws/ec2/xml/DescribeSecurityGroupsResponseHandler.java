@@ -23,13 +23,13 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.IpPermission;
 import org.jclouds.aws.ec2.domain.IpProtocol;
 import org.jclouds.aws.ec2.domain.SecurityGroup;
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.location.Region;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;

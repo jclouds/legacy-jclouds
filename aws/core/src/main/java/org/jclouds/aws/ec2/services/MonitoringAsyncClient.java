@@ -34,7 +34,7 @@ import org.jclouds.aws.ec2.binders.BindInstanceIdsToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.MonitoringState;
 import org.jclouds.aws.ec2.xml.MonitoringStateHandler;
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.aws.functions.RegionToEndpoint;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
@@ -63,7 +63,7 @@ public interface MonitoringAsyncClient {
    @FormParams(keys = ACTION, values = "MonitorInstances")
    @XMLResponseParser(MonitoringStateHandler.class)
    ListenableFuture<? extends Map<String, MonitoringState>> monitorInstancesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId.0") String instanceId,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
@@ -75,7 +75,7 @@ public interface MonitoringAsyncClient {
    @FormParams(keys = ACTION, values = "UnmonitorInstances")
    @XMLResponseParser(MonitoringStateHandler.class)
    ListenableFuture<? extends Map<String, MonitoringState>> unmonitorInstancesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId.0") String instanceId,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 }

@@ -50,9 +50,9 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.suppliers.DefaultLocationSupplier;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
+import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Function;
@@ -89,7 +89,7 @@ public class CloudSigmaComputeServiceContextModule
       }).to(CloudSigmaComputeServiceAdapter.class);
       bind(IdentityFunction.class).toInstance(IdentityFunction.INSTANCE);
       bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(DefaultLocationSupplier.class);
+      }).to(OnlyLocationOrFirstZone.class);
       bind(new TypeLiteral<Function<ServerInfo, NodeMetadata>>() {
       }).to(ServerInfoToNodeMetadata.class);
       bind(new TypeLiteral<Function<Hardware, Hardware>>() {

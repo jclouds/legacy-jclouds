@@ -28,12 +28,12 @@ import javax.inject.Inject;
 
 import org.jclouds.domain.Credentials;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.Utils;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.annotations.Identity;
-import org.jclouds.rest.annotations.Provider;
 
 import com.google.inject.Injector;
 import com.google.inject.Key;

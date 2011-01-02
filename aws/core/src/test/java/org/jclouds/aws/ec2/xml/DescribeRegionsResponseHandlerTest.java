@@ -29,7 +29,7 @@ import org.jclouds.aws.domain.Region;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.rest.annotations.Provider;
+import org.jclouds.location.Provider;
 import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;

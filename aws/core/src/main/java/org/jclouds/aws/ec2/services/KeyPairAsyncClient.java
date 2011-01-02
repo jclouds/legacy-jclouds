@@ -35,7 +35,7 @@ import org.jclouds.aws.ec2.domain.KeyPair;
 import org.jclouds.aws.ec2.xml.DescribeKeyPairsResponseHandler;
 import org.jclouds.aws.ec2.xml.KeyPairResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.aws.functions.RegionToEndpoint;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -66,7 +66,7 @@ public interface KeyPairAsyncClient {
    @FormParams(keys = ACTION, values = "CreateKeyPair")
    @XMLResponseParser(KeyPairResponseHandler.class)
    ListenableFuture<KeyPair> createKeyPairInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("KeyName") String keyName);
 
    /**
@@ -78,7 +78,7 @@ public interface KeyPairAsyncClient {
    @XMLResponseParser(DescribeKeyPairsResponseHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<KeyPair>> describeKeyPairsInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @BinderParam(BindKeyNamesToIndexedFormParams.class) String... keyPairNames);
 
    /**
@@ -88,7 +88,7 @@ public interface KeyPairAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "DeleteKeyPair")
    ListenableFuture<Void> deleteKeyPairInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("KeyName") String keyName);
 
 }

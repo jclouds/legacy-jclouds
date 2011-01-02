@@ -46,7 +46,7 @@ public class EC2BindComputeSuppliersByClass extends BindComputeSuppliersByClass 
 
    @Override
    protected Class<? extends Supplier<Location>> defineDefaultLocationSupplier() {
-      return org.jclouds.aws.suppliers.DefaultLocationSupplier.class;
+      return org.jclouds.location.suppliers.FirstZoneOrRegionMatchingRegionId.class;
    }
 
    @Override

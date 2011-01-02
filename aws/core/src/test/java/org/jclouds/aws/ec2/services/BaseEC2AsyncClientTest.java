@@ -72,7 +72,7 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
 
       @Override
       protected Map<String, String> provideAvailabilityZoneToRegions(EC2Client client,
-            @org.jclouds.aws.Region Map<String, URI> regions) {
+            @org.jclouds.location.Region Map<String, URI> regions) {
          return ImmutableMap.<String, String> of(AvailabilityZone.US_EAST_1A, Region.US_EAST_1);
       }
    }

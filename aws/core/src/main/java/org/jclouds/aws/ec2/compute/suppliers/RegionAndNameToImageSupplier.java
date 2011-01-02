@@ -58,13 +58,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
 import org.jclouds.aws.ec2.compute.functions.ImageParser;
 import org.jclouds.aws.ec2.compute.strategy.DescribeImagesParallel;
 import org.jclouds.aws.ec2.options.DescribeImagesOptions;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.location.Region;
 import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;

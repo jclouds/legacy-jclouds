@@ -21,16 +21,19 @@ package org.jclouds.compute.config;
 
 import java.util.Set;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.suppliers.DefaultLocationSupplier;
-import org.jclouds.compute.suppliers.LocationSupplier;
 import org.jclouds.domain.Location;
+import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 
 import com.google.common.base.Supplier;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 import com.google.inject.TypeLiteral;
+
 /**
  * @author Adrian Cole
  */
@@ -49,11 +52,27 @@ public abstract class BindComputeSuppliersByClass extends AbstractModule {
    protected abstract Class<? extends Supplier<Set<? extends Hardware>>> defineHardwareSupplier();
 
    protected Class<? extends Supplier<Set<? extends Location>>> defineLocationSupplier() {
-      return LocationSupplier.class;
+      return SupplierOfLocationSet.class;
+   }
+
+   @Singleton
+   static class SupplierOfLocationSet implements Supplier<Set<? extends Location>> {
+      private final Set<? extends Location> locations;
+
+      @Inject
+      SupplierOfLocationSet(Set<? extends Location> locations) {
+         this.locations = locations;
+      }
+
+      @Override
+      public Set<? extends Location> get() {
+         return locations;
+      }
+
    }
 
    protected Class<? extends Supplier<Location>> defineDefaultLocationSupplier() {
-      return DefaultLocationSupplier.class;
+      return OnlyLocationOrFirstZone.class;
    }
 
    protected void bindImageSupplier(Class<? extends Supplier<Set<? extends Image>>> clazz) {

@@ -33,7 +33,6 @@ import java.util.Set;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.Region;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
@@ -43,9 +42,10 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.location.Provider;
+import org.jclouds.location.Region;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.annotations.Provider;
 import org.jclouds.rest.config.RestClientModule;
 
 import com.google.common.base.Predicate;

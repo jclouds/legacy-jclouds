@@ -35,7 +35,7 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.rest.annotations.Provider;
+import org.jclouds.location.Provider;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
 import com.google.common.base.Supplier;

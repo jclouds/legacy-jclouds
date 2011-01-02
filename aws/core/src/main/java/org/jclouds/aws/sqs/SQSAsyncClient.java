@@ -30,7 +30,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.aws.functions.RegionToEndpoint;
 import org.jclouds.aws.sqs.domain.Queue;
 import org.jclouds.aws.sqs.functions.QueueLocation;
 import org.jclouds.aws.sqs.options.CreateQueueOptions;
@@ -38,6 +37,7 @@ import org.jclouds.aws.sqs.options.ListQueuesOptions;
 import org.jclouds.aws.sqs.xml.RegexListQueuesResponseHandler;
 import org.jclouds.aws.sqs.xml.RegexMD5Handler;
 import org.jclouds.aws.sqs.xml.RegexQueueHandler;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.RequestFilters;
@@ -66,7 +66,7 @@ public interface SQSAsyncClient {
    @FormParams(keys = ACTION, values = "ListQueues")
    @ResponseParser(RegexListQueuesResponseHandler.class)
    ListenableFuture<? extends Set<Queue>> listQueuesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             ListQueuesOptions... options);
 
    /**
@@ -77,7 +77,7 @@ public interface SQSAsyncClient {
    @FormParams(keys = ACTION, values = "CreateQueue")
    @ResponseParser(RegexQueueHandler.class)
    ListenableFuture<Queue> createQueueInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("QueueName") String queueName, CreateQueueOptions... options);
 
    /**

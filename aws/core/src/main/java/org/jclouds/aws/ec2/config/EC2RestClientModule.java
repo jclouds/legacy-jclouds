@@ -24,7 +24,6 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
-import org.jclouds.aws.Region;
 import org.jclouds.aws.config.AWSFormSigningRestClientModule;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
@@ -50,6 +49,7 @@ import org.jclouds.aws.ec2.services.SecurityGroupClient;
 import org.jclouds.aws.ec2.services.WindowsAsyncClient;
 import org.jclouds.aws.ec2.services.WindowsClient;
 import org.jclouds.http.RequiresHttp;
+import org.jclouds.location.Region;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.collect.ImmutableMap;

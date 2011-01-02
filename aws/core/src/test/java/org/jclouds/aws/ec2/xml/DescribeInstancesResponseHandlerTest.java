@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.Set;
 
-import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.ec2.domain.InstanceState;
@@ -38,6 +37,7 @@ import org.jclouds.aws.ec2.domain.RunningInstance.EbsBlockDevice;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
+import org.jclouds.location.Region;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 

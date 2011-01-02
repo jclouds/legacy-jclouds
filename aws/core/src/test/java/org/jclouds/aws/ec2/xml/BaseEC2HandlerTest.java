@@ -57,7 +57,7 @@ public class BaseEC2HandlerTest extends BaseHandlerTest {
          @SuppressWarnings("unused")
          @Singleton
          @Provides
-         @org.jclouds.aws.Region
+         @org.jclouds.location.Region
          String provideDefaultRegion() {
             return defaultRegion;
          }

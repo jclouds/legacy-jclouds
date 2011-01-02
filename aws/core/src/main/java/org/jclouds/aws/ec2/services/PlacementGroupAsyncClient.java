@@ -34,7 +34,7 @@ import org.jclouds.aws.ec2.binders.BindGroupNamesToIndexedFormParams;
 import org.jclouds.aws.ec2.domain.PlacementGroup;
 import org.jclouds.aws.ec2.xml.DescribePlacementGroupsResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.aws.functions.RegionToEndpoint;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -65,7 +65,7 @@ public interface PlacementGroupAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "CreatePlacementGroup")
    ListenableFuture<Void> createPlacementGroupInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("GroupName") String name, @FormParam("Strategy") String strategy);
 
    /**
@@ -75,7 +75,7 @@ public interface PlacementGroupAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION, "Strategy" }, values = { "CreatePlacementGroup", "cluster" })
    ListenableFuture<Void> createPlacementGroupInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region, @FormParam("GroupName") String name);
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region, @FormParam("GroupName") String name);
 
    /**
     * @see PlacementGroupClient#deletePlacementGroupInRegion
@@ -85,7 +85,7 @@ public interface PlacementGroupAsyncClient {
    @FormParams(keys = ACTION, values = "DeletePlacementGroup")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    ListenableFuture<Void> deletePlacementGroupInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region, @FormParam("GroupName") String name);
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region, @FormParam("GroupName") String name);
 
    /**
     * @see PlacementGroupClient#describePlacementGroupsInRegion
@@ -96,7 +96,7 @@ public interface PlacementGroupAsyncClient {
    @XMLResponseParser(DescribePlacementGroupsResponseHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<PlacementGroup>> describePlacementGroupsInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @BinderParam(BindGroupNamesToIndexedFormParams.class) String... placementGroupIds);
 
 }

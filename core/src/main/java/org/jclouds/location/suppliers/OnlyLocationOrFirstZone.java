@@ -17,8 +17,9 @@
  * ====================================================================
  */
 
-package org.jclouds.compute.suppliers;
+package org.jclouds.location.suppliers;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.getOnlyElement;
 
@@ -40,19 +41,19 @@ import com.google.common.base.Supplier;
  * 
  */
 @Singleton
-public class DefaultLocationSupplier implements Supplier<Location> {
-   private final Supplier<Set<? extends Location>> locations;
+public class OnlyLocationOrFirstZone implements Supplier<Location> {
+   private final Supplier<Set<? extends Location>> locationsSupplier;
 
    @Inject
-   DefaultLocationSupplier(@Memoized Supplier<Set<? extends Location>> locations) {
-      this.locations = locations;
+   OnlyLocationOrFirstZone(@Memoized Supplier<Set<? extends Location>> locationsSupplier) {
+      this.locationsSupplier = checkNotNull(locationsSupplier, "locationsSupplierSupplier");
    }
 
    @Override
    public Location get() {
-      if (locations.get().size() == 1)
-         return getOnlyElement(locations.get());
-      return find(locations.get(), new Predicate<Location>() {
+      if (locationsSupplier.get().size() == 1)
+         return getOnlyElement(locationsSupplier.get());
+      return find(locationsSupplier.get(), new Predicate<Location>() {
 
          @Override
          public boolean apply(Location input) {
