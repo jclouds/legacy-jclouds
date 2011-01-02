@@ -50,7 +50,6 @@
         <module>rackspace</module>
         <module>slicehost</module>
         <module>vcloud</module>
-        <module>gogrid</module>
         <module>elasticstack</module>
         <module>allcompute</module>
         <module>allblobstore</module>

@@ -55,7 +55,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds.provider</groupId>
             <artifactId>jclouds-gogrid</artifactId>
             <version>${project.version}</version>
         </dependency>

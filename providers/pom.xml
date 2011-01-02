@@ -33,6 +33,7 @@
     <packaging>pom</packaging>
     <name>jclouds providers project</name>
     <modules>
+        <module>gogrid</module>
         <module>cloudsigma</module>
     </modules>
 </project>

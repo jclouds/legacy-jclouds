@@ -24,20 +24,15 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.jclouds</groupId>
-        <artifactId>jclouds-project</artifactId>
+        <groupId>org.jclouds.provider</groupId>
+        <artifactId>jclouds-providers-project</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../project/pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>jclouds-gogrid</artifactId>
-    <name>jclouds GoGrid compute</name>
-    <description>jclouds components to access GoGrid</description>
+    <name>jclouds GoGrid provider</name>
+    <description>ComputeService implementation of GoGrid datacenters</description>
 
-    <scm>
-        <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk/gogrid</connection>
-        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk/gogrid</developerConnection>
-        <url>http://jclouds.googlecode.com/svn/trunk/gogrid</url>
-    </scm>
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
@@ -48,24 +43,24 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-compute</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-jsch</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-compute</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
@@ -78,7 +73,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-log4j</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
