@@ -66,7 +66,7 @@ public class SyncProxyTest {
 
       String take100MillisecondsAndTimeout();
 
-      @Timeout(duration = 150, timeUnit = TimeUnit.MILLISECONDS)
+      @Timeout(duration = 300, timeUnit = TimeUnit.MILLISECONDS)
       String take100MillisecondsAndOverride();
 
    }

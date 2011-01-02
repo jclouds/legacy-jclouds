@@ -21,21 +21,12 @@ package org.jclouds.simpledb;
 
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.aws.domain.Region.AP_SOUTHEAST_1;
-import static org.jclouds.aws.domain.Region.EU_WEST_1;
-import static org.jclouds.aws.domain.Region.US_EAST_1;
-import static org.jclouds.aws.domain.Region.US_WEST_1;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
-import java.util.Set;
 
 import org.jclouds.PropertiesBuilder;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableSet;
 
 /**
  * Builds properties used in SimpleDB Clients
@@ -43,7 +34,6 @@ import com.google.common.collect.ImmutableSet;
  * @author Adrian Cole
  */
 public class SimpleDBPropertiesBuilder extends PropertiesBuilder {
-   public static Set<String> DEFAULT_REGIONS = ImmutableSet.of(EU_WEST_1, US_EAST_1, US_WEST_1, AP_SOUTHEAST_1);
 
    @Override
    protected Properties defaultProperties() {
@@ -51,12 +41,7 @@ public class SimpleDBPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
       properties.setProperty(PROPERTY_HEADER_TAG, "amz");
       properties.setProperty(PROPERTY_API_VERSION, SimpleDBAsyncClient.VERSION);
-      properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(DEFAULT_REGIONS));
       properties.setProperty(PROPERTY_ENDPOINT, "https://sdb.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + US_EAST_1, "https://sdb.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + US_WEST_1, "https://sdb.us-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + EU_WEST_1, "https://sdb.eu-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + AP_SOUTHEAST_1, "https://sdb.ap-southeast-1.amazonaws.com");
       return properties;
    }
 

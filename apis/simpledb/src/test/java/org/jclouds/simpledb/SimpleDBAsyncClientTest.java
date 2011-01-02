@@ -19,7 +19,6 @@
 
 package org.jclouds.simpledb;
 
-import static org.jclouds.simpledb.SimpleDBPropertiesBuilder.DEFAULT_REGIONS;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
@@ -94,15 +93,6 @@ public class SimpleDBAsyncClientTest extends RestClientTest<SimpleDBAsyncClient>
       assertExceptionParserClassEquals(method, null);
 
       checkFilters(request);
-   }
-
-   // TODO fix this test as it has the wrong arg count
-   @Test(enabled = false)
-   public void testAllRegions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = SimpleDBAsyncClient.class.getMethod("putAttributes", String.class, String.class);
-      for (String region : DEFAULT_REGIONS) {
-         processor.createRequest(method, region, "domainName");
-      }
    }
 
    // TODO fix this test as it has the wrong arg type

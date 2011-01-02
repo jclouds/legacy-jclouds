@@ -20,7 +20,6 @@
 package org.jclouds.simpledb;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.simpledb.SimpleDBPropertiesBuilder.DEFAULT_REGIONS;
 import static org.testng.Assert.assertNotNull;
 
 import java.util.Properties;
@@ -28,7 +27,6 @@ import java.util.Set;
 import java.util.SortedSet;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.domain.Region;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.RestContextFactory;
@@ -38,7 +36,6 @@ import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Module;
 
@@ -50,11 +47,11 @@ import com.google.inject.Module;
 @Test(groups = "live", sequential = true)
 public class SimpleDBClientLiveTest {
 
-   private SimpleDBClient client;
+   protected SimpleDBClient client;
 
    private RestContext<SimpleDBClient, SimpleDBAsyncClient> context;
 
-   private Set<String> domains = Sets.newHashSet();
+   protected Set<String> domains = Sets.newHashSet();
    protected String provider = "simpledb";
    protected String identity;
    protected String credential;
@@ -93,47 +90,49 @@ public class SimpleDBClientLiveTest {
    }
 
    @Test
-   void testListDomainsInRegion() throws InterruptedException {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-            Region.AP_SOUTHEAST_1)) {
-         SortedSet<String> allResults = Sets.newTreeSet(client.listDomainsInRegion(region));
-         assertNotNull(allResults);
-         if (allResults.size() >= 1) {
-            String domain = allResults.last();
-            assertDomainInList(region, domain);
-         }
+   protected void testListDomains() throws InterruptedException {
+      listDomainInRegion(null);
+   }
+
+   protected void listDomainInRegion(String region) throws InterruptedException {
+      SortedSet<String> allResults = Sets.newTreeSet(client.listDomainsInRegion(region));
+      assertNotNull(allResults);
+      if (allResults.size() >= 1) {
+         String domain = allResults.last();
+         assertDomainInList(region, domain);
       }
    }
 
    public static final String PREFIX = System.getProperty("user.name") + "-simpledb";
 
-   @Test
-   void testCreateDomain() throws InterruptedException {
-      String domainName = PREFIX + "1";
-
-      for (String region : DEFAULT_REGIONS) {
-         try {
-            SortedSet<String> result = Sets.newTreeSet(client.listDomainsInRegion(region));
-            if (result.size() >= 1) {
-               client.deleteDomainInRegion(region, result.last());
-               domainName += 1;// cannot recreate a domain within 60 seconds
-            }
-         } catch (Exception e) {
-
+   protected String createDomainInRegion(String region, String domainName) throws InterruptedException {
+      try {
+         SortedSet<String> result = Sets.newTreeSet(client.listDomainsInRegion(region));
+         if (result.size() >= 1) {
+            client.deleteDomainInRegion(region, result.last());
+            domainName += 1;// cannot recreate a domain within 60 seconds
          }
-         client.createDomainInRegion(region, domainName);
+      } catch (Exception e) {
 
-         // TODO get the domain metadata and ensure the region is correct
-
-         // if (region != null)
-         // assertEquals(domain.getRegion(), region);
-         // assertEquals(domain.getName(), domainName);
-         assertDomainInList(region, domainName);
-         domains.add(domainName);
       }
+      client.createDomainInRegion(region, domainName);
+
+      // TODO get the domain metadata and ensure the region is correct
+
+      // if (region != null)
+      // assertEquals(domain.getRegion(), region);
+      // assertEquals(domain.getName(), domainName);
+      assertDomainInList(region, domainName);
+      domains.add(domainName);
+      return domainName;
    }
 
-   private void assertDomainInList(final String region, final String domain) throws InterruptedException {
+   @Test
+   protected void testCreateDomain() throws InterruptedException {
+      createDomainInRegion(null, PREFIX + "1");
+   }
+
+   protected void assertDomainInList(final String region, final String domain) throws InterruptedException {
       assertEventually(new Runnable() {
          public void run() {
             ListDomainsResponse domains = client.listDomainsInRegion(region);

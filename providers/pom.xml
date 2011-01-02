@@ -36,5 +36,6 @@
         <module>gogrid</module>
         <module>slicehost</module>
         <module>cloudsigma</module>
+        <module>aws-simpledb</module>
     </modules>
 </project>
