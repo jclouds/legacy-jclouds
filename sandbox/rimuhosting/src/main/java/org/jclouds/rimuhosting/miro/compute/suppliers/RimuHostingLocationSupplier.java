@@ -30,8 +30,8 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
+import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
-import org.jclouds.rest.annotations.Provider;
 import org.jclouds.rimuhosting.miro.RimuHostingClient;
 import org.jclouds.rimuhosting.miro.domain.PricingPlan;
 
