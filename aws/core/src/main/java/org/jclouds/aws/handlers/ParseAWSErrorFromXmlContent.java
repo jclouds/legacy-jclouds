@@ -99,13 +99,13 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                   .getCode().endsWith(".Duplicate"))) || (message != null && (message.indexOf("already exists") != -1)))
                exception = new IllegalStateException(message, exception);
             else if (error != null && error.getCode() != null && error.getCode().equals("AuthFailure"))
-               exception = new AuthorizationException(exception.getMessage(), exception);
+               exception = new AuthorizationException(message, exception);
             else if (message != null && message.indexOf("Failed to bind the following fields") != -1)// Nova
                exception = new IllegalArgumentException(message, exception);
             break;
          case 401:
          case 403:
-            exception = new AuthorizationException(exception.getMessage(), exception);
+            exception = new AuthorizationException(message, exception);
             break;
          case 404:
             if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
