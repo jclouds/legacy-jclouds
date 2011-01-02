@@ -29,7 +29,7 @@ data.
 our current version is 1.0-beta-8
 our dev version is 1.0-SNAPSHOT
  
-our compute api supports: ec2, gogrid, cloudservers (rackspace), rimuhosting, vcloud,
+our compute api supports: ec2, gogrid, cloudservers (rackspace), vcloud,
                           trmk-ecloud, trmk-vcloudexpress, eucalyptus, cloudsigma,
                           elasticstack, bluelock-vclouddirector, slicehost,
                           elastichosts-lon-p (Peer 1), elastichosts-sat-p (Peer 1),
@@ -45,8 +45,8 @@ our blobstore api supports: s3, cloudfiles (rackspace), azurestorage, atmosonlin
   * note * the pom dependency org.jclouds/jclouds-allblobstore gives you access to
            to all of these providers
 
-we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, as well a number of features
- the sandbox
+we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, rimuhosting, as well 
+ a number of features the sandbox
 
 
 If you want access to all jclouds components, include the maven dependency org.jclouds/jclouds-all

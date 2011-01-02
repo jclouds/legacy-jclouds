@@ -20,6 +20,6 @@
 #
 # The jclouds provider for RimuHosting (http://rimuhosting.com/).
 #
-# TODO: Implementation status.
-# TODO: Supported features.
-# TODO: Usage example.
+# Note: This provider is currently unstable, as http errors are often returned
+#       during mvn install -Plive.  When this runs cleanly, the provider can
+#       be promoted.

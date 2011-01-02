@@ -49,7 +49,6 @@
         <module>atmos</module>
         <module>rackspace</module>
         <module>slicehost</module>
-        <module>rimuhosting</module>        
         <module>vcloud</module>
         <module>gogrid</module>
         <module>elasticstack</module>
