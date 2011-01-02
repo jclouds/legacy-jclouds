@@ -29,7 +29,7 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>jclouds-gogrid</artifactId>
+    <artifactId>gogrid</artifactId>
     <name>jclouds GoGrid provider</name>
     <description>ComputeService implementation of GoGrid datacenters</description>
 
