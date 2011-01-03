@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payload;
 
 /**
@@ -35,6 +35,12 @@ import org.jclouds.io.Payload;
  */
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface HttpClient {
+   /**
+    * 
+    * @param request
+    * @return response, but make sure you consume its content.
+    */
+   HttpResponse invoke(HttpRequest request);
 
    /**
     * @return eTag
@@ -44,17 +50,7 @@ public interface HttpClient {
    /**
     * @return eTag
     */
-   String put(URI location, Payload payload, HttpRequestOptions options);
-
-   /**
-    * @return eTag
-    */
    String post(URI location, Payload payload);
-
-   /**
-    * @return eTag
-    */
-   String post(URI location, Payload payload, HttpRequestOptions options);
 
    boolean exists(URI location);
 
@@ -62,10 +58,6 @@ public interface HttpClient {
     * @return null if the resource didn't exist.
     */
    InputStream get(URI location);
-   
-   InputStream invoke(HttpRequest location);
-   
-   InputStream get(URI location, HttpRequestOptions options);
 
    /**
     * @return false if the resource didn't exist.

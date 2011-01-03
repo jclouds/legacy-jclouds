@@ -19,12 +19,7 @@
 
 package org.jclouds.blobstore.functions;
 
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
 import static org.testng.Assert.assertEquals;
-
-import java.net.URI;
 
 import javax.inject.Provider;
 import javax.ws.rs.core.HttpHeaders;
@@ -37,12 +32,10 @@ import org.jclouds.date.internal.SimpleDateFormatDateService;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.io.Payloads;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * @author Adrian Cole
@@ -61,22 +54,16 @@ public class ParseSystemAndUserMetadataFromHeadersTest {
 
    @BeforeTest
    void setUp() {
-
       parser = new ParseSystemAndUserMetadataFromHeaders(blobMetadataProvider, new SimpleDateFormatDateService(),
-               "prefix", "default");
-
-      GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/key")).anyTimes();
-      expect(request.getArgs()).andReturn(new Object[] { "container/key" }).anyTimes();
-      replay(request);
-      parser.setContext(request);
+            "prefix", "default");
+      parser.setName("key");
    }
 
    @Test
-   public void testApplySetsKey() {
-      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
+   public void testApplySetsName() {
+      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""), ImmutableMultimap.of(
+            HttpHeaders.LAST_MODIFIED, "Wed, 09 Sep 2009 19:50:23 GMT"));
       from.getPayload().getContentMetadata().setContentType(MediaType.APPLICATION_JSON);
-      from.getHeaders().put(HttpHeaders.LAST_MODIFIED, "Wed, 09 Sep 2009 19:50:23 GMT");
       from.getPayload().getContentMetadata().setContentLength(100l);
       BlobMetadata metadata = parser.apply(from);
       assertEquals(metadata.getName(), "key");
@@ -84,19 +71,19 @@ public class ParseSystemAndUserMetadataFromHeadersTest {
 
    @Test
    public void testNoContentOn204IsOk() {
-      HttpResponse from = new HttpResponse(204, "ok", Payloads.newStringPayload(""));
-      from.getHeaders().put(HttpHeaders.LAST_MODIFIED, "Wed, 09 Sep 2009 19:50:23 GMT");
+      HttpResponse from = new HttpResponse(204, "ok", Payloads.newStringPayload(""), ImmutableMultimap.of(
+            HttpHeaders.LAST_MODIFIED, "Wed, 09 Sep 2009 19:50:23 GMT"));
       parser.apply(from);
    }
 
    @Test
    public void testSetLastModified() {
-      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
-      from.getHeaders().put(HttpHeaders.LAST_MODIFIED, "Wed, 09 Sep 2009 19:50:23 GMT");
+      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""), ImmutableMultimap.of(
+            HttpHeaders.LAST_MODIFIED, "Wed, 09 Sep 2009 19:50:23 GMT"));
       MutableBlobMetadata metadata = blobMetadataProvider.get();
       parser.parseLastModifiedOrThrowException(from, metadata);
-      assertEquals(metadata.getLastModified(), new SimpleDateFormatDateService()
-               .rfc822DateParse("Wed, 09 Sep 2009 19:50:23 GMT"));
+      assertEquals(metadata.getLastModified(),
+            new SimpleDateFormatDateService().rfc822DateParse("Wed, 09 Sep 2009 19:50:23 GMT"));
    }
 
    @Test(expectedExceptions = HttpException.class)
@@ -108,8 +95,8 @@ public class ParseSystemAndUserMetadataFromHeadersTest {
 
    @Test
    public void testAddETagTo() {
-      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
-      from.getHeaders().put(HttpHeaders.ETAG, "0xfeb");
+      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""), ImmutableMultimap.of(
+            HttpHeaders.ETAG, "0xfeb"));
       MutableBlobMetadata metadata = blobMetadataProvider.get();
       parser.addETagTo(from, metadata);
       assertEquals(metadata.getETag(), "0xfeb");
@@ -117,9 +104,8 @@ public class ParseSystemAndUserMetadataFromHeadersTest {
 
    @Test
    public void testAddUserMetadataTo() {
-      Multimap<String, String> allHeaders = ImmutableMultimap.of("prefix" + "key", "value");
-      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""));
-      from.getHeaders().putAll(allHeaders);
+      HttpResponse from = new HttpResponse(200, "ok", Payloads.newStringPayload(""), ImmutableMultimap.of("prefix"
+            + "key", "value"));
       MutableBlobMetadata metadata = blobMetadataProvider.get();
       parser.addUserMetadataTo(from, metadata);
       assertEquals(metadata.getUserMetadata().get("key"), "value");

@@ -55,7 +55,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "vcloud.VCloudGuestCustomizationLiveTest")
+@Test(groups = "live", enabled = true, sequential = true)
 public class VCloudGuestCustomizationLiveTest {
 
    public static final String PARSE_VMTOOLSD = "vmtoolsd --cmd=\"info-get guestinfo.ovfenv\" |grep vCloud_CustomizationInfo|sed 's/.*value=\"\\(.*\\)\".*/\\1/g'|base64 -d";
@@ -125,7 +125,7 @@ public class VCloudGuestCustomizationLiveTest {
 
          assert socketTester.apply(socket);
 
-         SshClient ssh = sshFactory.create(socket, node.getCredentials().identity, node.getCredentials().credential);
+         SshClient ssh = sshFactory.create(socket, node.getCredentials());
          try {
             ssh.connect();
 

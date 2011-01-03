@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.vcloud.terremark.domain.KeyPair;
@@ -40,7 +41,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "vcloud.TerremarkVCloudClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTest {
 
    KeyPair key;
@@ -87,7 +88,7 @@ public class TerremarkVCloudExpressClientLiveTest extends TerremarkClientLiveTes
 
    @Override
    protected SshClient getConnectionFor(IPSocket socket) {
-      return sshFactory.create(socket, "vcloud", key.getPrivateKey().getBytes());
+      return sshFactory.create(socket, new Credentials("vcloud", key.getPrivateKey()));
    }
 
    @Override

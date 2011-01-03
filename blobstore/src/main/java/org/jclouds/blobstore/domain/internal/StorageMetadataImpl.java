@@ -45,10 +45,8 @@ public class StorageMetadataImpl extends ResourceMetadataImpl<StorageType> imple
 
    @Nullable
    private final String eTag;
-
    @Nullable
    private final Date lastModified;
-
    private final StorageType type;
 
    public StorageMetadataImpl(StorageType type, @Nullable String id, @Nullable String name,

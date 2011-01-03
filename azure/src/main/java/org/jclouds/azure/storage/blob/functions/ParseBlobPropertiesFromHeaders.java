@@ -38,13 +38,14 @@ import com.google.common.base.Function;
  * 
  * @author Adrian Cole
  */
-public class ParseBlobPropertiesFromHeaders implements Function<HttpResponse, MutableBlobProperties>, InvocationContext {
+public class ParseBlobPropertiesFromHeaders implements Function<HttpResponse, MutableBlobProperties>,
+      InvocationContext<ParseBlobPropertiesFromHeaders> {
    private final ParseSystemAndUserMetadataFromHeaders blobMetadataParser;
    private final BlobMetadataToBlobProperties blobToBlobProperties;
 
    @Inject
    public ParseBlobPropertiesFromHeaders(ParseSystemAndUserMetadataFromHeaders blobMetadataParser,
-            BlobMetadataToBlobProperties blobToBlobProperties) {
+         BlobMetadataToBlobProperties blobToBlobProperties) {
       this.blobMetadataParser = blobMetadataParser;
       this.blobToBlobProperties = blobToBlobProperties;
    }

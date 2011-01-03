@@ -37,7 +37,13 @@ import org.testng.annotations.Test;
 
 import com.google.inject.TypeLiteral;
 
-@Test(groups = "unit", testName = "jclouds.TransientBlobRequestSignerTest")
+/**
+ * Tests behavior of {@code TransientBlobRequestSigner}
+ * 
+ * @author Adrian Cole
+ */
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "TransientBlobRequestSignerTest")
 public class TransientBlobRequestSignerTest extends RestClientTest<TransientAsyncBlobStore> {
 
    private BlobRequestSigner signer;

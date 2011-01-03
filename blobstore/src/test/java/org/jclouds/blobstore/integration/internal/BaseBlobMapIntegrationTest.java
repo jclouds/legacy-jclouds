@@ -38,7 +38,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.options.ListContainerOptions;
 import org.jclouds.io.Payloads;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
@@ -175,11 +175,11 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
       try {
          Map<String, Blob> map = createMap(context, bucketName);
          Blob blob = context.getBlobStore().newBlob("one");
-         blob.setPayload(Utils.toInputStream("apple"));
+         blob.setPayload(Strings2.toInputStream("apple"));
          Payloads.calculateMD5(blob);
          Blob old = map.put(blob.getMetadata().getName(), blob);
          getOneReturnsAppleAndOldValueIsNull(map, old);
-         blob.setPayload(Utils.toInputStream("bear"));
+         blob.setPayload(Strings2.toInputStream("bear"));
          Payloads.calculateMD5(blob);
          Blob apple = map.put(blob.getMetadata().getName(), blob);
          getOneReturnsBearAndOldValueIsApple(map, apple);

@@ -32,7 +32,7 @@ import com.google.common.collect.ImmutableMultimap;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "azurequeue.CreateOptionsTest")
+@Test(groups = "unit")
 public class CreateOptionsTest {
 
    public void testMetadata() {

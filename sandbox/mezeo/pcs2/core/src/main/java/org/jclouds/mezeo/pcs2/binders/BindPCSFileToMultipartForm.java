@@ -42,11 +42,12 @@ public class BindPCSFileToMultipartForm implements Binder {
       this.file2Blob = file2Blob;
    }
 
-   public void bindToRequest(HttpRequest request, Object payload) {
-      PCSFile file = (PCSFile) payload;
-      checkNotNull(file.getPayload().getContentLength(), "contentLength");
-      checkArgument(file.getPayload().getContentLength() <= 2l * 1024 * 1024 * 1024,
-               "maximum size for POST request is 2GB");
-      blobBinder.bindToRequest(request, file2Blob.apply(file));
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      PCSFile file = (PCSFile) input;
+      checkNotNull(file.getPayload().getContentMetadata().getContentLength(), "contentLength");
+      checkArgument(file.getPayload().getContentMetadata().getContentLength() <= 2l * 1024 * 1024 * 1024,
+            "maximum size for POST request is 2GB");
+      return blobBinder.bindToRequest(request, file2Blob.apply(file));
    }
 }

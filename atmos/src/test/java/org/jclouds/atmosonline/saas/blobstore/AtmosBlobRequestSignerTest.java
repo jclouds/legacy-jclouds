@@ -45,7 +45,13 @@ import com.google.common.base.Supplier;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
-@Test(groups = "unit", testName = "emcsaas.AtmosBlobRequestSignerTest")
+/**
+ * Tests behavior of {@code AtmosBlobRequestSigner}
+ * 
+ * @author Adrian Cole
+ */
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "AtmosBlobRequestSignerTest")
 public class AtmosBlobRequestSignerTest extends RestClientTest<AtmosStorageAsyncClient> {
 
    private BlobRequestSigner signer;

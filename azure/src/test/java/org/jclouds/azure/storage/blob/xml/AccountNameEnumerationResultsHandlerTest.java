@@ -38,11 +38,12 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
- * Tests behavior of {@code ParseFlavorListFromJsonResponseTest}
+ * Tests behavior of {@code AccountNameEnumerationResultsHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "azureblob.AccountNameEnumerationResultsHandlerTest")
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "blob.AccountNameEnumerationResultsHandlerTest")
 public class AccountNameEnumerationResultsHandlerTest extends BaseHandlerTest {
 
    private DateService dateService;

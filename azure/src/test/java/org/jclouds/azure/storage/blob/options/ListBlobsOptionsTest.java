@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableList;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "azurestorage.ListBlobsOptionsTest")
+@Test(groups = "unit")
 public class ListBlobsOptionsTest {
 
    public void testDelimiter() {

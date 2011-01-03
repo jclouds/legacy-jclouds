@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "rest.HttpPropertiesBuilderTest")
+@Test(groups = "unit")
 public class HttpPropertiesBuilderTest {
 
    public void testBuilder() {

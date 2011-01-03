@@ -41,11 +41,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-rimuhosting</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-vcloud</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -60,13 +55,13 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-gogrid</artifactId>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>gogrid</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-slicehost</artifactId>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>slicehost</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -75,8 +70,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-cloudsigma</artifactId>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>cloudsigma</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

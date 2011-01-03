@@ -41,7 +41,7 @@ import org.jclouds.blobstore.util.BlobUtils;
 import org.jclouds.blobstore.util.internal.BlobUtilsImpl;
 import org.jclouds.collect.Memoized;
 import org.jclouds.domain.Location;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Assertions;
 
 import com.google.common.base.Supplier;
 import com.google.common.util.concurrent.Futures;
@@ -243,7 +243,7 @@ public abstract class BaseAsyncBlobStore implements AsyncBlobStore {
 
    protected void deleteAndEnsurePathGone(final String container) {
       try {
-         if (!Utils.eventuallyTrue(new Supplier<Boolean>() {
+         if (!Assertions.eventuallyTrue(new Supplier<Boolean>() {
             public Boolean get() {
                try {
                   clearContainer(container, recursive());

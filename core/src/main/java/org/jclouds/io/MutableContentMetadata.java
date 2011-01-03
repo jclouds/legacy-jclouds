@@ -21,10 +21,18 @@ package org.jclouds.io;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.Multimap;
+
 /**
  * @author Adrian Cole
  */
 public interface MutableContentMetadata extends ContentMetadata {
+   /**
+    * sets properties related to the http headers listed in
+    * {@link ContentMetadata#HTTP_HEADERS}
+    * 
+    */
+   void setPropertiesFromHttpHeaders(Multimap<String, String> headers);
 
    void setContentLength(@Nullable Long contentLength);
 

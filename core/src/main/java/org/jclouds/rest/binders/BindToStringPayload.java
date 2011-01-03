@@ -31,7 +31,9 @@ import org.jclouds.rest.Binder;
  */
 @Singleton
 public class BindToStringPayload implements Binder {
-   public void bindToRequest(HttpRequest request, Object payload) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
       request.setPayload(payload.toString());
+      return request;
    }
 }

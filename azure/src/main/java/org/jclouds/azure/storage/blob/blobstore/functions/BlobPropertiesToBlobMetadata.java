@@ -19,6 +19,8 @@
 
 package org.jclouds.azure.storage.blob.blobstore.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -40,7 +42,7 @@ public class BlobPropertiesToBlobMetadata implements Function<BlobProperties, Mu
 
    @Inject
    public BlobPropertiesToBlobMetadata(IfDirectoryReturnNameStrategy ifDirectoryReturnName) {
-      this.ifDirectoryReturnName = ifDirectoryReturnName;
+      this.ifDirectoryReturnName = checkNotNull(ifDirectoryReturnName, "ifDirectoryReturnName");
    }
 
    public MutableBlobMetadata apply(BlobProperties from) {

@@ -69,7 +69,7 @@ public class StubComputeServiceAdapter implements JCloudsNativeComputeServiceAda
    public StubComputeServiceAdapter(ConcurrentMap<String, NodeMetadata> nodes, Supplier<Location> location,
          @Named("NODE_ID") Provider<Integer> idProvider, @Named("PUBLIC_IP_PREFIX") String publicIpPrefix,
          @Named("PRIVATE_IP_PREFIX") String privateIpPrefix, @Named("PASSWORD_PREFIX") String passwordPrefix,
-         @org.jclouds.rest.annotations.Provider String providerName, Map<OsFamily, Map<String, String>> osToVersionMap) {
+         @org.jclouds.location.Provider String providerName, Map<OsFamily, Map<String, String>> osToVersionMap) {
       this.nodes = nodes;
       this.location = location;
       this.idProvider = idProvider;

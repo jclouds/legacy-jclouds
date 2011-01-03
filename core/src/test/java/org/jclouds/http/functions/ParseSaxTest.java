@@ -36,6 +36,13 @@ import org.testng.annotations.Test;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXParseException;
 
+/**
+ * Tests behavior of {@code ParseSax}
+ * 
+ * @author Adrian Cole
+ */
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "ParseSaxTest")
 public class ParseSaxTest extends BaseHandlerTest {
    public static class TestHandler extends ParseSax.HandlerWithResult<String> {
       @Override

@@ -33,7 +33,8 @@ import com.google.common.base.Function;
 /**
  * @author Adrian Cole
  */
-public class ParseContentMD5FromHeaders implements Function<HttpResponse, byte[]>, InvocationContext {
+public class ParseContentMD5FromHeaders implements Function<HttpResponse, byte[]>,
+      InvocationContext<ParseContentMD5FromHeaders> {
 
    public static class NoContentMD5Exception extends RuntimeException {
 

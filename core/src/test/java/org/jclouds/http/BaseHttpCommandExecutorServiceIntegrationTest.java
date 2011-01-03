@@ -41,7 +41,8 @@ import org.jclouds.http.options.GetOptions;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
+import org.jclouds.util.Throwables2;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -51,9 +52,8 @@ import com.google.common.collect.Multimap;
 import com.google.common.io.Closeables;
 
 /**
- * Tests for functionality all HttpCommandExecutorServices must express. These
- * tests will operate against an in-memory http engine, so as to ensure
- * end-to-end functionality works.
+ * Tests for functionality all HttpCommandExecutorServices must express. These tests will operate
+ * against an in-memory http engine, so as to ensure end-to-end functionality works.
  * 
  * @author Adrian Cole
  */
@@ -83,6 +83,17 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    @Test(invocationCount = 5, timeOut = 5000)
    public void testGetString() throws MalformedURLException, ExecutionException, InterruptedException, TimeoutException {
       assertEquals(client.download("").trim(), XML);
+   }
+
+   @Test(invocationCount = 5, timeOut = 5000)
+   public void testGetStringViaRequest() throws ExecutionException, InterruptedException,
+         TimeoutException, IOException {
+      assertEquals(
+            Strings2.toStringAndClose(
+                  client.invoke(
+                        HttpRequest.builder().method("GET")
+                              .endpoint(URI.create("http://localhost:" + testPort + "/objects/")).build()).getPayload()
+                        .getInput()).trim(), XML);
    }
 
    @DataProvider(name = "gets")
@@ -127,7 +138,7 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
          // must retry directly. In this case, we are assuming lightning doesn't
          // strike
          // twice in the same spot.
-         if (Utils.getFirstThrowableOfType(e, IOException.class) != null) {
+         if (Throwables2.getFirstThrowableOfType(e, IOException.class) != null) {
             input = getConsitution();
             assertEquals(CryptoStreams.md5Base64(InputSuppliers.of(input)), md5);
          }
@@ -135,8 +146,8 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    }
 
    private InputStream getConsitution() {
-      InputStream input = context.utils().http().get(
-            URI.create(String.format("http://localhost:%d/%s", testPort, "101constitutions")));
+      InputStream input = context.utils().http()
+            .get(URI.create(String.format("http://localhost:%d/%s", testPort, "101constitutions")));
       return input;
    }
 
@@ -167,8 +178,8 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
    }
 
    /**
-    * Tests sending a big file to the server. Note: this is a heavy test, takes
-    * several minutes to finish.
+    * Tests sending a big file to the server. Note: this is a heavy test, takes several minutes to
+    * finish.
     * 
     * @throws java.io.IOException
     */
@@ -202,8 +213,8 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
          byte[] digest = digester.digest();
          payload.getContentMetadata().setContentMD5(digest);
          Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
-         assertEquals(headers.get("x-Content-MD5"), Collections.singleton(CryptoStreams.base64Encode(InputSuppliers
-               .of(digest))));
+         assertEquals(headers.get("x-Content-MD5"),
+               Collections.singleton(CryptoStreams.base64Encode(InputSuppliers.of(digest))));
          payload.release();
       } finally {
          if (os != null)
@@ -241,20 +252,18 @@ public abstract class BaseHttpCommandExecutorServiceIntegrationTest extends Base
       assertEquals(headers.get("x-Content-Disposition"), Collections.singleton("attachment; filename=photo.jpg"));
       payload.release();
    }
-   
+
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testPostContentEncoding() throws ExecutionException, InterruptedException, TimeoutException,
-         IOException {
+   public void testPostContentEncoding() throws ExecutionException, InterruptedException, TimeoutException, IOException {
       Payload payload = Payloads.newStringPayload("foo");
       payload.getContentMetadata().setContentEncoding("gzip");
       Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);
       assertEquals(headers.get("x-Content-Encoding"), Collections.singleton("gzip"));
       payload.release();
    }
-   
+
    @Test(invocationCount = 5, timeOut = 5000)
-   public void testPostContentLanguage() throws ExecutionException, InterruptedException, TimeoutException,
-         IOException {
+   public void testPostContentLanguage() throws ExecutionException, InterruptedException, TimeoutException, IOException {
       Payload payload = Payloads.newStringPayload("foo");
       payload.getContentMetadata().setContentLanguage("mi, en");
       Multimap<String, String> headers = client.postPayloadAndReturnHeaders("", payload);

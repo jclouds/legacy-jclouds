@@ -42,10 +42,6 @@
         <test.aws.credential>FIXME</test.aws.credential>
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist.nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist.nodes>
-        <test.simpledb.endpoint>https://sdb.amazonaws.com</test.simpledb.endpoint>
-        <test.simpledb.apiversion>2009-04-15</test.simpledb.apiversion>
-        <test.simpledb.identity>${test.aws.identity}</test.simpledb.identity>
-        <test.simpledb.credential>${test.aws.credential}</test.simpledb.credential>
         <test.s3.endpoint>https://s3.amazonaws.com</test.s3.endpoint>
         <test.s3.apiversion>2006-03-01</test.s3.apiversion>
         <test.s3.identity>${test.aws.identity}</test.s3.identity>
@@ -126,6 +122,18 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-loadbalancer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jclouds-loadbalancer</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
            <groupId>log4j</groupId>
            <artifactId>log4j</artifactId>
            <version>1.2.14</version>
@@ -190,22 +198,6 @@
                                         <property>
                                             <name>jclouds.compute.blacklist.nodes</name>
                                             <value>${jclouds.compute.blacklist.nodes}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.simpledb.endpoint</name>
-                                            <value>${test.simpledb.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.simpledb.apiversion</name>
-                                            <value>${test.simpledb.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.simpledb.identity</name>
-                                            <value>${test.simpledb.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.simpledb.credential</name>
-                                            <value>${test.simpledb.credential}</value>
                                         </property>
                                         <property>
                                             <name>test.sqs.endpoint</name>

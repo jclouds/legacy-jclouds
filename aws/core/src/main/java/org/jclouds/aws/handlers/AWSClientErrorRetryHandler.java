@@ -64,7 +64,7 @@ public class AWSClientErrorRetryHandler implements HttpRetryHandler {
          // Content can be null in the case of HEAD requests
          if (response.getPayload() != null) {
             closeClientButKeepContentStream(response);
-            AWSError error = utils.parseAWSErrorFromContent(command.getRequest(), response);
+            AWSError error = utils.parseAWSErrorFromContent(command.getCurrentRequest(), response);
             if (error != null
                      && ("RequestTimeout".equals(error.getCode())
                               || "OperationAborted".equals(error.getCode()) || "SignatureDoesNotMatch"

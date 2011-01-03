@@ -29,13 +29,11 @@ import javax.inject.Singleton;
 
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
-import org.jclouds.compute.config.JCloudsNativeComputeServiceAdapterContextModule.IdentityFunction;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.reference.ComputeServiceConstants;
-import org.jclouds.compute.suppliers.DefaultLocationSupplier;
 import org.jclouds.domain.Location;
 import org.jclouds.elasticstack.ElasticStackAsyncClient;
 import org.jclouds.elasticstack.ElasticStackClient;
@@ -51,9 +49,11 @@ import org.jclouds.elasticstack.domain.Server;
 import org.jclouds.elasticstack.domain.ServerInfo;
 import org.jclouds.elasticstack.domain.WellKnownImage;
 import org.jclouds.elasticstack.predicates.DriveClaimed;
+import org.jclouds.functions.IdentityFunction;
 import org.jclouds.json.Json;
+import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -84,7 +84,7 @@ public class ElasticStackComputeServiceContextModule
       }).to(ElasticStackComputeServiceAdapter.class);
       bind(IdentityFunction.class).toInstance(IdentityFunction.INSTANCE);
       bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(DefaultLocationSupplier.class);
+      }).to(OnlyLocationOrFirstZone.class);
       bind(new TypeLiteral<Function<ServerInfo, NodeMetadata>>() {
       }).to(ServerInfoToNodeMetadata.class);
       bind(new TypeLiteral<Function<Image, Image>>() {
@@ -128,7 +128,7 @@ public class ElasticStackComputeServiceContextModule
    @Provides
    protected Map<String, WellKnownImage> provideImages(Json json) throws IOException {
       List<WellKnownImage> wellKnowns = json.fromJson(
-            Utils.toStringAndClose(getClass().getResourceAsStream("/preinstalled_images.json")),
+            Strings2.toStringAndClose(getClass().getResourceAsStream("/preinstalled_images.json")),
             new TypeLiteral<List<WellKnownImage>>() {
             }.getType());
       return Maps.uniqueIndex(wellKnowns, new Function<WellKnownImage, String>() {

@@ -23,12 +23,12 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.Snapshot;
 import org.jclouds.aws.ec2.domain.Snapshot.Status;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.location.Region;
 
 /**
  * 

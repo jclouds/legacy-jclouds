@@ -21,7 +21,6 @@ package org.jclouds.aws.ec2.compute;
 
 import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.aws.ec2.util.EC2Utils.parseHandle;
-import static org.jclouds.util.Utils.checkNotEmpty;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -62,6 +61,7 @@ import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.util.Preconditions2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
@@ -107,7 +107,7 @@ public class EC2ComputeService extends BaseComputeService {
 
    @VisibleForTesting
    void deletePlacementGroup(String region, String tag) {
-      checkNotEmpty(tag, "tag");
+      Preconditions2.checkNotEmpty(tag, "tag");
       String group = String.format("jclouds#%s#%s", tag, region);
       try {
          if (ec2Client.getPlacementGroupServices().describePlacementGroupsInRegion(region, group).size() > 0) {
@@ -137,7 +137,7 @@ public class EC2ComputeService extends BaseComputeService {
 
    @VisibleForTesting
    void deleteSecurityGroup(String region, String tag) {
-      checkNotEmpty(tag, "tag");
+      Preconditions2.checkNotEmpty(tag, "tag");
       String group = String.format("jclouds#%s#%s", tag, region);
       if (ec2Client.getSecurityGroupServices().describeSecurityGroupsInRegion(region, group).size() > 0) {
          logger.debug(">> deleting securityGroup(%s)", group);

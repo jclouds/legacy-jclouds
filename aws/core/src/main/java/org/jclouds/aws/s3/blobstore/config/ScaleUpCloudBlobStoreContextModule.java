@@ -32,10 +32,10 @@ import com.google.inject.TypeLiteral;
  */
 public class ScaleUpCloudBlobStoreContextModule extends S3BlobStoreContextModule {
 
-   @SuppressWarnings("rawtypes")
+   @SuppressWarnings({ "rawtypes", "unchecked" })
    @Override
    protected void bindBucketLocationStrategy() {
       bind(new TypeLiteral<Function<BucketMetadata, Location>>() {
-      }).toInstance((Function)Functions.constant(null));
+      }).toInstance((Function) Functions.constant(null));
    }
 }

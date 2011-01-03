@@ -42,7 +42,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.InstantiateVAppTemplateOptionsTest")
+@Test(groups = "unit")
 public class InstantiateVAppTemplateOptionsTest {
 
    Injector injector = Guice.createInjector(new SaxParserModule());

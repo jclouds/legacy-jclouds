@@ -37,7 +37,8 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.InternetServiceHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "InternetServiceHandlerTest")
 public class InternetServiceHandlerTest extends BaseHandlerTest {
 
    @BeforeTest

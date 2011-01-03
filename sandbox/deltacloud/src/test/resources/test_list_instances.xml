@@ -8,8 +8,8 @@
 
     <state>RUNNING</state>
     <actions>
-      <link rel="reboot" href="http://fancycloudprovider.com/api/instances/inst1/reboot"/>
-      <link rel="stop" href="http://fancycloudprovider.com/api/instances/inst1/stop"/>
+      <link rel="reboot" href="http://fancycloudprovider.com/api/instances/inst1/reboot" method="post" />
+      <link rel="stop" href="http://fancycloudprovider.com/api/instances/inst1/stop" method="post" />
     </actions>
     <public_addresses>
       <address>inst1.larry.fancycloudprovider.com</address>

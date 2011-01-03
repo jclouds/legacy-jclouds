@@ -49,7 +49,7 @@ import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
@@ -289,7 +289,7 @@ public class PCSAsyncClientTest extends RestClientTest<PCSAsyncClient> {
    }
 
    @Override
-   public ContextSpec<PCSClient, PCSAsyncClient> createContextSpec() {
+   public RestContextSpec<PCSClient, PCSAsyncClient> createContextSpec() {
       Properties properties = new Properties();
       properties.setProperty("pcs.apiversion", "foo");
       properties.setProperty("pcs.endpoint", "http://goo");

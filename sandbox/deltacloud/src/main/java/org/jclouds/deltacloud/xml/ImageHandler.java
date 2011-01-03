@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.Utils;
+import org.jclouds.util.SaxUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -49,7 +49,7 @@ public class ImageHandler extends ParseSax.HandlerWithResult<Image> {
 
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
-      Map<String, String> attributes = Utils.cleanseAttributes(attrs);
+      Map<String, String> attributes = SaxUtils.cleanseAttributes(attrs);
       if (qName.equals("image")) {
          String href = attributes.get("href");
          if (href != null) {

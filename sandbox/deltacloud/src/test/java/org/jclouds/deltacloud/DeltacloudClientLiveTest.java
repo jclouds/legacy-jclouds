@@ -20,124 +20,34 @@
 package org.jclouds.deltacloud;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
 import java.io.IOException;
-import java.net.URI;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
-import org.jclouds.Constants;
-import org.jclouds.deltacloud.collections.DeltacloudCollection;
-import org.jclouds.deltacloud.domain.Image;
 import org.jclouds.deltacloud.domain.Instance;
 import org.jclouds.deltacloud.domain.InstanceAction;
 import org.jclouds.deltacloud.domain.InstanceState;
 import org.jclouds.deltacloud.options.CreateInstanceOptions;
 import org.jclouds.domain.Credentials;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.net.IPSocket;
-import org.jclouds.predicates.InetSocketAddressConnect;
-import org.jclouds.predicates.RetryablePredicate;
-import org.jclouds.rest.RestContext;
-import org.jclouds.rest.RestContextFactory;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.AfterGroups;
-import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import com.google.inject.Guice;
-import com.google.inject.Module;
 
 /**
  * Tests behavior of {@code DeltacloudClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true)
-public class DeltacloudClientLiveTest {
-
-   protected DeltacloudClient client;
-   protected RestContext<DeltacloudClient, DeltacloudAsyncClient> context;
-
-   protected String provider = "deltacloud";
-   protected String identity;
-   protected String credential;
-   protected String endpoint;
-   protected String apiversion;
-   protected Predicate<IPSocket> socketTester;
-
-   protected void setupCredentials() {
-      identity = System.getProperty("test." + provider + ".identity", "mockuser");
-      credential = System.getProperty("test." + provider + ".credential", "mockpassword");
-      endpoint = System.getProperty("test." + provider + ".endpoint", "http://localhost:3001/api");
-      apiversion = System.getProperty("test." + provider + ".apiversion");
-   }
-
-   protected Properties setupProperties() {
-      Properties overrides = new Properties();
-      overrides.setProperty(Constants.PROPERTY_TRUST_ALL_CERTS, "true");
-      overrides.setProperty(Constants.PROPERTY_RELAX_HOSTNAME, "true");
-      overrides.setProperty(provider + ".identity", identity);
-      if (credential != null)
-         overrides.setProperty(provider + ".credential", credential);
-      if (endpoint != null)
-         overrides.setProperty(provider + ".endpoint", endpoint);
-      if (apiversion != null)
-         overrides.setProperty(provider + ".apiversion", apiversion);
-      return overrides;
-   }
-
-   @BeforeGroups(groups = "live")
-   public void setupClient() {
-      setupCredentials();
-      Properties overrides = setupProperties();
-      context = new RestContextFactory().createContext(provider, ImmutableSet.<Module> of(new Log4JLoggingModule()),
-            overrides);
-
-      client = context.getApi();
-      socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), 180, 1, TimeUnit.SECONDS);
-   }
-
-   @Test
-   public void testGetLinksContainsAll() throws Exception {
-      Map<DeltacloudCollection, URI> links = client.getCollections();
-      assertNotNull(links);
-      for (DeltacloudCollection link : DeltacloudCollection.values())
-         assert (links.get(link) != null) : link;
-   }
-
-   public void testListAndGetImages() throws Exception {
-      Set<? extends Image> response = client.listImages();
-      assert null != response;
-      long imageCount = response.size();
-      assertTrue(imageCount >= 0);
-      for (Image image : response) {
-         Image newDetails = client.getImage(image.getHref());
-         assertEquals(image, newDetails);
-      }
-   }
-
-   public void testListAndGetInstances() throws Exception {
-      Set<? extends Instance> response = client.listInstances();
-      assert null != response;
-      long instanceCount = response.size();
-      assertTrue(instanceCount >= 0);
-      for (Instance instance : response) {
-         Instance newDetails = client.getInstance(instance.getHref());
-         assertEquals(instance, newDetails);
-      }
-   }
+@Test(groups = "live", sequential = true, testName = "DeltacloudClientLiveTest")
+public class DeltacloudClientLiveTest extends ReadOnlyDeltacloudClientLiveTest {
 
    protected String prefix = System.getProperty("user.name") + ".test";
    protected Instance instance;
@@ -178,7 +88,7 @@ public class DeltacloudClientLiveTest {
       return null;
    }
 
-   public URI refreshInstanceAndGetAction(InstanceAction action) {
+   public HttpRequest refreshInstanceAndGetAction(InstanceAction action) {
       return client.getInstance(instance.getHref()).getActions().get(action);
    }
 
@@ -198,12 +108,12 @@ public class DeltacloudClientLiveTest {
    @Test(dependsOnMethods = "testLifeCycle")
    public void testDestroyInstance() throws Exception {
       try {
-         client.deleteResource(instance.getHref());
-      } catch (IllegalArgumentException e) {
          client.performAction(refreshInstanceAndGetAction(InstanceAction.STOP));
-         client.deleteResource(instance.getHref());
-         assertEquals(client.getInstance(instance.getHref()), null);
+         assertEquals(client.getInstance(instance.getHref()).getState(), InstanceState.STOPPED);
+      } catch (IllegalArgumentException e) {
       }
+      client.performAction(refreshInstanceAndGetAction(InstanceAction.DESTROY));
+      assertEquals(client.getInstance(instance.getHref()), null);
    }
 
    protected void doConnectViaSsh(Instance instance, Credentials creds) throws IOException {
@@ -223,14 +133,14 @@ public class DeltacloudClientLiveTest {
    }
 
    @AfterGroups(groups = "live")
+   @Override
    protected void tearDown() {
       try {
-         client.deleteResource(instance.getHref());
+         testDestroyInstance();
       } catch (Exception e) {
          // no need to check null or anything as we swallow all
       }
-      if (context != null)
-         context.close();
+      super.tearDown();
    }
 
 }

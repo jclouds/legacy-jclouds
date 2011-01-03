@@ -37,7 +37,7 @@ import org.jclouds.aws.ec2.options.BundleInstanceS3StorageOptions;
 import org.jclouds.aws.ec2.xml.BundleTaskHandler;
 import org.jclouds.aws.ec2.xml.DescribeBundleTasksResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.aws.functions.RegionToEndpoint;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -68,7 +68,7 @@ public interface WindowsAsyncClient {
    @FormParams(keys = ACTION, values = "BundleInstance")
    @XMLResponseParser(BundleTaskHandler.class)
    ListenableFuture<BundleTask> bundleInstanceInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId, @FormParam("Storage.S3.Prefix") String prefix,
             @FormParam("Storage.S3.Bucket") String bucket,
             @BinderParam(BindS3UploadPolicyAndSignature.class) String uploadPolicy,
@@ -82,7 +82,7 @@ public interface WindowsAsyncClient {
    @FormParams(keys = ACTION, values = "CancelBundleTask")
    @XMLResponseParser(BundleTaskHandler.class)
    ListenableFuture<BundleTask> cancelBundleTaskInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("BundleId") String bundleId);
 
    /**
@@ -94,7 +94,7 @@ public interface WindowsAsyncClient {
    @XMLResponseParser(DescribeBundleTasksResponseHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<BundleTask>> describeBundleTasksInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @BinderParam(BindBundleIdsToIndexedFormParams.class) String... bundleTaskIds);
 
 }

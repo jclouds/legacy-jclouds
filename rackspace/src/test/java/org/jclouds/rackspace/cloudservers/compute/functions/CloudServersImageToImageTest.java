@@ -40,7 +40,7 @@ import com.google.inject.Guice;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudservers.CloudServersImageToImageTest")
+@Test(groups = "unit")
 public class CloudServersImageToImageTest {
 
    @Test

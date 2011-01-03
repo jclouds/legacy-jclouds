@@ -19,21 +19,14 @@
 
 package org.jclouds.aws.config;
 
-import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.get;
-import static com.google.common.collect.Maps.newLinkedHashMap;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_REGIONS;
 
 import java.net.URI;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.inject.Singleton;
 
-import org.jclouds.Constants;
-import org.jclouds.aws.Region;
 import org.jclouds.aws.handlers.AWSClientErrorRetryHandler;
 import org.jclouds.aws.handlers.AWSRedirectionRetryHandler;
 import org.jclouds.aws.handlers.ParseAWSErrorFromXmlContent;
@@ -43,20 +36,18 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
+import org.jclouds.location.Provider;
+import org.jclouds.location.Region;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.annotations.Provider;
 import org.jclouds.rest.config.RestClientModule;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Splitter;
-import com.google.inject.Injector;
-import com.google.inject.Key;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.inject.Provides;
-import com.google.inject.name.Names;
+import com.google.inject.Scopes;
+import com.google.inject.TypeLiteral;
 
 /**
- * Configures the S3 connection, including logging and http transport.
  * 
  * @author Adrian Cole
  */
@@ -72,49 +63,6 @@ public class AWSRestClientModule<S, A> extends RestClientModule<S, A> {
       super(syncClientType, asyncClientType);
    }
 
-   @Provides
-   @Singleton
-   @Region
-   protected Map<String, URI> provideRegions(Injector injector) {
-      String regionString = injector.getInstance(Key.get(String.class, Names.named(PROPERTY_REGIONS)));
-      Map<String, URI> regions = newLinkedHashMap();
-      for (String region : Splitter.on(',').split(regionString)) {
-         regions.put(
-               region,
-               URI.create(injector.getInstance(Key.get(String.class,
-                     Names.named(Constants.PROPERTY_ENDPOINT + "." + region)))));
-      }
-      return regions;
-   }
-
-   @Provides
-   @Singleton
-   @Region
-   protected Set<String> provideRegions(@Region Map<String, URI> map) {
-      return map.keySet();
-   }
-
-   @Provides
-   @Singleton
-   @Region
-   protected String getDefaultRegion(@Provider final URI uri, @Region Map<String, URI> map, LoggerFactory logFactory) {
-      try {
-         return find(map.entrySet(), new Predicate<Entry<String, URI>>() {
-
-            @Override
-            public boolean apply(Entry<String, URI> input) {
-               return input.getValue().equals(uri);
-            }
-
-         }).getKey();
-      } catch (NoSuchElementException e) {
-         String region = get(map.keySet(), 0);
-         logFactory.getLogger("jclouds.compute").warn(
-               "failed to find region for current endpoint %s in %s; choosing first: %s", uri, map, region);
-         return region;
-      }
-   }
-
    @Override
    protected void bindErrorHandlers() {
       bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseAWSErrorFromXmlContent.class);
@@ -126,6 +74,41 @@ public class AWSRestClientModule<S, A> extends RestClientModule<S, A> {
    protected void bindRetryHandlers() {
       bind(HttpRetryHandler.class).annotatedWith(Redirection.class).to(AWSRedirectionRetryHandler.class);
       bind(HttpRetryHandler.class).annotatedWith(ClientError.class).to(AWSClientErrorRetryHandler.class);
+   }
+
+   @Provides
+   @Singleton
+   @Region
+   protected String getDefaultRegion(@Provider URI uri, @Region Map<String, URI> map, LoggerFactory logFactory) {
+      String region = ImmutableBiMap.copyOf(map).inverse().get(uri);
+      if (region == null) {
+         logFactory.getLogger(getClass().getName()).warn(
+               "failed to find region for current endpoint %s in %s; choosing first: %s", uri, map, region);
+         region = get(map.keySet(), 0);
+      }
+      return region;
+   }
+
+   protected void bindRegionsToProvider() {
+      bindRegionsToProvider(ProvideRegionsViaProperties.class);
+   }
+
+   @Override
+   protected void configure() {
+      super.configure();
+      bindRegionsToProvider();
+   }
+
+   protected void bindRegionsToProvider(Class<? extends javax.inject.Provider<Map<String, URI>>> providerClass) {
+      bind(new TypeLiteral<Map<String, URI>>() {
+      }).annotatedWith(Region.class).toProvider(providerClass).in(Scopes.SINGLETON);
+   }
+
+   @Provides
+   @Singleton
+   @Region
+   protected Set<String> provideRegions(@Region Map<String, URI> map) {
+      return map.keySet();
    }
 
 }

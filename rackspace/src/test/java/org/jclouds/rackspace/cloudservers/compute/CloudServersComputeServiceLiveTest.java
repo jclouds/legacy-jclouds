@@ -42,7 +42,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "cloudservers.CloudServersComputeServiceLiveTest")
+@Test(groups = "live", enabled = true, sequential = true)
 public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public CloudServersComputeServiceLiveTest() {
       provider = "cloudservers";

@@ -33,7 +33,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 /**
  * This will parse and set an appropriate exception on the command object.
@@ -52,7 +52,7 @@ public class IBMDeveloperCloudErrorHandler implements HttpErrorHandler {
          // it is important to always read fully and close streams
          String message = parseMessage(response);
          exception = message != null ? new HttpResponseException(command, response, message) : exception;
-         message = message != null ? message : String.format("%s -> %s", command.getRequest().getRequestLine(),
+         message = message != null ? message : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(),
                response.getStatusLine());
          switch (response.getStatusCode()) {
          case 401:
@@ -63,7 +63,7 @@ public class IBMDeveloperCloudErrorHandler implements HttpErrorHandler {
             exception = new AuthorizationException(message, exception);
             break;
          case 404:
-            if (!command.getRequest().getMethod().equals("DELETE")) {
+            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
                exception = new ResourceNotFoundException(message, exception);
             }
             break;
@@ -87,6 +87,6 @@ public class IBMDeveloperCloudErrorHandler implements HttpErrorHandler {
    public String parseMessage(HttpResponse response) throws IOException {
       if (response.getPayload() == null)
          return null;
-      return Utils.toStringAndClose(response.getPayload().getInput());
+      return Strings2.toStringAndClose(response.getPayload().getInput());
    }
 }

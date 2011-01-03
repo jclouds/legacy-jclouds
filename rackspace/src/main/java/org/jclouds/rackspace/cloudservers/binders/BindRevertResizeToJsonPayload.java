@@ -31,8 +31,9 @@ import org.jclouds.rest.Binder;
  */
 @Singleton
 public class BindRevertResizeToJsonPayload implements Binder {
-
-   public void bindToRequest(HttpRequest request, Object toBind) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object toBind) {
       request.setPayload("{\"revertResize\":null}");
+      return request;
    }
 }

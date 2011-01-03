@@ -85,11 +85,11 @@ public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload implemen
       this.defaultFenceMode = fenceMode;
    }
 
-   @SuppressWarnings("unchecked")
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
                "this binder is only valid for GeneratedHttpRequests!");
-      GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
+      GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
       String name = checkNotNull(postParams.remove("name"), "name");
       String template = checkNotNull(postParams.remove("template"), "template");
@@ -112,7 +112,7 @@ public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload implemen
          addQuantity(options, virtualHardwareQuantity);
       }
       try {
-         stringBinder.bindToRequest(request, generateXml(name, template, virtualHardwareQuantity, networkName,
+         return stringBinder.bindToRequest(request, generateXml(name, template, virtualHardwareQuantity, networkName,
                   fenceMode, URI.create(network)));
       } catch (ParserConfigurationException e) {
          throw new RuntimeException(e);
@@ -201,8 +201,8 @@ public class BindInstantiateVCloudExpressVAppTemplateParamsToXmlPayload implemen
          virtualHardwareQuantity.put(ResourceType.DISK_DRIVE, options.getDiskSizeKilobytes());
       }
    }
-
-   public void bindToRequest(HttpRequest request, Object input) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       throw new IllegalStateException("InstantiateVAppTemplateParams is needs parameters");
    }
 

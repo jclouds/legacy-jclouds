@@ -40,7 +40,7 @@ import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.ListableMap;
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Optional;
@@ -76,7 +76,7 @@ public abstract class BaseMapIntegrationTest<V> extends BaseBlobStoreIntegration
    protected void setUpInputStreams() {
       fiveInputs = Maps.transformValues(fiveStrings, new Function<String, InputStream>() {
          public InputStream apply(String from) {
-            return Utils.toInputStream(from);
+            return Strings2.toInputStream(from);
          }
       });
    }

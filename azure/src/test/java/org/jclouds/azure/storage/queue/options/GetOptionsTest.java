@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableList;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "azurequeue.GetOptionsTest")
+@Test(groups = "unit")
 public class GetOptionsTest {
 
    public void testMaxMessages() {

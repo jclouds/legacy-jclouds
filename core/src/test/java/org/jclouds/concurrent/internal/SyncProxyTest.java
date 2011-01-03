@@ -44,7 +44,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", sequential = true, testName = "concurrent.ListenableFutureExceptionParserTest")
+@Test(groups = "unit", sequential = true)
 public class SyncProxyTest {
 
    @Test
@@ -66,7 +66,7 @@ public class SyncProxyTest {
 
       String take100MillisecondsAndTimeout();
 
-      @Timeout(duration = 150, timeUnit = TimeUnit.MILLISECONDS)
+      @Timeout(duration = 300, timeUnit = TimeUnit.MILLISECONDS)
       String take100MillisecondsAndOverride();
 
    }

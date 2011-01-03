@@ -19,36 +19,57 @@
 
 package org.jclouds.atmosonline.saas.binders;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Map;
 
 import javax.inject.Singleton;
 
 import org.jclouds.atmosonline.saas.domain.UserMetadata;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
+import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Multimaps;
 
+/**
+ * @author Adrian Cole
+ */
 @Singleton
-public class BindUserMetadataToHeaders implements Binder {
+public class BindUserMetadataToHeaders implements Binder, Function<UserMetadata, Map<String, String>> {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof UserMetadata,
+            "this binder is only valid for UserMetadatas!");
+      checkNotNull(request, "request");
 
-   public void bindToRequest(HttpRequest request, Object payload) {
-      UserMetadata md = (UserMetadata) checkNotNull(payload, "payload");
+      return ModifyRequest.putHeaders(request, Multimaps.forMap(apply(UserMetadata.class.cast(input))));
+   }
+
+   @Override
+   public Map<String, String> apply(UserMetadata md) {
+      Builder<String, String> headers = ImmutableMap.<String, String> builder();
       if (md.getMetadata().size() > 0) {
          String header = Joiner.on(',').withKeyValueSeparator("=").join(md.getMetadata());
-         request.getHeaders().put("x-emc-meta", header);
+         headers.put("x-emc-meta", header);
       }
       if (md.getListableMetadata().size() > 0) {
          String header = Joiner.on(',').withKeyValueSeparator("=").join(md.getListableMetadata());
-         request.getHeaders().put("x-emc-listable-meta", header);
+         headers.put("x-emc-listable-meta", header);
       }
       if (md.getTags().size() > 0) {
          String header = Joiner.on(',').join(md.getTags());
-         request.getHeaders().put("x-emc-tags", header);
+         headers.put("x-emc-tags", header);
       }
       if (md.getListableTags().size() > 0) {
          String header = Joiner.on(',').join(md.getListableTags());
-         request.getHeaders().put("x-emc-listable-tags", header);
+         headers.put("x-emc-listable-tags", header);
       }
+      return headers.build();
    }
 }

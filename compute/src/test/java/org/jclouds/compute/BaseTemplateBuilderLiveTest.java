@@ -57,7 +57,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "integration,live", testName = "compute.BaseTemplateBuilderLiveTest")
+@Test(groups = "integration,live")
 public abstract class BaseTemplateBuilderLiveTest {
 
    protected String provider;

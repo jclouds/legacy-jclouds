@@ -23,11 +23,12 @@ import java.util.Set;
 
 import org.jclouds.aws.ec2.compute.suppliers.EC2HardwareSupplier;
 import org.jclouds.aws.ec2.compute.suppliers.EC2ImageSupplier;
-import org.jclouds.aws.ec2.compute.suppliers.EC2LocationSupplier;
 import org.jclouds.compute.config.BindComputeSuppliersByClass;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.domain.Location;
+import org.jclouds.location.suppliers.FirstZoneOrRegionMatchingRegionId;
+import org.jclouds.location.suppliers.ZoneToRegionToProvider;
 
 import com.google.common.base.Supplier;
 /**
@@ -46,11 +47,11 @@ public class EC2BindComputeSuppliersByClass extends BindComputeSuppliersByClass 
 
    @Override
    protected Class<? extends Supplier<Location>> defineDefaultLocationSupplier() {
-      return org.jclouds.aws.suppliers.DefaultLocationSupplier.class;
+      return FirstZoneOrRegionMatchingRegionId.class;
    }
 
    @Override
    protected Class<? extends Supplier<Set<? extends Location>>> defineLocationSupplier() {
-      return EC2LocationSupplier.class;
+      return ZoneToRegionToProvider.class;
    }
 }

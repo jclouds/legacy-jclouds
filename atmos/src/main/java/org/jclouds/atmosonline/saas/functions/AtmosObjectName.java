@@ -19,6 +19,9 @@
 
 package org.jclouds.atmosonline.saas.functions;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.inject.Singleton;
 
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
@@ -31,11 +34,14 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class AtmosObjectName implements Function<Object, String> {
+   @Override
+   public String apply(Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof AtmosObject,
+            "this function is only valid for AtmosObjects!");
+      AtmosObject object = AtmosObject.class.cast(input);
 
-   public String apply(Object in) {
-      AtmosObject from = (AtmosObject) in;
-      return from.getContentMetadata().getName() != null ? from.getContentMetadata().getName()
-               : from.getSystemMetadata().getObjectName();
+      return checkNotNull(object.getContentMetadata().getName() != null ? object.getContentMetadata().getName()
+            : object.getSystemMetadata().getObjectName(), "objectName");
    }
 
 }

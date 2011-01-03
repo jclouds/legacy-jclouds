@@ -21,7 +21,6 @@ package org.jclouds.azure.storage.filters;
 
 import static org.jclouds.util.Patterns.NEWLINE_PATTERN;
 
-import java.util.Collections;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -41,11 +40,15 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.internal.SignatureWire;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.io.InputSuppliers;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Multimaps;
 
 /**
  * Signs the Azure Storage request.
@@ -71,8 +74,8 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
 
    @Inject
    public SharedKeyLiteAuthentication(SignatureWire signatureWire, @Named(Constants.PROPERTY_IDENTITY) String identity,
-            @Named(Constants.PROPERTY_CREDENTIAL) String encodedKey, @TimeStamp Provider<String> timeStampProvider,
-            Crypto crypto, HttpUtils utils) {
+         @Named(Constants.PROPERTY_CREDENTIAL) String encodedKey, @TimeStamp Provider<String> timeStampProvider,
+         Crypto crypto, HttpUtils utils) {
       this.crypto = crypto;
       this.utils = utils;
       this.signatureWire = signatureWire;
@@ -81,11 +84,25 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
       this.timeStampProvider = timeStampProvider;
    }
 
-   public void filter(HttpRequest request) throws HttpException {
-      replaceDateHeader(request);
-      String toSign = createStringToSign(request);
-      calculateAndReplaceAuthHeader(request, toSign);
+   public HttpRequest filter(HttpRequest request) throws HttpException {
+      request = replaceDateHeader(request);
+      String signature = calculateSignature(createStringToSign(request));
+      request = replaceAuthorizationHeader(request, signature);
       utils.logRequest(signatureLog, request, "<<");
+      return request;
+   }
+
+   HttpRequest replaceAuthorizationHeader(HttpRequest request, String signature) {
+      return ModifyRequest.replaceHeader(request, HttpHeaders.AUTHORIZATION, "SharedKeyLite " + identity + ":"
+            + signature);
+   }
+
+   HttpRequest replaceDateHeader(HttpRequest request) {
+      Builder<String, String> builder = ImmutableMap.builder();
+      String date = timeStampProvider.get();
+      builder.put(HttpHeaders.DATE, date);
+      request = ModifyRequest.replaceHeaders(request, Multimaps.forMap(builder.build()));
+      return request;
    }
 
    public String createStringToSign(HttpRequest request) {
@@ -103,18 +120,19 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
    }
 
    private void appendPayloadMetadata(HttpRequest request, StringBuilder buffer) {
-      buffer.append(utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata().getContentMD5()))
-               .append("\n");
-      buffer.append(utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata().getContentType()))
-               .append("\n");
+      buffer.append(
+            utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
+                  .getContentMD5())).append("\n");
+      buffer.append(
+            utils.valueOrEmpty(request.getPayload() == null ? null : request.getPayload().getContentMetadata()
+                  .getContentType())).append("\n");
    }
 
-   private void calculateAndReplaceAuthHeader(HttpRequest request, String toSign) throws HttpException {
+   private String calculateSignature(String toSign) throws HttpException {
       String signature = signString(toSign);
       if (signatureWire.enabled())
-         signatureWire.input(Utils.toInputStream(signature));
-      request.getHeaders().replaceValues(HttpHeaders.AUTHORIZATION,
-               Collections.singletonList("SharedKeyLite " + identity + ":" + signature));
+         signatureWire.input(Strings2.toInputStream(signature));
+      return signature;
    }
 
    public String signString(String toSign) {
@@ -131,17 +149,13 @@ public class SharedKeyLiteAuthentication implements HttpRequestFilter {
       toSign.append(request.getMethod()).append("\n");
    }
 
-   private void replaceDateHeader(HttpRequest request) {
-      request.getHeaders().replaceValues(HttpHeaders.DATE, Collections.singletonList(timeStampProvider.get()));
-   }
-
    private void appendCanonicalizedHeaders(HttpRequest request, StringBuilder toSign) {
       Set<String> headers = new TreeSet<String>(request.getHeaders().keySet());
       for (String header : headers) {
          if (header.startsWith("x-ms-")) {
             toSign.append(header.toLowerCase()).append(":");
             for (String value : request.getHeaders().get(header)) {
-               toSign.append(Utils.replaceAll(value, NEWLINE_PATTERN, "")).append(",");
+               toSign.append(Strings2.replaceAll(value, NEWLINE_PATTERN, "")).append(",");
             }
             toSign.deleteCharAt(toSign.lastIndexOf(","));
             toSign.append("\n");

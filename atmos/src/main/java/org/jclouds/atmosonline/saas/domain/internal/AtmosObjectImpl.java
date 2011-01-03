@@ -22,6 +22,8 @@ package org.jclouds.atmosonline.saas.domain.internal;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.inject.Singleton;
 
 import org.jclouds.atmosonline.saas.domain.AtmosObject;
 import org.jclouds.atmosonline.saas.domain.MutableContentMetadata;
@@ -39,6 +41,26 @@ import com.google.common.collect.Multimap;
  * @author Adrian Cole
  */
 public class AtmosObjectImpl extends PayloadEnclosingImpl implements AtmosObject, Comparable<AtmosObject> {
+   @Singleton
+   public static class AtmosObjectFactory implements AtmosObject.Factory {
+
+      @Inject
+      Provider<MutableContentMetadata> metadataProvider;
+
+      public AtmosObject create(MutableContentMetadata contentMetadata) {
+         return new AtmosObjectImpl(contentMetadata != null ? contentMetadata : metadataProvider.get());
+      }
+
+      public AtmosObject create(SystemMetadata systemMetadata, UserMetadata userMetadata) {
+         return new AtmosObjectImpl(metadataProvider.get(), systemMetadata, userMetadata);
+      }
+
+      public AtmosObject create(MutableContentMetadata contentMetadata, SystemMetadata systemMetadata,
+            UserMetadata userMetadata) {
+         return new AtmosObjectImpl(contentMetadata, systemMetadata, userMetadata);
+      }
+   }
+
    private final UserMetadata userMetadata;
    private final SystemMetadata systemMetadata;
 
@@ -50,12 +72,11 @@ public class AtmosObjectImpl extends PayloadEnclosingImpl implements AtmosObject
       return userMetadata;
    }
 
-   private  MutableContentMetadata contentMetadata;
+   private MutableContentMetadata contentMetadata;
    private Multimap<String, String> allHeaders = LinkedHashMultimap.create();
 
    public AtmosObjectImpl(MutableContentMetadata contentMetadata, SystemMetadata systemMetadata,
-            UserMetadata userMetadata) {
-      super();
+         UserMetadata userMetadata) {
       this.contentMetadata = contentMetadata;
       this.systemMetadata = systemMetadata;
       this.userMetadata = userMetadata;
@@ -145,6 +166,7 @@ public class AtmosObjectImpl extends PayloadEnclosingImpl implements AtmosObject
    @Override
    public void setPayload(Payload data) {
       this.payload = data;
-      this.contentMetadata = new DelegatingMutableContentMetadata(contentMetadata.getName(), payload.getContentMetadata());
+      this.contentMetadata = new DelegatingMutableContentMetadata(contentMetadata.getName(),
+            payload.getContentMetadata());
    }
 }

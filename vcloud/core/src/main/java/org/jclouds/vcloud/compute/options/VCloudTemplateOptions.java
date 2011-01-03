@@ -23,7 +23,7 @@ import java.util.Arrays;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.io.Payload;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Preconditions2;
 
 /**
  * Contains options supported in the {@code ComputeService#runNode} operation on the "vcloud"
@@ -52,7 +52,7 @@ public class VCloudTemplateOptions extends TemplateOptions {
     * Specifies the customizationScript used to run instances with
     */
    public VCloudTemplateOptions customizationScript(String customizationScript) {
-      Utils.checkNotEmpty(customizationScript, "customizationScript must be non-empty");
+      Preconditions2.checkNotEmpty(customizationScript, "customizationScript must be non-empty");
       this.customizationScript = customizationScript;
       return this;
    }

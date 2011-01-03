@@ -39,7 +39,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.SupportedVersionsHandlerTest")
+@Test(groups = "unit")
 public class SupportedVersionsHandlerTest {
 
    public void testApplyInputStream() {

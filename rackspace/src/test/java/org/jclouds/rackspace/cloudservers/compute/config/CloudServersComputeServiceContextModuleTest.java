@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudservers.CloudServersComputeServiceContextModuleTest")
+@Test(groups = "unit")
 public class CloudServersComputeServiceContextModuleTest {
 
    public void testAllStatusCovered() {

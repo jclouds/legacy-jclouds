@@ -39,7 +39,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "live" }, testName = "blobstore.BlobLiveTest")
+@Test(groups = { "live" })
 public class BaseBlobLiveTest extends BaseBlobStoreIntegrationTest {
 
    private static final String sysHttpStreamUrl = System.getProperty("jclouds.blobstore.httpstream.url");

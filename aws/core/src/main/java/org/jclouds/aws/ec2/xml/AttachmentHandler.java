@@ -24,11 +24,11 @@ import java.util.Date;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.location.Region;
 import org.jclouds.logging.Logger;
 
 /**
@@ -36,15 +36,20 @@ import org.jclouds.logging.Logger;
  * @author Adrian Cole
  */
 public class AttachmentHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Attachment> {
-   private StringBuilder currentText = new StringBuilder();
 
    @Resource
    protected Logger logger = Logger.NULL;
+
+   protected final DateService dateService;
+   protected final String defaultRegion;
+
    @Inject
-   protected DateService dateService;
-   @Inject
-   @Region
-   String defaultRegion;
+   AttachmentHandler(DateService dateService, @Region String defaultRegion) {
+      this.dateService = dateService;
+      this.defaultRegion = defaultRegion;
+   }
+
+   private StringBuilder currentText = new StringBuilder();
    private String volumeId;
    private String instanceId;
    private String device;

@@ -39,7 +39,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudsharedIpGroups.RebuildServerOptionsTest")
+@Test(groups = "unit")
 public class RebuildServerOptionsTest {
 
    Injector injector = Guice.createInjector(new GsonModule());

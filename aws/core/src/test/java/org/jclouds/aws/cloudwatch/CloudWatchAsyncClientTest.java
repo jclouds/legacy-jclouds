@@ -51,7 +51,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudwatch.MonitoringAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "CloudWatchAsyncClientTest")
 public class CloudWatchAsyncClientTest extends RestClientTest<CloudWatchAsyncClient> {
 
    public void testRegisterInstancesWithMeasure() throws SecurityException, NoSuchMethodException, IOException {

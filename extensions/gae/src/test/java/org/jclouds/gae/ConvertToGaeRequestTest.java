@@ -36,7 +36,7 @@ import org.jclouds.crypto.Crypto;
 import org.jclouds.encryption.internal.JCECrypto;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.io.Payloads;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -45,6 +45,7 @@ import com.google.appengine.api.urlfetch.HTTPHeader;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.repackaged.com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.io.Files;
 
 /**
@@ -89,8 +90,7 @@ public class ConvertToGaeRequestTest {
 
    @Test
    void testConvertRequestSetsHeaders() throws IOException {
-      HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
-      request.getHeaders().put("foo", "bar");
+      HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint, ImmutableMultimap.of("foo", "bar"));
       HTTPRequest gaeRequest = req.apply(request);
       assertEquals(gaeRequest.getHeaders().get(0).getName(), "foo");
       assertEquals(gaeRequest.getHeaders().get(0).getValue(), "bar");
@@ -117,7 +117,7 @@ public class ConvertToGaeRequestTest {
    @Test
    void testConvertRequestInputStreamContent() throws IOException {
       HttpRequest request = new HttpRequest(HttpMethod.GET, endPoint);
-      request.setPayload(Utils.toInputStream("hoot!"));
+      request.setPayload(Strings2.toInputStream("hoot!"));
       request.getPayload().getContentMetadata().setContentLength(5l);
       testHoot(request);
    }
@@ -156,7 +156,8 @@ public class ConvertToGaeRequestTest {
       for (HTTPHeader header : gaeRequest.getHeaders()) {
          builder.append(header.getName()).append(": ").append(header.getValue()).append("\n");
       }
-      assertEquals(builder.toString(), "User-Agent: jclouds/1.0 urlfetch/1.3.5\nContent-Type: text/plain\nContent-Length: 5\nContent-MD5: AQIDBA==\n");
+      assertEquals(builder.toString(),
+            "User-Agent: jclouds/1.0 urlfetch/1.3.5\nContent-Type: text/plain\nContent-Length: 5\nContent-MD5: AQIDBA==\n");
       assertEquals(new String(gaeRequest.getPayload()), "hoot!");
    }
 }

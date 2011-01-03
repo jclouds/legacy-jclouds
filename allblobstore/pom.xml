@@ -50,8 +50,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-filesystem</artifactId>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>filesystem</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

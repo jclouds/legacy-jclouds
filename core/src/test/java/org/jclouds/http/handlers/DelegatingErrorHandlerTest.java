@@ -32,7 +32,7 @@ import com.google.inject.Guice;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "core.DelegatingErrorHandlerTest")
+@Test(groups = "unit")
 public class DelegatingErrorHandlerTest {
 
    public void testDefaultInjection() {

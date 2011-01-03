@@ -19,7 +19,6 @@
 
 package org.jclouds.http;
 
-
 /**
  * Responsible for setting an exception on the command relevant to the unrecoverable error in the
  * HttpResponse.
@@ -31,6 +30,10 @@ public interface HttpErrorHandler {
       public void handleError(HttpCommand command, HttpResponse response) {
          if (response.getPayload() != null)
             response.getPayload().release();
+      }
+
+      public String toString() {
+         return "NOOP";
       }
    };
 

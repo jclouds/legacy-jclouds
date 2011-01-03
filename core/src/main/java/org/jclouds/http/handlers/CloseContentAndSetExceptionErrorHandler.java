@@ -29,7 +29,7 @@ import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 /**
  * 
@@ -41,8 +41,7 @@ public class CloseContentAndSetExceptionErrorHandler implements HttpErrorHandler
    public void handleError(HttpCommand command, HttpResponse from) {
       String content;
       try {
-         content = from.getPayload() != null ? Utils.toStringAndClose(from.getPayload().getInput())
-                  : null;
+         content = from.getPayload() != null ? Strings2.toStringAndClose(from.getPayload().getInput()) : null;
          command.setException(new HttpResponseException(command, from, content));
       } catch (IOException e) {
          command.setException(new HttpResponseException(command, from));

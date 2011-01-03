@@ -30,7 +30,7 @@ import com.google.common.base.Predicate;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "cloudservers.CloudServersTemplateBuilderLiveTest")
+@Test(groups = "live")
 public class CloudServersTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    public CloudServersTemplateBuilderLiveTest() {

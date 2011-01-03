@@ -19,7 +19,7 @@
 
 package org.jclouds.nirvanix.sdn.filters;
 
-import static org.jclouds.http.HttpUtils.changePathTo;
+import java.net.URI;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -48,14 +48,15 @@ public class InsertUserContextIntoPath implements HttpRequestFilter {
 
    @Inject
    public InsertUserContextIntoPath(AddSessionTokenToRequest sessionManager,
-            @Named(SDNConstants.PROPERTY_SDN_APPNAME) String appname,
-            @Named(SDNConstants.PROPERTY_SDN_USERNAME) String username, Provider<UriBuilder> builder) {
+         @Named(SDNConstants.PROPERTY_SDN_APPNAME) String appname,
+         @Named(SDNConstants.PROPERTY_SDN_USERNAME) String username, Provider<UriBuilder> builder) {
       this.builder = builder;
       this.sessionManager = sessionManager;
       this.pathPrefix = String.format("/%s/%s/", appname, username);
    }
 
-   public void filter(HttpRequest request) throws HttpException {
+   @Override
+   public HttpRequest filter(HttpRequest request) throws HttpException {
       String sessionToken = sessionManager.getSessionToken();
       int prefixIndex = request.getEndpoint().getPath().indexOf(pathPrefix);
       String path;
@@ -64,7 +65,8 @@ public class InsertUserContextIntoPath implements HttpRequestFilter {
       } else { // replace token
          path = "/" + sessionToken + request.getEndpoint().getPath().substring(prefixIndex);
       }
-      changePathTo(request, path, builder.get());
+      URI newEndpoint = builder.get().uri(request.getEndpoint()).replacePath(path).build();
+      return request.toBuilder().endpoint(newEndpoint).build();
    }
 
 }

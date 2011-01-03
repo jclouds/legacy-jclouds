@@ -44,11 +44,11 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code ParseServerListFromJsonResponseTest}
+ * Tests behavior of {@code ParseServerListFromJsonResponse}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudservers.ParseServerListFromJsonResponseTest")
+@Test(groups = "unit")
 public class ParseServerListFromJsonResponseTest {
 
    Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());

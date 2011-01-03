@@ -41,7 +41,8 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.TaskHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "TaskHandlerTest")
 public class TaskHandlerTest extends BaseHandlerTest {
 
    private DateService dateService;

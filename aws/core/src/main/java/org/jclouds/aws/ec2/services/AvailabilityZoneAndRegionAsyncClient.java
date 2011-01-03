@@ -37,7 +37,7 @@ import org.jclouds.aws.ec2.options.DescribeRegionsOptions;
 import org.jclouds.aws.ec2.xml.DescribeAvailabilityZonesResponseHandler;
 import org.jclouds.aws.ec2.xml.DescribeRegionsResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.aws.functions.RegionToEndpoint;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
 import org.jclouds.rest.annotations.FormParams;
@@ -68,7 +68,7 @@ public interface AvailabilityZoneAndRegionAsyncClient {
    @XMLResponseParser(DescribeAvailabilityZonesResponseHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<? extends Set<AvailabilityZoneInfo>> describeAvailabilityZonesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             DescribeAvailabilityZonesOptions... options);
 
    /**

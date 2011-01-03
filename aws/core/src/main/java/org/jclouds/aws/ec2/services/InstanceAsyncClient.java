@@ -52,7 +52,7 @@ import org.jclouds.aws.ec2.xml.RunInstancesResponseHandler;
 import org.jclouds.aws.ec2.xml.StringValueHandler;
 import org.jclouds.aws.ec2.xml.UnencodeStringValueHandler;
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.aws.functions.RegionToEndpoint;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -83,7 +83,7 @@ public interface InstanceAsyncClient {
    @XMLResponseParser(DescribeInstancesResponseHandler.class)
    @ExceptionParser(ReturnEmptySetOnNotFoundOr404.class)
    ListenableFuture<Set<? extends Reservation<? extends RunningInstance>>> describeInstancesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
    /**
@@ -93,7 +93,7 @@ public interface InstanceAsyncClient {
    @Path("/")
    @FormParams(keys = ACTION, values = "RunInstances")
    @XMLResponseParser(RunInstancesResponseHandler.class)
-   ListenableFuture<Reservation<? extends RunningInstance>> runInstancesInRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+   ListenableFuture<Reservation<? extends RunningInstance>> runInstancesInRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @Nullable @BinderParam(IfNotNullBindAvailabilityZoneToFormParam.class) String nullableAvailabilityZone,
             @FormParam("ImageId") String imageId, @FormParam("MinCount") int minCount,
             @FormParam("MaxCount") int maxCount, RunInstancesOptions... options);
@@ -104,7 +104,7 @@ public interface InstanceAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = ACTION, values = "RebootInstances")
-   ListenableFuture<Void> rebootInstancesInRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+   ListenableFuture<Void> rebootInstancesInRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
    /**
@@ -115,7 +115,7 @@ public interface InstanceAsyncClient {
    @FormParams(keys = ACTION, values = "TerminateInstances")
    @XMLResponseParser(InstanceStateChangeHandler.class)
    ListenableFuture<Set<? extends InstanceStateChange>> terminateInstancesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
    /**
@@ -126,7 +126,7 @@ public interface InstanceAsyncClient {
    @FormParams(keys = ACTION, values = "StopInstances")
    @XMLResponseParser(InstanceStateChangeHandler.class)
    ListenableFuture<Set<? extends InstanceStateChange>> stopInstancesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region, @FormParam("Force") boolean force,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region, @FormParam("Force") boolean force,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
    /**
@@ -137,7 +137,7 @@ public interface InstanceAsyncClient {
    @FormParams(keys = ACTION, values = "StartInstances")
    @XMLResponseParser(InstanceStateChangeHandler.class)
    ListenableFuture<Set<? extends InstanceStateChange>> startInstancesInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @BinderParam(BindInstanceIdsToIndexedFormParams.class) String... instanceIds);
 
    /**
@@ -148,7 +148,7 @@ public interface InstanceAsyncClient {
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute", "userData" })
    @XMLResponseParser(UnencodeStringValueHandler.class)
    ListenableFuture<String> getUserDataForInstanceInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId);
 
    /**
@@ -159,7 +159,7 @@ public interface InstanceAsyncClient {
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute", "rootDeviceName" })
    @XMLResponseParser(StringValueHandler.class)
    ListenableFuture<String> getRootDeviceNameForInstanceInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId);
 
    /**
@@ -170,7 +170,7 @@ public interface InstanceAsyncClient {
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute", "ramdisk" })
    @XMLResponseParser(StringValueHandler.class)
    ListenableFuture<String> getRamdiskForInstanceInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId);
 
    /**
@@ -180,7 +180,7 @@ public interface InstanceAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute", "kernel" })
    @XMLResponseParser(StringValueHandler.class)
-   ListenableFuture<String> getKernelForInstanceInRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+   ListenableFuture<String> getKernelForInstanceInRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId);
 
    /**
@@ -191,7 +191,7 @@ public interface InstanceAsyncClient {
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute", "disableApiTermination" })
    @XMLResponseParser(BooleanValueHandler.class)
    ListenableFuture<Boolean> isApiTerminationDisabledForInstanceInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId);
 
    /**
@@ -202,7 +202,7 @@ public interface InstanceAsyncClient {
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute", "instanceType" })
    @XMLResponseParser(InstanceTypeHandler.class)
    ListenableFuture<String> getInstanceTypeForInstanceInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId);
 
    /**
@@ -214,7 +214,7 @@ public interface InstanceAsyncClient {
             "instanceInitiatedShutdownBehavior" })
    @XMLResponseParser(InstanceInitiatedShutdownBehaviorHandler.class)
    ListenableFuture<InstanceInitiatedShutdownBehavior> getInstanceInitiatedShutdownBehaviorForInstanceInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId);
 
    /**
@@ -225,7 +225,7 @@ public interface InstanceAsyncClient {
    @FormParams(keys = { ACTION, "Attribute" }, values = { "DescribeInstanceAttribute", "blockDeviceMapping" })
    @XMLResponseParser(BlockDeviceMappingHandler.class)
    ListenableFuture<? extends Map<String, RunningInstance.EbsBlockDevice>> getBlockDeviceMappingForInstanceInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId);
 
    /**
@@ -235,7 +235,7 @@ public interface InstanceAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "ResetInstanceAttribute", "ramdisk" })
    ListenableFuture<Void> resetRamdiskForInstanceInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId);
 
    /**
@@ -244,7 +244,7 @@ public interface InstanceAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "ResetInstanceAttribute", "kernel" })
-   ListenableFuture<Void> resetKernelForInstanceInRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+   ListenableFuture<Void> resetKernelForInstanceInRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId);
 
    /**
@@ -253,7 +253,7 @@ public interface InstanceAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "ModifyInstanceAttribute", "userData" })
-   ListenableFuture<Void> setUserDataForInstanceInRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+   ListenableFuture<Void> setUserDataForInstanceInRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId,
             @FormParam("Value") @ParamParser(ConvertUnencodedBytesToBase64EncodedString.class) byte[] unencodedData);
 
@@ -263,7 +263,7 @@ public interface InstanceAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "ModifyInstanceAttribute", "ramdisk" })
-   ListenableFuture<Void> setRamdiskForInstanceInRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+   ListenableFuture<Void> setRamdiskForInstanceInRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId, @FormParam("Value") String ramdisk);
 
    /**
@@ -272,7 +272,7 @@ public interface InstanceAsyncClient {
    @POST
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "ModifyInstanceAttribute", "kernel" })
-   ListenableFuture<Void> setKernelForInstanceInRegion(@EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+   ListenableFuture<Void> setKernelForInstanceInRegion(@EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId, @FormParam("Value") String kernel);
 
    /**
@@ -282,7 +282,7 @@ public interface InstanceAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "ModifyInstanceAttribute", "disableApiTermination" })
    ListenableFuture<Void> setApiTerminationDisabledForInstanceInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId, @FormParam("Value") boolean apiTerminationDisabled);
 
    /**
@@ -292,7 +292,7 @@ public interface InstanceAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION, "Attribute" }, values = { "ModifyInstanceAttribute", "instanceType" })
    ListenableFuture<Void> setInstanceTypeForInstanceInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId, @FormParam("Value") String instanceType);
 
    /**
@@ -303,7 +303,7 @@ public interface InstanceAsyncClient {
    @FormParams(keys = { ACTION, "Attribute" }, values = { "ModifyInstanceAttribute",
             "instanceInitiatedShutdownBehavior" })
    ListenableFuture<Void> setInstanceInitiatedShutdownBehaviorForInstanceInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId,
             @FormParam("Value") InstanceInitiatedShutdownBehavior instanceInitiatedShutdownBehavior);
 
@@ -314,7 +314,7 @@ public interface InstanceAsyncClient {
    @Path("/")
    @FormParams(keys = { ACTION }, values = { "ModifyInstanceAttribute" })
    ListenableFuture<Void> setBlockDeviceMappingForInstanceInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("InstanceId") String instanceId,
             @BinderParam(BindBlockDeviceMappingToIndexedFormParams.class) BlockDeviceMapping blockDeviceMapping);
 

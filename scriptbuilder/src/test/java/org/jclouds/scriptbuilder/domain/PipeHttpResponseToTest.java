@@ -30,7 +30,7 @@ import com.google.common.collect.ImmutableMultimap;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "scriptbuilder.PipeHttpResponseToTest")
+@Test(groups = "unit")
 public class PipeHttpResponseToTest {
    PipeHttpResponseTo bash = new PipeHttpResponseTo(Statements.interpret("bash"), "GET", URI
             .create("https://adriancolehappy.s3.amazonaws.com/java/install"), ImmutableMultimap.of("Host",

@@ -34,8 +34,10 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.Constants;
 import org.jclouds.http.HttpCommand;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpRetryHandler;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.logging.Logger;
 
 import com.google.inject.Inject;
@@ -70,28 +72,31 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
          URI redirectionUrl = URI.create(hostHeader);
 
          // if you are sent the same uri, assume there's a transient problem and retry.
-         if (redirectionUrl.equals(command.getRequest().getEndpoint()))
+         HttpRequest currentRequest = command.getCurrentRequest();
+         if (redirectionUrl.equals(currentRequest.getEndpoint()))
             return backoffHandler.shouldRetryRequest(command, response);
 
-         UriBuilder builder = uriBuilderProvider.get().uri(command.getRequest().getEndpoint());
+         UriBuilder builder = uriBuilderProvider.get().uri(currentRequest.getEndpoint());
          assert redirectionUrl.getPath() != null : "no path in redirect header from: " + response;
          builder.replacePath(redirectionUrl.getPath());
 
          if (redirectionUrl.getScheme() != null)
             builder.scheme(redirectionUrl.getScheme());
-
-         if (redirectionUrl.getHost() != null) {
-            builder.host(redirectionUrl.getHost());
-            if (command.getRequest().getFirstHeaderOrNull(HOST) != null)
-               command.getRequest().getHeaders().replaceValues(HOST, singletonList(redirectionUrl.getHost()));
-         }
-         if (redirectionUrl.getPort() != command.getRequest().getEndpoint().getPort())
+         if (redirectionUrl.getPort() != currentRequest.getEndpoint().getPort())
             builder.port(redirectionUrl.getPort());
-
          if (redirectionUrl.getQuery() != null)
             builder.replaceQuery(redirectionUrl.getQuery());
 
-         command.getRequest().setEndpoint(builder.build());
+         if (redirectionUrl.getHost() != null)
+            builder.host(redirectionUrl.getHost());
+
+         if (currentRequest.getFirstHeaderOrNull(HOST) != null && redirectionUrl.getHost() != null) {
+            command.setCurrentRequest(ModifyRequest
+                  .replaceHeader(currentRequest, HOST, singletonList(redirectionUrl.getHost())).toBuilder()
+                  .endpoint(builder.build()).build());
+         } else {
+            command.setCurrentRequest(currentRequest.toBuilder().endpoint(builder.build()).build());
+         }
          return true;
       } else {
          return false;

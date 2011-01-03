@@ -43,7 +43,7 @@ import com.google.inject.Injector;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "s3.S3RestClientModuleTest")
+@Test(groups = "unit")
 public class S3RestClientModuleTest {
 
    Injector createInjector() throws IOException {

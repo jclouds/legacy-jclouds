@@ -92,11 +92,11 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       this.client = client;
    }
 
-   @SuppressWarnings("unchecked")
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       checkArgument(checkNotNull(request, "request") instanceof GeneratedHttpRequest,
                "this binder is only valid for GeneratedHttpRequests!");
-      GeneratedHttpRequest gRequest = (GeneratedHttpRequest) request;
+      GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
       String name = checkNotNull(postParams.remove("name"), "name");
       final URI template = URI.create(checkNotNull(postParams.remove("template"), "template"));
@@ -125,7 +125,7 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
          networkConfig = ImmutableSet.of(networknetworkConfigDecorator.apply(null));
 
       try {
-         stringBinder.bindToRequest(request, generateXml(name, deploy, powerOn, template, networkConfig,
+         return stringBinder.bindToRequest(request, generateXml(name, deploy, powerOn, template, networkConfig,
                   customizeOnInstantiate));
       } catch (ParserConfigurationException e) {
          throw new RuntimeException(e);
@@ -254,8 +254,8 @@ public class BindInstantiateVAppTemplateParamsToXmlPayload implements MapBinder 
       }
       return null;
    }
-
-   public void bindToRequest(HttpRequest request, Object input) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       throw new IllegalStateException("InstantiateVAppTemplateParams is needs parameters");
    }
 

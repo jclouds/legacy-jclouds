@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" }, testName = "stub.StubTemplateBuilderIntegrationTest")
+@Test(groups = { "integration", "live" })
 public class StubTemplateBuilderIntegrationTest extends BaseTemplateBuilderLiveTest {
 
    public StubTemplateBuilderIntegrationTest() {

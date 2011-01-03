@@ -43,7 +43,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "cloudwatch.CloudWatchClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class CloudWatchClientLiveTest {
 
    private CloudWatchClient client;

@@ -19,7 +19,7 @@
 
 package org.jclouds.aws.sqs.config;
 
-import org.jclouds.aws.config.AWSFormSigningRestClientModule;
+import org.jclouds.aws.config.FormSigningRestClientModule;
 import org.jclouds.aws.sqs.SQSAsyncClient;
 import org.jclouds.aws.sqs.SQSClient;
 import org.jclouds.http.RequiresHttp;
@@ -32,7 +32,7 @@ import org.jclouds.rest.ConfiguresRestClient;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class SQSRestClientModule extends AWSFormSigningRestClientModule<SQSClient, SQSAsyncClient> {
+public class SQSRestClientModule extends FormSigningRestClientModule<SQSClient, SQSAsyncClient> {
 
    public SQSRestClientModule() {
       super(SQSClient.class, SQSAsyncClient.class);

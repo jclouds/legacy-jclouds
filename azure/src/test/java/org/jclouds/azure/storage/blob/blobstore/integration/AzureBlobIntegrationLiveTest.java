@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "azureblob.AzureBlobIntegrationTest")
+@Test(groups = "live")
 public class AzureBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
 
    @Override

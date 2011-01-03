@@ -19,7 +19,7 @@
 
 package org.jclouds.rest.functions;
 
-import static org.jclouds.util.Utils.propagateOrNull;
+import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import javax.inject.Singleton;
 

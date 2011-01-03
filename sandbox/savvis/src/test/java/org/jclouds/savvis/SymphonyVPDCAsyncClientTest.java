@@ -48,7 +48,7 @@ import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.savvis.config.SymphonyVPDCRestClientModule;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.CommonVCloudClient;
 import org.jclouds.vcloud.VCloudAsyncClient;
 import org.jclouds.vcloud.VCloudExpressMediaType;
@@ -93,7 +93,7 @@ import domain.VCloudVersionsAsyncClient;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "savvis.SymphonyVPDCAsyncClientTest")
+@Test(groups = "unit")
 public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyncClient> {
    public void testInstantiateVAppTemplateInVDCURI() throws SecurityException, NoSuchMethodException, IOException {
       Method method = SymphonyVPDCAsyncClient.class.getMethod("instantiateVAppTemplateInVDC", URI.class, URI.class,
@@ -107,7 +107,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
       assertPayloadEquals(
             request,
-            Utils.toStringAndClose(getClass().getResourceAsStream("/express/newvapp-hosting.xml")).replace(
+            Strings2.toStringAndClose(getClass().getResourceAsStream("/express/newvapp-hosting.xml")).replace(
                   "vcloud.safesecureweb.com/api", "api.sandbox.symphonyVPDC.savvis.net/rest/api"),
             "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
 
@@ -139,7 +139,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.vApp+xml\n");
       assertPayloadEquals(
             request,
-            Utils.toStringAndClose(getClass().getResourceAsStream("/express/newvapp-hostingcpumemdisk.xml")).replace(
+            Strings2.toStringAndClose(getClass().getResourceAsStream("/express/newvapp-hostingcpumemdisk.xml")).replace(
                   "vcloud.safesecureweb.com/api", "api.sandbox.symphonyVPDC.savvis.net/rest/api"),
             "application/vnd.vmware.vcloud.instantiateVAppTemplateParams+xml", false);
 
@@ -180,7 +180,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
       assertPayloadEquals(
             request,
-            Utils.toStringAndClose(getClass().getResourceAsStream("/express/cloneVApp-default.xml")).replace(
+            Strings2.toStringAndClose(getClass().getResourceAsStream("/express/cloneVApp-default.xml")).replace(
                   "vcloud.safesecureweb.com/api", "api.sandbox.symphonyVPDC.savvis.net/rest/api"),
             "application/vnd.vmware.vcloud.cloneVAppParams+xml", false);
 
@@ -202,7 +202,7 @@ public class SymphonyVPDCAsyncClientTest extends RestClientTest<SymphonyVPDCAsyn
       assertRequestLineEquals(request,
             "POST https://api.sandbox.symphonyVPDC.savvis.net/rest/api/v0.8/vdc/1/action/cloneVApp HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Accept: application/vnd.vmware.vcloud.task+xml\n");
-      assertPayloadEquals(request, Utils.toStringAndClose(getClass().getResourceAsStream("/express/cloneVApp.xml"))
+      assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/express/cloneVApp.xml"))
             .replace("vcloud.safesecureweb.com/api", "api.sandbox.symphonyVPDC.savvis.net/rest/api"),
             "application/vnd.vmware.vcloud.cloneVAppParams+xml", false);
 

@@ -36,9 +36,11 @@
         <module>archetypes</module>
         <module>core</module>
         <module>compute</module>
+        <module>loadbalancer</module>
+        <module>apis</module>
+        <module>providers</module>
         <module>blobstore</module>
         <module>skeletons</module>
-        <module>filesystem</module>
         <module>extensions</module>
         <module>tools</module>
         <module>scriptbuilder</module>
@@ -46,12 +48,8 @@
         <module>azure</module>
         <module>atmos</module>
         <module>rackspace</module>
-        <module>slicehost</module>
-        <module>rimuhosting</module>        
         <module>vcloud</module>
-        <module>gogrid</module>
         <module>elasticstack</module>
-        <module>cloudsigma</module>
         <module>allcompute</module>
         <module>allblobstore</module>
         <module>all</module>

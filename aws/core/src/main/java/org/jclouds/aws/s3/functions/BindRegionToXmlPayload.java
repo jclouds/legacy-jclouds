@@ -20,22 +20,17 @@
 package org.jclouds.aws.s3.functions;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_DEFAULT_REGIONS;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_REGIONS;
+
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.binders.BindToStringPayload;
-
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
 
 /**
  * 
@@ -50,39 +45,37 @@ public class BindRegionToXmlPayload extends BindToStringPayload {
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final Iterable<String> defaultRegions;
-   private final Iterable<String> regions;
+   private final String defaultRegion;
+   private final Set<String> regions;
 
    @Inject
-   BindRegionToXmlPayload(@Named(PROPERTY_DEFAULT_REGIONS) String defaultRegions,
-            @Named(PROPERTY_REGIONS) String regions) {
-      this.defaultRegions = Splitter.on(',').split(defaultRegions);
-      this.regions = Splitter.on(',').split(regions);
+   BindRegionToXmlPayload(@org.jclouds.location.Region String defaultRegion,
+         @org.jclouds.location.Region Set<String> regions) {
+      this.defaultRegion = defaultRegion;
+      this.regions = regions;
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Object input) {
-      input = input == null ? Iterables.get(defaultRegions, 0) : input;
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      input = input == null ? defaultRegion : input;
       checkArgument(input instanceof String, "this binder is only valid for Region!");
       String constraint = (String) input;
       String value = null;
-      if (Iterables.contains(defaultRegions, constraint)) {
+      if (defaultRegion.equals(constraint)) {
          // nothing to bind as this is default.
-         return;
-      } else if (Iterables.contains(regions, constraint)) {
+         return request;
+      } else if (regions.contains(constraint)) {
          value = constraint;
       } else {
-         if (constraint.equals(Region.EU_WEST_1)) {
-            value = "EU";
-         } else {
-            logger.warn("region %s not in %s ", constraint, regions);
-            value = constraint;
-         }
+         logger.warn("region %s not in %s ", constraint, regions);
+         value = constraint;
       }
-      String payload = String.format(
-               "<CreateBucketConfiguration><LocationConstraint>%s</LocationConstraint></CreateBucketConfiguration>",
-               value);
-      super.bindToRequest(request, payload);
+      String payload = String
+            .format(
+                  "<CreateBucketConfiguration><LocationConstraint>%s</LocationConstraint></CreateBucketConfiguration>",
+                  value);
+      request = super.bindToRequest(request, payload);
       request.getPayload().getContentMetadata().setContentType(MediaType.TEXT_XML);
+      return request;
    }
 }

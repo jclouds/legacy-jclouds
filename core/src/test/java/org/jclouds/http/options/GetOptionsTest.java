@@ -41,7 +41,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "http.GetOptionsTest")
+@Test(groups = "unit")
 public class GetOptionsTest {
 
    private String etag;

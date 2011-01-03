@@ -19,25 +19,23 @@
 
 package org.jclouds.http;
 
-import java.util.concurrent.SynchronousQueue;
-
 import java.util.concurrent.Future;
+import java.util.concurrent.SynchronousQueue;
 
 /**
  * Used for passing objects for response processing
  * 
  * @author Adrian Cole
  */
-public class HttpCommandRendezvous<T> {
+public class HttpCommandRendezvous<T, R extends HttpRequest> {
 
    private final HttpCommand command;
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings("rawtypes")
    private final SynchronousQueue rendezvous;
    private final Future<T> future;
 
-   @SuppressWarnings("unchecked")
-   public HttpCommandRendezvous(HttpCommand command, SynchronousQueue rendezvous,
-            Future<T> future) {
+   public HttpCommandRendezvous(HttpCommand command, @SuppressWarnings("rawtypes") SynchronousQueue rendezvous,
+         Future<T> future) {
       this.command = command;
       this.rendezvous = rendezvous;
       this.future = future;

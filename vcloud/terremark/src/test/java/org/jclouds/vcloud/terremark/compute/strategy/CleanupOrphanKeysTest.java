@@ -41,7 +41,7 @@ import com.google.common.collect.ImmutableSet;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "terremark.CleanupOrphanKeysTest")
+@Test(groups = "unit")
 public class CleanupOrphanKeysTest {
 
    public void testWhenNoDeletedNodes() {
@@ -181,6 +181,7 @@ public class CleanupOrphanKeysTest {
       NodeMetadataToOrgAndName nodeToOrgAndName = createMock(NodeMetadataToOrgAndName.class);
       DeleteKeyPair deleteKeyPair = createMock(DeleteKeyPair.class);
       ListNodesStrategy listNodes = createMock(ListNodesStrategy.class);
+      @SuppressWarnings("unchecked")
       Map<String, Credentials> credentialStore = createMock(Map.class);
       return new CleanupOrphanKeys(nodeToOrgAndName, deleteKeyPair, credentialStore, listNodes);
    }

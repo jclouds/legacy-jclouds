@@ -36,7 +36,8 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "s3.CopyObjectHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "CopyObjectHandlerTest")
 public class CopyObjectHandlerTest extends BaseHandlerTest {
 
    private DateService dateService;

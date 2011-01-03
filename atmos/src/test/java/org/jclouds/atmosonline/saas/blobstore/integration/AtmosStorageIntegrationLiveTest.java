@@ -34,7 +34,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" }, testName = "emcsaas.AtmosStorageIntegrationTest")
+@Test(groups = { "integration", "live" })
 public class AtmosStorageIntegrationLiveTest extends BaseBlobIntegrationTest {
 
    @DataProvider(name = "delete")

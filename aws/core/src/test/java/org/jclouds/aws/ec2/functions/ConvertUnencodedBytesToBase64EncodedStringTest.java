@@ -33,7 +33,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.ConvertUnencodedBytesToBase64EncodedStringTest")
+@Test(groups = "unit")
 public class ConvertUnencodedBytesToBase64EncodedStringTest {
    Injector injector = Guice.createInjector();
 

@@ -24,7 +24,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.net.URI;
 import java.util.List;
 
-import org.jclouds.http.HttpUtils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
@@ -47,12 +47,12 @@ public class Credentials {
       List<String> userInfo = Lists.newArrayList(Splitter.on(':').split(
                checkNotNull(uri.getUserInfo(), "no userInfo in " + uri)));
       String identity = checkNotNull(userInfo.get(0), "no username in " + uri.getUserInfo());
-      if (HttpUtils.isUrlEncoded(identity)) {
-         identity = HttpUtils.urlDecode(identity);
+      if (Strings2.isUrlEncoded(identity)) {
+         identity = Strings2.urlDecode(identity);
       }
       String credential = userInfo.size() > 1 ? userInfo.get(1) : null;
-      if (credential != null && HttpUtils.isUrlEncoded(credential)) {
-         credential = HttpUtils.urlDecode(credential);
+      if (credential != null && Strings2.isUrlEncoded(credential)) {
+         credential = Strings2.urlDecode(credential);
       }
       return new Credentials(identity, credential);
    }

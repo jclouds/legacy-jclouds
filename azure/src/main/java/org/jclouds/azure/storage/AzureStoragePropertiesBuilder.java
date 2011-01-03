@@ -28,7 +28,7 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 import org.jclouds.PropertiesBuilder;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 /**
  * Builds properties used in AzureBlob Connections
@@ -59,7 +59,7 @@ public class AzureStoragePropertiesBuilder extends PropertiesBuilder {
       String endpoint = properties.getProperty(PROPERTY_ENDPOINT);
       String identity = properties.getProperty(PROPERTY_IDENTITY);
 
-      properties.setProperty(PROPERTY_ENDPOINT, Utils.replaceAll(endpoint, IDENTITY_PATTERN,
+      properties.setProperty(PROPERTY_ENDPOINT, Strings2.replaceAll(endpoint, IDENTITY_PATTERN,
                identity));
       return super.build();
    }

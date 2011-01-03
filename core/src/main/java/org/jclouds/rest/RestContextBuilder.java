@@ -41,13 +41,13 @@ import org.jclouds.concurrent.config.ExecutorServiceModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.config.ConfiguresHttpCommandExecutorService;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
+import org.jclouds.location.Provider;
 import org.jclouds.logging.config.LoggingModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rest.annotations.Api;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.annotations.Credential;
 import org.jclouds.rest.annotations.Identity;
-import org.jclouds.rest.annotations.Provider;
 import org.jclouds.rest.config.CredentialStoreModule;
 import org.jclouds.rest.config.RestClientModule;
 import org.jclouds.rest.config.RestModule;
@@ -177,7 +177,7 @@ public class RestContextBuilder<S, A> {
    protected void addContextModule(List<Module> modules) {
       modules.add(new AbstractModule() {
 
-         @SuppressWarnings("unchecked")
+         @SuppressWarnings({ "unchecked", "rawtypes" })
          @Override
          protected void configure() {
             bind(
@@ -186,6 +186,11 @@ public class RestContextBuilder<S, A> {
                   TypeLiteral.get(Types.newParameterizedType(RestContextImpl.class, syncClientType, asyncClientType)))
                   .in(Scopes.SINGLETON);
 
+         }
+
+         public String toString() {
+            return String.format("configure rest context %s->%s", syncClientType.getSimpleName(),
+                  asyncClientType.getSimpleName());
          }
 
       });

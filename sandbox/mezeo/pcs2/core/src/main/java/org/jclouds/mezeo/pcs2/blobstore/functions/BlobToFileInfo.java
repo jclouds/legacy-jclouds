@@ -32,14 +32,15 @@ import com.google.common.base.Function;
  */
 @Singleton
 public class BlobToFileInfo implements Function<BlobMetadata, MutableFileInfo> {
+   @Override
    public MutableFileInfo apply(BlobMetadata base) {
       MutableFileInfo to = new MutableFileInfoImpl();
       to.setUrl(base.getUri());
-      to.setMimeType(base.getContentType());
+      to.setMimeType(base.getContentMetadata().getContentType());
       to.setName(base.getName());
       to.setModified(base.getLastModified());
-      if (base.getSize() != null)
-         to.setBytes(base.getSize());
+      if (base.getContentMetadata().getContentLength() != null)
+         to.setBytes(base.getContentMetadata().getContentLength());
       return to;
    }
 

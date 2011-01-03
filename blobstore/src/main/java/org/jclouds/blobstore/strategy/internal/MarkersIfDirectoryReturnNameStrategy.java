@@ -32,25 +32,25 @@ import org.jclouds.blobstore.strategy.IfDirectoryReturnNameStrategy;
  */
 @Singleton
 public class MarkersIfDirectoryReturnNameStrategy implements IfDirectoryReturnNameStrategy {
-
+   @Override
    public String execute(StorageMetadata metadata) {
       switch (metadata.getType()) {
-         case CONTAINER:
-         case FOLDER:
-         case RELATIVE_PATH:
-            return metadata.getName();
-         case BLOB:
-            BlobMetadata blobMd = (BlobMetadata) metadata;
-            for (String suffix : BlobStoreConstants.DIRECTORY_SUFFIXES) {
-               if (metadata.getName().endsWith(suffix)) {
-                  return metadata.getName().substring(0, metadata.getName().lastIndexOf(suffix));
-               }
+      case CONTAINER:
+      case FOLDER:
+      case RELATIVE_PATH:
+         return metadata.getName();
+      case BLOB:
+         BlobMetadata blobMd = (BlobMetadata) metadata;
+         for (String suffix : BlobStoreConstants.DIRECTORY_SUFFIXES) {
+            if (metadata.getName().endsWith(suffix)) {
+               return metadata.getName().substring(0, metadata.getName().lastIndexOf(suffix));
             }
-            // It is important that this is last, in case there is a file with a known directory
-            // suffix who also has content type set to application/directory
-            if (blobMd.getContentMetadata().getContentType() != null
-                     && blobMd.getContentMetadata().getContentType().equals("application/directory"))
-               return metadata.getName();
+         }
+         // It is important that this is last, in case there is a file with a known directory
+         // suffix who also has content type set to application/directory
+         if (blobMd.getContentMetadata().getContentType() != null
+               && blobMd.getContentMetadata().getContentType().equals("application/directory"))
+            return metadata.getName();
       }
       return null;
    }

@@ -22,7 +22,7 @@ package org.jclouds.atmosonline.saas.xml;
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
-import java.util.SortedSet;
+import java.util.Set;
 
 import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
 import org.jclouds.atmosonline.saas.domain.FileType;
@@ -37,24 +37,25 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "atmossaas.ListDirectoryResponseHandlerTest")
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "ListDirectoryResponseHandlerTest")
 public class ListDirectoryResponseHandlerTest extends BaseHandlerTest {
 
-   ParseSax<SortedSet<DirectoryEntry>> createParser() {
-      ParseSax<SortedSet<DirectoryEntry>> parser = (ParseSax<SortedSet<DirectoryEntry>>) factory
+   ParseSax<Set<DirectoryEntry>> createParser() {
+      ParseSax<Set<DirectoryEntry>> parser = (ParseSax<Set<DirectoryEntry>>) factory
                .create(injector.getInstance(ListDirectoryResponseHandler.class));
       return parser;
    }
 
    public void testApplyInputStreamBase() {
       InputStream is = getClass().getResourceAsStream("/list_basic.xml");
-      ParseSax<SortedSet<DirectoryEntry>> parser = createParser();
-      SortedSet<DirectoryEntry> expected = Sets.newTreeSet();
+      ParseSax<Set<DirectoryEntry>> parser = createParser();
+      Set<DirectoryEntry> expected = Sets.newTreeSet();
       expected.add(new DirectoryEntry("4980cdb2a411106a04a4538c92a1b204ad92077de6e3",
                FileType.DIRECTORY, "adriancole-blobstore-2096685753"));
       expected.add(new DirectoryEntry("4980cdb2a410105404980d99e53a0504ad93939e7dc3",
                FileType.DIRECTORY, "adriancole-blobstore247496608"));
-      SortedSet<DirectoryEntry> result = parser.parse(is);
+      Set<DirectoryEntry> result = parser.parse(is);
       assertEquals(result, expected);
    }
 }

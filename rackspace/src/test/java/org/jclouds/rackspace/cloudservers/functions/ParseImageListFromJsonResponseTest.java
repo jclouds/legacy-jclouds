@@ -42,11 +42,11 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code ParseImageListFromJsonResponseTest}
+ * Tests behavior of {@code ParseImageListFromJsonResponse}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudImages.ParseImageListFromJsonResponseTest")
+@Test(groups = "unit")
 public class ParseImageListFromJsonResponseTest {
    Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
    DateService dateService = i.getInstance(DateService.class);

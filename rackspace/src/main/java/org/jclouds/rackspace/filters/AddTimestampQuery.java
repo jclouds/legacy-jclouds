@@ -19,8 +19,6 @@
 
 package org.jclouds.rackspace.filters;
 
-import static org.jclouds.http.HttpUtils.addQueryParamTo;
-
 import java.util.Date;
 
 import javax.inject.Inject;
@@ -32,6 +30,7 @@ import org.jclouds.date.TimeStamp;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.utils.ModifyRequest;
 
 import com.google.common.base.Supplier;
 
@@ -52,8 +51,9 @@ public class AddTimestampQuery implements HttpRequestFilter {
       this.dateProvider = dateProvider;
    }
 
-   public void filter(HttpRequest request) throws HttpException {
-      addQueryParamTo(request, "now", dateProvider.get().getTime() + "", builder.get());
+   @Override
+   public HttpRequest filter(HttpRequest request) throws HttpException {
+      return ModifyRequest.addQueryParam(request, "now", dateProvider.get().getTime() + "", builder.get());
    }
 
 }

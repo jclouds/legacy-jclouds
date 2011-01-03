@@ -28,7 +28,7 @@ import javax.inject.Singleton;
 
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
 
@@ -47,7 +47,7 @@ public class ReturnStringIf2xx implements Function<HttpResponse, String> {
             InputStream payload = from.getPayload().getInput();
             String toReturn = null;
             try {
-               toReturn = Utils.toStringAndClose(payload);
+               toReturn = Strings2.toStringAndClose(payload);
             } catch (IOException e) {
                throw new HttpException(String.format(
                         "Couldn't receive response %1$s, payload: %2$s ", from, toReturn), e);

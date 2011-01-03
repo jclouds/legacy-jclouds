@@ -30,16 +30,12 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.compute.EC2ComputeService;
 import org.jclouds.aws.ec2.compute.domain.RegionAndName;
-import org.jclouds.aws.ec2.compute.strategy.EC2DestroyLoadBalancerStrategy;
-import org.jclouds.aws.ec2.compute.strategy.EC2LoadBalanceNodesStrategy;
 import org.jclouds.aws.ec2.compute.suppliers.RegionAndNameToImageSupplier;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
-import org.jclouds.compute.strategy.DestroyLoadBalancerStrategy;
-import org.jclouds.compute.strategy.LoadBalanceNodesStrategy;
-import org.jclouds.rest.annotations.Provider;
+import org.jclouds.location.Provider;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
 import com.google.common.base.Supplier;
@@ -85,9 +81,4 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
             });
    }
 
-   @Override
-   protected void bindLoadBalancerService() {
-      bind(LoadBalanceNodesStrategy.class).to(EC2LoadBalanceNodesStrategy.class);
-      bind(DestroyLoadBalancerStrategy.class).to(EC2DestroyLoadBalancerStrategy.class);
-   }
 }

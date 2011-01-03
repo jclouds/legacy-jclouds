@@ -32,20 +32,22 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * Tests behavior of {@code AttachmentHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.AttachmentHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "AttachmentHandlerTest")
 public class AttachmentHandlerTest extends BaseEC2HandlerTest {
    public void testApplyInputStream() {
       DateService dateService = injector.getInstance(DateService.class);
       InputStream is = getClass().getResourceAsStream("/ec2/attach.xml");
 
       Attachment expected = new Attachment(defaultRegion, "vol-4d826724", "i-6058a509", "/dev/sdh",
-               Attachment.Status.ATTACHING, dateService
-                        .iso8601DateParse("2008-05-07T11:51:50.000Z"));
+            Attachment.Status.ATTACHING, dateService.iso8601DateParse("2008-05-07T11:51:50.000Z"));
 
       AttachmentHandler handler = injector.getInstance(AttachmentHandler.class);
       addDefaultRegionToHandler(handler);
@@ -56,7 +58,7 @@ public class AttachmentHandlerTest extends BaseEC2HandlerTest {
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(new Object[] { null });
+      expect(request.getArgs()).andReturn(ImmutableList.<Object> of());
       replay(request);
       handler.setContext(request);
    }

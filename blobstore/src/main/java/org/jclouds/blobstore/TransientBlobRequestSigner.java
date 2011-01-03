@@ -48,26 +48,23 @@ public class TransientBlobRequestSigner implements BlobRequestSigner {
    @Override
    public HttpRequest signGetBlob(String container, String name) {
       HttpRequest request = new HttpRequest("GET", URI.create(String.format("http://localhost/%s/%s", container, name)));
-      basicAuth.filter(request);
-      return request;
+      return basicAuth.filter(request);
    }
 
    @Override
    public HttpRequest signPutBlob(String container, Blob blob) {
-      HttpRequest request = new HttpRequest("PUT", URI.create(String.format("http://localhost/%s/%s", container, blob
-               .getMetadata().getName())));
-      HttpUtils.addContentHeadersFromMetadata(blob.getMetadata().getContentMetadata(), request.getHeaders());
-      request.setPayload(blob.getPayload());
-      basicAuth.filter(request);
-      return request;
+      HttpRequest request = HttpRequest.builder().method("PUT")
+            .endpoint(URI.create(String.format("http://localhost/%s/%s", container, blob.getMetadata().getName())))
+            .payload(blob.getPayload())
+            .headers(HttpUtils.getContentHeadersFromMetadata(blob.getMetadata().getContentMetadata())).build();
+      return basicAuth.filter(request);
    }
 
    @Override
    public HttpRequest signRemoveBlob(String container, String name) {
       HttpRequest request = new HttpRequest("DELETE", URI.create(String.format("http://localhost/%s/%s", container,
-               name)));
-      basicAuth.filter(request);
-      return request;
+            name)));
+      return basicAuth.filter(request);
    }
 
 }

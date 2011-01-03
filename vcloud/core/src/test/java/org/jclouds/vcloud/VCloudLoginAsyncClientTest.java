@@ -32,9 +32,9 @@ import javax.ws.rs.core.HttpHeaders;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.filters.BasicAuthentication;
+import org.jclouds.location.Provider;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextSpec;
-import org.jclouds.rest.annotations.Provider;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.jclouds.vcloud.domain.VCloudSession;
 import org.jclouds.vcloud.endpoints.VCloudLogin;
@@ -49,11 +49,12 @@ import com.google.inject.TypeLiteral;
 import domain.VCloudExpressLoginAsyncClient;
 
 /**
- * Tests behavior of {@code VCloudLogin}
+ * Tests behavior of {@code VCloudLoginAsyncClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VCloudLoginTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "VCloudLoginAsyncClientTest")
 public class VCloudLoginAsyncClientTest extends RestClientTest<VCloudExpressLoginAsyncClient> {
 
    public void testLogin() throws SecurityException, NoSuchMethodException, IOException {

@@ -45,10 +45,11 @@ public class ParseSystemMetadataFromHeaders implements Function<HttpResponse, Sy
 
    @Inject
    public ParseSystemMetadataFromHeaders(DateService dateService) {
-      this.dateService = dateService;
+      this.dateService = checkNotNull(dateService, "dateService");
    }
 
    public SystemMetadata apply(HttpResponse from) {
+      checkNotNull(from, "http response");
       String meta = checkNotNull(from.getFirstHeaderOrNull(AtmosStorageHeaders.META), AtmosStorageHeaders.META);
       Map<String, String> metaMap = Maps.newHashMap();
       String[] metas = meta.split(", ");
@@ -59,12 +60,12 @@ public class ParseSystemMetadataFromHeaders implements Function<HttpResponse, Sy
       assert metaMap.size() >= 12 : String.format("Should be 12 entries in %s", metaMap);
       byte[] md5 = metaMap.containsKey("content-md5") ? CryptoStreams.hex(metaMap.get("content-md5")) : null;
       return new SystemMetadata(md5, dateService.iso8601SecondsDateParse(checkNotNull(metaMap.get("atime"), "atime")),
-               dateService.iso8601SecondsDateParse(checkNotNull(metaMap.get("ctime"), "ctime")), checkNotNull(metaMap
-                        .get("gid"), "gid"), dateService.iso8601SecondsDateParse(checkNotNull(metaMap.get("itime"),
-                        "itime")), dateService.iso8601SecondsDateParse(checkNotNull(metaMap.get("mtime"), "mtime")),
-               Integer.parseInt(checkNotNull(metaMap.get("nlink"), "nlink")), checkNotNull(metaMap.get("objectid"),
-                        "objectid"), checkNotNull(metaMap.get("objname"), "objname"), checkNotNull(metaMap
-                        .get("policyname"), "policyname"), Long.parseLong(checkNotNull(metaMap.get("size"), "size")),
-               FileType.fromValue(checkNotNull(metaMap.get("type"), "type")), checkNotNull(metaMap.get("uid"), "uid"));
+            dateService.iso8601SecondsDateParse(checkNotNull(metaMap.get("ctime"), "ctime")), checkNotNull(
+                  metaMap.get("gid"), "gid"), dateService.iso8601SecondsDateParse(checkNotNull(metaMap.get("itime"),
+                  "itime")), dateService.iso8601SecondsDateParse(checkNotNull(metaMap.get("mtime"), "mtime")),
+            Integer.parseInt(checkNotNull(metaMap.get("nlink"), "nlink")), checkNotNull(metaMap.get("objectid"),
+                  "objectid"), checkNotNull(metaMap.get("objname"), "objname"), checkNotNull(metaMap.get("policyname"),
+                  "policyname"), Long.parseLong(checkNotNull(metaMap.get("size"), "size")),
+            FileType.fromValue(checkNotNull(metaMap.get("type"), "type")), checkNotNull(metaMap.get("uid"), "uid"));
    }
 }

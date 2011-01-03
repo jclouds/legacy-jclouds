@@ -28,12 +28,12 @@ import javax.inject.Inject;
 
 import org.jclouds.domain.Credentials;
 import org.jclouds.lifecycle.Closer;
+import org.jclouds.location.Provider;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.Utils;
 import org.jclouds.rest.annotations.ApiVersion;
 import org.jclouds.rest.annotations.Identity;
-import org.jclouds.rest.annotations.Provider;
 
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -138,7 +138,6 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
       return result;
    }
 
-   @SuppressWarnings("unchecked")
    @Override
    public boolean equals(Object obj) {
       if (this == obj)
@@ -147,7 +146,7 @@ public class RestContextImpl<S, A> implements RestContext<S, A> {
          return false;
       if (getClass() != obj.getClass())
          return false;
-      RestContextImpl other = (RestContextImpl) obj;
+      RestContextImpl<?, ?> other = (RestContextImpl<?, ?>) obj;
       if (apiVersion == null) {
          if (other.apiVersion != null)
             return false;

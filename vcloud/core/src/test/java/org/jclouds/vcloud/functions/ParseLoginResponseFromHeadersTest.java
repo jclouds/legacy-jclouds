@@ -35,10 +35,15 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
 
 /**
+ * Tests behavior of {@code ParseLoginResponseFromHeaders}
+ * 
  * @author Adrian Cole
  */
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "ParseLoginResponseFromHeadersTest")
 public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
 
    private ParseLoginResponseFromHeaders parser;
@@ -51,11 +56,10 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
    @Test
    public void testApply() {
       HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
-            .getResourceAsStream("/orglist.xml")));
+            .getResourceAsStream("/orglist.xml")), ImmutableMultimap.<String,String>of(HttpHeaders.SET_COOKIE, "vcloud-token=9er4d061-4bff-48fa-84b1-5da7166764d2; path=/"));
       response.getPayload().getContentMetadata().setContentType("Content-Type: application/xml; charset=utf-8");
       response.getPayload().getContentMetadata().setContentLength(307l);
 
-      response.getHeaders().put(HttpHeaders.SET_COOKIE, "vcloud-token=9er4d061-4bff-48fa-84b1-5da7166764d2; path=/");
       VCloudSession reply = parser.apply(response);
       assertEquals(reply.getVCloudToken(), "9er4d061-4bff-48fa-84b1-5da7166764d2");
       assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new ReferenceTypeImpl("adrian@jclouds.org",
@@ -66,12 +70,10 @@ public class ParseLoginResponseFromHeadersTest extends BaseHandlerTest {
    @Test
    public void testApplyBlueLock() {
       HttpResponse response = new HttpResponse(200, "OK", Payloads.newInputStreamPayload(getClass()
-            .getResourceAsStream("/orglist.xml")));
+            .getResourceAsStream("/orglist.xml")), ImmutableMultimap.<String,String>of(HttpHeaders.SET_COOKIE,"vcloud-token=c9f232506df9b65d7b7d97b7499eddd7; Domain=.bluelock.com; Path=/") );
       response.getPayload().getContentMetadata().setContentType("Content-Type: application/xml; charset=utf-8");
       response.getPayload().getContentMetadata().setContentLength(307l);
 
-      response.getHeaders().put(HttpHeaders.SET_COOKIE,
-            "vcloud-token=c9f232506df9b65d7b7d97b7499eddd7; Domain=.bluelock.com; Path=/");
       VCloudSession reply = parser.apply(response);
       assertEquals(reply.getVCloudToken(), "c9f232506df9b65d7b7d97b7499eddd7");
       assertEquals(reply.getOrgs(), ImmutableMap.of("adrian@jclouds.org", new ReferenceTypeImpl("adrian@jclouds.org",

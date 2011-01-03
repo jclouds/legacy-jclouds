@@ -54,7 +54,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "azurequeue.AzureQueueAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "AzureQueueAsyncClientTest")
 public class AzureQueueAsyncClientTest extends RestClientTest<AzureQueueAsyncClient> {
 
    public void testGetMessages() throws SecurityException, NoSuchMethodException, IOException {

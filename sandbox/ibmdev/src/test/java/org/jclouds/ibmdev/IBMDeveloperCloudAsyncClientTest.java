@@ -54,7 +54,6 @@ import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
-import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -72,7 +71,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testListImages() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("listImages");
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method);
+      HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
             "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/offerings/image HTTP/1.1");
@@ -80,8 +79,8 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
       assertPayloadEquals(httpRequest, null, null, false);
 
       // now make sure request filters apply by replaying
-      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
-      Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
+      httpRequest = Iterables.getOnlyElement(httpRequest.getFilters()).filter(httpRequest);
 
       assertRequestLineEquals(httpRequest,
             "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/offerings/image HTTP/1.1");
@@ -101,7 +100,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testGetImage() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("getImage", String.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
+      HttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
             "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/offerings/image/1 HTTP/1.1");
@@ -118,7 +117,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testDeleteImage() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("deleteImage", String.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
+      HttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
             "DELETE https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/offerings/image/1 HTTP/1.1");
@@ -136,7 +135,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
    public void testSetImageVisibility() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("setImageVisibility", String.class,
             Image.Visibility.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1",
+      HttpRequest httpRequest = processor.createRequest(method, "1",
             Image.Visibility.PUBLIC);
 
       assertRequestLineEquals(httpRequest,
@@ -154,7 +153,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testListInstances() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("listInstances");
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method);
+      HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
             "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/instances HTTP/1.1");
@@ -171,7 +170,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testListInstancesFromRequest() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("listInstancesFromRequest", String.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
+      HttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
             "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/requests/1 HTTP/1.1");
@@ -188,7 +187,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testGetInstance() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("getInstance", String.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
+      HttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
             "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/instances/1 HTTP/1.1");
@@ -206,7 +205,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
    public void testExtendReservationForInstance() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("extendReservationForInstance", String.class,
             Date.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1", new Date(
+      HttpRequest httpRequest = processor.createRequest(method, "1", new Date(
             123215235l));
 
       assertRequestLineEquals(httpRequest,
@@ -224,7 +223,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
    public void testRestartInstance() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("restartInstance", String.class,
             RestartInstanceOptions[].class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
+      HttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
             "PUT https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/instances/1 HTTP/1.1");
@@ -241,7 +240,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
    public void testRestartInstanceNewKey() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("restartInstance", String.class,
             RestartInstanceOptions[].class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1",
+      HttpRequest httpRequest = processor.createRequest(method, "1",
             new RestartInstanceOptions().authorizePublicKey("keyName"));
 
       assertRequestLineEquals(httpRequest,
@@ -259,7 +258,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
    public void testSaveInstanceToImage() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("saveInstanceToImage", String.class, String.class,
             String.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1",
+      HttpRequest httpRequest = processor.createRequest(method, "1",
             "imageName", "imageDescription");
 
       assertRequestLineEquals(httpRequest,
@@ -277,7 +276,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testDeleteInstance() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("deleteInstance", String.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
+      HttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
             "DELETE https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/instances/1 HTTP/1.1");
@@ -294,7 +293,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testListKeys() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("listKeys");
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method);
+      HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
             "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/keys HTTP/1.1");
@@ -311,7 +310,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testGetKey() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("getKey", String.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
+      HttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
             "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/keys/1 HTTP/1.1");
@@ -328,7 +327,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testGenerateKeyPair() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("generateKeyPair", String.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "key");
+      HttpRequest httpRequest = processor.createRequest(method, "key");
 
       assertRequestLineEquals(httpRequest,
             "POST https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/keys HTTP/1.1");
@@ -345,7 +344,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testAddPublicKey() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("addPublicKey", String.class, String.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "key",
+      HttpRequest httpRequest = processor.createRequest(method, "key",
             "publicbits");
 
       assertRequestLineEquals(httpRequest,
@@ -363,7 +362,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testUpdatePublicKey() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("updatePublicKey", String.class, String.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "key",
+      HttpRequest httpRequest = processor.createRequest(method, "key",
             "publicbits");
 
       assertRequestLineEquals(httpRequest,
@@ -382,7 +381,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
    public void testSetDefaultStatusOfKey() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class
             .getMethod("setDefaultStatusOfKey", String.class, boolean.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "key", true);
+      HttpRequest httpRequest = processor.createRequest(method, "key", true);
 
       assertRequestLineEquals(httpRequest,
             "PUT https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/keys/key HTTP/1.1");
@@ -399,7 +398,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testDeleteKey() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("deleteKey", String.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
+      HttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
             "DELETE https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/keys/1 HTTP/1.1");
@@ -416,7 +415,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testListVolumes() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("listVolumes");
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method);
+      HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
             "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/storage HTTP/1.1");
@@ -433,7 +432,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testGetVolume() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("getVolume", String.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
+      HttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
             "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/storage/1 HTTP/1.1");
@@ -451,13 +450,13 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
    public void testCreateVolumeInLocation() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("createVolumeInLocation", String.class,
             String.class, String.class, String.class, String.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "location",
+      HttpRequest httpRequest = processor.createRequest(method, "location",
             "name", "format", "size", "offering");
 
       assertRequestLineEquals(httpRequest,
             "POST https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/storage HTTP/1.1");
       assertNonPayloadHeadersEqual(httpRequest, "Accept: application/json\n");
-      assertPayloadEquals(httpRequest, "location=location&format=format&name=name&size=size&offeringID=offering",
+      assertPayloadEquals(httpRequest, "location=location&format=format&name=name&offeringID=offering&size=size",
             "application/x-www-form-urlencoded", false);
 
       assertResponseParserClassEquals(method, httpRequest, ParseVolumeFromJson.class);
@@ -471,7 +470,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
    public void testCreateInstanceInLocation() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("createInstanceInLocation", String.class,
             String.class, String.class, String.class, CreateInstanceOptions[].class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1", "name",
+      HttpRequest httpRequest = processor.createRequest(method, "1", "name",
             "22", "instanceType");
 
       assertRequestLineEquals(httpRequest,
@@ -490,7 +489,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
    public void testCreateInstanceInLocationWithOptions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("createInstanceInLocation", String.class,
             String.class, String.class, String.class, CreateInstanceOptions[].class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "location",
+      HttpRequest httpRequest = processor.createRequest(method, "location",
             "name", "22", "instanceType", new CreateInstanceOptions().attachIp("1").authorizePublicKey("MOO")
                   .mountVolume("2", "/mnt").configurationData(
                         ImmutableMap.of("insight_admin_password", "myPassword1", "db2_admin_password", "myPassword2",
@@ -514,7 +513,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testDeleteVolume() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("deleteVolume", String.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
+      HttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
             "DELETE https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/storage/1 HTTP/1.1");
@@ -531,7 +530,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testListLocations() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("listLocations");
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method);
+      HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
             "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/locations HTTP/1.1");
@@ -548,7 +547,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testGetLocation() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("getLocation", String.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
+      HttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
             "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/locations/1 HTTP/1.1");
@@ -565,7 +564,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testListAddresses() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("listAddresses");
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method);
+      HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
             "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/addresses HTTP/1.1");
@@ -583,7 +582,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
    public void testAllocateAddressInLocation() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("allocateAddressInLocation", String.class,
             String.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1", "offering");
+      HttpRequest httpRequest = processor.createRequest(method, "1", "offering");
 
       assertRequestLineEquals(httpRequest,
             "POST https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/addresses HTTP/1.1");
@@ -600,7 +599,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testReleaseAddress() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("releaseAddress", String.class);
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method, "1");
+      HttpRequest httpRequest = processor.createRequest(method, "1");
 
       assertRequestLineEquals(httpRequest,
             "DELETE https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/addresses/1 HTTP/1.1");
@@ -617,7 +616,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testListStorageOfferings() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("listStorageOfferings");
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method);
+      HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
             "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/offerings/storage HTTP/1.1");
@@ -633,7 +632,7 @@ public class IBMDeveloperCloudAsyncClientTest extends RestClientTest<IBMDevelope
 
    public void testListAddressOfferings() throws SecurityException, NoSuchMethodException, IOException {
       Method method = IBMDeveloperCloudAsyncClient.class.getMethod("listAddressOfferings");
-      GeneratedHttpRequest<IBMDeveloperCloudAsyncClient> httpRequest = processor.createRequest(method);
+      HttpRequest httpRequest = processor.createRequest(method);
 
       assertRequestLineEquals(httpRequest,
             "GET https://www-147.ibm.com/computecloud/enterprise/api/rest/20100331/offerings/address HTTP/1.1");

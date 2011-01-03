@@ -27,14 +27,15 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 
 /**
- * Binds the String [] to form parameters named with UserId.index
+ * Binds the Iterable to form parameters named with UserId.index
  * 
  * @author Adrian Cole
  */
 @Singleton
 public class BindUserIdsToIndexedFormParams implements Binder {
-   public void bindToRequest(HttpRequest request, Object input) {
-      indexIterableToFormValuesWithPrefix(request, "UserId", input);
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      return indexIterableToFormValuesWithPrefix(request, "UserId", input);
    }
 
 }

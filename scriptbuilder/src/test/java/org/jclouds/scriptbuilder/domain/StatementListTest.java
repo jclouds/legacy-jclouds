@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "scriptbuilder.StatementListTest")
+@Test(groups = "unit")
 public class StatementListTest {
    Statement statement = newStatementList(call("default"), interpret("echo started{lf}"));
 

@@ -35,14 +35,15 @@ import com.google.common.base.Function;
  * @see ParseMetadataFromHeaders
  * @author Adrian Cole
  */
-public class ParseObjectFromHeadersAndHttpContent implements Function<HttpResponse, S3Object>, InvocationContext {
+public class ParseObjectFromHeadersAndHttpContent implements Function<HttpResponse, S3Object>,
+      InvocationContext<ParseObjectFromHeadersAndHttpContent> {
 
    private final ParseObjectMetadataFromHeaders metadataParser;
    private final S3Object.Factory objectProvider;
 
    @Inject
    public ParseObjectFromHeadersAndHttpContent(ParseObjectMetadataFromHeaders metadataParser,
-            S3Object.Factory objectProvider) {
+         S3Object.Factory objectProvider) {
       this.metadataParser = metadataParser;
       this.objectProvider = objectProvider;
    }

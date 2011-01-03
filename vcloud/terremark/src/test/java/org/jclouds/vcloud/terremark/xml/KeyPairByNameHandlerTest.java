@@ -33,12 +33,15 @@ import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.terremark.domain.KeyPair;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
+
 /**
  * Tests behavior of {@code KeyPairByNameHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.KeyPairByNameHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "KeyPairByNameHandlerTest")
 public class KeyPairByNameHandlerTest extends BaseHandlerTest {
 
    public void testGood() throws UnknownHostException {
@@ -46,9 +49,9 @@ public class KeyPairByNameHandlerTest extends BaseHandlerTest {
 
       KeyPair result = factory.create(
             addOrgAndNameToHandler(injector.getInstance(KeyPairByNameHandler.class), "org", "default")).parse(is);
-      assertEquals(result, new KeyPair(URI
-            .create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/extensions/key/9"), "default", true,
-            null, "4e:af:8a:9f:e9:d2:72:d7:4b:a0:da:98:72:98:4d:7d"));
+      assertEquals(result,
+            new KeyPair(URI.create("https://services.vcloudexpress.terremark.com/api/v0.8a-ext1.6/extensions/key/9"),
+                  "default", true, null, "4e:af:8a:9f:e9:d2:72:d7:4b:a0:da:98:72:98:4d:7d"));
 
    }
 
@@ -63,7 +66,7 @@ public class KeyPairByNameHandlerTest extends BaseHandlerTest {
 
    private static KeyPairByNameHandler addOrgAndNameToHandler(KeyPairByNameHandler handler, String org, String name) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(new Object[] { org, name }).anyTimes();
+      expect(request.getArgs()).andReturn(ImmutableList.<Object> of(org, name)).anyTimes();
       replay(request);
       handler.setContext(request);
       return handler;

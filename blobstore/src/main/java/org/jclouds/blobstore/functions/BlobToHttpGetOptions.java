@@ -19,6 +19,8 @@
 
 package org.jclouds.blobstore.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.inject.Singleton;
 
 import org.jclouds.http.options.GetOptions;
@@ -29,33 +31,34 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class BlobToHttpGetOptions implements
-         Function<org.jclouds.blobstore.options.GetOptions, GetOptions> {
+public class BlobToHttpGetOptions implements Function<org.jclouds.blobstore.options.GetOptions, GetOptions> {
+
    @Override
    public GetOptions apply(org.jclouds.blobstore.options.GetOptions from) {
+      checkNotNull(from, "options");
+      if (from == org.jclouds.blobstore.options.GetOptions.NONE)
+         return GetOptions.NONE;
       GetOptions httpOptions = new GetOptions();
-      if (from != null && from != org.jclouds.blobstore.options.GetOptions.NONE) {
-         if (from.getIfMatch() != null) {
-            httpOptions.ifETagMatches(from.getIfMatch());
-         }
-         if (from.getIfModifiedSince() != null) {
-            httpOptions.ifModifiedSince(from.getIfModifiedSince());
-         }
-         if (from.getIfNoneMatch() != null) {
-            httpOptions.ifETagDoesntMatch(from.getIfNoneMatch());
-         }
-         if (from.getIfUnmodifiedSince() != null) {
-            httpOptions.ifUnmodifiedSince(from.getIfUnmodifiedSince());
-         }
-         for (String range : from.getRanges()) {
-            String[] firstLast = range.split("\\-");
-            if (firstLast.length == 2)
-               httpOptions.range(Long.parseLong(firstLast[0]), Long.parseLong(firstLast[1]));
-            else if (range.startsWith("-"))
-               httpOptions.tail(Long.parseLong(firstLast[0]));
-            else
-               httpOptions.startAt(Long.parseLong(firstLast[0]));
-         }
+      if (from.getIfMatch() != null) {
+         httpOptions.ifETagMatches(from.getIfMatch());
+      }
+      if (from.getIfModifiedSince() != null) {
+         httpOptions.ifModifiedSince(from.getIfModifiedSince());
+      }
+      if (from.getIfNoneMatch() != null) {
+         httpOptions.ifETagDoesntMatch(from.getIfNoneMatch());
+      }
+      if (from.getIfUnmodifiedSince() != null) {
+         httpOptions.ifUnmodifiedSince(from.getIfUnmodifiedSince());
+      }
+      for (String range : from.getRanges()) {
+         String[] firstLast = range.split("\\-");
+         if (firstLast.length == 2)
+            httpOptions.range(Long.parseLong(firstLast[0]), Long.parseLong(firstLast[1]));
+         else if (range.startsWith("-"))
+            httpOptions.tail(Long.parseLong(firstLast[0]));
+         else
+            httpOptions.startAt(Long.parseLong(firstLast[0]));
       }
       return httpOptions;
    }

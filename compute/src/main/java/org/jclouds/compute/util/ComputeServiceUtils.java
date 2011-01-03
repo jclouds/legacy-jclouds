@@ -27,7 +27,6 @@ import static com.google.common.collect.Iterables.find;
 import static com.google.common.collect.Iterables.size;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.scriptbuilder.domain.Statements.pipeHttpResponseToBash;
-import static org.jclouds.util.Utils.getSupportedProvidersOfType;
 
 import java.net.URI;
 import java.util.Formatter;
@@ -49,6 +48,7 @@ import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
+import org.jclouds.rest.Providers;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.SshClient;
@@ -180,7 +180,7 @@ public class ComputeServiceUtils {
    }
 
    public static Iterable<String> getSupportedProviders() {
-      return getSupportedProvidersOfType(ComputeServiceContextBuilder.class);
+      return Providers.getSupportedProvidersOfType(ComputeServiceContextBuilder.class);
    }
 
    public static IPSocket findReachableSocketOnNode(RetryIfSocketNotYetOpen socketTester, final NodeMetadata node,

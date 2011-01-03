@@ -50,7 +50,7 @@ import org.jclouds.aws.s3.domain.AccessControlList.Permission;
 import org.jclouds.aws.s3.options.PutObjectOptions;
 import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Throwables;
@@ -61,7 +61,7 @@ import com.google.common.collect.Maps;
  * @author James Murty
  * @author Adrian Cole
  */
-@Test(groups = { "integration", "live" }, testName = "s3.S3ClientLiveTest")
+@Test(groups = { "integration", "live" })
 public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
    public S3Client getApi() {
       return (S3Client) context.getProviderSpecificContext().getApi();
@@ -98,7 +98,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
          withAcl(CannedAccessPolicy.PUBLIC_READ));
 
          URL url = new URL(String.format("http://%1$s.s3.amazonaws.com/%2$s", containerName, key));
-         Utils.toStringAndClose(url.openStream());
+         Strings2.toStringAndClose(url.openStream());
       } finally {
          returnContainer(containerName);
       }
@@ -119,7 +119,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
 
          URL url = new URL(String.format("http://%1$s.s3.amazonaws.com/%2$s", destinationContainer,
                   destinationKey));
-         Utils.toStringAndClose(url.openStream());
+         Strings2.toStringAndClose(url.openStream());
 
       } finally {
          returnContainer(containerName);
@@ -280,7 +280,7 @@ public class S3ClientLiveTest extends BaseBlobStoreIntegrationTest {
       assertConsistencyAwareContainerSize(sourceContainer, 1);
       S3Object newObject = getApi().getObject(sourceContainer, key);
       assert newObject != null;
-      assertEquals(Utils.toStringAndClose(newObject.getPayload().getInput()), TEST_STRING);
+      assertEquals(Strings2.toStringAndClose(newObject.getPayload().getInput()), TEST_STRING);
       return newObject;
    }
 

@@ -42,7 +42,7 @@ import org.jclouds.nirvanix.sdn.reference.SDNConstants;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.rest.RestContextFactory.ContextSpec;
+import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
@@ -184,7 +184,7 @@ public class SDNAsyncClientTest extends RestClientTest<SDNAsyncClient> {
    }
 
    @Override
-   public ContextSpec<SDNClient, SDNAsyncClient> createContextSpec() {
+   public RestContextSpec<SDNClient, SDNAsyncClient> createContextSpec() {
       return new RestContextFactory().createContextSpec("sdn", "user", "password", new Properties());
    }
 }

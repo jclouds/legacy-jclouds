@@ -51,7 +51,7 @@ public abstract class BasePerformanceLiveTest extends BaseBlobStoreIntegrationTe
       containerCount = 1;
    }
    protected int timeoutSeconds = 15;
-   protected int loopCount = Integer.parseInt(System.getProperty("jclouds.test.loopcount", "1000"));
+   protected int loopCount = Integer.parseInt(System.getProperty("test.s3.loopcount", "1000"));
    protected ExecutorService exec;
    protected Logger logger = Logger.NULL;;
 

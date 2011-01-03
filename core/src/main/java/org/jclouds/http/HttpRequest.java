@@ -21,7 +21,6 @@ package org.jclouds.http;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.newArrayList;
 
 import java.net.URI;
 import java.util.Arrays;
@@ -31,20 +30,75 @@ import javax.annotation.Nullable;
 
 import org.jclouds.io.Payload;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
 /**
- * Represents a request that can be executed within
- * {@link HttpCommandExecutorService}
+ * Represents a request that can be executed within {@link HttpCommandExecutorService}
  * 
  * @author Adrian Cole
  */
 public class HttpRequest extends HttpMessage {
+   public static Builder<? extends HttpRequest> builder() {
+      return new Builder<HttpRequest>();
+   }
 
-   private List<HttpRequestFilter> requestFilters = newArrayList();
-   private String method;
-   private URI endpoint;
-   private char[] skips;
+   public static class Builder<T extends HttpRequest> extends HttpMessage.Builder<T> {
+      protected String method;
+      protected URI endpoint;
+      protected char[] skips = new char[] {};
+      protected List<HttpRequestFilter> requestFilters = ImmutableList.of();
+
+      public Builder<T> filters(List<HttpRequestFilter> requestFilters) {
+         this.requestFilters = ImmutableList.copyOf(checkNotNull(requestFilters, "requestFilters"));
+         return this;
+      }
+
+      public Builder<T> method(String method) {
+         this.method = checkNotNull(method, "method");
+         return this;
+      }
+
+      public Builder<T> endpoint(URI endpoint) {
+         this.endpoint = checkNotNull(endpoint, "endpoint");
+         return this;
+      }
+
+      public Builder<T> skips(char[] skips) {
+         char[] retval = new char[checkNotNull(skips, "skips").length];
+         System.arraycopy(skips, 0, retval, 0, skips.length);
+         this.skips = retval;
+         return this;
+      }
+
+      @Override
+      public Builder<T> payload(Payload payload) {
+         return (Builder<T>) super.payload(payload);
+      }
+
+      @Override
+      public Builder<T> headers(Multimap<String, String> headers) {
+         return (Builder<T>) super.headers(headers);
+      }
+
+      @Override
+      @SuppressWarnings("unchecked")
+      public T build() {
+         return (T) new HttpRequest(method, endpoint, skips, requestFilters, payload, headers);
+      }
+
+      public static <X extends HttpRequest> Builder<X> from(X input) {
+         return new Builder<X>().method(input.getMethod()).endpoint(input.getEndpoint()).skips(input.getSkips())
+               .filters(input.getFilters()).payload(input.getPayload()).headers(input.getHeaders());
+      }
+
+   }
+
+   private final List<HttpRequestFilter> requestFilters;
+   private final String method;
+   private final URI endpoint;
+   private final char[] skips;
 
    /**
     * 
@@ -58,10 +112,16 @@ public class HttpRequest extends HttpMessage {
    }
 
    public HttpRequest(String method, URI endpoint, char[] skips) {
-      this.setMethod(checkNotNull(method, "method"));
-      this.setEndpoint(checkNotNull(endpoint, "endpoint"));
-      checkArgument(endpoint.getHost() != null, String.format("endpoint.getHost() is null for %s", endpoint));
-      this.skips = skips;
+      this(method, endpoint, skips, ImmutableList.<HttpRequestFilter> of());
+   }
+
+   public HttpRequest(String method, URI endpoint, char[] skips, List<HttpRequestFilter> requestFilters) {
+      this(method, endpoint, skips, requestFilters, null);
+   }
+
+   public HttpRequest(String method, URI endpoint, char[] skips, List<HttpRequestFilter> requestFilters,
+         @Nullable Payload payload) {
+      this(method, endpoint, skips, requestFilters, payload, ImmutableMultimap.<String, String> of());
    }
 
    /**
@@ -72,8 +132,17 @@ public class HttpRequest extends HttpMessage {
     *           If the request is HEAD, this may change to GET due to redirects
     */
    public HttpRequest(String method, URI endpoint, Multimap<String, String> headers) {
-      this(method, endpoint);
-      getHeaders().putAll(checkNotNull(headers, "headers"));
+      this(method, endpoint, new char[] {}, ImmutableList.<HttpRequestFilter> of(), null, headers);
+   }
+
+   public HttpRequest(String method, URI endpoint, char[] skips, List<HttpRequestFilter> requestFilters,
+         @Nullable Payload payload, Multimap<String, String> headers) {
+      super(payload, headers);
+      this.method = checkNotNull(method, "method");
+      this.endpoint = checkNotNull(endpoint, "endpoint");
+      checkArgument(endpoint.getHost() != null, String.format("endpoint.getHost() is null for %s", endpoint));
+      this.skips = checkNotNull(skips, "skips");
+      this.requestFilters = ImmutableList.<HttpRequestFilter> copyOf(checkNotNull(requestFilters, "requestFilters"));
    }
 
    /**
@@ -84,9 +153,7 @@ public class HttpRequest extends HttpMessage {
     *           If the request is HEAD, this may change to GET due to redirects
     */
    protected HttpRequest(String method, URI endpoint, Multimap<String, String> headers, @Nullable Payload payload) {
-      this(method, endpoint);
-      getHeaders().putAll(checkNotNull(headers, "headers"));
-      setPayload(payload);
+      this(method, endpoint, new char[] {}, ImmutableList.<HttpRequestFilter> of(), payload, headers);
    }
 
    public String getRequestLine() {
@@ -94,12 +161,10 @@ public class HttpRequest extends HttpMessage {
    }
 
    /**
-    * We cannot return an enum, as per specification custom methods are allowed.
-    * Enums are not extensible.
+    * We cannot return an enum, as per specification custom methods are allowed. Enums are not
+    * extensible.
     * 
-    * @see <a
-    *      href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1.1"
-    *      >rfc2616</a>
+    * @see <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1.1" >rfc2616</a>
     */
    public String getMethod() {
       return method;
@@ -110,10 +175,6 @@ public class HttpRequest extends HttpMessage {
     */
    public char[] getSkips() {
       return skips;
-   }
-
-   public void setSkips(char[] skips) {
-      this.skips = skips;
    }
 
    public URI getEndpoint() {
@@ -128,12 +189,9 @@ public class HttpRequest extends HttpMessage {
       return requestFilters;
    }
 
-   public void setMethod(String method) {
-      this.method = method;
-   }
-
-   public void setEndpoint(URI endpoint) {
-      this.endpoint = endpoint;
+   @Override
+   public Builder<? extends HttpRequest> toBuilder() {
+      return Builder.from(this);
    }
 
    @Override

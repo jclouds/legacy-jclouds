@@ -20,7 +20,7 @@
 package org.jclouds.blobstore;
 
 import static org.jclouds.rest.RestContextFactory.createContextBuilder;
-import static org.jclouds.util.Utils.propagateAuthorizationOrOriginalException;
+import static org.jclouds.util.Throwables2.propagateAuthorizationOrOriginalException;
 
 import java.util.Properties;
 

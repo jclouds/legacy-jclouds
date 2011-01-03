@@ -49,7 +49,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "ec2.KeyPairClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class KeyPairClientLiveTest {
 
    private KeyPairClient client;

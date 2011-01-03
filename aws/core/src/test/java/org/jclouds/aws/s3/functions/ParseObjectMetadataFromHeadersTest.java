@@ -43,6 +43,7 @@ import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
 
 /**
  * @author Adrian Cole
@@ -52,14 +53,14 @@ public class ParseObjectMetadataFromHeadersTest {
 
    @Test
    void testNormal() throws Exception {
-      HttpResponse http = new HttpResponse(400, "boa", Payloads.newStringPayload(""));
+      HttpResponse http = new HttpResponse(400, "boa", Payloads.newStringPayload(""), ImmutableMultimap.of(
+            HttpHeaders.CACHE_CONTROL, "cacheControl"));
       http.getPayload().getContentMetadata().setContentLength(1025l);
-
-      http.getHeaders().put(HttpHeaders.CACHE_CONTROL, "cacheControl");
       http.getPayload().getContentMetadata().setContentDisposition("contentDisposition");
       http.getPayload().getContentMetadata().setContentEncoding("encoding");
+
       ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(blobParser(http, "\"abcd\""),
-               blobToObjectMetadata, "x-amz-meta-");
+            blobToObjectMetadata, "x-amz-meta-");
       MutableObjectMetadata response = parser.apply(http);
       assertEquals(response, expects);
    }
@@ -67,14 +68,14 @@ public class ParseObjectMetadataFromHeadersTest {
    @Test
    void testAmzEtag() throws Exception {
 
-      HttpResponse http = new HttpResponse(400, "boa", Payloads.newStringPayload(""));
+      HttpResponse http = new HttpResponse(400, "boa", Payloads.newStringPayload(""), ImmutableMultimap.of(
+            HttpHeaders.CACHE_CONTROL, "cacheControl", "x-amz-meta-object-eTag", "\"abcd\""));
+
       http.getPayload().getContentMetadata().setContentLength(1025l);
       http.getPayload().getContentMetadata().setContentDisposition("contentDisposition");
       http.getPayload().getContentMetadata().setContentEncoding("encoding");
-      http.getHeaders().put(HttpHeaders.CACHE_CONTROL, "cacheControl");
-      http.getHeaders().put("x-amz-meta-object-eTag", "\"abcd\"");
       ParseObjectMetadataFromHeaders parser = new ParseObjectMetadataFromHeaders(blobParser(http, null),
-               blobToObjectMetadata, "x-amz-meta-");
+            blobToObjectMetadata, "x-amz-meta-");
       MutableObjectMetadata response = parser.apply(http);
       assertEquals(response, expects);
    }

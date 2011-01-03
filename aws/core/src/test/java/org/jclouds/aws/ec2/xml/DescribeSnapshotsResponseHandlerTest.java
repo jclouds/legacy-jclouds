@@ -33,6 +33,7 @@ import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 
 /**
@@ -40,7 +41,8 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.DescribeSnapshotsResponseHandlerTest")
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "DescribeSnapshotsResponseHandlerTest")
 public class DescribeSnapshotsResponseHandlerTest extends BaseEC2HandlerTest {
    public void testApplyInputStream() {
       DateService dateService = injector.getInstance(DateService.class);
@@ -61,7 +63,7 @@ public class DescribeSnapshotsResponseHandlerTest extends BaseEC2HandlerTest {
 
    private void addDefaultRegionToHandler(ParseSax.HandlerWithResult<?> handler) {
       GeneratedHttpRequest<?> request = createMock(GeneratedHttpRequest.class);
-      expect(request.getArgs()).andReturn(new Object[] { null });
+      expect(request.getArgs()).andReturn(ImmutableList.<Object>of());
       replay(request);
       handler.setContext(request);
    }

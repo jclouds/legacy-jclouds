@@ -20,30 +20,32 @@
 package org.jclouds.mezeo.pcs2.binders;
 
 import java.io.File;
-import java.util.Collections;
 
+import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
 
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.mezeo.pcs2.domain.PCSFile;
 import org.jclouds.rest.Binder;
+
+import com.google.common.collect.ImmutableMultimap;
 
 /**
  * 
  * @author Adrian Cole
  * 
  */
+@Singleton
 public class BindFileInfoToXmlPayload implements Binder {
 
-   public void bindToRequest(HttpRequest request, Object toBind) {
-      PCSFile blob = (PCSFile) toBind;
-      String file = String.format(
-               "<file><name>%s</name><mime_type>%s</mime_type><public>false</public></file>",
-               new File(blob.getMetadata().getName()).getName(), blob.getMetadata().getMimeType());
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      PCSFile blob = (PCSFile) input;
+      String file = String.format("<file><name>%s</name><mime_type>%s</mime_type><public>false</public></file>",
+            new File(blob.getMetadata().getName()).getName(), blob.getMetadata().getMimeType());
       request.setPayload(file);
-      request.getHeaders().replaceValues(HttpHeaders.CONTENT_LENGTH,
-               Collections.singletonList(file.getBytes().length + ""));
-      request.getHeaders().replaceValues(HttpHeaders.CONTENT_TYPE,
-               Collections.singletonList("application/vnd.csp.file-info+xml"));
+      return ModifyRequest.replaceHeaders(request, ImmutableMultimap.<String, String> of(HttpHeaders.CONTENT_LENGTH,
+            file.getBytes().length + "", HttpHeaders.CONTENT_TYPE, "application/vnd.csp.file-info+xml"));
    }
 }

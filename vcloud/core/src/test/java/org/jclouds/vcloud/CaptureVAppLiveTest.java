@@ -46,7 +46,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true, testName = "vcloud.CaptureVAppLiveTest")
+@Test(groups = "live", enabled = true, sequential = true)
 public class CaptureVAppLiveTest {
 
 

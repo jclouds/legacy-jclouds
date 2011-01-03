@@ -23,7 +23,7 @@ import static org.testng.Assert.assertEquals;
 
 import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 /**
@@ -33,7 +33,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "live" }, testName = "blobstore.BlobLiveTest")
+@Test(groups = { "live" })
 public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
 
    @Test
@@ -69,7 +69,7 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
          context.getBlobStore().putBlob(container, blob);
          HttpRequest request = context.getSigner().signGetBlob(container, name);
          assertEquals(request.getFilters().size(), 0);
-         assertEquals(Utils.toStringAndClose(context.utils().http().invoke(request)), text);
+         assertEquals(Strings2.toStringAndClose(context.utils().http().invoke(request).getPayload().getInput()), text);
       } finally {
          returnContainer(container);
       }
@@ -87,7 +87,7 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
       try {
          HttpRequest request = context.getSigner().signPutBlob(container, blob);
          assertEquals(request.getFilters().size(), 0);
-         Utils.toStringAndClose(context.utils().http().invoke(request));
+         Strings2.toStringAndClose(context.utils().http().invoke(request).getPayload().getInput());
          assert context.getBlobStore().blobExists(container, name);
       } finally {
          returnContainer(container);

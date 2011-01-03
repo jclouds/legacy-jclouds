@@ -37,7 +37,7 @@ import javax.inject.Named;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.internal.ClassMethodArgs;
 import org.jclouds.rest.annotations.Delegate;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Throwables2;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
@@ -131,11 +131,11 @@ public class SyncProxy implements InvocationHandler {
             return ((ListenableFuture<?>) methodMap.get(method).invoke(delegate, args)).get(timeoutMap.get(method),
                   TimeUnit.NANOSECONDS);
          } catch (ProvisionException e) {
-            throw Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(method.getExceptionTypes(), e);
+            throw Throwables2.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(method.getExceptionTypes(), e);
          } catch (ExecutionException e) {
-            throw Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(method.getExceptionTypes(), e);
+            throw Throwables2.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(method.getExceptionTypes(), e);
          } catch (Exception e) {
-            throw Utils.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(method.getExceptionTypes(), e);
+            throw Throwables2.returnFirstExceptionIfInListOrThrowStandardExceptionOrCause(method.getExceptionTypes(), e);
          }
       }
    }

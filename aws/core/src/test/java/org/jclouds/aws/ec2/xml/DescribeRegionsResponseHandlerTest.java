@@ -29,8 +29,8 @@ import org.jclouds.aws.domain.Region;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
-import org.jclouds.rest.annotations.Provider;
-import org.jclouds.util.Utils;
+import org.jclouds.location.Provider;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -39,11 +39,12 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 
 /**
- * Tests behavior of {@code RegionEndpointHandler}
+ * Tests behavior of {@code DescribeRegionsResponseHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.RegionEndpointHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "DescribeRegionsResponseHandlerTest")
 public class DescribeRegionsResponseHandlerTest extends BaseHandlerTest {
    @BeforeTest
    @Override
@@ -83,7 +84,7 @@ public class DescribeRegionsResponseHandlerTest extends BaseHandlerTest {
 
    public void testEuc() {
 
-      InputStream is = Utils
+      InputStream is = Strings2
             .toInputStream("<DescribeRegionsResponse xmlns=\"http://ec2.amazonaws.com/doc/2010-06-15/\"><requestId>6a3b36f9-9ff4-47cf-87e3-285b08fbe5e5</requestId><regionInfo><item><regionName>Eucalyptus</regionName><regionEndpoint>http://173.205.188.130:8773/services/Eucalyptus</regionEndpoint></item><item><regionName>Walrus</regionName><regionEndpoint>http://173.205.188.130:8773/services/Walrus</regionEndpoint></item></regionInfo></DescribeRegionsResponse>");
 
       Map<String, URI> expected = ImmutableMap.<String, URI> of("Eucalyptus",
@@ -98,7 +99,7 @@ public class DescribeRegionsResponseHandlerTest extends BaseHandlerTest {
    
    public void testEuc2() {
 
-      InputStream is = Utils
+      InputStream is = Strings2
             .toInputStream("<?xml version=\"1.0\" ?><DescribeRegionsResponse xmlns=\"http://ec2.amazonaws.com/doc/2009-11-30/\"><requestId>1LAQRTCLTLPS6CEIC627</requestId><regionInfo><item><regionUrl>http://10.255.255.1:8773/services/Cloud</regionUrl><regionName>nova</regionName></item></regionInfo></DescribeRegionsResponse>");
 
       Map<String, URI> expected = ImmutableMap.<String, URI> of("nova",

@@ -34,7 +34,7 @@ import org.jclouds.elasticstack.domain.Server;
 import org.jclouds.elasticstack.domain.VNC;
 import org.jclouds.elasticstack.functions.ServerToMap;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Function;
@@ -54,7 +54,7 @@ public class BindServerToPlainTextStringTest {
    public static String CREATED_SERVER;
    static {
       try {
-         CREATED_SERVER = Utils.toStringAndClose(BindServerToPlainTextStringTest.class
+         CREATED_SERVER = Strings2.toStringAndClose(BindServerToPlainTextStringTest.class
                .getResourceAsStream("/create_server.txt"));
       } catch (IOException e) {
          CREATED_SERVER = null;

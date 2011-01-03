@@ -84,7 +84,6 @@ public class Region {
     */
    public static final String AP_SOUTHEAST_1 = "ap-southeast-1";
 
-   public static Set<String> ALL_SIMPLEDB = ImmutableSet.of(EU_WEST_1, US_EAST_1, US_WEST_1, AP_SOUTHEAST_1);
    public static Set<String> ALL_S3 = ImmutableSet.of(EU, US_STANDARD, US_WEST_1, AP_SOUTHEAST_1);
    public static Set<String> ALL_SQS = ImmutableSet.of(EU_WEST_1, US_STANDARD, US_EAST_1, US_WEST_1, AP_SOUTHEAST_1);
 }

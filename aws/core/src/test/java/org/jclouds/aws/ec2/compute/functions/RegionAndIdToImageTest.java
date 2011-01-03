@@ -42,10 +42,10 @@ import com.google.common.collect.ImmutableSet;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.RegionAndIdToImageTest")
+@Test(groups = "unit")
 public class RegionAndIdToImageTest {
 
-   @SuppressWarnings({ "unchecked" })
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Test
    public void testApply() {
 
@@ -77,7 +77,7 @@ public class RegionAndIdToImageTest {
 
    }
 
-   @SuppressWarnings({ "unchecked" })
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Test
    public void testApplyNotFound() {
 
@@ -109,7 +109,7 @@ public class RegionAndIdToImageTest {
 
    }
 
-   @SuppressWarnings({ "unchecked" })
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    @Test
    public void testApplyNoSuchElementException() {
 

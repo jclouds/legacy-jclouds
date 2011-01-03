@@ -51,7 +51,7 @@ public class IBMDeveloperCloudLocationSupplier implements Supplier<Set<? extends
 
    @Inject
    IBMDeveloperCloudLocationSupplier(IBMDeveloperCloudClient sync,
-            @org.jclouds.rest.annotations.Provider String providerName) {
+            @org.jclouds.location.Provider String providerName) {
       this.sync = sync;
       this.providerName = providerName;
 

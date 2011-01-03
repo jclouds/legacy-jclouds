@@ -31,7 +31,7 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.io.Payload;
 import org.jclouds.scriptbuilder.domain.Statement;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Preconditions2;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -80,7 +80,7 @@ public class EC2TemplateOptions extends TemplateOptions {
    public EC2TemplateOptions securityGroups(Iterable<String> groupIds) {
       checkArgument(Iterables.size(groupIds) > 0, "you must specify at least one security group");
       for (String groupId : groupIds)
-         Utils.checkNotEmpty(groupId, "all security groups must be non-empty");
+         Preconditions2.checkNotEmpty(groupId, "all security groups must be non-empty");
       this.groupIds = ImmutableSet.copyOf(groupIds);
       return this;
    }
@@ -112,7 +112,7 @@ public class EC2TemplateOptions extends TemplateOptions {
    public EC2TemplateOptions keyPair(String keyPair) {
       checkNotNull(keyPair, "use noKeyPair option to request boot without a keypair");
       checkState(!noKeyPair, "you cannot specify both options keyPair and noKeyPair");
-      Utils.checkNotEmpty(keyPair, "keypair must be non-empty");
+      Preconditions2.checkNotEmpty(keyPair, "keypair must be non-empty");
       this.keyPair = keyPair;
       return this;
    }
@@ -132,7 +132,7 @@ public class EC2TemplateOptions extends TemplateOptions {
    public EC2TemplateOptions placementGroup(String placementGroup) {
       checkNotNull(placementGroup, "use noPlacementGroup option to request boot without a keypair");
       checkState(!noPlacementGroup, "you cannot specify both options placementGroup and noPlacementGroup");
-      Utils.checkNotEmpty(placementGroup, "placementGroup must be non-empty");
+      Preconditions2.checkNotEmpty(placementGroup, "placementGroup must be non-empty");
       this.placementGroup = placementGroup;
       return this;
    }
@@ -151,7 +151,7 @@ public class EC2TemplateOptions extends TemplateOptions {
     */
    public EC2TemplateOptions subnetId(String subnetId) {
       checkNotNull(subnetId, "subnetId cannot be null");
-      Utils.checkNotEmpty(subnetId, "subnetId must be non-empty");
+      Preconditions2.checkNotEmpty(subnetId, "subnetId must be non-empty");
       this.subnetId = subnetId;
       return this;
    }

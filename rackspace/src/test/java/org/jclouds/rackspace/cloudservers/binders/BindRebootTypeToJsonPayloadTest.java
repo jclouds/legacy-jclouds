@@ -40,7 +40,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudservers.BindRebootTypeToJsonPayloadTest")
+@Test(groups = "unit")
 public class BindRebootTypeToJsonPayloadTest {
 
    Injector injector = Guice.createInjector(new GsonModule());

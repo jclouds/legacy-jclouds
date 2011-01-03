@@ -48,7 +48,7 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Predicate;
@@ -275,7 +275,7 @@ public class JschSshClient implements SshClient {
          executor.setErrStream(error);
          try {
             executor.connect();
-            String outputString = Utils.toStringAndClose(executor.getInputStream());
+            String outputString = Strings2.toStringAndClose(executor.getInputStream());
             String errorString = error.toString();
             int errorStatus = executor.getExitStatus();
             int i = 0;

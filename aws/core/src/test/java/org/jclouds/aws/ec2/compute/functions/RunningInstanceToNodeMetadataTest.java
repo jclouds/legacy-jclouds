@@ -58,7 +58,7 @@ import javax.annotation.Nullable;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.RunningInstanceToNodeMetadataTest")
+@Test(groups = "unit")
 public class RunningInstanceToNodeMetadataTest {
 
    public void testAllStatesCovered() {

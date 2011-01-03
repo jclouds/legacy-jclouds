@@ -31,8 +31,9 @@ import org.jclouds.rest.binders.BindToStringPayload;
  */
 @Singleton
 public class BindToXmlStringPayload extends BindToStringPayload {
-   public void bindToRequest(HttpRequest request, Object payload) {
-      super.bindToRequest(request, new StringBuilder().append("<QueueMessage><MessageText>")
-               .append(payload).append("</MessageText></QueueMessage>").toString());
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
+      return super.bindToRequest(request, new StringBuilder().append("<QueueMessage><MessageText>").append(payload)
+            .append("</MessageText></QueueMessage>").toString());
    }
 }

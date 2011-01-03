@@ -20,7 +20,6 @@
 package org.jclouds.vcloud.terremark.binders;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.util.Utils.replaceTokens;
 import static org.jclouds.vcloud.terremark.reference.TerremarkConstants.PROPERTY_TERREMARK_EXTENSION_NS;
 
 import java.util.Map;
@@ -32,6 +31,7 @@ import javax.inject.Singleton;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
+import org.jclouds.util.Strings2;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -48,26 +48,26 @@ public class BindCreateKeyToXmlPayload implements MapBinder {
    private final String ns;
 
    @Inject
-   BindCreateKeyToXmlPayload(@Named(PROPERTY_TERREMARK_EXTENSION_NS) String ns,
-            @Named("CreateKey") String xmlTemplate, BindToStringPayload stringBinder) {
+   BindCreateKeyToXmlPayload(@Named(PROPERTY_TERREMARK_EXTENSION_NS) String ns, @Named("CreateKey") String xmlTemplate,
+         BindToStringPayload stringBinder) {
       this.ns = ns;
       this.xmlTemplate = xmlTemplate;
       this.stringBinder = stringBinder;
    }
 
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       String name = checkNotNull(postParams.get("name"), "name parameter not present");
-      String isDefault = checkNotNull(postParams.get("isDefault"),
-               "isDefault parameter not present");
+      String isDefault = checkNotNull(postParams.get("isDefault"), "isDefault parameter not present");
 
-      String payload = replaceTokens(xmlTemplate, ImmutableMap.of("name", name, "isDefault",
-               isDefault, "ns", ns));
-      stringBinder.bindToRequest(request, payload);
+      String payload = Strings2.replaceTokens(xmlTemplate,
+            ImmutableMap.of("name", name, "isDefault", isDefault, "ns", ns));
+      return stringBinder.bindToRequest(request, payload);
    }
 
-   public void bindToRequest(HttpRequest request, Object input) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       throw new IllegalStateException("CreateKey needs parameters");
-
    }
 
 }

@@ -22,6 +22,8 @@ package org.jclouds.atmosonline.saas.domain.internal;
 import org.jclouds.atmosonline.saas.domain.MutableContentMetadata;
 import org.jclouds.io.payloads.BaseMutableContentMetadata;
 
+import com.google.common.collect.Multimap;
+
 /**
  * 
  * @author Adrian Cole
@@ -148,6 +150,11 @@ public class DelegatingMutableContentMetadata implements MutableContentMetadata 
    @Override
    public String getContentLanguage() {
       return delegate.getContentLanguage();
+   }
+
+   @Override
+   public void setPropertiesFromHttpHeaders(Multimap<String, String> headers) {
+      delegate.setPropertiesFromHttpHeaders(headers);
    }
 
 }

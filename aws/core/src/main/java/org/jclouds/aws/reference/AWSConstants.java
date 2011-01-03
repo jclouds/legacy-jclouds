@@ -25,8 +25,7 @@ package org.jclouds.aws.reference;
  * @author Adrian Cole
  */
 public interface AWSConstants {
-   public static final String PROPERTY_REGIONS = "jclouds.aws.regions";
-   public static final String PROPERTY_DEFAULT_REGIONS = "jclouds.aws.default_regions";
+   public static final String PROPERTY_ZONECLIENT_ENDPOINT = "jclouds.aws.zoneclient-endpoint";
    public static final String PROPERTY_AUTH_TAG = "jclouds.aws.auth.tag";
    public static final String PROPERTY_HEADER_TAG = "jclouds.aws.header.tag";
 }

@@ -26,7 +26,7 @@ import java.util.Arrays;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.io.Payload;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Preconditions2;
 
 /**
  * Contains options supported in the {@code ComputeService#runNode} operation on the
@@ -58,7 +58,7 @@ public class TerremarkVCloudTemplateOptions extends TemplateOptions {
    public TerremarkVCloudTemplateOptions sshKeyFingerprint(String keyPair) {
       checkNotNull(keyPair, "use noKeyPair option to request boot without a keypair");
       checkState(!noKeyPair, "you cannot specify both options keyPair and noKeyPair");
-      Utils.checkNotEmpty(keyPair, "keypair must be non-empty");
+      Preconditions2.checkNotEmpty(keyPair, "keypair must be non-empty");
       this.keyPair = keyPair;
       return this;
    }

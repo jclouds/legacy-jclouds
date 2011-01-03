@@ -21,7 +21,6 @@ package org.jclouds.nirvanix.sdn.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.http.HttpUtils.addQueryParamTo;
 
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,7 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
 import com.google.common.collect.Lists;
@@ -47,14 +47,13 @@ public class BindMetadataToQueryParams implements Binder {
    }
 
    @SuppressWarnings("unchecked")
-   public void bindToRequest(HttpRequest request, Object input) {
-      checkArgument(checkNotNull(input, "input") instanceof Map,
-               "this binder is only valid for Maps!");
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof Map, "this binder is only valid for Maps!");
       Map<String, String> userMetadata = (Map<String, String>) input;
       List<String> metadata = Lists.newArrayList();
       for (Entry<String, String> entry : userMetadata.entrySet()) {
          metadata.add(String.format("%s:%s", entry.getKey().toLowerCase(), entry.getValue()));
       }
-      addQueryParamTo(request, "metadata", metadata, builder.get());
+      return ModifyRequest.addQueryParam(request, "metadata", metadata, builder.get());
    }
 }

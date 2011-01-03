@@ -40,14 +40,14 @@ import com.google.common.collect.ImmutableMap;
 public class BindResizeFlavorToJsonPayload extends BindToJsonPayload {
 
    @Override
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       throw new IllegalStateException("Resize doesn't take map parameters");
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Object toBind) {
+   public <R extends HttpRequest> R bindToRequest(R request, Object toBind) {
       checkArgument(toBind instanceof Integer, "this binder is only valid for integers!");
-      super.bindToRequest(request, ImmutableMap.of("resize", ImmutableMap.of("flavorId",
+      return super.bindToRequest(request, ImmutableMap.of("resize", ImmutableMap.of("flavorId",
                (Integer) checkNotNull(toBind, "flavorId"))));
    }
 }

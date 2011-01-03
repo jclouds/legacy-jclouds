@@ -48,7 +48,7 @@ import com.google.common.base.Objects;
  * @author Adrian Cole
  */
 public class ParseAuthenticationResponseFromHeaders implements Function<HttpResponse, AuthenticationResponse>,
-      InvocationContext {
+      InvocationContext<ParseAuthenticationResponseFromHeaders> {
 
    public static final class AuthenticationResponseImpl implements AuthenticationResponse {
 
@@ -136,7 +136,7 @@ public class ParseAuthenticationResponseFromHeaders implements Function<HttpResp
    }
 
    @Override
-   public Object setContext(HttpRequest request) {
+   public ParseAuthenticationResponseFromHeaders setContext(HttpRequest request) {
       hostToReplace = request.getEndpoint().getHost();
       return this;
    }

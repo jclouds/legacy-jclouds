@@ -33,14 +33,10 @@ import static com.google.common.collect.Sets.difference;
 import static com.google.common.collect.Sets.newHashSet;
 import static com.google.common.collect.Sets.newTreeSet;
 import static java.util.Arrays.asList;
-import static javax.ws.rs.core.HttpHeaders.*;
+import static javax.ws.rs.core.HttpHeaders.ACCEPT;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_TYPE;
 import static javax.ws.rs.core.HttpHeaders.HOST;
-import static org.jclouds.http.HttpUtils.makeQueryLine;
-import static org.jclouds.http.HttpUtils.parseQueryToMap;
-import static org.jclouds.http.HttpUtils.urlEncode;
 import static org.jclouds.io.Payloads.newPayload;
-import static org.jclouds.util.Utils.replaceTokens;
 
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -56,9 +52,9 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
-import java.util.Map.Entry;
 
 import javax.annotation.Nullable;
 import javax.annotation.Resource;
@@ -77,21 +73,24 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 
+import org.jclouds.functions.IdentityFunction;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpUtils;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.functions.ParseURIFromListOrLocationHeaderIf20x;
 import org.jclouds.http.functions.ReleasePayloadAndReturn;
 import org.jclouds.http.functions.ReturnInputStream;
 import org.jclouds.http.functions.ReturnStringIf2xx;
 import org.jclouds.http.functions.ReturnTrueIf2xx;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
-import org.jclouds.http.functions.ParseSax.HandlerWithResult;
 import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.internal.ClassMethodArgs;
+import org.jclouds.io.ContentMetadata;
 import org.jclouds.io.Payload;
 import org.jclouds.io.PayloadEnclosing;
 import org.jclouds.io.Payloads;
@@ -124,15 +123,20 @@ import org.jclouds.rest.annotations.Unwrap;
 import org.jclouds.rest.annotations.VirtualHost;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.MapHttp4xxCodesToExceptions;
+import org.jclouds.util.Strings2;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -249,7 +253,7 @@ public class RestAnnotationProcessor<T> {
          transformer = injector.getInstance(getParserOrThrowException(method));
       }
       if (transformer instanceof InvocationContext) {
-         ((InvocationContext) transformer).setContext((GeneratedHttpRequest<?>) request);
+         ((InvocationContext<?>) transformer).setContext(request);
       }
       return transformer;
    }
@@ -399,11 +403,21 @@ public class RestAnnotationProcessor<T> {
          }
       } catch (IllegalStateException e) {
          logger.trace("looking up default endpoint for %s", cma);
-         endpoint = injector.getInstance(Key.get(URI.class, org.jclouds.rest.annotations.Provider.class));
+         endpoint = injector.getInstance(Key.get(URI.class, org.jclouds.location.Provider.class));
          logger.trace("using default endpoint %s for %s", endpoint, cma);
       }
+      GeneratedHttpRequest.Builder<T> requestBuilder;
+      HttpRequest r = RestAnnotationProcessor.findHttpRequestInArgs(args);
+      if (r != null) {
+         requestBuilder = GeneratedHttpRequest.Builder.<T> from(r);
+         endpoint = r.getEndpoint();
+      } else {
+         requestBuilder = GeneratedHttpRequest.<T> builder();
+         requestBuilder.method(getHttpMethodOrConstantOrThrowException(method));
+      }
 
-      String httpMethod = getHttpMethodOrConstantOrThrowException(method);
+      requestBuilder.declaring(declaring).javaMethod(method).args(args).skips(skips);
+      requestBuilder.filters(getFiltersIfAnnotated(method));
 
       UriBuilder builder = uriBuilderProvider.get().uri(endpoint);
 
@@ -413,26 +427,27 @@ public class RestAnnotationProcessor<T> {
 
       Multimap<String, String> formParams = addFormParams(tokenValues.entries(), method, args);
       Multimap<String, String> queryParams = addQueryParams(tokenValues.entries(), method, args);
-
-      addMatrixParams(builder, tokenValues.entries(), method, args);
-
+      Multimap<String, String> matrixParams = addMatrixParams(tokenValues.entries(), method, args);
       Multimap<String, String> headers = buildHeaders(tokenValues.entries(), method, args);
+
+      if (shouldAddHostHeader(method))
+         headers.put(HOST, endpoint.getHost());
 
       Payload payload = null;
       HttpRequestOptions options = findOptionsIn(method, args);
       if (options != null) {
          injector.injectMembers(options);// TODO test case
          for (Entry<String, String> header : options.buildRequestHeaders().entries()) {
-            headers.put(header.getKey(), replaceTokens(header.getValue(), tokenValues.entries()));
+            headers.put(header.getKey(), Strings2.replaceTokens(header.getValue(), tokenValues.entries()));
          }
          for (Entry<String, String> matrix : options.buildMatrixParameters().entries()) {
-            builder.matrixParam(matrix.getKey(), replaceTokens(matrix.getValue(), tokenValues.entries()));
+            matrixParams.put(matrix.getKey(), Strings2.replaceTokens(matrix.getValue(), tokenValues.entries()));
          }
          for (Entry<String, String> query : options.buildQueryParameters().entries()) {
-            queryParams.put(query.getKey(), replaceTokens(query.getValue(), tokenValues.entries()));
+            queryParams.put(query.getKey(), Strings2.replaceTokens(query.getValue(), tokenValues.entries()));
          }
          for (Entry<String, String> form : options.buildFormParameters().entries()) {
-            formParams.put(form.getKey(), replaceTokens(form.getValue(), tokenValues.entries()));
+            formParams.put(form.getKey(), Strings2.replaceTokens(form.getValue(), tokenValues.entries()));
          }
 
          String pathSuffix = options.buildPathSuffix();
@@ -444,22 +459,24 @@ public class RestAnnotationProcessor<T> {
             payload = Payloads.newStringPayload(stringPayload);
       }
 
-      if (queryParams.size() > 0) {
-         builder.replaceQuery(makeQueryLine(queryParams, null, skips));
+      if (matrixParams.size() > 0) {
+         for (String key : matrixParams.keySet())
+            builder.matrixParam(key, Lists.newArrayList(matrixParams.get(key)).toArray());
       }
 
+      if (queryParams.size() > 0) {
+         builder.replaceQuery(ModifyRequest.makeQueryLine(queryParams, null, skips));
+      }
+
+      requestBuilder.headers(filterOutContentHeaders(headers));
+
       try {
-         endpoint = builder.buildFromEncodedMap(convertUnsafe(tokenValues));
+         requestBuilder.endpoint(builder.buildFromEncodedMap(convertUnsafe(tokenValues)));
       } catch (IllegalArgumentException e) {
          throw new IllegalStateException(e);
       } catch (UriBuilderException e) {
          throw new IllegalStateException(e);
       }
-
-      GeneratedHttpRequest<T> request = new GeneratedHttpRequest<T>(httpMethod, endpoint, skips, declaring, method,
-            args);
-      addHostHeaderIfAnnotatedWithVirtualHost(headers, request.getEndpoint().getHost(), method);
-      addFiltersIfAnnotated(method, request);
 
       if (payload == null)
          payload = findPayloadInArgs(args);
@@ -477,10 +494,38 @@ public class RestAnnotationProcessor<T> {
          payload.getContentMetadata().setContentType(Iterables.get(headers.get(CONTENT_TYPE), 0));
       }
       if (payload != null) {
-         request.setPayload(payload);
+         requestBuilder.payload(payload);
       }
-      decorateRequest(request, headers);
+      GeneratedHttpRequest<T> request = requestBuilder.build();
+
+      org.jclouds.rest.MapBinder mapBinder = getMapPayloadBinderOrNull(method, args);
+      if (mapBinder != null) {
+         Map<String, String> mapParams = buildPostParams(method, args);
+         if (method.isAnnotationPresent(MapPayloadParams.class)) {
+            MapPayloadParams params = method.getAnnotation(MapPayloadParams.class);
+            addMapPayload(mapParams, params, headers.entries());
+         }
+         request = mapBinder.bindToRequest(request, mapParams);
+      } else {
+         request = decorateRequest(request);
+      }
+
+      if (request.getPayload() != null)
+         request.getPayload().getContentMetadata().setPropertiesFromHttpHeaders(headers);
+      utils.checkRequestHasRequiredProperties(request);
       return request;
+   }
+
+   public static Multimap<String, String> filterOutContentHeaders(Multimap<String, String> headers) {
+      // TODO make a filter like {@link Maps.filterKeys} instead of this
+      ImmutableMultimap.Builder<String, String> headersBuilder = ImmutableMultimap.builder();
+      // http message usually comes in as a null key header, let's filter it out.
+      for (String header : Iterables.filter(headers.keySet(), Predicates.notNull())) {
+         if (!ContentMetadata.HTTP_HEADERS.contains(header)) {
+            headersBuilder.putAll(header, headers.get(header));
+         }
+      }
+      return headersBuilder.build();
    }
 
    public static final String BOUNDARY = "--JCLOUDS--";
@@ -488,7 +533,8 @@ public class RestAnnotationProcessor<T> {
    private Multimap<String, String> addPathAndGetTokens(Class<?> clazz, Method method, Object[] args, UriBuilder builder) {
       if (clazz.isAnnotationPresent(Path.class))
          builder.path(clazz);
-      builder.path(method);
+      if (method.isAnnotationPresent(Path.class))
+         builder.path(method);
       return encodeValues(getPathParamKeyValues(method, args), skips);
    }
 
@@ -499,25 +545,27 @@ public class RestAnnotationProcessor<T> {
    public static URI replaceQuery(Provider<UriBuilder> uriBuilderProvider, URI in, String newQuery,
          @Nullable Comparator<Entry<String, String>> sorter, char... skips) {
       UriBuilder builder = uriBuilderProvider.get().uri(in);
-      builder.replaceQuery(makeQueryLine(parseQueryToMap(newQuery), sorter, skips));
+      builder.replaceQuery(ModifyRequest.makeQueryLine(ModifyRequest.parseQueryToMap(newQuery), sorter, skips));
       return builder.build();
    }
 
-   private void addMatrixParams(UriBuilder builder, Collection<Entry<String, String>> tokenValues, Method method,
+   private Multimap<String, String> addMatrixParams(Collection<Entry<String, String>> tokenValues, Method method,
          Object... args) {
+      Multimap<String, String> matrixMap = LinkedListMultimap.create();
       if (declaring.isAnnotationPresent(MatrixParams.class)) {
          MatrixParams matrix = declaring.getAnnotation(MatrixParams.class);
-         addMatrix(builder, matrix, tokenValues);
+         addMatrix(matrixMap, matrix, tokenValues);
       }
 
       if (method.isAnnotationPresent(MatrixParams.class)) {
          MatrixParams matrix = method.getAnnotation(MatrixParams.class);
-         addMatrix(builder, matrix, tokenValues);
+         addMatrix(matrixMap, matrix, tokenValues);
       }
 
       for (Entry<String, String> matrix : getMatrixParamKeyValues(method, args).entries()) {
-         builder.matrixParam(matrix.getKey(), replaceTokens(matrix.getValue(), tokenValues));
+         matrixMap.put(matrix.getKey(), Strings2.replaceTokens(matrix.getValue(), tokenValues));
       }
+      return matrixMap;
    }
 
    private Multimap<String, String> addFormParams(Collection<Entry<String, String>> tokenValues, Method method,
@@ -534,7 +582,7 @@ public class RestAnnotationProcessor<T> {
       }
 
       for (Entry<String, String> form : getFormParamKeyValues(method, args).entries()) {
-         formMap.put(form.getKey(), replaceTokens(form.getValue(), tokenValues));
+         formMap.put(form.getKey(), Strings2.replaceTokens(form.getValue(), tokenValues));
       }
       return formMap;
    }
@@ -553,7 +601,7 @@ public class RestAnnotationProcessor<T> {
       }
 
       for (Entry<String, String> query : getQueryParamKeyValues(method, args).entries()) {
-         queryMap.put(query.getKey(), replaceTokens(query.getValue(), tokenValues));
+         queryMap.put(query.getKey(), Strings2.replaceTokens(query.getValue(), tokenValues));
       }
       return queryMap;
    }
@@ -565,18 +613,7 @@ public class RestAnnotationProcessor<T> {
             formParams.removeAll(form.keys()[i]);
             formParams.put(form.keys()[i], null);
          } else {
-            formParams.put(form.keys()[i], replaceTokens(form.values()[i], tokenValues));
-         }
-      }
-   }
-
-   private void addMapPayload(Map<String, String> postParams, MapPayloadParams mapDefaults,
-         Collection<Entry<String, String>> tokenValues) {
-      for (int i = 0; i < mapDefaults.keys().length; i++) {
-         if (mapDefaults.values()[i].equals(MapPayloadParams.NULL)) {
-            postParams.put(mapDefaults.keys()[i], null);
-         } else {
-            postParams.put(mapDefaults.keys()[i], replaceTokens(mapDefaults.values()[i], tokenValues));
+            formParams.put(form.keys()[i], Strings2.replaceTokens(form.values()[i], tokenValues));
          }
       }
    }
@@ -588,38 +625,54 @@ public class RestAnnotationProcessor<T> {
             queryParams.removeAll(query.keys()[i]);
             queryParams.put(query.keys()[i], null);
          } else {
-            queryParams.put(query.keys()[i], replaceTokens(query.values()[i], tokenValues));
+            queryParams.put(query.keys()[i], Strings2.replaceTokens(query.values()[i], tokenValues));
          }
       }
    }
 
-   private void addMatrix(UriBuilder builder, MatrixParams matrix, Collection<Entry<String, String>> tokenValues) {
+   private void addMatrix(Multimap<String, String> matrixParams, MatrixParams matrix,
+         Collection<Entry<String, String>> tokenValues) {
       for (int i = 0; i < matrix.keys().length; i++) {
          if (matrix.values()[i].equals(MatrixParams.NULL)) {
-            builder.replaceMatrix(matrix.keys()[i]);
+            matrixParams.removeAll(matrix.keys()[i]);
+            matrixParams.put(matrix.keys()[i], null);
          } else {
-            builder.matrixParam(matrix.keys()[i], replaceTokens(matrix.values()[i], tokenValues));
+            matrixParams.put(matrix.keys()[i], Strings2.replaceTokens(matrix.values()[i], tokenValues));
          }
       }
    }
 
-   private void addFiltersIfAnnotated(Method method, HttpRequest request) {
+   private void addMapPayload(Map<String, String> postParams, MapPayloadParams mapDefaults,
+         Collection<Entry<String, String>> tokenValues) {
+      for (int i = 0; i < mapDefaults.keys().length; i++) {
+         if (mapDefaults.values()[i].equals(MapPayloadParams.NULL)) {
+            postParams.put(mapDefaults.keys()[i], null);
+         } else {
+            postParams.put(mapDefaults.keys()[i], Strings2.replaceTokens(mapDefaults.values()[i], tokenValues));
+         }
+      }
+   }
+
+   @VisibleForTesting
+   List<HttpRequestFilter> getFiltersIfAnnotated(Method method) {
+      List<HttpRequestFilter> filters = Lists.newArrayList();
       if (declaring.isAnnotationPresent(RequestFilters.class)) {
          for (Class<? extends HttpRequestFilter> clazz : declaring.getAnnotation(RequestFilters.class).value()) {
             HttpRequestFilter instance = injector.getInstance(clazz);
-            request.getFilters().add(instance);
-            logger.trace("%s - adding filter  %s from annotation on %s", request, instance, declaring.getName());
+            filters.add(instance);
+            logger.trace("adding filter %s from annotation on %s", instance, declaring.getName());
          }
       }
       if (method.isAnnotationPresent(RequestFilters.class)) {
          if (method.isAnnotationPresent(OverrideRequestFilters.class))
-            request.getFilters().clear();
+            filters.clear();
          for (Class<? extends HttpRequestFilter> clazz : method.getAnnotation(RequestFilters.class).value()) {
             HttpRequestFilter instance = injector.getInstance(clazz);
-            request.getFilters().add(instance);
-            logger.trace("%s - adding filter  %s from annotation on %s", request, instance, method.getName());
+            filters.add(instance);
+            logger.trace("adding filter %s from annotation on %s", instance, method.getName());
          }
       }
+      return filters;
    }
 
    @VisibleForTesting
@@ -682,18 +735,18 @@ public class RestAnnotationProcessor<T> {
 
    public static final TypeLiteral<ListenableFuture<Boolean>> futureBooleanLiteral = new TypeLiteral<ListenableFuture<Boolean>>() {
    };
-
    public static final TypeLiteral<ListenableFuture<String>> futureStringLiteral = new TypeLiteral<ListenableFuture<String>>() {
    };
-
    public static final TypeLiteral<ListenableFuture<Void>> futureVoidLiteral = new TypeLiteral<ListenableFuture<Void>>() {
    };
    public static final TypeLiteral<ListenableFuture<URI>> futureURILiteral = new TypeLiteral<ListenableFuture<URI>>() {
    };
    public static final TypeLiteral<ListenableFuture<InputStream>> futureInputStreamLiteral = new TypeLiteral<ListenableFuture<InputStream>>() {
    };
+   public static final TypeLiteral<ListenableFuture<HttpResponse>> futureHttpResponseLiteral = new TypeLiteral<ListenableFuture<HttpResponse>>() {
+   };
 
-   @SuppressWarnings("unchecked")
+   @SuppressWarnings({ "unchecked", "rawtypes" })
    public static Key<? extends Function<HttpResponse, ?>> getParserOrThrowException(Method method) {
       ResponseParser annotation = method.getAnnotation(ResponseParser.class);
       if (annotation == null) {
@@ -706,6 +759,9 @@ public class RestAnnotationProcessor<T> {
          } else if (method.getReturnType().equals(InputStream.class)
                || TypeLiteral.get(method.getGenericReturnType()).equals(futureInputStreamLiteral)) {
             return Key.get(ReturnInputStream.class);
+         } else if (method.getReturnType().equals(HttpResponse.class)
+               || TypeLiteral.get(method.getGenericReturnType()).equals(futureHttpResponseLiteral)) {
+            return Key.get((Class) IdentityFunction.class);
          } else if (getAcceptHeadersOrNull(method).contains(MediaType.APPLICATION_JSON)) {
             Type returnVal;
             if (method.getReturnType().getTypeParameters().length == 0) {
@@ -780,7 +836,8 @@ public class RestAnnotationProcessor<T> {
    private Multimap<String, String> constants = LinkedHashMultimap.create();
 
    public boolean isHttpMethod(Method method) {
-      return method.isAnnotationPresent(Path.class) || getHttpMethods(method) != null;
+      return method.isAnnotationPresent(Path.class) || getHttpMethods(method) != null
+            || Sets.newHashSet(method.getParameterTypes()).contains(HttpRequest.class);
    }
 
    public boolean isConstantDeclaration(Method method) {
@@ -815,61 +872,53 @@ public class RestAnnotationProcessor<T> {
       return requests.iterator().next();
    }
 
-   public void addHostHeaderIfAnnotatedWithVirtualHost(Multimap<String, String> headers, String host, Method method) {
+   public boolean shouldAddHostHeader(Method method) {
       if (declaring.isAnnotationPresent(VirtualHost.class) || method.isAnnotationPresent(VirtualHost.class)) {
-         headers.put(HOST, host);
+         return true;
       }
+      return false;
    }
 
-   public void decorateRequest(GeneratedHttpRequest<T> request, Multimap<String, String> headers) {
-      org.jclouds.rest.MapBinder mapBinder = getMapPayloadBinderOrNull(request.getJavaMethod(), request.getArgs());
-      if (mapBinder != null) {
-         Map<String, String> mapParams = buildPostParams(request.getJavaMethod(), request.getArgs());
-         if (request.getJavaMethod().isAnnotationPresent(MapPayloadParams.class)) {
-            MapPayloadParams params = request.getJavaMethod().getAnnotation(MapPayloadParams.class);
-            addMapPayload(mapParams, params, headers.entries());
-         }
-         mapBinder.bindToRequest(request, mapParams);
-      } else {
-         OUTER: for (Entry<Integer, Set<Annotation>> entry : filterValues(
-               methodToIndexOfParamToDecoratorParamAnnotation.get(request.getJavaMethod()),
-               new Predicate<Set<Annotation>>() {
-                  public boolean apply(Set<Annotation> input) {
-                     return input.size() >= 1;
-                  }
-               }).entrySet()) {
-            boolean shouldBreak = false;
-            BinderParam payloadAnnotation = (BinderParam) entry.getValue().iterator().next();
-            Binder binder = injector.getInstance(payloadAnnotation.value());
-            if (request.getArgs().length >= entry.getKey() + 1 && request.getArgs()[entry.getKey()] != null) {
-               Object input;
-               Class<?> parameterType = request.getJavaMethod().getParameterTypes()[entry.getKey()];
-               Class<? extends Object> argType = request.getArgs()[entry.getKey()].getClass();
-               if (!argType.isArray() && request.getJavaMethod().isVarArgs() && parameterType.isArray()) {
-                  int arrayLength = request.getArgs().length - request.getJavaMethod().getParameterTypes().length + 1;
-                  if (arrayLength == 0)
-                     break OUTER;
-                  input = (Object[]) Array.newInstance(request.getArgs()[entry.getKey()].getClass(), arrayLength);
-                  System.arraycopy(request.getArgs(), entry.getKey(), input, 0, arrayLength);
-                  shouldBreak = true;
-               } else if (argType.isArray() && request.getJavaMethod().isVarArgs() && parameterType.isArray()) {
-                  input = request.getArgs()[entry.getKey()];
-               } else {
-                  input = request.getArgs()[entry.getKey()];
-                  if (input.getClass().isArray()) {
-                     Object[] payloadArray = (Object[]) input;
-                     input = payloadArray.length > 0 ? payloadArray[0] : null;
-                  }
+   public GeneratedHttpRequest<T> decorateRequest(GeneratedHttpRequest<T> request) {
+      OUTER: for (Entry<Integer, Set<Annotation>> entry : filterValues(
+            methodToIndexOfParamToDecoratorParamAnnotation.get(request.getJavaMethod()),
+            new Predicate<Set<Annotation>>() {
+               public boolean apply(Set<Annotation> input) {
+                  return input.size() >= 1;
                }
-               if (input != null) {
-                  binder.bindToRequest(request, input);
-               }
-               if (shouldBreak)
+            }).entrySet()) {
+         boolean shouldBreak = false;
+         BinderParam payloadAnnotation = (BinderParam) entry.getValue().iterator().next();
+         Binder binder = injector.getInstance(payloadAnnotation.value());
+         if (request.getArgs().size() >= entry.getKey() + 1 && request.getArgs().get(entry.getKey()) != null) {
+            Object input;
+            Class<?> parameterType = request.getJavaMethod().getParameterTypes()[entry.getKey()];
+            Class<? extends Object> argType = request.getArgs().get(entry.getKey()).getClass();
+            if (!argType.isArray() && request.getJavaMethod().isVarArgs() && parameterType.isArray()) {
+               int arrayLength = request.getArgs().size() - request.getJavaMethod().getParameterTypes().length + 1;
+               if (arrayLength == 0)
                   break OUTER;
+               input = (Object[]) Array.newInstance(request.getArgs().get(entry.getKey()).getClass(), arrayLength);
+               System.arraycopy(request.getArgs().toArray(), entry.getKey(), input, 0, arrayLength);
+               shouldBreak = true;
+            } else if (argType.isArray() && request.getJavaMethod().isVarArgs() && parameterType.isArray()) {
+               input = request.getArgs().get(entry.getKey());
+            } else {
+               input = request.getArgs().get(entry.getKey());
+               if (input.getClass().isArray()) {
+                  Object[] payloadArray = (Object[]) input;
+                  input = payloadArray.length > 0 ? payloadArray[0] : null;
+               }
             }
+            if (input != null) {
+               request = binder.bindToRequest(request, input);
+            }
+            if (shouldBreak)
+               break OUTER;
          }
       }
-      utils.setPayloadPropertiesFromHeaders(headers, request);
+
+      return request;
    }
 
    public static Map<Integer, Set<Annotation>> indexWithOnlyOneAnnotation(Method method, String description,
@@ -928,7 +977,7 @@ public class RestAnnotationProcessor<T> {
       for (Entry<Integer, Set<Annotation>> entry : indexToHeaderParam.entrySet()) {
          for (Annotation key : entry.getValue()) {
             String value = args[entry.getKey()].toString();
-            value = replaceTokens(value, tokenValues);
+            value = Strings2.replaceTokens(value, tokenValues);
             headers.put(((HeaderParam) key).value(), value);
          }
       }
@@ -983,7 +1032,7 @@ public class RestAnnotationProcessor<T> {
          Collection<Entry<String, String>> tokenValues) {
       for (int i = 0; i < header.keys().length; i++) {
          String value = header.values()[i];
-         value = replaceTokens(value, tokenValues);
+         value = Strings2.replaceTokens(value, tokenValues);
          headers.put(header.keys()[i], value);
       }
 
@@ -1007,7 +1056,7 @@ public class RestAnnotationProcessor<T> {
             if (!PartParam.NO_CONTENT_TYPE.equals(param.contentType()))
                options.contentType(param.contentType());
             if (!PartParam.NO_FILENAME.equals(param.filename()))
-               options.filename(replaceTokens(param.filename(), iterable));
+               options.filename(Strings2.replaceTokens(param.filename(), iterable));
             Part part = Part.create(param.name(), newPayload(args[entry.getKey()]), options);
             parts.add(part);
          }
@@ -1068,7 +1117,7 @@ public class RestAnnotationProcessor<T> {
    private Multimap<String, String> encodeValues(Multimap<String, String> unencoded, char... skips) {
       Multimap<String, String> encoded = LinkedHashMultimap.create();
       for (Entry<String, String> entry : unencoded.entries()) {
-         encoded.put(entry.getKey(), urlEncode(entry.getValue(), skips));
+         encoded.put(entry.getKey(), Strings2.urlEncode(entry.getValue(), skips));
       }
       return encoded;
    }

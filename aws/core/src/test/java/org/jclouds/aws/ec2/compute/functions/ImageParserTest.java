@@ -52,7 +52,7 @@ import com.google.inject.Guice;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "compute.ImageParserTest")
+@Test(groups = "unit")
 public class ImageParserTest {
    public void testParseAlesticCanonicalImage() {
 

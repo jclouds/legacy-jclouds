@@ -26,7 +26,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -37,7 +37,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "functionalTests")
+@Test(groups = "live", sequential = true)
 public class GoogleAppEngineLiveTest {
 
    GoogleDevServer server;
@@ -68,7 +68,7 @@ public class GoogleAppEngineLiveTest {
    @Test
    public void shouldPass() throws InterruptedException, IOException {
       InputStream i = url.openStream();
-      String string = Utils.toStringAndClose(i);
+      String string = Strings2.toStringAndClose(i);
       assert string.indexOf("Welcome") >= 0 : string;
    }
 
@@ -76,7 +76,7 @@ public class GoogleAppEngineLiveTest {
    public void testGuiceJCloudsSerial() throws InterruptedException, IOException {
       URL gurl = new URL(url, "/guice/status.check");
       InputStream i = gurl.openStream();
-      String string = Utils.toStringAndClose(i);
+      String string = Strings2.toStringAndClose(i);
       assert string.indexOf("List") >= 0 : string;
    }
 
@@ -84,7 +84,7 @@ public class GoogleAppEngineLiveTest {
    public void testGuiceJCloudsParallel() throws InterruptedException, IOException {
       URL gurl = new URL(url, "/guice/status.check");
       InputStream i = gurl.openStream();
-      String string = Utils.toStringAndClose(i);
+      String string = Strings2.toStringAndClose(i);
       assert string.indexOf("List") >= 0 : string;
    }
 }

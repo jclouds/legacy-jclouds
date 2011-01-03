@@ -24,7 +24,7 @@ import javax.inject.Singleton;
 import org.jclouds.atmosonline.saas.domain.BoundedSet;
 import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
 import org.jclouds.atmosonline.saas.domain.FileType;
-import org.jclouds.atmosonline.saas.domain.internal.BoundedHashSet;
+import org.jclouds.atmosonline.saas.domain.internal.BoundedLinkedHashSet;
 import org.jclouds.blobstore.domain.StorageMetadata;
 import org.jclouds.blobstore.domain.StorageType;
 
@@ -42,7 +42,7 @@ public class ResourceMetadataListToDirectoryEntryList
    public BoundedSet<DirectoryEntry> apply(
             org.jclouds.blobstore.domain.PageSet<? extends StorageMetadata> from) {
 
-      return new BoundedHashSet<DirectoryEntry>(Iterables.transform(from,
+      return new BoundedLinkedHashSet<DirectoryEntry>(Iterables.transform(from,
                new Function<StorageMetadata, DirectoryEntry>() {
                   public DirectoryEntry apply(StorageMetadata from) {
                      FileType type = (from.getType() == StorageType.FOLDER || from.getType() == StorageType.RELATIVE_PATH) ? FileType.DIRECTORY

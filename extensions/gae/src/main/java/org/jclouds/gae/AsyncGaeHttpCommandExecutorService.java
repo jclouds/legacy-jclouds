@@ -22,7 +22,6 @@ package org.jclouds.gae;
 import static com.google.common.base.Throwables.propagate;
 import static org.jclouds.http.HttpUtils.checkRequestHasContentLengthOrChunkedEncoding;
 import static org.jclouds.http.HttpUtils.wirePayloadIfEnabled;
-import static org.jclouds.util.Utils.getFirstThrowableOfType;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -47,6 +46,7 @@ import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.http.internal.HttpWire;
 import org.jclouds.logging.Logger;
+import org.jclouds.util.Throwables2;
 
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.URLFetchService;
@@ -79,9 +79,9 @@ public class AsyncGaeHttpCommandExecutorService implements HttpCommandExecutorSe
 
    @Inject
    public AsyncGaeHttpCommandExecutorService(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService service,
-            URLFetchService urlFetchService, ConvertToGaeRequest convertToGaeRequest,
-            ConvertToJcloudsResponse convertToJcloudsResponse, DelegatingRetryHandler retryHandler,
-            IOExceptionRetryHandler ioRetryHandler, DelegatingErrorHandler errorHandler, HttpUtils utils, HttpWire wire) {
+         URLFetchService urlFetchService, ConvertToGaeRequest convertToGaeRequest,
+         ConvertToJcloudsResponse convertToJcloudsResponse, DelegatingRetryHandler retryHandler,
+         IOExceptionRetryHandler ioRetryHandler, DelegatingErrorHandler errorHandler, HttpUtils utils, HttpWire wire) {
       this.service = service;
       this.urlFetchService = urlFetchService;
       this.convertToGaeRequest = convertToGaeRequest;
@@ -96,10 +96,10 @@ public class AsyncGaeHttpCommandExecutorService implements HttpCommandExecutorSe
    public HTTPRequest filterLogAndConvertRe(HttpRequest request) {
 
       for (HttpRequestFilter filter : request.getFilters()) {
-         filter.filter(request);
+         request = filter.filter(request);
       }
       checkRequestHasContentLengthOrChunkedEncoding(request,
-               "After filtering, the request has niether chunked encoding nor content length: " + request);
+            "After filtering, the request has niether chunked encoding nor content length: " + request);
       logger.debug("Sending request %s: %s", request.hashCode(), request.getRequestLine());
       wirePayloadIfEnabled(wire, request);
       HTTPRequest nativeRequest = convertToGaeRequest.apply(request);
@@ -110,17 +110,18 @@ public class AsyncGaeHttpCommandExecutorService implements HttpCommandExecutorSe
    @Override
    public ListenableFuture<HttpResponse> submit(final HttpCommand command) {
 
-      HTTPRequest nativeRequest = filterLogAndConvertRe(command.getRequest());
+      HTTPRequest nativeRequest = filterLogAndConvertRe(command.getCurrentRequest());
 
       ListenableFuture<HttpResponse> response = Futures.compose(urlFetchService.fetchAsync(nativeRequest),
-               convertToJcloudsResponse, service);
+            convertToJcloudsResponse, service);
 
       return Futures.compose(response, new Function<HttpResponse, HttpResponse>() {
 
          @Override
          public HttpResponse apply(HttpResponse response) {
             try {
-               logger.debug("Receiving response %s: %s", command.getRequest().hashCode(), response.getStatusLine());
+               logger.debug("Receiving response %s: %s", command.getCurrentRequest().hashCode(),
+                     response.getStatusLine());
                utils.logResponse(headerLog, response, "<<");
                if (response.getPayload() != null && wire.enabled())
                   wire.input(response);
@@ -133,7 +134,7 @@ public class AsyncGaeHttpCommandExecutorService implements HttpCommandExecutorSe
                }
                return response;
             } catch (Exception e) {
-               IOException ioe = getFirstThrowableOfType(e, IOException.class);
+               IOException ioe = Throwables2.getFirstThrowableOfType(e, IOException.class);
                if (ioe != null && ioRetryHandler.shouldRetryRequest(command, ioe)) {
                   try {
                      return submit(command).get();
@@ -143,7 +144,7 @@ public class AsyncGaeHttpCommandExecutorService implements HttpCommandExecutorSe
                   }
                } else {
                   command.setException(new HttpResponseException(e.getMessage() + " connecting to "
-                           + command.getRequest().getRequestLine(), command, null, e));
+                        + command.getCurrentRequest().getRequestLine(), command, null, e));
                   return response;
                }
             } finally {

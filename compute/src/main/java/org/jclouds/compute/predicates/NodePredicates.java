@@ -20,13 +20,13 @@
 package org.jclouds.compute.predicates;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.util.Utils.checkNotEmpty;
 
 import java.util.Set;
 
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
+import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -195,7 +195,7 @@ public class NodePredicates {
     * @return predicate
     */
    public static Predicate<NodeMetadata> withTag(final String tag) {
-      checkNotEmpty(tag, "Tag must be defined");
+      Preconditions2.checkNotEmpty(tag, "Tag must be defined");
       return new Predicate<NodeMetadata>() {
          @Override
          public boolean apply(NodeMetadata nodeMetadata) {
@@ -217,7 +217,7 @@ public class NodePredicates {
     * @return predicate
     */
    public static Predicate<NodeMetadata> runningWithTag(final String tag) {
-      checkNotEmpty(tag, "Tag must be defined");
+      Preconditions2.checkNotEmpty(tag, "Tag must be defined");
       return new Predicate<NodeMetadata>() {
          @Override
          public boolean apply(NodeMetadata nodeMetadata) {

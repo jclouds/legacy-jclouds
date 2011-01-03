@@ -73,21 +73,22 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
    protected Long maxTime;
 
    @Inject
-   private FindMD5InUserMetadata(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor,
-            ObjectMD5 objectMD5, ListBlobsInContainer getAllBlobMetadata, AtmosStorageAsyncClient client) {
+   FindMD5InUserMetadata(@Named(Constants.PROPERTY_USER_THREADS) ExecutorService userExecutor, ObjectMD5 objectMD5,
+         ListBlobsInContainer getAllBlobMetadata, AtmosStorageAsyncClient client) {
       this.objectMD5 = objectMD5;
       this.getAllBlobMetadata = getAllBlobMetadata;
       this.client = client;
       this.userExecutor = userExecutor;
    }
 
+   @Override
    public boolean execute(final String containerName, Object value, ListContainerOptions options) {
       final byte[] toSearch = objectMD5.apply(value);
       final BlockingQueue<Boolean> queue = new SynchronousQueue<Boolean>();
       Map<String, Future<?>> responses = Maps.newHashMap();
       for (BlobMetadata md : getAllBlobMetadata.execute(containerName, options)) {
-         final ListenableFuture<AtmosObject> future = Futures.makeListenable(client.headFile(containerName
-                  + "/" + md.getName()), userExecutor);
+         final ListenableFuture<AtmosObject> future = Futures.makeListenable(
+               client.headFile(containerName + "/" + md.getName()), userExecutor);
          future.addListener(new Runnable() {
             public void run() {
                try {
@@ -109,11 +110,11 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
          }, userExecutor);
          responses.put(md.getName(), future);
       }
-      Map<String, Exception> exceptions = awaitCompletion(responses, userExecutor, maxTime, logger, String.format(
-               "searching for md5 in container %s", containerName));
+      Map<String, Exception> exceptions = awaitCompletion(responses, userExecutor, maxTime, logger,
+            String.format("searching for md5 in container %s", containerName));
       if (exceptions.size() > 0)
          throw new BlobRuntimeException(String.format("searching for md5 in container %s: %s", containerName,
-                  exceptions));
+               exceptions));
       try {
          return queue.poll(1, TimeUnit.MICROSECONDS) != null;
       } catch (InterruptedException e) {
@@ -122,7 +123,7 @@ public class FindMD5InUserMetadata implements ContainsValueInListStrategy {
       } catch (Exception e) {
          Throwables.propagateIfPossible(e, BlobRuntimeException.class);
          throw new BlobRuntimeException(String.format("Error searching for ETAG of value: [%s] in container:%s", value,
-                  containerName), e);
+               containerName), e);
       }
    }
 }

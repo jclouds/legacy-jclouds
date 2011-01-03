@@ -25,7 +25,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = { "live" }, testName = "emcsaas.AtmosStorageContainerLiveTest")
+@Test(groups = { "live" })
 public class AtmosStorageContainerLiveTest extends BaseContainerLiveTest {
 
 }

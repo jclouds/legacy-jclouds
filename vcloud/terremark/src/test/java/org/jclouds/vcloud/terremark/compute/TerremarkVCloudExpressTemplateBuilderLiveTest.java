@@ -36,7 +36,7 @@ import com.google.common.base.Predicate;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "terremark.TerremarkVCloudExpressTemplateBuilderLiveTest")
+@Test(groups = "live")
 public class TerremarkVCloudExpressTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    public TerremarkVCloudExpressTemplateBuilderLiveTest() {

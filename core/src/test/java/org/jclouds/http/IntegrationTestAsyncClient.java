@@ -37,6 +37,7 @@ import javax.ws.rs.PathParam;
 
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.options.HttpRequestOptions;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.io.Payload;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -48,7 +49,7 @@ import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.binders.BindMapToMatrixParams;
 import org.jclouds.rest.binders.BindToJsonPayload;
 import org.jclouds.rest.binders.BindToStringPayload;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Multimap;
@@ -60,7 +61,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 public interface IntegrationTestAsyncClient {
-   @Target( { ElementType.METHOD })
+   @Target({ ElementType.METHOD })
    @Retention(RetentionPolicy.RUNTIME)
    @HttpMethod("ROWDY")
    public @interface ROWDY {
@@ -78,6 +79,8 @@ public interface IntegrationTestAsyncClient {
    @Path("/objects/{id}")
    ListenableFuture<String> download(@PathParam("id") String id);
 
+   ListenableFuture<HttpResponse> invoke(HttpRequest request);
+   
    @GET
    @Path("/{path}")
    ListenableFuture<String> synch(@PathParam("path") String id);
@@ -111,14 +114,15 @@ public interface IntegrationTestAsyncClient {
    @POST
    @Path("/objects/{id}")
    ListenableFuture<String> postAsInputStream(@PathParam("id") String id,
-            @BinderParam(BindToInputStreamPayload.class) String toPut);
+         @BinderParam(BindToInputStreamPayload.class) String toPut);
 
    static class BindToInputStreamPayload extends BindToStringPayload {
       @Override
-      public void bindToRequest(HttpRequest request, Object payload) {
-         super.bindToRequest(request, payload);
-         request.setPayload(Utils.toInputStream(payload.toString()));
+      public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
+         request = super.bindToRequest(request, payload);
+         request.setPayload(Strings2.toInputStream(payload.toString()));
          request.getPayload().getContentMetadata().setContentLength((long) payload.toString().getBytes().length);
+         return request;
       }
    }
 
@@ -144,7 +148,7 @@ public interface IntegrationTestAsyncClient {
    @POST
    @Path("/objects/{id}/action/{action}")
    ListenableFuture<String> action(@PathParam("id") String id, @PathParam("action") String action,
-            @BinderParam(BindMapToMatrixParams.class) Map<String, String> options);
+         @BinderParam(BindMapToMatrixParams.class) Map<String, String> options);
 
    @GET
    @Path("/objects/{id}")
@@ -152,10 +156,11 @@ public interface IntegrationTestAsyncClient {
    ListenableFuture<String> downloadFilter(@PathParam("id") String id, @HeaderParam("filterme") String header);
 
    static class Filter implements HttpRequestFilter {
-      public void filter(HttpRequest request) throws HttpException {
+      public HttpRequest filter(HttpRequest request) throws HttpException {
          if (request.getHeaders().containsKey("filterme")) {
-            request.getHeaders().put("test", "test");
+            request = ModifyRequest.replaceHeader(request, "test", "test");
          }
+         return request;
       }
    }
 

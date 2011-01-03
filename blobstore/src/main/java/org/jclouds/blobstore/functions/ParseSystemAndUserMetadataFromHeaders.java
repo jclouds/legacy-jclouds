@@ -20,9 +20,11 @@
 package org.jclouds.blobstore.functions;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
-import static org.jclouds.blobstore.util.BlobStoreUtils.getKeyFor;
+import static org.jclouds.blobstore.util.BlobStoreUtils.getNameFor;
 
 import java.util.Map.Entry;
 
@@ -47,27 +49,29 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpResponse, MutableBlobMetadata>,
-         InvocationContext {
+      InvocationContext<ParseSystemAndUserMetadataFromHeaders> {
    private final String metadataPrefix;
    private final DateService dateParser;
    private final Provider<MutableBlobMetadata> metadataFactory;
    private final String apiVersion;
 
-   private GeneratedHttpRequest<?> request;
+   private String key;
 
    @Inject
    public ParseSystemAndUserMetadataFromHeaders(Provider<MutableBlobMetadata> metadataFactory, DateService dateParser,
-            @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix, @Named(PROPERTY_API_VERSION) String apiVersion) {
-      this.metadataFactory = metadataFactory;
-      this.dateParser = dateParser;
-      this.metadataPrefix = metadataPrefix;
-      this.apiVersion = apiVersion;
+         @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix, @Named(PROPERTY_API_VERSION) String apiVersion) {
+      this.metadataFactory = checkNotNull(metadataFactory, "metadataFactory");
+      this.dateParser = checkNotNull(dateParser, "dateParser");
+      this.metadataPrefix = checkNotNull(metadataPrefix, "metadataPrefix");
+      this.apiVersion = checkNotNull(metadataPrefix, "metadataPrefix");
    }
 
    public MutableBlobMetadata apply(HttpResponse from) {
-      String objectKey = getKeyFor(request, from);
+      checkNotNull(from, "request");
+      checkState(key != null, "key must be initialized by now");
+
       MutableBlobMetadata to = metadataFactory.get();
-      to.setName(objectKey);
+      to.setName(key);
       HttpUtils.copy(from.getPayload().getContentMetadata(), to.getContentMetadata());
       addETagTo(from, to);
       parseLastModifiedOrThrowException(from, to);
@@ -80,7 +84,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
       for (Entry<String, String> header : from.getHeaders().entries()) {
          if (header.getKey() != null && header.getKey().startsWith(metadataPrefix))
             metadata.getUserMetadata().put((header.getKey().substring(metadataPrefix.length())).toLowerCase(),
-                     header.getValue());
+                  header.getValue());
       }
    }
 
@@ -90,7 +94,8 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
       if (lastModified == null) {
          // scaleup-storage uses the wrong case for the last modified header
          if ((lastModified = from.getFirstHeaderOrNull("Last-modified")) == null)
-            throw new HttpException(HttpHeaders.LAST_MODIFIED + " header not present in response: " + from.getStatusLine());
+            throw new HttpException(HttpHeaders.LAST_MODIFIED + " header not present in response: "
+                  + from.getStatusLine());
       }
       // Eucalyptus 1.6 returns iso8601 dates
       if (apiVersion.indexOf("Walrus-1.6") != -1) {
@@ -103,7 +108,6 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
          throw new HttpException("could not parse: " + HttpHeaders.LAST_MODIFIED + ": " + lastModified);
    }
 
-   @VisibleForTesting
    protected void addETagTo(HttpResponse from, MutableBlobMetadata metadata) {
       String eTag = from.getFirstHeaderOrNull(HttpHeaders.ETAG);
       if (metadata.getETag() == null && eTag != null) {
@@ -113,7 +117,12 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
 
    public ParseSystemAndUserMetadataFromHeaders setContext(HttpRequest request) {
       checkArgument(request instanceof GeneratedHttpRequest<?>, "note this handler requires a GeneratedHttpRequest");
-      this.request = (GeneratedHttpRequest<?>) request;
+      setName(getNameFor(GeneratedHttpRequest.class.cast(request)));
       return this;
+   }
+
+   @VisibleForTesting
+   void setName(String key) {
+      this.key = checkNotNull(key, "key");
    }
 }

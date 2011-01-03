@@ -36,11 +36,21 @@ public interface IOExceptionRetryHandler {
       public boolean shouldRetryRequest(HttpCommand command, IOException response) {
          return true;
       }
+
+      @Override
+      public String toString() {
+         return "ALWAYS_RETRY";
+      }
    };
 
    public static final IOExceptionRetryHandler NEVER_RETRY = new IOExceptionRetryHandler() {
       public boolean shouldRetryRequest(HttpCommand command, IOException response) {
          return false;
+      }
+
+      @Override
+      public String toString() {
+         return "NEVER_RETRY";
       }
    };
 

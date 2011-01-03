@@ -41,11 +41,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 /**
- * Tests behavior of {@code VCloudVirtualHardwareHandler}
+ * Tests behavior of {@code VCloudVirtualHardwareSectionHandler}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VCloudVirtualHardwareHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "VCloudVirtualHardwareSectionHandlerTest")
 public class VCloudVirtualHardwareSectionHandlerTest extends BaseHandlerTest {
 
    public void testDefault() throws UnknownHostException {

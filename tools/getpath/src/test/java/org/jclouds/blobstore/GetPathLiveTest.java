@@ -34,7 +34,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Optional;
@@ -50,7 +50,7 @@ import com.google.common.collect.Sets;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "functionalTests")
+@Test(groups = "live", sequential = true)
 public class GetPathLiveTest {
 
    public static final String PROPERTY_GETPATH_CONTAINER = "jclouds.getpath.container";
@@ -154,7 +154,7 @@ public class GetPathLiveTest {
          new File(tmpDirectory).mkdirs();
          GetPath.main(uriKey, tmpDirectory);
          for (Entry<String, String> entry : fiveStrings.entrySet()) {
-            assertEquals(Utils.toStringAndClose(new FileInputStream(new File(tmpDirectory, entry
+            assertEquals(Strings2.toStringAndClose(new FileInputStream(new File(tmpDirectory, entry
                      .getKey()))), entry.getValue());
          }
       }

@@ -38,7 +38,7 @@ import com.google.inject.util.Types;
  * 
  * @author Adrian Cole
  */
-@Test(groups = { "unit" }, testName = "blobstore.BaseBlobMapTest")
+@Test(groups = { "unit" })
 public class BaseBlobMapTest {
 
    BlobStoreContext context;
@@ -51,12 +51,12 @@ public class BaseBlobMapTest {
       map = (InputStreamMapImpl) context.createInputStreamMap("test");
    }
 
-   @SuppressWarnings("unchecked")
    public void testTypes() {
-      TypeLiteral type0 = new TypeLiteral<Map<String, Map<String, Blob>>>() {
+      TypeLiteral<Map<String, Map<String, Blob>>> type0 = new TypeLiteral<Map<String, Map<String, Blob>>>() {
       };
-      TypeLiteral type1 = TypeLiteral.get(Types.newParameterizedType(Map.class, String.class, Types
-               .newParameterizedType(Map.class, String.class, Blob.class)));
+      @SuppressWarnings("rawtypes")
+      TypeLiteral type1 = TypeLiteral.get(Types.newParameterizedType(Map.class, String.class,
+            Types.newParameterizedType(Map.class, String.class, Blob.class)));
       assertEquals(type0, type1);
 
    }

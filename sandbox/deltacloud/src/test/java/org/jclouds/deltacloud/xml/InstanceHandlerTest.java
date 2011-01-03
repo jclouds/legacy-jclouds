@@ -27,6 +27,7 @@ import java.net.URI;
 import org.jclouds.deltacloud.domain.Instance;
 import org.jclouds.deltacloud.domain.InstanceAction;
 import org.jclouds.deltacloud.domain.InstanceState;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.testng.annotations.Test;
@@ -61,12 +62,14 @@ public class InstanceHandlerTest {
    }
 
    public void test() {
-      Instance expects = new Instance(URI.create("http://fancycloudprovider.com/api/instances/inst1"), "inst1", "larry",
-            "Production JBoss Instance", URI.create("http://fancycloudprovider.com/api/images/img3"),
+      Instance expects = new Instance(URI.create("http://fancycloudprovider.com/api/instances/inst1"), "inst1",
+            "larry", "Production JBoss Instance", URI.create("http://fancycloudprovider.com/api/images/img3"),
             URI.create("http://fancycloudprovider.com/api/hardware_profiles/m1-small"),
             URI.create("http://fancycloudprovider.com/api/realms/us"), InstanceState.RUNNING, ImmutableMap.of(
-                  InstanceAction.REBOOT, URI.create("http://fancycloudprovider.com/api/instances/inst1/reboot"),
-                  InstanceAction.STOP, URI.create("http://fancycloudprovider.com/api/instances/inst1/stop")),
+                  InstanceAction.REBOOT,
+                  new HttpRequest("POST", URI.create("http://fancycloudprovider.com/api/instances/inst1/reboot")),
+                  InstanceAction.STOP,
+                  new HttpRequest("POST", URI.create("http://fancycloudprovider.com/api/instances/inst1/stop"))),
             ImmutableSet.of("inst1.larry.fancycloudprovider.com"), ImmutableSet.of("inst1.larry.internal"));
       assertEquals(parseInstance(), expects);
    }

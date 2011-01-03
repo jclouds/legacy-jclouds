@@ -19,14 +19,13 @@
 
 package org.jclouds.rackspace.filters;
 
-import java.util.Collections;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpRequestFilter;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rackspace.Authentication;
 import org.jclouds.rackspace.reference.RackspaceHeaders;
 
@@ -48,9 +47,9 @@ public class AuthenticateRequest implements HttpRequestFilter {
       this.authTokenProvider = authTokenProvider;
    }
 
-   public void filter(HttpRequest request) throws HttpException {
-      request.getHeaders().replaceValues(RackspaceHeaders.AUTH_TOKEN,
-               Collections.singletonList(authTokenProvider.get()));
+   @Override
+   public HttpRequest filter(HttpRequest request) throws HttpException {
+      return ModifyRequest.replaceHeader(request, RackspaceHeaders.AUTH_TOKEN, authTokenProvider.get());
    }
 
 }

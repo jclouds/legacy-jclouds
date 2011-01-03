@@ -37,7 +37,8 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "ImagesHandlerTest")
 public class ImagesHandlerTest extends BaseHandlerTest {
 
    @Test
@@ -50,11 +51,6 @@ public class ImagesHandlerTest extends BaseHandlerTest {
             "fedoraproject", "Fedora 10", "Fedora 10", "i386"),
             new Image(URI.create("http://fancycloudprovider.com/api/images/img3"), "img3", "ted", "JBoss", "JBoss",
                   "i386"));
-      System.out.println(factory);
-      System.out.println(injector);
-
-      // not sure why this isn't always automatically called from surefire.
-      setUpInjector();
       assertEquals(factory.create(injector.getInstance(ImagesHandler.class)).parse(is), expects);
    }
 }

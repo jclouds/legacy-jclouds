@@ -27,15 +27,15 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.Binder;
 
 /**
- * Binds the String [] to form parameters named with ProductCode.index
+ * Binds the Iterable to form parameters named with ProductCode.index
  * 
  * @author Adrian Cole
  */
 @Singleton
 public class BindProductCodesToIndexedFormParams implements Binder {
-
-   public void bindToRequest(HttpRequest request, Object input) {
-      indexIterableToFormValuesWithPrefix(request, "ProductCode", input);
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      return indexIterableToFormValuesWithPrefix(request, "ProductCode", input);
    }
 
 }

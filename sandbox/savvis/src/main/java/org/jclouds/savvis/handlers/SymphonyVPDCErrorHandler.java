@@ -31,7 +31,7 @@ import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.base.Throwables;
 import com.google.common.io.Closeables;
@@ -52,7 +52,7 @@ public class SymphonyVPDCErrorHandler implements HttpErrorHandler {
       Exception exception = message != null ? new HttpResponseException(command, response, message)
             : new HttpResponseException(command, response);
       try {
-         message = message != null ? message : String.format("%s -> %s", command.getRequest().getRequestLine(),
+         message = message != null ? message : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(),
                response.getStatusLine());
          switch (response.getStatusCode()) {
          case 400:
@@ -62,7 +62,7 @@ public class SymphonyVPDCErrorHandler implements HttpErrorHandler {
             exception = new AuthorizationException(message, exception);
             break;
          case 404:
-            if (!command.getRequest().getMethod().equals("DELETE")) {
+            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
                exception = new ResourceNotFoundException(message, exception);
             }
             break;
@@ -84,7 +84,7 @@ public class SymphonyVPDCErrorHandler implements HttpErrorHandler {
       if (response.getPayload() == null)
          return null;
       try {
-         return Utils.toStringAndClose(response.getPayload().getInput());
+         return Strings2.toStringAndClose(response.getPayload().getInput());
       } catch (IOException e) {
          throw new RuntimeException(e);
       } finally {

@@ -20,7 +20,7 @@
 package org.jclouds.elasticstack;
 
 import org.jclouds.compute.util.ComputeServiceUtils;
-import org.jclouds.util.Utils;
+import org.jclouds.rest.Providers;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Iterables;
@@ -35,7 +35,7 @@ public class ProvidersInPropertiesTest {
 
    @Test
    public void testSupportedProviders() {
-      Iterable<String> providers = Utils.getSupportedProviders();
+      Iterable<String> providers = Providers.getSupportedProviders();
       assert Iterables.contains(providers, "elasticstack") : providers;
       assert Iterables.contains(providers, "elastichosts-lon-p") : providers;
       assert Iterables.contains(providers, "elastichosts-lon-b") : providers;

@@ -19,13 +19,15 @@
 
 package org.jclouds.atmosonline.saas.functions;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import org.jclouds.atmosonline.saas.domain.BoundedSet;
 import org.jclouds.atmosonline.saas.domain.DirectoryEntry;
-import org.jclouds.atmosonline.saas.domain.internal.BoundedHashSet;
+import org.jclouds.atmosonline.saas.domain.internal.BoundedLinkedHashSet;
 import org.jclouds.atmosonline.saas.reference.AtmosStorageHeaders;
 import org.jclouds.atmosonline.saas.xml.ListDirectoryResponseHandler;
 import org.jclouds.http.HttpResponse;
@@ -40,25 +42,24 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class ParseDirectoryListFromContentAndHeaders implements
-         Function<HttpResponse, BoundedSet<DirectoryEntry>> {
+public class ParseDirectoryListFromContentAndHeaders implements Function<HttpResponse, BoundedSet<DirectoryEntry>> {
 
    private final ParseSax.Factory factory;
    private final Provider<ListDirectoryResponseHandler> listHandlerProvider;
 
    @Inject
-   private ParseDirectoryListFromContentAndHeaders(Factory factory,
-            Provider<ListDirectoryResponseHandler> orgHandlerProvider) {
-      this.factory = factory;
-      this.listHandlerProvider = orgHandlerProvider;
+   ParseDirectoryListFromContentAndHeaders(Factory factory, Provider<ListDirectoryResponseHandler> listHandlerProvider) {
+      this.factory = checkNotNull(factory, "factory");
+      this.listHandlerProvider = checkNotNull(listHandlerProvider, "listHandlerProvider");
    }
 
    /**
     * parses the http response headers to create a new {@link BoundedSet} object.
     */
    public BoundedSet<DirectoryEntry> apply(HttpResponse from) {
+      checkNotNull(from, "http response");
       String token = from.getFirstHeaderOrNull(AtmosStorageHeaders.TOKEN);
-      return new BoundedHashSet<DirectoryEntry>(factory.create(listHandlerProvider.get()).parse(
-               from.getPayload().getInput()), token);
+      return new BoundedLinkedHashSet<DirectoryEntry>(factory.create(listHandlerProvider.get()).parse(
+            from.getPayload().getInput()), token);
    }
 }

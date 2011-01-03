@@ -108,7 +108,6 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
     * @see VCloudClient#listOrgs
     */
    @GET
-   @Path("")
    @Endpoint(OrgList.class)
    @XMLResponseParser(OrgListHandler.class)
    @Consumes(VCloudMediaType.ORGLIST_XML)
@@ -118,7 +117,6 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
     * @see VCloudClient#getVAppTemplate
     */
    @GET
-   @Path("")
    @Consumes(VAPPTEMPLATE_XML)
    @XMLResponseParser(VAppTemplateHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -138,7 +136,6 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
     * @see VCloudClient#findVAppTemplateInOrgCatalogNamed
     */
    @GET
-   @Path("")
    @Consumes(VAPPTEMPLATE_XML)
    @XMLResponseParser(VAppTemplateHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -192,7 +189,6 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
     * @see VCloudClient#findVAppInOrgVDCNamed
     */
    @GET
-   @Path("")
    @Consumes(VAPP_XML)
    @XMLResponseParser(VAppHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -205,7 +201,6 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
     * @see VCloudClient#getVApp
     */
    @GET
-   @Path("")
    @Consumes(VAPP_XML)
    @XMLResponseParser(VAppHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -215,7 +210,6 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
     * @see VCloudClient#getVm
     */
    @GET
-   @Path("")
    @Consumes(VM_XML)
    @XMLResponseParser(VmHandler.class)
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
@@ -333,7 +327,6 @@ public interface VCloudAsyncClient extends CommonVCloudAsyncClient {
     * @see CommonVCloudClient#deleteVApp
     */
    @DELETE
-   @Path("")
    @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @XMLResponseParser(TaskHandler.class)
    ListenableFuture<? extends Task> deleteVApp(@EndpointParam URI vAppId);

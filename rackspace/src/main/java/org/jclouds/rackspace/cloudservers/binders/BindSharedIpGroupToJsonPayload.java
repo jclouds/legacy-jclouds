@@ -50,17 +50,17 @@ public class BindSharedIpGroupToJsonPayload extends BindToJsonPayload {
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Map<String, String> postParams) {
+   public <R extends HttpRequest> R bindToRequest(R request, Map<String, String> postParams) {
       ShareIpRequest createRequest = new ShareIpRequest(Integer.parseInt(checkNotNull(postParams
                .get("sharedIpGroupId"))));
       if (Boolean.parseBoolean(checkNotNull(postParams.get("configureServer")))) {
          createRequest.configureServer = new Boolean(true);
       }
-      super.bindToRequest(request, ImmutableMap.of("shareIp", createRequest));
+      return super.bindToRequest(request, ImmutableMap.of("shareIp", createRequest));
    }
 
    @Override
-   public void bindToRequest(HttpRequest request, Object toBind) {
+   public <R extends HttpRequest> R bindToRequest(R request, Object toBind) {
       throw new IllegalStateException("shareIp is needs parameters");
    }
 }

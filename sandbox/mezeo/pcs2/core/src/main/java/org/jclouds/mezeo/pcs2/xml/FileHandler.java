@@ -30,7 +30,7 @@ import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.mezeo.pcs2.domain.FileInfoWithMetadata;
 import org.jclouds.mezeo.pcs2.domain.internal.FileInfoWithMetadataImpl;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 
@@ -88,7 +88,7 @@ public class FileHandler extends ParseSax.HandlerWithResult<FileInfoWithMetadata
          int index = attributes.getIndex("xlink:href");
          if (index != -1) {
             currentContent = URI.create(attributes.getValue(index));
-            currentUrl = URI.create(Utils.replaceAll(attributes.getValue(index), CONTENT_PATTERN,
+            currentUrl = URI.create(Strings2.replaceAll(attributes.getValue(index), CONTENT_PATTERN,
                      ""));
          }
       } else if (qName.equals("permissions")) {
@@ -120,7 +120,7 @@ public class FileHandler extends ParseSax.HandlerWithResult<FileInfoWithMetadata
       } else if (qName.equals("metadata-item")) {
          int index = attributes.getIndex("xlink:href");
          if (index != -1) {
-            String key = Utils.replaceAll(attributes.getValue(index), METADATA_PATTERN, "");
+            String key = Strings2.replaceAll(attributes.getValue(index), METADATA_PATTERN, "");
             metadataItems.put(key.toLowerCase(), URI.create(attributes.getValue(index)));
          }
       }

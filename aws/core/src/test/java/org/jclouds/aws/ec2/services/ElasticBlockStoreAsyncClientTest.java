@@ -52,7 +52,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.ElasticBlockStoreAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "ElasticBlockStoreAsyncClientTest")
 public class ElasticBlockStoreAsyncClientTest extends BaseEC2AsyncClientTest<ElasticBlockStoreAsyncClient> {
 
    public void testCreateVolume() throws SecurityException, NoSuchMethodException, IOException {

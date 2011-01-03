@@ -34,7 +34,8 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "terremark.TerremarkNetworkHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "TerremarkNetworkHandlerTest")
 public class TerremarkNetworkHandlerTest extends BaseHandlerTest {
 
    public void test1() throws UnknownHostException {

@@ -21,7 +21,6 @@ package org.jclouds.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.get;
-import static org.jclouds.util.Utils.checkNotEmpty;
 import static org.testng.Assert.assertEquals;
 
 import java.io.File;
@@ -36,6 +35,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OperatingSystem;
 import org.jclouds.rest.HttpClient;
 import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.util.Preconditions2;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
@@ -66,7 +66,7 @@ public class ComputeTestUtils {
    }
 
    public static void checkSecretKeyFile(String secretKeyFile) throws FileNotFoundException {
-      checkNotEmpty(secretKeyFile, "System property: [test.ssh.keyfile] set to an empty string");
+      Preconditions2.checkNotEmpty(secretKeyFile, "System property: [test.ssh.keyfile] set to an empty string");
       if (!new File(secretKeyFile).exists()) {
          throw new FileNotFoundException("secretKeyFile not found at: " + secretKeyFile);
       }

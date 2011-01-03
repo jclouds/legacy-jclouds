@@ -41,7 +41,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "cloudservers.CreateServerOptionsTest")
+@Test(groups = "unit")
 public class CreateServerOptionsTest {
 
    Injector injector = Guice.createInjector(new GsonModule());

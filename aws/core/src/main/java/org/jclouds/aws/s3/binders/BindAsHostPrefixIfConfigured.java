@@ -21,7 +21,6 @@ package org.jclouds.aws.s3.binders;
 
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_SERVICE_PATH;
 import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
-import static org.jclouds.http.HttpUtils.urlEncode;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -32,11 +31,12 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.aws.s3.S3AsyncClient;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.binders.BindAsHostPrefix;
+import org.jclouds.util.Strings2;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 
 /**
@@ -53,30 +53,31 @@ public class BindAsHostPrefixIfConfigured implements Binder {
 
    @Inject
    public BindAsHostPrefixIfConfigured(BindAsHostPrefix bindAsHostPrefix,
-            @Named(PROPERTY_S3_VIRTUAL_HOST_BUCKETS) boolean isVhostStyle,
-            @Named(PROPERTY_S3_SERVICE_PATH) String servicePath,
-            Provider<UriBuilder> uriBuilderProvider) {
+         @Named(PROPERTY_S3_VIRTUAL_HOST_BUCKETS) boolean isVhostStyle,
+         @Named(PROPERTY_S3_SERVICE_PATH) String servicePath, Provider<UriBuilder> uriBuilderProvider) {
       this.bindAsHostPrefix = bindAsHostPrefix;
       this.isVhostStyle = isVhostStyle;
       this.servicePath = servicePath;
       this.uriBuilderProvider = uriBuilderProvider;
    }
 
-   public void bindToRequest(HttpRequest request, Object payload) {
+   @SuppressWarnings("unchecked")
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object payload) {
       if (isVhostStyle) {
-         bindAsHostPrefix.bindToRequest(request, payload);
-         request.getHeaders().replaceValues(HttpHeaders.HOST,
-                  ImmutableSet.of(request.getEndpoint().getHost()));
+         request = bindAsHostPrefix.bindToRequest(request, payload);
+         return ModifyRequest.replaceHeader(request, HttpHeaders.HOST, request.getEndpoint().getHost());
       } else {
          UriBuilder builder = uriBuilderProvider.get().uri(request.getEndpoint());
-         StringBuilder path = new StringBuilder(urlEncode(request.getEndpoint().getPath(),
-                  S3AsyncClient.class.getAnnotation(SkipEncoding.class).value()));
+         StringBuilder path = new StringBuilder(Strings2.urlEncode(request.getEndpoint().getPath(), S3AsyncClient.class
+               .getAnnotation(SkipEncoding.class).value()));
          int indexToInsert = path.indexOf(servicePath);
          indexToInsert = indexToInsert == -1 ? 0 : indexToInsert;
          indexToInsert += servicePath.length();
          path.insert(indexToInsert, "/" + payload.toString());
          builder.replacePath(path.toString());
-         request.setEndpoint(builder.buildFromEncodedMap(Maps.<String, Object> newHashMap()));
+         return (R) request.toBuilder().endpoint(builder.buildFromEncodedMap(Maps.<String, Object> newLinkedHashMap()))
+               .build();
       }
    }
 }

@@ -34,7 +34,7 @@ import org.jclouds.aws.cloudwatch.domain.Datapoint;
 import org.jclouds.aws.cloudwatch.functions.ISO8601Format;
 import org.jclouds.aws.cloudwatch.xml.GetMetricStatisticsResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
-import org.jclouds.aws.functions.RegionToEndpoint;
+import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
 import org.jclouds.rest.annotations.ParamParser;
@@ -67,7 +67,7 @@ public interface CloudWatchAsyncClient {
    @XMLResponseParser(GetMetricStatisticsResponseHandler.class)
    @FormParams(keys = ACTION, values = "GetMetricStatistics")
    ListenableFuture<? extends Set<Datapoint>> getMetricStatisticsInRegion(
-            @EndpointParam(parser = RegionToEndpoint.class) @Nullable String region,
+            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
             @FormParam("MeasureName") String measureName,
             @FormParam("StartTime") @ParamParser(ISO8601Format.class) Date startTime,
             @FormParam("EndTime") @ParamParser(ISO8601Format.class) Date endTime, @FormParam("Period") int period,

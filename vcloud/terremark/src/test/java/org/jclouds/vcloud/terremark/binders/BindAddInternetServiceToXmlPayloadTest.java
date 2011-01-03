@@ -31,7 +31,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.Maps;
@@ -46,7 +46,7 @@ import com.google.inject.name.Names;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.BindAddInternetServiceToXmlPayloadTest")
+@Test(groups = "unit")
 public class BindAddInternetServiceToXmlPayloadTest {
    Injector injector = Guice.createInjector(new AbstractModule() {
 
@@ -62,12 +62,12 @@ public class BindAddInternetServiceToXmlPayloadTest {
       @Named("CreateInternetService")
       String provideInstantiateVAppTemplateParams() throws IOException {
          InputStream is = getClass().getResourceAsStream("/terremark/CreateInternetService.xml");
-         return Utils.toStringAndClose(is);
+         return Strings2.toStringAndClose(is);
       }
    });
 
    public void testApplyInputStream() throws IOException {
-      String expected = Utils.toStringAndClose(getClass().getResourceAsStream(
+      String expected = Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/terremark/CreateInternetService-test.xml"));
       HttpRequest request = new HttpRequest("GET", URI.create("http://test"));
       BindAddInternetServiceToXmlPayload binder = injector

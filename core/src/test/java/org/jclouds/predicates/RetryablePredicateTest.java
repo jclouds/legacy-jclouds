@@ -32,7 +32,7 @@ import com.google.common.base.Predicates;
  * @author Adrian Cole
  * 
  */
-@Test(groups = "unit", sequential = true, testName = "jclouds.RetryablePredicateTest")
+@Test(groups = "unit", sequential = true)
 public class RetryablePredicateTest {
 
    @Test

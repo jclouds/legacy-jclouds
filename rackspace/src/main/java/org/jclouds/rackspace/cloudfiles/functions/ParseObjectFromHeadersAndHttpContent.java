@@ -36,7 +36,7 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 public class ParseObjectFromHeadersAndHttpContent implements Function<HttpResponse, CFObject>,
-         InvocationContext {
+         InvocationContext<ParseObjectFromHeadersAndHttpContent> {
 
    private final ParseObjectInfoFromHeaders infoParser;
    private final CFObject.Factory objectProvider;

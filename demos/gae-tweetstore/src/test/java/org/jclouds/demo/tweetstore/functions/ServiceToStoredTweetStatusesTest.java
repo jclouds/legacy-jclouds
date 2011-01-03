@@ -40,7 +40,7 @@ import com.google.common.collect.Iterables;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "tweetstore.ServiceToStoredTweetStatuses")
+@Test(groups = "unit")
 public class ServiceToStoredTweetStatusesTest {
 
    Map<String, BlobStoreContext> createServices(String container) throws InterruptedException,

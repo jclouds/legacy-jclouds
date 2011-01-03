@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "scriptbuilder.InstallRSAPrivateKeyTest")
+@Test(groups = "unit")
 public class InstallRSAPrivateKeyTest {
 
    InstallRSAPrivateKey key = new InstallRSAPrivateKey("-----BEGIN RSA PRIVATE KEY-----\n-----END RSA PRIVATE KEY-----\n");

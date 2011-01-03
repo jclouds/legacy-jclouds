@@ -20,32 +20,20 @@
 package org.jclouds.util;
 
 import static com.google.common.base.Predicates.equalTo;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.jclouds.http.HttpUtils.changeSchemeHostAndPortTo;
-import static org.jclouds.http.HttpUtils.parseQueryToMap;
 import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
 import static org.testng.Assert.assertEquals;
 
 import java.net.URI;
-import java.util.Collections;
 
 import javax.inject.Provider;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriBuilder;
 
 import org.jclouds.PerformanceTest;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.HttpUtils;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
 import com.sun.jersey.api.uri.UriBuilderImpl;
 
 /**
@@ -53,7 +41,8 @@ import com.sun.jersey.api.uri.UriBuilderImpl;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "performance", sequential = true, testName = "jclouds.HttpUtils")
+//NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "performance", sequential = true, timeOut = 2 * 60 * 1000, testName = "HttpUtilsTest")
 public class HttpUtilsTest extends PerformanceTest {
    Provider<UriBuilder> uriBuilderProvider = new Provider<UriBuilder>() {
 
@@ -63,62 +52,6 @@ public class HttpUtilsTest extends PerformanceTest {
       }
 
    };
-
-   public void testParseBase64InForm() {
-      Multimap<String, String> expects = LinkedListMultimap.create();
-      expects.put("Version", "2010-06-15");
-      expects.put("Action", "ModifyInstanceAttribute");
-      expects.put("Attribute", "userData");
-      expects.put("Value", "dGVzdA==");
-      expects.put("InstanceId", "1");
-      assertEquals(
-            expects,
-            parseQueryToMap("Version=2010-06-15&Action=ModifyInstanceAttribute&Attribute=userData&Value=dGVzdA%3D%3D&InstanceId=1"));
-   }
-
-   @Test
-   public void testParseQueryToMapSingleParam() {
-      Multimap<String, String> parsedMap = parseQueryToMap("v=1.3");
-      assert parsedMap.keySet().size() == 1 : "Expected 1 key, found: " + parsedMap.keySet().size();
-      assert parsedMap.keySet().contains("v") : "Expected v to be a part of the keys";
-      String valueForV = Iterables.getOnlyElement(parsedMap.get("v"));
-      assert valueForV.equals("1.3") : "Expected the value for 'v' to be '1.3', found: " + valueForV;
-   }
-
-   @Test
-   public void testParseQueryToMapMultiParam() {
-      Multimap<String, String> parsedMap = parseQueryToMap("v=1.3&sig=123");
-      assert parsedMap.keySet().size() == 2 : "Expected 2 keys, found: " + parsedMap.keySet().size();
-      assert parsedMap.keySet().contains("v") : "Expected v to be a part of the keys";
-      assert parsedMap.keySet().contains("sig") : "Expected sig to be a part of the keys";
-      String valueForV = Iterables.getOnlyElement(parsedMap.get("v"));
-      assert valueForV.equals("1.3") : "Expected the value for 'v' to be '1.3', found: " + valueForV;
-      String valueForSig = Iterables.getOnlyElement(parsedMap.get("sig"));
-      assert valueForSig.equals("123") : "Expected the value for 'v' to be '123', found: " + valueForSig;
-   }
-
-   @Test
-   public void testChangeSchemeHostAndPortTo() {
-      HttpRequest request = createMock(HttpRequest.class);
-      expect(request.getEndpoint()).andReturn(URI.create("http://localhost/mypath"));
-      request.setEndpoint(URI.create("https://remotehost:443/mypath"));
-      Multimap<String, String> headers = HashMultimap.create();
-      expect(request.getHeaders()).andReturn(headers);
-      replay(request);
-      changeSchemeHostAndPortTo(request, "https", "remotehost", 443, uriBuilderProvider.get());
-      assertEquals(headers.get(HttpHeaders.HOST), Collections.singletonList("remotehost"));
-   }
-
-   public void testIsEncoded() {
-      assert HttpUtils.isUrlEncoded("/read-tests/%73%6f%6d%65%20%66%69%6c%65");
-      assert !HttpUtils.isUrlEncoded("/read-tests/ tep");
-   }
-
-   public void testNoDoubleEncode() {
-      assertEquals(HttpUtils.urlEncode("/read-tests/%73%6f%6d%65%20%66%69%6c%65", '/'),
-            "/read-tests/%73%6f%6d%65%20%66%69%6c%65");
-      assertEquals(HttpUtils.urlEncode("/read-tests/ tep", '/'), "/read-tests/%20tep");
-   }
 
    public void testIBM() {
       URI ibm = HttpUtils
@@ -189,6 +122,7 @@ public class HttpUtilsTest extends PerformanceTest {
       Exception from = new HttpResponseException("message", null, new HttpResponse(404, "not found", null));
       assertEquals(returnValueOnCodeOrNull(from, true, equalTo(404)), Boolean.TRUE);
    }
+
    public void testNullResponse() {
       Exception from = new HttpResponseException("message", null, null);
       assertEquals(returnValueOnCodeOrNull(from, true, equalTo(404)), null);

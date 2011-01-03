@@ -29,7 +29,7 @@ import org.jclouds.domain.Credentials;
 import org.jclouds.io.Payload;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 
 import com.google.common.base.Throwables;
 
@@ -193,7 +193,7 @@ public class TemplateOptions extends RunScriptOptions {
     */
    public TemplateOptions runScript(Payload script) {
       try {
-         return runScript(Statements.exec(Utils.toStringAndClose(checkNotNull(script, "script").getInput())));
+         return runScript(Statements.exec(Strings2.toStringAndClose(checkNotNull(script, "script").getInput())));
       } catch (IOException e) {
          Throwables.propagate(e);
          return this;
@@ -225,7 +225,7 @@ public class TemplateOptions extends RunScriptOptions {
    @Deprecated
    public TemplateOptions installPrivateKey(Payload privateKey) {
       try {
-         return installPrivateKey(Utils.toStringAndClose(checkNotNull(privateKey, "privateKey").getInput()));
+         return installPrivateKey(Strings2.toStringAndClose(checkNotNull(privateKey, "privateKey").getInput()));
       } catch (IOException e) {
          Throwables.propagate(e);
          return this;
@@ -256,7 +256,7 @@ public class TemplateOptions extends RunScriptOptions {
    @Deprecated
    public TemplateOptions authorizePublicKey(Payload publicKey) {
       try {
-         return authorizePublicKey(Utils.toStringAndClose(checkNotNull(publicKey, "publicKey").getInput()));
+         return authorizePublicKey(Strings2.toStringAndClose(checkNotNull(publicKey, "publicKey").getInput()));
       } catch (IOException e) {
          Throwables.propagate(e);
          return this;

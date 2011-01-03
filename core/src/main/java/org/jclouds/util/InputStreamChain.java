@@ -71,7 +71,7 @@ public class InputStreamChain extends InputStream {
     * @return instance of self (for fluent calls)
     */
    public InputStreamChain addAsInputStream(final String value) {
-      return addInputStream(Utils.toInputStream(value));
+      return addInputStream(Strings2.toInputStream(value));
    }
 
    @Override

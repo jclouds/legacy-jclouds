@@ -19,8 +19,6 @@
 
 package org.jclouds.ssh.jsch.config;
 
-import static org.jclouds.util.Utils.isPrivateKeyCredential;
-
 import javax.inject.Named;
 
 import org.jclouds.Constants;
@@ -32,6 +30,7 @@ import org.jclouds.predicates.SocketOpen;
 import org.jclouds.ssh.ConfiguresSshClient;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.JschSshClient;
+import org.jclouds.util.CredentialUtils;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -79,7 +78,7 @@ public class JschSshClientModule extends AbstractModule {
 
       @Override
       public SshClient create(IPSocket socket, Credentials credentials) {
-         return isPrivateKeyCredential(credentials) ? create(socket, credentials.identity,
+         return CredentialUtils.isPrivateKeyCredential(credentials) ? create(socket, credentials.identity,
                credentials.credential.getBytes()) : create(socket, credentials.identity, credentials.credential);
       }
    }

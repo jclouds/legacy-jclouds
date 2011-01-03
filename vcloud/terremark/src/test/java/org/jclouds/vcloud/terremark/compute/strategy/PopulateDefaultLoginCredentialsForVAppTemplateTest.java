@@ -37,7 +37,7 @@ import com.google.common.io.ByteStreams;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "terremark.PopulateDefaultLoginCredentialsForVAppTemplateTest")
+@Test(groups = "unit")
 public class PopulateDefaultLoginCredentialsForVAppTemplateTest {
 
    @Test

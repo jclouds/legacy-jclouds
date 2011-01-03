@@ -33,7 +33,7 @@ import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.jclouds.vcloud.config.BaseVCloudExpressRestClientModule;
 import org.jclouds.vcloud.domain.ReferenceType;
 import org.jclouds.vcloud.domain.VCloudSession;
@@ -58,7 +58,7 @@ public abstract class TerremarkRestClientModule<S extends TerremarkVCloudClient,
    @Provides
    @Named("CreateInternetService")
    String provideCreateInternetService() throws IOException {
-      return Utils.toStringAndClose(getClass().getResourceAsStream(
+      return Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/terremark/CreateInternetService.xml"));
    }
 
@@ -66,7 +66,7 @@ public abstract class TerremarkRestClientModule<S extends TerremarkVCloudClient,
    @Provides
    @Named("CreateNodeService")
    String provideCreateNodeService() throws IOException {
-      return Utils.toStringAndClose(getClass().getResourceAsStream(
+      return Strings2.toStringAndClose(getClass().getResourceAsStream(
                "/terremark/CreateNodeService.xml"));
    }
 
@@ -122,6 +122,6 @@ public abstract class TerremarkRestClientModule<S extends TerremarkVCloudClient,
    @Provides
    @Named("CreateKey")
    String provideCreateKey() throws IOException {
-      return Utils.toStringAndClose(getClass().getResourceAsStream("/terremark/CreateKey.xml"));
+      return Strings2.toStringAndClose(getClass().getResourceAsStream("/terremark/CreateKey.xml"));
    }
 }

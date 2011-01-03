@@ -41,7 +41,8 @@ import com.google.inject.Guice;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.DescribeAvailabilityZonesResponseHandlerTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "DescribeAvailabilityZonesResponseHandlerTest")
 public class DescribeAvailabilityZonesResponseHandlerTest extends BaseHandlerTest {
 
    @BeforeTest
@@ -50,7 +51,7 @@ public class DescribeAvailabilityZonesResponseHandlerTest extends BaseHandlerTes
 
          @Override
          protected void configure() {
-            bindConstant().annotatedWith(org.jclouds.aws.Region.class).to("SHOULDNTSEETHISASXMLHASREGIONDATA");
+            bindConstant().annotatedWith(org.jclouds.location.Region.class).to("SHOULDNTSEETHISASXMLHASREGIONDATA");
             super.configure();
          }
 

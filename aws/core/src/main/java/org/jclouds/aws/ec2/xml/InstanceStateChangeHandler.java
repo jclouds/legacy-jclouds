@@ -23,11 +23,11 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.Region;
 import org.jclouds.aws.ec2.domain.InstanceState;
 import org.jclouds.aws.ec2.domain.InstanceStateChange;
 import org.jclouds.aws.ec2.util.EC2Utils;
 import org.jclouds.http.functions.ParseSax.HandlerForGeneratedRequestWithResult;
+import org.jclouds.location.Region;
 import org.xml.sax.Attributes;
 
 import com.google.common.collect.Sets;

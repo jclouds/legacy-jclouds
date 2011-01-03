@@ -64,7 +64,7 @@ import org.jclouds.io.Payloads;
 import org.jclouds.io.WriteTo;
 import org.jclouds.io.payloads.StreamingPayload;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -411,7 +411,7 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
    @DataProvider(name = "putTests")
    public Object[][] createData1() throws IOException {
 
-      String realObject = Utils.toStringAndClose(new FileInputStream("pom.xml"));
+      String realObject = Strings2.toStringAndClose(new FileInputStream("pom.xml"));
 
       return new Object[][] { { "file", "text/xml", new File("pom.xml"), realObject },
             { "string", "text/xml", realObject, realObject },

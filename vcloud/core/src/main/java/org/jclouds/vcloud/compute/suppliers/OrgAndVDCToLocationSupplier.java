@@ -44,7 +44,7 @@ public class OrgAndVDCToLocationSupplier implements Supplier<Set<? extends Locat
    private final Supplier<Map<String, ? extends Org>> orgNameToVDCResource;
 
    @Inject
-   OrgAndVDCToLocationSupplier(@org.jclouds.rest.annotations.Provider String providerName,
+   OrgAndVDCToLocationSupplier(@org.jclouds.location.Provider String providerName,
             @org.jclouds.vcloud.endpoints.Org Supplier<Map<String, ReferenceType>> orgNameToResource,
             Supplier<Map<String, ? extends Org>> orgNameToVDCResource) {
       this.providerName = providerName;

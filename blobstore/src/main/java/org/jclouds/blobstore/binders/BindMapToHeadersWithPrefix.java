@@ -19,17 +19,23 @@
 
 package org.jclouds.blobstore.binders;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
+import org.jclouds.util.Maps2;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Multimaps;
 
 /**
  * 
@@ -37,24 +43,36 @@ import org.jclouds.rest.Binder;
  */
 @Singleton
 public class BindMapToHeadersWithPrefix implements Binder {
-   private final String metadataPrefix;
+   private final Function<String, String> FN;
 
    @Inject
-   public BindMapToHeadersWithPrefix(@Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
-      this.metadataPrefix = metadataPrefix;
+   public BindMapToHeadersWithPrefix(@Named(PROPERTY_USER_METADATA_PREFIX) final String metadataPrefix) {
+      checkNotNull(metadataPrefix, PROPERTY_USER_METADATA_PREFIX);
+      FN = new Function<String, String>() {
+
+         @Override
+         public String apply(String arg0) {
+            String inLowercase = arg0.toLowerCase();
+            return (inLowercase.startsWith(metadataPrefix)) ? inLowercase : metadataPrefix + inLowercase;
+         }
+
+         @Override
+         public String toString() {
+            return "prefix: " + metadataPrefix;
+         }
+
+      };
+
    }
 
-   @SuppressWarnings("unchecked")
-   public void bindToRequest(HttpRequest request, Object payload) {
-      Map<String, String> userMetadata = (Map<String, String>) payload;
-      for (Entry<String, String> entry : userMetadata.entrySet()) {
-         if (entry.getKey().startsWith(metadataPrefix)) {
-            request.getHeaders().put(entry.getKey().toLowerCase(), entry.getValue());
-         } else {
-            request.getHeaders().put((metadataPrefix + entry.getKey()).toLowerCase(),
-                     entry.getValue());
-         }
-      }
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      checkArgument(checkNotNull(input, "input") instanceof Map, "this binder is only valid for Maps!");
+      checkNotNull(request, "request");
+
+      @SuppressWarnings("unchecked")
+      Map<String, String> userMetadata = Maps2.transformKeys((Map<String, String>) input, FN);
+      return ModifyRequest.putHeaders(request, Multimaps.forMap(userMetadata));
    }
 
 }

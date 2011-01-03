@@ -61,11 +61,12 @@ import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
 /**
- * Tests behavior of {@code AtmosStorageClient}
+ * Tests behavior of {@code AtmosStorageAsyncClient}
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "emcsaas.AtmosStorageClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "AtmosStorageAsyncClientTest")
 public class AtmosStorageAsyncClientTest extends RestClientTest<AtmosStorageAsyncClient> {
 
    private BlobToObject blobToObject;

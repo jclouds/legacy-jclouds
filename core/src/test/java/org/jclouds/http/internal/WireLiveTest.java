@@ -28,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +42,7 @@ import org.testng.annotations.Test;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "core.WireLiveTest")
+@Test(groups = "live", sequential = true)
 public class WireLiveTest {
 
    private static final String sysHttpStreamUrl = System.getProperty("jclouds.wire.httpstream.url");
@@ -134,14 +135,18 @@ public class WireLiveTest {
 
    @Test(groups = "live")
    public void testRemoteInputStream() throws Exception {
-      URL url = new URL(checkNotNull(sysHttpStreamUrl, "sysHttpStreamUrl"));
-      URLConnection connection = url.openConnection();
-      HttpWire wire = setUp();
-      final InputStream in = wire.input(connection.getInputStream());
-      byte[] compare = CryptoStreams.md5(InputSuppliers.of(in));
-      Thread.sleep(100);
-      assertEquals(CryptoStreams.hex(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
-      assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
+      try {
+         URL url = new URL(checkNotNull(sysHttpStreamUrl, "sysHttpStreamUrl"));
+         URLConnection connection = url.openConnection();
+         HttpWire wire = setUp();
+         final InputStream in = wire.input(connection.getInputStream());
+         byte[] compare = CryptoStreams.md5(InputSuppliers.of(in));
+         Thread.sleep(100);
+         assertEquals(CryptoStreams.hex(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
+         assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
+      } catch (UnknownHostException e) {
+         // probably in offline mode
+      }
    }
 
    @Test(groups = "live", enabled = false)
@@ -155,14 +160,18 @@ public class WireLiveTest {
 
    @Test(groups = "live")
    public void testRemoteInputStreamSynch() throws Exception {
-      URL url = new URL(checkNotNull(sysHttpStreamUrl, "sysHttpStreamUrl"));
-      URLConnection connection = url.openConnection();
-      HttpWire wire = setUpSynch();
-      final InputStream in = wire.input(connection.getInputStream());
-      byte[] compare = CryptoStreams.md5(InputSuppliers.of(in));
-      Thread.sleep(100);
-      assertEquals(CryptoStreams.hex(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
-      assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
+      try {
+         URL url = new URL(checkNotNull(sysHttpStreamUrl, "sysHttpStreamUrl"));
+         URLConnection connection = url.openConnection();
+         HttpWire wire = setUpSynch();
+         final InputStream in = wire.input(connection.getInputStream());
+         byte[] compare = CryptoStreams.md5(InputSuppliers.of(in));
+         Thread.sleep(100);
+         assertEquals(CryptoStreams.hex(compare), checkNotNull(sysHttpStreamMd5, sysHttpStreamMd5));
+         assertEquals(((BufferLogger) wire.getWireLog()).buff.toString().getBytes().length, 3331484);
+      } catch (UnknownHostException e) {
+         // probably in offline mode
+      }
    }
 
 }

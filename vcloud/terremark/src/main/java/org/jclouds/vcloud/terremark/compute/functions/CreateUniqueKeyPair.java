@@ -31,7 +31,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Throwables2;
 import org.jclouds.vcloud.terremark.TerremarkVCloudClient;
 import org.jclouds.vcloud.terremark.compute.domain.OrgAndName;
 import org.jclouds.vcloud.terremark.domain.KeyPair;
@@ -72,7 +72,7 @@ public class CreateUniqueKeyPair implements Function<OrgAndName, KeyPair> {
             keyPair = trmkClient.generateKeyPairInOrg(org, getNextName(keyPairName), false);
             logger.debug("<< created keyPair(%s)", keyPair.getName());
          } catch (RuntimeException e) {
-            HttpResponseException ht = Utils.getFirstThrowableOfType(e, HttpResponseException.class);
+            HttpResponseException ht = Throwables2.getFirstThrowableOfType(e, HttpResponseException.class);
             if (ht == null || ht.getContent() == null
                   || ht.getContent().indexOf("Security key with same name exists") == -1)
                throw e;

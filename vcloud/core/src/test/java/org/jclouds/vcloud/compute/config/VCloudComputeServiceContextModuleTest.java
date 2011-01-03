@@ -27,7 +27,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VCloudComputeServiceContextModuleTest")
+@Test(groups = "unit")
 public class VCloudComputeServiceContextModuleTest {
 
    @SuppressWarnings("static-access")

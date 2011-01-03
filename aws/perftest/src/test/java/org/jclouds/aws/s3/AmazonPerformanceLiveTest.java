@@ -27,7 +27,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.jets3t.service.S3ServiceException;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -43,19 +42,16 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
  * 
  * @author Adrian Cole
  */
-@Test(sequential = true, timeOut = 2 * 60 * 1000, testName = "perftest.AmazonPerformanceLiveTest", groups = { "live" })
+@Test(sequential = true, timeOut = 2 * 60 * 1000, groups = { "live" })
 public class AmazonPerformanceLiveTest extends BasePerformanceLiveTest {
    private AmazonS3 s3;
 
-   @BeforeClass(groups = { "live" }, dependsOnMethods = "setUpResourcesOnThisThread")
-   protected void createLiveS3Context(ITestContext testContext) throws S3ServiceException {
+   @BeforeClass(groups = { "integration", "live" })
+   public void setUpResourcesOnThisThread(ITestContext testContext) throws Exception {
+      super.setUpResourcesOnThisThread(testContext);
       exec = Executors.newCachedThreadPool();
-      if (testContext.getAttribute("jclouds.test.identity") != null) {
-         s3 = new AmazonS3Client(new BasicAWSCredentials((String) testContext.getAttribute("jclouds.test.identity"),
-               (String) testContext.getAttribute("jclouds.test.credential")));
-      } else {
-         throw new RuntimeException("not configured properly");
-      }
+      s3 = new AmazonS3Client(new BasicAWSCredentials(System.getProperty("test.s3.identity"),
+            System.getProperty("test.s3.credential")));
    }
 
    @Override

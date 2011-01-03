@@ -49,7 +49,8 @@ import com.google.inject.TypeLiteral;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "ec2.AMIAsyncClientTest")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "AMIAsyncClientTest")
 public class AMIAsyncClientTest extends BaseEC2AsyncClientTest<AMIAsyncClient> {
 
    public void testCreateImage() throws SecurityException, NoSuchMethodException, IOException {

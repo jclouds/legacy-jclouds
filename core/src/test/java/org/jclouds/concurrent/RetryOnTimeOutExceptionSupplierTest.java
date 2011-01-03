@@ -39,7 +39,7 @@ import com.google.common.base.Supplier;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "concurrent.RetryOnTimeOutExceptionSupplierTest")
+@Test(groups = "unit")
 public class RetryOnTimeOutExceptionSupplierTest {
    ExecutorService executorService = MoreExecutors.sameThreadExecutor();
 

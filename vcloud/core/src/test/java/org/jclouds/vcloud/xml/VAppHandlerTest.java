@@ -44,7 +44,7 @@ import com.google.inject.Injector;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit", testName = "vcloud.VAppHandlerTest")
+@Test(groups = "unit")
 public class VAppHandlerTest {
    public void testRhelOffStatic() {
       InputStream is = getClass().getResourceAsStream("/vapp-rhel-off-static.xml");

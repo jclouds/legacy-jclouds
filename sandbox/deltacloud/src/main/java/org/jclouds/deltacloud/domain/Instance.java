@@ -27,6 +27,8 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import org.jclouds.http.HttpRequest;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -45,12 +47,12 @@ public class Instance {
    private final URI hardwareProfile;
    private final URI realm;
    private final InstanceState state;
-   private final Map<InstanceAction, URI> actions;
+   private final Map<InstanceAction, HttpRequest> actions;
    private final Set<String> publicAddresses;
    private final Set<String> privateAddresses;
 
    public Instance(URI href, String id, String ownerId, @Nullable String name, URI image, URI hardwareProfile,
-         URI realm, InstanceState state, Map<InstanceAction, URI> actions, Set<String> publicAddresses,
+         URI realm, InstanceState state, Map<InstanceAction, HttpRequest> actions, Set<String> publicAddresses,
          Set<String> privateAddresses) {
       this.href = checkNotNull(href, "href");
       this.id = checkNotNull(id, "id");
@@ -135,7 +137,7 @@ public class Instance {
     * @return valid actions for the instance, along with the URL which may be used to perform the
     *         action
     */
-   public Map<InstanceAction, URI> getActions() {
+   public Map<InstanceAction, HttpRequest> getActions() {
       return actions;
    }
 

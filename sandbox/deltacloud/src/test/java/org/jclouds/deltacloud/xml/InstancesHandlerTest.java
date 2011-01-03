@@ -28,6 +28,7 @@ import java.util.Set;
 import org.jclouds.deltacloud.domain.Instance;
 import org.jclouds.deltacloud.domain.InstanceAction;
 import org.jclouds.deltacloud.domain.InstanceState;
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
 
@@ -39,7 +40,8 @@ import com.google.common.collect.ImmutableSet;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "unit")
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "InstancesHandlerTest")
 public class InstancesHandlerTest extends BaseHandlerTest {
 
    @Test
@@ -50,14 +52,11 @@ public class InstancesHandlerTest extends BaseHandlerTest {
             "Production JBoss Instance", URI.create("http://fancycloudprovider.com/api/images/img3"), URI
                   .create("http://fancycloudprovider.com/api/hardware_profiles/m1-small"), URI
                   .create("http://fancycloudprovider.com/api/realms/us"), InstanceState.RUNNING, ImmutableMap.of(
-                  InstanceAction.REBOOT, URI.create("http://fancycloudprovider.com/api/instances/inst1/reboot"),
-                  InstanceAction.STOP, URI.create("http://fancycloudprovider.com/api/instances/inst1/stop")),
+                  InstanceAction.REBOOT,
+                  new HttpRequest("POST", URI.create("http://fancycloudprovider.com/api/instances/inst1/reboot")),
+                  InstanceAction.STOP,
+                  new HttpRequest("POST", URI.create("http://fancycloudprovider.com/api/instances/inst1/stop"))),
             ImmutableSet.of("inst1.larry.fancycloudprovider.com"), ImmutableSet.of("inst1.larry.internal")));
-      System.out.println(factory);
-      System.out.println(injector);
-
-      // not sure why this isn't always automatically called from surefire.
-      setUpInjector();
       assertEquals(factory.create(injector.getInstance(InstancesHandler.class)).parse(is), expects);
    }
 }

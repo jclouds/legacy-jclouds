@@ -21,7 +21,7 @@ package org.jclouds.vcloud.functions;
 
 import static com.google.common.collect.Iterables.filter;
 import static org.jclouds.concurrent.FutureIterables.transformParallel;
-import static org.jclouds.util.Utils.propagateOrNull;
+import static org.jclouds.util.Throwables2.propagateOrNull;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;

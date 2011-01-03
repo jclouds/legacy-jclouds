@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups = "live", testName = "emcsaas.AtmosStorageMapIntegrationTest")
+@Test(groups = "live")
 public class AtmosStorageMapIntegrationLiveTest extends BaseBlobMapIntegrationTest {
 
    @Override

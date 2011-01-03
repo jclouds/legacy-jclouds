@@ -40,8 +40,8 @@ public class AzureBlobToBlob implements Function<AzureBlob, Blob> {
 
    @Inject
    AzureBlobToBlob(Factory blobFactory, BlobPropertiesToBlobMetadata blobPr2BlobMd) {
-      this.blobFactory = blobFactory;
-      this.blobPr2BlobMd = blobPr2BlobMd;
+      this.blobFactory = checkNotNull(blobFactory, "blobFactory");
+      this.blobPr2BlobMd = checkNotNull(blobPr2BlobMd, "blobPr2BlobMd");
    }
 
    public Blob apply(AzureBlob from) {

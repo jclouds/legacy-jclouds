@@ -25,10 +25,16 @@ import org.jclouds.aws.s3.domain.Payer;
 import org.jclouds.http.HttpException;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
-import org.jclouds.util.Utils;
+import org.jclouds.util.Strings2;
 import org.testng.annotations.Test;
 
-@Test(groups = "unit", testName = "s3.PayerHandlerTest")
+/**
+ * Tests behavior of {@code PayerHandler}
+ * 
+ * @author Adrian Cole
+ */
+// NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
+@Test(groups = "unit", testName = "PayerHandlerTest")
 public class PayerHandlerTest extends BaseHandlerTest {
 
    ParseSax<Payer> createParser() {
@@ -41,7 +47,7 @@ public class PayerHandlerTest extends BaseHandlerTest {
    public void testPayerRequester() throws HttpException {
       Payer payer = createParser()
                .parse(
-                        Utils
+                        Strings2
                                  .toInputStream("<RequestPaymentConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Payer>Requester</Payer></RequestPaymentConfiguration>"));
       assertEquals(payer, Payer.REQUESTER);
 
@@ -51,7 +57,7 @@ public class PayerHandlerTest extends BaseHandlerTest {
    public void testPayerBucketOwner() throws HttpException {
       Payer payer = createParser()
                .parse(
-                        Utils
+                        Strings2
                                  .toInputStream("<RequestPaymentConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Payer>BucketOwner</Payer></RequestPaymentConfiguration>"));
       assertEquals(payer, Payer.BUCKET_OWNER);
 

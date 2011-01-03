@@ -22,8 +22,8 @@ package org.jclouds.servermanager.compute.config;
 import org.jclouds.compute.ComputeServiceAdapter;
 import org.jclouds.compute.config.ComputeServiceAdapterContextModule;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.suppliers.DefaultLocationSupplier;
 import org.jclouds.domain.Location;
+import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.servermanager.Datacenter;
 import org.jclouds.servermanager.Hardware;
 import org.jclouds.servermanager.Image;
@@ -56,7 +56,7 @@ public class ServerManagerComputeServiceContextModule extends
       bind(new TypeLiteral<ComputeServiceAdapter<Server, Hardware, Image, Datacenter>>() {
       }).to(ServerManagerComputeServiceAdapter.class);
       bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(DefaultLocationSupplier.class);
+      }).to(OnlyLocationOrFirstZone.class);
       bind(new TypeLiteral<Function<Server, NodeMetadata>>() {
       }).to(ServerToNodeMetadata.class);
       bind(new TypeLiteral<Function<Image, org.jclouds.compute.domain.Image>>() {

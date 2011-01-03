@@ -21,13 +21,16 @@ package org.jclouds.aws.ec2.binders;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.http.HttpUtils.addFormParamTo;
 
 import javax.inject.Singleton;
 
 import org.jclouds.aws.ec2.domain.UserIdGroupPair;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
+
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableMultimap.Builder;
 
 /**
  * Binds the String [] to query parameters named with GroupName.index
@@ -36,12 +39,15 @@ import org.jclouds.rest.Binder;
  */
 @Singleton
 public class BindUserIdGroupPairToSourceSecurityGroupFormParams implements Binder {
-
-   public void bindToRequest(HttpRequest request, Object input) {
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
       checkArgument(checkNotNull(input, "input") instanceof UserIdGroupPair,
-               "this binder is only valid for UserIdGroupPair!");
+            "this binder is only valid for UserIdGroupPair!");
       UserIdGroupPair pair = (UserIdGroupPair) input;
-      addFormParamTo(request, "SourceSecurityGroupOwnerId", pair.getUserId());
-      addFormParamTo(request, "SourceSecurityGroupName", pair.getGroupName());
+      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      builder.put("SourceSecurityGroupOwnerId", pair.getUserId());
+      builder.put("SourceSecurityGroupName", pair.getGroupName());
+      return ModifyRequest.putFormParams(request, builder.build());
+
    }
 }

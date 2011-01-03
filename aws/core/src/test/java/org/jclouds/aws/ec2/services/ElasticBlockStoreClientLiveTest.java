@@ -59,7 +59,7 @@ import com.google.inject.Module;
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "ec2.ElasticBlockStoreClientLiveTest")
+@Test(groups = "live", sequential = true)
 public class ElasticBlockStoreClientLiveTest {
    private ElasticBlockStoreClient client;
    private RestContext<EC2Client, EC2AsyncClient> context;

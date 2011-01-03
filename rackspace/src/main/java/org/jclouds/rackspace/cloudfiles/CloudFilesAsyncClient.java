@@ -45,7 +45,7 @@ import org.jclouds.http.functions.ParseETagHeader;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.rackspace.CloudFiles;
 import org.jclouds.rackspace.CloudFilesCDN;
-import org.jclouds.rackspace.cloudfiles.binders.BindCFObjectToPayload;
+import org.jclouds.rackspace.cloudfiles.binders.BindCFObjectMetadataToRequest;
 import org.jclouds.rackspace.cloudfiles.domain.AccountMetadata;
 import org.jclouds.rackspace.cloudfiles.domain.CFObject;
 import org.jclouds.rackspace.cloudfiles.domain.ContainerCDNMetadata;
@@ -233,7 +233,7 @@ public interface CloudFilesAsyncClient {
    @ResponseParser(ParseETagHeader.class)
    ListenableFuture<String> putObject(
          @PathParam("container") String container,
-         @PathParam("name") @ParamParser(ObjectName.class) @BinderParam(BindCFObjectToPayload.class) CFObject object);
+         @PathParam("name") @ParamParser(ObjectName.class) @BinderParam(BindCFObjectMetadataToRequest.class) CFObject object);
 
    /**
     * @see CloudFilesClient#getObject

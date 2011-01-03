@@ -33,9 +33,9 @@ import org.jclouds.rest.Binder;
  */
 @Singleton
 public class BindVolumeIdsToIndexedFormParams implements Binder {
-
-   public void bindToRequest(HttpRequest request, Object input) {
-      indexStringArrayToFormValuesWithPrefix(request, "VolumeId", input);
+   @Override
+   public <R extends HttpRequest> R bindToRequest(R request, Object input) {
+      return indexStringArrayToFormValuesWithPrefix(request, "VolumeId", input);
    }
 
 }

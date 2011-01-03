@@ -42,6 +42,7 @@ import org.jclouds.http.internal.BaseHttpCommandExecutorService;
 import org.jclouds.http.internal.HttpWire;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -58,9 +59,9 @@ public class ApacheHCHttpCommandExecutorService extends BaseHttpCommandExecutorS
 
    @Inject
    ApacheHCHttpCommandExecutorService(HttpUtils utils,
-            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
-            DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
-            DelegatingErrorHandler errorHandler, HttpWire wire, HttpClient client) {
+         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
+         DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
+         DelegatingErrorHandler errorHandler, HttpWire wire, HttpClient client) {
       super(utils, ioWorkerExecutor, retryHandler, ioRetryHandler, errorHandler, wire);
       this.client = client;
    }
@@ -89,18 +90,18 @@ public class ApacheHCHttpCommandExecutorService extends BaseHttpCommandExecutorS
             logger.warn(e, "couldn't receive payload for request: %s", nativeRequest.getRequestLine());
             throw e;
          }
-      HttpResponse response = new HttpResponse(apacheResponse.getStatusLine().getStatusCode(), apacheResponse
-               .getStatusLine().getReasonPhrase(), payload);
       Multimap<String, String> headers = LinkedHashMultimap.create();
       for (Header header : apacheResponse.getAllHeaders()) {
          headers.put(header.getName(), header.getValue());
       }
-      utils.setPayloadPropertiesFromHeaders(headers, response);
-      return response;
+      if (payload != null)
+         payload.getContentMetadata().setPropertiesFromHttpHeaders(headers);
+      return new HttpResponse(apacheResponse.getStatusLine().getStatusCode(), apacheResponse.getStatusLine()
+            .getReasonPhrase(), payload, RestAnnotationProcessor.filterOutContentHeaders(headers));
    }
 
    private org.apache.http.HttpResponse executeRequest(HttpUriRequest nativeRequest) throws IOException,
-            ClientProtocolException {
+         ClientProtocolException {
       URI endpoint = URI.create(nativeRequest.getRequestLine().getUri());
       HttpHost host = new HttpHost(endpoint.getHost(), endpoint.getPort(), endpoint.getScheme());
       org.apache.http.HttpResponse nativeResponse = client.execute(host, nativeRequest);

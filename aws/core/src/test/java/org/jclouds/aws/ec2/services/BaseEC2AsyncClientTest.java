@@ -26,11 +26,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.inject.Named;
-
-import org.jclouds.Constants;
 import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.config.EC2RestClientModule;
 import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.aws.filters.FormSigner;
@@ -42,38 +38,47 @@ import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.inject.Injector;
 import com.google.inject.Module;
 
 /**
- * 
- * 
  * @author Adrian Cole
  */
+@Test(groups = "unit")
 public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
    @RequiresHttp
    @ConfiguresRestClient
    protected static class StubEC2RestClientModule extends EC2RestClientModule {
 
       @Override
-      protected String provideTimeStamp(final DateService dateService,
-            @Named(Constants.PROPERTY_SESSION_INTERVAL) final int expiration) {
+      protected String provideTimeStamp(DateService dateService, int expiration) {
          return "2009-11-08T15:54:08.897Z";
       }
 
-      @Override
-      protected Map<String, URI> provideRegions(Injector client) {
-         return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI.create("https://ec2.eu-west-1.amazonaws.com"),
-               Region.US_EAST_1, URI.create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1, URI
-                     .create("https://ec2.us-west-1.amazonaws.com"));
+      protected void bindRegionsToProvider() {
+         bindRegionsToProvider(Regions.class);
       }
 
-      @Override
-      protected Map<String, String> provideAvailabilityZoneToRegions(EC2Client client,
-            @org.jclouds.aws.Region Map<String, URI> regions) {
-         return ImmutableMap.<String, String> of(AvailabilityZone.US_EAST_1A, Region.US_EAST_1);
+      static class Regions implements javax.inject.Provider<Map<String, URI>> {
+         @Override
+         public Map<String, URI> get() {
+            return ImmutableMap.<String, URI> of(Region.EU_WEST_1, URI.create("https://ec2.eu-west-1.amazonaws.com"),
+                  Region.US_EAST_1, URI.create("https://ec2.us-east-1.amazonaws.com"), Region.US_WEST_1,
+                  URI.create("https://ec2.us-west-1.amazonaws.com"));
+         }
+      }
+
+      protected void bindZonesToProvider() {
+         bindZonesToProvider(Zones.class);
+      }
+
+      static class Zones implements javax.inject.Provider<Map<String, String>> {
+         @Override
+         public Map<String, String> get() {
+            return ImmutableMap.<String, String> of(AvailabilityZone.US_EAST_1A, Region.US_EAST_1);
+         }
       }
    }
 

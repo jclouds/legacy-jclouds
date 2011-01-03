@@ -22,10 +22,16 @@ package org.jclouds.http.functions;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
+/**
+ * 
+ * @author Adrian Cole
+ */
+@Test(groups = "unit")
 public class BaseHandlerTest {
 
    protected Injector injector = null;
