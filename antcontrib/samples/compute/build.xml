@@ -45,7 +45,7 @@
   <typedef resource="org/apache/maven/artifact/ant/antlib.xml" uri="urn:maven-artifact-ant" classpathref="maven-ant-tasks.classpath" />
 
   <artifact:localRepository id="local.repository" path="${user.home}/.m2/repository" />
-  <artifact:remoteRepository id="jclouds.repository" url="http://jclouds.googlecode.com/svn/repo" />
+  <artifact:remoteRepository id="jclouds.repository" url="http://repo1.maven.org/maven2" />
   <artifact:remoteRepository id="jclouds-snapshot.repository" url="https://oss.sonatype.org/content/repositories/snapshots" />
 
   <artifact:dependencies pathId="jclouds.classpath">
