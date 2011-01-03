@@ -226,7 +226,7 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>swank-clojure</groupId>
+            <groupId>com.github.technomancy</groupId>
             <artifactId>swank-clojure</artifactId>
             <version>1.2.1</version>
             <scope>test</scope>
