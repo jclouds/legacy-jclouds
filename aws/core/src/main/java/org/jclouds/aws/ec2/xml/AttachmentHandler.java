@@ -36,15 +36,20 @@ import org.jclouds.logging.Logger;
  * @author Adrian Cole
  */
 public class AttachmentHandler extends ParseSax.HandlerForGeneratedRequestWithResult<Attachment> {
-   private StringBuilder currentText = new StringBuilder();
 
    @Resource
    protected Logger logger = Logger.NULL;
+
+   protected final DateService dateService;
+   protected final String defaultRegion;
+
    @Inject
-   protected DateService dateService;
-   @Inject
-   @Region
-   String defaultRegion;
+   AttachmentHandler(DateService dateService, @Region String defaultRegion) {
+      this.dateService = dateService;
+      this.defaultRegion = defaultRegion;
+   }
+
+   private StringBuilder currentText = new StringBuilder();
    private String volumeId;
    private String instanceId;
    private String device;

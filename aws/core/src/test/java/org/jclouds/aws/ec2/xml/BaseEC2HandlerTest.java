@@ -28,6 +28,7 @@ import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
+import org.jclouds.location.Zone;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
@@ -65,6 +66,7 @@ public class BaseEC2HandlerTest extends BaseHandlerTest {
          @SuppressWarnings("unused")
          @Singleton
          @Provides
+         @Zone
          Map<String, String> provideAvailabilityZoneRegionMap() {
             return ImmutableMap.<String, String> of(AvailabilityZone.US_EAST_1A, Region.US_EAST_1);
          }

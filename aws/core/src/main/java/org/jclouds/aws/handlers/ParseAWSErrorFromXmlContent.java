@@ -93,7 +93,7 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                   && (error.getCode().equals("UnsupportedOperation")))
                exception = new UnsupportedOperationException(message, exception);
             if (error != null && error.getCode() != null
-                  && (error.getCode().endsWith(".NotFound") || error.getCode().endsWith(".Unknown")))
+                  && (error.getCode().endsWith("NotFound") || error.getCode().endsWith(".Unknown")))
                exception = new ResourceNotFoundException(message, exception);
             else if ((error != null && error.getCode() != null && (error.getCode().equals("IncorrectState") || error
                   .getCode().endsWith(".Duplicate"))) || (message != null && (message.indexOf("already exists") != -1)))

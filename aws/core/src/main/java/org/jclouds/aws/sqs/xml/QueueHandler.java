@@ -34,7 +34,8 @@ import com.google.common.collect.ImmutableBiMap;
 
 /**
  * 
- * @see <a href="http://docs.amazonwebservices.com/AWSSimpleQueueService/latest/APIReference/Query_QueryListQueues.html"
+ * @see <a href=
+ *      "http://docs.amazonwebservices.com/AWSSimpleQueueService/latest/APIReference/Query_QueryListQueues.html"
  *      />
  * @author Adrian Cole
  */
@@ -49,7 +50,7 @@ public class QueueHandler extends ParseSax.HandlerWithResult<Queue> {
    @Inject
    QueueHandler(Provider<UriBuilder> uriBuilderProvider, @Region Map<String, URI> regionMap) {
       this.uriBuilderProvider = uriBuilderProvider;
-      this.regionBiMap = ImmutableBiMap.<String, URI> builder().putAll(regionMap).build();
+      this.regionBiMap = ImmutableBiMap.<String, URI> copyOf(regionMap);
    }
 
    public Queue getResult() {

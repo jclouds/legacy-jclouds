@@ -42,16 +42,15 @@ import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Maps.newLinkedHashMap;
-import static com.google.common.collect.Maps.transformValues;
 import static com.google.common.collect.Maps.uniqueIndex;
 import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.imageIds;
 import static org.jclouds.aws.ec2.options.DescribeImagesOptions.Builder.ownedBy;
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
 import static org.jclouds.aws.ec2.reference.EC2Constants.PROPERTY_EC2_CC_AMIs;
 
-import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
@@ -70,6 +69,8 @@ import org.jclouds.logging.Logger;
 import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * 
@@ -81,7 +82,7 @@ public class RegionAndNameToImageSupplier implements Supplier<Map<RegionAndName,
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   private final Map<String, URI> regionMap;
+   private final Set<String> regions;
    private final DescribeImagesParallel describer;
    private final String[] ccAmis;
    private final String[] amiOwners;
@@ -89,10 +90,10 @@ public class RegionAndNameToImageSupplier implements Supplier<Map<RegionAndName,
    private final Map<RegionAndName, Image> images;
 
    @Inject
-   RegionAndNameToImageSupplier(@Region Map<String, URI> regionMap, DescribeImagesParallel describer,
+   RegionAndNameToImageSupplier(@Region Set<String> regions, DescribeImagesParallel describer,
          @Named(PROPERTY_EC2_CC_AMIs) String[] ccAmis, @Named(PROPERTY_EC2_AMI_OWNERS) final String[] amiOwners,
          final ImageParser parser, final Map<RegionAndName, Image> images) {
-      this.regionMap = regionMap;
+      this.regions = regions;
       this.describer = describer;
       this.ccAmis = ccAmis;
       this.amiOwners = amiOwners;
@@ -108,7 +109,7 @@ public class RegionAndNameToImageSupplier implements Supplier<Map<RegionAndName,
          logger.debug(">> providing images");
 
          Iterable<Entry<String, DescribeImagesOptions>> queries = concat(
-               getDescribeQueriesForOwnersInRegions(regionMap, amiOwners).entrySet(), ccAmisToDescribeQueries(ccAmis)
+               getDescribeQueriesForOwnersInRegions(regions, amiOwners).entrySet(), ccAmisToDescribeQueries(ccAmis)
                      .entrySet());
 
          Iterable<? extends Image> parsedImages = filter(transform(describer.apply(queries), parser),
@@ -136,16 +137,13 @@ public class RegionAndNameToImageSupplier implements Supplier<Map<RegionAndName,
       return queries;
    }
 
-   private static Map<String, DescribeImagesOptions> getDescribeQueriesForOwnersInRegions(Map<String, URI> regionMap,
+   private static Map<String, DescribeImagesOptions> getDescribeQueriesForOwnersInRegions(Set<String> regions,
          final String[] amiOwners) {
       final DescribeImagesOptions options = getOptionsForOwners(amiOwners);
-
-      return transformValues(regionMap, new Function<URI, DescribeImagesOptions>() {
-         @Override
-         public DescribeImagesOptions apply(URI from) {
-            return options;
-         }
-      });
+      Builder<String, DescribeImagesOptions> builder = ImmutableMap.<String, DescribeImagesOptions> builder();
+      for (String region : regions)
+         builder.put(region, options);
+      return builder.build();
    }
 
    private static DescribeImagesOptions getOptionsForOwners(final String[] amiOwners) {

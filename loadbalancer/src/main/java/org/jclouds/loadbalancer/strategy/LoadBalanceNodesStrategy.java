@@ -54,7 +54,7 @@ public interface LoadBalanceNodesStrategy {
     * @see org.jclouds.compute.ComputeService
     */
    @Beta
-   LoadBalancerMetadata execute(Location location, String name, String protocol, int loadBalancerPort,
+   LoadBalancerMetadata createLoadBalancerInLocation(Location location, String name, String protocol, int loadBalancerPort,
          int instancePort, Iterable<? extends NodeMetadata> nodes);
 
 }

@@ -35,7 +35,7 @@
 
     <properties>
         <test.elb.endpoint>https://elasticloadbalancing.us-east-1.amazonaws.com</test.elb.endpoint>
-        <test.elb.apiversion>2009-11-25</test.elb.apiversion>
+        <test.elb.apiversion>2010-07-01</test.elb.apiversion>
         <test.elb.identity>${test.aws.identity}</test.elb.identity>
         <test.elb.credential>${test.aws.credential}</test.elb.credential>
     </properties>
@@ -58,6 +58,12 @@
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-jsch</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

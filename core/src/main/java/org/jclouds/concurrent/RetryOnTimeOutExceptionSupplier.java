@@ -26,6 +26,7 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.util.Throwables2;
 
 import com.google.common.base.Supplier;
+
 /**
  * 
  * @author Adrian Cole
@@ -56,6 +57,11 @@ public class RetryOnTimeOutExceptionSupplier<T> implements Supplier<T> {
          propagate(ex);
       assert false;
       return null;
+   }
+
+   @Override
+   public String toString() {
+      return "RetryOnTimeOutExceptionSupplier(" + delegate + ")";
    }
 
 }

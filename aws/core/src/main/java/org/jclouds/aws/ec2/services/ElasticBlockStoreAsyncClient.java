@@ -37,7 +37,6 @@ import org.jclouds.aws.ec2.domain.Attachment;
 import org.jclouds.aws.ec2.domain.Permission;
 import org.jclouds.aws.ec2.domain.Snapshot;
 import org.jclouds.aws.ec2.domain.Volume;
-import org.jclouds.aws.ec2.functions.AvailabilityZoneToEndpoint;
 import org.jclouds.aws.ec2.functions.ReturnVoidOnVolumeAvailable;
 import org.jclouds.aws.ec2.options.CreateSnapshotOptions;
 import org.jclouds.aws.ec2.options.DescribeSnapshotsOptions;
@@ -50,6 +49,7 @@ import org.jclouds.aws.ec2.xml.PermissionHandler;
 import org.jclouds.aws.ec2.xml.SnapshotHandler;
 import org.jclouds.aws.filters.FormSigner;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
+import org.jclouds.location.functions.ZoneToEndpoint;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -80,7 +80,7 @@ public interface ElasticBlockStoreAsyncClient {
    @FormParams(keys = ACTION, values = "CreateVolume")
    @XMLResponseParser(CreateVolumeResponseHandler.class)
    ListenableFuture<Volume> createVolumeFromSnapshotInAvailabilityZone(
-            @EndpointParam(parser = AvailabilityZoneToEndpoint.class) @FormParam("AvailabilityZone") String availabilityZone,
+            @EndpointParam(parser = ZoneToEndpoint.class) @FormParam("AvailabilityZone") String availabilityZone,
             @FormParam("SnapshotId") String snapshotId);
 
    /**
@@ -91,7 +91,7 @@ public interface ElasticBlockStoreAsyncClient {
    @FormParams(keys = ACTION, values = "CreateVolume")
    @XMLResponseParser(CreateVolumeResponseHandler.class)
    ListenableFuture<Volume> createVolumeFromSnapshotInAvailabilityZone(
-            @EndpointParam(parser = AvailabilityZoneToEndpoint.class) @FormParam("AvailabilityZone") String availabilityZone,
+            @EndpointParam(parser = ZoneToEndpoint.class) @FormParam("AvailabilityZone") String availabilityZone,
             @FormParam("Size") int size, @FormParam("SnapshotId") String snapshotId);
 
    /**
@@ -102,7 +102,7 @@ public interface ElasticBlockStoreAsyncClient {
    @FormParams(keys = ACTION, values = "CreateVolume")
    @XMLResponseParser(CreateVolumeResponseHandler.class)
    ListenableFuture<Volume> createVolumeInAvailabilityZone(
-            @EndpointParam(parser = AvailabilityZoneToEndpoint.class) @FormParam("AvailabilityZone") String availabilityZone,
+            @EndpointParam(parser = ZoneToEndpoint.class) @FormParam("AvailabilityZone") String availabilityZone,
             @FormParam("Size") int size);
 
    /**

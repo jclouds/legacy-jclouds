@@ -21,7 +21,7 @@ package org.jclouds.aws.cloudwatch.config;
 
 import org.jclouds.aws.cloudwatch.CloudWatchAsyncClient;
 import org.jclouds.aws.cloudwatch.CloudWatchClient;
-import org.jclouds.aws.config.AWSFormSigningRestClientModule;
+import org.jclouds.aws.config.FormSigningRestClientModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 
@@ -32,7 +32,7 @@ import org.jclouds.rest.ConfiguresRestClient;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class CloudWatchRestClientModule extends AWSFormSigningRestClientModule<CloudWatchClient, CloudWatchAsyncClient> {
+public class CloudWatchRestClientModule extends FormSigningRestClientModule<CloudWatchClient, CloudWatchAsyncClient> {
    public CloudWatchRestClientModule() {
       super(CloudWatchClient.class, CloudWatchAsyncClient.class);
    }

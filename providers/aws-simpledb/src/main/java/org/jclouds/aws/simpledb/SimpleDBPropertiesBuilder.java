@@ -25,7 +25,7 @@ import static org.jclouds.aws.domain.Region.EU_WEST_1;
 import static org.jclouds.aws.domain.Region.US_EAST_1;
 import static org.jclouds.aws.domain.Region.US_WEST_1;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_REGIONS;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
 import java.util.Set;

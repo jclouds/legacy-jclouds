@@ -21,9 +21,8 @@ package org.jclouds.aws.s3;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_DEFAULT_REGIONS;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_REGIONS;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
 
@@ -44,7 +43,6 @@ public class GoogleStoragePropertiesBuilder extends S3PropertiesBuilder {
    @Override
    protected Properties addEndpoints(Properties properties) {
       properties.setProperty(PROPERTY_REGIONS, "GoogleStorage");
-      properties.setProperty(PROPERTY_DEFAULT_REGIONS, "GoogleStorage");
       properties.setProperty(PROPERTY_ENDPOINT, "https://commondatastorage.googleapis.com");
       properties.setProperty(PROPERTY_ENDPOINT + ".GoogleStorage",
                "https://commondatastorage.googleapis.com");

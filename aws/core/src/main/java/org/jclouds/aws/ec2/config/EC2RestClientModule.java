@@ -21,10 +21,12 @@ package org.jclouds.aws.ec2.config;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.jclouds.aws.config.AWSFormSigningRestClientModule;
+import org.jclouds.aws.config.WithZonesFormSigningRestClientModule;
 import org.jclouds.aws.ec2.EC2AsyncClient;
 import org.jclouds.aws.ec2.EC2Client;
 import org.jclouds.aws.ec2.domain.AvailabilityZoneInfo;
@@ -50,12 +52,11 @@ import org.jclouds.aws.ec2.services.WindowsAsyncClient;
 import org.jclouds.aws.ec2.services.WindowsClient;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.location.Region;
+import org.jclouds.location.Zone;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.inject.Injector;
-import com.google.inject.Provides;
+import com.google.common.collect.ImmutableMap.Builder;
 
 /**
  * Configures the EC2 connection.
@@ -64,56 +65,76 @@ import com.google.inject.Provides;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class EC2RestClientModule extends AWSFormSigningRestClientModule<EC2Client, EC2AsyncClient> {
+public class EC2RestClientModule extends WithZonesFormSigningRestClientModule<EC2Client, EC2AsyncClient> {
 
    public static final Map<Class<?>, Class<?>> DELEGATE_MAP = ImmutableMap.<Class<?>, Class<?>> builder()//
-            .put(AMIClient.class, AMIAsyncClient.class)//
-            .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
-            .put(InstanceClient.class, InstanceAsyncClient.class)//
-            .put(KeyPairClient.class, KeyPairAsyncClient.class)//
-            .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
-            .put(PlacementGroupClient.class, PlacementGroupAsyncClient.class)//
-            .put(MonitoringClient.class, MonitoringAsyncClient.class)//
-            .put(WindowsClient.class, WindowsAsyncClient.class)//
-            .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
-            .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
-            .build();
+         .put(AMIClient.class, AMIAsyncClient.class)//
+         .put(ElasticIPAddressClient.class, ElasticIPAddressAsyncClient.class)//
+         .put(InstanceClient.class, InstanceAsyncClient.class)//
+         .put(KeyPairClient.class, KeyPairAsyncClient.class)//
+         .put(SecurityGroupClient.class, SecurityGroupAsyncClient.class)//
+         .put(PlacementGroupClient.class, PlacementGroupAsyncClient.class)//
+         .put(MonitoringClient.class, MonitoringAsyncClient.class)//
+         .put(WindowsClient.class, WindowsAsyncClient.class)//
+         .put(AvailabilityZoneAndRegionClient.class, AvailabilityZoneAndRegionAsyncClient.class)//
+         .put(ElasticBlockStoreClient.class, ElasticBlockStoreAsyncClient.class)//
+         .build();
 
    public EC2RestClientModule() {
       super(EC2Client.class, EC2AsyncClient.class, DELEGATE_MAP);
    }
 
-   private RuntimeException regionException = null;
-
    @Override
-   protected Map<String, URI> provideRegions(Injector injector) {
-      // http://code.google.com/p/google-guice/issues/detail?id=483
-      // guice doesn't remember when singleton providers throw exceptions.
-      // in this case, if describeRegions fails, it is called again for
-      // each provider method that depends on it. To short-circuit this,
-      // we remember the last exception trusting that guice is single-threaded
-      if (regionException != null)
-         throw regionException;
-      EC2Client client = injector.getInstance(EC2Client.class);
-      try {
-         return client.getAvailabilityZoneAndRegionServices().describeRegions();
-      } catch (RuntimeException e) {
-         this.regionException = e;
-         throw e;
-      }
+   protected void bindRegionsToProvider() {
+      bindRegionsToProvider(RegionIdsToURI.class);
    }
 
-   @Provides
+   @Override
+   protected void bindZonesToProvider() {
+      bindZonesToProvider(RegionIdToZoneId.class);
+   }
+
    @Singleton
-   protected Map<String, String> provideAvailabilityZoneToRegions(EC2Client client, @Region Map<String, URI> regions) {
-      Map<String, String> map = Maps.newHashMap();
-      for (String region : regions.keySet()) {
-         for (AvailabilityZoneInfo zoneInfo : client.getAvailabilityZoneAndRegionServices()
-                  .describeAvailabilityZonesInRegion(region)) {
-            map.put(zoneInfo.getZone(), region);
-         }
+   public static class RegionIdsToURI implements javax.inject.Provider<Map<String, URI>> {
+      private final AvailabilityZoneAndRegionClient client;
+
+      @Inject
+      public RegionIdsToURI(EC2Client client) {
+         this.client = client.getAvailabilityZoneAndRegionServices();
       }
-      return map;
+
+      @Singleton
+      @Region
+      @Override
+      public Map<String, URI> get() {
+         return client.describeRegions();
+      }
+
+   }
+   @Singleton
+   public static class RegionIdToZoneId implements javax.inject.Provider<Map<String, String>> {
+      private final AvailabilityZoneAndRegionClient client;
+      private final Map<String, URI> regions;
+
+      @Inject
+      public RegionIdToZoneId(EC2Client client, @Region Map<String, URI> regions) {
+         this.client = client.getAvailabilityZoneAndRegionServices();
+         this.regions = regions;
+      }
+
+      @Singleton
+      @Zone
+      @Override
+      public Map<String, String> get() {
+         Builder<String, String> map = ImmutableMap.<String, String> builder();
+         for (Entry<String, URI> region : regions.entrySet()) {
+            for (AvailabilityZoneInfo zoneInfo : client.describeAvailabilityZonesInRegion(region.getKey())) {
+               map.put(zoneInfo.getZone(), region.getKey());
+            }
+         }
+         return map.build();
+      }
+
    }
 
 }

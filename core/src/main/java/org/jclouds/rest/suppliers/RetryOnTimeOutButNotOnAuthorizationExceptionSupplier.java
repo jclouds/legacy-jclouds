@@ -48,7 +48,7 @@ public class RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<T> implements 
    private final Supplier<T> delegate;
 
    public RetryOnTimeOutButNotOnAuthorizationExceptionSupplier(
-            final AtomicReference<AuthorizationException> authException, long seconds, final Supplier<T> delegate) {
+         final AtomicReference<AuthorizationException> authException, final long seconds, final Supplier<T> delegate) {
       this.delegate = Suppliers.<T> memoizeWithExpiration(new RetryOnTimeOutExceptionSupplier<T>(new Supplier<T>() {
          public T get() {
             if (authException.get() != null)
@@ -65,12 +65,22 @@ public class RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<T> implements 
             }
          }
 
+         @Override
+         public String toString() {
+            return "memoizeWithExpiration(" + delegate + ", seconds=" + seconds + ")";
+         }
+
       }), seconds, TimeUnit.SECONDS);
    }
 
    @Override
    public T get() {
       return delegate.get();
+   }
+
+   @Override
+   public String toString() {
+      return "RetryOnTimeOutButNotOnAuthorizationExceptionSupplier(" + delegate + ")";
    }
 
 }

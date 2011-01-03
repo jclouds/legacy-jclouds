@@ -87,8 +87,8 @@ public abstract class BaseLoadBalancerServiceLiveTest {
       credential = System.getProperty("test." + provider + ".credential");
       endpoint = System.getProperty("test." + provider + ".endpoint");
       apiversion = System.getProperty("test." + provider + ".apiversion");
-
-      computeProvider = checkNotNull(System.getProperty("test.compute.provider"), "test.compute.provider");
+      computeProvider = checkNotNull(System.getProperty("test." + provider + ".compute.provider"), "test." + provider
+            + ".compute.provider");
       computeIdentity = checkNotNull(System.getProperty("test." + computeProvider + ".identity"), "test."
             + computeProvider + ".identity");
       computeCredential = System.getProperty("test." + computeProvider + ".credential");
@@ -164,7 +164,7 @@ public abstract class BaseLoadBalancerServiceLiveTest {
 
    abstract protected Module getSshModule();
 
-   @BeforeGroups(groups = { "integration", "live" })
+   @BeforeGroups(groups = { "integration", "live" }, dependsOnMethods = "setupClient")
    public void createNodes() throws RunNodesException {
       try {
          nodes = computeContext.getComputeService().runNodesWithTag(tag, 2);
@@ -195,7 +195,7 @@ public abstract class BaseLoadBalancerServiceLiveTest {
    @AfterTest
    protected void cleanup() throws InterruptedException, ExecutionException, TimeoutException {
       if (loadbalancer != null) {
-         context.getLoadBalancerService().destroyLoadBalancer(tag);
+         context.getLoadBalancerService().destroyLoadBalancer(loadbalancer.getId());
       }
       if (nodes != null) {
          computeContext.getComputeService().destroyNodesMatching(NodePredicates.withTag(tag));

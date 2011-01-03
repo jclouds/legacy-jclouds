@@ -42,25 +42,33 @@ import com.google.common.base.Supplier;
  */
 @Singleton
 public class OnlyLocationOrFirstZone implements Supplier<Location> {
+   @Singleton
+   public static final class IsZone implements Predicate<Location> {
+      @Override
+      public boolean apply(Location input) {
+         return input.getScope() == LocationScope.ZONE;
+      }
+
+      @Override
+      public String toString() {
+         return "isZone()";
+      }
+   }
+
    private final Supplier<Set<? extends Location>> locationsSupplier;
+   private final IsZone isZone;
 
    @Inject
-   OnlyLocationOrFirstZone(@Memoized Supplier<Set<? extends Location>> locationsSupplier) {
+   OnlyLocationOrFirstZone(@Memoized Supplier<Set<? extends Location>> locationsSupplier, IsZone isZone) {
       this.locationsSupplier = checkNotNull(locationsSupplier, "locationsSupplierSupplier");
+      this.isZone = checkNotNull(isZone, "isZone");
    }
 
    @Override
    public Location get() {
       if (locationsSupplier.get().size() == 1)
          return getOnlyElement(locationsSupplier.get());
-      return find(locationsSupplier.get(), new Predicate<Location>() {
-
-         @Override
-         public boolean apply(Location input) {
-            return input.getScope() == LocationScope.ZONE;
-         }
-
-      });
+      return find(locationsSupplier.get(), isZone);
    }
 
 }

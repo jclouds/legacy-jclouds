@@ -41,6 +41,14 @@ import com.google.inject.ImplementedBy;
 public interface LoadBalancerService {
 
    /**
+    * The list locations command returns all the valid locations for load balancers. A location has
+    * a scope, which is typically region or zone. A region is a general area, like eu-west, where a
+    * zone is similar to a datacenter. If a location has a parent, that implies it is within that
+    * location. For example a location can be a rack, whose parent is likely to be a zone.
+    */
+   Set<? extends Location> listAssignableLocations();
+
+   /**
     * @return a reference to the context that created this LoadBalancerService.
     */
    LoadBalancerServiceContext getContext();
@@ -75,6 +83,8 @@ public interface LoadBalancerService {
    void destroyLoadBalancer(String id);
 
    @Beta
-   Set<String> listLoadBalancers();
+   Set<? extends LoadBalancerMetadata> listLoadBalancers();
+
+   LoadBalancerMetadata getLoadBalancerMetadata(String id);
 
 }

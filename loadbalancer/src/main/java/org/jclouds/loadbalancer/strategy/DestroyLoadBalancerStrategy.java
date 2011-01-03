@@ -19,6 +19,8 @@
 
 package org.jclouds.loadbalancer.strategy;
 
+import org.jclouds.loadbalancer.domain.LoadBalancerMetadata;
+
 import com.google.common.annotations.Beta;
 
 /**
@@ -29,6 +31,6 @@ import com.google.common.annotations.Beta;
 @Beta
 public interface DestroyLoadBalancerStrategy {
 
-   boolean execute(String loadBalancer);
+   LoadBalancerMetadata destroyLoadBalancer(String id);
 
 }

@@ -41,37 +41,53 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class FirstZoneOrRegionMatchingRegionId implements Supplier<Location> {
-   private final String region;
+   @Singleton
+   public static final class IsRegionAndIdEqualsOrIsZoneParentIdEquals implements Predicate<Location> {
+
+      private final String region;
+
+      @Inject
+      IsRegionAndIdEqualsOrIsZoneParentIdEquals(@Region String region) {
+         this.region = checkNotNull(region, "region");
+      }
+
+      @Override
+      public boolean apply(Location input) {
+         switch (input.getScope()) {
+         case ZONE:
+            return input.getParent().getId().equals(region);
+         case REGION:
+            return input.getId().equals(region);
+         default:
+            return false;
+         }
+      }
+
+      @Override
+      public String toString() {
+         return "isRegionAndIdEqualsOrIsZoneParentIdEquals(" + region + ")";
+      }
+   }
+
+   private final IsRegionAndIdEqualsOrIsZoneParentIdEquals matcher;
    private final Supplier<Set<? extends Location>> locationsSupplier;
 
    @Inject
-   FirstZoneOrRegionMatchingRegionId(@Region String region, @Memoized Supplier<Set<? extends Location>> locationsSupplier) {
-      this.region =  checkNotNull(region, "region");
-      this.locationsSupplier =  checkNotNull(locationsSupplier, "locationsSupplier");
+   FirstZoneOrRegionMatchingRegionId(IsRegionAndIdEqualsOrIsZoneParentIdEquals matcher,
+         @Memoized Supplier<Set<? extends Location>> locationsSupplier) {
+      this.matcher = checkNotNull(matcher, "matcher");
+      this.locationsSupplier = checkNotNull(locationsSupplier, "locationsSupplier");
    }
 
    @Override
    @Singleton
    public Location get() {
+      Set<? extends Location> locations = locationsSupplier.get();
       try {
-         Location toReturn = Iterables.find(locationsSupplier.get(), new Predicate<Location>() {
-
-            @Override
-            public boolean apply(Location input) {
-               switch (input.getScope()) {
-               case ZONE:
-                  return input.getParent().getId().equals(region);
-               case REGION:
-                  return input.getId().equals(region);
-               default:
-                  return false;
-               }
-            }
-
-         });
+         Location toReturn = Iterables.find(locations, matcher);
          return toReturn.getScope() == LocationScope.REGION ? toReturn : toReturn.getParent();
       } catch (NoSuchElementException e) {
-         throw new IllegalStateException(String.format("region: %s not found in %s", region, locationsSupplier));
+         throw new IllegalStateException(String.format("region %s not found in %s", matcher, locations));
       }
    }
 }

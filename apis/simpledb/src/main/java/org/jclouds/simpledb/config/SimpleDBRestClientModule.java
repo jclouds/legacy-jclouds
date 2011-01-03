@@ -19,7 +19,7 @@
 
 package org.jclouds.simpledb.config;
 
-import org.jclouds.aws.config.AWSFormSigningRestClientModule;
+import org.jclouds.aws.config.FormSigningRestClientModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.simpledb.SimpleDBAsyncClient;
@@ -33,7 +33,7 @@ import org.jclouds.simpledb.SimpleDBClient;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class SimpleDBRestClientModule extends AWSFormSigningRestClientModule<SimpleDBClient, SimpleDBAsyncClient> {
+public class SimpleDBRestClientModule extends FormSigningRestClientModule<SimpleDBClient, SimpleDBAsyncClient> {
 
    public SimpleDBRestClientModule() {
       super(SimpleDBClient.class, SimpleDBAsyncClient.class);

@@ -35,6 +35,7 @@ import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.location.Region;
+import org.jclouds.location.Zone;
 import org.jclouds.logging.Logger;
 import org.xml.sax.Attributes;
 
@@ -56,6 +57,7 @@ public class CreateVolumeResponseHandler extends
    @Region
    String defaultRegion;
    @Inject
+   @Zone
    protected Map<String, String> availabilityZoneToRegion;
 
    private String id;

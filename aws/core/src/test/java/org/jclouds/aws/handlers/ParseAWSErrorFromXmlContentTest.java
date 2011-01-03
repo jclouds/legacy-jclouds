@@ -58,6 +58,12 @@ public class ParseAWSErrorFromXmlContentTest {
    }
 
    @Test
+   public void test400WithLoadBalancerNotFoundSetsResourceNotFoundException() {
+      assertCodeMakes("GET", URI.create("https://amazonaws.com/foo"), 400, "",
+            "<Error><Code>LoadBalancerNotFound</Code></Error>", ResourceNotFoundException.class);
+   }
+
+   @Test
    public void test400WithUnsupportedCodeMakesUnsupportedOperationException() {
       assertCodeMakes("POST", URI.create("https://ec2.us-west-1.amazonaws.com/"), 400, "",
             "<Error><Code>UnsupportedOperation</Code></Error>", UnsupportedOperationException.class);
