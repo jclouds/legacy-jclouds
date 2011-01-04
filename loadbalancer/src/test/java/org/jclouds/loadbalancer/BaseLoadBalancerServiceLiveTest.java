@@ -89,11 +89,10 @@ public abstract class BaseLoadBalancerServiceLiveTest {
       apiversion = System.getProperty("test." + provider + ".apiversion");
       computeProvider = checkNotNull(System.getProperty("test." + provider + ".compute.provider"), "test." + provider
             + ".compute.provider");
-      computeIdentity = checkNotNull(System.getProperty("test." + computeProvider + ".identity"), "test."
-            + computeProvider + ".identity");
-      computeCredential = System.getProperty("test." + computeProvider + ".credential");
-      computeEndpoint = System.getProperty("test." + computeProvider + ".endpoint");
-      computeApiversion = System.getProperty("test." + computeProvider + ".apiversion");
+      computeIdentity = checkNotNull(System.getProperty("test." + provider + ".compute.identity"), "test." + provider + ".compute.identity");
+      computeCredential = System.getProperty("test." + provider + ".compute.credential");
+      computeEndpoint = System.getProperty("test." + provider + ".compute.endpoint");
+      computeApiversion = System.getProperty("test." + provider + ".compute.apiversion");
    }
 
    protected Properties setupProperties() {

@@ -108,7 +108,7 @@ public class ELBClientLiveTest {
             Region.AP_SOUTHEAST_1)) {
          Set<? extends LoadBalancer> allResults = client.describeLoadBalancersInRegion(region);
          assertNotNull(allResults);
-         assert (allResults.size() >= 1);
+         assert (allResults.size() >= 1) : region;
       }
    }
 

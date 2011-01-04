@@ -38,6 +38,11 @@
         <test.elb.apiversion>2010-07-01</test.elb.apiversion>
         <test.elb.identity>${test.aws.identity}</test.elb.identity>
         <test.elb.credential>${test.aws.credential}</test.elb.credential>
+        <test.elb.compute.provider>ec2</test.elb.compute.provider>
+        <test.elb.compute.endpoint>https://ec2.us-east-1.amazonaws.com</test.elb.compute.endpoint>
+        <test.elb.compute.apiversion>2010-06-15</test.elb.compute.apiversion>
+        <test.elb.compute.identity>${test.aws.identity}</test.elb.compute.identity>
+        <test.elb.compute.credential>${test.aws.credential}</test.elb.compute.credential>
     </properties>
 
     <dependencies>
@@ -79,6 +84,12 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <profiles>
@@ -113,6 +124,26 @@
                                         <property>
                                             <name>test.elb.credential</name>
                                             <value>${test.elb.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.elb.compute.provider</name>
+                                            <value>${test.elb.compute.provider}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.elb.compute.endpoint</name>
+                                            <value>${test.elb.compute.endpoint}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.elb.compute.apiversion</name>
+                                            <value>${test.elb.compute.apiversion}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.elb.compute.identity</name>
+                                            <value>${test.elb.compute.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.elb.compute.credential</name>
+                                            <value>${test.elb.compute.credential}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>
