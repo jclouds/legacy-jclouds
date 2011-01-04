@@ -39,5 +39,6 @@
         <module>aws-simpledb</module>
         <module>aws-elb</module>
         <module>aws-s3</module>
+        <module>googlestorage</module>
     </modules>
 </project>

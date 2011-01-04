@@ -82,6 +82,8 @@ import com.google.inject.Module;
 @Test(groups = "unit", testName = "S3AsyncClientTest")
 public class S3AsyncClientTest extends BaseS3AsyncClientTest {
 
+   protected String url = "s3.amazonaws.com";
+
    public void testAllRegions() throws SecurityException, NoSuchMethodException, IOException {
       Method method = S3AsyncClient.class.getMethod("putBucketInRegion", String.class, String.class,
             Array.newInstance(PutBucketOptions.class, 0).getClass());
@@ -94,16 +96,16 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       Method method = S3AsyncClient.class.getMethod("getBucketLocation", String.class);
       HttpRequest request = processor.createRequest(method, "bucket");
 
-      assertRequestLineEquals(request, "GET https://bucket.s3.amazonaws.com/?location HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "GET https://bucket." + url + "/?location HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(request, null, null, false);
 
       request = filter.filter(request);
 
-      assertRequestLineEquals(request, "GET https://bucket.s3.amazonaws.com/?location HTTP/1.1");
-      assertNonPayloadHeadersEqual(
-            request,
-            "Authorization: AWS identity:2fFTeYJTDwiJmaAkKj732RjNbOg=\nDate: 2009-11-08T15:54:08.897Z\nHost: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "GET https://bucket." + url + "/?location HTTP/1.1");
+      assertNonPayloadHeadersEqual(request,
+            "Authorization: AWS identity:2fFTeYJTDwiJmaAkKj732RjNbOg=\nDate: 2009-11-08T15:54:08.897Z\nHost: bucket."
+                  + url + "\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -117,8 +119,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       Method method = S3AsyncClient.class.getMethod("getBucketPayer", String.class);
       HttpRequest request = processor.createRequest(method, "bucket");
 
-      assertRequestLineEquals(request, "GET https://bucket.s3.amazonaws.com/?requestPayment HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "GET https://bucket." + url + "/?requestPayment HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -132,12 +134,10 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       Method method = S3AsyncClient.class.getMethod("setBucketPayer", String.class, Payer.class);
       HttpRequest request = processor.createRequest(method, "bucket", Payer.BUCKET_OWNER);
 
-      assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/?requestPayment HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
-      assertPayloadEquals(
-            request,
-            "<RequestPaymentConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Payer>BucketOwner</Payer></RequestPaymentConfiguration>",
-            "text/xml", false);
+      assertRequestLineEquals(request, "PUT https://bucket." + url + "/?requestPayment HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
+      assertPayloadEquals(request, "<RequestPaymentConfiguration xmlns=\"http://" + url
+            + "/doc/2006-03-01/\"><Payer>BucketOwner</Payer></RequestPaymentConfiguration>", "text/xml", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -150,12 +150,10 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       Method method = S3AsyncClient.class.getMethod("setBucketPayer", String.class, Payer.class);
       HttpRequest request = processor.createRequest(method, "bucket", Payer.REQUESTER);
 
-      assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/?requestPayment HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
-      assertPayloadEquals(
-            request,
-            "<RequestPaymentConfiguration xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Payer>Requester</Payer></RequestPaymentConfiguration>",
-            "text/xml", false);
+      assertRequestLineEquals(request, "PUT https://bucket." + url + "/?requestPayment HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
+      assertPayloadEquals(request, "<RequestPaymentConfiguration xmlns=\"http://" + url
+            + "/doc/2006-03-01/\"><Payer>Requester</Payer></RequestPaymentConfiguration>", "text/xml", false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -169,8 +167,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
             Array.newInstance(ListBucketOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, "bucket");
 
-      assertRequestLineEquals(request, "GET https://bucket.s3.amazonaws.com/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "GET https://bucket." + url + "/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -184,8 +182,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       Method method = S3AsyncClient.class.getMethod("bucketExists", String.class);
       HttpRequest request = processor.createRequest(method, "bucket");
 
-      assertRequestLineEquals(request, "HEAD https://bucket.s3.amazonaws.com/?max-keys=0 HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "HEAD https://bucket." + url + "/?max-keys=0 HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
@@ -211,9 +209,9 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       HttpRequest request = processor.createRequest(method, "sourceBucket", "sourceObject", "destinationbucket",
             "destinationObject");
 
-      assertRequestLineEquals(request, "PUT https://destinationbucket.s3.amazonaws.com/destinationObject HTTP/1.1");
-      assertNonPayloadHeadersEqual(request,
-            "Host: destinationbucket.s3.amazonaws.com\nx-amz-copy-source: /sourceBucket/sourceObject\n");
+      assertRequestLineEquals(request, "PUT https://destinationbucket." + url + "/destinationObject HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: destinationbucket." + url
+            + "\nx-amz-copy-source: /sourceBucket/sourceObject\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -227,8 +225,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       Method method = S3AsyncClient.class.getMethod("deleteBucketIfEmpty", String.class);
       HttpRequest request = processor.createRequest(method, "bucket");
 
-      assertRequestLineEquals(request, "DELETE https://bucket.s3.amazonaws.com/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "DELETE https://bucket." + url + "/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
@@ -242,8 +240,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       Method method = S3AsyncClient.class.getMethod("deleteObject", String.class, String.class);
       HttpRequest request = processor.createRequest(method, "bucket", "object");
 
-      assertRequestLineEquals(request, "DELETE https://bucket.s3.amazonaws.com/object HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "DELETE https://bucket." + url + "/object HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
@@ -258,8 +256,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       Method method = S3AsyncClient.class.getMethod("getBucketACL", String.class);
       HttpRequest request = processor.createRequest(method, "bucket");
 
-      assertRequestLineEquals(request, "GET https://bucket.s3.amazonaws.com/?acl HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "GET https://bucket." + url + "/?acl HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -274,8 +272,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       Method method = S3AsyncClient.class.getMethod("getObject", String.class, String.class, GetOptions[].class);
       HttpRequest request = processor.createRequest(method, "bucket", "object");
 
-      assertRequestLineEquals(request, "GET https://bucket.s3.amazonaws.com/object HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "GET https://bucket." + url + "/object HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseObjectFromHeadersAndHttpContent.class);
@@ -290,8 +288,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       Method method = S3AsyncClient.class.getMethod("getObjectACL", String.class, String.class);
       HttpRequest request = processor.createRequest(method, "bucket", "object");
 
-      assertRequestLineEquals(request, "GET https://bucket.s3.amazonaws.com/object?acl HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "GET https://bucket." + url + "/object?acl HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -306,8 +304,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       Method method = S3AsyncClient.class.getMethod("objectExists", String.class, String.class);
       HttpRequest request = processor.createRequest(method, "bucket", "object");
 
-      assertRequestLineEquals(request, "HEAD https://bucket.s3.amazonaws.com/object HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "HEAD https://bucket." + url + "/object HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
@@ -322,8 +320,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       Method method = S3AsyncClient.class.getMethod("headObject", String.class, String.class);
       HttpRequest request = processor.createRequest(method, "bucket", "object");
 
-      assertRequestLineEquals(request, "HEAD https://bucket.s3.amazonaws.com/object HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "HEAD https://bucket." + url + "/object HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseObjectMetadataFromHeaders.class);
@@ -337,8 +335,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       Method method = S3AsyncClient.class.getMethod("listOwnedBuckets");
       HttpRequest request = processor.createRequest(method);
 
-      assertRequestLineEquals(request, "GET https://s3.amazonaws.com/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "GET https://" + url + "/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: " + url + "\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -358,11 +356,13 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       HttpRequest request = processor.createRequest(method, "bucket",
             AccessControlList.fromCannedAccessPolicy(CannedAccessPolicy.PRIVATE, "1234"));
 
-      assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/?acl HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "PUT https://bucket." + url + "/?acl HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(
             request,
-            "<AccessControlPolicy xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Owner><ID>1234</ID></Owner><AccessControlList><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1234</ID></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>",
+            "<AccessControlPolicy xmlns=\"http://"
+                  + url
+                  + "/doc/2006-03-01/\"><Owner><ID>1234</ID></Owner><AccessControlList><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1234</ID></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>",
             "text/xml", false);
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
@@ -378,8 +378,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
             Array.newInstance(PutBucketOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, (String) null, "bucket");
 
-      assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "PUT https://bucket." + url + "/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
@@ -395,8 +395,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
             Array.newInstance(PutBucketOptions.class, 0).getClass());
       HttpRequest request = processor.createRequest(method, "EU", "bucket");
 
-      assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/ HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "PUT https://bucket." + url + "/ HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(request,
             "<CreateBucketConfiguration><LocationConstraint>EU</LocationConstraint></CreateBucketConfiguration>",
             "text/xml", false);
@@ -416,8 +416,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       HttpRequest request = processor.createRequest(method, "bucket",
             blobToS3Object.apply(BindBlobToMultipartFormTest.TEST_BLOB));
 
-      assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/hello HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "PUT https://bucket." + url + "/hello HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(request, "hello", "text/plain", false);
 
       assertResponseParserClassEquals(method, request, ParseETagHeader.class);
@@ -433,11 +433,13 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       HttpRequest request = processor.createRequest(method, "bucket", "key",
             AccessControlList.fromCannedAccessPolicy(CannedAccessPolicy.PRIVATE, "1234"));
 
-      assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/key?acl HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "PUT https://bucket." + url + "/key?acl HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(
             request,
-            "<AccessControlPolicy xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"><Owner><ID>1234</ID></Owner><AccessControlList><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1234</ID></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>",
+            "<AccessControlPolicy xmlns=\"http://"
+                  + url
+                  + "/doc/2006-03-01/\"><Owner><ID>1234</ID></Owner><AccessControlList><Grant><Grantee xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:type=\"CanonicalUser\"><ID>1234</ID></Grantee><Permission>FULL_CONTROL</Permission></Grant></AccessControlList></AccessControlPolicy>",
             "text/xml", false);
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
@@ -451,8 +453,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       Method method = S3AsyncClient.class.getMethod("getBucketLogging", String.class);
       HttpRequest request = processor.createRequest(method, "bucket");
 
-      assertRequestLineEquals(request, "GET https://bucket.s3.amazonaws.com/?logging HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "GET https://bucket." + url + "/?logging HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(request, null, null, false);
 
       assertResponseParserClassEquals(method, request, ParseSax.class);
@@ -466,10 +468,10 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
       Method method = S3AsyncClient.class.getMethod("disableBucketLogging", String.class);
       HttpRequest request = processor.createRequest(method, "bucket");
 
-      assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/?logging HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
-      assertPayloadEquals(request, "<BucketLoggingStatus xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"/>",
-            "text/xml", false);
+      assertRequestLineEquals(request, "PUT https://bucket." + url + "/?logging HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
+      assertPayloadEquals(request, "<BucketLoggingStatus xmlns=\"http://" + url + "/doc/2006-03-01/\"/>", "text/xml",
+            false);
 
       assertResponseParserClassEquals(method, request, ReleasePayloadAndReturn.class);
       assertSaxResponseParserClassEquals(method, null);
@@ -487,8 +489,8 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
                   new BucketLogging("mylogs", "access_log-", ImmutableSet.<Grant> of(new Grant(new EmailAddressGrantee(
                         "adrian@jclouds.org"), Permission.FULL_CONTROL))));
 
-      assertRequestLineEquals(request, "PUT https://bucket.s3.amazonaws.com/?logging HTTP/1.1");
-      assertNonPayloadHeadersEqual(request, "Host: bucket.s3.amazonaws.com\n");
+      assertRequestLineEquals(request, "PUT https://bucket." + url + "/?logging HTTP/1.1");
+      assertNonPayloadHeadersEqual(request, "Host: bucket." + url + "\n");
       assertPayloadEquals(request, Strings2.toStringAndClose(getClass().getResourceAsStream("/bucket_logging.xml")),
             "text/xml", false);
 
