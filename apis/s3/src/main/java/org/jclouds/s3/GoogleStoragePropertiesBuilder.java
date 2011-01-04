@@ -37,15 +37,9 @@ public class GoogleStoragePropertiesBuilder extends S3PropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_AUTH_TAG, "GOOG1");
       properties.setProperty(PROPERTY_HEADER_TAG, "goog");
-      return properties;
-   }
-
-   @Override
-   protected Properties addEndpoints(Properties properties) {
       properties.setProperty(PROPERTY_REGIONS, "GoogleStorage");
       properties.setProperty(PROPERTY_ENDPOINT, "https://commondatastorage.googleapis.com");
-      properties.setProperty(PROPERTY_ENDPOINT + ".GoogleStorage",
-               "https://commondatastorage.googleapis.com");
+      properties.setProperty(PROPERTY_ENDPOINT + ".GoogleStorage", "https://commondatastorage.googleapis.com");
       return properties;
    }
 

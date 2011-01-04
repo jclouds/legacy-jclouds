@@ -24,13 +24,13 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.jclouds.s3.blobstore.functions.BlobToObject;
-import org.jclouds.s3.filters.RequestAuthorizeSignature;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
+import org.jclouds.s3.blobstore.functions.BlobToObject;
+import org.jclouds.s3.filters.RequestAuthorizeSignature;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -70,9 +70,11 @@ public abstract class BaseS3AsyncClientTest extends RestClientTest<S3AsyncClient
       super();
    }
 
+   protected String provider = "s3";
+
    @Override
    public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("s3", "identity", "credential", new Properties());
+      return new RestContextFactory().createContextSpec(provider, "identity", "credential", new Properties());
    }
 
 }
