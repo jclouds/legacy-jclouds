@@ -17,29 +17,15 @@
  * ====================================================================
  */
 
-package org.jclouds.s3.blobstore;
+package org.jclouds.scaleup.storage.blobstore;
 
-import java.util.List;
-import java.util.Properties;
-
-import org.jclouds.s3.S3ContextBuilder;
-import org.jclouds.s3.blobstore.config.ScaleUpCloudBlobStoreContextModule;
-
-import com.google.inject.Module;
+import org.jclouds.blobstore.integration.internal.BaseContainerLiveTest;
+import org.testng.annotations.Test;
 
 /**
- * 
  * @author Adrian Cole
  */
-public class ScaleUpCloudBlobStoreContextContextBuilder extends S3ContextBuilder {
-
-   public ScaleUpCloudBlobStoreContextContextBuilder(Properties props) {
-      super(props);
-   }
-
-   @Override
-   protected void addContextModule(List<Module> modules) {
-      modules.add(new ScaleUpCloudBlobStoreContextModule());
-   }
+@Test(groups =  "live", testName = "ScaleUpStorageContainerLiveTest")
+public class ScaleUpStorageContainerLiveTest extends BaseContainerLiveTest {
 
 }

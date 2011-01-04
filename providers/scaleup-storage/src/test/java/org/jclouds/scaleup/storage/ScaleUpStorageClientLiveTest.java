@@ -17,25 +17,17 @@
  * ====================================================================
  */
 
-package org.jclouds.s3.blobstore.config;
+package org.jclouds.scaleup.storage;
 
-import org.jclouds.s3.domain.BucketMetadata;
-import org.jclouds.domain.Location;
-
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.inject.TypeLiteral;
+import org.jclouds.s3.S3ClientLiveTest;
+import org.testng.annotations.Test;
 
 /**
+ * Tests behavior of {@code S3Client}
  * 
  * @author Adrian Cole
  */
-public class ScaleUpCloudBlobStoreContextModule extends S3BlobStoreContextModule {
+@Test(groups = "live", sequential = true, testName = "ScaleUpStorageClientLiveTest")
+public class ScaleUpStorageClientLiveTest extends S3ClientLiveTest {
 
-   @SuppressWarnings({ "rawtypes", "unchecked" })
-   @Override
-   protected void bindBucketLocationStrategy() {
-      bind(new TypeLiteral<Function<BucketMetadata, Location>>() {
-      }).toInstance((Function) Functions.constant(null));
-   }
 }
