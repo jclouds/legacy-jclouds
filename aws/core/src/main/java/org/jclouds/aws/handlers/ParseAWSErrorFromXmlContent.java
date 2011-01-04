@@ -75,8 +75,8 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                error = utils.parseAWSErrorFromContent(request, response);
                if (error != null) {
                   message = error.getMessage();
-
                }
+               exception = new HttpResponseException(command, response, message);
             } else {
                try {
                   message = Strings2.toStringAndClose(response.getPayload().getInput());
@@ -89,8 +89,7 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                response.getStatusLine());
          switch (response.getStatusCode()) {
          case 400:
-            if (error != null && error.getCode() != null
-                  && (error.getCode().equals("UnsupportedOperation")))
+            if (error != null && error.getCode() != null && (error.getCode().equals("UnsupportedOperation")))
                exception = new UnsupportedOperationException(message, exception);
             if (error != null && error.getCode() != null
                   && (error.getCode().endsWith("NotFound") || error.getCode().endsWith(".Unknown")))
