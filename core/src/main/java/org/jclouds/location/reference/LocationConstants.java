@@ -25,4 +25,5 @@ package org.jclouds.location.reference;
  */
 public interface LocationConstants {
    public static final String PROPERTY_REGIONS = "jclouds.location.regions";
+   public static final String PROPERTY_REGION = "jclouds.location.region";
 }

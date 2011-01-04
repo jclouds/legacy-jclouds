@@ -86,10 +86,10 @@ public class EC2Utils {
       return Iterables.concat(client.describeInstancesInRegion(region, id));
    }
 
+   // there may not be a region, and in this case we do-not encode it into the string
    public static String[] parseHandle(String id) {
       String[] parts = checkNotNull(id, "id").split("/");
-      checkArgument(parts.length == 2, "id syntax is region/instanceid");
-      return parts;
+      return (parts.length == 1) ? new String[] { null, id } : parts;
    }
 
    public static <R extends HttpRequest> R indexIterableToFormValuesWithPrefix(R request, String prefix, Object input) {

@@ -23,6 +23,7 @@ import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
@@ -44,17 +45,17 @@ public class SQSPropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
       properties.setProperty(PROPERTY_HEADER_TAG, "amz");
       properties.setProperty(PROPERTY_API_VERSION, SQSAsyncClient.VERSION);
-      properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(Region.US_EAST_1,
-               Region.US_WEST_1, Region.EU_WEST_1, Region.AP_SOUTHEAST_1));
+      properties.setProperty(PROPERTY_REGIONS,
+            Joiner.on(',').join(Region.US_EAST_1, Region.US_WEST_1, Region.EU_WEST_1, Region.AP_SOUTHEAST_1));
       properties.setProperty(PROPERTY_ENDPOINT, "https://sqs.us-east-1.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + Region.US_EAST_1,
-               "https://sqs.us-east-1.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + Region.US_WEST_1,
-               "https://sqs.us-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + Region.EU_WEST_1,
-               "https://sqs.eu-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + Region.AP_SOUTHEAST_1,
-               "https://sqs.ap-southeast-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.US_EAST_1 + ".endpoint",
+            "https://sqs.us-east-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.US_WEST_1 + ".endpoint",
+            "https://sqs.us-west-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.EU_WEST_1 + ".endpoint",
+            "https://sqs.eu-west-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.AP_SOUTHEAST_1 + ".endpoint",
+            "https://sqs.ap-southeast-1.amazonaws.com");
       return properties;
    }
 

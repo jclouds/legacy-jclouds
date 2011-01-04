@@ -57,13 +57,13 @@ public class RegionToEndpointOrProviderIfNull implements Function<Object, URI> {
 
    @Override
    public URI apply(@Nullable Object from) {
-      checkState(from == null || from.equals(defaultProvider) || regionToEndpoint != null, "requested location " + from
+      if (from == null || from.equals(defaultProvider))
+         return defaultUri;
+      checkState(from.equals(defaultProvider) || regionToEndpoint != null, "requested location " + from
             + ", but only the default location " + defaultProvider + " is configured");
-      checkArgument(
-            from == null || from.equals(defaultProvider)
-                  || (regionToEndpoint != null && regionToEndpoint.containsKey(from)),
+      checkArgument(from.equals(defaultProvider) || (regionToEndpoint != null && regionToEndpoint.containsKey(from)),
             "requested location %s, which is not in the configured locations: %s", from, regionToEndpoint);
 
-      return from == null || from.equals(defaultProvider) ? defaultUri : regionToEndpoint.get(from);
+      return regionToEndpoint.get(from);
    }
 }

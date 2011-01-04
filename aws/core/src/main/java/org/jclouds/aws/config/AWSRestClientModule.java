@@ -38,6 +38,7 @@ import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
 import org.jclouds.location.Provider;
 import org.jclouds.location.Region;
+import org.jclouds.location.config.ProvideRegionsViaProperties;
 import org.jclouds.logging.Logger.LoggerFactory;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;

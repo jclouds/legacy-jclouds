@@ -25,10 +25,13 @@ import static org.jclouds.aws.domain.Region.EU_WEST_1;
 import static org.jclouds.aws.domain.Region.US_EAST_1;
 import static org.jclouds.aws.domain.Region.US_WEST_1;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
 import java.util.Set;
+
+import org.jclouds.aws.domain.Region;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
@@ -47,10 +50,13 @@ public class SimpleDBPropertiesBuilder extends org.jclouds.simpledb.SimpleDBProp
       properties.setProperty(PROPERTY_AUTH_TAG, "AWS");
       properties.setProperty(PROPERTY_REGIONS, Joiner.on(',').join(DEFAULT_REGIONS));
       properties.setProperty(PROPERTY_ENDPOINT, "https://sdb.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + US_EAST_1, "https://sdb.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + US_WEST_1, "https://sdb.us-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + EU_WEST_1, "https://sdb.eu-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + AP_SOUTHEAST_1, "https://sdb.ap-southeast-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.US_EAST_1 + ".endpoint", "https://sdb.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.US_WEST_1 + ".endpoint",
+            "https://sdb.us-west-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.EU_WEST_1 + ".endpoint",
+            "https://sdb.eu-west-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.AP_SOUTHEAST_1 + ".endpoint",
+            "https://sdb.ap-southeast-1.amazonaws.com");
       return properties;
    }
 

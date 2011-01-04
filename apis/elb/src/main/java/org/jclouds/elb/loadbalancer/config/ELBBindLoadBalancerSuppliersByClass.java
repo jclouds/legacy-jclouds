@@ -23,8 +23,7 @@ import java.util.Set;
 
 import org.jclouds.domain.Location;
 import org.jclouds.loadbalancer.config.BindLoadBalancerSuppliersByClass;
-import org.jclouds.location.suppliers.FirstZoneOrRegionMatchingRegionId;
-import org.jclouds.location.suppliers.ZoneToRegionToProvider;
+import org.jclouds.location.suppliers.RegionToProviderOrJustProvider;
 
 import com.google.common.base.Supplier;
 
@@ -34,12 +33,7 @@ import com.google.common.base.Supplier;
 public class ELBBindLoadBalancerSuppliersByClass extends BindLoadBalancerSuppliersByClass {
 
    @Override
-   protected Class<? extends Supplier<Location>> defineDefaultLocationSupplier() {
-      return FirstZoneOrRegionMatchingRegionId.class;
-   }
-
-   @Override
    protected Class<? extends Supplier<Set<? extends Location>>> defineLocationSupplier() {
-      return ZoneToRegionToProvider.class;
+      return RegionToProviderOrJustProvider.class;
    }
 }

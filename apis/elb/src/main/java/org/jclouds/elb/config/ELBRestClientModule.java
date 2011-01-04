@@ -19,7 +19,7 @@
 
 package org.jclouds.elb.config;
 
-import org.jclouds.aws.config.WithZonesFormSigningRestClientModule;
+import org.jclouds.aws.config.FormSigningRestClientModule;
 import org.jclouds.elb.ELBAsyncClient;
 import org.jclouds.elb.ELBClient;
 import org.jclouds.http.RequiresHttp;
@@ -32,7 +32,7 @@ import org.jclouds.rest.ConfiguresRestClient;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public class ELBRestClientModule extends WithZonesFormSigningRestClientModule<ELBClient, ELBAsyncClient> {
+public class ELBRestClientModule extends FormSigningRestClientModule<ELBClient, ELBAsyncClient> {
    public ELBRestClientModule() {
       super(ELBClient.class, ELBAsyncClient.class);
    }

@@ -27,8 +27,8 @@ import org.jclouds.compute.config.BindComputeSuppliersByClass;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.domain.Location;
-import org.jclouds.location.suppliers.FirstZoneOrRegionMatchingRegionId;
-import org.jclouds.location.suppliers.ZoneToRegionToProvider;
+import org.jclouds.location.suppliers.OnlyLocationOrFirstZoneOrRegionMatchingRegionId;
+import org.jclouds.location.suppliers.ZoneToRegionToProviderOrJustProvider;
 
 import com.google.common.base.Supplier;
 /**
@@ -47,11 +47,11 @@ public class EC2BindComputeSuppliersByClass extends BindComputeSuppliersByClass 
 
    @Override
    protected Class<? extends Supplier<Location>> defineDefaultLocationSupplier() {
-      return FirstZoneOrRegionMatchingRegionId.class;
+      return OnlyLocationOrFirstZoneOrRegionMatchingRegionId.class;
    }
 
    @Override
    protected Class<? extends Supplier<Set<? extends Location>>> defineLocationSupplier() {
-      return ZoneToRegionToProvider.class;
+      return ZoneToRegionToProviderOrJustProvider.class;
    }
 }

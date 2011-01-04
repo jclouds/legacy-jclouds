@@ -20,6 +20,7 @@
 package org.jclouds.location.suppliers;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterables.getOnlyElement;
 
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -40,7 +41,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Singleton
-public class FirstZoneOrRegionMatchingRegionId implements Supplier<Location> {
+public class OnlyLocationOrFirstZoneOrRegionMatchingRegionId implements Supplier<Location> {
    @Singleton
    public static final class IsRegionAndIdEqualsOrIsZoneParentIdEquals implements Predicate<Location> {
 
@@ -73,7 +74,7 @@ public class FirstZoneOrRegionMatchingRegionId implements Supplier<Location> {
    private final Supplier<Set<? extends Location>> locationsSupplier;
 
    @Inject
-   FirstZoneOrRegionMatchingRegionId(IsRegionAndIdEqualsOrIsZoneParentIdEquals matcher,
+   OnlyLocationOrFirstZoneOrRegionMatchingRegionId(IsRegionAndIdEqualsOrIsZoneParentIdEquals matcher,
          @Memoized Supplier<Set<? extends Location>> locationsSupplier) {
       this.matcher = checkNotNull(matcher, "matcher");
       this.locationsSupplier = checkNotNull(locationsSupplier, "locationsSupplier");
@@ -83,6 +84,8 @@ public class FirstZoneOrRegionMatchingRegionId implements Supplier<Location> {
    @Singleton
    public Location get() {
       Set<? extends Location> locations = locationsSupplier.get();
+      if (locationsSupplier.get().size() == 1)
+         return getOnlyElement(locationsSupplier.get());
       try {
          Location toReturn = Iterables.find(locations, matcher);
          return toReturn.getScope() == LocationScope.REGION ? toReturn : toReturn.getParent();

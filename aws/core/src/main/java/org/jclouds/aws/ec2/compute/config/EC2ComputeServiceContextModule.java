@@ -60,7 +60,7 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
       String provider = injector.getInstance(Key.get(String.class, Provider.class));
-      if ("ec2".equals(provider))
+      if ("ec2".equals(provider) || "aws-ec2".equals(provider))
          return template.osFamily(AMZN_LINUX).os64Bit(true);
       else if ("nova".equals(provider))
          return super.provideTemplate(injector, template);

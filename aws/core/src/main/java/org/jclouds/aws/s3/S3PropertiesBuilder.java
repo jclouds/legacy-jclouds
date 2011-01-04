@@ -29,6 +29,7 @@ import static org.jclouds.aws.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_
 import static org.jclouds.blobstore.reference.BlobStoreConstants.DIRECTORY_SUFFIX_FOLDER;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_BLOBSTORE_DIRECTORY_SUFFIX;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
@@ -62,11 +63,12 @@ public class S3PropertiesBuilder extends PropertiesBuilder {
       properties.setProperty(PROPERTY_REGIONS,
             Joiner.on(',').join(Region.US_STANDARD, Region.US_WEST_1, "EU", Region.AP_SOUTHEAST_1));
       properties.setProperty(PROPERTY_ENDPOINT, "https://s3.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + Region.US_STANDARD, "https://s3.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + Region.US_WEST_1, "https://s3-us-west-1.amazonaws.com");
-      properties.setProperty(PROPERTY_ENDPOINT + "." + "EU", "https://s3-eu-west-1.amazonaws.com");
-      properties
-            .setProperty(PROPERTY_ENDPOINT + "." + Region.AP_SOUTHEAST_1, "https://s3-ap-southeast-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.US_STANDARD + ".endpoint", "https://s3.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.US_WEST_1 + ".endpoint",
+            "https://s3-us-west-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + "EU" + ".endpoint", "https://s3-eu-west-1.amazonaws.com");
+      properties.setProperty(PROPERTY_REGION + "." + Region.AP_SOUTHEAST_1 + ".endpoint",
+            "https://s3-ap-southeast-1.amazonaws.com");
       return properties;
    }
 

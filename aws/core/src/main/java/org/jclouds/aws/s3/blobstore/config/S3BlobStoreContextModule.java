@@ -43,7 +43,7 @@ import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.location.Provider;
 import org.jclouds.location.Region;
-import org.jclouds.location.suppliers.FirstZoneOrRegionMatchingRegionId;
+import org.jclouds.location.suppliers.OnlyLocationOrFirstZoneOrRegionMatchingRegionId;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -65,7 +65,7 @@ public class S3BlobStoreContextModule extends AbstractModule {
    protected void configure() {
       install(new BlobStoreMapModule());
       bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(new TypeLiteral<FirstZoneOrRegionMatchingRegionId>() {
+      }).to(new TypeLiteral<OnlyLocationOrFirstZoneOrRegionMatchingRegionId>() {
       });
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.EVENTUAL);
       bind(AsyncBlobStore.class).to(S3AsyncBlobStore.class).in(Scopes.SINGLETON);

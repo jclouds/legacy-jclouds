@@ -37,5 +37,6 @@
         <module>slicehost</module>
         <module>cloudsigma</module>
         <module>aws-simpledb</module>
+        <module>aws-elb</module>
     </modules>
 </project>

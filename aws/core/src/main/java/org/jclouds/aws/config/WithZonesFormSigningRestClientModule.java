@@ -24,10 +24,10 @@ import java.util.Map;
 
 import javax.inject.Singleton;
 
-import org.jclouds.aws.config.ProvidersViaAPI.ProvidesZoneAndRegionClientModule;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.location.Region;
 import org.jclouds.location.Zone;
+import org.jclouds.location.config.ProvideZonesViaProperties;
 import org.jclouds.rest.ConfiguresRestClient;
 
 import com.google.common.base.Function;
@@ -54,8 +54,7 @@ public class WithZonesFormSigningRestClientModule<S, A> extends FormSigningRestC
    }
 
    protected void bindZonesToProvider() {
-      install(new ProvidesZoneAndRegionClientModule());
-      bindZonesToProvider(ProvidersViaAPI.RegionIdToZoneId.class);
+      bindZonesToProvider(ProvideZonesViaProperties.class);
    }
 
    protected void bindZonesToProvider(Class<? extends javax.inject.Provider<Map<String, String>>> providerClass) {

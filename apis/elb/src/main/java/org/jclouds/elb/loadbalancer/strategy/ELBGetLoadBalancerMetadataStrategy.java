@@ -36,9 +36,9 @@ public class ELBGetLoadBalancerMetadataStrategy implements GetLoadBalancerMetada
    public LoadBalancerMetadata getLoadBalancer(String id) {
       String[] parts = parseHandle(id);
       String region = parts[0];
-      String instanceId = parts[1];
+      String name = parts[1];
       try {
-         return converter.apply(getOnlyElement(client.describeLoadBalancersInRegion(region, region, instanceId)));
+         return converter.apply(getOnlyElement(client.describeLoadBalancersInRegion(region, name)));
       } catch (NoSuchElementException e) {
          return null;
       }

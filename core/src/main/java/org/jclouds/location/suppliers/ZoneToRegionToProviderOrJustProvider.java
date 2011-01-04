@@ -38,39 +38,42 @@ import org.jclouds.location.Zone;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class ZoneToRegionToProvider implements Supplier<Set<? extends Location>> {
+public class ZoneToRegionToProviderOrJustProvider implements Supplier<Set<? extends Location>> {
    private final Map<String, String> zoneToRegion;
    private final String providerName;
 
    @Inject
-   ZoneToRegionToProvider(@Zone Map<String, String> zoneToRegion, @Provider String providerName) {
+   ZoneToRegionToProviderOrJustProvider(@Zone Map<String, String> zoneToRegion, @Provider String providerName) {
       this.zoneToRegion = checkNotNull(zoneToRegion, "zoneToRegion");
       this.providerName = checkNotNull(providerName, "providerName");
    }
 
    @Override
    public Set<? extends Location> get() {
-      Location ec2 = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
-      Set<Location> locations = newLinkedHashSet();
+      Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
+      if (zoneToRegion.size() == 0)
+         return ImmutableSet.of(provider);
+      Set<Location> providers = newLinkedHashSet();
       for (String region : newLinkedHashSet(zoneToRegion.values())) {
-         locations.add(new LocationImpl(LocationScope.REGION, region, region, ec2));
+         providers.add(new LocationImpl(LocationScope.REGION, region, region, provider));
       }
-      ImmutableMap<String, Location> idToLocation = uniqueIndex(locations, new Function<Location, String>() {
+      ImmutableMap<String, Location> idToLocation = uniqueIndex(providers, new Function<Location, String>() {
          @Override
          public String apply(Location from) {
             return from.getId();
          }
       });
       for (String zone : zoneToRegion.keySet()) {
-         locations.add(new LocationImpl(LocationScope.ZONE, zone, zone, idToLocation.get(zoneToRegion.get(zone))));
+         providers.add(new LocationImpl(LocationScope.ZONE, zone, zone, idToLocation.get(zoneToRegion.get(zone))));
       }
-      return locations;
+      return providers;
    }
 
 }

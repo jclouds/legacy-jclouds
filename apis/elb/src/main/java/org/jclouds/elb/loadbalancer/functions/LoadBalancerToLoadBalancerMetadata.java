@@ -42,18 +42,24 @@ import com.google.common.collect.ImmutableSet;
 @Singleton
 public class LoadBalancerToLoadBalancerMetadata implements Function<LoadBalancer, LoadBalancerMetadata> {
    protected final Supplier<Map<String, ? extends Location>> locationMap;
+   protected final Supplier<Location> defaultLocationSupplier;
 
    @Inject
-   public LoadBalancerToLoadBalancerMetadata(Supplier<Map<String, ? extends Location>> locationMap) {
+   public LoadBalancerToLoadBalancerMetadata(Supplier<Location> defaultLocationSupplier,
+         Supplier<Map<String, ? extends Location>> locationMap) {
       this.locationMap = locationMap;
+      this.defaultLocationSupplier = defaultLocationSupplier;
    }
 
    @Override
    public LoadBalancerMetadata apply(LoadBalancer input) {
-      Location location = locationMap.get().get(input.getRegion());
+
+      Location location = input.getRegion() != null ? locationMap.get().get(input.getRegion())
+            : defaultLocationSupplier.get();
+
+      String id = input.getRegion() != null ? input.getRegion() + "/" + input.getName() : input.getName();
       // TODO Builder
-      return new LoadBalancerMetadataImpl(LoadBalancerType.LB, input.getName(), input.getName(), input.getRegion()
-            + "/" + input.getName(), location, null, ImmutableMap.<String, String> of(), ImmutableSet.of(input
-            .getDnsName()));
+      return new LoadBalancerMetadataImpl(LoadBalancerType.LB, input.getName(), input.getName(), id, location, null,
+            ImmutableMap.<String, String> of(), ImmutableSet.of(input.getDnsName()));
    }
 }

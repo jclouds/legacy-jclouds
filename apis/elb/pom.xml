@@ -34,6 +34,7 @@
     <description>jclouds components to access an implementation of Elastic Load Balancer</description>
 
     <properties>
+        <test.elb.zone>us-east-1a</test.elb.zone>
         <test.elb.endpoint>https://elasticloadbalancing.us-east-1.amazonaws.com</test.elb.endpoint>
         <test.elb.apiversion>2010-07-01</test.elb.apiversion>
         <test.elb.identity>${test.aws.identity}</test.elb.identity>
@@ -109,6 +110,10 @@
                                 </goals>
                                 <configuration>
                                     <systemProperties>
+                                        <property>
+                                            <name>test.elb.zone</name>
+                                            <value>${test.elb.zone}</value>
+                                        </property>
                                         <property>
                                             <name>test.elb.endpoint</name>
                                             <value>${test.elb.endpoint}</value>

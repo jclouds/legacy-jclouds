@@ -22,13 +22,10 @@ package org.jclouds.elb;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.testng.Assert.assertNotNull;
 
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.domain.Region;
-import org.jclouds.aws.ec2.domain.AvailabilityZone;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.loadbalancer.LoadBalancerServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
@@ -37,9 +34,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.Test;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.inject.Module;
 
 /**
@@ -57,6 +52,7 @@ public class ELBClientLiveTest {
    protected String credential;
    protected String endpoint;
    protected String apiversion;
+   protected String name = "TestLoadBalancer";
 
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
@@ -90,34 +86,35 @@ public class ELBClientLiveTest {
    }
 
    @Test
-   void testCreateLoadBalancer() {
-      String name = "TestLoadBalancer";
-      for (Entry<String, String> regionZone : ImmutableMap.<String, String> of(Region.US_EAST_1,
-            AvailabilityZone.US_EAST_1A, Region.US_WEST_1, AvailabilityZone.US_WEST_1A, Region.EU_WEST_1,
-            AvailabilityZone.EU_WEST_1A, Region.AP_SOUTHEAST_1, AvailabilityZone.AP_SOUTHEAST_1A).entrySet()) {
-         String dnsName = client.createLoadBalancerInRegion(regionZone.getKey(), name, "http", 80, 80,
-               regionZone.getValue());
-         assertNotNull(dnsName);
-         assert (dnsName.startsWith(name));
-      }
+   public void testCreateLoadBalancer() {
+      createLoadBalancerInRegionZone(null,
+            checkNotNull(System.getProperty("test." + provider + ".zone"), "test." + provider + ".zone"), name);
+   }
+
+   protected void createLoadBalancerInRegionZone(String region, String zone, String name) {
+      String dnsName = client.createLoadBalancerInRegion(region, name, "http", 80, 80, zone);
+      assertNotNull(dnsName);
+      assert (dnsName.startsWith(name));
    }
 
    @Test(dependsOnMethods = "testCreateLoadBalancer")
-   void testDescribeLoadBalancers() {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-            Region.AP_SOUTHEAST_1)) {
-         Set<? extends LoadBalancer> allResults = client.describeLoadBalancersInRegion(region);
-         assertNotNull(allResults);
-         assert (allResults.size() >= 1) : region;
-      }
+   public void testDescribeLoadBalancers() {
+      describeLoadBalancerInRegion(null);
+   }
+
+   protected void describeLoadBalancerInRegion(String region) {
+      Set<? extends LoadBalancer> allResults = client.describeLoadBalancersInRegion(region);
+      assertNotNull(allResults);
+      assert (allResults.size() >= 1) : region;
    }
 
    @Test
-   void testDeleteLoadBalancer() {
-      for (String region : Lists.newArrayList(null, Region.EU_WEST_1, Region.US_EAST_1, Region.US_WEST_1,
-            Region.AP_SOUTHEAST_1)) {
-         client.deleteLoadBalancerInRegion(region, "TestLoadBalancer");
-      }
+   public void testDeleteLoadBalancer() {
+      deleteLoadBalancerInRegion(null);
+   }
+
+   protected void deleteLoadBalancerInRegion(String region) {
+      client.deleteLoadBalancerInRegion(region, name);
    }
 
    @AfterTest

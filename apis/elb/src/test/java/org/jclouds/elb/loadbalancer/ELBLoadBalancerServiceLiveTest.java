@@ -25,7 +25,6 @@ import static org.testng.Assert.assertNotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.jclouds.aws.domain.Region;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.elb.ELBAsyncClient;
 import org.jclouds.elb.ELBClient;
@@ -63,7 +62,7 @@ public class ELBLoadBalancerServiceLiveTest extends BaseLoadBalancerServiceLiveT
       for (NodeMetadata node : nodes) {
          instanceIds.add(node.getProviderId());
       }
-      Set<? extends LoadBalancer> elbs = elbClient.describeLoadBalancersInRegion(Region.US_EAST_1);
+      Set<? extends LoadBalancer> elbs = elbClient.describeLoadBalancersInRegion(null);
       assertNotNull(elbs);
       for (LoadBalancer elb : elbs) {
          if (elb.getName().equals(tag))

@@ -27,7 +27,7 @@ import javax.inject.Singleton;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.domain.Location;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
+import org.jclouds.location.suppliers.OnlyLocationOrFirstZoneOrRegionMatchingRegionId;
 
 import com.google.common.base.Supplier;
 import com.google.inject.AbstractModule;
@@ -67,7 +67,7 @@ public abstract class BindLoadBalancerSuppliersByClass extends AbstractModule {
    }
 
    protected Class<? extends Supplier<Location>> defineDefaultLocationSupplier() {
-      return OnlyLocationOrFirstZone.class;
+      return OnlyLocationOrFirstZoneOrRegionMatchingRegionId.class;
    }
 
    protected void bindImageSupplier(Class<? extends Supplier<Set<? extends Image>>> clazz) {
