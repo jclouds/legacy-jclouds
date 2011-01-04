@@ -42,7 +42,7 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 @Test(groups = "unit")
-public class BaseEC2HandlerTest extends BaseHandlerTest {
+public abstract class BaseEC2HandlerTest extends BaseHandlerTest {
    protected String defaultRegion = Region.US_EAST_1;
 
    @BeforeTest

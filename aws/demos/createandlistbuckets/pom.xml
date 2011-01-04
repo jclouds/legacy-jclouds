@@ -30,6 +30,13 @@
 	<artifactId>jclouds-aws-demo-createandlistbuckets</artifactId>
 	<name>jclouds S3 sample that creates a bucket then lists all owned buckets</name>
 	<description>jclouds S3 sample that creates a bucket then lists all owned buckets</description>
+    <dependencies>
+        <dependency>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>s3</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>

@@ -57,7 +57,7 @@ public class AWSUtilsTest {
    @BeforeTest
    protected void setUpInjector() throws IOException {
 
-      Injector injector = new RestContextFactory().createContextBuilder("s3", "foo", "bar",
+      Injector injector = new RestContextFactory().createContextBuilder("ec2", "foo", "bar",
             ImmutableSet.of(new MockModule(), new NullLoggingModule()), new Properties()).buildInjector();
 
       utils = injector.getInstance(AWSUtils.class);

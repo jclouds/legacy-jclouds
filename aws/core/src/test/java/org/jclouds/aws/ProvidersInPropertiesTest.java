@@ -19,7 +19,6 @@
 
 package org.jclouds.aws;
 
-import org.jclouds.blobstore.util.BlobStoreUtils;
 import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.rest.Providers;
 import org.testng.annotations.Test;
@@ -38,9 +37,6 @@ public class ProvidersInPropertiesTest {
    public void testSupportedComputeServiceProviders() {
       Iterable<String> providers = ComputeServiceUtils.getSupportedProviders();
       assert !Iterables.contains(providers, "sqs") : providers;
-      assert !Iterables.contains(providers, "s3") : providers;
-      assert !Iterables.contains(providers, "walrus") : providers;
-      assert !Iterables.contains(providers, "googlestorage") : providers;
       assert Iterables.contains(providers, "ec2") : providers;
       assert Iterables.contains(providers, "nova") : providers;
       assert Iterables.contains(providers, "eucalyptus") : providers;
@@ -50,24 +46,9 @@ public class ProvidersInPropertiesTest {
    public void testSupportedProviders() {
       Iterable<String> providers = Providers.getSupportedProviders();
       assert Iterables.contains(providers, "sqs") : providers;
-      assert Iterables.contains(providers, "s3") : providers;
-      assert Iterables.contains(providers, "walrus") : providers;
-      assert Iterables.contains(providers, "googlestorage") : providers;
       assert Iterables.contains(providers, "ec2") : providers;
       assert Iterables.contains(providers, "nova") : providers;
       assert Iterables.contains(providers, "eucalyptus") : providers;
-   }
-
-   @Test
-   public void testSupportedBlobStoreProviders() {
-      Iterable<String> providers = BlobStoreUtils.getSupportedProviders();
-      assert !Iterables.contains(providers, "sqs") : providers;
-      assert Iterables.contains(providers, "s3") : providers;
-      assert Iterables.contains(providers, "walrus") : providers;
-      assert Iterables.contains(providers, "googlestorage") : providers;
-      assert !Iterables.contains(providers, "ec2") : providers;
-      assert !Iterables.contains(providers, "nova") : providers;
-      assert !Iterables.contains(providers, "eucalyptus") : providers;
    }
 
 }

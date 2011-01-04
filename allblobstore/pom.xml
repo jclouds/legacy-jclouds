@@ -30,8 +30,8 @@
     <name>allblobstore</name>
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-aws</artifactId>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>s3</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

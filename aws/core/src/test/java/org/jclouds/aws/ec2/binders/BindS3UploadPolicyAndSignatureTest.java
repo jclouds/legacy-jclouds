@@ -24,10 +24,14 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.net.URI;
 
-import org.jclouds.aws.s3.BaseS3AsyncClientTest;
+import org.jclouds.aws.ec2.services.BaseEC2AsyncClientTest;
+import org.jclouds.aws.ec2.services.InstanceAsyncClient;
 import org.jclouds.http.HttpRequest;
+import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.google.inject.TypeLiteral;
 
 /**
  * Tests behavior of {@code BindS3UploadPolicyAndSignature}
@@ -36,7 +40,7 @@ import org.testng.annotations.Test;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "BindS3UploadPolicyAndSignatureTest")
-public class BindS3UploadPolicyAndSignatureTest extends BaseS3AsyncClientTest {
+public class BindS3UploadPolicyAndSignatureTest extends BaseEC2AsyncClientTest<InstanceAsyncClient> {
    private BindS3UploadPolicyAndSignature binder;
 
    @BeforeClass
@@ -60,5 +64,11 @@ public class BindS3UploadPolicyAndSignatureTest extends BaseS3AsyncClientTest {
    public void testNullIsBad() {
       HttpRequest request = HttpRequest.builder().method("GET").endpoint(URI.create("http://momma")).build();
       binder.bindToRequest(request, null);
+   }
+
+   @Override
+   protected TypeLiteral<RestAnnotationProcessor<InstanceAsyncClient>> createTypeLiteral() {
+      return new TypeLiteral<RestAnnotationProcessor<InstanceAsyncClient>>() {
+      };
    }
 }

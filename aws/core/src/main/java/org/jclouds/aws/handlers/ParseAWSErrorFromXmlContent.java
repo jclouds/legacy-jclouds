@@ -29,11 +29,8 @@ import javax.inject.Singleton;
 
 import org.jclouds.aws.domain.AWSError;
 import org.jclouds.aws.util.AWSUtils;
-import org.jclouds.blobstore.ContainerNotFoundException;
-import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.Logger;
@@ -59,12 +56,11 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
    final AWSUtils utils;
 
    @Inject
-   ParseAWSErrorFromXmlContent(AWSUtils utils) {
+   public ParseAWSErrorFromXmlContent(AWSUtils utils) {
       this.utils = utils;
    }
 
    public void handleError(HttpCommand command, HttpResponse response) {
-      HttpRequest request = command.getCurrentRequest();
       Exception exception = new HttpResponseException(command, response);
       try {
          AWSError error = null;
@@ -72,7 +68,7 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
          if (response.getPayload() != null) {
             String contentType = response.getPayload().getContentMetadata().getContentType();
             if (contentType != null && (contentType.indexOf("xml") != -1 || contentType.indexOf("unknown") != -1)) {
-               error = utils.parseAWSErrorFromContent(request, response);
+               error = utils.parseAWSErrorFromContent(command.getCurrentRequest(), response);
                if (error != null) {
                   message = error.getMessage();
                }
@@ -85,44 +81,45 @@ public class ParseAWSErrorFromXmlContent implements HttpErrorHandler {
                }
             }
          }
-         message = message != null ? message : String.format("%s -> %s", request.getRequestLine(),
+         message = message != null ? message : String.format("%s -> %s", command.getCurrentRequest().getRequestLine(),
                response.getStatusLine());
-         switch (response.getStatusCode()) {
-         case 400:
-            if (error != null && error.getCode() != null && (error.getCode().equals("UnsupportedOperation")))
-               exception = new UnsupportedOperationException(message, exception);
-            if (error != null && error.getCode() != null
-                  && (error.getCode().endsWith("NotFound") || error.getCode().endsWith(".Unknown")))
-               exception = new ResourceNotFoundException(message, exception);
-            else if ((error != null && error.getCode() != null && (error.getCode().equals("IncorrectState") || error
-                  .getCode().endsWith(".Duplicate"))) || (message != null && (message.indexOf("already exists") != -1)))
-               exception = new IllegalStateException(message, exception);
-            else if (error != null && error.getCode() != null && error.getCode().equals("AuthFailure"))
-               exception = new AuthorizationException(message, exception);
-            else if (message != null && message.indexOf("Failed to bind the following fields") != -1)// Nova
-               exception = new IllegalArgumentException(message, exception);
-            break;
-         case 401:
-         case 403:
-            exception = new AuthorizationException(message, exception);
-            break;
-         case 404:
-            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
-               String container = request.getEndpoint().getHost();
-               String key = request.getEndpoint().getPath();
-               if (key == null || key.equals("/"))
-                  exception = new ContainerNotFoundException(container, message);
-               else
-                  exception = new KeyNotFoundException(container, key, message);
-            }
-            break;
-         case 409:
-            exception = new IllegalStateException(message, exception);
-         }
+         exception = refineException(command, response, exception, error, message);
       } finally {
          releasePayload(response);
          command.setException(exception);
       }
+   }
+
+   protected Exception refineException(HttpCommand command, HttpResponse response, Exception exception, AWSError error,
+         String message) {
+      switch (response.getStatusCode()) {
+      case 400:
+         if (error != null && error.getCode() != null && (error.getCode().equals("UnsupportedOperation")))
+            exception = new UnsupportedOperationException(message, exception);
+         if (error != null && error.getCode() != null
+               && (error.getCode().endsWith("NotFound") || error.getCode().endsWith(".Unknown")))
+            exception = new ResourceNotFoundException(message, exception);
+         else if ((error != null && error.getCode() != null && (error.getCode().equals("IncorrectState") || error
+               .getCode().endsWith(".Duplicate"))) || (message != null && (message.indexOf("already exists") != -1)))
+            exception = new IllegalStateException(message, exception);
+         else if (error != null && error.getCode() != null && error.getCode().equals("AuthFailure"))
+            exception = new AuthorizationException(message, exception);
+         else if (message != null && message.indexOf("Failed to bind the following fields") != -1)// Nova
+            exception = new IllegalArgumentException(message, exception);
+         break;
+      case 401:
+      case 403:
+         exception = new AuthorizationException(message, exception);
+         break;
+      case 404:
+         if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
+            exception = new ResourceNotFoundException(message, exception);
+         }
+         break;
+      case 409:
+         exception = new IllegalStateException(message, exception);
+      }
+      return exception;
    }
 
 }

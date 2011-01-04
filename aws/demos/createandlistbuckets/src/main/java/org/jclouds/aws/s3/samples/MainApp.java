@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
-import org.jclouds.aws.s3.S3AsyncClient;
-import org.jclouds.aws.s3.S3Client;
+import org.jclouds.s3.S3AsyncClient;
+import org.jclouds.s3.S3Client;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
 import org.jclouds.blobstore.BlobStoreContextFactory;

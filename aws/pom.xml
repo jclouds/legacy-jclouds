@@ -37,15 +37,10 @@
     </modules>
 
     <properties>
-        <test.initializer>org.jclouds.aws.s3.blobstore.integration.S3TestInitializer</test.initializer>
         <test.aws.identity>FIXME</test.aws.identity>
         <test.aws.credential>FIXME</test.aws.credential>
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist.nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist.nodes>
-        <test.s3.endpoint>https://s3.amazonaws.com</test.s3.endpoint>
-        <test.s3.apiversion>2006-03-01</test.s3.apiversion>
-        <test.s3.identity>${test.aws.identity}</test.s3.identity>
-        <test.s3.credential>${test.aws.credential}</test.s3.credential>
         <test.ec2.endpoint>https://ec2.us-east-1.amazonaws.com</test.ec2.endpoint>
         <test.ec2.apiversion>2010-06-15</test.ec2.apiversion>
         <test.ec2.identity>${test.aws.identity}</test.ec2.identity>
@@ -54,10 +49,6 @@
         <test.cloudwatch.apiversion>2009-05-15</test.cloudwatch.apiversion>
         <test.cloudwatch.identity>${test.aws.identity}</test.cloudwatch.identity>
         <test.cloudwatch.credential>${test.aws.credential}</test.cloudwatch.credential>
-        <test.elb.endpoint>https://elasticloadbalancing.us-east-1.amazonaws.com</test.elb.endpoint>
-        <test.elb.apiversion>2009-11-25</test.elb.apiversion>
-        <test.elb.identity>${test.aws.identity}</test.elb.identity>
-        <test.elb.credential>${test.aws.credential}</test.elb.credential>
         <test.sqs.endpoint>https://sqs.us-east-1.amazonaws.com</test.sqs.endpoint>
         <test.sqs.apiversion>2009-02-01</test.sqs.apiversion>
         <test.sqs.identity>${test.aws.identity}</test.sqs.identity>
@@ -78,18 +69,6 @@
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type> 
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-blobstore</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-blobstore</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -164,22 +143,6 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>test.s3.endpoint</name>
-                                            <value>${test.s3.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.s3.apiversion</name>
-                                            <value>${test.s3.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.s3.identity</name>
-                                            <value>${test.s3.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.s3.credential</name>
-                                            <value>${test.s3.credential}</value>
-                                        </property>
-                                        <property>
                                             <name>test.ec2.endpoint</name>
                                             <value>${test.ec2.endpoint}</value>
                                         </property>
@@ -214,22 +177,6 @@
                                         <property>
                                             <name>test.sqs.credential</name>
                                             <value>${test.sqs.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.elb.endpoint</name>
-                                            <value>${test.elb.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.elb.apiversion</name>
-                                            <value>${test.elb.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.elb.identity</name>
-                                            <value>${test.elb.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.elb.credential</name>
-                                            <value>${test.elb.credential}</value>
                                         </property>
                                         <property>
                                             <name>test.cloudwatch.endpoint</name>
@@ -278,18 +225,6 @@
                                         <property>
                                             <name>test.nova.credential</name>
                                             <value>${test.nova.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.initializer</name>
-                                            <value>${test.initializer}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.url</name>
-                                            <value>${jclouds.blobstore.httpstream.url}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.blobstore.httpstream.md5</name>
-                                            <value>${jclouds.blobstore.httpstream.md5}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

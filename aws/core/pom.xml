@@ -31,19 +31,4 @@
     <name>jclouds Amazon AWS Components Core</name>
     <description>jclouds Core components to access Amazon AWS</description>
 
-    <scm>
-        <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk</connection>
-        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk</developerConnection>
-        <url>http://jclouds.googlecode.com/svn/trunk</url>
-    </scm>
-
-
-    <dependencies>
-        <dependency>
-            <groupId>com.jamesmurty.utils</groupId>
-            <artifactId>java-xmlbuilder</artifactId>
-            <version>0.3</version>
-        </dependency>
-    </dependencies>
-
 </project>
