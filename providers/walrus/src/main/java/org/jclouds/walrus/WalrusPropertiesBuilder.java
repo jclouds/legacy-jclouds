@@ -17,33 +17,37 @@
  * ====================================================================
  */
 
-package org.jclouds.s3;
+package org.jclouds.walrus;
 
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;
-import static org.jclouds.aws.reference.AWSConstants.PROPERTY_HEADER_TAG;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_SERVICE_PATH;
+import static org.jclouds.s3.reference.S3Constants.PROPERTY_S3_VIRTUAL_HOST_BUCKETS;
 
 import java.util.Properties;
 
+import org.jclouds.s3.S3PropertiesBuilder;
+
 /**
- * Builds properties used in Google Storage
+ * Builds properties used in Walrus Clients
  * 
  * @author Adrian Cole
  */
-public class GoogleStoragePropertiesBuilder extends S3PropertiesBuilder {
+public class WalrusPropertiesBuilder extends S3PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_AUTH_TAG, "GOOG1");
-      properties.setProperty(PROPERTY_HEADER_TAG, "goog");
-      properties.setProperty(PROPERTY_REGIONS, "GoogleStorage");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://commondatastorage.googleapis.com");
-      properties.setProperty(PROPERTY_ENDPOINT + ".GoogleStorage", "https://commondatastorage.googleapis.com");
+      properties.setProperty(PROPERTY_REGIONS, "Walrus");
+      properties.setProperty(PROPERTY_API_VERSION, "Walrus-1.6");
+      properties.setProperty(PROPERTY_ENDPOINT, "http://ecc.eucalyptus.com:8773/services/Walrus");
+      properties.setProperty(PROPERTY_ENDPOINT + ".Walrus", "http://ecc.eucalyptus.com:8773/services/Walrus");
+      properties.setProperty(PROPERTY_S3_SERVICE_PATH, "/services/Walrus");
+      properties.setProperty(PROPERTY_S3_VIRTUAL_HOST_BUCKETS, "false");
       return properties;
    }
 
-   public GoogleStoragePropertiesBuilder(Properties properties) {
+   public WalrusPropertiesBuilder(Properties properties) {
       super(properties);
    }
 

@@ -29,7 +29,7 @@ data.
 our current version is 1.0-beta-8
 our dev version is 1.0-SNAPSHOT
  
-our compute api supports: ec2, gogrid, cloudservers (rackspace), vcloud,
+our compute api supports: aws-ec2, gogrid, cloudservers (rackspace), vcloud,
                           trmk-ecloud, trmk-vcloudexpress, eucalyptus, cloudsigma,
                           elasticstack, bluelock-vclouddirector, slicehost,
                           elastichosts-lon-p (Peer 1), elastichosts-sat-p (Peer 1),
@@ -38,9 +38,9 @@ our compute api supports: ec2, gogrid, cloudservers (rackspace), vcloud,
   * note * the pom dependency org.jclouds/jclouds-allcompute gives you access to
            to all of these providers
 
-our blobstore api supports: s3, cloudfiles (rackspace), azurestorage, atmosonline,
+our blobstore api supports: aws-s3, cloudfiles (rackspace), azurestorage, atmosonline,
                             synaptic, peer1-storage, walrus, googlestorage, 
-                            transient (in-memory), filesystem (on-disk)
+                            scaleup-storage, transient (in-memory), filesystem (on-disk)
  
   * note * the pom dependency org.jclouds/jclouds-allblobstore gives you access to
            to all of these providers
