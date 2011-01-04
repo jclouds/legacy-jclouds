@@ -37,7 +37,7 @@ import org.jclouds.s3.domain.AccessControlList.Grant;
 import org.jclouds.s3.domain.AccessControlList.Permission;
 import org.jclouds.s3.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.s3.functions.ParseObjectMetadataFromHeaders;
-import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYou;
+import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState;
 import org.jclouds.s3.functions.ReturnTrueOn404OrNotFoundFalseIfNotEmpty;
 import org.jclouds.s3.options.CopyObjectOptions;
 import org.jclouds.s3.options.ListBucketOptions;
@@ -384,7 +384,7 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnFalseIfBucketAlreadyOwnedByYou.class);
+      assertExceptionParserClassEquals(method, ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState.class);
 
       checkFilters(request);
    }
@@ -403,7 +403,7 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnFalseIfBucketAlreadyOwnedByYou.class);
+      assertExceptionParserClassEquals(method, ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState.class);
 
       checkFilters(request);
    }

@@ -26,19 +26,25 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(testName = "s3.ReturnTrueIfBucketAlreadyOwnedByYouTest")
-public class ReturnTrueIfBucketAlreadyOwnedByYouTest {
+@Test(testName = "ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalStateTest")
+public class ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalStateTest {
 
    @Test
    void testBucketAlreadyOwnedByYouIsOk() throws Exception {
       Exception e = getErrorWithCode("BucketAlreadyOwnedByYou");
-      assert !new ReturnFalseIfBucketAlreadyOwnedByYou().apply(e);
+      assert !new ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState().apply(e);
+   }
+
+   @Test
+   void testIllegalStateIsOk() throws Exception {
+      Exception e = new IllegalStateException();
+      assert !new ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState().apply(e);
    }
 
    @Test(expectedExceptions = AWSResponseException.class)
    void testBlahIsNotOk() throws Exception {
       Exception e = getErrorWithCode("blah");
-      new ReturnFalseIfBucketAlreadyOwnedByYou().apply(e);
+      new ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState().apply(e);
    }
 
    private Exception getErrorWithCode(String code) {

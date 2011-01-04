@@ -52,7 +52,7 @@ import org.jclouds.s3.functions.BindRegionToXmlPayload;
 import org.jclouds.s3.functions.ObjectKey;
 import org.jclouds.s3.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.s3.functions.ParseObjectMetadataFromHeaders;
-import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYou;
+import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState;
 import org.jclouds.s3.functions.ReturnTrueOn404OrNotFoundFalseIfNotEmpty;
 import org.jclouds.s3.options.CopyObjectOptions;
 import org.jclouds.s3.options.ListBucketOptions;
@@ -170,7 +170,7 @@ public interface S3AsyncClient {
     */
    @PUT
    @Path("/")
-   @ExceptionParser(ReturnFalseIfBucketAlreadyOwnedByYou.class)
+   @ExceptionParser(ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState.class)
    ListenableFuture<Boolean> putBucketInRegion(
             // TODO endpoint based on region
             @BinderParam(BindRegionToXmlPayload.class) @Nullable String region,
