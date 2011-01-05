@@ -37,8 +37,8 @@
         <test.initializer>org.jclouds.googlestorage.blobstore.GoogleStorageTestInitializer</test.initializer>
         <test.googlestorage.endpoint>https://commondatastorage.googleapis.com</test.googlestorage.endpoint>
         <test.googlestorage.apiversion>2006-03-01</test.googlestorage.apiversion>
-        <test.googlestorage.identity>${test.googlestorage.identity}</test.googlestorage.identity>
-        <test.googlestorage.credential>${test.googlestorage.credential}</test.googlestorage.credential>
+        <test.googlestorage.identity>FIX_ME</test.googlestorage.identity>
+        <test.googlestorage.credential>FIX_ME</test.googlestorage.credential>
     </properties>
 
     <dependencies>
