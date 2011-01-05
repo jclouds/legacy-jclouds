@@ -30,8 +30,8 @@
     <name>allcompute</name>
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-aws</artifactId>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>ec2</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

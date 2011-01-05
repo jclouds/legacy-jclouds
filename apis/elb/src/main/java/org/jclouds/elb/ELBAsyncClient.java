@@ -19,8 +19,8 @@
 
 package org.jclouds.elb;
 
-import static org.jclouds.aws.ec2.reference.EC2Parameters.ACTION;
-import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
+import static org.jclouds.aws.reference.FormParameters.ACTION;
+import static org.jclouds.aws.reference.FormParameters.VERSION;
 
 import java.util.Set;
 

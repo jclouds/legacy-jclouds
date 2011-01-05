@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 
-import org.jclouds.aws.ec2.util.EC2Utils;
+import org.jclouds.aws.util.AWSUtils;
 import org.jclouds.date.DateService;
 import org.jclouds.elb.domain.LoadBalancer;
 import org.jclouds.elb.domain.LoadBalancer.AppCookieStickinessPolicy;
@@ -126,7 +126,7 @@ public class DescribeLoadBalancersResponseHandler extends
          } else if (!(inListenerDescriptions || inAppCookieStickinessPolicies || inInstances
                || inLBCookieStickinessPolicies || inAvailabilityZones)) {
             try {
-               String region = EC2Utils.findRegionInArgsOrNull(getRequest());
+               String region = AWSUtils.findRegionInArgsOrNull(getRequest());
                elb.setRegion(region);
                contents.add(elb);
             } catch (NullPointerException e) {

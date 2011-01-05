@@ -1,6 +1,6 @@
 package org.jclouds.elb.binders;
 
-import static org.jclouds.aws.ec2.util.EC2Utils.indexStringArrayToFormValuesWithStringFormat;
+import static org.jclouds.aws.util.AWSUtils.indexStringArrayToFormValuesWithStringFormat;
 
 import javax.inject.Singleton;
 

@@ -21,199 +21,29 @@
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>jclouds-project</artifactId>
         <groupId>org.jclouds</groupId>
+        <artifactId>jclouds-project</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../project/pom.xml</relativePath>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>jclouds-aws-project</artifactId>
-    <packaging>pom</packaging>
-    <name>jclouds AWS project</name>
-    <modules>
-        <module>core</module>
-        <module>demos</module>
-    </modules>
-
-    <properties>
-        <test.aws.identity>FIXME</test.aws.identity>
-        <test.aws.credential>FIXME</test.aws.credential>
-        <!-- when instances are hung, open a ticket and add here -->
-        <jclouds.compute.blacklist.nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist.nodes>
-        <test.ec2.endpoint>https://ec2.us-east-1.amazonaws.com</test.ec2.endpoint>
-        <test.ec2.apiversion>2010-06-15</test.ec2.apiversion>
-        <test.ec2.identity>${test.aws.identity}</test.ec2.identity>
-        <test.ec2.credential>${test.aws.credential}</test.ec2.credential>
-        <test.cloudwatch.endpoint>https://monitoring.us-east-1.amazonaws.com</test.cloudwatch.endpoint>
-        <test.cloudwatch.apiversion>2009-05-15</test.cloudwatch.apiversion>
-        <test.cloudwatch.identity>${test.aws.identity}</test.cloudwatch.identity>
-        <test.cloudwatch.credential>${test.aws.credential}</test.cloudwatch.credential>
-        <test.eucalyptus.endpoint>http://173.205.188.130:8773/services/Eucalyptus</test.eucalyptus.endpoint>
-        <test.eucalyptus.apiversion>2010-06-15</test.eucalyptus.apiversion>
-        <test.eucalyptus.identity>FIXME</test.eucalyptus.identity>
-        <test.eucalyptus.credential>FIXME</test.eucalyptus.credential>
-        <test.nova.endpoint>http://10.255.255.1:8773/services/Cloud</test.nova.endpoint>
-        <test.nova.apiversion>2010-06-15</test.nova.apiversion>
-        <test.nova.identity>FIXME</test.nova.identity>
-        <test.nova.credential>FIXME</test.nova.credential>
-    </properties>
-
+    <artifactId>jclouds-aws</artifactId>
+    <name>jclouds Amazon AWS Components Core</name>
+    <description>jclouds Core components to access Amazon AWS</description>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type> 
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-scriptbuilder</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-enterprise</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-jsch</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-compute</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-compute</artifactId>
+            <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-loadbalancer</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-loadbalancer</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-           <groupId>log4j</groupId>
-           <artifactId>log4j</artifactId>
-           <version>1.2.14</version>
-           <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-log4j</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <profiles>
-        <profile>
-            <id>live</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>integration</id>
-                                <phase>integration-test</phase>
-                                <goals>
-                                    <goal>test</goal>
-                                </goals>
-                                <configuration>
-                                    <systemProperties>
-                                        <property>
-                                            <name>test.ec2.endpoint</name>
-                                            <value>${test.ec2.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.ec2.apiversion</name>
-                                            <value>${test.ec2.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.ec2.identity</name>
-                                            <value>${test.ec2.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.ec2.credential</name>
-                                            <value>${test.ec2.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>jclouds.compute.blacklist.nodes</name>
-                                            <value>${jclouds.compute.blacklist.nodes}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.cloudwatch.endpoint</name>
-                                            <value>${test.cloudwatch.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.cloudwatch.apiversion</name>
-                                            <value>${test.cloudwatch.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.cloudwatch.identity</name>
-                                            <value>${test.cloudwatch.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.cloudwatch.credential</name>
-                                            <value>${test.cloudwatch.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.eucalyptus.endpoint</name>
-                                            <value>${test.eucalyptus.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.eucalyptus.apiversion</name>
-                                            <value>${test.eucalyptus.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.eucalyptus.identity</name>
-                                            <value>${test.eucalyptus.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.eucalyptus.credential</name>
-                                            <value>${test.eucalyptus.credential}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.nova.endpoint</name>
-                                            <value>${test.nova.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.nova.apiversion</name>
-                                            <value>${test.nova.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.nova.identity</name>
-                                            <value>${test.nova.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.nova.credential</name>
-                                            <value>${test.nova.credential}</value>
-                                        </property>
-                                    </systemProperties>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 
 </project>
