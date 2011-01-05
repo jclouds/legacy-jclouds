@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.ec2.compute;
+package org.jclouds.aws.ec2.compute;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
@@ -25,14 +25,14 @@ import static org.testng.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.jclouds.ec2.domain.InstanceType;
-import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
+import org.jclouds.ec2.domain.InstanceType;
+import org.jclouds.ec2.reference.EC2Constants;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.Test;
 
@@ -45,10 +45,10 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class EC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
+public class AWSEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
-   public EC2TemplateBuilderLiveTest() {
-      provider = "ec2";
+   public AWSEC2TemplateBuilderLiveTest() {
+      provider = "aws-ec2";
    }
 
    @Override

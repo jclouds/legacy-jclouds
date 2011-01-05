@@ -106,9 +106,11 @@ public abstract class BaseEC2AsyncClientTest<T> extends RestClientTest<T> {
       return new StubEC2RestClientModule();
    }
 
+   protected String provider = "ec2";
+
    @Override
    public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("ec2", "identity", "credential", new Properties());
+      return new RestContextFactory().createContextSpec(provider, "identity", "credential", new Properties());
    }
 
 }
