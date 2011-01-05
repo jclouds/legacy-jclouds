@@ -96,7 +96,7 @@ import domain.VCloudVersionsAsyncClient;
  * @author Adrian Cole
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
-@Test(groups = "unit", testName = "TerremarkECloudAsyncClientTest")
+@Test(groups = "unit", sequential=true, testName = "TerremarkECloudAsyncClientTest")
 public class TerremarkECloudAsyncClientTest extends RestClientTest<TerremarkECloudAsyncClient> {
    public void testNetwork() throws SecurityException, NoSuchMethodException, IOException {
       Method method = TerremarkECloudAsyncClient.class.getMethod("getNetwork", URI.class);
