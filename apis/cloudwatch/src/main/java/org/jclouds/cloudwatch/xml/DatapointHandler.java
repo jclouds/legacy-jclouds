@@ -17,14 +17,14 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.cloudwatch.xml;
+package org.jclouds.cloudwatch.xml;
 
 import java.util.Date;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.cloudwatch.domain.Datapoint;
-import org.jclouds.aws.cloudwatch.domain.StandardUnit;
+import org.jclouds.cloudwatch.domain.Datapoint;
+import org.jclouds.cloudwatch.domain.StandardUnit;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 

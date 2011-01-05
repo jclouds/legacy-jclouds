@@ -17,13 +17,13 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.cloudwatch.xml;
+package org.jclouds.cloudwatch.xml;
 
 import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jclouds.aws.cloudwatch.domain.Datapoint;
+import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.http.functions.ParseSax;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;

@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.cloudwatch;
+package org.jclouds.cloudwatch;
 
 import java.util.Date;
 import java.util.Set;
@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.aws.cloudwatch.domain.Datapoint;
+import org.jclouds.cloudwatch.domain.Datapoint;
 import org.jclouds.concurrent.Timeout;
 
 /**

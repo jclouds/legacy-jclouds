@@ -17,10 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.cloudwatch;
-
-import static org.jclouds.aws.ec2.reference.EC2Parameters.ACTION;
-import static org.jclouds.aws.ec2.reference.EC2Parameters.VERSION;
+package org.jclouds.cloudwatch;
 
 import java.util.Date;
 import java.util.Set;
@@ -30,10 +27,10 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
-import org.jclouds.aws.cloudwatch.domain.Datapoint;
-import org.jclouds.aws.cloudwatch.functions.ISO8601Format;
-import org.jclouds.aws.cloudwatch.xml.GetMetricStatisticsResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.cloudwatch.domain.Datapoint;
+import org.jclouds.cloudwatch.functions.ISO8601Format;
+import org.jclouds.cloudwatch.xml.GetMetricStatisticsResponseHandler;
 import org.jclouds.location.functions.RegionToEndpointOrProviderIfNull;
 import org.jclouds.rest.annotations.EndpointParam;
 import org.jclouds.rest.annotations.FormParams;
@@ -54,7 +51,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @author Adrian Cole
  */
 @RequestFilters(FormSigner.class)
-@FormParams(keys = VERSION, values = CloudWatchAsyncClient.VERSION)
+@FormParams(keys = "Version", values = CloudWatchAsyncClient.VERSION)
 @VirtualHost
 public interface CloudWatchAsyncClient {
    public static final String VERSION = "2009-05-15";
@@ -65,11 +62,11 @@ public interface CloudWatchAsyncClient {
    @POST
    @Path("/")
    @XMLResponseParser(GetMetricStatisticsResponseHandler.class)
-   @FormParams(keys = ACTION, values = "GetMetricStatistics")
+   @FormParams(keys = "Action", values = "GetMetricStatistics")
    ListenableFuture<? extends Set<Datapoint>> getMetricStatisticsInRegion(
-            @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
-            @FormParam("MeasureName") String measureName,
-            @FormParam("StartTime") @ParamParser(ISO8601Format.class) Date startTime,
-            @FormParam("EndTime") @ParamParser(ISO8601Format.class) Date endTime, @FormParam("Period") int period,
-            @FormParam("Statistics.member.1") String statistics);
+         @EndpointParam(parser = RegionToEndpointOrProviderIfNull.class) @Nullable String region,
+         @FormParam("MeasureName") String measureName,
+         @FormParam("StartTime") @ParamParser(ISO8601Format.class) Date startTime,
+         @FormParam("EndTime") @ParamParser(ISO8601Format.class) Date endTime, @FormParam("Period") int period,
+         @FormParam("Statistics.member.1") String statistics);
 }

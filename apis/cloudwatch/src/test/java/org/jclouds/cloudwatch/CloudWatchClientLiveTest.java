@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.cloudwatch;
+package org.jclouds.cloudwatch;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

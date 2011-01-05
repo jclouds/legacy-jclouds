@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.cloudwatch.domain;
+package org.jclouds.cloudwatch.domain;
 
 import java.util.Date;
 

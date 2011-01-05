@@ -17,35 +17,24 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.cloudwatch.domain;
+package org.jclouds.cloudwatch.config;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import com.google.common.base.CaseFormat;
+import org.jclouds.aws.config.FormSigningRestClientModule;
+import org.jclouds.cloudwatch.CloudWatchAsyncClient;
+import org.jclouds.cloudwatch.CloudWatchClient;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.rest.ConfiguresRestClient;
 
 /**
- * 
+ * Configures the Monitoring connection.
  * 
  * @author Adrian Cole
  */
-public enum StandardUnit {
-   SECONDS, PERCENT, BYTES, BITS, COUNT, BITS_PER_SECOND, COUNT_PER_SECOND, NONE, UNRECOGNIZED;
-
-   public String value() {
-      return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name().replace("_PER_", "/")));
+@RequiresHttp
+@ConfiguresRestClient
+public class CloudWatchRestClientModule extends FormSigningRestClientModule<CloudWatchClient, CloudWatchAsyncClient> {
+   public CloudWatchRestClientModule() {
+      super(CloudWatchClient.class, CloudWatchAsyncClient.class);
    }
 
-   @Override
-   public String toString() {
-      return value();
-   }
-
-   public static StandardUnit fromValue(String state) {
-      try {
-         return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state").replace(
-                  "/", "_PER_")));
-      } catch (IllegalArgumentException e) {
-         return UNRECOGNIZED;
-      }
-   }
 }

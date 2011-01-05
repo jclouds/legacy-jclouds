@@ -17,15 +17,15 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.cloudwatch.xml;
+package org.jclouds.cloudwatch.xml;
 
 import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.aws.cloudwatch.domain.Datapoint;
-import org.jclouds.aws.cloudwatch.domain.StandardUnit;
+import org.jclouds.cloudwatch.domain.Datapoint;
+import org.jclouds.cloudwatch.domain.StandardUnit;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
@@ -42,7 +42,7 @@ import com.google.common.collect.ImmutableSet;
 public class GetMetricStatisticsResponseHandlerTest extends BaseHandlerTest {
    public void testApplyInputStream() {
       DateService dateService = injector.getInstance(DateService.class);
-      InputStream is = getClass().getResourceAsStream("/cloudwatch/get_metric_statistics.xml");
+      InputStream is = getClass().getResourceAsStream("/get_metric_statistics.xml");
 
       Set<Datapoint> expected = ImmutableSet.of(new Datapoint(0.17777777777777778, null, null, dateService
                .iso8601SecondsDateParse("2009-01-16T00:00:00Z"), 9.0, null, StandardUnit.PERCENT, null), new Datapoint(

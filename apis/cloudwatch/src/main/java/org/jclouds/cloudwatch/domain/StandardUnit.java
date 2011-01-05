@@ -17,37 +17,35 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.cloudwatch.functions;
+package org.jclouds.cloudwatch.domain;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Date;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.jclouds.date.DateService;
-
-import com.google.common.base.Function;
+import com.google.common.base.CaseFormat;
 
 /**
  * 
- * @author Adrian Cole
  * 
+ * @author Adrian Cole
  */
-@Singleton
-public class ISO8601Format implements Function<Object, String> {
+public enum StandardUnit {
+   SECONDS, PERCENT, BYTES, BITS, COUNT, BITS_PER_SECOND, COUNT_PER_SECOND, NONE, UNRECOGNIZED;
 
-   private final DateService dateService;
-
-   @Inject
-   ISO8601Format(DateService dateService) {
-      this.dateService = dateService;
+   public String value() {
+      return (CaseFormat.UPPER_UNDERSCORE.to(CaseFormat.UPPER_CAMEL, name().replace("_PER_", "/")));
    }
 
    @Override
-   public String apply(Object from) {
-      checkArgument(from instanceof Date, "this binder is only valid for Date!");
-      return dateService.iso8601SecondsDateFormat(Date.class.cast(from));
+   public String toString() {
+      return value();
+   }
+
+   public static StandardUnit fromValue(String state) {
+      try {
+         return valueOf(CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, checkNotNull(state, "state").replace(
+                  "/", "_PER_")));
+      } catch (IllegalArgumentException e) {
+         return UNRECOGNIZED;
+      }
    }
 }

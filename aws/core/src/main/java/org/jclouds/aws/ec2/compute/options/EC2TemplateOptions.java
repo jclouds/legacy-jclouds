@@ -26,7 +26,6 @@ import static com.google.common.base.Preconditions.checkState;
 import java.util.Arrays;
 import java.util.Set;
 
-import org.jclouds.aws.cloudwatch.CloudWatchClient;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.io.Payload;

@@ -17,12 +17,12 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.cloudwatch;
+package org.jclouds.cloudwatch;
 
 import java.util.List;
 import java.util.Properties;
 
-import org.jclouds.aws.cloudwatch.config.CloudWatchRestClientModule;
+import org.jclouds.cloudwatch.config.CloudWatchRestClientModule;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.rest.RestContextBuilder;

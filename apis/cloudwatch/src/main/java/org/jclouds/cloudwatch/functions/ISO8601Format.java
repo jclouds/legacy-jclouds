@@ -17,24 +17,37 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.cloudwatch.config;
+package org.jclouds.cloudwatch.functions;
 
-import org.jclouds.aws.cloudwatch.CloudWatchAsyncClient;
-import org.jclouds.aws.cloudwatch.CloudWatchClient;
-import org.jclouds.aws.config.FormSigningRestClientModule;
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.rest.ConfiguresRestClient;
+import static com.google.common.base.Preconditions.checkArgument;
+
+import java.util.Date;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jclouds.date.DateService;
+
+import com.google.common.base.Function;
 
 /**
- * Configures the Monitoring connection.
  * 
  * @author Adrian Cole
+ * 
  */
-@RequiresHttp
-@ConfiguresRestClient
-public class CloudWatchRestClientModule extends FormSigningRestClientModule<CloudWatchClient, CloudWatchAsyncClient> {
-   public CloudWatchRestClientModule() {
-      super(CloudWatchClient.class, CloudWatchAsyncClient.class);
+@Singleton
+public class ISO8601Format implements Function<Object, String> {
+
+   private final DateService dateService;
+
+   @Inject
+   ISO8601Format(DateService dateService) {
+      this.dateService = dateService;
    }
 
+   @Override
+   public String apply(Object from) {
+      checkArgument(from instanceof Date, "this binder is only valid for Date!");
+      return dateService.iso8601SecondsDateFormat(Date.class.cast(from));
+   }
 }

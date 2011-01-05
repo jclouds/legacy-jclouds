@@ -17,8 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.cloudwatch;
-
+package org.jclouds.cloudwatch;
 import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.aws.reference.AWSConstants.PROPERTY_AUTH_TAG;

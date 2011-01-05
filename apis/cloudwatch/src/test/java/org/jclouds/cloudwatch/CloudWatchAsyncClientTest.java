@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.aws.cloudwatch;
+package org.jclouds.cloudwatch;
 
 import static org.testng.Assert.assertEquals;
 
@@ -29,9 +29,9 @@ import java.util.Properties;
 import javax.inject.Named;
 
 import org.jclouds.Constants;
-import org.jclouds.aws.cloudwatch.config.CloudWatchRestClientModule;
-import org.jclouds.aws.cloudwatch.xml.GetMetricStatisticsResponseHandler;
 import org.jclouds.aws.filters.FormSigner;
+import org.jclouds.cloudwatch.config.CloudWatchRestClientModule;
+import org.jclouds.cloudwatch.xml.GetMetricStatisticsResponseHandler;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.RequiresHttp;
