@@ -40,5 +40,6 @@
        <module>sqs</module>
        <module>simpledb</module>
        <module>cloudwatch</module>
+       <module>walrus</module>
     </modules>
 </project>

@@ -39,8 +39,9 @@ our compute api supports: aws-ec2, gogrid, cloudservers (rackspace), vcloud,
            to all of these providers
 
 our blobstore api supports: aws-s3, cloudfiles (rackspace), azurestorage, atmosonline,
-                            synaptic, peer1-storage, walrus, googlestorage, 
-                            scaleup-storage, transient (in-memory), filesystem (on-disk)
+                            synaptic, peer1-storage, s3 (generic), walrus(generic),
+                            googlestorage, scaleup-storage, ecc-s3, transient (in-mem),
+                            filesystem (on-disk)
  
   * note * the pom dependency org.jclouds/jclouds-allblobstore gives you access to
            to all of these providers

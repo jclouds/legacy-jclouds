@@ -50,8 +50,13 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.provider</groupId>
+            <groupId>org.jclouds.api</groupId>
             <artifactId>walrus</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>ecc-s3</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

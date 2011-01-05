@@ -41,6 +41,6 @@
         <module>aws-s3</module>
         <module>googlestorage</module>
         <module>scaleup-storage</module>
-        <module>walrus</module>
+        <module>ecc-s3</module>
     </modules>
 </project>

@@ -24,14 +24,14 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4.0.0.xsd" >
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.jclouds.provider</groupId>
-        <artifactId>jclouds-providers-project</artifactId>
+        <groupId>org.jclouds.api</groupId>
+        <artifactId>jclouds-apis-project</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>walrus</artifactId>
-    <name>jclouds Eucalyptus Walrus provider</name>
-    <description>Simple Storage Service (S3) implementation targeted to Eucalyptus Walrus</description>
+    <name>jclouds Eucalyptus Walrus api</name>
+    <description>Simple Storage Service (S3) implementation based on Eucalyptus Walrus</description>
 
     <properties>
         <test.initializer>org.jclouds.walrus.blobstore.WalrusTestInitializer</test.initializer>
