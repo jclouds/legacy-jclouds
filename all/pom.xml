@@ -49,5 +49,10 @@
             <artifactId>aws-elb</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>sqs</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

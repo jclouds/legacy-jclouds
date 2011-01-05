@@ -49,10 +49,6 @@
         <test.cloudwatch.apiversion>2009-05-15</test.cloudwatch.apiversion>
         <test.cloudwatch.identity>${test.aws.identity}</test.cloudwatch.identity>
         <test.cloudwatch.credential>${test.aws.credential}</test.cloudwatch.credential>
-        <test.sqs.endpoint>https://sqs.us-east-1.amazonaws.com</test.sqs.endpoint>
-        <test.sqs.apiversion>2009-02-01</test.sqs.apiversion>
-        <test.sqs.identity>${test.aws.identity}</test.sqs.identity>
-        <test.sqs.credential>${test.aws.credential}</test.sqs.credential>
         <test.eucalyptus.endpoint>http://173.205.188.130:8773/services/Eucalyptus</test.eucalyptus.endpoint>
         <test.eucalyptus.apiversion>2010-06-15</test.eucalyptus.apiversion>
         <test.eucalyptus.identity>FIXME</test.eucalyptus.identity>
@@ -161,22 +157,6 @@
                                         <property>
                                             <name>jclouds.compute.blacklist.nodes</name>
                                             <value>${jclouds.compute.blacklist.nodes}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.sqs.endpoint</name>
-                                            <value>${test.sqs.endpoint}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.sqs.apiversion</name>
-                                            <value>${test.sqs.apiversion}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.sqs.identity</name>
-                                            <value>${test.sqs.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.sqs.credential</name>
-                                            <value>${test.sqs.credential}</value>
                                         </property>
                                         <property>
                                             <name>test.cloudwatch.endpoint</name>

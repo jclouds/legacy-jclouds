@@ -36,7 +36,6 @@ public class ProvidersInPropertiesTest {
    @Test
    public void testSupportedComputeServiceProviders() {
       Iterable<String> providers = ComputeServiceUtils.getSupportedProviders();
-      assert !Iterables.contains(providers, "sqs") : providers;
       assert Iterables.contains(providers, "ec2") : providers;
       assert Iterables.contains(providers, "nova") : providers;
       assert Iterables.contains(providers, "eucalyptus") : providers;
@@ -45,7 +44,6 @@ public class ProvidersInPropertiesTest {
    @Test
    public void testSupportedProviders() {
       Iterable<String> providers = Providers.getSupportedProviders();
-      assert Iterables.contains(providers, "sqs") : providers;
       assert Iterables.contains(providers, "ec2") : providers;
       assert Iterables.contains(providers, "nova") : providers;
       assert Iterables.contains(providers, "eucalyptus") : providers;
