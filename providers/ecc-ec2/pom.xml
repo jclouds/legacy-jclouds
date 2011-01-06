@@ -37,8 +37,8 @@
     <properties>
         <test.ecc-ec2.endpoint>http://ecc.eucalyptus.com:8773/services/Eucalyptus</test.ecc-ec2.endpoint>
         <test.ecc-ec2.apiversion>2010-06-15</test.ecc-ec2.apiversion>
-        <test.ecc-ec2.identity>${test.ecc-ec2.identity}</test.ecc-ec2.identity>
-        <test.ecc-ec2.credential>${test.ecc-ec2.credential}</test.ecc-ec2.credential>
+        <test.ecc-ec2.identity>FIXME_IDENTITY</test.ecc-ec2.identity>
+        <test.ecc-ec2.credential>FIXME_CREDENTIAL</test.ecc-ec2.credential>
     </properties>
 
     <dependencies>

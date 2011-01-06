@@ -37,8 +37,8 @@
     <properties>
         <test.eucalyptus.endpoint>http://ecc.eucalyptus.com:8773/services/Eucalyptus</test.eucalyptus.endpoint>
         <test.eucalyptus.apiversion>2010-06-15</test.eucalyptus.apiversion>
-        <test.eucalyptus.identity>${test.eucalyptus.identity}</test.eucalyptus.identity>
-        <test.eucalyptus.credential>${test.eucalyptus.credential}</test.eucalyptus.credential>
+        <test.eucalyptus.identity>FIXME_IDENTITY</test.eucalyptus.identity>
+        <test.eucalyptus.credential>FIXME_CREDENTIAL</test.eucalyptus.credential>
     </properties>
 
     <dependencies>
