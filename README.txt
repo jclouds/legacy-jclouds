@@ -47,8 +47,8 @@ our blobstore api supports: aws-s3, cloudfiles (rackspace), azurestorage, atmoso
   * note * the pom dependency org.jclouds/jclouds-allblobstore gives you access to
            to all of these providers
 
-we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, rimuhosting, as well 
- a number of features the sandbox
+we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, rimuhosting, openstack nova, 
+ as well a number of features the sandbox
 
 
 If you want access to all jclouds components, include the maven dependency org.jclouds/jclouds-all
