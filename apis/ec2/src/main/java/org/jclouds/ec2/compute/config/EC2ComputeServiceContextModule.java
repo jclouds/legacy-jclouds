@@ -28,13 +28,13 @@ import java.util.Map;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.ec2.compute.EC2ComputeService;
-import org.jclouds.ec2.compute.domain.RegionAndName;
-import org.jclouds.ec2.compute.suppliers.RegionAndNameToImageSupplier;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.ec2.compute.EC2ComputeService;
+import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.suppliers.RegionAndNameToImageSupplier;
 import org.jclouds.location.Provider;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
@@ -59,10 +59,11 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
+      // TODO: move this into the dependent modules
       String provider = injector.getInstance(Key.get(String.class, Provider.class));
       if ("ec2".equals(provider) || "ec2".equals(provider))
          return template.osFamily(AMZN_LINUX).os64Bit(true);
-      else if ("nova".equals(provider))
+      else if ("nova-ec2".equals(provider))
          return super.provideTemplate(injector, template);
       else
          return template.osFamily(CENTOS);
@@ -71,14 +72,14 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
    @Provides
    @Singleton
    protected Supplier<Map<RegionAndName, ? extends Image>> provideRegionAndNameToImageSupplierCache(
-         @Named(PROPERTY_SESSION_INTERVAL) long seconds, final RegionAndNameToImageSupplier supplier) {
+            @Named(PROPERTY_SESSION_INTERVAL) long seconds, final RegionAndNameToImageSupplier supplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Map<RegionAndName, ? extends Image>>(
-            authException, seconds, new Supplier<Map<RegionAndName, ? extends Image>>() {
-               @Override
-               public Map<RegionAndName, ? extends Image> get() {
-                  return supplier.get();
-               }
-            });
+               authException, seconds, new Supplier<Map<RegionAndName, ? extends Image>>() {
+                  @Override
+                  public Map<RegionAndName, ? extends Image> get() {
+                     return supplier.get();
+                  }
+               });
    }
 
 }

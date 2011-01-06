@@ -17,36 +17,60 @@
  * ====================================================================
  */
 
-package org.jclouds.ec2.compute;
+package org.jclouds.nova.ec2.compute;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
+
+import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
 import org.testng.annotations.Test;
+
+import com.google.common.base.Predicate;
 
 /**
  * 
  * @author Adrian Cole
  */
-@Test(enabled = false, groups = "live", sequential = true)
-public class NovaComputeServiceLiveTestDisabled extends EC2ComputeServiceLiveTest {
+@Test(groups = "live")
+public class NovaEC2TemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
-   public NovaComputeServiceLiveTestDisabled() {
-      provider = "nova";
+   public NovaEC2TemplateBuilderLiveTest() {
+      provider = "nova-ec2";
    }
 
    @Override
-   protected void assertDefaultWorks() {
-      Template defaultTemplate = client.templateBuilder().build();
+   protected Predicate<OsFamilyVersion64Bit> defineUnsupportedOperatingSystems() {
+      return new Predicate<OsFamilyVersion64Bit>() {
+
+         @Override
+         public boolean apply(OsFamilyVersion64Bit input) {
+            return input.family == OsFamily.RHEL || //
+                     (input.family == OsFamily.UBUNTU && !input.version.equals("9.10") || !input.is64Bit) || //
+                     input.family == OsFamily.WINDOWS || //
+                     input.family == OsFamily.CENTOS;
+
+         }
+
+      };
+   }
+
+   @Test
+   public void testDefaultTemplateBuilder() throws IOException {
+
+      Template defaultTemplate = context.getComputeService().templateBuilder().build();
       assert (defaultTemplate.getImage().getProviderId().startsWith("ami-")) : defaultTemplate;
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "9.10");
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(defaultTemplate.getImage().getUserMetadata().get("rootDeviceType"), "instance-store");
       assertEquals(defaultTemplate.getLocation().getId(), "nova");
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
+
    }
 
 }

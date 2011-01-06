@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.ec2;
+package org.jclouds.nova.ec2;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
@@ -25,12 +25,14 @@ import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_CC_AMIs;
 
 import java.util.Properties;
 
+import org.jclouds.ec2.EC2PropertiesBuilder;
+
 /**
- * Builds properties used in Eucalyptus Clients
+ * Builds properties used in NovaEC2 Clients
  * 
  * @author Adrian Cole
  */
-public class NovaPropertiesBuilder extends EC2PropertiesBuilder {
+public class NovaEC2PropertiesBuilder extends EC2PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
@@ -40,7 +42,7 @@ public class NovaPropertiesBuilder extends EC2PropertiesBuilder {
       return properties;
    }
 
-   public NovaPropertiesBuilder(Properties properties) {
+   public NovaEC2PropertiesBuilder(Properties properties) {
       super(properties);
    }
 
