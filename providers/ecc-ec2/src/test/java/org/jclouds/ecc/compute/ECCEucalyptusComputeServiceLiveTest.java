@@ -17,31 +17,25 @@
  * ====================================================================
  */
 
-package org.jclouds.ec2.compute;
+package org.jclouds.ecc.compute;
 
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
-import org.testng.annotations.BeforeClass;
+import org.jclouds.ec2.compute.EC2ComputeServiceLiveTest;
 import org.testng.annotations.Test;
 
 /**
- * Disabled until we have an environment with enough room to run a few nodes simultaneously.
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live", enabled = true, sequential = true)
-public class EucalyptusComputeServiceLiveTestDisabled extends EC2ComputeServiceLiveTest {
+@Test(groups = "live", sequential = true, testName = "ECCEucalyptusComputeServiceLiveTest")
+public class ECCEucalyptusComputeServiceLiveTest extends EC2ComputeServiceLiveTest {
 
-   public EucalyptusComputeServiceLiveTestDisabled() {
-      provider = "eucalyptus";
-   }
-
-   @BeforeClass
-   @Override
-   public void setServiceDefaults() {
+   public ECCEucalyptusComputeServiceLiveTest() {
+      provider = "ecc-ec2";
       // security groups must be <30 characters
       tag = "eu";
    }

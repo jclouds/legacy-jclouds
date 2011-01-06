@@ -43,5 +43,6 @@
         <module>googlestorage</module>
         <module>scaleup-storage</module>
         <module>ecc-s3</module>
+        <module>ecc-ec2</module>
     </modules>
 </project>

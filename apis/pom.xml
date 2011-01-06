@@ -41,5 +41,6 @@
        <module>simpledb</module>
        <module>cloudwatch</module>
        <module>walrus</module>
+       <module>eucalyptus</module>
     </modules>
 </project>

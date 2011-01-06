@@ -17,38 +17,28 @@
  * ====================================================================
  */
 
-package org.jclouds.ec2;
+package org.jclouds.ecc;
 
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_AMI_OWNERS;
-import static org.jclouds.ec2.reference.EC2Constants.PROPERTY_EC2_CC_AMIs;
-import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_PORT_OPEN;
 
 import java.util.Properties;
 
+import org.jclouds.eucalyptus.EucalyptusPropertiesBuilder;
+
 /**
- * Builds properties used in Eucalyptus Clients
+ * Builds properties used in ECCEucalyptus Clients
  * 
  * @author Adrian Cole
  */
-public class EucalyptusPropertiesBuilder extends EC2PropertiesBuilder {
+public class ECCEucalyptusPropertiesBuilder extends EucalyptusPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_ENDPOINT,
-            "http://173.205.188.130:8773/services/Eucalyptus");
-      // TODO
-      // properties.setProperty(PROPERTY_ELB_ENDPOINT,
-      // "https://elasticloadbalancing.us-east-1.amazonaws.com");
-      properties.setProperty(PROPERTY_EC2_AMI_OWNERS, "admin");
-      // amis that work with the cluster instances
-      properties.setProperty(PROPERTY_EC2_CC_AMIs, "");
-      properties.setProperty(PROPERTY_TIMEOUT_PORT_OPEN, 5 * 60 * 1000 + "");
-
+      properties.setProperty(PROPERTY_ENDPOINT, "http://173.205.188.130:8773/services/Eucalyptus");
       return properties;
    }
 
-   public EucalyptusPropertiesBuilder(Properties properties) {
+   public ECCEucalyptusPropertiesBuilder(Properties properties) {
       super(properties);
    }
 
