@@ -34,7 +34,7 @@ public class ECCWalrusPropertiesBuilder extends WalrusPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_ENDPOINT, "http://ecc.eucalyptus.com:8773/services/ECCWalrus");
+      properties.setProperty(PROPERTY_ENDPOINT, "http://ecc.eucalyptus.com:8773/services/Walrus");
       return properties;
    }
 
