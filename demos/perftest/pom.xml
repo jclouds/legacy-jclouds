@@ -22,10 +22,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.jclouds</groupId>
-		<artifactId>jclouds-aws-project</artifactId>
+		<artifactId>aws-common-project</artifactId>
 		<version>1.0-SNAPSHOT</version>
 	</parent>
-	<artifactId>jclouds-aws-perftest</artifactId>
+	<artifactId>aws-common-perftest</artifactId>
 	<name>jclouds Performance test verses Amazon SDK implementation</name>
 	<description>Performance test verses Amazon SDK implementation</description>
 	<properties>
@@ -77,8 +77,8 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>jclouds-aws</artifactId>
+			<groupId>org.jclouds.api</groupId>
+			<artifactId>s3</artifactId>
 			<version>${project.version}</version>
 			<type>test-jar</type>
 			<scope>test</scope>

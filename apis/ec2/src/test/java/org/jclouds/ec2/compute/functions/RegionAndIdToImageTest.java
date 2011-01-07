@@ -45,7 +45,7 @@ import com.google.common.collect.ImmutableSet;
 @Test(groups = "unit")
 public class RegionAndIdToImageTest {
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings("unchecked")
    @Test
    public void testApply() {
 
@@ -54,8 +54,7 @@ public class RegionAndIdToImageTest {
       AMIClient client = createMock(AMIClient.class);
       org.jclouds.ec2.domain.Image ec2Image = createMock(org.jclouds.ec2.domain.Image.class);
       Image image = createNiceMock(Image.class);
-      Set<? extends org.jclouds.ec2.domain.Image> images = ImmutableSet
-            .<org.jclouds.ec2.domain.Image> of(ec2Image);
+      Set<? extends org.jclouds.ec2.domain.Image> images = ImmutableSet.<org.jclouds.ec2.domain.Image> of(ec2Image);
 
       expect(caller.getAMIServices()).andReturn(client).atLeastOnce();
       expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn((Set) images);
@@ -77,7 +76,7 @@ public class RegionAndIdToImageTest {
 
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings("unchecked")
    @Test
    public void testApplyNotFound() {
 
@@ -86,8 +85,7 @@ public class RegionAndIdToImageTest {
       AMIClient client = createMock(AMIClient.class);
       org.jclouds.ec2.domain.Image ec2Image = createMock(org.jclouds.ec2.domain.Image.class);
       Image image = createNiceMock(Image.class);
-      Set<? extends org.jclouds.ec2.domain.Image> images = ImmutableSet
-            .<org.jclouds.ec2.domain.Image> of(ec2Image);
+      Set<? extends org.jclouds.ec2.domain.Image> images = ImmutableSet.<org.jclouds.ec2.domain.Image> of(ec2Image);
 
       expect(caller.getAMIServices()).andReturn(client).atLeastOnce();
       expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn((Set) images);
@@ -109,7 +107,7 @@ public class RegionAndIdToImageTest {
 
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings("unchecked")
    @Test
    public void testApplyNoSuchElementException() {
 
@@ -118,8 +116,7 @@ public class RegionAndIdToImageTest {
       AMIClient client = createMock(AMIClient.class);
       org.jclouds.ec2.domain.Image ec2Image = createMock(org.jclouds.ec2.domain.Image.class);
       Image image = createNiceMock(Image.class);
-      Set<? extends org.jclouds.ec2.domain.Image> images = ImmutableSet
-            .<org.jclouds.ec2.domain.Image> of(ec2Image);
+      Set<? extends org.jclouds.ec2.domain.Image> images = ImmutableSet.<org.jclouds.ec2.domain.Image> of(ec2Image);
 
       expect(caller.getAMIServices()).andReturn(client).atLeastOnce();
       expect(client.describeImagesInRegion("region", imageIds("ami"))).andReturn((Set) images);

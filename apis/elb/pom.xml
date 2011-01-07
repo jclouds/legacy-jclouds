@@ -49,10 +49,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-aws</artifactId>
+            <groupId>org.jclouds.common</groupId>
+            <artifactId>aws-common</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>

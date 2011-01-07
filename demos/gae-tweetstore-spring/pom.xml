@@ -83,8 +83,8 @@
             <scope>test</scope>
         </dependency>        
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-aws</artifactId>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>aws-s3</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
