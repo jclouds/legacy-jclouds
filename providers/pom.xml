@@ -43,5 +43,9 @@
         <module>scaleup-storage</module>
         <module>ecc-s3</module>
         <module>ecc-ec2</module>
+        <module>cloudservers-us</module>
+        <module>cloudservers-uk</module>
+        <module>cloudfiles-us</module>
+        <module>cloudfiles-uk</module>
     </modules>
 </project>

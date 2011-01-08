@@ -75,6 +75,16 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>cloudfiles-us</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>cloudfiles-uk</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.jclouds.api</groupId>
             <artifactId>filesystem</artifactId>
             <version>${project.version}</version>

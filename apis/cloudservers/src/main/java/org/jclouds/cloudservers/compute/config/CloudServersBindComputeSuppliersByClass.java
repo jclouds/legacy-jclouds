@@ -27,7 +27,7 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.domain.Location;
 import org.jclouds.cloudservers.compute.suppliers.CloudServersHardwareSupplier;
 import org.jclouds.cloudservers.compute.suppliers.CloudServersImageSupplier;
-import org.jclouds.rackspace.config.RackspaceLocationsSupplier;
+import org.jclouds.location.suppliers.SupplyPredefinedRegions;
 
 import com.google.common.base.Supplier;
 
@@ -49,6 +49,6 @@ public class CloudServersBindComputeSuppliersByClass extends BindComputeSupplier
 
    @Override
    protected Class<? extends Supplier<Set<? extends Location>>> defineLocationSupplier() {
-      return RackspaceLocationsSupplier.class;
+      return SupplyPredefinedRegions.class;
    }
 }

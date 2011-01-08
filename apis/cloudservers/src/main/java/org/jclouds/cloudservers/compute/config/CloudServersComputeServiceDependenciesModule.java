@@ -20,17 +20,10 @@
 package org.jclouds.cloudservers.compute.config;
 
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Singleton;
 
-import org.jclouds.compute.ComputeServiceContext;
-import org.jclouds.compute.domain.Hardware;
-import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
-import org.jclouds.compute.domain.OperatingSystem;
-import org.jclouds.compute.internal.BaseComputeService;
-import org.jclouds.compute.internal.ComputeServiceContextImpl;
 import org.jclouds.cloudservers.CloudServersAsyncClient;
 import org.jclouds.cloudservers.CloudServersClient;
 import org.jclouds.cloudservers.compute.functions.CloudServersImageToImage;
@@ -40,6 +33,16 @@ import org.jclouds.cloudservers.compute.functions.ServerToNodeMetadata;
 import org.jclouds.cloudservers.domain.Flavor;
 import org.jclouds.cloudservers.domain.Server;
 import org.jclouds.cloudservers.domain.ServerStatus;
+import org.jclouds.compute.ComputeServiceContext;
+import org.jclouds.compute.domain.Hardware;
+import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.domain.NodeState;
+import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.internal.BaseComputeService;
+import org.jclouds.compute.internal.ComputeServiceContextImpl;
+import org.jclouds.location.Region;
+import org.jclouds.location.config.ProvideRegionsViaProperties;
 import org.jclouds.rest.RestContext;
 import org.jclouds.rest.internal.RestContextImpl;
 
@@ -79,6 +82,8 @@ public class CloudServersComputeServiceDependenciesModule extends AbstractModule
       bind(new TypeLiteral<RestContext<CloudServersClient, CloudServersAsyncClient>>() {
       }).to(new TypeLiteral<RestContextImpl<CloudServersClient, CloudServersAsyncClient>>() {
       }).in(Scopes.SINGLETON);
+      bind(new TypeLiteral<Set<String>>() {
+      }).annotatedWith(Region.class).toProvider(ProvideRegionsViaProperties.class).in(Scopes.SINGLETON);
    }
 
    @VisibleForTesting

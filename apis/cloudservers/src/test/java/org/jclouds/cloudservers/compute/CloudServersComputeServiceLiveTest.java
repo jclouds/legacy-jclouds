@@ -19,19 +19,16 @@
 
 package org.jclouds.cloudservers.compute;
 
-import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 
+import org.jclouds.cloudservers.CloudServersAsyncClient;
+import org.jclouds.cloudservers.CloudServersClient;
 import org.jclouds.compute.BaseComputeServiceLiveTest;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.OsFamily;
-import org.jclouds.compute.domain.Template;
 import org.jclouds.domain.LocationScope;
-import org.jclouds.cloudservers.CloudServersAsyncClient;
-import org.jclouds.cloudservers.CloudServersClient;
 import org.jclouds.rest.RestContext;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.Test;
@@ -46,16 +43,6 @@ import org.testng.annotations.Test;
 public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public CloudServersComputeServiceLiveTest() {
       provider = "cloudservers";
-   }
-
-   @Test
-   public void testTemplateBuilder() {
-      Template defaultTemplate = client.templateBuilder().build();
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.04");
-      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
-      assertEquals(defaultTemplate.getLocation().getId(), "DFW1");
-      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 
    @Override

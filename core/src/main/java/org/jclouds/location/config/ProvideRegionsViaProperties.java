@@ -19,62 +19,38 @@
 
 package org.jclouds.location.config;
 
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGION;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
-import java.net.URI;
-import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.jclouds.location.Provider;
 import org.jclouds.location.Region;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
-import com.google.inject.ConfigurationException;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.name.Names;
+import com.google.common.collect.ImmutableSet;
 
 /**
- * 
- * looks for properties bound to the naming convention jclouds.location.region.{@code regionId}.endpoint
  * 
  * @author Adrian Cole
  */
 @Singleton
-public class ProvideRegionsViaProperties implements javax.inject.Provider<Map<String, URI>> {
+public class ProvideRegionsViaProperties implements javax.inject.Provider<Set<String>> {
 
-   private final Injector injector;
+   private final Set<String> regions;
 
    @Inject
-   ProvideRegionsViaProperties(Injector injector) {
-      this.injector = injector;
+   ProvideRegionsViaProperties(@Named(PROPERTY_REGIONS) String regions) {
+      this.regions = ImmutableSet.copyOf(Splitter.on(',').split(regions));
    }
 
    @Singleton
    @Region
    @Override
-   public Map<String, URI> get() {
-      try {
-         String regionString = injector.getInstance(Key.get(String.class, Names.named(PROPERTY_REGIONS)));
-         Builder<String, URI> regions = ImmutableMap.<String, URI> builder();
-         for (String region : Splitter.on(',').split(regionString)) {
-            regions.put(
-                  region,
-                  URI.create(injector.getInstance(Key.get(String.class,
-                        Names.named(PROPERTY_REGION + "." + region + ".endpoint")))));
-         }
-         return regions.build();
-      } catch (ConfigurationException e) {
-         // this happens if regions property isn't set
-         // services not run by AWS may not have regions, so this is ok.
-         return ImmutableMap.of(injector.getInstance(Key.get(String.class, Provider.class)),
-               injector.getInstance(Key.get(URI.class, Provider.class)));
-      }
+   public Set<String> get() {
+      return regions;
    }
 
 }

@@ -17,37 +17,48 @@
  * ====================================================================
  */
 
-package org.jclouds.rackspace.config;
+package org.jclouds.location.suppliers;
 
+import java.net.URI;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.location.Provider;
+import org.jclouds.location.Region;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 /**
- * Configures the locations used in Rackspace services
  * 
  * @author Adrian Cole
  */
-public class RackspaceLocationsSupplier implements Supplier<Set<? extends Location>> {
-
+@Singleton
+public class SupplyPredefinedRegions implements Supplier<Set<? extends Location>> {
+   private final Set<String> regions;
    private final String providerName;
+   private final URI endpoint;
 
    @Inject
-   RackspaceLocationsSupplier(@Provider String providerName) {
+   SupplyPredefinedRegions(@Region Set<String> regions, @Provider String providerName, @Provider URI endpoint) {
+      this.regions = regions;
       this.providerName = providerName;
+      this.endpoint = endpoint;
    }
 
    @Override
    public Set<? extends Location> get() {
-      Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
-      return ImmutableSet.of(new LocationImpl(LocationScope.ZONE, "DFW1", "Dallas, TX", provider));
+      Builder<Location> locations = ImmutableSet.builder();
+      Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, endpoint.toASCIIString(), null);
+      for (String zone : regions) {
+         locations.add(new LocationImpl(LocationScope.REGION, zone.toString(), zone.toString(), provider));
+      }
+      return locations.build();
    }
 }

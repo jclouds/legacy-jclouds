@@ -37,7 +37,9 @@ import org.jclouds.cloudfiles.CloudFilesClient;
 import org.jclouds.cloudfiles.blobstore.CloudFilesAsyncBlobStore;
 import org.jclouds.cloudfiles.blobstore.CloudFilesBlobRequestSigner;
 import org.jclouds.cloudfiles.blobstore.CloudFilesBlobStore;
-import org.jclouds.rackspace.config.RackspaceLocationsSupplier;
+import org.jclouds.location.Region;
+import org.jclouds.location.config.ProvideRegionsViaProperties;
+import org.jclouds.location.suppliers.SupplyPredefinedRegions;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
@@ -59,7 +61,7 @@ public class CloudFilesBlobStoreContextModule extends AbstractModule {
    protected void configure() {
       install(new BlobStoreMapModule());
       bind(new TypeLiteral<Supplier<Set<? extends Location>>>() {
-      }).annotatedWith(Memoized.class).to(new TypeLiteral<RackspaceLocationsSupplier>() {
+      }).annotatedWith(Memoized.class).to(new TypeLiteral<SupplyPredefinedRegions>() {
       });
 
       bind(ConsistencyModel.class).toInstance(ConsistencyModel.STRICT);
@@ -68,6 +70,8 @@ public class CloudFilesBlobStoreContextModule extends AbstractModule {
       bind(BlobStoreContext.class).to(new TypeLiteral<BlobStoreContextImpl<CloudFilesClient, CloudFilesAsyncClient>>() {
       }).in(Scopes.SINGLETON);
       bind(BlobRequestSigner.class).to(CloudFilesBlobRequestSigner.class);
+      bind(new TypeLiteral<Set<String>>() {
+      }).annotatedWith(Region.class).toProvider(ProvideRegionsViaProperties.class).in(Scopes.SINGLETON);
    }
 
    @Provides
