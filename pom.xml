@@ -47,7 +47,6 @@
         <module>scriptbuilder</module>
         <module>azure</module>
         <module>atmos</module>
-        <module>rackspace</module>
         <module>vcloud</module>
         <module>elasticstack</module>
         <module>allcompute</module>

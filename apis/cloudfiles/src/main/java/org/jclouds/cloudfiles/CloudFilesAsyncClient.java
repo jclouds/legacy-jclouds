@@ -1,0 +1,265 @@
+/**
+ *
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *
+ * ====================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ====================================================================
+ */
+
+package org.jclouds.cloudfiles;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.MediaType;
+
+import org.jclouds.blobstore.binders.BindMapToHeadersWithPrefix;
+import org.jclouds.blobstore.domain.PageSet;
+import org.jclouds.blobstore.functions.ReturnFalseOnContainerNotFound;
+import org.jclouds.blobstore.functions.ReturnFalseOnKeyNotFound;
+import org.jclouds.blobstore.functions.ReturnNullOnKeyNotFound;
+import org.jclouds.blobstore.functions.ThrowContainerNotFoundOn404;
+import org.jclouds.http.functions.ParseETagHeader;
+import org.jclouds.http.options.GetOptions;
+import org.jclouds.rackspace.CloudFiles;
+import org.jclouds.rackspace.CloudFilesCDN;
+import org.jclouds.cloudfiles.binders.BindCFObjectMetadataToRequest;
+import org.jclouds.cloudfiles.domain.AccountMetadata;
+import org.jclouds.cloudfiles.domain.CFObject;
+import org.jclouds.cloudfiles.domain.ContainerCDNMetadata;
+import org.jclouds.cloudfiles.domain.ContainerMetadata;
+import org.jclouds.cloudfiles.domain.MutableObjectInfoWithMetadata;
+import org.jclouds.cloudfiles.domain.ObjectInfo;
+import org.jclouds.cloudfiles.functions.ObjectName;
+import org.jclouds.cloudfiles.functions.ParseAccountMetadataResponseFromHeaders;
+import org.jclouds.cloudfiles.functions.ParseCdnUriFromHeaders;
+import org.jclouds.cloudfiles.functions.ParseContainerCDNMetadataFromHeaders;
+import org.jclouds.cloudfiles.functions.ParseObjectFromHeadersAndHttpContent;
+import org.jclouds.cloudfiles.functions.ParseObjectInfoFromHeaders;
+import org.jclouds.cloudfiles.functions.ParseObjectInfoListFromJsonResponse;
+import org.jclouds.cloudfiles.functions.ReturnTrueOn404FalseOn409;
+import org.jclouds.cloudfiles.options.ListCdnContainerOptions;
+import org.jclouds.cloudfiles.options.ListContainerOptions;
+import org.jclouds.cloudfiles.reference.CloudFilesHeaders;
+import org.jclouds.rackspace.filters.AuthenticateRequest;
+import org.jclouds.rest.annotations.BinderParam;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.ExceptionParser;
+import org.jclouds.rest.annotations.Headers;
+import org.jclouds.rest.annotations.ParamParser;
+import org.jclouds.rest.annotations.QueryParams;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.ResponseParser;
+import org.jclouds.rest.annotations.SkipEncoding;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
+
+import com.google.common.util.concurrent.ListenableFuture;
+
+/**
+ * Provides asynchronous access to Cloud Files via their REST API.
+ * <p/>
+ * All commands return a ListenableFuture of the result from Cloud Files. Any exceptions incurred
+ * during processing will be wrapped in an {@link ExecutionException} as documented in
+ * {@link ListenableFuture#get()}.
+ * 
+ * @see CloudFilesClient
+ * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
+ * @author Adrian Cole
+ */
+@SkipEncoding('/')
+@RequestFilters(AuthenticateRequest.class)
+@Endpoint(CloudFiles.class)
+public interface CloudFilesAsyncClient {
+
+   CFObject newCFObject();
+
+   /**
+    * @see CloudFilesClient#getAccountStatistics
+    */
+   @HEAD
+   @ResponseParser(ParseAccountMetadataResponseFromHeaders.class)
+   @Path("/")
+   ListenableFuture<AccountMetadata> getAccountStatistics();
+
+   /**
+    * @see CloudFilesClient#listContainers
+    */
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "format", values = "json")
+   @Path("/")
+   ListenableFuture<? extends Set<ContainerMetadata>> listContainers(ListContainerOptions... options);
+
+   /**
+    * @see CloudFilesClient#setObjectInfo
+    */
+   @POST
+   @Path("/{container}/{name}")
+   ListenableFuture<Boolean> setObjectInfo(@PathParam("container") String container, @PathParam("name") String name,
+            @BinderParam(BindMapToHeadersWithPrefix.class) Map<String, String> userMetadata);
+
+   /**
+    * @see CloudFilesClient#listCDNContainers
+    */
+   @GET
+   @Consumes(MediaType.APPLICATION_JSON)
+   @QueryParams(keys = "format", values = "json")
+   @Path("/")
+   @Endpoint(CloudFilesCDN.class)
+   ListenableFuture<? extends Set<ContainerCDNMetadata>> listCDNContainers(ListCdnContainerOptions... options);
+
+   // TODO: Container name is not included in CDN HEAD response headers, so we
+   // cannot populate it
+   // here.
+   /**
+    * @see CloudFilesClient#getCDNMetadata
+    */
+   @HEAD
+   @ResponseParser(ParseContainerCDNMetadataFromHeaders.class)
+   @ExceptionParser(ThrowContainerNotFoundOn404.class)
+   @Path("/{container}")
+   @Endpoint(CloudFilesCDN.class)
+   ListenableFuture<ContainerCDNMetadata> getCDNMetadata(@PathParam("container") String container);
+
+   /**
+    * @see CloudFilesClient#enableCDN(String, long);
+    */
+   @PUT
+   @Path("/{container}")
+   @Headers(keys = CloudFilesHeaders.CDN_ENABLED, values = "True")
+   @ResponseParser(ParseCdnUriFromHeaders.class)
+   @Endpoint(CloudFilesCDN.class)
+   ListenableFuture<URI> enableCDN(@PathParam("container") String container,
+            @HeaderParam(CloudFilesHeaders.CDN_TTL) long ttl);
+
+   /**
+    * @see CloudFilesClient#enableCDN(String)
+    */
+   @PUT
+   @Path("/{container}")
+   @Headers(keys = CloudFilesHeaders.CDN_ENABLED, values = "True")
+   @ResponseParser(ParseCdnUriFromHeaders.class)
+   @Endpoint(CloudFilesCDN.class)
+   ListenableFuture<URI> enableCDN(@PathParam("container") String container);
+
+   /**
+    * @see CloudFilesClient#updateCDN
+    */
+   @POST
+   @Path("/{container}")
+   @ResponseParser(ParseCdnUriFromHeaders.class)
+   @Endpoint(CloudFilesCDN.class)
+   ListenableFuture<URI> updateCDN(@PathParam("container") String container,
+            @HeaderParam(CloudFilesHeaders.CDN_TTL) long ttl);
+
+   /**
+    * @see CloudFilesClient#disableCDN
+    */
+   @POST
+   @Path("/{container}")
+   @Headers(keys = CloudFilesHeaders.CDN_ENABLED, values = "False")
+   @Endpoint(CloudFilesCDN.class)
+   ListenableFuture<Boolean> disableCDN(@PathParam("container") String container);
+
+   /**
+    * @see CloudFilesClient#createContainer
+    */
+   @PUT
+   @Path("/{container}")
+   ListenableFuture<Boolean> createContainer(@PathParam("container") String container);
+
+   /**
+    * @see CloudFilesClient#deleteContainerIfEmpty
+    */
+   @DELETE
+   @ExceptionParser(ReturnTrueOn404FalseOn409.class)
+   @Path("/{container}")
+   ListenableFuture<Boolean> deleteContainerIfEmpty(@PathParam("container") String container);
+
+   /**
+    * @see CloudFilesClient#listObjects
+    */
+   @GET
+   @QueryParams(keys = "format", values = "json")
+   @ResponseParser(ParseObjectInfoListFromJsonResponse.class)
+   @Path("/{container}")
+   ListenableFuture<PageSet<ObjectInfo>> listObjects(@PathParam("container") String container,
+            ListContainerOptions... options);
+
+   /**
+    * @see CloudFilesClient#containerExists
+    */
+   @HEAD
+   @Path("/{container}")
+   @ExceptionParser(ReturnFalseOnContainerNotFound.class)
+   ListenableFuture<Boolean> containerExists(@PathParam("container") String container);
+
+   /**
+    * @see CloudFilesClient#putObject
+    */
+   @PUT
+   @Path("/{container}/{name}")
+   @ResponseParser(ParseETagHeader.class)
+   ListenableFuture<String> putObject(
+            @PathParam("container") String container,
+            @PathParam("name") @ParamParser(ObjectName.class) @BinderParam(BindCFObjectMetadataToRequest.class) CFObject object);
+
+   /**
+    * @see CloudFilesClient#getObject
+    */
+   @GET
+   @ResponseParser(ParseObjectFromHeadersAndHttpContent.class)
+   @ExceptionParser(ReturnNullOnKeyNotFound.class)
+   @Path("/{container}/{name}")
+   ListenableFuture<CFObject> getObject(@PathParam("container") String container, @PathParam("name") String name,
+            GetOptions... options);
+
+   /**
+    * @see CloudFilesClient#getObjectInfo
+    */
+   @HEAD
+   @ResponseParser(ParseObjectInfoFromHeaders.class)
+   @ExceptionParser(ReturnNullOnKeyNotFound.class)
+   @Path("/{container}/{name}")
+   ListenableFuture<MutableObjectInfoWithMetadata> getObjectInfo(@PathParam("container") String container,
+            @PathParam("name") String name);
+
+   /**
+    * @see CloudFilesClient#objectExists
+    */
+   @HEAD
+   @ExceptionParser(ReturnFalseOnKeyNotFound.class)
+   @Path("/{container}/{name}")
+   ListenableFuture<Boolean> objectExists(@PathParam("container") String container, @PathParam("name") String name);
+
+   /**
+    * @see CloudFilesClient#removeObject
+    */
+   @DELETE
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
+   @Path("/{container}/{name}")
+   ListenableFuture<Void> removeObject(@PathParam("container") String container, @PathParam("name") String name);
+
+}
