@@ -19,18 +19,16 @@
 
 package org.jclouds.openstack.swift;
 
-import org.testng.annotations.Test;
+import java.util.concurrent.TimeUnit;
+
+import org.jclouds.concurrent.Timeout;
 
 /**
+ * Functionality that's in Swift, and not in CloudFiles.
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
-public class SwiftClientLiveTest extends CommonSwiftClientLiveTest<SwiftClient> {
-
-   @Override
-   public SwiftClient getApi() {
-      return (SwiftClient) context.getProviderSpecificContext().getApi();
-   }
+@Timeout(duration = 120, timeUnit = TimeUnit.SECONDS)
+public interface SwiftClient extends CommonSwiftClient {
 
 }

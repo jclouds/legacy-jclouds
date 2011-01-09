@@ -26,7 +26,7 @@ import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
 import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
-import org.jclouds.openstack.swift.config.BaseSwiftRestClientModule;
+import org.jclouds.openstack.swift.config.SwiftRestClientModule;
 
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -44,10 +44,10 @@ import com.google.inject.Module;
  * @author Adrian Cole, Andrew Newdigate
  * @see CloudFilesBlobStoreContext
  */
-public class SwiftContextBuilder extends BlobStoreContextBuilder<CommonSwiftClient, CommonSwiftAsyncClient> {
+public class SwiftContextBuilder extends BlobStoreContextBuilder<SwiftClient, SwiftAsyncClient> {
 
    public SwiftContextBuilder(Properties props) {
-      super(CommonSwiftClient.class, CommonSwiftAsyncClient.class, props);
+      super(SwiftClient.class, SwiftAsyncClient.class, props);
    }
 
    @Override
@@ -57,7 +57,6 @@ public class SwiftContextBuilder extends BlobStoreContextBuilder<CommonSwiftClie
 
    @Override
    protected void addClientModule(List<Module> modules) {
-      modules.add(new BaseSwiftRestClientModule<CommonSwiftClient, CommonSwiftAsyncClient>(CommonSwiftClient.class,
-               CommonSwiftAsyncClient.class));
+      modules.add(new SwiftRestClientModule());
    }
 }

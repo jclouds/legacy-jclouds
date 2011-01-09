@@ -21,8 +21,6 @@ package org.jclouds.openstack.swift;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.jclouds.blobstore.ContainerNotFoundException;
@@ -37,11 +35,7 @@ import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.jclouds.openstack.swift.options.ListContainerOptions;
 
 /**
- * Provides access to Cloud Files via their REST API.
- * <p/>
- * All commands return a Future of the result from Cloud Files. Any exceptions incurred
- * during processing will be wrapped in an {@link ExecutionException} as documented in
- * {@link Future#get()}.
+ * Common features between OpenStack Swift and CloudFiles
  * 
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />
  * @author Adrian Cole

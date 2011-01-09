@@ -29,7 +29,7 @@ import org.jclouds.blobstore.ContainerNotFoundException;
 import org.jclouds.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.http.HttpResponseException;
-import org.jclouds.openstack.swift.SwiftClientLiveTest;
+import org.jclouds.openstack.swift.CommonSwiftClientLiveTest;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -41,7 +41,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class CloudFilesClientLiveTest extends SwiftClientLiveTest {
+public class CloudFilesClientLiveTest extends CommonSwiftClientLiveTest<CloudFilesClient> {
 
    @Override
    public CloudFilesClient getApi() {

@@ -19,18 +19,19 @@
 
 package org.jclouds.openstack.swift;
 
-import org.testng.annotations.Test;
+import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.rest.annotations.Endpoint;
+import org.jclouds.rest.annotations.RequestFilters;
+import org.jclouds.rest.annotations.SkipEncoding;
 
 /**
+ * Functionality that's in Swift, and not in CloudFiles.
  * 
  * @author Adrian Cole
  */
-@Test(groups = "live")
-public class SwiftClientLiveTest extends CommonSwiftClientLiveTest<SwiftClient> {
-
-   @Override
-   public SwiftClient getApi() {
-      return (SwiftClient) context.getProviderSpecificContext().getApi();
-   }
+@SkipEncoding('/')
+@RequestFilters(AuthenticateRequest.class)
+@Endpoint(Storage.class)
+public interface SwiftAsyncClient extends CommonSwiftAsyncClient {
 
 }

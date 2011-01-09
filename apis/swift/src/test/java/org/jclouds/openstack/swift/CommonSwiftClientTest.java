@@ -48,7 +48,7 @@ import com.google.inject.Module;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "SwiftClientTest")
-public abstract class SwiftClientTest<A extends CommonSwiftAsyncClient> extends RestClientTest<A> {
+public abstract class CommonSwiftClientTest<A extends CommonSwiftAsyncClient> extends RestClientTest<A> {
 
    @Override
    protected void checkFilters(HttpRequest request) {

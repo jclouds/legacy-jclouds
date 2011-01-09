@@ -30,7 +30,7 @@ import org.jclouds.http.HttpRequest;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
-import org.jclouds.openstack.swift.SwiftClientTest;
+import org.jclouds.openstack.swift.CommonSwiftClientTest;
 import org.jclouds.openstack.swift.domain.SwiftObject;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
@@ -46,7 +46,7 @@ import com.google.inject.TypeLiteral;
  */
 // NOTE:without testName, this will not call @Before* and fail w/NPE during surefire
 @Test(groups = "unit", testName = "BindSwiftObjectMetadataToRequestTest")
-public class BindSwiftObjectMetadataToRequestTest extends SwiftClientTest<CommonSwiftAsyncClient> {
+public class BindSwiftObjectMetadataToRequestTest extends CommonSwiftClientTest<CommonSwiftAsyncClient> {
    @Override
    protected TypeLiteral<RestAnnotationProcessor<CommonSwiftAsyncClient>> createTypeLiteral() {
       return new TypeLiteral<RestAnnotationProcessor<CommonSwiftAsyncClient>>() {

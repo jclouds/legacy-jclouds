@@ -21,7 +21,6 @@ package org.jclouds.openstack.swift;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -67,11 +66,7 @@ import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * Provides asynchronous access to Cloud Files via their REST API.
- * <p/>
- * All commands return a ListenableFuture of the result from Cloud Files. Any exceptions incurred
- * during processing will be wrapped in an {@link ExecutionException} as documented in
- * {@link ListenableFuture#get()}.
+ * Common features between OpenStack Swift and CloudFiles
  * 
  * @see CommonSwiftClient
  * @see <a href="http://www.rackspacecloud.com/cf-devguide-20090812.pdf" />

@@ -28,6 +28,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 
+import org.jclouds.Constants;
 import org.jclouds.openstack.functions.ParseAuthenticationResponseFromHeaders;
 import org.jclouds.openstack.reference.AuthHeaders;
 import org.jclouds.rest.annotations.ResponseParser;
@@ -43,7 +44,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @see <a href="http://docs.rackspacecloud.com/servers/api/cs-devguide-latest.pdf" />
  * @author Adrian Cole
  */
-@Path("/v" + OpenStackAuthAsyncClient.VERSION)
+@Path("/v{" + Constants.PROPERTY_API_VERSION + "}")
 public interface OpenStackAuthAsyncClient {
    public static final String VERSION = "1.0";
 
