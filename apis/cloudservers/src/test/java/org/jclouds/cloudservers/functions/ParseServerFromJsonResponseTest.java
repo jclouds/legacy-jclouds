@@ -25,14 +25,13 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import org.jclouds.cloudservers.domain.Addresses;
+import org.jclouds.cloudservers.domain.Server;
+import org.jclouds.cloudservers.domain.ServerStatus;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.cloudservers.domain.Addresses;
-import org.jclouds.cloudservers.domain.Server;
-import org.jclouds.cloudservers.domain.ServerStatus;
-import org.jclouds.rackspace.config.RackspaceParserModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -71,7 +70,7 @@ public class ParseServerFromJsonResponseTest {
    }
 
    public static Server parseServer() {
-      Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
+      Injector i = Guice.createInjector(new GsonModule());
 
       InputStream is = ParseServerFromJsonResponseTest.class.getResourceAsStream("/test_get_server_detail.json");
 

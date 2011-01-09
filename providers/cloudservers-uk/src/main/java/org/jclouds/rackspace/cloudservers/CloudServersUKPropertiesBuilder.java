@@ -19,24 +19,27 @@
 
 package org.jclouds.rackspace.cloudservers;
 
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
 
-import org.jclouds.rackspace.RackspacePropertiesBuilder;
+import org.jclouds.PropertiesBuilder;
+import org.jclouds.openstack.OpenStackAuthAsyncClient;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class CloudServersUKPropertiesBuilder extends RackspacePropertiesBuilder {
+public class CloudServersUKPropertiesBuilder extends PropertiesBuilder {
 
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_REGIONS, "UK");
       properties.setProperty(PROPERTY_ENDPOINT, "https://lon.auth.api.rackspacecloud.com");
+      properties.setProperty(PROPERTY_API_VERSION, OpenStackAuthAsyncClient.VERSION);
       return properties;
    }
 

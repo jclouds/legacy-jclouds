@@ -25,7 +25,7 @@ import java.util.Properties;
 import org.jclouds.blobstore.BlobStoreContextBuilder;
 import org.jclouds.http.config.JavaUrlHttpCommandExecutorServiceModule;
 import org.jclouds.logging.jdk.config.JDKLoggingModule;
-import org.jclouds.cloudfiles.blobstore.config.CloudFilesBlobStoreContextModule;
+import org.jclouds.openstack.swift.blobstore.config.SwiftBlobStoreContextModule;
 import org.jclouds.cloudfiles.config.CloudFilesRestClientModule;
 
 import com.google.inject.Injector;
@@ -53,7 +53,7 @@ public class CloudFilesContextBuilder extends
 
    @Override
    protected void addContextModule(List<Module> modules) {
-      modules.add(new CloudFilesBlobStoreContextModule());
+      modules.add(new SwiftBlobStoreContextModule());
    }
 
    @Override

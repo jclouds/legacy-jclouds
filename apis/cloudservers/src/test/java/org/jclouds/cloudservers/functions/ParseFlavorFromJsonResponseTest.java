@@ -23,12 +23,11 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.InputStream;
 
+import org.jclouds.cloudservers.domain.Flavor;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.cloudservers.domain.Flavor;
-import org.jclouds.rackspace.config.RackspaceParserModule;
 import org.testng.annotations.Test;
 
 import com.google.gson.Gson;
@@ -53,10 +52,9 @@ public class ParseFlavorFromJsonResponseTest {
    }
 
    public static Flavor parseFlavor() {
-      Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
+      Injector i = Guice.createInjector(new GsonModule());
 
-      InputStream is = ParseFlavorFromJsonResponseTest.class
-            .getResourceAsStream("/test_get_flavor_details.json");
+      InputStream is = ParseFlavorFromJsonResponseTest.class.getResourceAsStream("/test_get_flavor_details.json");
 
       UnwrapOnlyJsonValue<Flavor> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Flavor>>() {
       }));

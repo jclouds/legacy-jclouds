@@ -19,13 +19,13 @@
 
 package org.jclouds.rackspace.cloudfiles.blobstore.integration;
 
-import org.jclouds.cloudfiles.blobstore.integration.CloudFilesInputStreamMapIntegrationLiveTest;
+import org.jclouds.openstack.swift.blobstore.integration.SwiftInputStreamMapIntegrationLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "CloudFilesUSInputStreamMapIntegrationLiveTest")
-public class CloudFilesUSInputStreamMapIntegrationLiveTest extends CloudFilesInputStreamMapIntegrationLiveTest {
+public class CloudFilesUSInputStreamMapIntegrationLiveTest extends SwiftInputStreamMapIntegrationLiveTest {
 
 }

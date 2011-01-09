@@ -19,13 +19,13 @@
 
 package org.jclouds.rackspace.cloudfiles.blobstore.integration;
 
-import org.jclouds.cloudfiles.blobstore.integration.CloudFilesContainerLiveTest;
+import org.jclouds.openstack.swift.blobstore.integration.SwiftContainerLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "CloudFilesUKContainerLiveTest")
-public class CloudFilesUKContainerLiveTest extends CloudFilesContainerLiveTest {
+public class CloudFilesUKContainerLiveTest extends SwiftContainerLiveTest {
 
 }

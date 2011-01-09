@@ -19,36 +19,15 @@
 
 package org.jclouds.cloudfiles.blobstore.integration;
 
-import org.jclouds.blobstore.domain.Blob;
-import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
+import org.jclouds.openstack.swift.blobstore.integration.SwiftBlobIntegrationLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * 
- * @author James Murty
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class CloudFilesBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
+public class CloudFilesBlobIntegrationLiveTest extends SwiftBlobIntegrationLiveTest {
 
-   @Override
-   @Test(enabled = false)
-   public void testGetTwoRanges() {
-      // not supported in cloud files
-   }
-
-   // not supported
-   @Override
-   protected void checkContentDisposition(Blob blob, String contentDisposition) {
-      assert blob.getPayload().getContentMetadata().getContentDisposition() == null;
-      assert blob.getMetadata().getContentMetadata().getContentDisposition() == null;
-   }
-
-   // not supported
-   @Override
-   protected void checkContentLanguage(Blob blob, String contentLanguage) {
-      assert blob.getPayload().getContentMetadata().getContentLanguage() == null;
-      assert blob.getMetadata().getContentMetadata().getContentLanguage() == null;
-   }
 
 }

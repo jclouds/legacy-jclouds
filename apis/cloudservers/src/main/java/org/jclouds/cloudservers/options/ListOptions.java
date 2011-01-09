@@ -21,7 +21,7 @@ package org.jclouds.cloudservers.options;
 
 import java.util.Date;
 
-import org.jclouds.rackspace.options.BaseListOptions;
+import org.jclouds.openstack.options.BaseListOptions;
 
 /**
  * Options used to control the amount of detail in the request.

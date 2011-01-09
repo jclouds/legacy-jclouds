@@ -19,19 +19,22 @@
 
 package org.jclouds.cloudfiles.config;
 
-import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.RequiresHttp;
-import org.jclouds.http.annotation.ClientError;
-import org.jclouds.http.annotation.Redirection;
-import org.jclouds.http.annotation.ServerError;
+import java.net.URI;
+
+import javax.inject.Singleton;
+
+import org.jclouds.cloudfiles.CDNManagement;
 import org.jclouds.cloudfiles.CloudFilesAsyncClient;
 import org.jclouds.cloudfiles.CloudFilesClient;
-import org.jclouds.cloudfiles.handlers.ParseCloudFilesErrorFromHttpResponse;
-import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
+import org.jclouds.openstack.reference.AuthHeaders;
+import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
+import org.jclouds.openstack.swift.CommonSwiftClient;
+import org.jclouds.openstack.swift.config.BaseSwiftRestClientModule;
 import org.jclouds.rest.ConfiguresRestClient;
-import org.jclouds.rest.config.RestClientModule;
 
-import com.google.inject.Module;
+import com.google.inject.Provides;
 
 /**
  * 
@@ -39,33 +42,28 @@ import com.google.inject.Module;
  */
 @ConfiguresRestClient
 @RequiresHttp
-public class CloudFilesRestClientModule extends
-         RestClientModule<CloudFilesClient, CloudFilesAsyncClient> {
-   private Module authModule;
+public class CloudFilesRestClientModule extends BaseSwiftRestClientModule<CloudFilesClient, CloudFilesAsyncClient> {
 
    public CloudFilesRestClientModule() {
-      this(new RackspaceAuthenticationRestModule());
-   }
-
-   public CloudFilesRestClientModule(Module authModule) {
       super(CloudFilesClient.class, CloudFilesAsyncClient.class);
-      this.authModule = authModule;
    }
 
-   @Override
-   protected void configure() {
-      install(authModule);
-      install(new CFObjectModule());
-      super.configure();
+   @Provides
+   @Singleton
+   CommonSwiftClient provideCommonSwiftClient(CloudFilesClient in) {
+      return in;
    }
 
-   @Override
-   protected void bindErrorHandlers() {
-      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-               ParseCloudFilesErrorFromHttpResponse.class);
-      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-               ParseCloudFilesErrorFromHttpResponse.class);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-               ParseCloudFilesErrorFromHttpResponse.class);
+   @Provides
+   @Singleton
+   CommonSwiftAsyncClient provideCommonSwiftClient(CloudFilesAsyncClient in) {
+      return in;
+   }
+
+   @Provides
+   @Singleton
+   @CDNManagement
+   protected URI provideCDNUrl(AuthenticationResponse response) {
+      return response.getServices().get(AuthHeaders.CDN_MANAGEMENT_URL);
    }
 }

@@ -19,22 +19,27 @@
 
 package org.jclouds.cloudfiles;
 
-import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
 
-import org.jclouds.rackspace.RackspacePropertiesBuilder;
+import org.jclouds.openstack.OpenStackAuthAsyncClient;
+import org.jclouds.openstack.swift.SwiftPropertiesBuilder;
 
 /**
  * Builds properties used in CloudFiles Connections
  * 
  * @author Adrian Cole
  */
-public class CloudFilesPropertiesBuilder extends RackspacePropertiesBuilder {
+public class CloudFilesPropertiesBuilder extends SwiftPropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "X-Object-Meta-");
+      properties.setProperty(PROPERTY_REGIONS, "US");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://auth.api.rackspacecloud.com");
+      properties.setProperty(PROPERTY_API_VERSION, OpenStackAuthAsyncClient.VERSION);
       return properties;
    }
 
@@ -42,8 +47,4 @@ public class CloudFilesPropertiesBuilder extends RackspacePropertiesBuilder {
       super(properties);
    }
 
-   protected CloudFilesPropertiesBuilder withMetaPrefix(String prefix) {
-      properties.setProperty(PROPERTY_USER_METADATA_PREFIX, prefix);
-      return this;
-   }
 }

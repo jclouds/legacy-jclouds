@@ -19,31 +19,17 @@
 
 package org.jclouds.cloudfiles.blobstore.integration;
 
-import java.io.IOException;
-
-import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
-import org.jclouds.blobstore.integration.TransientBlobStoreTestInitializer;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import org.jclouds.openstack.swift.blobstore.integration.SwiftTestInitializer;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class CloudFilesTestInitializer extends TransientBlobStoreTestInitializer {
+public class CloudFilesTestInitializer extends SwiftTestInitializer {
 
    public CloudFilesTestInitializer() {
       provider = "cloudfiles";
    }
 
-   @Override
-   protected BlobStoreContext createLiveContext(Module configurationModule, String endpoint, String apiversion,
-            String app, String identity, String credential) throws IOException {
-      return new BlobStoreContextFactory().createContext(provider, ImmutableSet.of(configurationModule,
-               new Log4JLoggingModule()), setupProperties(endpoint, apiversion, identity, credential));
-   }
 
 }

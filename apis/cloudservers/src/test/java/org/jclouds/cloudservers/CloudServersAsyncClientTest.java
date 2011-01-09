@@ -19,6 +19,8 @@
 
 package org.jclouds.cloudservers;
 
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.cloudservers.options.CreateServerOptions.Builder.withFile;
 import static org.jclouds.cloudservers.options.CreateServerOptions.Builder.withMetadata;
 import static org.jclouds.cloudservers.options.CreateServerOptions.Builder.withSharedIpGroup;
@@ -26,21 +28,18 @@ import static org.jclouds.cloudservers.options.CreateSharedIpGroupOptions.Builde
 import static org.jclouds.cloudservers.options.ListOptions.Builder.changesSince;
 import static org.jclouds.cloudservers.options.ListOptions.Builder.withDetails;
 import static org.jclouds.cloudservers.options.RebuildServerOptions.Builder.withImage;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Properties;
 
 import javax.ws.rs.core.MediaType;
 
-import org.jclouds.http.HttpRequest;
-import org.jclouds.http.functions.ReleasePayloadAndReturn;
-import org.jclouds.http.functions.ReturnFalseOn404;
-import org.jclouds.http.functions.ReturnTrueIf2xx;
-import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.cloudservers.config.CloudServersRestClientModule;
 import org.jclouds.cloudservers.domain.BackupSchedule;
 import org.jclouds.cloudservers.domain.DailyBackup;
@@ -50,9 +49,17 @@ import org.jclouds.cloudservers.options.CreateServerOptions;
 import org.jclouds.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.cloudservers.options.ListOptions;
 import org.jclouds.cloudservers.options.RebuildServerOptions;
-import org.jclouds.rackspace.TestRackspaceAuthenticationRestClientModule;
-import org.jclouds.rackspace.filters.AddTimestampQuery;
-import org.jclouds.rackspace.filters.AuthenticateRequest;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.RequiresHttp;
+import org.jclouds.http.functions.ReleasePayloadAndReturn;
+import org.jclouds.http.functions.ReturnFalseOn404;
+import org.jclouds.http.functions.ReturnTrueIf2xx;
+import org.jclouds.http.functions.UnwrapOnlyJsonValue;
+import org.jclouds.openstack.TestOpenStackAuthenticationModule;
+import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
+import org.jclouds.openstack.filters.AddTimestampQuery;
+import org.jclouds.openstack.filters.AuthenticateRequest;
+import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.RestClientTest;
 import org.jclouds.rest.RestContextFactory;
 import org.jclouds.rest.RestContextSpec;
@@ -860,13 +867,38 @@ public class CloudServersAsyncClientTest extends RestClientTest<CloudServersAsyn
 
    }
 
+   @Override
    protected Module createModule() {
-      return new CloudServersRestClientModule(new TestRackspaceAuthenticationRestClientModule());
+      return new TestCloudServersRestClientModule();
    }
+
+   @ConfiguresRestClient
+   @RequiresHttp
+   protected static class TestCloudServersRestClientModule extends CloudServersRestClientModule {
+      private TestCloudServersRestClientModule() {
+         super(new TestOpenStackAuthenticationModule());
+      }
+
+      @Override
+      protected URI provideServerUrl(AuthenticationResponse response) {
+         return URI.create("http://serverManagementUrl");
+      }
+
+   }
+
+   protected String provider = "cloudservers";
 
    @Override
    public RestContextSpec<CloudServersClient, CloudServersAsyncClient> createContextSpec() {
-      return new RestContextFactory().createContextSpec("cloudservers", "user", "password", new Properties());
+      return new RestContextFactory().createContextSpec(provider, "user", "password", new Properties());
    }
 
+   @Override
+   protected Properties getProperties() {
+      Properties properties = new Properties();
+      properties.setProperty(PROPERTY_REGIONS, "US");
+      properties.setProperty(PROPERTY_ENDPOINT, "https://auth");
+      properties.setProperty(PROPERTY_API_VERSION, "1");
+      return properties;
+   }
 }

@@ -24,12 +24,11 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 
+import org.jclouds.cloudservers.domain.SharedIpGroup;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.cloudservers.domain.SharedIpGroup;
-import org.jclouds.rackspace.config.RackspaceParserModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
@@ -46,7 +45,7 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit")
 public class ParseSharedIpGroupFromJsonResponseTest {
 
-   Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
+   Injector i = Guice.createInjector(new GsonModule());
 
    public void testApplyInputStreamDetails() throws UnknownHostException {
       InputStream is = getClass().getResourceAsStream("/test_get_sharedipgroup_details.json");

@@ -25,17 +25,19 @@ import java.io.InputStream;
 import java.net.UnknownHostException;
 import java.util.List;
 
+import org.jclouds.cloudservers.domain.Image;
+import org.jclouds.cloudservers.domain.ImageStatus;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.cloudservers.domain.Image;
-import org.jclouds.cloudservers.domain.ImageStatus;
-import org.jclouds.rackspace.config.RackspaceParserModule;
+import org.jclouds.json.config.GsonModule.DateAdapter;
+import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -48,7 +50,14 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit")
 public class ParseImageListFromJsonResponseTest {
-   Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
+   Injector i = Guice.createInjector(new AbstractModule() {
+
+      @Override
+      protected void configure() {
+         bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+      }
+
+   },new GsonModule());
    DateService dateService = i.getInstance(DateService.class);
 
    public void testApplyInputStream() {

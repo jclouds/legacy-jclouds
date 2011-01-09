@@ -24,16 +24,18 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.net.UnknownHostException;
 
+import org.jclouds.cloudservers.domain.Image;
+import org.jclouds.cloudservers.domain.ImageStatus;
 import org.jclouds.date.DateService;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.UnwrapOnlyJsonValue;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.cloudservers.domain.Image;
-import org.jclouds.cloudservers.domain.ImageStatus;
-import org.jclouds.rackspace.config.RackspaceParserModule;
+import org.jclouds.json.config.GsonModule.DateAdapter;
+import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
 import org.testng.annotations.Test;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -46,7 +48,14 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit")
 public class ParseImageFromJsonResponseTest {
-   Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
+   Injector i = Guice.createInjector(new AbstractModule() {
+
+      @Override
+      protected void configure() {
+         bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+      }
+
+   }, new GsonModule());
 
    DateService dateService = i.getInstance(DateService.class);
 
@@ -64,10 +73,16 @@ public class ParseImageFromJsonResponseTest {
    }
 
    public static Image parseImage() {
-      Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
+      Injector i = Guice.createInjector(new AbstractModule() {
 
-      InputStream is = ParseImageFromJsonResponseTest.class
-            .getResourceAsStream("/test_get_image_details.json");
+         @Override
+         protected void configure() {
+            bind(DateAdapter.class).to(Iso8601DateAdapter.class);
+         }
+
+      }, new GsonModule());
+
+      InputStream is = ParseImageFromJsonResponseTest.class.getResourceAsStream("/test_get_image_details.json");
 
       UnwrapOnlyJsonValue<Image> parser = i.getInstance(Key.get(new TypeLiteral<UnwrapOnlyJsonValue<Image>>() {
       }));

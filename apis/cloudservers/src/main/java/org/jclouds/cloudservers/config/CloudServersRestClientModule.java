@@ -19,19 +19,28 @@
 
 package org.jclouds.cloudservers.config;
 
+import java.net.URI;
+
+import javax.inject.Singleton;
+
+import org.jclouds.cloudservers.CloudServersAsyncClient;
+import org.jclouds.cloudservers.CloudServersClient;
+import org.jclouds.cloudservers.ServerManagement;
+import org.jclouds.cloudservers.handlers.ParseCloudServersErrorFromHttpResponse;
 import org.jclouds.http.HttpErrorHandler;
 import org.jclouds.http.RequiresHttp;
 import org.jclouds.http.annotation.ClientError;
 import org.jclouds.http.annotation.Redirection;
 import org.jclouds.http.annotation.ServerError;
-import org.jclouds.cloudservers.CloudServersAsyncClient;
-import org.jclouds.cloudservers.CloudServersClient;
-import org.jclouds.cloudservers.handlers.ParseCloudServersErrorFromHttpResponse;
-import org.jclouds.rackspace.config.RackspaceAuthenticationRestModule;
+import org.jclouds.json.config.GsonModule.DateAdapter;
+import org.jclouds.json.config.GsonModule.Iso8601DateAdapter;
+import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
+import org.jclouds.openstack.config.OpenStackAuthenticationModule;
+import org.jclouds.openstack.reference.AuthHeaders;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.config.RestClientModule;
 
-import com.google.inject.Module;
+import com.google.inject.Provides;
 
 /**
  * 
@@ -39,34 +48,38 @@ import com.google.inject.Module;
  */
 @ConfiguresRestClient
 @RequiresHttp
-public class CloudServersRestClientModule extends
-         RestClientModule<CloudServersClient, CloudServersAsyncClient> {
+public class CloudServersRestClientModule extends RestClientModule<CloudServersClient, CloudServersAsyncClient> {
 
-   private Module authModule;
+   private final OpenStackAuthenticationModule module;
 
-   public CloudServersRestClientModule() {
-      this(new RackspaceAuthenticationRestModule());
+   public CloudServersRestClientModule(OpenStackAuthenticationModule module) {
+      super(CloudServersClient.class, CloudServersAsyncClient.class);
+      this.module = module;
    }
 
-   public CloudServersRestClientModule(Module authModule) {
-      super(CloudServersClient.class, CloudServersAsyncClient.class);
-      this.authModule = authModule;
+   public CloudServersRestClientModule() {
+      this(new OpenStackAuthenticationModule());
    }
 
    @Override
    protected void configure() {
-      install(authModule);
+      install(module);
+      bind(DateAdapter.class).to(Iso8601DateAdapter.class);
       super.configure();
    }
-   
+
    @Override
    protected void bindErrorHandlers() {
-      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(
-               ParseCloudServersErrorFromHttpResponse.class);
-      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(
-               ParseCloudServersErrorFromHttpResponse.class);
-      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(
-               ParseCloudServersErrorFromHttpResponse.class);
+      bind(HttpErrorHandler.class).annotatedWith(Redirection.class).to(ParseCloudServersErrorFromHttpResponse.class);
+      bind(HttpErrorHandler.class).annotatedWith(ClientError.class).to(ParseCloudServersErrorFromHttpResponse.class);
+      bind(HttpErrorHandler.class).annotatedWith(ServerError.class).to(ParseCloudServersErrorFromHttpResponse.class);
+   }
+
+   @Provides
+   @Singleton
+   @ServerManagement
+   protected URI provideServerUrl(AuthenticationResponse response) {
+      return response.getServices().get(AuthHeaders.SERVER_MANAGEMENT_URL);
    }
 
 }

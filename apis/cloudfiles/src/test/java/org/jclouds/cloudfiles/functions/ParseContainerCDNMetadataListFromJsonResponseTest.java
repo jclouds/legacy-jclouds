@@ -26,12 +26,11 @@ import java.net.URI;
 import java.util.Set;
 import java.util.SortedSet;
 
+import org.jclouds.cloudfiles.domain.ContainerCDNMetadata;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseJson;
 import org.jclouds.io.Payloads;
 import org.jclouds.json.config.GsonModule;
-import org.jclouds.cloudfiles.domain.ContainerCDNMetadata;
-import org.jclouds.rackspace.config.RackspaceParserModule;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSortedSet;
@@ -47,7 +46,7 @@ import com.google.inject.TypeLiteral;
  */
 @Test(groups = "unit")
 public class ParseContainerCDNMetadataListFromJsonResponseTest {
-   Injector i = Guice.createInjector(new RackspaceParserModule(), new GsonModule());
+   Injector i = Guice.createInjector(new GsonModule());
 
    @Test
    public void testApplyInputStream() {
@@ -56,13 +55,13 @@ public class ParseContainerCDNMetadataListFromJsonResponseTest {
       Set<ContainerCDNMetadata> expects = ImmutableSortedSet.of(
 
       new ContainerCDNMetadata("adriancole-blobstore.testCDNOperationsContainerWithCDN", false, 3600, URI
-            .create("http://c0354712.cdn.cloudfiles.rackspacecloud.com")), new ContainerCDNMetadata(
-            "adriancole-blobstore5", true, 28800, URI.create("http://c0404671.cdn.cloudfiles.rackspacecloud.com")),
-            new ContainerCDNMetadata("adriancole-cfcdnint.testCDNOperationsContainerWithCDN", false, 3600, URI
-                  .create("http://c0320431.cdn.cloudfiles.rackspacecloud.com")));
+               .create("http://c0354712.cdn.cloudfiles.rackspacecloud.com")), new ContainerCDNMetadata(
+               "adriancole-blobstore5", true, 28800, URI.create("http://c0404671.cdn.cloudfiles.rackspacecloud.com")),
+               new ContainerCDNMetadata("adriancole-cfcdnint.testCDNOperationsContainerWithCDN", false, 3600, URI
+                        .create("http://c0320431.cdn.cloudfiles.rackspacecloud.com")));
       ParseJson<SortedSet<ContainerCDNMetadata>> parser = i.getInstance(Key
-            .get(new TypeLiteral<ParseJson<SortedSet<ContainerCDNMetadata>>>() {
-            }));
+               .get(new TypeLiteral<ParseJson<SortedSet<ContainerCDNMetadata>>>() {
+               }));
       assertEquals(parser.apply(new HttpResponse(200, "ok", Payloads.newInputStreamPayload(is))), expects);
    }
 }

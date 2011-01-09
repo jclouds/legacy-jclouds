@@ -33,7 +33,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.jclouds.http.functions.ReturnFalseOn404;
-import org.jclouds.rackspace.CloudServers;
 import org.jclouds.cloudservers.binders.BindAdminPassToJsonPayload;
 import org.jclouds.cloudservers.binders.BindBackupScheduleToJsonPayload;
 import org.jclouds.cloudservers.binders.BindConfirmResizeToJsonPayload;
@@ -54,8 +53,8 @@ import org.jclouds.cloudservers.options.CreateServerOptions;
 import org.jclouds.cloudservers.options.CreateSharedIpGroupOptions;
 import org.jclouds.cloudservers.options.ListOptions;
 import org.jclouds.cloudservers.options.RebuildServerOptions;
-import org.jclouds.rackspace.filters.AddTimestampQuery;
-import org.jclouds.rackspace.filters.AuthenticateRequest;
+import org.jclouds.openstack.filters.AddTimestampQuery;
+import org.jclouds.openstack.filters.AuthenticateRequest;
 import org.jclouds.rest.annotations.BinderParam;
 import org.jclouds.rest.annotations.Endpoint;
 import org.jclouds.rest.annotations.ExceptionParser;
@@ -85,7 +84,7 @@ import com.google.common.util.concurrent.ListenableFuture;
  */
 @SkipEncoding( { '/', '=' })
 @RequestFilters( { AuthenticateRequest.class, AddTimestampQuery.class })
-@Endpoint(CloudServers.class)
+@Endpoint(ServerManagement.class)
 public interface CloudServersAsyncClient {
 
    /**

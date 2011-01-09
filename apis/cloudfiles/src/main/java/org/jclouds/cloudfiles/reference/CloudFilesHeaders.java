@@ -19,6 +19,8 @@
 
 package org.jclouds.cloudfiles.reference;
 
+import org.jclouds.openstack.swift.reference.SwiftHeaders;
+
 
 /**
  * Additional headers specified by Rackspace Cloud Files REST API.
@@ -27,16 +29,11 @@ package org.jclouds.cloudfiles.reference;
  * @author Adrian Cole
  * 
  */
-public interface CloudFilesHeaders {
+public interface CloudFilesHeaders extends SwiftHeaders {
 
-   public static final String ACCOUNT_BYTES_USED = "X-Account-Bytes-Used";
-   public static final String ACCOUNT_CONTAINER_COUNT = "X-Account-Container-Count";
    public static final String CDN_ENABLED = "X-CDN-Enabled";
    public static final String CDN_REFERRER_ACL = "X-Referrer-ACL ";
    public static final String CDN_TTL = "X-TTL";
    public static final String CDN_URI = "X-CDN-URI";
    public static final String CDN_USER_AGENT_ACL = "X-User-Agent-ACL";
-   public static final String CONTAINER_BYTES_USED = "X-Container-Bytes-Used";
-   public static final String CONTAINER_OBJECT_COUNT = "X-Container-Object-Count";
-   public static final String USER_METADATA_PREFIX = "X-Object-Meta-";
 }
