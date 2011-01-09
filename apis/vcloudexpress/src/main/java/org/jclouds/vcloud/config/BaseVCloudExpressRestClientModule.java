@@ -31,13 +31,13 @@ import org.jclouds.http.RequiresHttp;
 import org.jclouds.rest.AsyncClientFactory;
 import org.jclouds.rest.ConfiguresRestClient;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
-import org.jclouds.vcloud.VCloudAsyncClient;
-import org.jclouds.vcloud.VCloudClient;
-import org.jclouds.vcloud.VCloudLoginAsyncClient;
+import org.jclouds.vcloud.VCloudExpressAsyncClient;
+import org.jclouds.vcloud.VCloudExpressClient;
+import org.jclouds.vcloud.VCloudExpressLoginAsyncClient;
 import org.jclouds.vcloud.domain.CatalogItem;
-import org.jclouds.vcloud.domain.VAppTemplate;
+import org.jclouds.vcloud.domain.VCloudExpressVAppTemplate;
 import org.jclouds.vcloud.domain.VCloudSession;
-import org.jclouds.vcloud.functions.VAppTemplatesForCatalogItems;
+import org.jclouds.vcloud.functions.VCloudExpressVAppTemplatesForCatalogItems;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
@@ -53,31 +53,31 @@ import com.google.inject.TypeLiteral;
  */
 @RequiresHttp
 @ConfiguresRestClient
-public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A extends VCloudAsyncClient> extends
-      CommonVCloudRestClientModule<S, A> {
+public abstract class BaseVCloudExpressRestClientModule<S extends VCloudExpressClient, A extends VCloudExpressAsyncClient>
+      extends CommonVCloudRestClientModule<S, A> {
 
-   public BaseVCloudRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
+   public BaseVCloudExpressRestClientModule(Class<S> syncClientType, Class<A> asyncClientType) {
       super(syncClientType, asyncClientType);
    }
 
    @Override
    protected void configure() {
-      bind(new TypeLiteral<Function<Iterable<? extends CatalogItem>, Iterable<? extends VAppTemplate>>>() {
-      }).to(new TypeLiteral<VAppTemplatesForCatalogItems>() {
+      bind(new TypeLiteral<Function<Iterable<? extends CatalogItem>, Iterable<? extends VCloudExpressVAppTemplate>>>() {
+      }).to(new TypeLiteral<VCloudExpressVAppTemplatesForCatalogItems>() {
       });
       super.configure();
    }
 
    @Provides
    @Singleton
-   protected VCloudLoginAsyncClient provideVCloudLogin(AsyncClientFactory factory) {
-      return factory.create(VCloudLoginAsyncClient.class);
+   protected VCloudExpressLoginAsyncClient provideVCloudLogin(AsyncClientFactory factory) {
+      return factory.create(VCloudExpressLoginAsyncClient.class);
    }
 
    @Provides
    @Singleton
    protected Supplier<VCloudSession> provideVCloudTokenCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final VCloudLoginAsyncClient login) {
+         final VCloudExpressLoginAsyncClient login) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<VCloudSession>(authException, seconds,
             new Supplier<VCloudSession>() {
 
@@ -94,4 +94,5 @@ public abstract class BaseVCloudRestClientModule<S extends VCloudClient, A exten
 
             });
    }
+
 }

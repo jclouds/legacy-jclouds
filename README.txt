@@ -35,7 +35,7 @@ our compute api supports: aws-ec2, gogrid, cloudservers (generic), cloudservers-
                           cloudsigma, elasticstack(generic), bluelock-vclouddirector,
                           slicehost, ecc-ec2, elastichosts-lon-p (Peer 1), 
                           elastichosts-sat-p (Peer 1), elastichosts-lon-b (BlueSquare),
-                          stub (in-memory)
+                          vcloudexpress (generic), stub (in-memory)
 
   * note * the pom dependency org.jclouds/jclouds-allcompute gives you access to
            to all of these providers

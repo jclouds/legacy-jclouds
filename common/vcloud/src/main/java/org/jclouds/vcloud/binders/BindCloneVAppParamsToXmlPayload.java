@@ -39,7 +39,7 @@ import org.jclouds.rest.MapBinder;
 import org.jclouds.rest.binders.BindToStringPayload;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
 import org.jclouds.vcloud.VCloudMediaType;
-import org.jclouds.vcloud.options.CaptureVAppOptions;
+import org.jclouds.vcloud.options.CloneVAppOptions;
 
 import com.google.inject.Inject;
 import com.jamesmurty.utils.XMLBuilder;
@@ -50,14 +50,14 @@ import com.jamesmurty.utils.XMLBuilder;
  * 
  */
 @Singleton
-public class BindCaptureVAppParamsToXmlPayload implements MapBinder {
+public class BindCloneVAppParamsToXmlPayload implements MapBinder {
 
    protected final String ns;
    protected final String schema;
    private final BindToStringPayload stringBinder;
 
    @Inject
-   public BindCaptureVAppParamsToXmlPayload(BindToStringPayload stringBinder,
+   public BindCloneVAppParamsToXmlPayload(BindToStringPayload stringBinder,
          @Named(PROPERTY_VCLOUD_XML_NAMESPACE) String ns, @Named(PROPERTY_VCLOUD_XML_SCHEMA) String schema) {
       this.ns = ns;
       this.schema = schema;
@@ -70,15 +70,15 @@ public class BindCaptureVAppParamsToXmlPayload implements MapBinder {
             "this binder is only valid for GeneratedHttpRequests!");
       GeneratedHttpRequest<?> gRequest = (GeneratedHttpRequest<?>) request;
       checkState(gRequest.getArgs() != null, "args should be initialized at this point");
-      String templateName = checkNotNull(postParams.remove("templateName"), "templateName");
+      String newName = checkNotNull(postParams.remove("newName"), "newName");
       String vApp = checkNotNull(postParams.remove("vApp"), "vApp");
 
-      CaptureVAppOptions options = findOptionsInArgsOrNull(gRequest);
+      CloneVAppOptions options = findOptionsInArgsOrNull(gRequest);
       if (options == null) {
-         options = new CaptureVAppOptions();
+         options = new CloneVAppOptions();
       }
       try {
-         return stringBinder.bindToRequest(request, generateXml(templateName, vApp, options));
+         return stringBinder.bindToRequest(request, generateXml(newName, vApp, options));
       } catch (ParserConfigurationException e) {
          throw new RuntimeException(e);
       } catch (FactoryConfigurationError e) {
@@ -89,29 +89,31 @@ public class BindCaptureVAppParamsToXmlPayload implements MapBinder {
 
    }
 
-   protected String generateXml(String templateName, String vApp, CaptureVAppOptions options)
+   protected String generateXml(String newName, String vApp, CloneVAppOptions options)
          throws ParserConfigurationException, FactoryConfigurationError, TransformerException {
-      XMLBuilder rootBuilder = buildRoot(templateName);
+      XMLBuilder rootBuilder = buildRoot(newName, options.isDeploy(), options.isPowerOn());
       if (options.getDescription() != null)
          rootBuilder.e("Description").text(options.getDescription());
-      rootBuilder.e("Source").a("href", vApp).a("type", VCloudMediaType.VAPP_XML);
+      rootBuilder.e("VApp").a("href", vApp).a("type", VCloudMediaType.VAPP_XML);
       Properties outputProperties = new Properties();
       outputProperties.put(javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION, "yes");
       return rootBuilder.asString(outputProperties);
    }
 
-   protected XMLBuilder buildRoot(String name) throws ParserConfigurationException, FactoryConfigurationError {
-      XMLBuilder rootBuilder = XMLBuilder.create("CaptureVAppParams").a("name", name).a("xmlns", ns)
-            .a("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance").a("xsi:schemaLocation", ns + " " + schema);
+   protected XMLBuilder buildRoot(String name, boolean deploy, boolean powerOn) throws ParserConfigurationException,
+         FactoryConfigurationError {
+      XMLBuilder rootBuilder = XMLBuilder.create("CloneVAppParams").a("name", name).a("deploy", deploy + "")
+            .a("powerOn", powerOn + "").a("xmlns", ns).a("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
+            .a("xsi:schemaLocation", ns + " " + schema);
       return rootBuilder;
    }
 
-   protected CaptureVAppOptions findOptionsInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
+   protected CloneVAppOptions findOptionsInArgsOrNull(GeneratedHttpRequest<?> gRequest) {
       for (Object arg : gRequest.getArgs()) {
-         if (arg instanceof CaptureVAppOptions) {
-            return (CaptureVAppOptions) arg;
-         } else if (arg instanceof CaptureVAppOptions[]) {
-            CaptureVAppOptions[] options = (CaptureVAppOptions[]) arg;
+         if (arg instanceof CloneVAppOptions) {
+            return (CloneVAppOptions) arg;
+         } else if (arg instanceof CloneVAppOptions[]) {
+            CloneVAppOptions[] options = (CloneVAppOptions[]) arg;
             return (options.length > 0) ? options[0] : null;
          }
       }
@@ -120,7 +122,7 @@ public class BindCaptureVAppParamsToXmlPayload implements MapBinder {
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-      throw new IllegalStateException("CaptureVAppParams is needs parameters");
+      throw new IllegalStateException("CloneVAppParams is needs parameters");
    }
 
    protected String ifNullDefaultTo(String value, String defaultValue) {

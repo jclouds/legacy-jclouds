@@ -29,17 +29,17 @@
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.api</groupId>
-    <artifactId>vcloud</artifactId>
-    <name>jcloud vcloud api</name>
-    <description>jclouds components to access an implementation of VMWare vCloud</description>
+    <artifactId>vcloudexpress</artifactId>
+    <name>jcloud vcloudexpress api</name>
+    <description>jclouds components to access an implementation of VMWare vCloud Express</description>
 
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
-        <test.vcloud.endpoint>FIXME</test.vcloud.endpoint>
-        <test.vcloud.apiversion>1.0</test.vcloud.apiversion>
-        <test.vcloud.identity>FIXME</test.vcloud.identity>
-        <test.vcloud.credential>FIXME</test.vcloud.credential>
+        <test.vcloudexpress.endpoint>FIXME</test.vcloudexpress.endpoint>
+        <test.vcloudexpress.apiversion>1.0</test.vcloudexpress.apiversion>
+        <test.vcloudexpress.identity>FIXME</test.vcloudexpress.identity>
+        <test.vcloudexpress.credential>FIXME</test.vcloudexpress.credential>
     </properties>
 
     <dependencies>
@@ -47,13 +47,13 @@
             <groupId>org.jclouds.common</groupId>
             <artifactId>vcloud-common</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds.common</groupId>
             <artifactId>vcloud-common</artifactId>
             <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
@@ -122,20 +122,20 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>test.vcloud.endpoint</name>
-                                            <value>${test.vcloud.endpoint}</value>
+                                            <name>test.vcloudexpress.endpoint</name>
+                                            <value>${test.vcloudexpress.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.vcloud.apiversion</name>
-                                            <value>${test.vcloud.apiversion}</value>
+                                            <name>test.vcloudexpress.apiversion</name>
+                                            <value>${test.vcloudexpress.apiversion}</value>
                                         </property>
                                         <property>
-                                            <name>test.vcloud.identity</name>
-                                            <value>${test.vcloud.identity}</value>
+                                            <name>test.vcloudexpress.identity</name>
+                                            <value>${test.vcloudexpress.identity}</value>
                                         </property>
                                         <property>
-                                            <name>test.vcloud.credential</name>
-                                            <value>${test.vcloud.credential}</value>
+                                            <name>test.vcloudexpress.credential</name>
+                                            <value>${test.vcloudexpress.credential}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.compute.blacklist-nodes</name>

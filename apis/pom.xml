@@ -43,5 +43,6 @@
        <module>cloudfiles</module>
        <module>cloudservers</module>
        <module>vcloud</module>
+       <module>vcloudexpress</module>
     </modules>
 </project>

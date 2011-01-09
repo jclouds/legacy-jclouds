@@ -93,8 +93,6 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
 
-import domain.VCloudLoginAsyncClient;
-import domain.VCloudVersionsAsyncClient;
 
 /**
  * Tests behavior of {@code VCloudAsyncClient}
