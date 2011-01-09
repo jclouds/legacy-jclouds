@@ -44,7 +44,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jclouds.common</groupId>
-            <artifactId>rackspace-common</artifactId>
+            <artifactId>openstack-common</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

@@ -20,6 +20,7 @@
 package org.jclouds.openstack.swift;
 
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
+import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
 
@@ -34,6 +35,7 @@ public class SwiftPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_REGIONS, "DEFAULT");
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "X-Object-Meta-");
       return properties;
    }

@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.openstack.swift.functions;
+package org.jclouds.cloudfiles.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

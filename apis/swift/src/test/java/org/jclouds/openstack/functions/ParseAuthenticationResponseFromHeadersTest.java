@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.openstack.swift.functions;
+package org.jclouds.openstack.functions;
 
 import static org.testng.Assert.assertEquals;
 
@@ -29,7 +29,6 @@ import org.jclouds.Constants;
 import org.jclouds.blobstore.reference.BlobStoreConstants;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
-import org.jclouds.openstack.functions.ParseAuthenticationResponseFromHeaders;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
@@ -61,12 +60,13 @@ public class ParseAuthenticationResponseFromHeadersTest {
 
    public void testReplaceLocalhost() {
       ParseAuthenticationResponseFromHeaders parser = i.getInstance(ParseAuthenticationResponseFromHeaders.class);
-
+      parser = parser.setHostToReplace("fooman");
+      
       HttpResponse response = new HttpResponse(204, "No Content", null, ImmutableMultimap.<String, String> of(
                "X-Auth-Token", "token", "X-Storage-Token", "token", "X-Storage-Url", "http://127.0.0.1:8080/v1/token"));
 
       AuthenticationResponse md = parser.apply(response);
       assertEquals(md, new AuthenticationResponse("token", ImmutableMap.<String, URI> of("X-Storage-Url", URI
-               .create("http://127.0.0.1:8080/v1/token"))));
+               .create("http://fooman:8080/v1/token"))));
    }
 }

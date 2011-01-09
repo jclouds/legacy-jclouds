@@ -39,8 +39,6 @@ import org.jclouds.blobstore.domain.BlobMetadata;
 import org.jclouds.blobstore.domain.PageSet;
 import org.jclouds.blobstore.functions.HttpGetOptionsListToGetOptions;
 import org.jclouds.blobstore.options.ListContainerOptions;
-import org.jclouds.cloudfiles.domain.ContainerCDNMetadata;
-import org.jclouds.cloudfiles.options.ListCdnContainerOptions;
 import org.jclouds.concurrent.Futures;
 import org.jclouds.http.options.GetOptions;
 import org.jclouds.openstack.swift.CommonSwiftAsyncClient;
@@ -126,10 +124,6 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
       throw new UnsupportedOperationException();
    }
 
-   public ListenableFuture<ContainerCDNMetadata> getCDNMetadata(String container) {
-      throw new UnsupportedOperationException();
-   }
-
    public ListenableFuture<SwiftObject> getObject(String container, String key, GetOptions... options) {
       org.jclouds.blobstore.options.GetOptions getOptions = httpGetOptionsConverter.apply(options);
       return Futures.compose(blobStore.getBlob(container, key, getOptions), blob2Object, service);
@@ -146,10 +140,6 @@ public class StubSwiftAsyncClient implements CommonSwiftAsyncClient {
                   }
 
                }, service);
-   }
-
-   public ListenableFuture<? extends Set<ContainerCDNMetadata>> listCDNContainers(ListCdnContainerOptions... options) {
-      throw new UnsupportedOperationException();
    }
 
    public ListenableFuture<? extends Set<ContainerMetadata>> listContainers(

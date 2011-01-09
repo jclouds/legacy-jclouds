@@ -71,6 +71,11 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.api</groupId>
+            <artifactId>swift</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.api</groupId>
             <artifactId>cloudfiles</artifactId>
             <version>${project.version}</version>
         </dependency>

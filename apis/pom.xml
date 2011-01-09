@@ -39,6 +39,7 @@
        <module>elb</module>
        <module>walrus</module>
        <module>eucalyptus</module>
+       <module>swift</module>
        <module>cloudfiles</module>
        <module>cloudservers</module>
     </modules>

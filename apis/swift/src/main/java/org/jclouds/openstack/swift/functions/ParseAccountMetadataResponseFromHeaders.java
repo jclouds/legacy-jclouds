@@ -23,7 +23,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.jclouds.http.HttpResponse;
 import org.jclouds.openstack.swift.domain.AccountMetadata;
-import org.jclouds.cloudfiles.reference.CloudFilesHeaders;
+import org.jclouds.openstack.swift.reference.SwiftHeaders;
 
 import com.google.common.base.Function;
 
@@ -32,21 +32,16 @@ import com.google.common.base.Function;
  * 
  * @author James Murty
  */
-public class ParseAccountMetadataResponseFromHeaders implements
-         Function<HttpResponse, AccountMetadata> {
+public class ParseAccountMetadataResponseFromHeaders implements Function<HttpResponse, AccountMetadata> {
 
    /**
     * parses the http response headers to create a new {@link AccountMetadata} object.
     */
    public AccountMetadata apply(final HttpResponse from) {
-      String bytesString = checkNotNull(
-            from.getFirstHeaderOrNull(CloudFilesHeaders.ACCOUNT_BYTES_USED),
-               CloudFilesHeaders.ACCOUNT_BYTES_USED);
-      String containersCountString = checkNotNull(
-            from.getFirstHeaderOrNull(CloudFilesHeaders.ACCOUNT_CONTAINER_COUNT),
-               CloudFilesHeaders.ACCOUNT_CONTAINER_COUNT);
-      return new AccountMetadata(
-            Long.parseLong(containersCountString), 
-            Long.parseLong(bytesString));
+      String bytesString = checkNotNull(from.getFirstHeaderOrNull(SwiftHeaders.ACCOUNT_BYTES_USED),
+               SwiftHeaders.ACCOUNT_BYTES_USED);
+      String containersCountString = checkNotNull(from.getFirstHeaderOrNull(SwiftHeaders.ACCOUNT_CONTAINER_COUNT),
+               SwiftHeaders.ACCOUNT_CONTAINER_COUNT);
+      return new AccountMetadata(Long.parseLong(containersCountString), Long.parseLong(bytesString));
    }
 }

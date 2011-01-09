@@ -44,13 +44,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jclouds.common</groupId>
-            <artifactId>rackspace-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-blobstore</artifactId>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>swift</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -62,7 +57,7 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.common</groupId>
-            <artifactId>rackspace-common</artifactId>
+            <artifactId>openstack-common</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
@@ -70,6 +65,13 @@
         <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-blobstore</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>swift</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>

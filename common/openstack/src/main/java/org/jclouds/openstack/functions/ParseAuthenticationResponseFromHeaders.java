@@ -28,12 +28,17 @@ import java.net.URI;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
-import javax.inject.Singleton;
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.ws.rs.core.UriBuilder;
 
+import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.logging.Logger;
 import org.jclouds.openstack.OpenStackAuthAsyncClient.AuthenticationResponse;
+import org.jclouds.rest.InvocationContext;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -43,11 +48,19 @@ import com.google.common.collect.ImmutableMap.Builder;
  * 
  * @author Adrian Cole
  */
-@Singleton
-public class ParseAuthenticationResponseFromHeaders implements Function<HttpResponse, AuthenticationResponse> {
+public class ParseAuthenticationResponseFromHeaders implements Function<HttpResponse, AuthenticationResponse>,
+         InvocationContext<ParseAuthenticationResponseFromHeaders> {
 
    @Resource
    protected Logger logger = Logger.NULL;
+
+   private final Provider<UriBuilder> uriBuilderProvider;
+   private String hostToReplace;
+
+   @Inject
+   public ParseAuthenticationResponseFromHeaders(Provider<UriBuilder> uriBuilderProvider) {
+      this.uriBuilderProvider = uriBuilderProvider;
+   }
 
    /**
     * parses the http response headers to create a new {@link AuthenticationResponse} object.
@@ -57,11 +70,32 @@ public class ParseAuthenticationResponseFromHeaders implements Function<HttpResp
       Builder<String, URI> builder = ImmutableMap.<String, URI> builder();
       for (Entry<String, String> entry : from.getHeaders().entries()) {
          if (entry.getKey().endsWith(URL_SUFFIX))
-            builder.put(entry.getKey(), URI.create(entry.getValue()));
+            builder.put(entry.getKey(), getURI(entry.getValue()));
       }
       AuthenticationResponse response = new AuthenticationResponse(checkNotNull(from.getFirstHeaderOrNull(AUTH_TOKEN),
                AUTH_TOKEN), builder.build());
       logger.debug("will connect to: ", response);
       return response;
+   }
+
+   // TODO: find the swift configuration or bug related to returning localhost
+   protected URI getURI(String headerValue) {
+      if (headerValue == null)
+         return null;
+      URI toReturn = URI.create(headerValue);
+      if (!"127.0.0.1".equals(toReturn.getHost()))
+         return toReturn;
+      return uriBuilderProvider.get().uri(toReturn).host(hostToReplace).build();
+   }
+
+   @Override
+   public ParseAuthenticationResponseFromHeaders setContext(HttpRequest request) {
+      return setHostToReplace(request.getEndpoint().getHost());
+   }
+
+   @VisibleForTesting
+   ParseAuthenticationResponseFromHeaders setHostToReplace(String hostToReplace) {
+      this.hostToReplace = hostToReplace;
+      return this;
    }
 }

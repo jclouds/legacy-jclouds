@@ -51,6 +51,13 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.api</groupId>
+            <artifactId>swift</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.api</groupId>
             <artifactId>cloudfiles</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>

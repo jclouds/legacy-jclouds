@@ -29,43 +29,40 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
-    <groupId>org.jclouds.provider</groupId>
-    <artifactId>cloudfiles-us</artifactId>
-    <name>jclouds CloudFiles US provider</name>
-    <description>CloudFiles implementation targeted to Rackspace US</description>
+    <groupId>org.jclouds.api</groupId>
+    <artifactId>swift</artifactId>
+    <name>jcloud swift api</name>
+    <description>jclouds components to access an implementation of OpenStack Swift</description>
 
     <properties>
-        <test.initializer>org.jclouds.rackspace.cloudfiles.blobstore.integration.CloudFilesUSTestInitializer</test.initializer>
-        <test.cloudfiles-us.endpoint>https://auth.api.rackspacecloud.com</test.cloudfiles-us.endpoint>
-        <test.cloudfiles-us.apiversion>1.0</test.cloudfiles-us.apiversion>
-        <test.cloudfiles-us.identity>${test.rackspace-us.identity}</test.cloudfiles-us.identity>
-        <test.cloudfiles-us.credential>${test.rackspace-us.credential}</test.cloudfiles-us.credential>
+        <test.initializer>org.jclouds.openstack.swift.blobstore.integration.SwiftTestInitializer</test.initializer>
+        <test.swift.endpoint>http://localhost:11000</test.swift.endpoint>
+        <test.swift.apiversion>1.0</test.swift.apiversion>
+        <test.swift.identity>test:tester</test.swift.identity>
+        <test.swift.credential>testing</test.swift.credential>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.jclouds.api</groupId>
-            <artifactId>cloudfiles</artifactId>
+            <groupId>org.jclouds.common</groupId>
+            <artifactId>openstack-common</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.jclouds.api</groupId>
-            <artifactId>swift</artifactId>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-blobstore</artifactId>
             <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds.api</groupId>
-            <artifactId>cloudfiles</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.common</groupId>
+            <artifactId>openstack-common</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
@@ -109,20 +106,20 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>test.cloudfiles-us.endpoint</name>
-                                            <value>${test.cloudfiles-us.endpoint}</value>
+                                            <name>test.swift.endpoint</name>
+                                            <value>${test.swift.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudfiles-us.apiversion</name>
-                                            <value>${test.cloudfiles-us.apiversion}</value>
+                                            <name>test.swift.apiversion</name>
+                                            <value>${test.swift.apiversion}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudfiles-us.identity</name>
-                                            <value>${test.cloudfiles-us.identity}</value>
+                                            <name>test.swift.identity</name>
+                                            <value>${test.swift.identity}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudfiles-us.credential</name>
-                                            <value>${test.cloudfiles-us.credential}</value>
+                                            <name>test.swift.credential</name>
+                                            <value>${test.swift.credential}</value>
                                         </property>
                                         <property>
                                             <name>test.initializer</name>

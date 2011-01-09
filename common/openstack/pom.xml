@@ -29,7 +29,7 @@
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.common</groupId>
-    <artifactId>rackspace-common</artifactId>
+    <artifactId>openstack-common</artifactId>
     <name>jclouds Rackspace Components Core</name>
     <description>jclouds Core components to access Rackspace apis</description>
     <dependencies>

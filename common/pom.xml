@@ -34,6 +34,6 @@
     <name>jclouds commons project</name>
     <modules>
        <module>aws</module>
-       <module>rackspace</module>
+       <module>openstack</module>
     </modules>
 </project>
