@@ -60,18 +60,13 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-vcloud</artifactId>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>vcloud</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-bluelock</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-terremark</artifactId>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>bluelock-vcdirector</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

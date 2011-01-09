@@ -42,5 +42,6 @@
        <module>swift</module>
        <module>cloudfiles</module>
        <module>cloudservers</module>
+       <module>vcloud</module>
     </modules>
 </project>

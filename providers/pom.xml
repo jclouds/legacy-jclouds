@@ -47,5 +47,6 @@
         <module>cloudservers-uk</module>
         <module>cloudfiles-us</module>
         <module>cloudfiles-uk</module>
+        <module>bluelock-vcdirector</module>
     </modules>
 </project>

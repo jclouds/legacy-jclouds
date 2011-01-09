@@ -24,16 +24,19 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jclouds</groupId>
-        <artifactId>jclouds-vcloud-project</artifactId>
+        <artifactId>jclouds-project</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../../project/pom.xml</relativePath>
     </parent>
-    <artifactId>jclouds-vcloud</artifactId>
-    <name>jclouds vcloud Components Core</name>
-    <description>jclouds Core components to access vcloud</description>
+    <groupId>org.jclouds.api</groupId>
+    <artifactId>vcloud</artifactId>
+    <name>jcloud vcloud api</name>
+    <description>jclouds components to access an implementation of VMWare vCloud</description>
+
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
-        <test.vcloud.endpoint>https://66.45.200.97/api</test.vcloud.endpoint>
+        <test.vcloud.endpoint>FIXME</test.vcloud.endpoint>
         <test.vcloud.apiversion>1.0</test.vcloud.apiversion>
         <test.vcloud.identity>FIXME</test.vcloud.identity>
         <test.vcloud.credential>FIXME</test.vcloud.credential>
@@ -46,12 +49,49 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-compute</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-compute</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-jsch</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+           <groupId>log4j</groupId>
+           <artifactId>log4j</artifactId>
+           <version>1.2.14</version>
+           <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-log4j</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.jamesmurty.utils</groupId>
             <artifactId>java-xmlbuilder</artifactId>
             <version>0.3</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
         </dependency>
