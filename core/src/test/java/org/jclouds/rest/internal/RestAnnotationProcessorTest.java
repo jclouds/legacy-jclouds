@@ -181,7 +181,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
 
    }
 
-   @Path("/client")
+   @Path("/client/{jclouds.api-version}")
    public static interface AsyncCallee {
       @GET
       @Path("/{path}")
@@ -209,7 +209,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
    }
 
    @SuppressWarnings("unchecked")
-   public void testDelegateAsync() throws SecurityException, NoSuchMethodException, InterruptedException,
+   public void testDelegateAsyncIncludesVersion() throws SecurityException, NoSuchMethodException, InterruptedException,
          ExecutionException {
       Injector child = injectorForClient();
       TransformingHttpCommandExecutorService mock = child.getInstance(TransformingHttpCommandExecutorService.class);
@@ -224,7 +224,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       }
 
       AsyncCaller caller = child.getInstance(AsyncCaller.class);
-      expect(mock.submit(requestLineEquals("GET http://localhost:9999/client/foo HTTP/1.1"), eq(function))).andReturn(
+      expect(mock.submit(requestLineEquals("GET http://localhost:9999/client/1/foo HTTP/1.1"), eq(function))).andReturn(
             createNiceMock(ListenableFuture.class)).atLeastOnce();
       replay(mock);
 
@@ -268,7 +268,7 @@ public class RestAnnotationProcessorTest extends BaseRestClientTest {
       }
 
       Caller caller = child.getInstance(Caller.class);
-      expect(mock.submit(requestLineEquals("GET http://localhost:1111/client/foo HTTP/1.1"), eq(function))).andReturn(
+      expect(mock.submit(requestLineEquals("GET http://localhost:1111/client/1/foo HTTP/1.1"), eq(function))).andReturn(
             Futures.<Void> immediateFuture(null)).atLeastOnce();
       replay(mock);
 
