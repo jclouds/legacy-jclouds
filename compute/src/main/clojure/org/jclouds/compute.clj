@@ -24,6 +24,7 @@ Current supported providers are:
    [ec2, aws-ec2, ecc-ec2, cloudservers, cloudservers-uk, cloudservers-us,
     trmk-ecloud, trmk-vcloudexpress, vcloud, bluelock, eucalyptus, 
     slicehost, elastichosts-lon-p, elastichosts-sat-p, elastichosts, 
+    openhosting-east1, serverlove-z1-man, skalicloud-sdg-my,
     elastichosts-lon-b, cloudsigma, vcloudexpress, stub]
 
 Here's an example of getting some compute configuration from rackspace:

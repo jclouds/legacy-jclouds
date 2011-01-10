@@ -44,5 +44,6 @@
        <module>cloudservers</module>
        <module>vcloud</module>
        <module>vcloudexpress</module>
+       <module>elasticstack</module>
     </modules>
 </project>

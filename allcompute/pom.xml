@@ -105,8 +105,38 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-elasticstack</artifactId>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>elasticstack</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>elastichosts-lon-p</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>elastichosts-sat-p</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>elastichosts-lon-b</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>openhosting-east1</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>serverlove-z1-man</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>skalicloud-sdg-my</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
