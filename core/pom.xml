@@ -79,9 +79,9 @@
             <version>1.4-ea06</version>
         </dependency>
         <dependency>
-            <groupId>com.google.code.guice</groupId>
+            <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>3.0-snapshot-20101120</version>
+            <version>3.0-rc2</version>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
