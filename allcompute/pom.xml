@@ -71,6 +71,26 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
+            <artifactId>trmk-vcloudexpress</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>trmk-ecloud</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>trmk-vcloudexpress</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>trmk-ecloud</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
             <artifactId>bluelock-vcdirector</artifactId>
             <version>${project.version}</version>
         </dependency>

@@ -35,5 +35,7 @@
     <modules>
        <module>aws</module>
        <module>openstack</module>
+       <module>vcloud</module>
+       <module>trmk</module>
     </modules>
 </project>

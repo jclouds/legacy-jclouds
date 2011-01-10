@@ -48,5 +48,7 @@
         <module>cloudfiles-us</module>
         <module>cloudfiles-uk</module>
         <module>bluelock-vcdirector</module>
+        <module>trmk-ecloud</module>
+        <module>trmk-vcloudexpress</module>
     </modules>
 </project>
