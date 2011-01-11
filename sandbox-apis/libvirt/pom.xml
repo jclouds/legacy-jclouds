@@ -45,6 +45,12 @@
            <artifactId>libvirt</artifactId>
            <version>0.4.6</version>
         </dependency>
+                <dependency>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                    <version>1.4</version>
+                </dependency>
+
 		<dependency>
 		    <groupId>com.sun.jna</groupId>
 		    <artifactId>jna</artifactId>
@@ -57,19 +63,19 @@
            <version>0.3</version>
        </dependency>		
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-compute</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-compute</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
@@ -82,13 +88,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-log4j</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-jsch</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

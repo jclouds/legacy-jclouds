@@ -29,17 +29,22 @@
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.api</groupId>
-    <artifactId>vsphere</artifactId>
-    <name>jclouds example components for a vijava lib for vSphere</name>
+    <artifactId>vi</artifactId>
+    <name>jclouds example components for a vijava lib for VI 4 (VMware Infrastructure)</name>
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist.nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist.nodes>
-        <test.libvirt.endpoint>test:///default</test.libvirt.endpoint>
-        <test.libvirt.apiversion>1.0</test.libvirt.apiversion>
-        <test.libvirt.identity>FIXME</test.libvirt.identity>
-        <test.libvirt.credential>FIXME</test.libvirt.credential>
+        <test.vi.endpoint>test:///default</test.vi.endpoint>
+        <test.vi.apiversion>1.0</test.vi.apiversion>
+        <test.vi.identity>FIXME</test.vi.identity>
+        <test.vi.credential>FIXME</test.vi.credential>
     </properties>
     <dependencies>
+		<dependency>
+		    <groupId>commons-io</groupId>
+		    <artifactId>commons-io</artifactId>
+		    <version>1.4</version>
+		</dependency>    
 		<dependency>
 		    <groupId>org.jvnet.hudson</groupId>
 		    <artifactId>vijava</artifactId>
@@ -107,20 +112,20 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>test.libvirt.endpoint</name>
-                                            <value>${test.libvirt.endpoint}</value>
+                                            <name>test.vi.endpoint</name>
+                                            <value>${test.vi.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.libvirt.apiversion</name>
-                                            <value>${test.libvirt.apiversion}</value>
+                                            <name>test.vi.apiversion</name>
+                                            <value>${test.vi.apiversion}</value>
                                         </property>
                                         <property>
-                                            <name>test.libvirt.identity</name>
-                                            <value>${test.libvirt.identity}</value>
+                                            <name>test.vi.identity</name>
+                                            <value>${test.vi.identity}</value>
                                         </property>
                                         <property>
-                                            <name>test.libvirt.credential</name>
-                                            <value>${test.libvirt.credential}</value>
+                                            <name>test.vi.credential</name>
+                                            <value>${test.vi.credential}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.compute.blacklist.nodes</name>

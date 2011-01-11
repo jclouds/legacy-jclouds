@@ -29,7 +29,7 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
-    <groupId>org.jclouds.api</groupId>
+    <groupId>org.jclouds.provider</groupId>
     <artifactId>rimuhosting</artifactId>
     <name>jclouds RimuHosting provider</name>
     <description>ComputeService implementation of RimuHosting datacenters </description>

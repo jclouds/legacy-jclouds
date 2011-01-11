@@ -30,7 +30,7 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
-    <groupId>org.jclouds.api</groupId>
+    <groupId>org.jclouds.provider</groupId>
     <artifactId>savvis</artifactId>
     <name>jclouds savvis core</name>
     <description>jclouds components to access savvis</description>
