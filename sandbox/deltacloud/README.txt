@@ -46,4 +46,13 @@ Here are some notes about specific cloud providers
       * jruby -S gem install amazon-ec2
 
 
+Local Development of Delta
+   * jruby -S gem install rack-test cucumber
+
+  * What tests are available
+    * jruby -S rake -T
+      * server/tests/drivers
+        * specific tests to a particular driver
+  * Running tests
+    * jruby -S rake test
 
