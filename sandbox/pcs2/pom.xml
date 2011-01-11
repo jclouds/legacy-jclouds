@@ -20,8 +20,7 @@
 
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jclouds</groupId>
@@ -30,39 +29,35 @@
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.api</groupId>
-    <artifactId>rimuhosting</artifactId>
-    <name>jclouds RimuHosting provider</name>
-    <description>ComputeService implementation of RimuHosting datacenters </description>
+    <artifactId>pcs</artifactId>
+    <name>jclouds mezeo cloud storage platform v2 core</name>
+    <description>jclouds Core components to access mezeo pcs2</description>
+    <!-- bootstrapping: need to fetch the project POM -->
+    <repositories>
+        <repository>
+            <id>jclouds-sona-snapshots-nexus</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <properties>
-        <!-- when instances are hung, open a ticket and add here -->
-        <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
-        <test.rimuhosting.endpoint>https://api.rimuhosting.com/r</test.rimuhosting.endpoint>
-        <test.rimuhosting.apiversion>1.0</test.rimuhosting.apiversion>
-        <test.rimuhosting.identity>FIXME</test.rimuhosting.identity>
+        <test.pcs.endpoint>FIXME</test.pcs.endpoint>
+        <test.pcs.apiversion>2</test.pcs.apiversion>
+        <test.pcs.identity>FIXME</test.pcs.identity>
+        <test.pcs.credential>FIXME</test.pcs.credential>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-jsch</artifactId>
+            <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type> 
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-compute</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-compute</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
@@ -88,7 +83,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <executions>
+                        <executions>:%s/
                             <execution>
                                 <id>integration</id>
                                 <phase>integration-test</phase>
@@ -98,20 +93,20 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>test.rimuhosting.endpoint</name>
-                                            <value>${test.rimuhosting.endpoint}</value>
+                                            <name>test.pcs.endpoint</name>
+                                            <value>${test.pcs.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.rimuhosting.apiversion</name>
-                                            <value>${test.rimuhosting.apiversion}</value>
+                                            <name>test.pcs.apiversion</name>
+                                            <value>${test.pcs.apiversion}</value>
                                         </property>
                                         <property>
-                                            <name>test.rimuhosting.identity</name>
-                                            <value>${test.rimuhosting.identity}</value>
+                                            <name>test.pcs.identity</name>
+                                            <value>${test.pcs.identity}</value>
                                         </property>
                                         <property>
-                                            <name>jclouds.compute.blacklist-nodes</name>
-                                            <value>${jclouds.compute.blacklist-nodes}</value>
+                                            <name>test.pcs.credential</name>
+                                            <value>${test.pcs.credential}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>
@@ -122,4 +117,6 @@
             </build>
         </profile>
     </profiles>
+
+    
 </project>

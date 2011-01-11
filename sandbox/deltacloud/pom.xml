@@ -30,17 +30,13 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
-    <groupId>org.jclouds</groupId>
-    <artifactId>jclouds-deltacloud</artifactId>
+    <groupId>org.jclouds.api</groupId>
+    <artifactId>deltacloud</artifactId>
     <name>jclouds deltacloud core</name>
     <description>jclouds components to access deltacloud</description>
     
     <!-- bootstrapping: need to fetch the project POM -->
     <repositories>
-        <repository>
-            <id>jclouds-googlecode-deploy</id>
-            <url>http://jclouds.googlecode.com/svn/repo</url>
-        </repository>
         <repository>
             <id>jclouds-rimu-snapshots-nexus</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -60,19 +56,19 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-jsch</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -84,7 +80,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-log4j</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

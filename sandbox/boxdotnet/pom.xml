@@ -31,46 +31,37 @@
         <groupId>org.jclouds</groupId>
         <artifactId>jclouds-project</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../project/pom.xml</relativePath>
+        <relativePath>../../project/pom.xml</relativePath>
     </parent>
-    <groupId>org.jclouds</groupId>
-    <artifactId>jclouds-boxdotnet</artifactId>
+    <groupId>org.jclouds.provider</groupId>
+    <artifactId>boxdotnet</artifactId>
     <name>jclouds BoxDotNet core</name>
     <description>jclouds components to access BoxDotNet</description>
-
-    <scm>
-        <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk/boxdotnet</connection>
-        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk/boxdotnet</developerConnection>
-        <url>http://jclouds.googlecode.com/svn/trunk/boxdotnet</url>
-    </scm>
-    
     <!-- bootstrapping: need to fetch the project POM -->
     <repositories>
         <repository>
-            <id>jclouds-googlecode-deploy</id>
-            <url>http://jclouds.googlecode.com/svn/repo</url>
-        </repository>
-        <repository>
-            <id>jclouds-rimu-snapshots-nexus</id>
+            <id>jclouds-sona-snapshots-nexus</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
-        </repository>    
+        </repository>
     </repositories>
-    
+
     <properties>
-        <jclouds.test.identity>apiKey</jclouds.test.identity>
-        <jclouds.test.credential>authToken</jclouds.test.credential>
+        <test.boxdotnet.endpoint>https://www.box.net/api/1.0/rest</test.boxdotnet.endpoint>
+        <test.boxdotnet.apiversion>1.0</test.boxdotnet.apiversion>
+        <test.boxdotnet.identity>FIXME</test.boxdotnet.identity>
+        <test.boxdotnet.credential>FIXME</test.boxdotnet.credential>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
@@ -83,10 +74,53 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-log4j</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <profiles>
+        <profile>
+            <id>live</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>:%s/
+                            <execution>
+                                <id>integration</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemProperties>
+                                        <property>
+                                            <name>test.boxdotnet.endpoint</name>
+                                            <value>${test.boxdotnet.endpoint}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.boxdotnet.apiversion</name>
+                                            <value>${test.boxdotnet.apiversion}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.boxdotnet.identity</name>
+                                            <value>${test.boxdotnet.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.boxdotnet.credential</name>
+                                            <value>${test.boxdotnet.credential}</value>
+                                        </property>
+                                    </systemProperties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

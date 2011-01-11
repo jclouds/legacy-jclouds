@@ -28,7 +28,8 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
-    <artifactId>jclouds-libvirt</artifactId>
+    <groupId>org.jclouds.api</groupId>
+    <artifactId>libvirt</artifactId>
     <name>jclouds example components for a libvirt provider</name>
     <properties>
         <!-- when instances are hung, open a ticket and add here -->

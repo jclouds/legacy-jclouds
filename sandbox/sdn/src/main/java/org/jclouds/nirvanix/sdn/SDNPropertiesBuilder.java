@@ -34,7 +34,7 @@ public class SDNPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-      properties.setProperty(Constants.PROPERTY_API_VERSION, "TODO");
+      properties.setProperty(Constants.PROPERTY_API_VERSION, "2.5.6");
       properties.setProperty(Constants.PROPERTY_ENDPOINT, "http://services.nirvanix.com");
       return properties;
    }
