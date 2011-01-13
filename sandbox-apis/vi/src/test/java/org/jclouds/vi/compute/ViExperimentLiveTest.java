@@ -21,16 +21,20 @@ package org.jclouds.vi.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Properties;
 import java.util.Set;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.domain.Location;
+import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.inject.Module;
 
 /**
  * 
@@ -56,50 +60,49 @@ public class ViExperimentLiveTest {
    public void testAndExperiment() {
       ComputeServiceContext context = null;
       try {
-         context = new ComputeServiceContextFactory().createContext(new ViComputeServiceContextSpec(
-               endpoint, identity, credential));
-         
+         context = new ComputeServiceContextFactory().createContext(new ViComputeServiceContextSpec(endpoint, identity,
+                  credential), ImmutableSet.<Module>of(new Log4JLoggingModule()), new Properties());
+
          Set<? extends Location> locations = context.getComputeService().listAssignableLocations();
          for (Location location : locations) {
-			System.out.println("location id: " + location.getId() + " - desc: " + location.getDescription());
-		}
-         
-//         Set<? extends ComputeMetadata> nodes = context.getComputeService().listNodes();
-//
+            System.out.println("location id: " + location.getId() + " - desc: " + location.getDescription());
+         }
+
+         // Set<? extends ComputeMetadata> nodes = context.getComputeService().listNodes();
+         //
          Set<? extends Hardware> hardwares = context.getComputeService().listHardwareProfiles();
          for (Hardware hardware : hardwares) {
-			System.out.println("hardware id: " + hardware.getId() + " - name: " + hardware.getName());
-		}
-//         
+            System.out.println("hardware id: " + hardware.getId() + " - name: " + hardware.getName());
+         }
+         //         
          Set<? extends Image> images = context.getComputeService().listImages();
          for (Image image : images) {
-			System.out.println("id: " + image.getId() + " - name:" + image.getName());
-		}
-//
-//         NodeMetadata node = context.getComputeService().getNodeMetadata("MyWinServer");
-//         System.out.println(node);
+            System.out.println("id: " + image.getId() + " - name:" + image.getName());
+         }
+         //
+         // NodeMetadata node = context.getComputeService().getNodeMetadata("MyWinServer");
+         // System.out.println(node);
 
          /*
           * We will probably make a default template out of properties at some point You can control
           * the default template via overriding a method in standalonecomputeservicexontextmodule
           */
          /*
-         Template defaultTemplate = context.getComputeService().templateBuilder()
-         .hardwareId("vm-1221").imageId("winNetEnterprise64Guest") //.locationId("")
-         .build();
-         
-         Set<? extends NodeMetadata> nodeMetadataSet = context.getComputeService().runNodesWithTag("MyWinServer", 1);
-         for (NodeMetadata nodeMetadata : nodeMetadataSet) {
-            
-//              context.getComputeService().suspendNode(nodeMetadata.getId());
-//              context.getComputeService().resumeNode(nodeMetadata.getId());
-             
-            //context.getComputeService().destroyNode(nodeMetadata.getId());
-         }
-         */
+          * Template defaultTemplate = context.getComputeService().templateBuilder()
+          * .hardwareId("vm-1221").imageId("winNetEnterprise64Guest") //.locationId("") .build();
+          * 
+          * Set<? extends NodeMetadata> nodeMetadataSet =
+          * context.getComputeService().runNodesWithTag("MyWinServer", 1); for (NodeMetadata
+          * nodeMetadata : nodeMetadataSet) {
+          * 
+          * // context.getComputeService().suspendNode(nodeMetadata.getId()); //
+          * context.getComputeService().resumeNode(nodeMetadata.getId());
+          * 
+          * //context.getComputeService().destroyNode(nodeMetadata.getId()); }
+          */
       } catch (Exception e) {
          e.printStackTrace();
-         
+
       } finally {
          if (context != null)
             context.close();

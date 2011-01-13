@@ -26,12 +26,17 @@ import static com.google.common.collect.Iterables.transform;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+import javax.ws.rs.core.HttpHeaders;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -42,9 +47,13 @@ import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.domain.Location;
+import org.jclouds.http.HttpRequest;
+import org.jclouds.http.HttpResponse;
 import org.jclouds.http.functions.ParseSax;
+import org.jclouds.io.Payloads;
 import org.jclouds.location.Provider;
 import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
+import org.jclouds.rest.HttpClient;
 import org.jclouds.vi.Image;
 import org.jclouds.vi.compute.functions.DatacenterToLocation;
 import org.jclouds.vi.compute.functions.ViImageToImage;
@@ -56,13 +65,19 @@ import org.xml.sax.SAXException;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
+import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
+import com.vmware.vim25.VimPortType;
 import com.vmware.vim25.mo.Datacenter;
+import com.vmware.vim25.mo.ServerConnection;
 import com.vmware.vim25.mo.ServiceInstance;
 import com.vmware.vim25.mo.VirtualMachine;
+import com.vmware.vim25.ws.WSClient;
 
 /**
  * 
@@ -95,10 +110,62 @@ public class ViComputeServiceContextModule
 
    @Provides
    @Singleton
-   protected ServiceInstance createConnection(@Provider URI endpoint,
+   protected ServiceInstance createConnection(HttpClient client, @Provider URI endpoint,
             @Named(Constants.PROPERTY_IDENTITY) String identity, @Named(Constants.PROPERTY_CREDENTIAL) String credential)
-            throws RemoteException, MalformedURLException {
-      return new ServiceInstance(endpoint.toURL(), identity, credential, true);
+            throws RemoteException, MalformedURLException, SecurityException, NoSuchFieldException,
+            IllegalArgumentException, IllegalAccessException, URISyntaxException {
+      ServiceInstance foo = new ServiceInstance(endpoint.toURL(), identity, credential, true);
+      Field serverConnectionField = ServiceInstance.class.getDeclaredField("serverConnection");
+      serverConnectionField.setAccessible(true);
+      ServerConnection connection = (ServerConnection) serverConnectionField.get(foo);
+      Field vimServiceField = ServerConnection.class.getDeclaredField("vimService");
+      vimServiceField.setAccessible(true);
+      VimPortType vim = (VimPortType) vimServiceField.get(connection);
+      Field wscField = VimPortType.class.getDeclaredField("wsc");
+      wscField.setAccessible(true);
+      WSClient oldClient = (WSClient) wscField.get(vim);
+      wscField.set(vim, new JcloudsWSClient(client, oldClient.getBaseUrl().toURI(), oldClient.getCookie(), oldClient
+               .getVimNameSpace()));
+      return foo;
+   }
+
+   static class JcloudsWSClient extends WSClient {
+
+      private final HttpClient client;
+
+      public JcloudsWSClient(HttpClient client, URI baseUrl, String cookie, String vimNameSpace)
+               throws MalformedURLException {
+         super(baseUrl.toASCIIString(), false);
+         this.setCookie(cookie);
+         this.setVimNameSpace(vimNameSpace);
+         this.client = client;
+      }
+
+      @Override
+      public InputStream post(String soapMsg) throws IOException {
+
+         Builder<String, String> headers = ImmutableMultimap.<String, String> builder();
+         headers.put("SOAPAction", "urn:vim25/4.0");
+         if (getCookie() != null)
+            headers.put(HttpHeaders.COOKIE, getCookie());
+
+         HttpRequest request;
+         try {
+            request = HttpRequest.builder().endpoint(getBaseUrl().toURI()).method("POST").headers(headers.build())
+                     .payload(Payloads.newStringPayload(soapMsg)).build();
+         } catch (URISyntaxException e) {
+            Throwables.propagate(e);
+            return null;// unreachable as the above line will throw the exception.
+         }
+
+         HttpResponse response = client.invoke(request);
+
+         if (getCookie() != null && response.getFirstHeaderOrNull(HttpHeaders.SET_COOKIE) != null) {
+            setCookie(response.getFirstHeaderOrNull(HttpHeaders.SET_COOKIE));
+         }
+
+         return response.getPayload().getInput();
+      }
    }
 
    @Override
@@ -119,22 +186,22 @@ public class ViComputeServiceContextModule
    @SuppressWarnings("unchecked")
    private String searchForHardwareIdInDomainDir(String domainDir, final ParseSax.Factory factory,
             final javax.inject.Provider<UUIDHandler> provider) {
-      
-      //TODO: remove commons-io dependency
-      return Iterables.<String>getLast(filter(transform(FileUtils.listFiles(new File(domainDir), new WildcardFileFilter("*.xml"), null),
-               new Function<File, String>() {
 
-                  @Override
-                  public String apply(File input) {
-                     try {
-                        return factory.create(provider.get()).parse(new FileInputStream(input));
-                     } catch (FileNotFoundException e) {
-                        // log error.
-                        return null;
-                     }
-                  }
+      // TODO: remove commons-io dependency
+      return Iterables.<String> getLast(filter(transform(FileUtils.listFiles(new File(domainDir),
+               new WildcardFileFilter("*.xml"), null), new Function<File, String>() {
 
-               }), notNull()));
+         @Override
+         public String apply(File input) {
+            try {
+               return factory.create(provider.get()).parse(new FileInputStream(input));
+            } catch (FileNotFoundException e) {
+               // log error.
+               return null;
+            }
+         }
+
+      }), notNull()));
    }
 
    public static class UUIDHandler extends ParseSax.HandlerWithResult<String> {
