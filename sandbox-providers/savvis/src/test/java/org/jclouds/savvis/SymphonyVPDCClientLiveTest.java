@@ -21,8 +21,10 @@ package org.jclouds.savvis;
 
 import java.util.Properties;
 
+import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
+import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.VCloudExpressClientLiveTest;
 import org.testng.annotations.BeforeGroups;
 
@@ -47,9 +49,18 @@ public class SymphonyVPDCClientLiveTest extends VCloudExpressClientLiveTest {
       restProperties.setProperty("savvis-symphony-vpdc.propertiesbuilder",
             "org.jclouds.savvis.SymphonyVPDCPropertiesBuilder");
 
-      context = new ComputeServiceContextFactory(restProperties).createContext(provider,
+      context = new ComputeServiceContextFactory(restProperties).createContext(provider, "kedar.dave", "gravSavvis1!",
             ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
 
+      System.out.println(context);
+      
+      /*Properties overrides1 = new Properties();
+      ComputeServiceContext context1 = 
+			new ComputeServiceContextFactory(restProperties).createContext(provider,"kedar.dave" ,"gravSavvis1!",ImmutableSet.<Module> of(new JschSshClientModule()), overrides1);
+      System.out.println(context1.getComputeService().listImages());
+      System.out.println(context1.getComputeService().listHardwareProfiles());*/
+      
       connection = context.getApi();
+      System.out.println(connection);
    }
 }
