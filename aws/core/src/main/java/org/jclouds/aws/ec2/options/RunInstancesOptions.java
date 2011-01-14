@@ -22,6 +22,8 @@ package org.jclouds.aws.ec2.options;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Set;
+
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.options.internal.BaseEC2RequestOptions;
 import org.jclouds.encryption.internal.Base64;
@@ -208,6 +210,34 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
    String getSubnetId() {
       return getFirstFormOrNull("SubnetId");
    }
+   
+   /**
+    * Specifies the Block Device Mapping for the instance
+    *
+    */
+   
+   public RunInstancesOptions withBlockDeviceMappings(Set<BlockDeviceMapping> mappings) {
+       int i = 1;
+       for(BlockDeviceMapping mapping: mappings)
+       {
+           checkNotNull(mapping.getDeviceName(), "deviceName");
+           formParameters.put(String.format("BlockDeviceMapping.%d.DeviceName", i), mapping.getDeviceName());
+           if(mapping.getVirtualName() != null)
+               formParameters.put(String.format("BlockDeviceMapping.%d.VirtualName", i), mapping.getVirtualName());
+           if(mapping.getEbsSnapshotId() != null)
+               formParameters.put(String.format("BlockDeviceMapping.%d.Ebs.SnapshotId", i), mapping.getEbsSnapshotId());
+           if(mapping.getEbsVolumeSize() != null)
+               formParameters.put(String.format("BlockDeviceMapping.%d.Ebs.VolumeSize", i), String.valueOf(mapping.getEbsVolumeSize()));
+           if(mapping.getEbsNoDevice() != null)
+               formParameters.put(String.format("BlockDeviceMapping.%d.Ebs.NoDevice", i), String.valueOf(mapping.getEbsNoDevice()));
+           if(mapping.getEbsDeleteOnTermination() != null)
+               formParameters.put(String.format("BlockDeviceMapping.%d.Ebs.DeleteOnTermination", i), String.valueOf(mapping.getEbsDeleteOnTermination()));
+               
+           i++;
+       }
+       return this;
+    }
+
 
    public static class Builder {
       /**
@@ -297,6 +327,94 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
          RunInstancesOptions options = new RunInstancesOptions();
          return options.withVirtualName(virtualName);
       }
+      
+      /**
+       * @see RunInstancesOptions#withBlockDeviceMappings(Set<BlockDeviceMapping> mappings)
+       */
+      public static RunInstancesOptions withBlockDeviceMappings(Set<BlockDeviceMapping> mappings) {
+         RunInstancesOptions options = new RunInstancesOptions();
+         return options.withBlockDeviceMappings(mappings);
+      }
 
    }
+   
+   public static class BlockDeviceMapping
+   {
+       private String deviceName;
+       private String virtualName;
+       private String ebsSnapshotId;
+       private Integer ebsVolumeSize;
+       private Boolean ebsNoDevice;
+       private Boolean ebsDeleteOnTermination;
+       
+       public BlockDeviceMapping(String deviceName, String virtualName,
+               String ebsSnapshotId, Integer ebsVolumeSize,
+               Boolean ebsNoDevice, Boolean ebsDeleteOnTermination){
+           this.deviceName = deviceName;
+           this.virtualName = virtualName;
+           this.ebsSnapshotId = ebsSnapshotId;
+           this.ebsVolumeSize = ebsVolumeSize;
+           this.ebsNoDevice = ebsNoDevice;
+           this.ebsDeleteOnTermination = ebsDeleteOnTermination;
+       }
+       
+       public String getDeviceName(){
+            return deviceName;
+       }
+       public String getVirtualName() {
+            return virtualName;
+       }
+       public String getEbsSnapshotId() {
+           return ebsSnapshotId;
+       }
+       public Integer getEbsVolumeSize() {
+           return ebsVolumeSize;
+       }
+       public Boolean getEbsNoDevice() {
+           return ebsNoDevice;
+       }
+       public Boolean getEbsDeleteOnTermination() {
+           return ebsDeleteOnTermination;
+       }
+
+       @Override
+       public int hashCode()
+       {
+          final int prime = 31;
+          int result = 1;
+          result = prime * result
+                + ((deviceName == null) ? 0 : deviceName.hashCode());
+          return result;
+       }
+
+       @Override
+       public boolean equals(Object obj)
+       {
+          if (this == obj)
+             return true;
+          if (obj == null)
+             return false;
+          if (getClass() != obj.getClass())
+             return false;
+          BlockDeviceMapping other = (BlockDeviceMapping) obj;
+          if (deviceName == null)
+          {
+             if (other.deviceName != null)
+                return false;
+          }
+          else if (!deviceName.equals(other.deviceName))
+             return false;
+          return true;
+        }
+
+        @Override
+        public String toString() {
+            return "BlockDeviceMapping [deviceName=" + deviceName
+                    + ", virtualName=" + virtualName + ", ebsSnapshotId="
+                    + ebsSnapshotId + ", ebsVolumeSize=" + ebsVolumeSize
+                    + ", ebsNoDevice=" + ebsNoDevice
+                    + ", ebsDeleteOnTermination=" + ebsDeleteOnTermination
+                    + "]";
+        }
+    }
 }

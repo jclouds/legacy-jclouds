@@ -40,6 +40,7 @@ import org.jclouds.aws.ec2.options.RunInstancesOptions;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.location.Provider;
+import org.jclouds.aws.ec2.options.RunInstancesOptions.BlockDeviceMapping;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
@@ -113,6 +114,11 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
 
       if (userData != null)
          instanceOptions.withUserData(userData);
+      
+      Set<BlockDeviceMapping> blockDeviceMappings = EC2TemplateOptions.class.cast(template.getOptions()).getBlockDeviceMappings();
+
+      if (blockDeviceMappings != null) 
+         instanceOptions.withBlockDeviceMappings(blockDeviceMappings);
 
       return instanceOptions;
    }

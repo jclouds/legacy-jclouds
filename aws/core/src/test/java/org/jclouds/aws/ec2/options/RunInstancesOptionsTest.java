@@ -29,11 +29,15 @@ import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withSecuri
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withSubnetId;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withUserData;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withVirtualName;
+import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withBlockDeviceMappings;
 import static org.testng.Assert.assertEquals;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.jclouds.aws.ec2.domain.InstanceType;
+import org.jclouds.aws.ec2.options.RunInstancesOptions.BlockDeviceMapping;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
 
@@ -298,6 +302,40 @@ public class RunInstancesOptionsTest {
    @Test(expectedExceptions = NullPointerException.class)
    public void testWithVirtualNameNPE() {
       withVirtualName(null);
+   }
+   
+   @Test
+   public void testWithBlockDeviceMapping() {
+      RunInstancesOptions options = new RunInstancesOptions();
+      BlockDeviceMapping mapping = new BlockDeviceMapping("/dev/sda1", null, null, 120, null, true);
+      Set<BlockDeviceMapping> mappings =  new HashSet<BlockDeviceMapping>();
+      mappings.add(mapping);
+      options.withBlockDeviceMappings(mappings);
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections.singletonList("/dev/sda1"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"), Collections.singletonList("120"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"), Collections.singletonList("true"));
+   }
+
+   @Test
+   public void testNullWithBlockDeviceMapping() {
+      RunInstancesOptions options = new RunInstancesOptions();
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping"), Collections.EMPTY_LIST);
+   }
+
+   @Test
+   public void testWithBlockDeviceMappingStatic() {
+      BlockDeviceMapping mapping = new BlockDeviceMapping("/dev/sda1", null, null, 120, null, true);
+      Set<BlockDeviceMapping> mappings =  new HashSet<BlockDeviceMapping>();
+      mappings.add(mapping);
+      RunInstancesOptions options = withBlockDeviceMappings(mappings);
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.DeviceName"), Collections.singletonList("/dev/sda1"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.VolumeSize"), Collections.singletonList("120"));
+      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"), Collections.singletonList("true"));
+   }
+
+@Test(expectedExceptions = NullPointerException.class)
+   public void testWithBlockDeviceMappingNPE() {
+       withBlockDeviceMappings(null);
    }
 
 }

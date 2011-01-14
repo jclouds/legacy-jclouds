@@ -24,9 +24,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.jclouds.aws.cloudwatch.CloudWatchClient;
+import org.jclouds.aws.ec2.options.RunInstancesOptions.BlockDeviceMapping;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.io.Payload;
@@ -63,7 +65,8 @@ public class EC2TemplateOptions extends TemplateOptions {
    private boolean noPlacementGroup;
    private String subnetId;
    private byte[] userData;
-
+   private Set<BlockDeviceMapping> blockDeviceMappings;
+ 
    public static final EC2TemplateOptions NONE = new EC2TemplateOptions();
 
    /**
@@ -153,6 +156,37 @@ public class EC2TemplateOptions extends TemplateOptions {
       checkNotNull(subnetId, "subnetId cannot be null");
       Preconditions2.checkNotEmpty(subnetId, "subnetId must be non-empty");
       this.subnetId = subnetId;
+      return this;
+   }
+   
+   /**
+    * Specifies the block device mappings to be used to run the instance
+    */
+   public EC2TemplateOptions blockDeviceMapping(String deviceName, 
+           String virtualName, String ebsSnapShotId, 
+           Integer ebsVolumeSize, Boolean ebsNoDevice, 
+           Boolean ebsNoDeviceebsDeleteOnTermination) {
+      checkNotNull(deviceName, "deviceName cannot be null");
+      Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
+      BlockDeviceMapping mapping = new BlockDeviceMapping(deviceName, virtualName, ebsSnapShotId, ebsVolumeSize, ebsNoDevice, ebsNoDeviceebsDeleteOnTermination);
+      if(blockDeviceMappings == null)
+          blockDeviceMappings = new HashSet<BlockDeviceMapping>();
+      blockDeviceMappings.add(mapping);
+      return this;
+   }
+   
+   /**
+    * Specifies the block device mappings to be used to run the instance
+    */
+   public EC2TemplateOptions blockDeviceMapping(Set<BlockDeviceMapping> blockDeviceMappings) {
+      checkArgument(Iterables.size(blockDeviceMappings) > 0, "you must specify at least one block device mapping");
+      for (BlockDeviceMapping blockDeviceMapping : blockDeviceMappings)
+      {
+         String deviceName = blockDeviceMapping.getDeviceName();
+         checkNotNull(deviceName, "deviceName cannot be null");
+         Preconditions2.checkNotEmpty(deviceName, "the deviceName must be non-empty");
+      }
+      this.blockDeviceMappings = blockDeviceMappings;
       return this;
    }
 
@@ -277,6 +311,19 @@ public class EC2TemplateOptions extends TemplateOptions {
       public static EC2TemplateOptions subnetId(String subnetId) {
          EC2TemplateOptions options = new EC2TemplateOptions();
          return EC2TemplateOptions.class.cast(options.subnetId(subnetId));
+      }
+      
+      /**
+       * @see EC2TemplateOptions#blockDeviceMapping
+       */
+      public static EC2TemplateOptions blockDeviceMapping(String deviceName, 
+              String virtualName, String ebsSnapShotId, 
+              Integer ebsVolumeSize, Boolean ebsNoDevice, 
+              Boolean ebsNoDeviceebsDeleteOnTermination) {
+         EC2TemplateOptions options = new EC2TemplateOptions();
+         return EC2TemplateOptions.class.cast(options.blockDeviceMapping(deviceName, 
+                 virtualName, ebsSnapShotId, ebsVolumeSize, ebsNoDevice, 
+                 ebsNoDeviceebsDeleteOnTermination));
       }
 
    }
@@ -462,24 +509,38 @@ public class EC2TemplateOptions extends TemplateOptions {
    public byte[] getUserData() {
       return userData;
    }
+   
+   /**
+    * @return BlockDeviceMapping to use when running the instance or null.
+    */
+   public Set<BlockDeviceMapping> getBlockDeviceMappings() {
+      return blockDeviceMappings;
+   }
 
    @Override
-   public int hashCode() {
+   public int hashCode(){
+       
       final int prime = 31;
       int result = super.hashCode();
+      result = prime
+            * result
+            + ((blockDeviceMappings == null) ? 0 : blockDeviceMappings
+                    .hashCode());
       result = prime * result + ((groupIds == null) ? 0 : groupIds.hashCode());
       result = prime * result + ((keyPair == null) ? 0 : keyPair.hashCode());
+      result = prime * result + (monitoringEnabled ? 1231 : 1237);
       result = prime * result + (noKeyPair ? 1231 : 1237);
       result = prime * result + (noPlacementGroup ? 1231 : 1237);
-      result = prime * result + (monitoringEnabled ? 1231 : 1237);
-      result = prime * result + ((placementGroup == null) ? 0 : placementGroup.hashCode());
+      result = prime * result
+            + ((placementGroup == null) ? 0 : placementGroup.hashCode());
       result = prime * result + ((subnetId == null) ? 0 : subnetId.hashCode());
-      result = prime * result + ((userData == null) ? 0 : userData.hashCode());
+      result = prime * result + Arrays.hashCode(userData);
       return result;
    }
 
    @Override
-   public boolean equals(Object obj) {
+   public boolean equals(Object obj)
+   {
       if (this == obj)
          return true;
       if (!super.equals(obj))
@@ -487,47 +548,62 @@ public class EC2TemplateOptions extends TemplateOptions {
       if (getClass() != obj.getClass())
          return false;
       EC2TemplateOptions other = (EC2TemplateOptions) obj;
-      if (groupIds == null) {
+      if (blockDeviceMappings == null)
+      {
+         if (other.blockDeviceMappings != null)
+            return false;
+      }
+      else if (!blockDeviceMappings.equals(other.blockDeviceMappings))
+         return false;
+      if (groupIds == null)
+      {
          if (other.groupIds != null)
             return false;
-      } else if (!groupIds.equals(other.groupIds))
+      }
+      else if (!groupIds.equals(other.groupIds))
          return false;
-      if (keyPair == null) {
+      if (keyPair == null)
+      {
          if (other.keyPair != null)
-            return false;
-      } else if (!keyPair.equals(other.keyPair))
+             return false;
+      }
+      else if (!keyPair.equals(other.keyPair))
+         return false;
+      if (monitoringEnabled != other.monitoringEnabled)
          return false;
       if (noKeyPair != other.noKeyPair)
          return false;
       if (noPlacementGroup != other.noPlacementGroup)
          return false;
-      if (monitoringEnabled != other.monitoringEnabled)
-         return false;
-      if (placementGroup == null) {
+      if (placementGroup == null)
+      {
          if (other.placementGroup != null)
             return false;
-      } else if (!placementGroup.equals(other.placementGroup))
-         return false;
-      if (subnetId == null) {
+      }
+      else if (!placementGroup.equals(other.placementGroup))
+            return false;
+      if (subnetId == null)
+      {
          if (other.subnetId != null)
             return false;
-      } else if (!subnetId.equals(other.subnetId))
+      }
+      else if (!subnetId.equals(other.subnetId))
          return false;
-      if (userData == null) {
-         if (other.userData != null)
-            return false;
-      } else if (!userData.equals(other.userData))
+      if (!Arrays.equals(userData, other.userData))
          return false;
+      
       return true;
-   }
+    }
 
    @Override
    public String toString() {
-      return "[groupIds=" + groupIds + ", keyPair=" + keyPair + ", noKeyPair=" + noKeyPair + ", placementGroup="
-               + placementGroup + ", noPlacementGroup=" + noPlacementGroup + ", monitoringEnabled=" + monitoringEnabled
-               + ", inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null)
-               + ", publicKey=" + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port
-               + ":" + seconds + ", subnetId=" + subnetId + ", metadata/details: " + includeMetadata + "]";
+       
+       return "EC2TemplateOptions [groupIds=" + groupIds + ", keyPair=" + keyPair
+                + ", noKeyPair=" + noKeyPair + ", monitoringEnabled="
+                + monitoringEnabled + ", placementGroup=" + placementGroup
+                + ", noPlacementGroup=" + noPlacementGroup + ", subnetId="
+                + subnetId + ", userData=" + Arrays.toString(userData)
+                + ", blockDeviceMappings=" + blockDeviceMappings + "]";
    }
 
 }
