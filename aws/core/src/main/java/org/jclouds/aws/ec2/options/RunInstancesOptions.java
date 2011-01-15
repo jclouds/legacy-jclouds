@@ -21,12 +21,12 @@ package org.jclouds.aws.ec2.options;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Set;
 
 import org.jclouds.aws.ec2.domain.InstanceType;
 import org.jclouds.aws.ec2.options.internal.BaseEC2RequestOptions;
 import org.jclouds.encryption.internal.Base64;
+import org.jclouds.util.Preconditions2;
 
 /**
  * Contains options supported in the Form API for the RunInstances operation. <h2>
@@ -340,16 +340,29 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
    
    public static class BlockDeviceMapping
    {
-       private String deviceName;
-       private String virtualName;
-       private String ebsSnapshotId;
-       private Integer ebsVolumeSize;
-       private Boolean ebsNoDevice;
-       private Boolean ebsDeleteOnTermination;
+       private final String deviceName;
+       private final String virtualName;
+       private final String ebsSnapshotId;
+       private final Integer ebsVolumeSize;
+       private final Boolean ebsNoDevice;
+       private final Boolean ebsDeleteOnTermination;
+       
+       //values expressed in GB
+       private static final Integer VOLUME_SIZE_MIN_VALUE = 1;
+       private static final Integer VOLUME_SIZE_MAX_VALUE = 1000;
        
        public BlockDeviceMapping(String deviceName, String virtualName,
                String ebsSnapshotId, Integer ebsVolumeSize,
                Boolean ebsNoDevice, Boolean ebsDeleteOnTermination){
+           
+           checkNotNull(deviceName, "deviceName cannot be null");
+           Preconditions2.checkNotEmpty(deviceName, "the deviceName must be non-empty");
+           
+           if(ebsVolumeSize != null)
+           {
+               checkArgument((ebsVolumeSize >=VOLUME_SIZE_MIN_VALUE  && ebsVolumeSize <= VOLUME_SIZE_MAX_VALUE), 
+                       String.format("EBS Volume Size must be between %s and %s GB", VOLUME_SIZE_MIN_VALUE, VOLUME_SIZE_MAX_VALUE));
+           }
            this.deviceName = deviceName;
            this.virtualName = virtualName;
            this.ebsSnapshotId = ebsSnapshotId;

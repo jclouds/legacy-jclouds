@@ -73,8 +73,7 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
             eTo.noKeyPair();
          if (eFrom.getSubnetId() != null)
             eTo.subnetId(eFrom.getSubnetId());
-         if (eFrom.getBlockDeviceMappings() != null)
-             eTo.blockDeviceMapping(eFrom.getBlockDeviceMappings());
+         eTo.blockDeviceMappings(eFrom.getBlockDeviceMappings());
          if (eFrom.isMonitoringEnabled())
             eTo.enableMonitoring();
          if (eFrom.getUserData() != null)

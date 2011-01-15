@@ -116,9 +116,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
          instanceOptions.withUserData(userData);
       
       Set<BlockDeviceMapping> blockDeviceMappings = EC2TemplateOptions.class.cast(template.getOptions()).getBlockDeviceMappings();
-
-      if (blockDeviceMappings != null) 
-         instanceOptions.withBlockDeviceMappings(blockDeviceMappings);
+      instanceOptions.withBlockDeviceMappings(blockDeviceMappings);
 
       return instanceOptions;
    }

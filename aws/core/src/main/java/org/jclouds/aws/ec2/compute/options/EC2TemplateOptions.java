@@ -65,7 +65,7 @@ public class EC2TemplateOptions extends TemplateOptions {
    private boolean noPlacementGroup;
    private String subnetId;
    private byte[] userData;
-   private Set<BlockDeviceMapping> blockDeviceMappings;
+   private Set<BlockDeviceMapping> blockDeviceMappings = ImmutableSet.of();
  
    public static final EC2TemplateOptions NONE = new EC2TemplateOptions();
 
@@ -168,25 +168,20 @@ public class EC2TemplateOptions extends TemplateOptions {
            Boolean ebsNoDeviceebsDeleteOnTermination) {
       checkNotNull(deviceName, "deviceName cannot be null");
       Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
+      Set<BlockDeviceMapping> mappings = new HashSet<BlockDeviceMapping>();
+      mappings.addAll(blockDeviceMappings);
       BlockDeviceMapping mapping = new BlockDeviceMapping(deviceName, virtualName, ebsSnapShotId, ebsVolumeSize, ebsNoDevice, ebsNoDeviceebsDeleteOnTermination);
-      if(blockDeviceMappings == null)
-          blockDeviceMappings = new HashSet<BlockDeviceMapping>();
-      blockDeviceMappings.add(mapping);
+      mappings.add(mapping);
+      blockDeviceMappings = ImmutableSet.copyOf(mappings);
       return this;
    }
    
    /**
     * Specifies the block device mappings to be used to run the instance
     */
-   public EC2TemplateOptions blockDeviceMapping(Set<BlockDeviceMapping> blockDeviceMappings) {
+   public EC2TemplateOptions blockDeviceMappings(Set<BlockDeviceMapping> blockDeviceMappings) {
       checkArgument(Iterables.size(blockDeviceMappings) > 0, "you must specify at least one block device mapping");
-      for (BlockDeviceMapping blockDeviceMapping : blockDeviceMappings)
-      {
-         String deviceName = blockDeviceMapping.getDeviceName();
-         checkNotNull(deviceName, "deviceName cannot be null");
-         Preconditions2.checkNotEmpty(deviceName, "the deviceName must be non-empty");
-      }
-      this.blockDeviceMappings = blockDeviceMappings;
+      this.blockDeviceMappings = ImmutableSet.copyOf(blockDeviceMappings);
       return this;
    }
 
@@ -321,9 +316,9 @@ public class EC2TemplateOptions extends TemplateOptions {
               Integer ebsVolumeSize, Boolean ebsNoDevice, 
               Boolean ebsNoDeviceebsDeleteOnTermination) {
          EC2TemplateOptions options = new EC2TemplateOptions();
-         return EC2TemplateOptions.class.cast(options.blockDeviceMapping(deviceName, 
+         return options.blockDeviceMapping(deviceName, 
                  virtualName, ebsSnapShotId, ebsVolumeSize, ebsNoDevice, 
-                 ebsNoDeviceebsDeleteOnTermination));
+                 ebsNoDeviceebsDeleteOnTermination);
       }
 
    }

@@ -333,7 +333,7 @@ public class RunInstancesOptionsTest {
       assertEquals(options.buildFormParameters().get("BlockDeviceMapping.1.Ebs.DeleteOnTermination"), Collections.singletonList("true"));
    }
 
-@Test(expectedExceptions = NullPointerException.class)
+   @Test(expectedExceptions = NullPointerException.class)
    public void testWithBlockDeviceMappingNPE() {
        withBlockDeviceMappings(null);
    }
