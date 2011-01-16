@@ -45,5 +45,6 @@
        <module>vcloud</module>
        <module>vcloudexpress</module>
        <module>elasticstack</module>
+       <module>atmos</module>
     </modules>
 </project>

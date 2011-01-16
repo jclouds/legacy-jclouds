@@ -46,7 +46,6 @@
         <module>tools</module>
         <module>scriptbuilder</module>
         <module>azure</module>
-        <module>atmos</module>
         <module>allcompute</module>
         <module>allblobstore</module>
         <module>all</module>
