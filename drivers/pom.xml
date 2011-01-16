@@ -21,26 +21,23 @@
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <groupId>org.jclouds</groupId>
-        <artifactId>jclouds-ssh-project</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>jclouds-jsch</artifactId>
-    <name>jclouds jsch ssh client</name>
-    <description>jclouds jsch ssh client</description>
-    <dependencies>
-        <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
-            <version>0.1.42</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>1.4</version>
-        </dependency>
-    </dependencies>
-    
+    <parent>
+        <artifactId>jclouds-project</artifactId>
+        <groupId>org.jclouds</groupId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../project/pom.xml</relativePath>
+    </parent>
+    <artifactId>jclouds-drivers-project</artifactId>
+    <packaging>pom</packaging>
+    <name>jclouds extensions project</name>
+    <modules>
+        <module>gae</module>
+        <module>apachehc</module>
+        <module>joda</module>
+        <module>bouncycastle</module>
+        <module>log4j</module>
+        <module>jsch</module>
+        <module>enterprise</module>
+    </modules>
 </project>

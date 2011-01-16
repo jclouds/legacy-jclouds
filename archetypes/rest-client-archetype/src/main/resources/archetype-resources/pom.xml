@@ -90,7 +90,7 @@ $symbol_dollar = '$' )
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${symbol_dollar}{project.groupId}</groupId>
+            <groupId>org.jclouds.driver</groupId>
             <artifactId>jclouds-log4j</artifactId>
             <version>${symbol_dollar}{project.version}</version>
             <scope>test</scope>

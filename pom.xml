@@ -42,7 +42,7 @@
         <module>providers</module>
         <module>blobstore</module>
         <module>skeletons</module>
-        <module>extensions</module>
+        <module>drivers</module>
         <module>tools</module>
         <module>scriptbuilder</module>
         <module>azure</module>

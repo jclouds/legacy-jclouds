@@ -20,7 +20,8 @@
 
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jclouds</groupId>
@@ -28,15 +29,27 @@
         <version>1.0-SNAPSHOT</version>
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
-    <groupId>org.jclouds.common</groupId>
-    <artifactId>vcloud-common</artifactId>
-    <name>common vCloud components</name>
-    <description>common vCloud components</description>
+    <groupId>org.jclouds.driver</groupId>
+    <artifactId>jclouds-jsch</artifactId>
+    <name>jclouds jsch ssh client</name>
+    <description>jclouds jsch ssh client</description>
+
+    <!-- bootstrapping: need to fetch the project POM -->
+    <repositories>
+        <repository>
+            <id>jclouds-sona-snapshots-nexus</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
-            <groupId>com.jamesmurty.utils</groupId>
-            <artifactId>java-xmlbuilder</artifactId>
-            <version>0.3</version>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-compute</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
@@ -51,35 +64,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-compute</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.42</version>
         </dependency>
         <dependency>
-            <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-compute</artifactId>
-            <version>${project.version}</version>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds.driver</groupId>
-            <artifactId>jclouds-log4j</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds.driver</groupId>
-            <artifactId>jclouds-jsch</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
-            <scope>test</scope>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.4</version>
         </dependency>
     </dependencies>
-
 </project>
