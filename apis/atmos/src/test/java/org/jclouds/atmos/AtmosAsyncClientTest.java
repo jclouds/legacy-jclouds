@@ -72,8 +72,8 @@ public class AtmosAsyncClientTest extends RestClientTest<AtmosAsyncClient> {
    private BlobToObject blobToObject;
 
    public void testListDirectories() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosAsyncClient.class.getMethod("listDirectories", Array
-               .newInstance(ListOptions.class, 0).getClass());
+      Method method = AtmosAsyncClient.class.getMethod("listDirectories", Array.newInstance(ListOptions.class, 0)
+               .getClass());
       HttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request, "GET https://accesspoint.atmosonline.com/rest/namespace HTTP/1.1");
@@ -104,8 +104,8 @@ public class AtmosAsyncClientTest extends RestClientTest<AtmosAsyncClient> {
    }
 
    public void testListDirectoriesOptions() throws SecurityException, NoSuchMethodException, IOException {
-      Method method = AtmosAsyncClient.class.getMethod("listDirectories", Array
-               .newInstance(ListOptions.class, 0).getClass());
+      Method method = AtmosAsyncClient.class.getMethod("listDirectories", Array.newInstance(ListOptions.class, 0)
+               .getClass());
       HttpRequest request = processor.createRequest(method, new ListOptions().limit(1).token("asda"));
 
       assertRequestLineEquals(request, "GET https://accesspoint.atmosonline.com/rest/namespace HTTP/1.1");
@@ -270,9 +270,13 @@ public class AtmosAsyncClientTest extends RestClientTest<AtmosAsyncClient> {
       }
    }
 
+   protected String provider = "atmos";
+
    @Override
    public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("atmos", "identity", "credential", new Properties());
+      Properties props = new Properties();
+      props.setProperty(provider + ".endpoint", "https://accesspoint.atmosonline.com");
+      return new RestContextFactory().createContextSpec(provider, "identity", "credential", props);
    }
 
 }

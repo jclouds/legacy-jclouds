@@ -46,6 +46,11 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
+            <artifactId>synaptic-storage</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.provider</groupId>
             <artifactId>scaleup-storage</artifactId>
             <version>${project.version}</version>
         </dependency>
