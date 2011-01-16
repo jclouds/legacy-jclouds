@@ -17,17 +17,15 @@
  * ====================================================================
  */
 
-package org.jclouds.vi;
+package org.jclouds.vi.reference;
 
 /**
- * Configuration properties and constants used in libvirt local connections.
+ * Configuration properties and constants used in VI connections.
  * 
  * @author Adrian Cole
  */
 public interface ViConstants {
-   public static final String PROPERTY_LIBVIRT_DOMAIN_DIR = "jclouds.libvirt.domain.dir";
+
+   public static final String PROPERTY_VI_XML_NAMESPACE = "jclouds.vi.xml.ns";
+
 }
-
-
-//public static final String PROPERTY_AUTH_TAG = "jclouds.aws.auth.tag";
-//public static final String PROPERTY_HEADER_TAG = "jclouds.aws.header.tag";

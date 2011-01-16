@@ -19,14 +19,13 @@
 
 package org.jclouds.vi.compute;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.vi.ViConstants.PROPERTY_LIBVIRT_DOMAIN_DIR;
-import static org.jclouds.compute.reference.ComputeServiceConstants.PROPERTY_TIMEOUT_NODE_SUSPENDED;
+import static org.jclouds.vi.reference.ViConstants.PROPERTY_VI_XML_NAMESPACE;
 
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
+
+import com.vmware.vim25.mo.ServiceInstance;
 
 /**
  * Builds properties used in vi Clients
@@ -37,14 +36,7 @@ public class ViPropertiesBuilder extends PropertiesBuilder {
    @Override
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
-//      properties.setProperty(PROPERTY_LIBVIRT_DOMAIN_DIR, "/etc/libvirt/qemu");
-
-      properties.setProperty(PROPERTY_TIMEOUT_NODE_SUSPENDED, 120 * 1000 + "");
-      // auth fail sometimes happens in EC2, as the rc.local script that injects the
-      // authorized key executes after ssh has started
-      properties.setProperty("jclouds.ssh.max_retries", "7");
-      properties.setProperty("jclouds.ssh.retryable_messages",
-            "Auth fail,invalid data,End of IO Stream Read,Connection reset,socket is not established");
+      properties.setProperty(PROPERTY_VI_XML_NAMESPACE, ServiceInstance.VIM25_NAMESPACE);
       return properties;
    }
 

@@ -22,18 +22,19 @@ package org.jclouds.vi.compute.config;
 import static com.google.common.base.Predicates.notNull;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
+import static org.jclouds.vi.reference.ViConstants.PROPERTY_VI_XML_NAMESPACE;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.rmi.RemoteException;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.HttpHeaders;
@@ -72,9 +73,7 @@ import com.google.common.collect.ImmutableMultimap.Builder;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
-import com.vmware.vim25.VimPortType;
 import com.vmware.vim25.mo.Datacenter;
-import com.vmware.vim25.mo.ServerConnection;
 import com.vmware.vim25.mo.ServiceInstance;
 import com.vmware.vim25.mo.VirtualMachine;
 import com.vmware.vim25.ws.WSClient;
@@ -110,33 +109,21 @@ public class ViComputeServiceContextModule
 
    @Provides
    @Singleton
-   protected ServiceInstance createConnection(HttpClient client, @Provider URI endpoint,
+   protected ServiceInstance createConnection(JcloudsWSClient client,
             @Named(Constants.PROPERTY_IDENTITY) String identity, @Named(Constants.PROPERTY_CREDENTIAL) String credential)
-            throws RemoteException, MalformedURLException, SecurityException, NoSuchFieldException,
-            IllegalArgumentException, IllegalAccessException, URISyntaxException {
-      ServiceInstance foo = new ServiceInstance(endpoint.toURL(), identity, credential, true);
-      Field serverConnectionField = ServiceInstance.class.getDeclaredField("serverConnection");
-      serverConnectionField.setAccessible(true);
-      ServerConnection connection = (ServerConnection) serverConnectionField.get(foo);
-      Field vimServiceField = ServerConnection.class.getDeclaredField("vimService");
-      vimServiceField.setAccessible(true);
-      VimPortType vim = (VimPortType) vimServiceField.get(connection);
-      Field wscField = VimPortType.class.getDeclaredField("wsc");
-      wscField.setAccessible(true);
-      WSClient oldClient = (WSClient) wscField.get(vim);
-      wscField.set(vim, new JcloudsWSClient(client, oldClient.getBaseUrl().toURI(), oldClient.getCookie(), oldClient
-               .getVimNameSpace()));
-      return foo;
+            throws RemoteException, MalformedURLException {
+      return new ServiceInstance(client, identity, credential);
    }
 
+   @Singleton
    static class JcloudsWSClient extends WSClient {
 
       private final HttpClient client;
 
-      public JcloudsWSClient(HttpClient client, URI baseUrl, String cookie, String vimNameSpace)
-               throws MalformedURLException {
+      @Inject
+      public JcloudsWSClient(HttpClient client, @Provider URI baseUrl,
+               @Named(PROPERTY_VI_XML_NAMESPACE) String vimNameSpace) throws MalformedURLException {
          super(baseUrl.toASCIIString(), false);
-         this.setCookie(cookie);
          this.setVimNameSpace(vimNameSpace);
          this.client = client;
       }
