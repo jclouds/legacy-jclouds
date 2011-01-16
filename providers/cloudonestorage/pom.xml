@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+
+    Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+
+    ====================================================================
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    ====================================================================
+
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4.0.0.xsd" >
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.jclouds</groupId>
+        <artifactId>jclouds-project</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../../project/pom.xml</relativePath>
+    </parent>
+    <groupId>org.jclouds.provider</groupId>
+    <artifactId>cloudonestorage</artifactId>
+    <name>jclouds CloudOne Storage as a Service provider</name>
+    <description>Atmos implementation targeted to Peer1 CloudOne Storage as a Service</description>
+
+    <properties>
+        <test.initializer>org.jclouds.cloudonestorage.blobstore.integration.CloudOneStorageTestInitializer</test.initializer>
+        <test.cloudonestorage.endpoint>https://cloudonestorage.peer1.com</test.cloudonestorage.endpoint>
+        <test.cloudonestorage.apiversion>1.3.0</test.cloudonestorage.apiversion>
+        <test.cloudonestorage.identity>FIXME_IDENTITY</test.cloudonestorage.identity>
+        <test.cloudonestorage.credential>FIXME_CREDENTIAL</test.cloudonestorage.credential>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>atmos</artifactId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.api</groupId>
+            <artifactId>atmos</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-blobstore</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.driver</groupId>
+            <artifactId>jclouds-log4j</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>live</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>integration</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemProperties>
+                                        <property>
+                                            <name>test.cloudonestorage.endpoint</name>
+                                            <value>${test.cloudonestorage.endpoint}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.cloudonestorage.apiversion</name>
+                                            <value>${test.cloudonestorage.apiversion}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.cloudonestorage.identity</name>
+                                            <value>${test.cloudonestorage.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.cloudonestorage.credential</name>
+                                            <value>${test.cloudonestorage.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.initializer</name>
+                                            <value>${test.initializer}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.blobstore.httpstream.url</name>
+                                            <value>${jclouds.blobstore.httpstream.url}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.blobstore.httpstream.md5</name>
+                                            <value>${jclouds.blobstore.httpstream.md5}</value>
+                                        </property>
+                                    </systemProperties>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+
+</project>
+

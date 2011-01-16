@@ -42,6 +42,7 @@
         <module>googlestorage</module>
         <module>scaleup-storage</module>
         <module>synaptic-storage</module>
+        <module>cloudonestorage</module>
         <module>ecc-s3</module>
         <module>ecc-ec2</module>
         <module>cloudservers-us</module>
