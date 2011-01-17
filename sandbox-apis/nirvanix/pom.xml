@@ -29,9 +29,9 @@
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
-    <artifactId>sdn</artifactId>
+    <artifactId>nirvanix</artifactId>
     <name>jclouds nirvanix storage delivery network core</name>
-    <description>jclouds Core components to access nirvanix sdn</description>
+    <description>jclouds Core components to access nirvanix nirvanix</description>
 
     <!-- bootstrapping: need to fetch the project POM -->
     <repositories>
@@ -45,10 +45,10 @@
     </repositories>
 
     <properties>
-        <test.sdn.endpoint>http://services.nirvanix.com</test.sdn.endpoint>
-        <test.sdn.apiversion>2.5.6</test.sdn.apiversion>
-        <test.sdn.identity>FIXME</test.sdn.identity>
-        <test.sdn.credential> FIXME </test.sdn.credential>
+        <test.nirvanix.endpoint>http://services.nirvanix.com</test.nirvanix.endpoint>
+        <test.nirvanix.apiversion>2.5.6</test.nirvanix.apiversion>
+        <test.nirvanix.identity>FIXME</test.nirvanix.identity>
+        <test.nirvanix.credential> FIXME </test.nirvanix.credential>
     </properties>
     <dependencies>
         <dependency>
@@ -106,20 +106,20 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>test.sdn.endpoint</name>
-                                            <value>${test.sdn.endpoint}</value>
+                                            <name>test.nirvanix.endpoint</name>
+                                            <value>${test.nirvanix.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.sdn.apiversion</name>
-                                            <value>${test.sdn.apiversion}</value>
+                                            <name>test.nirvanix.apiversion</name>
+                                            <value>${test.nirvanix.apiversion}</value>
                                         </property>
                                         <property>
-                                            <name>test.sdn.identity</name>
-                                            <value>${test.sdn.identity}</value>
+                                            <name>test.nirvanix.identity</name>
+                                            <value>${test.nirvanix.identity}</value>
                                         </property>
                                         <property>
-                                            <name>test.sdn.credential</name>
-                                            <value>${test.sdn.credential}</value>
+                                            <name>test.nirvanix.credential</name>
+                                            <value>${test.nirvanix.credential}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>
