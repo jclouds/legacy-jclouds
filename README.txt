@@ -42,7 +42,7 @@ our compute api supports: aws-ec2, gogrid, cloudservers (generic), cloudservers-
            to all of these providers
 
 our blobstore api supports: aws-s3, cloudfiles (generic), cloudfiles-us, cloudfiles-uk,
-                            azurestorage, atmos (generic), synaptic-storage, 
+                            azureblob, atmos (generic), synaptic-storage, 
                             cloudonestorage, s3 (generic), walrus(generic), googlestorage, 
                             scaleup-storage, ecc-s3, swift (generic), transient (in-mem),
                             filesystem (on-disk)
@@ -50,8 +50,8 @@ our blobstore api supports: aws-s3, cloudfiles (generic), cloudfiles-us, cloudfi
   * note * the pom dependency org.jclouds/jclouds-allblobstore gives you access to
            to all of these providers
 
-we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, rimuhosting, openstack nova, 
- as well a number of features the sandbox
+we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, rimuhosting, openstack nova,
+                          azurequeue, simpledb as well a number of features the sandbox
 
 
 If you want access to all jclouds components, include the maven dependency org.jclouds/jclouds-all

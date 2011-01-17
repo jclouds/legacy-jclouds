@@ -70,8 +70,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-azure</artifactId>
+            <groupId>org.jclouds.provider</groupId>
+            <artifactId>azureblob</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

@@ -23,20 +23,28 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>jclouds-project</artifactId>
         <groupId>org.jclouds</groupId>
+        <artifactId>jclouds-project</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../project/pom.xml</relativePath>
+        <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.common</groupId>
-    <artifactId>jclouds-commons-project</artifactId>
-    <packaging>pom</packaging>
-    <name>jclouds commons project</name>
-    <modules>
-       <module>azure</module>
-       <module>aws</module>
-       <module>openstack</module>
-       <module>vcloud</module>
-       <module>trmk</module>
-    </modules>
+    <artifactId>azure-common</artifactId>
+    <name>jclouds Azure Components Core</name>
+    <description>jclouds Core components to access Azure</description>
+    <dependencies>
+        <dependency>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds</groupId>
+            <artifactId>jclouds-core</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
 </project>
