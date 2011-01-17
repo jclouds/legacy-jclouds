@@ -40,22 +40,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-blobstore</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds.api</groupId>
-            <artifactId>s3</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>jclouds-azure</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jclouds.api</groupId>
-            <artifactId>cloudfiles</artifactId>
+            <artifactId>jclouds-allblobstore</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
