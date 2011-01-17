@@ -52,14 +52,12 @@ import org.jclouds.elasticstack.predicates.DriveClaimed;
 import org.jclouds.functions.IdentityFunction;
 import org.jclouds.json.Json;
 import org.jclouds.location.Provider;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.base.Supplier;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.inject.Provides;
@@ -83,9 +81,6 @@ public class ElasticStackComputeServiceContextModule
       super.configure();
       bind(new TypeLiteral<ComputeServiceAdapter<ServerInfo, Hardware, DriveInfo, Location>>() {
       }).to(ElasticStackComputeServiceAdapter.class);
-      bind(IdentityFunction.class).toInstance(IdentityFunction.INSTANCE);
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstZone.class);
       bind(new TypeLiteral<Function<ServerInfo, NodeMetadata>>() {
       }).to(ServerInfoToNodeMetadata.class);
       bind(new TypeLiteral<Function<Image, Image>>() {

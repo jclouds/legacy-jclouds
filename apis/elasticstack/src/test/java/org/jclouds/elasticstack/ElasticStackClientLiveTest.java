@@ -76,7 +76,7 @@ import com.google.inject.Module;
 public class ElasticStackClientLiveTest {
 
    protected long driveSize = 1 * 1024 * 1024 * 1024l;
-   protected int maxDriveImageTime = 120;
+   protected int maxDriveImageTime = 360;
    protected String vncPassword = "Il0veVNC";
    protected ElasticStackClient client;
    protected RestContext<ElasticStackClient, ElasticStackAsyncClient> context;

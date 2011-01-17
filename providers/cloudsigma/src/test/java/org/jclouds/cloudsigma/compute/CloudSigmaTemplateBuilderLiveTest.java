@@ -19,8 +19,14 @@
 
 package org.jclouds.cloudsigma.compute;
 
+import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
+import static org.testng.Assert.assertEquals;
+
+import java.io.IOException;
+
 import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
 import org.testng.annotations.Test;
 
@@ -45,12 +51,21 @@ public class CloudSigmaTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTe
          public boolean apply(OsFamilyVersion64Bit input) {
             return ((input.family == OsFamily.RHEL) || //
                   (input.family == OsFamily.CENTOS && !(input.version.equals("5.5") && input.is64Bit)) || //
-                  (input.family == OsFamily.UBUNTU && !(input.version.matches("10.[01][04]") && input.is64Bit)) || //
+                  (input.family == OsFamily.UBUNTU && !(input.version.matches("10.10") && input.is64Bit)) || //
             (input.family == OsFamily.WINDOWS && !((input.version.equals("2008 R2") && input.is64Bit)
                   || (input.version.equals("2008") && !input.is64Bit) || (input.version.equals("2003")))) //
             );
          }
 
       };
+   }
+   
+   @Override
+   public void testDefaultTemplateBuilder() throws IOException {
+      Template defaultTemplate = context.getComputeService().templateBuilder().build();
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.10");
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
+      assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
+      assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
    }
 }

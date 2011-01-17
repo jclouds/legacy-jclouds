@@ -22,6 +22,8 @@ package org.jclouds.skalicloud.compute;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
 import static org.testng.Assert.assertEquals;
 
+import java.io.IOException;
+
 import org.jclouds.compute.BaseTemplateBuilderLiveTest;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
@@ -57,8 +59,8 @@ public class SkaliCloudMalaysiaTemplateBuilderLiveTest extends BaseTemplateBuild
       };
    }
 
-   @Test
-   public void testTemplateBuilder() {
+   @Override
+   public void testDefaultTemplateBuilder() throws IOException {
       Template defaultTemplate = this.context.getComputeService().templateBuilder().build();
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getVersion(), "10.10");

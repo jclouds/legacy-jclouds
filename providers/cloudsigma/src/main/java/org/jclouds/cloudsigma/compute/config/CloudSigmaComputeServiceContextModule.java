@@ -52,13 +52,11 @@ import org.jclouds.compute.domain.os.OsFamilyVersion64Bit;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
 import org.jclouds.functions.IdentityFunction;
-import org.jclouds.location.suppliers.OnlyLocationOrFirstZone;
 import org.jclouds.predicates.RetryablePredicate;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.base.Supplier;
 import com.google.common.collect.MapMaker;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
@@ -78,7 +76,7 @@ public class CloudSigmaComputeServiceContextModule
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(UBUNTU).osVersionMatches("10.04").os64Bit(true).minRam(1024);
+      return template.osFamily(UBUNTU).osVersionMatches("10.10").os64Bit(true).minRam(1024);
    }
 
    @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -87,9 +85,6 @@ public class CloudSigmaComputeServiceContextModule
       super.configure();
       bind(new TypeLiteral<ComputeServiceAdapter<ServerInfo, Hardware, DriveInfo, Location>>() {
       }).to(CloudSigmaComputeServiceAdapter.class);
-      bind(IdentityFunction.class).toInstance(IdentityFunction.INSTANCE);
-      bind(new TypeLiteral<Supplier<Location>>() {
-      }).to(OnlyLocationOrFirstZone.class);
       bind(new TypeLiteral<Function<ServerInfo, NodeMetadata>>() {
       }).to(ServerInfoToNodeMetadata.class);
       bind(new TypeLiteral<Function<Hardware, Hardware>>() {

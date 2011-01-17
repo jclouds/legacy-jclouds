@@ -370,7 +370,7 @@ public class CloudSigmaClientLiveTest {
 
    protected void prepareDrive() {
       client.destroyDrive(drive.getUuid());
-      drive = client.cloneDrive("0b060e09-d98b-44cc-95a4-7e3a22ba1b53", drive.getName(),
+      drive = client.cloneDrive("6a9cd9c2-4814-4953-8e86-f8ee6a3e57d5", drive.getName(),
             new CloneDriveOptions().size(driveSize));
       assert driveNotClaimed.apply(drive) : client.getDriveInfo(drive.getUuid());
       System.err.println("after prepare" + client.getDriveInfo(drive.getUuid()));

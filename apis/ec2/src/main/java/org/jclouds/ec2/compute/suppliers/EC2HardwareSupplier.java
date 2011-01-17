@@ -89,8 +89,10 @@ public class EC2HardwareSupplier implements Supplier<Set<? extends Hardware>> {
          });
          sizes.add(cc1_4xlarge().location(location).supportsImageIds(ccAmi).build());
       }
+      // TODO move logic to dependent module
       sizes.addAll(ImmutableSet.<Hardware> of(t1_micro().build(), c1_medium().build(), c1_xlarge().build(), m1_large()
-               .build(), !"ec2".equals(providerName) ? m1_small().supportsImage(any()).build() : m1_small().build(),
+               .build(),
+               !"aws-ec2".equals(providerName) ? m1_small().supportsImage(any()).build() : m1_small().build(),
                m1_xlarge().build(), m2_xlarge().build(), m2_2xlarge().build(), m2_4xlarge().build()));
       return sizes;
    }
