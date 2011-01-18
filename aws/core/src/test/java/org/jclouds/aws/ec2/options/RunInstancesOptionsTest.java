@@ -21,14 +21,12 @@ package org.jclouds.aws.ec2.options;
 
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.asType;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.enableMonitoring;
-import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withDeviceName;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withKernelId;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withKeyName;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withRamdisk;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withSecurityGroup;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withSubnetId;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withUserData;
-import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withVirtualName;
 import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.withBlockDeviceMappings;
 import static org.testng.Assert.assertEquals;
 
@@ -37,7 +35,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.jclouds.aws.ec2.domain.InstanceType;
-import org.jclouds.aws.ec2.options.RunInstancesOptions.BlockDeviceMapping;
 import org.jclouds.http.options.HttpRequestOptions;
 import org.testng.annotations.Test;
 
@@ -186,32 +183,6 @@ public class RunInstancesOptionsTest {
    }
 
    @Test
-   public void testWithDeviceName() {
-      RunInstancesOptions options = new RunInstancesOptions();
-      options.withDeviceName("test");
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.DeviceName"),
-            Collections.singletonList("test"));
-   }
-
-   @Test
-   public void testNullWithDeviceName() {
-      RunInstancesOptions options = new RunInstancesOptions();
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.DeviceName"), Collections.EMPTY_LIST);
-   }
-
-   @Test
-   public void testWithDeviceNameStatic() {
-      RunInstancesOptions options = withDeviceName("test");
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.DeviceName"),
-            Collections.singletonList("test"));
-   }
-
-   @Test(expectedExceptions = NullPointerException.class)
-   public void testWithDeviceNameNPE() {
-      withDeviceName(null);
-   }
-
-   @Test
    public void testWithMonitoringEnabled() {
       RunInstancesOptions options = new RunInstancesOptions();
       options.enableMonitoring();
@@ -279,29 +250,9 @@ public class RunInstancesOptionsTest {
    }
 
    @Test
-   public void testWithVirtualName() {
-      RunInstancesOptions options = new RunInstancesOptions();
-      options.withVirtualName("test");
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"),
-            Collections.singletonList("test"));
-   }
-
-   @Test
    public void testNullWithVirtualName() {
       RunInstancesOptions options = new RunInstancesOptions();
       assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"), Collections.EMPTY_LIST);
-   }
-
-   @Test
-   public void testWithVirtualNameStatic() {
-      RunInstancesOptions options = withVirtualName("test");
-      assertEquals(options.buildFormParameters().get("BlockDeviceMapping.VirtualName"),
-            Collections.singletonList("test"));
-   }
-
-   @Test(expectedExceptions = NullPointerException.class)
-   public void testWithVirtualNameNPE() {
-      withVirtualName(null);
    }
    
    @Test

@@ -27,8 +27,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import org.jclouds.aws.cloudwatch.CloudWatchClient;
-import org.jclouds.aws.ec2.options.RunInstancesOptions.BlockDeviceMapping;
+import org.jclouds.aws.ec2.options.BlockDeviceMapping;
+import org.jclouds.aws.ec2.options.BlockDeviceMapping.MapEBSSnapshotToDevice;
+import org.jclouds.aws.ec2.options.BlockDeviceMapping.MapEphemeralDeviceToDevice;
+import org.jclouds.aws.ec2.options.BlockDeviceMapping.MapNewVolumeToDevice;
+import org.jclouds.aws.ec2.options.BlockDeviceMapping.UnmapDeviceNamed;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
 import org.jclouds.io.Payload;
@@ -162,15 +168,16 @@ public class EC2TemplateOptions extends TemplateOptions {
    /**
     * Specifies the block device mappings to be used to run the instance
     */
-   public EC2TemplateOptions blockDeviceMapping(String deviceName, 
-           String virtualName, String ebsSnapShotId, 
-           Integer ebsVolumeSize, Boolean ebsNoDevice, 
-           Boolean ebsNoDeviceebsDeleteOnTermination) {
+   public EC2TemplateOptions mapEBSSnapshotToDeviceName(String deviceName, 
+           String snapshotId, @Nullable Integer sizeInGib, 
+           @Nullable Boolean deleteOnTermination) {
       checkNotNull(deviceName, "deviceName cannot be null");
       Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
+      checkNotNull(snapshotId, "snapshotId cannot be null");
+      Preconditions2.checkNotEmpty(snapshotId, "snapshotId must be non-empty");
       Set<BlockDeviceMapping> mappings = new HashSet<BlockDeviceMapping>();
       mappings.addAll(blockDeviceMappings);
-      BlockDeviceMapping mapping = new BlockDeviceMapping(deviceName, virtualName, ebsSnapShotId, ebsVolumeSize, ebsNoDevice, ebsNoDeviceebsDeleteOnTermination);
+      MapEBSSnapshotToDevice mapping = new MapEBSSnapshotToDevice(deviceName, snapshotId, sizeInGib, deleteOnTermination);
       mappings.add(mapping);
       blockDeviceMappings = ImmutableSet.copyOf(mappings);
       return this;
@@ -179,7 +186,57 @@ public class EC2TemplateOptions extends TemplateOptions {
    /**
     * Specifies the block device mappings to be used to run the instance
     */
-   public EC2TemplateOptions blockDeviceMappings(Set<BlockDeviceMapping> blockDeviceMappings) {
+   public EC2TemplateOptions mapNewVolumeToDeviceName(String deviceName, Integer sizeInGib, 
+           @Nullable Boolean deleteOnTermination) {
+      checkNotNull(deviceName, "deviceName cannot be null");
+      Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
+      checkNotNull(sizeInGib, "sizeInGib cannot be null");
+
+      Set<BlockDeviceMapping> mappings = new HashSet<BlockDeviceMapping>();
+      mappings.addAll(blockDeviceMappings);
+      MapNewVolumeToDevice mapping = new MapNewVolumeToDevice(deviceName, sizeInGib, deleteOnTermination);
+      mappings.add(mapping);
+      blockDeviceMappings = ImmutableSet.copyOf(mappings);
+      return this;
+   }
+   
+   /**
+    * Specifies the block device mappings to be used to run the instance
+    */
+   public EC2TemplateOptions mapEphemeralDeviceToDeviceName(String deviceName, String virtualName) {
+      checkNotNull(deviceName, "deviceName cannot be null");
+      Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
+      checkNotNull(virtualName, "virtualName cannot be null");
+      Preconditions2.checkNotEmpty(virtualName, "virtualName must be non-empty");
+
+      Set<BlockDeviceMapping> mappings = new HashSet<BlockDeviceMapping>();
+      mappings.addAll(blockDeviceMappings);
+      MapEphemeralDeviceToDevice mapping = new MapEphemeralDeviceToDevice(deviceName, virtualName);
+      mappings.add(mapping);
+      blockDeviceMappings = ImmutableSet.copyOf(mappings);
+      return this;
+   }
+   
+   /**
+    * Specifies the block device mappings to be used to run the instance
+    */
+   public EC2TemplateOptions unmapDeviceNamed(String deviceName) {
+      checkNotNull(deviceName, "deviceName cannot be null");
+      Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
+
+      Set<BlockDeviceMapping> mappings = new HashSet<BlockDeviceMapping>();
+      mappings.addAll(blockDeviceMappings);
+      UnmapDeviceNamed mapping = new UnmapDeviceNamed(deviceName);
+      mappings.add(mapping);
+      blockDeviceMappings = ImmutableSet.copyOf(mappings);
+      return this;
+   }
+   
+   
+   /**
+    * Specifies the block device mappings to be used to run the instance
+    */
+   public EC2TemplateOptions blockDeviceMappings(Set<? extends BlockDeviceMapping> blockDeviceMappings) {
       checkArgument(Iterables.size(blockDeviceMappings) > 0, "you must specify at least one block device mapping");
       this.blockDeviceMappings = ImmutableSet.copyOf(blockDeviceMappings);
       return this;
@@ -307,20 +364,6 @@ public class EC2TemplateOptions extends TemplateOptions {
          EC2TemplateOptions options = new EC2TemplateOptions();
          return EC2TemplateOptions.class.cast(options.subnetId(subnetId));
       }
-      
-      /**
-       * @see EC2TemplateOptions#blockDeviceMapping
-       */
-      public static EC2TemplateOptions blockDeviceMapping(String deviceName, 
-              String virtualName, String ebsSnapShotId, 
-              Integer ebsVolumeSize, Boolean ebsNoDevice, 
-              Boolean ebsNoDeviceebsDeleteOnTermination) {
-         EC2TemplateOptions options = new EC2TemplateOptions();
-         return options.blockDeviceMapping(deviceName, 
-                 virtualName, ebsSnapShotId, ebsVolumeSize, ebsNoDevice, 
-                 ebsNoDeviceebsDeleteOnTermination);
-      }
-
    }
 
    // methods that only facilitate returning the correct object type
