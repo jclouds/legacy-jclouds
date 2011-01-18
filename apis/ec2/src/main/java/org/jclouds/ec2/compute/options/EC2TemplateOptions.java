@@ -24,10 +24,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Credentials;
+import org.jclouds.ec2.domain.BlockDeviceMapping;
+import org.jclouds.ec2.domain.BlockDeviceMapping.MapEBSSnapshotToDevice;
+import org.jclouds.ec2.domain.BlockDeviceMapping.MapEphemeralDeviceToDevice;
+import org.jclouds.ec2.domain.BlockDeviceMapping.MapNewVolumeToDevice;
+import org.jclouds.ec2.domain.BlockDeviceMapping.UnmapDeviceNamed;
 import org.jclouds.io.Payload;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.util.Preconditions2;
@@ -43,7 +51,7 @@ import com.google.common.collect.Iterables;
  * needed):
  * <p/>
  * <code>
- * import static org.jclouds.ec2.compute.options.EC2TemplateOptions.Builder.*;
+ * import static org.jclouds.aws.ec2.compute.options.EC2TemplateOptions.Builder.*;
  * <p/>
  * ComputeService client = // get connection
  * templateBuilder.options(inboundPorts(22, 80, 8080, 443));
@@ -62,6 +70,7 @@ public class EC2TemplateOptions extends TemplateOptions {
    private boolean noPlacementGroup;
    private String subnetId;
    private byte[] userData;
+   private Set<BlockDeviceMapping> blockDeviceMappings = ImmutableSet.of();
 
    public static final EC2TemplateOptions NONE = new EC2TemplateOptions();
 
@@ -94,17 +103,16 @@ public class EC2TemplateOptions extends TemplateOptions {
       return this;
    }
 
-
    /**
     * Unencoded data
     */
    public EC2TemplateOptions userData(byte[] unencodedData) {
       checkArgument(checkNotNull(unencodedData, "unencodedData").length <= 16 * 1024,
-      "userData cannot be larger than 16kb");
+            "userData cannot be larger than 16kb");
       this.userData = unencodedData;
       return this;
    }
-   
+
    /**
     * Specifies the keypair used to run instances with
     */
@@ -155,6 +163,81 @@ public class EC2TemplateOptions extends TemplateOptions {
       return this;
    }
 
+   /**
+    * Specifies the block device mappings to be used to run the instance
+    */
+   public EC2TemplateOptions mapEBSSnapshotToDeviceName(String deviceName, String snapshotId,
+         @Nullable Integer sizeInGib, @Nullable Boolean deleteOnTermination) {
+      checkNotNull(deviceName, "deviceName cannot be null");
+      Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
+      checkNotNull(snapshotId, "snapshotId cannot be null");
+      Preconditions2.checkNotEmpty(snapshotId, "snapshotId must be non-empty");
+      Set<BlockDeviceMapping> mappings = new HashSet<BlockDeviceMapping>();
+      mappings.addAll(blockDeviceMappings);
+      MapEBSSnapshotToDevice mapping = new MapEBSSnapshotToDevice(deviceName, snapshotId, sizeInGib,
+            deleteOnTermination);
+      mappings.add(mapping);
+      blockDeviceMappings = ImmutableSet.copyOf(mappings);
+      return this;
+   }
+
+   /**
+    * Specifies the block device mappings to be used to run the instance
+    */
+   public EC2TemplateOptions mapNewVolumeToDeviceName(String deviceName, Integer sizeInGib,
+         @Nullable Boolean deleteOnTermination) {
+      checkNotNull(deviceName, "deviceName cannot be null");
+      Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
+      checkNotNull(sizeInGib, "sizeInGib cannot be null");
+
+      Set<BlockDeviceMapping> mappings = new HashSet<BlockDeviceMapping>();
+      mappings.addAll(blockDeviceMappings);
+      MapNewVolumeToDevice mapping = new MapNewVolumeToDevice(deviceName, sizeInGib, deleteOnTermination);
+      mappings.add(mapping);
+      blockDeviceMappings = ImmutableSet.copyOf(mappings);
+      return this;
+   }
+
+   /**
+    * Specifies the block device mappings to be used to run the instance
+    */
+   public EC2TemplateOptions mapEphemeralDeviceToDeviceName(String deviceName, String virtualName) {
+      checkNotNull(deviceName, "deviceName cannot be null");
+      Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
+      checkNotNull(virtualName, "virtualName cannot be null");
+      Preconditions2.checkNotEmpty(virtualName, "virtualName must be non-empty");
+
+      Set<BlockDeviceMapping> mappings = new HashSet<BlockDeviceMapping>();
+      mappings.addAll(blockDeviceMappings);
+      MapEphemeralDeviceToDevice mapping = new MapEphemeralDeviceToDevice(deviceName, virtualName);
+      mappings.add(mapping);
+      blockDeviceMappings = ImmutableSet.copyOf(mappings);
+      return this;
+   }
+
+   /**
+    * Specifies the block device mappings to be used to run the instance
+    */
+   public EC2TemplateOptions unmapDeviceNamed(String deviceName) {
+      checkNotNull(deviceName, "deviceName cannot be null");
+      Preconditions2.checkNotEmpty(deviceName, "deviceName must be non-empty");
+
+      Set<BlockDeviceMapping> mappings = new HashSet<BlockDeviceMapping>();
+      mappings.addAll(blockDeviceMappings);
+      UnmapDeviceNamed mapping = new UnmapDeviceNamed(deviceName);
+      mappings.add(mapping);
+      blockDeviceMappings = ImmutableSet.copyOf(mappings);
+      return this;
+   }
+
+   /**
+    * Specifies the block device mappings to be used to run the instance
+    */
+   public EC2TemplateOptions blockDeviceMappings(Set<? extends BlockDeviceMapping> blockDeviceMappings) {
+      this.blockDeviceMappings = ImmutableSet.copyOf(checkNotNull(blockDeviceMappings, "blockDeviceMappings"));
+      return this;
+   }
+
    public static class Builder {
 
       /**
@@ -180,7 +263,7 @@ public class EC2TemplateOptions extends TemplateOptions {
          EC2TemplateOptions options = new EC2TemplateOptions();
          return EC2TemplateOptions.class.cast(options.keyPair(keyPair));
       }
-      
+
       /**
        * @see EC2TemplateOptions#userData
        */
@@ -277,7 +360,6 @@ public class EC2TemplateOptions extends TemplateOptions {
          EC2TemplateOptions options = new EC2TemplateOptions();
          return EC2TemplateOptions.class.cast(options.subnetId(subnetId));
       }
-
    }
 
    // methods that only facilitate returning the correct object type
@@ -454,7 +536,7 @@ public class EC2TemplateOptions extends TemplateOptions {
    public String getSubnetId() {
       return subnetId;
    }
-   
+
    /**
     * @return unencoded user data.
     */
@@ -462,18 +544,27 @@ public class EC2TemplateOptions extends TemplateOptions {
       return userData;
    }
 
+   /**
+    * @return BlockDeviceMapping to use when running the instance or null.
+    */
+   public Set<BlockDeviceMapping> getBlockDeviceMappings() {
+      return blockDeviceMappings;
+   }
+
    @Override
    public int hashCode() {
+
       final int prime = 31;
       int result = super.hashCode();
+      result = prime * result + ((blockDeviceMappings == null) ? 0 : blockDeviceMappings.hashCode());
       result = prime * result + ((groupIds == null) ? 0 : groupIds.hashCode());
       result = prime * result + ((keyPair == null) ? 0 : keyPair.hashCode());
+      result = prime * result + (monitoringEnabled ? 1231 : 1237);
       result = prime * result + (noKeyPair ? 1231 : 1237);
       result = prime * result + (noPlacementGroup ? 1231 : 1237);
-      result = prime * result + (monitoringEnabled ? 1231 : 1237);
       result = prime * result + ((placementGroup == null) ? 0 : placementGroup.hashCode());
       result = prime * result + ((subnetId == null) ? 0 : subnetId.hashCode());
-      result = prime * result + ((userData == null) ? 0 : userData.hashCode());
+      result = prime * result + Arrays.hashCode(userData);
       return result;
    }
 
@@ -486,6 +577,11 @@ public class EC2TemplateOptions extends TemplateOptions {
       if (getClass() != obj.getClass())
          return false;
       EC2TemplateOptions other = (EC2TemplateOptions) obj;
+      if (blockDeviceMappings == null) {
+         if (other.blockDeviceMappings != null)
+            return false;
+      } else if (!blockDeviceMappings.equals(other.blockDeviceMappings))
+         return false;
       if (groupIds == null) {
          if (other.groupIds != null)
             return false;
@@ -496,11 +592,11 @@ public class EC2TemplateOptions extends TemplateOptions {
             return false;
       } else if (!keyPair.equals(other.keyPair))
          return false;
+      if (monitoringEnabled != other.monitoringEnabled)
+         return false;
       if (noKeyPair != other.noKeyPair)
          return false;
       if (noPlacementGroup != other.noPlacementGroup)
-         return false;
-      if (monitoringEnabled != other.monitoringEnabled)
          return false;
       if (placementGroup == null) {
          if (other.placementGroup != null)
@@ -512,21 +608,19 @@ public class EC2TemplateOptions extends TemplateOptions {
             return false;
       } else if (!subnetId.equals(other.subnetId))
          return false;
-      if (userData == null) {
-         if (other.userData != null)
-            return false;
-      } else if (!userData.equals(other.userData))
+      if (!Arrays.equals(userData, other.userData))
          return false;
+
       return true;
    }
 
    @Override
    public String toString() {
-      return "[groupIds=" + groupIds + ", keyPair=" + keyPair + ", noKeyPair=" + noKeyPair + ", placementGroup="
-               + placementGroup + ", noPlacementGroup=" + noPlacementGroup + ", monitoringEnabled=" + monitoringEnabled
-               + ", inboundPorts=" + Arrays.toString(inboundPorts) + ", privateKey=" + (privateKey != null)
-               + ", publicKey=" + (publicKey != null) + ", runScript=" + (script != null) + ", port:seconds=" + port
-               + ":" + seconds + ", subnetId=" + subnetId + ", metadata/details: " + includeMetadata + "]";
+
+      return "EC2TemplateOptions [groupIds=" + groupIds + ", keyPair=" + keyPair + ", noKeyPair=" + noKeyPair
+            + ", monitoringEnabled=" + monitoringEnabled + ", placementGroup=" + placementGroup + ", noPlacementGroup="
+            + noPlacementGroup + ", subnetId=" + subnetId + ", userData=" + Arrays.toString(userData)
+            + ", blockDeviceMappings=" + blockDeviceMappings + "]";
    }
 
 }

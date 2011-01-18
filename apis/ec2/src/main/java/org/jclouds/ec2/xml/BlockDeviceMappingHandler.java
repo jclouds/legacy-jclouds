@@ -24,7 +24,7 @@ import java.util.Map;
 
 import com.google.inject.Inject;
 import org.jclouds.ec2.domain.Attachment;
-import org.jclouds.ec2.domain.RunningInstance.EbsBlockDevice;
+import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 
@@ -35,10 +35,10 @@ import com.google.common.collect.Maps;
  * @author Adrian Cole
  */
 public class BlockDeviceMappingHandler extends
-         ParseSax.HandlerWithResult<Map<String, EbsBlockDevice>> {
+         ParseSax.HandlerWithResult<Map<String, BlockDevice>> {
    private StringBuilder currentText = new StringBuilder();
 
-   private Map<String, EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
+   private Map<String, BlockDevice> ebsBlockDevices = Maps.newHashMap();
    private String deviceName;
    private String volumeId;
    private boolean deleteOnTermination = true;// correct default is true.
@@ -52,7 +52,7 @@ public class BlockDeviceMappingHandler extends
       this.dateService = dateService;
    }
 
-   public Map<String, EbsBlockDevice> getResult() {
+   public Map<String, BlockDevice> getResult() {
       return ebsBlockDevices;
    }
 
@@ -68,7 +68,7 @@ public class BlockDeviceMappingHandler extends
       } else if (qName.equals("attachTime")) {
          attachTime = dateService.iso8601DateParse(currentText.toString().trim());
       } else if (qName.equals("item")) {
-         ebsBlockDevices.put(deviceName, new EbsBlockDevice(volumeId, attachmentStatus, attachTime, deleteOnTermination));
+         ebsBlockDevices.put(deviceName, new BlockDevice(volumeId, attachmentStatus, attachTime, deleteOnTermination));
           this.volumeId = null;
           this.deviceName = null;
           this.deleteOnTermination = true;

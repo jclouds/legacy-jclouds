@@ -29,8 +29,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
-import org.jclouds.ec2.compute.domain.RegionAndName;
-import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -38,6 +36,8 @@ import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.TemplateBuilderImpl;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
+import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.compute.options.EC2TemplateOptions;
 
 import com.google.common.base.Supplier;
 import com.google.common.collect.ComputationException;
@@ -73,6 +73,7 @@ public class EC2TemplateBuilderImpl extends TemplateBuilderImpl {
             eTo.noKeyPair();
          if (eFrom.getSubnetId() != null)
             eTo.subnetId(eFrom.getSubnetId());
+         eTo.blockDeviceMappings(eFrom.getBlockDeviceMappings());
          if (eFrom.isMonitoringEnabled())
             eTo.enableMonitoring();
          if (eFrom.getUserData() != null)

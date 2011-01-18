@@ -24,15 +24,16 @@ import static org.testng.Assert.assertEquals;
 import java.io.File;
 import java.net.URI;
 import java.util.Date;
+import java.util.Map;
 
 import javax.ws.rs.HttpMethod;
 
 import org.jclouds.ec2.domain.Attachment.Status;
-import org.jclouds.ec2.domain.BlockDeviceMapping;
-import org.jclouds.ec2.domain.RunningInstance;
+import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.http.HttpRequest;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -48,11 +49,10 @@ public class BindBlockDeviceMappingToIndexedFormParamsTest {
          .getInstance(BindBlockDeviceMappingToIndexedFormParams.class);
 
    public void testMapping() {
-      BlockDeviceMapping mapping = new BlockDeviceMapping();
-      mapping.addEbsBlockDevice("apple", new RunningInstance.EbsBlockDevice("appleId", true));
+      Map<String, BlockDevice> mapping = Maps.newLinkedHashMap();
+      mapping.put("apple", new BlockDevice("appleId", true));
       Date date = new Date(999999l);
-      mapping.addEbsBlockDevice("cranberry", new RunningInstance.EbsBlockDevice("cranberry", Status.ATTACHED, date,
-            false));
+      mapping.put("cranberry", new BlockDevice("cranberry", Status.ATTACHED, date, false));
 
       HttpRequest request = HttpRequest.builder().method("POST").endpoint(URI.create("http://localhost")).build();
       request = binder.bindToRequest(request, mapping);

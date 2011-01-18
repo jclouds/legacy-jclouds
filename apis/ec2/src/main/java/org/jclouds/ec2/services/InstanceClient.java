@@ -25,11 +25,14 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.ec2.domain.*;
-import org.jclouds.ec2.domain.RunningInstance.EbsBlockDevice;
+import org.jclouds.concurrent.Timeout;
+import org.jclouds.ec2.domain.BlockDevice;
+import org.jclouds.ec2.domain.InstanceState;
+import org.jclouds.ec2.domain.InstanceStateChange;
+import org.jclouds.ec2.domain.Reservation;
+import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.ec2.options.RunInstancesOptions;
-import org.jclouds.concurrent.Timeout;
 
 /**
  * Provides access to EC2 via their REST API.
@@ -356,7 +359,7 @@ public interface InstanceClient {
     * @return Describes the mapping that defines native device names to use when
     *         exposing virtual devices.
     */
-   Map<String, EbsBlockDevice> getBlockDeviceMappingForInstanceInRegion(
+   Map<String, BlockDevice> getBlockDeviceMappingForInstanceInRegion(
          @Nullable String region, String instanceId);
 
    /**
@@ -536,9 +539,9 @@ public interface InstanceClient {
     * {@link InstanceState#STOPPING} to {@link InstanceState#STOPPED}</li>
     * </ol>
     * 
-    * To create the instances of {@link RunningInstance.EbsBlockDevice}, the
+    * To create the instances of {@link BlockDevice}, the
     * constructor can be used with the following parameters:
-    * {@link RunningInstance.EbsBlockDevice#EbsBlockDevice(String, String, boolean)}
+    * {@link BlockDevice#EbsBlockDevice(String, String, boolean)}
     * , that are:
     * <ol>
     * <li>Volume id (required), for instance, "vol-blah"</li>
@@ -571,5 +574,5 @@ public interface InstanceClient {
     *      />
     */
    void setBlockDeviceMappingForInstanceInRegion(@Nullable String region,
-         String instanceId, BlockDeviceMapping blockDeviceMapping);
+         String instanceId, Map<String, BlockDevice> blockDeviceMapping);
 }

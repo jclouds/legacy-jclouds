@@ -23,14 +23,17 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
-import org.jclouds.ec2.domain.BlockDeviceMapping;
-import org.jclouds.ec2.domain.RunningInstance;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.utils.ModifyRequest;
 import org.jclouds.rest.Binder;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableMultimap.Builder;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 
 /**
  * @author Oleksiy Yarmula
@@ -44,29 +47,22 @@ public class BindBlockDeviceMappingToIndexedFormParams implements Binder {
 
    @Override
    public <R extends HttpRequest> R bindToRequest(R request, Object input) {
-      checkArgument(checkNotNull(input, "input") instanceof BlockDeviceMapping,
-            "this binder is only valid for BlockDeviceMapping");
-      BlockDeviceMapping blockDeviceMapping = (BlockDeviceMapping) input;
+      checkArgument(checkNotNull(input, "input") instanceof Map, "this binder is only valid for Map");
+      @SuppressWarnings("unchecked")
+      Map<String, BlockDevice> blockDeviceMapping = (Map<String, BlockDevice>) input;
 
-      Builder<String, String> builder = ImmutableMultimap.<String, String> builder();
+      com.google.common.collect.ImmutableMap.Builder<String, String> builder = ImmutableMap.<String, String> builder();
       int amazonOneBasedIndex = 1; // according to docs, counters must start with 1
-      for (String ebsBlockDeviceName : blockDeviceMapping.getEbsBlockDevices().keySet()) {
-         for (RunningInstance.EbsBlockDevice ebsBlockDevice : blockDeviceMapping.getEbsBlockDevices().get(
-               ebsBlockDeviceName)) {
+      for (Entry<String, BlockDevice> ebsBlockDeviceName : blockDeviceMapping.entrySet()) {
+         // not null by contract
+         builder.put(format(volumeIdPattern, amazonOneBasedIndex), ebsBlockDeviceName.getValue().getVolumeId());
+         builder.put(format(deviceNamePattern, amazonOneBasedIndex), ebsBlockDeviceName.getKey());
+         builder.put(format(deleteOnTerminationPattern, amazonOneBasedIndex),
+               String.valueOf(ebsBlockDeviceName.getValue().isDeleteOnTermination()));
 
-            // not null by contract
-            builder.put(format(volumeIdPattern, amazonOneBasedIndex), ebsBlockDevice.getVolumeId());
-
-            if (ebsBlockDeviceName != null) {
-               builder.put(format(deviceNamePattern, amazonOneBasedIndex), ebsBlockDeviceName);
-            }
-            builder.put(format(deleteOnTerminationPattern, amazonOneBasedIndex),
-                  String.valueOf(ebsBlockDevice.isDeleteOnTermination()));
-
-            amazonOneBasedIndex++;
-         }
+         amazonOneBasedIndex++;
       }
-      ImmutableMultimap<String, String> forms = builder.build();
+      Multimap<String, String> forms = Multimaps.forMap(builder.build());
       return forms.size() == 0 ? request : ModifyRequest.putFormParams(request, forms);
    }
 

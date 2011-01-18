@@ -27,13 +27,13 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 
 import org.jclouds.ec2.domain.AvailabilityZone;
+import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.MonitoringState;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.ec2.domain.RunningInstance.EbsBlockDevice;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.rest.internal.GeneratedHttpRequest;
@@ -74,17 +74,17 @@ public class RunInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                "example-key-name", dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"), MonitoringState.ENABLED,
                AvailabilityZone.US_EAST_1B, null, "paravirtual", null, (String) null, null, Sets
                         .<String> newLinkedHashSet(), null, null, null, null, null, RootDeviceType.INSTANCE_STORE,
-               null, ImmutableMap.<String, EbsBlockDevice> of()), new RunningInstance(defaultRegion, ImmutableSet
+               null, ImmutableMap.<String, BlockDevice> of()), new RunningInstance(defaultRegion, ImmutableSet
                .of("default"), "1", null, "ami-60a54009", "i-2bc64242", InstanceState.PENDING, InstanceType.M1_SMALL,
                (String) null, null, "example-key-name", dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"),
                MonitoringState.ENABLED, AvailabilityZone.US_EAST_1B, null, "paravirtual", null, (String) null, null,
                Sets.<String> newLinkedHashSet(), null, null, null, null, null, RootDeviceType.INSTANCE_STORE, null,
-               ImmutableMap.<String, EbsBlockDevice> of()), new RunningInstance(defaultRegion, ImmutableSet
+               ImmutableMap.<String, BlockDevice> of()), new RunningInstance(defaultRegion, ImmutableSet
                .of("default"), "2", null, "ami-60a54009", "i-2be64332", InstanceState.PENDING, InstanceType.M1_SMALL,
                (String) null, null, "example-key-name", dateService.iso8601DateParse("2007-08-07T11:51:50.000Z"),
                MonitoringState.ENABLED, AvailabilityZone.US_EAST_1B, null, "paravirtual", null, (String) null, null,
                Sets.<String> newLinkedHashSet(), null, null, null, null, null, RootDeviceType.INSTANCE_STORE, null,
-               ImmutableMap.<String, EbsBlockDevice> of())
+               ImmutableMap.<String, BlockDevice> of())
 
       ), "AIDADH4IGTRXXKCD", null, "r-47a5402e");
 

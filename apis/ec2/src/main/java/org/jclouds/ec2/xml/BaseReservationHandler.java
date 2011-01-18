@@ -27,6 +27,7 @@ import javax.annotation.Resource;
 import javax.inject.Inject;
 
 import org.jclouds.ec2.domain.Attachment;
+import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.MonitoringState;
 import org.jclouds.ec2.domain.Reservation;
@@ -95,7 +96,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
    protected boolean inMonitoring;
 
    private boolean inBlockDeviceMapping;
-   private Map<String, RunningInstance.EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
+   private Map<String, BlockDevice> ebsBlockDevices = Maps.newHashMap();
 
    private String volumeId;
    private Attachment.Status attachmentStatus;
@@ -229,7 +230,7 @@ public abstract class BaseReservationHandler<T> extends HandlerForGeneratedReque
 
    protected void inItem() {
       if (inBlockDeviceMapping) {
-         ebsBlockDevices.put(deviceName, new RunningInstance.EbsBlockDevice(volumeId, attachmentStatus, attachTime,
+         ebsBlockDevices.put(deviceName, new BlockDevice(volumeId, attachmentStatus, attachTime,
                deleteOnTermination));
          this.deviceName = null;
          this.volumeId = null;

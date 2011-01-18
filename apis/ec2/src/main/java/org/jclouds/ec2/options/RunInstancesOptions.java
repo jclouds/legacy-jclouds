@@ -22,6 +22,9 @@ package org.jclouds.ec2.options;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Set;
+
+import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.options.internal.BaseEC2RequestOptions;
 import org.jclouds.encryption.internal.Base64;
@@ -33,7 +36,7 @@ import org.jclouds.encryption.internal.Base64;
  * mutator (if needed):
  * <p/>
  * <code>
- * import static org.jclouds.ec2.options.RunInstancesOptions.Builder.*
+ * import static org.jclouds.aws.ec2.options.RunInstancesOptions.Builder.*
  * <p/>
  * EC2Client connection = // get connection
  * Future<ReservationInfo> instances = connection.runInstances(executableBy("123125").imageIds(1000, 1004));
@@ -161,30 +164,6 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
    }
 
    /**
-    * The virtual name.
-    */
-   public RunInstancesOptions withVirtualName(String virtualName) {
-      formParameters.put("BlockDeviceMapping.VirtualName", checkNotNull(virtualName, "virtualName"));
-      return this;
-   }
-
-   String getVirtualName() {
-      return getFirstFormOrNull("BlockDeviceMapping.VirtualName");
-   }
-
-   /**
-    * The device name (e.g., /dev/sdh).
-    */
-   public RunInstancesOptions withDeviceName(String deviceName) {
-      formParameters.put("BlockDeviceMapping.DeviceName", checkNotNull(deviceName, "deviceName"));
-      return this;
-   }
-
-   String getDeviceName() {
-      return getFirstFormOrNull("BlockDeviceMapping.DeviceName");
-   }
-
-   /**
     * Enables monitoring for the instance.
     */
    public RunInstancesOptions enableMonitoring() {
@@ -208,6 +187,34 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
    String getSubnetId() {
       return getFirstFormOrNull("SubnetId");
    }
+   
+   /**
+    * Specifies the Block Device Mapping for the instance
+    *
+    */
+   
+   public RunInstancesOptions withBlockDeviceMappings(Set<? extends BlockDeviceMapping> mappings) {
+       int i = 1;
+       for(BlockDeviceMapping mapping: mappings)
+       {
+           checkNotNull(mapping.getDeviceName(), "deviceName");
+           formParameters.put(String.format("BlockDeviceMapping.%d.DeviceName", i), mapping.getDeviceName());
+           if(mapping.getVirtualName() != null)
+               formParameters.put(String.format("BlockDeviceMapping.%d.VirtualName", i), mapping.getVirtualName());
+           if(mapping.getEbsSnapshotId() != null)
+               formParameters.put(String.format("BlockDeviceMapping.%d.Ebs.SnapshotId", i), mapping.getEbsSnapshotId());
+           if(mapping.getEbsVolumeSize() != null)
+               formParameters.put(String.format("BlockDeviceMapping.%d.Ebs.VolumeSize", i), String.valueOf(mapping.getEbsVolumeSize()));
+           if(mapping.getEbsNoDevice() != null)
+               formParameters.put(String.format("BlockDeviceMapping.%d.Ebs.NoDevice", i), String.valueOf(mapping.getEbsNoDevice()));
+           if(mapping.getEbsDeleteOnTermination() != null)
+               formParameters.put(String.format("BlockDeviceMapping.%d.Ebs.DeleteOnTermination", i), String.valueOf(mapping.getEbsDeleteOnTermination()));
+               
+           i++;
+       }
+       return this;
+    }
+
 
    public static class Builder {
       /**
@@ -259,14 +266,6 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
       }
 
       /**
-       * @see RunInstancesOptions#withDeviceName(String)
-       */
-      public static RunInstancesOptions withDeviceName(String deviceName) {
-         RunInstancesOptions options = new RunInstancesOptions();
-         return options.withDeviceName(deviceName);
-      }
-
-      /**
        * @see RunInstancesOptions#enableMonitoring()
        */
       public static RunInstancesOptions enableMonitoring() {
@@ -289,13 +288,13 @@ public class RunInstancesOptions extends BaseEC2RequestOptions {
          RunInstancesOptions options = new RunInstancesOptions();
          return options.withRamdisk(ramdiskId);
       }
-
+      
       /**
-       * @see RunInstancesOptions#withVirtualName(String)
+       * @see RunInstancesOptions#withBlockDeviceMappings(Set<BlockDeviceMapping> mappings)
        */
-      public static RunInstancesOptions withVirtualName(String virtualName) {
+      public static RunInstancesOptions withBlockDeviceMappings(Set<? extends BlockDeviceMapping> mappings) {
          RunInstancesOptions options = new RunInstancesOptions();
-         return options.withVirtualName(virtualName);
+         return options.withBlockDeviceMappings(mappings);
       }
 
    }

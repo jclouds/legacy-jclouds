@@ -19,59 +19,130 @@
 
 package org.jclouds.ec2.domain;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import javax.annotation.Nullable;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.Multimap;
+import org.jclouds.util.Preconditions2;
 
 /**
- * Defines the mapping of volumes for
- * {@link org.jclouds.ec2.services.InstanceClient#setBlockDeviceMappingForInstanceInRegion}.
  * 
- * @author Oleksiy Yarmula
+ * @author Lili Nadar
  */
 public class BlockDeviceMapping {
+   private final String deviceName;
+   private final String virtualName;
+   private final String snapshotId;
+   private final Integer sizeInGib;
+   private final Boolean noDevice;
+   private final Boolean deleteOnTermination;
 
-   private final Multimap<String, RunningInstance.EbsBlockDevice> ebsBlockDevices = LinkedHashMultimap
-            .create();
+   // values expressed in GB
+   private static final Integer VOLUME_SIZE_MIN_VALUE = 1;
+   private static final Integer VOLUME_SIZE_MAX_VALUE = 1000;
 
-   public BlockDeviceMapping() {
+   public BlockDeviceMapping(String deviceName, @Nullable String virtualName, @Nullable String snapshotId,
+         @Nullable Integer sizeInGib, @Nullable Boolean noDevice, @Nullable Boolean deleteOnTermination) {
+
+      checkNotNull(deviceName, "deviceName cannot be null");
+      Preconditions2.checkNotEmpty(deviceName, "the deviceName must be non-empty");
+
+      if (sizeInGib != null) {
+         checkArgument((sizeInGib >= VOLUME_SIZE_MIN_VALUE && sizeInGib <= VOLUME_SIZE_MAX_VALUE),
+               String.format("Size in Gib must be between %s and %s GB", VOLUME_SIZE_MIN_VALUE, VOLUME_SIZE_MAX_VALUE));
+      }
+      this.deviceName = deviceName;
+      this.virtualName = virtualName;
+      this.snapshotId = snapshotId;
+      this.sizeInGib = sizeInGib;
+      this.noDevice = noDevice;
+      this.deleteOnTermination = deleteOnTermination;
    }
 
-   /**
-    * Creates block device mapping from the list of {@link RunningInstance.EbsBlockDevice devices}.
-    * 
-    * This method copies the values of the list.
-    * 
-    * @param ebsBlockDevices
-    *           devices to be changed for the volume. This cannot be null.
-    */
-   public BlockDeviceMapping(Multimap<String, RunningInstance.EbsBlockDevice> ebsBlockDevices) {
-      this.ebsBlockDevices.putAll(checkNotNull(ebsBlockDevices,
-      /* or throw */"EbsBlockDevices can't be null"));
+   public String getDeviceName() {
+      return deviceName;
    }
 
-   /**
-    * Adds a {@link RunningInstance.EbsBlockDevice} to the mapping.
-    * 
-    * @param deviceName
-    *           name of the device to apply the mapping. Can be null.
-    * @param ebsBlockDevice
-    *           ebsBlockDevice to be added. This cannot be null.
-    * @return the same instance for method chaining purposes
-    */
-   public BlockDeviceMapping addEbsBlockDevice(@Nullable String deviceName,
-            RunningInstance.EbsBlockDevice ebsBlockDevice) {
-      this.ebsBlockDevices.put(deviceName, checkNotNull(ebsBlockDevice,
-      /* or throw */"EbsBlockDevice can't be null"));
-      return this;
+   public String getVirtualName() {
+      return virtualName;
    }
 
-   public Multimap<String, RunningInstance.EbsBlockDevice> getEbsBlockDevices() {
-      return ImmutableMultimap.<String, RunningInstance.EbsBlockDevice> builder().putAll(
-               ebsBlockDevices).build();
+   public String getEbsSnapshotId() {
+      return snapshotId;
+   }
+
+   public Integer getEbsVolumeSize() {
+      return sizeInGib;
+   }
+
+   public Boolean getEbsNoDevice() {
+      return noDevice;
+   }
+
+   public Boolean getEbsDeleteOnTermination() {
+      return deleteOnTermination;
+   }
+
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((deviceName == null) ? 0 : deviceName.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      BlockDeviceMapping other = (BlockDeviceMapping) obj;
+      if (deviceName == null) {
+         if (other.deviceName != null)
+            return false;
+      } else if (!deviceName.equals(other.deviceName))
+         return false;
+      return true;
+   }
+
+   @Override
+   public String toString() {
+      return "BlockDeviceMapping [deviceName=" + deviceName + ", virtualName=" + virtualName + ", snapshotId="
+            + snapshotId + ", sizeInGib=" + sizeInGib + ", noDevice=" + noDevice + ", deleteOnTermination="
+            + deleteOnTermination + "]";
+   }
+
+   public static class MapEBSSnapshotToDevice extends BlockDeviceMapping {
+      public MapEBSSnapshotToDevice(String deviceName, String snapshotId, @Nullable Integer sizeInGib,
+            @Nullable Boolean deleteOnTermination) {
+         super(deviceName, null, snapshotId, sizeInGib, null, deleteOnTermination);
+         checkNotNull(snapshotId, "snapshotId cannot be null");
+         Preconditions2.checkNotEmpty(snapshotId, "the snapshotId must be non-empty");
+      }
+   }
+
+   public static class MapNewVolumeToDevice extends BlockDeviceMapping {
+      public MapNewVolumeToDevice(String deviceName, Integer sizeInGib, @Nullable Boolean deleteOnTermination) {
+         super(deviceName, null, null, sizeInGib, null, deleteOnTermination);
+         checkNotNull(sizeInGib, "sizeInGib cannot be null");
+      }
+   }
+
+   public static class MapEphemeralDeviceToDevice extends BlockDeviceMapping {
+      public MapEphemeralDeviceToDevice(String deviceName, String virtualName) {
+         super(deviceName, virtualName, null, null, null, null);
+         checkNotNull(virtualName, "virtualName cannot be null");
+         Preconditions2.checkNotEmpty(virtualName, "the virtualName must be non-empty");
+      }
+   }
+
+   public static class UnmapDeviceNamed extends BlockDeviceMapping {
+      public UnmapDeviceNamed(String deviceName) {
+         super(deviceName, null, null, null, true, null);
+      }
    }
 }

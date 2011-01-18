@@ -32,10 +32,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.jclouds.ec2.compute.domain.RegionAndName;
+import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.ec2.domain.RunningInstance.EbsBlockDevice;
 import org.jclouds.collect.Memoized;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.HardwareBuilder;
@@ -131,10 +131,10 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
    @VisibleForTesting
    static List<Volume> addEBS(final RunningInstance instance, Iterable<? extends Volume> volumes) {
       Iterable<Volume> ebsVolumes = Iterables.transform(instance.getEbsBlockDevices().entrySet(),
-               new Function<Entry<String, EbsBlockDevice>, Volume>() {
+               new Function<Entry<String, BlockDevice>, Volume>() {
 
                   @Override
-                  public Volume apply(Entry<String, EbsBlockDevice> from) {
+                  public Volume apply(Entry<String, BlockDevice> from) {
                      return new VolumeImpl(from.getValue().getVolumeId(), Volume.Type.SAN, null, from.getKey(),
                               instance.getRootDeviceName() != null
                                        && instance.getRootDeviceName().equals(from.getKey()), true);

@@ -27,13 +27,13 @@ import java.util.Set;
 
 import org.jclouds.ec2.domain.Attachment;
 import org.jclouds.ec2.domain.AvailabilityZone;
+import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceType;
 import org.jclouds.ec2.domain.MonitoringState;
 import org.jclouds.ec2.domain.Reservation;
 import org.jclouds.ec2.domain.RootDeviceType;
 import org.jclouds.ec2.domain.RunningInstance;
-import org.jclouds.ec2.domain.RunningInstance.EbsBlockDevice;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.config.SaxParserModule;
@@ -77,7 +77,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                         .iso8601DateParse("2009-11-09T03:00:34.000Z"), MonitoringState.DISABLED,
                   AvailabilityZone.US_EAST_1C, null, "paravirtual", null, "ip-10-243-42-70.ec2.internal",
                   "10.243.42.70", ImmutableSet.<String> of(), "ari-a51cf9cc", null, null, null, null,
-                  RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of())), "993194456877",
+                  RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, BlockDevice> of())), "993194456877",
             null, "r-a3c508cb"));
 
       Set<Reservation<? extends RunningInstance>> result = parseRunningInstances("/describe_instances_running.xml");
@@ -96,14 +96,14 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                         .iso8601DateParse("2007-08-07T11:54:42.000Z"), MonitoringState.DISABLED,
                   AvailabilityZone.US_EAST_1B, null, "paravirtual", null, "10-251-50-132.ec2.internal", null,
                   ImmutableSet.of("774F4FF8"), "ari-badbad00", null, null, null, null, RootDeviceType.INSTANCE_STORE,
-                  null, ImmutableMap.<String, EbsBlockDevice> of()),
+                  null, ImmutableMap.<String, BlockDevice> of()),
             new RunningInstance(defaultRegion, ImmutableSet.of("default"), "23",
                   "ec2-72-44-33-6.compute-1.amazonaws.com", "ami-6ea54007", "i-28a64435", InstanceState.RUNNING,
                   InstanceType.M1_LARGE, (String) null, "aki-ba3adfd3", "example-key-name", dateService
                         .iso8601DateParse("2007-08-07T11:54:42.000Z"), MonitoringState.DISABLED,
                   AvailabilityZone.US_EAST_1B, null, "paravirtual", null, "10-251-50-134.ec2.internal", null,
                   ImmutableSet.of("774F4FF8"), "ari-badbad00", null, null, null, null, RootDeviceType.INSTANCE_STORE,
-                  null, ImmutableMap.<String, EbsBlockDevice> of())), "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM", null,
+                  null, ImmutableMap.<String, BlockDevice> of())), "UYY3TLBUXIEON5NQVUUX6OMPWBZIQNFM", null,
             "r-44a5402d"));
 
       Set<Reservation<? extends RunningInstance>> result = parseRunningInstances("/describe_instances.xml");
@@ -123,7 +123,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                   "jclouds#euc-17", dateService.iso8601DateParse("2010-06-16T03:06:19.000Z"), MonitoringState.DISABLED,
                   "open", null, "paravirtual", null, "10.7.0.179", null, ImmutableSet.<String> of(), "eri-A97113E4",
                   null, null, null, null, RootDeviceType.INSTANCE_STORE, null, ImmutableMap
-                        .<String, EbsBlockDevice> of())), "jclouds", null, "r-4D2A08AD"));
+                        .<String, BlockDevice> of())), "jclouds", null, "r-4D2A08AD"));
 
       Set<Reservation<? extends RunningInstance>> result = parseRunningInstances("/describe_instances_euc.xml");
 
@@ -138,7 +138,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                   InstanceState.TERMINATED, InstanceType.M1_SMALL, null, null, "nebulatanimislam", dateService
                         .iso8601SecondsDateParse("2010-09-09T18:09:42Z"), null, null, null, "paravirtual", null, null,
                   "10.128.207.5", ImmutableSet.<String> of("None"), null, null, null, null, null,
-                  RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, EbsBlockDevice> of())), "tislam1", null,
+                  RootDeviceType.INSTANCE_STORE, null, ImmutableMap.<String, BlockDevice> of())), "tislam1", null,
             "r-opqeylmj"));
 
       Set<Reservation<? extends RunningInstance>> result = parseRunningInstances("/describe_instances_nova.xml");
@@ -157,9 +157,9 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
                         .iso8601DateParse("2009-12-30T04:06:23.000Z"), MonitoringState.DISABLED,
                   AvailabilityZone.US_EAST_1B, "placement", "hvm", null, "domU-12-31-39-09-CE-53.compute-1.internal",
                   "10.210.209.157", ImmutableSet.<String> of(), "ari-a51cf9cc", null, null, null, null,
-                  RootDeviceType.EBS, "/dev/sda1", ImmutableMap.<String, EbsBlockDevice> of(
+                  RootDeviceType.EBS, "/dev/sda1", ImmutableMap.<String, BlockDevice> of(
                         "/dev/sda1",
-                        new EbsBlockDevice("vol-dc6ca8b5", Attachment.Status.ATTACHED, dateService
+                        new BlockDevice("vol-dc6ca8b5", Attachment.Status.ATTACHED, dateService
                               .iso8601DateParse("2009-12-30T04:06:29.000Z"), true)))), "993194456877", null,
             "r-596dd731"));
 

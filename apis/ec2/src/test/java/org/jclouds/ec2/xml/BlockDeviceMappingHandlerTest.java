@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.util.Map;
 
 import org.jclouds.ec2.domain.Attachment;
-import org.jclouds.ec2.domain.RunningInstance.EbsBlockDevice;
+import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.date.DateService;
 import org.jclouds.http.functions.BaseHandlerTest;
 import org.testng.annotations.Test;
@@ -46,13 +46,13 @@ public class BlockDeviceMappingHandlerTest extends BaseHandlerTest {
                "/describe_image_attribute_blockDeviceMapping.xml");
 
       DateService dateService = injector.getInstance(DateService.class);
-      Map<String, EbsBlockDevice> expected = ImmutableMap.<String, EbsBlockDevice> of("/dev/sda1",
-               new EbsBlockDevice("vol-d74b82be", Attachment.Status.ATTACHED, dateService
+      Map<String, BlockDevice> expected = ImmutableMap.<String, BlockDevice> of("/dev/sda1",
+               new BlockDevice("vol-d74b82be", Attachment.Status.ATTACHED, dateService
                         .iso8601DateParse("2010-02-20T18:25:26.000Z"), true), "/dev/sdf",
-               new EbsBlockDevice("vol-another", Attachment.Status.DETACHED, dateService
+               new BlockDevice("vol-another", Attachment.Status.DETACHED, dateService
                         .iso8601DateParse("2010-02-20T19:26:26.000Z"), false));
 
-      Map<String, EbsBlockDevice> result = factory.create(
+      Map<String, BlockDevice> result = factory.create(
                injector.getInstance(BlockDeviceMappingHandler.class)).parse(is);
 
       assertEquals(result, expected);

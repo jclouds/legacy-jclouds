@@ -27,7 +27,6 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import org.jclouds.ec2.domain.Attachment.Status;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -40,82 +39,6 @@ import com.google.common.collect.Sets;
  * @author Adrian Cole
  */
 public class RunningInstance implements Comparable<RunningInstance> {
-
-   public static class EbsBlockDevice {
-      private final String volumeId;
-      private final Attachment.Status attachmentStatus;
-      private final Date attachTime;
-      private final boolean deleteOnTermination;
-
-      public EbsBlockDevice(String volumeId, Status attachmentStatus, Date attachTime, boolean deleteOnTermination) {
-         super();
-         this.volumeId = volumeId;
-         this.attachmentStatus = attachmentStatus;
-         this.attachTime = attachTime;
-         this.deleteOnTermination = deleteOnTermination;
-      }
-
-      public EbsBlockDevice(String volumeId, boolean deleteOnTermination) {
-         this(volumeId, null, null, deleteOnTermination);
-      }
-
-      @Override
-      public int hashCode() {
-         final int prime = 31;
-         int result = 1;
-         result = prime * result + ((attachTime == null) ? 0 : attachTime.hashCode());
-         result = prime * result + ((attachmentStatus == null) ? 0 : attachmentStatus.hashCode());
-         result = prime * result + (deleteOnTermination ? 1231 : 1237);
-         result = prime * result + ((volumeId == null) ? 0 : volumeId.hashCode());
-         return result;
-      }
-
-      @Override
-      public boolean equals(Object obj) {
-         if (this == obj)
-            return true;
-         if (obj == null)
-            return false;
-         if (getClass() != obj.getClass())
-            return false;
-         EbsBlockDevice other = (EbsBlockDevice) obj;
-         if (attachTime == null) {
-            if (other.attachTime != null)
-               return false;
-         } else if (!attachTime.equals(other.attachTime))
-            return false;
-         if (attachmentStatus == null) {
-            if (other.attachmentStatus != null)
-               return false;
-         } else if (!attachmentStatus.equals(other.attachmentStatus))
-            return false;
-         if (deleteOnTermination != other.deleteOnTermination)
-            return false;
-         if (volumeId == null) {
-            if (other.volumeId != null)
-               return false;
-         } else if (!volumeId.equals(other.volumeId))
-            return false;
-         return true;
-      }
-
-      public String getVolumeId() {
-         return volumeId;
-      }
-
-      public Attachment.Status getAttachmentStatus() {
-         return attachmentStatus;
-      }
-
-      public Date getAttachTime() {
-         return attachTime;
-      }
-
-      public boolean isDeleteOnTermination() {
-         return deleteOnTermination;
-      }
-
-   }
 
    private final String region;
    private final Set<String> groupIds = Sets.newLinkedHashSet();
@@ -159,7 +82,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    private final RootDeviceType rootDeviceType;
    @Nullable
    private final String rootDeviceName;
-   private final Map<String, EbsBlockDevice> ebsBlockDevices = Maps.newHashMap();
+   private final Map<String, BlockDevice> ebsBlockDevices = Maps.newHashMap();
 
    public int compareTo(RunningInstance o) {
       return (this == o) ? 0 : getId().compareTo(o.getId());
@@ -173,7 +96,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
             @Nullable String privateIpAddress, Set<String> productCodes, @Nullable String ramdiskId,
             @Nullable String reason, @Nullable String subnetId, @Nullable String spotInstanceRequestId,
             @Nullable String vpcId, RootDeviceType rootDeviceType, @Nullable String rootDeviceName,
-            Map<String, EbsBlockDevice> ebsBlockDevices) {
+            Map<String, BlockDevice> ebsBlockDevices) {
       Iterables.addAll(this.groupIds, checkNotNull(groupIds, "groupIds"));
       this.region = checkNotNull(region, "region");
       this.amiLaunchIndex = amiLaunchIndex; // nullable on runinstances.
@@ -389,7 +312,7 @@ public class RunningInstance implements Comparable<RunningInstance> {
    /**
     * EBS volumes associated with the instance.
     */
-   public Map<String, EbsBlockDevice> getEbsBlockDevices() {
+   public Map<String, BlockDevice> getEbsBlockDevices() {
       return ebsBlockDevices;
    }
 

@@ -22,12 +22,12 @@ package org.jclouds.ec2.services;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 import org.jclouds.aws.domain.Region;
 import org.jclouds.ec2.domain.AvailabilityZone;
-import org.jclouds.ec2.domain.BlockDeviceMapping;
+import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.InstanceType;
-import org.jclouds.ec2.domain.RunningInstance;
 import org.jclouds.ec2.domain.Volume.InstanceInitiatedShutdownBehavior;
 import org.jclouds.ec2.options.RunInstancesOptions;
 import org.jclouds.ec2.xml.BlockDeviceMappingHandler;
@@ -46,6 +46,7 @@ import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.internal.RestAnnotationProcessor;
 import org.testng.annotations.Test;
 
+import com.google.common.collect.Maps;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -468,11 +469,11 @@ public class InstanceAsyncClientTest extends BaseEC2AsyncClientTest<InstanceAsyn
    public void testSetBlockDeviceMappingForInstanceInRegion() throws SecurityException, NoSuchMethodException,
          IOException {
       Method method = InstanceAsyncClient.class.getMethod("setBlockDeviceMappingForInstanceInRegion", String.class,
-            String.class, BlockDeviceMapping.class);
+            String.class, Map.class);
 
-      BlockDeviceMapping blockDeviceMapping = new BlockDeviceMapping();
-      blockDeviceMapping.addEbsBlockDevice("/dev/sda1", new RunningInstance.EbsBlockDevice("vol-test1", true));
-      HttpRequest request = processor.createRequest(method, null, "1", blockDeviceMapping);
+      Map<String, BlockDevice> mapping = Maps.newLinkedHashMap();
+      mapping.put("/dev/sda1", new BlockDevice("vol-test1", true));
+      HttpRequest request = processor.createRequest(method, null, "1", mapping);
 
       assertRequestLineEquals(request, "POST https://ec2.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: ec2.us-east-1.amazonaws.com\n");

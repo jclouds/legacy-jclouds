@@ -28,6 +28,7 @@ import static org.testng.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -37,7 +38,7 @@ import java.util.concurrent.TimeoutException;
 import org.jclouds.Constants;
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.domain.Credentials;
-import org.jclouds.ec2.domain.BlockDeviceMapping;
+import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.Image.EbsBlockDevice;
 import org.jclouds.ec2.domain.InstanceState;
 import org.jclouds.ec2.domain.InstanceType;
@@ -67,6 +68,7 @@ import org.testng.annotations.Test;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
@@ -299,9 +301,9 @@ public class CloudApplicationArchitecturesEC2ClientLiveTest {
    }
 
    private void setBlockDeviceMappingForInstanceInRegion() {
-      BlockDeviceMapping blockDeviceMapping = new BlockDeviceMapping();
+      Map<String, BlockDevice> mapping = Maps.newLinkedHashMap();
       try {
-         client.getInstanceServices().setBlockDeviceMappingForInstanceInRegion(null, instanceId, blockDeviceMapping);
+         client.getInstanceServices().setBlockDeviceMappingForInstanceInRegion(null, instanceId, mapping);
          assert false : "shouldn't be allowed, as instance needs to be ebs based-ami";
       } catch (AWSResponseException e) {
          assertEquals("InvalidParameterCombination", e.getError().getCode());

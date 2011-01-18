@@ -41,6 +41,7 @@ import org.jclouds.ec2.compute.functions.CreatePlacementGroupIfNeeded;
 import org.jclouds.ec2.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
+import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.domain.PlacementGroup;
 import org.jclouds.ec2.options.RunInstancesOptions;
@@ -86,6 +87,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup expectations
       expect(template.getHardware()).andReturn(size).atLeastOnce();
       expect(template.getOptions()).andReturn(options).atLeastOnce();
+      expect(options.getBlockDeviceMappings()).andReturn(ImmutableSet.<BlockDeviceMapping> of()).atLeastOnce();
       expect(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options)).andReturn(
             systemGeneratedKeyPairName);
       expect(strategy.getSecurityGroupsForTagAndOptions(region, tag, options)).andReturn(generatedGroups);
@@ -142,6 +144,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup expectations
       expect(template.getHardware()).andReturn(size).atLeastOnce();
       expect(template.getOptions()).andReturn(options).atLeastOnce();
+      expect(options.getBlockDeviceMappings()).andReturn(ImmutableSet.<BlockDeviceMapping> of()).atLeastOnce();
       expect(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options)).andReturn(
             systemGeneratedKeyPairName);
       expect(strategy.createNewPlacementGroupUnlessUserSpecifiedOtherwise(region, tag, options)).andReturn(
@@ -201,6 +204,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup expectations
       expect(template.getHardware()).andReturn(size).atLeastOnce();
       expect(template.getOptions()).andReturn(options).atLeastOnce();
+      expect(options.getBlockDeviceMappings()).andReturn(ImmutableSet.<BlockDeviceMapping> of()).atLeastOnce();
       expect(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options)).andReturn(
             systemGeneratedKeyPairName);
       expect(strategy.createNewPlacementGroupUnlessUserSpecifiedOtherwise(region, tag, options)).andReturn(
@@ -258,6 +262,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup expectations
       expect(template.getHardware()).andReturn(size).atLeastOnce();
       expect(template.getOptions()).andReturn(options).atLeastOnce();
+      expect(options.getBlockDeviceMappings()).andReturn(ImmutableSet.<BlockDeviceMapping> of()).atLeastOnce();
       expect(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options)).andReturn(
             systemGeneratedKeyPairName);
       expect(options.getSubnetId()).andReturn("1");
@@ -313,6 +318,7 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       // setup expectations
       expect(template.getHardware()).andReturn(size).atLeastOnce();
       expect(template.getOptions()).andReturn(options).atLeastOnce();
+      expect(options.getBlockDeviceMappings()).andReturn(ImmutableSet.<BlockDeviceMapping> of()).atLeastOnce();
       expect(strategy.createNewKeyPairUnlessUserSpecifiedOtherwise(region, tag, options)).andReturn(
             systemGeneratedKeyPairName);
       expect(strategy.getSecurityGroupsForTagAndOptions(region, tag, options)).andReturn(generatedGroups);

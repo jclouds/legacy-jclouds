@@ -19,6 +19,7 @@
 
 package org.jclouds.ec2.compute.strategy;
 
+import static com.google.common.base.Preconditions.checkState;
 import static org.jclouds.ec2.options.RunInstancesOptions.Builder.asType;
 
 import java.util.Map;
@@ -29,16 +30,17 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.domain.Template;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.domain.RegionNameAndIngressRules;
 import org.jclouds.ec2.compute.functions.CreatePlacementGroupIfNeeded;
 import org.jclouds.ec2.compute.functions.CreateSecurityGroupIfNeeded;
 import org.jclouds.ec2.compute.functions.CreateUniqueKeyPair;
 import org.jclouds.ec2.compute.options.EC2TemplateOptions;
+import org.jclouds.ec2.domain.BlockDeviceMapping;
 import org.jclouds.ec2.domain.KeyPair;
 import org.jclouds.ec2.options.RunInstancesOptions;
-import org.jclouds.compute.domain.Template;
-import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.location.Provider;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -114,6 +116,13 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions 
       if (userData != null)
          instanceOptions.withUserData(userData);
 
+      Set<BlockDeviceMapping> blockDeviceMappings = EC2TemplateOptions.class.cast(template.getOptions())
+            .getBlockDeviceMappings();
+      if (blockDeviceMappings != null && blockDeviceMappings.size() > 0) {
+         checkState("ebs".equals(template.getImage().getUserMetadata().get("rootDeviceType")),
+               "BlockDeviceMapping only available on ebs boot");
+         instanceOptions.withBlockDeviceMappings(blockDeviceMappings);
+      }
       return instanceOptions;
    }
 

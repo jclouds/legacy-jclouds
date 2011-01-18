@@ -39,7 +39,7 @@ import org.jclouds.Constants;
 import org.jclouds.aws.AWSResponseException;
 import org.jclouds.domain.Credentials;
 import org.jclouds.ec2.domain.Attachment;
-import org.jclouds.ec2.domain.BlockDeviceMapping;
+import org.jclouds.ec2.domain.BlockDevice;
 import org.jclouds.ec2.domain.Image;
 import org.jclouds.ec2.domain.Image.Architecture;
 import org.jclouds.ec2.domain.Image.ImageType;
@@ -83,6 +83,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 
@@ -474,17 +475,16 @@ public class EBSBootEC2ClientLiveTest {
    private void setBlockDeviceMappingForInstanceInRegion() {
       String volumeId = ebsInstance.getEbsBlockDevices().get("/dev/sda1").getVolumeId();
 
-      BlockDeviceMapping blockDeviceMapping = new BlockDeviceMapping();
-      blockDeviceMapping.addEbsBlockDevice("/dev/sda1", new RunningInstance.EbsBlockDevice(volumeId, false));
+      Map<String, BlockDevice> mapping = Maps.newLinkedHashMap();
+      mapping.put("/dev/sda1", new BlockDevice(volumeId, false));
       try {
-         client.getInstanceServices().setBlockDeviceMappingForInstanceInRegion(null, ebsInstance.getId(),
-               blockDeviceMapping);
+         client.getInstanceServices().setBlockDeviceMappingForInstanceInRegion(null, ebsInstance.getId(), mapping);
 
-         Map<String, RunningInstance.EbsBlockDevice> devices = client.getInstanceServices()
-               .getBlockDeviceMappingForInstanceInRegion(null, ebsInstance.getId());
+         Map<String, BlockDevice> devices = client.getInstanceServices().getBlockDeviceMappingForInstanceInRegion(null,
+               ebsInstance.getId());
          assertEquals(devices.size(), 1);
          String deviceName = Iterables.getOnlyElement(devices.keySet());
-         RunningInstance.EbsBlockDevice device = Iterables.getOnlyElement(devices.values());
+         BlockDevice device = Iterables.getOnlyElement(devices.values());
 
          assertEquals(device.getVolumeId(), volumeId);
          assertEquals(deviceName, "/dev/sda1");
