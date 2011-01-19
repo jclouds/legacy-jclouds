@@ -21,10 +21,8 @@ package org.jclouds.savvis;
 
 import java.util.Properties;
 
-import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.vcloud.VCloudExpressClientLiveTest;
 import org.testng.annotations.BeforeGroups;
 

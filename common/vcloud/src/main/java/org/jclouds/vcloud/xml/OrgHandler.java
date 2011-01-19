@@ -71,9 +71,9 @@ public class OrgHandler extends ParseSax.HandlerWithResult<Org> {
    @Override
    public void startElement(String uri, String localName, String qName, Attributes attrs) throws SAXException {
       Map<String, String> attributes = cleanseAttributes(attrs);
-      if (qName.equals("Org")) {
+      if (qName.endsWith("Org")) {
          org = newReferenceType(attributes);
-      } else if (qName.equals("Link")) {
+      } else if (qName.endsWith("Link")) {
          String type = attributes.get("type");
          if (type != null) {
             if (type.indexOf("vdc+xml") != -1) {
@@ -94,11 +94,11 @@ public class OrgHandler extends ParseSax.HandlerWithResult<Org> {
 
    public void endElement(String uri, String name, String qName) {
       taskHandler.endElement(uri, name, qName);
-      if (qName.equals("Task")) {
+      if (qName.endsWith("Task")) {
          this.tasks.add(taskHandler.getResult());
-      } else if (qName.equals("Description")) {
+      } else if (qName.endsWith("Description")) {
          description = currentOrNull();
-      } else if (qName.equals("FullName")) {
+      } else if (qName.endsWith("FullName")) {
          fullName = currentOrNull();
       }
       currentText = new StringBuilder();

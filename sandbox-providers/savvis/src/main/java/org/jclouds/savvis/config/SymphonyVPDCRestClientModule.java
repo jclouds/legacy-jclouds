@@ -28,11 +28,9 @@ import org.jclouds.http.annotation.ServerError;
 import org.jclouds.savvis.SymphonyVPDCAsyncClient;
 import org.jclouds.savvis.SymphonyVPDCClient;
 import org.jclouds.savvis.handlers.SymphonyVPDCErrorHandler;
-import org.jclouds.savvis.xml.SymphonyVPDCOrgListHandler;
 import org.jclouds.vcloud.VCloudExpressAsyncClient;
 import org.jclouds.vcloud.VCloudExpressClient;
 import org.jclouds.vcloud.config.BaseVCloudExpressRestClientModule;
-import org.jclouds.vcloud.xml.OrgListHandler;
 
 import com.google.inject.Provides;
 
@@ -60,7 +58,8 @@ public class SymphonyVPDCRestClientModule extends
    @Override
    protected void configure() {
 	super.configure();
-	bind(OrgListHandler.class).to(SymphonyVPDCOrgListHandler.class);
+//	no longer needed.. just here to show an example of how to override an xml handler
+//	bind(OrgListHandler.class).to(SymphonyVPDCOrgListHandler.class);
    }
 
 @Override

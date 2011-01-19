@@ -167,7 +167,9 @@ public class OrgImpl extends ReferenceTypeImpl implements Org {
 
    @Override
    public String toString() {
-      return "[id=" + getHref() + ", name=" + getName() + ", type=" + getType() + "]";
+      return "[href=" + getHref() + ", name=" + getName() + ", type=" + getType() + ", fullName=" + fullName
+               + ", description=" + description + ", catalogs=" + catalogs + ", networks=" + networks + ", tasksList="
+               + tasksList + ", vdcs=" + vdcs + ", tasks=" + tasks + "]";
    }
 
 }

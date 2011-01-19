@@ -31,10 +31,14 @@ import org.jclouds.http.functions.ParseSax.Factory;
 import org.jclouds.http.functions.config.SaxParserModule;
 import org.jclouds.vcloud.VCloudMediaType;
 import org.jclouds.vcloud.domain.Org;
+import org.jclouds.vcloud.domain.ReferenceType;
+import org.jclouds.vcloud.domain.Task;
+import org.jclouds.vcloud.domain.internal.OrgImpl;
 import org.jclouds.vcloud.domain.internal.ReferenceTypeImpl;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -106,5 +110,18 @@ public class OrgHandlerTest {
                         .create("https://vcloud.safesecureweb.com/api/v0.8/vdc/188849"))));
       assertEquals(result.getTasksList(), new ReferenceTypeImpl("188849 Task List", TASKSLIST_XML, URI
                .create("https://vcloud.safesecureweb.com/api/v0.8/tasksList/188849")));
+   }
+
+   public void testSavvis() {
+      InputStream is = getClass().getResourceAsStream("/org-savvis.xml");
+      Injector injector = Guice.createInjector(new SaxParserModule());
+      Factory factory = injector.getInstance(ParseSax.Factory.class);
+      Org result = (Org) factory.create(injector.getInstance(OrgHandler.class)).parse(is);
+      assertEquals(result, new OrgImpl("607968.0", null, null, "607968.0", "Gravitant Inc", ImmutableMap
+               .<String, ReferenceType> of(), ImmutableMap.<String, ReferenceType> of("GravDataCenter1(Saved)",
+               new ReferenceTypeImpl("GravDataCenter1(Saved)", "application/vnd.vmware.vcloud.vdc+xml", URI
+                        .create("https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/607968.0/vdc/2826"))),
+               ImmutableMap.<String, ReferenceType> of(), null, ImmutableSet.<Task> of()));
+
    }
 }

@@ -48,4 +48,13 @@ public class OrgListHandlerTest extends BaseHandlerTest {
       assertEquals(result, ImmutableMap.of("adrian@jclouds.org", new ReferenceTypeImpl("adrian@jclouds.org",
                "application/vnd.vmware.vcloud.org+xml", URI.create("https://services.vcloudexpress.terremark.com/api/v0.8/org/48"))));
    }
+   
+
+   public void testSavvis() {
+      InputStream is = getClass().getResourceAsStream("/orglist-savvis.xml");
+
+      Map<String, ReferenceType> result = factory.create(injector.getInstance(OrgListHandler.class)).parse(is);
+      assertEquals(result, ImmutableMap.of("SAVVISStation Integration Testing", new ReferenceTypeImpl("SAVVISStation Integration Testing",
+               "application/vnd.vmware.vcloud.org+xml", URI.create("https://api.sandbox.symphonyvpdc.savvis.net/rest/api/v0.8/org/100000.0"))));
+   }
 }
