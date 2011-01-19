@@ -132,6 +132,8 @@ public abstract class BaseComputeServiceLiveTest {
       setServiceDefaults();
       if (tag == null)
          tag = checkNotNull(provider, "provider");
+      if (tag.indexOf('-') == -1)
+         tag = tag + "-";
       setupCredentials();
       setupKeyPairForTest();
       initializeContextAndClient();

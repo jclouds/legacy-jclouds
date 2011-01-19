@@ -172,7 +172,7 @@ public class BaseComputeService implements ComputeService {
    @Override
    public Set<? extends NodeMetadata> runNodesWithTag(String tag, int count, Template template)
             throws RunNodesException {
-      checkArgument(tag.indexOf('-') == -1, "tag cannot contain hyphens");
+      checkNotNull(tag, "tag cannot be null");
       checkNotNull(template.getLocation(), "location");
       logger.debug(">> running %d node%s tag(%s) location(%s) image(%s) hardwareProfile(%s) options(%s)", count,
                count > 1 ? "s" : "", tag, template.getLocation().getId(), template.getImage().getId(), template
