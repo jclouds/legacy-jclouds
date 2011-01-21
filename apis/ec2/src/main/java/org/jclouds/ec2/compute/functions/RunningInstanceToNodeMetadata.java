@@ -158,7 +158,7 @@ public class RunningInstanceToNodeMetadata implements Function<RunningInstance, 
 
    @VisibleForTesting
    String getTagForInstance(final RunningInstance instance) {
-      String tag = String.format("NOTAG-%s", instance.getId());// default
+      String tag = String.format("NOTAG#%s", instance.getId());// default
       try {
          tag = Iterables.getOnlyElement(Iterables.filter(instance.getGroupIds(), new Predicate<String>() {
 

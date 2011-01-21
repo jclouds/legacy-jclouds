@@ -83,7 +83,7 @@ public class RunningInstanceToNodeMetadataTest {
       RunningInstance server = firstInstanceFromResource("/describe_instances_nova.xml");
 
       assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.TERMINATED).publicAddresses(
-               ImmutableSet.<String> of()).privateAddresses(ImmutableSet.of("10.128.207.5")).tag("NOTAG-i-9slweygo")
+               ImmutableSet.<String> of()).privateAddresses(ImmutableSet.of("10.128.207.5")).tag("NOTAG#i-9slweygo")
                .credentials(creds).imageId("us-east-1/ami-25CB1213").id("us-east-1/i-9slweygo")
                .providerId("i-9slweygo").build());
    }
@@ -96,7 +96,7 @@ public class RunningInstanceToNodeMetadataTest {
       RunningInstance server = firstInstanceFromResource("/describe_instances_nova.xml");
 
       assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.TERMINATED).publicAddresses(
-               ImmutableSet.<String> of()).privateAddresses(ImmutableSet.of("10.128.207.5")).tag("NOTAG-i-9slweygo")
+               ImmutableSet.<String> of()).privateAddresses(ImmutableSet.of("10.128.207.5")).tag("NOTAG#i-9slweygo")
                .imageId("us-east-1/ami-25CB1213").id("us-east-1/i-9slweygo").providerId("i-9slweygo").build());
    }
 
@@ -108,7 +108,7 @@ public class RunningInstanceToNodeMetadataTest {
       RunningInstance server = firstInstanceFromResource("/describe_instances_nova.xml");
 
       assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.TERMINATED).privateAddresses(
-               ImmutableSet.of("10.128.207.5")).tag("NOTAG-i-9slweygo").imageId("us-east-1/ami-25CB1213").id(
+               ImmutableSet.of("10.128.207.5")).tag("NOTAG#i-9slweygo").imageId("us-east-1/ami-25CB1213").id(
                "us-east-1/i-9slweygo").providerId("i-9slweygo").location(provider).build());
    }
 
@@ -120,7 +120,7 @@ public class RunningInstanceToNodeMetadataTest {
       RunningInstance server = firstInstanceFromResource("/describe_instances_nova.xml");
 
       assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.TERMINATED).privateAddresses(
-               ImmutableSet.of("10.128.207.5")).tag("NOTAG-i-9slweygo").imageId("us-east-1/ami-25CB1213")
+               ImmutableSet.of("10.128.207.5")).tag("NOTAG#i-9slweygo").imageId("us-east-1/ami-25CB1213")
                .operatingSystem(
                         new OperatingSystemBuilder().family(OsFamily.UBUNTU).version("9.10").arch("paravirtual")
                                  .description("nebula/ubuntu-karmic").is64Bit(true).build()).id("us-east-1/i-9slweygo")
@@ -136,7 +136,7 @@ public class RunningInstanceToNodeMetadataTest {
       RunningInstance server = firstInstanceFromResource("/describe_instances_nova.xml");
 
       assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.TERMINATED).privateAddresses(
-               ImmutableSet.of("10.128.207.5")).tag("NOTAG-i-9slweygo").imageId("us-east-1/ami-25CB1213").hardware(
+               ImmutableSet.of("10.128.207.5")).tag("NOTAG#i-9slweygo").imageId("us-east-1/ami-25CB1213").hardware(
                m1_small().build()).operatingSystem(
                new OperatingSystemBuilder().family(OsFamily.UBUNTU).version("9.10").arch("paravirtual").description(
                         "nebula/ubuntu-karmic").is64Bit(true).build()).id("us-east-1/i-9slweygo").providerId(
@@ -165,7 +165,7 @@ public class RunningInstanceToNodeMetadataTest {
       RunningInstance server = firstInstanceFromResource("/describe_instances_nova.xml");
 
       assertEquals(parser.apply(server), new NodeMetadataBuilder().state(NodeState.TERMINATED).privateAddresses(
-              ImmutableSet.of("10.128.207.5")).tag("NOTAG-i-9slweygo").imageId("us-east-1/ami-25CB1213").id(
+              ImmutableSet.of("10.128.207.5")).tag("NOTAG#i-9slweygo").imageId("us-east-1/ami-25CB1213").id(
               "us-east-1/i-9slweygo").providerId("i-9slweygo").hardware(m1_small().build()).location(
               provider).build());
    }
@@ -298,7 +298,7 @@ public class RunningInstanceToNodeMetadataTest {
    //
    // NodeMetadata metadata = parser.apply(instance);
    //
-   // assertEquals(metadata.getTag(), "NOTAG-i-3d640055");
+   // assertEquals(metadata.getTag(), "NOTAG#i-3d640055");
    // assertEquals(metadata.getLocation(), null);
    // assertEquals(metadata.getImageId(), "us-east-1/ami-1515f07c");
    // assertEquals(metadata.getHardware().getId(), "m1.small");
@@ -395,7 +395,7 @@ public class RunningInstanceToNodeMetadataTest {
    //
    // NodeMetadata metadata = parser.apply(instance);
    //
-   // assertEquals(metadata.getTag(), "NOTAG-i-3d640055");
+   // assertEquals(metadata.getTag(), "NOTAG#i-3d640055");
    // assertEquals(metadata.getLocation(), region);
    // assertEquals(metadata.getImageId(), "us-east-1/ami-1515f07c");
    // assertEquals(metadata.getHardware().getId(), "m1.small");
@@ -486,7 +486,7 @@ public class RunningInstanceToNodeMetadataTest {
    //
    // NodeMetadata metadata = parser.apply(instance);
    //
-   // assertEquals(metadata.getTag(), "NOTAG-i-3d640055");
+   // assertEquals(metadata.getTag(), "NOTAG#i-3d640055");
    // assertEquals(metadata.getLocation(), region);
    // assertEquals(metadata.getImageId(), "us-east-1/ami-1515f07c");
    // assertEquals(metadata.getHardware(), null);
@@ -570,7 +570,7 @@ public class RunningInstanceToNodeMetadataTest {
    //
    // NodeMetadata metadata = parser.apply(instance);
    //
-   // assertEquals(metadata.getTag(), "NOTAG-i-3d640055");
+   // assertEquals(metadata.getTag(), "NOTAG#i-3d640055");
    // assertEquals(metadata.getLocation(), region);
    // assertEquals(metadata.getImageId(), "us-east-1/ami-1515f07c");
    // assertEquals(metadata.getHardware().getId(), "m1.small");
@@ -651,7 +651,7 @@ public class RunningInstanceToNodeMetadataTest {
    // NodeMetadata metadata = parser.apply(instance);
    // assertEquals(metadata.getLocation(), locations.get().iterator().next());
    // assertEquals(metadata.getImageId(), "us-east-1/imageId");
-   // assertEquals(metadata.getTag(), "NOTAG-id");
+   // assertEquals(metadata.getTag(), "NOTAG#id");
    // assertEquals(metadata.getCredentials(), null);
    //
    // verify(imageMap);
@@ -719,7 +719,7 @@ public class RunningInstanceToNodeMetadataTest {
    // NodeMetadata metadata = parser.apply(instance);
    // assertEquals(metadata.getLocation(), locations.get().iterator().next());
    // assertEquals(metadata.getImageId(), "us-east-1/imageId");
-   // assertEquals(metadata.getTag(), "NOTAG-id");
+   // assertEquals(metadata.getTag(), "NOTAG#id");
    // assertEquals(metadata.getCredentials(), null);
    //
    // verify(imageMap);
@@ -792,7 +792,7 @@ public class RunningInstanceToNodeMetadataTest {
    // NodeMetadata metadata = parser.apply(instance);
    // assertEquals(metadata.getLocation(), locations.get().iterator().next());
    // assertEquals(metadata.getImageId(), lateImage.getId());
-   // assertEquals(metadata.getTag(), "NOTAG-id");
+   // assertEquals(metadata.getTag(), "NOTAG#id");
    // assertEquals(metadata.getCredentials(), null);
    //
    // verify(lateImage);
@@ -861,7 +861,7 @@ public class RunningInstanceToNodeMetadataTest {
    // NodeMetadata metadata = parser.apply(instance);
    // assertEquals(metadata.getLocation(), locations.get().iterator().next());
    // assertEquals(metadata.getImageId(), "us-east-1/imageId");
-   // assertEquals(metadata.getTag(), "NOTAG-id");
+   // assertEquals(metadata.getTag(), "NOTAG#id");
    // assertEquals(metadata.getCredentials(), null);
    //
    // verify(imageMap);
@@ -1087,7 +1087,7 @@ public class RunningInstanceToNodeMetadataTest {
    //
    // NodeMetadata metadata = parser.apply(instance);
    //
-   // assertEquals(metadata.getTag(), "NOTAG-id");
+   // assertEquals(metadata.getTag(), "NOTAG#id");
    // assertEquals(metadata.getLocation(), location);
    // assertEquals(metadata.getImageId(), "us-east-1/imageId");
    //

@@ -75,7 +75,7 @@ public class ServerToNodeMetadataTest {
 
       assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
                ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16")).tag(
-               "NOTAG-sample-server").imageId("2").id("1234").providerId("1234").name("sample-server").credentials(
+               "NOTAG#sample-server").imageId("2").id("1234").providerId("1234").name("sample-server").credentials(
                creds).location(
                new LocationImpl(LocationScope.HOST, "e4d909c290d0fb1ca068ffaddf22cbd0",
                         "e4d909c290d0fb1ca068ffaddf22cbd0", new LocationImpl(LocationScope.ZONE, "dallas",
@@ -98,7 +98,7 @@ public class ServerToNodeMetadataTest {
 
       assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
                ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16")).tag(
-               "NOTAG-sample-server").imageId("2").id("1234").providerId("1234").name("sample-server").location(
+               "NOTAG#sample-server").imageId("2").id("1234").providerId("1234").name("sample-server").location(
                new LocationImpl(LocationScope.HOST, "e4d909c290d0fb1ca068ffaddf22cbd0",
                         "e4d909c290d0fb1ca068ffaddf22cbd0", new LocationImpl(LocationScope.ZONE, "dallas",
                                  "description", null))).userMetadata(
@@ -122,7 +122,7 @@ public class ServerToNodeMetadataTest {
 
       assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
                ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16")).tag(
-               "NOTAG-sample-server").imageId("2").operatingSystem(
+               "NOTAG#sample-server").imageId("2").operatingSystem(
                new OperatingSystemBuilder().family(OsFamily.CENTOS).description("CentOS 5.2").version("5.2").is64Bit(
                         true).build()).id("1234").providerId("1234").name("sample-server").location(
                new LocationImpl(LocationScope.HOST, "e4d909c290d0fb1ca068ffaddf22cbd0",
@@ -147,7 +147,7 @@ public class ServerToNodeMetadataTest {
 
       assertEquals(metadata, new NodeMetadataBuilder().state(NodeState.PENDING).publicAddresses(
                ImmutableSet.of("67.23.10.132", "67.23.10.131")).privateAddresses(ImmutableSet.of("10.176.42.16")).tag(
-               "NOTAG-sample-server").imageId("2").hardware(
+               "NOTAG#sample-server").imageId("2").hardware(
                new HardwareBuilder().ids("1").name("256 MB Server").processors(
                         ImmutableList.of(new Processor(1.0, 1.0))).ram(256).volumes(
                         ImmutableList.of(new VolumeBuilder().type(Volume.Type.LOCAL).size(10.0f).durable(true)

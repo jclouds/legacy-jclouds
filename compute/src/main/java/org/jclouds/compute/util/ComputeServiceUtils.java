@@ -62,7 +62,7 @@ import com.google.common.collect.Iterables;
  * @author Adrian Cole
  */
 public class ComputeServiceUtils {
-   public static final Pattern DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX = Pattern.compile("([^-]+)-[0-9a-f]+");
+   public static final Pattern DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX = Pattern.compile("(.+)-[0-9a-f]+");
 
    /**
     * build a shell script that invokes the contents of the http request in bash.
@@ -106,7 +106,7 @@ public class ComputeServiceUtils {
 
    public static String parseTagFromName(String from) {
       Matcher matcher = DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX.matcher(from);
-      return matcher.find() ? matcher.group(1) : "NOTAG-" + from;
+      return matcher.find() ? matcher.group(1) : "NOTAG#" + from;
    }
 
    public static double getCores(Hardware input) {

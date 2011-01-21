@@ -64,7 +64,7 @@ public class CloudServersComputeServiceLiveTest extends BaseComputeServiceLiveTe
       }
    }
 
-   @Test(expectedExceptions = UnsupportedOperationException.class)
+   @Test(enabled = true, dependsOnMethods = "testReboot", expectedExceptions = UnsupportedOperationException.class)
    public void testSuspendResume() throws Exception {
       super.testSuspendResume();
    }

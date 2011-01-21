@@ -100,7 +100,7 @@ public class CredentialsForInstanceTest {
 //
 //      NodeMetadata metadata = parser.apply(instance);
 //
-//      assertEquals(metadata.getTag(), "NOTAG-i-3d640055");
+//      assertEquals(metadata.getTag(), "NOTAG#i-3d640055");
 //      assertEquals(metadata.getLocation(), null);
 //      assertEquals(metadata.getImageId(), "us-east-1/ami-1515f07c");
 //      assertEquals(metadata.getHardware().getId(), "m1.small");
@@ -186,7 +186,7 @@ public class CredentialsForInstanceTest {
 //
 //      NodeMetadata metadata = parser.apply(instance);
 //
-//      assertEquals(metadata.getTag(), "NOTAG-i-3d640055");
+//      assertEquals(metadata.getTag(), "NOTAG#i-3d640055");
 //      assertEquals(metadata.getLocation(), region);
 //      assertEquals(metadata.getImageId(), "us-east-1/ami-1515f07c");
 //      assertEquals(metadata.getHardware().getId(), "m1.small");
@@ -268,7 +268,7 @@ public class CredentialsForInstanceTest {
 //
 //      NodeMetadata metadata = parser.apply(instance);
 //
-//      assertEquals(metadata.getTag(), "NOTAG-i-3d640055");
+//      assertEquals(metadata.getTag(), "NOTAG#i-3d640055");
 //      assertEquals(metadata.getLocation(), region);
 //      assertEquals(metadata.getImageId(), "us-east-1/ami-1515f07c");
 //      assertEquals(metadata.getHardware(), null);
@@ -344,7 +344,7 @@ public class CredentialsForInstanceTest {
 //
 //      NodeMetadata metadata = parser.apply(instance);
 //
-//      assertEquals(metadata.getTag(), "NOTAG-i-3d640055");
+//      assertEquals(metadata.getTag(), "NOTAG#i-3d640055");
 //      assertEquals(metadata.getLocation(), region);
 //      assertEquals(metadata.getImageId(), "us-east-1/ami-1515f07c");
 //      assertEquals(metadata.getHardware().getId(), "m1.small");
@@ -418,7 +418,7 @@ public class CredentialsForInstanceTest {
 //      NodeMetadata metadata = parser.apply(instance);
 //      assertEquals(metadata.getLocation(), locations.get().iterator().next());
 //      assertEquals(metadata.getImageId(), "us-east-1/imageId");
-//      assertEquals(metadata.getTag(), "NOTAG-id");
+//      assertEquals(metadata.getTag(), "NOTAG#id");
 //      assertEquals(metadata.getCredentials(), null);
 //
 //      verify(imageMap);
@@ -480,7 +480,7 @@ public class CredentialsForInstanceTest {
 //      NodeMetadata metadata = parser.apply(instance);
 //      assertEquals(metadata.getLocation(), locations.get().iterator().next());
 //      assertEquals(metadata.getImageId(), "us-east-1/imageId");
-//      assertEquals(metadata.getTag(), "NOTAG-id");
+//      assertEquals(metadata.getTag(), "NOTAG#id");
 //      assertEquals(metadata.getCredentials(), null);
 //
 //      verify(imageMap);
@@ -546,7 +546,7 @@ public class CredentialsForInstanceTest {
 //      NodeMetadata metadata = parser.apply(instance);
 //      assertEquals(metadata.getLocation(), locations.get().iterator().next());
 //      assertEquals(metadata.getImageId(), lateImage.getId());
-//      assertEquals(metadata.getTag(), "NOTAG-id");
+//      assertEquals(metadata.getTag(), "NOTAG#id");
 //      assertEquals(metadata.getCredentials(), null);
 //
 //      verify(lateImage);
@@ -609,7 +609,7 @@ public class CredentialsForInstanceTest {
 //      NodeMetadata metadata = parser.apply(instance);
 //      assertEquals(metadata.getLocation(), locations.get().iterator().next());
 //      assertEquals(metadata.getImageId(), "us-east-1/imageId");
-//      assertEquals(metadata.getTag(), "NOTAG-id");
+//      assertEquals(metadata.getTag(), "NOTAG#id");
 //      assertEquals(metadata.getCredentials(), null);
 //
 //      verify(imageMap);
@@ -815,7 +815,7 @@ public class CredentialsForInstanceTest {
 //
 //      NodeMetadata metadata = parser.apply(instance);
 //
-//      assertEquals(metadata.getTag(), "NOTAG-id");
+//      assertEquals(metadata.getTag(), "NOTAG#id");
 //      assertEquals(metadata.getLocation(), location);
 //      assertEquals(metadata.getImageId(), "us-east-1/imageId");
 //
