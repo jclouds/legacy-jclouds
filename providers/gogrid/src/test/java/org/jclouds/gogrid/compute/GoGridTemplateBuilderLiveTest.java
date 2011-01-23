@@ -50,9 +50,9 @@ public class GoGridTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             return ((input.family == OsFamily.RHEL && !input.version.equals("5.4")) || //
-                  (input.family == OsFamily.CENTOS && input.version.matches("5.[542]")) || //
-                  (input.family == OsFamily.CENTOS && input.is64Bit && input.version.equals("5.[42]")) || //
-                  (input.family == OsFamily.UBUNTU) || //
+                     (input.family == OsFamily.CENTOS && input.version.matches("5.[542]")) || //
+                     (input.family == OsFamily.CENTOS && input.is64Bit && input.version.equals("5.[42]")) || //
+                     (input.family == OsFamily.UBUNTU) || //
             (input.family == OsFamily.WINDOWS && input.version.equals("2008 SP2") || //
             (input.family == OsFamily.WINDOWS && input.version.equals("2008 R2"))));
          }

@@ -28,6 +28,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
@@ -37,6 +38,7 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -55,14 +57,15 @@ import com.google.common.collect.Iterables;
  */
 @Singleton
 public class ServerToNodeMetadata implements Function<Server, NodeMetadata> {
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected Logger logger = Logger.NULL;
+   
    protected final Supplier<Location> location;
    protected final Map<String, Credentials> credentialStore;
    protected final Map<ServerStatus, NodeState> serverToNodeState;
    protected final Supplier<Set<? extends Image>> images;
    protected final Supplier<Set<? extends Hardware>> hardwares;
-
-   @Resource
-   protected Logger logger = Logger.NULL;
 
    private static class FindImageForServer implements Predicate<Image> {
       private final Server instance;

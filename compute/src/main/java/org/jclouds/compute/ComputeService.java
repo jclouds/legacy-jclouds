@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
@@ -33,6 +33,7 @@ import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.io.Payload;
+import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.ssh.ExecResponse;
 
 import com.google.common.base.Predicate;
@@ -137,7 +138,7 @@ public interface ComputeService {
     * default, equivalent to {@code templateBuilder().any().options(templateOptions)}.
     */
    Set<? extends NodeMetadata> runNodesWithTag(String tag, int count, TemplateOptions templateOptions)
-         throws RunNodesException;
+            throws RunNodesException;
 
    /**
     * Like {@link ComputeService#runNodesWithTag(String,int,TemplateOptions)}, except that the
@@ -238,11 +239,12 @@ public interface ComputeService {
     *      org.jclouds.compute.options.RunScriptOptions)
     * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
     */
+   @Deprecated
    Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, Payload runScript)
-         throws RunScriptOnNodesException;
+            throws RunScriptOnNodesException;
 
    /**
-    * Run the script on all nodes with the specific tag.
+    * Run the script on all nodes with the specific predicate.
     * 
     * @param filter
     *           Predicate-based filter to define on which nodes the script is to be executed
@@ -257,7 +259,46 @@ public interface ComputeService {
     * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
     * @see org.jclouds.io.Payloads
     */
+   @Deprecated
    Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
-         Payload runScript, RunScriptOptions options) throws RunScriptOnNodesException;
+            Payload runScript, RunScriptOptions options) throws RunScriptOnNodesException;
+
+   /**
+    * Run the script on all nodes with the specific predicate.
+    * 
+    * @param filter
+    *           Predicate-based filter to define on which nodes the script is to be executed
+    * @param runScript
+    *           string containing the script to run
+    * @param options
+    *           nullable options to how to run the script, whether to override credentials
+    * @return map with node identifiers and corresponding responses
+    * @throws RunScriptOnNodesException
+    *            if anything goes wrong during script execution
+    * 
+    * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
+    * @see org.jclouds.scriptbuilder.domain.Statements
+    */
+   Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, String runScript,
+            RunScriptOptions options) throws RunScriptOnNodesException;
+
+   /**
+    * Run the script on all nodes with the specific predicate.
+    * 
+    * @param filter
+    *           Predicate-based filter to define on which nodes the script is to be executed
+    * @param runScript
+    *           statement containing the script to run
+    * @param options
+    *           nullable options to how to run the script, whether to override credentials
+    * @return map with node identifiers and corresponding responses
+    * @throws RunScriptOnNodesException
+    *            if anything goes wrong during script execution
+    * 
+    * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
+    * @see org.jclouds.scriptbuilder.domain.Statements
+    */
+   Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
+            Statement runScript, RunScriptOptions options) throws RunScriptOnNodesException;
 
 }

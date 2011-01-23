@@ -17,20 +17,14 @@
  * ====================================================================
  */
 
-package org.jclouds.skalicloud.compute;
-
-import org.jclouds.elasticstack.compute.ElasticStackComputeServiceLiveTest;
-import org.testng.annotations.Test;
+package org.jclouds.compute.config;
 
 /**
  * 
+ * Designates information related to customization of a resource.
+ * 
  * @author Adrian Cole
  */
-@Test(groups = "live", sequential = true, testName = "SkaliCloudMalaysiaComputeServiceLiveTest")
-public class SkaliCloudMalaysiaComputeServiceLiveTest extends ElasticStackComputeServiceLiveTest {
-
-   public SkaliCloudMalaysiaComputeServiceLiveTest() {
-      provider = "skalicloud-sdg-my";
-   }
+public interface CustomizationResponse {
 
 }

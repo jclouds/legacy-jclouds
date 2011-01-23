@@ -19,11 +19,14 @@
 
 package org.jclouds.slicehost.compute.config;
 
+import static org.jclouds.compute.domain.OsFamily.UBUNTU;
+
 import java.util.Set;
 
 import javax.inject.Singleton;
 
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
+import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.internal.BaseComputeService;
 import org.jclouds.domain.Location;
 import org.jclouds.domain.LocationScope;
@@ -31,6 +34,7 @@ import org.jclouds.domain.internal.LocationImpl;
 import org.jclouds.location.Provider;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.inject.Injector;
 import com.google.inject.Provides;
 
 /**
@@ -39,6 +43,10 @@ import com.google.inject.Provides;
  * @author Adrian Cole
  */
 public class SlicehostComputeServiceContextModule extends BaseComputeServiceContextModule {
+   @Override
+   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
+      return template.osFamily(UBUNTU).osVersionMatches("10.04").osDescriptionMatches("^((?!MGC).)*$").os64Bit(true);
+   }
 
    @Provides
    @Singleton

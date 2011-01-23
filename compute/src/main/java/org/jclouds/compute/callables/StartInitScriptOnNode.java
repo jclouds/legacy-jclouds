@@ -22,9 +22,15 @@ package org.jclouds.compute.callables;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Collections;
+import java.util.concurrent.Callable;
+
+import javax.annotation.Nullable;
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.util.ComputeServiceUtils.SshCallable;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
@@ -33,23 +39,51 @@ import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import com.google.inject.assistedinject.Assisted;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class InitAndStartScriptOnNode implements SshCallable<ExecResponse> {
-   protected SshClient ssh;
-   protected final NodeMetadata node;
-   protected final InitBuilder init;
-   protected final boolean runAsRoot;
+public class StartInitScriptOnNode implements Callable<ExecResponse> {
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
 
-   public InitAndStartScriptOnNode(NodeMetadata node, String name, Statement script, boolean runAsRoot) {
+   public interface Factory {
+      @Named("blocking")
+      StartInitScriptOnNode blockOnComplete(NodeMetadata node, @Nullable String name, Statement script,
+               boolean runAsRoot);
+
+      @Named("nonblocking")
+      StartInitScriptOnNode dontBlockOnComplete(NodeMetadata node, @Nullable String name, Statement script,
+               boolean runAsRoot);
+   }
+
+   protected final Function<NodeMetadata, SshClient> sshFactory;
+   protected final NodeMetadata node;
+   protected final Statement init;
+   protected final String name;
+   protected final boolean runAsRoot;
+
+   protected SshClient ssh;
+
+   @Inject
+   public StartInitScriptOnNode(Function<NodeMetadata, SshClient> sshFactory, @Assisted NodeMetadata node,
+            @Assisted @Nullable String name, @Assisted Statement script, @Assisted boolean runAsRoot) {
+      this.sshFactory = checkNotNull(sshFactory, "sshFactory");
       this.node = checkNotNull(node, "node");
+      if (name == null) {
+         if (checkNotNull(script, "script") instanceof InitBuilder)
+            name = InitBuilder.class.cast(script).getInstanceName();
+         else
+            name = "jclouds-script-" + System.currentTimeMillis();
+      }
       this.init = checkNotNull(script, "script") instanceof InitBuilder ? InitBuilder.class.cast(script)
                : createInitScript(checkNotNull(name, "name"), script);
+      this.name = checkNotNull(name, "name");
       this.runAsRoot = runAsRoot;
    }
 
@@ -60,13 +94,28 @@ public class InitAndStartScriptOnNode implements SshCallable<ExecResponse> {
 
    @Override
    public ExecResponse call() {
-      ssh.put(init.getInstanceName(), init.render(OsFamily.UNIX));
-      ssh.exec("chmod 755 " + init.getInstanceName());
+      ssh = sshFactory.apply(node);
+      try {
+         ssh.connect();
+         return doCall();
+      } finally {
+         if (ssh != null)
+            ssh.disconnect();
+      }
+
+   }
+
+   /**
+    * ssh client is initialized through this call.
+    */
+   protected ExecResponse doCall() {
+      ssh.put(name, init.render(OsFamily.UNIX));
+      ssh.exec("chmod 755 " + name);
       runAction("init");
       return runAction("start");
    }
 
-   private ExecResponse runAction(String action) {
+   protected ExecResponse runAction(String action) {
       ExecResponse returnVal;
       String command = (runAsRoot) ? execScriptAsRoot(action) : execScriptAsDefaultUser(action);
       returnVal = runCommand(command);
@@ -84,30 +133,23 @@ public class InitAndStartScriptOnNode implements SshCallable<ExecResponse> {
       return returnVal;
    }
 
-   @Override
-   public void setConnection(SshClient ssh, Logger logger) {
-      this.logger = checkNotNull(logger, "logger");
-      this.ssh = checkNotNull(ssh, "ssh");
-   }
-
    @VisibleForTesting
    public String execScriptAsRoot(String action) {
       String command;
       if (node.getCredentials().identity.equals("root")) {
-         command = "./" + init.getInstanceName() + " " + action;
+         command = "./" + name + " " + action;
       } else if (node.getAdminPassword() != null) {
-         command = String.format("echo '%s'|sudo -S ./%s %s", node.getAdminPassword(), init.getInstanceName(), action);
+         command = String.format("echo '%s'|sudo -S ./%s %s", node.getAdminPassword(), name, action);
       } else {
-         command = "sudo ./" + init.getInstanceName() + " " + action;
+         command = "sudo ./" + name + " " + action;
       }
       return command;
    }
 
    protected String execScriptAsDefaultUser(String action) {
-      return "./" + init.getInstanceName() + " " + action;
+      return "./" + name + " " + action;
    }
 
-   @Override
    public NodeMetadata getNode() {
       return node;
    }

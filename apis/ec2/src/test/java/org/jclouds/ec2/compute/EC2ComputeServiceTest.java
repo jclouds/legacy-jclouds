@@ -29,8 +29,6 @@ import java.util.concurrent.ExecutorService;
 
 import javax.inject.Provider;
 
-import org.jclouds.ec2.EC2Client;
-import org.jclouds.ec2.services.PlacementGroupClient;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
@@ -39,8 +37,10 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.RunStatementOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
-import org.jclouds.compute.util.ComputeUtils;
+import org.jclouds.ec2.EC2Client;
+import org.jclouds.ec2.services.PlacementGroupClient;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Predicate;
@@ -52,25 +52,26 @@ import com.google.common.base.Supplier;
 @Test(groups = "unit")
 public class EC2ComputeServiceTest {
 
-   @SuppressWarnings({ "unchecked" })
+   @SuppressWarnings( { "unchecked" })
    public void testUnsupportedOperationOkForPlacementGroups() {
       EC2Client client = createMock(EC2Client.class);
       EC2ComputeService service = new EC2ComputeService(createMock(ComputeServiceContext.class), createMock(Map.class),
-            createMock(Supplier.class), createMock(Supplier.class), createMock(Supplier.class),
-            createMock(ListNodesStrategy.class), createMock(GetNodeMetadataStrategy.class),
-            createMock(RunNodesAndAddToSetStrategy.class), createMock(RebootNodeStrategy.class),
-            createMock(DestroyNodeStrategy.class), createMock(ResumeNodeStrategy.class),
-            createMock(SuspendNodeStrategy.class), createMock(Provider.class), createMock(Provider.class),
-            createMock(Predicate.class), createMock(Predicate.class), createMock(Predicate.class),
-            createMock(ComputeUtils.class), createMock(Timeouts.class), createMock(ExecutorService.class), client,
-            createMock(Map.class), createMock(Map.class), createMock(Map.class), createMock(Predicate.class));
+               createMock(Supplier.class), createMock(Supplier.class), createMock(Supplier.class),
+               createMock(ListNodesStrategy.class), createMock(GetNodeMetadataStrategy.class),
+               createMock(RunNodesAndAddToSetStrategy.class), createMock(RebootNodeStrategy.class),
+               createMock(DestroyNodeStrategy.class), createMock(ResumeNodeStrategy.class),
+               createMock(SuspendNodeStrategy.class), createMock(Provider.class), createMock(Provider.class),
+               createMock(Predicate.class), createMock(Predicate.class), createMock(Predicate.class),
+               createMock(RunStatementOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory.class),
+               createMock(Timeouts.class), createMock(ExecutorService.class), client, createMock(Map.class),
+               createMock(Map.class), createMock(Map.class), createMock(Predicate.class));
 
       PlacementGroupClient placementClient = createMock(PlacementGroupClient.class);
 
       // setup expectations
       expect(client.getPlacementGroupServices()).andReturn(placementClient).atLeastOnce();
       expect(placementClient.describePlacementGroupsInRegion("us-west-1", "jclouds#tag#us-west-1")).andThrow(
-            new UnsupportedOperationException());
+               new UnsupportedOperationException());
 
       // replay mocks
       replay(client);

@@ -22,8 +22,8 @@ package org.jclouds.ec2.compute;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
@@ -49,8 +49,8 @@ import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
+import org.jclouds.compute.strategy.RunStatementOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
-import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 import org.jclouds.ec2.EC2Client;
@@ -81,23 +81,24 @@ public class EC2ComputeService extends BaseComputeService {
 
    @Inject
    protected EC2ComputeService(ComputeServiceContext context, Map<String, Credentials> credentialStore,
-         @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
-         @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
-         GetNodeMetadataStrategy getNodeMetadataStrategy, RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
-         RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
-         ResumeNodeStrategy startNodeStrategy, SuspendNodeStrategy stopNodeStrategy,
-         Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
-         @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
-         @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
-         @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended, ComputeUtils utils, Timeouts timeouts,
-         @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
-         Map<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Map<RegionAndName, String> securityGroupMap,
-         @Named("PLACEMENT") Map<RegionAndName, String> placementGroupMap,
-         @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted) {
+            @Memoized Supplier<Set<? extends Image>> images, @Memoized Supplier<Set<? extends Hardware>> sizes,
+            @Memoized Supplier<Set<? extends Location>> locations, ListNodesStrategy listNodesStrategy,
+            GetNodeMetadataStrategy getNodeMetadataStrategy, RunNodesAndAddToSetStrategy runNodesAndAddToSetStrategy,
+            RebootNodeStrategy rebootNodeStrategy, DestroyNodeStrategy destroyNodeStrategy,
+            ResumeNodeStrategy startNodeStrategy, SuspendNodeStrategy stopNodeStrategy,
+            Provider<TemplateBuilder> templateBuilderProvider, Provider<TemplateOptions> templateOptionsProvider,
+            @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning,
+            @Named("NODE_TERMINATED") Predicate<NodeMetadata> nodeTerminated,
+            @Named("NODE_SUSPENDED") Predicate<NodeMetadata> nodeSuspended,
+            RunStatementOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory statementRunner, Timeouts timeouts,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor, EC2Client ec2Client,
+            Map<RegionAndName, KeyPair> credentialsMap, @Named("SECURITY") Map<RegionAndName, String> securityGroupMap,
+            @Named("PLACEMENT") Map<RegionAndName, String> placementGroupMap,
+            @Named("DELETED") Predicate<PlacementGroup> placementGroupDeleted) {
       super(context, credentialStore, images, sizes, locations, listNodesStrategy, getNodeMetadataStrategy,
-            runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy, stopNodeStrategy,
-            templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated, nodeSuspended, utils,
-            timeouts, executor);
+               runNodesAndAddToSetStrategy, rebootNodeStrategy, destroyNodeStrategy, startNodeStrategy,
+               stopNodeStrategy, templateBuilderProvider, templateOptionsProvider, nodeRunning, nodeTerminated,
+               nodeSuspended, statementRunner, timeouts, executor);
       this.ec2Client = ec2Client;
       this.credentialsMap = credentialsMap;
       this.securityGroupMap = securityGroupMap;
@@ -115,7 +116,7 @@ public class EC2ComputeService extends BaseComputeService {
             try {
                ec2Client.getPlacementGroupServices().deletePlacementGroupInRegion(region, group);
                checkState(placementGroupDeleted.apply(new PlacementGroup(region, group, "cluster", State.PENDING)),
-                     String.format("placementGroup region(%s) name(%s) failed to delete", region, group));
+                        String.format("placementGroup region(%s) name(%s) failed to delete", region, group));
                placementGroupMap.remove(new RegionAndName(region, group));
                logger.debug("<< deleted placementGroup(%s)", group);
             } catch (AWSResponseException e) {
@@ -129,8 +130,8 @@ public class EC2ComputeService extends BaseComputeService {
       } catch (UnsupportedOperationException e) {
       } catch (HttpResponseException e) {
          // Eucalyptus does not support placement groups yet.
-         if (!(e.getResponse().getStatusCode() == 400 && context.getProviderSpecificContext().getProvider()
-               .equals("eucalyptus")))
+         if (!(e.getResponse().getStatusCode() == 400 && context.getProviderSpecificContext().getProvider().equals(
+                  "eucalyptus")))
             throw e;
       }
    }

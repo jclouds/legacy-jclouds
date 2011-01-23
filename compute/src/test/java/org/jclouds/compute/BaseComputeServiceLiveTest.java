@@ -38,7 +38,6 @@ import static org.jclouds.compute.predicates.NodePredicates.all;
 import static org.jclouds.compute.predicates.NodePredicates.runningWithTag;
 import static org.jclouds.compute.predicates.NodePredicates.withTag;
 import static org.jclouds.compute.util.ComputeServiceUtils.getCores;
-import static org.jclouds.io.Payloads.newStringPayload;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -75,7 +74,6 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContextFactory;
-import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
@@ -159,8 +157,8 @@ public abstract class BaseComputeServiceLiveTest {
       if (context != null)
          context.close();
       Properties props = setupProperties();
-      context = new ComputeServiceContextFactory(getRestProperties()).createContext(provider,
-            ImmutableSet.of(new Log4JLoggingModule(), getSshModule()), props);
+      context = new ComputeServiceContextFactory(getRestProperties()).createContext(provider, ImmutableSet.of(
+               new Log4JLoggingModule(), getSshModule()), props);
       client = context.getComputeService();
    }
 
@@ -180,8 +178,8 @@ public abstract class BaseComputeServiceLiveTest {
    public void testCorrectAuthException() throws Exception {
       ComputeServiceContext context = null;
       try {
-         context = new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA",
-               ImmutableSet.<Module> of(new Log4JLoggingModule()));
+         context = new ComputeServiceContextFactory().createContext(provider, "MOMMA", "MIA", ImmutableSet
+                  .<Module> of(new Log4JLoggingModule()));
          context.getComputeService().listNodes();
       } catch (AuthorizationException e) {
          throw e;
@@ -224,7 +222,7 @@ public abstract class BaseComputeServiceLiveTest {
          OperatingSystem os = get(nodes, 0).getOperatingSystem();
          try {
             Map<? extends NodeMetadata, ExecResponse> responses = runScriptWithCreds(tag, os, new Credentials(
-                  good.identity, "romeo"));
+                     good.identity, "romeo"));
             assert false : "shouldn't pass with a bad password\n" + responses;
          } catch (RunScriptOnNodesException e) {
             assert getRootCause(e).getMessage().contains("Auth fail") : e;
@@ -283,7 +281,7 @@ public abstract class BaseComputeServiceLiveTest {
       template = buildTemplate(client.templateBuilder());
 
       template.getOptions().installPrivateKey(keyPair.get("private")).authorizePublicKey(keyPair.get("public"))
-            .runScript(buildScript(template.getImage().getOperatingSystem()));
+               .runScript(buildScript(template.getImage().getOperatingSystem()));
    }
 
    protected void checkImageIdMatchesTemplate(NodeMetadata node) {
@@ -294,8 +292,8 @@ public abstract class BaseComputeServiceLiveTest {
    protected void checkOsMatchesTemplate(NodeMetadata node) {
       if (node.getOperatingSystem() != null)
          assert node.getOperatingSystem().getFamily().equals(template.getImage().getOperatingSystem().getFamily()) : String
-               .format("expecting family %s but got %s", template.getImage().getOperatingSystem().getFamily(),
-                     node.getOperatingSystem());
+                  .format("expecting family %s but got %s", template.getImage().getOperatingSystem().getFamily(), node
+                           .getOperatingSystem());
    }
 
    void assertLocationSameOrChild(Location test, Location expected) {
@@ -327,11 +325,10 @@ public abstract class BaseComputeServiceLiveTest {
    }
 
    protected Map<? extends NodeMetadata, ExecResponse> runScriptWithCreds(final String tag, OperatingSystem os,
-         Credentials creds) throws RunScriptOnNodesException {
+            Credentials creds) throws RunScriptOnNodesException {
       try {
-         return client.runScriptOnNodesMatching(runningWithTag(tag),
-               newStringPayload(buildScript(os).render(OsFamily.UNIX)),
-               overrideCredentialsWith(creds).nameTask("runScriptWithCreds"));
+         return client.runScriptOnNodesMatching(runningWithTag(tag), buildScript(os), overrideCredentialsWith(creds)
+                  .nameTask("runScriptWithCreds"));
       } catch (SshException e) {
          throw e;
       }
@@ -361,16 +358,16 @@ public abstract class BaseComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = "testCreateAnotherNodeWithANewContextToEnsureSharedMemIsntRequired")
    public void testGet() throws Exception {
-      Map<String, ? extends NodeMetadata> metadataMap = newLinkedHashMap(uniqueIndex(
-            filter(client.listNodesDetailsMatching(all()), and(withTag(tag), not(TERMINATED))),
-            new Function<NodeMetadata, String>() {
+      Map<String, ? extends NodeMetadata> metadataMap = newLinkedHashMap(uniqueIndex(filter(client
+               .listNodesDetailsMatching(all()), and(withTag(tag), not(TERMINATED))),
+               new Function<NodeMetadata, String>() {
 
-               @Override
-               public String apply(NodeMetadata from) {
-                  return from.getId();
-               }
+                  @Override
+                  public String apply(NodeMetadata from) {
+                     return from.getId();
+                  }
 
-            }));
+               }));
       for (NodeMetadata node : nodes) {
          metadataMap.remove(node.getId());
          NodeMetadata metadata = client.getNodeMetadata(node.getId());
@@ -389,7 +386,7 @@ public abstract class BaseComputeServiceLiveTest {
 
    protected void assertNodeZero(Collection<? extends NodeMetadata> metadataSet) {
       assert metadataSet.size() == 0 : String.format("nodes left in set: [%s] which didn't match set: [%s]",
-            metadataSet, nodes);
+               metadataSet, nodes);
    }
 
    @Test(enabled = true, dependsOnMethods = "testGet")
@@ -453,7 +450,9 @@ public abstract class BaseComputeServiceLiveTest {
 
    @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
    public void testDestroyNodes() {
-      client.destroyNodesMatching(withTag(tag));
+      int toDestroy = refreshNodes().size();
+      Set<? extends NodeMetadata> destroyed = client.destroyNodesMatching(withTag(tag));
+      assertEquals(toDestroy, destroyed.size());
       for (NodeMetadata node : filter(client.listNodesDetailsMatching(all()), withTag(tag))) {
          assert node.getState() == NodeState.TERMINATED : node;
          assertEquals(context.getCredentialStore().get("node#" + node.getId()), null);
@@ -475,12 +474,12 @@ public abstract class BaseComputeServiceLiveTest {
       }
 
       template = client.templateBuilder().options(blockOnComplete(false).blockOnPort(8080, 600).inboundPorts(22, 8080))
-            .build();
+               .build();
 
       // note this is a dependency on the template resolution
       template.getOptions().runScript(
-            RunScriptData.createScriptInstallAndStartJBoss(keyPair.get("public"), template.getImage()
-                  .getOperatingSystem()));
+               RunScriptData.createScriptInstallAndStartJBoss(keyPair.get("public"), template.getImage()
+                        .getOperatingSystem()));
       try {
          NodeMetadata node = getOnlyElement(client.runNodesWithTag(tag, 1, template));
 
@@ -514,26 +513,26 @@ public abstract class BaseComputeServiceLiveTest {
          assert location != location.getParent() : location;
          assert location.getScope() != null : location;
          switch (location.getScope()) {
-         case PROVIDER:
-            assertProvider(location);
-            break;
-         case REGION:
-            assertProvider(location.getParent());
-            break;
-         case ZONE:
-            Location provider = location.getParent().getParent();
-            // zone can be a direct descendant of provider
-            if (provider == null)
-               provider = location.getParent();
-            assertProvider(provider);
-            break;
-         case HOST:
-            Location provider2 = location.getParent().getParent().getParent();
-            // zone can be a direct descendant of provider
-            if (provider2 == null)
-               provider2 = location.getParent().getParent();
-            assertProvider(provider2);
-            break;
+            case PROVIDER:
+               assertProvider(location);
+               break;
+            case REGION:
+               assertProvider(location.getParent());
+               break;
+            case ZONE:
+               Location provider = location.getParent().getParent();
+               // zone can be a direct descendant of provider
+               if (provider == null)
+                  provider = location.getParent();
+               assertProvider(provider);
+               break;
+            case HOST:
+               Location provider2 = location.getParent().getParent().getParent();
+               // zone can be a direct descendant of provider
+               if (provider2 == null)
+                  provider2 = location.getParent().getParent();
+               assertProvider(provider2);
+               break;
          }
       }
    }
@@ -621,7 +620,7 @@ public abstract class BaseComputeServiceLiveTest {
          assertEquals(hello.getOutput().trim(), "hello");
          ExecResponse exec = ssh.exec("java -version");
          assert exec.getError().indexOf("1.6") != -1 || exec.getOutput().indexOf("1.6") != -1 : exec + "\n"
-               + ssh.exec("cat /tmp/bootstrap/stdout.log /tmp/bootstrap/stderr.log");
+                  + ssh.exec("cat /tmp/bootstrap/stdout.log /tmp/bootstrap/stderr.log");
       } finally {
          if (ssh != null)
             ssh.disconnect();

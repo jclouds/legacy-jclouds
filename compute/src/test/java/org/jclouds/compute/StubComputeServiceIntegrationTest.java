@@ -361,17 +361,17 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
       super.testTemplateMatch();
    }
 
-   @Override
+   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
    public void testGetNodesWithDetails() throws Exception {
       super.testGetNodesWithDetails();
    }
 
-   @Override
+   @Test(enabled = true, dependsOnMethods = "testSuspendResume")
    public void testListNodes() throws Exception {
       super.testListNodes();
    }
 
-   @Override
+   @Test(enabled = true,  dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
    public void testDestroyNodes() {
       super.testDestroyNodes();
    }

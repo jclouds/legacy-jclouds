@@ -30,14 +30,17 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.Constants;
+import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.strategy.AddNodeWithTagStrategy;
+import org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.impl.EncodeTagIntoNameRunNodesAndAddToSetStrategy;
-import org.jclouds.compute.util.ComputeUtils;
 import org.jclouds.domain.LocationScope;
 import org.jclouds.vcloud.terremark.compute.options.TerremarkVCloudTemplateOptions;
+
+import com.google.common.collect.Multimap;
 
 /**
  * creates futures that correlate to
@@ -50,23 +53,27 @@ public class TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy extends Encod
    private final CreateNewKeyPairUnlessUserSpecifiedOtherwise createNewKeyPairUnlessUserSpecifiedOtherwise;
 
    @Inject
-   protected TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy(AddNodeWithTagStrategy addNodeWithTagStrategy,
-            ListNodesStrategy listNodesStrategy, @Named("NAMING_CONVENTION") String nodeNamingConvention,
-            ComputeUtils utils, @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
+   protected TerremarkEncodeTagIntoNameRunNodesAndAddToSetStrategy(
+            AddNodeWithTagStrategy addNodeWithTagStrategy,
+            ListNodesStrategy listNodesStrategy,
+            @Named("NAMING_CONVENTION") String nodeNamingConvention,
+            CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory,
+            @Named(Constants.PROPERTY_USER_THREADS) ExecutorService executor,
             CreateNewKeyPairUnlessUserSpecifiedOtherwise createNewKeyPairUnlessUserSpecifiedOtherwise) {
-      super(addNodeWithTagStrategy, listNodesStrategy, nodeNamingConvention, utils, executor);
+      super(addNodeWithTagStrategy, listNodesStrategy, nodeNamingConvention, executor,
+               customizeNodeAndAddToGoodMapOrPutExceptionIntoBadMapFactory);
       this.createNewKeyPairUnlessUserSpecifiedOtherwise = createNewKeyPairUnlessUserSpecifiedOtherwise;
    }
 
    @Override
-   public Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> nodes,
-            Map<NodeMetadata, Exception> badNodes) {
+   public Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> goodNodes,
+            Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
       assert template.getLocation().getParent().getScope() == LocationScope.REGION : "template location should have a parent of org, which should be mapped to region: "
                + template.getLocation();
       String orgId = template.getLocation().getParent().getId();
       assert orgId.startsWith("http") : "parent id should be a rest url: " + template.getLocation().getParent();
       createNewKeyPairUnlessUserSpecifiedOtherwise.execute(URI.create(orgId), tag, template.getImage()
                .getDefaultCredentials().identity, template.getOptions().as(TerremarkVCloudTemplateOptions.class));
-      return super.execute(tag, count, template, nodes, badNodes);
+      return super.execute(tag, count, template, goodNodes, badNodes, customizationResponses);
    }
 }

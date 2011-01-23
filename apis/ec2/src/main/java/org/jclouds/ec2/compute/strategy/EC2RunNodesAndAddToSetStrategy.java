@@ -34,6 +34,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.aws.util.AWSUtils;
+import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -52,6 +53,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
 
 /**
  * creates futures that correlate to
@@ -68,7 +70,7 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
    @VisibleForTesting
    final EC2Client client;
    @VisibleForTesting
-   final CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions;
+   final CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize;
    @VisibleForTesting
    final Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata;
    @VisibleForTesting
@@ -80,14 +82,14 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
    @Inject
    EC2RunNodesAndAddToSetStrategy(
             EC2Client client,
-            CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions,
+            CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptions createKeyPairAndSecurityGroupsAsNeededAndReturncustomize,
             @Named("PRESENT") Predicate<RunningInstance> instancePresent,
             Function<RunningInstance, NodeMetadata> runningInstanceToNodeMetadata,
             Function<RunningInstance, Credentials> instanceToCredentials, Map<String, Credentials> credentialStore,
             ComputeUtils utils) {
       this.client = client;
       this.instancePresent = instancePresent;
-      this.createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions = createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions;
+      this.createKeyPairAndSecurityGroupsAsNeededAndReturncustomize = createKeyPairAndSecurityGroupsAsNeededAndReturncustomize;
       this.runningInstanceToNodeMetadata = runningInstanceToNodeMetadata;
       this.instanceToCredentials = instanceToCredentials;
       this.credentialStore = credentialStore;
@@ -96,7 +98,7 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
 
    @Override
    public Map<?, Future<Void>> execute(String tag, int count, Template template, Set<NodeMetadata> goodNodes,
-            Map<NodeMetadata, Exception> badNodes) {
+            Map<NodeMetadata, Exception> badNodes, Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
 
       Reservation<? extends RunningInstance> reservation = createKeyPairAndSecurityGroupsAsNeededThenRunInstances(tag,
                count, template);
@@ -111,8 +113,8 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
          populateCredentials(reservation);
       }
 
-      return utils.runOptionsOnNodesAndAddToGoodSetOrPutExceptionIntoBadMap(template.getOptions(), transform(
-               reservation, runningInstanceToNodeMetadata), goodNodes, badNodes);
+      return utils.customizeNodesAndAddToGoodMapOrPutExceptionIntoBadMap(template.getOptions(), transform(reservation,
+               runningInstanceToNodeMetadata), goodNodes, badNodes, customizationResponses);
    }
 
    protected void populateCredentials(Reservation<? extends RunningInstance> reservation) {
@@ -129,7 +131,7 @@ public class EC2RunNodesAndAddToSetStrategy implements RunNodesAndAddToSetStrate
       String region = AWSUtils.getRegionFromLocationOrNull(template.getLocation());
       String zone = getZoneFromLocationOrNull(template.getLocation());
 
-      RunInstancesOptions instanceOptions = createKeyPairAndSecurityGroupsAsNeededAndReturnRunOptions.execute(region,
+      RunInstancesOptions instanceOptions = createKeyPairAndSecurityGroupsAsNeededAndReturncustomize.execute(region,
                tag, template);
 
       if (EC2TemplateOptions.class.cast(template.getOptions()).isMonitoringEnabled())

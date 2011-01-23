@@ -115,14 +115,6 @@ public class TerremarkVCloudComputeServiceContextModule extends VCloudExpressCom
       return new ConcurrentHashMap<OrgAndName, KeyPairCredentials>();
    }
 
-   // TODO
-   // @Override
-   // protected void bindLoadBalancer() {
-   // bind(LoadBalanceNodesStrategy.class).to(TerremarkLoadBalanceNodesStrategy.class);
-   // bind(DestroyLoadBalancerStrategy.class).to(TerremarkDestroyLoadBalancerStrategy.class);
-   // }
-   //
-
    @Named("PASSWORD")
    @Provides
    String providePassword(SecureRandom random) {

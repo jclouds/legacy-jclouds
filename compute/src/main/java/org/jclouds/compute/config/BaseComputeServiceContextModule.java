@@ -24,12 +24,15 @@ import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
+import org.jclouds.compute.callables.StartInitScriptOnNode;
+import org.jclouds.compute.callables.StartInitScriptOnNodeAndBlockUntilComplete;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -37,11 +40,17 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.functions.CreateSshClientOncePortIsListeningOnNode;
+import org.jclouds.compute.functions.TemplateOptionsToStatement;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
+import org.jclouds.compute.strategy.RunStatementOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
+import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.domain.Location;
 import org.jclouds.json.Json;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
+import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
@@ -52,6 +61,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.google.inject.name.Names;
 
 /**
  * 
@@ -63,6 +74,23 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       install(new ComputeServiceTimeoutsModule());
       bind(new TypeLiteral<Function<NodeMetadata, SshClient>>() {
       }).to(CreateSshClientOncePortIsListeningOnNode.class);
+      bind(new TypeLiteral<Function<TemplateOptions, Statement>>() {
+      }).to(TemplateOptionsToStatement.class);
+
+      install(new FactoryModuleBuilder().implement(StartInitScriptOnNode.class, Names.named("blocking"),
+               StartInitScriptOnNodeAndBlockUntilComplete.class).implement(StartInitScriptOnNode.class,
+               Names.named("nonblocking"), StartInitScriptOnNode.class).build(StartInitScriptOnNode.Factory.class));
+
+      install(new FactoryModuleBuilder().implement(new TypeLiteral<Callable<Void>>() {
+      }, CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.class).implement(
+               new TypeLiteral<Function<NodeMetadata, Void>>() {
+               }, CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.class).build(
+               CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory.class));
+
+      install(new FactoryModuleBuilder().implement(new TypeLiteral<Callable<Void>>() {
+      }, RunStatementOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.class).build(
+               RunStatementOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory.class));
+      requestStaticInjection(ComputeServiceUtils.class);
    }
 
    @Provides
@@ -118,20 +146,20 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Memoized
    protected Supplier<Set<? extends Image>> supplyImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final Supplier<Set<? extends Image>> imageSupplier) {
+            final Supplier<Set<? extends Image>> imageSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Image>>(authException, seconds,
-            new Supplier<Set<? extends Image>>() {
-               @Override
-               public Set<? extends Image> get() {
-                  return imageSupplier.get();
-               }
-            });
+               new Supplier<Set<? extends Image>>() {
+                  @Override
+                  public Set<? extends Image> get() {
+                     return imageSupplier.get();
+                  }
+               });
    }
 
    @Provides
    @Singleton
    protected Supplier<Map<String, ? extends Location>> provideLocationMap(
-         @Memoized Supplier<Set<? extends Location>> locations) {
+            @Memoized Supplier<Set<? extends Location>> locations) {
       return Suppliers.compose(new Function<Set<? extends Location>, Map<String, ? extends Location>>() {
 
          @Override
@@ -153,14 +181,14 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Memoized
    protected Supplier<Set<? extends Location>> supplyLocationCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final Supplier<Set<? extends Location>> locationSupplier) {
+            final Supplier<Set<? extends Location>> locationSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Location>>(authException, seconds,
-            new Supplier<Set<? extends Location>>() {
-               @Override
-               public Set<? extends Location> get() {
-                  return locationSupplier.get();
-               }
-            });
+               new Supplier<Set<? extends Location>>() {
+                  @Override
+                  public Set<? extends Location> get() {
+                     return locationSupplier.get();
+                  }
+               });
    }
 
    @Provides
@@ -187,14 +215,14 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Memoized
    protected Supplier<Set<? extends Hardware>> supplySizeCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final Supplier<Set<? extends Hardware>> hardwareSupplier) {
+            final Supplier<Set<? extends Hardware>> hardwareSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Hardware>>(authException, seconds,
-            new Supplier<Set<? extends Hardware>>() {
-               @Override
-               public Set<? extends Hardware> get() {
-                  return hardwareSupplier.get();
-               }
-            });
+               new Supplier<Set<? extends Hardware>>() {
+                  @Override
+                  public Set<? extends Hardware> get() {
+                     return hardwareSupplier.get();
+                  }
+               });
    }
 
    @Provides

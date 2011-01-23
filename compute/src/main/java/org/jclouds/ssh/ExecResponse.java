@@ -19,10 +19,12 @@
 
 package org.jclouds.ssh;
 
+import org.jclouds.compute.config.CustomizationResponse;
+
 /**
  * @author Adrian Cole
  */
-public class ExecResponse {
+public class ExecResponse implements CustomizationResponse {
 
    private final String error;
    private final String output;

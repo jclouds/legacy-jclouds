@@ -50,7 +50,7 @@ public class TerremarkVCloudExpressTemplateBuilderLiveTest extends BaseTemplateB
          @Override
          public boolean apply(OsFamilyVersion64Bit input) {
             return ((input.family == OsFamily.RHEL || input.family == OsFamily.CENTOS) || //
-                  (input.family == OsFamily.UBUNTU && !input.version.equals("9.10")) || //
+                     (input.family == OsFamily.UBUNTU && !input.version.equals("9.10")) || //
             (input.family == OsFamily.WINDOWS && (input.version.equals("2008 SP2") || input.version.equals("2008 R2"))));
          }
 
@@ -64,7 +64,6 @@ public class TerremarkVCloudExpressTemplateBuilderLiveTest extends BaseTemplateB
       assertEquals(defaultTemplate.getImage().getOperatingSystem().is64Bit(), true);
       assertEquals(defaultTemplate.getImage().getOperatingSystem().getFamily(), OsFamily.UBUNTU);
       assertEquals(getCores(defaultTemplate.getHardware()), 1.0d);
-
    }
 
 }

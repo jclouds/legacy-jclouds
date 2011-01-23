@@ -100,15 +100,15 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       replay(strategy);
 
       // run
-      RunInstancesOptions runOptions = strategy.execute(region, tag, template);
-      assertEquals(runOptions.buildQueryParameters(), ImmutableMultimap.<String, String> of());
+      RunInstancesOptions customize = strategy.execute(region, tag, template);
+      assertEquals(customize.buildQueryParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(
-            runOptions.buildFormParameters().entries(),
+            customize.buildFormParameters().entries(),
             ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "SecurityGroup.1",
                   generatedGroup, "KeyName", systemGeneratedKeyPairName).entries());
-      assertEquals(runOptions.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
-      assertEquals(runOptions.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
-      assertEquals(runOptions.buildStringPayload(), null);
+      assertEquals(customize.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
+      assertEquals(customize.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
+      assertEquals(customize.buildStringPayload(), null);
 
       // verify mocks
       verify(options);
@@ -159,16 +159,16 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       replay(strategy);
 
       // run
-      RunInstancesOptions runOptions = strategy.execute(region, tag, template);
-      assertEquals(runOptions.buildQueryParameters(), ImmutableMultimap.<String, String> of());
+      RunInstancesOptions customize = strategy.execute(region, tag, template);
+      assertEquals(customize.buildQueryParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(
-            runOptions.buildFormParameters().entries(),
+            customize.buildFormParameters().entries(),
             ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "SecurityGroup.1",
                   generatedGroup, "KeyName", systemGeneratedKeyPairName, "Placement.GroupName", generatedGroup)
                   .entries());
-      assertEquals(runOptions.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
-      assertEquals(runOptions.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
-      assertEquals(runOptions.buildStringPayload(), null);
+      assertEquals(customize.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
+      assertEquals(customize.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
+      assertEquals(customize.buildStringPayload(), null);
 
       // verify mocks
       verify(options);
@@ -219,16 +219,16 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       replay(strategy);
 
       // run
-      RunInstancesOptions runOptions = strategy.execute(region, tag, template);
-      assertEquals(runOptions.buildQueryParameters(), ImmutableMultimap.<String, String> of());
+      RunInstancesOptions customize = strategy.execute(region, tag, template);
+      assertEquals(customize.buildQueryParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(
-            runOptions.buildFormParameters().entries(),
+            customize.buildFormParameters().entries(),
             ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "SecurityGroup.1",
                   generatedGroup, "KeyName", systemGeneratedKeyPairName, "Placement.GroupName", generatedGroup)
                   .entries());
-      assertEquals(runOptions.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
-      assertEquals(runOptions.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
-      assertEquals(runOptions.buildStringPayload(), null);
+      assertEquals(customize.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
+      assertEquals(customize.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
+      assertEquals(customize.buildStringPayload(), null);
 
       // verify mocks
       verify(options);
@@ -274,15 +274,15 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       replay(strategy);
 
       // run
-      RunInstancesOptions runOptions = strategy.execute(region, tag, template);
-      assertEquals(runOptions.buildQueryParameters(), ImmutableMultimap.<String, String> of());
+      RunInstancesOptions customize = strategy.execute(region, tag, template);
+      assertEquals(customize.buildQueryParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(
-            runOptions.buildFormParameters().entries(),
+            customize.buildFormParameters().entries(),
             ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "SubnetId", "1", "KeyName",
                   systemGeneratedKeyPairName).entries());
-      assertEquals(runOptions.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
-      assertEquals(runOptions.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
-      assertEquals(runOptions.buildStringPayload(), null);
+      assertEquals(customize.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
+      assertEquals(customize.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
+      assertEquals(customize.buildStringPayload(), null);
 
       // verify mocks
       verify(options);
@@ -331,15 +331,15 @@ public class CreateKeyPairPlacementAndSecurityGroupsAsNeededAndReturnRunOptionsT
       replay(strategy);
 
       // run
-      RunInstancesOptions runOptions = strategy.execute(region, tag, template);
-      assertEquals(runOptions.buildQueryParameters(), ImmutableMultimap.<String, String> of());
+      RunInstancesOptions customize = strategy.execute(region, tag, template);
+      assertEquals(customize.buildQueryParameters(), ImmutableMultimap.<String, String> of());
       assertEquals(
-            runOptions.buildFormParameters().entries(),
+            customize.buildFormParameters().entries(),
             ImmutableMultimap.<String, String> of("InstanceType", size.getProviderId(), "SecurityGroup.1", "group",
                   "KeyName", systemGeneratedKeyPairName, "UserData", Base64.encodeBytes("hello".getBytes())).entries());
-      assertEquals(runOptions.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
-      assertEquals(runOptions.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
-      assertEquals(runOptions.buildStringPayload(), null);
+      assertEquals(customize.buildMatrixParameters(), ImmutableMultimap.<String, String> of());
+      assertEquals(customize.buildRequestHeaders(), ImmutableMultimap.<String, String> of());
+      assertEquals(customize.buildStringPayload(), null);
 
       // verify mocks
       verify(options);

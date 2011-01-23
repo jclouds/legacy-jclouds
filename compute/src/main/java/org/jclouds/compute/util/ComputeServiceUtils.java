@@ -31,11 +31,13 @@ import static org.jclouds.scriptbuilder.domain.Statements.pipeHttpResponseToBash
 import java.net.URI;
 import java.util.Formatter;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.NoSuchElementException;
-import java.util.concurrent.Callable;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.annotation.Resource;
+import javax.inject.Named;
 
 import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.compute.domain.ComputeMetadata;
@@ -45,13 +47,13 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
 import org.jclouds.rest.Providers;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
-import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -84,7 +86,7 @@ public class ComputeServiceUtils {
     */
    public static Statement extractTargzIntoDirectory(HttpRequest targz, String directory) {
       return Statements
-            .extractTargzIntoDirectory(targz.getMethod(), targz.getEndpoint(), targz.getHeaders(), directory);
+               .extractTargzIntoDirectory(targz.getMethod(), targz.getEndpoint(), targz.getHeaders(), directory);
    }
 
    public static Statement extractTargzIntoDirectory(URI targz, String directory) {
@@ -104,9 +106,23 @@ public class ComputeServiceUtils {
       return extractZipIntoDirectory(new HttpRequest("GET", zip), directory);
    }
 
+   @Resource
+   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+   protected static Logger logger = Logger.NULL;
+
+   /**
+    * 
+    * 
+    * @return NOTAG#+from if tag cannot be parsed
+    */
    public static String parseTagFromName(String from) {
       Matcher matcher = DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX.matcher(from);
-      return matcher.find() ? matcher.group(1) : "NOTAG#" + from;
+      String returnVal = matcher.find() ? matcher.group(1) : "NOTAG#" + from;
+      if (logger.isTraceEnabled()) {
+         if (returnVal.startsWith("NOTAG#"))
+            logger.trace("failed to parse tag from name %s", from);
+      }
+      return returnVal;
    }
 
    public static double getCores(Hardware input) {
@@ -147,8 +163,8 @@ public class ComputeServiceUtils {
       Formatter fmt = new Formatter().format("Execution failures:%n%n");
       int index = 1;
       for (Entry<?, Exception> errorMessage : executionExceptions.entrySet()) {
-         fmt.format("%s) %s on %s:%n%s%n%n", index++, errorMessage.getValue().getClass().getSimpleName(),
-               errorMessage.getKey(), getStackTraceAsString(errorMessage.getValue()));
+         fmt.format("%s) %s on %s:%n%s%n%n", index++, errorMessage.getValue().getClass().getSimpleName(), errorMessage
+                  .getKey(), getStackTraceAsString(errorMessage.getValue()));
       }
       return fmt.format("%s error[s]", executionExceptions.size()).toString();
    }
@@ -158,13 +174,13 @@ public class ComputeServiceUtils {
       int index = 1;
       for (Entry<? extends NodeMetadata, ? extends Throwable> errorMessage : failedNodes.entrySet()) {
          fmt.format("%s) %s on node %s:%n%s%n%n", index++, errorMessage.getValue().getClass().getSimpleName(),
-               errorMessage.getKey().getId(), getStackTraceAsString(errorMessage.getValue()));
+                  errorMessage.getKey().getId(), getStackTraceAsString(errorMessage.getValue()));
       }
       return fmt.format("%s error[s]", failedNodes.size()).toString();
    }
 
    public static Iterable<? extends ComputeMetadata> filterByName(Iterable<? extends ComputeMetadata> nodes,
-         final String name) {
+            final String name) {
       return filter(nodes, new Predicate<ComputeMetadata>() {
          @Override
          public boolean apply(ComputeMetadata input) {
@@ -173,30 +189,23 @@ public class ComputeServiceUtils {
       });
    }
 
-   public static interface SshCallable<T> extends Callable<T> {
-      NodeMetadata getNode();
-
-      void setConnection(SshClient ssh, Logger logger);
-   }
-
    public static Iterable<String> getSupportedProviders() {
       return Providers.getSupportedProvidersOfType(ComputeServiceContextBuilder.class);
    }
 
    public static IPSocket findReachableSocketOnNode(RetryIfSocketNotYetOpen socketTester, final NodeMetadata node,
-         final int port) {
+            final int port) {
       checkNodeHasIps(node);
       IPSocket socket = null;
       try {
-         socket = find(
-               transform(concat(node.getPublicAddresses(), node.getPrivateAddresses()),
-                     new Function<String, IPSocket>() {
+         socket = find(transform(concat(node.getPublicAddresses(), node.getPrivateAddresses()),
+                  new Function<String, IPSocket>() {
 
-                        @Override
-                        public IPSocket apply(String from) {
-                           return new IPSocket(from, port);
-                        }
-                     }), socketTester);
+                     @Override
+                     public IPSocket apply(String from) {
+                        return new IPSocket(from, port);
+                     }
+                  }), socketTester);
       } catch (NoSuchElementException e) {
          throw new RuntimeException(String.format("could not connect to any ip address port %d on node %s", port, node));
       }
@@ -205,11 +214,11 @@ public class ComputeServiceUtils {
 
    public static void checkNodeHasIps(NodeMetadata node) {
       checkState(size(concat(node.getPublicAddresses(), node.getPrivateAddresses())) > 0,
-            "node does not have IP addresses configured: " + node);
+               "node does not have IP addresses configured: " + node);
    }
 
    public static String parseVersionOrReturnEmptyString(org.jclouds.compute.domain.OsFamily family, final String in,
-         Map<OsFamily, Map<String, String>> osVersionMap) {
+            Map<OsFamily, Map<String, String>> osVersionMap) {
       if (osVersionMap.containsKey(family)) {
          if (osVersionMap.get(family).containsKey(in))
             return osVersionMap.get(family).get(in);
