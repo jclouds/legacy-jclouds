@@ -30,6 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package com.vmware.vim25.mo;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Calendar;
 
@@ -56,28 +57,25 @@ import com.vmware.vim25.ws.WSClient;
  * @author Steve JIN (sjin@vmware.com)
  */
 
-public class ServiceInstance extends ManagedObject {
-	
-//	   @Resource
-//	   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-//	   protected Logger logger = Logger.NULL;
-	
-	private ServiceContent serviceContent = null;
-	final static ManagedObjectReference SERVICE_INSTANCE_MOR;
-	public final static String VIM25_NAMESPACE = " xmlns=\"urn:vim25\">";
-	public final static String VIM20_NAMESPACE = " xmlns=\"urn:vim2\">";
-	
-	static 
-	{
-		SERVICE_INSTANCE_MOR = new ManagedObjectReference();
-		SERVICE_INSTANCE_MOR.set_value("ServiceInstance");
-		SERVICE_INSTANCE_MOR.setType("ServiceInstance");
-	}
+public class ServiceInstance extends ManagedObject 
+{
+      private ServiceContent serviceContent = null;
+      final static ManagedObjectReference SERVICE_INSTANCE_MOR;
+      public final static String VIM25_NAMESPACE = " xmlns=\"urn:vim25\">";
+      public final static String VIM20_NAMESPACE = " xmlns=\"urn:vim2\">";
+      
+      static 
+      {
+            SERVICE_INSTANCE_MOR = new ManagedObjectReference();
+            SERVICE_INSTANCE_MOR.set_value("ServiceInstance");
+            SERVICE_INSTANCE_MOR.setType("ServiceInstance");
+      }
 
+      // PATCHED CONSTRUCTOR
 	public ServiceInstance(WSClient wsc, String username, String password, String ignoreCert)
-		throws RemoteException, MalformedURLException {
+            throws RemoteException, MalformedURLException 
+      {
 		
-		//logger.debug(">> ServiceInstance(%s, %s, %s, %s)", username, password, ignoreCert);
 		if(ignoreCert.equals("true")) {
 				this.ignoreCertificate();	
 		}
@@ -85,30 +83,102 @@ public class ServiceInstance extends ManagedObject {
 		if(username == null) {
 			throw new NullPointerException("username cannot be null.");
 		}
-		
-		setMOR(SERVICE_INSTANCE_MOR);
-			
-		VimPortType vimService_ = new VimPortType(wsc.getBaseUrl().toString(), ignoreCert.equals("true"));
-		VimPortType vimService = new VimPortType(wsc);
-		vimService.getWsc().setVimNameSpace(wsc.getVimNameSpace());
-				
-		serviceContent = vimService.retrieveServiceContent(SERVICE_INSTANCE_MOR);
-		vimService.getWsc().setSoapActionOnApiVersion(serviceContent.getAbout().getApiVersion());
-		setServerConnection(new ServerConnection(wsc.getBaseUrl(), vimService, this));
-		
-		// escape 5 special chars 
-		// http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
-		password = password.replace("&", "&amp;")
-		                   .replace("<", "&lt;")
-		                   .replace(">", "&gt;")
-		                   .replace("\"", "&quot;")
-		                   .replace("'", "&apos;");
-		
-		UserSession userSession = getSessionManager().login(username, password, null);
-		// it appears that this data is never used anywhere via reference checks
-            // getServerConnection().setUserSession(userSession);
+		     
+	      setMOR(SERVICE_INSTANCE_MOR);
+
+	      // PATCH TO USE OUR wsc
+	      VimPortType vimService = new VimPortType(wsc);
+	      vimService.getWsc().setVimNameSpace(wsc.getVimNameSpace());
+	           
+	      serviceContent = vimService.retrieveServiceContent(SERVICE_INSTANCE_MOR);
+	      vimService.getWsc().setSoapActionOnApiVersion(serviceContent.getAbout().getApiVersion());
+	      setServerConnection(new ServerConnection(wsc.getBaseUrl(), vimService, this));
+
+	      // escape 5 special chars 
+	      // http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
+	      password = password.replace("&", "&amp;")
+	                              .replace("<", "&lt;")
+	                              .replace(">", "&gt;")
+	                              .replace("\"", "&quot;")
+	                              .replace("'", "&apos;");
+	           
+	      UserSession userSession = getSessionManager().login(username, password, null);
+	      getServerConnection().setUserSession(userSession);		
 	}
-	
+     
+     public ServiceInstance(URL url, String username, String password) 
+           throws RemoteException, MalformedURLException
+     {
+           this(url, username, password, false);
+     }
+
+     public ServiceInstance(URL url, String username, String password, boolean ignoreCert)
+     throws RemoteException, MalformedURLException 
+     {
+           this(url, username, password, ignoreCert, VIM25_NAMESPACE);
+     }
+     
+     public ServiceInstance(URL url, String username, String password, boolean ignoreCert, String namespace)
+           throws RemoteException, MalformedURLException 
+     {
+           if(url == null || username==null)
+           {
+                 throw new NullPointerException("None of url, username can be null.");
+           }
+           
+           setMOR(SERVICE_INSTANCE_MOR);
+
+           VimPortType vimService = new VimPortType(url.toString(), ignoreCert);
+           vimService.getWsc().setVimNameSpace(namespace);
+           
+           serviceContent = vimService.retrieveServiceContent(SERVICE_INSTANCE_MOR);
+           vimService.getWsc().setSoapActionOnApiVersion(serviceContent.getAbout().getApiVersion());
+           setServerConnection(new ServerConnection(url, vimService, this));
+
+           // escape 5 special chars 
+           // http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
+           password = password.replace("&", "&amp;")
+                              .replace("<", "&lt;")
+                              .replace(">", "&gt;")
+                              .replace("\"", "&quot;")
+                              .replace("'", "&apos;");
+           
+           UserSession userSession = getSessionManager().login(username, password, null);
+           getServerConnection().setUserSession(userSession);
+     }
+     
+     public ServiceInstance(URL url, String sessionStr, boolean ignoreCert)
+     throws RemoteException, MalformedURLException
+     {
+           this(url, sessionStr, ignoreCert, VIM25_NAMESPACE);
+     }
+           
+     // sessionStr format: "vmware_soap_session=\"B3240D15-34DF-4BB8-B902-A844FDF42E85\""
+     public ServiceInstance(URL url, String sessionStr, boolean ignoreCert, String namespace)
+           throws RemoteException, MalformedURLException
+     {
+           if(url == null || sessionStr ==null)
+           {
+                 throw new NullPointerException("None of url, session string can be null.");
+           }
+
+           setMOR(SERVICE_INSTANCE_MOR);
+           
+           VimPortType vimService = new VimPortType(url.toString(), ignoreCert);
+           WSClient wsc = vimService.getWsc();
+           wsc.setCookie(sessionStr);
+           wsc.setVimNameSpace(namespace);
+           
+           serviceContent = vimService.retrieveServiceContent(SERVICE_INSTANCE_MOR);
+           setServerConnection(new ServerConnection(url, vimService, this));
+           UserSession userSession = (UserSession) getSessionManager().getCurrentProperty("currentSession");
+           getServerConnection().setUserSession(userSession);
+     }
+     
+     public ServiceInstance(ServerConnection sc) 
+     {
+           super(sc, SERVICE_INSTANCE_MOR);
+     }
 
 	public Calendar getServerClock()
 	{

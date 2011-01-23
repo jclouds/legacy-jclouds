@@ -64,13 +64,10 @@ import org.jclouds.util.Strings2;
 import com.vmware.vim25.ManagedObjectReference;
 
 /** 
- * 
- * Patched to include logging
- * 
  * The Web Service Engine
  * @author Steve Jin (sjin@vmware.com)
 */
-
+// MARKED NOT FINAL
 public class WSClient
 {
   private final static String SOAP_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><soapenv:Envelope xmlns:soapenc=\"http://schemas.xmlsoap.org/soap/encoding/\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"><soapenv:Body>"; 
@@ -86,38 +83,36 @@ public class WSClient
   private int connectTimeout = 0;
   private int readTimeout = 0;
   
-
-
-public WSClient(String serverUrl) throws MalformedURLException {
-	this(serverUrl, true);
-	 
+  public WSClient(String serverUrl) throws MalformedURLException 
+  {
+      this(serverUrl, true);
   }
   
-  public WSClient(String serverUrl, boolean ignoreCert) throws MalformedURLException {
-    if(serverUrl.endsWith("/")) {
+  public WSClient(String serverUrl, boolean ignoreCert) throws MalformedURLException 
+  {
+    if(serverUrl.endsWith("/"))
+    {
       serverUrl = serverUrl.substring(0, serverUrl.length()-1);
     } 
     this.baseUrl = new URL(serverUrl);
-    if(ignoreCert) {
-      ignoreCertificates();
+    if(ignoreCert)
+    {
+      try
+      {
+        trustAllHttpsCertificates();
+        HttpsURLConnection.setDefaultHostnameVerifier
+        (
+          new HostnameVerifier() 
+          {
+            public boolean verify(String urlHostName, SSLSession session)
+            {
+              return true;
+            }
+          }
+        );
+      } catch (Exception e)  {}
     }
   }
-	
-	/**
-	 * 
-	 */
-	public void ignoreCertificates() {
-		try {
-	        trustAllHttpsCertificates();
-	        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-	        	public boolean verify(String urlHostName, SSLSession session) {
-	        		return true;
-	            }
-	        });
-	      } catch (Exception e)  {
-	    	  // TODO
-	      }
-	}
   
   public Object invoke(ManagedObjectReference mor, String methodName, Argument[] paras, String returnType) throws IOException
   {
@@ -133,23 +128,9 @@ public WSClient(String serverUrl) throws MalformedURLException {
     Element body = (Element) root.elements().get(0);
     Element resp = (Element) body.elements().get(0);
     
-//    System.out.println("\n\n++++ methodName " + methodName);
-//
-//    for (Argument argument : paras) {
-//		System.out.println("par: " + argument.getName() + ", " + argument.getValue());
-//		if(argument.getValue() instanceof ManagedObjectReference)
-//			System.out.println("\t** " + ((ManagedObjectReference) argument.getValue()).getVal());
-//		else if(argument.getValue() instanceof PropertyFilterSpec) {
-//			for (ObjectSpec p : ((PropertyFilterSpec) argument.getValue()).getObjectSet()) {
-//				System.out.println("\t-- " + p.getObj().getVal());
-//			}
-//				
-//		}
-//	}
-    
     if(resp.getName().indexOf("Fault")!=-1)
     {
-    	SoapFaultException sfe = null;
+      SoapFaultException sfe = null;
       try 
       {
         sfe = XmlGen.parseSoapFault(resp);
@@ -164,7 +145,7 @@ public WSClient(String serverUrl) throws MalformedURLException {
       }
       else
       {
-      	throw sfe;
+            throw sfe;
       }
     }
     else
@@ -187,8 +168,8 @@ public WSClient(String serverUrl) throws MalformedURLException {
     }
   }
   
-  public Element invoke(String methodName, Argument[] paras) throws RemoteException  {
-
+  public Element invoke(String methodName, Argument[] paras) throws RemoteException
+  {
     String soapMsg = createSoapMessage(methodName, paras);
 
     Element root = null;
@@ -198,7 +179,7 @@ public WSClient(String serverUrl) throws MalformedURLException {
       is = post(soapMsg);
       SAXReader reader = new SAXReader();
       Document doc = reader.read(is);
-	    root = doc.getRootElement();
+          root = doc.getRootElement();
     } catch (Exception e) 
     {
       throw new RemoteException("VI SDK invoke exception:" + e);
@@ -226,12 +207,13 @@ public WSClient(String serverUrl) throws MalformedURLException {
     }
   }
 
-  private String createSoapMessage(String methodName, Argument[] paras) {
+  private String createSoapMessage(String methodName, Argument[] paras)
+  {
     StringBuffer sb = new StringBuffer();
     sb.append(SOAP_HEADER);
 
     sb.append("<" + methodName + vimNameSpace);
-		
+            
     for(int i=0; i<paras.length; i++)
     {
       String key = paras[i].getName();
@@ -242,14 +224,13 @@ public WSClient(String serverUrl) throws MalformedURLException {
 
     sb.append("</" + methodName + ">");
     sb.append(SOAP_END);
-//    System.out.println("sb.tostring: " + sb.toString());
     return sb.toString();
   }
   
   public InputStream post(String soapMsg) throws IOException
   {
     HttpURLConnection postCon = (HttpURLConnection) baseUrl.openConnection();
-     
+    
     if(connectTimeout > 0)
       postCon.setConnectTimeout(connectTimeout);
     if(readTimeout > 0)
@@ -271,14 +252,12 @@ public WSClient(String serverUrl) throws MalformedURLException {
 
     OutputStream os = postCon.getOutputStream();
     OutputStreamWriter out = new OutputStreamWriter(os);
-    
     // PRINT REQUEST
     try {
        System.out.printf("%s %s HTTP/1.1%n", "POST", baseUrl.toURI().toASCIIString());
-       for( Entry<String, List<String>> i :postCon.getRequestProperties().entrySet()){
-          for (String v: i.getValue())
-          System.out.printf("%s: %s%n", i.getKey(), v);
-       }
+       System.out.printf("%s: %s%n", SOAP_ACTION_HEADER, soapAction);
+       if(cookie!=null)
+          System.out.printf("%s: %s%n", "Cookie", cookie);
        System.out.println(soapMsg);
 
     } catch (URISyntaxException e1) {
@@ -293,33 +272,32 @@ public WSClient(String serverUrl) throws MalformedURLException {
     
     try
     {
-    	is = postCon.getInputStream();
+      is = postCon.getInputStream();
     } 
     catch(IOException ioe)
     {
-    	is = postCon.getErrorStream();
+      is = postCon.getErrorStream();
     }
-       
-    // PRINT RESPONSE
-
-    System.out.printf("HTTP/1.1 %d %s", postCon.getResponseCode(), postCon.getResponseMessage());
-
-    for( Entry<String, List<String>> i :postCon.getHeaderFields().entrySet()){
-      for (String v: i.getValue())
-        System.out.printf("%s: %s%n", i.getKey(), v);
-      }
     
-    String response = Strings2.toStringAndClose(is);
-    System.out.println(response);
-    
-    is = new ByteArrayInputStream(response.getBytes());
-    
-    // END PRINT RESPONSE
-
     if(cookie==null)
     {
       cookie = postCon.getHeaderField("Set-Cookie");
     }
+    
+    // PRINT RESPONSE
+
+    System.out.printf("HTTP/1.1 %d %s", postCon.getResponseCode(), postCon.getResponseMessage());
+
+    for (Entry<String, List<String>> i : postCon.getHeaderFields().entrySet()) {
+       for (String v : i.getValue())
+          System.out.printf("%s: %s%n", i.getKey(), v);
+    }
+    String response = Strings2.toStringAndClose(is);
+    System.out.println(response);
+    is = new ByteArrayInputStream(response.getBytes());
+    
+    // END PRINT RESPONSE
+    
     return is;
   }
   
@@ -430,7 +408,5 @@ public WSClient(String serverUrl) throws MalformedURLException {
     throws CertificateException 
     {
     }
-    
-
   }
 }
