@@ -30,6 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
 package com.vmware.vim25.ws;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -38,12 +39,15 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.rmi.RemoteException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.List;
+import java.util.Map.Entry;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -55,11 +59,9 @@ import javax.net.ssl.X509TrustManager;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.jclouds.util.Strings2;
 
 import com.vmware.vim25.ManagedObjectReference;
-import com.vmware.vim25.ObjectSpec;
-import com.vmware.vim25.PropertyFilterSpec;
-import com.vmware.vim25.PropertySpec;
 
 /** 
  * 
@@ -270,6 +272,20 @@ public WSClient(String serverUrl) throws MalformedURLException {
     OutputStream os = postCon.getOutputStream();
     OutputStreamWriter out = new OutputStreamWriter(os);
     
+    // PRINT REQUEST
+    try {
+       System.out.printf("%s %s HTTP/1.1%n", "POST", baseUrl.toURI().toASCIIString());
+       for( Entry<String, List<String>> i :postCon.getRequestProperties().entrySet()){
+          for (String v: i.getValue())
+          System.out.printf("%s: %s%n", i.getKey(), v);
+       }
+       System.out.println(soapMsg);
+
+    } catch (URISyntaxException e1) {
+    }
+    
+    // END PRINT REQUEST
+
     out.write(soapMsg);
     out.close();
 
@@ -283,7 +299,23 @@ public WSClient(String serverUrl) throws MalformedURLException {
     {
     	is = postCon.getErrorStream();
     }
+       
+    // PRINT RESPONSE
+
+    System.out.printf("HTTP/1.1 %d %s", postCon.getResponseCode(), postCon.getResponseMessage());
+
+    for( Entry<String, List<String>> i :postCon.getHeaderFields().entrySet()){
+      for (String v: i.getValue())
+        System.out.printf("%s: %s%n", i.getKey(), v);
+      }
     
+    String response = Strings2.toStringAndClose(is);
+    System.out.println(response);
+    
+    is = new ByteArrayInputStream(response.getBytes());
+    
+    // END PRINT RESPONSE
+
     if(cookie==null)
     {
       cookie = postCon.getHeaderField("Set-Cookie");

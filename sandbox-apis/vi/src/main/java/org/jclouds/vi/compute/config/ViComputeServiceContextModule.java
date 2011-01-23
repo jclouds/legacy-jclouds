@@ -23,7 +23,6 @@ import static com.google.common.base.Predicates.notNull;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.collect.Iterables.transform;
 import static org.jclouds.vi.reference.ViConstants.PROPERTY_VI_XML_NAMESPACE;
-import static org.jclouds.vi.reference.ViConstants.PROPERTY_VI_IGNORE_CERTIFICATE;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -86,9 +85,8 @@ import com.vmware.vim25.ws.WSClient;
 public class ViComputeServiceContextModule
          extends
          ComputeServiceAdapterContextModule<ServiceInstance, ServiceInstance, VirtualMachine, VirtualMachine, Image, Datacenter> {
-	
-	
-	public ViComputeServiceContextModule() {
+
+   public ViComputeServiceContextModule() {
       super(ServiceInstance.class, ServiceInstance.class);
    }
 
@@ -112,31 +110,33 @@ public class ViComputeServiceContextModule
    @Provides
    @Singleton
    protected ServiceInstance createConnection(JcloudsWSClient client,
-            @Named(Constants.PROPERTY_IDENTITY) String identity, @Named(Constants.PROPERTY_CREDENTIAL) String credential, 
-            @Named(PROPERTY_VI_IGNORE_CERTIFICATE) String ignoreCertificate)
-            throws RemoteException, MalformedURLException {
-      return new ServiceInstance(client, identity, credential, ignoreCertificate);
+            @Named(Constants.PROPERTY_IDENTITY) String identity,
+            @Named(Constants.PROPERTY_CREDENTIAL) String credential,
+            @Named(Constants.PROPERTY_TRUST_ALL_CERTS) boolean ignoreCertificate) throws RemoteException,
+            MalformedURLException {
+      // uncomment this to use jclouds http commands
+      // return new ServiceInstance(client, identity, credential, ignoreCertificate);
+      return new ServiceInstance(new WSClient(client.getBaseUrl().toString(), ignoreCertificate), identity, credential,
+               ignoreCertificate + "");
    }
 
    @Singleton
-public
-   static class JcloudsWSClient extends WSClient {
+   public static class JcloudsWSClient extends WSClient {
 
       private final HttpClient client;
 
       @Inject
       public JcloudsWSClient(HttpClient client, @Provider URI baseUrl,
                @Named(PROPERTY_VI_XML_NAMESPACE) String vimNameSpace,
-               @Named(PROPERTY_VI_IGNORE_CERTIFICATE) String ignoreCert) throws MalformedURLException {
-         super(baseUrl.toASCIIString(), ignoreCert.equals("true"));
+               @Named(Constants.PROPERTY_TRUST_ALL_CERTS) boolean ignoreCert) throws MalformedURLException {
+         super(baseUrl.toASCIIString(), ignoreCert);
          this.setVimNameSpace(vimNameSpace);
          this.client = client;
       }
 
-      
       @Override
       public InputStream post(String soapMsg) throws IOException {
-    	 
+
          Builder<String, String> headers = ImmutableMultimap.<String, String> builder();
          headers.put("SOAPAction", "urn:vim25/4.0");
          if (getCookie() != null)
@@ -158,7 +158,7 @@ public
 
          return response.getPayload().getInput();
       }
-      
+
    }
 
    @Override
