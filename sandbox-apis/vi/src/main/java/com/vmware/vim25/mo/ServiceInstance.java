@@ -49,12 +49,19 @@ import com.vmware.vim25.mo.util.MorUtil;
 import com.vmware.vim25.ws.WSClient;
 
 /**
+ * 
+ * jclouds
+ * 
  * The managed object class corresponding to the one defined in VI SDK API reference.
  * @author Steve JIN (sjin@vmware.com)
  */
 
-public class ServiceInstance extends ManagedObject 
-{
+public class ServiceInstance extends ManagedObject {
+	
+//	   @Resource
+//	   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
+//	   protected Logger logger = Logger.NULL;
+	
 	private ServiceContent serviceContent = null;
 	final static ManagedObjectReference SERVICE_INSTANCE_MOR;
 	public final static String VIM25_NAMESPACE = " xmlns=\"urn:vim25\">";
@@ -67,24 +74,28 @@ public class ServiceInstance extends ManagedObject
 		SERVICE_INSTANCE_MOR.setType("ServiceInstance");
 	}
 
-
-	
-	public ServiceInstance(WSClient wsc, String username, String password)
-		throws RemoteException, MalformedURLException 
-	{
-		if(username==null)
-		{
+	public ServiceInstance(WSClient wsc, String username, String password, String ignoreCert)
+		throws RemoteException, MalformedURLException {
+		
+		//logger.debug(">> ServiceInstance(%s, %s, %s, %s)", username, password, ignoreCert);
+		if(ignoreCert.equals("true")) {
+				this.ignoreCertificate();	
+		}
+		
+		if(username == null) {
 			throw new NullPointerException("username cannot be null.");
 		}
 		
 		setMOR(SERVICE_INSTANCE_MOR);
-
+			
+		VimPortType vimService_ = new VimPortType(wsc.getBaseUrl().toString(), ignoreCert.equals("true"));
 		VimPortType vimService = new VimPortType(wsc);
-		
+		vimService.getWsc().setVimNameSpace(wsc.getVimNameSpace());
+				
 		serviceContent = vimService.retrieveServiceContent(SERVICE_INSTANCE_MOR);
 		vimService.getWsc().setSoapActionOnApiVersion(serviceContent.getAbout().getApiVersion());
 		setServerConnection(new ServerConnection(wsc.getBaseUrl(), vimService, this));
-
+		
 		// escape 5 special chars 
 		// http://en.wikipedia.org/wiki/List_of_XML_and_HTML_character_entity_references
 		password = password.replace("&", "&amp;")
@@ -324,6 +335,12 @@ public class ServiceInstance extends ManagedObject
 	private ManagedObject createMO(ManagedObjectReference mor)
 	{
 		return MorUtil.createExactManagedObject(getServerConnection(), mor);
+	}
+	
+	private void ignoreCertificate() 
+	{
+		System.setProperty("org.apache.axis.components.net.SecureSocketFactory",
+			"org.apache.axis.components.net.SunFakeTrustSocketFactory");
 	}
 	
 	// TODO vim.VirtualizationManager is defined in servicecontent but no documentation there. Filed a bug already

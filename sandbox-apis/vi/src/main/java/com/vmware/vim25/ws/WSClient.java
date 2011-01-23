@@ -39,6 +39,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.rmi.RemoteException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
@@ -56,8 +57,9 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import com.vmware.vim25.ManagedObjectReference;
-
-import java.rmi.RemoteException;
+import com.vmware.vim25.ObjectSpec;
+import com.vmware.vim25.PropertyFilterSpec;
+import com.vmware.vim25.PropertySpec;
 
 /** 
  * 
@@ -82,36 +84,38 @@ public class WSClient
   private int connectTimeout = 0;
   private int readTimeout = 0;
   
-  public WSClient(String serverUrl) throws MalformedURLException 
-  {
+
+
+public WSClient(String serverUrl) throws MalformedURLException {
 	this(serverUrl, true);
+	 
   }
   
-  public WSClient(String serverUrl, boolean ignoreCert) throws MalformedURLException 
-  {
-    if(serverUrl.endsWith("/"))
-    {
+  public WSClient(String serverUrl, boolean ignoreCert) throws MalformedURLException {
+    if(serverUrl.endsWith("/")) {
       serverUrl = serverUrl.substring(0, serverUrl.length()-1);
     } 
     this.baseUrl = new URL(serverUrl);
-    if(ignoreCert)
-    {
-      try
-      {
-        trustAllHttpsCertificates();
-        HttpsURLConnection.setDefaultHostnameVerifier
-        (
-          new HostnameVerifier() 
-          {
-            public boolean verify(String urlHostName, SSLSession session)
-            {
-              return true;
-            }
-          }
-        );
-      } catch (Exception e)  {}
+    if(ignoreCert) {
+      ignoreCertificates();
     }
   }
+	
+	/**
+	 * 
+	 */
+	public void ignoreCertificates() {
+		try {
+	        trustAllHttpsCertificates();
+	        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+	        	public boolean verify(String urlHostName, SSLSession session) {
+	        		return true;
+	            }
+	        });
+	      } catch (Exception e)  {
+	    	  // TODO
+	      }
+	}
   
   public Object invoke(ManagedObjectReference mor, String methodName, Argument[] paras, String returnType) throws IOException
   {
@@ -126,6 +130,20 @@ public class WSClient
     Element root = invoke(methodName, paras);
     Element body = (Element) root.elements().get(0);
     Element resp = (Element) body.elements().get(0);
+    
+//    System.out.println("\n\n++++ methodName " + methodName);
+//
+//    for (Argument argument : paras) {
+//		System.out.println("par: " + argument.getName() + ", " + argument.getValue());
+//		if(argument.getValue() instanceof ManagedObjectReference)
+//			System.out.println("\t** " + ((ManagedObjectReference) argument.getValue()).getVal());
+//		else if(argument.getValue() instanceof PropertyFilterSpec) {
+//			for (ObjectSpec p : ((PropertyFilterSpec) argument.getValue()).getObjectSet()) {
+//				System.out.println("\t-- " + p.getObj().getVal());
+//			}
+//				
+//		}
+//	}
     
     if(resp.getName().indexOf("Fault")!=-1)
     {
@@ -167,8 +185,8 @@ public class WSClient
     }
   }
   
-  public Element invoke(String methodName, Argument[] paras) throws RemoteException
-  {
+  public Element invoke(String methodName, Argument[] paras) throws RemoteException  {
+
     String soapMsg = createSoapMessage(methodName, paras);
 
     Element root = null;
@@ -206,8 +224,7 @@ public class WSClient
     }
   }
 
-  private String createSoapMessage(String methodName, Argument[] paras)
-  {
+  private String createSoapMessage(String methodName, Argument[] paras) {
     StringBuffer sb = new StringBuffer();
     sb.append(SOAP_HEADER);
 
@@ -223,13 +240,14 @@ public class WSClient
 
     sb.append("</" + methodName + ">");
     sb.append(SOAP_END);
+//    System.out.println("sb.tostring: " + sb.toString());
     return sb.toString();
   }
   
   public InputStream post(String soapMsg) throws IOException
   {
     HttpURLConnection postCon = (HttpURLConnection) baseUrl.openConnection();
-    
+     
     if(connectTimeout > 0)
       postCon.setConnectTimeout(connectTimeout);
     if(readTimeout > 0)
@@ -251,7 +269,7 @@ public class WSClient
 
     OutputStream os = postCon.getOutputStream();
     OutputStreamWriter out = new OutputStreamWriter(os);
-
+    
     out.write(soapMsg);
     out.close();
 
@@ -380,5 +398,7 @@ public class WSClient
     throws CertificateException 
     {
     }
+    
+
   }
 }

@@ -21,20 +21,24 @@ package org.jclouds.vi.compute;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Properties;
 import java.util.Set;
+
+import javax.annotation.Resource;
 
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
+import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.domain.Location;
+import org.jclouds.logging.Logger;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
+import com.google.inject.name.Named;
 
 /**
  * 
@@ -42,12 +46,13 @@ import com.google.inject.Module;
  */
 @Test(groups = "live", testName = "vsphere.ViExperimentLiveTest")
 public class ViExperimentLiveTest {
-   protected String provider = "vsphere";
+	
+	protected String provider = "vsphere";
    protected String identity;
    protected String credential;
    protected String endpoint;
    protected String apiversion;
-
+   
    @BeforeClass
    protected void setupCredentials() {
       identity = checkNotNull(System.getProperty("test." + provider + ".identity"), "test." + provider + ".identity");
@@ -59,14 +64,20 @@ public class ViExperimentLiveTest {
    @Test
    public void testAndExperiment() {
       ComputeServiceContext context = null;
+
       try {
          context = new ComputeServiceContextFactory().createContext(new ViComputeServiceContextSpec(endpoint, identity,
-                  credential), ImmutableSet.<Module>of(new Log4JLoggingModule()), new Properties());
+                  credential), ImmutableSet.<Module>of(new Log4JLoggingModule()), new ViPropertiesBuilder().build());
 
          Set<? extends Location> locations = context.getComputeService().listAssignableLocations();
          for (Location location : locations) {
             System.out.println("location id: " + location.getId() + " - desc: " + location.getDescription());
          }
+         
+         Set<? extends Image> images = context.getComputeService().listImages();
+         for (Image image : images) {
+            System.out.println("id: " + image.getId() + " - name:" + image.getName());
+
 
          // Set<? extends ComputeMetadata> nodes = context.getComputeService().listNodes();
          //
@@ -75,9 +86,7 @@ public class ViExperimentLiveTest {
             System.out.println("hardware id: " + hardware.getId() + " - name: " + hardware.getName());
          }
          //         
-         Set<? extends Image> images = context.getComputeService().listImages();
-         for (Image image : images) {
-            System.out.println("id: " + image.getId() + " - name:" + image.getName());
+
          }
          //
          // NodeMetadata node = context.getComputeService().getNodeMetadata("MyWinServer");

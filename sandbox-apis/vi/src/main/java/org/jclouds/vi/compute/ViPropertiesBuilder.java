@@ -20,6 +20,7 @@
 package org.jclouds.vi.compute;
 
 import static org.jclouds.vi.reference.ViConstants.PROPERTY_VI_XML_NAMESPACE;
+import static org.jclouds.vi.reference.ViConstants.PROPERTY_VI_IGNORE_CERTIFICATE;
 
 import java.util.Properties;
 
@@ -37,6 +38,7 @@ public class ViPropertiesBuilder extends PropertiesBuilder {
    protected Properties defaultProperties() {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_VI_XML_NAMESPACE, ServiceInstance.VIM25_NAMESPACE);
+      properties.setProperty(PROPERTY_VI_IGNORE_CERTIFICATE, "true");
       return properties;
    }
 
