@@ -27,5 +27,7 @@ package org.jclouds.vi.reference;
 public interface ViConstants {
 
    public static final String PROPERTY_VI_XML_NAMESPACE = "jclouds.vi.xml.ns";
+   
+   public static final String PROPERTY_VI_IGNORE_CERTIFICATE = "jclouds.ignore-certificate";
 
 }
