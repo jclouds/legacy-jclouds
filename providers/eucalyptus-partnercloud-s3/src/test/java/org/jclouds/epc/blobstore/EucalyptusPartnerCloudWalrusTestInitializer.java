@@ -37,7 +37,7 @@ import com.google.inject.Module;
 public class EucalyptusPartnerCloudWalrusTestInitializer extends TransientBlobStoreTestInitializer {
 
    public EucalyptusPartnerCloudWalrusTestInitializer() {
-      provider = "ecc-s3";
+      provider = "eucalyptus-partnercloud-s3";
       BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
    }
 
