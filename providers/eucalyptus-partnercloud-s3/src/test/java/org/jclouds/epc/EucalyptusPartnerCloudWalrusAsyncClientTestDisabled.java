@@ -29,8 +29,8 @@ import org.testng.annotations.Test;
 public class EucalyptusPartnerCloudWalrusAsyncClientTestDisabled extends org.jclouds.walrus.WalrusAsyncClientTestDisabled {
 
    public EucalyptusPartnerCloudWalrusAsyncClientTestDisabled() {
-      this.provider = "ecc";
-      this.url = "commondatastorage.googleapis.com";
+      this.provider = "eucalyptus-partnercloud-s3";
+      this.url = "https://partnercloud.eucalyptus.com:8773/services/Walrus";
    }
 
    // TODO parameterize this test so that it can pass
