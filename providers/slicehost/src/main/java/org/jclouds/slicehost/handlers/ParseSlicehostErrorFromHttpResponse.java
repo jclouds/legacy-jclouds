@@ -21,6 +21,7 @@ package org.jclouds.slicehost.handlers;
 
 import static org.jclouds.http.HttpUtils.releasePayload;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +42,7 @@ import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.slicehost.xml.ErrorHandler;
+import org.jclouds.util.Strings2;
 
 /**
  * This will parse and set an appropriate exception on the command object.
@@ -67,28 +69,28 @@ public class ParseSlicehostErrorFromHttpResponse implements HttpErrorHandler {
          String content = response.getStatusCode() != 401 ? parseErrorFromContentOrNull(command, response) : null;
          exception = content != null ? new HttpResponseException(command, response, content) : exception;
          switch (response.getStatusCode()) {
-         case 401:
-            exception = new AuthorizationException(exception.getMessage(), exception);
-            break;
-         case 403:
-         case 404:
-            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
-               String path = command.getCurrentRequest().getEndpoint().getPath();
-               Matcher matcher = RESOURCE_PATTERN.matcher(path);
-               String message;
-               if (matcher.find()) {
-                  message = String.format("%s %s not found", matcher.group(1), matcher.group(2));
-               } else {
-                  message = path;
+            case 401:
+               exception = new AuthorizationException(exception.getMessage(), exception);
+               break;
+            case 403:
+            case 404:
+               if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
+                  String path = command.getCurrentRequest().getEndpoint().getPath();
+                  Matcher matcher = RESOURCE_PATTERN.matcher(path);
+                  String message;
+                  if (matcher.find()) {
+                     message = String.format("%s %s not found", matcher.group(1), matcher.group(2));
+                  } else {
+                     message = path;
+                  }
+                  exception = new ResourceNotFoundException(message);
                }
-               exception = new ResourceNotFoundException(message);
-            }
-            break;
-         case 422:
-            exception = new IllegalStateException(content);
-            break;
-         default:
-            exception = new HttpResponseException(command, response, content);
+               break;
+            case 422:
+               exception = new IllegalStateException(content);
+               break;
+            default:
+               exception = new HttpResponseException(command, response, content);
          }
       } finally {
          releasePayload(response);
@@ -124,8 +126,18 @@ public class ParseSlicehostErrorFromHttpResponse implements HttpErrorHandler {
 
    String parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
       // slicehost returns " " which is unparsable
-      if (response.getPayload() != null && response.getPayload().getContentMetadata().getContentLength() != 1) {
-         return errorParser.parse(response.getPayload());
+      if (response.getPayload() != null) {
+         String contentType = response.getPayload().getContentMetadata().getContentType();
+         if (response.getPayload().getContentMetadata().getContentLength() != 1) {
+            response.getPayload().release();
+         } else if (contentType != null && contentType.indexOf("xml") != -1) {
+            return errorParser.parse(response.getPayload());
+         } else {
+            try {
+               return Strings2.toStringAndClose(response.getPayload().getInput());
+            } catch (IOException e) {
+            }
+         }
       }
       return null;
    }
