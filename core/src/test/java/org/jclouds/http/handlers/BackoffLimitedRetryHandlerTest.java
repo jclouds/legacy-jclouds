@@ -86,13 +86,13 @@ public class BackoffLimitedRetryHandlerTest {
       handler.imposeBackoffExponentialDelay(4, "TEST FAILURE: 4");
       elapsedTime = (System.nanoTime() - startTime) / 1000000;
       assert (elapsedTime >= 799) : elapsedTime;
-      assertTrue(elapsedTime < 800 + acceptableDelay);
+      assertTrue(elapsedTime < 800 + acceptableDelay * 2);
 
       startTime = System.nanoTime();
       handler.imposeBackoffExponentialDelay(5, "TEST FAILURE: 5");
       elapsedTime = (System.nanoTime() - startTime) / 1000000;
       assert (elapsedTime >= 1249) : elapsedTime;
-      assertTrue(elapsedTime < 1250 + acceptableDelay);
+      assertTrue(elapsedTime < 1250 + acceptableDelay * 2);
    }
 
    TransformingHttpCommandExecutorServiceImpl executorService;
