@@ -31,7 +31,6 @@ import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.location.Provider;
 
 import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
 
@@ -51,8 +50,15 @@ public class BYONComputeServiceContextModule extends
    @Provides
    @Singleton
    Supplier<Map<String, Node>> provideNodeList(@Provider URI uri) {
-      // TODO parse uri into list, using yaml or something
-      return Suppliers.<Map<String, Node>> ofInstance(ImmutableMap.<String, Node> of());
+      return new Supplier<Map<String, Node>> (){
+
+         @Override
+         public Map<String, Node> get() {
+            // TODO parse uri into list, using yaml or something
+            return ImmutableMap.<String, Node> of();
+         }
+         
+      };
    }
 
    @Provides
