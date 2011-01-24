@@ -21,7 +21,8 @@
   "A clojure binding to the jclouds ComputeService.
 
 Current supported providers are:
-   [ec2, aws-ec2, ecc-ec2, cloudservers, cloudservers-uk, cloudservers-us,
+   [ec2, aws-ec2, eucualyptus-partnercloud-ec2, cloudservers, 
+    cloudservers-uk, cloudservers-us,
     trmk-ecloud, trmk-vcloudexpress, vcloud, bluelock, eucalyptus, 
     slicehost, elastichosts-lon-p, elastichosts-sat-p, elastichosts, 
     openhosting-east1, serverlove-z1-man, skalicloud-sdg-my,

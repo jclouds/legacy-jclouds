@@ -31,7 +31,7 @@
     <dependencies>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
-            <artifactId>ecc-ec2</artifactId>
+            <artifactId>eucalyptus-partnercloud-ec2</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

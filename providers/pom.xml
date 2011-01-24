@@ -44,8 +44,8 @@
         <module>scaleup-storage</module>
         <module>synaptic-storage</module>
         <module>cloudonestorage</module>
-        <module>ecc-s3</module>
-        <module>ecc-ec2</module>
+        <module>eucalyptus-partnercloud-s3</module>
+        <module>eucalyptus-partnercloud-ec2</module>
         <module>cloudservers-us</module>
         <module>cloudservers-uk</module>
         <module>cloudfiles-us</module>

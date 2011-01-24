@@ -33,7 +33,7 @@ our compute api supports: aws-ec2, gogrid, cloudservers (generic), cloudservers-
                           cloudservers-uk, vcloud (generic), ec2 (generic),
                           trmk-ecloud, trmk-vcloudexpress, eucalyptus (generic),
                           cloudsigma, elasticstack(generic), bluelock-vclouddirector,
-                          slicehost, ecc-ec2, elastichosts-lon-p (Peer 1), 
+                          slicehost, eucalyptus-partnercloud-ec2, elastichosts-lon-p (Peer 1), 
                           elastichosts-sat-p (Peer 1), elastichosts-lon-b (BlueSquare),
                           openhosting-east1, serverlove-z1-man, skalicloud-sdg-my,
                           vcloudexpress (generic), stub (in-memory)
@@ -44,8 +44,8 @@ our compute api supports: aws-ec2, gogrid, cloudservers (generic), cloudservers-
 our blobstore api supports: aws-s3, cloudfiles (generic), cloudfiles-us, cloudfiles-uk,
                             azureblob, atmos (generic), synaptic-storage, 
                             cloudonestorage, s3 (generic), walrus(generic), googlestorage, 
-                            scaleup-storage, ecc-s3, swift (generic), transient (in-mem),
-                            filesystem (on-disk)
+                            scaleup-storage, eucalyptus-partnercloud-s3, swift (generic), 
+                            transient (in-mem), filesystem (on-disk)
  
   * note * the pom dependency org.jclouds/jclouds-allblobstore gives you access to
            to all of these providers
