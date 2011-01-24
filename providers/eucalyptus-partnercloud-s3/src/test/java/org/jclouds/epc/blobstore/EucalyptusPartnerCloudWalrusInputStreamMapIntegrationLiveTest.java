@@ -27,5 +27,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups =  "live", testName = "EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest")
 public class EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest extends BaseInputStreamMapIntegrationTest {
-
+   public EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest() {
+      containerCount = 5;
+   }
 }

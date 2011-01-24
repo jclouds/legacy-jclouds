@@ -28,8 +28,11 @@ import org.testng.annotations.Test;
 /**
  * @author Adrian Cole
  */
-@Test(groups =  "live", testName = "EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest")
+@Test(groups = "live", testName = "EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest")
 public class EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
+   public EucalyptusPartnerCloudWalrusBlobIntegrationLiveTest() {
+      containerCount = 5;
+   }
 
    @Override
    @Test(expectedExceptions = IllegalArgumentException.class)
