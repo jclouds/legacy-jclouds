@@ -384,7 +384,7 @@ public abstract class BaseComputeServiceLiveTest {
          assertLocationSameOrChild(metadata.getLocation(), template.getLocation());
          checkImageIdMatchesTemplate(metadata);
          checkOsMatchesTemplate(metadata);
-         assertEquals(metadata.getState(), NodeState.RUNNING);
+         assert (metadata.getState() == NodeState.RUNNING) : metadata;
          // due to DHCP the addresses can actually change in-between runs.
          assertEquals(metadata.getPrivateAddresses().size(), node.getPrivateAddresses().size());
          assertEquals(metadata.getPublicAddresses().size(), node.getPublicAddresses().size());

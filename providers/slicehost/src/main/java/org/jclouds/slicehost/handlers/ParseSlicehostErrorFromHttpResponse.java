@@ -32,12 +32,10 @@ import javax.inject.Singleton;
 
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
-import org.jclouds.io.Payload;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
@@ -111,15 +109,8 @@ public class ParseSlicehostErrorFromHttpResponse implements HttpErrorHandler {
          this.errorHandlerProvider = errorHandlerProvider;
       }
 
-      String parse(Payload in) {
-         try {
-            return factory.create(errorHandlerProvider.get()).parse(in.getInput());
-         } catch (HttpException e) {
-            logger.warn(e, "error parsing error");
-            return null;
-         } finally {
-            in.release();
-         }
+      String parse(String in) {
+         return factory.create(errorHandlerProvider.get()).parse(in);
       }
 
    }
@@ -127,16 +118,10 @@ public class ParseSlicehostErrorFromHttpResponse implements HttpErrorHandler {
    String parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
       // slicehost returns " " which is unparsable
       if (response.getPayload() != null) {
-         String contentType = response.getPayload().getContentMetadata().getContentType();
-         if (response.getPayload().getContentMetadata().getContentLength() != 1) {
-            response.getPayload().release();
-         } else if (contentType != null && contentType.indexOf("xml") != -1) {
-            return errorParser.parse(response.getPayload());
-         } else {
-            try {
-               return Strings2.toStringAndClose(response.getPayload().getInput());
-            } catch (IOException e) {
-            }
+         try {
+            String payload = Strings2.toStringAndClose(response.getPayload().getInput()).trim();
+            return payload.indexOf("xml") != -1 ? errorParser.parse(payload) : payload;
+         } catch (IOException e) {
          }
       }
       return null;
