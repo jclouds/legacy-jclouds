@@ -30,5 +30,6 @@ import org.testng.annotations.Test;
 public class ElasticHostsBlueSquareLondonClientLiveTest extends ElasticStackClientLiveTest {
    public ElasticHostsBlueSquareLondonClientLiveTest() {
       provider = "elastichosts-lon-b";
+      bootDrive = "aee5589a-88c3-43ef-bb0a-9cab6e64192d";
    }
 }

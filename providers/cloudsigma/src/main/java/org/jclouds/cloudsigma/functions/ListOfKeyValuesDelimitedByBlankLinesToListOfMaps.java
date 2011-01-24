@@ -45,9 +45,11 @@ public class ListOfKeyValuesDelimitedByBlankLinesToListOfMaps implements Functio
             for (String keyValueLine : Splitter.on('\n').split(listOfKeyValues)) {
                if (!"".equals(keyValueLine)) {
                   int firstIndex = keyValueLine.indexOf(' ');
-                  String key = keyValueLine.substring(0, firstIndex);
-                  String value = keyValueLine.substring(firstIndex + 1).replace("\\n", "\n");
-                  map.put(key, value);
+                  if (firstIndex != -1) {
+                     String key = keyValueLine.substring(0, firstIndex);
+                     String value = keyValueLine.substring(firstIndex + 1).replace("\\n", "\n");
+                     map.put(key, value);
+                  }
                }
             }
             if (map.size() != 0)

@@ -19,7 +19,9 @@
 
 package org.jclouds.serverlove;
 
+import org.jclouds.domain.Credentials;
 import org.jclouds.elasticstack.ElasticStackClientLiveTest;
+import org.jclouds.elasticstack.domain.Server;
 import org.testng.annotations.Test;
 
 /**
@@ -30,5 +32,10 @@ import org.testng.annotations.Test;
 public class ServerloveManchesterClientLiveTest extends ElasticStackClientLiveTest {
    public ServerloveManchesterClientLiveTest() {
       provider = "serverlove-z1-man";
+      bootDrive = "5f2e0e29-2937-42b9-b362-d2d07eddbdeb";
+   }
+
+   protected Credentials getSshCredentials(Server server) {
+      return new Credentials("root", server.getVnc().getPassword());
    }
 }

@@ -19,22 +19,12 @@
 
 package org.jclouds.serverlove.config;
 
-import static org.jclouds.compute.domain.OsFamily.UBUNTU;
-
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.elasticstack.compute.config.ElasticStackComputeServiceContextModule;
-
-import com.google.inject.Injector;
 
 /**
  * 
  * @author Adrian Cole
  */
 public class ServerloveManchesterComputeServiceContextModule extends ElasticStackComputeServiceContextModule {
-
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(UBUNTU).osVersionMatches("10.10").os64Bit(true);
-   }
 
 }

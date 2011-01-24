@@ -81,6 +81,7 @@ public class ElasticStackClientLiveTest {
    protected ElasticStackClient client;
    protected RestContext<ElasticStackClient, ElasticStackAsyncClient> context;
    protected Predicate<IPSocket> socketTester;
+   protected String bootDrive = "38df0986-4d85-4b76-b502-3878ffc80161";
 
    protected String provider = "elasticstack";
    protected String identity;
@@ -115,13 +116,13 @@ public class ElasticStackClientLiveTest {
       setupCredentials();
       Properties overrides = setupProperties();
       context = new ComputeServiceContextFactory().createContext(provider,
-            ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
+               ImmutableSet.<Module> of(new Log4JLoggingModule()), overrides).getProviderSpecificContext();
 
       client = context.getApi();
       driveNotClaimed = new RetryablePredicate<DriveInfo>(Predicates.not(new DriveClaimed(client)), maxDriveImageTime,
-            1, TimeUnit.SECONDS);
+               1, TimeUnit.SECONDS);
       socketTester = new RetryablePredicate<IPSocket>(new InetSocketAddressConnect(), maxDriveImageTime, 1,
-            TimeUnit.SECONDS);
+               TimeUnit.SECONDS);
    }
 
    @Test
@@ -198,12 +199,10 @@ public class ElasticStackClientLiveTest {
    @Test(dependsOnMethods = "testCreateDrive")
    public void testSetDriveData() throws Exception {
 
-      DriveInfo drive2 = client.setDriveData(
-            drive.getUuid(),
-            new DriveData.Builder().claimType(ClaimType.SHARED).name("rediculous")
-                  .readers(ImmutableSet.of("ffffffff-ffff-ffff-ffff-ffffffffffff"))
-                  .tags(ImmutableSet.of("networking", "security", "gateway"))
-                  .userMetadata(ImmutableMap.of("foo", "bar")).build());
+      DriveInfo drive2 = client.setDriveData(drive.getUuid(), new DriveData.Builder().claimType(ClaimType.SHARED).name(
+               "rediculous").readers(ImmutableSet.of("ffffffff-ffff-ffff-ffff-ffffffffffff")).tags(
+               ImmutableSet.of("networking", "security", "gateway")).userMetadata(ImmutableMap.of("foo", "bar"))
+               .build());
 
       assertNotNull(drive2.getUuid(), drive.getUuid());
       assertEquals(drive2.getName(), "rediculous");
@@ -244,8 +243,8 @@ public class ElasticStackClientLiveTest {
       assertNotNull(server.getUser());
       assertEquals(server.getName(), prefix);
       assertEquals(server.isPersistent(), true);
-      assertEquals(server.getDevices(),
-            ImmutableMap.of("ide:0:0", new IDEDevice.Builder(0, 0).uuid(drive.getUuid()).build()));
+      assertEquals(server.getDevices(), ImmutableMap.of("ide:0:0", new IDEDevice.Builder(0, 0).uuid(drive.getUuid())
+               .build()));
       assertEquals(server.getBootDeviceIds(), ImmutableSet.of("ide:0:0"));
       assertEquals(server.getNics().get(0).getDhcp(), server.getVnc().getIp());
       assertEquals(server.getNics().get(0).getModel(), Model.E1000);
@@ -254,10 +253,12 @@ public class ElasticStackClientLiveTest {
 
    @Test(dependsOnMethods = "testCreateAndStartServer")
    public void testConnectivity() throws Exception {
-      Logger.getAnonymousLogger().info("awaiting vnc");
-      assert socketTester.apply(new IPSocket(server.getVnc().getIp(), 5900)) : server;
-      Logger.getAnonymousLogger().info("awaiting ssh");
-      assert socketTester.apply(new IPSocket(server.getNics().get(0).getDhcp(), 22)) : server;
+      IPSocket vncsocket = new IPSocket(server.getVnc().getIp(), 5900);
+      Logger.getAnonymousLogger().info("awaiting vnc: " + vncsocket);
+      assert socketTester.apply(vncsocket) : server;
+      IPSocket sshsocket = new IPSocket(server.getNics().get(0).getDhcp(), 22);
+      Logger.getAnonymousLogger().info("awaiting ssh: " + sshsocket);
+      assert socketTester.apply(sshsocket) : server;
       doConnectViaSsh(server, getSshCredentials(server));
    }
 
@@ -276,7 +277,7 @@ public class ElasticStackClientLiveTest {
       // behavior on shutdown depends on how your server OS is set up to respond to an ACPI power
       // button signal
       assert (client.getServerInfo(server.getUuid()).getStatus() == ServerStatus.ACTIVE || client.getServerInfo(
-            server.getUuid()).getStatus() == ServerStatus.STOPPED);
+               server.getUuid()).getStatus() == ServerStatus.STOPPED);
    }
 
    @Test(dependsOnMethods = "testLifeCycle")
@@ -284,11 +285,9 @@ public class ElasticStackClientLiveTest {
       client.stopServer(server.getUuid());
       assertEquals(client.getServerInfo(server.getUuid()).getStatus(), ServerStatus.STOPPED);
 
-      ServerInfo server2 = client.setServerConfiguration(
-            server.getUuid(),
-            Server.Builder.fromServer(server).name("rediculous")
-                  .tags(ImmutableSet.of("networking", "security", "gateway"))
-                  .userMetadata(ImmutableMap.of("foo", "bar")).build());
+      ServerInfo server2 = client.setServerConfiguration(server.getUuid(), Server.Builder.fromServer(server).name(
+               "rediculous").tags(ImmutableSet.of("networking", "security", "gateway")).userMetadata(
+               ImmutableMap.of("foo", "bar")).build());
 
       assertNotNull(server2.getUuid(), server.getUuid());
       assertEquals(server2.getName(), "rediculous");
@@ -314,8 +313,8 @@ public class ElasticStackClientLiveTest {
    }
 
    protected void doConnectViaSsh(Server server, Credentials creds) throws IOException {
-      SshClient ssh = Guice.createInjector(new JschSshClientModule()).getInstance(SshClient.Factory.class)
-            .create(new IPSocket(server.getVnc().getIp(), 22), creds);
+      SshClient ssh = Guice.createInjector(new JschSshClientModule()).getInstance(SshClient.Factory.class).create(
+               new IPSocket(server.getVnc().getIp(), 22), creds);
       try {
          ssh.connect();
          ExecResponse hello = ssh.exec("echo hello");
@@ -358,7 +357,7 @@ public class ElasticStackClientLiveTest {
    public void testWeCopyADriveContentsViaGzip() throws IOException {
       try {
          drive3 = client
-               .createDrive(new CreateDriveRequest.Builder().name(prefix + "3").size(1 * 1024 * 1024l).build());
+                  .createDrive(new CreateDriveRequest.Builder().name(prefix + "3").size(1 * 1024 * 1024l).build());
          System.err.println("before image; drive 2" + client.getDriveInfo(drive2.getUuid()));
          System.err.println("before image; drive 3" + client.getDriveInfo(drive3.getUuid()));
          client.imageDrive(drive2.getUuid(), drive3.getUuid());
@@ -379,7 +378,7 @@ public class ElasticStackClientLiveTest {
 
    protected void prepareDrive() {
       System.err.println("before prepare" + client.getDriveInfo(drive.getUuid()));
-      client.imageDrive("38df0986-4d85-4b76-b502-3878ffc80161", drive.getUuid(), ImageConversionType.GUNZIP);
+      client.imageDrive(bootDrive, drive.getUuid(), ImageConversionType.GUNZIP);
       assert driveNotClaimed.apply(drive) : client.getDriveInfo(drive.getUuid());
       System.err.println("after prepare" + client.getDriveInfo(drive.getUuid()));
    }

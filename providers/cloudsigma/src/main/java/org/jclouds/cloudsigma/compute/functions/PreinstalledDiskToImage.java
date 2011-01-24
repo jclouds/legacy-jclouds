@@ -44,7 +44,7 @@ public class PreinstalledDiskToImage implements Function<DriveInfo, Image> {
 
    @Inject
    public PreinstalledDiskToImage(Supplier<Location> locationSupplier,
-         Function<String, OsFamilyVersion64Bit> imageParser) {
+            Function<String, OsFamilyVersion64Bit> imageParser) {
       this.locationSupplier = locationSupplier;
       this.imageParser = imageParser;
    }
@@ -56,11 +56,11 @@ public class PreinstalledDiskToImage implements Function<DriveInfo, Image> {
       String description = drive.getDescription() != null ? drive.getDescription() : drive.getName();
       OperatingSystemBuilder builder = new OperatingSystemBuilder();
       OsFamilyVersion64Bit parsed = imageParser.apply(drive.getName());
-      builder.name(drive.getName()).description(description).is64Bit(parsed.is64Bit).version(parsed.version)
-            .family(parsed.family);
-      return new ImageBuilder().ids(drive.getUuid())
-            .userMetadata(ImmutableMap.<String, String> of("size", drive.getSize() / 1024 / 1024 / 1024 + ""))
-            .defaultCredentials(new Credentials("cloudsigma", "cloudsigma")).location(locationSupplier.get())
-            .name(drive.getName()).description(description).operatingSystem(builder.build()).version("").build();
+      builder.name(drive.getName()).description(description).is64Bit(parsed.is64Bit).version(parsed.version).family(
+               parsed.family);
+      return new ImageBuilder().ids(drive.getUuid()).adminPassword("cloudsigma").userMetadata(
+               ImmutableMap.<String, String> of("size", drive.getSize() / 1024 / 1024 / 1024 + "")).defaultCredentials(
+               new Credentials("cloudsigma", "cloudsigma")).location(locationSupplier.get()).name(drive.getName())
+               .description(description).operatingSystem(builder.build()).version("").build();
    }
 }

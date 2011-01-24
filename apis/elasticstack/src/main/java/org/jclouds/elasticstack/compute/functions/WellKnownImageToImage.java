@@ -53,18 +53,13 @@ public class WellKnownImageToImage implements Function<DriveInfo, Image> {
    @Override
    public Image apply(DriveInfo drive) {
       WellKnownImage input = preinstalledImages.get(drive.getUuid());
-      return new ImageBuilder()
-            .ids(drive.getUuid())
-            .userMetadata(
-                  ImmutableMap.<String, String> builder().putAll(drive.getUserMetadata())
-                        .put("size", input.getSize() + "").build())
-            .defaultCredentials(new Credentials("toor", null))
-            .location(locationSupplier.get())
-            .name(input.getDescription())
-            .description(drive.getName())
-            .operatingSystem(
-                  new OperatingSystemBuilder().family(input.getOsFamily()).version(input.getOsVersion())
-                        .name(input.getDescription()).description(drive.getName()).is64Bit(input.is64bit()).build()).version("")
-            .build();
+      return new ImageBuilder().ids(drive.getUuid()).userMetadata(
+               ImmutableMap.<String, String> builder().putAll(drive.getUserMetadata())
+                        .put("size", input.getSize() + "").build()).defaultCredentials(
+               new Credentials(input.getLoginUser(), null)).location(locationSupplier.get()).name(
+               input.getDescription()).description(drive.getName()).operatingSystem(
+               new OperatingSystemBuilder().family(input.getOsFamily()).version(input.getOsVersion()).name(
+                        input.getDescription()).description(drive.getName()).is64Bit(input.is64bit()).build()).version(
+               "").build();
    }
 }

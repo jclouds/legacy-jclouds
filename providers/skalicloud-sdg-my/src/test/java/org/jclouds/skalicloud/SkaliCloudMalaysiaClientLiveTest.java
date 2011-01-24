@@ -30,5 +30,6 @@ import org.testng.annotations.Test;
 public class SkaliCloudMalaysiaClientLiveTest extends ElasticStackClientLiveTest {
    public SkaliCloudMalaysiaClientLiveTest() {
       provider = "skalicloud-sdg-my";
+      bootDrive = "3051699a-a536-4220-aeb5-67f2ec101a09";
    }
 }

@@ -23,6 +23,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.cloudsigma.domain.ClaimType;
@@ -30,6 +31,7 @@ import org.jclouds.cloudsigma.domain.DriveInfo;
 import org.jclouds.cloudsigma.domain.DriveMetrics;
 import org.jclouds.cloudsigma.domain.DriveStatus;
 import org.jclouds.cloudsigma.domain.DriveType;
+import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -41,6 +43,9 @@ import com.google.common.collect.Maps;
  */
 @Singleton
 public class MapToDriveInfo implements Function<Map<String, String>, DriveInfo> {
+
+   @Resource
+   protected Logger logger = Logger.NULL;
 
    @Override
    public DriveInfo apply(Map<String, String> from) {
@@ -89,7 +94,12 @@ public class MapToDriveInfo implements Function<Map<String, String>, DriveInfo> 
          builder.free(new Boolean(from.get("free")));
       if (from.containsKey("type"))
          builder.type(DriveType.fromValue(from.get("type")));
-      return builder.build();
+      try {
+         return builder.build();
+      } catch (NullPointerException e) {
+         logger.trace("entry missing data: %s; %s", e.getMessage(), from);
+         return null;
+      }
    }
 
    protected DriveMetrics buildMetrics(Map<String, String> from) {

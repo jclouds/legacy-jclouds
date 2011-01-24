@@ -68,14 +68,14 @@ import com.google.inject.TypeLiteral;
  * @author Adrian Cole
  */
 public class ElasticStackComputeServiceContextModule
-      extends
-      ComputeServiceAdapterContextModule<ElasticStackClient, ElasticStackAsyncClient, ServerInfo, Hardware, DriveInfo, Location> {
+         extends
+         ComputeServiceAdapterContextModule<ElasticStackClient, ElasticStackAsyncClient, ServerInfo, Hardware, DriveInfo, Location> {
 
    public ElasticStackComputeServiceContextModule() {
       super(ElasticStackClient.class, ElasticStackAsyncClient.class);
    }
 
-   @SuppressWarnings({ "unchecked", "rawtypes" })
+   @SuppressWarnings( { "unchecked", "rawtypes" })
    @Override
    protected void configure() {
       super.configure();
@@ -123,10 +123,9 @@ public class ElasticStackComputeServiceContextModule
    @Singleton
    @Provides
    protected Map<String, WellKnownImage> provideImages(Json json, @Provider String providerName) throws IOException {
-      List<WellKnownImage> wellKnowns = json.fromJson(
-            Strings2.toStringAndClose(getClass().getResourceAsStream("/"+providerName+"/preinstalled_images.json")),
-            new TypeLiteral<List<WellKnownImage>>() {
-            }.getType());
+      List<WellKnownImage> wellKnowns = json.fromJson(Strings2.toStringAndClose(getClass().getResourceAsStream(
+               "/" + providerName + "/preinstalled_images.json")), new TypeLiteral<List<WellKnownImage>>() {
+      }.getType());
       return Maps.uniqueIndex(wellKnowns, new Function<WellKnownImage, String>() {
 
          @Override
@@ -140,8 +139,8 @@ public class ElasticStackComputeServiceContextModule
    @Provides
    @Singleton
    protected Predicate<DriveInfo> supplyDriveUnclaimed(DriveClaimed driveClaimed,
-         ComputeServiceConstants.Timeouts timeouts) {
+            ComputeServiceConstants.Timeouts timeouts) {
       return new RetryablePredicate<DriveInfo>(Predicates.not(driveClaimed), timeouts.nodeRunning, 1000,
-            TimeUnit.MILLISECONDS);
+               TimeUnit.MILLISECONDS);
    }
 }

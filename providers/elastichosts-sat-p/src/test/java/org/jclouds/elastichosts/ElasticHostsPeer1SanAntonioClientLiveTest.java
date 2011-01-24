@@ -30,5 +30,6 @@ import org.testng.annotations.Test;
 public class ElasticHostsPeer1SanAntonioClientLiveTest extends ElasticStackClientLiveTest {
    public ElasticHostsPeer1SanAntonioClientLiveTest() {
       provider = "elastichosts-sat-p";
+      bootDrive = "aee5589a-88c3-43ef-bb0a-9cab6e64192d";
    }
 }

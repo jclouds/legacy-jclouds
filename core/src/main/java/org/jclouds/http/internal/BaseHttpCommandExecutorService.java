@@ -34,6 +34,7 @@ import java.util.concurrent.Future;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.net.ssl.SSLException;
 
 import org.jclouds.Constants;
 import org.jclouds.http.HttpCommand;
@@ -47,6 +48,7 @@ import org.jclouds.http.IOExceptionRetryHandler;
 import org.jclouds.http.handlers.DelegatingErrorHandler;
 import org.jclouds.http.handlers.DelegatingRetryHandler;
 import org.jclouds.logging.Logger;
+import org.jclouds.rest.AuthorizationException;
 import org.jclouds.util.Throwables2;
 
 import com.google.common.io.NullOutputStream;
@@ -73,9 +75,9 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
 
    @Inject
    protected BaseHttpCommandExecutorService(HttpUtils utils,
-         @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
-         DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
-         DelegatingErrorHandler errorHandler, HttpWire wire) {
+            @Named(Constants.PROPERTY_IO_WORKER_THREADS) ExecutorService ioWorkerExecutor,
+            DelegatingRetryHandler retryHandler, IOExceptionRetryHandler ioRetryHandler,
+            DelegatingErrorHandler errorHandler, HttpWire wire) {
       this.utils = checkNotNull(utils, "utils");
       this.retryHandler = checkNotNull(retryHandler, "retryHandler");
       this.ioRetryHandler = checkNotNull(ioRetryHandler, "ioRetryHandler");
@@ -125,7 +127,8 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
    public Future<HttpResponse> submit(HttpCommand command) {
       HttpRequest request = command.getCurrentRequest();
       checkRequestHasContentLengthOrChunkedEncoding(request,
-            "if the request has a payload, it must be set to chunked encoding or specify a content length: " + request);
+               "if the request has a payload, it must be set to chunked encoding or specify a content length: "
+                        + request);
       return ioWorkerExecutor.submit(new HttpResponseCallable(command));
    }
 
@@ -147,7 +150,7 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
                   request = filter.filter(request);
                }
                checkRequestHasContentLengthOrChunkedEncoding(request,
-                     "After filtering, the request has niether chunked encoding nor content length: " + request);
+                        "After filtering, the request has niether chunked encoding nor content length: " + request);
                logger.debug("Sending request %s: %s", request.hashCode(), request.getRequestLine());
                wirePayloadIfEnabled(wire, request);
                nativeRequest = convert(request);
@@ -169,13 +172,18 @@ public abstract class BaseHttpCommandExecutorService<Q> implements HttpCommandEx
                }
             } catch (Exception e) {
                IOException ioe = Throwables2.getFirstThrowableOfType(e, IOException.class);
-               if (ioe != null && ioRetryHandler.shouldRetryRequest(command, ioe)) {
-                  continue;
-               } else {
-                  command.setException(new HttpResponseException(e.getMessage() + " connecting to "
-                        + command.getCurrentRequest().getRequestLine(), command, null, e));
-                  break;
+               if (ioe != null) {
+                  if (ioe instanceof SSLException) {
+                     command.setException(new AuthorizationException(e.getMessage() + " connecting to "
+                              + command.getCurrentRequest().getRequestLine(), e));
+                     break;
+                  } else if (ioRetryHandler.shouldRetryRequest(command, ioe)) {
+                     continue;
+                  }
                }
+               command.setException(new HttpResponseException(e.getMessage() + " connecting to "
+                        + command.getCurrentRequest().getRequestLine(), command, null, e));
+               break;
             } finally {
                cleanup(nativeRequest);
             }

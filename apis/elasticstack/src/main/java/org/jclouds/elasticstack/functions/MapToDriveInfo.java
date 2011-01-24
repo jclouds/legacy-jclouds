@@ -22,12 +22,14 @@ package org.jclouds.elasticstack.functions;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jclouds.elasticstack.domain.ClaimType;
 import org.jclouds.elasticstack.domain.DriveInfo;
 import org.jclouds.elasticstack.domain.DriveMetrics;
 import org.jclouds.elasticstack.domain.DriveStatus;
+import org.jclouds.logging.Logger;
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
@@ -39,6 +41,10 @@ import com.google.common.collect.Maps;
  */
 @Singleton
 public class MapToDriveInfo implements Function<Map<String, String>, DriveInfo> {
+
+   @Resource
+   protected Logger logger = Logger.NULL;
+
    @Override
    public DriveInfo apply(Map<String, String> from) {
       if (from.size() == 0)
@@ -67,7 +73,12 @@ public class MapToDriveInfo implements Function<Map<String, String>, DriveInfo> 
             metadata.put(entry.getKey().substring(entry.getKey().indexOf(':') + 1), entry.getValue());
       }
       builder.userMetadata(metadata);
-      return builder.build();
+      try {
+         return builder.build();
+      } catch (NullPointerException e) {
+         logger.trace("entry missing data: %s; %s", e.getMessage(), from);
+         return null;
+      }
    }
 
    protected DriveMetrics buildMetrics(Map<String, String> from) {

@@ -99,6 +99,7 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
          Image image = findImageForId.apply(imageId);
          if (image != null) {
             builder.operatingSystem(image.getOperatingSystem());
+            builder.adminPassword(image.getAdminPassword());
          }
       }
       builder.hardware(new HardwareBuilder().ids(from.getUuid())
@@ -108,8 +109,6 @@ public class ServerInfoToNodeMetadata implements Function<ServerInfo, NodeMetada
       builder.publicAddresses(ImmutableSet.<String> of(from.getVnc().getIp()));
       builder.privateAddresses(ImmutableSet.<String> of());
       builder.credentials(credentialStore.get(from.getUuid()));
-      // note sudo password!
-      builder.adminPassword(from.getVnc().getPassword());
       return builder.build();
    }
 

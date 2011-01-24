@@ -36,4 +36,8 @@ public class ElasticStackComputeServiceLiveTest extends BaseComputeServiceLiveTe
       return new JschSshClientModule();
    }
 
+   @Override
+   public void testOptionToNotBlock() {
+      // start call is blocking anyway.
+   }
 }

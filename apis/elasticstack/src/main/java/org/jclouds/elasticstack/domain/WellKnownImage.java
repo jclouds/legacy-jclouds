@@ -28,6 +28,7 @@ import com.google.common.base.Objects;
  * @author Adrian Cole
  */
 public class WellKnownImage {
+   private String loginUser = "toor";
    private String uuid;
    private String description;
    private OsFamily osFamily;
@@ -66,9 +67,13 @@ public class WellKnownImage {
       return is64bit;
    }
 
+   public String getLoginUser() {
+      return loginUser;
+   }
+
    @Override
    public int hashCode() {
-      return Objects.hashCode(uuid, description, osFamily, osVersion, size, is64bit);
+      return Objects.hashCode(uuid, description, osFamily, osVersion, size, is64bit, loginUser);
    }
 
    @Override
@@ -81,7 +86,8 @@ public class WellKnownImage {
    @Override
    public String toString() {
       return Objects.toStringHelper(this).add("uuid", uuid).add("description", description).add("osFamily", osFamily)
-               .add("osVersion", osVersion).add("size", size).add("is64bit", is64bit).toString();
+               .add("osVersion", osVersion).add("size", size).add("is64bit", is64bit).add("loginUser", loginUser)
+               .toString();
    }
 
 }
