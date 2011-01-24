@@ -85,63 +85,43 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements AddNodeWith
 
    @Override
    public NodeMetadata getNode(String id) {
-      N node = client.getNode(id);
+      N node = client.getNode(checkNotNull(id, "id"));
       return node == null ? null : nodeMetadataAdapter.apply(node);
    }
 
    @Override
    public NodeMetadata rebootNode(String id) {
-
-      NodeMetadata node = getNode(id);
+      NodeMetadata node = getNode(checkNotNull(id, "id"));
       if (node == null || node.getState() == NodeState.TERMINATED)
          return node;
-
-      logger.debug(">> rebooting node(%s)", id);
       client.rebootNode(id);
-      logger.debug("<< rebooted node(%s)", id);
-
       return node;
    }
 
    @Override
    public NodeMetadata resumeNode(String id) {
-
-      NodeMetadata node = getNode(id);
+      NodeMetadata node = getNode(checkNotNull(id, "id"));
       if (node == null || node.getState() == NodeState.TERMINATED || node.getState() == NodeState.RUNNING)
          return node;
-
-      logger.debug(">> resuming node(%s)", id);
       client.resumeNode(id);
-      logger.debug("<< resumed node(%s)", id);
-
       return node;
    }
 
    @Override
    public NodeMetadata suspendNode(String id) {
-
-      NodeMetadata node = getNode(id);
+      NodeMetadata node = getNode(checkNotNull(id, "id"));
       if (node == null || node.getState() == NodeState.TERMINATED || node.getState() == NodeState.SUSPENDED)
          return node;
-
-      logger.debug(">> suspending node(%s)", id);
       client.suspendNode(id);
-      logger.debug("<< suspended node(%s)", id);
-
       return node;
    }
 
    @Override
    public NodeMetadata destroyNode(String id) {
-
-      NodeMetadata node = getNode(id);
+      NodeMetadata node = getNode(checkNotNull(id, "id"));
       if (node == null)
          return node;
-
-      logger.debug(">> destroying node(%s)", id);
       client.destroyNode(id);
-      logger.debug("<< destroyed node(%s)", id);
-
       return node;
    }
 
@@ -152,14 +132,10 @@ public class AdaptingComputeServiceStrategies<N, H, I, L> implements AddNodeWith
    public NodeMetadata addNodeWithTag(String tag, String name, Template template) {
       checkState(tag != null, "tag (that which groups identical nodes together) must be specified");
       checkState(name != null && name.indexOf(tag) != -1, "name should have %s encoded into it", tag);
-
-      logger.debug(">> instantiating node location(%s) name(%s) image(%s) hardware(%s)",
-               template.getLocation().getId(), name, template.getImage().getProviderId(), template.getHardware()
-                        .getProviderId());
+      checkState(template != null, "template must be specified");
 
       N from = client.runNodeWithTagAndNameAndStoreCredentials(tag, name, template, credentialStore);
       NodeMetadata node = nodeMetadataAdapter.apply(from);
-      logger.debug("<< instantiated node(%s)", node.getId());
       return node;
    }
 

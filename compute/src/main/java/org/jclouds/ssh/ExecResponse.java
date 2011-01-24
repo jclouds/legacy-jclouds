@@ -46,7 +46,7 @@ public class ExecResponse implements CustomizationResponse {
 
    @Override
    public String toString() {
-      return "ExecResponse [output=" + output + ", error=" + error + ", exitCode=" + exitCode + "]";
+      return "[output=" + output + ", error=" + error + ", exitCode=" + exitCode + "]";
    }
 
    @Override

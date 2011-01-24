@@ -115,8 +115,10 @@ public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
       ExecResponse returnVal;
       String command = (runAsRoot) ? execScriptAsRoot(action) : execScriptAsDefaultUser(action);
       returnVal = runCommand(command);
-      logger.debug("<< %s(%d)", action, returnVal.getExitCode());
-      logger.trace("<< %s[%s]", action, returnVal);
+      if (logger.isTraceEnabled())
+         logger.trace("<< %s[%s]", action, returnVal);
+      else
+         logger.debug("<< %s(%d)", action, returnVal.getExitCode());
       return returnVal;
    }
 

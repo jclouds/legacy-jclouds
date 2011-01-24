@@ -75,7 +75,9 @@ public class EncodeTagIntoNameRunNodesAndAddToSetStrategy implements RunNodesAnd
       @Override
       public NodeMetadata call() throws Exception {
          NodeMetadata node = null;
-         logger.debug(">> starting node(%s) tag(%s)", name, tag);
+         logger.debug(">> adding node location(%s) name(%s) image(%s) hardware(%s)",
+                  template.getLocation().getId(), name, template.getImage().getProviderId(), template.getHardware()
+                           .getProviderId());
          node = addNodeWithTagStrategy.addNodeWithTag(tag, name, template);
          logger.debug("<< %s node(%s)", node.getState(), node.getId());
          return node;

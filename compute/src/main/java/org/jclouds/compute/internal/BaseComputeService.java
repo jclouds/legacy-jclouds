@@ -425,10 +425,10 @@ public class BaseComputeService implements ComputeService {
    @Override
    public void suspendNode(String id) {
       checkNotNull(id, "id");
-      logger.debug(">> suspendping node(%s)", id);
+      logger.debug(">> suspending node(%s)", id);
       NodeMetadata node = suspendNodeStrategy.suspendNode(id);
       boolean successful = nodeSuspended.apply(node);
-      logger.debug("<< suspendped node(%s) success(%s)", id, successful);
+      logger.debug("<< suspended node(%s) success(%s)", id, successful);
    }
 
    /**
@@ -528,7 +528,7 @@ public class BaseComputeService implements ComputeService {
             Iterable<? extends NodeMetadata> nodes, Statement script, RunScriptOptions options,
             Map<NodeMetadata, Exception> badNodes) {
       return filter(transformParallel(nodes, new TransformNodesIntoInitializedScriptRunners(script, options, badNodes),
-               executor, null, logger, "transformNodesIntoInitializedScriptRunners(" + nodes + ")"), notNull());
+               executor, null, logger, "initialize script runners"), notNull());
    }
 
    private Set<? extends NodeMetadata> detailsOnAllNodes() {
