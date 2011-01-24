@@ -166,6 +166,8 @@ public interface ComputeService {
     * 
     * @throws UnsupportedOperationException
     *            if the underlying provider doesn't support suspend/resume
+    * @throws NoSuchElementException
+    *            if no nodes matched the predicate specified
     */
    void resumeNodesMatching(Predicate<NodeMetadata> filter);
 
@@ -189,6 +191,11 @@ public interface ComputeService {
     * <h4>note</h4>
     * 
     * affected nodes may not resume with the same IP address(es)
+    * 
+    * @throws UnsupportedOperationException
+    *            if the underlying provider doesn't support suspend/resume
+    * @throws NoSuchElementException
+    *            if no nodes matched the predicate specified
     */
    void suspendNodesMatching(Predicate<NodeMetadata> filter);
 
@@ -215,6 +222,9 @@ public interface ComputeService {
    /**
     * nodes matching the filter are treated as a logical set. Using this command, you can save time
     * by rebooting the nodes in parallel.
+    * 
+    * @throws NoSuchElementException
+    *            if no nodes matched the predicate specified
     */
    void rebootNodesMatching(Predicate<NodeMetadata> filter);
 
@@ -233,54 +243,34 @@ public interface ComputeService {
    Set<? extends NodeMetadata> listNodesDetailsMatching(Predicate<ComputeMetadata> filter);
 
    /**
-    * Runs the script without any additional options
-    * 
-    * @see #runScriptOnNodesMatching(Predicate, Payload,
-    *      org.jclouds.compute.options.RunScriptOptions)
-    * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
+    * @see org.jclouds.io.Payloads
+    * @see ComputeService#runScriptOnNodesMatching(Predicate, Statement, RunScriptOptions)
     */
    @Deprecated
    Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, Payload runScript)
             throws RunScriptOnNodesException;
 
    /**
-    * Run the script on all nodes with the specific predicate.
-    * 
-    * @param filter
-    *           Predicate-based filter to define on which nodes the script is to be executed
-    * @param runScript
-    *           payload containing the script to run
-    * @param options
-    *           nullable options to how to run the script, whether to override credentials
-    * @return map with node identifiers and corresponding responses
-    * @throws RunScriptOnNodesException
-    *            if anything goes wrong during script execution
-    * 
-    * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
     * @see org.jclouds.io.Payloads
+    * @see ComputeService#runScriptOnNodesMatching(Predicate, Statement, RunScriptOptions)
     */
    @Deprecated
    Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
             Payload runScript, RunScriptOptions options) throws RunScriptOnNodesException;
 
    /**
-    * Run the script on all nodes with the specific predicate.
     * 
-    * @param filter
-    *           Predicate-based filter to define on which nodes the script is to be executed
-    * @param runScript
-    *           string containing the script to run
-    * @param options
-    *           nullable options to how to run the script, whether to override credentials
-    * @return map with node identifiers and corresponding responses
-    * @throws RunScriptOnNodesException
-    *            if anything goes wrong during script execution
-    * 
-    * @see org.jclouds.compute.predicates.NodePredicates#runningWithTag(String)
-    * @see org.jclouds.scriptbuilder.domain.Statements
+    * @see ComputeService#runScriptOnNodesMatching(Predicate, Statement, RunScriptOptions)
     */
-   Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, String runScript,
-            RunScriptOptions options) throws RunScriptOnNodesException;
+   Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter, String runScript)
+            throws RunScriptOnNodesException;
+
+   /**
+    * 
+    * @see ComputeService#runScriptOnNodesMatching(Predicate, Statement, RunScriptOptions)
+    */
+   Map<? extends NodeMetadata, ExecResponse> runScriptOnNodesMatching(Predicate<NodeMetadata> filter,
+            Statement runScript) throws RunScriptOnNodesException;
 
    /**
     * Run the script on all nodes with the specific predicate.
@@ -292,6 +282,8 @@ public interface ComputeService {
     * @param options
     *           nullable options to how to run the script, whether to override credentials
     * @return map with node identifiers and corresponding responses
+    * @throws NoSuchElementException
+    *            if no nodes matched the predicate specified
     * @throws RunScriptOnNodesException
     *            if anything goes wrong during script execution
     * 

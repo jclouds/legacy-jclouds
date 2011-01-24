@@ -36,9 +36,6 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.Resource;
-import javax.inject.Named;
-
 import org.jclouds.compute.ComputeServiceContextBuilder;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
@@ -47,9 +44,7 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Processor;
 import org.jclouds.compute.domain.Volume;
 import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
-import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.http.HttpRequest;
-import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
 import org.jclouds.rest.Providers;
 import org.jclouds.scriptbuilder.domain.Statement;
@@ -106,10 +101,6 @@ public class ComputeServiceUtils {
       return extractZipIntoDirectory(new HttpRequest("GET", zip), directory);
    }
 
-   @Resource
-   @Named(ComputeServiceConstants.COMPUTE_LOGGER)
-   protected static Logger logger = Logger.NULL;
-
    /**
     * 
     * 
@@ -117,12 +108,7 @@ public class ComputeServiceUtils {
     */
    public static String parseTagFromName(String from) {
       Matcher matcher = DELIMETED_BY_HYPHEN_ENDING_IN_HYPHEN_HEX.matcher(from);
-      String returnVal = matcher.find() ? matcher.group(1) : "NOTAG#" + from;
-      if (logger.isTraceEnabled()) {
-         if (returnVal.startsWith("NOTAG#"))
-            logger.trace("failed to parse tag from name %s", from);
-      }
-      return returnVal;
+      return matcher.find() ? matcher.group(1) : "NOTAG#" + from;
    }
 
    public static double getCores(Hardware input) {
@@ -207,7 +193,8 @@ public class ComputeServiceUtils {
                      }
                   }), socketTester);
       } catch (NoSuchElementException e) {
-         throw new RuntimeException(String.format("could not connect to any ip address port %d on node %s", port, node));
+         throw new NoSuchElementException(String.format("could not connect to any ip address port %d on node %s", port,
+                  node));
       }
       return socket;
    }

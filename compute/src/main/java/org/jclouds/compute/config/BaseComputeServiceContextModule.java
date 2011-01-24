@@ -19,6 +19,7 @@
 
 package org.jclouds.compute.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
@@ -31,8 +32,9 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
-import org.jclouds.compute.callables.StartInitScriptOnNode;
-import org.jclouds.compute.callables.StartInitScriptOnNodeAndBlockUntilComplete;
+import org.jclouds.compute.callables.RunScriptOnNode;
+import org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh;
+import org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -41,16 +43,17 @@ import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.functions.CreateSshClientOncePortIsListeningOnNode;
 import org.jclouds.compute.functions.TemplateOptionsToStatement;
+import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
-import org.jclouds.compute.strategy.RunStatementOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
-import org.jclouds.compute.util.ComputeServiceUtils;
+import org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap;
 import org.jclouds.domain.Location;
 import org.jclouds.json.Json;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
@@ -58,6 +61,7 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
@@ -77,9 +81,12 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       bind(new TypeLiteral<Function<TemplateOptions, Statement>>() {
       }).to(TemplateOptionsToStatement.class);
 
-      install(new FactoryModuleBuilder().implement(StartInitScriptOnNode.class, Names.named("blocking"),
-               StartInitScriptOnNodeAndBlockUntilComplete.class).implement(StartInitScriptOnNode.class,
-               Names.named("nonblocking"), StartInitScriptOnNode.class).build(StartInitScriptOnNode.Factory.class));
+      install(new FactoryModuleBuilder().implement(RunScriptOnNode.class, Names.named("blocking"),
+               RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.class).implement(RunScriptOnNode.class,
+               Names.named("nonblocking"), RunScriptOnNodeAsInitScriptUsingSsh.class).build(
+               RunScriptOnNodeFactoryImpl.Factory.class));
+      
+      bind(RunScriptOnNode.Factory.class).to(RunScriptOnNodeFactoryImpl.class);
 
       install(new FactoryModuleBuilder().implement(new TypeLiteral<Callable<Void>>() {
       }, CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.class).implement(
@@ -87,10 +94,47 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
                }, CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.class).build(
                CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory.class));
 
-      install(new FactoryModuleBuilder().implement(new TypeLiteral<Callable<Void>>() {
-      }, RunStatementOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.class).build(
-               RunStatementOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory.class));
-      requestStaticInjection(ComputeServiceUtils.class);
+      install(new FactoryModuleBuilder().implement(new TypeLiteral<Callable<RunScriptOnNode>>() {
+      }, InitializeRunScriptOnNodeOrPlaceInBadMap.class).build(InitializeRunScriptOnNodeOrPlaceInBadMap.Factory.class));
+   }
+
+   @Singleton
+   static class RunScriptOnNodeFactoryImpl implements RunScriptOnNode.Factory {
+
+      static interface Factory {
+
+         @Named("blocking")
+         RunScriptOnNode blockOnComplete(NodeMetadata node, Statement script, RunScriptOptions options);
+
+         @Named("nonblocking")
+         RunScriptOnNode dontBlockOnComplete(NodeMetadata node, Statement script, RunScriptOptions options);
+      }
+
+      private final Factory factory;
+
+      @Inject
+      RunScriptOnNodeFactoryImpl(Factory factory) {
+         this.factory = checkNotNull(factory, "factory");
+      }
+
+      @Override
+      public RunScriptOnNode create(NodeMetadata node, Statement runScript, RunScriptOptions options) {
+         checkNotNull(node, "node");
+         checkNotNull(runScript, "runScript");
+         checkNotNull(options, "options");
+         return options.shouldBlockOnComplete() ? factory.blockOnComplete(node, runScript, options) : factory
+                  .dontBlockOnComplete(node, runScript, options);
+      }
+
+      @Override
+      public RunScriptOnNode create(NodeMetadata node, String script) {
+         return create(node, Statements.exec(checkNotNull(script, "script")));
+      }
+
+      @Override
+      public RunScriptOnNode create(NodeMetadata node, Statement script) {
+         return create(node, script, RunScriptOptions.NONE);
+      }
    }
 
    @Provides

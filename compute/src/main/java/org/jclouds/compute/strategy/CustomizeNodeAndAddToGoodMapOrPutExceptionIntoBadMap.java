@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
-import org.jclouds.compute.callables.StartInitScriptOnNode;
+import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.TemplateOptions;
@@ -70,7 +70,7 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
    protected Logger logger = Logger.NULL;
 
    private final Predicate<NodeMetadata> nodeRunning;
-   private final ScriptInvokerForNodeAndStatement scriptInvokerForNodeAndStatement;
+   private final InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory;
    private final GetNodeMetadataStrategy getNode;
    private final RetryIfSocketNotYetOpen socketTester;
    private final Timeouts timeouts;
@@ -90,15 +90,14 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
             @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning, GetNodeMetadataStrategy getNode,
             RetryIfSocketNotYetOpen socketTester, Timeouts timeouts,
             Function<TemplateOptions, Statement> templateOptionsToStatement,
-            ScriptInvokerForNodeAndStatement scriptInvokerForNodeAndStatement, @Assisted TemplateOptions options,
-            @Assisted @Nullable NodeMetadata node, @Assisted Set<NodeMetadata> goodNodes,
-            @Assisted Map<NodeMetadata, Exception> badNodes,
+            InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
+            @Assisted TemplateOptions options, @Assisted @Nullable NodeMetadata node,
+            @Assisted Set<NodeMetadata> goodNodes, @Assisted Map<NodeMetadata, Exception> badNodes,
             @Assisted Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
       this.statement = checkNotNull(templateOptionsToStatement, "templateOptionsToStatement").apply(
                checkNotNull(options, "options"));
       this.nodeRunning = checkNotNull(nodeRunning, "nodeRunning");
-      this.scriptInvokerForNodeAndStatement = checkNotNull(scriptInvokerForNodeAndStatement,
-               "scriptInvokerForNodeAndStatement");
+      this.initScriptRunnerFactory = checkNotNull(initScriptRunnerFactory, "initScriptRunnerFactory");
       this.getNode = checkNotNull(getNode, "getNode");
       this.socketTester = checkNotNull(socketTester, "socketTester");
       this.timeouts = checkNotNull(timeouts, "timeouts");
@@ -114,11 +113,12 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
             @Named("NODE_RUNNING") Predicate<NodeMetadata> nodeRunning, GetNodeMetadataStrategy getNode,
             RetryIfSocketNotYetOpen socketTester, Timeouts timeouts,
             Function<TemplateOptions, Statement> templateOptionsToStatement,
-            ScriptInvokerForNodeAndStatement scriptInvokerForNodeAndStatement, @Assisted TemplateOptions options,
-            @Assisted Set<NodeMetadata> goodNodes, @Assisted Map<NodeMetadata, Exception> badNodes,
+            InitializeRunScriptOnNodeOrPlaceInBadMap.Factory initScriptRunnerFactory,
+            @Assisted TemplateOptions options, @Assisted Set<NodeMetadata> goodNodes,
+            @Assisted Map<NodeMetadata, Exception> badNodes,
             @Assisted Multimap<NodeMetadata, CustomizationResponse> customizationResponses) {
-      this(nodeRunning, getNode, socketTester, timeouts, templateOptionsToStatement, scriptInvokerForNodeAndStatement,
-               options, null, goodNodes, badNodes, customizationResponses);
+      this(nodeRunning, getNode, socketTester, timeouts, templateOptionsToStatement, initScriptRunnerFactory, options,
+               null, goodNodes, badNodes, customizationResponses);
    }
 
    @Override
@@ -135,10 +135,11 @@ public class CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap implements Cal
                                  .getId(), timeouts.nodeRunning / 1000, node.getState()));
             }
             if (statement != null) {
-               StartInitScriptOnNode scriptInstructions = scriptInvokerForNodeAndStatement.create(node, statement,
-                        options);
-               ExecResponse exec = scriptInstructions.call();
-               customizationResponses.put(node, exec);
+               RunScriptOnNode runner = initScriptRunnerFactory.create(node, statement, options, badNodes).call();
+               if (runner != null) {
+                  ExecResponse exec = runner.call();
+                  customizationResponses.put(node, exec);
+               }
             }
             if (options.getPort() > 0) {
                findReachableSocketOnNode(socketTester.seconds(options.getSeconds()), node, options.getPort());

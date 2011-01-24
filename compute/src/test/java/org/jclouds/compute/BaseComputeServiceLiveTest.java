@@ -62,6 +62,8 @@ import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystem;
+import org.jclouds.compute.domain.OperatingSystemBuilder;
+import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.Template;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.options.TemplateOptions;
@@ -199,6 +201,12 @@ public abstract class BaseComputeServiceLiveTest {
       client.listImages();
       long duration = System.currentTimeMillis() - time;
       assert duration < 1000 : String.format("%dms to get images", duration);
+   }
+
+   @Test(enabled = true, expectedExceptions = NoSuchElementException.class)
+   public void testCorrectExceptionRunningNodesNotFound() throws Exception {
+      client.runScriptOnNodesMatching(runningWithTag("zebras-are-awesome"), buildScript(new OperatingSystemBuilder()
+               .family(OsFamily.UBUNTU).description("ffoo").build()));
    }
 
    // since surefire and eclipse don't otherwise guarantee the order, we are

@@ -20,16 +20,15 @@
 package org.jclouds.compute.callables;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Collections;
-import java.util.concurrent.Callable;
 
-import javax.annotation.Nullable;
 import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.InitBuilder;
@@ -40,27 +39,18 @@ import org.jclouds.ssh.SshClient;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
+import com.google.common.base.Objects;
 import com.google.inject.assistedinject.Assisted;
+import com.google.inject.assistedinject.AssistedInject;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class StartInitScriptOnNode implements Callable<ExecResponse> {
+public class RunScriptOnNodeAsInitScriptUsingSsh implements RunScriptOnNode {
    @Resource
    @Named(ComputeServiceConstants.COMPUTE_LOGGER)
    protected Logger logger = Logger.NULL;
-
-   public interface Factory {
-      @Named("blocking")
-      StartInitScriptOnNode blockOnComplete(NodeMetadata node, @Nullable String name, Statement script,
-               boolean runAsRoot);
-
-      @Named("nonblocking")
-      StartInitScriptOnNode dontBlockOnComplete(NodeMetadata node, @Nullable String name, Statement script,
-               boolean runAsRoot);
-   }
 
    protected final Function<NodeMetadata, SshClient> sshFactory;
    protected final NodeMetadata node;
@@ -70,21 +60,22 @@ public class StartInitScriptOnNode implements Callable<ExecResponse> {
 
    protected SshClient ssh;
 
-   @Inject
-   public StartInitScriptOnNode(Function<NodeMetadata, SshClient> sshFactory, @Assisted NodeMetadata node,
-            @Assisted @Nullable String name, @Assisted Statement script, @Assisted boolean runAsRoot) {
+   @AssistedInject
+   public RunScriptOnNodeAsInitScriptUsingSsh(Function<NodeMetadata, SshClient> sshFactory,
+            @Assisted NodeMetadata node, @Assisted Statement script, @Assisted RunScriptOptions options) {
       this.sshFactory = checkNotNull(sshFactory, "sshFactory");
       this.node = checkNotNull(node, "node");
+      String name = options.getTaskName();
       if (name == null) {
          if (checkNotNull(script, "script") instanceof InitBuilder)
             name = InitBuilder.class.cast(script).getInstanceName();
          else
             name = "jclouds-script-" + System.currentTimeMillis();
       }
-      this.init = checkNotNull(script, "script") instanceof InitBuilder ? InitBuilder.class.cast(script)
-               : createInitScript(checkNotNull(name, "name"), script);
       this.name = checkNotNull(name, "name");
-      this.runAsRoot = runAsRoot;
+      this.init = checkNotNull(script, "script") instanceof InitBuilder ? InitBuilder.class.cast(script)
+               : createInitScript(name, script);
+      this.runAsRoot = options.shouldRunAsRoot();
    }
 
    public static InitBuilder createInitScript(String name, Statement script) {
@@ -94,7 +85,7 @@ public class StartInitScriptOnNode implements Callable<ExecResponse> {
 
    @Override
    public ExecResponse call() {
-      ssh = sshFactory.apply(node);
+      checkState(ssh != null, "please call init() before invoking call");
       try {
          ssh.connect();
          return doCall();
@@ -102,7 +93,12 @@ public class StartInitScriptOnNode implements Callable<ExecResponse> {
          if (ssh != null)
             ssh.disconnect();
       }
+   }
 
+   @Override
+   public RunScriptOnNode init() {
+      ssh = sshFactory.apply(node);
+      return this;
    }
 
    /**
@@ -127,8 +123,7 @@ public class StartInitScriptOnNode implements Callable<ExecResponse> {
    protected ExecResponse runCommand(String command) {
       ExecResponse returnVal;
       logger.debug(">> running [%s] as %s@%s", command.replace(node.getAdminPassword() != null ? node
-               .getAdminPassword() : "XXXXX", "XXXXX"), node.getCredentials().identity, Iterables.get(node
-               .getPublicAddresses(), 0));
+               .getAdminPassword() : "XXXXX", "XXXXX"), ssh.getUsername(), ssh.getHostAddress());
       returnVal = ssh.exec(command);
       return returnVal;
    }
@@ -153,4 +148,10 @@ public class StartInitScriptOnNode implements Callable<ExecResponse> {
    public NodeMetadata getNode() {
       return node;
    }
+
+   @Override
+   public String toString() {
+      return Objects.toStringHelper(this).add("node", node).add("name", name).add("runAsRoot", runAsRoot).toString();
+   }
+
 }

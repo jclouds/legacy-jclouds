@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.ssh.ExecResponse;
@@ -39,15 +40,15 @@ import com.google.inject.assistedinject.Assisted;
  * 
  * @author Adrian Cole
  */
-public class StartInitScriptOnNodeAndBlockUntilComplete extends StartInitScriptOnNode {
+public class RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete extends RunScriptOnNodeAsInitScriptUsingSsh {
    protected final Predicate<CommandUsingClient> runScriptNotRunning;
 
    @Inject
-   public StartInitScriptOnNodeAndBlockUntilComplete(
+   public RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete(
             @Named("SCRIPT_COMPLETE") Predicate<CommandUsingClient> runScriptNotRunning,
-            Function<NodeMetadata, SshClient> sshFactory, @Assisted NodeMetadata node, @Assisted String scriptName,
-            @Assisted Statement script, @Assisted boolean runAsRoot) {
-      super(sshFactory, node, scriptName, script, runAsRoot);
+            Function<NodeMetadata, SshClient> sshFactory, @Assisted NodeMetadata node, @Assisted Statement script,
+            @Assisted RunScriptOptions options) {
+      super(sshFactory, node, script, options);
       this.runScriptNotRunning = checkNotNull(runScriptNotRunning, "runScriptNotRunning");
    }
 

@@ -33,11 +33,11 @@ import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.compute.strategy.DestroyNodeStrategy;
 import org.jclouds.compute.strategy.GetNodeMetadataStrategy;
+import org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap;
 import org.jclouds.compute.strategy.ListNodesStrategy;
 import org.jclouds.compute.strategy.RebootNodeStrategy;
 import org.jclouds.compute.strategy.ResumeNodeStrategy;
 import org.jclouds.compute.strategy.RunNodesAndAddToSetStrategy;
-import org.jclouds.compute.strategy.RunStatementOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
 import org.jclouds.compute.strategy.SuspendNodeStrategy;
 import org.jclouds.ec2.EC2Client;
 import org.jclouds.ec2.services.PlacementGroupClient;
@@ -62,7 +62,7 @@ public class EC2ComputeServiceTest {
                createMock(DestroyNodeStrategy.class), createMock(ResumeNodeStrategy.class),
                createMock(SuspendNodeStrategy.class), createMock(Provider.class), createMock(Provider.class),
                createMock(Predicate.class), createMock(Predicate.class), createMock(Predicate.class),
-               createMock(RunStatementOnNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory.class),
+               createMock(InitializeRunScriptOnNodeOrPlaceInBadMap.Factory.class),
                createMock(Timeouts.class), createMock(ExecutorService.class), client, createMock(Map.class),
                createMock(Map.class), createMock(Map.class), createMock(Predicate.class));
 
