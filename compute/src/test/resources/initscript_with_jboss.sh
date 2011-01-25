@@ -72,7 +72,7 @@ END_OF_FILE
    iptables -I INPUT 1 -p tcp --dport 8080 -j ACCEPT
    iptables -I RH-Firewall-1-INPUT 1 -p tcp --dport 8080 -j ACCEPT
    iptables-save
-   curl -X GET -s --retry 20  http://commondatastorage.googleapis.com/jclouds-repo/jboss-as-distribution-6.0.0.20100911-M5.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
+   curl -X GET -s --retry 20  http://d19xvfg065k8li.cloudfront.net/jboss-6.0.0.Final.tar.gz |(mkdir -p /usr/local &&cd /usr/local &&tar -xpzf -)
    mkdir -p /usr/local/jboss
    mv /usr/local/jboss-*/* /usr/local/jboss
    chmod -R oug+r+w /usr/local/jboss
@@ -96,7 +96,7 @@ END_OF_SCRIPT
    # add desired commands from the user
    cat >> $INSTANCE_HOME/jboss.sh <<'END_OF_SCRIPT'
 cd $INSTANCE_HOME
-java -Xms128m -Xmx512m -XX:MaxPermSize=256m -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Djava.endorsed.dirs=lib/endorsed -classpath bin/run.jar org.jboss.Main -b 0.0.0.0
+java -Xms128m -Xmx512m -XX:MaxPermSize=256m -Dorg.jboss.resolver.warning=true -Dsun.rmi.dgc.client.gcInterval=3600000 -Dsun.rmi.dgc.server.gcInterval=3600000 -Djava.endorsed.dirs=lib/endorsed -classpath bin/run.jar org.jboss.Main -c jbossweb-standalone -b 0.0.0.0
 END_OF_SCRIPT
    
    # add runscript footer
