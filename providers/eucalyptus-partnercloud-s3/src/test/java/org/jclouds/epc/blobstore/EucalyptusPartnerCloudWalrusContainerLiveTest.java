@@ -27,5 +27,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups =  "live", testName = "EucalyptusPartnerCloudWalrusContainerLiveTest")
 public class EucalyptusPartnerCloudWalrusContainerLiveTest extends BaseContainerLiveTest {
-
+   public EucalyptusPartnerCloudWalrusContainerLiveTest() {
+      containerCount = 5;
+   }
 }

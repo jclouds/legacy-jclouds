@@ -17,17 +17,33 @@
  * ====================================================================
  */
 
-package org.jclouds.epc.blobstore;
+package org.jclouds.byon;
 
-import org.jclouds.blobstore.integration.internal.BaseInputStreamMapIntegrationTest;
-import org.testng.annotations.Test;
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
+import static org.jclouds.Constants.PROPERTY_CREDENTIAL;
+import static org.jclouds.Constants.PROPERTY_IDENTITY;
+
+import java.util.Properties;
+
+import org.jclouds.PropertiesBuilder;
 
 /**
+ * Builds properties used in byon Clients
+ * 
  * @author Adrian Cole
  */
-@Test(groups =  "live", testName = "EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest")
-public class EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest extends BaseInputStreamMapIntegrationTest {
-   public EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest() {
-      containerCount = 5;
+public class BYONPropertiesBuilder extends PropertiesBuilder {
+   @Override
+   protected Properties defaultProperties() {
+      Properties properties = super.defaultProperties();
+      properties.setProperty(PROPERTY_API_VERSION, "1.0");
+      properties.setProperty(PROPERTY_IDENTITY, "foo");
+      properties.setProperty(PROPERTY_CREDENTIAL, "bar");
+      return properties;
    }
+
+   public BYONPropertiesBuilder(Properties properties) {
+      super(properties);
+   }
+
 }

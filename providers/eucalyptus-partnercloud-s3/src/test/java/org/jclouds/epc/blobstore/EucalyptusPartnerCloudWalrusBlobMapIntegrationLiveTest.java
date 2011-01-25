@@ -27,5 +27,7 @@ import org.testng.annotations.Test;
  */
 @Test(groups =  "live", testName = "EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest")
 public class EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest extends BaseBlobMapIntegrationTest {
-
+   public EucalyptusPartnerCloudWalrusBlobMapIntegrationLiveTest() {
+      containerCount = 5;
+   }
 }

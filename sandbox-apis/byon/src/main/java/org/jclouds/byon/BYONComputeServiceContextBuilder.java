@@ -17,17 +17,31 @@
  * ====================================================================
  */
 
-package org.jclouds.epc.blobstore;
+package org.jclouds.byon;
 
-import org.jclouds.blobstore.integration.internal.BaseInputStreamMapIntegrationTest;
-import org.testng.annotations.Test;
+import java.util.List;
+import java.util.Properties;
+
+import org.jclouds.byon.config.BYONComputeServiceContextModule;
+import org.jclouds.compute.StandaloneComputeServiceContextBuilder;
+
+import com.google.common.base.Supplier;
+import com.google.inject.Module;
 
 /**
+ * 
  * @author Adrian Cole
  */
-@Test(groups =  "live", testName = "EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest")
-public class EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest extends BaseInputStreamMapIntegrationTest {
-   public EucalyptusPartnerCloudWalrusInputStreamMapIntegrationLiveTest() {
-      containerCount = 5;
+@SuppressWarnings("rawtypes")
+public class BYONComputeServiceContextBuilder extends StandaloneComputeServiceContextBuilder<Supplier> {
+
+   public BYONComputeServiceContextBuilder(Properties props) {
+      super(Supplier.class, props);
    }
+
+   @Override
+   protected void addContextModule(List<Module> modules) {
+      modules.add(new BYONComputeServiceContextModule());
+   }
+
 }
