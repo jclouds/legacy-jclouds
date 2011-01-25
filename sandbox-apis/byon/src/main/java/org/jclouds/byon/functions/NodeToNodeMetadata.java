@@ -62,8 +62,12 @@ public class NodeToNodeMetadata implements Function<Node, NodeMetadata> {
       builder.location(location.get());
       builder.tag(Iterables.get(from.getTags(), 0));
       builder
-            .operatingSystem(new OperatingSystemBuilder().arch(from.getOsArch())
-                  .family(OsFamily.fromValue(from.getOsFamily())).name(from.getOsName()).version(from.getOsVersion())
+            .operatingSystem(new OperatingSystemBuilder()
+                  .arch(from.getOsArch())
+                  .family(OsFamily.fromValue(from.getOsFamily()))
+                  .name(from.getOsName())
+                  .version(from.getOsVersion())
+                  .description(from.getDescription())
                   .build());
       builder.state(NodeState.RUNNING);
       builder.publicAddresses(ImmutableSet.<String> of(from.getHostname()));

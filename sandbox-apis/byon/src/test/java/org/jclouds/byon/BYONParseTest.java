@@ -34,6 +34,11 @@ import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
+//TODO: REMOVE
+import com.google.common.base.Predicates;
+import org.jclouds.compute.domain.NodeMetadata;
+import org.jclouds.ssh.jsch.config.JschSshClientModule;
+
 /**
  * 
  * @author Adrian Cole
@@ -47,20 +52,23 @@ public class BYONParseTest {
 
    @BeforeClass
    protected void setupCredentials() {
-      endpoint = System.getProperty("test." + provider + ".endpoint", "file://c:/test.txt");
+//      endpoint = System.getProperty("test." + provider + ".endpoint", "file://c:/test.txt");
+      endpoint = System.getProperty("test." + provider + ".endpoint", "file:///Users/kelvin/pg/jclouds/sandbox-apis/byon/src/test/resources/config.yaml");
       // NOTE you may not care about identity/credential
-      identity = System.getProperty("test." + provider + ".identity", "FIXME_IDENTITY");
-      credential = System.getProperty("test." + provider + ".credential", "FIXME_CREDENTIAL");
+//      identity = System.getProperty("test." + provider + ".identity", "FIXME_IDENTITY");
+      identity = System.getProperty("test." + provider + ".identity", "kelvin");
+//      credential = System.getProperty("test." + provider + ".credential", "FIXME_CREDENTIAL");
+      credential = System.getProperty("test." + provider + ".credential", "~/.ssh/id_rsa");
    }
 
    @Test
-   public void testNodesParse() {
+   public void testNodesParse() throws Exception {
       ComputeServiceContext context = null;
       try {
          Properties contextProperties = new Properties();
          contextProperties.setProperty("byon.endpoint", endpoint);
          context = new ComputeServiceContextFactory().createContext("byon", identity, credential,
-               ImmutableSet.<Module> of(), contextProperties);
+               ImmutableSet.<Module> of(new JschSshClientModule()), contextProperties);
 
          assertEquals(context.getProviderSpecificContext().getEndpoint(), URI.create(endpoint));
 
@@ -72,6 +80,11 @@ public class BYONParseTest {
 
          // TODO verify that the node list corresponds correctly to the content at endpoint
          context.getComputeService().listNodes();
+
+//TODO: REMOVE
+System.out.println(
+context.getComputeService().runScriptOnNodesMatching(Predicates.<NodeMetadata>alwaysTrue(), "echo hello")
+);
 
       } finally {
          if (context != null)
