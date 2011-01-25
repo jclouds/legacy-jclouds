@@ -19,6 +19,8 @@
 
 package org.jclouds.byon;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.google.common.base.Objects;
@@ -29,16 +31,16 @@ import com.google.common.base.Objects;
  * @author Adrian Cole
  */
 public class Node {
-   private String id;
-   private String description;
-   private String hostname;
-   private String osArch;
-   private String osFamily;
-   private String osName;
-   private String osVersion;
-   private Set<String> tags;
-   private String username;
-   private String credential;
+   public String id;
+   public String description;
+   public String hostname;
+   public String osArch;
+   public String osFamily;
+   public String osName;
+   public String osVersion;
+   public List<String> tags;
+   public String username;
+   public String credential;
 
    public String getId() {
       return id;
@@ -69,7 +71,10 @@ public class Node {
    }
 
    public Set<String> getTags() {
-      return tags;
+      Set<String> tagSet = new HashSet<String>();
+      for (String tag : tags)
+          tagSet.add(tag);
+      return tagSet;
    }
 
    public String getUsername() {

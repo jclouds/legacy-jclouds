@@ -69,6 +69,10 @@ public class BYONComputeServiceContextModule extends
          public Map<String, Node> get() {
             Constructor constructor = new Constructor(Config.class);
 
+            TypeDescription nodeDesc = new TypeDescription(Node.class);
+            nodeDesc.putListPropertyType("tags", String.class);
+            constructor.addTypeDescription(nodeDesc);
+
             TypeDescription configDesc = new TypeDescription(Config.class);
             configDesc.putMapPropertyType("nodes", String.class, Node.class);
             constructor.addTypeDescription(configDesc);
