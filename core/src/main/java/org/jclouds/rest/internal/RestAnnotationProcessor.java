@@ -435,6 +435,8 @@ public class RestAnnotationProcessor<T> {
       Multimap<String, String> queryParams = addQueryParams(tokenValues.entries(), method, args);
       Multimap<String, String> matrixParams = addMatrixParams(tokenValues.entries(), method, args);
       Multimap<String, String> headers = buildHeaders(tokenValues.entries(), method, args);
+      if (r != null)
+         headers.putAll(r.getHeaders());
 
       if (shouldAddHostHeader(method))
          headers.put(HOST, endpoint.getHost());

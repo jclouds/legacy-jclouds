@@ -47,6 +47,7 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
       String container = getContainerName();
       try {
          context.getBlobStore().putBlob(container, blob);
+         assertConsistencyAwareContainerSize(container, 1);
          HttpRequest request = context.getSigner().signRemoveBlob(container, name);
          assertEquals(request.getFilters().size(), 0);
          context.utils().http().invoke(request);
@@ -67,6 +68,7 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
       String container = getContainerName();
       try {
          context.getBlobStore().putBlob(container, blob);
+         assertConsistencyAwareContainerSize(container, 1);
          HttpRequest request = context.getSigner().signGetBlob(container, name);
          assertEquals(request.getFilters().size(), 0);
          assertEquals(Strings2.toStringAndClose(context.utils().http().invoke(request).getPayload().getInput()), text);
@@ -88,7 +90,7 @@ public class BaseBlobSignerLiveTest extends BaseBlobStoreIntegrationTest {
          HttpRequest request = context.getSigner().signPutBlob(container, blob);
          assertEquals(request.getFilters().size(), 0);
          Strings2.toStringAndClose(context.utils().http().invoke(request).getPayload().getInput());
-         assert context.getBlobStore().blobExists(container, name);
+         assertConsistencyAwareContainerSize(container, 1);
       } finally {
          returnContainer(container);
       }
