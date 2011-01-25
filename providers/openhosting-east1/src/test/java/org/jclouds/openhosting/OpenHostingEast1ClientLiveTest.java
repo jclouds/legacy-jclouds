@@ -30,5 +30,6 @@ import org.testng.annotations.Test;
 public class OpenHostingEast1ClientLiveTest extends ElasticStackClientLiveTest {
    public OpenHostingEast1ClientLiveTest() {
       provider = "openhosting-east1";
+      bootDrive = "8067ee3c-e9a5-48a7-a3a7-8c158ce039db";
    }
 }

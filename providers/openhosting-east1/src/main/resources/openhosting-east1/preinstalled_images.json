@@ -1,72 +1,23 @@
 [
   {
-      "uuid": "38df0986-4d85-4b76-b502-3878ffc80161",
+      "uuid": "1fc52c4b-f08d-4f9f-8821-7fdd073a32d6",
       "description": "CentOS Linux 5.5",
       "osFamily": "CENTOS",
       "osVersion": "5.5",
       "size": "3"
   },
   {
-      "uuid": "980cf63c-f21e-4382-997b-6541d5809629",
+      "uuid": "9c1a506a-5d2b-496b-9ebc-26cfeae76f42",
       "description": "Debian Linux 5.0",
       "osFamily": "DEBIAN",
       "osVersion": "5.0",
       "size": "1"
   },
   {
-      "uuid": "aee5589a-88c3-43ef-bb0a-9cab6e64192d",
-      "description": "Ubuntu Linux 10.04",
+      "uuid": "8067ee3c-e9a5-48a7-a3a7-8c158ce039db",
+      "description": "Ubuntu Linux 10.10",
       "osFamily": "UBUNTU",
-      "osVersion": "10.04",
+      "osVersion": "10.10",
       "size": "1"
-  },
-  {
-      "uuid": "bf1d943e-2a55-46bb-a8c7-6099e44a3dde",
-      "description": "Ubuntu Linux 8.10: Base system with X",
-      "osFamily": "UBUNTU",
-      "osVersion": "8.10",
-      "size": "3"
-  },
-  {
-      "uuid": "757586d5-f1e9-4d9c-b215-5a391c9a24bf",
-      "description": "Ubuntu Linux 9.04: Base system with X",
-      "osFamily": "UBUNTU",
-      "osVersion": "9.04",
-      "size": "3"
-  },
-  {
-      "uuid": "b9d0eb72-d273-43f1-98e3-0d4b87d372c0",
-      "description": "Windows Web Server 2008",
-      "osFamily": "WINDOWS",
-      "osVersion": "2008",
-      "size": "13"
-  },
-  {
-      "uuid": "b405b598-4ae4-4ba8-8a2b-a9487d693f34",
-      "description": "Windows Web Server 2008 R2",
-      "osFamily": "WINDOWS",
-      "osVersion": "2008 R2",
-      "size": "13"
-  },
-  {
-      "uuid": "9397d327-3bf6-46a2-abf6-69553dbb6927",
-      "description": "Windows Web Server 2008 R2 + SQL Server",
-      "osFamily": "WINDOWS",
-      "osVersion": "2008 R2",
-      "size": "13"
-  },
-  {
-      "uuid": "10a88d1c-6575-46e3-8d2c-7744065ea530",
-      "description": "Windows Server 2008 Standard R2",
-      "osFamily": "WINDOWS",
-      "osVersion": "2008 R2",
-      "size": "13"
-  },
-  {
-      "uuid": "662c5b3f-9828-4aa2-a866-7cfa53798cdf",
-      "description": "Windows Server 2008 Standard R2 + SQL Server",
-      "osFamily": "WINDOWS",
-      "osVersion": "2008 R2",
-      "size": "13"
   }
 ]
