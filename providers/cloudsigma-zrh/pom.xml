@@ -31,17 +31,17 @@
         <relativePath>../../project/pom.xml</relativePath>
     </parent>
     <groupId>org.jclouds.provider</groupId>
-    <artifactId>cloudsigma</artifactId>
+    <artifactId>cloudsigma-zrh</artifactId>
     <name>jclouds CloudSigma provider</name>
     <description>ComputeService binding to the CloudSigma datacenter in Zürich</description>
     
     <properties>
         <!-- when instances are hung, open a ticket and add here -->
         <jclouds.compute.blacklist-nodes>trmkrun-ccc,test.trmk-924</jclouds.compute.blacklist-nodes>
-        <test.cloudsigma.endpoint>https://api.cloudsigma.com</test.cloudsigma.endpoint>
-        <test.cloudsigma.apiversion>1.0</test.cloudsigma.apiversion>
-        <test.cloudsigma.identity>FIXME</test.cloudsigma.identity>
-        <test.cloudsigma.credential>FIXME</test.cloudsigma.credential>
+        <test.cloudsigma-zrh.endpoint>https://api.cloudsigma.com</test.cloudsigma-zrh.endpoint>
+        <test.cloudsigma-zrh.apiversion>1.0</test.cloudsigma-zrh.apiversion>
+        <test.cloudsigma-zrh.identity>FIXME</test.cloudsigma-zrh.identity>
+        <test.cloudsigma-zrh.credential>FIXME</test.cloudsigma-zrh.credential>
     </properties>
 
     <dependencies>
@@ -108,20 +108,20 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
-                                            <name>test.cloudsigma.endpoint</name>
-                                            <value>${test.cloudsigma.endpoint}</value>
+                                            <name>test.cloudsigma-zrh.endpoint</name>
+                                            <value>${test.cloudsigma-zrh.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudsigma.apiversion</name>
-                                            <value>${test.cloudsigma.apiversion}</value>
+                                            <name>test.cloudsigma-zrh.apiversion</name>
+                                            <value>${test.cloudsigma-zrh.apiversion}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudsigma.identity</name>
-                                            <value>${test.cloudsigma.identity}</value>
+                                            <name>test.cloudsigma-zrh.identity</name>
+                                            <value>${test.cloudsigma-zrh.identity}</value>
                                         </property>
                                         <property>
-                                            <name>test.cloudsigma.credential</name>
-                                            <value>${test.cloudsigma.credential}</value>
+                                            <name>test.cloudsigma-zrh.credential</name>
+                                            <value>${test.cloudsigma-zrh.credential}</value>
                                         </property>
                                         <property>
                                             <name>jclouds.compute.blacklist-nodes</name>

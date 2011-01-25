@@ -26,7 +26,7 @@ Current supported providers are:
     trmk-ecloud, trmk-vcloudexpress, vcloud, bluelock, eucalyptus, 
     slicehost, elastichosts-lon-p, elastichosts-sat-p, elastichosts, 
     openhosting-east1, serverlove-z1-man, skalicloud-sdg-my,
-    elastichosts-lon-b, cloudsigma, vcloudexpress, stub]
+    elastichosts-lon-b, cloudsigma-zrh, vcloudexpress, stub]
 
 Here's an example of getting some compute configuration from rackspace:
 

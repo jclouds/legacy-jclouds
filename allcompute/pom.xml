@@ -141,7 +141,7 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
-            <artifactId>cloudsigma</artifactId>
+            <artifactId>cloudsigma-zrh</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

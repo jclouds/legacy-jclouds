@@ -80,7 +80,7 @@ public class CloudSigmaClientLiveTest {
    protected RestContext<CloudSigmaClient, CloudSigmaAsyncClient> context;
    protected Predicate<IPSocket> socketTester;
 
-   protected String provider = "cloudsigma";
+   protected String provider = "cloudsigma-zrh";
    protected String identity;
    protected String credential;
    protected String endpoint;

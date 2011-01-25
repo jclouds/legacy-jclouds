@@ -40,7 +40,7 @@ import com.google.common.base.Predicate;
 public class CloudSigmaTemplateBuilderLiveTest extends BaseTemplateBuilderLiveTest {
 
    public CloudSigmaTemplateBuilderLiveTest() {
-      provider = "cloudsigma";
+      provider = "cloudsigma-zrh";
    }
 
    @Override

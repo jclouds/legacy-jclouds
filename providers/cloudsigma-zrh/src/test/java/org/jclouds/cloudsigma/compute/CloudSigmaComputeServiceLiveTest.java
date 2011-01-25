@@ -28,7 +28,7 @@ import org.testng.annotations.Test;
 @Test(groups = "live")
 public class CloudSigmaComputeServiceLiveTest extends BaseComputeServiceLiveTest {
    public CloudSigmaComputeServiceLiveTest() {
-      provider = "cloudsigma";
+      provider = "cloudsigma-zrh";
    }
 
    @Override

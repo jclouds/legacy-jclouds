@@ -32,7 +32,7 @@ our dev version is 1.0-SNAPSHOT
 our compute api supports: aws-ec2, gogrid, cloudservers (generic), cloudservers-us,
                           cloudservers-uk, vcloud (generic), ec2 (generic),
                           trmk-ecloud, trmk-vcloudexpress, eucalyptus (generic),
-                          cloudsigma, elasticstack(generic), bluelock-vclouddirector,
+                          cloudsigma-zrh, elasticstack(generic), bluelock-vclouddirector,
                           slicehost, eucalyptus-partnercloud-ec2, elastichosts-lon-p (Peer 1), 
                           elastichosts-sat-p (Peer 1), elastichosts-lon-b (BlueSquare),
                           openhosting-east1, serverlove-z1-man, skalicloud-sdg-my,

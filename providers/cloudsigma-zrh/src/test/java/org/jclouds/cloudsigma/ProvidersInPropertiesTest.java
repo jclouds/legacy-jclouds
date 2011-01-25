@@ -19,6 +19,7 @@
 
 package org.jclouds.cloudsigma;
 
+import org.jclouds.compute.util.ComputeServiceUtils;
 import org.jclouds.rest.Providers;
 import org.testng.annotations.Test;
 
@@ -35,13 +36,13 @@ public class ProvidersInPropertiesTest {
    @Test
    public void testSupportedProviders() {
       Iterable<String> providers = Providers.getSupportedProviders();
-      assert Iterables.contains(providers, "cloudsigma") : providers;
+      assert Iterables.contains(providers, "cloudsigma-zrh") : providers;
    }
-//
-//   @Test
-//   public void testSupportedComputeServiceProviders() {
-//      Iterable<String> providers = ComputeServiceUtils.getSupportedProviders();
-//      assert Iterables.contains(providers, "cloudsigma") : providers;
-//   }
+
+   @Test
+   public void testSupportedComputeServiceProviders() {
+      Iterable<String> providers = ComputeServiceUtils.getSupportedProviders();
+      assert Iterables.contains(providers, "cloudsigma-zrh") : providers;
+   }
 
 }
