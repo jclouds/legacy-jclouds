@@ -19,13 +19,11 @@
 
 package org.jclouds.cloudfiles;
 
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.Constants.PROPERTY_ENDPOINT;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
 
-import org.jclouds.openstack.OpenStackAuthAsyncClient;
 import org.jclouds.openstack.swift.SwiftPropertiesBuilder;
 
 /**
@@ -39,7 +37,6 @@ public class CloudFilesPropertiesBuilder extends SwiftPropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_REGIONS, "US");
       properties.setProperty(PROPERTY_ENDPOINT, "https://auth.api.rackspacecloud.com");
-      properties.setProperty(PROPERTY_API_VERSION, OpenStackAuthAsyncClient.VERSION);
       return properties;
    }
 
