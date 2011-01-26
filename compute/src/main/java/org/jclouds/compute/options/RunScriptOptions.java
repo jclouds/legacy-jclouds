@@ -118,6 +118,7 @@ public class RunScriptOptions {
    protected Credentials overridingCredentials;
    protected boolean runAsRoot = true;
    protected boolean blockOnComplete = true;
+   protected boolean wrapInInitScript = true;
 
    public RunScriptOptions withOverridingCredentials(Credentials overridingCredentials) {
       checkNotNull(overridingCredentials, "overridingCredentials");
@@ -139,6 +140,20 @@ public class RunScriptOptions {
 
    public RunScriptOptions runAsRoot(boolean runAsRoot) {
       this.runAsRoot = runAsRoot;
+      return this;
+   }
+
+   /**
+    * default true
+    * <p/>
+    * 
+    * @param wrapInInitScript
+    *           if the command is long-running, use this option to ensure it is wrapInInitScripted
+    *           properly. (ex. have jclouds wrap it an init script, nohup, etc)
+    * @return
+    */
+   public RunScriptOptions wrapInInitScript(boolean wrapInInitScript) {
+      this.wrapInInitScript = wrapInInitScript;
       return this;
    }
 
@@ -198,6 +213,15 @@ public class RunScriptOptions {
       return blockOnComplete;
    }
 
+   /**
+    * Whether to wait until the script has completed. By default, true.
+    * 
+    * @return value
+    */
+   public boolean shouldWrapInInitScript() {
+      return wrapInInitScript;
+   }
+
    public static class Builder {
 
       public static RunScriptOptions nameTask(String name) {
@@ -220,6 +244,11 @@ public class RunScriptOptions {
          return options.blockOnComplete(value);
       }
 
+      public static RunScriptOptions wrapInInitScript(boolean value) {
+         RunScriptOptions options = new RunScriptOptions();
+         return options.wrapInInitScript(value);
+      }
+
       public static RunScriptOptions blockOnPort(int port, int seconds) {
          RunScriptOptions options = new RunScriptOptions();
          return options.blockOnPort(port, seconds);
@@ -230,7 +259,8 @@ public class RunScriptOptions {
    @Override
    public String toString() {
       return "[overridingCredentials=" + (overridingCredentials != null) + ", port:seconds=" + port + ":" + seconds
-               + ", runAsRoot=" + runAsRoot + ", blockOnComplete=" + blockOnComplete + "]";
+               + ", runAsRoot=" + runAsRoot + ", blockOnComplete=" + blockOnComplete + ", wrapInInitScript=" + wrapInInitScript
+               + "]";
    }
 
 }

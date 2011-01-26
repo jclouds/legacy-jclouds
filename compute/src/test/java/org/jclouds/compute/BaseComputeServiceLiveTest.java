@@ -50,6 +50,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -76,6 +77,7 @@ import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.RestContextFactory;
+import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
@@ -236,6 +238,12 @@ public abstract class BaseComputeServiceLiveTest {
             assert getRootCause(e).getMessage().contains("Auth fail") : e;
          }
 
+         for (Entry<? extends NodeMetadata, ExecResponse> response : client.runScriptOnNodesMatching(
+                  runningWithTag(tag), Statements.exec("echo hello"), overrideCredentialsWith(good).wrapInInitScript(false))
+                  .entrySet())
+            assert response.getValue().getOutput().trim().equals("hello") : response.getKey() + ": "
+                     + response.getValue();
+            
          runScriptWithCreds(tag, os, good);
 
          checkNodes(nodes, tag);

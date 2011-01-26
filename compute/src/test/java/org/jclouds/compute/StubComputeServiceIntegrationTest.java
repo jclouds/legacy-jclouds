@@ -106,48 +106,55 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             SshClient client5 = createMock(SshClient.class);
 
             expect(factory.create(new IPSocket("144.175.1.1", 22), new Credentials("root", "password1"))).andReturn(
-                  client1);
+                     client1);
             runScriptAndService(client1, 1);
 
             expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("root", "password2"))).andReturn(
-                  client2).times(2);
+                     client2).times(3);
             expect(factory.create(new IPSocket("144.175.1.2", 22), new Credentials("root", "romeo"))).andThrow(
-                  new SshException("Auth fail"));
+                     new SshException("Auth fail"));
+            
+            // run script without backgrounding
+            client2.connect();
+            expect(client2.exec("echo hello\n")).andReturn(new ExecResponse("hello\n", "", 0));
+            client2.disconnect();
+
             client2.connect();
             try {
-               runScript(client2, "runScriptWithCreds", Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
-                     .getResourceAsStream("/runscript.sh")), 2);
+               runScript(client2, "runScriptWithCreds",
+                        Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
+                                 .getResourceAsStream("/runscript.sh")), 2);
             } catch (IOException e) {
                Throwables.propagate(e);
             }
             client2.disconnect();
 
             expect(factory.create(new IPSocket("144.175.1.3", 22), new Credentials("root", "password3"))).andReturn(
-                  client3).times(2);
+                     client3).times(2);
             expect(factory.create(new IPSocket("144.175.1.4", 22), new Credentials("root", "password4"))).andReturn(
-                  client4).times(2);
+                     client4).times(2);
             expect(factory.create(new IPSocket("144.175.1.5", 22), new Credentials("root", "password5"))).andReturn(
-                  client5).times(2);
+                     client5).times(2);
 
             runScriptAndInstallSsh(client3, "bootstrap", 3);
             runScriptAndInstallSsh(client4, "bootstrap", 4);
             runScriptAndInstallSsh(client5, "bootstrap", 5);
 
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.1", 22)),
-                        eq(new Credentials("root", keyPair.get("private"))))).andReturn(client1);
+                     factory.create(eq(new IPSocket("144.175.1.1", 22)), eq(new Credentials("root", keyPair
+                              .get("private"))))).andReturn(client1);
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.2", 22)),
-                        eq(new Credentials("root", keyPair.get("private"))))).andReturn(client2);
+                     factory.create(eq(new IPSocket("144.175.1.2", 22)), eq(new Credentials("root", keyPair
+                              .get("private"))))).andReturn(client2);
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.3", 22)),
-                        eq(new Credentials("root", keyPair.get("private"))))).andReturn(client3);
+                     factory.create(eq(new IPSocket("144.175.1.3", 22)), eq(new Credentials("root", keyPair
+                              .get("private"))))).andReturn(client3);
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.4", 22)),
-                        eq(new Credentials("root", keyPair.get("private"))))).andReturn(client4);
+                     factory.create(eq(new IPSocket("144.175.1.4", 22)), eq(new Credentials("root", keyPair
+                              .get("private"))))).andReturn(client4);
             expect(
-                  factory.create(eq(new IPSocket("144.175.1.5", 22)),
-                        eq(new Credentials("root", keyPair.get("private"))))).andReturn(client5);
+                     factory.create(eq(new IPSocket("144.175.1.5", 22)), eq(new Credentials("root", keyPair
+                              .get("private"))))).andReturn(client5);
 
             helloAndJava(client2);
             helloAndJava(client3);
@@ -169,7 +176,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
 
             try {
                runScript(client, "jboss", Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
-                     .getResourceAsStream("/initscript_with_jboss.sh")), nodeId);
+                        .getResourceAsStream("/initscript_with_jboss.sh")), nodeId);
             } catch (IOException e) {
                Throwables.propagate(e);
             }
@@ -183,7 +190,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
 
             try {
                runScript(client, scriptName, Strings2.toStringAndClose(StubComputeServiceIntegrationTest.class
-                     .getResourceAsStream("/initscript_with_java.sh")), nodeId);
+                        .getResourceAsStream("/initscript_with_java.sh")), nodeId);
             } catch (IOException e) {
                Throwables.propagate(e);
             }
@@ -236,7 +243,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
    public void testAssignability() throws Exception {
       @SuppressWarnings("unused")
       RestContext<ConcurrentMap<String, NodeMetadata>, ConcurrentMap<String, NodeMetadata>> stubContext = new ComputeServiceContextFactory()
-            .createContext(provider, identity, credential).getProviderSpecificContext();
+               .createContext(provider, identity, credential).getProviderSpecificContext();
    }
 
    private static class PayloadEquals implements IArgumentMatcher, Serializable {
@@ -283,7 +290,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
             return false;
          PayloadEquals other = (PayloadEquals) o;
          return this.expected == null && other.expected == null || this.expected != null
-               && this.expected.equals(other.expected);
+                  && this.expected.equals(other.expected);
       }
 
       @Override
@@ -371,7 +378,7 @@ public class StubComputeServiceIntegrationTest extends BaseComputeServiceLiveTes
       super.testListNodes();
    }
 
-   @Test(enabled = true,  dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
+   @Test(enabled = true, dependsOnMethods = { "testListNodes", "testGetNodesWithDetails" })
    public void testDestroyNodes() {
       super.testDestroyNodes();
    }
