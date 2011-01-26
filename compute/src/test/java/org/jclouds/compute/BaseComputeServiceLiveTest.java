@@ -239,11 +239,11 @@ public abstract class BaseComputeServiceLiveTest {
          }
 
          for (Entry<? extends NodeMetadata, ExecResponse> response : client.runScriptOnNodesMatching(
-                  runningWithTag(tag), Statements.exec("echo hello"), overrideCredentialsWith(good).wrapInInitScript(false))
-                  .entrySet())
+                  runningWithTag(tag), Statements.exec("echo hello"),
+                  overrideCredentialsWith(good).wrapInInitScript(false).runAsRoot(false)).entrySet())
             assert response.getValue().getOutput().trim().equals("hello") : response.getKey() + ": "
                      + response.getValue();
-            
+
          runScriptWithCreds(tag, os, good);
 
          checkNodes(nodes, tag);
