@@ -38,7 +38,7 @@ import org.jclouds.s3.domain.AccessControlList.Permission;
 import org.jclouds.s3.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.s3.functions.ParseObjectMetadataFromHeaders;
 import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState;
-import org.jclouds.s3.functions.ReturnTrueOn404OrNotFoundFalseIfNotEmpty;
+import org.jclouds.s3.functions.ReturnTrueOn404OrNotFoundFalseOnIllegalState;
 import org.jclouds.s3.options.CopyObjectOptions;
 import org.jclouds.s3.options.ListBucketOptions;
 import org.jclouds.s3.options.PutBucketOptions;
@@ -231,7 +231,7 @@ public class S3AsyncClientTest extends BaseS3AsyncClientTest {
 
       assertResponseParserClassEquals(method, request, ReturnTrueIf2xx.class);
       assertSaxResponseParserClassEquals(method, null);
-      assertExceptionParserClassEquals(method, ReturnTrueOn404OrNotFoundFalseIfNotEmpty.class);
+      assertExceptionParserClassEquals(method, ReturnTrueOn404OrNotFoundFalseOnIllegalState.class);
 
       checkFilters(request);
    }

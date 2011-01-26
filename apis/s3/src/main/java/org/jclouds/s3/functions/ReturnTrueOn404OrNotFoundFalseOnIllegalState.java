@@ -20,18 +20,12 @@
 package org.jclouds.s3.functions;
 
 import static com.google.common.base.Predicates.equalTo;
-import static com.google.common.base.Throwables.getCausalChain;
-import static com.google.common.collect.Iterables.filter;
-import static com.google.common.collect.Iterables.get;
-import static com.google.common.collect.Iterables.size;
 import static org.jclouds.http.HttpUtils.returnValueOnCodeOrNull;
+import static org.jclouds.util.Throwables2.getFirstThrowableOfType;
 import static org.jclouds.util.Throwables2.propagateOrNull;
-
-import java.util.List;
 
 import javax.inject.Singleton;
 
-import org.jclouds.aws.AWSResponseException;
 import org.jclouds.blobstore.ContainerNotFoundException;
 
 import com.google.common.base.Function;
@@ -41,20 +35,13 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 @Singleton
-public class ReturnTrueOn404OrNotFoundFalseIfNotEmpty implements Function<Exception, Boolean> {
+public class ReturnTrueOn404OrNotFoundFalseOnIllegalState implements Function<Exception, Boolean> {
 
    public Boolean apply(Exception from) {
-      List<Throwable> throwables = getCausalChain(from);
-
-      Iterable<AWSResponseException> matchingAWSResponseException = filter(throwables, AWSResponseException.class);
-      if (size(matchingAWSResponseException) >= 1 && get(matchingAWSResponseException, 0).getError() != null) {
-         if (get(matchingAWSResponseException, 0).getError().getCode().equals("BucketNotEmpty"))
-            return false;
+      if (getFirstThrowableOfType(from, IllegalStateException.class) != null) {
+         return false;
       }
-
-      Iterable<ContainerNotFoundException> matchingContainerNotFoundException = filter(throwables,
-            ContainerNotFoundException.class);
-      if (size(matchingContainerNotFoundException) >= 1) {
+      if (getFirstThrowableOfType(from, ContainerNotFoundException.class) != null) {
          return true;
       }
       if (returnValueOnCodeOrNull(from, true, equalTo(404)) != null)
