@@ -83,7 +83,6 @@ echo nameserver 208.67.222.222 >> /etc/resolv.conf
 rm -rf /var/cache/apt /usr/lib/vmware-tools
 echo "export PATH=\"\$JAVA_HOME/bin/:\$PATH\"" >> /root/.bashrc
 
-
 END_OF_SCRIPT
    
    # add runscript footer

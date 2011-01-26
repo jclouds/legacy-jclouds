@@ -19,10 +19,12 @@
 
 package org.jclouds.ssh;
 
+import org.jclouds.compute.config.CustomizationResponse;
+
 /**
  * @author Adrian Cole
  */
-public class ExecResponse {
+public class ExecResponse implements CustomizationResponse {
 
    private final String error;
    private final String output;
@@ -44,7 +46,7 @@ public class ExecResponse {
 
    @Override
    public String toString() {
-      return "ExecResponse [output=" + output + ", error=" + error + ", exitCode=" + exitCode + "]";
+      return "[output=" + output + ", error=" + error + ", exitCode=" + exitCode + "]";
    }
 
    @Override

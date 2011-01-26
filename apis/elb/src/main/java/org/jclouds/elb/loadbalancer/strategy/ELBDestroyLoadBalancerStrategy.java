@@ -20,7 +20,7 @@
 package org.jclouds.elb.loadbalancer.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.aws.ec2.util.EC2Utils.parseHandle;
+import static org.jclouds.aws.util.AWSUtils.parseHandle;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;

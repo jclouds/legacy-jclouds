@@ -53,7 +53,6 @@ public class JCloudsNativeComputeServiceAdapterContextModule<S, A> extends
    protected void configure() {
       bind(new TypeLiteral<ComputeServiceAdapter<NodeMetadata, Hardware, Image, Location>>() {
       }).to(adapter);
-      bind(IdentityFunction.class).toInstance(IdentityFunction.INSTANCE);
       bind(new TypeLiteral<Function<NodeMetadata, NodeMetadata>>() {
       }).to((Class) IdentityFunction.class);
       bind(new TypeLiteral<Function<Image, Image>>() {

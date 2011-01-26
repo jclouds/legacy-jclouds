@@ -20,7 +20,7 @@
 package org.jclouds.elb.loadbalancer.strategy;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.aws.ec2.compute.util.EC2ComputeUtils.getRegionFromLocationOrNull;
+import static org.jclouds.aws.util.AWSUtils.getRegionFromLocationOrNull;
 
 import java.util.ArrayList;
 import java.util.List;

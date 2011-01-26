@@ -76,26 +76,20 @@ public class RedirectionRetryHandler implements HttpRetryHandler {
          if (redirectionUrl.equals(currentRequest.getEndpoint()))
             return backoffHandler.shouldRetryRequest(command, response);
 
-         UriBuilder builder = uriBuilderProvider.get().uri(currentRequest.getEndpoint());
          assert redirectionUrl.getPath() != null : "no path in redirect header from: " + response;
-         builder.replacePath(redirectionUrl.getPath());
-
-         if (redirectionUrl.getScheme() != null)
-            builder.scheme(redirectionUrl.getScheme());
-         if (redirectionUrl.getPort() != currentRequest.getEndpoint().getPort())
-            builder.port(redirectionUrl.getPort());
-         if (redirectionUrl.getQuery() != null)
-            builder.replaceQuery(redirectionUrl.getQuery());
-
-         if (redirectionUrl.getHost() != null)
-            builder.host(redirectionUrl.getHost());
+         if (!redirectionUrl.isAbsolute()) {
+            UriBuilder builder = uriBuilderProvider.get().uri(currentRequest.getEndpoint());
+            builder.replacePath(redirectionUrl.getPath());
+            if (redirectionUrl.getQuery() != null)
+               builder.replaceQuery(redirectionUrl.getQuery());
+            redirectionUrl = builder.build();
+         }
 
          if (currentRequest.getFirstHeaderOrNull(HOST) != null && redirectionUrl.getHost() != null) {
-            command.setCurrentRequest(ModifyRequest
-                  .replaceHeader(currentRequest, HOST, singletonList(redirectionUrl.getHost())).toBuilder()
-                  .endpoint(builder.build()).build());
+            command.setCurrentRequest(ModifyRequest.replaceHeader(currentRequest, HOST,
+                     singletonList(redirectionUrl.getHost())).toBuilder().endpoint(redirectionUrl).build());
          } else {
-            command.setCurrentRequest(currentRequest.toBuilder().endpoint(builder.build()).build());
+            command.setCurrentRequest(currentRequest.toBuilder().endpoint(redirectionUrl).build());
          }
          return true;
       } else {

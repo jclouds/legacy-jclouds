@@ -67,32 +67,32 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>${symbol_dollar}{project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-compute</artifactId>
             <version>${symbol_dollar}{project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${symbol_dollar}{project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-compute</artifactId>
             <version>${symbol_dollar}{project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${symbol_dollar}{project.groupId}</groupId>
+            <groupId>org.jclouds</groupId>
             <artifactId>jclouds-core</artifactId>
             <version>${symbol_dollar}{project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${symbol_dollar}{project.groupId}</groupId>
+            <groupId>org.jclouds.driver</groupId>
             <artifactId>jclouds-jsch</artifactId>
             <version>${symbol_dollar}{project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${symbol_dollar}{project.groupId}</groupId>
+            <groupId>org.jclouds.driver</groupId>
             <artifactId>jclouds-log4j</artifactId>
             <version>${symbol_dollar}{project.version}</version>
             <scope>test</scope>

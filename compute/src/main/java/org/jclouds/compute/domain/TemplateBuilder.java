@@ -78,7 +78,7 @@ public interface TemplateBuilder {
     * Configure this template to start in a specific location
     * 
     * @throws NoSuchElementException
-    *            if location matches the id specified
+    *            if no location matches the id specified
     */
    TemplateBuilder locationId(String locationId);
 

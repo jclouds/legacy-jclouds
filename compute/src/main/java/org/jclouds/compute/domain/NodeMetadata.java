@@ -46,7 +46,7 @@ public interface NodeMetadata extends ComputeMetadata {
 
    /**
     * 
-    * The harware this node is running, if possible to determine.
+    * The hardware this node is running, if possible to determine.
     */
    @Nullable
    Hardware getHardware();

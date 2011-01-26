@@ -1,0 +1,23 @@
+[
+  {
+      "uuid": "1fc52c4b-f08d-4f9f-8821-7fdd073a32d6",
+      "description": "CentOS Linux 5.5",
+      "osFamily": "CENTOS",
+      "osVersion": "5.5",
+      "size": "3"
+  },
+  {
+      "uuid": "9c1a506a-5d2b-496b-9ebc-26cfeae76f42",
+      "description": "Debian Linux 5.0",
+      "osFamily": "DEBIAN",
+      "osVersion": "5.0",
+      "size": "1"
+  },
+  {
+      "uuid": "8067ee3c-e9a5-48a7-a3a7-8c158ce039db",
+      "description": "Ubuntu Linux 10.10",
+      "osFamily": "UBUNTU",
+      "osVersion": "10.10",
+      "size": "1"
+  }
+]

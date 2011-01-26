@@ -60,7 +60,12 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-core</artifactId>
-            <version>1.4-ea06</version>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-assistedinject</artifactId>
+            <version>3.0-rc2</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>

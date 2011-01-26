@@ -21,6 +21,7 @@ package org.jclouds.slicehost.handlers;
 
 import static org.jclouds.http.HttpUtils.releasePayload;
 
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,16 +32,15 @@ import javax.inject.Singleton;
 
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpErrorHandler;
-import org.jclouds.http.HttpException;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.http.HttpResponseException;
 import org.jclouds.http.functions.ParseSax;
 import org.jclouds.http.functions.ParseSax.Factory;
-import org.jclouds.io.Payload;
 import org.jclouds.logging.Logger;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.ResourceNotFoundException;
 import org.jclouds.slicehost.xml.ErrorHandler;
+import org.jclouds.util.Strings2;
 
 /**
  * This will parse and set an appropriate exception on the command object.
@@ -67,28 +67,28 @@ public class ParseSlicehostErrorFromHttpResponse implements HttpErrorHandler {
          String content = response.getStatusCode() != 401 ? parseErrorFromContentOrNull(command, response) : null;
          exception = content != null ? new HttpResponseException(command, response, content) : exception;
          switch (response.getStatusCode()) {
-         case 401:
-            exception = new AuthorizationException(exception.getMessage(), exception);
-            break;
-         case 403:
-         case 404:
-            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
-               String path = command.getCurrentRequest().getEndpoint().getPath();
-               Matcher matcher = RESOURCE_PATTERN.matcher(path);
-               String message;
-               if (matcher.find()) {
-                  message = String.format("%s %s not found", matcher.group(1), matcher.group(2));
-               } else {
-                  message = path;
+            case 401:
+               exception = new AuthorizationException(exception.getMessage(), exception);
+               break;
+            case 403:
+            case 404:
+               if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
+                  String path = command.getCurrentRequest().getEndpoint().getPath();
+                  Matcher matcher = RESOURCE_PATTERN.matcher(path);
+                  String message;
+                  if (matcher.find()) {
+                     message = String.format("%s %s not found", matcher.group(1), matcher.group(2));
+                  } else {
+                     message = path;
+                  }
+                  exception = new ResourceNotFoundException(message);
                }
-               exception = new ResourceNotFoundException(message);
-            }
-            break;
-         case 422:
-            exception = new IllegalStateException(content);
-            break;
-         default:
-            exception = new HttpResponseException(command, response, content);
+               break;
+            case 422:
+               exception = new IllegalStateException(content);
+               break;
+            default:
+               exception = new HttpResponseException(command, response, content);
          }
       } finally {
          releasePayload(response);
@@ -109,23 +109,20 @@ public class ParseSlicehostErrorFromHttpResponse implements HttpErrorHandler {
          this.errorHandlerProvider = errorHandlerProvider;
       }
 
-      String parse(Payload in) {
-         try {
-            return factory.create(errorHandlerProvider.get()).parse(in.getInput());
-         } catch (HttpException e) {
-            logger.warn(e, "error parsing error");
-            return null;
-         } finally {
-            in.release();
-         }
+      String parse(String in) {
+         return factory.create(errorHandlerProvider.get()).parse(in);
       }
 
    }
 
    String parseErrorFromContentOrNull(HttpCommand command, HttpResponse response) {
       // slicehost returns " " which is unparsable
-      if (response.getPayload() != null && response.getPayload().getContentMetadata().getContentLength() != 1) {
-         return errorParser.parse(response.getPayload());
+      if (response.getPayload() != null) {
+         try {
+            String payload = Strings2.toStringAndClose(response.getPayload().getInput()).trim();
+            return payload.indexOf("xml") != -1 ? errorParser.parse(payload) : payload;
+         } catch (IOException e) {
+         }
       }
       return null;
    }

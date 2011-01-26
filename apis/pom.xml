@@ -37,8 +37,14 @@
        <module>s3</module>
        <module>ec2</module>
        <module>elb</module>
-       <module>sqs</module>
-       <module>simpledb</module>
-       <module>cloudwatch</module>
+       <module>walrus</module>
+       <module>eucalyptus</module>
+       <module>swift</module>
+       <module>cloudfiles</module>
+       <module>cloudservers</module>
+       <module>vcloud</module>
+       <module>vcloudexpress</module>
+       <module>elasticstack</module>
+       <module>atmos</module>
     </modules>
 </project>

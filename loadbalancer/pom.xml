@@ -33,11 +33,16 @@
     <name>jclouds loadbalancer core</name>
     <description>jclouds components to access loadbalancer providers</description>
 
-    <scm>
-        <connection>scm:svn:http://jclouds.googlecode.com/svn/trunk/loadbalancer</connection>
-        <developerConnection>scm:svn:https://jclouds.googlecode.com/svn/trunk/loadbalancer</developerConnection>
-        <url>http://jclouds.googlecode.com/svn/trunk/loadbalancer</url>
-    </scm>
+    <!-- bootstrapping: need to fetch the project POM -->
+    <repositories>
+        <repository>
+            <id>jclouds-sona-snapshots-nexus</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -58,7 +63,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.jclouds.driver</groupId>
             <artifactId>jclouds-log4j</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>

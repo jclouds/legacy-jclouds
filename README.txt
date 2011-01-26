@@ -29,24 +29,29 @@ data.
 our current version is 1.0-beta-8
 our dev version is 1.0-SNAPSHOT
  
-our compute api supports: ec2, gogrid, cloudservers (rackspace), vcloud,
-                          trmk-ecloud, trmk-vcloudexpress, eucalyptus, cloudsigma,
-                          elasticstack, bluelock-vclouddirector, slicehost,
-                          elastichosts-lon-p (Peer 1), elastichosts-sat-p (Peer 1),
-                          elastichosts-lon-b (BlueSquare), stub (in-memory)
+our compute api supports: aws-ec2, gogrid, cloudservers (generic), cloudservers-us,
+                          cloudservers-uk, vcloud (generic), ec2 (generic),
+                          trmk-ecloud, trmk-vcloudexpress, eucalyptus (generic),
+                          cloudsigma-zrh, elasticstack(generic), bluelock-vclouddirector,
+                          slicehost, eucalyptus-partnercloud-ec2, elastichosts-lon-p (Peer 1), 
+                          elastichosts-sat-p (Peer 1), elastichosts-lon-b (BlueSquare),
+                          openhosting-east1, serverlove-z1-man, skalicloud-sdg-my,
+                          vcloudexpress (generic), stub (in-memory)
 
   * note * the pom dependency org.jclouds/jclouds-allcompute gives you access to
            to all of these providers
 
-our blobstore api supports: s3, cloudfiles (rackspace), azurestorage, atmosonline,
-                            synaptic, peer1-storage, walrus, googlestorage, 
-                            transient (in-memory), filesystem (on-disk)
+our blobstore api supports: aws-s3, cloudfiles (generic), cloudfiles-us, cloudfiles-uk,
+                            azureblob, atmos (generic), synaptic-storage, 
+                            cloudonestorage, s3 (generic), walrus(generic), googlestorage, 
+                            scaleup-storage, eucalyptus-partnercloud-s3, swift (generic), 
+                            transient (in-mem), filesystem (on-disk)
  
   * note * the pom dependency org.jclouds/jclouds-allblobstore gives you access to
            to all of these providers
 
-we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, rimuhosting, as well 
- a number of features the sandbox
+we also have support for: ibmdev, mezeo, nirvanix, boxdotnet, rimuhosting, openstack nova,
+                          azurequeue, simpledb as well a number of features the sandbox
 
 
 If you want access to all jclouds components, include the maven dependency org.jclouds/jclouds-all

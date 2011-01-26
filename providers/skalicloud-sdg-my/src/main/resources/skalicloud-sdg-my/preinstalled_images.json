@@ -1,0 +1,53 @@
+[
+  {
+      "uuid": "1cf47918-4280-4bbc-8f5f-7c7b2a0c3b3a",
+      "description": "CentOS 5.5 -32bit",
+      "osFamily": "CENTOS",
+      "osVersion": "5.5",
+      "is64bit": false,
+      "size": "1"
+  },
+  {
+      "uuid": "90aa51f2-15c0-4cff-81ee-e93aa20b9468",
+      "description": "CentOS 5.5 -64bit",
+      "osFamily": "CENTOS",
+      "osVersion": "5.5",
+      "size": "1"
+  },
+  {
+      "uuid": "c144d7a7-e24b-48ab-954b-6b6ec514ed6f",
+      "description": "Debian 5 -64bit",
+      "osFamily": "DEBIAN",
+      "osVersion": "5.0",
+      "size": "1"
+  },
+  {
+      "uuid": "3051699a-a536-4220-aeb5-67f2ec101a09",
+      "description": "Ubuntu Server 10.10 -64bit",
+      "osFamily": "UBUNTU",
+      "osVersion": "10.10",
+      "size": "1"
+  },
+  {
+      "uuid": "4d5656b5-74d3-4aa0-9308-6b7377552204",
+      "description": "Ubuntu Server 10.10 -32bit",
+      "osFamily": "UBUNTU",
+      "osVersion": "10.10",
+      "is64bit": false,
+      "size": "1"
+  },
+  {
+      "uuid": "11c4c922-5ff8-4094-b06c-eb8ffaec1ea9",
+      "description": "Windows 2008R2 Web Edition",
+      "osFamily": "WINDOWS",
+      "osVersion": "2008 R2",
+      "size": "13"
+  },
+  {
+      "uuid": "93bf390e-4f46-4252-a8bc-9d6d80e3f955",
+      "description": "Windows Server 2008R2 Standard",
+      "osFamily": "WINDOWS",
+      "osVersion": "2008 R2",
+      "size": "13"
+  }
+]

@@ -27,12 +27,16 @@ import javax.annotation.Nullable;
 import org.jclouds.concurrent.Timeout;
 import org.jclouds.elb.domain.LoadBalancer;
 
+import com.google.common.annotations.Beta;
+
 /**
  * Provides access to EC2 Elastic Load Balancer via their REST API.
  * <p/>
  * 
  * @author Lili Nader
  */
+@Beta
+// see ELBAsyncClient
 @Timeout(duration = 30, timeUnit = TimeUnit.SECONDS)
 public interface ELBClient {
 
@@ -50,8 +54,10 @@ public interface ELBClient {
     * @return dns the DNS name for the load balancer
     * @see <a href="http://docs.amazonwebservices.com/ElasticLoadBalancing/latest/DeveloperGuide/"
     */
-   String createLoadBalancerInRegion(@Nullable String region, String name, String protocol,
-            int loadBalancerPort, int instancePort, String... availabilityZones);
+   @Beta
+   // see ELBAsyncClient
+   String createLoadBalancerInRegion(@Nullable String region, String name, String protocol, int loadBalancerPort,
+            int instancePort, String... availabilityZones);
 
    /**
     * Delete load balancer
@@ -76,8 +82,7 @@ public interface ELBClient {
     * @see <a
     *      href="http://docs.amazonwebservices.com/ElasticLoadBalancing/2009-05-15/DeveloperGuide/"
     */
-   Set<String> registerInstancesWithLoadBalancerInRegion(@Nullable String region, String name,
-            String... instanceIds);
+   Set<String> registerInstancesWithLoadBalancerInRegion(@Nullable String region, String name, String... instanceIds);
 
    /**
     * Deregister instances with an existing load balancer
@@ -91,13 +96,14 @@ public interface ELBClient {
     * @see <a
     *      href="http://docs.amazonwebservices.com/ElasticLoadBalancing/2009-05-15/DeveloperGuide/"
     */
-   void deregisterInstancesWithLoadBalancerInRegion(@Nullable String region, String name,
-            String... instanceIds);
+   void deregisterInstancesWithLoadBalancerInRegion(@Nullable String region, String name, String... instanceIds);
 
    /**
     * Returns a set of elastic load balancers
+    * 
     * @param region
-    * @param loadbalancerNames names associated with the LoadBalancers at creation time.
+    * @param loadbalancerNames
+    *           names associated with the LoadBalancers at creation time.
     * @return
     */
    Set<? extends LoadBalancer> describeLoadBalancersInRegion(@Nullable String region, String... loadbalancerNames);

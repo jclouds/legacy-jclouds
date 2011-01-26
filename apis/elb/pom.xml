@@ -24,28 +24,34 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4.0.0.xsd" >
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.jclouds.api</groupId>
-        <artifactId>jclouds-apis-project</artifactId>
+        <groupId>org.jclouds</groupId>
+        <artifactId>jclouds-project</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../../project/pom.xml</relativePath>
     </parent>
+    <groupId>org.jclouds.api</groupId>
     <artifactId>elb</artifactId>
     <name>jcloud elb api</name>
     <description>jclouds components to access an implementation of Elastic Load Balancer</description>
 
     <properties>
+        <test.elb.zone>us-east-1a</test.elb.zone>
         <test.elb.endpoint>https://elasticloadbalancing.us-east-1.amazonaws.com</test.elb.endpoint>
         <test.elb.apiversion>2010-07-01</test.elb.apiversion>
         <test.elb.identity>${test.aws.identity}</test.elb.identity>
         <test.elb.credential>${test.aws.credential}</test.elb.credential>
+        <test.elb.compute.provider>ec2</test.elb.compute.provider>
+        <test.elb.compute.endpoint>https://ec2.us-east-1.amazonaws.com</test.elb.compute.endpoint>
+        <test.elb.compute.apiversion>2010-06-15</test.elb.compute.apiversion>
+        <test.elb.compute.identity>${test.aws.identity}</test.elb.compute.identity>
+        <test.elb.compute.credential>${test.aws.credential}</test.elb.compute.credential>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-aws</artifactId>
+            <groupId>org.jclouds.common</groupId>
+            <artifactId>aws-common</artifactId>
             <version>${project.version}</version>
-            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.jclouds</groupId>
@@ -61,7 +67,7 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jclouds</groupId>
+            <groupId>org.jclouds.driver</groupId>
             <artifactId>jclouds-jsch</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
@@ -74,9 +80,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jclouds</groupId>
+            <groupId>org.jclouds.driver</groupId>
             <artifactId>jclouds-log4j</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -99,6 +111,10 @@
                                 <configuration>
                                     <systemProperties>
                                         <property>
+                                            <name>test.elb.zone</name>
+                                            <value>${test.elb.zone}</value>
+                                        </property>
+                                        <property>
                                             <name>test.elb.endpoint</name>
                                             <value>${test.elb.endpoint}</value>
                                         </property>
@@ -113,6 +129,26 @@
                                         <property>
                                             <name>test.elb.credential</name>
                                             <value>${test.elb.credential}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.elb.compute.provider</name>
+                                            <value>${test.elb.compute.provider}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.elb.compute.endpoint</name>
+                                            <value>${test.elb.compute.endpoint}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.elb.compute.apiversion</name>
+                                            <value>${test.elb.compute.apiversion}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.elb.compute.identity</name>
+                                            <value>${test.elb.compute.identity}</value>
+                                        </property>
+                                        <property>
+                                            <name>test.elb.compute.credential</name>
+                                            <value>${test.elb.compute.credential}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

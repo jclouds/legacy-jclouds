@@ -24,17 +24,18 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4.0.0.xsd" >
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.jclouds.api</groupId>
-        <artifactId>jclouds-apis-project</artifactId>
+        <groupId>org.jclouds</groupId>
+        <artifactId>jclouds-project</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>../../project/pom.xml</relativePath>
     </parent>
+    <groupId>org.jclouds.api</groupId>
     <artifactId>s3</artifactId>
     <name>jcloud s3 api</name>
     <description>jclouds components to access an implementation of S3</description>
 
     <properties>
-        <test.initializer>org.jclouds.s3.blobstore.S3TestInitializer</test.initializer>
+        <test.initializer>org.jclouds.s3.blobstore.integration.S3TestInitializer</test.initializer>
         <test.s3.endpoint>https://s3.amazonaws.com</test.s3.endpoint>
         <test.s3.apiversion>2006-03-01</test.s3.apiversion>
         <test.s3.identity>${test.aws.identity}</test.s3.identity>
@@ -43,8 +44,13 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.jclouds</groupId>
-            <artifactId>jclouds-aws</artifactId>
+            <groupId>com.jamesmurty.utils</groupId>
+            <artifactId>java-xmlbuilder</artifactId>
+            <version>0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jclouds.common</groupId>
+            <artifactId>aws-common</artifactId>
             <version>${project.version}</version>
             <type>jar</type>
         </dependency>
@@ -69,9 +75,15 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.jclouds</groupId>
+            <groupId>org.jclouds.driver</groupId>
             <artifactId>jclouds-log4j</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.16</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -112,6 +124,14 @@
                                         <property>
                                             <name>test.initializer</name>
                                             <value>${test.initializer}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.blobstore.httpstream.url</name>
+                                            <value>${jclouds.blobstore.httpstream.url}</value>
+                                        </property>
+                                        <property>
+                                            <name>jclouds.blobstore.httpstream.md5</name>
+                                            <value>${jclouds.blobstore.httpstream.md5}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

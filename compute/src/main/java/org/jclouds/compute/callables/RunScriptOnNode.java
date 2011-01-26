@@ -19,41 +19,47 @@
 
 package org.jclouds.compute.callables;
 
-import javax.inject.Named;
+import java.util.concurrent.Callable;
 
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
+import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.ssh.ExecResponse;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import com.google.common.annotations.Beta;
 
 /**
+ * Separates out how one implements the ability to run a script on a node.
  * 
  * @author Adrian Cole
  */
-public class RunScriptOnNode extends InitAndStartScriptOnNode {
-   protected final Predicate<CommandUsingClient> runScriptNotRunning;
+@Beta
+public interface RunScriptOnNode extends Callable<ExecResponse> {
 
-   public RunScriptOnNode(@Named("SCRIPT_COMPLETE") Predicate<CommandUsingClient> runScriptNotRunning,
-            NodeMetadata node, String scriptName, Statement script, boolean runAsRoot) {
-      super(node, scriptName, script, runAsRoot);
-      this.runScriptNotRunning = runScriptNotRunning;
+   public interface Factory {
+      RunScriptOnNode create(NodeMetadata node, String script);
+
+      RunScriptOnNode create(NodeMetadata node, Statement script);
+
+      RunScriptOnNode create(NodeMetadata node, Statement script, RunScriptOptions options);
    }
 
-
+   /**
+    * Note that {@link #init} must be called first.
+    */
    @Override
-   public ExecResponse call() {
-      ExecResponse returnVal = super.call();
-      boolean complete = runScriptNotRunning.apply(new CommandUsingClient("./" + init.getInstanceName() + " status", ssh));
-      logger.debug("<< complete(%s)", complete);
-      if (logger.isDebugEnabled() || returnVal.getExitCode() != 0) {
-         logger.debug("<< stdout from %s as %s@%s\n%s", init.getInstanceName(), node.getCredentials().identity, Iterables.get(node
-                  .getPublicAddresses(), 0), ssh.exec("./" + init.getInstanceName() + " tail").getOutput());
-         logger.debug("<< stderr from %s as %s@%s\n%s", init.getInstanceName(), node.getCredentials().identity, Iterables.get(node
-                  .getPublicAddresses(), 0), ssh.exec("./" + init.getInstanceName() + " tailerr").getOutput());
-      }
-      return returnVal;
-   }
+   ExecResponse call();
+
+   /**
+    * verifies that the command can execute on the node. For example, if this is ssh, it may attempt
+    * to find a reachable socket. If this is using an API, it may attempt to validate that
+    * connection.
+    */
+   RunScriptOnNode init();
+
+   /**
+    * the node this command is being executed on.
+    */
+   NodeMetadata getNode();
+
 }

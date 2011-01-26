@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vApp:Org xmlns:vApp="http://www.vmware.com/vcloud/v0.8"
+    xmlns:common="http://schemas.dmtf.org/wbem/wscim/1/common"
+    xmlns:ovf="http://schemas.dmtf.org/ovf/envelope/1"
+    xmlns:rasd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_ResourceAllocationSettingData"
+    xmlns:vssd="http://schemas.dmtf.org/wbem/wscim/1/cim-schema/2/CIM_VirtualSystemSettingData"
+    name="607968.0">
+    <vApp:Link
+        href="https://api.symphonyVPDC.savvis.net/rest/api/v0.8/org/607968.0/vdc/2826"
+        name="GravDataCenter1(Saved)" rel="down"
+        type="application/vnd.vmware.vcloud.vdc+xml" />
+    <vApp:Description>Gravitant Inc</vApp:Description>
+</vApp:Org>

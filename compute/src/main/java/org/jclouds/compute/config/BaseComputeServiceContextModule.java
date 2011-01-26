@@ -19,17 +19,22 @@
 
 package org.jclouds.compute.config;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
 import static org.jclouds.compute.domain.OsFamily.UBUNTU;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.collect.Memoized;
+import org.jclouds.compute.callables.RunScriptOnNode;
+import org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh;
+import org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -37,11 +42,18 @@ import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.domain.OsFamily;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.functions.CreateSshClientOncePortIsListeningOnNode;
+import org.jclouds.compute.functions.TemplateOptionsToStatement;
+import org.jclouds.compute.options.RunScriptOptions;
+import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
+import org.jclouds.compute.strategy.CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap;
+import org.jclouds.compute.strategy.InitializeRunScriptOnNodeOrPlaceInBadMap;
 import org.jclouds.domain.Location;
 import org.jclouds.json.Json;
 import org.jclouds.rest.AuthorizationException;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
+import org.jclouds.scriptbuilder.domain.Statement;
+import org.jclouds.scriptbuilder.domain.Statements;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;
@@ -49,9 +61,12 @@ import com.google.common.base.Supplier;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Maps;
 import com.google.inject.AbstractModule;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.google.inject.name.Names;
 
 /**
  * 
@@ -63,6 +78,63 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       install(new ComputeServiceTimeoutsModule());
       bind(new TypeLiteral<Function<NodeMetadata, SshClient>>() {
       }).to(CreateSshClientOncePortIsListeningOnNode.class);
+      bind(new TypeLiteral<Function<TemplateOptions, Statement>>() {
+      }).to(TemplateOptionsToStatement.class);
+
+      install(new FactoryModuleBuilder().implement(RunScriptOnNode.class, Names.named("blocking"),
+               RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.class).implement(RunScriptOnNode.class,
+               Names.named("nonblocking"), RunScriptOnNodeAsInitScriptUsingSsh.class).build(
+               RunScriptOnNodeFactoryImpl.Factory.class));
+      
+      bind(RunScriptOnNode.Factory.class).to(RunScriptOnNodeFactoryImpl.class);
+
+      install(new FactoryModuleBuilder().implement(new TypeLiteral<Callable<Void>>() {
+      }, CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.class).implement(
+               new TypeLiteral<Function<NodeMetadata, Void>>() {
+               }, CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.class).build(
+               CustomizeNodeAndAddToGoodMapOrPutExceptionIntoBadMap.Factory.class));
+
+      install(new FactoryModuleBuilder().implement(new TypeLiteral<Callable<RunScriptOnNode>>() {
+      }, InitializeRunScriptOnNodeOrPlaceInBadMap.class).build(InitializeRunScriptOnNodeOrPlaceInBadMap.Factory.class));
+   }
+
+   @Singleton
+   static class RunScriptOnNodeFactoryImpl implements RunScriptOnNode.Factory {
+
+      static interface Factory {
+
+         @Named("blocking")
+         RunScriptOnNode blockOnComplete(NodeMetadata node, Statement script, RunScriptOptions options);
+
+         @Named("nonblocking")
+         RunScriptOnNode dontBlockOnComplete(NodeMetadata node, Statement script, RunScriptOptions options);
+      }
+
+      private final Factory factory;
+
+      @Inject
+      RunScriptOnNodeFactoryImpl(Factory factory) {
+         this.factory = checkNotNull(factory, "factory");
+      }
+
+      @Override
+      public RunScriptOnNode create(NodeMetadata node, Statement runScript, RunScriptOptions options) {
+         checkNotNull(node, "node");
+         checkNotNull(runScript, "runScript");
+         checkNotNull(options, "options");
+         return options.shouldBlockOnComplete() ? factory.blockOnComplete(node, runScript, options) : factory
+                  .dontBlockOnComplete(node, runScript, options);
+      }
+
+      @Override
+      public RunScriptOnNode create(NodeMetadata node, String script) {
+         return create(node, Statements.exec(checkNotNull(script, "script")));
+      }
+
+      @Override
+      public RunScriptOnNode create(NodeMetadata node, Statement script) {
+         return create(node, script, RunScriptOptions.NONE);
+      }
    }
 
    @Provides
@@ -118,20 +190,20 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Memoized
    protected Supplier<Set<? extends Image>> supplyImageCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final Supplier<Set<? extends Image>> imageSupplier) {
+            final Supplier<Set<? extends Image>> imageSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Image>>(authException, seconds,
-            new Supplier<Set<? extends Image>>() {
-               @Override
-               public Set<? extends Image> get() {
-                  return imageSupplier.get();
-               }
-            });
+               new Supplier<Set<? extends Image>>() {
+                  @Override
+                  public Set<? extends Image> get() {
+                     return imageSupplier.get();
+                  }
+               });
    }
 
    @Provides
    @Singleton
    protected Supplier<Map<String, ? extends Location>> provideLocationMap(
-         @Memoized Supplier<Set<? extends Location>> locations) {
+            @Memoized Supplier<Set<? extends Location>> locations) {
       return Suppliers.compose(new Function<Set<? extends Location>, Map<String, ? extends Location>>() {
 
          @Override
@@ -153,14 +225,14 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Memoized
    protected Supplier<Set<? extends Location>> supplyLocationCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final Supplier<Set<? extends Location>> locationSupplier) {
+            final Supplier<Set<? extends Location>> locationSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Location>>(authException, seconds,
-            new Supplier<Set<? extends Location>>() {
-               @Override
-               public Set<? extends Location> get() {
-                  return locationSupplier.get();
-               }
-            });
+               new Supplier<Set<? extends Location>>() {
+                  @Override
+                  public Set<? extends Location> get() {
+                     return locationSupplier.get();
+                  }
+               });
    }
 
    @Provides
@@ -187,14 +259,14 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
    @Singleton
    @Memoized
    protected Supplier<Set<? extends Hardware>> supplySizeCache(@Named(PROPERTY_SESSION_INTERVAL) long seconds,
-         final Supplier<Set<? extends Hardware>> hardwareSupplier) {
+            final Supplier<Set<? extends Hardware>> hardwareSupplier) {
       return new RetryOnTimeOutButNotOnAuthorizationExceptionSupplier<Set<? extends Hardware>>(authException, seconds,
-            new Supplier<Set<? extends Hardware>>() {
-               @Override
-               public Set<? extends Hardware> get() {
-                  return hardwareSupplier.get();
-               }
-            });
+               new Supplier<Set<? extends Hardware>>() {
+                  @Override
+                  public Set<? extends Hardware> get() {
+                     return hardwareSupplier.get();
+                  }
+               });
    }
 
    @Provides

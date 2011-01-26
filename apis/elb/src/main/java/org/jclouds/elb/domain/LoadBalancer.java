@@ -22,18 +22,25 @@ package org.jclouds.elb.domain;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.common.annotations.Beta;
+
 /**
  * 
  * 
  * @author Lili Nader
  */
+@Beta
+// Missing fields, this class is too big, please cut out inner classes into top-level
 public class LoadBalancer implements Comparable<LoadBalancer> {
 
+   // Missing: createdTime, healthcheck
    private String region;
    private String name;
    private Set<String> instanceIds;
    private Set<String> availabilityZones;
    private String dnsName;
+   // TODO: this could be cleaned up to be a policy collection of subclasses of Policy. note that
+   // docs suggest there could be many
    private AppCookieStickinessPolicy appCookieStickinessPolicy;
    private LBCookieStickinessPolicy lBCookieStickinessPolicy;
    private Set<LoadBalancerListener> loadBalancerListeners;
@@ -46,7 +53,7 @@ public class LoadBalancer implements Comparable<LoadBalancer> {
    }
 
    public LoadBalancer(String region, String name, Set<String> instanceIds, Set<String> availabilityZones,
-         String dnsName) {
+            String dnsName) {
       this.region = region;
       this.name = name;
       this.instanceIds = instanceIds;
@@ -127,9 +134,9 @@ public class LoadBalancer implements Comparable<LoadBalancer> {
    @Override
    public String toString() {
       return "[region=" + region + ", name=" + name + ", instanceIds=" + instanceIds + ", availabilityZones="
-            + availabilityZones + ", dnsName=" + dnsName + ", appCookieStickinessPolicy=" + appCookieStickinessPolicy
-            + ", lBCookieStickinessPolicy=" + lBCookieStickinessPolicy + ", loadBalancerListeners="
-            + loadBalancerListeners + "]";
+               + availabilityZones + ", dnsName=" + dnsName + ", appCookieStickinessPolicy="
+               + appCookieStickinessPolicy + ", lBCookieStickinessPolicy=" + lBCookieStickinessPolicy
+               + ", loadBalancerListeners=" + loadBalancerListeners + "]";
    }
 
    @Override
@@ -336,13 +343,14 @@ public class LoadBalancer implements Comparable<LoadBalancer> {
    }
 
    public static class LoadBalancerListener {
+      // TODO: missing SSLCertificateId
       private Set<String> policyNames;
       private Integer instancePort;
       private Integer loadBalancerPort;
       private String protocol;
 
       public LoadBalancerListener(Set<String> policyNames, Integer instancePort, Integer loadBalancerPort,
-            String protocol) {
+               String protocol) {
          super();
          this.policyNames = policyNames;
          this.instancePort = instancePort;
@@ -432,7 +440,7 @@ public class LoadBalancer implements Comparable<LoadBalancer> {
       @Override
       public String toString() {
          return "[policyNames=" + policyNames + ", instancePort=" + instancePort + ", loadBalancerPort="
-               + loadBalancerPort + ", protocol=" + protocol + "]";
+                  + loadBalancerPort + ", protocol=" + protocol + "]";
       }
 
    }

@@ -41,7 +41,7 @@
         </dependency>
         <dependency>
             <groupId>org.jclouds.provider</groupId>
-            <artifactId>aws-simpledb</artifactId>
+            <artifactId>aws-elb</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

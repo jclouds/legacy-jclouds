@@ -80,7 +80,7 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
 
    public void testDescribeLoadBalancers() throws SecurityException, NoSuchMethodException, IOException {
       Method method = ELBAsyncClient.class.getMethod("describeLoadBalancersInRegion", String.class, String[].class);
-      HttpRequest request = processor.createRequest(method, (String) null);
+      HttpRequest request = processor.createRequest(method);
 
       assertRequestLineEquals(request, "POST https://elasticloadbalancing.us-east-1.amazonaws.com/ HTTP/1.1");
       assertNonPayloadHeadersEqual(request, "Host: elasticloadbalancing.us-east-1.amazonaws.com\n");
@@ -178,9 +178,11 @@ public class ELBAsyncClientTest extends RestClientTest<ELBAsyncClient> {
       return new TestELBRestClientModule();
    }
 
+   protected String provider = "elb";
+
    @Override
    public RestContextSpec<?, ?> createContextSpec() {
-      return new RestContextFactory().createContextSpec("elb", "identity", "credential", new Properties());
+      return new RestContextFactory().createContextSpec(provider, "identity", "credential", new Properties());
    }
 
    @Override

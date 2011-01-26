@@ -35,7 +35,29 @@
     <modules>
         <module>gogrid</module>
         <module>slicehost</module>
-        <module>cloudsigma</module>
-        <module>aws-simpledb</module>
+        <module>cloudsigma-zrh</module>
+        <module>azureblob</module>
+        <module>aws-elb</module>
+        <module>aws-s3</module>
+        <module>aws-ec2</module>
+        <module>googlestorage</module>
+        <module>scaleup-storage</module>
+        <module>synaptic-storage</module>
+        <module>cloudonestorage</module>
+        <module>eucalyptus-partnercloud-s3</module>
+        <module>eucalyptus-partnercloud-ec2</module>
+        <module>cloudservers-us</module>
+        <module>cloudservers-uk</module>
+        <module>cloudfiles-us</module>
+        <module>cloudfiles-uk</module>
+        <module>bluelock-vcdirector</module>
+        <module>trmk-ecloud</module>
+        <module>trmk-vcloudexpress</module>
+        <module>elastichosts-lon-p</module>
+        <module>elastichosts-sat-p</module>
+        <module>elastichosts-lon-b</module>
+        <module>openhosting-east1</module>
+        <module>serverlove-z1-man</module>
+        <module>skalicloud-sdg-my</module>
     </modules>
 </project>

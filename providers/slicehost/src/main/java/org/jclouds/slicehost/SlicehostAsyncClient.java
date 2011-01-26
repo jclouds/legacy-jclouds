@@ -38,6 +38,7 @@ import org.jclouds.rest.annotations.SkipEncoding;
 import org.jclouds.rest.annotations.XMLResponseParser;
 import org.jclouds.rest.functions.ReturnEmptySetOnNotFoundOr404;
 import org.jclouds.rest.functions.ReturnNullOnNotFoundOr404;
+import org.jclouds.rest.functions.ReturnVoidOnNotFoundOr404;
 import org.jclouds.slicehost.binders.BindCreateSliceToXmlPayload;
 import org.jclouds.slicehost.domain.Backup;
 import org.jclouds.slicehost.domain.Flavor;
@@ -92,6 +93,7 @@ public interface SlicehostAsyncClient {
     * @see SlicehostClient#destroySlice
     */
    @DELETE
+   @ExceptionParser(ReturnVoidOnNotFoundOr404.class)
    @Path("/slices/{id}/destroy.xml")
    ListenableFuture<Void> destroySlice(@PathParam("id") int id);
 
