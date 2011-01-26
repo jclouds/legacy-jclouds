@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.easymock.IArgumentMatcher;
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.domain.Credentials;
 import org.jclouds.io.Payload;
@@ -43,7 +44,6 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.predicates.SocketOpen;
 import org.jclouds.rest.RestContext;
-import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.jclouds.util.Strings2;

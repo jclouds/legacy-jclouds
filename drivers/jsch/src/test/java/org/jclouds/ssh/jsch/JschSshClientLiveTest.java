@@ -26,11 +26,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.net.IPSocket;
-import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.util.Strings2;

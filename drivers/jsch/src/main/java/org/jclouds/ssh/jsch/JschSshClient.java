@@ -40,12 +40,12 @@ import javax.inject.Named;
 
 import org.apache.commons.io.input.ProxyInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.http.handlers.BackoffLimitedRetryHandler;
 import org.jclouds.io.Payload;
 import org.jclouds.io.Payloads;
 import org.jclouds.logging.Logger;
 import org.jclouds.net.IPSocket;
-import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.SshException;
 import org.jclouds.util.Strings2;

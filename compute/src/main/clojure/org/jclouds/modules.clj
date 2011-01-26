@@ -20,7 +20,8 @@
   (:require
    [clojure.contrib.logging :as logging])
   (:import
-   [org.jclouds.ssh SshClient ExecResponse]
+   org.jclouds.ssh.SshClient
+   org.jclouds.compute.domain.ExecResponse
    com.google.inject.Module
    com.google.common.collect.ImmutableSet
    org.jclouds.domain.Credentials

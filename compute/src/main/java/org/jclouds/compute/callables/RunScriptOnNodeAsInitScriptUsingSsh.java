@@ -27,6 +27,7 @@ import java.util.Collections;
 import javax.annotation.Resource;
 import javax.inject.Named;
 
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.reference.ComputeServiceConstants;
@@ -34,7 +35,6 @@ import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.InitBuilder;
 import org.jclouds.scriptbuilder.domain.OsFamily;
 import org.jclouds.scriptbuilder.domain.Statement;
-import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.annotations.VisibleForTesting;

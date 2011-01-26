@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -34,7 +35,6 @@ import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.domain.Location;
 import org.jclouds.io.Payload;
 import org.jclouds.scriptbuilder.domain.Statement;
-import org.jclouds.ssh.ExecResponse;
 
 import com.google.common.base.Predicate;
 import com.google.inject.ImplementedBy;
