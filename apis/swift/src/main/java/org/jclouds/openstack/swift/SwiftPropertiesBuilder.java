@@ -19,12 +19,14 @@
 
 package org.jclouds.openstack.swift;
 
+import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
 
 import java.util.Properties;
 
 import org.jclouds.PropertiesBuilder;
+import org.jclouds.openstack.OpenStackAuthAsyncClient;
 
 /**
  * Builds properties used in CloudFiles Connections
@@ -37,6 +39,7 @@ public class SwiftPropertiesBuilder extends PropertiesBuilder {
       Properties properties = super.defaultProperties();
       properties.setProperty(PROPERTY_REGIONS, "DEFAULT");
       properties.setProperty(PROPERTY_USER_METADATA_PREFIX, "X-Object-Meta-");
+      properties.setProperty(PROPERTY_API_VERSION, OpenStackAuthAsyncClient.VERSION);
       return properties;
    }
 

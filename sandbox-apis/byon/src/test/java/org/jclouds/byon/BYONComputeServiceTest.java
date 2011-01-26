@@ -25,12 +25,15 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 
+import org.jclouds.byon.functions.NodeToNodeMetadataTest;
+import org.jclouds.byon.functions.NodesFromYamlTest;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.ComputeServiceContextFactory;
-import org.testng.annotations.BeforeClass;
+import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.Test;
 
 import com.google.common.base.Supplier;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.inject.Module;
 
@@ -39,39 +42,30 @@ import com.google.inject.Module;
  * @author Adrian Cole
  */
 @Test(groups = "live")
-public class BYONParseTest {
-   private String provider = "byon";
-   private String endpoint;
-   private String identity;
-   private String credential;
-
-   @BeforeClass
-   protected void setupCredentials() {
-      endpoint = System.getProperty("test." + provider + ".endpoint", "file://c:/test.txt");
-      // NOTE you may not care about identity/credential
-      identity = System.getProperty("test." + provider + ".identity", "FIXME_IDENTITY");
-      credential = System.getProperty("test." + provider + ".credential", "FIXME_CREDENTIAL");
-   }
+public class BYONComputeServiceTest {
 
    @Test
-   public void testNodesParse() {
+   public void testNodesParse() throws Exception {
       ComputeServiceContext context = null;
       try {
-         Properties contextProperties = new Properties();
-         contextProperties.setProperty("byon.endpoint", endpoint);
-         context = new ComputeServiceContextFactory().createContext("byon", identity, credential,
-               ImmutableSet.<Module> of(), contextProperties);
+         String endpoint = "file://" + getClass().getResource("/test1.yaml").getPath();
+
+         Properties props = new Properties();
+         props.setProperty("byon.endpoint", endpoint);
+         context = new ComputeServiceContextFactory().createContext("byon", "foo", "bar", ImmutableSet
+                  .<Module> of(new JschSshClientModule()), props);
 
          assertEquals(context.getProviderSpecificContext().getEndpoint(), URI.create(endpoint));
 
          @SuppressWarnings("unchecked")
          Supplier<Map<String, Node>> supplier = (Supplier<Map<String, Node>>) context.getProviderSpecificContext()
-               .getApi();
+                  .getApi();
 
          assertEquals(supplier.get().size(), context.getComputeService().listNodes().size());
+         assertEquals(supplier.get(), ImmutableMap.<String, Node> of(NodesFromYamlTest.TEST1.id,
+                  NodesFromYamlTest.TEST1));
 
-         // TODO verify that the node list corresponds correctly to the content at endpoint
-         context.getComputeService().listNodes();
+         assertEquals(context.getComputeService().listNodes(), ImmutableSet.of(NodeToNodeMetadataTest.TEST1));
 
       } finally {
          if (context != null)

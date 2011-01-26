@@ -17,31 +17,31 @@
  * ====================================================================
  */
 
-package org.jclouds.cloudfiles;
+package org.jclouds.byon.suppliers;
 
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
-import static org.jclouds.location.reference.LocationConstants.PROPERTY_REGIONS;
+import org.jclouds.byon.functions.NodesFromYaml;
+import org.jclouds.util.Strings2;
+import org.testng.annotations.Test;
 
-import java.util.Properties;
-
-import org.jclouds.openstack.swift.SwiftPropertiesBuilder;
+import com.google.common.base.Suppliers;
 
 /**
- * Builds properties used in CloudFiles Connections
  * 
  * @author Adrian Cole
  */
-public class CloudFilesPropertiesBuilder extends SwiftPropertiesBuilder {
-   @Override
-   protected Properties defaultProperties() {
-      Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_REGIONS, "US");
-      properties.setProperty(PROPERTY_ENDPOINT, "https://auth.api.rackspacecloud.com");
-      return properties;
+public class NodesParsedFromSupplierTest {
+
+   @Test(expectedExceptions = IllegalStateException.class)
+   public void testMustParseSomething() throws Exception {
+
+      new NodesParsedFromSupplier(Suppliers.ofInstance(Strings2.toInputStream("nodes:\n")), new NodesFromYaml()).get();
+
    }
 
-   public CloudFilesPropertiesBuilder(Properties properties) {
-      super(properties);
-   }
+   public void testCanParseSomething() throws Exception {
 
+      new NodesParsedFromSupplier(Suppliers.ofInstance(Strings2.toInputStream("nodes:\n        first:\n")),
+               new NodesFromYaml()).get();
+
+   }
 }

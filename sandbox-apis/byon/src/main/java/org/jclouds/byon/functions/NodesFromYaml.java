@@ -1,0 +1,88 @@
+/**
+ *
+ * Copyright (C) 2010 Cloud Conscious, LLC. <info@cloudconscious.com>
+ *
+ * ====================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ====================================================================
+ */
+
+package org.jclouds.byon.functions;
+
+import static com.google.common.base.Preconditions.checkState;
+
+import java.io.InputStream;
+import java.util.Map;
+
+import javax.inject.Singleton;
+
+import org.jclouds.byon.Node;
+import org.yaml.snakeyaml.Loader;
+import org.yaml.snakeyaml.TypeDescription;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+
+import com.google.common.base.Function;
+
+/**
+ * Parses the following syntax.
+ * 
+ * <pre>
+ * nodes:
+ *     cluster-1:
+ *         id: cluster-1
+ *         description: xyz
+ *         hostname: cluster-1.mydomain.com
+ *         os_arch: x86
+ *         os_family: linux
+ *         os_name: redhat
+ *         os_version: 5.3
+ *         group: hadoop
+ *         tags:
+ *             - vanilla
+ *         username: kelvin
+ *         credential: password_or_rsa_in_base64
+ *         sudo_password: password_in_base64
+ * </pre>
+ * 
+ * @author Kelvin Kakugawa
+ */
+@Singleton
+public class NodesFromYaml implements Function<InputStream, Map<String, Node>> {
+
+   /**
+    * Type-safe config class for YAML
+    * 
+    */
+   public static class Config {
+      public Map<String, Node> nodes;
+   }
+
+   @Override
+   public Map<String, Node> apply(InputStream source) {
+      Constructor constructor = new Constructor(Config.class);
+
+      TypeDescription nodeDesc = new TypeDescription(Node.class);
+      nodeDesc.putListPropertyType("tags", String.class);
+      constructor.addTypeDescription(nodeDesc);
+
+      TypeDescription configDesc = new TypeDescription(Config.class);
+      configDesc.putMapPropertyType("nodes", String.class, Node.class);
+      constructor.addTypeDescription(configDesc);
+
+      Yaml yaml = new Yaml(new Loader(constructor));
+      Config config = (Config) yaml.load(source);
+      checkState(config != null, "missing nodes: collection");
+      return config.nodes;
+   }
+}

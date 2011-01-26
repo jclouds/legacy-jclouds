@@ -32,13 +32,14 @@ import org.jclouds.compute.domain.NodeMetadataBuilder;
 import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.OperatingSystemBuilder;
 import org.jclouds.compute.domain.OsFamily;
+import org.jclouds.crypto.CryptoStreams;
 import org.jclouds.domain.Credentials;
 import org.jclouds.domain.Location;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 /**
  * @author Adrian Cole
@@ -60,16 +61,19 @@ public class NodeToNodeMetadata implements Function<Node, NodeMetadata> {
       builder.ids(from.getId());
       builder.name(from.getDescription());
       builder.location(location.get());
-      builder.tag(Iterables.get(from.getTags(), 0));
-      builder
-            .operatingSystem(new OperatingSystemBuilder().arch(from.getOsArch())
-                  .family(OsFamily.fromValue(from.getOsFamily())).name(from.getOsName()).version(from.getOsVersion())
-                  .build());
+      builder.tag(from.getGroup());
+      // TODO add tags!
+      builder.operatingSystem(new OperatingSystemBuilder().arch(from.getOsArch()).family(
+               OsFamily.fromValue(from.getOsFamily())).name(from.getOsName()).version(from.getOsVersion()).description(
+               from.getDescription()).build());
       builder.state(NodeState.RUNNING);
       builder.publicAddresses(ImmutableSet.<String> of(from.getHostname()));
-      Credentials creds = new Credentials(from.getUsername(), from.getCredential());
+      Credentials creds = new Credentials(from.getUsername(), new String(CryptoStreams.base64(from.getCredential()),
+               Charsets.UTF_8));
       builder.credentials(creds);
-      credentialStore.put(from.getId(), creds);
+      if (from.getSudoPassword() != null)
+         builder.adminPassword(new String(CryptoStreams.base64(from.getSudoPassword()), Charsets.UTF_8));
+      credentialStore.put("node#" + from.getId(), creds);
       return builder.build();
    }
 

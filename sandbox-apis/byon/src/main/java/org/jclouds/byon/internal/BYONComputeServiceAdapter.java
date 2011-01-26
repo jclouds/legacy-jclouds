@@ -19,6 +19,8 @@
 
 package org.jclouds.byon.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -52,15 +54,15 @@ public class BYONComputeServiceAdapter implements JCloudsNativeComputeServiceAda
 
    @Inject
    public BYONComputeServiceAdapter(Supplier<Map<String, Node>> nodes, NodeToNodeMetadata converter,
-         @org.jclouds.location.Provider String providerName) {
-      this.nodes = nodes;
-      this.converter = converter;
-      this.providerName = providerName;
+            @org.jclouds.location.Provider String providerName) {
+      this.nodes = checkNotNull(nodes, "nodes");
+      this.converter = checkNotNull(converter, "converter");
+      this.providerName = checkNotNull(providerName, "providerName");
    }
 
    @Override
    public NodeMetadata runNodeWithTagAndNameAndStoreCredentials(String tag, String name, Template template,
-         Map<String, Credentials> credentialStore) {
+            Map<String, Credentials> credentialStore) {
       throw new UnsupportedOperationException();
    }
 
@@ -81,11 +83,7 @@ public class BYONComputeServiceAdapter implements JCloudsNativeComputeServiceAda
 
    @Override
    public Iterable<Location> listLocations() {
-      Location provider = new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null);
-      Location region = new LocationImpl(LocationScope.REGION, providerName + "region", providerName + "region",
-            provider);
-      return ImmutableSet.<Location> of(new LocationImpl(LocationScope.ZONE, providerName + "zone", providerName
-            + "zone", region));
+      return ImmutableSet.<Location> of(new LocationImpl(LocationScope.PROVIDER, providerName, providerName, null));
    }
 
    @Override

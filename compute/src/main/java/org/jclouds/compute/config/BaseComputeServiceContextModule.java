@@ -35,6 +35,7 @@ import org.jclouds.collect.Memoized;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSsh;
 import org.jclouds.compute.callables.RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete;
+import org.jclouds.compute.callables.RunScriptOnNodeUsingSsh;
 import org.jclouds.compute.domain.ComputeMetadata;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
@@ -81,11 +82,12 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
       bind(new TypeLiteral<Function<TemplateOptions, Statement>>() {
       }).to(TemplateOptionsToStatement.class);
 
-      install(new FactoryModuleBuilder().implement(RunScriptOnNode.class, Names.named("blocking"),
+      install(new FactoryModuleBuilder().implement(RunScriptOnNode.class, Names.named("direct"),
+               RunScriptOnNodeUsingSsh.class).implement(RunScriptOnNode.class, Names.named("blocking"),
                RunScriptOnNodeAsInitScriptUsingSshAndBlockUntilComplete.class).implement(RunScriptOnNode.class,
                Names.named("nonblocking"), RunScriptOnNodeAsInitScriptUsingSsh.class).build(
                RunScriptOnNodeFactoryImpl.Factory.class));
-      
+
       bind(RunScriptOnNode.Factory.class).to(RunScriptOnNodeFactoryImpl.class);
 
       install(new FactoryModuleBuilder().implement(new TypeLiteral<Callable<Void>>() {
@@ -103,11 +105,14 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
 
       static interface Factory {
 
+         @Named("direct")
+         RunScriptOnNode exec(NodeMetadata node, Statement script, RunScriptOptions options);
+
          @Named("blocking")
-         RunScriptOnNode blockOnComplete(NodeMetadata node, Statement script, RunScriptOptions options);
+         RunScriptOnNode backgroundAndBlockOnComplete(NodeMetadata node, Statement script, RunScriptOptions options);
 
          @Named("nonblocking")
-         RunScriptOnNode dontBlockOnComplete(NodeMetadata node, Statement script, RunScriptOptions options);
+         RunScriptOnNode background(NodeMetadata node, Statement script, RunScriptOptions options);
       }
 
       private final Factory factory;
@@ -122,8 +127,9 @@ public abstract class BaseComputeServiceContextModule extends AbstractModule {
          checkNotNull(node, "node");
          checkNotNull(runScript, "runScript");
          checkNotNull(options, "options");
-         return options.shouldBlockOnComplete() ? factory.blockOnComplete(node, runScript, options) : factory
-                  .dontBlockOnComplete(node, runScript, options);
+         return !options.shouldWrapInInitScript() ? factory.exec(node, runScript, options)
+                  : (options.shouldBlockOnComplete() ? factory.backgroundAndBlockOnComplete(node, runScript, options)
+                           : factory.background(node, runScript, options));
       }
 
       @Override

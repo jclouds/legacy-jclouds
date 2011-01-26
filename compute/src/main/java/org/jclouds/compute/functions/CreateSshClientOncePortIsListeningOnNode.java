@@ -54,7 +54,7 @@ public class CreateSshClientOncePortIsListeningOnNode implements Function<NodeMe
       checkState(sshFactory != null, "ssh requested, but no SshModule configured");
       checkNotNull(node.getCredentials(), "no credentials found for node %s", node.getId());
       checkNotNull(node.getCredentials().identity, "no login identity found for node %s", node.getId());
-      checkNotNull(node.getCredentials().credential, "no credential found for $s on node %s", node
+      checkNotNull(node.getCredentials().credential, "no credential found for %s on node %s", node
                .getCredentials().identity, node.getId());
       IPSocket socket = ComputeServiceUtils.findReachableSocketOnNode(socketTester, node, node.getLoginPort());
       return sshFactory.create(socket, node.getCredentials());

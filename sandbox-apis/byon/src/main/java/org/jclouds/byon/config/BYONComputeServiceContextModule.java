@@ -19,52 +19,55 @@
 
 package org.jclouds.byon.config;
 
-import java.net.URI;
+import java.io.InputStream;
 import java.util.Map;
 
 import javax.inject.Singleton;
 
 import org.jclouds.byon.Node;
+import org.jclouds.byon.functions.NodesFromYaml;
 import org.jclouds.byon.internal.BYONComputeServiceAdapter;
+import org.jclouds.byon.suppliers.NodesParsedFromSupplier;
+import org.jclouds.byon.suppliers.SupplyFromProviderURIOrNodesProperty;
 import org.jclouds.compute.config.JCloudsNativeComputeServiceAdapterContextModule;
 import org.jclouds.concurrent.SingleThreaded;
 import org.jclouds.location.Provider;
 
+import com.google.common.base.Function;
 import com.google.common.base.Supplier;
-import com.google.common.collect.ImmutableMap;
 import com.google.inject.Provides;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
  * @author Adrian Cole
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings( { "rawtypes", "unchecked" })
 @SingleThreaded
 public class BYONComputeServiceContextModule extends
-      JCloudsNativeComputeServiceAdapterContextModule<Supplier, Supplier> {
+         JCloudsNativeComputeServiceAdapterContextModule<Supplier, Supplier> {
 
    public BYONComputeServiceContextModule() {
       super(Supplier.class, Supplier.class, BYONComputeServiceAdapter.class);
    }
 
-   @Provides
-   @Singleton
-   Supplier<Map<String, Node>> provideNodeList(@Provider URI uri) {
-      return new Supplier<Map<String, Node>> (){
-
-         @Override
-         public Map<String, Node> get() {
-            // TODO parse uri into list, using yaml or something
-            return ImmutableMap.<String, Node> of();
-         }
-         
-      };
-   }
-
+   @SuppressWarnings("unchecked")
    @Provides
    @Singleton
    Supplier provideApi(Supplier<Map<String, Node>> in) {
       return in;
+   }
+
+   @Override
+   protected void configure() {
+      super.configure();
+      bind(new TypeLiteral<Supplier<Map<String, Node>>>() {
+      }).to(NodesParsedFromSupplier.class);
+      bind(new TypeLiteral<Supplier<InputStream>>() {
+      }).annotatedWith(Provider.class).to(SupplyFromProviderURIOrNodesProperty.class);
+      // TODO make this somehow overridable via user request
+      bind(new TypeLiteral<Function<InputStream, Map<String, Node>>>() {
+      }).to(NodesFromYaml.class);
    }
 
 }
