@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 
 import org.jclouds.Constants;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
 import org.jclouds.elasticstack.domain.ClaimType;
 import org.jclouds.elasticstack.domain.CreateDriveRequest;
@@ -51,7 +52,6 @@ import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
-import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.jclouds.util.Strings2;

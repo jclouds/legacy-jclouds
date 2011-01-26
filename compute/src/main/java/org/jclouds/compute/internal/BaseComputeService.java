@@ -59,6 +59,7 @@ import org.jclouds.compute.RunScriptOnNodesException;
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.config.CustomizationResponse;
 import org.jclouds.compute.domain.ComputeMetadata;
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
@@ -85,7 +86,6 @@ import org.jclouds.logging.Logger;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.scriptbuilder.domain.Statement;
 import org.jclouds.scriptbuilder.domain.Statements;
-import org.jclouds.ssh.ExecResponse;
 import org.jclouds.util.Strings2;
 
 import com.google.common.base.Function;

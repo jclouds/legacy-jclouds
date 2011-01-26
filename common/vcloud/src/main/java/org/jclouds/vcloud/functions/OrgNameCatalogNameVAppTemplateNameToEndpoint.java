@@ -48,8 +48,8 @@ public class OrgNameCatalogNameVAppTemplateNameToEndpoint implements Function<Ob
 
    @Inject
    public OrgNameCatalogNameVAppTemplateNameToEndpoint(
-         Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>> orgCatalogItemMap,
-         @Org String defaultOrg, @Catalog String defaultCatalog) {
+            Supplier<Map<String, Map<String, Map<String, ? extends org.jclouds.vcloud.domain.CatalogItem>>>> orgCatalogItemMap,
+            @Org String defaultOrg, @Catalog String defaultCatalog) {
       this.orgCatalogItemMap = orgCatalogItemMap;
       this.defaultOrg = defaultOrg;
       this.defaultCatalog = defaultCatalog;
@@ -65,13 +65,23 @@ public class OrgNameCatalogNameVAppTemplateNameToEndpoint implements Function<Ob
          org = defaultOrg;
       if (catalog == null)
          catalog = defaultCatalog;
-      try {
-         Map<String, Map<String, ? extends CatalogItem>> catalogs = checkNotNull(orgCatalogItemMap.get().get(org));
-         return catalogs.get(catalog).get(catalogItem).getEntity().getHref();
-      } catch (NullPointerException e) {
-         throw new NoSuchElementException(org + "/" + catalog + "/" + catalogItem + " not found in "
-               + orgCatalogItemMap.get());
-      }
+      Map<String, Map<String, Map<String, ? extends CatalogItem>>> orgCatalogItemMap = this.orgCatalogItemMap.get();
+
+      if (!orgCatalogItemMap.containsKey(org))
+         throw new NoSuchElementException("org: " + org + " not found in " + orgCatalogItemMap.keySet());
+      Map<String, Map<String, ? extends CatalogItem>> catalogs = orgCatalogItemMap.get(org);
+
+      if (!catalogs.containsKey(catalog))
+         throw new NoSuchElementException("catalog: " + org + "/" + catalog + " not found in " + catalogs.keySet());
+      Map<String, ? extends CatalogItem> catalogMap = catalogs.get(catalog);
+
+      if (!catalogMap.containsKey(catalogItem))
+         throw new NoSuchElementException("item: " + org + "/" + catalog + "/" + catalogItem + " not found in "
+                  + catalogMap.keySet());
+      CatalogItem item = catalogMap.get(catalogItem);
+
+      return checkNotNull(item.getEntity(), "item: " + org + "/" + catalog + "/" + catalogItem + " has no entity")
+               .getHref();
    }
 
 }

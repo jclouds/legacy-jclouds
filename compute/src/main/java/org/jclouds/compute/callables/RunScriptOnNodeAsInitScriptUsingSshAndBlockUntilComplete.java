@@ -24,11 +24,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.compute.predicates.ScriptStatusReturnsZero.CommandUsingClient;
 import org.jclouds.scriptbuilder.domain.Statement;
-import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Function;

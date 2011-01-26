@@ -22,8 +22,8 @@ package org.jclouds.compute.predicates;
 import javax.annotation.Resource;
 import javax.inject.Singleton;
 
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.logging.Logger;
-import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 
 import com.google.common.base.Predicate;

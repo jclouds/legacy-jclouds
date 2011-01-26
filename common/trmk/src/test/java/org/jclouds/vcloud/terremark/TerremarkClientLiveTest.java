@@ -33,7 +33,6 @@ import static org.testng.Assert.assertNotNull;
 import java.io.IOException;
 import java.net.URI;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
@@ -41,7 +40,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.jclouds.Constants;
-import org.jclouds.http.HttpResponseException;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.RetryablePredicate;
@@ -82,13 +80,6 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 
 public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTest {
-
-   // Terremark service call 695,490
-   @Override
-   @Test(expectedExceptions = NoSuchElementException.class)
-   public void testCatalog() throws Exception {
-      super.testCatalog();
-   }
 
    protected String expectedOs = "Ubuntu Linux (64-bit)";
    protected String itemName = "Ubuntu JeOS 9.10 (64-bit)";
@@ -149,7 +140,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
       prepare();
       StringBuffer name = new StringBuffer();
       for (int i = 0; i < 15; i++)
-         name.append("a");
+         name.append("c");
       String serverName = name.toString();// "adriantest";
 
       long hardDisk = 4194304;
@@ -166,6 +157,8 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
 
       TerremarkCatalogItem item = tmClient.findCatalogItemInOrgCatalogNamed(null, null, itemName);
 
+      assert item != null;
+
       // if this template supports setting the root password, let's add it to
       // our options
       CustomizationParameters customizationOptions = tmClient.getCustomizationOptions(item.getCustomizationOptions()
@@ -174,6 +167,8 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
          instantiateOptions.withPassword("robotsarefun");
 
       VCloudExpressVAppTemplate vAppTemplate = tmClient.getVAppTemplate(item.getEntity().getHref());
+
+      assert vAppTemplate != null;
 
       // instantiate, noting vApp returned has minimal details
       vApp = tmClient.instantiateVAppTemplateInVDC(vdc.getHref(), vAppTemplate.getHref(), serverName,
@@ -196,8 +191,7 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
 
       try {// per docs, this is not supported
          tmClient.cancelTask(deployTask.getHref());
-      } catch (HttpResponseException e) {
-         assertEquals(e.getResponse().getStatusCode(), 501);
+      } catch (UnsupportedOperationException e) {
       }
 
       assert successTester.apply(deployTask.getHref());
@@ -302,14 +296,14 @@ public abstract class TerremarkClientLiveTest extends VCloudExpressClientLiveTes
 
       try {// per docs, this is not supported
          tmClient.undeployVApp(vApp.getHref());
-      } catch (HttpResponseException e) {
-         assertEquals(e.getResponse().getStatusCode(), 501);
+         assert false;
+      } catch (UnsupportedOperationException e) {
       }
 
       try {// per docs, this is not supported
          tmClient.suspendVApp(vApp.getHref());
-      } catch (HttpResponseException e) {
-         assertEquals(e.getResponse().getStatusCode(), 501);
+         assert false;
+      } catch (UnsupportedOperationException e) {
       }
 
       assert successTester.apply(tmClient.resetVApp(vApp.getHref()).getHref());

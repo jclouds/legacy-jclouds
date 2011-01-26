@@ -21,7 +21,8 @@
    [clojure.contrib.logging :as logging]
    [org.jclouds.modules :as modules])
   (:import
-   [org.jclouds.ssh SshClient ExecResponse]
+   org.jclouds.ssh.SshClient
+   org.jclouds.compute.domain.ExecResponse
    org.jclouds.io.Payload
    org.jclouds.net.IPSocket))
 

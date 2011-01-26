@@ -46,10 +46,10 @@ import com.google.common.collect.Maps;
 public class NodeToNodeMetadataTest {
    public static final Location location = new LocationImpl(LocationScope.PROVIDER, "byon", "byon", null);
 
-   public static final NodeMetadata TEST1 = new NodeMetadataBuilder().ids("first").tag("hadoop").name("xyz").location(
+   public static final NodeMetadata TEST1 = new NodeMetadataBuilder().ids("cluster-1").tag("hadoop").name("xyz").location(
             location).state(NodeState.RUNNING).operatingSystem(
             new OperatingSystemBuilder().name("redhat").family(OsFamily.RHEL).arch("x86").version("5.3").description(
-                     "xyz").build()).publicAddresses(ImmutableSet.of("firsthost")).credentials(
+                     "xyz").build()).publicAddresses(ImmutableSet.of("cluster-1.mydomain.com")).credentials(
             new Credentials("myUser", "fancyfoot")).adminPassword("sudo").build();
 
    @Test
@@ -60,7 +60,7 @@ public class NodeToNodeMetadataTest {
       NodeToNodeMetadata parser = new NodeToNodeMetadata(Suppliers.ofInstance(location), credentialStore);
 
       assertEquals(parser.apply(NodesFromYamlTest.TEST1), TEST1);
-      assertEquals(credentialStore, ImmutableMap.of("node#first",  new Credentials("myUser", "fancyfoot")));
+      assertEquals(credentialStore, ImmutableMap.of("node#cluster-1",  new Credentials("myUser", "fancyfoot")));
 
    }
 }

@@ -17,7 +17,7 @@
  * ====================================================================
  */
 
-package org.jclouds.ssh;
+package org.jclouds.compute.domain;
 
 import org.jclouds.compute.config.CustomizationResponse;
 

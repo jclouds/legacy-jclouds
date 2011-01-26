@@ -22,6 +22,7 @@ package org.jclouds.ssh;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
 import org.jclouds.io.Payload;
 import org.jclouds.net.IPSocket;

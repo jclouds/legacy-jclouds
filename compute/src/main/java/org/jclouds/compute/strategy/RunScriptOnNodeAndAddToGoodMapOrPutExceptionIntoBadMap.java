@@ -30,10 +30,10 @@ import javax.annotation.Resource;
 import javax.inject.Named;
 
 import org.jclouds.compute.callables.RunScriptOnNode;
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.logging.Logger;
-import org.jclouds.ssh.ExecResponse;
 
 import com.google.common.base.Objects;
 import com.google.inject.assistedinject.AssistedInject;
