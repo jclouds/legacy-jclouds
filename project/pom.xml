@@ -78,6 +78,14 @@
 
     <repositories>
         <repository>
+          <!-- only needed for some google appengine jars that google does not distribute in the Central repo -->
+            <id>jclouds-googlecode-deploy</id>
+            <url>http://jclouds.googlecode.com/svn/repo</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
             <id>jclouds-rimu-snapshots-nexus</id>
             <url>http://jclouds.rimuhosting.com/nexus/content/repositories/snapshots</url>
             <releases>
