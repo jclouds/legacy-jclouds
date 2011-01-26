@@ -28,8 +28,8 @@
     debug="false">
 
     <!-- A time/date based rolling appender -->
-    <appender name="WIREFILE" class="org.apache.log4j.DailyRollingFileAppender">
-        <param name="File" value="target/test-data/jclouds-wire.log" />
+    <appender name="SSHFILE" class="org.apache.log4j.DailyRollingFileAppender">
+        <param name="File" value="target/test-data/jclouds-ssh.log" />
         <param name="Append" value="true" />
 
         <!-- Rollover at midnight each day -->
@@ -99,8 +99,8 @@
         <appender-ref ref="FILE" />
     </appender>
 
-    <appender name="ASYNCWIRE" class="org.apache.log4j.AsyncAppender">
-        <appender-ref ref="WIREFILE" />
+    <appender name="ASYNCSSH" class="org.apache.log4j.AsyncAppender">
+        <appender-ref ref="SSHFILE" />
     </appender>
 
     <!-- ================ -->
@@ -112,13 +112,9 @@
         <appender-ref ref="ASYNC" />
     </category>
 
-    <category name="jclouds.headers">
-        <priority value="DEBUG" />
-        <appender-ref ref="ASYNCWIRE" />
-    </category>
-    <category name="jclouds.wire">
-        <priority value="DEBUG" />
-        <appender-ref ref="ASYNCWIRE" />
+    <category name="jclouds.ssh">
+        <priority value="TRACE" />
+        <appender-ref ref="ASYNCSSH" />
     </category>
 
     <category name="jclouds.compute">

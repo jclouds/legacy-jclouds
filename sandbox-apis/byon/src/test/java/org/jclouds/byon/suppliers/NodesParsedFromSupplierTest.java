@@ -17,17 +17,31 @@
  * ====================================================================
  */
 
-package org.jclouds.byon.config;
+package org.jclouds.byon.suppliers;
 
-import java.util.Map;
+import org.jclouds.byon.functions.NodesFromYaml;
+import org.jclouds.util.Strings2;
+import org.testng.annotations.Test;
 
-import org.jclouds.byon.Node;
+import com.google.common.base.Suppliers;
 
 /**
- * Type-safe config class for YAML
- *
- * @author Kelvin Kakugawa
+ * 
+ * @author Adrian Cole
  */
-public class Config {
-    public Map<String, Node> nodes;
+public class NodesParsedFromSupplierTest {
+
+   @Test(expectedExceptions = IllegalStateException.class)
+   public void testMustParseSomething() throws Exception {
+
+      new NodesParsedFromSupplier(Suppliers.ofInstance(Strings2.toInputStream("nodes:\n")), new NodesFromYaml()).get();
+
+   }
+
+   public void testCanParseSomething() throws Exception {
+
+      new NodesParsedFromSupplier(Suppliers.ofInstance(Strings2.toInputStream("nodes:\n        first:\n")),
+               new NodesFromYaml()).get();
+
+   }
 }

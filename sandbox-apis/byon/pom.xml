@@ -30,11 +30,10 @@
     </parent>
     <groupId>org.jclouds.api</groupId>
     <artifactId>byon</artifactId>
-    <name>jclouds example components for a standalone compute provider</name>
+    <name>jclouds bring your own node provider</name>
     <properties>
         <test.byon.endpoint>file://c:/test.txt</test.byon.endpoint>
-        <test.byon.identity>FIXME</test.byon.identity>
-        <test.byon.credential>FIXME</test.byon.credential>
+        <test.byon.sudo-password> </test.byon.sudo-password>
     </properties>
     <dependencies>
         <dependency>
@@ -103,12 +102,8 @@
                                             <value>${test.byon.endpoint}</value>
                                         </property>
                                         <property>
-                                            <name>test.byon.identity</name>
-                                            <value>${test.byon.identity}</value>
-                                        </property>
-                                        <property>
-                                            <name>test.byon.credential</name>
-                                            <value>${test.byon.credential}</value>
+                                            <name>test.byon.sudo-password</name>
+                                            <value>${test.byon.sudo-password}</value>
                                         </property>
                                     </systemProperties>
                                 </configuration>

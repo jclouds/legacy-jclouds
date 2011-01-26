@@ -24,26 +24,53 @@ import java.util.List;
 import java.util.Set;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 
 /**
- * This would be replaced with the real java object related to the underlying server
  * 
  * @author Adrian Cole
  */
 public class Node {
+   // public due to snakeyaml
+   public Node() {
+   }
+
+   public Node(String id, String description, String hostname, String osArch, String osFamily, String osName,
+            String osVersion, String group, List<String> tags, String username, String credential, String sudo_password) {
+      this.id = id;
+      this.description = description;
+      this.hostname = hostname;
+      this.os_arch = osArch;
+      this.os_family = osFamily;
+      this.os_name = osName;
+      this.os_version = osVersion;
+      this.group = group;
+      this.tags = ImmutableList.copyOf(tags);
+      this.username = username;
+      this.credential = credential;
+      this.sudo_password = sudo_password;
+   }
+
+   // public due to snakeyaml
    public String id;
    public String description;
    public String hostname;
-   public String osArch;
-   public String osFamily;
-   public String osName;
-   public String osVersion;
+   public String os_arch;
+   public String os_family;
+   public String os_name;
+   public String os_version;
+   public String group;
    public List<String> tags;
    public String username;
    public String credential;
+   public String sudo_password;
 
    public String getId() {
       return id;
+   }
+
+   public String getGroup() {
+      return group;
    }
 
    public String getDescription() {
@@ -55,25 +82,25 @@ public class Node {
    }
 
    public String getOsArch() {
-      return osArch;
+      return os_arch;
    }
 
    public String getOsFamily() {
-      return osFamily;
+      return os_family;
    }
 
    public String getOsName() {
-      return osName;
+      return os_name;
    }
 
    public String getOsVersion() {
-      return osVersion;
+      return os_version;
    }
 
    public Set<String> getTags() {
       Set<String> tagSet = new HashSet<String>();
       for (String tag : tags)
-          tagSet.add(tag);
+         tagSet.add(tag);
       return tagSet;
    }
 
@@ -90,6 +117,10 @@ public class Node {
       return Objects.hashCode(id);
    }
 
+   public String getSudoPassword() {
+      return sudo_password;
+   }
+
    @Override
    public boolean equals(Object that) {
       if (that == null)
@@ -99,9 +130,10 @@ public class Node {
 
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).add("id", id).add("description", description).add("hostname", hostname)
-            .add("osArch", osArch).add("osFamily", osFamily).add("osName", osName).add("osVersion", osVersion)
-            .add("tags", tags).add("username", username).toString();
+      return Objects.toStringHelper(this).add("id", id).add("description", description).add("hostname", hostname).add(
+               "osArch", os_arch).add("osFamily", os_family).add("osName", os_name).add("osVersion", os_version).add(
+               "group", group).add("tags", tags).add("username", username).add("hasCredential", credential != null)
+               .add("hasSudoPassword", sudo_password != null).toString();
    }
 
 }
