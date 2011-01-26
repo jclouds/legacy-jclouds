@@ -25,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import org.jclouds.cloudsigma.domain.Drive;
 import org.jclouds.cloudsigma.domain.DriveData;
 import org.jclouds.cloudsigma.domain.DriveInfo;
+import org.jclouds.cloudsigma.domain.ProfileInfo;
 import org.jclouds.cloudsigma.domain.Server;
 import org.jclouds.cloudsigma.domain.ServerInfo;
 import org.jclouds.cloudsigma.options.CloneDriveOptions;
@@ -40,13 +41,21 @@ import org.jclouds.concurrent.Timeout;
  */
 @Timeout(duration = 60, timeUnit = TimeUnit.SECONDS)
 public interface CloudSigmaClient  {
+
+   /**
+    * Get profile info
+    * 
+    * @return info or null, if not found
+    */
+   ProfileInfo getProfileInfo();
+   
    /**
     * list of server uuids in your account
     * 
     * @return or empty set if no servers are found
     */
    Set<String> listServers();
-
+   
    /**
     * Get all servers info
     * 

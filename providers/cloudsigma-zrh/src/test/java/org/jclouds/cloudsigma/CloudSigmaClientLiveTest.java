@@ -38,6 +38,7 @@ import org.jclouds.cloudsigma.domain.DriveStatus;
 import org.jclouds.cloudsigma.domain.DriveType;
 import org.jclouds.cloudsigma.domain.IDEDevice;
 import org.jclouds.cloudsigma.domain.Model;
+import org.jclouds.cloudsigma.domain.ProfileInfo;
 import org.jclouds.cloudsigma.domain.Server;
 import org.jclouds.cloudsigma.domain.ServerInfo;
 import org.jclouds.cloudsigma.domain.ServerStatus;
@@ -126,6 +127,12 @@ public class CloudSigmaClientLiveTest {
    public void testListServers() throws Exception {
       Set<String> servers = client.listServers();
       assertNotNull(servers);
+   }
+
+   @Test
+   public void testGetProfileInfo() throws Exception {
+      ProfileInfo profile = client.getProfileInfo();
+      assertNotNull(profile);
    }
 
    @Test
