@@ -116,6 +116,7 @@
                                     <goal>test</goal>
                                 </goals>
                                 <configuration>
+                                    <threadCount>1</threadCount>
                                     <systemProperties>
                                         <property>
                                             <name>test.eucalyptus-partnercloud-ec2.endpoint</name>
