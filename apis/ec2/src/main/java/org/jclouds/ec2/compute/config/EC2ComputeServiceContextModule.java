@@ -20,8 +20,6 @@
 package org.jclouds.ec2.compute.config;
 
 import static org.jclouds.Constants.PROPERTY_SESSION_INTERVAL;
-import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
-import static org.jclouds.compute.domain.OsFamily.CENTOS;
 
 import java.util.Map;
 
@@ -31,16 +29,12 @@ import javax.inject.Singleton;
 import org.jclouds.compute.ComputeServiceContext;
 import org.jclouds.compute.config.BaseComputeServiceContextModule;
 import org.jclouds.compute.domain.Image;
-import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.ec2.compute.EC2ComputeService;
 import org.jclouds.ec2.compute.domain.RegionAndName;
 import org.jclouds.ec2.compute.suppliers.RegionAndNameToImageSupplier;
-import org.jclouds.location.Provider;
 import org.jclouds.rest.suppliers.RetryOnTimeOutButNotOnAuthorizationExceptionSupplier;
 
 import com.google.common.base.Supplier;
-import com.google.inject.Injector;
-import com.google.inject.Key;
 import com.google.inject.Provides;
 
 /**
@@ -55,18 +49,6 @@ public class EC2ComputeServiceContextModule extends BaseComputeServiceContextMod
       install(new EC2BindComputeStrategiesByClass());
       install(new EC2BindComputeSuppliersByClass());
       super.configure();
-   }
-
-   @Override
-   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      // TODO: move this into the dependent modules
-      String provider = injector.getInstance(Key.get(String.class, Provider.class));
-      if ("aws-ec2".equals(provider))
-         return template.osFamily(AMZN_LINUX).os64Bit(true);
-      else if ("nova-ec2".equals(provider))
-         return super.provideTemplate(injector, template);
-      else
-         return template.osFamily(CENTOS);
    }
 
    @Provides

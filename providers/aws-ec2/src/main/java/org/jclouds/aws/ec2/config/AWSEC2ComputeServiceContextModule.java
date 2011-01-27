@@ -17,29 +17,32 @@
  * ====================================================================
  */
 
-package org.jclouds.epc;
+package org.jclouds.aws.ec2.config;
 
-import static org.jclouds.Constants.PROPERTY_ENDPOINT;
+import static org.jclouds.compute.domain.OsFamily.AMZN_LINUX;
 
-import java.util.Properties;
+import org.jclouds.aws.ec2.strategy.AWSEC2ReviseParsedImage;
+import org.jclouds.compute.domain.TemplateBuilder;
+import org.jclouds.ec2.compute.config.EC2ComputeServiceContextModule;
+import org.jclouds.ec2.compute.strategy.ReviseParsedImage;
 
-import org.jclouds.eucalyptus.EucalyptusPropertiesBuilder;
+import com.google.inject.Injector;
 
 /**
- * Builds properties used in EucalyptusPartnerCloudEucalyptus Clients
  * 
  * @author Adrian Cole
  */
-public class EucalyptusPartnerCloudEucalyptusPropertiesBuilder extends EucalyptusPropertiesBuilder {
+public class AWSEC2ComputeServiceContextModule extends EC2ComputeServiceContextModule {
+
    @Override
-   protected Properties defaultProperties() {
-      Properties properties = super.defaultProperties();
-      properties.setProperty(PROPERTY_ENDPOINT, "http://partnercloud.eucalyptus.com:8773/services/Eucalyptus");
-      return properties;
+   protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
+      return template.osFamily(AMZN_LINUX).os64Bit(true);
    }
 
-   public EucalyptusPartnerCloudEucalyptusPropertiesBuilder(Properties properties) {
-      super(properties);
+   @Override
+   protected void configure() {
+      super.configure();
+      bind(ReviseParsedImage.class).to(AWSEC2ReviseParsedImage.class);
    }
 
 }

@@ -134,7 +134,7 @@ public class DescribeInstancesResponseHandlerTest extends BaseEC2HandlerTest {
       Set<Reservation<? extends RunningInstance>> contents = Sets.newLinkedHashSet();
 
       contents.add(new Reservation<RunningInstance>(defaultRegion, ImmutableSet.of("default"), ImmutableSet
-            .of(new RunningInstance(defaultRegion, ImmutableSet.<String> of(), "0", null, "ami-25CB1213", "i-9slweygo",
+            .of(new RunningInstance(defaultRegion, ImmutableSet.<String> of(), "0", null, "ami-82e4b5c7", "i-9slweygo",
                   InstanceState.TERMINATED, InstanceType.M1_SMALL, null, null, "nebulatanimislam", dateService
                         .iso8601SecondsDateParse("2010-09-09T18:09:42Z"), null, null, null, "paravirtual", null, null,
                   "10.128.207.5", ImmutableSet.<String> of("None"), null, null, null, null, null,

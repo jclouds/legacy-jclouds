@@ -1,0 +1,108 @@
+<DescribeImagesResponse xmlns="http://ec2.amazonaws.com/doc/2010-06-15/">
+    <requestId>0bd968c0-b1d2-41bd-ad04-fc35017b5110</requestId>
+    <imagesSet>
+        <item>
+            <imageId>eri-91061322</imageId>
+            <imageLocation>initrd-64-xen/initrd-2.6.27.21-0.1-xen.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>admin</imageOwnerId>
+            <isPublic>true</isPublic>
+            <productCodes />
+            <architecture>x86_64</architecture>
+            <imageType>ramdisk</imageType>
+            <platform>linux</platform>
+        </item>
+        <item>
+            <imageId>emi-F96014E1</imageId>
+            <imageLocation>centos-5.3-x86_64-xen/centos.5-3.x86-64.img.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>admin</imageOwnerId>
+            <isPublic>true</isPublic>
+            <productCodes />
+            <architecture>x86_64</architecture>
+            <imageType>machine</imageType>
+            <kernelId>eki-AE7F138B</kernelId>
+            <ramdiskId>eri-91061322</ramdiskId>
+            <platform>linux</platform>
+        </item>
+        <item>
+            <imageId>emi-767B178C</imageId>
+            <imageLocation>windows-2008-server/windows.my2008server.img.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>admin</imageOwnerId>
+            <isPublic>true</isPublic>
+            <productCodes />
+            <architecture>x86_64</architecture>
+            <imageType>machine</imageType>
+            <platform>windows</platform>
+        </item>
+        <item>
+            <imageId>eki-AE7F138B</imageId>
+            <imageLocation>kernel-64-xen/vmlinuz-2.6.27.21-0.1-xen.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>admin</imageOwnerId>
+            <isPublic>true</isPublic>
+            <productCodes />
+            <architecture>x86_64</architecture>
+            <imageType>kernel</imageType>
+            <platform>linux</platform>
+        </item>
+        <item>
+            <imageId>eki-101E1514</imageId>
+            <imageLocation>kernel-deb-ec2-32bit/vmlinuz-2.6.32-308-ec2.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>admin</imageOwnerId>
+            <isPublic>true</isPublic>
+            <productCodes />
+            <architecture>i386</architecture>
+            <imageType>kernel</imageType>
+            <platform>linux</platform>
+        </item>
+        <item>
+            <imageId>emi-F9ED14E7</imageId>
+            <imageLocation>centos-5.3-x86_64-kvm/centos.5-3.x86-64.img.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>admin</imageOwnerId>
+            <isPublic>true</isPublic>
+            <productCodes />
+            <architecture>x86_64</architecture>
+            <imageType>machine</imageType>
+            <kernelId>eki-C9BE147B</kernelId>
+            <ramdiskId>eri-0AEE155E</ramdiskId>
+            <platform>linux</platform>
+        </item>
+        <item>
+            <imageId>eki-C9BE147B</imageId>
+            <imageLocation>kernel-64-kvm/vmlinuz-2.6.28-11-generic.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>admin</imageOwnerId>
+            <isPublic>true</isPublic>
+            <productCodes />
+            <architecture>x86_64</architecture>
+            <imageType>kernel</imageType>
+            <platform>linux</platform>
+        </item>
+        <item>
+            <imageId>eri-0AEE155E</imageId>
+            <imageLocation>initrd-64-kvm/initrd.img-2.6.28-11-generic.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>admin</imageOwnerId>
+            <isPublic>true</isPublic>
+            <productCodes />
+            <architecture>x86_64</architecture>
+            <imageType>ramdisk</imageType>
+            <platform>linux</platform>
+        </item>
+        <item>
+            <imageId>eki-9383133A</imageId>
+            <imageLocation>kernel-deb-ec2/vmlinuz-2.6.32-308-ec2.manifest.xml</imageLocation>
+            <imageState>available</imageState>
+            <imageOwnerId>admin</imageOwnerId>
+            <isPublic>true</isPublic>
+            <productCodes />
+            <architecture>x86_64</architecture>
+            <imageType>kernel</imageType>
+            <platform>linux</platform>
+        </item>
+    </imagesSet>
+</DescribeImagesResponse>

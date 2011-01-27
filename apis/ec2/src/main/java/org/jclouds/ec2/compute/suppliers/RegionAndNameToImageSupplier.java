@@ -58,7 +58,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.jclouds.ec2.compute.domain.RegionAndName;
-import org.jclouds.ec2.compute.functions.ImageParser;
+import org.jclouds.ec2.compute.functions.EC2ImageParser;
 import org.jclouds.ec2.compute.strategy.DescribeImagesParallel;
 import org.jclouds.ec2.options.DescribeImagesOptions;
 import org.jclouds.compute.domain.Image;
@@ -86,13 +86,13 @@ public class RegionAndNameToImageSupplier implements Supplier<Map<RegionAndName,
    private final DescribeImagesParallel describer;
    private final String[] ccAmis;
    private final String[] amiOwners;
-   private final ImageParser parser;
+   private final EC2ImageParser parser;
    private final Map<RegionAndName, Image> images;
 
    @Inject
    RegionAndNameToImageSupplier(@Region Set<String> regions, DescribeImagesParallel describer,
          @Named(PROPERTY_EC2_CC_AMIs) String[] ccAmis, @Named(PROPERTY_EC2_AMI_OWNERS) final String[] amiOwners,
-         final ImageParser parser, final Map<RegionAndName, Image> images) {
+         final EC2ImageParser parser, final Map<RegionAndName, Image> images) {
       this.regions = regions;
       this.describer = describer;
       this.ccAmis = ccAmis;

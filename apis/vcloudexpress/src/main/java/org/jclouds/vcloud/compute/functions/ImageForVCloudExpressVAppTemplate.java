@@ -20,7 +20,7 @@
 package org.jclouds.vcloud.compute.functions;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.jclouds.compute.util.ComputeServiceUtils.parseOsFamilyOrNull;
+import static org.jclouds.compute.util.ComputeServiceUtils.parseOsFamilyOrUnrecognized;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -81,7 +81,7 @@ public class ImageForVCloudExpressVAppTemplate implements Function<VCloudExpress
 
    protected OperatingSystem parseOs(VCloudExpressVAppTemplate from) {
       OperatingSystemBuilder builder = new OperatingSystemBuilder();
-      OsFamily osFamily = parseOsFamilyOrNull("vcloudexpress", checkNotNull(from, "vapp template").getName());
+      OsFamily osFamily = parseOsFamilyOrUnrecognized("vcloudexpress", checkNotNull(from, "vapp template").getName());
       builder.family(osFamily);
       builder.description(from.getName());
       builder.is64Bit(from.getName().indexOf("64") != -1);

@@ -49,7 +49,7 @@ public class RegionAndIdToImageTest {
    @Test
    public void testApply() {
 
-      ImageParser parser = createMock(ImageParser.class);
+      EC2ImageParser parser = createMock(EC2ImageParser.class);
       EC2Client caller = createMock(EC2Client.class);
       AMIClient client = createMock(AMIClient.class);
       org.jclouds.ec2.domain.Image ec2Image = createMock(org.jclouds.ec2.domain.Image.class);
@@ -80,7 +80,7 @@ public class RegionAndIdToImageTest {
    @Test
    public void testApplyNotFound() {
 
-      ImageParser parser = createMock(ImageParser.class);
+      EC2ImageParser parser = createMock(EC2ImageParser.class);
       EC2Client caller = createMock(EC2Client.class);
       AMIClient client = createMock(AMIClient.class);
       org.jclouds.ec2.domain.Image ec2Image = createMock(org.jclouds.ec2.domain.Image.class);
@@ -111,7 +111,7 @@ public class RegionAndIdToImageTest {
    @Test
    public void testApplyNoSuchElementException() {
 
-      ImageParser parser = createMock(ImageParser.class);
+      EC2ImageParser parser = createMock(EC2ImageParser.class);
       EC2Client caller = createMock(EC2Client.class);
       AMIClient client = createMock(AMIClient.class);
       org.jclouds.ec2.domain.Image ec2Image = createMock(org.jclouds.ec2.domain.Image.class);

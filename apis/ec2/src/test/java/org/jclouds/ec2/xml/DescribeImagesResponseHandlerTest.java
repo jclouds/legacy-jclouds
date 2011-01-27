@@ -24,7 +24,7 @@ import static org.testng.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.Set;
 
-import org.jclouds.ec2.compute.functions.ImageParserTest;
+import org.jclouds.ec2.compute.functions.EC2ImageParserTest;
 import org.jclouds.ec2.domain.Image;
 import org.jclouds.ec2.domain.Image.Architecture;
 import org.jclouds.ec2.domain.Image.EbsBlockDevice;
@@ -100,7 +100,7 @@ public class DescribeImagesResponseHandlerTest {
    }
 
    public static Set<Image> parseImages(String resource) {
-      InputStream is = ImageParserTest.class.getResourceAsStream(resource);
+      InputStream is = EC2ImageParserTest.class.getResourceAsStream(resource);
       return createParser().parse(is);
    }
 }
