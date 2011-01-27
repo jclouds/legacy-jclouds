@@ -22,7 +22,6 @@ package org.jclouds.blobstore.functions;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import static org.jclouds.Constants.PROPERTY_API_VERSION;
 import static org.jclouds.blobstore.reference.BlobStoreConstants.PROPERTY_USER_METADATA_PREFIX;
 import static org.jclouds.blobstore.util.BlobStoreUtils.getNameFor;
 
@@ -49,21 +48,19 @@ import com.google.common.base.Function;
  * @author Adrian Cole
  */
 public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpResponse, MutableBlobMetadata>,
-      InvocationContext<ParseSystemAndUserMetadataFromHeaders> {
+         InvocationContext<ParseSystemAndUserMetadataFromHeaders> {
    private final String metadataPrefix;
    private final DateService dateParser;
    private final Provider<MutableBlobMetadata> metadataFactory;
-   private final String apiVersion;
 
    private String key;
 
    @Inject
    public ParseSystemAndUserMetadataFromHeaders(Provider<MutableBlobMetadata> metadataFactory, DateService dateParser,
-         @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix, @Named(PROPERTY_API_VERSION) String apiVersion) {
+            @Named(PROPERTY_USER_METADATA_PREFIX) String metadataPrefix) {
       this.metadataFactory = checkNotNull(metadataFactory, "metadataFactory");
       this.dateParser = checkNotNull(dateParser, "dateParser");
       this.metadataPrefix = checkNotNull(metadataPrefix, "metadataPrefix");
-      this.apiVersion = checkNotNull(metadataPrefix, "metadataPrefix");
    }
 
    public MutableBlobMetadata apply(HttpResponse from) {
@@ -84,7 +81,7 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
       for (Entry<String, String> header : from.getHeaders().entries()) {
          if (header.getKey() != null && header.getKey().startsWith(metadataPrefix))
             metadata.getUserMetadata().put((header.getKey().substring(metadataPrefix.length())).toLowerCase(),
-                  header.getValue());
+                     header.getValue());
       }
    }
 
@@ -95,11 +92,12 @@ public class ParseSystemAndUserMetadataFromHeaders implements Function<HttpRespo
          // scaleup-storage uses the wrong case for the last modified header
          if ((lastModified = from.getFirstHeaderOrNull("Last-modified")) == null)
             throw new HttpException(HttpHeaders.LAST_MODIFIED + " header not present in response: "
-                  + from.getStatusLine());
+                     + from.getStatusLine());
       }
-      // Eucalyptus 1.6 returns iso8601 dates
-      if (apiVersion.indexOf("Walrus-1.6") != -1) {
-         metadata.setLastModified(dateParser.iso8601DateParse(lastModified.replace("+0000", "Z")));
+
+      // Walrus
+      if (lastModified.startsWith("20")) {
+         metadata.setLastModified(dateParser.iso8601DateParse(lastModified));
       } else {
          metadata.setLastModified(dateParser.rfc822DateParse(lastModified));
       }
