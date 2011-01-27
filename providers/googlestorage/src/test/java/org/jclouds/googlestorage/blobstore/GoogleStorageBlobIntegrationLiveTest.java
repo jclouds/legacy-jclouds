@@ -19,22 +19,20 @@
 
 package org.jclouds.googlestorage.blobstore;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
+import org.jclouds.blobstore.domain.Blob;
 import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups =  "live", testName = "GoogleStorageBlobIntegrationLiveTest")
+@Test(groups = "live", testName = "GoogleStorageBlobIntegrationLiveTest")
 public class GoogleStorageBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
-
+   // NOTE google supports streaming
+   // no support for content language
    @Override
-   @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testPutObjectStream() throws InterruptedException, IOException, ExecutionException {
-      super.testPutObjectStream();
+   protected void checkContentLanguage(Blob blob, String contentLanguage) {
+      assert blob.getPayload().getContentMetadata().getContentLanguage() == null;
+      assert blob.getMetadata().getContentMetadata().getContentLanguage() == null;
    }
-
 }

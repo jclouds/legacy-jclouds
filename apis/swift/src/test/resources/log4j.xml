@@ -106,15 +106,18 @@
         <appender-ref ref="ASYNCWIRE" />
     </category>
 
-    <category name="jclouds.wire">
-        <priority value="DEBUG" />
-        <appender-ref ref="ASYNCWIRE" />
-    </category>
+    <!--
+        NOTE!! enabling this logger will cause the following test to
+        fail BaseBlobIntegrationTest.testPutObjectStream <category
+        name="jclouds.wire"> <priority value="DEBUG" /> <appender-ref
+        ref="ASYNCWIRE" /> </category>
+    -->
+
     <category name="jclouds.blobstore">
         <priority value="DEBUG" />
         <appender-ref ref="ASYNCBLOBSTORE" />
     </category>
-   
+
     <!-- ======================= -->
     <!-- Setup the Root category -->
     <!-- ======================= -->

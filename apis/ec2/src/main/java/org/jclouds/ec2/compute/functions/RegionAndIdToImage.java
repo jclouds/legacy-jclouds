@@ -45,11 +45,11 @@ public final class RegionAndIdToImage implements Function<RegionAndName, Image> 
    @Resource
    protected Logger logger = Logger.NULL;
 
-   private final ImageParser parser;
+   private final EC2ImageParser parser;
    private final EC2Client sync;
 
    @Inject
-   public RegionAndIdToImage(ImageParser parser, EC2Client sync) {
+   public RegionAndIdToImage(EC2ImageParser parser, EC2Client sync) {
       this.parser = parser;
       this.sync = sync;
    }

@@ -19,13 +19,13 @@
 
 package org.jclouds.synaptic.storage.blobstore.integration;
 
-import org.jclouds.blobstore.integration.internal.BaseContainerIntegrationTest;
+import org.jclouds.atmos.blobstore.integration.AtmosContainerIntegrationLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "SynapticStorageContainerIntegrationLiveTest")
-public class SynapticStorageContainerIntegrationLiveTest extends BaseContainerIntegrationTest {
+public class SynapticStorageContainerIntegrationLiveTest extends AtmosContainerIntegrationLiveTest {
 
 }

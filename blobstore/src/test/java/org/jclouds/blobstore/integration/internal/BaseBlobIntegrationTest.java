@@ -513,7 +513,6 @@ public class BaseBlobIntegrationTest extends BaseBlobStoreIntegrationTest {
             .getPayload().getContentMetadata().getContentLanguage();
       assert blob.getMetadata().getContentMetadata().getContentLanguage().startsWith(contentLanguage) : blob
             .getMetadata().getContentMetadata().getContentLanguage();
-
    }
 
    protected volatile static Crypto crypto;

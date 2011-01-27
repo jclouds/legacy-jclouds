@@ -1,0 +1,28 @@
+uuid 58ca3c1f-7629-4771-9b71-863f40153ba4
+email adrian@jclouds.org
+salutation 
+first_name Adrian
+last_name Cole
+nick_name jclouds
+title Mr
+company Cloud Conscious, LLC.
+vat 
+country US
+town 1200 Fulton St. #609
+language en
+currency USD
+address 1200 Fulton St. #609
+postcode 1200 Fulton St. #609
+phone 4153180253
+job_title 
+location 
+facebook 
+twitter 
+xing 
+linkedin 
+website 
+signature 
+ftp_disabled false
+api_disabled false
+api_https_only false
+type regular

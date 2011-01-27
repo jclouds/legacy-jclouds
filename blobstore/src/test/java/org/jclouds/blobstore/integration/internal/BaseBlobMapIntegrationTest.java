@@ -19,6 +19,7 @@
 
 package org.jclouds.blobstore.integration.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
 import static org.jclouds.blobstore.util.BlobStoreUtils.getContentAsStringOrNullAndClose;
 import static org.testng.Assert.assertEquals;
@@ -68,8 +69,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
             blobsAsString.add(getContentAsStringOrNullAndClose(blob));
          }
          blobsAsString.removeAll(fiveStrings.values());
-         assert blobsAsString.size() == 0 : blobsAsString.size() + ": " + blobs + ": "
-                  + blobsAsString;
+         assert blobsAsString.size() == 0 : blobsAsString.size() + ": " + blobs + ": " + blobsAsString;
       } finally {
          returnContainer(bucketName);
       }
@@ -91,8 +91,8 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
       }
    }
 
-   private void assertConsistencyAwareContentEquals(final Map<String, Blob> map, final String key,
-            final String blob) throws InterruptedException {
+   private void assertConsistencyAwareContentEquals(final Map<String, Blob> map, final String key, final String blob)
+            throws InterruptedException {
       assertConsistencyAware(new Runnable() {
          public void run() {
             Blob old = map.remove(key);
@@ -116,8 +116,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
          Set<Entry<String, Blob>> entries = map.entrySet();
          assertEquals(entries.size(), 5);
          for (Entry<String, Blob> entry : entries) {
-            assertEquals(fiveStrings.get(entry.getKey()), getContentAsStringOrNullAndClose(entry
-                     .getValue()));
+            assertEquals(fiveStrings.get(entry.getKey()), getContentAsStringOrNullAndClose(entry.getValue()));
             Blob blob = entry.getValue();
             blob.setPayload("");
             Payloads.calculateMD5(blob);
@@ -155,16 +154,15 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
       }
    }
 
-   void getOneReturnsAppleAndOldValueIsNull(Map<String, Blob> map, Blob old) throws IOException,
-            InterruptedException {
+   void getOneReturnsAppleAndOldValueIsNull(Map<String, Blob> map, Blob old) throws IOException, InterruptedException {
       assert old == null;
       assertEquals(getContentAsStringOrNullAndClose(map.get("one")), "apple");
       assertConsistencyAwareMapSize(map, 1);
    }
 
-   void getOneReturnsBearAndOldValueIsApple(Map<String, Blob> map, Blob oldValue)
-            throws IOException, InterruptedException {
-      assertEquals(getContentAsStringOrNullAndClose(map.get("one")), "bear");
+   void getOneReturnsBearAndOldValueIsApple(Map<String, Blob> map, Blob oldValue) throws IOException,
+            InterruptedException {
+      assertEquals(getContentAsStringOrNullAndClose(checkNotNull(map.get("one"), "one")), "bear");
       assertEquals(getContentAsStringOrNullAndClose(oldValue), "apple");
       assertConsistencyAwareMapSize(map, 1);
    }
@@ -210,8 +208,7 @@ public abstract class BaseBlobMapIntegrationTest extends BaseMapIntegrationTest<
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPutMoreThanSingleListing() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testPutMoreThanSingleListing() throws InterruptedException, ExecutionException, TimeoutException {
       if (maxResultsForTestListings() == 0)
          return;
       String bucketName = getContainerName();

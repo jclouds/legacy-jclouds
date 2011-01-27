@@ -19,6 +19,7 @@
 
 package org.jclouds.blobstore.integration.internal;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.jclouds.blobstore.options.ListContainerOptions.Builder.maxResults;
 import static org.testng.Assert.assertEquals;
 
@@ -65,16 +66,14 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
             valuesAsString.add(Strings2.toStringAndClose(stream));
          }
          valuesAsString.removeAll(fiveStrings.values());
-         assert valuesAsString.size() == 0 : valuesAsString.size() + ": " + values + ": "
-                  + valuesAsString;
+         assert valuesAsString.size() == 0 : valuesAsString.size() + ": " + values + ": " + valuesAsString;
       } finally {
          returnContainer(containerName);
       }
    }
 
    @Test(groups = { "integration", "live" })
-   public void testPutMoreThanSingleListing() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testPutMoreThanSingleListing() throws InterruptedException, ExecutionException, TimeoutException {
       String containerName = getContainerName();
       try {
          InputStreamMap map = createMap(context, containerName);
@@ -134,8 +133,8 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
             entry.setValue(Strings2.toInputStream(""));
          }
          assertConsistencyAwareMapSize(map, 5);
-         for (InputStream value : map.values()) {
-            assertEquals(Strings2.toStringAndClose(value), "");
+         for (Entry<String, InputStream> entry : map.entrySet()) {
+            assertEquals(Strings2.toStringAndClose(checkNotNull(entry.getValue(), entry.getKey())), "");
          }
       } finally {
          returnContainer(containerName);
@@ -143,8 +142,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    }
 
    @Test(groups = { "integration", "live" })
-   public void testContainsStringValue() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testContainsStringValue() throws InterruptedException, ExecutionException, TimeoutException {
       String containerName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, containerName);
@@ -156,8 +154,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    }
 
    @Test(groups = { "integration", "live" })
-   public void testContainsFileValue() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testContainsFileValue() throws InterruptedException, ExecutionException, TimeoutException {
       String containerName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, containerName);
@@ -169,8 +166,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    }
 
    @Test(groups = { "integration", "live" })
-   public void testContainsInputStreamValue() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testContainsInputStreamValue() throws InterruptedException, ExecutionException, TimeoutException {
       String containerName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, containerName);
@@ -182,8 +178,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    }
 
    @Test(groups = { "integration", "live" })
-   public void testContainsBytesValue() throws InterruptedException, ExecutionException,
-            TimeoutException {
+   public void testContainsBytesValue() throws InterruptedException, ExecutionException, TimeoutException {
       String containerName = getContainerName();
       try {
          Map<String, InputStream> map = createMap(context, containerName);
@@ -269,16 +264,15 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
       }
    }
 
-   void getOneReturnsAppleAndOldValueIsNull(Map<String, InputStream> map, InputStream old)
-            throws IOException, InterruptedException {
+   void getOneReturnsAppleAndOldValueIsNull(Map<String, InputStream> map, InputStream old) throws IOException,
+            InterruptedException {
       assert old == null;
-      assertEquals(Strings2.toStringAndClose(map.get("one")), String
-               .format(XML_STRING_FORMAT, "apple"));
+      assertEquals(Strings2.toStringAndClose(map.get("one")), String.format(XML_STRING_FORMAT, "apple"));
       assertConsistencyAwareMapSize(map, 1);
    }
 
-   void getOneReturnsBearAndOldValueIsApple(Map<String, InputStream> map, InputStream oldValue)
-            throws IOException, InterruptedException {
+   void getOneReturnsBearAndOldValueIsApple(Map<String, InputStream> map, InputStream oldValue) throws IOException,
+            InterruptedException {
       assertEquals(Strings2.toStringAndClose(map.get("one")), String.format(XML_STRING_FORMAT, "bear"));
       assertEquals(Strings2.toStringAndClose(oldValue), String.format(XML_STRING_FORMAT, "apple"));
       assertConsistencyAwareMapSize(map, 1);
@@ -330,8 +324,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
    }
 
    @Override
-   protected void putStringWithMD5(Map<String, InputStream> map, String key, String value)
-            throws InterruptedException {
+   protected void putStringWithMD5(Map<String, InputStream> map, String key, String value) throws InterruptedException {
       ((InputStreamMap) map).putString(key, value);
    }
 
@@ -343,8 +336,7 @@ public abstract class BaseInputStreamMapIntegrationTest extends BaseMapIntegrati
       return createMap(context, bucket, maxResults(maxResultsForTestListings()));
    }
 
-   protected InputStreamMap createMap(BlobStoreContext context, String bucket,
-            ListContainerOptions options) {
+   protected InputStreamMap createMap(BlobStoreContext context, String bucket, ListContainerOptions options) {
       return context.createInputStreamMap(bucket, options);
    }
 }

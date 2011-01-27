@@ -21,10 +21,10 @@ package org.jclouds.compute.callables;
 
 import java.util.concurrent.Callable;
 
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.RunScriptOptions;
 import org.jclouds.scriptbuilder.domain.Statement;
-import org.jclouds.ssh.ExecResponse;
 
 import com.google.common.annotations.Beta;
 

@@ -11,7 +11,7 @@
                     <dnsName />
                     <launchTime>2010-09-09T18:09:42Z</launchTime>
                     <instanceId>i-9slweygo</instanceId>
-                    <imageId>ami-25CB1213</imageId>
+                    <imageId>ami-82e4b5c7</imageId>
                     <instanceState>
                         <code>1</code>
                         <name>shutdown</name>

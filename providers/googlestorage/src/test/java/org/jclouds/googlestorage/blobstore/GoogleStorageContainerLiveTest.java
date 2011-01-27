@@ -19,13 +19,13 @@
 
 package org.jclouds.googlestorage.blobstore;
 
-import org.jclouds.blobstore.integration.internal.BaseContainerLiveTest;
+import org.jclouds.s3.blobstore.integration.S3ContainerLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "GoogleStorageContainerLiveTest")
-public class GoogleStorageContainerLiveTest extends BaseContainerLiveTest {
+public class GoogleStorageContainerLiveTest extends S3ContainerLiveTest {
 
 }

@@ -19,7 +19,7 @@
 
 package org.jclouds.cloudonestorage.blobstore.integration;
 
-import org.jclouds.blobstore.integration.internal.BaseBlobSignerLiveTest;
+import org.jclouds.atmos.blobstore.integration.AtmosBlobSignerLiveTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,6 +27,6 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "CloudOneStorageBlobSignerLiveTest")
-public class CloudOneStorageBlobSignerLiveTest extends BaseBlobSignerLiveTest {
+public class CloudOneStorageBlobSignerLiveTest extends AtmosBlobSignerLiveTest {
 
 }

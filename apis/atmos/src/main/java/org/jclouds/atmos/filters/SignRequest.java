@@ -179,7 +179,7 @@ public class SignRequest implements HttpRequestFilter {
       for (String header : new String[] { "Range" })
          toSign.append(utils.valueOrEmpty(request.getHeaders().get(header)).toLowerCase()).append("\n");
       // Standard HTTP header, in UTC format. Only the date value is used, not the header name.
-      toSign.append(request.getHeaders().get(HttpHeaders.DATE).iterator().next()).append("\n");
+      toSign.append(request.getFirstHeaderOrNull(HttpHeaders.DATE)).append("\n");
    }
 
    @VisibleForTesting

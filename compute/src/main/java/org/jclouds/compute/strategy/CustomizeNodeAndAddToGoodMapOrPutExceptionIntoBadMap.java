@@ -34,6 +34,7 @@ import javax.inject.Named;
 
 import org.jclouds.compute.callables.RunScriptOnNode;
 import org.jclouds.compute.config.CustomizationResponse;
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.NodeMetadata;
 import org.jclouds.compute.options.TemplateOptions;
 import org.jclouds.compute.predicates.RetryIfSocketNotYetOpen;
@@ -41,7 +42,6 @@ import org.jclouds.compute.reference.ComputeServiceConstants;
 import org.jclouds.compute.reference.ComputeServiceConstants.Timeouts;
 import org.jclouds.logging.Logger;
 import org.jclouds.scriptbuilder.domain.Statement;
-import org.jclouds.ssh.ExecResponse;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;

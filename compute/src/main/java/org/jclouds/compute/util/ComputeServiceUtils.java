@@ -132,7 +132,7 @@ public class ComputeServiceUtils {
       return total;
    }
 
-   public static org.jclouds.compute.domain.OsFamily parseOsFamilyOrNull(String provider, String in) {
+   public static org.jclouds.compute.domain.OsFamily parseOsFamilyOrUnrecognized(String provider, String in) {
       org.jclouds.compute.domain.OsFamily myOs = null;
       for (org.jclouds.compute.domain.OsFamily os : org.jclouds.compute.domain.OsFamily.values()) {
          if (in.toLowerCase().replaceAll("\\s", "").indexOf(os.toString()) != -1) {
@@ -142,7 +142,7 @@ public class ComputeServiceUtils {
       if (myOs == null && provider.indexOf("nebula") != -1) {
          myOs = OsFamily.UBUNTU;
       }
-      return myOs;
+      return OsFamily.UNRECOGNIZED;
    }
 
    public static String createExecutionErrorMessage(Map<?, Exception> executionExceptions) {

@@ -19,13 +19,13 @@
 
 package org.jclouds.synaptic.storage.blobstore.integration;
 
-import org.jclouds.blobstore.integration.internal.BaseInputStreamMapIntegrationTest;
+import org.jclouds.atmos.blobstore.integration.AtmosInputStreamMapIntegrationLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "SynapticStorageInputStreamMapIntegrationLiveTest")
-public class SynapticStorageInputStreamMapIntegrationLiveTest extends BaseInputStreamMapIntegrationTest {
+public class SynapticStorageInputStreamMapIntegrationLiveTest extends AtmosInputStreamMapIntegrationLiveTest {
 
 }

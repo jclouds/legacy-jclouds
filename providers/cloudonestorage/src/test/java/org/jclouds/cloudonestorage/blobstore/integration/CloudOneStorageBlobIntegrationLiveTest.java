@@ -19,22 +19,13 @@
 
 package org.jclouds.cloudonestorage.blobstore.integration;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
-import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
+import org.jclouds.atmos.blobstore.integration.AtmosIntegrationLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "CloudOneStorageBlobIntegrationLiveTest")
-public class CloudOneStorageBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
-
-   @Override
-   @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testPutObjectStream() throws InterruptedException, IOException, ExecutionException {
-      super.testPutObjectStream();
-   }
+public class CloudOneStorageBlobIntegrationLiveTest extends AtmosIntegrationLiveTest {
 
 }

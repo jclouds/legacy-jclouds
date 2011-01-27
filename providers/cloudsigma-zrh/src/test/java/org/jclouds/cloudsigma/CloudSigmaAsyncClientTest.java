@@ -31,6 +31,7 @@ import org.jclouds.cloudsigma.domain.Drive;
 import org.jclouds.cloudsigma.domain.DriveData;
 import org.jclouds.cloudsigma.domain.Server;
 import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
+import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToProfileInfo;
 import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToServerInfo;
 import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
 import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet;
@@ -61,6 +62,21 @@ import com.google.inject.TypeLiteral;
 @Test(groups = "unit", testName = "CloudSigmaAsyncClientTest")
 public class CloudSigmaAsyncClientTest extends RestClientTest<CloudSigmaAsyncClient> {
 
+   public void testGetProfileInfo() throws SecurityException, NoSuchMethodException, IOException {
+      Method method = CloudSigmaAsyncClient.class.getMethod("getProfileInfo");
+      HttpRequest httpRequest = processor.createRequest(method);
+
+      assertRequestLineEquals(httpRequest, "GET https://api.cloudsigma.com/profile/info HTTP/1.1");
+      assertNonPayloadHeadersEqual(httpRequest, "Accept: text/plain\n");
+      assertPayloadEquals(httpRequest, null, null, false);
+
+      assertResponseParserClassEquals(method, httpRequest, KeyValuesDelimitedByBlankLinesToProfileInfo.class);
+      assertSaxResponseParserClassEquals(method, null);
+      assertExceptionParserClassEquals(method, ReturnNullOnNotFoundOr404.class);
+
+      checkFilters(httpRequest);
+
+   }
    public void testListStandardDrives() throws SecurityException, NoSuchMethodException, IOException {
       Method method = CloudSigmaAsyncClient.class.getMethod("listStandardDrives");
       HttpRequest httpRequest = processor.createRequest(method);

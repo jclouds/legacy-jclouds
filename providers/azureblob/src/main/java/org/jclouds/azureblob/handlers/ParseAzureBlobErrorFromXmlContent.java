@@ -19,6 +19,8 @@
 
 package org.jclouds.azureblob.handlers;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -30,6 +32,10 @@ import org.jclouds.blobstore.KeyNotFoundException;
 import org.jclouds.http.HttpCommand;
 import org.jclouds.http.HttpResponse;
 import org.jclouds.rest.ResourceNotFoundException;
+
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 
 /**
  * @author Adrian Cole
@@ -43,22 +49,28 @@ public class ParseAzureBlobErrorFromXmlContent extends ParseAzureStorageErrorFro
       super(utils);
    }
 
-   protected Exception refineException(HttpCommand command, HttpResponse response, Exception exception, AzureStorageError error,
-         String message) {
+   protected Exception refineException(HttpCommand command, HttpResponse response, Exception exception,
+            AzureStorageError error, String message) {
       switch (response.getStatusCode()) {
-      case 404:
-         if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
-            exception = new ResourceNotFoundException(message, exception);
-            String container = command.getCurrentRequest().getEndpoint().getHost();
-            String key = command.getCurrentRequest().getEndpoint().getPath();
-            if (key == null || key.equals("/"))
-               exception = new ContainerNotFoundException(container, message);
-            else
-               exception = new KeyNotFoundException(container, key, message);
-         }
-         return exception;
-      default:
-         return super.refineException(command, response, exception, error, message);
+         case 404:
+            if (!command.getCurrentRequest().getMethod().equals("DELETE")) {
+               exception = new ResourceNotFoundException(message, exception);
+               List<String> parts = Lists.newArrayList(Splitter.on('/').split(
+                        command.getCurrentRequest().getEndpoint().getPath()));
+               parts.remove("");
+               if (parts.size() > 0) {
+                  String container = parts.remove(0);
+                  String query = command.getCurrentRequest().getEndpoint().getQuery();
+                  if (query != null && query.indexOf("container") != -1) {
+                     exception = new ContainerNotFoundException(container, message);
+                  } else {
+                     exception = new KeyNotFoundException(container, Joiner.on('/').join(parts), message);
+                  }
+               }
+            }
+            return exception;
+         default:
+            return super.refineException(command, response, exception, error, message);
       }
    }
 }

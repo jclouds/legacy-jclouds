@@ -19,33 +19,16 @@
 
 package org.jclouds.synaptic.storage.blobstore.integration;
 
-import java.io.IOException;
-
-import org.jclouds.blobstore.BlobStoreContext;
-import org.jclouds.blobstore.BlobStoreContextFactory;
-import org.jclouds.blobstore.integration.TransientBlobStoreTestInitializer;
-import org.jclouds.blobstore.integration.internal.BaseBlobStoreIntegrationTest;
-import org.jclouds.logging.log4j.config.Log4JLoggingModule;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.inject.Module;
+import org.jclouds.atmos.blobstore.integration.AtmosTestInitializer;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class SynapticStorageTestInitializer extends TransientBlobStoreTestInitializer {
+public class SynapticStorageTestInitializer extends AtmosTestInitializer {
 
    public SynapticStorageTestInitializer() {
       provider = "synaptic-storage";
-      BaseBlobStoreIntegrationTest.SANITY_CHECK_RETURNED_BUCKET_NAME = true;
-   }
-
-   @Override
-   protected BlobStoreContext createLiveContext(Module configurationModule, String endpoint, String apiversion,
-            String app, String identity, String credential) throws IOException {
-      return new BlobStoreContextFactory().createContext(provider, ImmutableSet.of(configurationModule,
-               new Log4JLoggingModule()), setupProperties(endpoint, apiversion, identity, credential));
    }
 
 }

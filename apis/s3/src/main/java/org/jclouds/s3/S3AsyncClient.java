@@ -53,7 +53,7 @@ import org.jclouds.s3.functions.ObjectKey;
 import org.jclouds.s3.functions.ParseObjectFromHeadersAndHttpContent;
 import org.jclouds.s3.functions.ParseObjectMetadataFromHeaders;
 import org.jclouds.s3.functions.ReturnFalseIfBucketAlreadyOwnedByYouOrIllegalState;
-import org.jclouds.s3.functions.ReturnTrueOn404OrNotFoundFalseIfNotEmpty;
+import org.jclouds.s3.functions.ReturnTrueOn404OrNotFoundFalseOnIllegalState;
 import org.jclouds.s3.options.CopyObjectOptions;
 import org.jclouds.s3.options.ListBucketOptions;
 import org.jclouds.s3.options.PutBucketOptions;
@@ -182,7 +182,7 @@ public interface S3AsyncClient {
     */
    @DELETE
    @Path("/")
-   @ExceptionParser(ReturnTrueOn404OrNotFoundFalseIfNotEmpty.class)
+   @ExceptionParser(ReturnTrueOn404OrNotFoundFalseOnIllegalState.class)
    ListenableFuture<Boolean> deleteBucketIfEmpty(
             @Bucket @BinderParam(BindAsHostPrefixIfConfigured.class) @ParamValidators( { BucketNameValidator.class }) String bucketName);
 

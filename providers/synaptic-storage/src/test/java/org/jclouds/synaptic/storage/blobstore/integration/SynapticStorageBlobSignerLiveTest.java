@@ -19,7 +19,7 @@
 
 package org.jclouds.synaptic.storage.blobstore.integration;
 
-import org.jclouds.blobstore.integration.internal.BaseBlobSignerLiveTest;
+import org.jclouds.atmos.blobstore.integration.AtmosBlobSignerLiveTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,6 +27,6 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "SynapticStorageBlobSignerLiveTest")
-public class SynapticStorageBlobSignerLiveTest extends BaseBlobSignerLiveTest {
+public class SynapticStorageBlobSignerLiveTest extends AtmosBlobSignerLiveTest {
 
 }

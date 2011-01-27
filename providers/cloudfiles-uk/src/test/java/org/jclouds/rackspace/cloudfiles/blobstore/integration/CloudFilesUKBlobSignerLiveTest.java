@@ -19,7 +19,7 @@
 
 package org.jclouds.rackspace.cloudfiles.blobstore.integration;
 
-import org.jclouds.openstack.swift.blobstore.integration.SwiftBlobSignerLiveTest;
+import org.jclouds.cloudfiles.blobstore.integration.CloudFilesBlobSignerLiveTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,6 +27,6 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "CloudFilesUKBlobSignerLiveTest")
-public class CloudFilesUKBlobSignerLiveTest extends SwiftBlobSignerLiveTest {
+public class CloudFilesUKBlobSignerLiveTest extends CloudFilesBlobSignerLiveTest {
 
 }

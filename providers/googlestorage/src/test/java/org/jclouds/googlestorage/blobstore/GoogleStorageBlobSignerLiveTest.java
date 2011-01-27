@@ -19,7 +19,7 @@
 
 package org.jclouds.googlestorage.blobstore;
 
-import org.jclouds.blobstore.integration.internal.BaseBlobSignerLiveTest;
+import org.jclouds.s3.blobstore.integration.S3BlobSignerLiveTest;
 import org.testng.annotations.Test;
 
 /**
@@ -27,6 +27,6 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "GoogleStorageBlobSignerLiveTest")
-public class GoogleStorageBlobSignerLiveTest extends BaseBlobSignerLiveTest {
+public class GoogleStorageBlobSignerLiveTest extends S3BlobSignerLiveTest {
 
 }

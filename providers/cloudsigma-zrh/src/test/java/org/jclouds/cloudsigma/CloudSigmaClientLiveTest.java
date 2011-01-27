@@ -38,6 +38,7 @@ import org.jclouds.cloudsigma.domain.DriveStatus;
 import org.jclouds.cloudsigma.domain.DriveType;
 import org.jclouds.cloudsigma.domain.IDEDevice;
 import org.jclouds.cloudsigma.domain.Model;
+import org.jclouds.cloudsigma.domain.ProfileInfo;
 import org.jclouds.cloudsigma.domain.Server;
 import org.jclouds.cloudsigma.domain.ServerInfo;
 import org.jclouds.cloudsigma.domain.ServerStatus;
@@ -45,13 +46,13 @@ import org.jclouds.cloudsigma.options.CloneDriveOptions;
 import org.jclouds.cloudsigma.predicates.DriveClaimed;
 import org.jclouds.cloudsigma.util.Servers;
 import org.jclouds.compute.ComputeServiceContextFactory;
+import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.domain.Credentials;
 import org.jclouds.logging.log4j.config.Log4JLoggingModule;
 import org.jclouds.net.IPSocket;
 import org.jclouds.predicates.InetSocketAddressConnect;
 import org.jclouds.predicates.RetryablePredicate;
 import org.jclouds.rest.RestContext;
-import org.jclouds.ssh.ExecResponse;
 import org.jclouds.ssh.SshClient;
 import org.jclouds.ssh.jsch.config.JschSshClientModule;
 import org.testng.annotations.AfterGroups;
@@ -126,6 +127,12 @@ public class CloudSigmaClientLiveTest {
    public void testListServers() throws Exception {
       Set<String> servers = client.listServers();
       assertNotNull(servers);
+   }
+
+   @Test
+   public void testGetProfileInfo() throws Exception {
+      ProfileInfo profile = client.getProfileInfo();
+      assertNotNull(profile);
    }
 
    @Test
