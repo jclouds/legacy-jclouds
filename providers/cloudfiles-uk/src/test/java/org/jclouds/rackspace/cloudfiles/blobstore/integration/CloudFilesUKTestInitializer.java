@@ -19,13 +19,13 @@
 
 package org.jclouds.rackspace.cloudfiles.blobstore.integration;
 
-import org.jclouds.openstack.swift.blobstore.integration.SwiftTestInitializer;
+import org.jclouds.cloudfiles.blobstore.integration.CloudFilesTestInitializer;
 
 /**
  * 
  * @author Adrian Cole
  */
-public class CloudFilesUKTestInitializer extends SwiftTestInitializer {
+public class CloudFilesUKTestInitializer extends CloudFilesTestInitializer {
 
    public CloudFilesUKTestInitializer() {
       provider = "cloudfiles-uk";

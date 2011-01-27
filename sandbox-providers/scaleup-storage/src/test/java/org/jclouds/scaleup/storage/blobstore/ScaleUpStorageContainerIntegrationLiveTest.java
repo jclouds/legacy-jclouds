@@ -19,14 +19,13 @@
 
 package org.jclouds.scaleup.storage.blobstore;
 
-import org.jclouds.blobstore.integration.internal.BaseBlobSignerLiveTest;
+import org.jclouds.s3.blobstore.integration.S3ContainerIntegrationLiveTest;
 import org.testng.annotations.Test;
 
 /**
- * 
  * @author Adrian Cole
  */
-@Test(groups =  "live", testName = "ScaleUpStorageBlobSignerLiveTest")
-public class ScaleUpStorageBlobSignerLiveTest extends BaseBlobSignerLiveTest {
+@Test(groups =  "live", testName = "ScaleUpStorageContainerIntegrationLiveTest")
+public class ScaleUpStorageContainerIntegrationLiveTest extends S3ContainerIntegrationLiveTest {
 
 }

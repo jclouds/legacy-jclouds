@@ -19,13 +19,13 @@
 
 package org.jclouds.googlestorage.blobstore;
 
-import org.jclouds.blobstore.integration.internal.BaseInputStreamMapIntegrationTest;
+import org.jclouds.s3.blobstore.integration.S3InputStreamMapIntegrationLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
 @Test(groups =  "live", testName = "GoogleStorageInputStreamMapIntegrationLiveTest")
-public class GoogleStorageInputStreamMapIntegrationLiveTest extends BaseInputStreamMapIntegrationTest {
+public class GoogleStorageInputStreamMapIntegrationLiveTest extends S3InputStreamMapIntegrationLiveTest {
 
 }

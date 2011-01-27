@@ -19,22 +19,13 @@
 
 package org.jclouds.synaptic.storage.blobstore.integration;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
-import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
+import org.jclouds.atmos.blobstore.integration.AtmosIntegrationLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups =  "live", testName = "SynapticStorageBlobIntegrationLiveTest")
-public class SynapticStorageBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
-
-   @Override
-   @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testPutObjectStream() throws InterruptedException, IOException, ExecutionException {
-      super.testPutObjectStream();
-   }
+@Test(groups = "live", testName = "SynapticStorageBlobIntegrationLiveTest")
+public class SynapticStorageBlobIntegrationLiveTest extends AtmosIntegrationLiveTest {
 
 }

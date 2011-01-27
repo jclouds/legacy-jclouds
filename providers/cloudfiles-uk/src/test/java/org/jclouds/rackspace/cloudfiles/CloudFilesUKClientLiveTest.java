@@ -19,7 +19,8 @@
 
 package org.jclouds.rackspace.cloudfiles;
 
-import org.jclouds.cloudfiles.CloudFilesClientLiveTest;
+import org.jclouds.cloudfiles.CloudFilesClient;
+import org.jclouds.openstack.swift.CommonSwiftClientLiveTest;
 import org.testng.annotations.Test;
 
 /**
@@ -28,6 +29,11 @@ import org.testng.annotations.Test;
  * @author Adrian Cole
  */
 @Test(groups = "live", sequential = true, testName = "CloudFilesUKClientLiveTest")
-public class CloudFilesUKClientLiveTest extends CloudFilesClientLiveTest {
+public class CloudFilesUKClientLiveTest extends CommonSwiftClientLiveTest<CloudFilesClient> {
+   // NOTE cloudfilesuk doesn't have cdn
 
+   @Override
+   public CloudFilesClient getApi() {
+      return (CloudFilesClient) context.getProviderSpecificContext().getApi();
+   }
 }

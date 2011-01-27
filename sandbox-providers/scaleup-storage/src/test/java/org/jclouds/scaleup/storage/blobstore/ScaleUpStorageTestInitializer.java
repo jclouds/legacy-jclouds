@@ -19,22 +19,18 @@
 
 package org.jclouds.scaleup.storage.blobstore;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
+import org.jclouds.s3.blobstore.integration.S3TestInitializer;
 
-import org.jclouds.blobstore.integration.internal.BaseBlobIntegrationTest;
-import org.testng.annotations.Test;
 
 /**
+ * 
  * @author Adrian Cole
  */
-@Test(groups =  "live", testName = "ScaleUpStorageBlobIntegrationLiveTest")
-public class ScaleUpStorageBlobIntegrationLiveTest extends BaseBlobIntegrationTest {
+public class ScaleUpStorageTestInitializer extends S3TestInitializer {
 
-   @Override
-   @Test(expectedExceptions = IllegalArgumentException.class)
-   public void testPutObjectStream() throws InterruptedException, IOException, ExecutionException {
-      super.testPutObjectStream();
+   public ScaleUpStorageTestInitializer() {
+      provider = "scaleup-storage";
    }
+
 
 }

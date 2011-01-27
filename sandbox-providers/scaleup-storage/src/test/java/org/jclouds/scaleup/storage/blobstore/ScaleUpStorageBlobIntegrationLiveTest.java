@@ -19,13 +19,13 @@
 
 package org.jclouds.scaleup.storage.blobstore;
 
-import org.jclouds.blobstore.integration.internal.BaseBlobLiveTest;
+import org.jclouds.s3.blobstore.integration.S3BlobIntegrationLiveTest;
 import org.testng.annotations.Test;
 
 /**
  * @author Adrian Cole
  */
-@Test(groups =  "live", testName = "ScaleUpStorageBlobLiveTest")
-public class ScaleUpStorageBlobLiveTest extends BaseBlobLiveTest {
+@Test(groups =  "live", testName = "ScaleUpStorageBlobIntegrationLiveTest")
+public class ScaleUpStorageBlobIntegrationLiveTest extends S3BlobIntegrationLiveTest {
 
 }
