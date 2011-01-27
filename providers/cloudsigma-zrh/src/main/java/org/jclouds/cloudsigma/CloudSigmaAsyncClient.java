@@ -35,9 +35,11 @@ import org.jclouds.cloudsigma.binders.BindServerToPlainTextString;
 import org.jclouds.cloudsigma.domain.Drive;
 import org.jclouds.cloudsigma.domain.DriveData;
 import org.jclouds.cloudsigma.domain.DriveInfo;
+import org.jclouds.cloudsigma.domain.ProfileInfo;
 import org.jclouds.cloudsigma.domain.Server;
 import org.jclouds.cloudsigma.domain.ServerInfo;
 import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToDriveInfo;
+import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToProfileInfo;
 import org.jclouds.cloudsigma.functions.KeyValuesDelimitedByBlankLinesToServerInfo;
 import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet;
 import org.jclouds.cloudsigma.functions.ListOfKeyValuesDelimitedByBlankLinesToServerInfoSet;
@@ -102,12 +104,21 @@ public interface CloudSigmaAsyncClient {
          @MapPayloadParam("name") String newName, CloneDriveOptions... options);
 
    /**
+    * @see CloudSigmaClient#getProfileInfo
+    */
+   @GET
+   @Path("/profile/info")
+   @ExceptionParser(ReturnNullOnNotFoundOr404.class)
+   @ResponseParser(KeyValuesDelimitedByBlankLinesToProfileInfo.class)
+   ListenableFuture<ProfileInfo> getProfileInfo();
+
+   /**
     * @see CloudSigmaClient#listDriveInfo
     */
    @GET
    @Path("/drives/info")
    @ResponseParser(ListOfKeyValuesDelimitedByBlankLinesToDriveInfoSet.class)
-   ListenableFuture<Set<org.jclouds.cloudsigma.domain.DriveInfo>> listDriveInfo();
+   ListenableFuture<Set<DriveInfo>> listDriveInfo();
 
    /**
     * @see CloudSigmaClient#getDriveInfo
@@ -143,8 +154,7 @@ public interface CloudSigmaAsyncClient {
    @ExceptionParser(ReturnNullOnNotFoundOr404.class)
    @ResponseParser(KeyValuesDelimitedByBlankLinesToServerInfo.class)
    @Path("/servers/create")
-   ListenableFuture<ServerInfo> createServer(
-         @BinderParam(BindServerToPlainTextString.class) Server createServer);
+   ListenableFuture<ServerInfo> createServer(@BinderParam(BindServerToPlainTextString.class) Server createServer);
 
    /**
     * @see CloudSigmaClient#listServerInfo
