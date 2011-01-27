@@ -36,7 +36,7 @@ public class EucalyptusPartnerCloudComputeServiceContextModule extends EC2Comput
 
    @Override
    protected TemplateBuilder provideTemplate(Injector injector, TemplateBuilder template) {
-      return template.osFamily(CENTOS);
+      return template.osFamily(CENTOS).locationId("xen-cluster").osDescriptionMatches("xen");
    }
 
    @Override
