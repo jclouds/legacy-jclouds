@@ -22,6 +22,7 @@ package org.jclouds.byon.functions;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Singleton;
@@ -33,26 +34,27 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 
 /**
  * Parses the following syntax.
  * 
  * <pre>
  * nodes:
- *     cluster-1:
- *         id: cluster-1
- *         description: xyz
- *         hostname: cluster-1.mydomain.com
- *         os_arch: x86
- *         os_family: linux
- *         os_name: redhat
- *         os_version: 5.3
- *         group: hadoop
- *         tags:
- *             - vanilla
- *         username: kelvin
- *         credential: password_or_rsa_in_base64
- *         sudo_password: password_in_base64
+ *     - id: cluster-1:
+ *       name: cluster-1
+ *       description: xyz
+ *       hostname: cluster-1.mydomain.com
+ *       os_arch: x86
+ *       os_family: linux
+ *       os_name: redhat
+ *       os_version: 5.3
+ *       group: hadoop
+ *       tags:
+ *           - vanilla
+ *       username: kelvin
+ *       credential: password_or_rsa_in_base64
+ *       sudo_password: password_in_base64
  * </pre>
  * 
  * @author Kelvin Kakugawa
@@ -65,7 +67,7 @@ public class NodesFromYaml implements Function<InputStream, Map<String, Node>> {
     * 
     */
    public static class Config {
-      public Map<String, Node> nodes;
+      public List<Node> nodes;
    }
 
    @Override
@@ -77,12 +79,16 @@ public class NodesFromYaml implements Function<InputStream, Map<String, Node>> {
       constructor.addTypeDescription(nodeDesc);
 
       TypeDescription configDesc = new TypeDescription(Config.class);
-      configDesc.putMapPropertyType("nodes", String.class, Node.class);
+      configDesc.putListPropertyType("nodes", Node.class);
       constructor.addTypeDescription(configDesc);
 
       Yaml yaml = new Yaml(new Loader(constructor));
       Config config = (Config) yaml.load(source);
-      checkState(config != null, "missing nodes: collection");
-      return config.nodes;
+      checkState(config != null, "missing config: class");
+      checkState(config.nodes != null, "missing nodes: collection");
+
+      return Maps.uniqueIndex(config.nodes, new Function<Node, String>(){
+         public String apply(Node node) { return node.getId(); }
+      });
    }
 }

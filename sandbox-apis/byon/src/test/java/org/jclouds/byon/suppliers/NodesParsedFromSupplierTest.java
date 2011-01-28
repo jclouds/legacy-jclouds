@@ -37,11 +37,4 @@ public class NodesParsedFromSupplierTest {
       new NodesParsedFromSupplier(Suppliers.ofInstance(Strings2.toInputStream("nodes:\n")), new NodesFromYaml()).get();
 
    }
-
-   public void testCanParseSomething() throws Exception {
-
-      new NodesParsedFromSupplier(Suppliers.ofInstance(Strings2.toInputStream("nodes:\n        first:\n")),
-               new NodesFromYaml()).get();
-
-   }
 }

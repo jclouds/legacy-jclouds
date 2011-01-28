@@ -35,9 +35,10 @@ public class Node {
    public Node() {
    }
 
-   public Node(String id, String description, String hostname, String osArch, String osFamily, String osName,
+   public Node(String id, String name, String description, String hostname, String osArch, String osFamily, String osName,
             String osVersion, String group, List<String> tags, String username, String credential, String sudo_password) {
       this.id = id;
+      this.name = name;
       this.description = description;
       this.hostname = hostname;
       this.os_arch = osArch;
@@ -53,6 +54,7 @@ public class Node {
 
    // public due to snakeyaml
    public String id;
+   public String name;
    public String description;
    public String hostname;
    public String os_arch;
@@ -67,6 +69,10 @@ public class Node {
 
    public String getId() {
       return id;
+   }
+
+   public String getName() {
+      return name;
    }
 
    public String getGroup() {
@@ -130,10 +136,10 @@ public class Node {
 
    @Override
    public String toString() {
-      return Objects.toStringHelper(this).add("id", id).add("description", description).add("hostname", hostname).add(
-               "osArch", os_arch).add("osFamily", os_family).add("osName", os_name).add("osVersion", os_version).add(
-               "group", group).add("tags", tags).add("username", username).add("hasCredential", credential != null)
-               .add("hasSudoPassword", sudo_password != null).toString();
+      return Objects.toStringHelper(this).add("id", id).add("name", name).add("description", description).add(
+               "hostname", hostname).add("osArch", os_arch).add("osFamily", os_family).add("osName", os_name).add(
+               "osVersion", os_version).add("group", group).add("tags", tags).add("username", username).add(
+               "hasCredential", credential != null).add("hasSudoPassword", sudo_password != null).toString();
    }
 
 }
